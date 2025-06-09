@@ -291,7 +291,7 @@ export default function RankingsContent(): React.JSX.Element {
                         )}
                         {ranking.metrics.monthly_arr !== undefined &&
                           ranking.metrics.monthly_arr > 0 && (
-                            <div>ARR: {formatMetric(ranking.metrics.monthly_arr, "arr")}</div>
+                            <div>Revenue: {formatMetric(ranking.metrics.monthly_arr, "arr")}</div>
                           )}
                         {ranking.metrics.swe_bench_score !== undefined &&
                           ranking.metrics.swe_bench_score > 0 && (
