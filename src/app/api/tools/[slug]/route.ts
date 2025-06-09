@@ -54,22 +54,28 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       .order("recorded_at", { ascending: false })
       .limit(20);
 
-    // Get latest scoring metrics
-    const { data: latestScoringMetrics } = await supabase
-      .from("latest_scoring_metrics")
-      .select("metrics")
-      .eq("tool_id", tool.id)
-      .single();
-
-    // Process latest metrics for display
+    // Get latest metrics from metrics_history
     const latestMetrics: Record<string, unknown> = {};
-    if (latestScoringMetrics?.metrics) {
-      Object.entries(latestScoringMetrics.metrics).forEach(
-        ([key, metric]: [string, { value: number }]) => {
-          latestMetrics[key] = metric.value;
-        }
-      );
-    }
+
+    // Get the most recent value for each metric
+    const { data: recentMetrics } = await supabase
+      .from("metrics_history")
+      .select("metric_key, value_integer, value_decimal")
+      .eq("tool_id", tool.id)
+      .order("recorded_at", { ascending: false });
+
+    // Group by metric_key and take the most recent value
+    const metricMap = new Map<string, unknown>();
+    recentMetrics?.forEach((m) => {
+      if (!metricMap.has(m.metric_key)) {
+        metricMap.set(m.metric_key, m.value_integer || m.value_decimal);
+      }
+    });
+
+    // Convert to object
+    metricMap.forEach((value, key) => {
+      latestMetrics[key] = value;
+    });
 
     // Get ranking data from ranking_cache
     const { data: rankingData } = await supabase
@@ -161,7 +167,7 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
         github_stars: latestMetrics["github_stars"] as number,
         valuation: latestMetrics["valuation"] as number,
         funding: latestMetrics["funding_total"] as number,
-        employees: latestMetrics["employee_count"] as number,
+        employees: latestMetrics["employees"] as number,
       },
       metricHistory,
     });
