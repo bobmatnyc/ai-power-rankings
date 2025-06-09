@@ -9,9 +9,9 @@ export interface Tool {
   github_repo?: string;
   company_name?: string;
   founded_date?: string;
-  pricing_model?: 'free' | 'freemium' | 'paid' | 'enterprise';
-  license_type?: 'open-source' | 'proprietary' | 'commercial';
-  status: 'active' | 'discontinued' | 'beta';
+  pricing_model?: "free" | "freemium" | "paid" | "enterprise";
+  license_type?: "open-source" | "proprietary" | "commercial";
+  status: "active" | "discontinued" | "beta";
   logo_url?: string;
   created_at: string;
   updated_at: string;
@@ -53,7 +53,7 @@ export interface Ranking {
   tool_id: string;
   position: number;
   score: number;
-  movement: 'up' | 'down' | 'same' | 'new' | 'returning';
+  movement: "up" | "down" | "same" | "new" | "returning";
   movement_positions: number;
   previous_position?: number;
   score_breakdown: Record<string, number>;
@@ -68,6 +68,6 @@ export interface RankingPeriod {
   tools_count: number;
   algorithm_version: string;
   editorial_summary?: string;
-  major_changes: Record<string, any>;
+  major_changes: Record<string, unknown>;
   is_current: boolean;
 }
