@@ -200,7 +200,7 @@ async function getToolMetrics(): Promise<ToolMetricsV6[]> {
   // Get all tools
   const { data: tools } = await supabase
     .from("tools")
-    .select("id, name, slug, category, status, info")
+    .select("id, name, slug, category, status")
     .in("status", ["active", "beta", "acquired"]);
 
   if (!tools) {
@@ -321,7 +321,7 @@ export async function GET(): Promise<NextResponse> {
     const toolIds = rankings.map((r) => r.metrics.tool_id);
     const { data: tools } = await supabase
       .from("tools")
-      .select("id, name, slug, category, status, info")
+      .select("id, name, slug, category, status")
       .in("id", toolIds);
 
     const toolMap = new Map(tools?.map((t) => [t.id, t]) || []);
