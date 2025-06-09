@@ -1,0 +1,431 @@
+{
+  "export_metadata": {
+    "updated_date": "2025-06-09",
+    "source": "comprehensive_research_review",
+    "scope": "missing_tools_and_corrections"
+  },
+
+  "missing_tools": {
+    "autonomous_agents": [
+      {
+        "id": "openhands",
+        "name": "OpenHands (formerly OpenDevin)",
+        "provider": "All-Hands-AI",
+        "description": "Open source autonomous AI agent for software engineering tasks with Docker sandbox environment",
+        "license": "open-source",
+        "github_repo": "All-Hands-AI/OpenHands",
+        "github_stars": 40000,
+        "contributors": 186,
+        "swe_bench_score": 29.38,
+        "category": "autonomous-agent",
+        "subcategory": "open-source-framework",
+        "status": "active",
+        "first_tracked": "2024-06-01",
+        "website": "https://all-hands.dev"
+      },
+      {
+        "id": "swe-agent",
+        "name": "SWE-agent",
+        "provider": "Princeton/Stanford Universities",
+        "description": "GitHub issue resolution agent with custom ACI (Agent-Computer Interface)",
+        "license": "open-source",
+        "github_repo": "SWE-agent/SWE-agent",
+        "swe_bench_score": 33.83,
+        "category": "autonomous-agent",
+        "subcategory": "research-project",
+        "status": "active",
+        "website": "https://swe-agent.com"
+      }
+    ],
+
+    "code_editors": [
+      {
+        "id": "zed",
+        "name": "Zed",
+        "provider": "Zed Industries",
+        "description": "Rust-based code editor with GPU-accelerated performance and collaborative editing",
+        "license": "open-source",
+        "github_repo": "zed-industries/zed",
+        "github_stars": 47000,
+        "category": "code-editor",
+        "subcategory": "high-performance-editor",
+        "status": "active",
+        "pricing_model": "freemium",
+        "autonomy_level": 5.5,
+        "innovation_score": 7.5,
+        "supported_platforms": ["macOS", "Linux", "Windows"],
+        "website": "https://zed.dev"
+      },
+      {
+        "id": "pearai",
+        "name": "PearAI",
+        "provider": "PearAI Team",
+        "description": "Open-source VS Code fork with enhanced AI capabilities",
+        "license": "open-source",
+        "category": "code-editor",
+        "subcategory": "vscode-fork",
+        "status": "active"
+      }
+    ],
+
+    "app_builders": [
+      {
+        "id": "claude-artifacts",
+        "name": "Claude Artifacts",
+        "provider": "Anthropic",
+        "description": "Interactive component generation within Claude for code, diagrams, and applications",
+        "license": "proprietary",
+        "category": "app-builder",
+        "subcategory": "interactive-generator",
+        "pricing_model": "freemium",
+        "launch_date": "2024-06-01",
+        "ga_date": "2024-08-27",
+        "status": "active",
+        "website": "https://claude.ai"
+      },
+      {
+        "id": "firebase-studio",
+        "name": "Firebase Studio",
+        "provider": "Google",
+        "description": "Cloud-based development platform with Figma integration and AI assistance",
+        "license": "proprietary",
+        "category": "app-builder",
+        "subcategory": "cloud-platform",
+        "pricing_model": "freemium",
+        "status": "preview",
+        "workspaces_created": 1500000,
+        "website": "https://firebase.google.com/products/studio"
+      }
+    ],
+
+    "testing_tools": [
+      {
+        "id": "qodo-gen",
+        "name": "Qodo Gen (formerly CodiumAI)",
+        "provider": "Qodo",
+        "description": "Quality-first AI coding platform with multi-agent testing capabilities",
+        "license": "commercial",
+        "category": "testing-tool",
+        "subcategory": "ai-test-generation",
+        "pricing_model": "freemium",
+        "supported_languages": ["Python", "JavaScript", "TypeScript", "Java", "C#", "PHP", "Go"],
+        "status": "active",
+        "website": "https://qodo.ai"
+      },
+      {
+        "id": "diffblue-cover",
+        "name": "Diffblue Cover",
+        "provider": "Diffblue Ltd.",
+        "description": "AI-powered unit test generation for Java using reinforcement learning",
+        "license": "commercial",
+        "category": "testing-tool",
+        "subcategory": "unit-test-generation",
+        "pricing_model": "freemium",
+        "supported_languages": ["Java"],
+        "founded": 2016,
+        "status": "active",
+        "website": "https://diffblue.com"
+      },
+      {
+        "id": "accelq",
+        "name": "ACCELQ",
+        "provider": "ACCELQ Inc.",
+        "description": "Codeless test automation with AI Autopilot capabilities",
+        "license": "commercial",
+        "category": "testing-tool",
+        "subcategory": "enterprise-automation",
+        "pricing_model": "enterprise",
+        "status": "active",
+        "website": "https://accelq.com"
+      }
+    ],
+
+    "enterprise_platforms": [
+      {
+        "id": "azure-ai-foundry",
+        "name": "Microsoft Azure AI Foundry",
+        "provider": "Microsoft",
+        "description": "Comprehensive AI platform with 1,900+ models and Agent Service",
+        "license": "commercial",
+        "category": "enterprise-platform",
+        "subcategory": "cloud-ai-platform",
+        "model_count": 1900,
+        "features": ["Agent Service", "Model Router", "Multi-agent orchestration"],
+        "status": "active"
+      },
+      {
+        "id": "google-cloud-ai",
+        "name": "Google Cloud AI Platform",
+        "provider": "Google",
+        "description": "Enterprise AI platform with Vertex AI and Agent Development Kit",
+        "license": "commercial",
+        "category": "enterprise-platform",
+        "subcategory": "cloud-ai-platform",
+        "features": ["Vertex AI", "Agent Development Kit", "A2A protocol"],
+        "status": "active"
+      }
+    ],
+
+    "documentation_tools": [
+      {
+        "id": "mintlify",
+        "name": "Mintlify",
+        "provider": "Mintlify",
+        "description": "AI-native documentation platform with LLM compatibility",
+        "license": "commercial",
+        "category": "documentation-tool",
+        "funding": "18M Series A (2024)",
+        "status": "active",
+        "website": "https://mintlify.com"
+      },
+      {
+        "id": "swimm",
+        "name": "Swimm",
+        "provider": "Swimm",
+        "description": "AI code knowledge platform for legacy code modernization",
+        "license": "commercial",
+        "category": "documentation-tool",
+        "focus": "legacy_modernization",
+        "status": "active",
+        "website": "https://swimm.io"
+      }
+    ]
+  },
+
+  "metric_corrections": {
+    "claude-code": {
+      "swe_bench_score": 72.7,
+      "corrected_from": 72.5,
+      "source": "metrics_latest.json"
+    },
+    "jules": {
+      "swe_bench_score": 52.2,
+      "corrected_from": "~52%",
+      "source": "metrics_latest.json"
+    },
+    "cursor": {
+      "monthly_arr": 50000000000,
+      "estimated_users": 360000,
+      "valuation_latest": 990000000000,
+      "updated_date": "2025-06-01"
+    },
+    "github-copilot": {
+      "monthly_arr": 40000000000,
+      "growth_rate": "281% YoY",
+      "estimated_users": 15000000,
+      "updated_date": "2025-06-01"
+    },
+    "devin": {
+      "pricing_change": {
+        "old_price": 50000,
+        "new_price": 2000,
+        "change_date": "2025-04-03",
+        "percentage_reduction": 96
+      }
+    }
+  },
+
+  "timeline_additions": {
+    "2025_updates": [
+      {
+        "date": "2025-06-09",
+        "event": "Zed reaches 47K GitHub stars with Rust-based performance leadership",
+        "category": "product_milestone",
+        "impact": "high",
+        "tools_affected": ["zed"]
+      },
+      {
+        "date": "2025-05-22",
+        "event": "Claude 4 achieves 72.7% on SWE-bench Verified (corrected score)",
+        "category": "benchmark_achievement",
+        "impact": "critical",
+        "tools_affected": ["claude-code"]
+      },
+      {
+        "date": "2025-04-16",
+        "event": "OpenAI acquires Windsurf for $3B (acquisition completion)",
+        "category": "acquisition",
+        "impact": "critical",
+        "amount": 300000000000,
+        "tools_affected": ["windsurf"]
+      },
+      {
+        "date": "2025-04-03",
+        "event": "Devin slashes pricing 96% from $500 to $20/month",
+        "category": "pricing_change",
+        "impact": "high",
+        "tools_affected": ["devin"]
+      }
+    ]
+  },
+
+  "category_additions": {
+    "new_categories": [
+      {
+        "id": "enterprise-platform",
+        "name": "Enterprise AI Platforms",
+        "description": "Comprehensive AI development platforms for enterprise use",
+        "examples": ["Azure AI Foundry", "Google Cloud AI Platform", "AWS Q Developer"]
+      },
+      {
+        "id": "documentation-tool",
+        "name": "Documentation & Analysis Tools",
+        "description": "AI-powered tools for code documentation and analysis",
+        "examples": ["Mintlify", "Swimm", "DeepSource"]
+      },
+      {
+        "id": "specialized-platform",
+        "name": "Specialized Coding Platforms",
+        "description": "Domain-specific AI coding tools for particular use cases",
+        "examples": ["CodeWP", "DataRobot", "Retool AI"]
+      }
+    ]
+  },
+
+  "market_intelligence_updates": {
+    "adoption_statistics": {
+      "developer_ai_usage": "97%",
+      "ai_generated_code_percentage": "25%",
+      "source": "GitHub Enterprise Developer Survey & Google reports"
+    },
+    "funding_trends": {
+      "total_2024_2025": "3B+",
+      "largest_rounds": [
+        {
+          "company": "Anysphere (Cursor)",
+          "amount": 90000000000,
+          "valuation": 990000000000,
+          "date": "2025-06-05"
+        },
+        {
+          "company": "Cognition Labs (Devin)",
+          "amount": 29000000000,
+          "valuation": 400000000000,
+          "date": "2025-03-18"
+        }
+      ]
+    },
+    "performance_trends": {
+      "swe_bench_progression": [
+        {
+          "tool": "Devin",
+          "score": 13.86,
+          "date": "2024-03-12"
+        },
+        {
+          "tool": "Jules",
+          "score": 52.2,
+          "date": "2024-12-11"
+        },
+        {
+          "tool": "Claude Code",
+          "score": 72.7,
+          "date": "2025-05-22"
+        }
+      ]
+    }
+  },
+
+  "pricing_updates": {
+    "recent_changes": [
+      {
+        "tool": "Devin",
+        "old_pricing": "$500/month",
+        "new_pricing": "$20/month",
+        "change_date": "2025-04-03",
+        "reason": "Market competition and accessibility"
+      },
+      {
+        "tool": "ChatGPT Pro",
+        "pricing": "$200/month",
+        "launch_date": "2024-12-05",
+        "features": ["Unlimited o1 access", "O1 Pro mode", "GPT-4.1 access"]
+      }
+    ]
+  },
+
+  "feature_updates": {
+    "github_copilot": {
+      "multi_model_support": {
+        "models": ["GPT-4o", "Claude 3.5 Sonnet", "Gemini 1.5 Pro"],
+        "launch_date": "2024-10-29"
+      },
+      "agent_mode": {
+        "description": "Autonomous coding agents for complex tasks",
+        "status": "beta"
+      }
+    },
+    "cursor": {
+      "cursorrules": {
+        "description": "Ability to encode team coding standards directly into AI",
+        "competitive_advantage": "Suggestions align with team workflow"
+      },
+      "model_flexibility": {
+        "supported_models": ["Claude 3.5 Sonnet", "GPT-4o", "Gemini 2.5"],
+        "fallback_capability": true
+      }
+    }
+  },
+
+  "corrections": {
+    "windsurf_acquisition": {
+      "corrected_timeline": "OpenAI acquisition talks reported April 16, 2025, completion date needs verification",
+      "amount": 300000000000,
+      "strategic_rationale": "40K+ user base, ~$40M ARR, competition with Cursor"
+    },
+    "claude_artifacts": {
+      "ga_date": "2024-08-27",
+      "beta_period": "June 2024 - August 2024",
+      "adoption": "tens of millions of artifacts created"
+    },
+    "bolt_new_growth": {
+      "arr_progression": {
+        "launch": "2024-10-01",
+        "30_days": 400000000,
+        "60_days": 2000000000,
+        "current": 4000000000
+      },
+      "user_growth": "600 to 14,000 in weeks"
+    }
+  },
+
+  "platform_risks": {
+    "dependency_analysis": [
+      {
+        "tool": "Jules",
+        "risk": "Gemini 2.5 Pro only",
+        "impact": "High dependency on Google ecosystem"
+      },
+      {
+        "tool": "Devin",
+        "risk": "Primarily GPT-4 based",
+        "impact": "Single LLM provider dependency"
+      },
+      {
+        "tool": "Cursor",
+        "advantage": "Multi-model support",
+        "resilience": "High - can switch between Claude, GPT-4, Gemini"
+      }
+    ]
+  },
+
+  "missing_benchmark_data": {
+    "humaneval_scores": [
+      {
+        "tool": "Claude Code",
+        "score": 84.9,
+        "model": "Claude 4 Opus"
+      },
+      {
+        "tool": "GitHub Copilot",
+        "score": 85.2,
+        "model": "GPT-4o"
+      }
+    ],
+    "additional_benchmarks": [
+      "Terminal benchmark (43.2% for Claude 4 Opus)",
+      "Multi-step reasoning tasks",
+      "Enterprise code quality metrics"
+    ]
+  }
+}
