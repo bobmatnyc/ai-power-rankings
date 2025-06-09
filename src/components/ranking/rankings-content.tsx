@@ -122,7 +122,7 @@ export default function RankingsContent(): React.JSX.Element {
   };
 
   const formatMetric = (value: number | undefined, type: string): string => {
-    if (value === undefined) {
+    if (value === undefined || value === 0) {
       return "-";
     }
 
@@ -286,20 +286,26 @@ export default function RankingsContent(): React.JSX.Element {
                     </TableCell>
                     <TableCell>
                       <div className="text-sm space-y-1">
-                        {ranking.metrics.users && (
+                        {ranking.metrics.users !== undefined && ranking.metrics.users > 0 && (
                           <div>Users: {formatMetric(ranking.metrics.users, "users")}</div>
                         )}
-                        {ranking.metrics.monthly_arr && (
-                          <div>ARR: {formatMetric(ranking.metrics.monthly_arr, "arr")}</div>
-                        )}
-                        {ranking.metrics.swe_bench_score && (
-                          <div>
-                            SWE-bench: {formatMetric(ranking.metrics.swe_bench_score, "percentage")}
-                          </div>
-                        )}
-                        {ranking.metrics.github_stars && (
-                          <div>GitHub: {formatMetric(ranking.metrics.github_stars, "stars")}⭐</div>
-                        )}
+                        {ranking.metrics.monthly_arr !== undefined &&
+                          ranking.metrics.monthly_arr > 0 && (
+                            <div>ARR: {formatMetric(ranking.metrics.monthly_arr, "arr")}</div>
+                          )}
+                        {ranking.metrics.swe_bench_score !== undefined &&
+                          ranking.metrics.swe_bench_score > 0 && (
+                            <div>
+                              SWE-bench:{" "}
+                              {formatMetric(ranking.metrics.swe_bench_score, "percentage")}
+                            </div>
+                          )}
+                        {ranking.metrics.github_stars !== undefined &&
+                          ranking.metrics.github_stars > 0 && (
+                            <div>
+                              GitHub: {formatMetric(ranking.metrics.github_stars, "stars")}⭐
+                            </div>
+                          )}
                       </div>
                     </TableCell>
                     <TableCell>

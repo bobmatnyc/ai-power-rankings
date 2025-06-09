@@ -99,7 +99,7 @@ export default function ToolDetailPage(): React.JSX.Element {
   };
 
   const formatMetric = (value: number | undefined, type: string): string => {
-    if (value === undefined) {
+    if (value === undefined || value === 0) {
       return "N/A";
     }
 
@@ -252,7 +252,7 @@ export default function ToolDetailPage(): React.JSX.Element {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {metrics?.swe_bench_score !== undefined && (
+                {metrics?.swe_bench_score !== undefined && metrics.swe_bench_score > 0 && (
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="text-sm font-medium">SWE-bench Score</span>
@@ -300,7 +300,7 @@ export default function ToolDetailPage(): React.JSX.Element {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                {metrics?.monthly_arr !== undefined && (
+                {metrics?.monthly_arr !== undefined && metrics.monthly_arr > 0 && (
                   <div>
                     <p className="text-sm text-muted-foreground">Monthly ARR</p>
                     <p className="text-2xl font-bold">
@@ -308,7 +308,7 @@ export default function ToolDetailPage(): React.JSX.Element {
                     </p>
                   </div>
                 )}
-                {metrics?.valuation !== undefined && (
+                {metrics?.valuation !== undefined && metrics.valuation > 0 && (
                   <div>
                     <p className="text-sm text-muted-foreground">Valuation</p>
                     <p className="text-2xl font-bold">
@@ -316,7 +316,7 @@ export default function ToolDetailPage(): React.JSX.Element {
                     </p>
                   </div>
                 )}
-                {metrics?.funding !== undefined && (
+                {metrics?.funding !== undefined && metrics.funding > 0 && (
                   <div>
                     <p className="text-sm text-muted-foreground">Total Funding</p>
                     <p className="text-2xl font-bold">
@@ -324,7 +324,7 @@ export default function ToolDetailPage(): React.JSX.Element {
                     </p>
                   </div>
                 )}
-                {metrics?.employees !== undefined && (
+                {metrics?.employees !== undefined && metrics.employees > 0 && (
                   <div>
                     <p className="text-sm text-muted-foreground">Employees</p>
                     <p className="text-2xl font-bold">
@@ -332,7 +332,7 @@ export default function ToolDetailPage(): React.JSX.Element {
                     </p>
                   </div>
                 )}
-                {metrics?.users !== undefined && (
+                {metrics?.users !== undefined && metrics.users > 0 && (
                   <div>
                     <p className="text-sm text-muted-foreground">Total Users</p>
                     <p className="text-2xl font-bold">{formatMetric(metrics.users, "users")}</p>
@@ -453,7 +453,7 @@ export default function ToolDetailPage(): React.JSX.Element {
 }
 
 function formatMetricValue(key: string, value: unknown): string {
-  if (value === null || value === undefined) {
+  if (value === null || value === undefined || value === 0) {
     return "N/A";
   }
 

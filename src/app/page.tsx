@@ -60,7 +60,7 @@ export default function Home(): React.JSX.Element {
   };
 
   const formatMetric = (value: number | undefined, type: string): string => {
-    if (value === undefined) {
+    if (value === undefined || value === 0) {
       return "-";
     }
 
