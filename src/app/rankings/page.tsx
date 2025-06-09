@@ -273,10 +273,16 @@ export default function RankingsPage(): React.JSX.Element {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
-                      <div className="font-bold text-lg">
-                        {ranking.scores?.overall?.toFixed(2) || "0.00"}
-                      </div>
-                      <div className="text-xs text-muted-foreground">/ 10</div>
+                      {ranking.scores?.overall ? (
+                        <>
+                          <div className="font-bold text-lg">
+                            {ranking.scores.overall.toFixed(2)}
+                          </div>
+                          <div className="text-xs text-muted-foreground">/ 10</div>
+                        </>
+                      ) : (
+                        <div className="text-muted-foreground">-</div>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="text-sm space-y-1">
@@ -360,25 +366,33 @@ export default function RankingsPage(): React.JSX.Element {
                         <div>
                           <p className="text-muted-foreground">Agentic</p>
                           <p className="font-semibold">
-                            {ranking.scores?.agentic_capability?.toFixed(1) || "0.0"}/10
+                            {ranking.scores?.agentic_capability
+                              ? `${ranking.scores.agentic_capability.toFixed(1)}/10`
+                              : "-"}
                           </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Innovation</p>
                           <p className="font-semibold">
-                            {ranking.scores?.innovation?.toFixed(1) || "0.0"}/10
+                            {ranking.scores?.innovation
+                              ? `${ranking.scores.innovation.toFixed(1)}/10`
+                              : "-"}
                           </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Technical</p>
                           <p className="font-semibold">
-                            {ranking.scores?.technical_performance?.toFixed(1) || "0.0"}/10
+                            {ranking.scores?.technical_performance
+                              ? `${ranking.scores.technical_performance.toFixed(1)}/10`
+                              : "-"}
                           </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Adoption</p>
                           <p className="font-semibold">
-                            {ranking.scores?.developer_adoption?.toFixed(1) || "0.0"}/10
+                            {ranking.scores?.developer_adoption
+                              ? `${ranking.scores.developer_adoption.toFixed(1)}/10`
+                              : "-"}
                           </p>
                         </div>
                       </div>

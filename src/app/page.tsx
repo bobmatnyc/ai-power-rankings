@@ -127,7 +127,8 @@ export default function Home(): React.JSX.Element {
                           <Badge variant="secondary" className="mr-2">
                             {ranking.tool.category.replace("-", " ")}
                           </Badge>
-                          Overall Score: {ranking.scores?.overall?.toFixed(2) || "0.00"}/10
+                          Overall Score:{" "}
+                          {ranking.scores?.overall ? `${ranking.scores.overall.toFixed(2)}/10` : ""}
                         </CardDescription>
                       </div>
                     </div>
@@ -137,23 +138,29 @@ export default function Home(): React.JSX.Element {
                       <div>
                         <p className="text-sm text-muted-foreground">Agentic Capability</p>
                         <p className="text-lg font-semibold">
-                          {ranking.scores?.agentic_capability?.toFixed(1) || "0.0"}/10
+                          {ranking.scores?.agentic_capability
+                            ? `${ranking.scores.agentic_capability.toFixed(1)}/10`
+                            : "-"}
                         </p>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Innovation Score</p>
                         <p className="text-lg font-semibold">
-                          {ranking.scores?.innovation?.toFixed(1) || "0.0"}/10
+                          {ranking.scores?.innovation
+                            ? `${ranking.scores.innovation.toFixed(1)}/10`
+                            : "-"}
                         </p>
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Key Metric</p>
                         <p className="text-lg font-semibold">
-                          {ranking.metrics.users && formatMetric(ranking.metrics.users, "users")}
-                          {ranking.metrics.monthly_arr &&
-                            formatMetric(ranking.metrics.monthly_arr, "arr")}
-                          {ranking.metrics.swe_bench_score &&
-                            formatMetric(ranking.metrics.swe_bench_score, "percentage")}
+                          {ranking.metrics.users
+                            ? formatMetric(ranking.metrics.users, "users")
+                            : ranking.metrics.monthly_arr
+                              ? formatMetric(ranking.metrics.monthly_arr, "arr")
+                              : ranking.metrics.swe_bench_score
+                                ? formatMetric(ranking.metrics.swe_bench_score, "percentage")
+                                : "-"}
                         </p>
                       </div>
                     </div>
