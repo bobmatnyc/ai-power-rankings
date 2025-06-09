@@ -28,7 +28,11 @@
     "export-by-date": "tsx scripts/export-by-date.ts",
     "export-showcase": "tsx scripts/export-showcase.ts",
     "check:tools-schema": "tsx scripts/check-tools-schema.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "mcp:install": "cd mcp-server && npm install",
+    "mcp:build": "cd mcp-server && npm run build",
+    "mcp:dev": "cd mcp-server && npm run dev",
+    "mcp:setup": "npm run mcp:install && npm run mcp:build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
