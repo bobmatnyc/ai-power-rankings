@@ -1,115 +1,209 @@
-import { supabaseAdmin } from '../src/lib/database';
-import toolsData from '../src/data/seed/tools.json';
-import * as dotenv from 'dotenv';
+#!/usr/bin/env node
+
+import { config } from 'dotenv';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+import { createClient } from '@supabase/supabase-js';
 
 // Load environment variables
-dotenv.config({ path: '.env.local' });
+config({ path: '.env.local' });
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('❌ Missing required environment variables!');
+  console.error('Please ensure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set in .env.local');
+  process.exit(1);
+}
+
+// Create Supabase client with service role key for admin access
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
+
+async function checkDatabaseState() {
+  // Check if tools table exists and has data
+  const { data, error } = await supabase
+    .from('tools')
+    .select('id')
+    .limit(1);
+  
+  if (error) {
+    if (error.message.includes('relation "public.tools" does not exist')) {
+      return { exists: false, hasData: false };
+    }
+    throw error;
+  }
+  
+  return { exists: true, hasData: (data?.length ?? 0) > 0 };
+}
+
+async function executeSqlFile(filePath: string) {
+  const sql = readFileSync(filePath, 'utf-8');
+  
+  // Split by semicolons but preserve those within strings
+  const statements = sql
+    .split(/;(?=(?:[^']*'[^']*')*[^']*$)/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0 && !s.startsWith('--') && !s.match(/^\/\*/));
+  
+  console.log(`📊 Found ${statements.length} SQL statements to execute\n`);
+  
+  let successful = 0;
+  let failed = 0;
+  const errors: string[] = [];
+  
+  for (let i = 0; i < statements.length; i++) {
+    const statement = statements[i];
+    const preview = statement.substring(0, 60).replace(/\n/g, ' ') + '...';
+    
+    process.stdout.write(`[${i + 1}/${statements.length}] ${preview} `);
+    
+    try {
+      // Use the SQL endpoint for raw SQL execution
+      const { data, error } = await supabase.rpc('sql', {
+        query: statement
+      }).single();
+      
+      if (error) {
+        // Try direct execution as fallback
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_SERVICE_ROLE_KEY,
+            'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ query: statement })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        }
+        
+        console.log('✅');
+        successful++;
+      } else {
+        console.log('✅');
+        successful++;
+      }
+    } catch (error: any) {
+      console.log('❌');
+      const errorMsg = `Statement ${i + 1}: ${error.message || error}`;
+      console.error(`   Error: ${errorMsg}`);
+      errors.push(errorMsg);
+      failed++;
+      
+      // Continue on error for INSERT statements
+      if (!statement.toUpperCase().startsWith('CREATE') && 
+          !statement.toUpperCase().startsWith('ALTER')) {
+        continue;
+      }
+    }
+  }
+  
+  return { successful, failed, total: statements.length, errors };
+}
 
 async function seedDatabase() {
-  console.log('🌱 Starting database seeding...');
+  console.log('🚀 AI Power Rankings - Database Seeding\n');
   
   try {
-    // Insert tools
-    console.log('📦 Inserting tools...');
-    const { data: insertedTools, error: toolsError } = await supabaseAdmin
-      .from('tools')
-      .insert(toolsData)
-      .select();
+    // Check current database state
+    console.log('Checking database status...');
+    const dbState = await checkDatabaseState();
     
-    if (toolsError) {
-      console.error('❌ Error seeding tools:', toolsError);
-      return;
+    if (!dbState.exists) {
+      console.log('📭 Database schema not found!\n');
+      console.log('Setting up database schema first...\n');
+      
+      // Execute schema file
+      const schemaPath = join(process.cwd(), 'database/schema-complete.sql');
+      console.log(`📄 Reading schema file: ${schemaPath}`);
+      
+      const schemaResult = await executeSqlFile(schemaPath);
+      console.log('\n📈 Schema Setup Summary:');
+      console.log(`   ✅ Successful: ${schemaResult.successful}`);
+      console.log(`   ❌ Failed: ${schemaResult.failed}`);
+      console.log(`   📊 Total: ${schemaResult.total}\n`);
+      
+      if (schemaResult.failed > 0) {
+        console.error('⚠️  Some schema statements failed. Continuing with seed data...\n');
+      }
+    } else if (dbState.hasData) {
+      console.log('⚠️  Database already contains data. Adding seed data...\n');
+    } else {
+      console.log('📬 Database schema exists but is empty. Perfect for seeding!\n');
     }
     
-    console.log(`✅ Inserted ${insertedTools.length} tools`);
+    // Execute seed data
+    const seedPath = join(process.cwd(), 'docs/data/POPULATE.sql');
+    console.log(`📄 Reading seed file: ${seedPath}`);
     
-    // Insert sample capabilities for each tool
-    console.log('🔧 Inserting tool capabilities...');
-    const capabilities = toolsData.map(tool => ({
-      tool_id: tool.id,
-      autonomy_level: Math.floor(Math.random() * 5) + 5, // 5-10
-      context_window_size: 100000 + Math.floor(Math.random() * 100000),
-      supports_multi_file: Math.random() > 0.5,
-      supported_languages: ['JavaScript', 'TypeScript', 'Python', 'Java', 'Go'],
-      supported_platforms: ['VS Code', 'IntelliJ', 'Terminal'],
-      integration_types: ['IDE', 'CLI', 'API'],
-      llm_providers: ['OpenAI', 'Anthropic', 'Google'],
-      deployment_options: ['Local', 'Cloud', 'Self-hosted']
-    }));
+    const seedResult = await executeSqlFile(seedPath);
     
-    const { error: capabilitiesError } = await supabaseAdmin
-      .from('tool_capabilities')
-      .insert(capabilities);
+    console.log('\n📈 Seeding Summary:');
+    console.log(`   ✅ Successful: ${seedResult.successful}`);
+    console.log(`   ❌ Failed: ${seedResult.failed}`);
+    console.log(`   📊 Total: ${seedResult.total}\n`);
     
-    if (capabilitiesError) {
-      console.error('❌ Error seeding capabilities:', capabilitiesError);
-      return;
+    if (seedResult.errors.length > 0) {
+      console.log('❌ Errors encountered:');
+      seedResult.errors.slice(0, 5).forEach(err => console.log(`   - ${err}`));
+      if (seedResult.errors.length > 5) {
+        console.log(`   ... and ${seedResult.errors.length - 5} more errors`);
+      }
+      console.log('');
     }
     
-    console.log('✅ Inserted tool capabilities');
-    
-    // Insert sample metrics for each tool
-    console.log('📊 Inserting tool metrics...');
-    const metrics = toolsData.map(tool => ({
-      tool_id: tool.id,
-      metric_date: new Date().toISOString().split('T')[0],
-      github_stars: Math.floor(Math.random() * 50000),
-      github_forks: Math.floor(Math.random() * 5000),
-      github_watchers: Math.floor(Math.random() * 1000),
-      github_commits_last_month: Math.floor(Math.random() * 200),
-      github_contributors: Math.floor(Math.random() * 100),
-      github_last_commit: new Date().toISOString(),
-      funding_total: Math.floor(Math.random() * 100000000),
-      valuation_latest: Math.floor(Math.random() * 1000000000),
-      estimated_users: Math.floor(Math.random() * 100000),
-      social_mentions_30d: Math.floor(Math.random() * 1000),
-      sentiment_score: Math.random() * 0.5 + 0.5, // 0.5-1.0
-      community_size: Math.floor(Math.random() * 10000),
-      release_frequency_days: Math.floor(Math.random() * 30) + 7
-    }));
-    
-    const { error: metricsError } = await supabaseAdmin
-      .from('tool_metrics')
-      .insert(metrics);
-    
-    if (metricsError) {
-      console.error('❌ Error seeding metrics:', metricsError);
-      return;
+    // Verify the results
+    if (seedResult.successful > 0) {
+      console.log('✅ Verifying seed data...\n');
+      
+      const { data: toolCount } = await supabase
+        .from('tools')
+        .select('id', { count: 'exact', head: true });
+      
+      const { data: rankingCount } = await supabase
+        .from('ranking_cache')
+        .select('id', { count: 'exact', head: true });
+      
+      const { data: topRankings } = await supabase
+        .from('latest_rankings')
+        .select('*')
+        .order('position')
+        .limit(5);
+      
+      console.log('📊 Database Contents:');
+      console.log(`   Tools: ${toolCount || 0}`);
+      console.log(`   Rankings: ${rankingCount || 0}`);
+      console.log('');
+      
+      if (topRankings && topRankings.length > 0) {
+        console.log('🏆 Current Top 5 Rankings:');
+        topRankings.forEach((r: any) => {
+          console.log(`   ${r.position}. ${r.tool_name} (${r.score.toFixed(2)})`);
+        });
+      }
+      
+      console.log('\n✨ Database seeding completed successfully!');
+      console.log('\nYou can verify in Supabase Dashboard:');
+      console.log(`   ${SUPABASE_URL.replace('.supabase.co', '.supabase.com')}/project/fukdwnsvjdgyakdvtdin/editor`);
+    } else {
+      console.log('❌ No statements were executed successfully.');
+      console.log('   Please check your database connection and permissions.');
     }
     
-    console.log('✅ Inserted tool metrics');
-    
-    // Create a sample ranking period
-    console.log('📅 Creating ranking period...');
-    const currentPeriod = {
-      period: '2025-01',
-      display_name: 'January 2025',
-      publication_date: '2025-01-01',
-      tools_count: toolsData.length,
-      algorithm_version: '1.0.0',
-      editorial_summary: 'The inaugural AI Power Rankings featuring the top agentic AI coding tools.',
-      major_changes: {
-        new_entries: toolsData.map(t => t.id),
-        significant_moves: []
-      },
-      is_current: true
-    };
-    
-    const { error: periodError } = await supabaseAdmin
-      .from('ranking_periods')
-      .insert(currentPeriod);
-    
-    if (periodError) {
-      console.error('❌ Error creating ranking period:', periodError);
-      return;
-    }
-    
-    console.log('✅ Created ranking period');
-    
-    console.log('🎉 Database seeded successfully!');
-  } catch (error) {
-    console.error('❌ Unexpected error:', error);
+  } catch (error: any) {
+    console.error('\n❌ Fatal error:', error.message);
+    process.exit(1);
   }
 }
 
+// Run the seeding
 seedDatabase().catch(console.error);

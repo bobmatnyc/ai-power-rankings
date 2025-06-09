@@ -1,0 +1,361 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Separator } from '@/components/ui/separator'
+
+interface ToolDetail {
+  tool: {
+    id: string
+    name: string
+    category: string
+    status: string
+    description?: string
+    website?: string
+    github_url?: string
+    pricing?: string
+    company?: string
+  }
+  ranking?: {
+    rank: number
+    scores: {
+      overall: number
+      agentic_capability: number
+      innovation: number
+      technical_performance: number
+      developer_adoption: number
+      market_traction: number
+      business_sentiment: number
+      development_velocity: number
+      platform_resilience: number
+    }
+  }
+  metrics?: {
+    users?: number
+    monthly_arr?: number
+    swe_bench_score?: number
+    github_stars?: number
+    valuation?: number
+    funding?: number
+    employees?: number
+  }
+}
+
+export default function ToolDetailPage(): React.JSX.Element {
+  const params = useParams()
+  const [toolData, setToolData] = useState<ToolDetail | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const slug = params['slug']
+    if (slug) {
+      fetchToolDetail(slug as string)
+    }
+  }, [params])
+
+  const fetchToolDetail = async (slug: string): Promise<void> => {
+    try {
+      const response = await fetch(`/api/tools/${slug}`)
+      const data = await response.json()
+      setToolData(data)
+      setLoading(false)
+    } catch (error) {
+      console.error('Failed to fetch tool details:', error)
+      setLoading(false)
+    }
+  }
+
+  const formatMetric = (value: number | undefined, type: string): string => {
+    if (value === undefined) {
+      return 'N/A'
+    }
+    
+    switch (type) {
+      case 'users':
+        return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(0)}k`
+      case 'currency':
+        return `$${(value / 1000000).toFixed(1)}M`
+      case 'percentage':
+        return `${value.toFixed(1)}%`
+      case 'number':
+        return value.toLocaleString()
+      default:
+        return value.toString()
+    }
+  }
+
+  const getStatusBadge = (status: string): React.JSX.Element => {
+    const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+      'active': 'default',
+      'beta': 'secondary',
+      'acquired': 'destructive',
+      'deprecated': 'outline'
+    }
+    return <Badge variant={variants[status] || 'outline'}>{status}</Badge>
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto p-8">
+        <div className="flex items-center justify-center h-64">
+          <p className="text-muted-foreground">Loading tool details...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!toolData) {
+    return (
+      <div className="container mx-auto p-8">
+        <div className="flex flex-col items-center justify-center h-64">
+          <p className="text-muted-foreground mb-4">Tool not found</p>
+          <Button asChild>
+            <Link href="/tools">Back to Tools</Link>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const { tool, ranking, metrics } = toolData
+
+  return (
+    <div className="container mx-auto p-8 max-w-6xl">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+          <Link href="/tools" className="hover:text-foreground">
+            Tools
+          </Link>
+          <span>/</span>
+          <span>{tool.name}</span>
+        </div>
+        
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">{tool.name}</h1>
+            <div className="flex items-center gap-2">
+              <Badge className="capitalize">{tool.category.replace(/-/g, ' ')}</Badge>
+              {getStatusBadge(tool.status)}
+              {ranking && (
+                <Badge variant="outline">Rank #{ranking.rank}</Badge>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex gap-2">
+            {tool.website && (
+              <Button asChild>
+                <a href={tool.website} target="_blank" rel="noopener noreferrer">
+                  Visit Website
+                </a>
+              </Button>
+            )}
+            {tool.github_url && (
+              <Button variant="outline" asChild>
+                <a href={tool.github_url} target="_blank" rel="noopener noreferrer">
+                  GitHub
+                </a>
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Overview Card */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Overview</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <h3 className="font-semibold mb-1">Description</h3>
+            <p className="text-muted-foreground">
+              {tool.description || 'AI-powered coding assistant helping developers write better code faster.'}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground">Company</p>
+              <p className="font-medium">{tool.company || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Pricing</p>
+              <p className="font-medium">{tool.pricing || 'N/A'}</p>
+            </div>
+            {metrics?.users && (
+              <div>
+                <p className="text-sm text-muted-foreground">Users</p>
+                <p className="font-medium">{formatMetric(metrics.users, 'users')}</p>
+              </div>
+            )}
+            {metrics?.github_stars && (
+              <div>
+                <p className="text-sm text-muted-foreground">GitHub Stars</p>
+                <p className="font-medium">{formatMetric(metrics.github_stars, 'number')}</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Detailed Information Tabs */}
+      <Tabs defaultValue="performance" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="performance">Performance</TabsTrigger>
+          <TabsTrigger value="metrics">Business Metrics</TabsTrigger>
+          <TabsTrigger value="scores">Ranking Scores</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="performance" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Technical Performance</CardTitle>
+              <CardDescription>
+                Benchmark results and technical capabilities
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {metrics?.swe_bench_score !== undefined && (
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium">SWE-bench Score</span>
+                      <span className="text-sm font-medium">{formatMetric(metrics.swe_bench_score, 'percentage')}</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div 
+                        className="bg-primary h-2 rounded-full transition-all"
+                        style={{ width: `${Math.min(metrics.swe_bench_score, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+                
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Context Window</p>
+                    <p className="font-medium">200k tokens</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Language Support</p>
+                    <p className="font-medium">20+ languages</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Multi-file Support</p>
+                    <p className="font-medium">Yes</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">LLM Providers</p>
+                    <p className="font-medium">Multiple</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="metrics" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Business Metrics</CardTitle>
+              <CardDescription>
+                Financial and growth metrics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                {metrics?.monthly_arr !== undefined && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Monthly ARR</p>
+                    <p className="text-2xl font-bold">{formatMetric(metrics.monthly_arr, 'currency')}</p>
+                  </div>
+                )}
+                {metrics?.valuation !== undefined && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Valuation</p>
+                    <p className="text-2xl font-bold">{formatMetric(metrics.valuation, 'currency')}</p>
+                  </div>
+                )}
+                {metrics?.funding !== undefined && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Funding</p>
+                    <p className="text-2xl font-bold">{formatMetric(metrics.funding, 'currency')}</p>
+                  </div>
+                )}
+                {metrics?.employees !== undefined && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Employees</p>
+                    <p className="text-2xl font-bold">{formatMetric(metrics.employees, 'number')}</p>
+                  </div>
+                )}
+                {metrics?.users !== undefined && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Users</p>
+                    <p className="text-2xl font-bold">{formatMetric(metrics.users, 'users')}</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="scores" className="space-y-4">
+          {ranking ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Algorithm v6.0 Scores</CardTitle>
+                <CardDescription>
+                  Detailed scoring breakdown across all factors
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                    <span className="font-semibold">Overall Score</span>
+                    <span className="text-2xl font-bold">{ranking.scores.overall.toFixed(2)}/10</span>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="space-y-3">
+                    {Object.entries(ranking.scores).filter(([key]) => key !== 'overall').map(([factor, score]) => (
+                      <div key={factor}>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm font-medium capitalize">
+                            {factor.replace(/_/g, ' ')}
+                          </span>
+                          <span className="text-sm font-medium">{score.toFixed(1)}/10</span>
+                        </div>
+                        <div className="w-full bg-muted rounded-full h-2">
+                          <div 
+                            className="bg-primary h-2 rounded-full transition-all"
+                            style={{ width: `${score * 10}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="py-8">
+                <p className="text-center text-muted-foreground">
+                  This tool has not been ranked yet.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
