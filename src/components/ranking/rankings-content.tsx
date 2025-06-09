@@ -321,8 +321,8 @@ export default function RankingsContent(): React.JSX.Element {
                               🔄 Decay: {(ranking.modifiers.innovation_decay * 100).toFixed(0)}%
                             </div>
                           )}
-                        {ranking.modifiers?.platform_risk &&
-                          ranking.modifiers.platform_risk !== 0 && (
+                        {ranking.modifiers?.platform_risk !== undefined &&
+                          Math.abs(ranking.modifiers.platform_risk) > 0.001 && (
                             <div
                               className={
                                 ranking.modifiers.platform_risk > 0

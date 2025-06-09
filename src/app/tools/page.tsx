@@ -138,41 +138,55 @@ export default function ToolsPage(): React.JSX.Element {
       {/* Tools Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedTools.map((tool) => (
-          <Card key={tool.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <CardTitle className="text-xl">{tool.name}</CardTitle>
-                {getStatusBadge(tool.status)}
-              </div>
-              <CardDescription>
-                <Link href={`/rankings?category=${tool.category}`}>
-                  <Badge
-                    className={`${getCategoryColor(tool.category)} text-white cursor-pointer hover:opacity-80`}
+          <Link key={tool.id} href={`/tools/${tool.id}`} className="block">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <CardTitle className="text-xl">{tool.name}</CardTitle>
+                  {getStatusBadge(tool.status)}
+                </div>
+                <CardDescription>
+                  <div 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `/rankings?category=${tool.category}`;
+                    }}
                   >
-                    {tool.category.replace(/-/g, " ")}
-                  </Badge>
-                </Link>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                {tool.description ||
-                  "AI-powered coding assistant helping developers write better code faster."}
-              </p>
-              <div className="flex gap-2">
-                <Button asChild size="sm">
-                  <Link href={`/tools/${tool.id}`}>View Details</Link>
-                </Button>
+                    <Badge
+                      className={`${getCategoryColor(tool.category)} text-white cursor-pointer hover:opacity-80`}
+                    >
+                      {tool.category.replace(/-/g, " ")}
+                    </Badge>
+                  </div>
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {tool.description ||
+                    "AI-powered coding assistant helping developers write better code faster."}
+                </p>
                 {tool.website && (
-                  <Button asChild size="sm" variant="outline">
-                    <a href={tool.website} target="_blank" rel="noopener noreferrer">
-                      Website
-                    </a>
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      asChild 
+                      size="sm" 
+                      variant="outline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <a 
+                        href={tool.website} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Visit Website
+                      </a>
+                    </Button>
+                  </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
 
