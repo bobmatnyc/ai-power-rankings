@@ -132,7 +132,12 @@ export default function RankingsContent(): React.JSX.Element {
           ? `${(value / 1000000).toFixed(1)}M`
           : `${(value / 1000).toFixed(0)}k`;
       case "arr":
-        return `$${(value / 1000000).toFixed(0)}M`;
+        const millions = value / 1000000;
+        if (millions >= 1000) {
+          const billions = millions / 1000;
+          return `$${billions % 1 === 0 ? billions.toFixed(0) : billions.toFixed(1)}B`;
+        }
+        return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
       case "percentage":
         return `${value.toFixed(1)}%`;
       case "stars":

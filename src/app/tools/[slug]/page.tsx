@@ -109,7 +109,12 @@ export default function ToolDetailPage(): React.JSX.Element {
           ? `${(value / 1000000).toFixed(1)}M`
           : `${(value / 1000).toFixed(0)}k`;
       case "currency":
-        return `$${(value / 1000000).toFixed(1)}M`;
+        const millions = value / 1000000;
+        if (millions >= 1000) {
+          const billions = millions / 1000;
+          return `$${billions % 1 === 0 ? billions.toFixed(0) : billions.toFixed(1)}B`;
+        }
+        return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
       case "percentage":
         return `${value.toFixed(1)}%`;
       case "number":
@@ -467,7 +472,13 @@ function formatMetricValue(key: string, value: unknown): string {
     return `${Number(value).toFixed(1)}%`;
   }
   if (key.includes("arr") || key.includes("funding") || key.includes("valuation")) {
-    return `$${(Number(value) / 1000000).toFixed(1)}M`;
+    const num = Number(value);
+    const millions = num / 1000000;
+    if (millions >= 1000) {
+      const billions = millions / 1000;
+      return `$${billions % 1 === 0 ? billions.toFixed(0) : billions.toFixed(1)}B`;
+    }
+    return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
   }
   if (key.includes("users") || key.includes("stars")) {
     const num = Number(value);
