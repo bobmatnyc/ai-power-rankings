@@ -1,85 +1,90 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Tool {
-  id: string
-  name: string
-  category: string
-  status: string
-  description?: string
-  website?: string
-  github_url?: string
+  id: string;
+  name: string;
+  category: string;
+  status: string;
+  description?: string;
+  website?: string;
+  github_url?: string;
 }
 
 export default function ToolsPage(): React.JSX.Element {
-  const [tools, setTools] = useState<Tool[]>([])
-  const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [sortBy, setSortBy] = useState<string>('name')
+  const [tools, setTools] = useState<Tool[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("name");
 
   useEffect(() => {
-    fetchTools()
-  }, [])
+    fetchTools();
+  }, []);
 
   const fetchTools = async (): Promise<void> => {
     try {
-      const response = await fetch('/api/tools')
-      const data = await response.json()
-      setTools(data.tools)
-      setLoading(false)
+      const response = await fetch("/api/tools");
+      const data = await response.json();
+      setTools(data.tools);
+      setLoading(false);
     } catch (error) {
-      console.error('Failed to fetch tools:', error)
-      setLoading(false)
+      console.error("Failed to fetch tools:", error);
+      setLoading(false);
     }
-  }
+  };
 
-  const categories = ['all', ...new Set(tools.map(t => t.category))]
-  
-  const filteredTools = selectedCategory === 'all' 
-    ? tools 
-    : tools.filter(t => t.category === selectedCategory)
+  const categories = ["all", ...new Set(tools.map((t) => t.category))];
+
+  const filteredTools =
+    selectedCategory === "all" ? tools : tools.filter((t) => t.category === selectedCategory);
 
   const sortedTools = [...filteredTools].sort((a, b) => {
     switch (sortBy) {
-      case 'name':
-        return a.name.localeCompare(b.name)
-      case 'category':
-        return a.category.localeCompare(b.category)
-      case 'status':
-        return a.status.localeCompare(b.status)
+      case "name":
+        return a.name.localeCompare(b.name);
+      case "category":
+        return a.category.localeCompare(b.category);
+      case "status":
+        return a.status.localeCompare(b.status);
       default:
-        return 0
+        return 0;
     }
-  })
+  });
 
   const getCategoryColor = (category: string): string => {
     const colors: Record<string, string> = {
-      'autonomous-agent': 'bg-purple-500',
-      'code-editor': 'bg-blue-500',
-      'ide-assistant': 'bg-green-500',
-      'app-builder': 'bg-orange-500',
-      'open-source-framework': 'bg-cyan-500',
-      'testing-tool': 'bg-red-500',
-      'code-review': 'bg-yellow-500'
-    }
-    return colors[category] || 'bg-gray-500'
-  }
+      "autonomous-agent": "bg-purple-500",
+      "code-editor": "bg-blue-500",
+      "ide-assistant": "bg-green-500",
+      "app-builder": "bg-orange-500",
+      "open-source-framework": "bg-cyan-500",
+      "testing-tool": "bg-red-500",
+      "code-review": "bg-yellow-500",
+    };
+    return colors[category] || "bg-gray-500";
+  };
 
   const getStatusBadge = (status: string): React.JSX.Element => {
-    const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-      'active': 'default',
-      'beta': 'secondary',
-      'acquired': 'destructive',
-      'deprecated': 'outline'
-    }
-    return <Badge variant={variants[status] || 'outline'}>{status}</Badge>
-  }
+    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+      active: "default",
+      beta: "secondary",
+      acquired: "destructive",
+      deprecated: "outline",
+    };
+    return <Badge variant={variants[status] || "outline"}>{status}</Badge>;
+  };
 
   if (loading) {
     return (
@@ -88,7 +93,7 @@ export default function ToolsPage(): React.JSX.Element {
           <p className="text-muted-foreground">Loading tools...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -108,9 +113,11 @@ export default function ToolsPage(): React.JSX.Element {
             <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
           <SelectContent>
-            {categories.map(cat => (
+            {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>
-                {cat === 'all' ? 'All Categories' : cat.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                {cat === "all"
+                  ? "All Categories"
+                  : cat.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
               </SelectItem>
             ))}
           </SelectContent>
@@ -138,20 +145,23 @@ export default function ToolsPage(): React.JSX.Element {
                 {getStatusBadge(tool.status)}
               </div>
               <CardDescription>
-                <Badge className={`${getCategoryColor(tool.category)} text-white`}>
-                  {tool.category.replace(/-/g, ' ')}
-                </Badge>
+                <Link href={`/rankings?category=${tool.category}`}>
+                  <Badge
+                    className={`${getCategoryColor(tool.category)} text-white cursor-pointer hover:opacity-80`}
+                  >
+                    {tool.category.replace(/-/g, " ")}
+                  </Badge>
+                </Link>
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                {tool.description || 'AI-powered coding assistant helping developers write better code faster.'}
+                {tool.description ||
+                  "AI-powered coding assistant helping developers write better code faster."}
               </p>
               <div className="flex gap-2">
                 <Button asChild size="sm">
-                  <Link href={`/tools/${tool.id}`}>
-                    View Details
-                  </Link>
+                  <Link href={`/tools/${tool.id}`}>View Details</Link>
                 </Button>
                 {tool.website && (
                   <Button asChild size="sm" variant="outline">
@@ -191,7 +201,9 @@ export default function ToolsPage(): React.JSX.Element {
             <CardTitle className="text-sm font-medium">Active Tools</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{tools.filter(t => t.status === 'active').length}</p>
+            <p className="text-2xl font-bold">
+              {tools.filter((t) => t.status === "active").length}
+            </p>
           </CardContent>
         </Card>
 
@@ -200,10 +212,12 @@ export default function ToolsPage(): React.JSX.Element {
             <CardTitle className="text-sm font-medium">Open Source</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{tools.filter(t => t.category === 'open-source-framework').length}</p>
+            <p className="text-2xl font-bold">
+              {tools.filter((t) => t.category === "open-source-framework").length}
+            </p>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }

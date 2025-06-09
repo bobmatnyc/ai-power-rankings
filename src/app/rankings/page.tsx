@@ -1,112 +1,146 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 
 interface RankingData {
-  rank: number
+  rank: number;
   tool: {
-    id: string
-    name: string
-    category: string
-    status: string
-  }
+    id: string;
+    name: string;
+    category: string;
+    status: string;
+  };
   scores: {
-    overall: number
-    agentic_capability: number
-    innovation: number
-    technical_performance: number
-    developer_adoption: number
-    market_traction: number
-    business_sentiment: number
-    development_velocity: number
-    platform_resilience: number
-  }
+    overall: number;
+    agentic_capability: number;
+    innovation: number;
+    technical_performance: number;
+    developer_adoption: number;
+    market_traction: number;
+    business_sentiment: number;
+    development_velocity: number;
+    platform_resilience: number;
+  };
   metrics: {
-    users?: number
-    monthly_arr?: number
-    swe_bench_score?: number
-    github_stars?: number
-  }
+    users?: number;
+    monthly_arr?: number;
+    swe_bench_score?: number;
+    github_stars?: number;
+  };
   modifiers?: {
-    innovation_decay?: number
-    platform_risk?: number
-    revenue_quality?: number
-  }
+    innovation_decay?: number;
+    platform_risk?: number;
+    revenue_quality?: number;
+  };
 }
 
 export default function RankingsPage(): React.JSX.Element {
-  const [rankings, setRankings] = useState<RankingData[]>([])
-  const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [rankings, setRankings] = useState<RankingData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Get category from URL or default to 'all'
+  const categoryParam = searchParams.get("category") || "all";
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryParam);
 
   useEffect(() => {
-    fetchRankings()
-  }, [])
+    fetchRankings();
+  }, []);
+
+  useEffect(() => {
+    // Update URL when category changes
+    const params = new URLSearchParams(searchParams.toString());
+    if (selectedCategory === "all") {
+      params.delete("category");
+    } else {
+      params.set("category", selectedCategory);
+    }
+    const query = params.toString();
+    router.push(query ? `?${query}` : "/rankings", { scroll: false });
+  }, [selectedCategory, router, searchParams]);
 
   const fetchRankings = async (): Promise<void> => {
     try {
-      const response = await fetch('/api/rankings')
-      const data = await response.json()
-      setRankings(data.rankings)
-      setLoading(false)
+      const response = await fetch("/api/rankings");
+      const data = await response.json();
+      setRankings(data.rankings);
+      setLoading(false);
     } catch (error) {
-      console.error('Failed to fetch rankings:', error)
-      setLoading(false)
+      console.error("Failed to fetch rankings:", error);
+      setLoading(false);
     }
-  }
+  };
 
-  const categories = ['all', ...new Set(rankings.map(r => r.tool.category))]
-  const filteredRankings = selectedCategory === 'all' 
-    ? rankings 
-    : rankings.filter(r => r.tool.category === selectedCategory)
+  const categories = ["all", ...new Set(rankings.map((r) => r.tool.category))];
+  const filteredRankings =
+    selectedCategory === "all"
+      ? rankings
+      : rankings.filter((r) => r.tool.category === selectedCategory);
 
   const getCategoryColor = (category: string): string => {
     const colors: Record<string, string> = {
-      'autonomous-agent': 'bg-purple-500',
-      'code-editor': 'bg-blue-500',
-      'ide-assistant': 'bg-green-500',
-      'app-builder': 'bg-orange-500',
-      'open-source-framework': 'bg-cyan-500',
-      'testing-tool': 'bg-red-500',
-      'code-review': 'bg-yellow-500'
-    }
-    return colors[category] || 'bg-gray-500'
-  }
+      "autonomous-agent": "bg-purple-500",
+      "code-editor": "bg-blue-500",
+      "ide-assistant": "bg-green-500",
+      "app-builder": "bg-orange-500",
+      "open-source-framework": "bg-cyan-500",
+      "testing-tool": "bg-red-500",
+      "code-review": "bg-yellow-500",
+    };
+    return colors[category] || "bg-gray-500";
+  };
 
   const getStatusBadge = (status: string): React.JSX.Element => {
-    const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-      'active': 'default',
-      'beta': 'secondary',
-      'acquired': 'destructive'
-    }
-    return <Badge variant={variants[status] || 'outline'}>{status}</Badge>
-  }
+    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+      active: "default",
+      beta: "secondary",
+      acquired: "destructive",
+    };
+    return <Badge variant={variants[status] || "outline"}>{status}</Badge>;
+  };
 
   const formatMetric = (value: number | undefined, type: string): string => {
     if (value === undefined) {
-      return '-'
+      return "-";
     }
-    
+
     switch (type) {
-      case 'users':
-        return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(0)}k`
-      case 'arr':
-        return `$${(value / 1000000).toFixed(0)}M`
-      case 'percentage':
-        return `${value.toFixed(1)}%`
-      case 'stars':
-        return value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value.toString()
+      case "users":
+        return value >= 1000000
+          ? `${(value / 1000000).toFixed(1)}M`
+          : `${(value / 1000).toFixed(0)}k`;
+      case "arr":
+        return `$${(value / 1000000).toFixed(0)}M`;
+      case "percentage":
+        return `${value.toFixed(1)}%`;
+      case "stars":
+        return value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value.toString();
       default:
-        return value.toFixed(1)
+        return value.toFixed(1);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -115,7 +149,7 @@ export default function RankingsPage(): React.JSX.Element {
           <p className="text-muted-foreground">Loading rankings...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -133,7 +167,8 @@ export default function RankingsPage(): React.JSX.Element {
         <CardHeader>
           <CardTitle>Algorithm v6.0 Features</CardTitle>
           <CardDescription>
-            Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments
+            Enhanced ranking system with innovation decay, platform risk modifiers, and revenue
+            quality adjustments
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -159,19 +194,30 @@ export default function RankingsPage(): React.JSX.Element {
       </Card>
 
       {/* Filters */}
-      <div className="mb-6 flex gap-4">
+      <div className="mb-6 flex gap-4 items-center">
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
           <SelectContent>
-            {categories.map(cat => (
+            {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>
-                {cat === 'all' ? 'All Categories' : cat.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                {cat === "all"
+                  ? "All Categories"
+                  : cat.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        {selectedCategory !== "all" && (
+          <Badge
+            variant="secondary"
+            className="cursor-pointer hover:bg-secondary/80"
+            onClick={() => setSelectedCategory("all")}
+          >
+            Clear filter ✕
+          </Badge>
+        )}
       </div>
 
       {/* Rankings Table */}
@@ -193,8 +239,15 @@ export default function RankingsPage(): React.JSX.Element {
             </TableHeader>
             <TableBody>
               {filteredRankings.slice(0, 15).map((ranking) => {
-                const medal = ranking.rank === 1 ? '🥇' : ranking.rank === 2 ? '🥈' : ranking.rank === 3 ? '🥉' : ''
-                
+                const medal =
+                  ranking.rank === 1
+                    ? "🥇"
+                    : ranking.rank === 2
+                      ? "🥈"
+                      : ranking.rank === 3
+                        ? "🥉"
+                        : "";
+
                 return (
                   <TableRow key={ranking.tool.id}>
                     <TableCell className="font-medium">
@@ -202,7 +255,7 @@ export default function RankingsPage(): React.JSX.Element {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Link 
+                        <Link
                           href={`/tools/${ranking.tool.id}`}
                           className="font-semibold hover:underline"
                         >
@@ -212,51 +265,68 @@ export default function RankingsPage(): React.JSX.Element {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={`${getCategoryColor(ranking.tool.category)} text-white`}>
-                        {ranking.tool.category.replace('-', ' ')}
+                      <Badge
+                        className={`${getCategoryColor(ranking.tool.category)} text-white cursor-pointer hover:opacity-80`}
+                        onClick={() => setSelectedCategory(ranking.tool.category)}
+                      >
+                        {ranking.tool.category.replace("-", " ")}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
-                      <div className="font-bold text-lg">{ranking.scores.overall.toFixed(2)}</div>
+                      <div className="font-bold text-lg">
+                        {ranking.scores?.overall?.toFixed(2) || "0.00"}
+                      </div>
                       <div className="text-xs text-muted-foreground">/ 10</div>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm space-y-1">
                         {ranking.metrics.users && (
-                          <div>Users: {formatMetric(ranking.metrics.users, 'users')}</div>
+                          <div>Users: {formatMetric(ranking.metrics.users, "users")}</div>
                         )}
                         {ranking.metrics.monthly_arr && (
-                          <div>ARR: {formatMetric(ranking.metrics.monthly_arr, 'arr')}</div>
+                          <div>ARR: {formatMetric(ranking.metrics.monthly_arr, "arr")}</div>
                         )}
                         {ranking.metrics.swe_bench_score && (
-                          <div>SWE-bench: {formatMetric(ranking.metrics.swe_bench_score, 'percentage')}</div>
+                          <div>
+                            SWE-bench: {formatMetric(ranking.metrics.swe_bench_score, "percentage")}
+                          </div>
                         )}
                         {ranking.metrics.github_stars && (
-                          <div>GitHub: {formatMetric(ranking.metrics.github_stars, 'stars')}⭐</div>
+                          <div>GitHub: {formatMetric(ranking.metrics.github_stars, "stars")}⭐</div>
                         )}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm space-y-1">
-                        {ranking.modifiers?.innovation_decay && ranking.modifiers.innovation_decay < 0.8 && (
-                          <div className="text-orange-600">
-                            🔄 Decay: {(ranking.modifiers.innovation_decay * 100).toFixed(0)}%
-                          </div>
-                        )}
-                        {ranking.modifiers?.platform_risk && ranking.modifiers.platform_risk !== 0 && (
-                          <div className={ranking.modifiers.platform_risk > 0 ? 'text-green-600' : 'text-red-600'}>
-                            ⚠️ Risk: {ranking.modifiers.platform_risk > 0 ? '+' : ''}{ranking.modifiers.platform_risk.toFixed(1)}
-                          </div>
-                        )}
-                        {ranking.modifiers?.revenue_quality && ranking.modifiers.revenue_quality !== 0.5 && (
-                          <div className="text-blue-600">
-                            💰 Quality: {(ranking.modifiers.revenue_quality * 100).toFixed(0)}%
-                          </div>
-                        )}
+                        {ranking.modifiers?.innovation_decay &&
+                          ranking.modifiers.innovation_decay < 0.8 && (
+                            <div className="text-orange-600">
+                              🔄 Decay: {(ranking.modifiers.innovation_decay * 100).toFixed(0)}%
+                            </div>
+                          )}
+                        {ranking.modifiers?.platform_risk &&
+                          ranking.modifiers.platform_risk !== 0 && (
+                            <div
+                              className={
+                                ranking.modifiers.platform_risk > 0
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }
+                            >
+                              ⚠️ Risk: {ranking.modifiers.platform_risk > 0 ? "+" : ""}
+                              {ranking.modifiers.platform_risk.toFixed(1)}
+                            </div>
+                          )}
+                        {ranking.modifiers?.revenue_quality &&
+                          ranking.modifiers.revenue_quality !== 0.5 && (
+                            <div className="text-blue-600">
+                              💰 Quality: {(ranking.modifiers.revenue_quality * 100).toFixed(0)}%
+                            </div>
+                          )}
                       </div>
                     </TableCell>
                   </TableRow>
-                )
+                );
               })}
             </TableBody>
           </Table>
@@ -275,7 +345,7 @@ export default function RankingsPage(): React.JSX.Element {
               <TabsTrigger value="factors">Scoring Factors</TabsTrigger>
               <TabsTrigger value="insights">Key Insights</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="top3" className="mt-4">
               <div className="space-y-4">
                 {rankings.slice(0, 3).map((ranking) => (
@@ -289,19 +359,27 @@ export default function RankingsPage(): React.JSX.Element {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                           <p className="text-muted-foreground">Agentic</p>
-                          <p className="font-semibold">{ranking.scores.agentic_capability.toFixed(1)}/10</p>
+                          <p className="font-semibold">
+                            {ranking.scores?.agentic_capability?.toFixed(1) || "0.0"}/10
+                          </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Innovation</p>
-                          <p className="font-semibold">{ranking.scores.innovation.toFixed(1)}/10</p>
+                          <p className="font-semibold">
+                            {ranking.scores?.innovation?.toFixed(1) || "0.0"}/10
+                          </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Technical</p>
-                          <p className="font-semibold">{ranking.scores.technical_performance.toFixed(1)}/10</p>
+                          <p className="font-semibold">
+                            {ranking.scores?.technical_performance?.toFixed(1) || "0.0"}/10
+                          </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Adoption</p>
-                          <p className="font-semibold">{ranking.scores.developer_adoption.toFixed(1)}/10</p>
+                          <p className="font-semibold">
+                            {ranking.scores?.developer_adoption?.toFixed(1) || "0.0"}/10
+                          </p>
                         </div>
                       </div>
                     </CardContent>
@@ -309,7 +387,7 @@ export default function RankingsPage(): React.JSX.Element {
                 ))}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="factors" className="mt-4">
               <div className="space-y-4">
                 <div>
@@ -357,28 +435,28 @@ export default function RankingsPage(): React.JSX.Element {
                 </div>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="insights" className="mt-4">
               <div className="space-y-4 text-sm">
                 <div>
                   <h4 className="font-semibold mb-1">💡 Innovation Decay</h4>
                   <p className="text-muted-foreground">
-                    Innovation scores decay with a 6-month half-life. Tools with innovations older than 12 months 
-                    see significant score reductions.
+                    Innovation scores decay with a 6-month half-life. Tools with innovations older
+                    than 12 months see significant score reductions.
                   </p>
                 </div>
                 <div>
                   <h4 className="font-semibold mb-1">⚠️ Platform Risk</h4>
                   <p className="text-muted-foreground">
-                    Tools receive penalties for exclusive dependencies or acquisition by LLM providers. 
-                    Open-source tools with multi-LLM support receive bonuses.
+                    Tools receive penalties for exclusive dependencies or acquisition by LLM
+                    providers. Open-source tools with multi-LLM support receive bonuses.
                   </p>
                 </div>
                 <div>
                   <h4 className="font-semibold mb-1">💰 Revenue Quality</h4>
                   <p className="text-muted-foreground">
-                    Enterprise revenue (&gt;$100k ACV) counts at 100%, while freemium and donation-based models 
-                    count at 30% and 20% respectively.
+                    Enterprise revenue (&gt;$100k ACV) counts at 100%, while freemium and
+                    donation-based models count at 30% and 20% respectively.
                   </p>
                 </div>
               </div>
@@ -387,5 +465,5 @@ export default function RankingsPage(): React.JSX.Element {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
