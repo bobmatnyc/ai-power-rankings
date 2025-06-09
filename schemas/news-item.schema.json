@@ -1,0 +1,348 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ai-power-rankings.com/schemas/news-item.json",
+  "title": "AI Power Rankings News Item",
+  "description": "Schema for incoming news items about AI coding tools",
+  "type": "object",
+  "required": ["id", "title", "source", "published_date", "type", "tools_mentioned"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the news item",
+      "pattern": "^[a-zA-Z0-9-_]+$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Headline of the news item",
+      "minLength": 10,
+      "maxLength": 200
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief summary of the news content",
+      "maxLength": 500
+    },
+    "source": {
+      "type": "object",
+      "description": "Source information",
+      "required": ["name", "url"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the publication or source",
+          "examples": ["TechCrunch", "The Verge", "GitHub Blog", "Twitter", "Company Blog"]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the original article"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author of the article"
+        }
+      }
+    },
+    "published_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 date when the news was published"
+    },
+    "discovered_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 date when we discovered this news"
+    },
+    "type": {
+      "type": "string",
+      "description": "Type of news item",
+      "enum": [
+        "product_launch",
+        "feature_update",
+        "funding",
+        "acquisition",
+        "benchmark_result",
+        "pricing_change",
+        "partnership",
+        "research_paper",
+        "security_incident",
+        "company_news",
+        "community_news",
+        "technical_milestone",
+        "market_analysis"
+      ]
+    },
+    "tools_mentioned": {
+      "type": "array",
+      "description": "AI coding tools mentioned in the news",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["tool_id", "relevance"],
+        "properties": {
+          "tool_id": {
+            "type": "string",
+            "description": "ID of the tool from our database",
+            "examples": ["cursor", "github-copilot", "devin", "claude-code"]
+          },
+          "relevance": {
+            "type": "string",
+            "description": "How central this tool is to the news",
+            "enum": ["primary", "secondary", "mentioned"]
+          },
+          "sentiment": {
+            "type": "string",
+            "description": "Sentiment of the news for this tool",
+            "enum": ["positive", "neutral", "negative", "mixed"]
+          }
+        }
+      }
+    },
+    "metrics_mentioned": {
+      "type": "array",
+      "description": "Specific metrics mentioned in the news",
+      "items": {
+        "type": "object",
+        "required": ["tool_id", "metric_key", "value"],
+        "properties": {
+          "tool_id": {
+            "type": "string",
+            "description": "ID of the tool this metric applies to"
+          },
+          "metric_key": {
+            "type": "string",
+            "description": "Key of the metric",
+            "examples": [
+              "users",
+              "revenue",
+              "valuation",
+              "github_stars",
+              "swe_bench_score",
+              "pricing",
+              "employee_count"
+            ]
+          },
+          "value": {
+            "oneOf": [
+              {"type": "number"},
+              {"type": "string"},
+              {"type": "boolean"},
+              {"type": "object"}
+            ],
+            "description": "Value of the metric"
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of measurement",
+            "examples": ["USD", "users", "percent", "score"]
+          },
+          "comparison": {
+            "type": "object",
+            "description": "Comparison to previous value if mentioned",
+            "properties": {
+              "previous_value": {
+                "oneOf": [
+                  {"type": "number"},
+                  {"type": "string"}
+                ]
+              },
+              "change_type": {
+                "type": "string",
+                "enum": ["increase", "decrease", "stable"]
+              },
+              "change_percentage": {
+                "type": "number",
+                "description": "Percentage change if mentioned"
+              }
+            }
+          }
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "description": "Relevant tags for categorization",
+      "items": {
+        "type": "string",
+        "examples": [
+          "autonomous-coding",
+          "ai-agents",
+          "code-generation",
+          "testing",
+          "open-source",
+          "enterprise",
+          "developer-tools",
+          "llm",
+          "benchmark"
+        ]
+      }
+    },
+    "impact_assessment": {
+      "type": "object",
+      "description": "Assessment of the news impact",
+      "properties": {
+        "importance": {
+          "type": "string",
+          "description": "Overall importance of this news",
+          "enum": ["critical", "high", "medium", "low"]
+        },
+        "market_impact": {
+          "type": "string",
+          "description": "Expected impact on the market",
+          "enum": ["major", "moderate", "minor", "none"]
+        },
+        "ranking_impact": {
+          "type": "array",
+          "description": "Expected impact on tool rankings",
+          "items": {
+            "type": "object",
+            "required": ["tool_id", "impact_type"],
+            "properties": {
+              "tool_id": {
+                "type": "string"
+              },
+              "impact_type": {
+                "type": "string",
+                "enum": ["positive", "negative", "neutral"]
+              },
+              "factors_affected": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "agentic_capability",
+                    "innovation",
+                    "technical_capability",
+                    "developer_adoption",
+                    "market_traction",
+                    "business_sentiment",
+                    "development_velocity",
+                    "platform_resilience"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "description": "Content extracted from the news",
+      "properties": {
+        "full_text": {
+          "type": "string",
+          "description": "Full text of the article if available"
+        },
+        "key_quotes": {
+          "type": "array",
+          "description": "Important quotes from the article",
+          "items": {
+            "type": "object",
+            "required": ["text"],
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "speaker": {
+                "type": "string",
+                "description": "Who said this quote"
+              },
+              "context": {
+                "type": "string",
+                "description": "Context of the quote"
+              }
+            }
+          }
+        },
+        "data_points": {
+          "type": "array",
+          "description": "Specific data points mentioned",
+          "items": {
+            "type": "object",
+            "required": ["description", "value"],
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "value": {
+                "oneOf": [
+                  {"type": "number"},
+                  {"type": "string"},
+                  {"type": "object"}
+                ]
+              },
+              "source": {
+                "type": "string",
+                "description": "Source of this data point within the article"
+              }
+            }
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "description": "Verification status and confidence",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["verified", "unverified", "disputed", "retracted"]
+        },
+        "confidence_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence in the accuracy of this news (0-1)"
+        },
+        "fact_checked": {
+          "type": "boolean",
+          "description": "Whether this has been fact-checked"
+        },
+        "corroborating_sources": {
+          "type": "array",
+          "description": "Other sources reporting similar news",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "url": {"type": "string", "format": "uri"}
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "properties": {
+        "language": {
+          "type": "string",
+          "default": "en",
+          "description": "Language code (ISO 639-1)"
+        },
+        "region": {
+          "type": "string",
+          "description": "Geographic region if relevant",
+          "examples": ["global", "us", "eu", "asia"]
+        },
+        "exclusive": {
+          "type": "boolean",
+          "description": "Whether this is exclusive news"
+        },
+        "embargo_until": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Embargo date if applicable"
+        },
+        "related_news_ids": {
+          "type": "array",
+          "description": "IDs of related news items",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
