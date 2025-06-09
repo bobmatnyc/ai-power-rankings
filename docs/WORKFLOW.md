@@ -1,15 +1,15 @@
-# 🔁 Atlas Message Agent - Development Workflow
+# 🔁 AI Power Rankings - Development Workflow
 
-**Version**: 1.0  
-**Updated**: 5-21-2025  
-**Reference**: This document contains the complete workflow procedures for the Atlas Message Agent project. It should be referenced from `INSTRUCTIONS.md`.
+**Version**: 2.0  
+**Updated**: 2025-06-09  
+**Reference**: This document contains the complete workflow procedures for the AI Power Rankings project. It should be referenced from `INSTRUCTIONS.md`.
 
-**Changes in v1.0**:
-- Extracted from INSTRUCTIONS.md for better organization
-- Added GitHub API milestone management procedures  
-- Complete Git workflow and branch naming conventions
-- Issue tracking with structured labels and templates
-- Design document workflow requirements
+**Changes in v2.0**:
+
+- Complete rewrite for AI Power Rankings project
+- Added metrics extraction workflow using AI
+- Source-oriented data collection procedures
+- Monthly ranking generation process
 
 ---
 
@@ -20,7 +20,7 @@ We treat Git as a tool for **narrating engineering decisions**—not just storin
 ### ✅ Commit Philosophy
 
 - **Commit early, commit often**, but only once the change is coherent.
-- Each commit should answer: *What changed, and why?*
+- Each commit should answer: _What changed, and why?_
 - Prefer **small, purposeful commits** over monolithic ones.
 
 ### 🔤 Conventional Commit Format
@@ -35,288 +35,294 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 
 **Examples:**
-- `feat(auth): add OAuth login`
-- `fix(api): correct rate limit handling`
-- `chore(lint): update prettier config`
+
+- `feat(metrics): add AI-powered article extraction`
+- `fix(ranking): correct agentic capability weight`
+- `chore(db): migrate to source-oriented schema`
 
 **Valid types**:  
-`feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `perf`, `ci`
+`feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `perf`, `ci`, `data`
 
 ### 🌱 Branch Naming Convention
 
 Branches should reflect purpose and follow a `type/slug` format:
 
 ```
-feature/search-api
-fix/token-refresh
+feature/metrics-extraction
+fix/ranking-algorithm
+data/june-2025-update
 chore/update-deps
 ```
 
-### 🔄 Local Workflow
+---
+
+## 📊 2. Metrics Collection Workflow
+
+### 🤖 AI-Powered Extraction
+
+1. **Identify Source**: Find relevant article, benchmark, or report
+2. **Extract Metrics**: Use `extract-metrics-from-article.ts`
+   ```bash
+   npm run extract-metrics "https://article-url.com"
+   ```
+3. **Review JSON**: Verify extracted metrics follow schema
+4. **Store in Database**: Metrics automatically stored with unique source URL
+
+### 📝 Manual Data Entry
+
+For sources that can't be automatically extracted:
+
+```typescript
+// Use upsert_metrics_source function
+SELECT upsert_metrics_source(
+    'https://source-url.com',
+    'media', // or 'official', 'benchmark', 'research'
+    'TechCrunch',
+    '2025-06-15',
+    '{
+        "context": {...},
+        "tools": {
+            "tool-id": {
+                "metrics": {...},
+                "analysis": "..."
+            }
+        },
+        "metadata": {...}
+    }'::jsonb
+);
+```
+
+### 🔍 Multi-Tool Sources
+
+Single articles often contain metrics for multiple tools:
+
+- Benchmark results comparing tools
+- Market analysis articles
+- Funding round comparisons
+
+Each source URL is unique - updates replace existing data.
+
+---
+
+## 🏆 3. Monthly Ranking Process
+
+### 📅 Schedule (1st of each month)
+
+1. **Data Collection Deadline** (Last week of month)
+
+   - Gather all recent metrics
+   - Update qualitative scores (innovation, business sentiment)
+   - Verify data quality
+
+2. **Algorithm Execution** (1st, 9 AM UTC)
+
+   ```bash
+   npm run generate-rankings
+   ```
+
+3. **Quality Assurance** (1st, 10 AM UTC)
+
+   - Review ranking movements
+   - Verify major changes have explanations
+   - Check for data anomalies
+
+4. **Publication** (1st, 12 PM UTC)
+   - Update ranking_cache table
+   - Generate "Real Story" explanations
+   - Publish to website
+   - Send newsletter
+
+### 🎯 Algorithm v4.0 Weights
+
+- **Agentic Capability** (25%): Autonomous capabilities
+- **Technical Capability** (20%): Performance, features
+- **Developer Adoption** (20%): Users, community
+- **Market Traction** (15%): ARR, valuation
+- **Business Sentiment** (10%): Market perception
+- **Development Velocity** (5%): Release frequency
+- **Platform Resilience** (5%): Dependencies
+
+---
+
+## 📋 4. Metrics Guidelines
+
+### 🎯 Scoring Criteria
+
+Refer to `/docs/METRICS-GUIDELINES.md` for detailed scoring:
+
+- **Agentic Capability** (0-10): Autonomous planning and execution
+- **Innovation Score** (0-10): Technical breakthroughs
+- **Business Sentiment** (-1 to +1): Market dynamics
+
+### 📊 Confidence Levels
+
+- **High**: Official announcements, verified data
+- **Medium**: Credible estimates, derived metrics
+- **Low**: Speculation, rough estimates
+
+### 🔗 Source Attribution
+
+Every metric must include:
+
+- Unique source URL
+- Evidence quote or description
+- Confidence level
+- Collection timestamp
+
+---
+
+## 🗄️ 5. Database Operations
+
+### 📥 Importing Metrics
 
 ```bash
-# Start from main
-git checkout main
-git pull origin main
+# Extract from article
+npm run extract-metrics "https://article-url.com"
 
-# Create a new branch
-git checkout -b feature/new-dashboard
+# Bulk import from JSON
+npm run import-metrics data/metrics-2025-06.json
 
-# Make your changes
-git add .
-git commit -m "feat(dashboard): initial layout and state setup"
-
-# Keep up to date
-git fetch origin
-git rebase origin/main
-
-# Push and open PR
-git push -u origin feature/new-dashboard
+# Update specific metrics
+npm run update-tool cursor --metric innovation_score --value 8.5
 ```
 
-### 🔍 PR & Merge Rules
-
-- Always **rebase** before opening PRs.
-- **Run full CI checks locally** before pushing any changes.
-- **Wait for all CI checks to pass** before requesting review.
-- **Fix all CI failures immediately** – don't leave broken builds.
-- **Squash-merge** in GitHub. Clean up the title to follow commit conventions.
-- Only merge if CI passes and code is reviewed.
-
-### ✅ Before Closing Issues
-
-Never close an issue until:
-1. All code changes are merged to main
-2. CI checks are passing on main
-3. Any documentation updates are complete
-4. Tests have been added/updated as needed
-5. The fix has been verified in the CI environment
-
-### 🚫 Avoid
-
-- Committing secrets, `.env`, build artifacts, or large binary files.
-- Merge commits in feature branches (use rebase instead).
-- Committing unresolved conflicts or commented-out code.
-
----
-
-## 🧭 2. GitHub Issue Tracking
-
-We use **GitHub Issues** for all tracked work—features, bugs, ideas, spikes.  
-Submit via GitHub Issues REST API with `GITHUB_TOKEN`. No automation scripts.
-
-Each issue answers: *What are we doing, why does it matter, and how will we know it's done?*
-
-### Issue Fields to Fill
-
-- **Title** – human-readable and emoji-tagged (e.g. `🚀 Add login flow`)
-- **Description** – context, proposed approach, and acceptance criteria
-- **Labels** – use taxonomy below
-- **Assignee** – assign only when actively in progress
-- **Milestone** – for cycles/themes
-- **References** – include links to **design docs** where applicable
-
-### Label Taxonomy
-
-| Category  | Prefix    | Examples                                 |
-| --------- | --------- | ---------------------------------------- |
-| Theme     | `theme:`  | `theme:infra`, `theme:ai`, `theme:ux`    |
-| Status    | `status:` | `status:in-progress`, `status:blocked`   |
-| Priority  | `prio:`   | `prio:high`, `prio:low`                  |
-| Effort    | `size:`   | `size:xs`, `size:m`, `size:xl`           |
-| Type      | `type:`   | `type:bug`, `type:feature`, `type:chore` |
-
----
-
-## 📅 3. Milestones & Roadmap Management
-
-Milestones replace a static `ROADMAP.md`. Use them to group issues by cycle or theme.
-
-### Creating Milestones
-
-**Use GitHub API** (gh CLI doesn't support milestones):
+### 📤 Exporting Data
 
 ```bash
-# Create a new milestone
-gh api repos/OWNER/REPO/milestones --method POST \
-  --field title='Phase 1: Foundation' \
-  --field description='Core infrastructure and MVP setup' \
-  --field due_on='2025-06-04T23:59:59Z' \
-  --field state='open'
+# Export by date (for manageable file sizes)
+npm run export-by-date
 
-# Assign issue to milestone
-gh issue edit ISSUE_NUMBER --milestone 'Phase 1: Foundation'
+# Export specific month
+npm run export-month 2025-06
+
+# Export for analysis
+npm run export-for-analysis
 ```
 
-### Milestone Guidelines
-
-- **Include**: goal (1–2 lines), timeframe, and summary
-- **Examples**: `Phase 1: Foundation & MVP`, `Q2 2025 Infrastructure`, `Semantic Intelligence`
-- **Optionally close** with a wrap-up issue
-- **Design docs** should be linked for each milestone initiative
-- **Due dates** should be realistic and account for dependencies
-
-### Milestone Structure
-
-- **Phase 1**: Foundation & MVP (2 weeks)
-- **Phase 2**: Semantic Intelligence (2 weeks)  
-- **Phase 3**: Agent API & Operations (2 weeks)
-- **Phase 4**: Self-Learning & Training (2 weeks)
-- **Future Enhancements**: Long-term improvements (no due date)
-
----
-
-## 📌 4. Decision Logs
-
-Capture important design or architectural decisions as `type:decision` issues.
-
-* Use titles like `📌 Decision: Move to Mastra`
-* Include rationale and resolution in comments
-* Reference relevant **design documents** if one informed the decision
-
----
-
-## 🧾 5. How to Write Good Issues
-
-* Start with **why**
-* Use checklists if multiple deliverables
-* Use code blocks and links to previous Issues/PRs
-* Link relevant design docs from `docs/design/`
-
----
-
-## 🚀 6. Proposing New Work
-
-Anyone can open an Issue. Use this template:
-
-```md
-### Summary
-What's the idea or problem?
-
-### Why it matters
-Why now? What impact does it have?
-
-### Proposal (if known)
-How might we tackle this? Link to any relevant design doc in `docs/design/`.
-
-### Success Criteria
-What does "done" look like?
-```
-
-Apply appropriate `type:` and `theme:` labels.
-
----
-
-## 🔗 7. Design Document Workflow
-
-Design documents live in `docs/design/` and are required for all substantial features, architecture changes, or systems work.
-
-### Design Doc Requirements
-
-- Each major issue **must reference a design doc** unless trivial
-- GitHub Issues proposing large features must either embed or link to the doc
-- Revisit/update the design doc post-launch with a closing summary
-
-### Design Doc Structure
-
-```md
-# Feature Name or System Title
-
-## Summary
-What is this and why are we doing it?
-
-## Problem
-The pain point, friction, or opportunity this addresses.
-
-## Goals & Non-goals
-Explicit scope boundaries.
-
-## Product Considerations
-User needs, performance, accessibility, regulatory impacts.
-
-## Technical Design
-Architecture, key components, protocols, libraries, and rationale.
-
-## Implementation Plan
-Phased rollout or sequencing steps.
-
-## Open Questions
-Unresolved items or future revisits.
-
-## References
-Link related issues, PRs, or past work.
-```
-
----
-
-## 🔄 8. Milestone API Commands Reference
-
-### Common Milestone Operations
+### 🔄 Migration Commands
 
 ```bash
-# List all milestones
-gh api repos/OWNER/REPO/milestones
+# Run database migrations
+npm run db:migrate
 
-# Create milestone with due date
-gh api repos/OWNER/REPO/milestones --method POST \
-  --field title='Milestone Name' \
-  --field description='Milestone description' \
-  --field due_on='2025-12-31T23:59:59Z' \
-  --field state='open'
+# Seed initial data
+npm run db:seed
 
-# Update milestone
-gh api repos/OWNER/REPO/milestones/NUMBER --method PATCH \
-  --field title='Updated Title' \
-  --field state='closed'
-
-# Assign issue to milestone
-gh issue edit ISSUE_NUMBER --milestone 'Milestone Name'
-
-# List issues in milestone
-gh issue list --milestone 'Milestone Name'
+# Reset and rebuild
+npm run db:reset
 ```
 
-### Milestone States
-
-- **open**: Active milestone accepting issues
-- **closed**: Completed milestone (automatically closes when due date passes)
-
 ---
 
-## 🔁 9. Replaces These Docs
+## 🧪 6. Testing & Validation
 
-* `ROADMAP.md` → use Milestones
-* `PROGRESS.md` → use Labels + Issues  
-* Task trackers (Notion, Google Docs) → link Issues and **Design Docs**
-
----
-
-## 🚀 10. Quick Reference: Issue Commands
+### ✅ Before Committing
 
 ```bash
-# Create new issue
-gh issue create --title "Issue title" --body "Description" --label "type:feature"
+# Lint and type check
+npm run lint
+npm run build:types
 
-# List issues
-gh issue list --state open
-gh issue list --milestone "Phase 1"
-gh issue list --label "prio:high"
+# Test algorithm calculations
+npm test src/lib/ranking-algorithm.test.ts
 
-# Edit issue
-gh issue edit NUMBER --title "New title"
-gh issue edit NUMBER --milestone "Phase 1"
-gh issue edit NUMBER --add-label "status:in-progress"
+# Validate metrics schema
+npm run validate-metrics
+```
 
-# Close issue
-gh issue close NUMBER --comment "Completed in PR #123"
+### 🔍 Data Quality Checks
+
+- Verify metric values are within expected ranges
+- Check for missing required metrics
+- Validate source URLs are unique
+- Ensure evidence is provided for claims
+
+---
+
+## 📅 7. Release Schedule
+
+### Monthly Cycle
+
+- **Week 1**: Previous month's rankings published
+- **Week 2-3**: Continuous data collection
+- **Week 4**: Final data gathering, quality checks
+- **Month End**: Algorithm execution and review
+
+### Hotfixes
+
+For critical updates between monthly cycles:
+
+1. Document reason for off-cycle update
+2. Run partial ranking recalculation
+3. Note update in changelog
+
+---
+
+## 📚 8. Documentation Updates
+
+When adding new features or changing processes:
+
+1. Update relevant docs:
+
+   - `PROJECT.md`: Architecture changes
+   - `DATABASE.md`: Schema modifications
+   - `METRICS-GUIDELINES.md`: Scoring criteria
+   - `WORKFLOW.md`: Process changes
+
+2. Keep exports current:
+
+   ```bash
+   npm run export-docs
+   ```
+
+3. Update CLAUDE.md if adding new reference docs
+
+---
+
+## 🚀 9. Quick Reference
+
+### Common Commands
+
+```bash
+# Data collection
+npm run extract-metrics [URL]          # Extract from article
+npm run collect:github                 # Update GitHub metrics
+npm run collect:all                    # Run all collectors
+
+# Rankings
+npm run generate-rankings              # Calculate new rankings
+npm run preview-rankings               # Preview without saving
+npm run export-rankings                # Export for publication
+
+# Database
+npm run db:migrate                     # Run migrations
+npm run db:backup                      # Backup database
+npm run db:restore [file]              # Restore from backup
+
+# Exports
+npm run export-by-date                 # Organized by month
+npm run export-showcase                # Top tools summary
+npm run export-all                     # Complete export
+```
+
+### Environment Variables
+
+```bash
+# Required for metrics extraction
+OPENAI_API_KEY=your-key-here
+
+# Required for database
+SUPABASE_URL=your-url
+SUPABASE_SERVICE_ROLE_KEY=your-key
+
+# Optional
+GITHUB_TOKEN=your-token
 ```
 
 ---
 
 ## 👁️ Final Note
 
-Issues aren't just tasks—they're **shared context**.  
-Design docs make that context durable.
+Quality over quantity. Every metric should tell a story, backed by evidence.
 
-Write them like you're briefing a future teammate (or future you).  
-Clear Issues and thoughtful docs create speed later.
+The goal is to provide developers with trustworthy, actionable intelligence about AI coding tools. Maintain high standards for data quality and transparency in methodology.

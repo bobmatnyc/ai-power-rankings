@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# data exports
+/data/metrics-export/
+/data/metrics-by-date/
