@@ -551,4 +551,422 @@ git checkout -b feature/tool-details
 git checkout -b feature/data-collection
 ```
 
+## 11. UI Components Setup (shadcn/ui)
+
+### Initialize shadcn/ui:
+```bash
+npx shadcn-ui@latest init
+```
+
+### Add essential components:
+```bash
+npx shadcn-ui@latest add button
+npx shadcn-ui@latest add card
+npx shadcn-ui@latest add table
+npx shadcn-ui@latest add badge
+npx shadcn-ui@latest add separator
+npx shadcn-ui@latest add dropdown-menu
+npx shadcn-ui@latest add dialog
+npx shadcn-ui@latest add select
+npx shadcn-ui@latest add input
+npx shadcn-ui@latest add form
+npx shadcn-ui@latest add toast
+```
+
+### Create base layout components:
+
+#### `src/components/layout/header.tsx`:
+```typescript
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+
+export function Header() {
+  return (
+    <header className="border-b">
+      <div className="container mx-auto px-4 py-4">
+        <nav className="flex items-center justify-between">
+          <Link href="/" className="text-2xl font-bold">
+            AI Power Rankings
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/rankings" className="text-gray-600 hover:text-gray-900">
+              Rankings
+            </Link>
+            <Link href="/tools" className="text-gray-600 hover:text-gray-900">
+              Tools
+            </Link>
+            <Link href="/news" className="text-gray-600 hover:text-gray-900">
+              News
+            </Link>
+            <Button>Subscribe</Button>
+          </div>
+        </nav>
+      </div>
+    </header>
+  );
+}
+```
+
+#### `src/components/ranking/ranking-table.tsx`:
+```typescript
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
+
+interface RankingTableProps {
+  rankings: any[]; // Will be properly typed
+}
+
+export function RankingTable({ rankings }: RankingTableProps) {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-[50px]">Rank</TableHead>
+          <TableHead>Tool</TableHead>
+          <TableHead>Category</TableHead>
+          <TableHead className="text-right">Score</TableHead>
+          <TableHead className="w-[100px]">Movement</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rankings.map((ranking) => (
+          <TableRow key={ranking.id}>
+            <TableCell className="font-medium">{ranking.position}</TableCell>
+            <TableCell>{ranking.tool.name}</TableCell>
+            <TableCell>
+              <Badge variant="secondary">{ranking.tool.category}</Badge>
+            </TableCell>
+            <TableCell className="text-right">{ranking.score.toFixed(2)}</TableCell>
+            <TableCell>
+              {ranking.movement === 'up' && (
+                <span className="flex items-center text-green-600">
+                  <ArrowUp className="w-4 h-4" />
+                  {ranking.movement_positions}
+                </span>
+              )}
+              {ranking.movement === 'down' && (
+                <span className="flex items-center text-red-600">
+                  <ArrowDown className="w-4 h-4" />
+                  {ranking.movement_positions}
+                </span>
+              )}
+              {ranking.movement === 'same' && (
+                <span className="text-gray-400">
+                  <Minus className="w-4 h-4" />
+                </span>
+              )}
+              {ranking.movement === 'new' && (
+                <Badge variant="default">New</Badge>
+              )}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+## 12. API Routes Implementation
+
+### `src/app/api/rankings/route.ts`:
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/database';
+
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const period = searchParams.get('period') || 'current';
+  const category = searchParams.get('category');
+  const limit = parseInt(searchParams.get('limit') || '50');
+
+  let query = supabase
+    .from('rankings')
+    .select(`
+      *,
+      tool:tools(*)
+    `)
+    .eq('period', period)
+    .order('position', { ascending: true })
+    .limit(limit);
+
+  if (category) {
+    query = query.eq('tool.category', category);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ data });
+}
+```
+
+### `src/app/api/tools/[id]/route.ts`:
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/database';
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { data: tool, error: toolError } = await supabase
+    .from('tools')
+    .select(`
+      *,
+      capabilities:tool_capabilities(*),
+      metrics:tool_metrics(*)
+    `)
+    .eq('id', params.id)
+    .single();
+
+  if (toolError) {
+    return NextResponse.json({ error: toolError.message }, { status: 404 });
+  }
+
+  // Get ranking history
+  const { data: rankings, error: rankingsError } = await supabase
+    .from('rankings')
+    .select('*')
+    .eq('tool_id', params.id)
+    .order('created_at', { ascending: false })
+    .limit(12);
+
+  if (rankingsError) {
+    return NextResponse.json({ error: rankingsError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    tool,
+    rankings
+  });
+}
+```
+
+### `src/app/api/collect/github/route.ts`:
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { Octokit } from '@octokit/rest';
+import { supabaseAdmin } from '@/lib/database';
+
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN,
+});
+
+export async function POST(request: NextRequest) {
+  // Verify API key or implement authentication
+  const authHeader = request.headers.get('authorization');
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    // Get all tools with GitHub repos
+    const { data: tools, error } = await supabaseAdmin
+      .from('tools')
+      .select('id, github_repo')
+      .not('github_repo', 'is', null);
+
+    if (error) throw error;
+
+    const metrics = [];
+
+    for (const tool of tools) {
+      if (!tool.github_repo) continue;
+
+      const [owner, repo] = tool.github_repo.replace('https://github.com/', '').split('/');
+      
+      try {
+        const { data: repoData } = await octokit.repos.get({ owner, repo });
+        const { data: contributors } = await octokit.repos.listContributors({ 
+          owner, 
+          repo,
+          per_page: 1 
+        });
+
+        metrics.push({
+          tool_id: tool.id,
+          github_stars: repoData.stargazers_count,
+          github_forks: repoData.forks_count,
+          github_watchers: repoData.watchers_count,
+          github_contributors: contributors.length,
+          github_last_commit: repoData.pushed_at,
+        });
+      } catch (error) {
+        console.error(`Error fetching GitHub data for ${tool.github_repo}:`, error);
+      }
+    }
+
+    // Upsert metrics
+    const { error: upsertError } = await supabaseAdmin
+      .from('tool_metrics')
+      .upsert(metrics, { onConflict: 'tool_id,metric_date' });
+
+    if (upsertError) throw upsertError;
+
+    return NextResponse.json({ 
+      success: true, 
+      toolsProcessed: metrics.length 
+    });
+  } catch (error) {
+    console.error('GitHub data collection error:', error);
+    return NextResponse.json({ 
+      error: 'Internal server error' 
+    }, { status: 500 });
+  }
+}
+```
+
+## 13. Testing Setup
+
+### Install testing dependencies:
+```bash
+npm install -D vitest @testing-library/react @testing-library/jest-dom
+npm install -D @vitejs/plugin-react jsdom
+npm install -D @testing-library/user-event
+```
+
+### `vitest.config.ts`:
+```typescript
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/test/setup.ts',
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+});
+```
+
+### `src/test/setup.ts`:
+```typescript
+import '@testing-library/jest-dom';
+import { expect, afterEach } from 'vitest';
+import { cleanup } from '@testing-library/react';
+import * as matchers from '@testing-library/jest-dom/matchers';
+
+expect.extend(matchers);
+
+afterEach(() => {
+  cleanup();
+});
+```
+
+### Example test - `src/components/ranking/__tests__/ranking-table.test.tsx`:
+```typescript
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { RankingTable } from '../ranking-table';
+
+describe('RankingTable', () => {
+  const mockRankings = [
+    {
+      id: '1',
+      position: 1,
+      score: 95.5,
+      movement: 'up',
+      movement_positions: 2,
+      tool: {
+        name: 'Test Tool',
+        category: 'code-editor',
+      },
+    },
+  ];
+
+  it('renders ranking table with data', () => {
+    render(<RankingTable rankings={mockRankings} />);
+    
+    expect(screen.getByText('Test Tool')).toBeInTheDocument();
+    expect(screen.getByText('95.50')).toBeInTheDocument();
+    expect(screen.getByText('code-editor')).toBeInTheDocument();
+  });
+});
+```
+
+## 14. Deployment Configuration
+
+### `vercel.json`:
+```json
+{
+  "crons": [
+    {
+      "path": "/api/collect/github",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/generate-rankings",
+      "schedule": "0 2 * * 0"
+    }
+  ]
+}
+```
+
+### Environment Variables for Production:
+```bash
+# Add to Vercel dashboard
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+GITHUB_TOKEN=
+PERPLEXITY_API_KEY=
+CRON_SECRET=
+```
+
+## 15. Development Best Practices
+
+### Code Style:
+- Use TypeScript for all files
+- Follow Next.js App Router conventions
+- Use server components by default
+- Client components only when needed (interactivity)
+- Implement proper error boundaries
+- Use Suspense for loading states
+
+### Git Workflow:
+```bash
+# Feature development
+git checkout -b feature/feature-name
+# Make changes
+git add .
+git commit -m "feat: description of feature"
+git push origin feature/feature-name
+# Create PR to develop branch
+
+# Commit message conventions
+# feat: new feature
+# fix: bug fix
+# docs: documentation changes
+# style: formatting changes
+# refactor: code restructuring
+# test: adding tests
+# chore: maintenance tasks
+```
+
+### Performance Considerations:
+- Use static generation where possible
+- Implement ISR for rankings pages
+- Optimize images with next/image
+- Lazy load heavy components
+- Cache API responses appropriately
+
 This scaffolding provides a solid foundation for building the AI Power Rankings platform with all the necessary structure, dependencies, and initial setup to begin development.
