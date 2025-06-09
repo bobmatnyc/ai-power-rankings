@@ -112,9 +112,17 @@ export default function AboutPage(): React.JSX.Element {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-4">
-            AI Power Rankings is an independent project created and maintained by developers
-            passionate about the future of AI-assisted coding. We have no affiliations with any of
-            the tools we rank, ensuring complete objectivity.
+            AI Power Rankings is created and maintained by Bob Matsuoka, an independent developer
+            passionate about the future of AI-assisted coding. I have no commercial affiliations
+            with any of the tools ranked here, ensuring complete objectivity in analysis and
+            rankings.
+          </p>
+          <p className="text-muted-foreground mb-4">
+            This project grew out of my own frustration trying to keep up with the rapidly evolving
+            landscape of agentic AI coding tools. As a developer who&apos;s been experimenting with
+            everything from Cursor to Claude Code to Bolt.new, I realized we needed a trusted,
+            data-driven resource to cut through the hype and help developers make informed decisions
+            about these powerful but rapidly changing tools.
           </p>
           <div className="flex gap-4">
             <Button variant="outline" asChild>
