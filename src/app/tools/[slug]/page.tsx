@@ -302,7 +302,7 @@ export default function ToolDetailPage(): React.JSX.Element {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 {metrics?.monthly_arr !== undefined && metrics.monthly_arr > 0 && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Monthly Revenue</p>
+                    <p className="text-sm text-muted-foreground">ARR (Monthly)</p>
                     <p className="text-2xl font-bold">
                       {formatMetric(metrics.monthly_arr, "currency")}
                     </p>
@@ -431,7 +431,7 @@ export default function ToolDetailPage(): React.JSX.Element {
                         {Object.entries(history.scoring_metrics || {}).map(([key, metric]) => (
                           <div key={key} className="text-sm">
                             <p className="text-muted-foreground capitalize">
-                              {key === "monthly_arr" ? "Monthly Revenue" : key.replace(/_/g, " ")}
+                              {key === "monthly_arr" ? "ARR (Monthly)" : key.replace(/_/g, " ")}
                             </p>
                             <p className="font-medium">
                               {typeof metric === "object" && metric.value !== undefined
