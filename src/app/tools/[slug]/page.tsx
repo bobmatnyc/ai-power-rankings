@@ -1,103 +1,133 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Separator } from '@/components/ui/separator'
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { MetricHistory } from "@/types/database";
 
 interface ToolDetail {
   tool: {
-    id: string
-    name: string
-    category: string
-    status: string
-    description?: string
-    website?: string
-    github_url?: string
-    pricing?: string
-    company?: string
-  }
+    id: string;
+    name: string;
+    category: string;
+    status: string;
+    info: {
+      company: {
+        name: string;
+        website?: string;
+        founded_date?: string;
+        headquarters?: string;
+      };
+      product: {
+        tagline?: string;
+        description?: string;
+        pricing_model?: string;
+        license_type?: string;
+      };
+      links: {
+        website?: string;
+        github?: string;
+        documentation?: string;
+        pricing?: string;
+        blog?: string;
+      };
+      tags?: string[];
+      features?: {
+        key_features?: string[];
+        languages_supported?: string[];
+        ide_support?: string[];
+        llm_providers?: string[];
+      };
+      metadata?: {
+        logo_url?: string;
+      };
+    };
+  };
   ranking?: {
-    rank: number
+    rank: number;
     scores: {
-      overall: number
-      agentic_capability: number
-      innovation: number
-      technical_performance: number
-      developer_adoption: number
-      market_traction: number
-      business_sentiment: number
-      development_velocity: number
-      platform_resilience: number
-    }
-  }
+      overall: number;
+      agentic_capability: number;
+      innovation: number;
+      technical_performance: number;
+      developer_adoption: number;
+      market_traction: number;
+      business_sentiment: number;
+      development_velocity: number;
+      platform_resilience: number;
+    };
+  };
   metrics?: {
-    users?: number
-    monthly_arr?: number
-    swe_bench_score?: number
-    github_stars?: number
-    valuation?: number
-    funding?: number
-    employees?: number
-  }
+    users?: number;
+    monthly_arr?: number;
+    swe_bench_score?: number;
+    github_stars?: number;
+    valuation?: number;
+    funding?: number;
+    employees?: number;
+  };
+  metricHistory?: MetricHistory[];
 }
 
 export default function ToolDetailPage(): React.JSX.Element {
-  const params = useParams()
-  const [toolData, setToolData] = useState<ToolDetail | null>(null)
-  const [loading, setLoading] = useState(true)
+  const params = useParams();
+  const [toolData, setToolData] = useState<ToolDetail | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const slug = params['slug']
+    const slug = params["slug"];
     if (slug) {
-      fetchToolDetail(slug as string)
+      fetchToolDetail(slug as string);
     }
-  }, [params])
+  }, [params]);
 
   const fetchToolDetail = async (slug: string): Promise<void> => {
     try {
-      const response = await fetch(`/api/tools/${slug}`)
-      const data = await response.json()
-      setToolData(data)
-      setLoading(false)
+      const response = await fetch(`/api/tools/${slug}`);
+      const data = await response.json();
+      setToolData(data);
+      setLoading(false);
     } catch (error) {
-      console.error('Failed to fetch tool details:', error)
-      setLoading(false)
+      console.error("Failed to fetch tool details:", error);
+      setLoading(false);
     }
-  }
+  };
 
   const formatMetric = (value: number | undefined, type: string): string => {
     if (value === undefined) {
-      return 'N/A'
+      return "N/A";
     }
-    
+
     switch (type) {
-      case 'users':
-        return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(0)}k`
-      case 'currency':
-        return `$${(value / 1000000).toFixed(1)}M`
-      case 'percentage':
-        return `${value.toFixed(1)}%`
-      case 'number':
-        return value.toLocaleString()
+      case "users":
+        return value >= 1000000
+          ? `${(value / 1000000).toFixed(1)}M`
+          : `${(value / 1000).toFixed(0)}k`;
+      case "currency":
+        return `$${(value / 1000000).toFixed(1)}M`;
+      case "percentage":
+        return `${value.toFixed(1)}%`;
+      case "number":
+        return value.toLocaleString();
       default:
-        return value.toString()
+        return value.toString();
     }
-  }
+  };
 
   const getStatusBadge = (status: string): React.JSX.Element => {
-    const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-      'active': 'default',
-      'beta': 'secondary',
-      'acquired': 'destructive',
-      'deprecated': 'outline'
-    }
-    return <Badge variant={variants[status] || 'outline'}>{status}</Badge>
-  }
+    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+      active: "default",
+      beta: "secondary",
+      acquired: "destructive",
+      deprecated: "outline",
+    };
+    return <Badge variant={variants[status] || "outline"}>{status}</Badge>;
+  };
 
   if (loading) {
     return (
@@ -106,7 +136,7 @@ export default function ToolDetailPage(): React.JSX.Element {
           <p className="text-muted-foreground">Loading tool details...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!toolData) {
@@ -119,10 +149,10 @@ export default function ToolDetailPage(): React.JSX.Element {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
-  const { tool, ranking, metrics } = toolData
+  const { tool, ranking, metrics, metricHistory } = toolData;
 
   return (
     <div className="container mx-auto p-8 max-w-6xl">
@@ -135,30 +165,28 @@ export default function ToolDetailPage(): React.JSX.Element {
           <span>/</span>
           <span>{tool.name}</span>
         </div>
-        
+
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-4xl font-bold mb-2">{tool.name}</h1>
             <div className="flex items-center gap-2">
-              <Badge className="capitalize">{tool.category.replace(/-/g, ' ')}</Badge>
+              <Badge className="capitalize">{tool.category.replace(/-/g, " ")}</Badge>
               {getStatusBadge(tool.status)}
-              {ranking && (
-                <Badge variant="outline">Rank #{ranking.rank}</Badge>
-              )}
+              {ranking && <Badge variant="outline">Rank #{ranking.rank}</Badge>}
             </div>
           </div>
-          
+
           <div className="flex gap-2">
-            {tool.website && (
+            {tool.info?.links?.website && (
               <Button asChild>
-                <a href={tool.website} target="_blank" rel="noopener noreferrer">
+                <a href={tool.info.links.website} target="_blank" rel="noopener noreferrer">
                   Visit Website
                 </a>
               </Button>
             )}
-            {tool.github_url && (
+            {tool.info?.links?.github && (
               <Button variant="outline" asChild>
-                <a href={tool.github_url} target="_blank" rel="noopener noreferrer">
+                <a href={tool.info.links.github} target="_blank" rel="noopener noreferrer">
                   GitHub
                 </a>
               </Button>
@@ -176,29 +204,31 @@ export default function ToolDetailPage(): React.JSX.Element {
           <div>
             <h3 className="font-semibold mb-1">Description</h3>
             <p className="text-muted-foreground">
-              {tool.description || 'AI-powered coding assistant helping developers write better code faster.'}
+              {tool.info?.product?.description ||
+                tool.info?.product?.tagline ||
+                "AI-powered coding assistant helping developers write better code faster."}
             </p>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Company</p>
-              <p className="font-medium">{tool.company || 'N/A'}</p>
+              <p className="font-medium">{tool.info?.company?.name || "N/A"}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Pricing</p>
-              <p className="font-medium">{tool.pricing || 'N/A'}</p>
+              <p className="font-medium">{tool.info?.product?.pricing_model || "N/A"}</p>
             </div>
             {metrics?.users && (
               <div>
                 <p className="text-sm text-muted-foreground">Users</p>
-                <p className="font-medium">{formatMetric(metrics.users, 'users')}</p>
+                <p className="font-medium">{formatMetric(metrics.users, "users")}</p>
               </div>
             )}
             {metrics?.github_stars && (
               <div>
                 <p className="text-sm text-muted-foreground">GitHub Stars</p>
-                <p className="font-medium">{formatMetric(metrics.github_stars, 'number')}</p>
+                <p className="font-medium">{formatMetric(metrics.github_stars, "number")}</p>
               </div>
             )}
           </div>
@@ -207,19 +237,18 @@ export default function ToolDetailPage(): React.JSX.Element {
 
       {/* Detailed Information Tabs */}
       <Tabs defaultValue="performance" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="metrics">Business Metrics</TabsTrigger>
           <TabsTrigger value="scores">Ranking Scores</TabsTrigger>
+          <TabsTrigger value="history">Metric History</TabsTrigger>
         </TabsList>
 
         <TabsContent value="performance" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Technical Performance</CardTitle>
-              <CardDescription>
-                Benchmark results and technical capabilities
-              </CardDescription>
+              <CardDescription>Benchmark results and technical capabilities</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -227,17 +256,19 @@ export default function ToolDetailPage(): React.JSX.Element {
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="text-sm font-medium">SWE-bench Score</span>
-                      <span className="text-sm font-medium">{formatMetric(metrics.swe_bench_score, 'percentage')}</span>
+                      <span className="text-sm font-medium">
+                        {formatMetric(metrics.swe_bench_score, "percentage")}
+                      </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-primary h-2 rounded-full transition-all"
                         style={{ width: `${Math.min(metrics.swe_bench_score, 100)}%` }}
                       />
                     </div>
                   </div>
                 )}
-                
+
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Context Window</p>
@@ -265,40 +296,46 @@ export default function ToolDetailPage(): React.JSX.Element {
           <Card>
             <CardHeader>
               <CardTitle>Business Metrics</CardTitle>
-              <CardDescription>
-                Financial and growth metrics
-              </CardDescription>
+              <CardDescription>Financial and growth metrics</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 {metrics?.monthly_arr !== undefined && (
                   <div>
                     <p className="text-sm text-muted-foreground">Monthly ARR</p>
-                    <p className="text-2xl font-bold">{formatMetric(metrics.monthly_arr, 'currency')}</p>
+                    <p className="text-2xl font-bold">
+                      {formatMetric(metrics.monthly_arr, "currency")}
+                    </p>
                   </div>
                 )}
                 {metrics?.valuation !== undefined && (
                   <div>
                     <p className="text-sm text-muted-foreground">Valuation</p>
-                    <p className="text-2xl font-bold">{formatMetric(metrics.valuation, 'currency')}</p>
+                    <p className="text-2xl font-bold">
+                      {formatMetric(metrics.valuation, "currency")}
+                    </p>
                   </div>
                 )}
                 {metrics?.funding !== undefined && (
                   <div>
                     <p className="text-sm text-muted-foreground">Total Funding</p>
-                    <p className="text-2xl font-bold">{formatMetric(metrics.funding, 'currency')}</p>
+                    <p className="text-2xl font-bold">
+                      {formatMetric(metrics.funding, "currency")}
+                    </p>
                   </div>
                 )}
                 {metrics?.employees !== undefined && (
                   <div>
                     <p className="text-sm text-muted-foreground">Employees</p>
-                    <p className="text-2xl font-bold">{formatMetric(metrics.employees, 'number')}</p>
+                    <p className="text-2xl font-bold">
+                      {formatMetric(metrics.employees, "number")}
+                    </p>
                   </div>
                 )}
                 {metrics?.users !== undefined && (
                   <div>
                     <p className="text-sm text-muted-foreground">Total Users</p>
-                    <p className="text-2xl font-bold">{formatMetric(metrics.users, 'users')}</p>
+                    <p className="text-2xl font-bold">{formatMetric(metrics.users, "users")}</p>
                   </div>
                 )}
               </div>
@@ -311,36 +348,38 @@ export default function ToolDetailPage(): React.JSX.Element {
             <Card>
               <CardHeader>
                 <CardTitle>Algorithm v6.0 Scores</CardTitle>
-                <CardDescription>
-                  Detailed scoring breakdown across all factors
-                </CardDescription>
+                <CardDescription>Detailed scoring breakdown across all factors</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                     <span className="font-semibold">Overall Score</span>
-                    <span className="text-2xl font-bold">{ranking.scores.overall.toFixed(2)}/10</span>
+                    <span className="text-2xl font-bold">
+                      {ranking.scores.overall.toFixed(2)}/10
+                    </span>
                   </div>
-                  
+
                   <Separator />
-                  
+
                   <div className="space-y-3">
-                    {Object.entries(ranking.scores).filter(([key]) => key !== 'overall').map(([factor, score]) => (
-                      <div key={factor}>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium capitalize">
-                            {factor.replace(/_/g, ' ')}
-                          </span>
-                          <span className="text-sm font-medium">{score.toFixed(1)}/10</span>
+                    {Object.entries(ranking.scores)
+                      .filter(([key]) => key !== "overall")
+                      .map(([factor, score]) => (
+                        <div key={factor}>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-sm font-medium capitalize">
+                              {factor.replace(/_/g, " ")}
+                            </span>
+                            <span className="text-sm font-medium">{score.toFixed(1)}/10</span>
+                          </div>
+                          <div className="w-full bg-muted rounded-full h-2">
+                            <div
+                              className="bg-primary h-2 rounded-full transition-all"
+                              style={{ width: `${score * 10}%` }}
+                            />
+                          </div>
                         </div>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full transition-all"
-                            style={{ width: `${score * 10}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
               </CardContent>
@@ -355,7 +394,90 @@ export default function ToolDetailPage(): React.JSX.Element {
             </Card>
           )}
         </TabsContent>
+
+        <TabsContent value="history" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Metric History</CardTitle>
+              <CardDescription>Recent metrics that affect ranking scores</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {metricHistory && metricHistory.length > 0 ? (
+                <div className="space-y-4">
+                  {metricHistory.map((history, index) => (
+                    <div key={index} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-medium">{history.source_name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {new Date(history.published_date).toLocaleDateString()}
+                          </p>
+                        </div>
+                        {history.source_url && (
+                          <Button variant="ghost" size="sm" asChild>
+                            <a href={history.source_url} target="_blank" rel="noopener noreferrer">
+                              Source →
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
+                        {Object.entries(history.scoring_metrics || {}).map(([key, metric]) => (
+                          <div key={key} className="text-sm">
+                            <p className="text-muted-foreground capitalize">
+                              {key.replace(/_/g, " ")}
+                            </p>
+                            <p className="font-medium">
+                              {typeof metric === "object" && metric.value !== undefined
+                                ? formatMetricValue(key, metric.value)
+                                : formatMetricValue(key, metric)}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground py-8">
+                  No metric history available for this tool.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
-  )
+  );
+}
+
+function formatMetricValue(key: string, value: unknown): string {
+  if (value === null || value === undefined) {
+    return "N/A";
+  }
+
+  // Handle specific metric types
+  if (key.includes("score") || key.includes("percentage")) {
+    return `${Number(value).toFixed(1)}%`;
+  }
+  if (key.includes("arr") || key.includes("funding") || key.includes("valuation")) {
+    return `$${(Number(value) / 1000000).toFixed(1)}M`;
+  }
+  if (key.includes("users") || key.includes("stars")) {
+    const num = Number(value);
+    if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(1)}M`;
+    }
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(0)}k`;
+    }
+    return num.toString();
+  }
+
+  // Default formatting
+  if (typeof value === "number") {
+    return value.toLocaleString();
+  }
+  return String(value);
 }

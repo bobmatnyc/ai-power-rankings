@@ -4,17 +4,48 @@ export interface Tool {
   slug: string;
   category: string;
   subcategory?: string;
-  description?: string;
-  website_url?: string;
-  github_repo?: string;
-  company_name?: string;
-  founded_date?: string;
-  pricing_model?: "free" | "freemium" | "paid" | "enterprise";
-  license_type?: "open-source" | "proprietary" | "commercial";
-  status: "active" | "discontinued" | "beta";
-  logo_url?: string;
+  status: "active" | "discontinued" | "beta" | "acquired";
+  info: ToolInfo;
   created_at: string;
   updated_at: string;
+}
+
+export interface ToolInfo {
+  company: {
+    name: string;
+    website?: string;
+    founded_date?: string;
+    headquarters?: string;
+  };
+  product: {
+    tagline?: string;
+    description?: string;
+    pricing_model?: "free" | "freemium" | "paid" | "enterprise" | "open-source";
+    license_type?: "mit" | "apache" | "gpl" | "proprietary" | "other";
+    deployment_options?: string[];
+    integrations?: string[];
+  };
+  links: {
+    website?: string;
+    github?: string;
+    documentation?: string;
+    pricing?: string;
+    blog?: string;
+  };
+  tags?: string[];
+  features?: {
+    key_features?: string[];
+    languages_supported?: string[];
+    ide_support?: string[];
+    llm_providers?: string[];
+  };
+  metadata?: {
+    first_tracked_date?: string;
+    logo_url?: string;
+    last_major_update?: string;
+    acquisition_date?: string;
+    discontinued_date?: string;
+  };
 }
 
 export interface ToolCapabilities {
@@ -70,4 +101,19 @@ export interface RankingPeriod {
   editorial_summary?: string;
   major_changes: Record<string, unknown>;
   is_current: boolean;
+}
+
+export interface MetricHistory {
+  metric_date: string;
+  source_name: string;
+  source_url: string;
+  metrics: Record<string, MetricValue>;
+  scoring_metrics: Record<string, MetricValue>;
+  published_date: string;
+}
+
+export interface MetricValue {
+  value: number;
+  evidence?: string;
+  confidence?: "high" | "medium" | "low";
 }
