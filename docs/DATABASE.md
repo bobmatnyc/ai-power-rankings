@@ -106,19 +106,66 @@ data_collection_jobs (target_tools[])
 
 ## Key Tables
 
+### 0. **companies**
+
+Companies and organizations behind the tools.
+
+```sql
+CREATE TABLE companies (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL UNIQUE,
+    type VARCHAR(20) CHECK (type IN ('company', 'startup', 'enterprise', 'academic', 'open-source', 'acquired')),
+    description TEXT,
+    website_url VARCHAR(255),
+    founded_date DATE,
+    headquarters_location VARCHAR(100),
+    employee_count_min INTEGER,
+    employee_count_max INTEGER,
+    logo_url VARCHAR(500),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+**Key Points:**
+
+- UUID primary key for companies
+- Type includes 'acquired' for companies like Windsurf
+- Used as foreign key in tools table
+
 ### 1. **tools**
 
 Primary table for AI coding tools.
 
 ```sql
--- Key columns
-id: text (primary key, e.g., 'cursor', 'github-copilot')
-name: text
-slug: text (unique)
-company_id: uuid (foreign key)
-category: text ('code-editor', 'autonomous-agent', 'app-builder', etc.)
-status: text ('active', 'deprecated', 'beta')
+CREATE TABLE tools (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    slug VARCHAR(100) UNIQUE NOT NULL,
+    company_id UUID REFERENCES companies(id),
+    category VARCHAR(50) NOT NULL,
+    subcategory VARCHAR(50),
+    description TEXT,
+    tagline VARCHAR(255),
+    website_url VARCHAR(255),
+    github_repo VARCHAR(255),
+    founded_date DATE,
+    first_tracked_date DATE DEFAULT CURRENT_DATE,
+    pricing_model VARCHAR(20) CHECK (pricing_model IN ('free', 'freemium', 'paid', 'open-source', 'enterprise')),
+    license_type VARCHAR(20) CHECK (license_type IN ('mit', 'apache', 'gpl', 'proprietary', 'other')),
+    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'beta', 'deprecated', 'discontinued', 'acquired')),
+    logo_url VARCHAR(500),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
 ```
+
+**Key Points:**
+
+- `id` is VARCHAR(50), not UUID (e.g., 'cursor', 'github-copilot')
+- `company_id` is a foreign key to companies table
+- `status` includes 'acquired' for tools like Windsurf
+- Pricing and license constraints ensure data quality
 
 ### 2. **ranking_cache**
 
@@ -141,14 +188,31 @@ developer_adoption_score: decimal
 Time-series data for all metrics.
 
 ```sql
--- Key columns
-tool_id: text
-metric_key: text (references metric_definitions)
-value_integer: bigint
-value_decimal: decimal
-recorded_at: timestamp
-source: text
+CREATE TABLE metrics_history (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tool_id VARCHAR(50) REFERENCES tools(id) ON DELETE CASCADE,
+    metric_key VARCHAR(50) REFERENCES metric_definitions(metric_key),
+    value_integer BIGINT,
+    value_decimal DECIMAL(15,2),
+    value_boolean BOOLEAN,
+    value_json JSONB,
+    recorded_at TIMESTAMP NOT NULL,
+    source VARCHAR(50),
+    source_url VARCHAR(500),
+    notes TEXT,
+    is_interpolated BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(tool_id, metric_key, recorded_at)
+);
 ```
+
+**Important Schema Notes:**
+
+- Different value columns for different data types (not value_text)
+- `value_json` for complex data like timeline events
+- No `confidence_score` column in this schema
+- Enforces uniqueness on (tool_id, metric_key, recorded_at)
+- Use appropriate value column based on metric data type
 
 ### 4. **algorithm_versions**
 
@@ -292,10 +356,33 @@ WHERE id = 'cursor';
 ### Add New Metrics
 
 ```sql
+-- Integer metric example (GitHub stars)
 INSERT INTO metrics_history (
-  id, tool_id, metric_key, value_integer,
-  recorded_at, source, source_url
+  tool_id, metric_key, value_integer,
+  recorded_at, source
 ) VALUES (
+  'cursor', 'github_stars', 25000,
+  '2025-06-09', 'github_api'
+);
+
+-- Decimal metric example (SWE-bench score)
+INSERT INTO metrics_history (
+  tool_id, metric_key, value_decimal,
+  recorded_at, source
+) VALUES (
+  'claude-code', 'swe_bench_score', 72.7,
+  '2025-06-09', 'official_benchmark'
+);
+
+-- JSON metric example (timeline event)
+INSERT INTO metrics_history (
+  tool_id, metric_key, value_json,
+  recorded_at, source
+) VALUES (
+  'windsurf', 'timeline_event',
+  '{"event": "Acquired by OpenAI", "amount": 3000000000}',
+  '2025-04-16', 'news_announcement'
+);
   gen_random_uuid(),
   'cursor',
   'estimated_users',
