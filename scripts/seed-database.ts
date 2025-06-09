@@ -65,7 +65,7 @@ async function executeSqlFile(filePath: string) {
     
     try {
       // Use the SQL endpoint for raw SQL execution
-      const { data, error } = await supabase.rpc('sql', {
+      const { error } = await supabase.rpc('sql', {
         query: statement
       }).single();
       
@@ -92,9 +92,9 @@ async function executeSqlFile(filePath: string) {
         console.log('✅');
         successful++;
       }
-    } catch (error: any) {
+    } catch (error) {
       console.log('❌');
-      const errorMsg = `Statement ${i + 1}: ${error.message || error}`;
+      const errorMsg = `Statement ${i + 1}: ${(error as Error).message || error}`;
       console.error(`   Error: ${errorMsg}`);
       errors.push(errorMsg);
       failed++;
@@ -186,7 +186,7 @@ async function seedDatabase() {
       
       if (topRankings && topRankings.length > 0) {
         console.log('🏆 Current Top 5 Rankings:');
-        topRankings.forEach((r: any) => {
+        topRankings.forEach((r) => {
           console.log(`   ${r.position}. ${r.tool_name} (${r.score.toFixed(2)})`);
         });
       }
@@ -199,8 +199,8 @@ async function seedDatabase() {
       console.log('   Please check your database connection and permissions.');
     }
     
-  } catch (error: any) {
-    console.error('\n❌ Fatal error:', error.message);
+  } catch (error) {
+    console.error('\n❌ Fatal error:', (error as Error).message);
     process.exit(1);
   }
 }
