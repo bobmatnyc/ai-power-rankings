@@ -413,9 +413,14 @@ export default function ToolDetailPage(): React.JSX.Element {
                             {new Date(history.published_date).toLocaleDateString()}
                           </p>
                         </div>
-                        {history.source_url && (
+                        {history.source_url && history.source_url.trim() !== "" && (
                           <Button variant="ghost" size="sm" asChild>
-                            <a href={history.source_url} target="_blank" rel="noopener noreferrer">
+                            <a
+                              href={history.source_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:underline"
+                            >
                               Source →
                             </a>
                           </Button>
