@@ -94,7 +94,7 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       `
       )
       .eq("tool_id", tool.id)
-      .eq("period", "2025-06")
+      .eq("period", "june-2025")
       .single();
 
     let ranking = null;
@@ -138,12 +138,11 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       }
 
       const group = groupedMetrics.get(key);
-      if (!group) {
-        continue;
-      }
-      const value = tm.value_integer || tm.value_decimal || tm.value_boolean || tm.value_json;
-      if (tm.metric_key && value !== null && value !== undefined) {
-        group.metrics[tm.metric_key] = value;
+      if (group) {
+        const value = tm.value_integer || tm.value_decimal || tm.value_boolean || tm.value_json;
+        if (tm.metric_key && value !== null && value !== undefined) {
+          group.metrics[tm.metric_key] = value;
+        }
       }
     });
 
