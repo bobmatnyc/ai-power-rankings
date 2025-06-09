@@ -43,3 +43,7 @@ next-env.d.ts
 # data exports
 /data/metrics-export/
 /data/metrics-by-date/
+
+# development scripts
+/scripts/
+!scripts/seed-database.ts
