@@ -46,9 +46,12 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       };
     }
 
-    // Get latest metrics from metrics_sources via the tool_metrics view
+    // Get metrics history for the tool
     const { data: toolMetrics } = await supabase
-      .rpc("get_tool_metrics_history", { p_tool_id: tool.id })
+      .from("metrics_history")
+      .select("*")
+      .eq("tool_id", tool.id)
+      .order("recorded_at", { ascending: false })
       .limit(20);
 
     // Get latest scoring metrics
@@ -106,23 +109,47 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       };
     }
 
-    // Format metric history for the UI
-    const metricHistory =
-      toolMetrics?.map(
-        (tm: {
-          published_date: string;
-          source_name: string;
-          source_url: string;
-          metrics: Record<string, unknown>;
-        }) => ({
-          metric_date: tm.published_date,
-          source_name: tm.source_name,
-          source_url: tm.source_url,
-          metrics: tm.metrics,
-          scoring_metrics: tm.metrics, // In the view, all metrics are scoring-relevant
-          published_date: tm.published_date,
-        })
-      ) || [];
+    // Group metrics by date and source for better display
+    const groupedMetrics = new Map<
+      string,
+      {
+        source_name: string;
+        source_url: string;
+        published_date: string;
+        metrics: Record<string, unknown>;
+      }
+    >();
+
+    toolMetrics?.forEach((tm) => {
+      const key = `${tm.recorded_at}_${tm.source}`;
+      if (!groupedMetrics.has(key)) {
+        groupedMetrics.set(key, {
+          source_name: tm.source || "Unknown",
+          source_url: tm.source_url || "",
+          published_date: tm.recorded_at,
+          metrics: {},
+        });
+      }
+
+      const group = groupedMetrics.get(key);
+      if (!group) {
+        continue;
+      }
+      const value = tm.value_integer || tm.value_decimal || tm.value_boolean || tm.value_json;
+      if (tm.metric_key && value !== null && value !== undefined) {
+        group.metrics[tm.metric_key] = value;
+      }
+    });
+
+    // Convert to array and sort by date
+    const metricHistory = Array.from(groupedMetrics.values())
+      .sort((a, b) => new Date(b.published_date).getTime() - new Date(a.published_date).getTime())
+      .map((item) => ({
+        ...item,
+        scoring_metrics: item.metrics,
+        metric_date: item.published_date,
+      }))
+      .slice(0, 10); // Limit to 10 most recent entries
 
     return NextResponse.json({
       tool,
