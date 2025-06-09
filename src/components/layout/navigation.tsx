@@ -11,7 +11,7 @@ const navItems = [
   { href: "/about", label: "About" },
 ];
 
-export function Navigation() {
+export function Navigation(): React.ReactElement {
   const pathname = usePathname();
 
   return (
