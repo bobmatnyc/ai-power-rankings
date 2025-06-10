@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { NewsletterModal } from "@/components/ui/newsletter-modal";
 
-export default function AboutPage(): React.JSX.Element {
+function AboutContent(): React.JSX.Element {
   const searchParams = useSearchParams();
   const [newsletterOpen, setNewsletterOpen] = useState(false);
 
@@ -194,5 +194,13 @@ export default function AboutPage(): React.JSX.Element {
 
       <NewsletterModal open={newsletterOpen} onOpenChange={setNewsletterOpen} />
     </div>
+  );
+}
+
+export default function AboutPage(): React.JSX.Element {
+  return (
+    <Suspense fallback={<div className="container mx-auto p-8 max-w-4xl">Loading...</div>}>
+      <AboutContent />
+    </Suspense>
   );
 }
