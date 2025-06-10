@@ -47,3 +47,8 @@ next-env.d.ts
 /scripts/
 !scripts/seed-database.ts
 !scripts/import-v0-mcp-metrics.ts
+
+# claude and husky files
+.claude
+.husky
+.prompt-cache

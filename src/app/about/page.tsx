@@ -1,8 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { NewsletterModal } from "@/components/ui/newsletter-modal";
 
 export default function AboutPage(): React.JSX.Element {
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
   return (
     <div className="container mx-auto p-8 max-w-4xl">
       {/* Header */}
@@ -25,6 +30,11 @@ export default function AboutPage(): React.JSX.Element {
             landscape of AI-assisted development, we cut through the marketing noise to deliver
             clear, actionable insights based on real performance metrics and comprehensive analysis.
           </p>
+          <div className="mt-6">
+            <Button onClick={() => setNewsletterOpen(true)}>
+              Sign Up for Updates
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -170,6 +180,8 @@ export default function AboutPage(): React.JSX.Element {
           </div>
         </CardContent>
       </Card>
+      
+      <NewsletterModal open={newsletterOpen} onOpenChange={setNewsletterOpen} />
     </div>
   );
 }

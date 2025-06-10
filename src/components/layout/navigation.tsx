@@ -6,8 +6,9 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/rankings", label: "Rankings" },
-  { href: "/methodology", label: "Methodology" },
+  { href: "/news", label: "News" },
   { href: "/tools", label: "Tools" },
+  { href: "/methodology", label: "Methodology" },
   { href: "/about", label: "About" },
 ];
 
@@ -19,9 +20,11 @@ export function Navigation(): React.ReactElement {
       {/* Desktop Navigation */}
       <div className="mr-4 hidden md:flex">
         <Link href="/" className="mr-6 flex items-center space-x-3 group">
-          <div className="w-9 h-9 bg-gradient-primary rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-            <span className="text-white font-bold text-sm">AI</span>
-          </div>
+          <img 
+            src="/ai-power-ranking-icon.png" 
+            alt="AI Power Rankings" 
+            className="w-9 h-9 object-contain"
+          />
           <div className="flex flex-col">
             <span className="font-bold text-foreground group-hover:text-primary transition-colors">
               AI <span className="text-gradient">Power Rankings</span>

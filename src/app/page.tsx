@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ArrowUp, ArrowRight, Star, TrendingUp } from "lucide-react";
+import { RankingCard } from "@/components/ranking/ranking-card";
+import { HeroCard } from "@/components/ranking/hero-card";
 
 interface RankingData {
   rank: number;
@@ -13,6 +16,8 @@ interface RankingData {
     name: string;
     category: string;
     status: string;
+    website_url?: string;
+    description?: string;
   };
   scores: {
     overall: number;
@@ -28,53 +33,29 @@ interface RankingData {
 
 export default function Home(): React.JSX.Element {
   const [topRankings, setTopRankings] = useState<RankingData[]>([]);
+  const [trendingTools, setTrendingTools] = useState<RankingData[]>([]);
+  const [recentlyUpdated, setRecentlyUpdated] = useState<RankingData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchTopRankings();
+    fetchRankings();
   }, []);
 
-  const fetchTopRankings = async (): Promise<void> => {
+  const fetchRankings = async (): Promise<void> => {
     try {
       const response = await fetch("/api/rankings");
       const data = await response.json();
-      setTopRankings(data.rankings.slice(0, 3));
+      const rankings = data.rankings;
+      
+      setTopRankings(rankings.slice(0, 3));
+      // For now, simulate trending as the next 3 tools
+      setTrendingTools(rankings.slice(3, 6));
+      // And recently updated as the next 4
+      setRecentlyUpdated(rankings.slice(6, 10));
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch rankings:", error);
       setLoading(false);
-    }
-  };
-
-  const getMedal = (rank: number): string => {
-    switch (rank) {
-      case 1:
-        return "🥇";
-      case 2:
-        return "🥈";
-      case 3:
-        return "🥉";
-      default:
-        return "";
-    }
-  };
-
-  const formatMetric = (value: number | undefined, type: string): string => {
-    if (value === undefined || value === 0) {
-      return "-";
-    }
-
-    switch (type) {
-      case "users":
-        return value >= 1000000
-          ? `${(value / 1000000).toFixed(1)}M users`
-          : `${(value / 1000).toFixed(0)}k users`;
-      case "arr":
-        return `$${(value / 1000000).toFixed(0)}M ARR`;
-      case "percentage":
-        return `${value.toFixed(1)}% SWE-bench`;
-      default:
-        return value.toFixed(1);
     }
   };
 
@@ -85,142 +66,230 @@ export default function Home(): React.JSX.Element {
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5" />
         
-        <div className="relative container mx-auto px-4 py-24 md:py-32">
-          <div className="mx-auto max-w-4xl text-center animate-fade-in">
-            <h1 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl">
-              AI <span className="text-gradient">Power Rankings</span>
+        <div className="relative px-6 py-12 mx-auto max-w-7xl">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              <Star className="h-3 w-3 mr-1" />
+              Updated Weekly
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
+              <img 
+                src="/ai-power-ranking-icon.png" 
+                alt="AI Power Rankings Icon" 
+                className="w-12 h-12 md:w-16 md:h-16 object-contain"
+              />
+              <span>AI <span className="text-gradient">Power Rankings</span></span>
             </h1>
-            <p className="mb-8 text-xl text-muted-foreground md:text-2xl">
-              Data-driven rankings of AI coding tools using Algorithm v6.0 with innovation decay,
-              platform risk modifiers, and revenue quality adjustments
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, 
+              find the perfect AI companion for your development workflow.
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" className="gradient-primary hover:opacity-90 transition-opacity" asChild>
-                <Link href="/rankings">View Full Rankings</Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button size="lg" className="gradient-primary text-white hover:opacity-90 transition-opacity" asChild>
+                <Link href="/rankings">
+                  Explore All Tools
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="#methodology">Learn Methodology</Link>
+              <Button variant="outline" size="lg" asChild>
+                <Link href="/rankings?sort=trending">
+                  View Trending
+                  <ArrowUp className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Top 3 Preview */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="mx-auto max-w-4xl">
-          <div className="text-center mb-8">
-            <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">
-              Current Leaders
-            </Badge>
-            <h2 className="text-3xl font-bold">Top 3 AI Coding Tools</h2>
-          </div>
-
+          {/* Top 3 Tools */}
           {loading ? (
-            <div className="text-center text-muted-foreground">Loading rankings...</div>
+            <div className="text-center text-muted-foreground mb-12">Loading rankings...</div>
           ) : (
-            <div className="space-y-6">
-              {topRankings.map((ranking) => (
-                <Card key={ranking.tool.id} className="group overflow-hidden hover:shadow-lg transition-all duration-200 border-border/50 hover:border-primary/20 animate-scale-in">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
-                          <span className="text-white font-bold text-lg">{ranking.tool.name.slice(0, 2).toUpperCase()}</span>
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                            <Link href={`/tools/${ranking.tool.id}`} className="hover:underline">
-                              {ranking.tool.name}
-                            </Link>
-                          </CardTitle>
-                          <CardDescription className="text-sm text-muted-foreground">
-                            {ranking.tool.category.replace("-", " ")}
-                          </CardDescription>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-                          <span className="text-2xl mr-1">{getMedal(ranking.rank)}</span>
-                          #{ranking.rank}
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-3">
-                      <div className="flex flex-wrap gap-2">
-                        <Badge className="bg-primary/10 text-primary">
-                          {ranking.tool.category.replace("-", " ")}
-                        </Badge>
-                        {ranking.scores?.overall && (
-                          <Badge variant="outline">
-                            Score: {ranking.scores.overall.toFixed(1)}/10
-                          </Badge>
-                        )}
-                        {ranking.metrics.swe_bench_score && (
-                          <Badge variant="outline">
-                            SWE-bench: {ranking.metrics.swe_bench_score.toFixed(1)}%
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      <div className="flex items-center justify-between pt-2">
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <span className="flex items-center space-x-1">
-                            <span className="w-2 h-2 bg-primary rounded-full"></span>
-                            <span>Agentic: {ranking.scores?.agentic_capability?.toFixed(1) || "-"}</span>
-                          </span>
-                          <span className="flex items-center space-x-1">
-                            <span className="w-2 h-2 bg-secondary rounded-full"></span>
-                            <span>Innovation: {ranking.scores?.innovation?.toFixed(1) || "-"}</span>
-                          </span>
-                        </div>
-                        
-                        <div className="flex space-x-2">
-                          <Button variant="outline" size="sm" asChild>
-                            <Link href={`/tools/${ranking.tool.id}`}>
-                              View Details
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+            <div className="grid md:grid-cols-3 gap-6 mb-12">
+              {topRankings.map((ranking, index) => (
+                <HeroCard key={ranking.tool.id} ranking={ranking} index={index} />
               ))}
             </div>
           )}
 
-          <div className="mt-8 text-center">
-            <Button asChild>
-              <Link href="/rankings">See All Rankings →</Link>
-            </Button>
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-1">25</div>
+              <div className="text-sm text-muted-foreground">AI Tools Ranked</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-secondary mb-1">
+                {trendingTools.length}
+              </div>
+              <div className="text-sm text-muted-foreground">Trending Up</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-accent mb-1">Weekly</div>
+              <div className="text-sm text-muted-foreground">Updates</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-foreground mb-1">100%</div>
+              <div className="text-sm text-muted-foreground">Free Access</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Newsletter Signup */}
-      <section className="bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-2xl text-center">
-            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-              Weekly Updates
-            </Badge>
-            <h2 className="mb-4 text-3xl font-bold">Stay Ahead of the Curve</h2>
-            <p className="mb-6 text-muted-foreground">
-              Get weekly updates on AI coding tool rankings, new releases, and industry insights
-            </p>
-            <form className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex h-11 w-full rounded-md border border-input bg-background px-4 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:max-w-sm"
-              />
-              <Button type="submit" size="lg" className="gradient-primary hover:opacity-90 transition-opacity">
-                Subscribe
-              </Button>
-            </form>
+      {/* Trending Section */}
+      <section className="px-6 py-12 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center">
+                <TrendingUp className="h-8 w-8 mr-2 text-accent" />
+                Trending This Week
+              </h2>
+              <p className="text-muted-foreground">
+                AI tools gaining momentum and climbing the rankings
+              </p>
+            </div>
+            <Button variant="outline" asChild>
+              <Link href="/rankings?sort=trending">View All Trending</Link>
+            </Button>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {trendingTools.map((tool, index) => (
+              <div key={tool.tool.id} className="relative h-full">
+                <div className="absolute -top-2 -right-2 z-10">
+                  <Badge className="bg-accent text-white border-0 shadow-lg">
+                    <ArrowUp className="h-3 w-3 mr-1" />
+                    +{3 - index}
+                  </Badge>
+                </div>
+                <div className="h-full">
+                  <RankingCard ranking={tool} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Recently Updated Section */}
+      <section className="px-6 py-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center">
+                <Star className="h-8 w-8 mr-2 text-primary" />
+                Recently Updated
+              </h2>
+              <p className="text-muted-foreground">
+                Latest updates and new features from top AI tools
+              </p>
+            </div>
+            <Button variant="outline" asChild>
+              <Link href="/rankings">View All Rankings</Link>
+            </Button>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            {recentlyUpdated.map((tool) => (
+              <div key={tool.tool.id} className="h-full">
+                <RankingCard ranking={tool} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Categories Overview */}
+      <section className="px-6 py-12 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
+            Explore by Category
+          </h2>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-primary/20 h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  Code Assistants
+                  <Badge className="bg-primary/10 text-primary">8</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col h-full">
+                <p className="text-sm text-muted-foreground flex-1">
+                  AI-powered code completion and suggestions
+                </p>
+                <div className="pt-3 mt-auto">
+                  <Button variant="ghost" size="sm" className="group-hover:text-primary w-full justify-start" asChild>
+                    <Link href="/rankings?category=code-assistant">
+                      Explore →
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-secondary/20 h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  AI Editors
+                  <Badge className="bg-secondary/10 text-secondary">6</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col h-full">
+                <p className="text-sm text-muted-foreground flex-1">
+                  Smart editors with AI integration
+                </p>
+                <div className="pt-3 mt-auto">
+                  <Button variant="ghost" size="sm" className="group-hover:text-secondary w-full justify-start" asChild>
+                    <Link href="/rankings?category=ai-editor">
+                      Explore →
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-accent/20 h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  App Builders
+                  <Badge className="bg-accent/10 text-accent">2</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col h-full">
+                <p className="text-sm text-muted-foreground flex-1">
+                  Build complete applications with AI assistance
+                </p>
+                <div className="pt-3 mt-auto">
+                  <Button variant="ghost" size="sm" className="group-hover:text-accent w-full justify-start" asChild>
+                    <Link href="/rankings?category=app-builder">
+                      Explore →
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-destructive/20 h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  Autonomous Agents
+                  <Badge className="bg-destructive/10 text-destructive">3</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col h-full">
+                <p className="text-sm text-muted-foreground flex-1">
+                  Fully autonomous AI software engineers
+                </p>
+                <div className="pt-3 mt-auto">
+                  <Button variant="ghost" size="sm" className="group-hover:text-destructive w-full justify-start" asChild>
+                    <Link href="/rankings?category=autonomous-agent">
+                      Explore →
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -322,11 +391,14 @@ export default function Home(): React.JSX.Element {
                 <Link href="/rankings" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Rankings
                 </Link>
-                <Link href="/methodology" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Methodology
+                <Link href="/news" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  News
                 </Link>
                 <Link href="/tools" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Tools Directory
+                </Link>
+                <Link href="/methodology" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Methodology
                 </Link>
                 <Link href="/about" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
                   About
