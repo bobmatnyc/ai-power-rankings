@@ -145,8 +145,8 @@ export default function ToolsPage(): React.JSX.Element {
       {/* Tools Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedTools.map((tool) => (
-          <Link key={tool.id} href={`/tools/${tool.id}`} className="block">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+          <Link key={tool.id} href={`/tools/${tool.id}`} className="flex h-full">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer w-full flex flex-col">
               <CardHeader>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
@@ -175,13 +175,13 @@ export default function ToolsPage(): React.JSX.Element {
                   </div>
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-1 flex flex-col">
                 <p className="text-sm text-muted-foreground mb-4">
                   {tool.description ||
                     "AI-powered coding assistant helping developers write better code faster."}
                 </p>
                 {(tool.website_url || tool.website || tool.info?.links?.website) && (
-                  <div className="flex gap-2">
+                  <div className="mt-auto text-right">
                     <Button
                       asChild
                       size="sm"
