@@ -13,16 +13,17 @@ import { checkOAuthToken, requireScope } from '@/lib/oauth-auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { data, error } = await supabase
       .from('tools')
       .select(`
         *,
         companies!inner(*)
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
 
     if (error) {
@@ -44,7 +45,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Check authentication
   const auth = checkOAuthToken(request);
@@ -53,12 +54,13 @@ export async function PUT(
   }
 
   try {
+    const { id } = await params;
     const updates = await request.json();
     
     const { data, error } = await supabase
       .from('tools')
       .update(updates)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -68,7 +70,7 @@ export async function PUT(
 
     // Audit log
     console.log(`[AUDIT] ${new Date().toISOString()} - UPDATE_TOOL:`, {
-      tool_id: params.id,
+      tool_id: id,
       updates
     });
 

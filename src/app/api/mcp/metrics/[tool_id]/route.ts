@@ -11,13 +11,14 @@ const supabase = createClient(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tool_id: string } }
+  { params }: { params: Promise<{ tool_id: string }> }
 ) {
   try {
+    const { tool_id } = await params;
     const { data, error } = await supabase
       .from('metrics_history')
       .select('*')
-      .eq('tool_id', params.tool_id)
+      .eq('tool_id', tool_id)
       .order('recorded_at', { ascending: false });
 
     if (error) {
@@ -25,7 +26,7 @@ export async function GET(
     }
 
     // Group by metric_key and get latest value
-    const latestMetrics: Record<string, any> = {};
+    const latestMetrics: Record<string, unknown> = {};
     const seen = new Set<string>();
     
     for (const metric of data || []) {
