@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -42,15 +43,11 @@ const navigationItems = [
   },
 ];
 
-const categories = [
-  { id: 'all', name: 'All Categories', count: 25 },
-  { id: 'code-assistant', name: 'Code Assistant', count: 8 },
-  { id: 'ai-editor', name: 'AI Editor', count: 6 },
-  { id: 'code-review', name: 'Code Review', count: 4 },
-  { id: 'autonomous-agent', name: 'Autonomous Agent', count: 3 },
-  { id: 'app-builder', name: 'App Builder', count: 2 },
-  { id: 'data-analysis', name: 'Data Analysis', count: 2 },
-];
+interface Category {
+  id: string;
+  name: string;
+  count: number;
+}
 
 const tagFilters = [
   { id: 'autocomplete', name: 'Autocomplete', count: 15 },
@@ -67,6 +64,42 @@ export function AppSidebar(): React.JSX.Element {
   const { isMobile, setOpenMobile } = useSidebar();
   const currentCategory = searchParams.get('category') || 'all';
   const currentTags = searchParams.get('tags')?.split(',') || [];
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async (): Promise<void> => {
+    try {
+      const response = await fetch('/api/mcp/categories');
+      const data = await response.json();
+      
+      // Convert the object to array format
+      const categoryArray: Category[] = Object.entries(data).map(([id, count]) => ({
+        id,
+        name: id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+        count: count as number
+      }));
+      
+      // Calculate total
+      const total = categoryArray.reduce((sum, cat) => sum + cat.count, 0);
+      
+      // Add "All Categories" at the beginning
+      const allCategories = [
+        { id: 'all', name: 'All Categories', count: total },
+        ...categoryArray.sort((a, b) => b.count - a.count)
+      ];
+      
+      setCategories(allCategories);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+      // Fallback to some default categories
+      setCategories([
+        { id: 'all', name: 'All Categories', count: 0 }
+      ]);
+    }
+  };
 
   const handleNavClick = (): void => {
     if (isMobile) {
@@ -103,9 +136,11 @@ export function AppSidebar(): React.JSX.Element {
     <Sidebar>
       <div className="p-6 h-full overflow-y-auto">
         <Link href="/" onClick={handleNavClick} className="flex items-center space-x-3 mb-6">
-          <div className="w-9 h-9 bg-gradient-primary rounded-lg flex items-center justify-center shadow-sm">
-            <span className="text-white font-bold text-sm">AI</span>
-          </div>
+          <img 
+            src="/crown-of-technology.png" 
+            alt="AI Power Rankings" 
+            className="w-9 h-9 object-contain"
+          />
           <div>
             <h1 className="text-lg font-bold text-foreground">AI Power Rankings</h1>
             <p className="text-xs text-muted-foreground">Discover the best AI tools</p>
