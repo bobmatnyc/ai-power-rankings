@@ -72,16 +72,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (existingSubscriber) {
       if (existingSubscriber.status === 'verified') {
-        return NextResponse.json(
-          { error: 'This email is already subscribed' },
-          { status: 400 }
-        );
+        return NextResponse.json({
+          success: true,
+          message: 'You are already subscribed to our newsletter!',
+          alreadySubscribed: true
+        });
       }
-      // If pending, resend verification email
+      // If pending or unsubscribed, we'll resend verification email
     }
 
-    // Generate a verification token
-    const verificationToken = crypto.randomUUID();
+    // Generate a verification token (use existing if re-subscribing)
+    const verificationToken = existingSubscriber?.verification_token || crypto.randomUUID();
 
     // Insert or update subscription
     const { error: dbError } = await supabase
@@ -90,8 +91,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         email,
         first_name: firstName,
         last_name: lastName,
-        status: 'pending',
+        status: existingSubscriber?.status || 'pending',
         verification_token: verificationToken,
+      }, {
+        onConflict: 'email'
       })
       .select()
       .single();
@@ -296,8 +299,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         error: emailError,
         message: emailError.message,
         name: emailError.name,
-        statusCode: (emailError as any).statusCode,
-        response: (emailError as any).response,
+        statusCode: (emailError as { statusCode?: number }).statusCode,
+        response: (emailError as { response?: unknown }).response,
         resendApiKey: process.env.RESEND_API_KEY ? 'Set (length: ' + process.env.RESEND_API_KEY.length + ')' : 'Not set',
         toEmail: email,
         fromEmail: 'AI Power Rankings <newsletter@aipowerranking.com>'
@@ -308,9 +311,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
+    // Different messages based on subscription status
+    const isResend = existingSubscriber && existingSubscriber.status !== 'verified';
+    
     return NextResponse.json({
       success: true,
-      message: 'Please check your email to verify your subscription',
+      message: isResend 
+        ? 'We\'ve resent the verification email. Please check your inbox.' 
+        : 'Please check your email to verify your subscription',
+      resent: isResend
     });
   } catch (error) {
     console.error('Subscribe error:', error);
