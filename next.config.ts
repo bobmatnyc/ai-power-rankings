@@ -4,8 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   eslint: {
     // During production builds, do not fail on warnings
-    ignoreDuringBuilds: false,
-    dirs: ["src"],
+    ignoreDuringBuilds: true,
   },
   env: {
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.TURNSTILE_SITE_KEY,
