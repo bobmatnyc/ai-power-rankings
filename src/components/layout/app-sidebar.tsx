@@ -7,7 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sidebar, useSidebar } from "@/components/ui/sidebar";
-import { Home, List, TrendingUp, Filter, Newspaper, FlaskConical, Info, Wrench } from "lucide-react";
+import {
+  Home,
+  List,
+  TrendingUp,
+  Filter,
+  Newspaper,
+  FlaskConical,
+  Info,
+  Wrench,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigationItems = [
@@ -28,7 +37,7 @@ const navigationItems = [
   },
   {
     title: "Tools",
-    href: "/tools", 
+    href: "/tools",
     icon: Wrench,
   },
   {
@@ -50,20 +59,20 @@ interface Category {
 }
 
 const tagFilters = [
-  { id: 'autocomplete', name: 'Autocomplete', count: 15 },
-  { id: 'chat', name: 'Chat Interface', count: 18 },
-  { id: 'code-generation', name: 'Code Generation', count: 20 },
-  { id: 'refactoring', name: 'Refactoring', count: 12 },
-  { id: 'testing', name: 'Testing', count: 8 },
-  { id: 'documentation', name: 'Documentation', count: 10 },
+  { id: "autocomplete", name: "Autocomplete", count: 15 },
+  { id: "chat", name: "Chat Interface", count: 18 },
+  { id: "code-generation", name: "Code Generation", count: 20 },
+  { id: "refactoring", name: "Refactoring", count: 12 },
+  { id: "testing", name: "Testing", count: 8 },
+  { id: "documentation", name: "Documentation", count: 10 },
 ];
 
 export function AppSidebar(): React.JSX.Element {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { isMobile, setOpenMobile } = useSidebar();
-  const currentCategory = searchParams.get('category') || 'all';
-  const currentTags = searchParams.get('tags')?.split(',') || [];
+  const currentCategory = searchParams.get("category") || "all";
+  const currentTags = searchParams.get("tags")?.split(",") || [];
   const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
@@ -72,32 +81,33 @@ export function AppSidebar(): React.JSX.Element {
 
   const fetchCategories = async (): Promise<void> => {
     try {
-      const response = await fetch('/api/mcp/categories');
+      const response = await fetch("/api/mcp/categories");
       const data = await response.json();
-      
+
       // Convert the object to array format
       const categoryArray: Category[] = Object.entries(data).map(([id, count]) => ({
         id,
-        name: id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-        count: count as number
+        name: id
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" "),
+        count: count as number,
       }));
-      
+
       // Calculate total
       const total = categoryArray.reduce((sum, cat) => sum + cat.count, 0);
-      
+
       // Add "All Categories" at the beginning
       const allCategories = [
-        { id: 'all', name: 'All Categories', count: total },
-        ...categoryArray.sort((a, b) => b.count - a.count)
+        { id: "all", name: "All Categories", count: total },
+        ...categoryArray.sort((a, b) => b.count - a.count),
       ];
-      
+
       setCategories(allCategories);
     } catch (error) {
-      console.error('Failed to fetch categories:', error);
+      console.error("Failed to fetch categories:", error);
       // Fallback to some default categories
-      setCategories([
-        { id: 'all', name: 'All Categories', count: 0 }
-      ]);
+      setCategories([{ id: "all", name: "All Categories", count: 0 }]);
     }
   };
 
@@ -109,41 +119,40 @@ export function AppSidebar(): React.JSX.Element {
 
   const createFilterUrl = (type: string, value: string): string => {
     const params = new URLSearchParams(searchParams.toString());
-    
-    if (type === 'category') {
-      if (value === 'all') {
-        params.delete('category');
+
+    if (type === "category") {
+      if (value === "all") {
+        params.delete("category");
       } else {
-        params.set('category', value);
+        params.set("category", value);
       }
-    } else if (type === 'tag') {
+    } else if (type === "tag") {
       const tags = currentTags.includes(value)
-        ? currentTags.filter(t => t !== value)
+        ? currentTags.filter((t) => t !== value)
         : [...currentTags, value];
-      
+
       if (tags.length === 0) {
-        params.delete('tags');
+        params.delete("tags");
       } else {
-        params.set('tags', tags.join(','));
+        params.set("tags", tags.join(","));
       }
     }
-    
+
     const queryString = params.toString();
-    return `/rankings${queryString ? `?${queryString}` : ''}`;
+    return `/rankings${queryString ? `?${queryString}` : ""}`;
   };
 
   return (
     <Sidebar>
       <div className="p-6 h-full overflow-y-auto">
         <Link href="/" onClick={handleNavClick} className="flex items-center space-x-3 mb-6">
-          <img 
-            src="/crown-of-technology.png" 
-            alt="AI Power Rankings" 
+          <img
+            src="/crown-of-technology.png"
+            alt="AI Power Rankings"
             className="w-9 h-9 object-contain"
           />
           <div>
-            <h1 className="text-lg font-bold text-foreground">AI Power Rankings</h1>
-            <p className="text-xs text-muted-foreground">Discover the best AI tools</p>
+            <h1 className="text-2xl font-bold text-gradient">APR</h1>
           </div>
         </Link>
 
@@ -208,7 +217,7 @@ export function AppSidebar(): React.JSX.Element {
               {categories.map((category) => (
                 <Link
                   key={category.id}
-                  href={createFilterUrl('category', category.id)}
+                  href={createFilterUrl("category", category.id)}
                   onClick={handleNavClick}
                   className={cn(
                     "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors",
@@ -238,7 +247,7 @@ export function AppSidebar(): React.JSX.Element {
                 <button
                   key={tag.id}
                   onClick={() => {
-                    window.location.href = createFilterUrl('tag', tag.id);
+                    window.location.href = createFilterUrl("tag", tag.id);
                     handleNavClick();
                   }}
                   className={cn(
@@ -260,13 +269,8 @@ export function AppSidebar(): React.JSX.Element {
           <Separator className="bg-border/50" />
 
           {/* Clear Filters */}
-          {(currentCategory !== 'all' || currentTags.length > 0) && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full"
-              asChild
-            >
+          {(currentCategory !== "all" || currentTags.length > 0) && (
+            <Button variant="outline" size="sm" className="w-full" asChild>
               <Link href="/rankings" onClick={handleNavClick}>
                 <Filter className="h-4 w-4 mr-2" />
                 Clear Filters
