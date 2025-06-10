@@ -1,8 +1,26 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { NewsletterModal } from "@/components/ui/newsletter-modal";
 
 export default function AboutPage(): React.JSX.Element {
+  const searchParams = useSearchParams();
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
+
+  useEffect(() => {
+    // Check if we should open the newsletter modal
+    if (searchParams.get("subscribe") === "true") {
+      setNewsletterOpen(true);
+      // Clean up the URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("subscribe");
+      window.history.replaceState({}, "", url.pathname);
+    }
+  }, [searchParams]);
   return (
     <div className="container mx-auto p-8 max-w-4xl">
       {/* Header */}
@@ -25,6 +43,9 @@ export default function AboutPage(): React.JSX.Element {
             landscape of AI-assisted development, we cut through the marketing noise to deliver
             clear, actionable insights based on real performance metrics and comprehensive analysis.
           </p>
+          <div className="mt-6">
+            <Button onClick={() => setNewsletterOpen(true)}>Subscribe To Updates</Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -170,6 +191,8 @@ export default function AboutPage(): React.JSX.Element {
           </div>
         </CardContent>
       </Card>
+
+      <NewsletterModal open={newsletterOpen} onOpenChange={setNewsletterOpen} />
     </div>
   );
 }

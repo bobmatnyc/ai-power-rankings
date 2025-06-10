@@ -426,7 +426,31 @@ WHERE version = 'v3.2' AND is_active = true;
 
 ## Maintenance Tasks
 
-### 1. Backup Database
+### 1. Running Migrations
+
+#### Using Supabase API (Recommended)
+
+For running SQL migrations programmatically, you can use the Supabase Management API:
+
+```bash
+# Run a migration script
+node scripts/run-newsletter-migration.js
+
+# Or create your own migration script
+# See scripts/run-newsletter-migration.js for example
+```
+
+The script uses the Supabase Management API to execute SQL directly:
+- Requires `SUPABASE_ACCESS_TOKEN` environment variable
+- Executes SQL through the `/v1/projects/{id}/database/query` endpoint
+- Provides immediate feedback on success/failure
+
+#### Using Supabase Dashboard
+
+Alternatively, run SQL directly in the dashboard:
+https://supabase.com/dashboard/project/fukdwnsvjdgyakdvtdin/sql
+
+### 2. Backup Database
 
 ```bash
 # Using Supabase CLI

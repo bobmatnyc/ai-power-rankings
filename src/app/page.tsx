@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ArrowUp, ArrowRight, Star, TrendingUp } from "lucide-react";
+import { RankingCard } from "@/components/ranking/ranking-card";
+import { HeroCard } from "@/components/ranking/hero-card";
 
 interface RankingData {
   rank: number;
@@ -13,6 +16,8 @@ interface RankingData {
     name: string;
     category: string;
     status: string;
+    website_url?: string;
+    description?: string;
   };
   scores: {
     overall: number;
@@ -28,17 +33,25 @@ interface RankingData {
 
 export default function Home(): React.JSX.Element {
   const [topRankings, setTopRankings] = useState<RankingData[]>([]);
+  const [trendingTools, setTrendingTools] = useState<RankingData[]>([]);
+  const [recentlyUpdated, setRecentlyUpdated] = useState<RankingData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchTopRankings();
+    fetchRankings();
   }, []);
 
-  const fetchTopRankings = async (): Promise<void> => {
+  const fetchRankings = async (): Promise<void> => {
     try {
       const response = await fetch("/api/rankings");
       const data = await response.json();
-      setTopRankings(data.rankings.slice(0, 3));
+      const rankings = data.rankings;
+
+      setTopRankings(rankings.slice(0, 3));
+      // For now, simulate trending as the next 3 tools
+      setTrendingTools(rankings.slice(3, 6));
+      // And recently updated as the next 4
+      setRecentlyUpdated(rankings.slice(6, 10));
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch rankings:", error);
@@ -46,154 +59,252 @@ export default function Home(): React.JSX.Element {
     }
   };
 
-  const getMedal = (rank: number): string => {
-    switch (rank) {
-      case 1:
-        return "🥇";
-      case 2:
-        return "🥈";
-      case 3:
-        return "🥉";
-      default:
-        return "";
-    }
-  };
-
-  const formatMetric = (value: number | undefined, type: string): string => {
-    if (value === undefined || value === 0) {
-      return "-";
-    }
-
-    switch (type) {
-      case "users":
-        return value >= 1000000
-          ? `${(value / 1000000).toFixed(1)}M users`
-          : `${(value / 1000).toFixed(0)}k users`;
-      case "arr":
-        return `$${(value / 1000000).toFixed(0)}M ARR`;
-      case "percentage":
-        return `${value.toFixed(1)}% SWE-bench`;
-      default:
-        return value.toFixed(1);
-    }
-  };
-
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-background to-muted/20">
-        <div className="container mx-auto px-4 py-24 md:py-32">
-          <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl">
-              AI Power Rankings
+      <section className="relative overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5" />
+
+        <div className="relative px-6 py-12 mx-auto max-w-7xl">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              <Star className="h-3 w-3 mr-1" />
+              Updated Weekly
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
+              <img
+                src="/crown-of-technology.png"
+                alt="AI Power Rankings Icon"
+                className="w-12 h-12 md:w-16 md:h-16 object-contain"
+              />
+              <span>
+                AI <span className="text-gradient">Power Rankings</span>
+              </span>
             </h1>
-            <p className="mb-8 text-xl text-muted-foreground md:text-2xl">
-              Data-driven rankings of AI coding tools using Algorithm v6.0 with innovation decay,
-              platform risk modifiers, and revenue quality adjustments
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              Discover and compare the most powerful AI coding tools. From autonomous agents to IDE
+              assistants, find the perfect AI companion for your development workflow.
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" asChild>
-                <Link href="/rankings">View Full Rankings</Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button
+                size="lg"
+                className="gradient-primary text-white hover:opacity-90 transition-opacity"
+                asChild
+              >
+                <Link href="/rankings">
+                  Explore All Tools
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="#methodology">Learn Methodology</Link>
+              <Button variant="outline" size="lg" asChild>
+                <Link href="/rankings?sort=trending">
+                  View Trending
+                  <ArrowUp className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Top 3 Preview */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="mb-8 text-center text-3xl font-bold">Top 3 AI Coding Tools</h2>
-
+          {/* Top 3 Tools */}
           {loading ? (
-            <div className="text-center text-muted-foreground">Loading rankings...</div>
+            <div className="text-center text-muted-foreground mb-12">Loading rankings...</div>
           ) : (
-            <div className="space-y-6">
-              {topRankings.map((ranking) => (
-                <Card key={ranking.tool.id} className="overflow-hidden">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="flex items-center gap-2 text-2xl">
-                          <span className="text-3xl">{getMedal(ranking.rank)}</span>
-                          <Link href={`/tools/${ranking.tool.id}`} className="hover:underline">
-                            {ranking.tool.name}
-                          </Link>
-                        </CardTitle>
-                        <CardDescription className="mt-1">
-                          <Badge variant="secondary" className="mr-2">
-                            {ranking.tool.category.replace("-", " ")}
-                          </Badge>
-                          Overall Score:{" "}
-                          {ranking.scores?.overall ? `${ranking.scores.overall.toFixed(2)}/10` : ""}
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Agentic Capability</p>
-                        <p className="text-lg font-semibold">
-                          {ranking.scores?.agentic_capability
-                            ? `${ranking.scores.agentic_capability.toFixed(1)}/10`
-                            : "-"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Innovation Score</p>
-                        <p className="text-lg font-semibold">
-                          {ranking.scores?.innovation
-                            ? `${ranking.scores.innovation.toFixed(1)}/10`
-                            : "-"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Key Metric</p>
-                        <p className="text-lg font-semibold">
-                          {ranking.metrics.users
-                            ? formatMetric(ranking.metrics.users, "users")
-                            : ranking.metrics.monthly_arr
-                              ? formatMetric(ranking.metrics.monthly_arr, "arr")
-                              : ranking.metrics.swe_bench_score
-                                ? formatMetric(ranking.metrics.swe_bench_score, "percentage")
-                                : "-"}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+            <div className="grid md:grid-cols-3 gap-6 mb-12">
+              {topRankings.map((ranking, index) => (
+                <HeroCard key={ranking.tool.id} ranking={ranking} index={index} />
               ))}
             </div>
           )}
 
-          <div className="mt-8 text-center">
-            <Button asChild>
-              <Link href="/rankings">See All Rankings →</Link>
-            </Button>
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-primary mb-1">25</div>
+              <div className="text-sm text-muted-foreground">AI Tools Ranked</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-secondary mb-1">{trendingTools.length}</div>
+              <div className="text-sm text-muted-foreground">Trending Up</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-accent mb-1">Weekly</div>
+              <div className="text-sm text-muted-foreground">Updates</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-foreground mb-1">100%</div>
+              <div className="text-sm text-muted-foreground">Free Access</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Newsletter Signup */}
-      <section className="bg-muted/50 py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="mb-4 text-3xl font-bold">Stay Updated</h2>
-            <p className="mb-6 text-muted-foreground">
-              Get weekly updates on AI coding tool rankings and industry insights
-            </p>
-            <form className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:max-w-sm"
-              />
-              <Button type="submit">Subscribe</Button>
-            </form>
+      {/* Trending Section */}
+      <section className="px-6 py-12 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center">
+                <TrendingUp className="h-8 w-8 mr-2 text-accent" />
+                Trending This Week
+              </h2>
+              <p className="text-muted-foreground">
+                AI tools gaining momentum and climbing the rankings
+              </p>
+            </div>
+            <Button variant="outline" asChild>
+              <Link href="/rankings?sort=trending">View All Trending</Link>
+            </Button>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {trendingTools.map((tool, index) => (
+              <div key={tool.tool.id} className="relative h-full">
+                <div className="absolute -top-2 -right-2 z-10">
+                  <Badge className="bg-accent text-white border-0 shadow-lg">
+                    <ArrowUp className="h-3 w-3 mr-1" />+{3 - index}
+                  </Badge>
+                </div>
+                <div className="h-full">
+                  <RankingCard ranking={tool} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Recently Updated Section */}
+      <section className="px-6 py-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center">
+                <Star className="h-8 w-8 mr-2 text-primary" />
+                Recently Updated
+              </h2>
+              <p className="text-muted-foreground">
+                Latest updates and new features from top AI tools
+              </p>
+            </div>
+            <Button variant="outline" asChild>
+              <Link href="/rankings">View All Rankings</Link>
+            </Button>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {recentlyUpdated.map((tool) => (
+              <div key={tool.tool.id} className="h-full">
+                <RankingCard ranking={tool} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Categories Overview */}
+      <section className="px-6 py-12 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
+            Explore by Category
+          </h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-primary/20 h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  Code Assistants
+                  <Badge className="bg-primary/10 text-primary">8</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col h-full">
+                <p className="text-sm text-muted-foreground flex-1">
+                  AI-powered code completion and suggestions
+                </p>
+                <div className="pt-3 mt-auto">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="group-hover:text-primary w-full justify-start"
+                    asChild
+                  >
+                    <Link href="/rankings?category=code-assistant">Explore →</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-secondary/20 h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  AI Editors
+                  <Badge className="bg-secondary/10 text-secondary">6</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col h-full">
+                <p className="text-sm text-muted-foreground flex-1">
+                  Smart editors with AI integration
+                </p>
+                <div className="pt-3 mt-auto">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="group-hover:text-secondary w-full justify-start"
+                    asChild
+                  >
+                    <Link href="/rankings?category=ai-editor">Explore →</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-accent/20 h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  App Builders
+                  <Badge className="bg-accent/10 text-accent">2</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col h-full">
+                <p className="text-sm text-muted-foreground flex-1">
+                  Build complete applications with AI assistance
+                </p>
+                <div className="pt-3 mt-auto">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="group-hover:text-accent w-full justify-start"
+                    asChild
+                  >
+                    <Link href="/rankings?category=app-builder">Explore →</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-destructive/20 h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  Autonomous Agents
+                  <Badge className="bg-destructive/10 text-destructive">3</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col h-full">
+                <p className="text-sm text-muted-foreground flex-1">
+                  Fully autonomous AI software engineers
+                </p>
+                <div className="pt-3 mt-auto">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="group-hover:text-destructive w-full justify-start"
+                    asChild
+                  >
+                    <Link href="/rankings?category=autonomous-agent">Explore →</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -204,9 +315,11 @@ export default function Home(): React.JSX.Element {
           <h2 className="mb-8 text-center text-3xl font-bold">Our Methodology</h2>
 
           <div className="grid gap-6 md:grid-cols-2">
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle>Algorithm v6.0</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-primary">Algorithm v6.0</span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="mb-4 text-muted-foreground">
@@ -230,9 +343,11 @@ export default function Home(): React.JSX.Element {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle>Key Modifiers</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-secondary">Key Modifiers</span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="mb-4 text-muted-foreground">
@@ -264,65 +379,99 @@ export default function Home(): React.JSX.Element {
         </div>
       </section>
 
-      {/* Social Proof */}
-      <section className="bg-muted/50 py-16">
+      {/* Footer */}
+      <footer className="border-t border-border/50 bg-muted/30 py-12">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl">
-            <h2 className="mb-8 text-center text-3xl font-bold">Trusted by the Community</h2>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="mb-4 text-muted-foreground">
-                    &quot;The most comprehensive and fair ranking system for AI coding tools
-                    I&apos;ve seen. The innovation decay modifier is brilliant.&quot;
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-9 h-9 bg-gradient-primary rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">AI</span>
+                </div>
+                <div>
+                  <h3 className="font-bold">AI Power Rankings</h3>
+                  <p className="text-xs text-muted-foreground">
+                    Data-driven insights for the AI revolution
                   </p>
-                  <p className="text-sm font-semibold">- Senior Developer</p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground max-w-md">
+                Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation
+                decay, platform risk modifiers, and revenue quality adjustments.
+              </p>
+            </div>
 
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="mb-4 text-muted-foreground">
-                    &quot;Finally, a ranking that considers platform independence and revenue
-                    quality. This is what the industry needed.&quot;
-                  </p>
-                  <p className="text-sm font-semibold">- Tech Lead</p>
-                </CardContent>
-              </Card>
+            <div>
+              <h4 className="font-semibold mb-3">Quick Links</h4>
+              <div className="space-y-2">
+                <Link
+                  href="/rankings"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Rankings
+                </Link>
+                <Link
+                  href="/news"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  News
+                </Link>
+                <Link
+                  href="/tools"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Tools Directory
+                </Link>
+                <Link
+                  href="/methodology"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Methodology
+                </Link>
+                <Link
+                  href="/about"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  About
+                </Link>
+              </div>
+            </div>
 
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="mb-4 text-muted-foreground">
-                    &quot;Algorithm v6.0&apos;s approach to weighing autonomous capabilities is spot
-                    on. Great work on the methodology.&quot;
-                  </p>
-                  <p className="text-sm font-semibold">- AI Researcher</p>
-                </CardContent>
-              </Card>
+            <div>
+              <h4 className="font-semibold mb-3">Categories</h4>
+              <div className="space-y-2">
+                <Link
+                  href="/rankings?category=code-assistant"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Code Assistants
+                </Link>
+                <Link
+                  href="/rankings?category=ai-editor"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  AI Editors
+                </Link>
+                <Link
+                  href="/rankings?category=code-review"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Code Review
+                </Link>
+                <Link
+                  href="/rankings?category=autonomous-agent"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Autonomous Agents
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <p className="text-sm text-muted-foreground">
-              © 2025 AI Power Rankings. Data-driven insights for the AI coding revolution.
+          <div className="mt-8 pt-8 border-t border-border/50">
+            <p className="text-center text-sm text-muted-foreground">
+              © 2025 AI Power Rankings. All rights reserved.
             </p>
-            <div className="flex gap-4">
-              <Link href="/rankings" className="text-sm hover:underline">
-                Rankings
-              </Link>
-              <Link href="/methodology" className="text-sm hover:underline">
-                Methodology
-              </Link>
-              <Link href="/about" className="text-sm hover:underline">
-                About
-              </Link>
-            </div>
           </div>
         </div>
       </footer>

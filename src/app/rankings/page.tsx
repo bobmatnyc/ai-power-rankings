@@ -1,18 +1,18 @@
 import { Suspense } from "react";
-import RankingsContent from "@/components/ranking/rankings-content";
+import RankingsGrid from "@/components/ranking/rankings-grid";
 
 export default function RankingsPage(): React.JSX.Element {
   return (
-    <Suspense
-      fallback={
-        <div className="container mx-auto p-8">
+    <div className="px-6 py-8 max-w-7xl mx-auto">
+      <Suspense
+        fallback={
           <div className="flex items-center justify-center h-64">
             <p className="text-muted-foreground">Loading rankings...</p>
           </div>
-        </div>
-      }
-    >
-      <RankingsContent />
-    </Suspense>
+        }
+      >
+        <RankingsGrid />
+      </Suspense>
+    </div>
   );
 }

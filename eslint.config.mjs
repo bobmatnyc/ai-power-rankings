@@ -22,6 +22,7 @@ const eslintConfig = [
       "*.config.mjs",
       "*.config.ts",
       "next-env.d.ts",
+      "data/**",
     ],
     rules: {
       // TypeScript strict rules
