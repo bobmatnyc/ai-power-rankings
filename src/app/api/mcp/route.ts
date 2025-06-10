@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     status: 'AI Power Rankings MCP API',
     version: '1.0.0',
     authentication: isDevelopment ? 'none (development mode)' : 'OAuth 2.0',
-    oauth_discovery: isDevelopment ? null : `${baseUrl}/api/mcp/.well-known/oauth-authorization-server`,
+    oauth_discovery: isDevelopment ? null : `${baseUrl}/.well-known/oauth-authorization-server`,
     endpoints: {
       public: {
         'GET /api/mcp/rankings': 'Get current rankings',
