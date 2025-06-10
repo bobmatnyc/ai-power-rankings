@@ -46,7 +46,7 @@ export default function Home(): React.JSX.Element {
       const response = await fetch("/api/rankings");
       const data = await response.json();
       const rankings = data.rankings;
-      
+
       setTopRankings(rankings.slice(0, 3));
       // For now, simulate trending as the next 3 tools
       setTrendingTools(rankings.slice(3, 6));
@@ -65,7 +65,7 @@ export default function Home(): React.JSX.Element {
       <section className="relative overflow-hidden">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5" />
-        
+
         <div className="relative px-6 py-12 mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
@@ -73,19 +73,25 @@ export default function Home(): React.JSX.Element {
               Updated Weekly
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
-              <img 
-                src="/ai-power-ranking-icon.png" 
-                alt="AI Power Rankings Icon" 
+              <img
+                src="/crown-of-technology.png"
+                alt="AI Power Rankings Icon"
                 className="w-12 h-12 md:w-16 md:h-16 object-contain"
               />
-              <span>AI <span className="text-gradient">Power Rankings</span></span>
+              <span>
+                AI <span className="text-gradient">Power Rankings</span>
+              </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, 
-              find the perfect AI companion for your development workflow.
+              Discover and compare the most powerful AI coding tools. From autonomous agents to IDE
+              assistants, find the perfect AI companion for your development workflow.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button size="lg" className="gradient-primary text-white hover:opacity-90 transition-opacity" asChild>
+              <Button
+                size="lg"
+                className="gradient-primary text-white hover:opacity-90 transition-opacity"
+                asChild
+              >
                 <Link href="/rankings">
                   Explore All Tools
                   <ArrowRight className="ml-2 h-4 w-4" />
@@ -118,9 +124,7 @@ export default function Home(): React.JSX.Element {
               <div className="text-sm text-muted-foreground">AI Tools Ranked</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-secondary mb-1">
-                {trendingTools.length}
-              </div>
+              <div className="text-3xl font-bold text-secondary mb-1">{trendingTools.length}</div>
               <div className="text-sm text-muted-foreground">Trending Up</div>
             </div>
             <div className="text-center">
@@ -152,14 +156,13 @@ export default function Home(): React.JSX.Element {
               <Link href="/rankings?sort=trending">View All Trending</Link>
             </Button>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-6">
             {trendingTools.map((tool, index) => (
               <div key={tool.tool.id} className="relative h-full">
                 <div className="absolute -top-2 -right-2 z-10">
                   <Badge className="bg-accent text-white border-0 shadow-lg">
-                    <ArrowUp className="h-3 w-3 mr-1" />
-                    +{3 - index}
+                    <ArrowUp className="h-3 w-3 mr-1" />+{3 - index}
                   </Badge>
                 </div>
                 <div className="h-full">
@@ -188,7 +191,7 @@ export default function Home(): React.JSX.Element {
               <Link href="/rankings">View All Rankings</Link>
             </Button>
           </div>
-          
+
           <div className="grid md:grid-cols-2 gap-6">
             {recentlyUpdated.map((tool) => (
               <div key={tool.tool.id} className="h-full">
@@ -205,7 +208,7 @@ export default function Home(): React.JSX.Element {
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
             Explore by Category
           </h2>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-primary/20 h-full">
               <CardHeader className="pb-3">
@@ -219,10 +222,13 @@ export default function Home(): React.JSX.Element {
                   AI-powered code completion and suggestions
                 </p>
                 <div className="pt-3 mt-auto">
-                  <Button variant="ghost" size="sm" className="group-hover:text-primary w-full justify-start" asChild>
-                    <Link href="/rankings?category=code-assistant">
-                      Explore →
-                    </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="group-hover:text-primary w-full justify-start"
+                    asChild
+                  >
+                    <Link href="/rankings?category=code-assistant">Explore →</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -240,10 +246,13 @@ export default function Home(): React.JSX.Element {
                   Smart editors with AI integration
                 </p>
                 <div className="pt-3 mt-auto">
-                  <Button variant="ghost" size="sm" className="group-hover:text-secondary w-full justify-start" asChild>
-                    <Link href="/rankings?category=ai-editor">
-                      Explore →
-                    </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="group-hover:text-secondary w-full justify-start"
+                    asChild
+                  >
+                    <Link href="/rankings?category=ai-editor">Explore →</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -261,10 +270,13 @@ export default function Home(): React.JSX.Element {
                   Build complete applications with AI assistance
                 </p>
                 <div className="pt-3 mt-auto">
-                  <Button variant="ghost" size="sm" className="group-hover:text-accent w-full justify-start" asChild>
-                    <Link href="/rankings?category=app-builder">
-                      Explore →
-                    </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="group-hover:text-accent w-full justify-start"
+                    asChild
+                  >
+                    <Link href="/rankings?category=app-builder">Explore →</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -282,10 +294,13 @@ export default function Home(): React.JSX.Element {
                   Fully autonomous AI software engineers
                 </p>
                 <div className="pt-3 mt-auto">
-                  <Button variant="ghost" size="sm" className="group-hover:text-destructive w-full justify-start" asChild>
-                    <Link href="/rankings?category=autonomous-agent">
-                      Explore →
-                    </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="group-hover:text-destructive w-full justify-start"
+                    asChild
+                  >
+                    <Link href="/rankings?category=autonomous-agent">Explore →</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -364,7 +379,6 @@ export default function Home(): React.JSX.Element {
         </div>
       </section>
 
-
       {/* Footer */}
       <footer className="border-t border-border/50 bg-muted/30 py-12">
         <div className="container mx-auto px-4">
@@ -376,55 +390,84 @@ export default function Home(): React.JSX.Element {
                 </div>
                 <div>
                   <h3 className="font-bold">AI Power Rankings</h3>
-                  <p className="text-xs text-muted-foreground">Data-driven insights for the AI revolution</p>
+                  <p className="text-xs text-muted-foreground">
+                    Data-driven insights for the AI revolution
+                  </p>
                 </div>
               </div>
               <p className="text-sm text-muted-foreground max-w-md">
-                Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay,
-                platform risk modifiers, and revenue quality adjustments.
+                Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation
+                decay, platform risk modifiers, and revenue quality adjustments.
               </p>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-3">Quick Links</h4>
               <div className="space-y-2">
-                <Link href="/rankings" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link
+                  href="/rankings"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   Rankings
                 </Link>
-                <Link href="/news" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link
+                  href="/news"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   News
                 </Link>
-                <Link href="/tools" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link
+                  href="/tools"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   Tools Directory
                 </Link>
-                <Link href="/methodology" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link
+                  href="/methodology"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   Methodology
                 </Link>
-                <Link href="/about" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link
+                  href="/about"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   About
                 </Link>
               </div>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-3">Categories</h4>
               <div className="space-y-2">
-                <Link href="/rankings?category=code-assistant" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link
+                  href="/rankings?category=code-assistant"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   Code Assistants
                 </Link>
-                <Link href="/rankings?category=ai-editor" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link
+                  href="/rankings?category=ai-editor"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   AI Editors
                 </Link>
-                <Link href="/rankings?category=code-review" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link
+                  href="/rankings?category=code-review"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   Code Review
                 </Link>
-                <Link href="/rankings?category=autonomous-agent" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link
+                  href="/rankings?category=autonomous-agent"
+                  className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
                   Autonomous Agents
                 </Link>
               </div>
             </div>
           </div>
-          
+
           <div className="mt-8 pt-8 border-t border-border/50">
             <p className="text-center text-sm text-muted-foreground">
               © 2025 AI Power Rankings. All rights reserved.
