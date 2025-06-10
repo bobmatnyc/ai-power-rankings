@@ -13,12 +13,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToolIcon } from "@/components/ui/tool-icon";
+import { StatusIndicator } from "@/components/ui/status-indicator";
 
 interface Tool {
   id: string;
   name: string;
   category: string;
-  status: string;
+  status: 'active' | 'beta' | 'deprecated' | 'discontinued' | 'acquired';
   description?: string;
   website?: string;
   website_url?: string;
@@ -83,15 +84,6 @@ export default function ToolsPage(): React.JSX.Element {
     return colors[category] || "bg-gray-500";
   };
 
-  const getStatusBadge = (status: string): React.JSX.Element => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      active: "default",
-      beta: "secondary",
-      acquired: "destructive",
-      deprecated: "outline",
-    };
-    return <Badge variant={variants[status] || "outline"}>{status}</Badge>;
-  };
 
   if (loading) {
     return (
@@ -158,7 +150,7 @@ export default function ToolsPage(): React.JSX.Element {
                     />
                     <CardTitle className="text-xl">{tool.name}</CardTitle>
                   </div>
-                  {getStatusBadge(tool.status)}
+                  <StatusIndicator status={tool.status} showLabel />
                 </div>
                 <CardDescription>
                   <div
@@ -175,30 +167,11 @@ export default function ToolsPage(): React.JSX.Element {
                   </div>
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex-1 flex flex-col">
-                <p className="text-sm text-muted-foreground mb-4">
+              <CardContent className="flex-1">
+                <p className="text-sm text-muted-foreground">
                   {tool.description ||
                     "AI-powered coding assistant helping developers write better code faster."}
                 </p>
-                {(tool.website_url || tool.website || tool.info?.links?.website) && (
-                  <div className="mt-auto text-right">
-                    <Button
-                      asChild
-                      size="sm"
-                      variant="outline"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <a
-                        href={tool.website_url || tool.website || tool.info?.links?.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Visit Website
-                      </a>
-                    </Button>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </Link>

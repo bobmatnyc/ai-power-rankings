@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
+import { StatusIndicator } from "@/components/ui/status-indicator";
 import { NewsCard, type NewsItem } from "@/components/news/news-card";
 import { MetricHistory } from "@/types/database";
 
@@ -17,7 +18,7 @@ interface ToolDetail {
     id: string;
     name: string;
     category: string;
-    status: string;
+    status: 'active' | 'beta' | 'deprecated' | 'discontinued' | 'acquired';
     info: {
       company: {
         name: string;
@@ -126,15 +127,6 @@ export default function ToolDetailPage(): React.JSX.Element {
     }
   };
 
-  const getStatusBadge = (status: string): React.JSX.Element => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      active: "default",
-      beta: "secondary",
-      acquired: "destructive",
-      deprecated: "outline",
-    };
-    return <Badge variant={variants[status] || "outline"}>{status}</Badge>;
-  };
 
   if (loading) {
     return (
@@ -185,7 +177,7 @@ export default function ToolDetailPage(): React.JSX.Element {
               <h1 className="text-4xl font-bold mb-2">{tool.name}</h1>
               <div className="flex items-center gap-2">
                 <Badge className="capitalize">{tool.category.replace(/-/g, " ")}</Badge>
-                {getStatusBadge(tool.status)}
+                <StatusIndicator status={tool.status} showLabel />
                 {ranking && <Badge variant="outline">Rank #{ranking.rank}</Badge>}
               </div>
             </div>
