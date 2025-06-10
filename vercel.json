@@ -1,0 +1,16 @@
+{
+  "functions": {
+    "src/app/api/mcp/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/.well-known/oauth-authorization-server/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/no-auth/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/test-endpoint/route.ts": {
+      "maxDuration": 30
+    }
+  }
+}
