@@ -23,7 +23,6 @@ const eslintConfig = [
       "*.config.ts",
       "next-env.d.ts",
       "data/**",
-      "src/app/api/mcp/**",
     ],
     rules: {
       // TypeScript rules - more lenient for production

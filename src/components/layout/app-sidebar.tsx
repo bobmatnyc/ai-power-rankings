@@ -81,11 +81,21 @@ export function AppSidebar(): React.JSX.Element {
 
   const fetchCategories = async (): Promise<void> => {
     try {
-      const response = await fetch("/api/mcp/categories");
+      const response = await fetch("/api/tools");
       const data = await response.json();
 
+      // Extract categories from tools
+      const categoryMap: Record<string, number> = {};
+      data.tools?.forEach((tool: any) => {
+        if (tool.categories && Array.isArray(tool.categories)) {
+          tool.categories.forEach((category: string) => {
+            categoryMap[category] = (categoryMap[category] || 0) + 1;
+          });
+        }
+      });
+
       // Convert the object to array format
-      const categoryArray: Category[] = Object.entries(data).map(([id, count]) => ({
+      const categoryArray: Category[] = Object.entries(categoryMap).map(([id, count]) => ({
         id,
         name: id
           .split("-")
@@ -95,7 +105,7 @@ export function AppSidebar(): React.JSX.Element {
       }));
 
       // Calculate total
-      const total = categoryArray.reduce((sum, cat) => sum + cat.count, 0);
+      const total = data.tools?.length || 0;
 
       // Add "All Categories" at the beginning
       const allCategories = [

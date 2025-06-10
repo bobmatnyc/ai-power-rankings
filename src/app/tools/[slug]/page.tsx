@@ -18,7 +18,7 @@ interface ToolDetail {
     id: string;
     name: string;
     category: string;
-    status: 'active' | 'beta' | 'deprecated' | 'discontinued' | 'acquired';
+    status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";
     info: {
       company: {
         name: string;
@@ -127,7 +127,6 @@ export default function ToolDetailPage(): React.JSX.Element {
     }
   };
 
-
   if (loading) {
     return (
       <div className="container mx-auto p-8">
@@ -167,7 +166,7 @@ export default function ToolDetailPage(): React.JSX.Element {
 
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-4">
-            <ToolIcon 
+            <ToolIcon
               name={tool.name}
               domain={tool.info?.links?.website}
               size={64}
@@ -406,7 +405,9 @@ export default function ToolDetailPage(): React.JSX.Element {
           <div className="space-y-4">
             <div>
               <h3 className="text-lg font-semibold mb-2">Metric History</h3>
-              <p className="text-sm text-muted-foreground mb-4">Recent metrics that affect ranking scores</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Recent metrics that affect ranking scores
+              </p>
             </div>
             {metricHistory && metricHistory.length > 0 ? (
               <div className="space-y-4">
@@ -419,25 +420,19 @@ export default function ToolDetailPage(): React.JSX.Element {
                     tool_category: tool.category,
                     tool_website: tool.info?.links?.website,
                     event_date: history.published_date,
-                    event_type: 'update',
+                    event_type: "update",
                     title: `${history.source_name} Update`,
                     description: `New metrics reported for ${tool.name}`,
                     source_url: history.source_url || undefined,
                     source_name: history.source_name || undefined,
                     metrics: {
-                      users: history.scoring_metrics?.users as number | undefined,
-                      revenue: history.scoring_metrics?.monthly_arr as number | undefined,
+                      users: history.scoring_metrics?.["users"] as number | undefined,
+                      revenue: history.scoring_metrics?.["monthly_arr"] as number | undefined,
                       // Add other metrics as needed
                     },
                   };
-                  
-                  return (
-                    <NewsCard
-                      key={index}
-                      item={newsItem}
-                      showToolLink={false}
-                    />
-                  );
+
+                  return <NewsCard key={index} item={newsItem} showToolLink={false} />;
                 })}
               </div>
             ) : (

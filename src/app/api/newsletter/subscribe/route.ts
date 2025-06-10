@@ -1,14 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import { Resend } from 'resend';
-import crypto from 'crypto';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { Resend } from "resend";
+import crypto from "crypto";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabaseUrl = process.env["NEXT_PUBLIC_SUPABASE_URL"] || "";
+const supabaseKey = process.env["SUPABASE_SERVICE_ROLE_KEY"] || "";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || 'YOUR_TURNSTILE_SECRET_KEY';
+const resend = new Resend(process.env["RESEND_API_KEY"]);
+const TURNSTILE_SECRET_KEY = process.env["TURNSTILE_SECRET_KEY"] || "YOUR_TURNSTILE_SECRET_KEY";
 
 interface SubscribeRequest {
   firstName: string;
@@ -21,19 +21,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // Validate environment variables
     if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase environment variables');
-      return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
-      );
+      console.error("Missing Supabase environment variables");
+      return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
     }
 
-    if (!process.env.RESEND_API_KEY) {
-      console.error('Missing Resend API key');
-      return NextResponse.json(
-        { error: 'Email service configuration error' },
-        { status: 500 }
-      );
+    if (!process.env["RESEND_API_KEY"]) {
+      console.error("Missing Resend API key");
+      return NextResponse.json({ error: "Email service configuration error" }, { status: 500 });
     }
 
     const body: SubscribeRequest = await request.json();
@@ -41,11 +35,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Verify Turnstile token
     const turnstileResponse = await fetch(
-      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           secret: TURNSTILE_SECRET_KEY,
@@ -55,27 +49,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
 
     const turnstileData = await turnstileResponse.json();
-    
+
     if (!turnstileData.success) {
-      return NextResponse.json(
-        { error: 'Invalid captcha verification' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid captcha verification" }, { status: 400 });
     }
 
     // Check if email already exists
     const { data: existingSubscriber } = await supabase
-      .from('newsletter_subscriptions')
-      .select('*')
-      .eq('email', email)
+      .from("newsletter_subscriptions")
+      .select("*")
+      .eq("email", email)
       .single();
 
     if (existingSubscriber) {
-      if (existingSubscriber.status === 'verified') {
+      if (existingSubscriber.status === "verified") {
         return NextResponse.json({
           success: true,
-          message: 'You are already subscribed to our newsletter!',
-          alreadySubscribed: true
+          message: "You are already subscribed to our newsletter!",
+          alreadySubscribed: true,
         });
       }
       // If pending or unsubscribed, we'll resend verification email
@@ -86,41 +77,41 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Insert or update subscription
     const { error: dbError } = await supabase
-      .from('newsletter_subscriptions')
-      .upsert({
-        email,
-        first_name: firstName,
-        last_name: lastName,
-        status: existingSubscriber?.status || 'pending',
-        verification_token: verificationToken,
-      }, {
-        onConflict: 'email'
-      })
+      .from("newsletter_subscriptions")
+      .upsert(
+        {
+          email,
+          first_name: firstName,
+          last_name: lastName,
+          status: existingSubscriber?.status || "pending",
+          verification_token: verificationToken,
+        },
+        {
+          onConflict: "email",
+        }
+      )
       .select()
       .single();
 
     if (dbError) {
-      console.error('Database error details:', {
+      console.error("Database error details:", {
         error: dbError,
         message: dbError.message,
         details: dbError.details,
         hint: dbError.hint,
-        code: dbError.code
+        code: dbError.code,
       });
-      return NextResponse.json(
-        { error: 'Failed to save subscription' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to save subscription" }, { status: 500 });
     }
 
     // Generate verification URL
-    const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/newsletter/verify?token=${verificationToken}`;
+    const verificationUrl = `${process.env["NEXT_PUBLIC_BASE_URL"]}/api/newsletter/verify?token=${verificationToken}`;
 
     // Send verification email
     const { error: emailError } = await resend.emails.send({
-      from: 'AI Power Rankings <newsletter@aipowerranking.com>',
+      from: "AI Power Rankings <newsletter@aipowerranking.com>",
       to: email,
-      subject: 'Verify your subscription to AI Power Rankings',
+      subject: "Verify your subscription to AI Power Rankings",
       html: `
         <!DOCTYPE html>
         <html>
@@ -232,7 +223,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               <div class="container">
                 <div class="header">
                   <h1>
-                    <img src="${process.env.NEXT_PUBLIC_BASE_URL}/favicon.ico" alt="AI Power Rankings" class="crown-icon" />
+                    <img src="${process.env["NEXT_PUBLIC_BASE_URL"]}/favicon.ico" alt="AI Power Rankings" class="crown-icon" />
                     AI Power Rankings
                   </h1>
                 </div>
@@ -282,9 +273,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
                   <p style="margin: 0 0 8px 0;">If you didn't subscribe to AI Power Rankings, you can safely ignore this email.</p>
                   <p style="margin: 0 0 16px 0;">© 2025 AI Power Rankings. All rights reserved.</p>
                   <p style="margin: 0;">
-                    <a href="${process.env.NEXT_PUBLIC_BASE_URL}" class="link">Visit our website</a> | 
-                    <a href="${process.env.NEXT_PUBLIC_BASE_URL}/about" class="link">About us</a> | 
-                    <a href="${process.env.NEXT_PUBLIC_BASE_URL}/methodology" class="link">Our methodology</a>
+                    <a href="${process.env["NEXT_PUBLIC_BASE_URL"]}" class="link">Visit our website</a> | 
+                    <a href="${process.env["NEXT_PUBLIC_BASE_URL"]}/about" class="link">About us</a> | 
+                    <a href="${process.env["NEXT_PUBLIC_BASE_URL"]}/methodology" class="link">Our methodology</a>
                   </p>
                 </div>
               </div>
@@ -295,37 +286,33 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
 
     if (emailError) {
-      console.error('Resend email error details:', {
+      console.error("Resend email error details:", {
         error: emailError,
         message: emailError.message,
         name: emailError.name,
         statusCode: (emailError as { statusCode?: number }).statusCode,
         response: (emailError as { response?: unknown }).response,
-        resendApiKey: process.env.RESEND_API_KEY ? 'Set (length: ' + process.env.RESEND_API_KEY.length + ')' : 'Not set',
+        resendApiKey: process.env["RESEND_API_KEY"]
+          ? "Set (length: " + process.env["RESEND_API_KEY"].length + ")"
+          : "Not set",
         toEmail: email,
-        fromEmail: 'AI Power Rankings <newsletter@aipowerranking.com>'
+        fromEmail: "AI Power Rankings <newsletter@aipowerranking.com>",
       });
-      return NextResponse.json(
-        { error: 'Failed to send verification email' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to send verification email" }, { status: 500 });
     }
 
     // Different messages based on subscription status
-    const isResend = existingSubscriber && existingSubscriber.status !== 'verified';
-    
+    const isResend = existingSubscriber && existingSubscriber.status !== "verified";
+
     return NextResponse.json({
       success: true,
-      message: isResend 
-        ? 'We\'ve resent the verification email. Please check your inbox.' 
-        : 'Please check your email to verify your subscription',
-      resent: isResend
+      message: isResend
+        ? "We've resent the verification email. Please check your inbox."
+        : "Please check your email to verify your subscription",
+      resent: isResend,
     });
   } catch (error) {
-    console.error('Subscribe error:', error);
-    return NextResponse.json(
-      { error: 'An unexpected error occurred' },
-      { status: 500 }
-    );
+    console.error("Subscribe error:", error);
+    return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
   }
 }
