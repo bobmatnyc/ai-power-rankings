@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ToolIcon } from "@/components/ui/tool-icon";
 
 interface Tool {
   id: string;
@@ -20,7 +21,13 @@ interface Tool {
   status: string;
   description?: string;
   website?: string;
+  website_url?: string;
   github_url?: string;
+  info?: {
+    links?: {
+      website?: string;
+    };
+  };
 }
 
 export default function ToolsPage(): React.JSX.Element {
@@ -141,12 +148,20 @@ export default function ToolsPage(): React.JSX.Element {
           <Link key={tool.id} href={`/tools/${tool.id}`} className="block">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <CardTitle className="text-xl">{tool.name}</CardTitle>
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <ToolIcon
+                      name={tool.name}
+                      domain={tool.website_url || tool.website || tool.info?.links?.website}
+                      size={48}
+                      className="flex-shrink-0"
+                    />
+                    <CardTitle className="text-xl">{tool.name}</CardTitle>
+                  </div>
                   {getStatusBadge(tool.status)}
                 </div>
                 <CardDescription>
-                  <div 
+                  <div
                     onClick={(e) => {
                       e.preventDefault();
                       window.location.href = `/rankings?category=${tool.category}`;
@@ -165,17 +180,17 @@ export default function ToolsPage(): React.JSX.Element {
                   {tool.description ||
                     "AI-powered coding assistant helping developers write better code faster."}
                 </p>
-                {tool.website && (
+                {(tool.website_url || tool.website || tool.info?.links?.website) && (
                   <div className="flex gap-2">
-                    <Button 
-                      asChild 
-                      size="sm" 
+                    <Button
+                      asChild
+                      size="sm"
                       variant="outline"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <a 
-                        href={tool.website} 
-                        target="_blank" 
+                      <a
+                        href={tool.website_url || tool.website || tool.info?.links?.website}
+                        target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                       >
