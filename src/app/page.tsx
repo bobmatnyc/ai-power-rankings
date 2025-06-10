@@ -109,62 +109,81 @@ export default function Home(): React.JSX.Element {
       {/* Top 3 Preview */}
       <section className="container mx-auto px-4 py-16">
         <div className="mx-auto max-w-4xl">
-          <h2 className="mb-8 text-center text-3xl font-bold">Top 3 AI Coding Tools</h2>
+          <div className="text-center mb-8">
+            <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">
+              Current Leaders
+            </Badge>
+            <h2 className="text-3xl font-bold">Top 3 AI Coding Tools</h2>
+          </div>
 
           {loading ? (
             <div className="text-center text-muted-foreground">Loading rankings...</div>
           ) : (
             <div className="space-y-6">
               {topRankings.map((ranking) => (
-                <Card key={ranking.tool.id} className="overflow-hidden hover:shadow-lg transition-shadow animate-scale-in">
-                  <CardHeader>
+                <Card key={ranking.tool.id} className="group overflow-hidden hover:shadow-lg transition-all duration-200 border-border/50 hover:border-primary/20 animate-scale-in">
+                  <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="flex items-center gap-2 text-2xl">
-                          <span className="text-3xl">{getMedal(ranking.rank)}</span>
-                          <Link href={`/tools/${ranking.tool.id}`} className="hover:underline">
-                            {ranking.tool.name}
-                          </Link>
-                        </CardTitle>
-                        <CardDescription className="mt-1">
-                          <Badge variant="secondary" className="mr-2">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center">
+                          <span className="text-white font-bold text-lg">{ranking.tool.name.slice(0, 2).toUpperCase()}</span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                            <Link href={`/tools/${ranking.tool.id}`} className="hover:underline">
+                              {ranking.tool.name}
+                            </Link>
+                          </CardTitle>
+                          <CardDescription className="text-sm text-muted-foreground">
                             {ranking.tool.category.replace("-", " ")}
-                          </Badge>
-                          Overall Score:{" "}
-                          {ranking.scores?.overall ? `${ranking.scores.overall.toFixed(2)}/10` : ""}
-                        </CardDescription>
+                          </CardDescription>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+                          <span className="text-2xl mr-1">{getMedal(ranking.rank)}</span>
+                          #{ranking.rank}
+                        </Badge>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Agentic Capability</p>
-                        <p className="text-lg font-semibold">
-                          {ranking.scores?.agentic_capability
-                            ? `${ranking.scores.agentic_capability.toFixed(1)}/10`
-                            : "-"}
-                        </p>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap gap-2">
+                        <Badge className="bg-primary/10 text-primary">
+                          {ranking.tool.category.replace("-", " ")}
+                        </Badge>
+                        {ranking.scores?.overall && (
+                          <Badge variant="outline">
+                            Score: {ranking.scores.overall.toFixed(1)}/10
+                          </Badge>
+                        )}
+                        {ranking.metrics.swe_bench_score && (
+                          <Badge variant="outline">
+                            SWE-bench: {ranking.metrics.swe_bench_score.toFixed(1)}%
+                          </Badge>
+                        )}
                       </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Innovation Score</p>
-                        <p className="text-lg font-semibold">
-                          {ranking.scores?.innovation
-                            ? `${ranking.scores.innovation.toFixed(1)}/10`
-                            : "-"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Key Metric</p>
-                        <p className="text-lg font-semibold">
-                          {ranking.metrics.users
-                            ? formatMetric(ranking.metrics.users, "users")
-                            : ranking.metrics.monthly_arr
-                              ? formatMetric(ranking.metrics.monthly_arr, "arr")
-                              : ranking.metrics.swe_bench_score
-                                ? formatMetric(ranking.metrics.swe_bench_score, "percentage")
-                                : "-"}
-                        </p>
+                      
+                      <div className="flex items-center justify-between pt-2">
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <span className="flex items-center space-x-1">
+                            <span className="w-2 h-2 bg-primary rounded-full"></span>
+                            <span>Agentic: {ranking.scores?.agentic_capability?.toFixed(1) || "-"}</span>
+                          </span>
+                          <span className="flex items-center space-x-1">
+                            <span className="w-2 h-2 bg-secondary rounded-full"></span>
+                            <span>Innovation: {ranking.scores?.innovation?.toFixed(1) || "-"}</span>
+                          </span>
+                        </div>
+                        
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href={`/tools/${ranking.tool.id}`}>
+                              View Details
+                            </Link>
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -182,20 +201,25 @@ export default function Home(): React.JSX.Element {
       </section>
 
       {/* Newsletter Signup */}
-      <section className="bg-muted/50 py-16">
+      <section className="bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 py-16">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="mb-4 text-3xl font-bold">Stay Updated</h2>
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              Weekly Updates
+            </Badge>
+            <h2 className="mb-4 text-3xl font-bold">Stay Ahead of the Curve</h2>
             <p className="mb-6 text-muted-foreground">
-              Get weekly updates on AI coding tool rankings and industry insights
+              Get weekly updates on AI coding tool rankings, new releases, and industry insights
             </p>
             <form className="flex flex-col gap-3 sm:flex-row sm:justify-center">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:max-w-sm"
+                className="flex h-11 w-full rounded-md border border-input bg-background px-4 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:max-w-sm"
               />
-              <Button type="submit">Subscribe</Button>
+              <Button type="submit" size="lg" className="gradient-primary hover:opacity-90 transition-opacity">
+                Subscribe
+              </Button>
             </form>
           </div>
         </div>
@@ -273,23 +297,66 @@ export default function Home(): React.JSX.Element {
 
 
       {/* Footer */}
-      <footer className="border-t py-8">
+      <footer className="border-t border-border/50 bg-muted/30 py-12">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <p className="text-sm text-muted-foreground">
-              © 2025 AI Power Rankings. Data-driven insights for the AI coding revolution.
-            </p>
-            <div className="flex gap-4">
-              <Link href="/rankings" className="text-sm hover:underline">
-                Rankings
-              </Link>
-              <Link href="/methodology" className="text-sm hover:underline">
-                Methodology
-              </Link>
-              <Link href="/about" className="text-sm hover:underline">
-                About
-              </Link>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-9 h-9 bg-gradient-primary rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">AI</span>
+                </div>
+                <div>
+                  <h3 className="font-bold">AI Power Rankings</h3>
+                  <p className="text-xs text-muted-foreground">Data-driven insights for the AI revolution</p>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground max-w-md">
+                Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay,
+                platform risk modifiers, and revenue quality adjustments.
+              </p>
             </div>
+            
+            <div>
+              <h4 className="font-semibold mb-3">Quick Links</h4>
+              <div className="space-y-2">
+                <Link href="/rankings" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Rankings
+                </Link>
+                <Link href="/methodology" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Methodology
+                </Link>
+                <Link href="/tools" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Tools Directory
+                </Link>
+                <Link href="/about" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  About
+                </Link>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold mb-3">Categories</h4>
+              <div className="space-y-2">
+                <Link href="/rankings?category=code-assistant" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Code Assistants
+                </Link>
+                <Link href="/rankings?category=ai-editor" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  AI Editors
+                </Link>
+                <Link href="/rankings?category=code-review" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Code Review
+                </Link>
+                <Link href="/rankings?category=autonomous-agent" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Autonomous Agents
+                </Link>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-8 pt-8 border-t border-border/50">
+            <p className="text-center text-sm text-muted-foreground">
+              © 2025 AI Power Rankings. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

@@ -26,12 +26,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container mx-auto flex h-14 items-center px-4">
-            <Navigation />
-          </div>
-        </nav>
-        {children}
+        <div className="min-h-screen bg-background">
+          <nav className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border/50">
+            <div className="container mx-auto flex h-16 items-center px-4">
+              <Navigation />
+            </div>
+          </nav>
+          <main className="flex-1">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );
