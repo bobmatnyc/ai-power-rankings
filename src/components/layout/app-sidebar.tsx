@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Sidebar } from "@/components/ui/sidebar";
+import { Sidebar, useSidebar } from "@/components/ui/sidebar";
 import { Home, List, TrendingUp, Filter, Newspaper, FlaskConical, Info, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -64,8 +64,15 @@ const tagFilters = [
 export function AppSidebar(): React.JSX.Element {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { isMobile, setOpenMobile } = useSidebar();
   const currentCategory = searchParams.get('category') || 'all';
   const currentTags = searchParams.get('tags')?.split(',') || [];
+
+  const handleNavClick = (): void => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   const createFilterUrl = (type: string, value: string): string => {
     const params = new URLSearchParams(searchParams.toString());
@@ -95,7 +102,7 @@ export function AppSidebar(): React.JSX.Element {
   return (
     <Sidebar>
       <div className="p-6 h-full overflow-y-auto">
-        <Link href="/" className="flex items-center space-x-3 mb-6">
+        <Link href="/" onClick={handleNavClick} className="flex items-center space-x-3 mb-6">
           <div className="w-9 h-9 bg-gradient-primary rounded-lg flex items-center justify-center shadow-sm">
             <span className="text-white font-bold text-sm">AI</span>
           </div>
@@ -116,6 +123,7 @@ export function AppSidebar(): React.JSX.Element {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={handleNavClick}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors",
                     pathname === item.href
@@ -140,6 +148,7 @@ export function AppSidebar(): React.JSX.Element {
             <nav className="space-y-1">
               <Link
                 href="/rankings?sort=trending"
+                onClick={handleNavClick}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors",
                   pathname === "/rankings" && searchParams.get("sort") === "trending"
@@ -165,6 +174,7 @@ export function AppSidebar(): React.JSX.Element {
                 <Link
                   key={category.id}
                   href={createFilterUrl('category', category.id)}
+                  onClick={handleNavClick}
                   className={cn(
                     "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors",
                     currentCategory === category.id
@@ -192,7 +202,10 @@ export function AppSidebar(): React.JSX.Element {
               {tagFilters.map((tag) => (
                 <button
                   key={tag.id}
-                  onClick={() => window.location.href = createFilterUrl('tag', tag.id)}
+                  onClick={() => {
+                    window.location.href = createFilterUrl('tag', tag.id);
+                    handleNavClick();
+                  }}
                   className={cn(
                     "w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors text-left",
                     currentTags.includes(tag.id)
@@ -219,7 +232,7 @@ export function AppSidebar(): React.JSX.Element {
               className="w-full"
               asChild
             >
-              <Link href="/rankings">
+              <Link href="/rankings" onClick={handleNavClick}>
                 <Filter className="h-4 w-4 mr-2" />
                 Clear Filters
               </Link>
