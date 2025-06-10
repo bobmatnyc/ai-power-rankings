@@ -18,10 +18,16 @@ export function Navigation(): React.ReactElement {
     <>
       {/* Desktop Navigation */}
       <div className="mr-4 hidden md:flex">
-        <Link href="/" className="mr-6 flex items-center space-x-2 group">
-          <span className="hidden font-bold sm:inline-block group-hover:text-primary transition-colors">
-            AI <span className="text-gradient">Power Rankings</span>
-          </span>
+        <Link href="/" className="mr-6 flex items-center space-x-3 group">
+          <div className="w-9 h-9 bg-gradient-primary rounded-lg flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+            <span className="text-white font-bold text-sm">AI</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-foreground group-hover:text-primary transition-colors">
+              AI <span className="text-gradient">Power Rankings</span>
+            </span>
+            <span className="text-xs text-muted-foreground">Discover the best AI tools</span>
+          </div>
         </Link>
         <nav className="flex items-center space-x-6 text-sm font-medium">
           {navItems.map((item) => (
@@ -29,10 +35,11 @@ export function Navigation(): React.ReactElement {
               key={item.href}
               href={item.href}
               className={cn(
-                "transition-colors hover:text-foreground/80",
+                "relative px-3 py-2 transition-colors hover:text-foreground",
                 pathname === item.href || pathname.startsWith(`${item.href}/`)
-                  ? "text-foreground"
-                  : "text-foreground/60"
+                  ? "text-foreground font-semibold"
+                  : "text-foreground/60",
+                pathname === item.href && "after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:rounded-full"
               )}
             >
               {item.label}
