@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Only apply to /api/mcp routes
-  if (request.nextUrl.pathname.startsWith('/api/mcp')) {
+  const pathname = request.nextUrl.pathname;
+  
+  // Apply to /api/mcp routes and OAuth routes
+  if (pathname.startsWith('/api/mcp') || 
+      pathname === '/.well-known/oauth-authorization-server' ||
+      pathname === '/register') {
     // Clone the response
     const response = NextResponse.next();
 
@@ -24,5 +28,9 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/api/mcp/:path*'
+  matcher: [
+    '/api/mcp/:path*',
+    '/.well-known/oauth-authorization-server',
+    '/register'
+  ]
 };

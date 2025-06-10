@@ -7,11 +7,21 @@ export async function GET(request: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${request.headers.get('host')}`;
   const isDevelopment = process.env.NODE_ENV === 'development' || process.env.ENABLE_DEV_MODE === 'true';
   
+  // If in dev mode, return minimal response for Claude.ai
+  if (isDevelopment) {
+    return NextResponse.json({
+      status: 'AI Power Rankings MCP API',
+      version: '1.0.0',
+      authentication: 'none',
+      description: 'Development mode - no authentication required'
+    });
+  }
+  
   return NextResponse.json({
     status: 'AI Power Rankings MCP API',
     version: '1.0.0',
-    authentication: isDevelopment ? 'none (development mode)' : 'OAuth 2.0',
-    oauth_discovery: isDevelopment ? null : `${baseUrl}/.well-known/oauth-authorization-server`,
+    authentication: 'OAuth 2.0',
+    oauth_discovery: `${baseUrl}/.well-known/oauth-authorization-server`,
     endpoints: {
       public: {
         'GET /api/mcp/rankings': 'Get current rankings',
