@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Catch-all route to see what Claude.ai is trying to access
-export async function GET(request: NextRequest, { params }: { params: { path: string[] } }) {
-  const path = params.path.join('/');
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> }
+) {
+  const resolvedParams = await params;
+  const path = resolvedParams.path.join('/');
   console.log('Claude.ai tried to access:', path);
   console.log('Headers:', Object.fromEntries(request.headers.entries()));
   
@@ -13,15 +17,19 @@ export async function GET(request: NextRequest, { params }: { params: { path: st
   }, { status: 404 });
 }
 
-export async function POST(request: NextRequest, { params }: { params: { path: string[] } }) {
-  const path = params.path.join('/');
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> }
+) {
+  const resolvedParams = await params;
+  const path = resolvedParams.path.join('/');
   console.log('Claude.ai POST to:', path);
   console.log('Headers:', Object.fromEntries(request.headers.entries()));
   
   try {
     const body = await request.json();
     console.log('Body:', body);
-  } catch (e) {
+  } catch {
     console.log('No JSON body');
   }
   
