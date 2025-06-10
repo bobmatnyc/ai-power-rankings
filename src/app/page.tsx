@@ -81,18 +81,21 @@ export default function Home(): React.JSX.Element {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-background to-muted/20">
-        <div className="container mx-auto px-4 py-24 md:py-32">
-          <div className="mx-auto max-w-4xl text-center">
+      <section className="relative overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5" />
+        
+        <div className="relative container mx-auto px-4 py-24 md:py-32">
+          <div className="mx-auto max-w-4xl text-center animate-fade-in">
             <h1 className="mb-6 text-5xl font-bold tracking-tight md:text-6xl lg:text-7xl">
-              AI Power Rankings
+              AI <span className="text-gradient">Power Rankings</span>
             </h1>
             <p className="mb-8 text-xl text-muted-foreground md:text-2xl">
               Data-driven rankings of AI coding tools using Algorithm v6.0 with innovation decay,
               platform risk modifiers, and revenue quality adjustments
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" asChild>
+              <Button size="lg" className="gradient-primary hover:opacity-90 transition-opacity" asChild>
                 <Link href="/rankings">View Full Rankings</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
@@ -113,7 +116,7 @@ export default function Home(): React.JSX.Element {
           ) : (
             <div className="space-y-6">
               {topRankings.map((ranking) => (
-                <Card key={ranking.tool.id} className="overflow-hidden">
+                <Card key={ranking.tool.id} className="overflow-hidden hover:shadow-lg transition-shadow animate-scale-in">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div>
@@ -204,9 +207,11 @@ export default function Home(): React.JSX.Element {
           <h2 className="mb-8 text-center text-3xl font-bold">Our Methodology</h2>
 
           <div className="grid gap-6 md:grid-cols-2">
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle>Algorithm v6.0</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-primary">Algorithm v6.0</span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="mb-4 text-muted-foreground">
@@ -230,9 +235,11 @@ export default function Home(): React.JSX.Element {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle>Key Modifiers</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-secondary">Key Modifiers</span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="mb-4 text-muted-foreground">

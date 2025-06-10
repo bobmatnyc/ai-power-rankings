@@ -18,8 +18,10 @@ export function Navigation(): React.ReactElement {
     <>
       {/* Desktop Navigation */}
       <div className="mr-4 hidden md:flex">
-        <Link href="/" className="mr-6 flex items-center space-x-2">
-          <span className="hidden font-bold sm:inline-block">AI Power Rankings</span>
+        <Link href="/" className="mr-6 flex items-center space-x-2 group">
+          <span className="hidden font-bold sm:inline-block group-hover:text-primary transition-colors">
+            AI <span className="text-gradient">Power Rankings</span>
+          </span>
         </Link>
         <nav className="flex items-center space-x-6 text-sm font-medium">
           {navItems.map((item) => (
@@ -43,7 +45,7 @@ export function Navigation(): React.ReactElement {
       <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
         <div className="w-full flex-1 md:w-auto md:flex-none">
           <Link href="/" className="inline-flex md:hidden">
-            <span className="font-bold">AI Power Rankings</span>
+            <span className="font-bold">AI <span className="text-gradient">Power Rankings</span></span>
           </Link>
         </div>
       </div>
