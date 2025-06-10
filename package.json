@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
+    "@marsidev/react-turnstile": "^1.1.0",
     "@octokit/rest": "^22.0.0",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
@@ -58,6 +59,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.57.0",
     "recharts": "^2.15.3",
+    "resend": "^4.5.2",
     "tailwind-merge": "^3.3.0",
     "zod": "^3.25.56"
   },
