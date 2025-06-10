@@ -44,7 +44,7 @@ export default function AboutPage(): React.JSX.Element {
             clear, actionable insights based on real performance metrics and comprehensive analysis.
           </p>
           <div className="mt-6">
-            <Button onClick={() => setNewsletterOpen(true)}>Sign Up for Updates</Button>
+            <Button onClick={() => setNewsletterOpen(true)}>Subscribe To Updates</Button>
           </div>
         </CardContent>
       </Card>
