@@ -31,12 +31,7 @@ const eslintConfig = [
         argsIgnorePattern: "^_",
         varsIgnorePattern: "^_"
       }],
-      "@typescript-eslint/explicit-function-return-type": ["warn", {
-        allowExpressions: true,
-        allowTypedFunctionExpressions: true,
-        allowHigherOrderFunctions: true,
-        allowDirectConstAssertionInArrowFunctions: true,
-      }],
+      "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/no-non-null-assertion": "error",
       
       // React/Next.js rules
@@ -45,7 +40,7 @@ const eslintConfig = [
       "react-hooks/exhaustive-deps": "error",
       
       // General code quality
-      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "no-console": ["warn", { allow: ["log", "warn", "error"] }],
       "no-debugger": "error",
       "no-alert": "error",
       "prefer-const": "error",
