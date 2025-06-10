@@ -18,7 +18,7 @@ interface Tool {
   id: string;
   name: string;
   category: string;
-  status: 'active' | 'beta' | 'deprecated' | 'discontinued' | 'acquired';
+  status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";
   description?: string;
   website?: string;
   website_url?: string;
@@ -83,7 +83,6 @@ export default function ToolsPage(): React.JSX.Element {
     return colors[category] || "bg-gray-500";
   };
 
-
   if (loading) {
     return (
       <div className="container mx-auto p-8">
@@ -95,7 +94,7 @@ export default function ToolsPage(): React.JSX.Element {
   }
 
   return (
-    <div className="container mx-auto p-8 max-w-7xl">
+    <div className="container mx-auto p-4 md:p-8 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">AI Coding Tools Directory</h1>

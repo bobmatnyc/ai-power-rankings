@@ -3,7 +3,7 @@ import NewsContent from "@/components/news/news-content";
 
 export default function NewsPage(): React.JSX.Element {
   return (
-    <div className="px-6 py-8 max-w-4xl mx-auto">
+    <div className="px-3 md:px-6 py-8 max-w-4xl mx-auto">
       <Suspense
         fallback={
           <div className="flex items-center justify-center h-64">

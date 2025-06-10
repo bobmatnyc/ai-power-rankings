@@ -87,10 +87,8 @@ function SidebarContent(): React.JSX.Element {
       // Extract categories from tools
       const categoryMap: Record<string, number> = {};
       data.tools?.forEach((tool: any) => {
-        if (tool.categories && Array.isArray(tool.categories)) {
-          tool.categories.forEach((category: string) => {
-            categoryMap[category] = (categoryMap[category] || 0) + 1;
-          });
+        if (tool.category) {
+          categoryMap[tool.category] = (categoryMap[tool.category] || 0) + 1;
         }
       });
 

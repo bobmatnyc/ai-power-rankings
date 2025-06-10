@@ -104,8 +104,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: "Failed to save subscription" }, { status: 500 });
     }
 
-    // Generate verification URL
-    const verificationUrl = `${process.env["NEXT_PUBLIC_BASE_URL"]}/api/newsletter/verify?token=${verificationToken}`;
+    // Generate verification URL - use the request URL to get the correct base URL
+    const baseUrl =
+      process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
+        ? `https://${process.env["VERCEL_URL"]}`
+        : new URL(request.url).origin;
+    const verificationUrl = `${baseUrl}/api/newsletter/verify/${verificationToken}`;
 
     // Send verification email
     const { error: emailError } = await resend.emails.send({
@@ -223,7 +227,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               <div class="container">
                 <div class="header">
                   <h1>
-                    <img src="${process.env["NEXT_PUBLIC_BASE_URL"]}/favicon.ico" alt="AI Power Rankings" class="crown-icon" />
+                    <img src="${baseUrl}/favicon.ico" alt="AI Power Rankings" class="crown-icon" />
                     AI Power Rankings
                   </h1>
                 </div>
@@ -273,9 +277,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
                   <p style="margin: 0 0 8px 0;">If you didn't subscribe to AI Power Rankings, you can safely ignore this email.</p>
                   <p style="margin: 0 0 16px 0;">© 2025 AI Power Rankings. All rights reserved.</p>
                   <p style="margin: 0;">
-                    <a href="${process.env["NEXT_PUBLIC_BASE_URL"]}" class="link">Visit our website</a> | 
-                    <a href="${process.env["NEXT_PUBLIC_BASE_URL"]}/about" class="link">About us</a> | 
-                    <a href="${process.env["NEXT_PUBLIC_BASE_URL"]}/methodology" class="link">Our methodology</a>
+                    <a href="${baseUrl}" class="link">Visit our website</a> | 
+                    <a href="${baseUrl}/about" class="link">About us</a> | 
+                    <a href="${baseUrl}/methodology" class="link">Our methodology</a>
                   </p>
                 </div>
               </div>

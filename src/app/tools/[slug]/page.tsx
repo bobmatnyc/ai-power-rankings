@@ -129,7 +129,7 @@ export default function ToolDetailPage(): React.JSX.Element {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-8">
+      <div className="container mx-auto p-4 md:p-8">
         <div className="flex items-center justify-center h-64">
           <p className="text-muted-foreground">Loading tool details...</p>
         </div>
@@ -139,7 +139,7 @@ export default function ToolDetailPage(): React.JSX.Element {
 
   if (!toolData) {
     return (
-      <div className="container mx-auto p-8">
+      <div className="container mx-auto p-4 md:p-8">
         <div className="flex flex-col items-center justify-center h-64">
           <p className="text-muted-foreground mb-4">Tool not found</p>
           <Button asChild>
@@ -153,7 +153,7 @@ export default function ToolDetailPage(): React.JSX.Element {
   const { tool, ranking, metrics, metricHistory } = toolData;
 
   return (
-    <div className="container mx-auto p-8 max-w-6xl">
+    <div className="container mx-auto p-4 md:p-8 max-w-6xl">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
@@ -164,7 +164,12 @@ export default function ToolDetailPage(): React.JSX.Element {
           <span>{tool.name}</span>
         </div>
 
-        <div className="flex items-start justify-between">
+        {/* Category Badge - Centered on mobile */}
+        <div className="mb-4 md:hidden flex justify-center">
+          <Badge className="capitalize px-4 py-1 text-xs">{tool.category.replace(/-/g, " ")}</Badge>
+        </div>
+
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between">
           <div className="flex items-start gap-4">
             <ToolIcon
               name={tool.name}
@@ -173,16 +178,19 @@ export default function ToolDetailPage(): React.JSX.Element {
               className="flex-shrink-0 mt-1"
             />
             <div>
-              <h1 className="text-4xl font-bold mb-2">{tool.name}</h1>
-              <div className="flex items-center gap-2">
-                <Badge className="capitalize">{tool.category.replace(/-/g, " ")}</Badge>
+              <h1 className="text-2xl md:text-4xl font-bold mb-2">{tool.name}</h1>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge className="capitalize hidden md:inline-flex">
+                  {tool.category.replace(/-/g, " ")}
+                </Badge>
                 <StatusIndicator status={tool.status} showLabel />
                 {ranking && <Badge variant="outline">Rank #{ranking.rank}</Badge>}
               </div>
             </div>
           </div>
 
-          <div className="flex gap-2">
+          {/* Desktop buttons */}
+          <div className="hidden md:flex gap-2">
             {tool.info?.links?.website && (
               <Button asChild>
                 <a href={tool.info.links.website} target="_blank" rel="noopener noreferrer">
@@ -243,11 +251,19 @@ export default function ToolDetailPage(): React.JSX.Element {
 
       {/* Detailed Information Tabs */}
       <Tabs defaultValue="performance" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="metrics">Business Metrics</TabsTrigger>
-          <TabsTrigger value="scores">Ranking Scores</TabsTrigger>
-          <TabsTrigger value="history">Metric History</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
+          <TabsTrigger value="performance" className="text-xs md:text-sm">
+            Performance
+          </TabsTrigger>
+          <TabsTrigger value="metrics" className="text-xs md:text-sm">
+            Business
+          </TabsTrigger>
+          <TabsTrigger value="scores" className="text-xs md:text-sm">
+            Scores
+          </TabsTrigger>
+          <TabsTrigger value="history" className="text-xs md:text-sm">
+            History
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="performance" className="space-y-4">
@@ -447,6 +463,24 @@ export default function ToolDetailPage(): React.JSX.Element {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Mobile Visit Site button - centered below content */}
+      <div className="mt-8 flex flex-col items-center gap-3 md:hidden">
+        {tool.info?.links?.website && (
+          <Button asChild size="lg" className="w-full max-w-xs">
+            <a href={tool.info.links.website} target="_blank" rel="noopener noreferrer">
+              Visit Website
+            </a>
+          </Button>
+        )}
+        {tool.info?.links?.github && (
+          <Button variant="outline" asChild size="lg" className="w-full max-w-xs">
+            <a href={tool.info.links.github} target="_blank" rel="noopener noreferrer">
+              View on GitHub
+            </a>
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
