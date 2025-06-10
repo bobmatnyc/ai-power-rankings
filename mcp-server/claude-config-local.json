@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "ai-power-rankings": {
-      "command": "node",
-      "args": ["/Users/masa/Projects/ai-power-rankings/mcp-server/dist/index.js"],
-      "env": {}
-    }
-  }
-}

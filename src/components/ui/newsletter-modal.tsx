@@ -19,7 +19,8 @@ interface NewsletterModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAABglXFXbgAmdRz-H";
+const TURNSTILE_SITE_KEY =
+  process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABglXFXbgAmdRz-H";
 
 export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): React.JSX.Element {
   const [firstName, setFirstName] = useState("");
@@ -35,12 +36,12 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setError("");
-    
+
     if (!turnstileToken) {
       setError("Please complete the security check");
       return;
     }
-    
+
     setIsSubmitting(true);
 
     try {
@@ -62,11 +63,11 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
       if (!response.ok) {
         throw new Error(data.error || "Failed to subscribe");
       }
-      
+
       // Show success message
       setSuccessMessage(data.message || "Please check your email to verify your subscription");
       setIsSubmitted(true);
-      
+
       // Close modal after longer delay for already subscribed
       const delay = data.alreadySubscribed ? 2000 : 3000;
       setTimeout(() => {
@@ -114,14 +115,12 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
             Get weekly updates on AI tool rankings, new features, and industry insights.
           </DialogDescription>
         </DialogHeader>
-        
+
         {isSubmitted ? (
           <div className="py-8 text-center">
             <div className="text-4xl mb-4">✓</div>
             <p className="text-lg font-medium">Thank you!</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              {successMessage}
-            </p>
+            <p className="text-sm text-muted-foreground mt-2">{successMessage}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -163,7 +162,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                 />
               </div>
             </div>
-            
+
             {/* Turnstile CAPTCHA */}
             <div className="flex justify-center">
               <Turnstile
@@ -178,20 +177,16 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                 }}
               />
             </div>
-            
+
             {error && (
               <div className="flex items-center gap-2 text-sm text-destructive">
                 <AlertCircle className="h-4 w-4" />
                 <span>{error}</span>
               </div>
             )}
-            
+
             <div className="flex gap-3 pt-4">
-              <Button
-                type="submit"
-                className="flex-1"
-                disabled={isSubmitting || !turnstileToken}
-              >
+              <Button type="submit" className="flex-1" disabled={isSubmitting || !turnstileToken}>
                 {isSubmitting ? "Subscribing..." : "Subscribe"}
               </Button>
               <Button
@@ -203,7 +198,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                 Cancel
               </Button>
             </div>
-            
+
             <p className="text-xs text-muted-foreground text-center">
               We respect your privacy. Unsubscribe at any time.
             </p>
