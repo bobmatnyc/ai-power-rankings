@@ -1,0 +1,101 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "AI Power Rankings API",
+    "version": "1.0.0",
+    "description": "API for accessing AI coding tool rankings and metrics"
+  },
+  "servers": [
+    {
+      "url": "https://aipowerranking.com/api/mcp"
+    }
+  ],
+  "paths": {
+    "/rankings": {
+      "get": {
+        "summary": "Get current AI tool rankings",
+        "operationId": "getRankings",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by category"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 15
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "period": { "type": "string" },
+                    "rankings": { "type": "array" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/{id}": {
+      "get": {
+        "summary": "Get tool details",
+        "operationId": "getToolDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool details"
+          }
+        }
+      }
+    },
+    "/search": {
+      "post": {
+        "summary": "Search tools",
+        "operationId": "searchTools",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results"
+          }
+        }
+      }
+    }
+  }
+}
