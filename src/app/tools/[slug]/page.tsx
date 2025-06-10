@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { ToolIcon } from "@/components/ui/tool-icon";
+import { StatusIndicator } from "@/components/ui/status-indicator";
+import { NewsCard, type NewsItem } from "@/components/news/news-card";
 import { MetricHistory } from "@/types/database";
 
 interface ToolDetail {
@@ -15,7 +18,7 @@ interface ToolDetail {
     id: string;
     name: string;
     category: string;
-    status: string;
+    status: 'active' | 'beta' | 'deprecated' | 'discontinued' | 'acquired';
     info: {
       company: {
         name: string;
@@ -124,15 +127,6 @@ export default function ToolDetailPage(): React.JSX.Element {
     }
   };
 
-  const getStatusBadge = (status: string): React.JSX.Element => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      active: "default",
-      beta: "secondary",
-      acquired: "destructive",
-      deprecated: "outline",
-    };
-    return <Badge variant={variants[status] || "outline"}>{status}</Badge>;
-  };
 
   if (loading) {
     return (
@@ -172,12 +166,20 @@ export default function ToolDetailPage(): React.JSX.Element {
         </div>
 
         <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">{tool.name}</h1>
-            <div className="flex items-center gap-2">
-              <Badge className="capitalize">{tool.category.replace(/-/g, " ")}</Badge>
-              {getStatusBadge(tool.status)}
-              {ranking && <Badge variant="outline">Rank #{ranking.rank}</Badge>}
+          <div className="flex items-start gap-4">
+            <ToolIcon 
+              name={tool.name}
+              domain={tool.info?.links?.website}
+              size={64}
+              className="flex-shrink-0 mt-1"
+            />
+            <div>
+              <h1 className="text-4xl font-bold mb-2">{tool.name}</h1>
+              <div className="flex items-center gap-2">
+                <Badge className="capitalize">{tool.category.replace(/-/g, " ")}</Badge>
+                <StatusIndicator status={tool.status} showLabel />
+                {ranking && <Badge variant="outline">Rank #{ranking.rank}</Badge>}
+              </div>
             </div>
           </div>
 
@@ -401,99 +403,55 @@ export default function ToolDetailPage(): React.JSX.Element {
         </TabsContent>
 
         <TabsContent value="history" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Metric History</CardTitle>
-              <CardDescription>Recent metrics that affect ranking scores</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {metricHistory && metricHistory.length > 0 ? (
-                <div className="space-y-4">
-                  {metricHistory.map((history, index) => (
-                    <div key={index} className="border rounded-lg p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="font-medium">{history.source_name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {new Date(history.published_date).toLocaleDateString()}
-                          </p>
-                        </div>
-                        {history.source_url && history.source_url.trim() !== "" && (
-                          <Button variant="ghost" size="sm" asChild>
-                            <a
-                              href={history.source_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="hover:underline"
-                            >
-                              Source →
-                            </a>
-                          </Button>
-                        )}
-                      </div>
-
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-                        {Object.entries(history.scoring_metrics || {}).map(([key, metric]) => (
-                          <div key={key} className="text-sm">
-                            <p className="text-muted-foreground capitalize">
-                              {key === "monthly_arr" ? "ARR (Monthly)" : key.replace(/_/g, " ")}
-                            </p>
-                            <p className="font-medium">
-                              {typeof metric === "object" && metric.value !== undefined
-                                ? formatMetricValue(key, metric.value)
-                                : formatMetricValue(key, metric)}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center text-muted-foreground py-8">
-                  No metric history available for this tool.
-                </p>
-              )}
-            </CardContent>
-          </Card>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Metric History</h3>
+              <p className="text-sm text-muted-foreground mb-4">Recent metrics that affect ranking scores</p>
+            </div>
+            {metricHistory && metricHistory.length > 0 ? (
+              <div className="space-y-4">
+                {metricHistory.map((history, index) => {
+                  // Convert MetricHistory to NewsItem format
+                  const newsItem: NewsItem = {
+                    id: `${tool.id}-${index}`,
+                    tool_id: tool.id,
+                    tool_name: tool.name,
+                    tool_category: tool.category,
+                    tool_website: tool.info?.links?.website,
+                    event_date: history.published_date,
+                    event_type: 'update',
+                    title: `${history.source_name} Update`,
+                    description: `New metrics reported for ${tool.name}`,
+                    source_url: history.source_url || undefined,
+                    source_name: history.source_name || undefined,
+                    metrics: {
+                      users: history.scoring_metrics?.users as number | undefined,
+                      revenue: history.scoring_metrics?.monthly_arr as number | undefined,
+                      // Add other metrics as needed
+                    },
+                  };
+                  
+                  return (
+                    <NewsCard
+                      key={index}
+                      item={newsItem}
+                      showToolLink={false}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="py-8">
+                  <p className="text-center text-muted-foreground">
+                    No metric history available for this tool.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </div>
   );
-}
-
-function formatMetricValue(key: string, value: unknown): string {
-  if (value === null || value === undefined || value === 0) {
-    return "N/A";
-  }
-
-  // Handle specific metric types
-  if (key.includes("score") || key.includes("percentage")) {
-    return `${Number(value).toFixed(1)}%`;
-  }
-  if (key.includes("arr") || key.includes("funding") || key.includes("valuation")) {
-    const num = Number(value);
-    const millions = num / 1000000;
-    if (millions >= 1000) {
-      const billions = millions / 1000;
-      return `$${billions % 1 === 0 ? billions.toFixed(0) : billions.toFixed(1)}B`;
-    }
-    return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
-  }
-  if (key.includes("users") || key.includes("stars")) {
-    const num = Number(value);
-    if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(1)}M`;
-    }
-    if (num >= 1000) {
-      return `${(num / 1000).toFixed(0)}k`;
-    }
-    return num.toString();
-  }
-
-  // Default formatting
-  if (typeof value === "number") {
-    return value.toLocaleString();
-  }
-  return String(value);
 }

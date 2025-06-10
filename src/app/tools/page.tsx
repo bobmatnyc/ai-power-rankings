@@ -12,15 +12,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ToolIcon } from "@/components/ui/tool-icon";
+import { StatusIndicator } from "@/components/ui/status-indicator";
 
 interface Tool {
   id: string;
   name: string;
   category: string;
-  status: string;
+  status: 'active' | 'beta' | 'deprecated' | 'discontinued' | 'acquired';
   description?: string;
   website?: string;
+  website_url?: string;
   github_url?: string;
+  info?: {
+    links?: {
+      website?: string;
+    };
+  };
 }
 
 export default function ToolsPage(): React.JSX.Element {
@@ -76,15 +84,6 @@ export default function ToolsPage(): React.JSX.Element {
     return colors[category] || "bg-gray-500";
   };
 
-  const getStatusBadge = (status: string): React.JSX.Element => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      active: "default",
-      beta: "secondary",
-      acquired: "destructive",
-      deprecated: "outline",
-    };
-    return <Badge variant={variants[status] || "outline"}>{status}</Badge>;
-  };
 
   if (loading) {
     return (
@@ -138,15 +137,23 @@ export default function ToolsPage(): React.JSX.Element {
       {/* Tools Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedTools.map((tool) => (
-          <Link key={tool.id} href={`/tools/${tool.id}`} className="block">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+          <Link key={tool.id} href={`/tools/${tool.id}`} className="flex h-full">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer w-full flex flex-col">
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <CardTitle className="text-xl">{tool.name}</CardTitle>
-                  {getStatusBadge(tool.status)}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <ToolIcon
+                      name={tool.name}
+                      domain={tool.website_url || tool.website || tool.info?.links?.website}
+                      size={48}
+                      className="flex-shrink-0"
+                    />
+                    <CardTitle className="text-xl">{tool.name}</CardTitle>
+                  </div>
+                  <StatusIndicator status={tool.status} showLabel />
                 </div>
                 <CardDescription>
-                  <div 
+                  <div
                     onClick={(e) => {
                       e.preventDefault();
                       window.location.href = `/rankings?category=${tool.category}`;
@@ -160,30 +167,11 @@ export default function ToolsPage(): React.JSX.Element {
                   </div>
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
+              <CardContent className="flex-1">
+                <p className="text-sm text-muted-foreground">
                   {tool.description ||
                     "AI-powered coding assistant helping developers write better code faster."}
                 </p>
-                {tool.website && (
-                  <div className="flex gap-2">
-                    <Button 
-                      asChild 
-                      size="sm" 
-                      variant="outline"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <a 
-                        href={tool.website} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Visit Website
-                      </a>
-                    </Button>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </Link>

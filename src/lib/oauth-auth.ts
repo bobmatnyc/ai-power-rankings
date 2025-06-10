@@ -28,7 +28,7 @@ export function checkOAuthToken(request: NextRequest): { isValid: boolean; scope
 }
 
 export function requireScope(scope: string, tokenScope: string | undefined): boolean {
-  if (!tokenScope) return false;
+  if (!tokenScope) {return false;}
   const scopes = tokenScope.split(' ');
   return scopes.includes(scope) || scopes.includes('write');
 }

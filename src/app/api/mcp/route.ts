@@ -4,16 +4,23 @@ import { NextRequest, NextResponse } from 'next/server';
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${request.headers.get('host')}`;
+  const host = request.headers.get('host');
+  const protocol = request.headers.get('x-forwarded-proto') || 'https';
+  const baseUrl = `${protocol}://${host}`;
   const isDevelopment = process.env.NODE_ENV === 'development' || process.env.ENABLE_DEV_MODE === 'true';
   
   // If in dev mode, return minimal response for Claude.ai
   if (isDevelopment) {
     return NextResponse.json({
-      status: 'AI Power Rankings MCP API',
-      version: '1.0.0',
-      authentication: 'none',
-      description: 'Development mode - no authentication required'
+      mcp: {
+        version: '0.1.0',
+        endpoint: `${baseUrl}/api/mcp/rpc`
+      },
+      name: 'AI Power Rankings',
+      description: 'Real-time rankings and analytics for AI coding tools',
+      auth: {
+        type: 'none'
+      }
     });
   }
   

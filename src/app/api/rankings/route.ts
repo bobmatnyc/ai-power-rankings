@@ -321,7 +321,7 @@ export async function GET(): Promise<NextResponse> {
     const toolIds = rankings.map((r) => r.metrics.tool_id);
     const { data: tools } = await supabase
       .from("tools")
-      .select("id, name, slug, category, status")
+      .select("id, name, slug, category, status, website_url, description")
       .in("id", toolIds);
 
     const toolMap = new Map(tools?.map((t) => [t.id, t]) || []);
@@ -347,6 +347,8 @@ export async function GET(): Promise<NextResponse> {
             name: displayName,
             category: tool.category,
             status: tool.status,
+            website_url: tool.website_url,
+            description: tool.description,
           },
           scores: {
             overall: ranking.score.overallScore,
