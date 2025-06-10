@@ -8,9 +8,23 @@ export async function GET(request: NextRequest) {
   
   // If in dev mode, return a minimal response indicating no auth
   if (isDevelopment) {
+    // Use the actual host from the request for ngrok compatibility
+    const host = request.headers.get('host');
+    const protocol = request.headers.get('x-forwarded-proto') || 'https';
+    const baseUrl = `${protocol}://${host}`;
+    
     return NextResponse.json({
-      issuer: "https://aipowerranking.com",
-      service_documentation: "https://aipowerranking.com/api/mcp"
+      issuer: baseUrl,
+      mcp_configuration: {
+        endpoint: `${baseUrl}/api/mcp/rpc`,
+        transport: 'http',
+        auth_required: false
+      },
+      authorization_endpoint: `${baseUrl}/api/mcp/oauth/authorize`,
+      token_endpoint: `${baseUrl}/api/mcp/oauth/token`,
+      token_endpoint_auth_methods_supported: ["none"],
+      response_types_supported: ["code"],
+      grant_types_supported: ["authorization_code"]
     }, {
       headers: {
         'Content-Type': 'application/json',
