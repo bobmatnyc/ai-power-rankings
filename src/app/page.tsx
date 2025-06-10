@@ -264,46 +264,6 @@ export default function Home(): React.JSX.Element {
         </div>
       </section>
 
-      {/* Social Proof */}
-      <section className="bg-muted/50 py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl">
-            <h2 className="mb-8 text-center text-3xl font-bold">Trusted by the Community</h2>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="mb-4 text-muted-foreground">
-                    &quot;The most comprehensive and fair ranking system for AI coding tools
-                    I&apos;ve seen. The innovation decay modifier is brilliant.&quot;
-                  </p>
-                  <p className="text-sm font-semibold">- Senior Developer</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="mb-4 text-muted-foreground">
-                    &quot;Finally, a ranking that considers platform independence and revenue
-                    quality. This is what the industry needed.&quot;
-                  </p>
-                  <p className="text-sm font-semibold">- Tech Lead</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="mb-4 text-muted-foreground">
-                    &quot;Algorithm v6.0&apos;s approach to weighing autonomous capabilities is spot
-                    on. Great work on the methodology.&quot;
-                  </p>
-                  <p className="text-sm font-semibold">- AI Researcher</p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="border-t py-8">
