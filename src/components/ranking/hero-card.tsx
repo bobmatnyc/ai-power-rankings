@@ -48,12 +48,13 @@ export function HeroCard({ ranking, index }: HeroCardProps) {
       
       <CardHeader className="pb-3">
         <div className="flex items-center space-x-3">
-          <ToolIcon 
-            name={ranking.tool.name}
-            domain={ranking.tool.website_url}
-            size={64}
-            className="flex-shrink-0"
-          />
+          <Link href={`/tools/${ranking.tool.id}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
+            <ToolIcon 
+              name={ranking.tool.name}
+              domain={ranking.tool.website_url}
+              size={64}
+            />
+          </Link>
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">

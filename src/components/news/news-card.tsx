@@ -14,7 +14,6 @@ import {
   AlertCircle,
   Sparkles,
   Clock,
-  ArrowRight,
   ExternalLink
 } from "lucide-react";
 import Link from "next/link";
@@ -45,7 +44,7 @@ interface NewsCardProps {
   showToolLink?: boolean;
 }
 
-export function NewsCard({ item, showToolLink = true }: NewsCardProps) {
+export function NewsCard({ item }: NewsCardProps) {
   const getEventIcon = (eventType: string) => {
     switch (eventType) {
       case "milestone":
@@ -108,12 +107,13 @@ export function NewsCard({ item, showToolLink = true }: NewsCardProps) {
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-start space-x-3 flex-1">
-            <ToolIcon 
-              name={item.tool_name}
-              domain={item.tool_website}
-              size={40}
-              className="flex-shrink-0 mt-1"
-            />
+            <Link href={`/tools/${item.tool_id}`} className="flex-shrink-0 mt-1 hover:opacity-80 transition-opacity">
+              <ToolIcon 
+                name={item.tool_name}
+                domain={item.tool_website}
+                size={40}
+              />
+            </Link>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Badge className={getEventColor(item.event_type)}>
@@ -194,21 +194,13 @@ export function NewsCard({ item, showToolLink = true }: NewsCardProps) {
           )}
 
           {/* Action Links */}
-          <div className="ml-auto flex gap-2">
+          <div className="ml-auto">
             {item.source_url && (
               <Button variant="ghost" size="sm" asChild>
                 <a href={item.source_url} target="_blank" rel="noopener noreferrer">
-                  {item.source_name || "Source"}
+                  View Source
                   <ExternalLink className="h-3 w-3 ml-1" />
                 </a>
-              </Button>
-            )}
-            {showToolLink && (
-              <Button variant="ghost" size="sm" asChild>
-                <Link href={`/tools/${item.tool_id}`}>
-                  View Tool
-                  <ArrowRight className="h-4 w-4 ml-1" />
-                </Link>
               </Button>
             )}
           </div>
