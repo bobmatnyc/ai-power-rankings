@@ -5,10 +5,15 @@ const supabaseUrl = process.env["NEXT_PUBLIC_SUPABASE_URL"] || "";
 const supabaseKey = process.env["SUPABASE_SERVICE_ROLE_KEY"] || "";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+type RouteParams = Promise<{ token: string }>;
+
+export async function GET(
+  request: NextRequest,
+  props: { params: RouteParams }
+): Promise<NextResponse> {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const token = searchParams.get("token");
+    const params = await props.params;
+    const token = params.token;
 
     if (!token) {
       return NextResponse.redirect(new URL("/newsletter/verify?error=missing-token", request.url));

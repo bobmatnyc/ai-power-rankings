@@ -119,7 +119,7 @@ function RankingsGridContent(): React.JSX.Element {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-8">
         <Card className="border-border/50">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Tools</CardTitle>
@@ -261,13 +261,13 @@ function RankingsGridContent(): React.JSX.Element {
 
       {/* Rankings Display */}
       {viewMode === "grid" ? (
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-3 md:gap-6">
           {sortedRankings.map((ranking) => (
             <RankingCard key={ranking.tool.id} ranking={ranking} />
           ))}
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-2 md:space-y-4">
           {sortedRankings.map((ranking) => (
             <RankingCard key={ranking.tool.id} ranking={ranking} />
           ))}

@@ -66,7 +66,7 @@ export default function Home(): React.JSX.Element {
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5" />
 
-        <div className="relative px-6 py-12 mx-auto max-w-7xl">
+        <div className="relative px-3 md:px-6 py-12 mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
               <Star className="h-3 w-3 mr-1" />
@@ -110,7 +110,7 @@ export default function Home(): React.JSX.Element {
           {loading ? (
             <div className="text-center text-muted-foreground mb-12">Loading rankings...</div>
           ) : (
-            <div className="grid md:grid-cols-3 gap-6 mb-12">
+            <div className="grid md:grid-cols-3 gap-3 md:gap-6 mb-12">
               {topRankings.map((ranking, index) => (
                 <HeroCard key={ranking.tool.id} ranking={ranking} index={index} />
               ))}
@@ -118,7 +118,7 @@ export default function Home(): React.JSX.Element {
           )}
 
           {/* Stats Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-primary mb-1">25</div>
               <div className="text-sm text-muted-foreground">AI Tools Ranked</div>
@@ -140,7 +140,7 @@ export default function Home(): React.JSX.Element {
       </section>
 
       {/* Trending Section */}
-      <section className="px-6 py-12 bg-muted/30">
+      <section className="px-3 md:px-6 py-12 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -157,7 +157,7 @@ export default function Home(): React.JSX.Element {
             </Button>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-3 md:gap-6">
             {trendingTools.map((tool, index) => (
               <div key={tool.tool.id} className="relative h-full">
                 <div className="absolute -top-2 -right-2 z-10">
@@ -175,7 +175,7 @@ export default function Home(): React.JSX.Element {
       </section>
 
       {/* Recently Updated Section */}
-      <section className="px-6 py-12">
+      <section className="px-3 md:px-6 py-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -192,7 +192,7 @@ export default function Home(): React.JSX.Element {
             </Button>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-3 md:gap-6">
             {recentlyUpdated.map((tool) => (
               <div key={tool.tool.id} className="h-full">
                 <RankingCard ranking={tool} />
@@ -203,114 +203,84 @@ export default function Home(): React.JSX.Element {
       </section>
 
       {/* Categories Overview */}
-      <section className="px-6 py-12 bg-muted/30">
+      <section className="px-3 md:px-6 py-12 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
             Explore by Category
           </h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-primary/20 h-full">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center justify-between">
-                  Code Assistants
-                  <Badge className="bg-primary/10 text-primary">8</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col h-full">
-                <p className="text-sm text-muted-foreground flex-1">
-                  AI-powered code completion and suggestions
-                </p>
-                <div className="pt-3 mt-auto">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="group-hover:text-primary w-full justify-start"
-                    asChild
-                  >
-                    <Link href="/rankings?category=code-assistant">Explore →</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+            <Link href="/rankings?category=ide-assistant" className="block h-full">
+              <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-primary/20 h-full">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center justify-between">
+                    IDE Assistants
+                    <Badge className="bg-primary/10 text-primary">7</Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    AI-powered code completion and suggestions
+                  </p>
+                  <p className="text-sm text-primary mt-3 group-hover:underline">Explore →</p>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-secondary/20 h-full">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center justify-between">
-                  AI Editors
-                  <Badge className="bg-secondary/10 text-secondary">6</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col h-full">
-                <p className="text-sm text-muted-foreground flex-1">
-                  Smart editors with AI integration
-                </p>
-                <div className="pt-3 mt-auto">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="group-hover:text-secondary w-full justify-start"
-                    asChild
-                  >
-                    <Link href="/rankings?category=ai-editor">Explore →</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/rankings?category=code-editor" className="block h-full">
+              <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-secondary/20 h-full">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center justify-between">
+                    AI Editors
+                    <Badge className="bg-secondary/10 text-secondary">3</Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Smart editors with AI integration</p>
+                  <p className="text-sm text-secondary mt-3 group-hover:underline">Explore →</p>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-accent/20 h-full">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center justify-between">
-                  App Builders
-                  <Badge className="bg-accent/10 text-accent">2</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col h-full">
-                <p className="text-sm text-muted-foreground flex-1">
-                  Build complete applications with AI assistance
-                </p>
-                <div className="pt-3 mt-auto">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="group-hover:text-accent w-full justify-start"
-                    asChild
-                  >
-                    <Link href="/rankings?category=app-builder">Explore →</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/rankings?category=app-builder" className="block h-full">
+              <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-accent/20 h-full">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center justify-between">
+                    App Builders
+                    <Badge className="bg-accent/10 text-accent">4</Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Build complete applications with AI assistance
+                  </p>
+                  <p className="text-sm text-accent mt-3 group-hover:underline">Explore →</p>
+                </CardContent>
+              </Card>
+            </Link>
 
-            <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-destructive/20 h-full">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center justify-between">
-                  Autonomous Agents
-                  <Badge className="bg-destructive/10 text-destructive">3</Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col h-full">
-                <p className="text-sm text-muted-foreground flex-1">
-                  Fully autonomous AI software engineers
-                </p>
-                <div className="pt-3 mt-auto">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="group-hover:text-destructive w-full justify-start"
-                    asChild
-                  >
-                    <Link href="/rankings?category=autonomous-agent">Explore →</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/rankings?category=autonomous-agent" className="block h-full">
+              <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-destructive/20 h-full">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center justify-between">
+                    Autonomous Agents
+                    <Badge className="bg-destructive/10 text-destructive">6</Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Fully autonomous AI software engineers
+                  </p>
+                  <p className="text-sm text-destructive mt-3 group-hover:underline">Explore →</p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Methodology Brief */}
-      <section id="methodology" className="container mx-auto px-4 py-16">
+      <section id="methodology" className="container mx-auto px-2 md:px-4 py-16">
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-8 text-center text-3xl font-bold">Our Methodology</h2>
 
@@ -381,7 +351,7 @@ export default function Home(): React.JSX.Element {
 
       {/* Footer */}
       <footer className="border-t border-border/50 bg-muted/30 py-12">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-2 md:px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
               <div className="flex items-center space-x-3 mb-4">

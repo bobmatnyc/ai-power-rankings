@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,7 @@ import {
   DollarSign,
   TrendingUp,
   TrendingDown,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react";
 
 interface MetricsHistory {
@@ -45,16 +45,54 @@ interface MetricsHistory {
 export default function NewsContent(): React.JSX.Element {
   const [newsItems, setNewsItems] = useState<MetricsHistory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [filter, setFilter] = useState<string>("all");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
+  // Initial data fetch
   useEffect(() => {
-    fetchNews();
+    fetchNews(1, true);
   }, []);
 
-  const fetchNews = async (): Promise<void> => {
+  // Set up intersection observer for infinite scroll
+  useEffect(() => {
+    if (!loadMoreRef.current) {
+      return;
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting && hasMore && !loadingMore) {
+          fetchNews(page + 1, false);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observerRef.current.observe(loadMoreRef.current);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [page, hasMore, loadingMore]);
+
+  const fetchNews = async (pageNum: number, isInitial: boolean): Promise<void> => {
     try {
-      // For now, we'll use mock data
-      const mockNews: MetricsHistory[] = [
+      if (isInitial) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
+
+      // For now, we'll use mock data with pagination simulation
+      const itemsPerPage = 10;
+      const allMockNews: MetricsHistory[] = [
         {
           id: "1",
           tool_id: "cursor",
@@ -64,15 +102,16 @@ export default function NewsContent(): React.JSX.Element {
           event_date: new Date().toISOString(),
           event_type: "milestone",
           title: "Cursor reaches 500K+ active users",
-          description: "The AI-powered code editor hits a major milestone with over half a million active developers.",
+          description:
+            "The AI-powered code editor hits a major milestone with over half a million active developers.",
           source_url: "https://twitter.com/cursor_ai/status/1234567890",
           source_name: "Cursor Twitter",
           metrics: {
             users: 500000,
             score_change: 0.5,
-            rank_change: 1
+            rank_change: 1,
           },
-          tags: ["milestone", "growth"]
+          tags: ["milestone", "growth"],
         },
         {
           id: "2",
@@ -83,11 +122,12 @@ export default function NewsContent(): React.JSX.Element {
           event_date: new Date(Date.now() - 86400000).toISOString(),
           event_type: "feature",
           title: "Windsurf launches Cascade feature",
-          description: "New AI-powered feature enables multi-file editing and complex refactoring tasks.",
+          description:
+            "New AI-powered feature enables multi-file editing and complex refactoring tasks.",
           metrics: {
-            score_change: 0.8
+            score_change: 0.8,
           },
-          tags: ["feature", "innovation"]
+          tags: ["feature", "innovation"],
         },
         {
           id: "3",
@@ -100,9 +140,9 @@ export default function NewsContent(): React.JSX.Element {
           title: "GitHub Copilot integrates with Azure",
           description: "Microsoft announces deeper integration between Copilot and Azure services.",
           metrics: {
-            revenue: 100000000
+            revenue: 100000000,
           },
-          tags: ["partnership", "enterprise"]
+          tags: ["partnership", "enterprise"],
         },
         {
           id: "4",
@@ -113,11 +153,12 @@ export default function NewsContent(): React.JSX.Element {
           event_date: new Date(Date.now() - 259200000).toISOString(),
           event_type: "update",
           title: "v0 improves component generation accuracy",
-          description: "Latest update brings 30% improvement in React component generation quality.",
+          description:
+            "Latest update brings 30% improvement in React component generation quality.",
           metrics: {
-            score_change: 0.3
+            score_change: 0.3,
           },
-          tags: ["update", "performance"]
+          tags: ["update", "performance"],
         },
         {
           id: "5",
@@ -128,20 +169,51 @@ export default function NewsContent(): React.JSX.Element {
           event_date: new Date(Date.now() - 345600000).toISOString(),
           event_type: "announcement",
           title: "Claude 3.5 Sonnet powers new coding capabilities",
-          description: "Anthropic's latest model brings significant improvements to code generation and debugging.",
+          description:
+            "Anthropic's latest model brings significant improvements to code generation and debugging.",
           metrics: {
             score_change: 1.2,
-            rank_change: 2
+            rank_change: 2,
           },
-          tags: ["announcement", "ai-model"]
-        }
+          tags: ["announcement", "ai-model"],
+        },
       ];
 
-      setNewsItems(mockNews);
+      // Generate more mock items for pagination testing
+      for (let i = 6; i <= 50; i++) {
+        allMockNews.push({
+          id: i.toString(),
+          tool_id: `tool-${i}`,
+          tool_name: `Tool ${i}`,
+          tool_category: "ai-tool",
+          tool_website: "https://example.com",
+          event_date: new Date(Date.now() - i * 86400000).toISOString(),
+          event_type: ["feature", "update", "milestone", "partnership", "announcement"][i % 5],
+          title: `News item ${i}`,
+          description: `This is mock news item ${i} for pagination testing.`,
+          tags: ["news", "update"],
+        });
+      }
+
+      // Simulate pagination
+      const startIndex = (pageNum - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedNews = allMockNews.slice(startIndex, endIndex);
+
+      if (isInitial) {
+        setNewsItems(paginatedNews);
+      } else {
+        setNewsItems((prev) => [...prev, ...paginatedNews]);
+      }
+
+      setPage(pageNum);
+      setHasMore(endIndex < allMockNews.length);
       setLoading(false);
+      setLoadingMore(false);
     } catch (error) {
       console.error("Failed to fetch news:", error);
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -190,21 +262,28 @@ export default function NewsContent(): React.JSX.Element {
       if (diffHours === 0) {
         return "Just now";
       }
-      return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
     } else if (diffDays < 7) {
-      return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+      return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
     } else {
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric',
-        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
       });
     }
   };
 
-  const filteredNews = filter === "all" 
-    ? newsItems 
-    : newsItems.filter(item => item.event_type === filter);
+  // Reset pagination when filter changes
+  useEffect(() => {
+    setNewsItems([]);
+    setPage(1);
+    setHasMore(true);
+    fetchNews(1, true);
+  }, [filter]);
+
+  const filteredNews =
+    filter === "all" ? newsItems : newsItems.filter((item) => item.event_type === filter);
 
   const eventTypes = ["all", "milestone", "feature", "partnership", "update", "announcement"];
 
@@ -242,7 +321,7 @@ export default function NewsContent(): React.JSX.Element {
       </div>
 
       {/* News List */}
-      <div className="space-y-4">
+      <div className="space-y-2 md:space-y-4">
         {filteredNews.length === 0 ? (
           <Card className="p-8 text-center">
             <p className="text-muted-foreground">No news items found.</p>
@@ -253,7 +332,7 @@ export default function NewsContent(): React.JSX.Element {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3 flex-1">
-                    <ToolIcon 
+                    <ToolIcon
                       name={item.tool_name}
                       domain={item.tool_website}
                       size={40}
@@ -269,17 +348,13 @@ export default function NewsContent(): React.JSX.Element {
                           {formatDate(item.event_date)}
                         </span>
                       </div>
-                      <CardTitle className="text-lg mb-1">
-                        {item.title}
-                      </CardTitle>
-                      <CardDescription>
-                        {item.description}
-                      </CardDescription>
+                      <CardTitle className="text-lg mb-1">{item.title}</CardTitle>
+                      <CardDescription>{item.description}</CardDescription>
                     </div>
                   </div>
                 </div>
               </CardHeader>
-              
+
               <CardContent className="pt-0">
                 <div className="flex flex-wrap items-center gap-4">
                   {/* Metrics */}
@@ -304,8 +379,13 @@ export default function NewsContent(): React.JSX.Element {
                           ) : (
                             <TrendingDown className="h-4 w-4 text-red-500" />
                           )}
-                          <span className={item.metrics.score_change > 0 ? "text-green-500" : "text-red-500"}>
-                            {item.metrics.score_change > 0 ? "+" : ""}{item.metrics.score_change.toFixed(1)} score
+                          <span
+                            className={
+                              item.metrics.score_change > 0 ? "text-green-500" : "text-red-500"
+                            }
+                          >
+                            {item.metrics.score_change > 0 ? "+" : ""}
+                            {item.metrics.score_change.toFixed(1)} score
                           </span>
                         </div>
                       )}
@@ -316,8 +396,13 @@ export default function NewsContent(): React.JSX.Element {
                           ) : (
                             <TrendingDown className="h-4 w-4 text-red-500" />
                           )}
-                          <span className={item.metrics.rank_change > 0 ? "text-green-500" : "text-red-500"}>
-                            {item.metrics.rank_change > 0 ? "+" : ""}{item.metrics.rank_change} rank
+                          <span
+                            className={
+                              item.metrics.rank_change > 0 ? "text-green-500" : "text-red-500"
+                            }
+                          >
+                            {item.metrics.rank_change > 0 ? "+" : ""}
+                            {item.metrics.rank_change} rank
                           </span>
                         </div>
                       )}
@@ -354,13 +439,15 @@ export default function NewsContent(): React.JSX.Element {
         )}
       </div>
 
-      {/* Load More */}
-      {filteredNews.length > 0 && (
-        <div className="text-center pt-6">
-          <Button variant="outline" size="lg">
-            Load More News
-          </Button>
+      {/* Infinite scroll trigger */}
+      {hasMore && (
+        <div ref={loadMoreRef} className="h-20 flex items-center justify-center">
+          {loadingMore && <div className="text-muted-foreground">Loading more news...</div>}
         </div>
+      )}
+
+      {!hasMore && filteredNews.length > 0 && (
+        <div className="text-center py-8 text-muted-foreground">No more news to load</div>
       )}
     </div>
   );
