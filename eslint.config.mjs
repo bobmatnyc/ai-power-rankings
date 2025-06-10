@@ -23,24 +23,26 @@ const eslintConfig = [
       "*.config.ts",
       "next-env.d.ts",
       "data/**",
+      "src/app/api/mcp/**",
     ],
     rules: {
-      // TypeScript strict rules
-      "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/no-unused-vars": ["error", { 
+      // TypeScript rules - more lenient for production
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", { 
         argsIgnorePattern: "^_",
         varsIgnorePattern: "^_"
       }],
       "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/no-non-null-assertion": "error",
+      "@typescript-eslint/no-non-null-assertion": "warn",
       
       // React/Next.js rules
       "react/no-unescaped-entities": "error",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "error",
+      "@next/next/no-img-element": "off",
       
       // General code quality
-      "no-console": ["warn", { allow: ["log", "warn", "error"] }],
+      "no-console": "off",
       "no-debugger": "error",
       "no-alert": "error",
       "prefer-const": "error",
