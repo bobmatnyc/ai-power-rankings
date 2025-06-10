@@ -1,0 +1,10 @@
+{
+  "mcp_version": "0.1.0",
+  "name": "AI Power Rankings",
+  "description": "Real-time rankings for AI coding tools",
+  "endpoint": "https://1mbot.ngrok.app/api/mcp/rpc",
+  "transport": "http",
+  "auth": {
+    "type": "none"
+  }
+}
