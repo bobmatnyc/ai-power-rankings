@@ -28,6 +28,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
   const turnstileRef = useRef<TurnstileInstance>(null);
 
@@ -63,7 +64,11 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
       }
       
       // Show success message
+      setSuccessMessage(data.message || "Please check your email to verify your subscription");
       setIsSubmitted(true);
+      
+      // Close modal after longer delay for already subscribed
+      const delay = data.alreadySubscribed ? 2000 : 3000;
       setTimeout(() => {
         onOpenChange(false);
         // Reset form after closing
@@ -72,10 +77,11 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
           setLastName("");
           setEmail("");
           setIsSubmitted(false);
+          setSuccessMessage("");
           setTurnstileToken("");
           turnstileRef.current?.reset();
         }, 300);
-      }, 3000);
+      }, delay);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to subscribe. Please try again.");
       turnstileRef.current?.reset();
@@ -112,9 +118,9 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
         {isSubmitted ? (
           <div className="py-8 text-center">
             <div className="text-4xl mb-4">✓</div>
-            <p className="text-lg font-medium">Thank you for subscribing!</p>
+            <p className="text-lg font-medium">Thank you!</p>
             <p className="text-sm text-muted-foreground mt-2">
-              Check your email to confirm your subscription.
+              {successMessage}
             </p>
           </div>
         ) : (

@@ -145,7 +145,7 @@ async function handleToolCall(params: any, id: any) {
 
         const { data, error } = await query;
         
-        if (error) throw error;
+        if (error) {throw error;}
 
         const rankings = data?.map((item: any) => ({
           rank: item.rank,
@@ -186,7 +186,7 @@ async function handleToolCall(params: any, id: any) {
           .eq('id', args.tool_id)
           .single();
 
-        if (toolError) throw toolError;
+        if (toolError) {throw toolError;}
 
         return NextResponse.json({
           jsonrpc: '2.0',
