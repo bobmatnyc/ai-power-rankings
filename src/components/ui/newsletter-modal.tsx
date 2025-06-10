@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,11 +11,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+import { AlertCircle } from "lucide-react";
 
 interface NewsletterModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAABglXFXbgAmdRz-H";
 
 export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): React.JSX.Element {
   const [firstName, setFirstName] = useState("");
@@ -23,15 +27,42 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
+    setError("");
+    
+    if (!turnstileToken) {
+      setError("Please complete the security check");
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
-      // TODO: Implement newsletter signup API endpoint
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      const response = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          turnstileToken,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to subscribe");
+      }
       
+      // Show success message
       setIsSubmitted(true);
       setTimeout(() => {
         onOpenChange(false);
@@ -41,12 +72,31 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
           setLastName("");
           setEmail("");
           setIsSubmitted(false);
+          setTurnstileToken("");
+          turnstileRef.current?.reset();
         }, 300);
-      }, 2000);
-    } catch (error) {
-      console.error("Failed to subscribe:", error);
+      }, 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to subscribe. Please try again.");
+      turnstileRef.current?.reset();
+      setTurnstileToken("");
+    } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleTurnstileSuccess = (token: string): void => {
+    setTurnstileToken(token);
+    setError("");
+  };
+
+  const handleTurnstileError = (): void => {
+    setError("Security verification failed. Please try again.");
+    setTurnstileToken("");
+  };
+
+  const handleTurnstileExpire = (): void => {
+    setTurnstileToken("");
   };
 
   return (
@@ -79,6 +129,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div className="space-y-2">
@@ -89,6 +140,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
@@ -101,15 +153,38 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
+            
+            {/* Turnstile CAPTCHA */}
+            <div className="flex justify-center">
+              <Turnstile
+                ref={turnstileRef}
+                siteKey={TURNSTILE_SITE_KEY}
+                onSuccess={handleTurnstileSuccess}
+                onError={handleTurnstileError}
+                onExpire={handleTurnstileExpire}
+                options={{
+                  theme: "light",
+                  size: "normal",
+                }}
+              />
+            </div>
+            
+            {error && (
+              <div className="flex items-center gap-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4" />
+                <span>{error}</span>
+              </div>
+            )}
             
             <div className="flex gap-3 pt-4">
               <Button
                 type="submit"
                 className="flex-1"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
               >
                 {isSubmitting ? "Subscribing..." : "Subscribe"}
               </Button>
