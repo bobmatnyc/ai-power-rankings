@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -67,7 +67,7 @@ const tagFilters = [
   { id: "documentation", name: "Documentation", count: 10 },
 ];
 
-export function AppSidebar(): React.JSX.Element {
+function SidebarContent(): React.JSX.Element {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { isMobile, setOpenMobile } = useSidebar();
@@ -290,5 +290,19 @@ export function AppSidebar(): React.JSX.Element {
         </div>
       </div>
     </Sidebar>
+  );
+}
+
+export function AppSidebar(): React.JSX.Element {
+  return (
+    <Suspense
+      fallback={
+        <Sidebar>
+          <div className="p-6">Loading...</div>
+        </Sidebar>
+      }
+    >
+      <SidebarContent />
+    </Suspense>
   );
 }
