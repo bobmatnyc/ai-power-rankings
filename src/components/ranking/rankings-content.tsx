@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -55,7 +55,7 @@ interface RankingData {
   };
 }
 
-export default function RankingsContent(): React.JSX.Element {
+function RankingsContentInner(): React.JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [rankings, setRankings] = useState<RankingData[]>([]);
@@ -490,5 +490,21 @@ export default function RankingsContent(): React.JSX.Element {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function RankingsContent(): React.JSX.Element {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto p-8">
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">Loading rankings...</p>
+          </div>
+        </div>
+      }
+    >
+      <RankingsContentInner />
+    </Suspense>
   );
 }

@@ -1,13 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Grid, List, ArrowUpDown, TrendingUp, Star } from "lucide-react";
 import { RankingCard } from "./ranking-card";
 
@@ -43,7 +49,7 @@ interface RankingData {
   };
 }
 
-export default function RankingsGrid(): React.JSX.Element {
+function RankingsGridContent(): React.JSX.Element {
   const searchParams = useSearchParams();
   const [rankings, setRankings] = useState<RankingData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,9 +122,7 @@ export default function RankingsGrid(): React.JSX.Element {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <Card className="border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Tools
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Tools</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{rankings.length}</div>
@@ -126,33 +130,29 @@ export default function RankingsGrid(): React.JSX.Element {
         </Card>
         <Card className="border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Categories
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Categories</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {new Set(rankings.map(r => r.tool.category)).size}
+              {new Set(rankings.map((r) => r.tool.category)).size}
             </div>
           </CardContent>
         </Card>
         <Card className="border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Avg Score
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Avg Score</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {(rankings.reduce((acc, r) => acc + (r.scores?.overall || 0), 0) / rankings.length).toFixed(1)}
+              {(
+                rankings.reduce((acc, r) => acc + (r.scores?.overall || 0), 0) / rankings.length
+              ).toFixed(1)}
             </div>
           </CardContent>
         </Card>
         <Card className="border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Last Update
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Last Update</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">This Week</div>
@@ -163,15 +163,18 @@ export default function RankingsGrid(): React.JSX.Element {
       {/* Controls */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <Select value={sortParam} onValueChange={(value) => {
-            const params = new URLSearchParams(searchParams.toString());
-            if (value === "rank") {
-              params.delete("sort");
-            } else {
-              params.set("sort", value);
-            }
-            window.location.href = `/rankings${params.toString() ? `?${params.toString()}` : ''}`;
-          }}>
+          <Select
+            value={sortParam}
+            onValueChange={(value) => {
+              const params = new URLSearchParams(searchParams.toString());
+              if (value === "rank") {
+                params.delete("sort");
+              } else {
+                params.set("sort", value);
+              }
+              window.location.href = `/rankings${params.toString() ? `?${params.toString()}` : ""}`;
+            }}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
@@ -222,26 +225,35 @@ export default function RankingsGrid(): React.JSX.Element {
         <div className="flex items-center gap-2 mb-4">
           <span className="text-sm text-muted-foreground">Active filters:</span>
           {categoryParam !== "all" && (
-            <Badge variant="secondary" className="cursor-pointer" onClick={() => {
-              const params = new URLSearchParams(searchParams.toString());
-              params.delete("category");
-              window.location.href = `/rankings${params.toString() ? `?${params.toString()}` : ''}`;
-            }}>
-              {categoryParam.replace(/-/g, ' ')} ✕
+            <Badge
+              variant="secondary"
+              className="cursor-pointer"
+              onClick={() => {
+                const params = new URLSearchParams(searchParams.toString());
+                params.delete("category");
+                window.location.href = `/rankings${params.toString() ? `?${params.toString()}` : ""}`;
+              }}
+            >
+              {categoryParam.replace(/-/g, " ")} ✕
             </Badge>
           )}
-          {tagsParam.map(tag => (
-            <Badge key={tag} variant="secondary" className="cursor-pointer" onClick={() => {
-              const params = new URLSearchParams(searchParams.toString());
-              const newTags = tagsParam.filter(t => t !== tag);
-              if (newTags.length === 0) {
-                params.delete("tags");
-              } else {
-                params.set("tags", newTags.join(","));
-              }
-              window.location.href = `/rankings${params.toString() ? `?${params.toString()}` : ''}`;
-            }}>
-              {tag.replace(/-/g, ' ')} ✕
+          {tagsParam.map((tag) => (
+            <Badge
+              key={tag}
+              variant="secondary"
+              className="cursor-pointer"
+              onClick={() => {
+                const params = new URLSearchParams(searchParams.toString());
+                const newTags = tagsParam.filter((t) => t !== tag);
+                if (newTags.length === 0) {
+                  params.delete("tags");
+                } else {
+                  params.set("tags", newTags.join(","));
+                }
+                window.location.href = `/rankings${params.toString() ? `?${params.toString()}` : ""}`;
+              }}
+            >
+              {tag.replace(/-/g, " ")} ✕
             </Badge>
           ))}
         </div>
@@ -267,7 +279,8 @@ export default function RankingsGrid(): React.JSX.Element {
         <CardHeader>
           <CardTitle>About Algorithm v6.0</CardTitle>
           <CardDescription>
-            Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments
+            Enhanced ranking system with innovation decay, platform risk modifiers, and revenue
+            quality adjustments
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -361,9 +374,7 @@ export default function RankingsGrid(): React.JSX.Element {
                   based on new data and continuously refine our methodology.
                 </p>
                 <Button variant="outline" size="sm" className="mt-4" asChild>
-                  <Link href="/methodology">
-                    View Full Methodology
-                  </Link>
+                  <Link href="/methodology">View Full Methodology</Link>
                 </Button>
               </div>
             </TabsContent>
@@ -371,5 +382,19 @@ export default function RankingsGrid(): React.JSX.Element {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function RankingsGrid(): React.JSX.Element {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center h-64">
+          <p className="text-muted-foreground">Loading rankings...</p>
+        </div>
+      }
+    >
+      <RankingsGridContent />
+    </Suspense>
   );
 }
