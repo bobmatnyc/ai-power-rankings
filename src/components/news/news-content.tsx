@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { loggers } from "@/lib/logger";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -123,7 +124,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
       setLoading(false);
       setLoadingMore(false);
     } catch (error) {
-      console.error("Failed to fetch news:", error);
+      loggers.news.error("Failed to fetch news", { error, pageNum, isInitial });
       setLoading(false);
       setLoadingMore(false);
     }

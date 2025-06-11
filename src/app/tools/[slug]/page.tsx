@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { loggers } from "@/lib/logger";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -96,7 +97,7 @@ export default function ToolDetailPage(): React.JSX.Element {
       setToolData(data);
       setLoading(false);
     } catch (error) {
-      console.error("Failed to fetch tool details:", error);
+      loggers.tools.error("Failed to fetch tool details", { error, slug });
       setLoading(false);
     }
   };

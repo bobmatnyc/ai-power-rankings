@@ -1,5 +1,6 @@
 import type { Dictionary } from "./get-dictionary";
 import { EXPECTED_DICTIONARY_STRUCTURE } from "./expected-structure";
+import { loggers } from "@/lib/logger";
 
 // Global set to track missing translations (avoid duplicates)
 const missingTranslations = new Set<string>();
@@ -13,10 +14,10 @@ function logMissingTranslation(path: string, locale: string) {
     missingTranslations.add(key);
     if (typeof window === "undefined") {
       // Server-side logging
-      console.warn(`🌐 Missing translation [${locale}]: ${path}`);
+      loggers.import.warn(`Missing translation [${locale}]: ${path}`);
     } else {
       // Client-side logging
-      console.warn(`🌐 Missing translation [${locale}]: ${path}`);
+      loggers.import.warn(`Missing translation [${locale}]: ${path}`);
     }
   }
 }
@@ -121,7 +122,7 @@ export async function processDictionary(dict: unknown, locale: string): Promise<
     // Ensure it's serializable (no functions, symbols, etc.)
     return JSON.parse(JSON.stringify(completeDict));
   } catch (error) {
-    console.error("Error processing dictionary:", error);
+    loggers.import.error("Error processing dictionary", { error, locale });
     // Return the expected structure with all fallback values
     return createFallbackStructure(EXPECTED_DICTIONARY_STRUCTURE, "", locale) as Dictionary;
   }

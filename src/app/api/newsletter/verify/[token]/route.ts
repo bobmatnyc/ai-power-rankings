@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { loggers } from "@/lib/logger";
 
 const supabaseUrl = process.env["NEXT_PUBLIC_SUPABASE_URL"] || "";
 const supabaseKey = process.env["SUPABASE_SERVICE_ROLE_KEY"] || "";
@@ -46,7 +47,7 @@ export async function GET(
       .eq("verification_token", token);
 
     if (updateError) {
-      console.error("Failed to verify subscription:", updateError);
+      loggers.api.error("Failed to verify subscription", { updateError, token });
       return NextResponse.redirect(
         new URL("/newsletter/verify?error=verification-failed", request.url)
       );
@@ -54,7 +55,7 @@ export async function GET(
 
     return NextResponse.redirect(new URL("/newsletter/verify?status=success", request.url));
   } catch (error) {
-    console.error("Verify error:", error);
+    loggers.api.error("Verify error", { error });
     return NextResponse.redirect(new URL("/newsletter/verify?error=unexpected", request.url));
   }
 }

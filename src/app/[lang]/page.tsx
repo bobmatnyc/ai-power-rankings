@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { loggers } from "@/lib/logger";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +36,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     // And recently updated as the next 4
     recentlyUpdated = rankings.slice(6, 10);
   } catch (error) {
-    console.error("Failed to fetch rankings:", error);
+    loggers.api.error("Failed to fetch rankings", { error });
     loading = true; // Show loading state on error
   }
 

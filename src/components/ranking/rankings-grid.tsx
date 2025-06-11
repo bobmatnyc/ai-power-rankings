@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
+import { loggers } from "@/lib/logger";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -78,7 +79,7 @@ function RankingsGridContent({ lang, dict }: RankingsGridProps): React.JSX.Eleme
       setRankings(data.rankings);
       setLoading(false);
     } catch (error) {
-      console.error("Failed to fetch rankings:", error);
+      loggers.ranking.error("Failed to fetch rankings", { error });
       setLoading(false);
     }
   };

@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/database";
 import { Resend } from "resend";
 import crypto from "crypto";
-
-const supabaseUrl = process.env["NEXT_PUBLIC_SUPABASE_URL"] || "";
-const supabaseKey = process.env["SUPABASE_SERVICE_ROLE_KEY"] || "";
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { loggers } from "@/lib/logger";
 
 const resend = new Resend(process.env["RESEND_API_KEY"]);
 const TURNSTILE_SECRET_KEY = process.env["TURNSTILE_SECRET_KEY"] || "YOUR_TURNSTILE_SECRET_KEY";
@@ -19,89 +16,101 @@ interface SubscribeRequest {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // Validate environment variables
-    if (!supabaseUrl || !supabaseKey) {
-      console.error("Missing Supabase environment variables");
-      return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
-    }
+    // Debug environment variables
+    loggers.api.info("Environment check", {
+      hasResendKey: !!process.env["RESEND_API_KEY"],
+      hasSupabaseUrl: !!process.env["NEXT_PUBLIC_SUPABASE_URL"],
+      hasAnonKey: !!process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"],
+      nodeEnv: process.env.NODE_ENV,
+    });
 
+    // Validate environment variables
     if (!process.env["RESEND_API_KEY"]) {
-      console.error("Missing Resend API key");
+      loggers.api.error("Missing Resend API key");
       return NextResponse.json({ error: "Email service configuration error" }, { status: 500 });
     }
 
     const body: SubscribeRequest = await request.json();
     const { firstName, lastName, email, turnstileToken } = body;
 
-    // Verify Turnstile token
-    const turnstileResponse = await fetch(
-      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          secret: TURNSTILE_SECRET_KEY,
-          response: turnstileToken,
-        }),
-      }
-    );
-
-    const turnstileData = await turnstileResponse.json();
-
-    if (!turnstileData.success) {
-      return NextResponse.json({ error: "Invalid captcha verification" }, { status: 400 });
+    // Basic validation
+    if (!firstName || !lastName || !email) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Check if email already exists
-    const { data: existingSubscriber } = await supabase
-      .from("newsletter_subscriptions")
-      .select("*")
-      .eq("email", email)
-      .single();
-
-    if (existingSubscriber) {
-      if (existingSubscriber.status === "verified") {
-        return NextResponse.json({
-          success: true,
-          message: "You are already subscribed to our newsletter!",
-          alreadySubscribed: true,
-        });
-      }
-      // If pending or unsubscribed, we'll resend verification email
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
     }
 
-    // Generate a verification token (use existing if re-subscribing)
-    const verificationToken = existingSubscriber?.verification_token || crypto.randomUUID();
-
-    // Insert or update subscription
-    const { error: dbError } = await supabase
-      .from("newsletter_subscriptions")
-      .upsert(
+    // Verify Turnstile token (skip in development)
+    if (process.env.NODE_ENV !== "development") {
+      const turnstileResponse = await fetch(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
         {
-          email,
-          first_name: firstName,
-          last_name: lastName,
-          status: existingSubscriber?.status || "pending",
-          verification_token: verificationToken,
-        },
-        {
-          onConflict: "email",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            secret: TURNSTILE_SECRET_KEY,
+            response: turnstileToken,
+          }),
         }
-      )
+      );
+
+      const turnstileData = await turnstileResponse.json();
+
+      if (!turnstileData.success) {
+        loggers.api.warn("Turnstile verification failed", {
+          email: email.substring(0, 3) + "***",
+          errors: turnstileData["error-codes"],
+        });
+        return NextResponse.json({ error: "Invalid captcha verification" }, { status: 400 });
+      }
+    } else {
+      loggers.api.info("Skipping Turnstile verification in development");
+    }
+
+    // Generate a verification token
+    const verificationToken = crypto.randomUUID();
+
+    // Try to insert new subscription (will handle duplicates via database constraints)
+    const { error: dbError, data: subscription } = await supabase
+      .from("newsletter_subscriptions")
+      .insert({
+        email,
+        first_name: firstName,
+        last_name: lastName,
+        status: "pending",
+        verification_token: verificationToken,
+      })
       .select()
       .single();
 
     if (dbError) {
-      console.error("Database error details:", {
+      loggers.database.error("Database error during subscription", {
         error: dbError,
         message: dbError.message,
         details: dbError.details,
         hint: dbError.hint,
         code: dbError.code,
+        email: email.substring(0, 3) + "***", // Log partial email for privacy
       });
-      return NextResponse.json({ error: "Failed to save subscription" }, { status: 500 });
+
+      // Return more specific error based on the error code
+      if (dbError.code === "23505") {
+        return NextResponse.json({ error: "Email already registered" }, { status: 409 });
+      }
+
+      return NextResponse.json(
+        {
+          error: "Failed to save subscription",
+          debug: process.env.NODE_ENV === "development" ? dbError.message : undefined,
+        },
+        { status: 500 }
+      );
     }
 
     // Generate verification URL - use the request URL to get the correct base URL
@@ -290,7 +299,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
 
     if (emailError) {
-      console.error("Resend email error details:", {
+      loggers.api.error("Resend email error during subscription", {
         error: emailError,
         message: emailError.message,
         name: emailError.name,
@@ -302,7 +311,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         toEmail: email,
         fromEmail: "AI Power Rankings <newsletter@aipowerranking.com>",
       });
-      return NextResponse.json({ error: "Failed to send verification email" }, { status: 500 });
+      return NextResponse.json(
+        {
+          error: "Failed to send verification email",
+          debug:
+            process.env.NODE_ENV === "development"
+              ? {
+                  message: emailError.message,
+                  name: emailError.name,
+                  statusCode: (emailError as { statusCode?: number }).statusCode,
+                }
+              : undefined,
+        },
+        { status: 500 }
+      );
     }
 
     // Different messages based on subscription status
@@ -316,7 +338,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       resent: isResend,
     });
   } catch (error) {
-    console.error("Subscribe error:", error);
+    loggers.api.error("Subscribe error", { error });
     return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { loggers } from "@/lib/logger";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -47,7 +48,7 @@ export default function ToolsPage(): React.JSX.Element {
       setTools(data.tools);
       setLoading(false);
     } catch (error) {
-      console.error("Failed to fetch tools:", error);
+      loggers.tools.error("Failed to fetch tools", { error });
       setLoading(false);
     }
   };

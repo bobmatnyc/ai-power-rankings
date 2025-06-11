@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env["NEXT_PUBLIC_SUPABASE_URL"] || "";
-const supabaseKey = process.env["SUPABASE_SERVICE_ROLE_KEY"] || "";
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from "@/lib/database";
+import { loggers } from "@/lib/logger";
 
 type Params = {
   params: Promise<{
@@ -171,7 +168,7 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       metricHistory,
     });
   } catch (error) {
-    console.error("Error in tool detail API:", error);
+    loggers.api.error("Error in tool detail API", { error, slug });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
