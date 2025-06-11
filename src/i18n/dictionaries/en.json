@@ -1,4 +1,14 @@
 {
+  "categories": {
+    "autonomousagent": "Autonomous Agent",
+    "codeeditor": "Code Editor",
+    "ideassistant": "IDE Assistant",
+    "appbuilder": "App Builder",
+    "opensourceframework": "Open Source Framework",
+    "testingtool": "Testing Tool",
+    "codereview": "Code Review",
+    "codeassistant": "Code Assistant"
+  },
   "common": {
     "appName": "AI Power Rankings",
     "appDescription": "Data-driven rankings of AI coding tools",
