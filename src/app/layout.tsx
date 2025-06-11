@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ClientLayout } from "@/components/layout/client-layout";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
@@ -16,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AI Power Rankings - Data-driven rankings of AI coding tools",
-  description: "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments",
+  description:
+    "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments",
 };
 
 export default function RootLayout({
@@ -27,9 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ClientLayout>
-          {children}
-        </ClientLayout>
+        {children}
         <Analytics />
       </body>
     </html>

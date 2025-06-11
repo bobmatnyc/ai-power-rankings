@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "Classement IA",
+    "appDescription": "Classements basés sur les données des outils de codage IA",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "tryAgain": "Réessayer",
+    "backToHome": "Retour à l'accueil",
+    "learnMore": "En savoir plus",
+    "viewAll": "Voir tout",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "share": "Partager"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "rankings": "Classements",
+    "news": "Actualités",
+    "tools": "Outils",
+    "methodology": "Méthodologie",
+    "about": "À propos",
+    "subscribeToUpdates": "S'abonner aux mises à jour",
+    "navigation": "Navigation",
+    "quickLinks": "Liens rapides",
+    "trending": "Tendances",
+    "categories": "Catégories",
+    "features": "Fonctionnalités",
+    "clearFilters": "Effacer les filtres",
+    "allCategories": "Toutes les catégories"
+  }
+}
