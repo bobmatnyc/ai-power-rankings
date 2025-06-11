@@ -101,7 +101,7 @@ function SidebarContent(): React.JSX.Element {
       // Convert the object to array format
       const categoryArray: Category[] = Object.entries(categoryMap).map(([id, count]) => ({
         id,
-        name: getCategoryName(id, dict.categories).join(" "),
+        name: getCategoryName(id, dict.categories),
         count: count as number,
       }));
 
