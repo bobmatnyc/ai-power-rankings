@@ -1,43 +1,38 @@
 import type { Dictionary } from "./get-dictionary";
+import { EXPECTED_DICTIONARY_STRUCTURE } from "./expected-structure";
 
 /**
- * Deep merge two objects, using the first object as the base and filling
- * missing properties from the second object
+ * Deep merge two objects, filling missing properties with fallback values
  */
-function deepMerge<T extends Record<string, unknown>>(
-  target: Partial<T>,
-  source: T,
-  path: string = ""
-): T {
-  const result = { ...target } as T;
+function deepMergeWithFallbacks(target: any, source: any, path: string = ""): any {
+  if (!source || typeof source !== "object") {
+    return target;
+  }
+
+  const result: any = { ...target };
 
   for (const key in source) {
     const currentPath = path ? `${path}.${key}` : key;
 
     if (!(key in result)) {
-      // If key is missing, use the key path as fallback
-      if (typeof source[key] === "object" && source[key] !== null) {
-        // For nested objects, create a structure with key paths as values
-        result[key] = createFallbackObject(
-          source[key] as Record<string, unknown>,
-          currentPath
-        ) as T[Extract<keyof T, string>];
+      // Property is missing, create fallback
+      if (source[key] && typeof source[key] === "object" && !Array.isArray(source[key])) {
+        // For objects, create a structure with fallback values
+        result[key] = createFallbackStructure(source[key], currentPath);
       } else {
-        // For primitive values, use the key path as fallback
-        result[key] = currentPath as T[Extract<keyof T, string>];
+        // For primitive values, use the path as fallback
+        result[key] = `[${currentPath} undefined]`;
       }
     } else if (
-      typeof source[key] === "object" &&
-      source[key] !== null &&
+      result[key] &&
       typeof result[key] === "object" &&
-      result[key] !== null
+      !Array.isArray(result[key]) &&
+      source[key] &&
+      typeof source[key] === "object" &&
+      !Array.isArray(source[key])
     ) {
-      // Recursively merge nested objects
-      result[key] = deepMerge(
-        result[key] as Record<string, unknown>,
-        source[key] as Record<string, unknown>,
-        currentPath
-      ) as T[Extract<keyof T, string>];
+      // Both are objects, merge recursively
+      result[key] = deepMergeWithFallbacks(result[key], source[key], currentPath);
     }
   }
 
@@ -45,58 +40,41 @@ function deepMerge<T extends Record<string, unknown>>(
 }
 
 /**
- * Create a fallback object structure where each leaf value is its key path
+ * Create a fallback structure for missing objects
  */
-function createFallbackObject(
-  template: Record<string, unknown>,
-  basePath: string = ""
-): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
+function createFallbackStructure(template: any, basePath: string): any {
+  if (!template || typeof template !== "object") {
+    return `[${basePath} undefined]`;
+  }
+
+  const result: any = {};
 
   for (const key in template) {
-    const path = basePath ? `${basePath}.${key}` : key;
+    const path = `${basePath}.${key}`;
 
-    if (typeof template[key] === "object" && template[key] !== null) {
-      result[key] = createFallbackObject(template[key] as Record<string, unknown>, path);
+    if (template[key] && typeof template[key] === "object" && !Array.isArray(template[key])) {
+      result[key] = createFallbackStructure(template[key], path);
     } else {
-      result[key] = path;
+      result[key] = `[${path} undefined]`;
     }
   }
 
   return result;
-}
-
-/**
- * Get a complete English dictionary structure with all possible keys
- * This serves as our template for what a complete dictionary should look like
- */
-async function getCompleteDictionaryStructure(): Promise<Dictionary> {
-  // Import the full English dictionary to use as template
-  const enDict = await import("./dictionaries/en.json").then((m) => m.default);
-
-  // Create a complete structure with fallback values for any missing keys
-  // This ensures we have a complete template
-  return createFallbackObject(enDict) as Dictionary;
-}
-
-/**
- * Ensure a dictionary has all required keys, filling missing ones with fallbacks
- */
-export async function ensureCompleteDictionary(
-  partialDict: Partial<Dictionary>
-): Promise<Dictionary> {
-  const template = await getCompleteDictionaryStructure();
-  return deepMerge(partialDict, template);
 }
 
 /**
  * Process dictionary to ensure it's complete and serializable
- * This is the main export that should be used by getDictionary
  */
 export async function processDictionary(dict: unknown, _locale: string): Promise<Dictionary> {
-  // Ensure the dictionary is complete
-  const completeDict = await ensureCompleteDictionary(dict as Partial<Dictionary>);
+  try {
+    // Start with the expected structure as our base
+    const completeDict = deepMergeWithFallbacks(dict || {}, EXPECTED_DICTIONARY_STRUCTURE);
 
-  // Return a plain object (no proxies, fully serializable)
-  return JSON.parse(JSON.stringify(completeDict));
+    // Ensure it's serializable (no functions, symbols, etc.)
+    return JSON.parse(JSON.stringify(completeDict));
+  } catch (error) {
+    console.error("Error processing dictionary:", error);
+    // Return the expected structure with all fallback values
+    return createFallbackStructure(EXPECTED_DICTIONARY_STRUCTURE, "") as Dictionary;
+  }
 }
