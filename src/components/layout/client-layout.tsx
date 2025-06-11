@@ -8,6 +8,7 @@ import { BuildTimeBadge } from "@/components/layout/build-time-badge";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { I18nProvider, useI18n } from "@/i18n/client";
+import { LanguageSelector } from "@/components/layout/language-selector";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -69,26 +70,31 @@ function ClientLayoutContent({ children }: { children: React.ReactNode }): React
                 </div>
               </div>
 
-              {/* Desktop button */}
-              <Button
-                onClick={handleSubscribeClick}
-                size="sm"
-                className="hidden md:flex items-center gap-2"
-              >
-                <Bell className="h-4 w-4" />
-                {dict.navigation.subscribeToUpdates}
-              </Button>
+              <div className="flex items-center gap-2">
+                {/* Language selector */}
+                <LanguageSelector />
 
-              {/* Mobile icon button */}
-              <Button
-                onClick={handleSubscribeClick}
-                size="icon"
-                variant="ghost"
-                className="md:hidden"
-              >
-                <Bell className="h-5 w-5" />
-                <span className="sr-only">{dict.navigation.subscribeToUpdates}</span>
-              </Button>
+                {/* Desktop button */}
+                <Button
+                  onClick={handleSubscribeClick}
+                  size="sm"
+                  className="hidden md:flex items-center gap-2"
+                >
+                  <Bell className="h-4 w-4" />
+                  {dict.navigation.subscribeToUpdates}
+                </Button>
+
+                {/* Mobile icon button */}
+                <Button
+                  onClick={handleSubscribeClick}
+                  size="icon"
+                  variant="ghost"
+                  className="md:hidden"
+                >
+                  <Bell className="h-5 w-5" />
+                  <span className="sr-only">{dict.navigation.subscribeToUpdates}</span>
+                </Button>
+              </div>
             </div>
           </div>
 
