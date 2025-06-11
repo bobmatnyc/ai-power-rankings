@@ -262,6 +262,23 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
     },
   },
   tools: {
+    title: "",
+    subtitle: "",
+    filterByCategory: "",
+    sortBy: "",
+    allCategories: "",
+    defaultDescription: "",
+    sort: {
+      name: "",
+      category: "",
+      status: "",
+    },
+    stats: {
+      total: "",
+      categories: "",
+      active: "",
+      openSource: "",
+    },
     directory: {
       title: "",
       subtitle: "",
