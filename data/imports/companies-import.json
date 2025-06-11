@@ -1,0 +1,173 @@
+{
+  "importType": "companies",
+  "data": [
+    {
+      "name": "OpenAI",
+      "slug": "openai",
+      "website_url": "https://openai.com",
+      "headquarters": "San Francisco, CA",
+      "founded_year": 2015,
+      "company_size": "startup",
+      "company_type": "private",
+      "logo_url": "https://openai.com/favicon.ico",
+      "description": "AI research company, creator of ChatGPT and GPT models"
+    },
+    {
+      "name": "Tabnine Ltd.",
+      "slug": "tabnine",
+      "website_url": "https://tabnine.com",
+      "headquarters": "Tel Aviv, Israel",
+      "founded_year": 2013,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "AI code completion assistant emphasizing privacy and local models"
+    },
+    {
+      "name": "Sourcegraph",
+      "slug": "sourcegraph",
+      "website_url": "https://sourcegraph.com",
+      "headquarters": "San Francisco, CA",
+      "founded_year": 2013,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "Code search and intelligence platform"
+    },
+    {
+      "name": "Qodo (formerly CodiumAI)",
+      "slug": "qodo",
+      "website_url": "https://qodo.ai",
+      "headquarters": "Tel Aviv, Israel",
+      "founded_year": 2022,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "Quality-first AI coding platform with multi-agent testing capabilities"
+    },
+    {
+      "name": "Diffblue Ltd.",
+      "slug": "diffblue",
+      "website_url": "https://diffblue.com",
+      "headquarters": "Oxford, UK",
+      "founded_year": 2016,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "AI-powered unit test generation for Java applications"
+    },
+    {
+      "name": "Snyk Ltd.",
+      "slug": "snyk",
+      "website_url": "https://snyk.io",
+      "headquarters": "London, UK",
+      "founded_year": 2015,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "Developer security platform with AI-powered code analysis"
+    },
+    {
+      "name": "Sourcery Ltd.",
+      "slug": "sourcery",
+      "website_url": "https://sourcery.ai",
+      "headquarters": "London, UK",
+      "founded_year": 2020,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "AI code review and refactoring tool focusing on code quality"
+    },
+    {
+      "name": "Amazon Web Services",
+      "slug": "aws",
+      "website_url": "https://aws.amazon.com",
+      "headquarters": "Seattle, WA",
+      "founded_year": 2006,
+      "company_size": "large",
+      "company_type": "public",
+      "description": "Cloud computing platform with AI coding tools"
+    },
+    {
+      "name": "IBM",
+      "slug": "ibm",
+      "website_url": "https://ibm.com",
+      "headquarters": "Armonk, NY",
+      "founded_year": 1911,
+      "company_size": "large",
+      "company_type": "public",
+      "description": "Technology corporation with AI assistant offerings"
+    },
+    {
+      "name": "Significant Gravitas",
+      "slug": "significant-gravitas",
+      "website_url": "https://github.com/Significant-Gravitas/AutoGPT",
+      "headquarters": "Open Source",
+      "founded_year": 2023,
+      "company_size": "startup",
+      "company_type": "open-source",
+      "description": "Creator of Auto-GPT autonomous agent framework"
+    },
+    {
+      "name": "JetBrains",
+      "slug": "jetbrains",
+      "website_url": "https://jetbrains.com",
+      "headquarters": "Prague, Czech Republic",
+      "founded_year": 2000,
+      "company_size": "medium",
+      "company_type": "private",
+      "logo_url": "https://jetbrains.com/favicon.ico",
+      "description": "IDE and development tools company with AI assistant integration"
+    },
+    {
+      "name": "Open Source Community",
+      "slug": "open-source-community",
+      "website_url": "https://github.com",
+      "headquarters": "Global",
+      "founded_year": 2008,
+      "company_size": "enterprise",
+      "company_type": "open-source",
+      "description": "Global open source community developing AI frameworks and tools"
+    },
+    {
+      "name": "Zed Industries",
+      "slug": "zed-industries",
+      "website_url": "https://zed.dev",
+      "headquarters": "San Francisco, CA",
+      "founded_year": 2021,
+      "company_size": "startup",
+      "company_type": "private",
+      "logo_url": "https://zed.dev/favicon.ico",
+      "description": "Creator of Zed, the high-performance collaborative code editor"
+    },
+    {
+      "name": "PearAI Team",
+      "slug": "pear-ai-team",
+      "website_url": "https://trypear.ai",
+      "headquarters": "Open Source",
+      "founded_year": 2024,
+      "company_size": "startup",
+      "company_type": "open-source",
+      "description": "Open source team behind PearAI VS Code fork"
+    },
+    {
+      "name": "TransformerOptimus",
+      "slug": "transformeroptimus",
+      "website_url": "https://superagi.com",
+      "headquarters": "India",
+      "founded_year": 2023,
+      "company_size": "startup",
+      "company_type": "open-source",
+      "description": "Creator of SuperAGI autonomous agent framework"
+    },
+    {
+      "name": "Reworkd",
+      "slug": "reworkd",
+      "website_url": "https://reworkd.ai",
+      "headquarters": "San Francisco, CA",
+      "founded_year": 2023,
+      "company_size": "startup",
+      "company_type": "open-source",
+      "description": "Creator of AgentGPT and AI automation tools"
+    }
+  ],
+  "options": {
+    "upsert": true,
+    "validateOnly": false,
+    "batchSize": 20
+  }
+}

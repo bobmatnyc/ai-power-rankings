@@ -1,0 +1,84 @@
+{
+  "importType": "metrics_history",
+  "data": [
+    {
+      "tool_id": "github-copilot",
+      "metric_key": "users",
+      "value_integer": 15000000,
+      "recorded_at": "2025-06-01T12:00:00Z",
+      "source": "github",
+      "notes": "15M+ total users including free tier"
+    },
+    {
+      "tool_id": "bolt-new",
+      "metric_key": "monthly_arr",
+      "value_decimal": 40000000.0,
+      "recorded_at": "2025-06-01T12:00:00Z",
+      "source": "business-insider",
+      "notes": "$40M ARR after rapid growth from $0 in 30 days"
+    },
+    {
+      "tool_id": "bolt-new",
+      "metric_key": "users",
+      "value_integer": 3000000,
+      "recorded_at": "2025-06-01T12:00:00Z",
+      "source": "business-insider",
+      "notes": "3M users achieved rapid growth"
+    },
+    {
+      "tool_id": "tabnine",
+      "metric_key": "users",
+      "value_integer": 1000000,
+      "recorded_at": "2025-06-01T12:00:00Z",
+      "source": "manual_entry",
+      "notes": "1M+ developers using Tabnine"
+    },
+    {
+      "tool_id": "tabnine",
+      "metric_key": "github_stars",
+      "value_integer": 22000,
+      "recorded_at": "2025-06-01T12:00:00Z",
+      "source": "github_api",
+      "notes": "Open source components popularity"
+    },
+    {
+      "tool_id": "auto-gpt",
+      "metric_key": "github_stars",
+      "value_integer": 167000,
+      "recorded_at": "2025-06-01T12:00:00Z",
+      "source": "github_api",
+      "notes": "One of most starred AI repositories"
+    },
+    {
+      "tool_id": "sourcegraph-cody",
+      "metric_key": "users",
+      "value_integer": 100000,
+      "recorded_at": "2025-06-01T12:00:00Z",
+      "source": "manual_entry",
+      "notes": "Estimated active user base"
+    },
+    {
+      "tool_id": "cursor",
+      "metric_key": "valuation_usd",
+      "value_decimal": 9900000000.0,
+      "recorded_at": "2025-06-05T12:00:00Z",
+      "source": "bloomberg",
+      "source_url": "https://www.bloomberg.com/news/articles/2025-06-05/anysphere-hailed-as-fastest-growing-startup-ever-raises-900-million",
+      "notes": "Valuation at Series C funding round"
+    },
+    {
+      "tool_id": "cursor",
+      "metric_key": "total_funding_usd",
+      "value_decimal": 900000000.0,
+      "recorded_at": "2025-06-05T12:00:00Z",
+      "source": "bloomberg",
+      "source_url": "https://www.bloomberg.com/news/articles/2025-06-05/anysphere-hailed-as-fastest-growing-startup-ever-raises-900-million",
+      "notes": "Series C funding round led by Thrive Capital"
+    }
+  ],
+  "options": {
+    "upsert": true,
+    "validateOnly": false,
+    "batchSize": 50
+  }
+}

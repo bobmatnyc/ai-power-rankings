@@ -40,16 +40,24 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# data directory
-/data/
+# data exports and temporary files
+/data/exports/
+/data/incoming/
+/data/metrics-by-date/
+/data/metrics-export/
+*-export.json
+*-dump-*.sql
 
-# development scripts
+# development scripts (keep essential ones)
 /scripts/
-!scripts/seed-database.ts
-!scripts/import-v0-mcp-metrics.ts
+!scripts/export-tools.js
+!scripts/import-data.js
+!scripts/switch-env.sh
 
-# ai code review docs
-ai-code-review-docs/
+# temporary and generated files
+CHANGELOG.md
+VERSION
+*.tsbuildinfo
 
 # claude and husky files
 .claude

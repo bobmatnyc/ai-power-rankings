@@ -186,22 +186,6 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
         },
       ];
 
-      // Generate more mock items for pagination testing
-      for (let i = 6; i <= 50; i++) {
-        allMockNews.push({
-          id: i.toString(),
-          tool_id: `tool-${i}`,
-          tool_name: `Tool ${i}`,
-          tool_category: "ai-tool",
-          tool_website: "https://example.com",
-          event_date: new Date(Date.now() - i * 86400000).toISOString(),
-          event_type: ["feature", "update", "milestone", "partnership", "announcement"][i % 5],
-          title: `News item ${i}`,
-          description: `This is mock news item ${i} for pagination testing.`,
-          tags: ["news", "update"],
-        });
-      }
-
       // Simulate pagination
       const startIndex = (pageNum - 1) * itemsPerPage;
       const endIndex = startIndex + itemsPerPage;

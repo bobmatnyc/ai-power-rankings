@@ -418,6 +418,111 @@
     "subtitle": "How we rank AI coding tools",
     "lastUpdated": "Last updated: January 2025",
     "intro": "AI Power Rankings uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "algorithm": {
+      "title": "Algorithm v6.0",
+      "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
+      "keyFeatures": "Key Features",
+      "features": {
+        "innovationDecay": "Innovation decay modeling to reflect tool freshness",
+        "platformRisk": "Platform risk assessment for vendor dependencies",
+        "revenueQuality": "Revenue quality adjustments based on business model",
+        "technicalWeighting": "Technical capability weighting for different use cases",
+        "dataValidation": "Multi-source data validation and normalization",
+        "logarithmicScaling": "Logarithmic scaling for balanced comparisons"
+      }
+    },
+    "factors": {
+      "title": "Scoring Factors",
+      "description": "Tools are evaluated across 8 key dimensions with specific weightings",
+      "primary": "Primary Factors (82.5%)",
+      "secondary": "Secondary Factors (17.5%)",
+      "agentic": {
+        "details": "Measures autonomous capabilities, multi-step reasoning, and complex task completion"
+      },
+      "innovation": {
+        "details": "Evaluates breakthrough features, technical advances, and market differentiation"
+      },
+      "performance": {
+        "details": "Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
+      },
+      "adoption": {
+        "details": "Active users, growth rate, and market penetration metrics"
+      },
+      "traction": {
+        "details": "Revenue growth, funding rounds, and business momentum indicators"
+      },
+      "sentiment": {
+        "details": "Developer satisfaction, community feedback, and recommendation scores"
+      },
+      "velocity": {
+        "details": "Feature release cadence, update frequency, and innovation speed"
+      },
+      "resilience": {
+        "details": "Platform stability, backup options, and vendor independence"
+      }
+    },
+    "modifiers": {
+      "title": "Dynamic Modifiers",
+      "description": "Real-time adjustments that reflect market conditions and tool maturity",
+      "innovationDecay": {
+        "description": "Innovation scores decay over time to reward continuous improvement and penalize stagnation"
+      },
+      "platformRisk": {
+        "description": "Adjustments based on vendor lock-in, platform dependencies, and business risks",
+        "penalties": "Risk Penalties",
+        "penaltyList": {
+          "acquired": "Recently acquired by competitor",
+          "exclusive": "Platform exclusive (single LLM)",
+          "competitor": "Owned by competing platform",
+          "regulatory": "Regulatory compliance issues",
+          "funding": "Funding or sustainability concerns"
+        },
+        "bonuses": "Risk Mitigation Bonuses",
+        "bonusList": {
+          "multiLLM": "Supports multiple LLM providers",
+          "openSource": "Open source availability",
+          "selfHosted": "Self-hosting options"
+        }
+      },
+      "revenueQuality": {
+        "description": "Revenue weighting based on business model sustainability and growth potential",
+        "models": {
+          "enterpriseHigh": "Enterprise (High-touch)",
+          "enterpriseStandard": "Enterprise (Standard)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "Consumer Premium",
+          "freemium": "Freemium",
+          "openSource": "Open Source"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "Data Sources & Validation",
+      "description": "We maintain rigorous standards for data collection and validation",
+      "collection": {
+        "title": "Data Collection Methods",
+        "sources": {
+          "api": "Direct API integrations with tool providers",
+          "research": "Industry research reports and analyst data",
+          "announcements": "Official company announcements and press releases",
+          "community": "Developer surveys and community feedback",
+          "benchmarks": "Standardized performance benchmarks"
+        }
+      },
+      "validation": {
+        "title": "Validation Requirements",
+        "requirements": {
+          "completeness": "All required metrics must be present",
+          "reliability": "Multiple source verification for key metrics",
+          "outlier": "Outlier detection and manual review",
+          "crossValidation": "Cross-validation with industry benchmarks"
+        }
+      },
+      "updateFrequency": {
+        "title": "Update Schedule",
+        "description": "Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
+      }
+    },
     "sections": {
       "scoringFactors": {
         "title": "Scoring Factors",
@@ -467,7 +572,10 @@
     },
     "team": {
       "title": "The Team",
-      "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development."
+      "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development.",
+      "description1": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development.",
+      "description2": "We combine deep technical expertise with a commitment to transparency and objectivity in our rankings.",
+      "reportIssue": "Report an Issue"
     },
     "contact": {
       "title": "Get in Touch",
@@ -478,6 +586,12 @@
       "title": "Stay Updated",
       "description": "Get weekly insights on AI tool rankings and industry trends.",
       "subscribe": "Subscribe to Newsletter"
+    },
+    "cta": {
+      "title": "Ready to Explore?",
+      "description": "Dive into our rankings to discover the best AI coding tools for your needs.",
+      "exploreButton": "Explore Rankings",
+      "methodologyButton": "Learn Our Methodology"
     },
     "whatWeDo": {
       "title": "What We Do",
@@ -522,7 +636,26 @@
         "Make data-driven decisions",
         "Stay ahead of the curve",
         "Choose tools that fit your needs"
-      ]
+      ],
+      "challenges": {
+        "paralysis": {
+          "title": "Decision Paralysis",
+          "description": "With dozens of AI tools launching every week, developers face overwhelming choices"
+        },
+        "marketing": {
+          "title": "Marketing vs Reality",
+          "description": "Bold claims often don't match real-world performance and capabilities"
+        },
+        "change": {
+          "title": "Rapid Change",
+          "description": "Tools evolve quickly - what's best today might be obsolete tomorrow"
+        },
+        "risks": {
+          "title": "Hidden Risks",
+          "description": "Security, privacy, and vendor lock-in concerns are often overlooked"
+        }
+      },
+      "conclusion": "That's why we built AI Power Rankings - to cut through the noise and provide clear, data-driven insights."
     }
   },
   "sidebar": {

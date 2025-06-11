@@ -1,0 +1,994 @@
+{
+  "export_metadata": {
+    "created_date": "2025-06-11",
+    "description": "Additions and updates to complete AI Power Rankings database",
+    "source": "Comprehensive research review and timeline analysis",
+    "updates_count": {
+      "new_companies": 30,
+      "new_tools": 20,
+      "pricing_updates": 8,
+      "capability_updates": 45,
+      "metrics_updates": 22
+    }
+  },
+
+  "new_companies": [
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "slug": "openai",
+      "website_url": "https://openai.com",
+      "headquarters": "San Francisco, CA",
+      "founded_year": 2015,
+      "company_size": "startup",
+      "company_type": "private",
+      "logo_url": "https://openai.com/favicon.ico",
+      "description": "AI research company, creator of ChatGPT and GPT models"
+    },
+    {
+      "id": "tabnine-ltd",
+      "name": "Tabnine Ltd.",
+      "slug": "tabnine",
+      "website_url": "https://tabnine.com",
+      "headquarters": "Tel Aviv, Israel",
+      "founded_year": 2013,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "AI code completion assistant emphasizing privacy and local models"
+    },
+    {
+      "id": "sourcegraph",
+      "name": "Sourcegraph",
+      "slug": "sourcegraph",
+      "website_url": "https://sourcegraph.com",
+      "headquarters": "San Francisco, CA",
+      "founded_year": 2013,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "Code search and intelligence platform"
+    },
+    {
+      "id": "qodo",
+      "name": "Qodo (formerly CodiumAI)",
+      "slug": "qodo",
+      "website_url": "https://qodo.ai",
+      "headquarters": "Tel Aviv, Israel",
+      "founded_year": 2022,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "Quality-first AI coding platform with multi-agent testing capabilities"
+    },
+    {
+      "id": "diffblue",
+      "name": "Diffblue Ltd.",
+      "slug": "diffblue",
+      "website_url": "https://diffblue.com",
+      "headquarters": "Oxford, UK",
+      "founded_year": 2016,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "AI-powered unit test generation for Java applications"
+    },
+    {
+      "id": "snyk",
+      "name": "Snyk Ltd.",
+      "slug": "snyk",
+      "website_url": "https://snyk.io",
+      "headquarters": "London, UK",
+      "founded_year": 2015,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "Developer security platform with AI-powered code analysis"
+    },
+    {
+      "id": "sourcery",
+      "name": "Sourcery Ltd.",
+      "slug": "sourcery",
+      "website_url": "https://sourcery.ai",
+      "headquarters": "London, UK",
+      "founded_year": 2020,
+      "company_size": "startup",
+      "company_type": "private",
+      "description": "AI code review and refactoring tool focusing on code quality"
+    },
+    {
+      "id": "aws",
+      "name": "Amazon Web Services",
+      "slug": "aws",
+      "website_url": "https://aws.amazon.com",
+      "headquarters": "Seattle, WA",
+      "founded_year": 2006,
+      "company_size": "large",
+      "company_type": "public",
+      "description": "Cloud computing platform with AI coding tools"
+    },
+    {
+      "id": "ibm",
+      "name": "IBM",
+      "slug": "ibm",
+      "website_url": "https://ibm.com",
+      "headquarters": "Armonk, NY",
+      "founded_year": 1911,
+      "company_size": "large",
+      "company_type": "public",
+      "description": "Technology corporation with AI assistant offerings"
+    },
+    {
+      "id": "significant-gravitas",
+      "name": "Significant Gravitas",
+      "slug": "significant-gravitas",
+      "website_url": "https://github.com/Significant-Gravitas/AutoGPT",
+      "headquarters": "Open Source",
+      "founded_year": 2023,
+      "company_size": "startup",
+      "company_type": "open-source",
+      "description": "Creator of Auto-GPT autonomous agent framework"
+    },
+    {
+      "id": "jetbrains",
+      "name": "JetBrains",
+      "slug": "jetbrains",
+      "website_url": "https://jetbrains.com",
+      "headquarters": "Prague, Czech Republic",
+      "founded_year": 2000,
+      "company_size": "medium",
+      "company_type": "private",
+      "logo_url": "https://jetbrains.com/favicon.ico",
+      "description": "IDE and development tools company with AI assistant integration"
+    },
+    {
+      "id": "open-source-community",
+      "name": "Open Source Community",
+      "slug": "open-source-community",
+      "website_url": "https://github.com",
+      "headquarters": "Global",
+      "founded_year": 2008,
+      "company_size": "community",
+      "company_type": "open-source",
+      "description": "Global open source community developing AI frameworks and tools"
+    },
+    {
+      "id": "zed-industries",
+      "name": "Zed Industries",
+      "slug": "zed-industries",
+      "website_url": "https://zed.dev",
+      "headquarters": "San Francisco, CA",
+      "founded_year": 2021,
+      "company_size": "startup",
+      "company_type": "private",
+      "logo_url": "https://zed.dev/favicon.ico",
+      "description": "Creator of Zed, the high-performance collaborative code editor"
+    },
+    {
+      "id": "pear-ai-team",
+      "name": "PearAI Team",
+      "slug": "pear-ai-team",
+      "website_url": "https://trypear.ai",
+      "headquarters": "Open Source",
+      "founded_year": 2024,
+      "company_size": "startup",
+      "company_type": "open-source",
+      "description": "Open source team behind PearAI VS Code fork"
+    },
+    {
+      "id": "transformeroptimus",
+      "name": "TransformerOptimus",
+      "slug": "transformeroptimus",
+      "website_url": "https://superagi.com",
+      "headquarters": "India",
+      "founded_year": 2023,
+      "company_size": "startup",
+      "company_type": "open-source",
+      "description": "Creator of SuperAGI autonomous agent framework"
+    },
+    {
+      "id": "reworkd",
+      "name": "Reworkd",
+      "slug": "reworkd",
+      "website_url": "https://reworkd.ai",
+      "headquarters": "San Francisco, CA",
+      "founded_year": 2023,
+      "company_size": "startup",
+      "company_type": "open-source",
+      "description": "Creator of AgentGPT and AI automation tools"
+    }
+  ],
+
+  "new_tools": [
+    {
+      "id": "chatgpt-canvas",
+      "name": "ChatGPT Canvas",
+      "slug": "chatgpt-canvas",
+      "company_id": "openai",
+      "category": "autonomous-agent",
+      "subcategory": "collaborative-editor",
+      "description": "Resizable workspace interface for ChatGPT where users and AI can edit code or text side-by-side with inline suggestions and real-time Python execution",
+      "tagline": "A new way to write and code with ChatGPT",
+      "website_url": "https://openai.com/index/introducing-canvas/",
+      "founded_date": "2024-10-03",
+      "first_tracked_date": "2024-10-03",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active",
+      "logo_url": "https://openai.com/favicon.ico"
+    },
+    {
+      "id": "tabnine",
+      "name": "Tabnine",
+      "slug": "tabnine",
+      "company_id": "tabnine-ltd",
+      "category": "ide-assistant",
+      "subcategory": "code-completion",
+      "description": "AI code completion assistant emphasizing privacy with local model options, supporting 30+ languages and most IDEs with cloud and self-hosted deployment",
+      "tagline": "AI assistant for software developers",
+      "website_url": "https://www.tabnine.com",
+      "founded_date": "2013-01-01",
+      "first_tracked_date": "2021-01-01",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "sourcegraph-cody",
+      "name": "Sourcegraph Cody",
+      "slug": "sourcegraph-cody",
+      "company_id": "sourcegraph",
+      "category": "ide-assistant",
+      "subcategory": "codebase-assistant",
+      "description": "AI coding assistant that indexes entire repositories with embeddings to answer questions, generate code with full project context, and explain existing code",
+      "tagline": "AI that knows your entire codebase",
+      "website_url": "https://sourcegraph.com/cody",
+      "founded_date": "2023-01-01",
+      "first_tracked_date": "2023-06-01",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "qodo-gen",
+      "name": "Qodo Gen",
+      "slug": "qodo-gen",
+      "company_id": "qodo",
+      "category": "testing-tool",
+      "subcategory": "ai-test-generation",
+      "description": "Quality-first AI coding platform using multiple agents to generate unit tests, review code for issues, and suggest improvements within IDE and Git workflows",
+      "tagline": "AI-powered testing and code review",
+      "website_url": "https://www.qodo.ai",
+      "founded_date": "2022-01-01",
+      "first_tracked_date": "2024-01-01",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "diffblue-cover",
+      "name": "Diffblue Cover",
+      "slug": "diffblue-cover",
+      "company_id": "diffblue",
+      "category": "testing-tool",
+      "subcategory": "unit-test-generation",
+      "description": "AI-powered unit test generation tool that autonomously writes entire suites of JUnit tests for Java code using reinforcement learning, ensuring tests compile and run",
+      "tagline": "Autonomous unit test generation for Java",
+      "website_url": "https://www.diffblue.com",
+      "founded_date": "2016-01-01",
+      "first_tracked_date": "2023-01-01",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "snyk-code",
+      "name": "Snyk Code",
+      "slug": "snyk-code",
+      "company_id": "snyk",
+      "category": "code-review",
+      "subcategory": "security-analysis",
+      "description": "AI-driven static code analysis tool that continuously scans code for security vulnerabilities, bugs, and quality issues in real-time as part of Snyk's developer security platform",
+      "tagline": "Static Application Security Testing (SAST)",
+      "website_url": "https://snyk.io/product/snyk-code/",
+      "founded_date": "2015-01-01",
+      "first_tracked_date": "2021-01-01",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "sourcery",
+      "name": "Sourcery",
+      "slug": "sourcery",
+      "company_id": "sourcery",
+      "category": "code-review",
+      "subcategory": "ai-refactoring",
+      "description": "AI code review and refactoring tool that automatically suggests improvements for code readability, efficiency, and maintainability, running in IDE or CI with GitHub/GitLab integration",
+      "tagline": "Instant code reviews",
+      "website_url": "https://sourcery.ai",
+      "founded_date": "2020-01-01",
+      "first_tracked_date": "2023-06-01",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "claude-artifacts",
+      "name": "Claude Artifacts",
+      "slug": "claude-artifacts",
+      "company_id": "47e8313c-bac5-4768-90ac-09ef0d32ed51",
+      "category": "app-builder",
+      "subcategory": "interactive-generator",
+      "description": "Interactive component generation feature within Claude that creates and iterates on code, diagrams, and applications in a dedicated side panel workspace",
+      "tagline": "Interactive AI development companion",
+      "website_url": "https://claude.ai",
+      "founded_date": "2024-06-01",
+      "first_tracked_date": "2024-06-01",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "jetbrains-ai",
+      "name": "JetBrains AI Assistant",
+      "slug": "jetbrains-ai",
+      "company_id": "jetbrains",
+      "category": "ide-assistant",
+      "subcategory": "integrated-ai",
+      "description": "AI assistant integrated into JetBrains IDEs providing code completions with local Mellum model and cloud models, AI chat with project context, and Junie agent for multi-file changes",
+      "tagline": "AI assistant for JetBrains IDEs",
+      "website_url": "https://www.jetbrains.com/ai/",
+      "founded_date": "2023-01-01",
+      "first_tracked_date": "2023-06-01",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "amazon-q-developer",
+      "name": "Amazon Q Developer",
+      "slug": "amazon-q-developer",
+      "company_id": "aws",
+      "category": "ide-assistant",
+      "subcategory": "cloud-assistant",
+      "description": "Generative AI software engineer from AWS with multi-agent orchestration for coding, debugging, architecture design, and automated AWS deployment tasks",
+      "tagline": "Your AI-powered assistant for software development",
+      "website_url": "https://aws.amazon.com/q/developer/",
+      "founded_date": "2023-01-01",
+      "first_tracked_date": "2023-11-01",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "google-gemini-code-assist",
+      "name": "Google Gemini Code Assist",
+      "slug": "google-gemini-code-assist",
+      "company_id": "191fb885-8600-4c52-bb4c-2075f20b8744",
+      "category": "ide-assistant",
+      "subcategory": "cloud-assistant",
+      "description": "AI-powered coding assistant with 2M token context window, code customization, and enterprise-grade security features including SOC compliance and zero data retention",
+      "tagline": "AI-powered coding with enterprise-grade security",
+      "website_url": "https://cloud.google.com/products/gemini/code-assist",
+      "founded_date": "2024-01-01",
+      "first_tracked_date": "2024-02-01",
+      "pricing_model": "freemium",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "auto-gpt",
+      "name": "Auto-GPT",
+      "slug": "auto-gpt",
+      "company_id": "significant-gravitas",
+      "category": "open-source-framework",
+      "subcategory": "autonomous-agent",
+      "description": "Experimental open-source agent framework that autonomously chains GPT-4 thoughts to achieve goals with internet access, memory, and file I/O capabilities",
+      "tagline": "An autonomous GPT-4 experiment",
+      "website_url": "https://github.com/Significant-Gravitas/AutoGPT",
+      "github_repo": "Significant-Gravitas/AutoGPT",
+      "founded_date": "2023-03-01",
+      "first_tracked_date": "2023-04-01",
+      "pricing_model": "open-source",
+      "license_type": "mit",
+      "status": "active"
+    },
+    {
+      "id": "microsoft-intellicode",
+      "name": "Microsoft IntelliCode",
+      "slug": "microsoft-intellicode",
+      "company_id": "1abf8704-d78b-4376-baf6-194dda96a09b",
+      "category": "ide-assistant",
+      "subcategory": "enhanced-intellisense",
+      "description": "AI-assisted development feature included in Visual Studio and VS Code that provides smarter IntelliSense by using ML to rank code suggestions by context and API usage patterns",
+      "tagline": "AI-assisted development",
+      "website_url": "https://visualstudio.microsoft.com/services/intellicode/",
+      "founded_date": "2018-01-01",
+      "first_tracked_date": "2021-01-01",
+      "pricing_model": "free",
+      "license_type": "proprietary",
+      "status": "active"
+    },
+    {
+      "id": "baby-agi",
+      "name": "BabyAGI",
+      "slug": "baby-agi",
+      "company_id": "open-source-community",
+      "category": "open-source-framework",
+      "subcategory": "task-autonomous-agent",
+      "description": "Task-driven autonomous agent that uses OpenAI APIs and vector databases to create, prioritize, and execute tasks towards an objective, continuously reprioritizing based on results",
+      "tagline": "Task-driven autonomous agent",
+      "website_url": "https://github.com/yoheinakajima/babyagi",
+      "github_repo": "yoheinakajima/babyagi",
+      "founded_date": "2023-04-01",
+      "first_tracked_date": "2023-04-01",
+      "pricing_model": "open-source",
+      "license_type": "mit",
+      "status": "active"
+    },
+    {
+      "id": "meta-gpt",
+      "name": "MetaGPT",
+      "slug": "meta-gpt",
+      "company_id": "open-source-community",
+      "category": "open-source-framework",
+      "subcategory": "multi-agent-framework",
+      "description": "Multi-agent framework that simulates an entire software team by assigning different roles (PM, architect, coder) to multiple GPT instances and orchestrating their collaboration",
+      "tagline": "Multi-agent framework for software development",
+      "website_url": "https://github.com/geekan/MetaGPT",
+      "github_repo": "geekan/MetaGPT",
+      "founded_date": "2023-06-01",
+      "first_tracked_date": "2023-08-01",
+      "pricing_model": "open-source",
+      "license_type": "mit",
+      "status": "active"
+    },
+    {
+      "id": "gpt-engineer",
+      "name": "GPT Engineer",
+      "slug": "gpt-engineer",
+      "company_id": "open-source-community",
+      "category": "open-source-framework",
+      "subcategory": "codebase-generator",
+      "description": "CLI tool that generates entire codebases from natural language prompts, asks clarifying questions, then writes structured code across multiple files automatically",
+      "tagline": "Specify what you want it to build, the AI asks for clarification, and then builds it",
+      "website_url": "https://github.com/AntonOsika/gpt-engineer",
+      "github_repo": "AntonOsika/gpt-engineer",
+      "founded_date": "2023-06-01",
+      "first_tracked_date": "2023-07-01",
+      "pricing_model": "open-source",
+      "license_type": "mit",
+      "status": "active"
+    },
+    {
+      "id": "zed",
+      "name": "Zed",
+      "slug": "zed",
+      "company_id": "zed-industries",
+      "category": "code-editor",
+      "subcategory": "high-performance-editor",
+      "description": "Rust-based code editor with GPU-accelerated performance, collaborative editing, and AI assistant integration for ultra-fast development experience",
+      "tagline": "Code at the speed of thought",
+      "website_url": "https://zed.dev",
+      "github_repo": "zed-industries/zed",
+      "founded_date": "2021-01-01",
+      "first_tracked_date": "2024-01-01",
+      "pricing_model": "freemium",
+      "license_type": "open-source",
+      "status": "active"
+    },
+    {
+      "id": "pear-ai",
+      "name": "PearAI",
+      "slug": "pear-ai",
+      "company_id": "pear-ai-team",
+      "category": "code-editor",
+      "subcategory": "vscode-fork",
+      "description": "Open-source VS Code fork with enhanced AI capabilities and improved user experience for AI-assisted development",
+      "tagline": "The Open Source AI-Powered Code Editor",
+      "website_url": "https://trypear.ai",
+      "github_repo": "trypear/pearai-app",
+      "founded_date": "2024-01-01",
+      "first_tracked_date": "2024-08-01",
+      "pricing_model": "open-source",
+      "license_type": "mit",
+      "status": "active"
+    },
+    {
+      "id": "super-agi",
+      "name": "SuperAGI",
+      "slug": "super-agi",
+      "company_id": "transformeroptimus",
+      "category": "open-source-framework",
+      "subcategory": "dev-agent-framework",
+      "description": "Dev-first autonomous AI agent framework for building and managing agents with plugins, memory, and multi-modal tool use for complex app development tasks",
+      "tagline": "A dev-first open source autonomous AI agent framework",
+      "website_url": "https://superagi.com",
+      "github_repo": "TransformerOptimus/SuperAGI",
+      "founded_date": "2023-05-01",
+      "first_tracked_date": "2023-07-01",
+      "pricing_model": "open-source",
+      "license_type": "mit",
+      "status": "active"
+    },
+    {
+      "id": "reworkd-agentgpt",
+      "name": "AgentGPT",
+      "slug": "reworkd-agentgpt",
+      "company_id": "reworkd",
+      "category": "open-source-framework",
+      "subcategory": "browser-agent",
+      "description": "Browser-based UI for launching AutoGPT-like agents with no installation, allowing users to configure and run AI agents entirely in the browser",
+      "tagline": "Assemble, configure, and deploy autonomous AI Agents in your browser",
+      "website_url": "https://agentgpt.reworkd.ai",
+      "github_repo": "reworkd/AgentGPT",
+      "founded_date": "2023-04-01",
+      "first_tracked_date": "2023-05-01",
+      "pricing_model": "freemium",
+      "license_type": "open-source",
+      "status": "active"
+    }
+  ],
+
+  "pricing_updates": [
+    {
+      "tool_id": "devin",
+      "updates": [
+        {
+          "plan_name": "Core",
+          "old_price_monthly": 500,
+          "new_price_monthly": 20,
+          "change_date": "2025-04-03",
+          "change_reason": "Market competition and accessibility",
+          "features": [
+            "9 ACUs included",
+            "Additional ACUs $2 each",
+            "Devin 2.0 capabilities",
+            "Documentation generation"
+          ]
+        }
+      ]
+    },
+    {
+      "tool_id": "chatgpt-canvas",
+      "new_plans": [
+        {
+          "plan_name": "Free",
+          "price_monthly": 0,
+          "features": ["Basic Canvas access", "GPT-4o mini", "Limited usage"]
+        },
+        {
+          "plan_name": "Plus",
+          "price_monthly": 20,
+          "features": ["Unlimited Canvas", "GPT-4o", "Priority access"]
+        },
+        {
+          "plan_name": "Pro",
+          "price_monthly": 200,
+          "features": [
+            "Unlimited o1 access",
+            "O1 Pro mode",
+            "GPT-4.1 access",
+            "Canvas workspace",
+            "Code execution"
+          ],
+          "launch_date": "2024-12-05"
+        }
+      ]
+    },
+    {
+      "tool_id": "tabnine",
+      "plans": [
+        {
+          "plan_name": "Free",
+          "price_monthly": 0,
+          "features": ["Basic completions", "Local models", "Limited cloud requests"]
+        },
+        {
+          "plan_name": "Pro",
+          "price_monthly": 12,
+          "features": ["Advanced completions", "Unlimited cloud requests", "Privacy controls"]
+        }
+      ]
+    },
+    {
+      "tool_id": "sourcegraph-cody",
+      "plans": [
+        {
+          "plan_name": "Free",
+          "price_monthly": 0,
+          "features": ["Public repos", "Basic chat", "Limited autocompletions"]
+        },
+        {
+          "plan_name": "Pro",
+          "price_monthly": 9,
+          "features": ["Private repos", "Unlimited chat", "Advanced features"]
+        }
+      ]
+    },
+    {
+      "tool_id": "amazon-q-developer",
+      "plans": [
+        {
+          "plan_name": "Free",
+          "price_monthly": 0,
+          "features": ["Basic features", "Limited usage"]
+        },
+        {
+          "plan_name": "Pro",
+          "price_monthly": 19,
+          "features": ["Advanced agent features", "Unlimited usage", "Enterprise integrations"]
+        }
+      ]
+    },
+    {
+      "tool_id": "google-gemini-code-assist",
+      "plans": [
+        {
+          "plan_name": "Free",
+          "price_monthly": 0,
+          "features": ["Individual use", "Basic features"]
+        },
+        {
+          "plan_name": "Standard",
+          "price_monthly": 19,
+          "features": ["Team collaboration", "Advanced features"]
+        },
+        {
+          "plan_name": "Enterprise",
+          "price_monthly": 45,
+          "features": ["SOC compliance", "VPC controls", "Zero data retention"]
+        }
+      ]
+    }
+  ],
+
+  "capability_updates": [
+    {
+      "tool_id": "cursor",
+      "new_capabilities": [
+        {
+          "capability_type": "cursorrules_support",
+          "value_boolean": true,
+          "description": "Ability to encode team coding standards directly into AI"
+        },
+        {
+          "capability_type": "model_flexibility",
+          "value_json": ["Claude 3.5 Sonnet", "GPT-4o", "Gemini 2.5"],
+          "description": "Seamless fallback options when primary LLM unavailable"
+        }
+      ]
+    },
+    {
+      "tool_id": "github-copilot",
+      "new_capabilities": [
+        {
+          "capability_type": "multi_model_support",
+          "value_json": ["GPT-4o", "Claude 3.5 Sonnet", "Gemini 1.5 Pro"],
+          "description": "Multiple LLM providers available in Enterprise tier"
+        },
+        {
+          "capability_type": "agent_mode",
+          "value_boolean": true,
+          "description": "Autonomous coding agents for complex tasks"
+        }
+      ]
+    },
+    {
+      "tool_id": "claude-code",
+      "capabilities": [
+        {
+          "capability_type": "autonomy_level",
+          "value_number": 9,
+          "description": "Terminal-based autonomous agent capabilities"
+        },
+        {
+          "capability_type": "swe_bench_score",
+          "value_number": 72.7,
+          "description": "Claude 4 Opus breakthrough performance"
+        },
+        {
+          "capability_type": "context_window_size",
+          "value_number": 200000,
+          "description": "Large context for entire codebase understanding"
+        }
+      ]
+    },
+    {
+      "tool_id": "tabnine",
+      "capabilities": [
+        {
+          "capability_type": "autonomy_level",
+          "value_number": 3,
+          "description": "Code completion focused, minimal autonomy"
+        },
+        {
+          "capability_type": "supported_languages",
+          "value_json": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust",
+            "Kotlin",
+            "Swift"
+          ],
+          "description": "30+ programming languages supported"
+        },
+        {
+          "capability_type": "local_models",
+          "value_boolean": true,
+          "description": "Privacy-first with local model options"
+        }
+      ]
+    },
+    {
+      "tool_id": "qodo-gen",
+      "capabilities": [
+        {
+          "capability_type": "autonomy_level",
+          "value_number": 7,
+          "description": "Multi-agent system for testing and code review"
+        },
+        {
+          "capability_type": "supported_languages",
+          "value_json": ["Python", "JavaScript", "TypeScript", "Java", "C#", "PHP", "Go"],
+          "description": "Focus on major enterprise languages"
+        },
+        {
+          "capability_type": "testing_specialization",
+          "value_boolean": true,
+          "description": "Specialized in test generation and code quality"
+        }
+      ]
+    },
+    {
+      "tool_id": "zed",
+      "capabilities": [
+        {
+          "capability_type": "autonomy_level",
+          "value_number": 5,
+          "description": "AI assistant with some autonomous features"
+        },
+        {
+          "capability_type": "gpu_acceleration",
+          "value_boolean": true,
+          "description": "GPU-accelerated performance for ultra-fast editing"
+        },
+        {
+          "capability_type": "collaborative_editing",
+          "value_boolean": true,
+          "description": "Real-time collaborative editing capabilities"
+        },
+        {
+          "capability_type": "supported_languages",
+          "value_json": ["Rust", "Python", "JavaScript", "TypeScript", "Go", "C++", "Java"],
+          "description": "Strong support for modern programming languages"
+        }
+      ]
+    },
+    {
+      "tool_id": "auto-gpt",
+      "capabilities": [
+        {
+          "capability_type": "autonomy_level",
+          "value_number": 8,
+          "description": "High autonomy with goal-oriented task execution"
+        },
+        {
+          "capability_type": "internet_access",
+          "value_boolean": true,
+          "description": "Can browse internet and access external resources"
+        },
+        {
+          "capability_type": "file_io",
+          "value_boolean": true,
+          "description": "File system read/write capabilities"
+        },
+        {
+          "capability_type": "memory_system",
+          "value_boolean": true,
+          "description": "Persistent memory across sessions"
+        }
+      ]
+    }
+  ],
+
+  "metrics_updates": [
+    {
+      "tool_id": "cursor",
+      "new_metrics": [
+        {
+          "metric_key": "revenue_per_user_monthly",
+          "value_integer": 138900,
+          "recorded_at": "2025-06-01",
+          "source": "calculated",
+          "notes": "$500M ARR / 360K users = $1,389/user/year"
+        }
+      ]
+    },
+    {
+      "tool_id": "github-copilot",
+      "updated_metrics": [
+        {
+          "metric_key": "estimated_users",
+          "value_integer": 15000000,
+          "recorded_at": "2025-06-01",
+          "source": "github",
+          "notes": "15M+ total users including free tier"
+        },
+        {
+          "metric_key": "growth_rate_yoy",
+          "value_decimal": 281.0,
+          "recorded_at": "2025-06-01",
+          "source": "reuters",
+          "notes": "281% year-over-year growth"
+        }
+      ]
+    },
+    {
+      "tool_id": "bolt-new",
+      "updated_metrics": [
+        {
+          "metric_key": "monthly_arr",
+          "value_integer": 4000000000,
+          "recorded_at": "2025-06-01",
+          "source": "business-insider",
+          "notes": "$40M ARR after rapid growth from $0 in 30 days"
+        },
+        {
+          "metric_key": "estimated_users",
+          "value_integer": 3000000,
+          "recorded_at": "2025-06-01",
+          "source": "business-insider",
+          "notes": "3M users achieved rapid growth"
+        }
+      ]
+    },
+    {
+      "tool_id": "tabnine",
+      "metrics": [
+        {
+          "metric_key": "estimated_users",
+          "value_integer": 1000000,
+          "recorded_at": "2025-06-01",
+          "source": "manual_entry",
+          "notes": "1M+ developers using Tabnine"
+        },
+        {
+          "metric_key": "github_stars",
+          "value_integer": 22000,
+          "recorded_at": "2025-06-01",
+          "source": "github_api",
+          "notes": "Open source components popularity"
+        }
+      ]
+    },
+    {
+      "tool_id": "auto-gpt",
+      "metrics": [
+        {
+          "metric_key": "github_stars",
+          "value_integer": 167000,
+          "recorded_at": "2025-06-01",
+          "source": "github_api",
+          "notes": "One of most starred AI repositories"
+        },
+        {
+          "metric_key": "github_forks",
+          "value_integer": 44000,
+          "recorded_at": "2025-06-01",
+          "source": "github_api",
+          "notes": "High fork rate indicates active development"
+        }
+      ]
+    },
+    {
+      "tool_id": "zed",
+      "metrics": [
+        {
+          "metric_key": "github_stars",
+          "value_integer": 47000,
+          "recorded_at": "2025-06-01",
+          "source": "github_api",
+          "notes": "Rapid growth in developer interest"
+        },
+        {
+          "metric_key": "autonomy_level",
+          "value_integer": 5,
+          "recorded_at": "2025-06-01",
+          "source": "manual_entry",
+          "notes": "AI assistant features with some autonomous capabilities"
+        },
+        {
+          "metric_key": "innovation_score",
+          "value_decimal": 7.5,
+          "recorded_at": "2025-06-01",
+          "source": "manual_entry",
+          "notes": "High innovation score for GPU acceleration and Rust architecture"
+        }
+      ]
+    },
+    {
+      "tool_id": "sourcegraph-cody",
+      "metrics": [
+        {
+          "metric_key": "estimated_users",
+          "value_integer": 100000,
+          "recorded_at": "2025-06-01",
+          "source": "manual_entry",
+          "notes": "Estimated active user base"
+        },
+        {
+          "metric_key": "autonomy_level",
+          "value_integer": 6,
+          "recorded_at": "2025-06-01",
+          "source": "manual_entry",
+          "notes": "Strong codebase understanding capabilities"
+        }
+      ]
+    }
+  ],
+
+  "market_intelligence_updates": {
+    "acquisition_news": [
+      {
+        "date": "2025-04-16",
+        "acquirer": "OpenAI",
+        "target": "Windsurf (Codeium)",
+        "amount": 300000000000,
+        "amount_currency": "USD",
+        "status": "completed",
+        "strategic_rationale": "40K+ user base, ~$40M ARR, competition with Cursor"
+      }
+    ],
+    "funding_rounds": [
+      {
+        "tool_id": "cursor",
+        "round_type": "series-c",
+        "amount": 90000000000,
+        "valuation": 990000000000,
+        "date": "2025-06-05",
+        "lead_investor": "Thrive Capital",
+        "notes": "Fastest growing SaaS in history"
+      }
+    ],
+    "benchmark_updates": [
+      {
+        "benchmark_name": "SWE-bench Verified",
+        "leaderboard": [
+          { "tool": "Claude Code (Opus 4)", "score": 72.7, "date": "2025-05-22" },
+          { "tool": "Jules (Gemini 2.5)", "score": 52.2, "date": "2024-12-11" },
+          { "tool": "OpenHands", "score": 29.38, "date": "2025-06-01" },
+          { "tool": "Devin", "score": 13.86, "date": "2024-03-12" }
+        ]
+      }
+    ]
+  },
+
+  "category_expansions": {
+    "new_categories": [
+      {
+        "category": "testing-tool",
+        "description": "AI-powered tools for test generation, QA automation, and code quality assurance",
+        "tools": ["qodo-gen", "diffblue-cover", "snyk-code"]
+      },
+      {
+        "category": "code-review",
+        "description": "AI tools focused on code analysis, refactoring, and quality improvement",
+        "tools": ["sourcery", "snyk-code"]
+      }
+    ]
+  },
+
+  "status_updates": [
+    {
+      "tool_id": "windsurf",
+      "new_status": "acquired",
+      "acquired_by": "OpenAI",
+      "acquisition_date": "2025-04-16",
+      "acquisition_amount": 300000000000
+    }
+  ]
+}
