@@ -216,18 +216,45 @@ npm run db:reset
 
 ## 🧪 6. Testing & Validation
 
+### 🚨 CRITICAL: Pre-Deployment Checklist
+
+**ALWAYS run this before any deployment:**
+
+```bash
+npm run pre-deploy  # Comprehensive pre-deployment check
+```
+
+This runs:
+
+- `npm run lint` - ESLint checks
+- `npm run type-check` - TypeScript compilation check
+- `npm run format:check` - Code formatting verification
+- `npm run test` - Full test suite
+
 ### ✅ Before Committing
 
 ```bash
-# Lint and type check
+# Run comprehensive checks (prevents Vercel deployment failures)
+npm run ci:local
+
+# Or run individual checks:
 npm run lint
-npm run build:types
+npm run type-check
+npm run test
 
 # Test algorithm calculations
 npm test src/lib/ranking-algorithm.test.ts
 
 # Validate metrics schema
 npm run validate-metrics
+```
+
+### 🚫 Never Deploy Without Type Checking
+
+TypeScript errors will cause Vercel deployment failures. The build process now includes automatic type checking to catch errors early:
+
+```bash
+npm run build  # Now includes type-check before building
 ```
 
 ### 🔍 Data Quality Checks
