@@ -1,6 +1,6 @@
 {
   "name": "ai-power-rankings",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "node scripts/dev-server.js",
@@ -28,7 +28,10 @@
     "export-by-date": "tsx scripts/export-by-date.ts",
     "export-showcase": "tsx scripts/export-showcase.ts",
     "check:tools-schema": "tsx scripts/check-tools-schema.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "version:patch": "npm version patch && echo $(npm pkg get version | tr -d '\"') > VERSION",
+    "version:minor": "npm version minor && echo $(npm pkg get version | tr -d '\"') > VERSION",
+    "version:major": "npm version major && echo $(npm pkg get version | tr -d '\"') > VERSION"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
