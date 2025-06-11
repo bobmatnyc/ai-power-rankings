@@ -440,6 +440,111 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
     subtitle: "",
     lastUpdated: "",
     intro: "",
+    algorithm: {
+      title: "",
+      description: "",
+      keyFeatures: "",
+      features: {
+        innovationDecay: "",
+        platformRisk: "",
+        revenueQuality: "",
+        technicalWeighting: "",
+        dataValidation: "",
+        logarithmicScaling: "",
+      },
+    },
+    factors: {
+      title: "",
+      description: "",
+      primary: "",
+      secondary: "",
+      agentic: {
+        details: "",
+      },
+      innovation: {
+        details: "",
+      },
+      performance: {
+        details: "",
+      },
+      adoption: {
+        details: "",
+      },
+      traction: {
+        details: "",
+      },
+      sentiment: {
+        details: "",
+      },
+      velocity: {
+        details: "",
+      },
+      resilience: {
+        details: "",
+      },
+    },
+    modifiers: {
+      title: "",
+      description: "",
+      innovationDecay: {
+        description: "",
+      },
+      platformRisk: {
+        description: "",
+        penalties: "",
+        bonuses: "",
+        penaltyList: {
+          acquired: "",
+          exclusive: "",
+          competitor: "",
+          regulatory: "",
+          funding: "",
+        },
+        bonusList: {
+          multiLLM: "",
+          openSource: "",
+          selfHosted: "",
+        },
+      },
+      revenueQuality: {
+        description: "",
+        models: {
+          enterpriseHigh: "",
+          enterpriseStandard: "",
+          smbSaas: "",
+          consumerPremium: "",
+          freemium: "",
+          openSource: "",
+        },
+      },
+    },
+    dataSources: {
+      title: "",
+      description: "",
+      collection: {
+        title: "",
+        sources: {
+          api: "",
+          research: "",
+          announcements: "",
+          community: "",
+          benchmarks: "",
+        },
+      },
+      validation: {
+        title: "",
+        requirements: {
+          completeness: "",
+          reliability: "",
+          outlier: "",
+          crossValidation: "",
+        },
+      },
+      updateFrequency: {
+        title: "",
+        description: "",
+      },
+    },
     sections: {
       scoringFactors: {
         title: "",
