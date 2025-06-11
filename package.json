@@ -31,7 +31,9 @@
     "prepare": "husky",
     "version:patch": "npm version patch && echo $(npm pkg get version | tr -d '\"') > VERSION",
     "version:minor": "npm version minor && echo $(npm pkg get version | tr -d '\"') > VERSION",
-    "version:major": "npm version major && echo $(npm pkg get version | tr -d '\"') > VERSION"
+    "version:major": "npm version major && echo $(npm pkg get version | tr -d '\"') > VERSION",
+    "i18n:crawl": "node scripts/crawl-missing-translations.js",
+    "i18n:debug": "curl -s http://localhost:3000/api/debug/missing-translations | jq"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
