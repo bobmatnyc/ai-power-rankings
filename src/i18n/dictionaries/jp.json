@@ -67,14 +67,23 @@
       "updateFrequency": "Weekly Updates"
     },
     "trending": {
-      "title": "Trending This Week",
-      "subtitle": "AI tools gaining momentum and climbing the rankings",
-      "viewAll": "View All Trending"
+      "title": "今週のトレンド",
+      "subtitle": "勢いを増し、ランキングを上がっているAIツール",
+      "description": "勢いを増し、ランキングを上がっているAIツール",
+      "viewAll": "すべてのトレンドを見る",
+      "viewAllButton": "すべてのトレンドを見る"
     },
     "recentlyUpdated": {
-      "title": "Recently Updated",
-      "subtitle": "Latest updates and new features from top AI tools",
-      "viewAll": "View All Rankings"
+      "title": "最近の更新",
+      "subtitle": "トップAIツールからの最新アップデートと新機能",
+      "description": "トップAIツールからの最新アップデートと新機能",
+      "viewAll": "すべてのランキングを見る",
+      "viewAllButton": "すべてのランキングを見る"
+    },
+    "recent": {
+      "title": "最近の更新",
+      "description": "トップAIツールからの最新開発と機能リリース",
+      "viewAllButton": "すべての最近の更新を見る"
     },
     "categories": {
       "title": "Explore by Category",
@@ -267,9 +276,10 @@
         "history": "History"
       },
       "performance": {
-        "title": "Technical Performance",
-        "subtitle": "Benchmark results and technical capabilities",
-        "sweScore": "SWE-bench Score",
+        "title": "技術パフォーマンス",
+        "subtitle": "ベンチマーク結果と技術的能力",
+        "description": "SWE-benchスコアと機能サポートを含むベンチマーク結果と技術的能力",
+        "sweScore": "SWE-benchスコア",
         "contextWindow": "Context Window",
         "languageSupport": "Language Support",
         "multiFileSupport": "Multi-file Support",
