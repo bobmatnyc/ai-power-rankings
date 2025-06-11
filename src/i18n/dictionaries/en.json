@@ -47,14 +47,18 @@
       "badge": "Updated Weekly",
       "title": "AI Power Rankings",
       "subtitle": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
+      "description": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
       "exploreTools": "Explore All Tools",
-      "viewTrending": "View Trending"
+      "viewTrending": "View Trending",
+      "exploreButton": "Explore All Tools",
+      "trendingButton": "View Trending"
     },
     "stats": {
       "toolsRanked": "AI Tools Ranked",
       "trendingUp": "Trending Up",
       "updates": "Updates",
-      "freeAccess": "Free Access"
+      "freeAccess": "Free Access",
+      "updateFrequency": "Weekly Updates"
     },
     "trending": {
       "title": "Trending This Week",
@@ -96,15 +100,50 @@
         "agenticCapability": "Agentic Capability (30%) - Autonomous coding abilities",
         "innovation": "Innovation (15%) - With 6-month decay half-life",
         "technicalPerformance": "Technical Performance (12.5%) - SWE-bench focus",
-        "marketTraction": "Market Traction (12.5%) - Revenue quality adjusted"
+        "marketTraction": "Market Traction (12.5%) - Revenue quality adjusted",
+        "agentic": {
+          "name": "Agentic Capability",
+          "description": "Autonomous coding abilities and multi-step task completion"
+        },
+        "innovation": {
+          "name": "Innovation",
+          "description": "Technical breakthroughs and feature innovation"
+        },
+        "performance": {
+          "name": "Technical Performance",
+          "description": "Code quality, speed, and benchmark results"
+        },
+        "traction": {
+          "name": "Market Traction",
+          "description": "User adoption, growth rate, and market presence"
+        }
       },
       "modifiers": {
         "innovationDecay": "Innovation Decay - Recent innovations score higher",
         "platformRisk": "Platform Risk - Independence bonuses, lock-in penalties",
         "revenueQuality": "Revenue Quality - Enterprise revenue weighted higher",
-        "dataValidation": "Data Validation - 80% completeness required"
+        "dataValidation": "Data Validation - 80% completeness required",
+        "decay": {
+          "name": "Innovation Decay",
+          "description": "Recent innovations weighted more heavily"
+        },
+        "risk": {
+          "name": "Platform Risk",
+          "description": "Independence vs. platform lock-in factors"
+        },
+        "revenue": {
+          "name": "Revenue Quality",
+          "description": "Enterprise revenue weighted higher than consumer"
+        },
+        "validation": {
+          "name": "Data Validation",
+          "description": "Minimum 80% data completeness required"
+        }
       },
-      "readFull": "Read Full Methodology"
+      "modifiersTitle": "Dynamic Modifiers",
+      "modifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings",
+      "readFull": "Read Full Methodology",
+      "readMoreButton": "Read Full Methodology"
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
@@ -124,13 +163,13 @@
       "lastUpdate": "Last Update",
       "thisWeek": "This Week"
     },
-    "filters": {
-      "sortBy": "Sort by",
+    "sortBy": "Sort by",
+    "activeFilters": "Active filters",
+    "sort": {
       "rank": "Rank",
       "trending": "Trending",
       "score": "Score",
-      "name": "Name",
-      "activeFilters": "Active filters:"
+      "name": "Name"
     },
     "algorithm": {
       "title": "About Algorithm v6.0",
@@ -257,6 +296,14 @@
     }
   },
   "newsletter": {
+    "form": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "subscribe": "Subscribe",
+      "subscribing": "Subscribing...",
+      "privacyNote": "We respect your privacy. Unsubscribe at any time."
+    },
     "modal": {
       "title": "Stay Updated",
       "subtitle": "Get weekly updates on AI tool rankings, new features, and industry insights.",
@@ -372,13 +419,15 @@
   },
   "about": {
     "title": "About AI Power Rankings",
+    "subtitle": "Empowering developers with data-driven AI tool insights",
     "hero": {
       "title": "Empowering developers with data-driven AI tool insights",
       "subtitle": "We believe developers deserve transparent, objective rankings of AI coding tools to make informed decisions."
     },
     "mission": {
       "title": "Our Mission",
-      "content": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
+      "content": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs.",
+      "description": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
     },
     "whyWeBuiltThis": {
       "title": "Why We Built This",
@@ -402,6 +451,51 @@
       "title": "Stay Updated",
       "description": "Get weekly insights on AI tool rankings and industry trends.",
       "subscribe": "Subscribe to Newsletter"
+    },
+    "whatWeDo": {
+      "title": "What We Do",
+      "track": {
+        "title": "Track AI Tools",
+        "description": "Monitor and analyze the latest AI coding tools"
+      },
+      "analyze": {
+        "title": "Analyze Performance",
+        "description": "Evaluate tools based on real-world metrics"
+      },
+      "rank": {
+        "title": "Rank Objectively",
+        "description": "Apply our algorithm to provide unbiased rankings"
+      },
+      "update": {
+        "title": "Update Weekly",
+        "description": "Keep rankings current with the latest data"
+      },
+      "analysis": {
+        "title": "Deep Analysis",
+        "description": "Comprehensive evaluation of AI coding tools based on performance, features, and user feedback"
+      },
+      "methodology": {
+        "title": "Transparent Methodology",
+        "description": "Our ranking algorithm is fully documented and continuously refined based on community input"
+      },
+      "updates": {
+        "title": "Weekly Updates",
+        "description": "Rankings are refreshed every week to reflect the rapidly evolving AI tools landscape"
+      },
+      "community": {
+        "title": "Community-Driven",
+        "description": "We incorporate feedback from developers worldwide to improve our rankings and methodology"
+      }
+    },
+    "whyItMatters": {
+      "title": "Why It Matters",
+      "description": "In the rapidly evolving AI landscape, developers need reliable data to make informed decisions.",
+      "points": [
+        "Save time evaluating tools",
+        "Make data-driven decisions",
+        "Stay ahead of the curve",
+        "Choose tools that fit your needs"
+      ]
     }
   },
   "sidebar": {
@@ -419,6 +513,13 @@
     "refactoring": "Refactoring",
     "testing": "Testing",
     "documentation": "Documentation"
+  },
+  "status": {
+    "active": "Active",
+    "beta": "Beta",
+    "deprecated": "Deprecated",
+    "discontinued": "Discontinued",
+    "acquired": "Acquired"
   },
   "errors": {
     "404": {
