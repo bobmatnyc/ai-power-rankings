@@ -163,12 +163,12 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             <div>
               <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center">
                 <Star className="h-8 w-8 mr-2 text-primary" />
-                {dict.home.recent.title}
+                {dict.home.recentlyUpdated.title}
               </h2>
-              <p className="text-muted-foreground">{dict.home.recent.description}</p>
+              <p className="text-muted-foreground">{dict.home.recentlyUpdated.description}</p>
             </div>
             <Button variant="outline" asChild>
-              <Link href={`/${lang}/rankings`}>{dict.home.recent.viewAllButton}</Link>
+              <Link href={`/${lang}/rankings`}>{dict.home.recentlyUpdated.viewAllButton}</Link>
             </Button>
           </div>
 
@@ -360,11 +360,13 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                   <p className="text-xs text-muted-foreground">{dict.common.appDescription}</p>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground max-w-md">{dict.footer.description}</p>
+              <p className="text-sm text-muted-foreground max-w-md">
+                {dict.home.footer.description}
+              </p>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-3">{dict.footer.quickLinks}</h4>
+              <h4 className="font-semibold mb-3">{dict.home.footer.quickLinks}</h4>
               <div className="space-y-2">
                 <Link
                   href={`/${lang}/rankings`}
@@ -400,7 +402,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             </div>
 
             <div>
-              <h4 className="font-semibold mb-3">{dict.footer.categories}</h4>
+              <h4 className="font-semibold mb-3">{dict.home.footer.categories}</h4>
               <div className="space-y-2">
                 <Link
                   href={`/${lang}/rankings?category=code-assistant`}
@@ -431,7 +433,9 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
           </div>
 
           <div className="mt-8 pt-8 border-t border-border/50">
-            <p className="text-center text-sm text-muted-foreground">{dict.footer.copyright}</p>
+            <p className="text-center text-sm text-muted-foreground">
+              {dict.home.footer.copyright}
+            </p>
           </div>
         </div>
       </footer>

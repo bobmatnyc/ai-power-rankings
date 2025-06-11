@@ -7,7 +7,13 @@
     "opensourceframework": "Open Source Framework",
     "testingtool": "Testing Tool",
     "codereview": "Code Review",
-    "codeassistant": "Code Assistant"
+    "codeassistant": "Code Assistant",
+    "autonomousAgent": "Autonomous Agent",
+    "codeEditor": "Code Editor",
+    "ideAssistant": "IDE Assistant",
+    "appBuilder": "App Builder",
+    "codeReview": "Code Review",
+    "codeAssistant": "Code Assistant"
   },
   "common": {
     "appName": "AI Power Rankings",
@@ -88,7 +94,11 @@
       "autonomousAgents": {
         "name": "Autonomous Agents",
         "description": "Fully autonomous AI software engineers"
-      }
+      },
+      "ideDescription": "AI-powered code completion and suggestions",
+      "editorDescription": "Smart editors with AI integration",
+      "builderDescription": "Build complete applications with AI assistance",
+      "agentDescription": "Fully autonomous AI software engineers"
     },
     "methodology": {
       "title": "Our Methodology",
