@@ -280,7 +280,7 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
                   <div>
                     <div className="flex justify-between mb-1">
                       <span className="text-sm font-medium">
-                        {dict.tools.detail.performance.sweBench}
+                        {dict.tools.detail.performance.sweScore}
                       </span>
                       <span className="text-sm font-medium">
                         {formatMetric(metrics.swe_bench_score, "percentage")}
@@ -300,19 +300,25 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
                     <p className="text-sm text-muted-foreground">
                       {dict.tools.detail.performance.contextWindow}
                     </p>
-                    <p className="font-medium">200k {dict.common.tokens}</p>
+                    <p className="font-medium">200k {dict.tools.detail.performance.tokens}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Language Support</p>
-                    <p className="font-medium">20+ languages</p>
+                    <p className="text-sm text-muted-foreground">
+                      {dict.tools.detail.performance.languageSupport}
+                    </p>
+                    <p className="font-medium">20+ {dict.tools.detail.performance.languages}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Multi-file Support</p>
-                    <p className="font-medium">Yes</p>
+                    <p className="text-sm text-muted-foreground">
+                      {dict.tools.detail.performance.multiFileSupport}
+                    </p>
+                    <p className="font-medium">{dict.tools.detail.performance.yes}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">LLM Providers</p>
-                    <p className="font-medium">Multiple</p>
+                    <p className="text-sm text-muted-foreground">
+                      {dict.tools.detail.performance.llmProviders}
+                    </p>
+                    <p className="font-medium">{dict.tools.detail.performance.multiple}</p>
                   </div>
                 </div>
               </div>
