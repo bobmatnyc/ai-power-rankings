@@ -13,6 +13,17 @@
 
 ## Development Guidelines
 
-- Always run lint and typecheck before completing tasks
+- **CRITICAL**: Always run `npm run ci:local` before committing to catch TypeScript errors
+- Use `npm run pre-deploy` before any deployment to ensure code quality
 - Follow existing code patterns and conventions
 - **NEVER deviate from documented instructions without explicit approval**
+
+## Pre-Deployment Checklist
+
+Before pushing to production, ALWAYS run:
+
+```bash
+npm run pre-deploy  # Runs lint, type-check, format-check, and tests
+```
+
+This prevents deployment failures due to TypeScript errors or code quality issues.
