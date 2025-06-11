@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { NewsletterModal } from "@/components/ui/newsletter-modal";
+import { TechStackModal } from "@/components/ui/tech-stack-modal";
+import { Code2 } from "lucide-react";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -124,8 +126,34 @@ export function AboutContent({ lang, dict }: AboutContentProps): React.JSX.Eleme
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-4">{dict.about.team.description1}</p>
-          <p className="text-muted-foreground mb-4">{dict.about.team.description2}</p>
-          <div className="flex gap-4">
+          <p className="text-muted-foreground mb-4">
+            {dict.about.team.description2.split("HyperDev").map((part, index) => {
+              if (index === 0) {
+                return part;
+              }
+              return (
+                <span key={index}>
+                  <a
+                    href="https://hyperdev.matsuoka.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    {dict.about.team.hyperdevLink}
+                  </a>
+                  {part}
+                </span>
+              );
+            })}
+          </p>
+          <p className="text-muted-foreground mb-4">{dict.about.team.description3}</p>
+          <div className="flex flex-wrap gap-4">
+            <TechStackModal>
+              <Button variant="outline" className="gap-2">
+                <Code2 className="h-4 w-4" />
+                View Tech Stack
+              </Button>
+            </TechStackModal>
             <Button variant="outline" asChild>
               <Link href="/contact">{dict.about.team.reportIssue}</Link>
             </Button>

@@ -122,9 +122,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Send verification email
     const { error: emailError } = await resend.emails.send({
-      from: "AI Power Rankings <newsletter@aipowerranking.com>",
+      from: "AI Power Ranking <newsletter@aipowerranking.com>",
       to: email,
-      subject: "Verify your subscription to AI Power Rankings",
+      subject: "Verify your subscription to AI Power Ranking",
       html: `
         <!DOCTYPE html>
         <html>
@@ -236,15 +236,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               <div class="container">
                 <div class="header">
                   <h1>
-                    <img src="${baseUrl}/favicon.ico" alt="AI Power Rankings" class="crown-icon" />
-                    AI Power Rankings
+                    <img src="${baseUrl}/favicon.ico" alt="AI Power Ranking" class="crown-icon" />
+                    AI Power Ranking
                   </h1>
                 </div>
                 
                 <div class="content">
                   <p style="font-size: 18px; margin-bottom: 8px;">Hi ${firstName},</p>
                   
-                  <p style="font-size: 16px; color: #4b5563;">Welcome to the <span class="gradient-text">AI Power Rankings</span> community! 🎉</p>
+                  <p style="font-size: 16px; color: #4b5563;">Welcome to the <span class="gradient-text">AI Power Ranking</span> community! 🎉</p>
                   
                   <p>Thank you for subscribing to our weekly newsletter. You're now part of an exclusive group staying ahead of the AI coding revolution.</p>
                   
@@ -283,8 +283,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
                 </div>
                 
                 <div class="footer">
-                  <p style="margin: 0 0 8px 0;">If you didn't subscribe to AI Power Rankings, you can safely ignore this email.</p>
-                  <p style="margin: 0 0 16px 0;">© 2025 AI Power Rankings. All rights reserved.</p>
+                  <p style="margin: 0 0 8px 0;">If you didn't subscribe to AI Power Ranking, you can safely ignore this email.</p>
+                  <p style="margin: 0 0 16px 0;">© 2025 AI Power Ranking. All rights reserved.</p>
                   <p style="margin: 0;">
                     <a href="${baseUrl}" class="link">Visit our website</a> | 
                     <a href="${baseUrl}/about" class="link">About us</a> | 
