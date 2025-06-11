@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { AlertCircle } from "lucide-react";
+import { useI18n } from "@/i18n/client";
 
 interface NewsletterModalProps {
   open: boolean;
@@ -32,13 +33,14 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
   const [successMessage, setSuccessMessage] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
   const turnstileRef = useRef<TurnstileInstance>(null);
+  const { dict } = useI18n();
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setError("");
 
     if (!turnstileToken) {
-      setError("Please complete the security check");
+      setError(dict.newsletter.errors.securityCheck);
       return;
     }
 
@@ -61,11 +63,11 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to subscribe");
+        throw new Error(data.error || dict.newsletter.errors.subscriptionFailed);
       }
 
       // Show success message
-      setSuccessMessage(data.message || "Please check your email to verify your subscription");
+      setSuccessMessage(data.message || dict.newsletter.success.checkEmail);
       setIsSubmitted(true);
 
       // Close modal after longer delay for already subscribed
@@ -84,7 +86,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
         }, 300);
       }, delay);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to subscribe. Please try again.");
+      setError(err instanceof Error ? err.message : dict.newsletter.errors.tryAgain);
       turnstileRef.current?.reset();
       setTurnstileToken("");
     } finally {
@@ -98,7 +100,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
   };
 
   const handleTurnstileError = (): void => {
-    setError("Security verification failed. Please try again.");
+    setError(dict.newsletter.errors.verificationFailed);
     setTurnstileToken("");
   };
 
@@ -110,16 +112,14 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Stay Updated</DialogTitle>
-          <DialogDescription>
-            Get weekly updates on AI tool rankings, new features, and industry insights.
-          </DialogDescription>
+          <DialogTitle>{dict.newsletter.title}</DialogTitle>
+          <DialogDescription>{dict.newsletter.description}</DialogDescription>
         </DialogHeader>
 
         {isSubmitted ? (
           <div className="py-8 text-center">
             <div className="text-4xl mb-4">✓</div>
-            <p className="text-lg font-medium">Thank you!</p>
+            <p className="text-lg font-medium">{dict.newsletter.success.thankYou}</p>
             <p className="text-sm text-muted-foreground mt-2">{successMessage}</p>
           </div>
         ) : (
@@ -127,10 +127,10 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
             <div className="grid gap-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First name</Label>
+                  <Label htmlFor="firstName">{dict.newsletter.form.firstName}</Label>
                   <Input
                     id="firstName"
-                    placeholder="John"
+                    placeholder={dict.newsletter.form.firstNamePlaceholder}
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
@@ -138,10 +138,10 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last name</Label>
+                  <Label htmlFor="lastName">{dict.newsletter.form.lastName}</Label>
                   <Input
                     id="lastName"
-                    placeholder="Doe"
+                    placeholder={dict.newsletter.form.lastNamePlaceholder}
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
@@ -150,11 +150,11 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{dict.newsletter.form.email}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="john.doe@example.com"
+                  placeholder={dict.newsletter.form.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -187,7 +187,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
 
             <div className="flex gap-3 pt-4">
               <Button type="submit" className="flex-1" disabled={isSubmitting || !turnstileToken}>
-                {isSubmitting ? "Subscribing..." : "Subscribe"}
+                {isSubmitting ? dict.newsletter.form.subscribing : dict.newsletter.form.subscribe}
               </Button>
               <Button
                 type="button"
@@ -195,12 +195,12 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                 onClick={() => onOpenChange(false)}
                 disabled={isSubmitting}
               >
-                Cancel
+                {dict.common.cancel}
               </Button>
             </div>
 
             <p className="text-xs text-muted-foreground text-center">
-              We respect your privacy. Unsubscribe at any time.
+              {dict.newsletter.privacyNote}
             </p>
           </form>
         )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -18,39 +18,22 @@ import {
   Wrench,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/i18n/client";
+import type { Dictionary } from "@/i18n/get-dictionary";
 
-const navigationItems = [
-  {
-    title: "Home",
-    href: "/",
-    icon: Home,
-  },
-  {
-    title: "Rankings",
-    href: "/rankings",
-    icon: List,
-  },
-  {
-    title: "News",
-    href: "/news",
-    icon: Newspaper,
-  },
-  {
-    title: "Tools",
-    href: "/tools",
-    icon: Wrench,
-  },
-  {
-    title: "Methodology",
-    href: "/methodology",
-    icon: FlaskConical,
-  },
-  {
-    title: "About",
-    href: "/about",
-    icon: Info,
-  },
-];
+// Navigation items will be built dynamically with i18n
+
+// Helper function to get category name from dictionary
+function getCategoryName(categoryId: string, categories: Dictionary["categories"]): string {
+  const categoryKey = categoryId.replace(/-/g, "") as keyof typeof categories;
+  return (
+    categories[categoryKey] ||
+    categoryId
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ")
+  );
+}
 
 interface Category {
   id: string;
@@ -58,14 +41,7 @@ interface Category {
   count: number;
 }
 
-const tagFilters = [
-  { id: "autocomplete", name: "Autocomplete", count: 15 },
-  { id: "chat", name: "Chat Interface", count: 18 },
-  { id: "code-generation", name: "Code Generation", count: 20 },
-  { id: "refactoring", name: "Refactoring", count: 12 },
-  { id: "testing", name: "Testing", count: 8 },
-  { id: "documentation", name: "Documentation", count: 10 },
-];
+// Tag filters will be built dynamically with i18n
 
 function SidebarContent(): React.JSX.Element {
   const pathname = usePathname();
@@ -74,19 +50,49 @@ function SidebarContent(): React.JSX.Element {
   const currentCategory = searchParams.get("category") || "all";
   const currentTags = searchParams.get("tags")?.split(",") || [];
   const [categories, setCategories] = useState<Category[]>([]);
+  const { dict, lang } = useI18n();
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  const navigationItems = [
+    {
+      title: dict.navigation.home,
+      href: `/${lang}`,
+      icon: Home,
+    },
+    {
+      title: dict.navigation.rankings,
+      href: `/${lang}/rankings`,
+      icon: List,
+    },
+    {
+      title: dict.navigation.news,
+      href: `/${lang}/news`,
+      icon: Newspaper,
+    },
+    {
+      title: dict.navigation.tools,
+      href: `/${lang}/tools`,
+      icon: Wrench,
+    },
+    {
+      title: dict.navigation.methodology,
+      href: `/${lang}/methodology`,
+      icon: FlaskConical,
+    },
+    {
+      title: dict.navigation.about,
+      href: `/${lang}/about`,
+      icon: Info,
+    },
+  ];
 
-  const fetchCategories = async (): Promise<void> => {
+  const fetchCategories = useCallback(async (): Promise<void> => {
     try {
       const response = await fetch("/api/tools");
       const data = await response.json();
 
       // Extract categories from tools
       const categoryMap: Record<string, number> = {};
-      data.tools?.forEach((tool: any) => {
+      data.tools?.forEach((tool: { category?: string }) => {
         if (tool.category) {
           categoryMap[tool.category] = (categoryMap[tool.category] || 0) + 1;
         }
@@ -95,10 +101,7 @@ function SidebarContent(): React.JSX.Element {
       // Convert the object to array format
       const categoryArray: Category[] = Object.entries(categoryMap).map(([id, count]) => ({
         id,
-        name: id
-          .split("-")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" "),
+        name: getCategoryName(id, dict.categories).join(" "),
         count: count as number,
       }));
 
@@ -117,7 +120,11 @@ function SidebarContent(): React.JSX.Element {
       // Fallback to some default categories
       setCategories([{ id: "all", name: "All Categories", count: 0 }]);
     }
-  };
+  }, [dict.categories]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   const handleNavClick = (): void => {
     if (isMobile) {
@@ -147,13 +154,26 @@ function SidebarContent(): React.JSX.Element {
     }
 
     const queryString = params.toString();
-    return `/rankings${queryString ? `?${queryString}` : ""}`;
+    return `/${lang}/rankings${queryString ? `?${queryString}` : ""}`;
   };
+
+  const tagFilters = [
+    { id: "autocomplete", name: dict.features.autocomplete, count: 15 },
+    { id: "chat", name: dict.features.chat, count: 18 },
+    { id: "code-generation", name: dict.features.codeGeneration, count: 20 },
+    { id: "refactoring", name: dict.features.refactoring, count: 12 },
+    { id: "testing", name: dict.features.testing, count: 8 },
+    { id: "documentation", name: dict.features.documentation, count: 10 },
+  ];
 
   return (
     <Sidebar>
       <div className="p-6 h-full overflow-y-auto">
-        <Link href="/" onClick={handleNavClick} className="flex items-center space-x-3 mb-6">
+        <Link
+          href={`/${lang}`}
+          onClick={handleNavClick}
+          className="flex items-center space-x-3 mb-6"
+        >
           <img
             src="/crown-of-technology.png"
             alt="AI Power Rankings"
@@ -168,7 +188,7 @@ function SidebarContent(): React.JSX.Element {
           {/* Navigation */}
           <div>
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-              Navigation
+              {dict.sidebar.navigation}
             </h3>
             <nav className="space-y-1">
               {navigationItems.map((item) => (
@@ -195,21 +215,21 @@ function SidebarContent(): React.JSX.Element {
           {/* Quick Links */}
           <div>
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-              Quick Links
+              {dict.sidebar.quickLinks}
             </h3>
             <nav className="space-y-1">
               <Link
-                href="/rankings?sort=trending"
+                href={`/${lang}/rankings?sort=trending`}
                 onClick={handleNavClick}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors",
-                  pathname === "/rankings" && searchParams.get("sort") === "trending"
+                  pathname === `/${lang}/rankings` && searchParams.get("sort") === "trending"
                     ? "bg-primary/10 text-primary font-medium"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
                 <TrendingUp className="h-4 w-4" />
-                <span>Trending</span>
+                <span>{dict.sidebar.trending}</span>
               </Link>
             </nav>
           </div>
@@ -219,7 +239,7 @@ function SidebarContent(): React.JSX.Element {
           {/* Categories */}
           <div>
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-              Categories
+              {dict.sidebar.categories}
             </h3>
             <div className="space-y-1">
               {categories.map((category) => (
@@ -248,7 +268,7 @@ function SidebarContent(): React.JSX.Element {
           {/* Tags */}
           <div>
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-              Features
+              {dict.sidebar.features}
             </h3>
             <div className="space-y-1">
               {tagFilters.map((tag) => (
@@ -279,9 +299,9 @@ function SidebarContent(): React.JSX.Element {
           {/* Clear Filters */}
           {(currentCategory !== "all" || currentTags.length > 0) && (
             <Button variant="outline" size="sm" className="w-full" asChild>
-              <Link href="/rankings" onClick={handleNavClick}>
+              <Link href={`/${lang}/rankings`} onClick={handleNavClick}>
                 <Filter className="h-4 w-4 mr-2" />
-                Clear Filters
+                {dict.sidebar.clearFilters}
               </Link>
             </Button>
           )}

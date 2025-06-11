@@ -20,6 +20,8 @@ import {
   TrendingDown,
   ArrowRight,
 } from "lucide-react";
+import type { Dictionary } from "@/i18n/get-dictionary";
+import type { Locale } from "@/i18n/config";
 
 interface MetricsHistory {
   id: string;
@@ -42,7 +44,12 @@ interface MetricsHistory {
   tags?: string[];
 }
 
-export default function NewsContent(): React.JSX.Element {
+interface NewsContentProps {
+  lang: Locale;
+  dict: Dictionary;
+}
+
+export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX.Element {
   const [newsItems, setNewsItems] = useState<MetricsHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -260,11 +267,11 @@ export default function NewsContent(): React.JSX.Element {
 
     if (diffHours < 24) {
       if (diffHours === 0) {
-        return "Just now";
+        return dict.common.justNow;
       }
-      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+      return dict.common.hoursAgo.replace("{count}", diffHours.toString());
     } else if (diffDays < 7) {
-      return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+      return dict.common.daysAgo.replace("{count}", diffDays.toString());
     } else {
       return date.toLocaleDateString("en-US", {
         month: "short",
@@ -290,7 +297,7 @@ export default function NewsContent(): React.JSX.Element {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Loading news...</p>
+        <p className="text-muted-foreground">{dict.common.loading}</p>
       </div>
     );
   }
@@ -299,10 +306,8 @@ export default function NewsContent(): React.JSX.Element {
     <div className="space-y-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">AI Tools News</h1>
-        <p className="text-muted-foreground text-lg">
-          Latest updates, milestones, and announcements from AI coding tools
-        </p>
+        <h1 className="text-4xl font-bold mb-2">{dict.news.title}</h1>
+        <p className="text-muted-foreground text-lg">{dict.news.subtitle}</p>
       </div>
 
       {/* Filter Tabs */}
@@ -315,7 +320,9 @@ export default function NewsContent(): React.JSX.Element {
             onClick={() => setFilter(type)}
             className="capitalize"
           >
-            {type === "all" ? "All News" : type.replace("-", " ")}
+            {type === "all"
+              ? dict.news.filters.all
+              : dict.news.filters[type as keyof typeof dict.news.filters] || type.replace("-", " ")}
           </Button>
         ))}
       </div>
@@ -324,7 +331,7 @@ export default function NewsContent(): React.JSX.Element {
       <div className="space-y-2 md:space-y-4">
         {filteredNews.length === 0 ? (
           <Card className="p-8 text-center">
-            <p className="text-muted-foreground">No news items found.</p>
+            <p className="text-muted-foreground">{dict.news.noItems}</p>
           </Card>
         ) : (
           filteredNews.map((item) => (
@@ -363,7 +370,9 @@ export default function NewsContent(): React.JSX.Element {
                       {item.metrics.users && (
                         <div className="flex items-center gap-1">
                           <Users className="h-4 w-4 text-muted-foreground" />
-                          <span>{(item.metrics.users / 1000).toFixed(0)}K users</span>
+                          <span>
+                            {(item.metrics.users / 1000).toFixed(0)}K {dict.common.users}
+                          </span>
                         </div>
                       )}
                       {item.metrics.revenue && (
@@ -385,7 +394,7 @@ export default function NewsContent(): React.JSX.Element {
                             }
                           >
                             {item.metrics.score_change > 0 ? "+" : ""}
-                            {item.metrics.score_change.toFixed(1)} score
+                            {item.metrics.score_change.toFixed(1)} {dict.common.score}
                           </span>
                         </div>
                       )}
@@ -402,7 +411,7 @@ export default function NewsContent(): React.JSX.Element {
                             }
                           >
                             {item.metrics.rank_change > 0 ? "+" : ""}
-                            {item.metrics.rank_change} rank
+                            {item.metrics.rank_change} {dict.common.rank}
                           </span>
                         </div>
                       )}
@@ -426,8 +435,8 @@ export default function NewsContent(): React.JSX.Element {
                   {/* View Tool Link */}
                   <div className="ml-auto">
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/tools/${item.tool_id}`}>
-                        View Tool
+                      <Link href={`/${lang}/tools/${item.tool_id}`}>
+                        {dict.common.viewTool}
                         <ArrowRight className="h-4 w-4 ml-1" />
                       </Link>
                     </Button>
@@ -442,12 +451,12 @@ export default function NewsContent(): React.JSX.Element {
       {/* Infinite scroll trigger */}
       {hasMore && (
         <div ref={loadMoreRef} className="h-20 flex items-center justify-center">
-          {loadingMore && <div className="text-muted-foreground">Loading more news...</div>}
+          {loadingMore && <div className="text-muted-foreground">{dict.news.loadingMore}</div>}
         </div>
       )}
 
       {!hasMore && filteredNews.length > 0 && (
-        <div className="text-center py-8 text-muted-foreground">No more news to load</div>
+        <div className="text-center py-8 text-muted-foreground">{dict.news.noMore}</div>
       )}
     </div>
   );
