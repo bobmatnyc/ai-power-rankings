@@ -22,7 +22,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
   let loading = false;
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/rankings`, {
       next: { revalidate: 3600 }, // Cache for 1 hour
     });
@@ -138,7 +138,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
           </div>
 
           <div className="grid md:grid-cols-3 gap-3 md:gap-6">
-            {trendingTools.map((tool, index) => (
+            {trendingTools.map((tool: any, index: number) => (
               <div key={tool.tool.id} className="relative h-full">
                 <div className="absolute -top-2 -right-2 z-10">
                   <Badge className="bg-accent text-white border-0 shadow-lg">
@@ -171,7 +171,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
           </div>
 
           <div className="grid md:grid-cols-2 gap-3 md:gap-6">
-            {recentlyUpdated.map((tool) => (
+            {recentlyUpdated.map((tool: any) => (
               <div key={tool.tool.id} className="h-full">
                 <RankingCard ranking={tool} />
               </div>

@@ -30,7 +30,10 @@
     "search": "Search",
     "filter": "Filter",
     "sort": "Sort",
-    "share": "Share"
+    "share": "Share",
+    "explore": "Explore",
+    "notAvailable": "N/A",
+    "users": "Users"
   },
   "navigation": {
     "home": "Home",
@@ -191,7 +194,17 @@
       },
       "primaryFactors": "Primary Factors (67.5%)",
       "secondaryFactors": "Secondary Factors (32.5%)",
-      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology."
+      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
+      "factors": {
+        "agentic": "Agentic Capability",
+        "innovation": "Innovation",
+        "performance": "Performance",
+        "adoption": "Adoption",
+        "traction": "Traction",
+        "sentiment": "Sentiment",
+        "velocity": "Velocity",
+        "resilience": "Resilience"
+      }
     }
   },
   "news": {
@@ -229,6 +242,8 @@
     "filterByCategory": "Filter by category",
     "sortBy": "Sort by",
     "defaultDescription": "Discover and compare AI coding tools",
+    "notFound": "Tool not found",
+    "backToTools": "Back to Tools",
     "sort": {
       "name": "Name",
       "category": "Category",
@@ -384,22 +399,43 @@
         "subscribeAgain": "Subscribe Again"
       }
     },
+    "verify": {
+      "goToHomepage": "Go to Homepage",
+      "tryAgain": "Try Again",
+      "success": {
+        "title": "Email Verified!",
+        "description": "Your email has been successfully verified. You'll start receiving our weekly newsletter."
+      },
+      "alreadyVerified": {
+        "title": "Already Verified",
+        "description": "This email address has already been verified. You're all set!"
+      },
+      "error": {
+        "title": "Verification Error"
+      },
+      "errors": {
+        "default": "An unexpected error occurred. Please try again.",
+        "missingToken": "The verification link appears to be incomplete.",
+        "invalidToken": "This verification link is invalid or has expired.",
+        "verificationFailed": "We couldn't verify your email at this time. Please try again later."
+      }
+    },
     "unsubscribe": {
       "title": "Unsubscribe from Newsletter",
       "processing": "Processing your request...",
       "success": {
         "title": "Successfully Unsubscribed",
-        "message": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!"
+        "message": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!",
+        "description": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!"
+      },
+      "error": {
+        "title": "Unsubscribe Error"
       },
       "errors": {
-        "missingToken": {
-          "title": "Missing Token",
-          "message": "The unsubscribe link appears to be incomplete."
-        },
-        "invalidToken": {
-          "title": "Invalid Link",
-          "message": "This unsubscribe link is invalid or has expired."
-        },
+        "missingToken": "The unsubscribe link appears to be incomplete.",
+        "invalidToken": "This unsubscribe link is invalid or has expired.",
+        "unsubscribeFailed": "We couldn't process your unsubscribe request. Please try again later.",
+        "default": "An unexpected error occurred. Please try again.",
         "failed": {
           "title": "Unsubscribe Failed",
           "message": "We couldn't process your unsubscribe request. Please try again later."
