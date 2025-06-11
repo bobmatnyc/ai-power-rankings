@@ -125,7 +125,26 @@ export function AboutContent({ lang, dict }: AboutContentProps): React.JSX.Eleme
           <CardTitle>{dict.about.team.title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground mb-4">{dict.about.team.description1}</p>
+          <p className="text-muted-foreground mb-4">
+            {dict.about.team.description1.split("Bob Matsuoka").map((part, index) => {
+              if (index === 0) {
+                return part;
+              }
+              return (
+                <span key={index}>
+                  <a
+                    href="https://matsuoka.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Bob Matsuoka
+                  </a>
+                  {part}
+                </span>
+              );
+            })}
+          </p>
           <p className="text-muted-foreground mb-4">
             {dict.about.team.description2.split("HyperDev").map((part, index) => {
               if (index === 0) {
