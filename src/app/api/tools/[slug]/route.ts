@@ -9,9 +9,8 @@ type Params = {
 };
 
 export async function GET(_request: Request, { params }: Params): Promise<NextResponse> {
+  const { slug } = await params;
   try {
-    const { slug } = await params;
-
     // Get tool details with info JSON
     const { data: tool, error: toolError } = await supabase
       .from("tools")
