@@ -69,12 +69,21 @@
     "trending": {
       "title": "이번 주 트렌딩",
       "subtitle": "모멘텀을 얻고 있는 AI 툴들과 랭킹 상승",
-      "viewAll": "모든 트렌딩 보기"
+      "description": "모멘텀을 얻고 있는 AI 툴들과 랭킹 상승",
+      "viewAll": "모든 트렌딩 보기",
+      "viewAllButton": "모든 트렌딩 보기"
     },
     "recentlyUpdated": {
       "title": "최근 업데이트",
       "subtitle": "탑 AI 툴들의 최신 업데이트와 새로운 기능",
-      "viewAll": "모든 랭킹 보기"
+      "description": "탑 AI 툴들의 최신 업데이트와 새로운 기능",
+      "viewAll": "모든 랭킹 보기",
+      "viewAllButton": "모든 랭킹 보기"
+    },
+    "recent": {
+      "title": "최근 업데이트",
+      "description": "탑 AI 툴들의 최신 개발 사항과 기능 릴리스",
+      "viewAllButton": "모든 최근 업데이트 보기"
     },
     "categories": {
       "title": "카테고리별 탐색",
@@ -270,6 +279,7 @@
       "performance": {
         "title": "기술 성능",
         "subtitle": "벤치마크 결과 및 기술적 능력",
+        "description": "SWE-bench 점수와 기능 지원을 포함한 벤치마크 결과 및 기술적 역량",
         "sweScore": "SWE-bench 점수",
         "contextWindow": "컨텍스트 윈도우",
         "languageSupport": "언어 지원",

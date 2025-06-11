@@ -69,12 +69,21 @@
     "trending": {
       "title": "Трендінг цього тижня",
       "subtitle": "AI тули що набирають momentum і піднімаються в рейтингах",
-      "viewAll": "Переглянути весь trending"
+      "description": "AI тули що набирають momentum і піднімаються в рейтингах",
+      "viewAll": "Переглянути весь trending",
+      "viewAllButton": "Переглянути весь trending"
     },
     "recentlyUpdated": {
       "title": "Нещодавно оновлені",
       "subtitle": "Останні апдейти та нові фічі від топових AI тулів",
-      "viewAll": "Переглянути всі рейтинги"
+      "description": "Останні апдейти та нові фічі від топових AI тулів",
+      "viewAll": "Переглянути всі рейтинги",
+      "viewAllButton": "Переглянути всі рейтинги"
+    },
+    "recent": {
+      "title": "Недавні оновлення",
+      "description": "Останні розробки та релізи функцій від топових AI тулів",
+      "viewAllButton": "Переглянути всі недавні"
     },
     "categories": {
       "title": "Досліджуй за категоріями",
@@ -268,9 +277,10 @@
         "history": "History"
       },
       "performance": {
-        "title": "Technical Performance",
-        "subtitle": "Benchmark результати та technical можливості",
-        "sweScore": "SWE-bench Score",
+        "title": "Технічна продуктивність",
+        "subtitle": "Результати бенчмарків та технічні можливості",
+        "description": "Результати бенчмарків та технічні можливості включаючи SWE-bench оцінки та підтримку функцій",
+        "sweScore": "SWE-bench Очки",
         "contextWindow": "Context Window",
         "languageSupport": "Language Support",
         "multiFileSupport": "Multi-file Support",

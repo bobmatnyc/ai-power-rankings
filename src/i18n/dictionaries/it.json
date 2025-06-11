@@ -67,14 +67,23 @@
       "updateFrequency": "Weekly Updates"
     },
     "trending": {
-      "title": "Trending This Week",
-      "subtitle": "AI tools gaining momentum and climbing the rankings",
-      "viewAll": "View All Trending"
+      "title": "Trend di questa settimana",
+      "subtitle": "Strumenti AI in crescita e in ascesa nelle classifiche",
+      "description": "Strumenti AI in crescita e in ascesa nelle classifiche",
+      "viewAll": "Visualizza tutti i trend",
+      "viewAllButton": "Visualizza tutti i trend"
     },
     "recentlyUpdated": {
-      "title": "Recently Updated",
-      "subtitle": "Latest updates and new features from top AI tools",
-      "viewAll": "View All Rankings"
+      "title": "Aggiornati di recente",
+      "subtitle": "Ultimi aggiornamenti e nuove funzionalità dai migliori strumenti AI",
+      "description": "Ultimi aggiornamenti e nuove funzionalità dai migliori strumenti AI",
+      "viewAll": "Visualizza tutte le classifiche",
+      "viewAllButton": "Visualizza tutte le classifiche"
+    },
+    "recent": {
+      "title": "Aggiornamenti recenti",
+      "description": "Ultimi sviluppi e rilasci di funzionalità dai migliori strumenti AI",
+      "viewAllButton": "Visualizza tutti i recenti"
     },
     "categories": {
       "title": "Explore by Category",
@@ -267,9 +276,10 @@
         "history": "History"
       },
       "performance": {
-        "title": "Technical Performance",
-        "subtitle": "Benchmark results and technical capabilities",
-        "sweScore": "SWE-bench Score",
+        "title": "Prestazioni tecniche",
+        "subtitle": "Risultati dei benchmark e capacità tecniche",
+        "description": "Risultati dei benchmark e capacità tecniche inclusi i punteggi SWE-bench e il supporto delle funzionalità",
+        "sweScore": "Punteggio SWE-bench",
         "contextWindow": "Context Window",
         "languageSupport": "Language Support",
         "multiFileSupport": "Multi-file Support",

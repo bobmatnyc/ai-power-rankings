@@ -69,12 +69,21 @@
     "trending": {
       "title": "Trending ovaj tjedan",
       "subtitle": "AI alati koji dobivaju momentum i penju se u rankingima",
-      "viewAll": "Vidi sve trending"
+      "description": "AI alati koji dobivaju momentum i penju se u rankingima",
+      "viewAll": "Vidi sve trending",
+      "viewAllButton": "Vidi sve trending"
     },
     "recentlyUpdated": {
       "title": "Nedavno ažurirani",
       "subtitle": "Najnoviji updates i features od top AI alata",
-      "viewAll": "Vidi sva rangiranja"
+      "description": "Najnoviji updates i features od top AI alata",
+      "viewAll": "Vidi sva rangiranja",
+      "viewAllButton": "Vidi sva rangiranja"
+    },
+    "recent": {
+      "title": "Nedavni updates",
+      "description": "Najnoviji razvoji i izdanja funkcionalnosti od najboljih AI alata",
+      "viewAllButton": "Vidi sve nedavne"
     },
     "categories": {
       "title": "Istraži po kategorijama",
@@ -268,9 +277,10 @@
         "history": "History"
       },
       "performance": {
-        "title": "Tehnički Performance",
-        "subtitle": "Benchmark rezultati i tehnički mogućnosti",
-        "sweScore": "SWE-bench Score",
+        "title": "Tehnička izvedba",
+        "subtitle": "Rezultati benchmarkova i tehničke sposobnosti",
+        "description": "Rezultati benchmarkova i tehničke sposobnosti uključujući SWE-bench rezultate i podršku funkcionalnosti",
+        "sweScore": "SWE-bench rezultat",
         "contextWindow": "Context Window",
         "languageSupport": "Language Support",
         "multiFileSupport": "Multi-file Support",

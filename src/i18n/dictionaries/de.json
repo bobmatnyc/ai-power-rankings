@@ -273,6 +273,7 @@
       "performance": {
         "title": "Technical Performance",
         "subtitle": "Benchmark results and technical capabilities",
+        "description": "Benchmark-Ergebnisse und technische Fähigkeiten einschließlich SWE-bench Scores und Feature-Unterstützung",
         "sweScore": "SWE-bench Score",
         "contextWindow": "Context Window",
         "languageSupport": "Language Support",
