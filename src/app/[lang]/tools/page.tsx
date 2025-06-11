@@ -31,7 +31,7 @@ export default async function ToolsPage({ params }: PageProps): Promise<React.JS
   let loading = false;
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/tools`, {
       next: { revalidate: 3600 }, // Cache for 1 hour
     });

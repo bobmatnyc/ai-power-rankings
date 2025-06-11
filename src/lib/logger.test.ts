@@ -62,19 +62,19 @@ describe("logger", () => {
   });
 
   describe("log level configuration", () => {
-    const originalLogLevel = process.env.LOG_LEVEL;
+    const originalLogLevel = process.env["LOG_LEVEL"];
 
     afterEach(() => {
       if (originalLogLevel) {
-        process.env.LOG_LEVEL = originalLogLevel;
+        process.env["LOG_LEVEL"] = originalLogLevel;
       } else {
-        delete process.env.LOG_LEVEL;
+        delete process.env["LOG_LEVEL"];
       }
     });
 
     it("should respect LOG_LEVEL environment variable", () => {
       // In test environment, LOG_LEVEL should be 'silent'
-      expect(process.env.LOG_LEVEL).toBe("silent");
+      expect(process.env["LOG_LEVEL"]).toBe("silent");
     });
   });
 });
