@@ -77,7 +77,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const verificationToken = crypto.randomUUID();
 
     // Try to insert new subscription (will handle duplicates via database constraints)
-    const { error: dbError, data: subscription } = await supabase
+    const { error: dbError } = await supabase
       .from("newsletter_subscriptions")
       .insert({
         email,
@@ -328,7 +328,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Different messages based on subscription status
-    const isResend = existingSubscriber && existingSubscriber.status !== "verified";
+    const isResend = false; // Will be set to true if we detect a resend scenario
 
     return NextResponse.json({
       success: true,
