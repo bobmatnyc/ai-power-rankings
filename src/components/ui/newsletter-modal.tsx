@@ -40,7 +40,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
     setError("");
 
     if (!turnstileToken) {
-      setError(dict.newsletter.errors.securityCheck);
+      setError(dict.newsletter.modal.errors.captcha);
       return;
     }
 
@@ -63,11 +63,11 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || dict.newsletter.errors.subscriptionFailed);
+        throw new Error(data.error || dict.newsletter.modal.errors.failed);
       }
 
       // Show success message
-      setSuccessMessage(data.message || dict.newsletter.success.checkEmail);
+      setSuccessMessage(data.message || dict.newsletter.modal.checkEmail);
       setIsSubmitted(true);
 
       // Close modal after longer delay for already subscribed
@@ -86,7 +86,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
         }, 300);
       }, delay);
     } catch (err) {
-      setError(err instanceof Error ? err.message : dict.newsletter.errors.tryAgain);
+      setError(err instanceof Error ? err.message : dict.newsletter.modal.errors.failed);
       turnstileRef.current?.reset();
       setTurnstileToken("");
     } finally {
@@ -100,7 +100,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
   };
 
   const handleTurnstileError = (): void => {
-    setError(dict.newsletter.errors.verificationFailed);
+    setError(dict.newsletter.modal.errors.failed);
     setTurnstileToken("");
   };
 
@@ -112,14 +112,14 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{dict.newsletter.title}</DialogTitle>
-          <DialogDescription>{dict.newsletter.description}</DialogDescription>
+          <DialogTitle>{dict.newsletter.modal.title}</DialogTitle>
+          <DialogDescription>{dict.newsletter.modal.subtitle}</DialogDescription>
         </DialogHeader>
 
         {isSubmitted ? (
           <div className="py-8 text-center">
             <div className="text-4xl mb-4">✓</div>
-            <p className="text-lg font-medium">{dict.newsletter.success.thankYou}</p>
+            <p className="text-lg font-medium">{dict.newsletter.modal.thankYou}</p>
             <p className="text-sm text-muted-foreground mt-2">{successMessage}</p>
           </div>
         ) : (
@@ -130,7 +130,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                   <Label htmlFor="firstName">{dict.newsletter.form.firstName}</Label>
                   <Input
                     id="firstName"
-                    placeholder={dict.newsletter.form.firstNamePlaceholder}
+                    placeholder={dict.newsletter.modal.firstName}
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
@@ -141,7 +141,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                   <Label htmlFor="lastName">{dict.newsletter.form.lastName}</Label>
                   <Input
                     id="lastName"
-                    placeholder={dict.newsletter.form.lastNamePlaceholder}
+                    placeholder={dict.newsletter.modal.lastName}
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
@@ -154,7 +154,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                 <Input
                   id="email"
                   type="email"
-                  placeholder={dict.newsletter.form.emailPlaceholder}
+                  placeholder={dict.newsletter.modal.email}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -200,7 +200,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
             </div>
 
             <p className="text-xs text-muted-foreground text-center">
-              {dict.newsletter.privacyNote}
+              {dict.newsletter.modal.privacyNote}
             </p>
           </form>
         )}

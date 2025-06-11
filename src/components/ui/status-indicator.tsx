@@ -24,31 +24,35 @@ export function StatusIndicator({
       acquired: { label: "Acquired", title: "Company has been acquired" },
     };
 
+    // Helper function to get label and title, handling both string and object formats
+    const getStatusText = (statusKey: keyof typeof labels) => {
+      const status = labels[statusKey];
+      if (typeof status === "string") {
+        return { label: status, title: status };
+      }
+      return { label: status.label, title: status.title };
+    };
+
     return {
       active: {
         color: "bg-green-500",
-        label: labels.active.label,
-        title: labels.active.title,
+        ...getStatusText("active"),
       },
       beta: {
         color: "bg-yellow-500",
-        label: labels.beta.label,
-        title: labels.beta.title,
+        ...getStatusText("beta"),
       },
       deprecated: {
         color: "bg-orange-500",
-        label: labels.deprecated.label,
-        title: labels.deprecated.title,
+        ...getStatusText("deprecated"),
       },
       discontinued: {
         color: "bg-red-500",
-        label: labels.discontinued.label,
-        title: labels.discontinued.title,
+        ...getStatusText("discontinued"),
       },
       acquired: {
         color: "bg-blue-500",
-        label: labels.acquired.label,
-        title: labels.acquired.title,
+        ...getStatusText("acquired"),
       },
     };
   };

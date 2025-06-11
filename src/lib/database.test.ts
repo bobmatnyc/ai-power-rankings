@@ -5,9 +5,9 @@ describe("database", () => {
 
   beforeEach(() => {
     // Reset env vars to test values
-    process.env.NEXT_PUBLIC_SUPABASE_URL = "http://localhost:54321";
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
-    process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-key";
+    process.env["NEXT_PUBLIC_SUPABASE_URL"] = "http://localhost:54321";
+    process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"] = "test-anon-key";
+    process.env["SUPABASE_SERVICE_ROLE_KEY"] = "test-service-key";
   });
 
   afterEach(() => {
@@ -31,7 +31,7 @@ describe("database", () => {
     });
 
     it("should throw error if required env vars are missing", async () => {
-      delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+      delete process.env["NEXT_PUBLIC_SUPABASE_URL"];
 
       // Expect the import to throw when environment variables are missing
       await expect(async () => {
@@ -40,7 +40,7 @@ describe("database", () => {
     });
 
     it("should fallback to anon client if service key is missing", async () => {
-      delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+      delete process.env["SUPABASE_SERVICE_ROLE_KEY"];
 
       const { supabase, supabaseAdmin } = await import("./database");
       expect(supabase).toBeDefined();
