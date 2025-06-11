@@ -4,7 +4,6 @@ import { ClientLayout } from "@/components/layout/client-layout";
 import { Analytics } from "@vercel/analytics/react";
 import { i18n, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import "../globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

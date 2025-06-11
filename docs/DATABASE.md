@@ -2,49 +2,101 @@
 
 ## Overview
 
-The AI Power Rankings uses Supabase (PostgreSQL) as its database. This document covers everything you need to know about connecting to, querying, and managing the database.
+The AI Power Rankings uses Supabase (PostgreSQL) as its database with two separate environments for safe development and production operations. This document covers everything you need to know about connecting to, querying, and managing both databases.
 
 ## Table of Contents
 
-1. [Connection Details](#connection-details)
-2. [Database Schema](#database-schema)
-3. [Key Tables](#key-tables)
-4. [Views and Functions](#views-and-functions)
-5. [Common Queries](#common-queries)
-6. [Data Manipulation](#data-manipulation)
-7. [Maintenance Tasks](#maintenance-tasks)
-8. [Troubleshooting](#troubleshooting)
+1. [Two-Database System](#two-database-system)
+2. [Environment Management](#environment-management)
+3. [Connection Details](#connection-details)
+4. [Database Schema](#database-schema)
+5. [Key Tables](#key-tables)
+6. [Data Import System](#data-import-system)
+7. [Common Queries](#common-queries)
+8. [Data Manipulation](#data-manipulation)
+9. [Maintenance Tasks](#maintenance-tasks)
+10. [Troubleshooting](#troubleshooting)
+
+## Two-Database System
+
+### Production Database
+
+- **Project ID**: `fukdwnsvjdgyakdvtdin`
+- **URL**: `https://fukdwnsvjdgyakdvtdin.supabase.co`
+- **Purpose**: Live data for the production website
+- **Access**: Read-only for development, write access only for production deployments
+
+### Development Database
+
+- **Project ID**: `gqucazglcjgvnzycwwia`
+- **URL**: `https://gqucazglcjgvnzycwwia.supabase.co`
+- **Purpose**: Safe environment for development, testing, and experimentation
+- **Access**: Full read/write access for development work
+
+## Environment Management
+
+### Switching Between Environments
+
+Use the environment switching script to safely change between databases:
+
+```bash
+# Switch to development (safe for testing)
+./scripts/switch-env.sh dev
+
+# Switch to production (use with caution)
+./scripts/switch-env.sh prod
+
+# Check current environment
+./scripts/switch-env.sh status
+```
+
+### Environment Files
+
+#### Development Environment (`.env.local.dev`)
+
+```bash
+# DEVELOPMENT ENVIRONMENT - Safe Development Database
+NEXT_PUBLIC_SUPABASE_URL=https://gqucazglcjgvnzycwwia.supabase.co
+SUPABASE_PROJECT_ID=gqucazglcjgvnzycwwia
+SUPABASE_DATABASE_PASSWORD=DevPassword123!
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
+
+#### Production Environment (`.env.local.prod`)
+
+```bash
+# PRODUCTION ENVIRONMENT - Live Production Database
+NEXT_PUBLIC_SUPABASE_URL=https://fukdwnsvjdgyakdvtdin.supabase.co
+SUPABASE_PROJECT_ID=fukdwnsvjdgyakdvtdin
+# ... production keys
+NEXT_PUBLIC_BASE_URL=https://aipowerranking.com
+```
+
+### Safety Features
+
+- **Automatic Backup**: The switch script creates backup copies of your current `.env.local`
+- **Environment Indicators**: Clear terminal output shows which environment is active
+- **Development Default**: New setups default to development environment
 
 ## Connection Details
 
-### Environment Variables
-
-```bash
-# Required in .env.local
-NEXT_PUBLIC_SUPABASE_URL=https://fukdwnsvjdgyakdvtdin.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
-SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
-SUPABASE_ACCESS_TOKEN=<your-access-token>
-SUPABASE_DATABASE_PASSWORD=<your-db-password>
-```
-
-### Connection Methods
-
-#### 1. Supabase Client (JavaScript/TypeScript)
+### JavaScript/TypeScript Client
 
 ```typescript
 import { createClient } from "@supabase/supabase-js";
 
-// For client-side operations
+// For client-side operations (uses anon key)
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// For server-side operations with full access
+// For server-side operations (uses service role key)
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
   {
     auth: {
       autoRefreshToken: false,
@@ -54,23 +106,28 @@ const supabaseAdmin = createClient(
 );
 ```
 
-#### 2. Direct SQL Access
+### Direct SQL Access
 
 ```bash
-# Via Supabase Dashboard
-https://supabase.com/dashboard/project/fukdwnsvjdgyakdvtdin/sql
+# Development database
+PGPASSWORD="DevPassword123!" psql -h db.gqucazglcjgvnzycwwia.supabase.co -U postgres -d postgres
 
-# Via psql
-psql "postgresql://postgres:[PASSWORD]@db.fukdwnsvjdgyakdvtdin.supabase.co:5432/postgres"
+# Production database (use with caution)
+PGPASSWORD="[PROD_PASSWORD]" psql -h db.fukdwnsvjdgyakdvtdin.supabase.co -U postgres -d postgres
 ```
 
-#### 3. REST API
+### REST API Access
 
 ```bash
-# Query example
+# Development API
+curl "https://gqucazglcjgvnzycwwia.supabase.co/rest/v1/tools" \
+  -H "apikey: YOUR_DEV_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_DEV_ANON_KEY"
+
+# Production API
 curl "https://fukdwnsvjdgyakdvtdin.supabase.co/rest/v1/tools" \
-  -H "apikey: YOUR_ANON_KEY" \
-  -H "Authorization: Bearer YOUR_ANON_KEY"
+  -H "apikey: YOUR_PROD_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_PROD_ANON_KEY"
 ```
 
 ## Database Schema
@@ -78,6 +135,7 @@ curl "https://fukdwnsvjdgyakdvtdin.supabase.co/rest/v1/tools" \
 ### Core Schema Files
 
 - `database/schema-complete.sql` - Full database schema
+- `database/migrations/` - Migration files for schema updates
 - `docs/data/POPULATE.sql` - Seed data with research
 - `database/ranking-algorithm.sql` - Ranking calculation functions
 
@@ -106,33 +164,6 @@ data_collection_jobs (target_tools[])
 
 ## Key Tables
 
-### 0. **companies**
-
-Companies and organizations behind the tools.
-
-```sql
-CREATE TABLE companies (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL UNIQUE,
-    type VARCHAR(20) CHECK (type IN ('company', 'startup', 'enterprise', 'academic', 'open-source', 'acquired')),
-    description TEXT,
-    website_url VARCHAR(255),
-    founded_date DATE,
-    headquarters_location VARCHAR(100),
-    employee_count_min INTEGER,
-    employee_count_max INTEGER,
-    logo_url VARCHAR(500),
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-**Key Points:**
-
-- UUID primary key for companies
-- Type includes 'acquired' for companies like Windsurf
-- Used as foreign key in tools table
-
 ### 1. **tools**
 
 Primary table for AI coding tools.
@@ -150,37 +181,34 @@ CREATE TABLE tools (
     website_url VARCHAR(255),
     github_repo VARCHAR(255),
     founded_date DATE,
-    first_tracked_date DATE DEFAULT CURRENT_DATE,
     pricing_model VARCHAR(20) CHECK (pricing_model IN ('free', 'freemium', 'paid', 'open-source', 'enterprise')),
     license_type VARCHAR(20) CHECK (license_type IN ('mit', 'apache', 'gpl', 'proprietary', 'other')),
-    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'beta', 'deprecated', 'discontinued', 'acquired')),
+    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'beta', 'deprecated', 'discontinued')),
     logo_url VARCHAR(500),
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
 ```
 
-**Key Points:**
+### 2. **companies**
 
-- `id` is VARCHAR(50), not UUID (e.g., 'cursor', 'github-copilot')
-- `company_id` is a foreign key to companies table
-- `status` includes 'acquired' for tools like Windsurf
-- Pricing and license constraints ensure data quality
-
-### 2. **ranking_cache**
-
-Pre-calculated rankings for each period.
+Companies and organizations behind the tools.
 
 ```sql
--- Key columns
-period: text (e.g., 'june-2025')
-tool_id: text
-position: integer
-score: decimal
-market_traction_score: decimal
-technical_capability_score: decimal
-developer_adoption_score: decimal
--- ... other factor scores
+CREATE TABLE companies (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    slug VARCHAR(100) UNIQUE NOT NULL,
+    website_url VARCHAR(255),
+    headquarters VARCHAR(100),
+    founded_year INTEGER,
+    company_size VARCHAR(20) CHECK (company_size IN ('startup', 'small', 'medium', 'large', 'enterprise')),
+    company_type VARCHAR(20) CHECK (company_type IN ('private', 'public', 'open-source', 'non-profit')),
+    logo_url VARCHAR(500),
+    description TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
 ```
 
 ### 3. **metrics_history**
@@ -206,70 +234,170 @@ CREATE TABLE metrics_history (
 );
 ```
 
-**Important Schema Notes:**
+### 4. **ranking_cache**
 
-- Different value columns for different data types (not value_text)
-- `value_json` for complex data like timeline events
-- No `confidence_score` column in this schema
-- Enforces uniqueness on (tool_id, metric_key, recorded_at)
-- Use appropriate value column based on metric data type
-
-### 4. **algorithm_versions**
-
-Tracks ranking algorithm changes over time.
+Pre-calculated rankings for each period.
 
 ```sql
--- Key columns
-version: text (e.g., 'v3.2')
-weights: jsonb (factor weights)
-is_active: boolean
+CREATE TABLE ranking_cache (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    period VARCHAR(20) REFERENCES ranking_periods(period),
+    tool_id VARCHAR(50) REFERENCES tools(id) ON DELETE CASCADE,
+    position INTEGER NOT NULL,
+    score DECIMAL(5,2) NOT NULL,
+    market_traction_score DECIMAL(5,2),
+    technical_capability_score DECIMAL(5,2),
+    developer_adoption_score DECIMAL(5,2),
+    development_velocity_score DECIMAL(5,2),
+    platform_resilience_score DECIMAL(5,2),
+    community_sentiment_score DECIMAL(5,2),
+    algorithm_version VARCHAR(10) REFERENCES algorithm_versions(version),
+    created_at TIMESTAMP DEFAULT NOW()
+);
 ```
 
-## Views and Functions
+## Data Import System
 
-### Key Views
+### Export Tools Data
 
-#### **latest_rankings**
+Export all current tools data for updating:
 
-Current rankings with full tool details.
-
-```sql
-SELECT * FROM latest_rankings
-ORDER BY position
-LIMIT 10;
+```bash
+# Export all tools data to JSON
+node scripts/export-tools.js
 ```
 
-#### **current_tool_metrics**
+This creates `tools-export.json` with complete database export including:
 
-Latest metric values for each tool.
+- Tools table data
+- Tool capabilities
+- Pricing plans
+- Companies
+- Recent metrics history (30 days)
 
-```sql
-SELECT * FROM current_tool_metrics
-WHERE tool_id = 'cursor';
+### Import Data Using JSON Files
+
+The project includes a comprehensive data import system with schema validation:
+
+#### 1. **Schema Definition**
+
+Location: `data/imports/schema.json`
+
+Defines the complete JSON schema for importing:
+
+- Tools data
+- Metrics history
+- Company information
+- Tool capabilities
+- Pricing plans
+
+#### 2. **Example Files**
+
+- `data/imports/example-metrics-history.json` - Metrics data import example
+- `data/imports/example-tool-details.json` - Tool information import example
+- `data/imports/example-capabilities.json` - Tool capabilities import example
+
+#### 3. **Import Script**
+
+Location: `scripts/import-data.js`
+
+Features:
+
+- **Schema Validation**: Validates against JSON schema before import
+- **Batch Processing**: Handles large datasets efficiently
+- **Upsert Support**: Updates existing records or creates new ones
+- **Error Handling**: Detailed error reporting for failed records
+- **Validation Mode**: Test imports without making changes
+
+#### 4. **Usage Examples**
+
+```bash
+# Import metrics history
+node scripts/import-data.js data/imports/example-metrics-history.json
+
+# Import tool details with validation only
+node scripts/import-data.js data/imports/example-tool-details.json
+
+# Import capabilities data
+node scripts/import-data.js data/imports/example-capabilities.json
 ```
 
-### Key Functions
+#### 5. **Creating Import Files**
 
-#### **calculate_zeitgeist_rankings()**
+##### Metrics History Import Format
 
-Calculates rankings based on current metrics.
-
-```sql
-SELECT * FROM calculate_zeitgeist_rankings()
-ORDER BY score DESC;
+```json
+{
+  "importType": "metrics_history",
+  "data": [
+    {
+      "tool_id": "claude-code",
+      "metric_key": "users",
+      "value_integer": 150000,
+      "recorded_at": "2025-06-10T12:00:00Z",
+      "source": "company_report",
+      "source_url": "https://anthropic.com/metrics",
+      "notes": "Active monthly users as reported in Q2 2025"
+    }
+  ],
+  "options": {
+    "upsert": true,
+    "validateOnly": false,
+    "batchSize": 50
+  }
+}
 ```
 
-#### **get_tool_metrics_history()**
+##### Tool Details Import Format
 
-Returns time-series metrics for a tool.
-
-```sql
-SELECT * FROM get_tool_metrics_history('cursor', '2024-01-01', '2025-12-31');
+```json
+{
+  "importType": "tools",
+  "data": [
+    {
+      "id": "new-ai-tool",
+      "name": "New AI Coding Tool",
+      "slug": "new-ai-tool",
+      "category": "ide-assistant",
+      "description": "An innovative AI-powered coding assistant...",
+      "website_url": "https://newaitool.com",
+      "status": "active"
+    }
+  ],
+  "options": {
+    "upsert": true,
+    "batchSize": 10
+  }
+}
 ```
+
+### Supported Metrics
+
+The system supports these metric types:
+
+#### Core Metrics
+
+- `users` - Total or monthly active users
+- `monthly_arr` - Monthly Annual Recurring Revenue
+- `github_stars` - GitHub repository stars
+- `github_commits_last_month` - Recent development activity
+- `swe_bench_score` - SWE-bench coding benchmark score
+- `context_window_tokens` - AI model context window size
+- `supported_languages_count` - Number of programming languages supported
+- `valuation_usd` - Company valuation
+- `total_funding_usd` - Total funding raised
+- `employees_count` - Company employee count
+
+#### Data Types
+
+- **Integer values**: Use `value_integer` (e.g., users, stars, employee count)
+- **Decimal values**: Use `value_decimal` (e.g., scores, revenue, funding)
+- **Boolean values**: Use `value_boolean` (e.g., feature availability)
+- **Complex data**: Use `value_json` (e.g., feature lists, timeline events)
 
 ## Common Queries
 
-### Get Current Top 10
+### Get Current Top 10 Rankings
 
 ```sql
 SELECT
@@ -282,8 +410,10 @@ SELECT
   rc.developer_adoption_score
 FROM ranking_cache rc
 JOIN tools t ON t.id = rc.tool_id
-JOIN companies c ON c.id = t.company_id
-WHERE rc.period = 'june-2025'
+LEFT JOIN companies c ON c.id = t.company_id
+WHERE rc.period = (
+  SELECT period FROM ranking_periods WHERE is_current = true
+)
 ORDER BY rc.position
 LIMIT 10;
 ```
@@ -301,31 +431,20 @@ WHERE rc.tool_id = 'cursor'
 ORDER BY rp.calculation_date;
 ```
 
-### Get Tool Details with Capabilities
+### Get Latest Metrics for a Tool
 
 ```sql
-SELECT
-  t.*,
-  c.name as company_name,
-  json_agg(
-    json_build_object(
-      'type', tc.capability_type,
-      'value', COALESCE(
-        tc.value_text::text,
-        tc.value_number::text,
-        tc.value_boolean::text,
-        tc.value_json::text
-      )
-    )
-  ) as capabilities
-FROM tools t
-JOIN companies c ON c.id = t.company_id
-LEFT JOIN tool_capabilities tc ON tc.tool_id = t.id
-WHERE t.id = 'cursor'
-GROUP BY t.id, c.name;
+SELECT DISTINCT ON (metric_key)
+  metric_key,
+  COALESCE(value_integer, value_decimal) as value,
+  recorded_at,
+  source
+FROM metrics_history
+WHERE tool_id = 'claude-code'
+ORDER BY metric_key, recorded_at DESC;
 ```
 
-### Find Tools by Category
+### Find Tools by Category with Rankings
 
 ```sql
 SELECT
@@ -333,148 +452,132 @@ SELECT
   t.slug,
   t.category,
   t.subcategory,
-  rc.position,
+  COALESCE(rc.position, 999) as position,
   rc.score
 FROM tools t
-LEFT JOIN ranking_cache rc ON rc.tool_id = t.id AND rc.period = 'june-2025'
+LEFT JOIN ranking_cache rc ON rc.tool_id = t.id
+  AND rc.period = (SELECT period FROM ranking_periods WHERE is_current = true)
 WHERE t.category = 'autonomous-agent'
+  AND t.status = 'active'
 ORDER BY COALESCE(rc.position, 999);
 ```
 
 ## Data Manipulation
 
-### Update Tool Information
+### Adding New Tools
 
 ```sql
-UPDATE tools
-SET
-  description = 'Updated description',
-  updated_at = CURRENT_TIMESTAMP
-WHERE id = 'cursor';
+-- 1. Add company (if needed)
+INSERT INTO companies (name, slug, website_url, company_type)
+VALUES ('NewAI Corp', 'newai-corp', 'https://newai.com', 'private');
+
+-- 2. Add tool
+INSERT INTO tools (
+  id, name, slug, company_id, category,
+  description, website_url, status
+) VALUES (
+  'newai-assistant',
+  'NewAI Assistant',
+  'newai-assistant',
+  (SELECT id FROM companies WHERE slug = 'newai-corp'),
+  'ide-assistant',
+  'AI-powered coding assistant',
+  'https://newai.com/assistant',
+  'active'
+);
+
+-- 3. Add capabilities
+INSERT INTO tool_capabilities (tool_id, capability_type, value_boolean)
+VALUES
+  ('newai-assistant', 'autocomplete', true),
+  ('newai-assistant', 'chat_interface', true),
+  ('newai-assistant', 'code_generation', true);
 ```
 
-### Add New Metrics
+### Adding Metrics Data
 
 ```sql
--- Integer metric example (GitHub stars)
+-- Add user count
 INSERT INTO metrics_history (
   tool_id, metric_key, value_integer,
-  recorded_at, source
+  recorded_at, source, notes
 ) VALUES (
-  'cursor', 'github_stars', 25000,
-  '2025-06-09', 'github_api'
+  'claude-code', 'users', 200000,
+  CURRENT_TIMESTAMP, 'company_report',
+  'Monthly active users Q2 2025'
 );
 
--- Decimal metric example (SWE-bench score)
+-- Add benchmark score
 INSERT INTO metrics_history (
   tool_id, metric_key, value_decimal,
-  recorded_at, source
+  recorded_at, source, source_url
 ) VALUES (
-  'claude-code', 'swe_bench_score', 72.7,
-  '2025-06-09', 'official_benchmark'
-);
-
--- JSON metric example (timeline event)
-INSERT INTO metrics_history (
-  tool_id, metric_key, value_json,
-  recorded_at, source
-) VALUES (
-  'windsurf', 'timeline_event',
-  '{"event": "Acquired by OpenAI", "amount": 3000000000}',
-  '2025-04-16', 'news_announcement'
-);
-  gen_random_uuid(),
-  'cursor',
-  'estimated_users',
-  500000,
-  CURRENT_TIMESTAMP,
-  'techcrunch',
-  'https://techcrunch.com/...'
+  'cursor', 'swe_bench_score', 85.2,
+  CURRENT_TIMESTAMP, 'swe_bench',
+  'https://www.swebench.com/leaderboard'
 );
 ```
 
-### Recalculate Rankings
+### Updating Tool Information
 
 ```sql
--- Insert new rankings for a period
-INSERT INTO ranking_cache (id, period, tool_id, position, score, ...)
-SELECT
-  gen_random_uuid(),
-  'july-2025',
-  tool_id,
-  ROW_NUMBER() OVER (ORDER BY score DESC),
-  score,
-  ...
-FROM calculate_zeitgeist_rankings();
-```
-
-### Update Algorithm Weights
-
-```sql
-UPDATE algorithm_versions
+-- Update tool description and website
+UPDATE tools
 SET
-  weights = '{
-    "market_traction": 0.20,
-    "technical_capability": 0.30,
-    "developer_adoption": 0.25,
-    "development_velocity": 0.10,
-    "platform_resilience": 0.10,
-    "community_sentiment": 0.05
-  }'::jsonb
-WHERE version = 'v3.2' AND is_active = true;
+  description = 'Updated comprehensive description of the tool capabilities',
+  website_url = 'https://newtool.com/updated',
+  updated_at = CURRENT_TIMESTAMP
+WHERE id = 'tool-id';
+
+-- Update company information
+UPDATE companies
+SET
+  headquarters = 'San Francisco, CA',
+  employee_count_min = 50,
+  employee_count_max = 100,
+  updated_at = CURRENT_TIMESTAMP
+WHERE slug = 'company-slug';
 ```
 
 ## Maintenance Tasks
 
-### 1. Running Migrations
+### 1. Database Synchronization
 
-#### Using Supabase API (Recommended)
-
-For running SQL migrations programmatically, you can use the Supabase Management API:
+#### From Production to Development
 
 ```bash
-# Run a migration script
-node scripts/run-newsletter-migration.js
+# 1. Switch to development environment
+./scripts/switch-env.sh dev
 
-# Or create your own migration script
-# See scripts/run-newsletter-migration.js for example
+# 2. Export production data
+./scripts/switch-env.sh prod
+node scripts/export-tools.js
+
+# 3. Switch back to development
+./scripts/switch-env.sh dev
+
+# 4. Import production data to development
+node scripts/import-data.js tools-export.json
 ```
 
-The script uses the Supabase Management API to execute SQL directly:
-- Requires `SUPABASE_ACCESS_TOKEN` environment variable
-- Executes SQL through the `/v1/projects/{id}/database/query` endpoint
-- Provides immediate feedback on success/failure
-
-#### Using Supabase Dashboard
-
-Alternatively, run SQL directly in the dashboard:
-https://supabase.com/dashboard/project/fukdwnsvjdgyakdvtdin/sql
-
-### 2. Backup Database
+#### From Development to Production
 
 ```bash
-# Using Supabase CLI
-supabase db dump -f backup.sql
+# 1. Export development data
+./scripts/switch-env.sh dev
+node scripts/export-tools.js
 
-# Using pg_dump
-pg_dump "postgresql://postgres:[PASSWORD]@db.fukdwnsvjdgyakdvtdin.supabase.co:5432/postgres" > backup.sql
+# 2. Review changes carefully
+cat tools-export.json | jq '.dataCount'
+
+# 3. Switch to production (with caution)
+./scripts/switch-env.sh prod
+
+# 4. Import changes (ensure this is what you want!)
+node scripts/import-data.js tools-export.json
 ```
 
-### 2. Reset and Reseed
-
-```sql
--- Clear all data
-TRUNCATE TABLE news_updates CASCADE;
-TRUNCATE TABLE ranking_editorial CASCADE;
-TRUNCATE TABLE ranking_cache CASCADE;
--- ... etc
-
--- Then run seed scripts
--- database/schema-complete.sql
--- docs/data/POPULATE.sql
-```
-
-### 3. Validate Data Integrity
+### 2. Data Validation
 
 ```sql
 -- Check for orphaned records
@@ -486,19 +589,36 @@ WHERE c.id IS NULL;
 SELECT t.id, t.name
 FROM tools t
 LEFT JOIN ranking_cache rc ON rc.tool_id = t.id
-  AND rc.period = 'june-2025'
+  AND rc.period = (SELECT period FROM ranking_periods WHERE is_current = true)
 WHERE rc.id IS NULL AND t.status = 'active';
+
+-- Validate metrics data integrity
+SELECT
+  tool_id,
+  metric_key,
+  COUNT(*) as record_count,
+  MIN(recorded_at) as earliest,
+  MAX(recorded_at) as latest
+FROM metrics_history
+GROUP BY tool_id, metric_key
+ORDER BY tool_id, metric_key;
 ```
 
-### 4. Performance Optimization
+### 3. Performance Monitoring
 
 ```sql
--- Analyze query performance
-EXPLAIN ANALYZE
-SELECT * FROM latest_rankings;
+-- Check database size
+SELECT
+  schemaname,
+  tablename,
+  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
+FROM pg_tables
+WHERE schemaname = 'public'
+ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 
--- Update statistics
-ANALYZE;
+-- Monitor query performance
+EXPLAIN ANALYZE
+SELECT * FROM latest_rankings LIMIT 10;
 
 -- Check index usage
 SELECT
@@ -506,78 +626,193 @@ SELECT
   tablename,
   indexname,
   idx_scan,
-  idx_tup_read
+  idx_tup_read,
+  idx_tup_fetch
 FROM pg_stat_user_indexes
 ORDER BY idx_scan DESC;
 ```
 
+### 4. Backup Procedures
+
+```bash
+# Development database backup
+./scripts/switch-env.sh dev
+pg_dump "postgresql://postgres:DevPassword123!@db.gqucazglcjgvnzycwwia.supabase.co:5432/postgres" > dev-backup-$(date +%Y%m%d).sql
+
+# Production database backup (via Supabase dashboard recommended)
+# Or using CLI with proper credentials
+```
+
 ## Troubleshooting
 
-### Common Issues
+### Environment Issues
+
+#### Problem: "Can't connect to database"
+
+```bash
+# Check current environment
+./scripts/switch-env.sh status
+
+# Verify environment variables
+echo $NEXT_PUBLIC_SUPABASE_URL
+echo $SUPABASE_SERVICE_ROLE_KEY
+
+# Test connection
+curl "$NEXT_PUBLIC_SUPABASE_URL/rest/v1/" \
+  -H "apikey: $NEXT_PUBLIC_SUPABASE_ANON_KEY"
+```
+
+#### Problem: "Wrong database - seeing unexpected data"
+
+```bash
+# Check which environment you're in
+./scripts/switch-env.sh status
+
+# Switch to correct environment
+./scripts/switch-env.sh dev  # or prod
+```
+
+### Import Issues
+
+#### Problem: "Schema validation failed"
+
+```bash
+# Run validation only mode first
+node scripts/import-data.js data/imports/your-file.json
+
+# Check the example files for correct format
+cat data/imports/example-metrics-history.json
+```
+
+#### Problem: "Duplicate key error"
+
+```bash
+# Use upsert mode to update existing records
+# Ensure your JSON has "upsert": true in options
+```
+
+#### Problem: "Foreign key constraint violation"
+
+```bash
+# Ensure referenced records exist first
+# For tools: company_id must exist in companies table
+# For metrics: tool_id must exist in tools table
+```
+
+### Common Database Issues
 
 #### 1. "relation does not exist"
 
-The schema hasn't been created. Run:
-
-```bash
-# In SQL editor
--- Paste contents of database/schema-complete.sql
-```
-
-#### 2. "duplicate key value"
-
-Data already exists. Clear before reseeding:
+The schema hasn't been created. Run the schema creation:
 
 ```sql
-TRUNCATE TABLE tools CASCADE;
--- Then rerun seed script
+-- Run contents of database/schema-complete.sql
 ```
 
-#### 3. Connection Refused
+#### 2. "permission denied"
 
-Check environment variables and network access:
-
-```bash
-# Test connection
-curl https://fukdwnsvjdgyakdvtdin.supabase.co/rest/v1/
-```
-
-#### 4. Permission Denied
-
-Use service role key for admin operations:
+Use the service role key for admin operations:
 
 ```typescript
-const supabase = createClient(url, SUPABASE_SERVICE_ROLE_KEY);
+const supabase = createClient(url, process.env.SUPABASE_SERVICE_ROLE_KEY);
 ```
 
-### Useful Scripts
+#### 3. Connection timeouts
 
-Located in `/scripts/`:
+Check network access and correct database URL:
 
-- `seed-database.ts` - Populate database with seed data
-- `validate-database.ts` - Verify database integrity
-- `update-algorithm-weights.ts` - Adjust ranking algorithm
-- `populate-only.ts` - Add data without recreating schema
-
-### Direct SQL Access
-
-For complex operations, use the Supabase SQL Editor:
-https://supabase.com/dashboard/project/fukdwnsvjdgyakdvtdin/sql
+```bash
+# Test basic connectivity
+ping db.gqucazglcjgvnzycwwia.supabase.co
+```
 
 ## Best Practices
 
-1. **Always backup before major changes**
-2. **Use transactions for multi-table updates**
-3. **Test queries in development first**
-4. **Keep seed data in sync with schema**
-5. **Document any manual database changes**
-6. **Use appropriate indexes for performance**
-7. **Monitor query performance regularly**
+### Development Workflow
+
+1. **Always work in development first**
+
+   ```bash
+   ./scripts/switch-env.sh dev
+   ```
+
+2. **Test imports with validation mode**
+
+   ```bash
+   node scripts/import-data.js --validate-only your-file.json
+   ```
+
+3. **Keep environments synchronized**
+
+   - Export production data periodically to development
+   - Test all changes in development before production
+
+4. **Use version control for schema changes**
+   - Keep migration files in `database/migrations/`
+   - Document all manual database changes
+
+### Data Management
+
+1. **Use appropriate value columns**
+
+   - `value_integer` for whole numbers (users, stars)
+   - `value_decimal` for precise numbers (scores, money)
+   - `value_boolean` for yes/no values
+   - `value_json` for complex data structures
+
+2. **Include source attribution**
+
+   - Always specify `source` for metrics
+   - Include `source_url` when available
+   - Add `notes` for context
+
+3. **Maintain data quality**
+   - Validate data before import
+   - Use consistent naming conventions
+   - Regular data integrity checks
+
+### Security
+
+1. **Environment separation**
+
+   - Never test destructive operations on production
+   - Use development environment for all experiments
+   - Keep production credentials secure
+
+2. **Access control**
+   - Use anon key for client-side operations
+   - Use service role key only for admin operations
+   - Monitor database access logs
 
 ## Additional Resources
 
-- [Supabase Docs](https://supabase.com/docs)
+- [Supabase Documentation](https://supabase.com/docs)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- Project Schema: `/database/schema-complete.sql`
-- Seed Data: `/docs/data/POPULATE.sql`
-- Ranking Algorithm: `/database/ranking-algorithm.sql`
+- **Project Files**:
+  - Schema: `database/schema-complete.sql`
+  - Import Examples: `data/imports/`
+  - Scripts: `scripts/`
+  - Environment Management: `scripts/switch-env.sh`
+
+## Quick Reference
+
+### Environment Commands
+
+```bash
+./scripts/switch-env.sh dev     # Switch to development
+./scripts/switch-env.sh prod    # Switch to production
+./scripts/switch-env.sh status  # Check current environment
+```
+
+### Data Operations
+
+```bash
+node scripts/export-tools.js                    # Export all data
+node scripts/import-data.js <file.json>         # Import data
+node scripts/import-data.js --validate <file>   # Validate only
+```
+
+### Database URLs
+
+- **Development**: `https://gqucazglcjgvnzycwwia.supabase.co`
+- **Production**: `https://fukdwnsvjdgyakdvtdin.supabase.co`

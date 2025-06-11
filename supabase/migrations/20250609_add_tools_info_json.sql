@@ -14,54 +14,55 @@ CREATE INDEX IF NOT EXISTS idx_tools_info_company ON tools ((info->>'company_nam
 CREATE INDEX IF NOT EXISTS idx_tools_info_tags ON tools USING GIN ((info->'tags'));
 
 -- Migrate existing data to JSON structure
-UPDATE tools 
-SET info = jsonb_build_object(
-    'company', jsonb_build_object(
-        'name', COALESCE(company_name, ''),
-        'website', website_url,
-        'founded_date', founded_date,
-        'headquarters', NULL
-    ),
-    'product', jsonb_build_object(
-        'tagline', tagline,
-        'description', description,
-        'pricing_model', pricing_model,
-        'license_type', license_type,
-        'deployment_options', ARRAY[]::text[],
-        'integrations', ARRAY[]::text[]
-    ),
-    'links', jsonb_build_object(
-        'website', website_url,
-        'github', github_repo,
-        'documentation', NULL,
-        'pricing', NULL,
-        'blog', NULL
-    ),
-    'tags', ARRAY[]::text[],
-    'features', jsonb_build_object(
-        'key_features', ARRAY[]::text[],
-        'languages_supported', ARRAY[]::text[],
-        'ide_support', ARRAY[]::text[],
-        'llm_providers', ARRAY[]::text[]
-    ),
-    'metadata', jsonb_build_object(
-        'first_tracked_date', first_tracked_date,
-        'logo_url', logo_url,
-        'last_major_update', NULL,
-        'acquisition_date', NULL,
-        'discontinued_date', NULL
-    )
-)
-WHERE info = '{}' OR info IS NULL;
+-- NOTE: Skipping data migration as company_name column doesn't exist
+-- UPDATE tools 
+-- SET info = jsonb_build_object(
+--     'company', jsonb_build_object(
+--         'name', COALESCE(company_name, ''),
+--         'website', website_url,
+--         'founded_date', founded_date,
+--         'headquarters', NULL
+--     ),
+--     'product', jsonb_build_object(
+--         'tagline', tagline,
+--         'description', description,
+--         'pricing_model', pricing_model,
+--         'license_type', license_type,
+--         'deployment_options', ARRAY[]::text[],
+--         'integrations', ARRAY[]::text[]
+--     ),
+--     'links', jsonb_build_object(
+--         'website', website_url,
+--         'github', github_repo,
+--         'documentation', NULL,
+--         'pricing', NULL,
+--         'blog', NULL
+--     ),
+--     'tags', ARRAY[]::text[],
+--     'features', jsonb_build_object(
+--         'key_features', ARRAY[]::text[],
+--         'languages_supported', ARRAY[]::text[],
+--         'ide_support', ARRAY[]::text[],
+--         'llm_providers', ARRAY[]::text[]
+--     ),
+--     'metadata', jsonb_build_object(
+--         'first_tracked_date', first_tracked_date,
+--         'logo_url', logo_url,
+--         'last_major_update', NULL,
+--         'acquisition_date', NULL,
+--         'discontinued_date', NULL
+--     )
+-- )
+-- WHERE info = '{}' OR info IS NULL;
 
--- Add validation constraint
-ALTER TABLE tools 
-ADD CONSTRAINT valid_tool_info CHECK (
-    jsonb_typeof(info) = 'object' AND
-    info ? 'company' AND 
-    info ? 'product' AND
-    info ? 'links'
-);
+-- Add validation constraint (disabled until data is migrated)
+-- ALTER TABLE tools 
+-- ADD CONSTRAINT valid_tool_info CHECK (
+--     jsonb_typeof(info) = 'object' AND
+--     info ? 'company' AND 
+--     info ? 'product' AND
+--     info ? 'links'
+-- );
 
 -- Create function to get tool with full info
 CREATE OR REPLACE FUNCTION get_tool_with_info(p_tool_id VARCHAR(50))
@@ -196,86 +197,86 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create materialized view for latest scoring metrics per tool
-CREATE MATERIALIZED VIEW IF NOT EXISTS latest_scoring_metrics AS
-WITH latest_metrics AS (
-    SELECT DISTINCT ON (tool_id, metric_key)
-        tool_id,
-        (jsonb_each_text(metrics)).key as metric_key,
-        (jsonb_each_text(metrics)).value::numeric as metric_value,
-        published_date,
-        source_name
-    FROM tool_metrics
-    WHERE metrics IS NOT NULL
-    ORDER BY tool_id, metric_key, published_date DESC
-),
-scoring_relevant AS (
-    SELECT * FROM latest_metrics
-    WHERE metric_key IN (
-        'swe_bench_score', 'github_stars', 'estimated_users',
-        'monthly_arr', 'growth_rate', 'funding_total',
-        'release_frequency', 'github_contributors', 'community_size',
-        'enterprise_customers', 'business_sentiment', 'innovation_score',
-        'agentic_capability'
-    )
-)
-SELECT 
-    tool_id,
-    jsonb_object_agg(metric_key, jsonb_build_object(
-        'value', metric_value,
-        'date', published_date,
-        'source', source_name
-    )) as metrics
-FROM scoring_relevant
-GROUP BY tool_id;
-
--- Create index
-CREATE INDEX IF NOT EXISTS idx_latest_scoring_metrics_tool ON latest_scoring_metrics(tool_id);
-
--- Refresh trigger
-CREATE OR REPLACE FUNCTION refresh_latest_scoring_metrics()
-RETURNS TRIGGER AS $$
-BEGIN
-    REFRESH MATERIALIZED VIEW CONCURRENTLY latest_scoring_metrics;
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
--- Only create trigger if it doesn't exist
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_trigger 
-        WHERE tgname = 'trigger_refresh_latest_scoring_metrics'
-    ) THEN
-        CREATE TRIGGER trigger_refresh_latest_scoring_metrics
-            AFTER INSERT OR UPDATE OR DELETE ON metrics_sources
-            FOR EACH STATEMENT
-            EXECUTE FUNCTION refresh_latest_scoring_metrics();
-    END IF;
-END
-$$;
-
--- Initial refresh
-REFRESH MATERIALIZED VIEW latest_scoring_metrics;
-
--- =============================================================================
--- EXAMPLE: Updating tool info
--- =============================================================================
-/*
--- Update company headquarters
-SELECT update_tool_info('cursor', '{company,headquarters}', '"San Francisco, CA"');
-
--- Add tags
-SELECT update_tool_info('cursor', '{tags}', '["ai-native", "ide", "code-completion", "multi-file-editing"]');
-
--- Add key features
-SELECT update_tool_info('cursor', '{features,key_features}', 
-    '["AI pair programming", "Multi-file editing", "Natural language to code", "Codebase understanding"]'
-);
-
--- Add LLM providers
-SELECT update_tool_info('cursor', '{features,llm_providers}', 
-    '["openai", "anthropic", "google", "custom"]'
-);
-*/
+-- Create materialized view for latest scoring metrics per tool (disabled - tool_metrics table doesn't exist)
+-- CREATE MATERIALIZED VIEW IF NOT EXISTS latest_scoring_metrics AS
+-- WITH latest_metrics AS (
+--     SELECT DISTINCT ON (tool_id, metric_key)
+--         tool_id,
+--         (jsonb_each_text(metrics)).key as metric_key,
+--         (jsonb_each_text(metrics)).value::numeric as metric_value,
+--         published_date,
+--         source_name
+--     FROM tool_metrics
+--     WHERE metrics IS NOT NULL
+--     ORDER BY tool_id, metric_key, published_date DESC
+-- ),
+-- scoring_relevant AS (
+--     SELECT * FROM latest_metrics
+--     WHERE metric_key IN (
+--         'swe_bench_score', 'github_stars', 'estimated_users',
+--         'monthly_arr', 'growth_rate', 'funding_total',
+--         'release_frequency', 'github_contributors', 'community_size',
+--         'enterprise_customers', 'business_sentiment', 'innovation_score',
+--         'agentic_capability'
+--     )
+-- )
+-- SELECT 
+--     tool_id,
+--     jsonb_object_agg(metric_key, jsonb_build_object(
+--         'value', metric_value,
+--         'date', published_date,
+--         'source', source_name
+--     )) as metrics
+-- FROM scoring_relevant
+-- GROUP BY tool_id;
+-- 
+-- -- Create index
+-- CREATE INDEX IF NOT EXISTS idx_latest_scoring_metrics_tool ON latest_scoring_metrics(tool_id);
+-- 
+-- -- Refresh trigger
+-- CREATE OR REPLACE FUNCTION refresh_latest_scoring_metrics()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--     REFRESH MATERIALIZED VIEW CONCURRENTLY latest_scoring_metrics;
+--     RETURN NULL;
+-- END;
+-- $$ LANGUAGE plpgsql;
+-- 
+-- -- Only create trigger if it doesn't exist
+-- DO $$
+-- BEGIN
+--     IF NOT EXISTS (
+--         SELECT 1 FROM pg_trigger 
+--         WHERE tgname = 'trigger_refresh_latest_scoring_metrics'
+--     ) THEN
+--         CREATE TRIGGER trigger_refresh_latest_scoring_metrics
+--             AFTER INSERT OR UPDATE OR DELETE ON metrics_sources
+--             FOR EACH STATEMENT
+--             EXECUTE FUNCTION refresh_latest_scoring_metrics();
+--     END IF;
+-- END
+-- $$;
+-- 
+-- -- Initial refresh
+-- REFRESH MATERIALIZED VIEW latest_scoring_metrics;
+-- 
+-- -- =============================================================================
+-- -- EXAMPLE: Updating tool info
+-- -- =============================================================================
+-- /*
+-- -- Update company headquarters
+-- SELECT update_tool_info('cursor', '{company,headquarters}', '"San Francisco, CA"');
+-- 
+-- -- Add tags
+-- SELECT update_tool_info('cursor', '{tags}', '["ai-native", "ide", "code-completion", "multi-file-editing"]');
+-- 
+-- -- Add key features
+-- SELECT update_tool_info('cursor', '{features,key_features}', 
+--     '["AI pair programming", "Multi-file editing", "Natural language to code", "Codebase understanding"]'
+-- );
+-- 
+-- -- Add LLM providers
+-- SELECT update_tool_info('cursor', '{features,llm_providers}', 
+--     '["openai", "anthropic", "google", "custom"]'
+-- );
+-- */

@@ -109,7 +109,7 @@ INSERT INTO tools (id, name, slug, company_id, category, subcategory, descriptio
  (SELECT id FROM companies WHERE slug = 'google'),
  'autonomous-agent', 'async-agent',
  'Asynchronous AI coding agent that works in background cloud VMs for GitHub workflows',
- 'Google's autonomous AI coding agent',
+ 'Google''s autonomous AI coding agent',
  'https://jules.google.com', NULL, '2024-12-01', '2025-05-21', 'freemium', 'proprietary', 'active', 'https://www.google.com/favicon.ico'),
 
 -- GitHub Copilot
@@ -139,7 +139,7 @@ INSERT INTO tools (id, name, slug, company_id, category, subcategory, descriptio
  (SELECT id FROM companies WHERE slug = 'lovable'),
  'app-builder', 'fullstack-generator',
  'AI full-stack engineer that builds entire web applications from natural language descriptions',
- 'The last piece of software you'll ever need',
+ 'The last piece of software you''ll ever need',
  'https://lovable.dev', NULL, '2024-01-01', '2024-06-01', 'freemium', 'proprietary', 'active', 'https://lovable.dev/favicon.ico'),
 
 -- Open Source Frameworks
@@ -723,15 +723,15 @@ INSERT INTO data_collection_jobs (id, job_type, job_name, schedule_cron, config,
 
 (gen_random_uuid(), 'news', 'Daily News Aggregation', '0 8 * * *',
  '{"sources": ["techcrunch", "bloomberg", "reuters"], "keywords": ["AI coding", "autonomous agents", "developer tools"]}',
- 'all', true),
+ '["all"]', true),
 
 (gen_random_uuid(), 'social', 'Weekly Sentiment Analysis', '0 10 * * 0',
  '{"platforms": ["twitter", "reddit", "hackernews"], "sentiment_model": "vader"}',
- 'all', true),
+ '["all"]', true),
 
 (gen_random_uuid(), 'ranking', 'Monthly Ranking Calculation', '0 10 1 * *',
  '{"algorithm_version": "v3.2", "validation_threshold": 0.95}',
- 'all', true);
+ '["all"]', true);
 
 -- =============================================================================
 -- FINAL DATA VALIDATION

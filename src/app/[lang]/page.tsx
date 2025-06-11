@@ -130,12 +130,10 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <TrendingUp className="h-8 w-8 mr-2 text-accent" />
                 {dict.home.trending.title}
               </h2>
-              <p className="text-muted-foreground">{dict.home.trending.description}</p>
+              <p className="text-muted-foreground">{dict.home.trending.subtitle}</p>
             </div>
             <Button variant="outline" asChild>
-              <Link href={`/${lang}/rankings?sort=trending`}>
-                {dict.home.trending.viewAllButton}
-              </Link>
+              <Link href={`/${lang}/rankings?sort=trending`}>{dict.home.trending.viewAll}</Link>
             </Button>
           </div>
 
@@ -165,10 +163,10 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <Star className="h-8 w-8 mr-2 text-primary" />
                 {dict.home.recentlyUpdated.title}
               </h2>
-              <p className="text-muted-foreground">{dict.home.recentlyUpdated.description}</p>
+              <p className="text-muted-foreground">{dict.home.recentlyUpdated.subtitle}</p>
             </div>
             <Button variant="outline" asChild>
-              <Link href={`/${lang}/rankings`}>{dict.home.recentlyUpdated.viewAllButton}</Link>
+              <Link href={`/${lang}/rankings`}>{dict.home.recentlyUpdated.viewAll}</Link>
             </Button>
           </div>
 

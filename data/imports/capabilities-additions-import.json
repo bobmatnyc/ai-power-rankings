@@ -1,0 +1,150 @@
+{
+  "importType": "tool_capabilities",
+  "data": [
+    {
+      "tool_id": "cursor",
+      "capability_type": "custom_prompts",
+      "value_text": "Cursorrules support - ability to encode team coding standards directly into AI"
+    },
+    {
+      "tool_id": "cursor",
+      "capability_type": "multi_file_editing",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "github-copilot",
+      "capability_type": "multi_file_editing",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "claude-code",
+      "capability_type": "context_awareness",
+      "value_text": "200K token context window for entire codebase understanding"
+    },
+    {
+      "tool_id": "tabnine",
+      "capability_type": "language_support",
+      "value_json": {
+        "languages": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "PHP",
+          "Ruby",
+          "Go",
+          "Rust",
+          "Kotlin",
+          "Swift"
+        ],
+        "count": 30,
+        "note": "30+ programming languages supported"
+      }
+    },
+    {
+      "tool_id": "tabnine",
+      "capability_type": "autocomplete",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "qodo-gen",
+      "capability_type": "testing",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "qodo-gen",
+      "capability_type": "language_support",
+      "value_json": {
+        "languages": ["Python", "JavaScript", "TypeScript", "Java", "C#", "PHP", "Go"],
+        "focus": "enterprise languages"
+      }
+    },
+    {
+      "tool_id": "zed",
+      "capability_type": "multi_file_editing",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "auto-gpt",
+      "capability_type": "context_awareness",
+      "value_text": "High autonomy with goal-oriented task execution, internet access, file I/O"
+    },
+    {
+      "tool_id": "auto-gpt",
+      "capability_type": "code_generation",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "chatgpt-canvas",
+      "capability_type": "code_generation",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "chatgpt-canvas",
+      "capability_type": "multi_file_editing",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "chatgpt-canvas",
+      "capability_type": "context_awareness",
+      "value_text": "Resizable workspace for side-by-side editing with real-time Python execution"
+    },
+    {
+      "tool_id": "sourcegraph-cody",
+      "capability_type": "context_awareness",
+      "value_text": "Repository-wide indexing with embeddings for full codebase understanding"
+    },
+    {
+      "tool_id": "sourcegraph-cody",
+      "capability_type": "code_generation",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "sourcegraph-cody",
+      "capability_type": "chat_interface",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "jetbrains-ai",
+      "capability_type": "autocomplete",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "jetbrains-ai",
+      "capability_type": "chat_interface",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "jetbrains-ai",
+      "capability_type": "multi_file_editing",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "amazon-q-developer",
+      "capability_type": "code_generation",
+      "value_boolean": true
+    },
+    {
+      "tool_id": "amazon-q-developer",
+      "capability_type": "context_awareness",
+      "value_text": "Multi-agent orchestration for AWS deployment tasks and architecture design"
+    },
+    {
+      "tool_id": "google-gemini-code-assist",
+      "capability_type": "context_awareness",
+      "value_text": "2M token context window with enterprise-grade security features"
+    },
+    {
+      "tool_id": "google-gemini-code-assist",
+      "capability_type": "code_generation",
+      "value_boolean": true
+    }
+  ],
+  "options": {
+    "upsert": true,
+    "validateOnly": false,
+    "batchSize": 25
+  }
+}
