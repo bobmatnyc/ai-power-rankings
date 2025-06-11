@@ -23,7 +23,7 @@ export function ChangelogModal({ children }: ChangelogModalProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Tag className="h-5 w-5" />
-            Changelog - AI Power Rankings
+            Changelog - AI Power Ranking
           </DialogTitle>
         </DialogHeader>
 

@@ -16,8 +16,8 @@
     "codeAssistant": "Code Assistant"
   },
   "common": {
-    "appName": "AI Power Rankings",
-    "appDescription": "Data-driven rankings of AI coding tools",
+    "appName": "AI Power Ranking",
+    "appDescription": "Data-driven ranking of AI coding tools",
     "loading": "Loading...",
     "error": "Error",
     "tryAgain": "Try Again",
@@ -631,9 +631,11 @@
     },
     "team": {
       "title": "The Team",
-      "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development.",
-      "description1": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development.",
-      "description2": "We combine deep technical expertise with a commitment to transparency and objectivity in our rankings.",
+      "description": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description1": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description2": "I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
+      "description3": "Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
+      "hyperdevLink": "HyperDev",
       "reportIssue": "Report an Issue"
     },
     "contact": {
