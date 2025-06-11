@@ -173,9 +173,6 @@ export function AboutContent({ lang, dict }: AboutContentProps): React.JSX.Eleme
                 View Tech Stack
               </Button>
             </TechStackModal>
-            <Button variant="outline" asChild>
-              <Link href="/contact">{dict.about.team.reportIssue}</Link>
-            </Button>
           </div>
         </CardContent>
       </Card>
