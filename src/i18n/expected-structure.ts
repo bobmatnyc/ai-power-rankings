@@ -131,10 +131,6 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
           name: "",
           description: "",
         },
-        innovation: {
-          name: "",
-          description: "",
-        },
         performance: {
           name: "",
           description: "",

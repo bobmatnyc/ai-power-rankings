@@ -2,7 +2,10 @@ import "@testing-library/jest-dom";
 import { vi } from "vitest";
 
 // Mock environment variables for tests
-process.env["NODE_ENV"] = "test";
+Object.defineProperty(process.env, "NODE_ENV", {
+  value: "test",
+  writable: false,
+});
 process.env["NEXT_PUBLIC_SUPABASE_URL"] = "http://localhost:54321";
 process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"] = "test-anon-key";
 process.env["SUPABASE_SERVICE_ROLE_KEY"] = "test-service-key";

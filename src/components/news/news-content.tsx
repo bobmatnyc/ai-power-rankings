@@ -74,7 +74,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
     observerRef.current = new IntersectionObserver(
       (entries) => {
         const first = entries[0];
-        if (first.isIntersecting && hasMore && !loadingMore) {
+        if (first?.isIntersecting && hasMore && !loadingMore) {
           fetchNews(page + 1, false);
         }
       },
