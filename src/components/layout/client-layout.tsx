@@ -7,12 +7,15 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { BuildTimeBadge } from "@/components/layout/build-time-badge";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
+import { I18nProvider, useI18n } from "@/i18n/client";
+import type { Dictionary } from "@/i18n/get-dictionary";
+import type { Locale } from "@/i18n/config";
 
-export function ClientLayout({ children }: { children: React.ReactNode }): React.JSX.Element {
+function ClientLayoutContent({ children }: { children: React.ReactNode }): React.JSX.Element {
   const router = useRouter();
   const pathname = usePathname();
-  const [showHeader, setShowHeader] = useState(true);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const { dict, lang } = useI18n();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,12 +31,12 @@ export function ClientLayout({ children }: { children: React.ReactNode }): React
   }, []);
 
   // On home page on mobile, hide header until scroll
-  const isHomePage = pathname === "/";
+  const isHomePage = pathname === `/${lang}`;
   const shouldHideHeader = isHomePage && !hasScrolled;
 
   const handleSubscribeClick = (): void => {
     // Navigate to about page with a query param to open the modal
-    router.push("/about?subscribe=true");
+    router.push(`/${lang}/about?subscribe=true`);
   };
 
   return (
@@ -56,7 +59,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }): React
                     alt="AI Power Rankings"
                     className="w-6 h-6 object-contain"
                   />
-                  <span className="font-bold text-sm">AI Power Rankings</span>
+                  <span className="font-bold text-sm">{dict.common.appName}</span>
                 </div>
               </div>
 
@@ -73,7 +76,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }): React
                 className="hidden md:flex items-center gap-2"
               >
                 <Bell className="h-4 w-4" />
-                Subscribe To Updates
+                {dict.navigation.subscribeToUpdates}
               </Button>
 
               {/* Mobile icon button */}
@@ -84,7 +87,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }): React
                 className="md:hidden"
               >
                 <Bell className="h-5 w-5" />
-                <span className="sr-only">Subscribe to updates</span>
+                <span className="sr-only">{dict.navigation.subscribeToUpdates}</span>
               </Button>
             </div>
           </div>
@@ -99,5 +102,21 @@ export function ClientLayout({ children }: { children: React.ReactNode }): React
         </main>
       </div>
     </SidebarProvider>
+  );
+}
+
+export function ClientLayout({
+  children,
+  lang,
+  dict,
+}: {
+  children: React.ReactNode;
+  lang: Locale;
+  dict: Dictionary;
+}): React.JSX.Element {
+  return (
+    <I18nProvider dict={dict} lang={lang}>
+      <ClientLayoutContent>{children}</ClientLayoutContent>
+    </I18nProvider>
   );
 }

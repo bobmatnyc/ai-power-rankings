@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/select";
 import { Grid, List, ArrowUpDown, TrendingUp, Star } from "lucide-react";
 import { RankingCard } from "./ranking-card";
+import type { Dictionary } from "@/i18n/get-dictionary";
+import type { Locale } from "@/i18n/config";
 
 interface RankingData {
   rank: number;
@@ -49,7 +51,12 @@ interface RankingData {
   };
 }
 
-function RankingsGridContent(): React.JSX.Element {
+interface RankingsGridProps {
+  lang: Locale;
+  dict: Dictionary;
+}
+
+function RankingsGridContent({ lang, dict }: RankingsGridProps): React.JSX.Element {
   const searchParams = useSearchParams();
   const [rankings, setRankings] = useState<RankingData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -103,7 +110,7 @@ function RankingsGridContent(): React.JSX.Element {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Loading rankings...</p>
+        <p className="text-muted-foreground">{dict.common.loading}</p>
       </div>
     );
   }
@@ -112,17 +119,17 @@ function RankingsGridContent(): React.JSX.Element {
     <div className="space-y-6">
       {/* Header Section */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">AI Power Rankings</h1>
-        <p className="text-muted-foreground text-lg">
-          Comprehensive rankings of AI coding tools using Algorithm v6.0
-        </p>
+        <h1 className="text-4xl font-bold mb-2">{dict.common.appName}</h1>
+        <p className="text-muted-foreground text-lg">{dict.rankings.subtitle}</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-8">
         <Card className="border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Tools</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {dict.rankings.stats.totalTools}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{rankings.length}</div>
@@ -130,7 +137,9 @@ function RankingsGridContent(): React.JSX.Element {
         </Card>
         <Card className="border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Categories</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {dict.rankings.stats.categories}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -140,7 +149,9 @@ function RankingsGridContent(): React.JSX.Element {
         </Card>
         <Card className="border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Avg Score</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {dict.rankings.stats.avgScore}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -152,10 +163,12 @@ function RankingsGridContent(): React.JSX.Element {
         </Card>
         <Card className="border-border/50">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Last Update</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {dict.rankings.stats.lastUpdate}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">This Week</div>
+            <div className="text-2xl font-bold">{dict.rankings.stats.thisWeek}</div>
           </CardContent>
         </Card>
       </div>
@@ -172,32 +185,32 @@ function RankingsGridContent(): React.JSX.Element {
               } else {
                 params.set("sort", value);
               }
-              window.location.href = `/rankings${params.toString() ? `?${params.toString()}` : ""}`;
+              window.location.href = `/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`;
             }}
           >
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort by" />
+              <SelectValue placeholder={dict.rankings.sortBy} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="rank">
                 <div className="flex items-center">
                   <ArrowUpDown className="h-4 w-4 mr-2" />
-                  Rank
+                  {dict.rankings.sort.rank}
                 </div>
               </SelectItem>
               <SelectItem value="trending">
                 <div className="flex items-center">
                   <TrendingUp className="h-4 w-4 mr-2" />
-                  Trending
+                  {dict.rankings.sort.trending}
                 </div>
               </SelectItem>
               <SelectItem value="score">
                 <div className="flex items-center">
                   <Star className="h-4 w-4 mr-2" />
-                  Score
+                  {dict.rankings.sort.score}
                 </div>
               </SelectItem>
-              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="name">{dict.rankings.sort.name}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -223,7 +236,7 @@ function RankingsGridContent(): React.JSX.Element {
       {/* Active Filters */}
       {(categoryParam !== "all" || tagsParam.length > 0) && (
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-sm text-muted-foreground">Active filters:</span>
+          <span className="text-sm text-muted-foreground">{dict.rankings.activeFilters}:</span>
           {categoryParam !== "all" && (
             <Badge
               variant="secondary"
@@ -231,7 +244,7 @@ function RankingsGridContent(): React.JSX.Element {
               onClick={() => {
                 const params = new URLSearchParams(searchParams.toString());
                 params.delete("category");
-                window.location.href = `/rankings${params.toString() ? `?${params.toString()}` : ""}`;
+                window.location.href = `/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`;
               }}
             >
               {categoryParam.replace(/-/g, " ")} ✕
@@ -250,7 +263,7 @@ function RankingsGridContent(): React.JSX.Element {
                 } else {
                   params.set("tags", newTags.join(","));
                 }
-                window.location.href = `/rankings${params.toString() ? `?${params.toString()}` : ""}`;
+                window.location.href = `/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`;
               }}
             >
               {tag.replace(/-/g, " ")} ✕
@@ -277,61 +290,62 @@ function RankingsGridContent(): React.JSX.Element {
       {/* Algorithm Info */}
       <Card className="mt-12">
         <CardHeader>
-          <CardTitle>About Algorithm v6.0</CardTitle>
-          <CardDescription>
-            Enhanced ranking system with innovation decay, platform risk modifiers, and revenue
-            quality adjustments
-          </CardDescription>
+          <CardTitle>{dict.rankings.algorithm.title}</CardTitle>
+          <CardDescription>{dict.rankings.algorithm.description}</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="factors" className="w-full">
             <TabsList>
-              <TabsTrigger value="factors">Scoring Factors</TabsTrigger>
-              <TabsTrigger value="modifiers">Modifiers</TabsTrigger>
-              <TabsTrigger value="methodology">Methodology</TabsTrigger>
+              <TabsTrigger value="factors">{dict.rankings.algorithm.tabs.factors}</TabsTrigger>
+              <TabsTrigger value="modifiers">{dict.rankings.algorithm.tabs.modifiers}</TabsTrigger>
+              <TabsTrigger value="methodology">
+                {dict.rankings.algorithm.tabs.methodology}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="factors" className="mt-4">
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-semibold mb-2">Primary Factors (67.5%)</h4>
+                    <h4 className="font-semibold mb-2">{dict.rankings.algorithm.primaryFactors}</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span>Agentic Capability</span>
+                        <span>{dict.rankings.algorithm.factors.agentic}</span>
                         <span className="text-muted-foreground">30.0%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Innovation</span>
+                        <span>{dict.rankings.algorithm.factors.innovation}</span>
                         <span className="text-muted-foreground">15.0%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Technical Performance</span>
+                        <span>{dict.rankings.algorithm.factors.performance}</span>
                         <span className="text-muted-foreground">12.5%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Developer Adoption</span>
+                        <span>{dict.rankings.algorithm.factors.adoption}</span>
                         <span className="text-muted-foreground">10.0%</span>
                       </div>
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-2">Secondary Factors (32.5%)</h4>
+                    <h4 className="font-semibold mb-2">
+                      {dict.rankings.algorithm.secondaryFactors}
+                    </h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span>Market Traction</span>
+                        <span>{dict.rankings.algorithm.factors.traction}</span>
                         <span className="text-muted-foreground">12.5%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Business Sentiment</span>
+                        <span>{dict.rankings.algorithm.factors.sentiment}</span>
                         <span className="text-muted-foreground">7.5%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Development Velocity</span>
+                        <span>{dict.rankings.algorithm.factors.velocity}</span>
                         <span className="text-muted-foreground">5.0%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Platform Resilience</span>
+                        <span>{dict.rankings.algorithm.factors.resilience}</span>
                         <span className="text-muted-foreground">5.0%</span>
                       </div>
                     </div>
@@ -343,24 +357,27 @@ function RankingsGridContent(): React.JSX.Element {
             <TabsContent value="modifiers" className="mt-4">
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-semibold mb-2">💡 Innovation Decay</h4>
+                  <h4 className="font-semibold mb-2">
+                    💡 {dict.home.methodology.modifiers.decay.name}
+                  </h4>
                   <p className="text-sm text-muted-foreground">
-                    Innovation scores decay with a 6-month half-life. Tools with innovations older
-                    than 12 months see significant score reductions.
+                    {dict.rankings.algorithm.modifiers.decay}
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">⚠️ Platform Risk</h4>
+                  <h4 className="font-semibold mb-2">
+                    ⚠️ {dict.home.methodology.modifiers.risk.name}
+                  </h4>
                   <p className="text-sm text-muted-foreground">
-                    Tools receive penalties for exclusive dependencies or acquisition by LLM
-                    providers. Open-source tools with multi-LLM support receive bonuses.
+                    {dict.rankings.algorithm.modifiers.risk}
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">💰 Revenue Quality</h4>
+                  <h4 className="font-semibold mb-2">
+                    💰 {dict.home.methodology.modifiers.revenue.name}
+                  </h4>
                   <p className="text-sm text-muted-foreground">
-                    Enterprise revenue (&gt;$100k ACV) counts at 100%, while freemium and
-                    donation-based models count at 30% and 20% respectively.
+                    {dict.rankings.algorithm.modifiers.revenue}
                   </p>
                 </div>
               </div>
@@ -368,13 +385,11 @@ function RankingsGridContent(): React.JSX.Element {
 
             <TabsContent value="methodology" className="mt-4">
               <div className="prose prose-sm text-muted-foreground">
-                <p>
-                  Our ranking algorithm combines quantitative metrics with qualitative assessments
-                  to provide a comprehensive view of AI coding tools. We update rankings weekly
-                  based on new data and continuously refine our methodology.
-                </p>
+                <p>{dict.rankings.algorithm.methodologyText}</p>
                 <Button variant="outline" size="sm" className="mt-4" asChild>
-                  <Link href="/methodology">View Full Methodology</Link>
+                  <Link href={`/${lang}/methodology`}>
+                    {dict.rankings.algorithm.viewMethodology}
+                  </Link>
                 </Button>
               </div>
             </TabsContent>
@@ -385,16 +400,16 @@ function RankingsGridContent(): React.JSX.Element {
   );
 }
 
-export default function RankingsGrid(): React.JSX.Element {
+export default function RankingsGrid({ lang, dict }: RankingsGridProps): React.JSX.Element {
   return (
     <Suspense
       fallback={
         <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">Loading rankings...</p>
+          <p className="text-muted-foreground">{dict.common.loading}</p>
         </div>
       }
     >
-      <RankingsGridContent />
+      <RankingsGridContent lang={lang} dict={dict} />
     </Suspense>
   );
 }
