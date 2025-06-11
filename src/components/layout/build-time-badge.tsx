@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Clock } from "lucide-react";
 import { getFormattedBuildTime } from "@/lib/build-info";
+import { ChangelogModal } from "@/components/ui/changelog-modal";
 
 export function BuildTimeBadge() {
   const [buildTime, setBuildTime] = useState<string>("");
@@ -25,17 +26,27 @@ export function BuildTimeBadge() {
   // Don't render until mounted to avoid hydration mismatch
   if (!mounted) {
     return (
-      <Badge variant="outline" className="hidden sm:flex">
-        <Clock className="h-3 w-3 mr-1" />
-        Last updated: Loading...
-      </Badge>
+      <ChangelogModal>
+        <Badge
+          variant="outline"
+          className="hidden sm:flex cursor-pointer hover:bg-muted transition-colors"
+        >
+          <Clock className="h-3 w-3 mr-1" />
+          Last updated: Loading...
+        </Badge>
+      </ChangelogModal>
     );
   }
 
   return (
-    <Badge variant="outline" className="hidden sm:flex">
-      <Clock className="h-3 w-3 mr-1" />
-      Last updated: {buildTime}
-    </Badge>
+    <ChangelogModal>
+      <Badge
+        variant="outline"
+        className="hidden sm:flex cursor-pointer hover:bg-muted transition-colors"
+      >
+        <Clock className="h-3 w-3 mr-1" />
+        Last updated: {buildTime}
+      </Badge>
+    </ChangelogModal>
   );
 }

@@ -69,12 +69,16 @@
     "trending": {
       "title": "Diese Woche im Trend",
       "subtitle": "KI-Tools mit Momentum, die in den Rankings aufsteigen",
-      "viewAll": "Alle Trending anzeigen"
+      "description": "KI-Tools mit Momentum, die in den Rankings aufsteigen",
+      "viewAll": "Alle Trending anzeigen",
+      "viewAllButton": "Alle Trending anzeigen"
     },
     "recentlyUpdated": {
       "title": "Kürzlich aktualisiert",
       "subtitle": "Neueste Updates und Features von Top-KI-Tools",
-      "viewAll": "Alle Rankings anzeigen"
+      "description": "Neueste Updates und Features von Top-KI-Tools",
+      "viewAll": "Alle Rankings anzeigen",
+      "viewAllButton": "Alle Rankings anzeigen"
     },
     "categories": {
       "title": "Nach Kategorie erkunden",
