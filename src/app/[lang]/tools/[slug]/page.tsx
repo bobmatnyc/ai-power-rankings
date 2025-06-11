@@ -88,7 +88,7 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
   let loading = false;
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/tools/${slug}`, {
       next: { revalidate: 3600 }, // Cache for 1 hour
     });
@@ -257,7 +257,7 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
             {dict.tools.detail.tabs.performance}
           </TabsTrigger>
           <TabsTrigger value="metrics" className="text-xs md:text-sm">
-            {dict.tools.detail.tabs.business}
+            {dict.tools.detail.tabs.businessMetrics}
           </TabsTrigger>
           <TabsTrigger value="scores" className="text-xs md:text-sm">
             {dict.tools.detail.tabs.scores}
