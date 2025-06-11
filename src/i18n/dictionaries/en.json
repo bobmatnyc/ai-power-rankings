@@ -223,6 +223,23 @@
     }
   },
   "tools": {
+    "title": "AI Coding Tools",
+    "subtitle": "Explore all {count} AI coding tools in our database",
+    "allCategories": "All Categories",
+    "filterByCategory": "Filter by category",
+    "sortBy": "Sort by",
+    "defaultDescription": "Discover and compare AI coding tools",
+    "sort": {
+      "name": "Name",
+      "category": "Category",
+      "status": "Status"
+    },
+    "stats": {
+      "total": "Total Tools",
+      "active": "Active",
+      "categories": "Categories",
+      "openSource": "Open Source"
+    },
     "directory": {
       "title": "AI Coding Tools Directory",
       "subtitle": "Explore all {count} AI coding tools in our database",
