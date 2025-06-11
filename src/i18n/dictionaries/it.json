@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "AI Power Rankings",
+    "appDescription": "Classifiche basate sui dati degli strumenti di coding AI",
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "tryAgain": "Riprova",
+    "backToHome": "Torna alla Home",
+    "learnMore": "Scopri di più",
+    "viewAll": "Vedi tutto",
+    "close": "Chiudi",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "search": "Cerca",
+    "filter": "Filtra",
+    "sort": "Ordina",
+    "share": "Condividi"
+  },
+  "navigation": {
+    "home": "Home",
+    "rankings": "Classifiche",
+    "news": "News",
+    "tools": "Strumenti",
+    "methodology": "Metodologia",
+    "about": "About",
+    "subscribeToUpdates": "Iscriviti agli aggiornamenti",
+    "navigation": "Navigazione",
+    "quickLinks": "Link rapidi",
+    "trending": "Trending",
+    "categories": "Categorie",
+    "features": "Features",
+    "clearFilters": "Cancella filtri",
+    "allCategories": "Tutte le categorie"
+  }
+}

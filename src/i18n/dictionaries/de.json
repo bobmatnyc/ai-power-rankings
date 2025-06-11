@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "KI Power Rankings",
+    "appDescription": "Datenbasierte Rankings von KI-Coding-Tools",
+    "loading": "Lädt...",
+    "error": "Fehler",
+    "tryAgain": "Erneut versuchen",
+    "backToHome": "Zurück zur Startseite",
+    "learnMore": "Mehr erfahren",
+    "viewAll": "Alle anzeigen",
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "sort": "Sortieren",
+    "share": "Teilen"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "rankings": "Rankings",
+    "news": "News",
+    "tools": "Tools",
+    "methodology": "Methodik",
+    "about": "Über uns",
+    "subscribeToUpdates": "Updates abonnieren",
+    "navigation": "Navigation",
+    "quickLinks": "Quick Links",
+    "trending": "Trending",
+    "categories": "Kategorien",
+    "features": "Features",
+    "clearFilters": "Filter löschen",
+    "allCategories": "Alle Kategorien"
+  }
+}
