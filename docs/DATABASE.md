@@ -4,6 +4,42 @@
 
 The AI Power Rankings uses Supabase (PostgreSQL) as its database with two separate environments for safe development and production operations. This document covers everything you need to know about connecting to, querying, and managing both databases.
 
+## 🚨 CRITICAL DATABASE ACCESS RULES
+
+**ALWAYS follow these rules to avoid database connection issues:**
+
+### 1. Use Centralized Database Clients
+
+```typescript
+// ✅ CORRECT - use this in ALL API routes
+import { supabase } from "@/lib/database";
+
+// ❌ WRONG - never manually create clients in API routes
+import { createClient } from "@supabase/supabase-js";
+const supabase = createClient(url, key);
+```
+
+### 2. Use Anon Key for 99% of Operations
+
+- ✅ `supabase` (anon key) - for tools, rankings, news, metrics
+- ⚠️ `supabaseAdmin` (service role) - only for admin operations
+
+### 3. Use Bracket Notation for Environment Variables
+
+```typescript
+// ✅ CORRECT
+process.env["NEXT_PUBLIC_SUPABASE_URL"];
+
+// ❌ WRONG - fails in production
+process.env.NEXT_PUBLIC_SUPABASE_URL;
+```
+
+### 4. Restart Dev Server After Environment Changes
+
+```bash
+kill $(lsof -ti:3000) && npm run dev
+```
+
 ## Table of Contents
 
 1. [Two-Database System](#two-database-system)
@@ -82,7 +118,40 @@ NEXT_PUBLIC_BASE_URL=https://aipowerranking.com
 
 ## Connection Details
 
-### JavaScript/TypeScript Client
+### JavaScript/TypeScript Client - AUTHORITATIVE METHODS
+
+There are **TWO WAYS** to access our databases. Use these patterns consistently:
+
+#### Method 1: Using the Centralized Database Client (RECOMMENDED)
+
+**Always use this for API routes and server-side code:**
+
+```typescript
+// Import the centralized client from our database module
+import { supabase } from "@/lib/database"; // Uses anon key - works for 99% of operations
+
+// For admin operations (if you really need them)
+import { supabaseAdmin } from "@/lib/database"; // Uses service role key
+```
+
+**Examples:**
+
+```typescript
+// API routes - use this pattern
+import { supabase } from "@/lib/database";
+
+export async function GET() {
+  const { data: tools, error } = await supabase.from("tools").select("*").order("name");
+
+  if (error) {
+    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
+  }
+
+  return NextResponse.json({ tools });
+}
+```
+
+#### Method 2: Manual Client Creation (AVOID UNLESS NECESSARY)
 
 ```typescript
 import { createClient } from "@supabase/supabase-js";
@@ -104,6 +173,37 @@ const supabaseAdmin = createClient(
     },
   }
 );
+```
+
+### CRITICAL: When to Use Which Client
+
+#### Use `supabase` (anon key) for:
+
+- ✅ **API routes** - tools, rankings, news endpoints
+- ✅ **Reading public data** - tools, rankings, metrics_history
+- ✅ **Client-side operations** - all React components
+- ✅ **99% of all database operations**
+
+#### Use `supabaseAdmin` (service role key) ONLY for:
+
+- ⚠️ **Admin operations** - creating/deleting tables
+- ⚠️ **Bypassing RLS** - when you need unrestricted access
+- ⚠️ **Bulk operations** - large data imports/exports
+
+#### NEVER manually create clients in API routes - use the centralized clients
+
+### Environment Variable Access
+
+**CRITICAL**: Always use bracket notation for environment variables in Next.js:
+
+```typescript
+// ✅ CORRECT
+const url = process.env["NEXT_PUBLIC_SUPABASE_URL"];
+const key = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+
+// ❌ WRONG - will fail in production
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 ```
 
 ### Direct SQL Access
@@ -644,6 +744,63 @@ pg_dump "postgresql://postgres:DevPassword123!@db.gqucazglcjgvnzycwwia.supabase.
 ```
 
 ## Troubleshooting
+
+### Database Access Issues (COMMON PROBLEMS)
+
+#### Problem: "Invalid API key" or "Failed to fetch"
+
+**SOLUTION**: Use the centralized database client, not manual client creation:
+
+```typescript
+// ❌ WRONG - causes "Invalid API key" errors
+import { createClient } from "@supabase/supabase-js";
+const supabase = createClient(url, serviceRoleKey);
+
+// ✅ CORRECT - use centralized client
+import { supabase } from "@/lib/database";
+```
+
+**Why this happens**: Manual client creation often uses wrong keys or fails environment variable access.
+
+#### Problem: "Categories showing as null" or missing data
+
+**SOLUTION**: Restart the Next.js dev server after environment changes:
+
+```bash
+# Kill existing server
+kill $(lsof -ti:3000)
+
+# Restart
+npm run dev
+```
+
+**Why this happens**: Environment variables are cached, new connections need fresh env vars.
+
+#### Problem: "Service role key not working"
+
+**SOLUTION**: Use anon key client for 99% of operations:
+
+```typescript
+// ❌ Most operations don't need admin access
+import { supabaseAdmin } from "@/lib/database";
+
+// ✅ Use regular client for API routes
+import { supabase } from "@/lib/database";
+```
+
+**Why this happens**: Our database permissions allow anon key access to most tables.
+
+#### Problem: "Environment variables undefined"
+
+**SOLUTION**: Use bracket notation:
+
+```typescript
+// ❌ WRONG - fails in production
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+// ✅ CORRECT - works everywhere
+const url = process.env["NEXT_PUBLIC_SUPABASE_URL"];
+```
 
 ### Environment Issues
 

@@ -1,6 +1,7 @@
 import { ToolsContent } from "./tools-content";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { loggers } from "@/lib/logger";
 
 interface Tool {
   id: string;
@@ -37,7 +38,7 @@ export default async function ToolsPage({ params }: PageProps): Promise<React.JS
     const data = await response.json();
     tools = data.tools;
   } catch (error) {
-    console.error("Failed to fetch tools:", error);
+    loggers.tools.error("Failed to fetch tools", { error, lang });
     loading = true;
   }
 

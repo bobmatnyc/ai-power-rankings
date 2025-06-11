@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { loggers } from "@/lib/logger";
 
 const supabaseUrl = process.env["NEXT_PUBLIC_SUPABASE_URL"] || "";
 const supabaseAnonKey = process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"] || "";
@@ -98,7 +99,7 @@ export async function getRankings(category?: string): Promise<RankingData[]> {
     const { data: rankings, error } = await query;
 
     if (error) {
-      console.error("Error fetching rankings:", error);
+      loggers.database.error("Error fetching rankings", { error, category });
       return [];
     }
 
@@ -167,7 +168,7 @@ export async function getRankings(category?: string): Promise<RankingData[]> {
       })
     );
   } catch (error) {
-    console.error("Error in getRankings:", error);
+    loggers.ranking.error("Error in getRankings", { error, category });
     return [];
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, Suspense } from "react";
+import { loggers } from "@/lib/logger";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -116,7 +117,7 @@ function SidebarContent(): React.JSX.Element {
 
       setCategories(allCategories);
     } catch (error) {
-      console.error("Failed to fetch categories:", error);
+      loggers.tools.error("Failed to fetch categories", { error });
       // Fallback to some default categories
       setCategories([{ id: "all", name: "All Categories", count: 0 }]);
     }
