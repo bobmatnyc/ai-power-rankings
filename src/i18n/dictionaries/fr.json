@@ -67,14 +67,18 @@
       "updateFrequency": "Weekly Updates"
     },
     "trending": {
-      "title": "Trending This Week",
-      "subtitle": "AI tools gaining momentum and climbing the rankings",
-      "viewAll": "View All Trending"
+      "title": "Tendances cette semaine",
+      "subtitle": "Outils IA qui gagnent en popularité et grimpent dans les classements",
+      "description": "Outils IA qui gagnent en popularité et grimpent dans les classements",
+      "viewAll": "Voir toutes les tendances",
+      "viewAllButton": "Voir toutes les tendances"
     },
     "recentlyUpdated": {
-      "title": "Recently Updated",
-      "subtitle": "Latest updates and new features from top AI tools",
-      "viewAll": "View All Rankings"
+      "title": "Récemment mis à jour",
+      "subtitle": "Dernières mises à jour et nouvelles fonctionnalités des meilleurs outils IA",
+      "description": "Dernières mises à jour et nouvelles fonctionnalités des meilleurs outils IA",
+      "viewAll": "Voir tous les classements",
+      "viewAllButton": "Voir tous les classements"
     },
     "categories": {
       "title": "Explore by Category",

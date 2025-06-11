@@ -72,12 +72,21 @@
     "trending": {
       "title": "Trending This Week",
       "subtitle": "AI tools gaining momentum and climbing the rankings",
-      "viewAll": "View All Trending"
+      "description": "AI tools gaining momentum and climbing the rankings",
+      "viewAll": "View All Trending",
+      "viewAllButton": "View All Trending"
     },
     "recentlyUpdated": {
       "title": "Recently Updated",
       "subtitle": "Latest updates and new features from top AI tools",
-      "viewAll": "View All Rankings"
+      "description": "Latest updates and new features from top AI tools",
+      "viewAll": "View All Rankings",
+      "viewAllButton": "View All Rankings"
+    },
+    "recent": {
+      "title": "Recent Updates",
+      "description": "Latest developments and feature releases from top AI tools",
+      "viewAllButton": "View All Recent"
     },
     "categories": {
       "title": "Explore by Category",
@@ -166,6 +175,12 @@
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
     }
   },
+  "footer": {
+    "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+    "quickLinks": "Quick Links",
+    "categories": "Categories",
+    "copyright": "© 2025 AI Power Rankings. All rights reserved."
+  },
   "rankings": {
     "title": "AI Power Rankings",
     "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v6.0",
@@ -204,7 +219,14 @@
         "sentiment": "Sentiment",
         "velocity": "Velocity",
         "resilience": "Resilience"
-      }
+      },
+      "modifiers": {
+        "decay": "Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
+        "risk": "Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
+        "revenue": "Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
+      },
+      "methodologyText": "Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
+      "viewMethodology": "View Full Methodology"
     }
   },
   "news": {
