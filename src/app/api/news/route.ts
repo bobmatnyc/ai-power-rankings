@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/database";
+import { supabaseAdmin } from "@/lib/database";
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get("offset") || "0");
     const filter = searchParams.get("filter") || "all";
 
-    const supabase = createClient();
+    const supabase = supabaseAdmin;
 
     // Build the query
     let query = supabase
