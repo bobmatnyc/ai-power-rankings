@@ -267,11 +267,19 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
 
     if (diffHours < 24) {
       if (diffHours === 0) {
-        return dict.common.justNow;
+        return dict.news.time?.justNow || "Just now";
       }
-      return dict.common.hoursAgo.replace("{count}", diffHours.toString());
+      const hoursText =
+        diffHours === 1
+          ? dict.news.time?.hourAgo || "hour ago"
+          : dict.news.time?.hoursAgo || "{count} hours ago";
+      return hoursText.replace("{count}", diffHours.toString());
     } else if (diffDays < 7) {
-      return dict.common.daysAgo.replace("{count}", diffDays.toString());
+      const daysText =
+        diffDays === 1
+          ? dict.news.time?.dayAgo || "day ago"
+          : dict.news.time?.daysAgo || "{count} days ago";
+      return daysText.replace("{count}", diffDays.toString());
     } else {
       return date.toLocaleDateString("en-US", {
         month: "short",
@@ -371,7 +379,8 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                         <div className="flex items-center gap-1">
                           <Users className="h-4 w-4 text-muted-foreground" />
                           <span>
-                            {(item.metrics.users / 1000).toFixed(0)}K {dict.common.users}
+                            {(item.metrics.users / 1000).toFixed(0)}K{" "}
+                            {dict.news.metrics?.users || "users"}
                           </span>
                         </div>
                       )}
@@ -394,7 +403,8 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                             }
                           >
                             {item.metrics.score_change > 0 ? "+" : ""}
-                            {item.metrics.score_change.toFixed(1)} {dict.common.score}
+                            {item.metrics.score_change.toFixed(1)}{" "}
+                            {dict.news.metrics?.score || "score"}
                           </span>
                         </div>
                       )}
@@ -411,7 +421,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                             }
                           >
                             {item.metrics.rank_change > 0 ? "+" : ""}
-                            {item.metrics.rank_change} {dict.common.rank}
+                            {item.metrics.rank_change} {dict.news.metrics?.rank || "rank"}
                           </span>
                         </div>
                       )}
@@ -436,7 +446,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                   <div className="ml-auto">
                     <Button variant="ghost" size="sm" asChild>
                       <Link href={`/${lang}/tools/${item.tool_id}`}>
-                        {dict.common.viewTool}
+                        {dict.news.viewTool || "View Tool"}
                         <ArrowRight className="h-4 w-4 ml-1" />
                       </Link>
                     </Button>

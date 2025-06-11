@@ -216,10 +216,10 @@
     },
     "time": {
       "justNow": "Just now",
-      "hourAgo": "hour ago",
-      "hoursAgo": "hours ago",
-      "dayAgo": "day ago",
-      "daysAgo": "days ago"
+      "hourAgo": "1 hour ago",
+      "hoursAgo": "{count} hours ago",
+      "dayAgo": "1 day ago",
+      "daysAgo": "{count} days ago"
     }
   },
   "tools": {
