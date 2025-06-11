@@ -62,7 +62,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
   // Initial data fetch
   useEffect(() => {
     fetchNews(1, true);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Set up intersection observer for infinite scroll
   useEffect(() => {
@@ -87,7 +87,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
         observerRef.current.disconnect();
       }
     };
-  }, [page, hasMore, loadingMore]);
+  }, [page, hasMore, loadingMore]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchNews = async (pageNum: number, isInitial: boolean): Promise<void> => {
     try {
@@ -97,108 +97,29 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
         setLoadingMore(true);
       }
 
-      // For now, we'll use mock data with pagination simulation
-      const itemsPerPage = 10;
-      const allMockNews: MetricsHistory[] = [
-        {
-          id: "1",
-          tool_id: "cursor",
-          tool_name: "Cursor",
-          tool_category: "code-editor",
-          tool_website: "https://cursor.com",
-          event_date: new Date().toISOString(),
-          event_type: "milestone",
-          title: "Cursor reaches 500K+ active users",
-          description:
-            "The AI-powered code editor hits a major milestone with over half a million active developers.",
-          source_url: "https://twitter.com/cursor_ai/status/1234567890",
-          source_name: "Cursor Twitter",
-          metrics: {
-            users: 500000,
-            score_change: 0.5,
-            rank_change: 1,
-          },
-          tags: ["milestone", "growth"],
-        },
-        {
-          id: "2",
-          tool_id: "windsurf",
-          tool_name: "Windsurf",
-          tool_category: "code-editor",
-          tool_website: "https://codeium.com/windsurf",
-          event_date: new Date(Date.now() - 86400000).toISOString(),
-          event_type: "feature",
-          title: "Windsurf launches Cascade feature",
-          description:
-            "New AI-powered feature enables multi-file editing and complex refactoring tasks.",
-          metrics: {
-            score_change: 0.8,
-          },
-          tags: ["feature", "innovation"],
-        },
-        {
-          id: "3",
-          tool_id: "github-copilot",
-          tool_name: "GitHub Copilot",
-          tool_category: "code-completion",
-          tool_website: "https://github.com/features/copilot",
-          event_date: new Date(Date.now() - 172800000).toISOString(),
-          event_type: "partnership",
-          title: "GitHub Copilot integrates with Azure",
-          description: "Microsoft announces deeper integration between Copilot and Azure services.",
-          metrics: {
-            revenue: 100000000,
-          },
-          tags: ["partnership", "enterprise"],
-        },
-        {
-          id: "4",
-          tool_id: "v0",
-          tool_name: "v0",
-          tool_category: "app-builder",
-          tool_website: "https://v0.dev",
-          event_date: new Date(Date.now() - 259200000).toISOString(),
-          event_type: "update",
-          title: "v0 improves component generation accuracy",
-          description:
-            "Latest update brings 30% improvement in React component generation quality.",
-          metrics: {
-            score_change: 0.3,
-          },
-          tags: ["update", "performance"],
-        },
-        {
-          id: "5",
-          tool_id: "claude-artifacts",
-          tool_name: "Claude Artifacts",
-          tool_category: "code-assistant",
-          tool_website: "https://claude.ai",
-          event_date: new Date(Date.now() - 345600000).toISOString(),
-          event_type: "announcement",
-          title: "Claude 3.5 Sonnet powers new coding capabilities",
-          description:
-            "Anthropic's latest model brings significant improvements to code generation and debugging.",
-          metrics: {
-            score_change: 1.2,
-            rank_change: 2,
-          },
-          tags: ["announcement", "ai-model"],
-        },
-      ];
+      const itemsPerPage = 20;
+      const offset = (pageNum - 1) * itemsPerPage;
 
-      // Simulate pagination
-      const startIndex = (pageNum - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      const paginatedNews = allMockNews.slice(startIndex, endIndex);
+      // Fetch from API
+      const response = await fetch(
+        `/api/news?limit=${itemsPerPage}&offset=${offset}&filter=${filter}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch news");
+      }
+
+      const data = await response.json();
+      const newsData: MetricsHistory[] = data.news || [];
 
       if (isInitial) {
-        setNewsItems(paginatedNews);
+        setNewsItems(newsData);
       } else {
-        setNewsItems((prev) => [...prev, ...paginatedNews]);
+        setNewsItems((prev) => [...prev, ...newsData]);
       }
 
       setPage(pageNum);
-      setHasMore(endIndex < allMockNews.length);
+      setHasMore(data.hasMore || false);
       setLoading(false);
       setLoadingMore(false);
     } catch (error) {
@@ -279,7 +200,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
     setPage(1);
     setHasMore(true);
     fetchNews(1, true);
-  }, [filter]);
+  }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filteredNews =
     filter === "all" ? newsItems : newsItems.filter((item) => item.event_type === filter);
