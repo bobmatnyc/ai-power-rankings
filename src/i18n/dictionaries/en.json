@@ -394,6 +394,22 @@
       "subscribe": "Subscribe to Newsletter"
     }
   },
+  "sidebar": {
+    "navigation": "Navigation",
+    "quickLinks": "Quick Links",
+    "trending": "Trending",
+    "categories": "Categories",
+    "features": "Features",
+    "clearFilters": "Clear Filters"
+  },
+  "features": {
+    "autocomplete": "Autocomplete",
+    "chat": "Chat Interface",
+    "codeGeneration": "Code Generation",
+    "refactoring": "Refactoring",
+    "testing": "Testing",
+    "documentation": "Documentation"
+  },
   "errors": {
     "404": {
       "title": "Page Not Found",

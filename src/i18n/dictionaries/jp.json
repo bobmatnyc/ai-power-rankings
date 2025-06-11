@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "AI Power Rankings",
+    "appDescription": "データ駆動型のAIコーディングツールランキング",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "tryAgain": "再試行",
+    "backToHome": "ホームに戻る",
+    "learnMore": "詳細を見る",
+    "viewAll": "すべて表示",
+    "close": "閉じる",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "search": "検索",
+    "filter": "フィルター",
+    "sort": "並び替え",
+    "share": "シェア"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "rankings": "ランキング",
+    "news": "ニュース",
+    "tools": "ツール",
+    "methodology": "手法",
+    "about": "About",
+    "subscribeToUpdates": "アップデートを購読",
+    "navigation": "ナビゲーション",
+    "quickLinks": "クイックリンク",
+    "trending": "トレンド",
+    "categories": "カテゴリー",
+    "features": "機能",
+    "clearFilters": "フィルターをクリア",
+    "allCategories": "すべてのカテゴリー"
+  }
+}
