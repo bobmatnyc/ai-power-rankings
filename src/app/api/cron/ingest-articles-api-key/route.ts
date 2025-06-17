@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 
 // Get folder IDs from environment
 const INCOMING_FOLDER_ID =
-  process.env["GOODLE_DRIVE_INCOMING_FOLDER_ID"] || "1TVEXlX3PDHDtyRgjR1VenDUywrIEAVy8";
+  process.env["GOOGLE_DRIVE_INCOMING_FOLDER_ID"] || "1TVEXlX3PDHDtyRgjR1VenDUywrIEAVy8";
 
 export async function GET() {
   try {

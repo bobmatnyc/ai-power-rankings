@@ -50,14 +50,38 @@ export async function downloadFileContent(fileId: string): Promise<string> {
   const apiKey = getApiKey();
 
   try {
-    const url = `${DRIVE_API_BASE}/files/${fileId}?alt=media&key=${apiKey}`;
+    // First get file metadata to obtain webContentLink
+    const metadataUrl = `${DRIVE_API_BASE}/files/${fileId}?fields=webContentLink&key=${apiKey}`;
+    const metadataResponse = await fetch(metadataUrl);
 
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to download file: ${response.statusText}`);
+    if (!metadataResponse.ok) {
+      // Fallback to direct download
+      const url = `${DRIVE_API_BASE}/files/${fileId}?alt=media&key=${apiKey}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to download file: ${response.statusText}`);
+      }
+      return await response.text();
     }
 
-    return await response.text();
+    const metadata = await metadataResponse.json();
+
+    if (metadata.webContentLink) {
+      // Use webContentLink which works better for publicly shared files
+      const response = await fetch(metadata.webContentLink);
+      if (!response.ok) {
+        throw new Error(`Failed to download file via webContentLink: ${response.statusText}`);
+      }
+      return await response.text();
+    } else {
+      // Fallback to alt=media
+      const url = `${DRIVE_API_BASE}/files/${fileId}?alt=media&key=${apiKey}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to download file: ${response.statusText}`);
+      }
+      return await response.text();
+    }
   } catch (error) {
     logger.error("Failed to download file content:", error);
     throw error;
