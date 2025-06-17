@@ -33,27 +33,24 @@ interface HeroCardProps {
 
 export function HeroCard({ ranking, index }: HeroCardProps) {
   return (
-    <Card 
+    <Card
       className={`relative group hover:shadow-xl transition-all duration-300 border-border/50 ${
-        index === 0 ? 'md:scale-105 border-primary/30 shadow-lg' : 'hover:border-primary/20'
+        index === 0 ? "md:scale-105 border-primary/30 shadow-lg" : "hover:border-primary/20"
       }`}
     >
       {index === 0 && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <Badge className="bg-gradient-primary text-white border-0 shadow-lg">
-            🏆 #1 Ranked
-          </Badge>
+          <Badge className="bg-gradient-primary text-white border-0 shadow-lg">🏆 #1 Ranked</Badge>
         </div>
       )}
-      
+
       <CardHeader className="pb-3">
         <div className="flex items-center space-x-3">
-          <Link href={`/tools/${ranking.tool.id}`} className="flex-shrink-0 hover:opacity-80 transition-opacity">
-            <ToolIcon 
-              name={ranking.tool.name}
-              domain={ranking.tool.website_url}
-              size={64}
-            />
+          <Link
+            href={`/tools/${ranking.tool.id}`}
+            className="flex-shrink-0 hover:opacity-80 transition-opacity"
+          >
+            <ToolIcon name={ranking.tool.name} domain={ranking.tool.website_url} size={64} />
           </Link>
           <div className="flex-1">
             <div className="flex items-center justify-between">
@@ -65,7 +62,7 @@ export function HeroCard({ ranking, index }: HeroCardProps) {
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground">
-              {ranking.tool.category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              {ranking.tool.category.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
             </p>
           </div>
         </div>
@@ -74,11 +71,9 @@ export function HeroCard({ ranking, index }: HeroCardProps) {
       <CardContent>
         <div className="space-y-4">
           {ranking.tool.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {ranking.tool.description}
-            </p>
+            <p className="text-sm text-muted-foreground line-clamp-2">{ranking.tool.description}</p>
           )}
-          
+
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-muted-foreground">Score</span>
@@ -95,12 +90,14 @@ export function HeroCard({ ranking, index }: HeroCardProps) {
               </div>
             )}
           </div>
-          
+
           <div className="flex gap-2 pt-2">
-            <Button className="flex-1 gradient-primary text-white hover:opacity-90" size="sm" asChild>
-              <Link href={`/tools/${ranking.tool.id}`}>
-                View Details
-              </Link>
+            <Button
+              className="flex-1 gradient-primary text-white hover:opacity-90"
+              size="sm"
+              asChild
+            >
+              <Link href={`/tools/${ranking.tool.id}`}>View Details</Link>
             </Button>
           </div>
         </div>

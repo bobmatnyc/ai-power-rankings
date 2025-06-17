@@ -36,8 +36,8 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
     try {
       // TODO: Implement actual newsletter signup
       // For now, simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Reset form and show success
       setSuccess(true);
       setTimeout(() => {
@@ -53,7 +53,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
@@ -75,7 +75,8 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
             <DialogHeader>
               <DialogTitle>Sign Up for Weekly Updates</DialogTitle>
               <DialogDescription>
-                Get the latest AI tool rankings, news, and insights delivered to your inbox every week.
+                Get the latest AI tool rankings, news, and insights delivered to your inbox every
+                week.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
@@ -118,9 +119,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                   disabled={loading}
                 />
               </div>
-              {error && (
-                <p className="text-sm text-red-500">{error}</p>
-              )}
+              {error && <p className="text-sm text-red-500">{error}</p>}
               <div className="flex gap-3 pt-2">
                 <Button
                   type="button"

@@ -3,18 +3,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Zap, 
-  Users, 
-  DollarSign, 
+import {
+  TrendingUp,
+  TrendingDown,
+  Zap,
+  Users,
+  DollarSign,
   GitBranch,
   Award,
   AlertCircle,
   Sparkles,
   Clock,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -90,14 +90,14 @@ export function NewsCard({ item }: NewsCardProps) {
       if (diffHours === 0) {
         return "Just now";
       }
-      return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
     } else if (diffDays < 7) {
-      return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+      return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
     } else {
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric',
-        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
       });
     }
   };
@@ -107,12 +107,11 @@ export function NewsCard({ item }: NewsCardProps) {
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-start space-x-3 flex-1">
-            <Link href={`/tools/${item.tool_id}`} className="flex-shrink-0 mt-1 hover:opacity-80 transition-opacity">
-              <ToolIcon 
-                name={item.tool_name}
-                domain={item.tool_website}
-                size={40}
-              />
+            <Link
+              href={`/tools/${item.tool_id}`}
+              className="flex-shrink-0 mt-1 hover:opacity-80 transition-opacity"
+            >
+              <ToolIcon name={item.tool_name} domain={item.tool_website} size={40} />
             </Link>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
@@ -120,21 +119,15 @@ export function NewsCard({ item }: NewsCardProps) {
                   {getEventIcon(item.event_type)}
                   <span className="ml-1">{item.event_type}</span>
                 </Badge>
-                <span className="text-sm text-muted-foreground">
-                  {formatDate(item.event_date)}
-                </span>
+                <span className="text-sm text-muted-foreground">{formatDate(item.event_date)}</span>
               </div>
-              <CardTitle className="text-lg mb-1">
-                {item.title}
-              </CardTitle>
-              <CardDescription>
-                {item.description}
-              </CardDescription>
+              <CardTitle className="text-lg mb-1">{item.title}</CardTitle>
+              <CardDescription>{item.description}</CardDescription>
             </div>
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-0">
         <div className="flex flex-wrap items-center gap-4">
           {/* Metrics */}
@@ -159,8 +152,11 @@ export function NewsCard({ item }: NewsCardProps) {
                   ) : (
                     <TrendingDown className="h-4 w-4 text-red-500" />
                   )}
-                  <span className={item.metrics.score_change > 0 ? "text-green-500" : "text-red-500"}>
-                    {item.metrics.score_change > 0 ? "+" : ""}{item.metrics.score_change.toFixed(1)} score
+                  <span
+                    className={item.metrics.score_change > 0 ? "text-green-500" : "text-red-500"}
+                  >
+                    {item.metrics.score_change > 0 ? "+" : ""}
+                    {item.metrics.score_change.toFixed(1)} score
                   </span>
                 </div>
               )}
@@ -171,8 +167,11 @@ export function NewsCard({ item }: NewsCardProps) {
                   ) : (
                     <TrendingDown className="h-4 w-4 text-red-500" />
                   )}
-                  <span className={item.metrics.rank_change > 0 ? "text-green-500" : "text-red-500"}>
-                    {item.metrics.rank_change > 0 ? "+" : ""}{item.metrics.rank_change} rank
+                  <span
+                    className={item.metrics.rank_change > 0 ? "text-green-500" : "text-red-500"}
+                  >
+                    {item.metrics.rank_change > 0 ? "+" : ""}
+                    {item.metrics.rank_change} rank
                   </span>
                 </div>
               )}

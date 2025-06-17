@@ -18,11 +18,11 @@ export function ToolIcon({ name, domain, size = 48, className }: ToolIconProps) 
   const getPlaceholder = () => {
     const initials = name
       .split(/\s+/)
-      .map(word => word[0])
-      .join('')
+      .map((word) => word[0])
+      .join("")
       .toUpperCase()
       .slice(0, 2);
-    
+
     return initials || name.slice(0, 2).toUpperCase();
   };
 
@@ -38,14 +38,14 @@ export function ToolIcon({ name, domain, size = 48, className }: ToolIconProps) 
       "bg-gradient-to-br from-teal-500 to-teal-600",
       "bg-gradient-to-br from-red-500 to-red-600",
     ];
-    
+
     // Simple hash function to get consistent color
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
-      hash = ((hash << 5) - hash) + name.charCodeAt(i);
+      hash = (hash << 5) - hash + name.charCodeAt(i);
       hash = hash & hash;
     }
-    
+
     return colors[Math.abs(hash) % colors.length];
   };
 
