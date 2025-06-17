@@ -13,8 +13,8 @@ interface PageProps {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "What's New - AI Power Rankings",
-    description: "Latest updates and changes to the AI Power Rankings platform",
+    title: "What's New - AI Power Ranking",
+    description: "Latest updates and changes to the AI Power Ranking platform",
   };
 }
 
@@ -43,7 +43,7 @@ export default async function UpdatesPage({ params }: PageProps) {
 
           <h1 className="text-4xl font-bold mb-4">What&apos;s New</h1>
           <p className="text-xl text-muted-foreground max-w-3xl">
-            Latest updates, new articles, and ranking changes in the AI Power Rankings platform.
+            Latest updates, new articles, and ranking changes in the AI Power Ranking platform.
           </p>
         </div>
 

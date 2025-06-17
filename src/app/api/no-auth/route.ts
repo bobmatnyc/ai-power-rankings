@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 // Ultra-simple endpoint that explicitly requires no authentication
 export async function GET() {
   return NextResponse.json({
-    name: "AI Power Rankings",
+    name: "AI Power Ranking",
     version: "1.0.0",
     auth: false,
     endpoints: ["/api/mcp/rankings", "/api/mcp/tools/:id", "/api/mcp/search"],

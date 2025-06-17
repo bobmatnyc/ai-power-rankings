@@ -18,7 +18,7 @@ function UnsubscribeContent(): React.JSX.Element {
         icon: <CheckCircle className="h-16 w-16 text-green-500" />,
         title: "Successfully Unsubscribed",
         description:
-          "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!",
+          "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!",
         buttonText: "Go to Homepage",
         buttonHref: "/",
       };

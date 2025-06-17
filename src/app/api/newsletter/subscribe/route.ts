@@ -309,7 +309,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           ? "Set (length: " + process.env["RESEND_API_KEY"].length + ")"
           : "Not set",
         toEmail: email,
-        fromEmail: "AI Power Rankings <newsletter@aipowerranking.com>",
+        fromEmail: "AI Power Ranking <newsletter@aipowerranking.com>",
       });
       return NextResponse.json(
         {

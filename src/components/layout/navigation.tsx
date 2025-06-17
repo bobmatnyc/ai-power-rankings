@@ -22,7 +22,7 @@ export function Navigation(): React.ReactElement {
         <Link href="/" className="mr-6 flex items-center space-x-3 group">
           <img
             src="/crown-of-technology.png"
-            alt="AI Power Rankings"
+            alt="AI Power Ranking"
             className="w-9 h-9 object-contain"
           />
           <div className="flex flex-col">

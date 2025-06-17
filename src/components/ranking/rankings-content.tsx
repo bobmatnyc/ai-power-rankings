@@ -162,7 +162,7 @@ function RankingsContentInner(): React.JSX.Element {
     <div className="container mx-auto p-8 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">AI Power Rankings</h1>
+        <h1 className="text-4xl font-bold mb-2">AI Power Ranking</h1>
         <p className="text-muted-foreground text-lg">
           Algorithm v6.0: Code-Ready Modifiers • June 2025
         </p>

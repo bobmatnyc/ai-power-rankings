@@ -54,7 +54,7 @@
   "home": {
     "hero": {
       "badge": "Updated Weekly",
-      "title": "AI Power Rankings",
+      "title": "AI Power Ranking",
       "subtitle": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
       "description": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
       "exploreTools": "Explore All Tools",
@@ -173,17 +173,17 @@
       "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
-      "copyright": "© 2025 AI Power Rankings. All rights reserved."
+      "copyright": "© 2025 AI Power Ranking. All rights reserved."
     }
   },
   "footer": {
     "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
     "quickLinks": "Quick Links",
     "categories": "Categories",
-    "copyright": "© 2025 AI Power Rankings. All rights reserved."
+    "copyright": "© 2025 AI Power Ranking. All rights reserved."
   },
   "rankings": {
-    "title": "AI Power Rankings",
+    "title": "AI Power Ranking",
     "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v6.0",
     "stats": {
       "totalTools": "Total Tools",
@@ -449,8 +449,8 @@
       "processing": "Processing your request...",
       "success": {
         "title": "Successfully Unsubscribed",
-        "message": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!",
-        "description": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!"
+        "message": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!",
+        "description": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
       },
       "error": {
         "title": "Unsubscribe Error"
@@ -477,7 +477,7 @@
     "title": "Our Methodology",
     "subtitle": "How we rank AI coding tools",
     "lastUpdated": "Last updated: January 2025",
-    "intro": "AI Power Rankings uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "intro": "AI Power Ranking uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
     "algorithm": {
       "title": "Algorithm v6.0",
       "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
@@ -610,7 +610,7 @@
     }
   },
   "about": {
-    "title": "About AI Power Rankings",
+    "title": "About AI Power Ranking",
     "subtitle": "Empowering developers with data-driven AI tool insights",
     "hero": {
       "title": "Empowering developers with data-driven AI tool insights",
@@ -717,7 +717,7 @@
           "description": "Security, privacy, and vendor lock-in concerns are often overlooked"
         }
       },
-      "conclusion": "That's why we built AI Power Rankings - to cut through the noise and provide clear, data-driven insights."
+      "conclusion": "That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
     }
   },
   "sidebar": {
