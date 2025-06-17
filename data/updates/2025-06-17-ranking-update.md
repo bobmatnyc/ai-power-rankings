@@ -74,20 +74,31 @@ Successfully processed **3 new articles** from the latest news cycle:
 
 ## 🔄 Algorithm Changes
 
-### News Impact Integration:
+### News Impact Integration (v6-news):
 
-- **Algorithm Version**: v6-news
+- **Algorithm Version**: v6-news (Enhanced API Integration)
 - **Weighting**: 70% base score + 30% news impact
-- **News Aging**: Exponential decay over 12 months
-- **Company Discount**: 0.7x for self-reported announcements
-- **Recency Bonus**: Higher weight for recent articles
+- **News Aging**: Exponential decay over 12 months with 1.2 decay factor
+- **Impact Multipliers**:
+  - Funding announcements: 25x multiplier
+  - Product launches: 15x multiplier
+  - Technical achievements: 15x multiplier
+  - Article volume bonus: up to 20 points (capped)
+- **Recency Bonus**: Average article age affects decay calculation
+
+### Updated Infrastructure:
+
+- **API Integration**: Main `/api/rankings` endpoint now uses v6-news algorithm
+- **Real-time Updates**: Home page reflects latest news-enhanced rankings
+- **Comprehensive Coverage**: 39 tools tracked (increased from 25)
+- **News Database**: 93+ articles processed for impact calculation
 
 ### Ranking Methodology:
 
-- **Base Scores**: Technical capabilities and adoption
-- **News Multipliers**: Category-specific impact scaling
-- **Age Decay**: Prevents stale news from dominating
-- **Volume Bonus**: Consistent coverage builds momentum
+- **Base Scores**: Category-driven foundation scores
+- **News Impact**: Real-time calculation from news_updates table
+- **Decay Function**: `1 / (1 + (avgDaysOld / 365)^1.2)`
+- **Volume Bonus**: Linear scaling with diminishing returns
 
 ## 📈 Market Insights
 
@@ -106,11 +117,33 @@ Successfully processed **3 new articles** from the latest news cycle:
 - **Technical benchmarks drive credibility**: Performance scores influence rankings
 - **Acquisition activity increases**: Market consolidation accelerating
 
+## 🚀 Infrastructure Updates
+
+### API Enhancements:
+
+- **Live News Integration**: Main rankings API now uses v6-news algorithm
+- **Enhanced Response Format**: Includes news impact metrics and statistics
+- **Performance Optimization**: Direct database queries for news calculation
+- **Real-time Updates**: Rankings reflect latest news without manual refresh
+
+### Platform Improvements:
+
+- **Home Page Updates**: Shows current top tools with latest rankings
+- **Tool Count Update**: Reflects accurate count of 39 tracked tools
+- **What's New Feature**: Dedicated updates page with comprehensive details
+- **News Page Fix**: Now displays actual news articles from news_updates table
+
+### Data Quality:
+
+- **Comprehensive Coverage**: All 39 tools properly categorized and scored
+- **News Database**: 93+ articles with proper tool associations
+- **Improved Accuracy**: Fixed inconsistencies between script and API rankings
+
 ## 🎯 What's Next
 
 ### Immediate Improvements:
 
-- Real-time ranking updates after news ingestion
+- ✅ Real-time ranking updates after news ingestion (COMPLETED)
 - Enhanced sentiment analysis for positive/negative impact
 - Automated RSS feed crawling for continuous updates
 

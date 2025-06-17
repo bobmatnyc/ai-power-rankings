@@ -105,7 +105,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
           {/* Stats Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">25</div>
+              <div className="text-3xl font-bold text-primary mb-1">39</div>
               <div className="text-sm text-muted-foreground">{dict.home.stats.toolsRanked}</div>
             </div>
             <div className="text-center">
