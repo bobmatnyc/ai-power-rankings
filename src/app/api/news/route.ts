@@ -9,121 +9,103 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get("offset") || "0");
     const filter = searchParams.get("filter") || "all";
 
-    // Build the query from metrics_history - this is our real event log
+    // Build the query from news_updates - this is our real news content
     let query = supabase
-      .from("metrics_history")
-      .select(
-        `
-        *,
-        tools (
-          id,
-          name,
-          category
-        )
-      `
-      )
-      .not("source_url", "is", null)
-      .order("recorded_at", { ascending: false })
+      .from("news_updates")
+      .select("*")
+      .order("published_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
-    // Apply filter if not "all" - map to metric types
+    // Apply filter if not "all" - map to news categories
     if (filter !== "all") {
-      const metricTypeMap: Record<string, string[]> = {
-        milestone: ["monthly_arr", "estimated_users", "github_stars", "valuation_latest"],
-        announcement: ["funding_total", "timeline_event"],
-        update: ["swe_bench_score", "innovation_score", "feature_set"],
-        feature: ["feature_set", "innovation_score"],
-        partnership: ["timeline_event"],
+      const categoryMap: Record<string, string[]> = {
+        milestone: ["funding", "acquisition"],
+        announcement: ["funding", "product-launch", "acquisition"],
+        update: ["technical-achievement", "general"],
+        feature: ["product-launch"],
+        partnership: ["acquisition", "general"],
       };
 
-      if (metricTypeMap[filter]) {
-        query = query.in("metric_key", metricTypeMap[filter]);
+      if (categoryMap[filter]) {
+        query = query.in("category", categoryMap[filter]);
       }
     }
 
-    const { data: metricsItems, error } = await query;
+    const { data: newsItems, error } = await query;
 
     if (error) {
       loggers.news.error("Error fetching news", { error });
       return NextResponse.json({ error: "Failed to fetch news" }, { status: 500 });
     }
 
-    // Transform metrics_history data into news format
+    // Transform news_updates data into the expected format
     const transformedNews =
-      metricsItems?.map((metric) => {
-        // Generate appropriate title and description based on metric type
-        let title = "";
-        let description = "";
+      newsItems?.map((article) => {
+        // Map category to event type
         let eventType = "update";
-        const metricValue = metric.value_integer || metric.value_decimal || 0;
-        const toolName = metric.tools?.name || "Unknown Tool";
-
-        switch (metric.metric_key) {
-          case "monthly_arr":
-            title = `${toolName} Reaches $${(metricValue / 1000000).toFixed(0)}M ARR`;
-            description = `${toolName} has achieved $${(metricValue / 1000000).toFixed(0)} million in Annual Recurring Revenue.`;
+        switch (article.category) {
+          case "funding":
             eventType = "milestone";
             break;
-          case "valuation_latest":
-            title = `${toolName} Valued at $${(metricValue / 1000000000).toFixed(1)}B`;
-            description = `${toolName} achieves ${metricValue >= 1000000000 ? "unicorn" : "significant"} valuation of $${(metricValue / 1000000000).toFixed(1)} billion.`;
-            eventType = "milestone";
-            break;
-          case "funding_total":
-            title = `${toolName} Raises Funding - Total $${(metricValue / 1000000).toFixed(0)}M`;
-            description =
-              metric.notes ||
-              `${toolName} has raised additional funding, bringing total to $${(metricValue / 1000000).toFixed(0)}M.`;
+          case "acquisition":
             eventType = "announcement";
             break;
-          case "estimated_users":
-            title = `${toolName} Surpasses ${(metricValue / 1000).toFixed(0)}K Users`;
-            description = `${toolName} continues rapid growth, now serving over ${(metricValue / 1000).toFixed(0)}K active users.`;
-            eventType = "milestone";
+          case "product-launch":
+            eventType = "feature";
             break;
-          case "swe_bench_score":
-            title = `${toolName} Achieves ${metricValue}% on SWE-bench`;
-            description = `${toolName} demonstrates strong performance on the SWE-bench coding benchmark with ${metricValue}% score.`;
-            eventType = "update";
-            break;
-          case "github_stars":
-            title = `${toolName} Reaches ${(metricValue / 1000).toFixed(0)}K GitHub Stars`;
-            description = `${toolName} gains developer popularity with ${(metricValue / 1000).toFixed(0)}K GitHub stars.`;
-            eventType = "milestone";
-            break;
-          case "timeline_event":
-            title = metric.notes || `${toolName} Major Update`;
-            description = metric.notes || `${toolName} announces significant developments.`;
-            eventType = "announcement";
-            break;
-          case "innovation_score":
-            title = `${toolName} Innovation Score Updated`;
-            description = `${toolName} receives updated innovation assessment: ${metricValue}`;
+          case "technical-achievement":
             eventType = "update";
             break;
           default:
-            title = `${toolName} Updates ${metric.metric_key.replace(/_/g, " ")}`;
-            description =
-              metric.notes || `New ${metric.metric_key.replace(/_/g, " ")} data for ${toolName}`;
-            eventType = "update";
+            eventType = "announcement";
         }
 
+        // Get the main tool from related_tools array
+        const primaryToolId = Array.isArray(article.related_tools)
+          ? article.related_tools[0]
+          : null;
+        const toolNames = Array.isArray(article.related_tools)
+          ? article.related_tools
+              .map((id: string) => {
+                // Simple mapping for common tool IDs to display names
+                const toolNameMap: Record<string, string> = {
+                  cursor: "Cursor",
+                  devin: "Devin",
+                  "claude-code": "Claude Code",
+                  "github-copilot": "GitHub Copilot",
+                  "chatgpt-canvas": "ChatGPT Canvas",
+                  "openai-codex-cli": "OpenAI Codex CLI",
+                  "augment-code": "Augment Code",
+                  "google-jules": "Google Jules",
+                  lovable: "Lovable",
+                  "bolt-new": "Bolt.new",
+                  windsurf: "Windsurf",
+                  zed: "Zed",
+                  tabnine: "Tabnine",
+                  "replit-agent": "Replit Agent",
+                  "amazon-q-developer": "Amazon Q Developer",
+                };
+                return toolNameMap[id] || id;
+              })
+              .join(", ")
+          : "Various Tools";
+
         return {
-          id: metric.id,
-          tool_id: metric.tool_id,
-          tool_name: toolName,
-          tool_category: metric.tools?.category || "unknown",
+          id: article.id,
+          tool_id: primaryToolId || "unknown",
+          tool_name: toolNames,
+          tool_category: "ai-coding-tool",
           tool_website: "",
-          event_date: metric.recorded_at,
+          event_date: article.published_at || article.created_at,
           event_type: eventType,
-          title,
-          description,
-          source_url: metric.source_url,
-          source_name: metric.source_name || "Industry Report",
+          title: article.title,
+          description: article.summary || article.title,
+          source_url: article.url,
+          source_name: article.source || "AI News",
           metrics: {
-            [metric.metric_key]: metricValue,
+            importance_score: article.importance_score || 5,
           },
-          tags: [metric.metric_key],
+          tags: [article.category, ...(article.related_tools || [])],
         };
       }) || [];
 

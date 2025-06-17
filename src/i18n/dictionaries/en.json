@@ -60,7 +60,8 @@
       "exploreTools": "Explore All Tools",
       "viewTrending": "View Trending",
       "exploreButton": "Explore All Tools",
-      "trendingButton": "View Trending"
+      "trendingButton": "View Trending",
+      "whatsNewButton": "What's New"
     },
     "stats": {
       "toolsRanked": "AI Tools Ranked",

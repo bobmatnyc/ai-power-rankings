@@ -3,7 +3,7 @@ import { loggers } from "@/lib/logger";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUp, ArrowRight, Star, TrendingUp } from "lucide-react";
+import { ArrowUp, ArrowRight, Star, TrendingUp, Newspaper } from "lucide-react";
 import { RankingCard } from "@/components/ranking/ranking-card";
 import { HomeContent } from "./home-content";
 import { getDictionary } from "@/i18n/get-dictionary";
@@ -84,6 +84,12 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <Link href={`/${lang}/rankings?sort=trending`}>
                   {dict.home.hero.trendingButton}
                   <ArrowUp className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="outline" size="lg" asChild>
+                <Link href={`/${lang}/updates`}>
+                  {dict.home.hero.whatsNewButton}
+                  <Newspaper className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
