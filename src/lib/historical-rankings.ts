@@ -36,7 +36,7 @@ export interface HistoricalRanking {
     platformResilience: number;
     newsImpactModifier?: number;
   };
-  metrics_used: Record<string, any>;
+  metrics_used: Record<string, unknown>;
   news_summary?: {
     article_count: number;
     total_impact: number;
@@ -49,7 +49,7 @@ export interface HistoricalRanking {
  * Get metric value at a specific point in time
  */
 async function getMetricAtTime(
-  supabase: any,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   toolId: string,
   metricKey: string,
   referenceDate: string
@@ -130,9 +130,9 @@ export async function calculateHistoricalRankings(
       ];
 
       for (const key of metricKeys) {
-        const value = await getMetricAtTime(supabase, tool.id, key, referenceDate);
+        const value = await getMetricAtTime(await supabase, tool.id, key, referenceDate);
         if (value !== null) {
-          metrics[key] = value;
+          (metrics as Record<string, unknown>)[key] = value;
         }
       }
 
@@ -180,7 +180,14 @@ export async function calculateHistoricalRankings(
         position: 0, // Will be set after sorting
         score: Math.round(finalScore * 100) / 100,
         factor_scores: {
-          ...factorScores,
+          agenticCapability: factorScores["agenticCapability"] || 0,
+          innovation: factorScores["innovation"] || 0,
+          technicalPerformance: factorScores["technicalPerformance"] || 0,
+          developerAdoption: factorScores["developerAdoption"] || 0,
+          marketTraction: factorScores["marketTraction"] || 0,
+          businessSentiment: factorScores["businessSentiment"] || 0,
+          developmentVelocity: factorScores["developmentVelocity"] || 0,
+          platformResilience: factorScores["platformResilience"] || 0,
           newsImpactModifier,
         },
         metrics_used: metrics,
@@ -207,28 +214,28 @@ function calculateFactorScores(metrics: Partial<ToolMetricsV6>): Record<string, 
   const scores: Record<string, number> = {};
 
   // Agentic Capability (0-10)
-  scores.agenticCapability = calculateAgenticScore(metrics);
+  scores["agenticCapability"] = calculateAgenticScore(metrics);
 
   // Innovation (0-10)
-  scores.innovation = metrics.innovation_score || 5;
+  scores["innovation"] = (metrics.innovation_score as number) || 5;
 
   // Technical Performance (0-10)
-  scores.technicalPerformance = calculateTechnicalScore(metrics);
+  scores["technicalPerformance"] = calculateTechnicalScore(metrics);
 
   // Developer Adoption (0-10)
-  scores.developerAdoption = calculateDeveloperScore(metrics);
+  scores["developerAdoption"] = calculateDeveloperScore(metrics);
 
   // Market Traction (0-10)
-  scores.marketTraction = calculateMarketScore(metrics);
+  scores["marketTraction"] = calculateMarketScore(metrics);
 
   // Business Sentiment (0-10)
-  scores.businessSentiment = metrics.business_sentiment || 5;
+  scores["businessSentiment"] = (metrics.business_sentiment as number) || 5;
 
   // Development Velocity (0-10)
-  scores.developmentVelocity = calculateVelocityScore(metrics);
+  scores["developmentVelocity"] = calculateVelocityScore(metrics);
 
   // Platform Resilience (0-10)
-  scores.platformResilience = calculateResilienceScore(metrics);
+  scores["platformResilience"] = calculateResilienceScore(metrics);
 
   return scores;
 }
@@ -237,17 +244,17 @@ function calculateAgenticScore(metrics: Partial<ToolMetricsV6>): number {
   let score = 5; // Base score
 
   if (metrics.agentic_capability) {
-    score = metrics.agentic_capability;
+    score = metrics.agentic_capability as number;
   } else {
     // Calculate from components
     if (metrics.swe_bench_score) {
-      score += (metrics.swe_bench_score / 100) * 3;
+      score += ((metrics.swe_bench_score as number) / 100) * 3;
     }
     if (metrics.multi_file_capability) {
-      score += metrics.multi_file_capability * 0.2;
+      score += (metrics.multi_file_capability as number) * 0.2;
     }
     if (metrics.planning_depth) {
-      score += metrics.planning_depth * 0.1;
+      score += (metrics.planning_depth as number) * 0.1;
     }
   }
 
@@ -259,12 +266,12 @@ function calculateTechnicalScore(metrics: Partial<ToolMetricsV6>): number {
 
   if (metrics.context_window) {
     // Normalize context window (assume 200k is excellent)
-    score += Math.min(3, (metrics.context_window / 200000) * 3);
+    score += Math.min(3, ((metrics.context_window as number) / 200000) * 3);
   }
 
   if (metrics.language_support) {
     // Normalize language support (assume 20+ is excellent)
-    score += Math.min(2, (metrics.language_support / 20) * 2);
+    score += Math.min(2, ((metrics.language_support as number) / 20) * 2);
   }
 
   return Math.min(10, Math.max(0, score));
@@ -275,12 +282,15 @@ function calculateDeveloperScore(metrics: Partial<ToolMetricsV6>): number {
 
   if (metrics.github_stars) {
     // Logarithmic scale for stars
-    score = Math.min(10, Math.log10(metrics.github_stars + 1) * 2);
+    score = Math.min(10, Math.log10((metrics.github_stars as number) + 1) * 2);
   }
 
   if (metrics.estimated_users) {
     // Boost for large user base
-    score = Math.max(score, Math.min(10, Math.log10(metrics.estimated_users + 1) * 1.5));
+    score = Math.max(
+      score,
+      Math.min(10, Math.log10((metrics.estimated_users as number) + 1) * 1.5)
+    );
   }
 
   return score;
@@ -291,18 +301,19 @@ function calculateMarketScore(metrics: Partial<ToolMetricsV6>): number {
 
   if (metrics.monthly_arr) {
     // Logarithmic scale for revenue
-    score = Math.min(10, (Math.log10(metrics.monthly_arr + 1) / 6) * 10);
+    score = Math.min(10, (Math.log10((metrics.monthly_arr as number) + 1) / 6) * 10);
   } else if (metrics.valuation) {
     // Use valuation as proxy
-    score = Math.min(10, (Math.log10(metrics.valuation + 1) / 9) * 10);
+    score = Math.min(10, (Math.log10((metrics.valuation as number) + 1) / 9) * 10);
   } else if (metrics.funding) {
     // Use funding as proxy
-    score = Math.min(10, (Math.log10(metrics.funding + 1) / 8) * 10);
+    score = Math.min(10, (Math.log10((metrics.funding as number) + 1) / 8) * 10);
   }
 
   // Apply revenue quality multiplier if business model is known
-  if (metrics.business_model && REVENUE_QUALITY_MULTIPLIERS[metrics.business_model]) {
-    score *= REVENUE_QUALITY_MULTIPLIERS[metrics.business_model];
+  const businessModel = metrics.business_model as keyof typeof REVENUE_QUALITY_MULTIPLIERS;
+  if (businessModel && REVENUE_QUALITY_MULTIPLIERS[businessModel]) {
+    score *= REVENUE_QUALITY_MULTIPLIERS[businessModel];
   }
 
   return Math.min(10, Math.max(0, score));
@@ -313,10 +324,10 @@ function calculateVelocityScore(metrics: Partial<ToolMetricsV6>): number {
 
   if (metrics.release_frequency) {
     // Normalize release frequency (assume 50+ releases/year is excellent)
-    score = Math.min(10, (metrics.release_frequency / 50) * 10);
+    score = Math.min(10, ((metrics.release_frequency as number) / 50) * 10);
   }
 
-  if (metrics.github_contributors && metrics.github_contributors > 10) {
+  if (metrics.github_contributors && (metrics.github_contributors as number) > 10) {
     score = Math.max(score, 6); // Boost for active community
   }
 
@@ -326,8 +337,8 @@ function calculateVelocityScore(metrics: Partial<ToolMetricsV6>): number {
 function calculateResilienceScore(metrics: Partial<ToolMetricsV6>): number {
   let score = 5;
 
-  if (metrics.llm_provider_count && metrics.llm_provider_count > 1) {
-    score += Math.min(3, metrics.llm_provider_count - 1);
+  if (metrics.llm_provider_count && (metrics.llm_provider_count as number) > 1) {
+    score += Math.min(3, (metrics.llm_provider_count as number) - 1);
   }
 
   if (metrics.multi_model_support) {
@@ -335,10 +346,12 @@ function calculateResilienceScore(metrics: Partial<ToolMetricsV6>): number {
   }
 
   // Apply risk modifiers
-  if (metrics.risk_factors) {
-    for (const risk of metrics.risk_factors) {
-      if (PLATFORM_RISK_MODIFIERS[risk]) {
-        score += PLATFORM_RISK_MODIFIERS[risk];
+  const riskFactors = metrics.risk_factors as string[];
+  if (riskFactors) {
+    for (const risk of riskFactors) {
+      const riskKey = risk as keyof typeof PLATFORM_RISK_MODIFIERS;
+      if (PLATFORM_RISK_MODIFIERS[riskKey]) {
+        score += PLATFORM_RISK_MODIFIERS[riskKey];
       }
     }
   }
@@ -365,13 +378,16 @@ function applyNewsImpact(
   // Apply weighted impact
   for (const [factor, weight] of Object.entries(impactDistribution)) {
     if (scores[factor] !== undefined) {
-      scores[factor] = Math.max(0, Math.min(10, scores[factor] + newsImpactModifier * weight));
+      scores[factor] = Math.max(
+        0,
+        Math.min(10, (scores[factor] as number) + newsImpactModifier * weight)
+      );
     }
   }
 
   // Boost development velocity for high recent activity
-  if (recentArticleCount > 5 && scores.developmentVelocity !== undefined) {
-    scores.developmentVelocity = Math.min(10, scores.developmentVelocity + 0.5);
+  if (recentArticleCount > 5 && scores["developmentVelocity"] !== undefined) {
+    scores["developmentVelocity"] = Math.min(10, (scores["developmentVelocity"] as number) + 0.5);
   }
 }
 
