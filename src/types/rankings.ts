@@ -1,12 +1,12 @@
-import { Tool, ToolCapabilities, ToolMetrics, Ranking } from './database';
+import { Tool, ToolCapabilities, ToolMetrics, Ranking } from "./database";
 
 export interface RankingWeights {
-  marketTraction: number;      // 25%
+  marketTraction: number; // 25%
   technicalCapability: number; // 20%
-  developerAdoption: number;   // 20%
+  developerAdoption: number; // 20%
   developmentVelocity: number; // 15%
-  platformResilience: number;  // 10%
-  communitySentiment: number;  // 10%
+  platformResilience: number; // 10%
+  communitySentiment: number; // 10%
 }
 
 export interface ToolScore {

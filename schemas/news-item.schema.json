@@ -67,6 +67,7 @@
         "research_paper",
         "security_incident",
         "company_news",
+        "company_announcement",
         "community_news",
         "technical_milestone",
         "market_analysis"
@@ -124,10 +125,10 @@
           },
           "value": {
             "oneOf": [
-              {"type": "number"},
-              {"type": "string"},
-              {"type": "boolean"},
-              {"type": "object"}
+              { "type": "number" },
+              { "type": "string" },
+              { "type": "boolean" },
+              { "type": "object" }
             ],
             "description": "Value of the metric"
           },
@@ -141,10 +142,7 @@
             "description": "Comparison to previous value if mentioned",
             "properties": {
               "previous_value": {
-                "oneOf": [
-                  {"type": "number"},
-                  {"type": "string"}
-                ]
+                "oneOf": [{ "type": "number" }, { "type": "string" }]
               },
               "change_type": {
                 "type": "string",
@@ -266,11 +264,7 @@
                 "type": "string"
               },
               "value": {
-                "oneOf": [
-                  {"type": "number"},
-                  {"type": "string"},
-                  {"type": "object"}
-                ]
+                "oneOf": [{ "type": "number" }, { "type": "string" }, { "type": "object" }]
               },
               "source": {
                 "type": "string",
@@ -305,8 +299,8 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": {"type": "string"},
-              "url": {"type": "string", "format": "uri"}
+              "name": { "type": "string" },
+              "url": { "type": "string", "format": "uri" }
             }
           }
         }
@@ -341,6 +335,18 @@
           "items": {
             "type": "string"
           }
+        },
+        "is_company_announcement": {
+          "type": "boolean",
+          "description": "Whether this is a company announcement/PR",
+          "default": false
+        },
+        "source_credibility": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Credibility score for the source (0-1)",
+          "examples": [1.0, 0.85, 0.7]
         }
       }
     }

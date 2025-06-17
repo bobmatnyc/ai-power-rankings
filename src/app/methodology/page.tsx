@@ -1,6 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 export default function MethodologyPage(): React.JSX.Element {
   return (
@@ -17,8 +17,8 @@ export default function MethodologyPage(): React.JSX.Element {
         <CardHeader>
           <CardTitle>Algorithm v6.0: Code-Ready Modifiers</CardTitle>
           <CardDescription>
-            Our ranking system combines 8 key factors with sophisticated modifiers to provide
-            the most accurate and fair rankings of AI coding tools
+            Our ranking system combines 8 key factors with sophisticated modifiers to provide the
+            most accurate and fair rankings of AI coding tools
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -57,7 +57,8 @@ export default function MethodologyPage(): React.JSX.Element {
                       <Badge>30%</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Autonomous coding abilities, planning depth, multi-file handling, and context utilization
+                      Autonomous coding abilities, planning depth, multi-file handling, and context
+                      utilization
                     </p>
                   </div>
                 </div>
@@ -81,7 +82,8 @@ export default function MethodologyPage(): React.JSX.Element {
                       <Badge>12.5%</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      SWE-bench scores (40%), multi-file capability (30%), context window (20%), language support (10%)
+                      SWE-bench scores (40%), multi-file capability (30%), context window (20%),
+                      language support (10%)
                     </p>
                   </div>
                 </div>
@@ -105,7 +107,8 @@ export default function MethodologyPage(): React.JSX.Element {
                       <Badge>12.5%</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Revenue (quality-adjusted), valuation, and growth rate with logarithmic scaling
+                      Revenue (quality-adjusted), valuation, and growth rate with logarithmic
+                      scaling
                     </p>
                   </div>
                 </div>
@@ -171,7 +174,8 @@ export default function MethodologyPage(): React.JSX.Element {
           <div>
             <h3 className="font-semibold mb-2">🔄 Innovation Decay</h3>
             <p className="text-sm text-muted-foreground mb-2">
-              Innovation scores decay exponentially with a 6-month half-life to reflect the fast-moving AI landscape
+              Innovation scores decay exponentially with a 6-month half-life to reflect the
+              fast-moving AI landscape
             </p>
             <div className="bg-muted p-4 rounded-md">
               <code className="text-xs">score = originalScore * e^(-0.115 * monthsOld)</code>
@@ -244,9 +248,7 @@ export default function MethodologyPage(): React.JSX.Element {
       <Card>
         <CardHeader>
           <CardTitle>Data Sources & Validation</CardTitle>
-          <CardDescription>
-            How we collect and validate data for accurate rankings
-          </CardDescription>
+          <CardDescription>How we collect and validate data for accurate rankings</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -273,12 +275,12 @@ export default function MethodologyPage(): React.JSX.Element {
           <div>
             <h3 className="font-semibold mb-2">Update Frequency</h3>
             <p className="text-sm text-muted-foreground">
-              Rankings are updated weekly with new data. Major algorithm updates are versioned
-              and documented with full changelog.
+              Rankings are updated weekly with new data. Major algorithm updates are versioned and
+              documented with full changelog.
             </p>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
