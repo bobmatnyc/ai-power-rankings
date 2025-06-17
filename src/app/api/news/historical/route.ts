@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
       }
 
       if (includeDetails) {
-        response["articles"] = impacts || [];
+        (response as Record<string, unknown>)["articles"] = impacts || [];
       }
 
       return NextResponse.json(response);
