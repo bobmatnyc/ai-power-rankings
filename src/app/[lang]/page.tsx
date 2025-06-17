@@ -24,17 +24,31 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
 
   try {
     const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
+    const isDev = process.env.NODE_ENV === "development";
     const response = await fetch(`${baseUrl}/api/rankings`, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      next: { revalidate: isDev ? 60 : 300 }, // 1 minute in dev, 5 minutes in prod
+      cache: isDev ? "no-store" : "default", // No cache in development
     });
     const data = await response.json();
     const rankings = data.rankings;
 
-    topRankings = rankings.slice(0, 3);
-    // For now, simulate trending as the next 3 tools
-    trendingTools = rankings.slice(3, 6);
-    // And recently updated as the next 4
-    recentlyUpdated = rankings.slice(6, 10);
+    if (rankings && rankings.length > 0) {
+      topRankings = rankings.slice(0, 3);
+      // For now, simulate trending as the next 3 tools
+      trendingTools = rankings.slice(3, 6);
+      // And recently updated as the next 4
+      recentlyUpdated = rankings.slice(6, 10);
+
+      // Log top ranking for debugging
+      loggers.api.info("Home page loaded with top ranking", {
+        topTool: rankings[0]?.tool?.name || "unknown",
+        totalRankings: rankings.length,
+        algorithm: data.algorithm?.version || "unknown",
+      });
+    } else {
+      loggers.api.warn("No rankings data received", { data });
+      loading = true;
+    }
   } catch (error) {
     loggers.api.error("Failed to fetch rankings", { error });
     loading = true; // Show loading state on error
