@@ -8,7 +8,7 @@ export default function MethodologyPage(): React.JSX.Element {
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Methodology</h1>
         <p className="text-muted-foreground text-lg">
-          How we calculate the AI Power Rankings using Algorithm v6.0
+          How we calculate the AI Power Ranking using Algorithm v6.0
         </p>
       </div>
 

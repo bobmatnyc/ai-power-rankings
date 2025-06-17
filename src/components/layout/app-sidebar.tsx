@@ -177,7 +177,7 @@ function SidebarContent(): React.JSX.Element {
         >
           <img
             src="/crown-of-technology.png"
-            alt="AI Power Rankings"
+            alt="AI Power Ranking"
             className="w-9 h-9 object-contain"
           />
           <div>

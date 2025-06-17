@@ -57,7 +57,7 @@ function ClientLayoutContent({ children }: { children: React.ReactNode }): React
                 <div className="flex items-center gap-2 md:hidden">
                   <img
                     src="/crown-of-technology.png"
-                    alt="AI Power Rankings"
+                    alt="AI Power Ranking"
                     className="w-6 h-6 object-contain"
                   />
                   <span className="font-bold text-sm">{dict.common.appName}</span>

@@ -56,7 +56,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
               <img
                 src="/crown-of-technology.png"
-                alt="AI Power Rankings Icon"
+                alt="AI Power Ranking Icon"
                 className="w-12 h-12 md:w-16 md:h-16 object-contain"
               />
               <span>
