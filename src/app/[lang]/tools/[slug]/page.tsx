@@ -1,13 +1,11 @@
 import Link from "next/link";
 import { loggers } from "@/lib/logger";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { StatusIndicator } from "@/components/ui/status-indicator";
-import { NewsCard, type NewsItem } from "@/components/news/news-card";
+import { ToolDetailTabs } from "@/components/tools/tool-detail-tabs";
 import { MetricHistory } from "@/types/database";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
@@ -74,6 +72,26 @@ interface ToolDetail {
     employees?: number;
   };
   metricHistory?: MetricHistory[];
+  rankingsHistory?: Array<{
+    position: number;
+    score: number;
+    period: string;
+    ranking_periods: {
+      period: string;
+      display_name: string;
+      calculation_date: string;
+    };
+  }>;
+  newsItems?: Array<{
+    id: string;
+    title: string;
+    summary?: string;
+    url?: string;
+    source?: string;
+    published_at: string;
+    category?: string;
+    type?: string;
+  }>;
 }
 
 interface PageProps {
@@ -122,8 +140,6 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
           return `$${billions % 1 === 0 ? billions.toFixed(0) : billions.toFixed(1)}B`;
         }
         return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
-      case "percentage":
-        return `${value.toFixed(1)}%`;
       case "number":
         return value.toLocaleString();
       default:
@@ -154,7 +170,7 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
     );
   }
 
-  const { tool, ranking, metrics, metricHistory } = toolData;
+  const { tool, ranking, metrics, metricHistory, rankingsHistory, newsItems } = toolData;
 
   return (
     <div className="container mx-auto p-4 md:p-8 max-w-6xl">
@@ -256,229 +272,15 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
       </Card>
 
       {/* Detailed Information Tabs */}
-      <Tabs defaultValue="performance" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
-          <TabsTrigger value="performance" className="text-xs md:text-sm">
-            {dict.tools.detail.tabs.performance}
-          </TabsTrigger>
-          <TabsTrigger value="metrics" className="text-xs md:text-sm">
-            {dict.tools.detail.tabs.businessMetrics}
-          </TabsTrigger>
-          <TabsTrigger value="scores" className="text-xs md:text-sm">
-            {dict.tools.detail.tabs.scores}
-          </TabsTrigger>
-          <TabsTrigger value="history" className="text-xs md:text-sm">
-            {dict.tools.detail.tabs.history}
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="performance" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{dict.tools.detail.performance.title}</CardTitle>
-              <CardDescription>{dict.tools.detail.performance.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {metrics?.swe_bench_score !== undefined && metrics.swe_bench_score > 0 && (
-                  <div>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm font-medium">
-                        {dict.tools.detail.performance.sweScore}
-                      </span>
-                      <span className="text-sm font-medium">
-                        {formatMetric(metrics.swe_bench_score, "percentage")}
-                      </span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2">
-                      <div
-                        className="bg-primary h-2 rounded-full transition-all"
-                        style={{ width: `${Math.min(metrics.swe_bench_score, 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      {dict.tools.detail.performance.contextWindow}
-                    </p>
-                    <p className="font-medium">200k {dict.tools.detail.performance.tokens}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      {dict.tools.detail.performance.languageSupport}
-                    </p>
-                    <p className="font-medium">20+ {dict.tools.detail.performance.languages}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      {dict.tools.detail.performance.multiFileSupport}
-                    </p>
-                    <p className="font-medium">{dict.tools.detail.performance.yes}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      {dict.tools.detail.performance.llmProviders}
-                    </p>
-                    <p className="font-medium">{dict.tools.detail.performance.multiple}</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="metrics" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Business Metrics</CardTitle>
-              <CardDescription>Financial and growth metrics</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                {metrics?.monthly_arr !== undefined && metrics.monthly_arr > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">ARR (Monthly)</p>
-                    <p className="text-2xl font-bold">
-                      {formatMetric(metrics.monthly_arr, "currency")}
-                    </p>
-                  </div>
-                )}
-                {metrics?.valuation !== undefined && metrics.valuation > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Valuation</p>
-                    <p className="text-2xl font-bold">
-                      {formatMetric(metrics.valuation, "currency")}
-                    </p>
-                  </div>
-                )}
-                {metrics?.funding !== undefined && metrics.funding > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Funding</p>
-                    <p className="text-2xl font-bold">
-                      {formatMetric(metrics.funding, "currency")}
-                    </p>
-                  </div>
-                )}
-                {metrics?.employees !== undefined && metrics.employees > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Employees</p>
-                    <p className="text-2xl font-bold">
-                      {formatMetric(metrics.employees, "number")}
-                    </p>
-                  </div>
-                )}
-                {metrics?.users !== undefined && metrics.users > 0 && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Users</p>
-                    <p className="text-2xl font-bold">{formatMetric(metrics.users, "users")}</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="scores" className="space-y-4">
-          {ranking ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Algorithm v6.0 Scores</CardTitle>
-                <CardDescription>Detailed scoring breakdown across all factors</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-                    <span className="font-semibold">Overall Score</span>
-                    <span className="text-2xl font-bold">
-                      {ranking.scores.overall.toFixed(2)}/10
-                    </span>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    {Object.entries(ranking.scores)
-                      .filter(([key]) => key !== "overall")
-                      .map(([factor, score]) => (
-                        <div key={factor}>
-                          <div className="flex justify-between mb-1">
-                            <span className="text-sm font-medium capitalize">
-                              {factor.replace(/_/g, " ")}
-                            </span>
-                            <span className="text-sm font-medium">{score.toFixed(1)}/10</span>
-                          </div>
-                          <div className="w-full bg-muted rounded-full h-2">
-                            <div
-                              className="bg-primary h-2 rounded-full transition-all"
-                              style={{ width: `${score * 10}%` }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent className="py-8">
-                <p className="text-center text-muted-foreground">
-                  This tool has not been ranked yet.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="history" className="space-y-4">
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Metric History</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Recent metrics that affect ranking scores
-              </p>
-            </div>
-            {metricHistory && metricHistory.length > 0 ? (
-              <div className="space-y-4">
-                {metricHistory.map((history, index) => {
-                  // Convert MetricHistory to NewsItem format
-                  const newsItem: NewsItem = {
-                    id: `${tool.id}-${index}`,
-                    tool_id: tool.id,
-                    tool_name: tool.name,
-                    tool_category: tool.category,
-                    tool_website: tool.info?.links?.website,
-                    event_date: history.published_date,
-                    event_type: "update",
-                    title: `${history.source_name} Update`,
-                    description: `New metrics reported for ${tool.name}`,
-                    source_url: history.source_url || undefined,
-                    source_name: history.source_name || undefined,
-                    metrics: {
-                      users: history.scoring_metrics?.["users"] as number | undefined,
-                      revenue: history.scoring_metrics?.["monthly_arr"] as number | undefined,
-                      // Add other metrics as needed
-                    },
-                  };
-
-                  return <NewsCard key={index} item={newsItem} showToolLink={false} />;
-                })}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="py-8">
-                  <p className="text-center text-muted-foreground">
-                    No metric history available for this tool.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </TabsContent>
-      </Tabs>
+      <ToolDetailTabs
+        tool={tool}
+        ranking={ranking}
+        metrics={metrics}
+        metricHistory={metricHistory}
+        rankingsHistory={rankingsHistory}
+        newsItems={newsItems}
+        dict={dict}
+      />
 
       {/* Mobile Visit Site button - centered below content */}
       <div className="mt-8 flex flex-col items-center gap-3 md:hidden">

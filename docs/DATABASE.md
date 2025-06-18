@@ -1086,10 +1086,86 @@ Example migration scripts are available in `/scripts/`:
    WHERE c.id IS NULL;
    ```
 
+## Querying JSONB Fields in Supabase
+
+### Working with JSONB Arrays
+
+When querying JSONB arrays (like `related_tools` in `news_updates`), be aware of format variations:
+
+#### Mixed Array Formats
+
+The `related_tools` field may contain:
+
+- Simple string arrays: `["tool-id-1", "tool-id-2"]`
+- Object arrays: `[{"tool_id": "tool-id-1", "sentiment": "positive"}]`
+- Mixed formats in the same database
+
+#### Query Strategies
+
+1. **PostgREST Contains Operator Issues**
+
+```typescript
+// ❌ May not work reliably with mixed formats
+.contains('related_tools', [tool.id])
+.contains('related_tools', [{tool_id: tool.id}])
+```
+
+2. **Client-Side Filtering (More Reliable)**
+
+```typescript
+// ✅ Fetch and filter client-side for mixed formats
+const { data: allNews } = await supabase.from("news_updates").select("*").limit(100);
+
+const filtered = allNews?.filter((item) => {
+  if (!item.related_tools || !Array.isArray(item.related_tools)) return false;
+
+  return item.related_tools.some((relatedTool: any) => {
+    if (typeof relatedTool === "string") {
+      return relatedTool === tool.id;
+    } else if (relatedTool && typeof relatedTool === "object") {
+      return relatedTool.tool_id === tool.id;
+    }
+    return false;
+  });
+});
+```
+
+3. **SQL Function Approach (Most Efficient)**
+
+Create a database function to handle both formats:
+
+```sql
+CREATE OR REPLACE FUNCTION find_news_by_tool(p_tool_id text)
+RETURNS SETOF news_updates AS $$
+BEGIN
+  RETURN QUERY
+  SELECT * FROM news_updates
+  WHERE
+    -- Check string array format
+    related_tools::jsonb @> to_jsonb(ARRAY[p_tool_id])
+    OR
+    -- Check object array format
+    EXISTS (
+      SELECT 1 FROM jsonb_array_elements(related_tools) AS elem
+      WHERE elem->>'tool_id' = p_tool_id
+    );
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Best Practices for JSONB Queries
+
+1. **Know Your Data Format**: Check the actual format stored in your database
+2. **Use Indexes**: Create GIN indexes on JSONB columns for better performance
+3. **Consider Migration**: Standardize data format if possible
+4. **Fallback Strategies**: Have client-side filtering as a backup
+5. **Test Thoroughly**: JSONB queries can behave differently with different data
+
 ## Additional Resources
 
 - [Supabase Documentation](https://supabase.com/docs)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [PostgreSQL JSONB Functions](https://www.postgresql.org/docs/current/functions-json.html)
 - **Project Files**:
   - Schema: `database/schema-complete.sql`
   - Import Examples: `data/imports/`
