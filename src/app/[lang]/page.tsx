@@ -43,20 +43,6 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       trendingTools = rankings.slice(3, 6);
       // And recently updated as the next 4
       recentlyUpdated = rankings.slice(6, 10);
-
-      // Log top ranking for debugging
-      loggers.api.info("Home page loaded with top ranking", {
-        topTool: rankings[0]?.tool?.name || "unknown",
-        topScore: rankings[0]?.total_score || 0,
-        secondTool: rankings[1]?.tool?.name || "unknown",
-        secondScore: rankings[1]?.total_score || 0,
-        totalRankings: rankings.length,
-        algorithm: data.algorithm?.version || "unknown",
-        fetchUrl: url,
-      });
-
-      // Also log raw data for debugging
-      console.log("DEBUG: Raw rankings data:", JSON.stringify(rankings.slice(0, 3), null, 2));
     } else {
       loggers.api.warn("No rankings data received", { data });
       loading = true;
