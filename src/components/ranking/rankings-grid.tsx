@@ -55,12 +55,17 @@ interface RankingData {
 interface RankingsGridProps {
   lang: Locale;
   dict: Dictionary;
+  initialRankings?: RankingData[];
 }
 
-function RankingsGridContent({ lang, dict }: RankingsGridProps): React.JSX.Element {
+function RankingsGridContent({
+  lang,
+  dict,
+  initialRankings = [],
+}: RankingsGridProps): React.JSX.Element {
   const searchParams = useSearchParams();
-  const [rankings, setRankings] = useState<RankingData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [rankings, setRankings] = useState<RankingData[]>(initialRankings);
+  const [loading, setLoading] = useState(initialRankings.length === 0);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   // Get filters from URL
@@ -69,12 +74,22 @@ function RankingsGridContent({ lang, dict }: RankingsGridProps): React.JSX.Eleme
   const sortParam = searchParams.get("sort") || "rank";
 
   useEffect(() => {
-    fetchRankings();
-  }, []);
+    // Only fetch if no initial rankings provided
+    if (initialRankings.length === 0) {
+      fetchRankings();
+    } else {
+      setLoading(false);
+    }
+  }, [initialRankings.length]);
 
   const fetchRankings = async (): Promise<void> => {
     try {
-      const response = await fetch("/api/rankings");
+      const isDev = process.env.NODE_ENV === "development";
+      const timestamp = Date.now();
+      const url = `/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
+      const response = await fetch(url, {
+        cache: isDev ? "no-store" : "default",
+      });
       const data = await response.json();
       setRankings(data.rankings);
       setLoading(false);
@@ -401,7 +416,11 @@ function RankingsGridContent({ lang, dict }: RankingsGridProps): React.JSX.Eleme
   );
 }
 
-export default function RankingsGrid({ lang, dict }: RankingsGridProps): React.JSX.Element {
+export default function RankingsGrid({
+  lang,
+  dict,
+  initialRankings,
+}: RankingsGridProps): React.JSX.Element {
   return (
     <Suspense
       fallback={
@@ -410,7 +429,7 @@ export default function RankingsGrid({ lang, dict }: RankingsGridProps): React.J
         </div>
       }
     >
-      <RankingsGridContent lang={lang} dict={dict} />
+      <RankingsGridContent lang={lang} dict={dict} initialRankings={initialRankings} />
     </Suspense>
   );
 }
