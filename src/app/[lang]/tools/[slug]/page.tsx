@@ -89,9 +89,13 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
   let loading = false;
 
   try {
-    const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
+    const isDev = process.env.NODE_ENV === "development";
+    const baseUrl = isDev
+      ? "http://localhost:3001"
+      : process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/tools/${slug}`, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      next: { revalidate: isDev ? 300 : 3600 }, // 5 min in dev, 1 hour in prod
+      cache: isDev ? "no-store" : "default",
     });
     if (response.ok) {
       toolData = await response.json();
