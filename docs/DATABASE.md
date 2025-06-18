@@ -64,10 +64,11 @@ kill $(lsof -ti:3000) && npm run dev
 
 ### Development Database
 
-- **Project ID**: `gqucazglcjgvnzycwwia`
-- **URL**: `https://gqucazglcjgvnzycwwia.supabase.co`
+- **Project ID**: `iupygejzjkwyxtitescy` (NEW as of June 2025)
+- **URL**: `https://iupygejzjkwyxtitescy.supabase.co`
 - **Purpose**: Safe environment for development, testing, and experimentation
 - **Access**: Full read/write access for development work
+- **Note**: This is the enhanced database with the newer schema including the `info` field on tools table
 
 ## Environment Management
 
@@ -92,8 +93,8 @@ Use the environment switching script to safely change between databases:
 
 ```bash
 # DEVELOPMENT ENVIRONMENT - Safe Development Database
-NEXT_PUBLIC_SUPABASE_URL=https://gqucazglcjgvnzycwwia.supabase.co
-SUPABASE_PROJECT_ID=gqucazglcjgvnzycwwia
+NEXT_PUBLIC_SUPABASE_URL=https://iupygejzjkwyxtitescy.supabase.co
+SUPABASE_PROJECT_ID=iupygejzjkwyxtitescy
 SUPABASE_DATABASE_PASSWORD=DevPassword123!
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -210,7 +211,7 @@ const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 ```bash
 # Development database
-PGPASSWORD="DevPassword123!" psql -h db.gqucazglcjgvnzycwwia.supabase.co -U postgres -d postgres
+PGPASSWORD="DevPassword123!" psql -h db.iupygejzjkwyxtitescy.supabase.co -U postgres -d postgres
 
 # Production database (use with caution)
 PGPASSWORD="[PROD_PASSWORD]" psql -h db.fukdwnsvjdgyakdvtdin.supabase.co -U postgres -d postgres
@@ -220,7 +221,7 @@ PGPASSWORD="[PROD_PASSWORD]" psql -h db.fukdwnsvjdgyakdvtdin.supabase.co -U post
 
 ```bash
 # Development API
-curl "https://gqucazglcjgvnzycwwia.supabase.co/rest/v1/tools" \
+curl "https://iupygejzjkwyxtitescy.supabase.co/rest/v1/tools" \
   -H "apikey: YOUR_DEV_ANON_KEY" \
   -H "Authorization: Bearer YOUR_DEV_ANON_KEY"
 
@@ -238,6 +239,47 @@ curl "https://fukdwnsvjdgyakdvtdin.supabase.co/rest/v1/tools" \
 - `database/migrations/` - Migration files for schema updates
 - `docs/data/POPULATE.sql` - Seed data with research
 - `database/ranking-algorithm.sql` - Ranking calculation functions
+
+### Schema Differences Between Environments
+
+#### Enhanced Development Schema (June 2025)
+
+The development database includes an enhanced schema with:
+
+```sql
+-- tools table includes info JSONB column
+ALTER TABLE tools ADD COLUMN info JSONB;
+
+-- Example info structure:
+{
+  "company": {
+    "name": "Company Name",
+    "website": "https://example.com",
+    "founded_date": "2020-01-01"
+  },
+  "product": {
+    "tagline": "Product tagline",
+    "description": "Detailed description",
+    "pricing_model": "freemium",
+    "license_type": "proprietary"
+  },
+  "links": {
+    "website": "https://tool.com",
+    "github": "https://github.com/org/repo",
+    "documentation": "https://docs.tool.com"
+  },
+  "features": {
+    "key_features": ["feature1", "feature2"],
+    "languages_supported": ["python", "javascript"],
+    "ide_support": ["vscode", "jetbrains"]
+  },
+  "metadata": {
+    "logo_url": "https://logo.url"
+  }
+}
+```
+
+This consolidated structure improves data organization and query performance.
 
 ### Entity Relationship Overview
 
@@ -940,6 +982,109 @@ ping db.gqucazglcjgvnzycwwia.supabase.co
    - Use anon key for client-side operations
    - Use service role key only for admin operations
    - Monitor database access logs
+
+## Database Migration Strategies
+
+### Production to Development Migration
+
+When migrating data between databases with different schemas:
+
+#### 1. Handle Foreign Key Constraints
+
+```typescript
+// Option A: Drop constraints temporarily
+ALTER TABLE tools DROP CONSTRAINT IF EXISTS tools_company_id_fkey;
+// ... perform migration ...
+ALTER TABLE tools ADD CONSTRAINT tools_company_id_fkey
+  FOREIGN KEY (company_id) REFERENCES companies(id);
+
+// Option B: Use upsert with proper ordering
+// 1. Migrate referenced tables first (companies)
+// 2. Then migrate dependent tables (tools)
+// 3. Finally migrate junction/history tables
+```
+
+#### 2. Schema Transformation
+
+When migrating to enhanced schema (e.g., adding `info` field):
+
+```typescript
+// Transform data during migration
+const toolsWithInfo = prodTools.map((tool) => ({
+  ...tool,
+  info: {
+    company: {
+      name: tool.name,
+      website: tool.website_url,
+      founded_date: tool.founded_date,
+    },
+    product: {
+      tagline: tool.tagline,
+      description: tool.description,
+      pricing_model: tool.pricing_model,
+      license_type: tool.license_type,
+    },
+    links: {
+      website: tool.website_url,
+      github: tool.github_repo,
+    },
+    metadata: {
+      logo_url: tool.logo_url,
+    },
+  },
+}));
+```
+
+#### 3. Handling Duplicate Keys
+
+```typescript
+// Use upsert to handle existing records
+const { error } = await supabase.from("table_name").upsert(data, { onConflict: "id" });
+
+// For unique constraints on multiple columns
+const { error } = await supabase
+  .from("metrics_history")
+  .upsert(data, { onConflict: "tool_id,metric_key,recorded_at" });
+```
+
+### Migration Scripts
+
+Example migration scripts are available in `/scripts/`:
+
+- `migrate-prod-to-dev.ts` - Basic migration
+- `migrate-with-constraints.ts` - Advanced migration with constraint handling
+- `compare-databases.ts` - Compare data between environments
+- `check-schemas.ts` - Verify schema differences
+
+### Best Practices for Migration
+
+1. **Always backup before migration**
+
+   ```bash
+   pg_dump "postgresql://..." > backup-$(date +%Y%m%d).sql
+   ```
+
+2. **Test migrations with small datasets first**
+
+   ```typescript
+   const testBatch = data.slice(0, 10);
+   // Test with small batch before full migration
+   ```
+
+3. **Use transactions for critical operations**
+
+   ```sql
+   BEGIN;
+   -- migration operations
+   COMMIT; -- or ROLLBACK if issues
+   ```
+
+4. **Monitor for orphaned records**
+   ```sql
+   SELECT t.* FROM tools t
+   LEFT JOIN companies c ON c.id = t.company_id
+   WHERE c.id IS NULL;
+   ```
 
 ## Additional Resources
 

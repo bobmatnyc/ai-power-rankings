@@ -22,9 +22,10 @@ The platform implements a source-oriented metrics architecture where each articl
 - **Data Visualization**: Recharts
 - **Authentication**: Supabase Auth
 - **Deployment**: Vercel
-- **Data Collection**: GitHub API, Perplexity AI API, Web Scraping
+- **Data Collection**: GitHub API, Perplexity AI API, Web Scraping, Google Drive API
 - **Email**: Resend (for newsletters)
 - **Analytics**: Vercel Analytics
+- **News Management**: Google Drive integration for article ingestion
 
 ### Core Components
 
@@ -44,11 +45,13 @@ Responsible for:
 
 // Created: 2025-06-08
 // Updated: 2025-06-09 - AI-powered extraction
+// Updated: 2025-06-18 - Google Drive integration
 Responsible for:
 
 - **AI-Powered Extraction**: GPT-4 based metrics extraction from articles using structured prompts
 - **Multi-Tool Sources**: Single article can provide metrics for multiple tools (benchmarks, comparisons)
 - **GitHub API Integration**: Repository metrics (stars, forks, commits, contributors)
+- **Google Drive Integration**: Automated ingestion of news articles from shared folder
 - **Source Attribution**: Every metric linked to unique source URL with confidence levels
 - **Structured JSON Storage**: Consistent format for all metrics with evidence and analysis
 
@@ -129,9 +132,13 @@ Responsible for:
 - `scripts/`: Utility scripts for data management
   - `extract-metrics-from-article.ts`: AI-powered metrics extraction
   - `migrate-to-source-oriented.ts`: Database migration utilities
+  - `run-ingestion-lenient.ts`: Google Drive news ingestion with lenient validation
+  - `check-drive-folder.ts`: Verify Google Drive access and list files
 - `docs/`: Comprehensive documentation
   - `METRICS-GUIDELINES.md`: Scoring criteria for all metrics
   - `METRICS-EXTRACTION-PROMPT.md`: AI prompt for article analysis
+  - `GOOGLE_DRIVE_INTEGRATION.md`: Google Drive setup and usage guide
+  - `DATABASE.md`: Complete database documentation with migration strategies
 
 ### Data Quality Standards
 
@@ -215,12 +222,14 @@ Strategic analysis including:
 
 // Created: 2025-06-08
 // Updated: 2025-06-09 - AI extraction system ready
+// Updated: 2025-06-18 - Google Drive integration complete
 
 1. **AI Extraction**: ✅ GPT-4 powered metrics extraction from articles
-2. **Frontend Foundation**: 🔄 Landing page and rankings display
-3. **Collection Pipeline**: 🔄 Automated data collection scripts
-4. **Scheduling System**: ⏳ Vercel cron jobs for automation
-5. **API Development**: ⏳ RESTful endpoints for data access
+2. **Frontend Foundation**: ✅ Landing page and rankings display with change indicators
+3. **Collection Pipeline**: ✅ Automated data collection scripts
+4. **Google Drive Integration**: ✅ News article ingestion from shared folder
+5. **Scheduling System**: ⏳ Vercel cron jobs for automation
+6. **API Development**: 🔄 RESTful endpoints for data access
 
 ### Phase 2: Enhanced Features (Weeks 11-16)
 
@@ -258,6 +267,8 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 # Data Collection APIs
 GITHUB_TOKEN=your_github_token
 PERPLEXITY_API_KEY=your_perplexity_key
+GOOGLE_API_KEY=your_google_api_key
+GOOGLE_DRIVE_FOLDER_ID=your_folder_id
 
 # Email & Analytics
 RESEND_API_KEY=your_resend_key
@@ -279,6 +290,7 @@ npm run dev              # Start development server
 npm run db:reset         # Reset and reseed database
 npm run collect:github   # Manual data collection
 npm run generate:rankings # Manual ranking generation
+npx tsx scripts/run-ingestion-lenient.ts # Ingest news from Google Drive
 
 # Testing & Quality
 npm run lint             # ESLint checking

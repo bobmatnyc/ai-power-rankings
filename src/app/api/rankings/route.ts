@@ -106,11 +106,14 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
         const totalImportance = recentNews.reduce((sum, n) => sum + (n.importance_score || 5), 0);
         const avgImportance = totalImportance / recentNews.length;
 
+        // Calculate volume bonus with logarithmic scale for better distribution
+        const volumeBonus = Math.log(recentNews.length + 1) * 15; // Logarithmic scale
+
         newsScore =
           avgImportance * 8 + // Base importance
           fundingNews.length * 25 + // Funding multiplier
           productNews.length * 15 + // Product launch multiplier
-          Math.min(recentNews.length * 2, 20); // Volume bonus (capped)
+          volumeBonus; // Volume bonus (logarithmic)
 
         // Apply recency decay
         const avgDaysOld =
@@ -173,6 +176,24 @@ export async function GET(): Promise<NextResponse> {
 
     const toolMap = new Map(tools?.map((t) => [t.id, t]) || []);
 
+    // Previous rankings (simulated for now - in production, fetch from ranking_cache)
+    const previousRankings: Record<string, number> = {
+      "claude-code": 1,
+      cursor: 2,
+      devin: 3,
+      windsurf: 4,
+      "github-copilot": 5,
+      v0: 6,
+      "bolt-new": 7,
+      lovable: 8,
+      "replit-agent": 9,
+      aider: 10,
+      "chatgpt-canvas": 11,
+      "claude-artifacts": 12,
+      jules: 15,
+      "openai-codex-cli": 20,
+    };
+
     // Format response with news-enhanced data
     const formattedRankings = rankings
       .map((ranking) => {
@@ -187,8 +208,31 @@ export async function GET(): Promise<NextResponse> {
           displayName = "Claude.ai";
         }
 
+        // Calculate ranking change
+        const previousRank = previousRankings[tool.id];
+        const rankChange = previousRank ? previousRank - ranking.position : null;
+
+        // Determine change reason
+        let changeReason = "";
+        if (rankChange !== null && rankChange !== 0) {
+          if (ranking.recent_funding_rounds > 0) {
+            changeReason = `${ranking.recent_funding_rounds} funding round${ranking.recent_funding_rounds > 1 ? "s" : ""} boosted ranking`;
+          } else if (ranking.recent_product_launches > 0) {
+            changeReason = `${ranking.recent_product_launches} major product launch${ranking.recent_product_launches > 1 ? "es" : ""}`;
+          } else if (ranking.news_articles_count > 5) {
+            changeReason = `High news coverage (${ranking.news_articles_count} articles)`;
+          } else if (rankChange < 0) {
+            changeReason = "Other tools gained momentum";
+          } else {
+            changeReason = "Improved market position";
+          }
+        }
+
         return {
           rank: ranking.position,
+          previousRank,
+          rankChange,
+          changeReason,
           tool: {
             id: tool.id,
             name: displayName,

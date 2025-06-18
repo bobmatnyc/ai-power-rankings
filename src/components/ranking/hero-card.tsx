@@ -2,10 +2,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToolIcon } from "@/components/ui/tool-icon";
+import { RankingChange } from "@/components/ui/ranking-change";
 import Link from "next/link";
 
 interface RankingData {
   rank: number;
+  previousRank?: number;
+  rankChange?: number;
+  changeReason?: string;
   tool: {
     id: string;
     name: string;
@@ -57,9 +61,17 @@ export function HeroCard({ ranking, index }: HeroCardProps) {
               <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
                 {ranking.tool.name}
               </CardTitle>
-              <Badge variant="secondary" className="bg-primary/10 text-primary">
-                #{ranking.rank}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="bg-primary/10 text-primary">
+                  #{ranking.rank}
+                </Badge>
+                <RankingChange
+                  previousRank={ranking.previousRank}
+                  currentRank={ranking.rank}
+                  changeReason={ranking.changeReason}
+                  size="sm"
+                />
+              </div>
             </div>
             <p className="text-sm text-muted-foreground">
               {ranking.tool.category.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}

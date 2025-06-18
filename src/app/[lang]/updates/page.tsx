@@ -37,7 +37,7 @@ export default async function UpdatesPage({ params }: PageProps) {
           <div className="flex items-center gap-4 mb-4">
             <Badge className="bg-primary/10 text-primary border-primary/20">
               <Calendar className="h-3 w-3 mr-1" />
-              June 17, 2025
+              June 18, 2025
             </Badge>
           </div>
 
@@ -64,13 +64,13 @@ export default async function UpdatesPage({ params }: PageProps) {
                   <div className="flex items-start justify-between">
                     <div>
                       <h4 className="font-medium">
-                        OpenAI Launches $200 ChatGPT Pro with Unlimited O1 Access and Canvas
+                        Bolt.new&apos;s Figma Integration Delivers 70% Faster Design-to-Code
                       </h4>
                       <p className="text-sm text-muted-foreground mt-1">
                         <Badge variant="secondary" className="mr-2">
-                          Product Launch
+                          Product Integration
                         </Badge>
-                        Affects: ChatGPT Canvas
+                        Affects: Bolt.new
                       </p>
                     </div>
                   </div>
@@ -80,13 +80,14 @@ export default async function UpdatesPage({ params }: PageProps) {
                   <div className="flex items-start justify-between">
                     <div>
                       <h4 className="font-medium">
-                        OpenAI Rewrites Codex CLI in Rust for Enhanced Performance and Security
+                        Google&apos;s Jules AI Coding Agent Faces User Backlash Over Beta
+                        Limitations
                       </h4>
                       <p className="text-sm text-muted-foreground mt-1">
                         <Badge variant="secondary" className="mr-2">
-                          Technical Achievement
+                          User Feedback
                         </Badge>
-                        Affects: OpenAI Codex CLI
+                        Affects: Google Jules
                       </p>
                     </div>
                   </div>
@@ -96,14 +97,13 @@ export default async function UpdatesPage({ params }: PageProps) {
                   <div className="flex items-start justify-between">
                     <div>
                       <h4 className="font-medium">
-                        Augment Code Becomes First AI Coding Assistant to Achieve ISO/IEC 42001
-                        Certification
+                        Firebase Studio Growth Overshadowed by Preview Phase Limitations
                       </h4>
                       <p className="text-sm text-muted-foreground mt-1">
                         <Badge variant="secondary" className="mr-2">
-                          Technical Achievement
+                          Market Analysis
                         </Badge>
-                        Affects: Augment Code
+                        Affects: Google Firebase
                       </p>
                     </div>
                   </div>
@@ -116,16 +116,16 @@ export default async function UpdatesPage({ params }: PageProps) {
               <h3 className="text-lg font-semibold mb-3">🏆 Top 10 Current Rankings</h3>
               <div className="grid gap-2">
                 {[
-                  { rank: 1, name: "Cursor", score: 110.4, change: "+15", tier: "S" },
-                  { rank: 2, name: "Devin", score: 99.9, change: "—", tier: "S" },
-                  { rank: 3, name: "Claude Code", score: 86.1, change: "—", tier: "S" },
-                  { rank: 4, name: "Google Jules", score: 81.2, change: "—", tier: "S" },
-                  { rank: 5, name: "GitHub Copilot", score: 80.0, change: "—", tier: "S" },
-                  { rank: 6, name: "Lovable", score: 76.1, change: "+24", tier: "A" },
-                  { rank: 7, name: "ChatGPT Canvas", score: 70.0, change: "NEW", tier: "A" },
-                  { rank: 8, name: "Windsurf", score: 69.1, change: "—", tier: "A" },
-                  { rank: 9, name: "Bolt.new", score: 67.5, change: "+22", tier: "A" },
-                  { rank: 10, name: "OpenAI Codex CLI", score: 64.8, change: "NEW", tier: "A" },
+                  { rank: 1, name: "Cursor", score: 105.1, change: "↑1", tier: "S" },
+                  { rank: 2, name: "Devin", score: 94.5, change: "↑1", tier: "S" },
+                  { rank: 3, name: "Lovable", score: 80.4, change: "↑5", tier: "S" },
+                  { rank: 4, name: "Claude Code", score: 75.6, change: "↓3", tier: "S" },
+                  { rank: 5, name: "Google Jules", score: 73.9, change: "NEW", tier: "S" },
+                  { rank: 6, name: "GitHub Copilot", score: 73.5, change: "↓1", tier: "A" },
+                  { rank: 7, name: "Bolt.new", score: 71.0, change: "—", tier: "A" },
+                  { rank: 8, name: "Windsurf", score: 67.3, change: "↓4", tier: "A" },
+                  { rank: 9, name: "OpenAI Codex CLI", score: 67.2, change: "NEW", tier: "A" },
+                  { rank: 10, name: "ChatGPT Canvas", score: 66.5, change: "NEW", tier: "A" },
                 ].map((tool) => (
                   <div
                     key={tool.rank}
@@ -151,7 +151,9 @@ export default async function UpdatesPage({ params }: PageProps) {
                           className={
                             tool.change === "NEW"
                               ? "bg-green-100 text-green-800"
-                              : "bg-blue-100 text-blue-800"
+                              : tool.change.startsWith("↑")
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
                           }
                         >
                           {tool.change}
@@ -168,20 +170,20 @@ export default async function UpdatesPage({ params }: PageProps) {
               <h3 className="text-lg font-semibold mb-3">📊 Impact Statistics</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold">3</div>
+                  <div className="text-2xl font-bold">4</div>
                   <div className="text-sm text-muted-foreground">New Articles</div>
+                </div>
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold">107</div>
+                  <div className="text-sm text-muted-foreground">Total Articles</div>
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl font-bold">19/39</div>
                   <div className="text-sm text-muted-foreground">Tools with News</div>
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold">38.3</div>
-                  <div className="text-sm text-muted-foreground">Avg News Boost</div>
-                </div>
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold">227.9</div>
-                  <div className="text-sm text-muted-foreground">Max Impact</div>
+                  <div className="text-2xl font-bold">210.4</div>
+                  <div className="text-sm text-muted-foreground">Max Impact (Cursor)</div>
                 </div>
               </div>
             </div>
@@ -204,6 +206,7 @@ export default async function UpdatesPage({ params }: PageProps) {
                   <li>• 70% base score + 30% news impact weighting</li>
                   <li>• Exponential news aging over 12 months</li>
                   <li>• Category-specific impact multipliers</li>
+                  <li>• NEW: Logarithmic volume scaling for better distribution</li>
                   <li>• Company announcement discount (0.7x)</li>
                 </ul>
               </div>
