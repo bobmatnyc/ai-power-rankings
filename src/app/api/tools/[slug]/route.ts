@@ -73,7 +73,7 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       latestMetrics[key] = value;
     });
 
-    // Get ranking data from ranking_cache
+    // Get current ranking data from ranking_cache
     const { data: rankingData } = await supabase
       .from("ranking_cache")
       .select(
@@ -92,6 +92,64 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       .eq("tool_id", tool.id)
       .eq("period", "june-2025")
       .single();
+
+    // Get rankings history (last 12 months)
+    const { data: rankingsHistory, error: rankingsError } = await supabase
+      .from("ranking_cache")
+      .select(
+        `
+        position,
+        score,
+        period,
+        ranking_periods!inner(
+          period,
+          display_name,
+          calculation_date
+        )
+      `
+      )
+      .eq("tool_id", tool.id)
+      .order("ranking_periods.calculation_date", { ascending: false })
+      .limit(12);
+
+    if (rankingsError) {
+      loggers.api.error("Error fetching rankings history", {
+        error: rankingsError,
+        toolId: tool.id,
+      });
+    }
+
+    // Get all news items and filter client-side for now
+    // This handles both array format ["tool-id"] and object format [{"tool_id": "tool-id"}]
+    const { data: allNews, error: newsError } = await supabase
+      .from("news_updates")
+      .select("*")
+      .order("published_at", { ascending: false })
+      .limit(100);
+
+    if (newsError) {
+      loggers.api.error("Error fetching news items", { error: newsError, toolId: tool.id });
+    }
+
+    // Filter news items that mention this tool
+    const newsItems =
+      allNews
+        ?.filter((item) => {
+          if (!item.related_tools || !Array.isArray(item.related_tools)) {
+            return false;
+          }
+
+          // Check if tool is mentioned (handles both string array and object array)
+          return item.related_tools.some((relatedTool: any) => {
+            if (typeof relatedTool === "string") {
+              return relatedTool === tool.id;
+            } else if (relatedTool && typeof relatedTool === "object") {
+              return relatedTool.tool_id === tool.id;
+            }
+            return false;
+          });
+        })
+        .slice(0, 20) || [];
 
     let ranking = null;
     if (rankingData) {
@@ -152,6 +210,13 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       }))
       .slice(0, 10); // Limit to 10 most recent entries
 
+    loggers.api.debug("Tool detail API response", {
+      toolId: tool.id,
+      rankingsHistoryCount: rankingsHistory?.length || 0,
+      newsItemsCount: newsItems?.length || 0,
+      metricHistoryCount: metricHistory?.length || 0,
+    });
+
     return NextResponse.json({
       tool,
       ranking,
@@ -165,6 +230,8 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
         employees: latestMetrics["employees"] as number,
       },
       metricHistory,
+      rankingsHistory: rankingsHistory || [],
+      newsItems: newsItems || [],
     });
   } catch (error) {
     loggers.api.error("Error in tool detail API", { error, slug });
