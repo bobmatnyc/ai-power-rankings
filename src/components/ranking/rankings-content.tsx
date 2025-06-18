@@ -282,9 +282,8 @@ function RankingsContentInner(): React.JSX.Element {
                       {ranking.scores?.overall ? (
                         <>
                           <div className="font-bold text-lg">
-                            {ranking.scores.overall.toFixed(2)}
+                            {ranking.scores.overall.toFixed(1)}
                           </div>
-                          <div className="text-xs text-muted-foreground">/ 10</div>
                         </>
                       ) : (
                         <div className="text-muted-foreground">-</div>
@@ -379,7 +378,7 @@ function RankingsContentInner(): React.JSX.Element {
                           <p className="text-muted-foreground">Agentic</p>
                           <p className="font-semibold">
                             {ranking.scores?.agentic_capability
-                              ? `${ranking.scores.agentic_capability.toFixed(1)}/10`
+                              ? `${ranking.scores.agentic_capability.toFixed(1)}`
                               : "-"}
                           </p>
                         </div>
@@ -387,7 +386,7 @@ function RankingsContentInner(): React.JSX.Element {
                           <p className="text-muted-foreground">Innovation</p>
                           <p className="font-semibold">
                             {ranking.scores?.innovation
-                              ? `${ranking.scores.innovation.toFixed(1)}/10`
+                              ? `${ranking.scores.innovation.toFixed(1)}`
                               : "-"}
                           </p>
                         </div>
@@ -395,7 +394,7 @@ function RankingsContentInner(): React.JSX.Element {
                           <p className="text-muted-foreground">Technical</p>
                           <p className="font-semibold">
                             {ranking.scores?.technical_performance
-                              ? `${ranking.scores.technical_performance.toFixed(1)}/10`
+                              ? `${ranking.scores.technical_performance.toFixed(1)}`
                               : "-"}
                           </p>
                         </div>
@@ -403,7 +402,7 @@ function RankingsContentInner(): React.JSX.Element {
                           <p className="text-muted-foreground">Adoption</p>
                           <p className="font-semibold">
                             {ranking.scores?.developer_adoption
-                              ? `${ranking.scores.developer_adoption.toFixed(1)}/10`
+                              ? `${ranking.scores.developer_adoption.toFixed(1)}`
                               : "-"}
                           </p>
                         </div>

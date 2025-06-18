@@ -377,9 +377,7 @@ export default function ToolDetailPage(): React.JSX.Element {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                     <span className="font-semibold">Overall Score</span>
-                    <span className="text-2xl font-bold">
-                      {ranking.scores.overall.toFixed(2)}/10
-                    </span>
+                    <span className="text-2xl font-bold">{ranking.scores.overall.toFixed(1)}</span>
                   </div>
 
                   <Separator />
@@ -393,12 +391,12 @@ export default function ToolDetailPage(): React.JSX.Element {
                             <span className="text-sm font-medium capitalize">
                               {factor.replace(/_/g, " ")}
                             </span>
-                            <span className="text-sm font-medium">{score.toFixed(1)}/10</span>
+                            <span className="text-sm font-medium">{score.toFixed(1)}</span>
                           </div>
                           <div className="w-full bg-muted rounded-full h-2">
                             <div
                               className="bg-primary h-2 rounded-full transition-all"
-                              style={{ width: `${score * 10}%` }}
+                              style={{ width: `${score}%` }}
                             />
                           </div>
                         </div>

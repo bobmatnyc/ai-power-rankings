@@ -346,6 +346,35 @@ SUPABASE_SERVICE_ROLE_KEY=your-key
 GITHUB_TOKEN=your-token
 ```
 
+### Pricing Data Management
+
+When updating pricing information:
+
+1. **Use dedicated pricing scripts**:
+
+   ```bash
+   tsx scripts/update-pricing-details.ts
+   ```
+
+2. **Handle database constraints**:
+
+   - Check if pricing plan exists before upsert
+   - Use manual insert/update if no unique constraint
+   - Consider adding constraints for frequently updated data
+
+3. **Pricing data structure**:
+
+   - Store in `pricing_plans` table
+   - Include features array (JSONB)
+   - Include limits object (JSONB)
+   - Mark primary plans with `is_primary`
+
+4. **Display pricing in UI**:
+   - Fetch pricing plans in API route
+   - Add dedicated pricing tab in tool details
+   - Show primary plan price in overview
+   - Format currency properly
+
 ---
 
 ## 👁️ Final Note

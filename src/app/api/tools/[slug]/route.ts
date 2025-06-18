@@ -100,17 +100,37 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
         `
         position,
         score,
-        period,
-        ranking_periods!inner(
-          period,
-          display_name,
-          calculation_date
-        )
+        period
       `
       )
       .eq("tool_id", tool.id)
-      .order("ranking_periods.calculation_date", { ascending: false })
+      .order("period", { ascending: false })
       .limit(12);
+
+    // Get ranking periods info
+    let enrichedRankingsHistory: any[] = [];
+    if (rankingsHistory && rankingsHistory.length > 0) {
+      const periods = [...new Set(rankingsHistory.map((r) => r.period))];
+      const { data: periodData } = await supabase
+        .from("ranking_periods")
+        .select("period, display_name, calculation_date")
+        .in("period", periods);
+
+      if (periodData) {
+        const periodMap = new Map(periodData.map((p) => [p.period, p]));
+        enrichedRankingsHistory = rankingsHistory
+          .map((r) => ({
+            ...r,
+            ranking_periods: periodMap.get(r.period),
+          }))
+          .filter((r) => r.ranking_periods)
+          .sort((a, b) => {
+            const dateA = new Date(a.ranking_periods!.calculation_date);
+            const dateB = new Date(b.ranking_periods!.calculation_date);
+            return dateB.getTime() - dateA.getTime();
+          });
+      }
+    }
 
     if (rankingsError) {
       loggers.api.error("Error fetching rankings history", {
@@ -217,6 +237,14 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       metricHistoryCount: metricHistory?.length || 0,
     });
 
+    // Get pricing plans for this tool
+    const { data: pricingPlans } = await supabase
+      .from("pricing_plans")
+      .select("*")
+      .eq("tool_id", tool.id)
+      .eq("is_active", true)
+      .order("price_monthly", { ascending: true });
+
     return NextResponse.json({
       tool,
       ranking,
@@ -230,8 +258,9 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
         employees: latestMetrics["employees"] as number,
       },
       metricHistory,
-      rankingsHistory: rankingsHistory || [],
+      rankingsHistory: enrichedRankingsHistory || [],
       newsItems: newsItems || [],
+      pricingPlans: pricingPlans || [],
     });
   } catch (error) {
     loggers.api.error("Error in tool detail API", { error, slug });

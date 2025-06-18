@@ -256,7 +256,7 @@ function SidebarContent(): React.JSX.Element {
                   )}
                 >
                   <span>{category.name}</span>
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs text-white">
                     {category.count}
                   </Badge>
                 </Link>
