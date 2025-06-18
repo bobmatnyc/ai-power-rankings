@@ -23,10 +23,14 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
   let loading = false;
 
   try {
-    const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
     const isDev = process.env.NODE_ENV === "development";
-    const response = await fetch(`${baseUrl}/api/rankings`, {
-      next: { revalidate: isDev ? 60 : 300 }, // 1 minute in dev, 5 minutes in prod
+    const baseUrl =
+      process.env["NEXT_PUBLIC_BASE_URL"] ||
+      (isDev ? "http://localhost:3001" : "http://localhost:3000");
+    const timestamp = Date.now();
+    const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
+    const response = await fetch(url, {
+      next: { revalidate: isDev ? 0 : 300 }, // No cache in dev, 5 minutes in prod
       cache: isDev ? "no-store" : "default", // No cache in development
     });
     const data = await response.json();
@@ -42,9 +46,16 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       // Log top ranking for debugging
       loggers.api.info("Home page loaded with top ranking", {
         topTool: rankings[0]?.tool?.name || "unknown",
+        topScore: rankings[0]?.total_score || 0,
+        secondTool: rankings[1]?.tool?.name || "unknown",
+        secondScore: rankings[1]?.total_score || 0,
         totalRankings: rankings.length,
         algorithm: data.algorithm?.version || "unknown",
+        fetchUrl: url,
       });
+
+      // Also log raw data for debugging
+      console.log("DEBUG: Raw rankings data:", JSON.stringify(rankings.slice(0, 3), null, 2));
     } else {
       loggers.api.warn("No rankings data received", { data });
       loading = true;
