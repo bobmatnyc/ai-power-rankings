@@ -17,6 +17,7 @@ interface ToolDetailTabsProps {
     info?: {
       links?: {
         website?: string;
+        pricing?: string;
       };
     };
   };
@@ -64,6 +65,19 @@ interface ToolDetailTabsProps {
     category?: string;
     type?: string;
   }>;
+  pricingPlans?: Array<{
+    id: string;
+    tool_id: string;
+    plan_name: string;
+    price_monthly?: number;
+    price_annually?: number;
+    currency: string;
+    billing_cycle: string;
+    features?: string[];
+    limits?: Record<string, any>;
+    is_primary: boolean;
+    is_active: boolean;
+  }>;
   dict: any;
 }
 
@@ -100,6 +114,7 @@ export function ToolDetailTabs({
   metricHistory,
   rankingsHistory,
   newsItems,
+  pricingPlans,
   dict,
 }: ToolDetailTabsProps) {
   const pathname = usePathname();
@@ -110,13 +125,14 @@ export function ToolDetailTabs({
     rankingsHistory: rankingsHistory?.length || 0,
     newsItems: newsItems?.length || 0,
     metricHistory: metricHistory?.length || 0,
+    pricingPlans: pricingPlans?.length || 0,
   });
 
   // Handle hash navigation
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
-      if (hash && ["performance", "metrics", "scores", "history"].includes(hash)) {
+      if (hash && ["performance", "pricing", "metrics", "scores", "history"].includes(hash)) {
         setActiveTab(hash);
       }
     };
@@ -137,9 +153,12 @@ export function ToolDetailTabs({
 
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-      <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
+      <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-1">
         <TabsTrigger value="performance" className="text-xs md:text-sm">
           {dict.tools.detail.tabs.performance}
+        </TabsTrigger>
+        <TabsTrigger value="pricing" className="text-xs md:text-sm">
+          Pricing
         </TabsTrigger>
         <TabsTrigger value="metrics" className="text-xs md:text-sm">
           {dict.tools.detail.tabs.businessMetrics}
@@ -210,6 +229,110 @@ export function ToolDetailTabs({
         </Card>
       </TabsContent>
 
+      <TabsContent value="pricing" className="space-y-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Pricing Plans</CardTitle>
+            <CardDescription>
+              Available pricing tiers and features
+              {tool.info?.links?.pricing && (
+                <a
+                  href={tool.info.links.pricing}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-2 text-primary hover:underline"
+                >
+                  View official pricing →
+                </a>
+              )}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {pricingPlans && pricingPlans.length > 0 ? (
+              <div className="space-y-6">
+                {pricingPlans.map((plan) => (
+                  <div
+                    key={plan.id}
+                    className={`p-4 border rounded-lg ${
+                      plan.is_primary ? "border-primary bg-primary/5" : ""
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold text-lg flex items-center gap-2">
+                          {plan.plan_name}
+                          {plan.is_primary && (
+                            <Badge variant="default" className="text-xs">
+                              Popular
+                            </Badge>
+                          )}
+                        </h3>
+                        <p className="text-2xl font-bold mt-1">
+                          {plan.price_monthly === 0 ? (
+                            "Free"
+                          ) : (
+                            <>
+                              ${plan.price_monthly}
+                              <span className="text-sm font-normal text-muted-foreground">
+                                /{plan.billing_cycle === "annually" ? "year" : "month"}
+                              </span>
+                            </>
+                          )}
+                        </p>
+                        {plan.price_annually &&
+                          plan.billing_cycle === "monthly" &&
+                          plan.price_monthly && (
+                            <p className="text-sm text-muted-foreground">
+                              ${plan.price_annually}/year (save{" "}
+                              {Math.round(
+                                ((plan.price_monthly * 12 - plan.price_annually) /
+                                  (plan.price_monthly * 12)) *
+                                  100
+                              )}
+                              %)
+                            </p>
+                          )}
+                      </div>
+                    </div>
+
+                    {plan.features && plan.features.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-muted-foreground">Features:</p>
+                        <ul className="space-y-1">
+                          {plan.features.map((feature, idx) => (
+                            <li key={idx} className="flex items-start gap-2 text-sm">
+                              <span className="text-primary mt-0.5">✓</span>
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {plan.limits && Object.keys(plan.limits).length > 0 && (
+                      <div className="mt-3 pt-3 border-t">
+                        <p className="text-sm font-medium text-muted-foreground mb-1">Limits:</p>
+                        <div className="space-y-1">
+                          {Object.entries(plan.limits).map(([key, value]) => (
+                            <p key={key} className="text-sm text-muted-foreground">
+                              {key.replace(/_/g, " ")}: {String(value)}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">
+                No pricing information available.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+
       <TabsContent value="metrics" className="space-y-4">
         <Card>
           <CardHeader>
@@ -272,7 +395,7 @@ export function ToolDetailTabs({
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
                   <span className="font-semibold">Overall Score</span>
-                  <span className="text-2xl font-bold">{ranking.scores.overall.toFixed(2)}/10</span>
+                  <span className="text-2xl font-bold">{ranking.scores.overall.toFixed(1)}</span>
                 </div>
 
                 <Separator />
@@ -286,12 +409,12 @@ export function ToolDetailTabs({
                           <span className="text-sm font-medium capitalize">
                             {factor.replace(/_/g, " ")}
                           </span>
-                          <span className="text-sm font-medium">{score.toFixed(1)}/10</span>
+                          <span className="text-sm font-medium">{score.toFixed(1)}</span>
                         </div>
                         <div className="w-full bg-muted rounded-full h-2">
                           <div
                             className="bg-primary h-2 rounded-full transition-all"
-                            style={{ width: `${score * 10}%` }}
+                            style={{ width: `${score}%` }}
                           />
                         </div>
                       </div>

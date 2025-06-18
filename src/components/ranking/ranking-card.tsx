@@ -116,7 +116,7 @@ export function RankingCard({ ranking, showDetails = true }: RankingCardProps): 
                   {ranking.tool.category.replace(/-/g, " ")}
                 </Badge>
                 {ranking.scores?.overall && (
-                  <Badge variant="outline">Score: {ranking.scores.overall.toFixed(1)}/10</Badge>
+                  <Badge variant="outline">Score: {ranking.scores.overall.toFixed(1)}</Badge>
                 )}
                 {ranking.metrics?.swe_bench_score ? (
                   <Badge variant="outline">

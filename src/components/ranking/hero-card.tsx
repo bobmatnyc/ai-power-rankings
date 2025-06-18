@@ -90,7 +90,7 @@ export function HeroCard({ ranking, index }: HeroCardProps) {
             <div>
               <span className="text-muted-foreground">Score</span>
               <div className="font-semibold text-lg text-primary">
-                {ranking.scores?.overall?.toFixed(1) || "-"}/10
+                {ranking.scores?.overall?.toFixed(1) || "-"}
               </div>
             </div>
             {ranking.metrics?.swe_bench_score && (

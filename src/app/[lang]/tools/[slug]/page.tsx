@@ -92,6 +92,19 @@ interface ToolDetail {
     category?: string;
     type?: string;
   }>;
+  pricingPlans?: Array<{
+    id: string;
+    tool_id: string;
+    plan_name: string;
+    price_monthly?: number;
+    price_annually?: number;
+    currency: string;
+    billing_cycle: string;
+    features?: string[];
+    limits?: Record<string, any>;
+    is_primary: boolean;
+    is_active: boolean;
+  }>;
 }
 
 interface PageProps {
@@ -112,8 +125,7 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
       ? "http://localhost:3001"
       : process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/tools/${slug}`, {
-      next: { revalidate: isDev ? 300 : 3600 }, // 5 min in dev, 1 hour in prod
-      cache: isDev ? "no-store" : "default",
+      next: { revalidate: isDev ? 0 : 3600 }, // No cache in dev, 1 hour in prod
     });
     if (response.ok) {
       toolData = await response.json();
@@ -170,7 +182,8 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
     );
   }
 
-  const { tool, ranking, metrics, metricHistory, rankingsHistory, newsItems } = toolData;
+  const { tool, ranking, metrics, metricHistory, rankingsHistory, newsItems, pricingPlans } =
+    toolData;
 
   return (
     <div className="container mx-auto p-4 md:p-8 max-w-6xl">
@@ -252,7 +265,15 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
             <div>
               <p className="text-sm text-muted-foreground">{dict.tools.detail.pricing}</p>
               <p className="font-medium">
-                {tool.info?.product?.pricing_model || dict.common.notAvailable}
+                {pricingPlans && pricingPlans.length > 0 ? (
+                  <>
+                    {pricingPlans.find((p) => p.is_primary)?.price_monthly === 0
+                      ? "Free"
+                      : `From $${pricingPlans.find((p) => p.is_primary)?.price_monthly || pricingPlans[0]?.price_monthly}/mo`}
+                  </>
+                ) : (
+                  tool.info?.product?.pricing_model || dict.common.notAvailable
+                )}
               </p>
             </div>
             {metrics?.users && (
@@ -279,6 +300,7 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
         metricHistory={metricHistory}
         rankingsHistory={rankingsHistory}
         newsItems={newsItems}
+        pricingPlans={pricingPlans}
         dict={dict}
       />
 

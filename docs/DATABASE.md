@@ -1086,6 +1086,47 @@ Example migration scripts are available in `/scripts/`:
    WHERE c.id IS NULL;
    ```
 
+## Working with Upsert Operations
+
+### Check Table Constraints Before Using Upsert
+
+When using Supabase's `.upsert()` method, ensure the table has appropriate unique constraints:
+
+```typescript
+// ❌ Will fail if no unique constraint exists
+const { error } = await supabase.from("table_name").upsert(data, { onConflict: "column1,column2" });
+```
+
+**Error**: `there is no unique or exclusion constraint matching the ON CONFLICT specification`
+
+### Solution: Check and Insert/Update Manually
+
+```typescript
+// ✅ Check existence first, then insert or update
+const { data: existing } = await supabase
+  .from("table_name")
+  .select("id")
+  .eq("column1", value1)
+  .eq("column2", value2)
+  .single();
+
+if (existing) {
+  await supabase.from("table_name").update(updateData).eq("id", existing.id);
+} else {
+  await supabase.from("table_name").insert(insertData);
+}
+```
+
+### Creating Unique Constraints
+
+If you need upsert functionality, create the constraint:
+
+```sql
+ALTER TABLE pricing_plans
+ADD CONSTRAINT unique_tool_plan
+UNIQUE (tool_id, plan_name);
+```
+
 ## Querying JSONB Fields in Supabase
 
 ### Working with JSONB Arrays

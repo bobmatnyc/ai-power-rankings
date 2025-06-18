@@ -272,6 +272,7 @@
       "githubStars": "GitHub 스타",
       "tabs": {
         "performance": "성능",
+        "pricing": "가격",
         "businessMetrics": "비즈니스",
         "scores": "점수",
         "history": "히스토리"
