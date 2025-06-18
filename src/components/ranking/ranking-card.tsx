@@ -1,11 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToolIcon } from "@/components/ui/tool-icon";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { RankingChange } from "@/components/ui/ranking-change";
 import Link from "next/link";
 
 interface RankingData {
   rank: number;
+  previousRank?: number;
+  rankChange?: number;
+  changeReason?: string;
   tool: {
     id: string;
     name: string;
@@ -34,16 +37,6 @@ interface RankingCardProps {
 }
 
 export function RankingCard({ ranking, showDetails = true }: RankingCardProps): React.JSX.Element {
-  const getTrendingIcon = (): React.JSX.Element | null => {
-    if (ranking.trend === "up") {
-      return <ArrowUp className="h-3 w-3 text-accent" />;
-    }
-    if (ranking.trend === "down") {
-      return <ArrowDown className="h-3 w-3 text-destructive" />;
-    }
-    return null;
-  };
-
   const getCategoryColor = (category: string): string => {
     const colors: Record<string, string> = {
       "code-assistant": "bg-primary/10 text-primary",
@@ -93,10 +86,16 @@ export function RankingCard({ ranking, showDetails = true }: RankingCardProps): 
               </div>
             </div>
             <div className="flex items-center space-x-2 flex-shrink-0">
-              {getTrendingIcon()}
               <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                 <span className="text-xs mr-1">{getMedal(ranking.rank)}</span>#{ranking.rank}
               </Badge>
+              <RankingChange
+                previousRank={ranking.previousRank}
+                currentRank={ranking.rank}
+                changeReason={ranking.changeReason}
+                size="sm"
+                showIcon={true}
+              />
             </div>
           </div>
         </CardHeader>

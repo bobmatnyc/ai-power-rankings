@@ -4,6 +4,9 @@ import { HeroCard } from "@/components/ranking/hero-card";
 
 interface RankingData {
   rank: number;
+  previousRank?: number;
+  rankChange?: number;
+  changeReason?: string;
   tool: {
     id: string;
     name: string;
