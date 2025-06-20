@@ -28,26 +28,45 @@ export class GoogleSearchConsole {
       return;
     }
 
-    // Use Google Application Default Credentials
-    const serviceAccountEmail = process.env["GOOGLE_SERVICE_ACCOUNT_EMAIL"];
     const projectId = process.env["GOOGLE_CLOUD_PROJECT_ID"] || "ai-power-ranking";
-
     let auth;
-    if (serviceAccountEmail) {
-      // Use service account impersonation
-      auth = new google.auth.GoogleAuth({
-        scopes: ["https://www.googleapis.com/auth/webmasters"],
-        projectId: projectId,
-        clientOptions: {
-          subject: serviceAccountEmail,
-        },
-      });
+
+    // Check for service account JSON (for production environments like Vercel)
+    const serviceAccountJson = process.env["GOOGLE_APPLICATION_CREDENTIALS_JSON"];
+
+    if (serviceAccountJson) {
+      // Parse the service account JSON and use it for authentication
+      try {
+        const credentials = JSON.parse(serviceAccountJson);
+        auth = new google.auth.GoogleAuth({
+          credentials,
+          scopes: ["https://www.googleapis.com/auth/webmasters"],
+          projectId: projectId,
+        });
+      } catch (error) {
+        console.error("Failed to parse service account JSON:", error);
+        throw new Error("Invalid GOOGLE_APPLICATION_CREDENTIALS_JSON");
+      }
     } else {
-      // Use default credentials without impersonation
-      auth = new google.auth.GoogleAuth({
-        scopes: ["https://www.googleapis.com/auth/webmasters"],
-        projectId: projectId,
-      });
+      // Use Application Default Credentials (for local development)
+      const serviceAccountEmail = process.env["GOOGLE_SERVICE_ACCOUNT_EMAIL"];
+
+      if (serviceAccountEmail) {
+        // Use service account impersonation
+        auth = new google.auth.GoogleAuth({
+          scopes: ["https://www.googleapis.com/auth/webmasters"],
+          projectId: projectId,
+          clientOptions: {
+            subject: serviceAccountEmail,
+          },
+        });
+      } else {
+        // Use default credentials without impersonation
+        auth = new google.auth.GoogleAuth({
+          scopes: ["https://www.googleapis.com/auth/webmasters"],
+          projectId: projectId,
+        });
+      }
     }
 
     const authClient = await auth.getClient();
