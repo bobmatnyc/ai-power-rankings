@@ -1,17 +1,26 @@
 import { Metadata } from "next";
-import { MarkdownPage } from "@/components/markdown/markdown-page";
-import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
-import { loadMarkdownContent } from "@/lib/markdown-loader";
+import { MarkdownLayout } from "@/components/layout/markdown-layout";
+import { MarkdownContent } from "@/lib/markdown-renderer";
+import {
+  generateMarkdownPageMetadata,
+  getMarkdownPageContent,
+  getMarkdownPageConfig,
+} from "@/lib/markdown-page-utils";
+import { notFound } from "next/navigation";
 
-export const metadata: Metadata = generateSEOMetadata({
-  title: "Contact Us",
-  description:
-    "Get in touch with AI Power Rankings. Contact us for inquiries, partnerships, or to submit your AI coding tool.",
-  path: "/contact",
-  noIndex: false,
-});
+export const metadata: Metadata = generateMarkdownPageMetadata("contact");
 
 export default function ContactPage() {
-  const content = loadMarkdownContent("contact.md");
-  return <MarkdownPage content={content} />;
+  const config = getMarkdownPageConfig("contact");
+  const content = getMarkdownPageContent("contact");
+
+  if (!config || !content) {
+    notFound();
+  }
+
+  return (
+    <MarkdownLayout title={config.title}>
+      <MarkdownContent content={content} />
+    </MarkdownLayout>
+  );
 }
