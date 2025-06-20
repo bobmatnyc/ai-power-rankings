@@ -45,7 +45,7 @@ export function createOrganizationSchema(): WithContext<Organization> {
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
-      email: "hello@aipowerrankings.com",
+      email: "hyperdev@matsuoka.com",
       availableLanguage: [
         "English",
         "Japanese",

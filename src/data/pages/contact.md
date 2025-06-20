@@ -5,33 +5,33 @@ We'd love to hear from you! Whether you have questions about our rankings, sugge
 ### General Inquiries
 
 For general questions about AI Power Rankings:  
-**Email**: [hello@aipowerrankings.com](mailto:hello@aipowerrankings.com)
+**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
 
 ### Press & Media
 
 For press inquiries, interviews, or media kit requests:  
-**Email**: [press@aipowerrankings.com](mailto:press@aipowerrankings.com)
+**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
 
 ### Business Development
 
 For partnership opportunities, advertising, or sponsorships:  
-**Email**: [partnerships@aipowerrankings.com](mailto:partnerships@aipowerrankings.com)
+**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
 
 ### Technical Support
 
 For website issues or technical problems:  
-**Email**: [support@aipowerrankings.com](mailto:support@aipowerrankings.com)
+**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
 
 ### Data & Rankings
 
 For questions about our ranking methodology or to submit tool information:  
-**Email**: [rankings@aipowerrankings.com](mailto:rankings@aipowerrankings.com)
+**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
 
 ## Submit a Tool
 
 Have an AI coding tool that should be included in our rankings? We're always looking to expand our coverage.
 
-**Submit your tool**: [submissions@aipowerrankings.com](mailto:submissions@aipowerrankings.com)
+**Submit your tool**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
 
 Please include:
 
@@ -44,15 +44,15 @@ Please include:
 ## Report an Issue
 
 Found an error or inaccuracy in our rankings or content?  
-**Email**: [corrections@aipowerrankings.com](mailto:corrections@aipowerrankings.com)
+**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
 
 ## Legal Matters
 
 For legal inquiries or DMCA requests:  
-**Email**: [legal@aipowerrankings.com](mailto:legal@aipowerrankings.com)
+**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
 
 For privacy-related concerns:  
-**Email**: [privacy@aipowerrankings.com](mailto:privacy@aipowerrankings.com)
+**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
 
 ## Response Time
 
