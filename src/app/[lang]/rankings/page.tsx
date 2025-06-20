@@ -11,6 +11,8 @@ import {
   createJsonLdScript,
 } from "@/lib/schema";
 import { generateRankingOGImageUrl } from "@/lib/og-utils";
+import { QuickAnswerBox, FAQSection } from "@/components/seo";
+import { generalFAQs } from "@/data/seo-content";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -167,6 +169,23 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
       >
         <RankingsGrid lang={lang} dict={dict} initialRankings={initialRankings} />
       </Suspense>
+
+      {/* SEO-Optimized Content Sections */}
+      <div className="mt-12 space-y-8">
+        {/* Quick Answer about rankings */}
+        <QuickAnswerBox
+          question="How are AI tool rankings determined?"
+          answer="Our AI tool rankings use <strong>Algorithm v6.0</strong> which evaluates tools across 8 key factors: Agentic Capability, Innovation, Technical Performance, Developer Adoption, Market Traction, Business Sentiment, Development Velocity, and Platform Resilience. Rankings are updated weekly with fresh data from multiple sources."
+          type="definition"
+        />
+
+        {/* FAQ Section */}
+        <FAQSection
+          title="AI Tool Rankings FAQ"
+          faqs={generalFAQs}
+          defaultOpen={["what-are-ai-tool-rankings", "how-are-rankings-calculated"]}
+        />
+      </div>
     </div>
   );
 }
