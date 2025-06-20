@@ -44,6 +44,9 @@ dependencies:
   '@supabase/supabase-js':
     specifier: ^2.50.0
     version: 2.50.0
+  '@types/nodemailer':
+    specifier: ^6.4.17
+    version: 6.4.17
   '@vercel/analytics':
     specifier: ^1.5.0
     version: 1.5.0(next@15.3.3)(react@19.1.0)
@@ -94,7 +97,10 @@ dependencies:
     version: 15.3.3(@babel/core@7.27.4)(react-dom@19.1.0)(react@19.1.0)
   next-auth:
     specifier: ^4.24.11
-    version: 4.24.11(next@15.3.3)(react-dom@19.1.0)(react@19.1.0)
+    version: 4.24.11(next@15.3.3)(nodemailer@6.10.1)(react-dom@19.1.0)(react@19.1.0)
+  nodemailer:
+    specifier: ^6.9.15
+    version: 6.10.1
   pino:
     specifier: ^9.7.0
     version: 9.7.0
@@ -2496,6 +2502,12 @@ packages:
     resolution: {integrity: sha512-hfrc+1tud1xcdVTABC2JiomZJEklMcXYNTVtZLAeqTVWD+qL5jkHKT+1lOtqDdGxt+mB53DTtiz673vfjU8D1Q==}
     dependencies:
       undici-types: 6.21.0
+
+  /@types/nodemailer@6.4.17:
+    resolution: {integrity: sha512-I9CCaIp6DTldEg7vyUTZi8+9Vo0hi1/T8gv3C89yk1rSAAzoKQ8H8ki/jBYJSFoH/BisgLP8tkZMlQ91CIquww==}
+    dependencies:
+      '@types/node': 20.19.0
+    dev: false
 
   /@types/phoenix@1.6.6:
     resolution: {integrity: sha512-PIzZZlEppgrpoT2QgbnDU+MMzuR6BbCjllj0bM70lWoejMeNJAxCchxnv7J3XFkI8MpygtRpzXrIlmWUBclP5A==}
@@ -5700,7 +5712,7 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /next-auth@4.24.11(next@15.3.3)(react-dom@19.1.0)(react@19.1.0):
+  /next-auth@4.24.11(next@15.3.3)(nodemailer@6.10.1)(react-dom@19.1.0)(react@19.1.0):
     resolution: {integrity: sha512-pCFXzIDQX7xmHFs4KVH4luCjaCbuPRtZ9oBUjUhOk84mZ9WVPf94n87TxYI4rSRf9HmfHEF8Yep3JrYDVOo3Cw==}
     peerDependencies:
       '@auth/core': 0.34.2
@@ -5719,6 +5731,7 @@ packages:
       cookie: 0.7.2
       jose: 4.15.9
       next: 15.3.3(@babel/core@7.27.4)(react-dom@19.1.0)(react@19.1.0)
+      nodemailer: 6.10.1
       oauth: 0.9.15
       openid-client: 5.7.1
       preact: 10.26.9
@@ -5788,6 +5801,11 @@ packages:
 
   /node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
+
+  /nodemailer@6.10.1:
+    resolution: {integrity: sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==}
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   /normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
