@@ -41,6 +41,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
     "@marsidev/react-turnstile": "^1.1.0",
+    "@next-auth/supabase-adapter": "^0.2.1",
     "@octokit/rest": "^22.0.0",
     "@radix-ui/react-collapsible": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.14",
