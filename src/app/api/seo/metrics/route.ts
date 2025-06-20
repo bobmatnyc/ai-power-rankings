@@ -56,31 +56,27 @@ const getMockSEOMetrics = () => {
 async function fetchGoogleSearchConsoleData() {
   // Check if we have the required environment variables
   const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
-  const serviceAccountEmail = process.env["GOOGLE_SERVICE_ACCOUNT_EMAIL"];
-  const serviceAccountKey = process.env["GOOGLE_SERVICE_ACCOUNT_KEY"];
 
-  if (!siteUrl || !serviceAccountEmail || !serviceAccountKey) {
-    console.log("Google Search Console not configured, using mock data");
+  if (!siteUrl) {
+    console.log("Google Search Console site URL not configured, using mock data");
     return getMockSEOMetrics();
   }
 
   try {
-    // Initialize Google Search Console client
+    // Initialize Google Search Console client with ADC
     const gsc = new GoogleSearchConsole({
       siteUrl,
-      serviceAccountEmail,
-      serviceAccountKey
     });
 
     // Fetch various metrics
-    const [siteMetrics, topQueries, topPages] = await Promise.all([
+    const [siteMetrics, topQueries] = await Promise.all([
       gsc.getSiteMetrics(),
       gsc.getTopQueries(5),
-      gsc.getTopPages(10)
+      gsc.getTopPages(10), // We're not using topPages yet, but keeping for future use
     ]);
 
     // Transform the data to our format
-    const topKeywords = (topQueries.rows || []).map((row: any, index: number) => ({
+    const topKeywords = (topQueries.rows || []).map((row: any) => ({
       keyword: row.keys[0],
       position: Math.round(row.position),
       clicks: Math.round(row.clicks),

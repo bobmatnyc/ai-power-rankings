@@ -47,12 +47,7 @@ export default function SignInPage() {
             </Alert>
           )}
 
-          <Button
-            size="lg"
-            className="w-full"
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-          >
+          <Button size="lg" className="w-full" onClick={handleGoogleSignIn} disabled={loading}>
             <Chrome className="mr-2 h-5 w-5" />
             {loading ? "Signing in..." : "Sign in with Google"}
           </Button>
@@ -61,9 +56,7 @@ export default function SignInPage() {
             <p className="text-sm text-muted-foreground">
               Access is restricted to authorized administrators
             </p>
-            <p className="text-xs text-muted-foreground">
-              Contact: bob@matsuoka.com
-            </p>
+            <p className="text-xs text-muted-foreground">Contact: bob@matsuoka.com</p>
           </div>
         </CardContent>
       </Card>

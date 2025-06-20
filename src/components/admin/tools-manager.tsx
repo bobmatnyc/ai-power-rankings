@@ -15,18 +15,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { 
-  ArrowLeft, 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  TrendingUp, 
+import {
+  ArrowLeft,
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  TrendingUp,
   TrendingDown,
   MoreVertical,
   Filter,
   Download,
-  Upload
+  Upload,
 } from "lucide-react";
 import Link from "next/link";
 import { useSupabase } from "@/hooks/use-supabase";
@@ -53,25 +53,28 @@ export function ToolsManager() {
     fetchRankings();
   }, [fetchTools, fetchRankings]);
 
-  const filteredTools = tools.filter(tool => {
-    const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         tool.info?.product?.description?.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredTools = tools.filter((tool) => {
+    const matchesSearch =
+      tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      tool.info?.product?.description?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = !selectedCategory || tool.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const categories = Array.from(new Set(tools.map(t => t.category)));
+  const categories = Array.from(new Set(tools.map((t) => t.category)));
 
-  const getLatestRanking = (toolId: string): ToolWithRanking['latest_ranking'] => {
+  const getLatestRanking = (toolId: string): ToolWithRanking["latest_ranking"] => {
     const toolRankings = rankings
-      .filter(r => r.tool_id === toolId)
+      .filter((r) => r.tool_id === toolId)
       .sort((a, b) => b.period.localeCompare(a.period));
-    
-    if (toolRankings.length === 0) return undefined;
-    
+
+    if (toolRankings.length === 0) {
+      return undefined;
+    }
+
     const latest = toolRankings[0];
     const previous = toolRankings[1];
-    
+
     return {
       position: latest?.position || 0,
       position_change: previous ? (previous.position || 0) - (latest?.position || 0) : 0,
@@ -86,8 +89,11 @@ export function ToolsManager() {
   };
 
   const handleDeleteTool = async (toolId: string) => {
-    if (!window.confirm("Are you sure you want to delete this tool?")) return;
-    
+    // eslint-disable-next-line no-alert
+    if (!window.confirm("Are you sure you want to delete this tool?")) {
+      return;
+    }
+
     // TODO: Implement delete functionality
     console.log("Delete tool:", toolId);
   };
@@ -108,9 +114,7 @@ export function ToolsManager() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Tools Management</h1>
-          <p className="text-muted-foreground">
-            Manage AI tools, rankings, and information
-          </p>
+          <p className="text-muted-foreground">Manage AI tools, rankings, and information</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
@@ -168,7 +172,7 @@ export function ToolsManager() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {rankings.length > 0 
+              {rankings.length > 0
                 ? (rankings.reduce((sum, r) => sum + r.score, 0) / rankings.length).toFixed(1)
                 : "0"}
             </div>
@@ -209,8 +213,10 @@ export function ToolsManager() {
                 onChange={(e) => setSelectedCategory(e.target.value || null)}
               >
                 <option value="">All Categories</option>
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
                 ))}
               </select>
             </div>
@@ -268,9 +274,11 @@ export function ToolsManager() {
                             <div className="flex items-center gap-2">
                               <span className="font-medium">#{ranking.position}</span>
                               {ranking.position_change !== 0 && (
-                                <div className={`flex items-center gap-1 text-sm ${
-                                  ranking.position_change > 0 ? "text-green-600" : "text-red-600"
-                                }`}>
+                                <div
+                                  className={`flex items-center gap-1 text-sm ${
+                                    ranking.position_change > 0 ? "text-green-600" : "text-red-600"
+                                  }`}
+                                >
                                   {ranking.position_change > 0 ? (
                                     <TrendingUp className="h-3 w-3" />
                                   ) : (
@@ -298,11 +306,7 @@ export function ToolsManager() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleEditTool(tool)}
-                            >
+                            <Button size="sm" variant="ghost" onClick={() => handleEditTool(tool)}>
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button
@@ -332,9 +336,7 @@ export function ToolsManager() {
               <CardTitle>Rankings Management</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
-                Rankings management interface coming soon...
-              </p>
+              <p className="text-muted-foreground">Rankings management interface coming soon...</p>
             </CardContent>
           </Card>
         </TabsContent>
