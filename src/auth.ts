@@ -1,37 +1,18 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import Credentials from "next-auth/providers/credentials";
 import type { NextAuthConfig } from "next-auth";
 
 export const config: NextAuthConfig = {
   providers: [
     Google({
-      clientId: process.env.GOOGLE_OAUTH_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET!,
+      clientId: process.env["GOOGLE_OAUTH_CLIENT_ID"]!,
+      clientSecret: process.env["GOOGLE_OAUTH_CLIENT_SECRET"]!,
       authorization: {
         params: {
           prompt: "consent",
           access_type: "offline",
           response_type: "code",
         },
-      },
-    }),
-    // Keep credentials as fallback
-    Credentials({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (credentials?.email === "bob@matsuoka.com" && credentials?.password === "admin123") {
-          return {
-            id: "1",
-            email: "bob@matsuoka.com",
-            name: "Admin User",
-          };
-        }
-        return null;
       },
     }),
   ],
@@ -57,22 +38,22 @@ export const config: NextAuthConfig = {
 
       return true;
     },
-    async signIn({ user, account, profile }) {
+    async signIn({ user }) {
       // Only allow specific email to sign in
       if (user.email === "bob@matsuoka.com") {
         return true;
       }
       return false;
     },
-    async session({ session, token }) {
+    async session({ session }) {
       if (session.user?.email === "bob@matsuoka.com") {
         session.user.isAdmin = true;
       }
       return session;
     },
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user }) {
       if (user?.email === "bob@matsuoka.com") {
-        token.isAdmin = true;
+        token["isAdmin"] = true;
       }
       return token;
     },
