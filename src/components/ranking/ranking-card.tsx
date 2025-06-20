@@ -39,12 +39,12 @@ interface RankingCardProps {
 export function RankingCard({ ranking, showDetails = true }: RankingCardProps): React.JSX.Element {
   const getCategoryColor = (category: string): string => {
     const colors: Record<string, string> = {
-      "code-assistant": "bg-primary/10 text-primary",
-      "ai-editor": "bg-secondary/10 text-secondary",
-      "app-builder": "bg-accent/10 text-accent",
-      "autonomous-agent": "bg-destructive/10 text-destructive",
+      "code-assistant": "bg-primary text-primary-foreground",
+      "ai-editor": "bg-secondary text-secondary-foreground",
+      "app-builder": "bg-accent text-accent-foreground",
+      "autonomous-agent": "bg-destructive text-destructive-foreground",
       "code-review": "bg-muted text-muted-foreground",
-      "data-analysis": "bg-primary/10 text-primary",
+      "data-analysis": "bg-primary text-primary-foreground",
     };
     return colors[category] || "bg-muted text-muted-foreground";
   };
@@ -86,7 +86,7 @@ export function RankingCard({ ranking, showDetails = true }: RankingCardProps): 
               </div>
             </div>
             <div className="flex items-center space-x-2 flex-shrink-0">
-              <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
+              <Badge className="bg-primary text-primary-foreground">
                 <span className="text-xs mr-1">{getMedal(ranking.rank)}</span>#{ranking.rank}
               </Badge>
               <RankingChange

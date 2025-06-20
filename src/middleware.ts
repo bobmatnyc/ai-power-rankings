@@ -26,7 +26,13 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // Check if there is any supported locale in the pathname
+  // For admin routes, we'll handle authentication in the layout component
+  // since middleware can't use auth() in Edge runtime
+  if (pathname.startsWith("/admin")) {
+    return NextResponse.next();
+  }
+
+  // Handle locale routing for non-admin routes
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
@@ -44,6 +50,6 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Skip all internal paths (_next, assets, api)
-    "/((?!api|_next/static|_next/image|assets|favicon.ico|crown-of-technology.png|robots.txt).*)",
+    "/((?!api|_next/static|_next/image|assets|favicon.ico|crown-of-technology.png|robots.txt|sitemap.xml).*)",
   ],
 };

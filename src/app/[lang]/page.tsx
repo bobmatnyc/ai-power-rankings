@@ -61,7 +61,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
 
         <div className="relative px-3 md:px-6 py-12 mx-auto max-w-7xl">
           <div className="text-center mb-12">
-            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+            <Badge className="mb-4 bg-primary/20 text-primary-foreground border-primary/30">
               <Star className="h-3 w-3 mr-1" />
               {dict.home.hero.badge}
             </Badge>
@@ -212,7 +212,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center justify-between">
                     {dict.categories.ideAssistant}
-                    <Badge className="bg-primary/10 text-primary">7</Badge>
+                    <Badge className="bg-primary text-primary-foreground">7</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -231,7 +231,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center justify-between">
                     {dict.categories.codeEditor}
-                    <Badge className="bg-secondary/10 text-secondary">3</Badge>
+                    <Badge variant="secondary">3</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -250,7 +250,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center justify-between">
                     {dict.categories.appBuilder}
-                    <Badge className="bg-accent/10 text-accent">4</Badge>
+                    <Badge className="bg-accent text-white">4</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -269,7 +269,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center justify-between">
                     {dict.categories.autonomousAgent}
-                    <Badge className="bg-destructive/10 text-destructive">6</Badge>
+                    <Badge variant="destructive">6</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
