@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { GoogleSearchConsole } from "@/lib/google-search-console";
 
 // Mock data for development - will be replaced with real API integrations
 const getMockSEOMetrics = () => {
@@ -51,11 +52,61 @@ const getMockSEOMetrics = () => {
   };
 };
 
-// TODO: Implement real Google Search Console API integration
+// Fetch real Google Search Console data
 async function fetchGoogleSearchConsoleData() {
-  // This will integrate with Google Search Console API
-  // For now, returning mock data
-  return getMockSEOMetrics();
+  // Check if we have the required environment variables
+  const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
+  const serviceAccountEmail = process.env["GOOGLE_SERVICE_ACCOUNT_EMAIL"];
+  const serviceAccountKey = process.env["GOOGLE_SERVICE_ACCOUNT_KEY"];
+
+  if (!siteUrl || !serviceAccountEmail || !serviceAccountKey) {
+    console.log("Google Search Console not configured, using mock data");
+    return getMockSEOMetrics();
+  }
+
+  try {
+    // Initialize Google Search Console client
+    const gsc = new GoogleSearchConsole({
+      siteUrl,
+      serviceAccountEmail,
+      serviceAccountKey
+    });
+
+    // Fetch various metrics
+    const [siteMetrics, topQueries, topPages] = await Promise.all([
+      gsc.getSiteMetrics(),
+      gsc.getTopQueries(5),
+      gsc.getTopPages(10)
+    ]);
+
+    // Transform the data to our format
+    const topKeywords = (topQueries.rows || []).map((row: any, index: number) => ({
+      keyword: row.keys[0],
+      position: Math.round(row.position),
+      clicks: Math.round(row.clicks),
+      impressions: Math.round(row.impressions),
+    }));
+
+    return {
+      organicTraffic: siteMetrics.current.clicks,
+      trafficChange: siteMetrics.changes.clicks,
+      avgPosition: siteMetrics.current.position,
+      positionChange: siteMetrics.changes.position,
+      topKeywords,
+      coreWebVitals: {
+        lcp: 1.8, // Still mock - would come from PageSpeed Insights API
+        fid: 45,
+        cls: 0.05,
+      },
+      crawlErrors: 0, // Would need additional API calls
+      seoScore: calculateSEOScore(siteMetrics.current),
+      lastUpdated: new Date().toISOString(),
+    };
+  } catch (error) {
+    console.error("Error fetching Google Search Console data:", error);
+    // Fall back to mock data
+    return getMockSEOMetrics();
+  }
 }
 
 // TODO: Implement Core Web Vitals data from PageSpeed Insights API
