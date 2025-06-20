@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/auth";
 
 // Mock data for development - will be replaced with real API integrations
 const getMockSEOMetrics = () => {
@@ -79,8 +78,8 @@ function calculateSEOScore(_metrics: any) {
 
 // Authentication check using NextAuth.js session
 async function checkAuth(): Promise<boolean> {
-  const session = await getServerSession(authOptions);
-  return !!(session?.user as any)?.isAdmin;
+  const session = await auth();
+  return session?.user?.email === "bob@matsuoka.com";
 }
 
 export async function GET() {
