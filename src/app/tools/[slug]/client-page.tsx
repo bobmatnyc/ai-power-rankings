@@ -19,6 +19,8 @@ import {
   generateToolReviewSchema,
   createJsonLdScript,
 } from "@/lib/schema";
+import { QuickAnswerBox, FAQSection, ComparisonTable } from "@/components/seo";
+import { generalFAQs, codeAssistantFAQs, toolComparisonData } from "@/data/seo-content";
 
 interface ToolDetailClientPageProps {
   slug: string;
@@ -317,7 +319,7 @@ export default function ToolDetailClientPage({
 
       {/* Detailed Information Tabs */}
       <Tabs defaultValue="performance" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-1">
           <TabsTrigger value="performance" className="text-xs md:text-sm">
             Performance
           </TabsTrigger>
@@ -326,6 +328,9 @@ export default function ToolDetailClientPage({
           </TabsTrigger>
           <TabsTrigger value="scores" className="text-xs md:text-sm">
             Scores
+          </TabsTrigger>
+          <TabsTrigger value="comparison" className="text-xs md:text-sm">
+            Compare
           </TabsTrigger>
           <TabsTrigger value="history" className="text-xs md:text-sm">
             History
@@ -481,6 +486,35 @@ export default function ToolDetailClientPage({
           )}
         </TabsContent>
 
+        <TabsContent value="comparison" className="space-y-4">
+          <div className="space-y-6">
+            {/* Quick Answer about the tool */}
+            <QuickAnswerBox
+              question={`How does ${tool.name} compare to other AI tools?`}
+              answer={`${tool.name} ${ranking ? `ranks #${ranking.rank} in our latest rankings` : "is evaluated"} based on performance, features, and user adoption. ${tool.info?.product?.description || "It offers unique capabilities in the AI tool landscape."}`}
+              type="highlight"
+            />
+
+            {/* Comparison table with similar tools */}
+            {tool.category === "code-assistant" && (
+              <ComparisonTable
+                title={`${tool.name} vs Top Code Assistants`}
+                tools={toolComparisonData.topCodeAssistants}
+                focusedTool={tool.name}
+              />
+            )}
+
+            {/* FAQ specific to tool category */}
+            {tool.category === "code-assistant" && (
+              <FAQSection
+                title="Code Assistant FAQs"
+                faqs={codeAssistantFAQs}
+                defaultOpen={["what-is-ai-code-assistant"]}
+              />
+            )}
+          </div>
+        </TabsContent>
+
         <TabsContent value="history" className="space-y-4">
           <div className="space-y-4">
             <div>
@@ -527,6 +561,25 @@ export default function ToolDetailClientPage({
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* SEO-Optimized Content Sections */}
+      <div className="mt-12 space-y-8">
+        {/* General FAQ Section */}
+        <FAQSection
+          title="AI Tool Rankings FAQ"
+          faqs={generalFAQs.slice(0, 4)} // Show first 4 most relevant FAQs
+          defaultOpen={["what-are-ai-tool-rankings"]}
+        />
+
+        {/* Quick Answer about the tool category */}
+        {tool.category === "code-assistant" && (
+          <QuickAnswerBox
+            question="What is the best AI code assistant?"
+            answer={`Based on our comprehensive analysis, <strong>Cursor</strong> currently leads our rankings for AI code assistants. However, ${tool.name} ${ranking ? `ranks #${ranking.rank}` : "is also a strong contender"} and may be the best choice depending on your specific needs and workflow preferences.`}
+            type="definition"
+          />
+        )}
+      </div>
 
       {/* Mobile Visit Site button - centered below content */}
       <div className="mt-8 flex flex-col items-center gap-3 md:hidden">
