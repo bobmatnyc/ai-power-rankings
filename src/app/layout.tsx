@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-import { SEOProvider } from "@/components/seo/seo-provider";
 import { Footer } from "@/components/layout/footer";
 import "./globals.css";
 
@@ -81,7 +80,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
-        <SEOProvider />
         <div className="flex-1">{children}</div>
         <Footer />
         <SpeedInsights />
