@@ -1,17 +1,26 @@
 import { Metadata } from "next";
-import { MarkdownPage } from "@/components/markdown/markdown-page";
-import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
-import { loadMarkdownContent } from "@/lib/markdown-loader";
+import { MarkdownLayout } from "@/components/layout/markdown-layout";
+import { MarkdownContent } from "@/lib/markdown-renderer";
+import {
+  generateMarkdownPageMetadata,
+  getMarkdownPageContent,
+  getMarkdownPageConfig,
+} from "@/lib/markdown-page-utils";
+import { notFound } from "next/navigation";
 
-export const metadata: Metadata = generateSEOMetadata({
-  title: "Terms of Use",
-  description:
-    "Terms of Use for AI Power Rankings. Read our terms and conditions for using our website and services.",
-  path: "/terms",
-  noIndex: false,
-});
+export const metadata: Metadata = generateMarkdownPageMetadata("terms");
 
 export default function TermsPage() {
-  const content = loadMarkdownContent("terms-of-use.md");
-  return <MarkdownPage content={content} />;
+  const config = getMarkdownPageConfig("terms");
+  const content = getMarkdownPageContent("terms");
+
+  if (!config || !content) {
+    notFound();
+  }
+
+  return (
+    <MarkdownLayout title={config.title}>
+      <MarkdownContent content={content} />
+    </MarkdownLayout>
+  );
 }

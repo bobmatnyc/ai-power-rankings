@@ -1,26 +1,5 @@
-import { Card } from "@/components/ui/card";
-
-interface MarkdownPageProps {
-  content: string;
-  className?: string;
-}
-
-export function MarkdownPage({ content, className = "" }: MarkdownPageProps) {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Card className={`p-8 md:p-12 bg-white shadow-lg ${className}`}>
-          <article className="prose prose-lg max-w-none">
-            <div
-              dangerouslySetInnerHTML={{ __html: parseMarkdown(content) }}
-              className="markdown-content"
-            />
-          </article>
-        </Card>
-      </div>
-    </div>
-  );
-}
+import fs from "fs";
+import path from "path";
 
 // Simple markdown parser for basic formatting
 function parseMarkdown(markdown: string): string {
@@ -65,4 +44,30 @@ function parseMarkdown(markdown: string): string {
   html = html.replace(/\*([^*]+)\*/g, '<em class="italic">$1</em>');
 
   return html;
+}
+
+export function loadMarkdownContent(filename: string): string {
+  const filePath = path.join(process.cwd(), "src", "data", "pages", filename);
+
+  try {
+    const content = fs.readFileSync(filePath, "utf8");
+    return content;
+  } catch (error) {
+    console.error(`Error loading markdown file ${filename}:`, error);
+    return `# Error\n\nCould not load content for this page.`;
+  }
+}
+
+export function renderMarkdownToHtml(markdownContent: string): string {
+  return parseMarkdown(markdownContent);
+}
+
+interface MarkdownContentProps {
+  content: string;
+}
+
+export function MarkdownContent({ content }: MarkdownContentProps) {
+  const htmlContent = renderMarkdownToHtml(content);
+
+  return <div dangerouslySetInnerHTML={{ __html: htmlContent }} className="markdown-content" />;
 }
