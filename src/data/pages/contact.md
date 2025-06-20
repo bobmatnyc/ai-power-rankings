@@ -1,5 +1,3 @@
-# Contact Us
-
 We'd love to hear from you! Whether you have questions about our rankings, suggestions for improvements, or business inquiries, we're here to help.
 
 ## Get in Touch
