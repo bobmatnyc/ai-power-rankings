@@ -18,12 +18,12 @@ export function AdminDashboard() {
       color: "bg-blue-500",
     },
     {
-      title: "Content Management",
-      description: "Manage rankings, tools, and website content",
+      title: "Tools Management",
+      description: "Manage AI tools, rankings, and information",
       icon: FileText,
-      href: "/admin/content",
+      href: "/admin/tools",
       color: "bg-green-500",
-      disabled: true,
+      disabled: false,
     },
     {
       title: "Analytics",
@@ -108,8 +108,8 @@ export function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div>
-            <p className="text-xs text-muted-foreground">SEO Dashboard available</p>
+            <div className="text-2xl font-bold">2</div>
+            <p className="text-xs text-muted-foreground">SEO & Tools Management</p>
           </CardContent>
         </Card>
 
