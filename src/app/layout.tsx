@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import { SEOProvider } from "@/components/seo/seo-provider";
+import { Footer } from "@/components/layout/footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -79,9 +80,10 @@ export default function RootLayout({
 }>): React.JSX.Element {
   return (
     <html lang="en">
-      <body>
+      <body className="min-h-screen flex flex-col">
         <SEOProvider />
-        {children}
+        <div className="flex-1">{children}</div>
+        <Footer />
         <SpeedInsights />
         <Analytics />
       </body>
