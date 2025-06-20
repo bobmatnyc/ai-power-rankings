@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 // Mock data for development - will be replaced with real API integrations
 const getMockSEOMetrics = () => {
@@ -75,13 +77,18 @@ function calculateSEOScore(_metrics: any) {
   return 85; // Mock score
 }
 
+// Authentication check using NextAuth.js session
+async function checkAuth(): Promise<boolean> {
+  const session = await getServerSession(authOptions);
+  return !!(session?.user as any)?.isAdmin;
+}
+
 export async function GET() {
   try {
-    // TODO: Add authentication check here
-    // const user = await getAuthenticatedUser();
-    // if (!user || !user.isAdmin) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    // Check authentication using NextAuth.js session
+    if (!(await checkAuth())) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const [searchConsoleData] = await Promise.all([
       fetchGoogleSearchConsoleData(),
@@ -105,7 +112,10 @@ export async function GET() {
 
 export async function POST() {
   try {
-    // TODO: Add authentication check
+    // Check authentication using NextAuth.js session
+    if (!(await checkAuth())) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     // Force refresh of SEO data
     const refreshedMetrics = await fetchGoogleSearchConsoleData();

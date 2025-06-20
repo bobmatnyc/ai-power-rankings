@@ -3,6 +3,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Script from "next/script";
 import { generateOrganizationSchema, createJsonLdScript } from "@/lib/schema";
+import { AuthSessionProvider } from "@/components/providers/session-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -97,7 +98,7 @@ export default function RootLayout({
             __html: createJsonLdScript(organizationSchema),
           }}
         />
-        {children}
+        <AuthSessionProvider>{children}</AuthSessionProvider>
         <SpeedInsights />
         <Analytics />
       </body>
