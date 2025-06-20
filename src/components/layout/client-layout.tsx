@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { I18nProvider, useI18n } from "@/i18n/client";
 import { LanguageSelector } from "@/components/layout/language-selector";
+import { Footer } from "@/components/layout/footer";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -103,7 +104,10 @@ function ClientLayoutContent({ children }: { children: React.ReactNode }): React
               shouldHideHeader ? "pt-0 md:pt-0" : "pt-[73px] md:pt-0"
             }`}
           >
-            {children}
+            <div className="min-h-full flex flex-col">
+              <div className="flex-1">{children}</div>
+              <Footer />
+            </div>
           </div>
         </main>
       </div>
