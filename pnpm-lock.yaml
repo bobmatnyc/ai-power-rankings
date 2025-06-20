@@ -11,6 +11,9 @@ dependencies:
   '@marsidev/react-turnstile':
     specifier: ^1.1.0
     version: 1.1.0(react-dom@19.1.0)(react@19.1.0)
+  '@next-auth/supabase-adapter':
+    specifier: ^0.2.1
+    version: 0.2.1(@supabase/supabase-js@2.50.0)(next-auth@4.24.11)
   '@octokit/rest':
     specifier: ^22.0.0
     version: 22.0.0
@@ -1087,6 +1090,16 @@ packages:
       '@tybys/wasm-util': 0.9.0
     dev: true
     optional: true
+
+  /@next-auth/supabase-adapter@0.2.1(@supabase/supabase-js@2.50.0)(next-auth@4.24.11):
+    resolution: {integrity: sha512-BlIbBRd8QjdV84h/XH2QuuleZAFcmfRwT0pyvc9iqrVztxmjWOalNRvSA7xsbqsQq9mK16PMmNPRvsDEUAAgfQ==}
+    peerDependencies:
+      '@supabase/supabase-js': ^2.0.5
+      next-auth: ^4.18.7
+    dependencies:
+      '@supabase/supabase-js': 2.50.0
+      next-auth: 4.24.11(next@15.3.3)(nodemailer@6.10.1)(react-dom@19.1.0)(react@19.1.0)
+    dev: false
 
   /@next/env@15.3.3:
     resolution: {integrity: sha512-OdiMrzCl2Xi0VTjiQQUK0Xh7bJHnOuET2s+3V+Y40WJBAXrJeGA3f+I8MZJ/YQ3mVGi5XGR1L66oFlgqXhQ4Vw==}
