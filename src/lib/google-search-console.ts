@@ -12,15 +12,18 @@ interface SearchAnalyticsQuery {
 interface SearchConsoleConfig {
   siteUrl: string;
   serviceAccountEmail?: string;
+  accessToken?: string; // OAuth token from authenticated user
 }
 
 export class GoogleSearchConsole {
   private searchconsole: any;
   private siteUrl: string;
   private initialized: boolean = false;
+  private accessToken?: string;
 
   constructor(config: SearchConsoleConfig) {
     this.siteUrl = config.siteUrl;
+    this.accessToken = config.accessToken;
   }
 
   private async initialize() {
@@ -30,12 +33,19 @@ export class GoogleSearchConsole {
 
     const projectId = process.env["GOOGLE_CLOUD_PROJECT_ID"] || "ai-power-ranking";
     let auth;
+    let authClient;
 
-    // Check for service account JSON (for production environments like Vercel)
-    const serviceAccountJson = process.env["GOOGLE_APPLICATION_CREDENTIALS_JSON"];
-
-    if (serviceAccountJson) {
-      // Parse the service account JSON and use it for authentication
+    // Option 1: Use OAuth access token from authenticated user (for production)
+    if (this.accessToken) {
+      const oauth2Client = new google.auth.OAuth2();
+      oauth2Client.setCredentials({
+        access_token: this.accessToken,
+      });
+      authClient = oauth2Client;
+    }
+    // Option 2: Use service account JSON (if provided)
+    else if (process.env["GOOGLE_APPLICATION_CREDENTIALS_JSON"]) {
+      const serviceAccountJson = process.env["GOOGLE_APPLICATION_CREDENTIALS_JSON"];
       try {
         const credentials = JSON.parse(serviceAccountJson);
         auth = new google.auth.GoogleAuth({
@@ -43,12 +53,14 @@ export class GoogleSearchConsole {
           scopes: ["https://www.googleapis.com/auth/webmasters"],
           projectId: projectId,
         });
+        authClient = await auth.getClient();
       } catch (error) {
         console.error("Failed to parse service account JSON:", error);
         throw new Error("Invalid GOOGLE_APPLICATION_CREDENTIALS_JSON");
       }
-    } else {
-      // Use Application Default Credentials (for local development)
+    }
+    // Option 3: Use Application Default Credentials (for local development)
+    else {
       const serviceAccountEmail = process.env["GOOGLE_SERVICE_ACCOUNT_EMAIL"];
 
       if (serviceAccountEmail) {
@@ -67,9 +79,8 @@ export class GoogleSearchConsole {
           projectId: projectId,
         });
       }
+      authClient = await auth.getClient();
     }
-
-    const authClient = await auth.getClient();
 
     // Initialize Search Console API
     this.searchconsole = google.searchconsole({
