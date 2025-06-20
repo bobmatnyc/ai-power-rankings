@@ -13,6 +13,13 @@ import { ToolIcon } from "@/components/ui/tool-icon";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import { NewsCard, type NewsItem } from "@/components/news/news-card";
 import { MetricHistory } from "@/types/database";
+import Script from "next/script";
+import {
+  generateToolSchema,
+  generateBreadcrumbSchema,
+  generateToolReviewSchema,
+  createJsonLdScript,
+} from "@/lib/schema";
 
 interface ToolDetail {
   tool: {
@@ -153,8 +160,63 @@ export default function ToolDetailPage(): React.JSX.Element {
 
   const { tool, ranking, metrics, metricHistory } = toolData;
 
+  // Generate structured data
+  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+
+  const toolSchemaData = {
+    name: tool.name,
+    description: tool.info?.product?.description || tool.info?.product?.tagline,
+    category: tool.category,
+    company: tool.info?.company?.name,
+    website: tool.info?.links?.website,
+    pricing: tool.info?.product?.pricing_model,
+    logo: tool.info?.metadata?.logo_url,
+    github: tool.info?.links?.github,
+    rank: ranking?.rank,
+    score: ranking?.scores?.overall,
+    users: metrics?.users,
+    ratingCount: 1, // Default value for now
+  };
+
+  const toolSchema = generateToolSchema(toolSchemaData);
+
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Home", url: "/" },
+      { name: "Tools", url: "/tools" },
+      { name: tool.name, url: `/tools/${params["slug"]}` },
+    ],
+    baseUrl
+  );
+
+  const reviewSchema = generateToolReviewSchema(toolSchemaData, baseUrl);
+
   return (
     <div className="container mx-auto p-4 md:p-8 max-w-6xl">
+      <Script
+        id="tool-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: createJsonLdScript(toolSchema),
+        }}
+      />
+      <Script
+        id="tool-breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: createJsonLdScript(breadcrumbSchema),
+        }}
+      />
+      {reviewSchema && (
+        <Script
+          id="tool-review-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: createJsonLdScript(reviewSchema),
+          }}
+        />
+      )}
+
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">

@@ -3,6 +3,12 @@ import RankingsGrid from "@/components/ranking/rankings-grid";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 import { loggers } from "@/lib/logger";
+import Script from "next/script";
+import {
+  generateRankingFAQSchema,
+  generateBreadcrumbSchema,
+  createJsonLdScript,
+} from "@/lib/schema";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -33,8 +39,34 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
     loggers.ranking.error("Failed to fetch rankings on server", { error });
   }
 
+  // Generate structured data
+  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+  const faqSchema = generateRankingFAQSchema();
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Home", url: "/" },
+      { name: "Rankings", url: "/rankings" },
+    ],
+    baseUrl
+  );
+
   return (
     <div className="px-3 md:px-6 py-8 max-w-7xl mx-auto">
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: createJsonLdScript(faqSchema),
+        }}
+      />
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: createJsonLdScript(breadcrumbSchema),
+        }}
+      />
+
       <Suspense
         fallback={
           <div className="flex items-center justify-center h-64">

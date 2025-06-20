@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import Script from "next/script";
+import { generateOrganizationSchema, createJsonLdScript } from "@/lib/schema";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -76,9 +78,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>): React.JSX.Element {
+  // Generate organization schema
+  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+  const organizationSchema = generateOrganizationSchema({
+    name: "AI Power Rankings",
+    url: baseUrl,
+    description:
+      "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by 500K+ developers worldwide.",
+  });
+
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col">
+        <Script
+          id="organization-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: createJsonLdScript(organizationSchema),
+          }}
+        />
         {children}
         <SpeedInsights />
         <Analytics />
