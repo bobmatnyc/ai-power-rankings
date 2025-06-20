@@ -11,6 +11,7 @@ import { Mail } from "lucide-react";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -28,18 +29,30 @@ export default function SignInPage() {
     }
 
     try {
-      const result = await signIn("email", {
+      const result = await signIn("credentials", {
         email,
+        password,
         redirect: false,
+        callbackUrl: "/admin",
       });
 
+      console.log("SignIn result:", result);
+
       if (result?.error) {
-        setError("Failed to send sign-in email. Please try again.");
+        console.error("SignIn error:", result.error);
+        setError("Invalid credentials. Please check your email and password.");
+      } else if (result?.ok) {
+        setMessage("Sign in successful! Redirecting...");
+        // Redirect to admin dashboard
+        window.location.href = "/admin";
       } else {
-        setMessage("Check your email for a sign-in link!");
+        setError("Authentication failed. Please try again.");
       }
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+      console.error("SignIn exception:", err);
+      setError(
+        `An unexpected error occurred: ${err instanceof Error ? err.message : "Unknown error"}`
+      );
     } finally {
       setLoading(false);
     }
@@ -61,7 +74,20 @@ export default function SignInPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="bob@matsuoka.com"
+                required
+                disabled={loading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
                 required
                 disabled={loading}
               />
@@ -80,8 +106,8 @@ export default function SignInPage() {
               </Alert>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading || !email}>
-              {loading ? "Sending..." : "Send Sign-in Link"}
+            <Button type="submit" className="w-full" disabled={loading || !email || !password}>
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
         </CardContent>
