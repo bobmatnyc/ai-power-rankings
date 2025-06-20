@@ -12,6 +12,7 @@ export const config: NextAuthConfig = {
           prompt: "consent",
           access_type: "offline",
           response_type: "code",
+          scope: "openid email profile https://www.googleapis.com/auth/webmasters.readonly",
         },
       },
     }),
@@ -45,15 +46,22 @@ export const config: NextAuthConfig = {
       }
       return false;
     },
-    async session({ session }) {
+    async session({ session, token }) {
       if (session.user?.email === "bob@matsuoka.com") {
         session.user.isAdmin = true;
       }
+      // Pass the access token to the session
+      session.accessToken = token.accessToken as string;
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user?.email === "bob@matsuoka.com") {
         token["isAdmin"] = true;
+      }
+      // Persist the OAuth access_token to the token right after signin
+      if (account) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
       }
       return token;
     },

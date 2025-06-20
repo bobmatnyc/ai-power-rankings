@@ -53,7 +53,7 @@ const getMockSEOMetrics = () => {
 };
 
 // Fetch real Google Search Console data
-async function fetchGoogleSearchConsoleData() {
+async function fetchGoogleSearchConsoleData(accessToken?: string) {
   // Check if we have the required environment variables
   const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
 
@@ -63,9 +63,10 @@ async function fetchGoogleSearchConsoleData() {
   }
 
   try {
-    // Initialize Google Search Console client with ADC
+    // Initialize Google Search Console client
     const gsc = new GoogleSearchConsole({
       siteUrl,
+      accessToken, // Pass the OAuth token from the authenticated user
     });
 
     // Fetch various metrics
@@ -131,13 +132,16 @@ async function checkAuth(): Promise<boolean> {
 
 export async function GET() {
   try {
-    // Check authentication using NextAuth.js session
-    if (!(await checkAuth())) {
+    // Get the session with access token
+    const session = await auth();
+
+    // Check authentication
+    if (!session || session.user?.email !== "bob@matsuoka.com") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const [searchConsoleData] = await Promise.all([
-      fetchGoogleSearchConsoleData(),
+      fetchGoogleSearchConsoleData(session.accessToken),
       fetchCoreWebVitalsData(),
     ]);
 
@@ -158,13 +162,16 @@ export async function GET() {
 
 export async function POST() {
   try {
-    // Check authentication using NextAuth.js session
-    if (!(await checkAuth())) {
+    // Get the session with access token
+    const session = await auth();
+
+    // Check authentication
+    if (!session || session.user?.email !== "bob@matsuoka.com") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Force refresh of SEO data
-    const refreshedMetrics = await fetchGoogleSearchConsoleData();
+    const refreshedMetrics = await fetchGoogleSearchConsoleData(session.accessToken);
 
     return NextResponse.json({
       message: "SEO metrics refreshed successfully",
