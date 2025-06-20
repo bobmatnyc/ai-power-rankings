@@ -1,5 +1,3 @@
-# Terms of Use
-
 **Last Updated: December 2024**
 
 ## 1. Acceptance of Terms
