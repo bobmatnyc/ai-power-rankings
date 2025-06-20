@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Mail } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Chrome } from "lucide-react";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -58,6 +59,21 @@ export default function SignInPage() {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      await signIn("google", {
+        callbackUrl: "/admin",
+      });
+    } catch (err) {
+      console.error("Google SignIn exception:", err);
+      setError("Failed to sign in with Google. Please try again.");
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md">
@@ -101,7 +117,6 @@ export default function SignInPage() {
 
             {message && (
               <Alert>
-                <Mail className="h-4 w-4" />
                 <AlertDescription>{message}</AlertDescription>
               </Alert>
             )}
@@ -110,6 +125,30 @@ export default function SignInPage() {
               {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <Separator />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+          >
+            <Chrome className="mr-2 h-4 w-4" />
+            Sign in with Google
+          </Button>
+
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            Only authorized users (bob@matsuoka.com) can access the admin panel.
+          </p>
         </CardContent>
       </Card>
     </div>
