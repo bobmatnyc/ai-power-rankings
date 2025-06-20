@@ -15,13 +15,12 @@ export function useSupabase() {
     try {
       setLoading(true);
       setError(null);
-      
-      const { data, error } = await supabase
-        .from("tools")
-        .select("*")
-        .order("name");
 
-      if (error) throw error;
+      const { data, error } = await supabase.from("tools").select("*").order("name");
+
+      if (error) {
+        throw error;
+      }
       setTools(data || []);
     } catch (err) {
       setError(err as Error);
@@ -36,14 +35,16 @@ export function useSupabase() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const { data, error } = await supabase
         .from("rankings")
         .select("*")
         .order("period", { ascending: false })
         .order("position");
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       setRankings(data || []);
     } catch (err) {
       setError(err as Error);
@@ -58,7 +59,7 @@ export function useSupabase() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const { data, error } = await supabase
         .from("tools")
         .update(updates)
@@ -66,13 +67,13 @@ export function useSupabase() {
         .select()
         .single();
 
-      if (error) throw error;
-      
+      if (error) {
+        throw error;
+      }
+
       // Update local state
-      setTools(prevTools => 
-        prevTools.map(tool => tool.id === toolId ? data : tool)
-      );
-      
+      setTools((prevTools) => prevTools.map((tool) => (tool.id === toolId ? data : tool)));
+
       return data;
     } catch (err) {
       setError(err as Error);
@@ -88,16 +89,15 @@ export function useSupabase() {
     try {
       setLoading(true);
       setError(null);
-      
-      const { error } = await supabase
-        .from("tools")
-        .delete()
-        .eq("id", toolId);
 
-      if (error) throw error;
-      
+      const { error } = await supabase.from("tools").delete().eq("id", toolId);
+
+      if (error) {
+        throw error;
+      }
+
       // Update local state
-      setTools(prevTools => prevTools.filter(tool => tool.id !== toolId));
+      setTools((prevTools) => prevTools.filter((tool) => tool.id !== toolId));
     } catch (err) {
       setError(err as Error);
       console.error("Error deleting tool:", err);
