@@ -42,7 +42,7 @@ function parseMarkdown(markdown: string): string {
 
   // Lists
   html = html.replace(/^\* (.+)$/gim, '<li class="ml-6 mb-2">$1</li>');
-  html = html.replace(/(<li.*<\/li>)/s, '<ul class="list-disc mb-4">$1</ul>');
+  html = html.replace(/(<li.*<\/li>)/g, '<ul class="list-disc mb-4">$1</ul>');
 
   // Numbered lists
   html = html.replace(/^\d+\. (.+)$/gim, '<li class="ml-6 mb-2">$1</li>');
