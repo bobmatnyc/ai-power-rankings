@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,10 @@ import {
   AlertTriangle,
   Clock,
   BarChart3,
+  LogOut,
+  ArrowLeft,
 } from "lucide-react";
+import Link from "next/link";
 
 interface SEOMetrics {
   organicTraffic: number;
@@ -36,13 +40,16 @@ interface SEOMetrics {
 }
 
 export function SEODashboard() {
+  const { data: session, status } = useSession();
   const [metrics, setMetrics] = useState<SEOMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchSEOMetrics();
-  }, []);
+    if (status === "authenticated") {
+      fetchSEOMetrics();
+    }
+  }, [status]);
 
   const fetchSEOMetrics = async () => {
     try {
@@ -126,6 +133,16 @@ export function SEODashboard() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* Navigation */}
+      <div className="flex items-center gap-4">
+        <Button variant="outline" size="sm" asChild>
+          <Link href="/admin" className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Admin
+          </Link>
+        </Button>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -134,9 +151,23 @@ export function SEODashboard() {
             Monitor website performance and search engine optimization metrics
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Clock className="h-4 w-4" />
-          Last updated: {new Date(metrics.lastUpdated).toLocaleString()}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Clock className="h-4 w-4" />
+            Last updated: {new Date(metrics.lastUpdated).toLocaleString()}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">{session?.user?.email}</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => signOut()}
+              className="flex items-center gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </div>
 

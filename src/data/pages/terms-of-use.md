@@ -100,7 +100,7 @@ We reserve the right to modify or replace these Terms at any time. If a revision
 
 For questions about these Terms of Use, please contact us at:
 
-**Email**: legal@aipowerrankings.com  
+**Email**: hyperdev@matsuoka.com  
 **Website**: https://aipowerrankings.com/contact
 
 ---

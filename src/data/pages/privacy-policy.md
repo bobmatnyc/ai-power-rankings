@@ -68,7 +68,7 @@ You have the right to:
 - **Objection**: Object to certain processing activities
 - **Unsubscribe**: Opt-out of newsletter communications
 
-To exercise these rights, contact us at privacy@aipowerrankings.com.
+To exercise these rights, contact us at hyperdev@matsuoka.com.
 
 ## Cookie Policy
 
@@ -96,12 +96,12 @@ We may update this Privacy Policy periodically. We will notify you of material c
 
 For privacy-related questions or concerns:
 
-**Email**: privacy@aipowerrankings.com  
+**Email**: hyperdev@matsuoka.com  
 **Website**: https://aipowerrankings.com/contact
 
 ## Data Protection Officer
 
-For GDPR-related inquiries, contact our Data Protection Officer at dpo@aipowerrankings.com.
+For GDPR-related inquiries, contact our Data Protection Officer at hyperdev@matsuoka.com.
 
 ---
 
