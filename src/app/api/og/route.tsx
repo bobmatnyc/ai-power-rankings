@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     const subtitle = searchParams.get("subtitle") || "Developer Tool Intelligence";
     const rank = searchParams.get("rank");
     const logo = searchParams.get("logo");
+    const description = searchParams.get("description");
 
     return new ImageResponse(
       (
@@ -81,12 +82,28 @@ export async function GET(request: NextRequest) {
             style={{
               fontSize: "36px",
               color: "#94a3b8",
-              marginBottom: "60px",
+              marginBottom: description ? "24px" : "60px",
               fontWeight: "400",
             }}
           >
             {subtitle}
           </div>
+
+          {/* Description */}
+          {description && (
+            <div
+              style={{
+                fontSize: "24px",
+                color: "#cbd5e1",
+                marginBottom: "60px",
+                fontWeight: "400",
+                maxWidth: "900px",
+                lineHeight: "1.4",
+              }}
+            >
+              {description}
+            </div>
+          )}
 
           {/* Branding footer */}
           <div
