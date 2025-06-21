@@ -20,6 +20,7 @@ const languageNames: Record<Locale, string> = {
   ko: "KO",
   uk: "UK",
   hr: "HR",
+  zh: "ZH",
 };
 
 export function LanguageSelector() {

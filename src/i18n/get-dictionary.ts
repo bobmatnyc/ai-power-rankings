@@ -13,6 +13,7 @@ const dictionaries = {
   ko: () => import("./dictionaries/ko.json").then((module) => module.default),
   uk: () => import("./dictionaries/uk.json").then((module) => module.default),
   hr: () => import("./dictionaries/hr.json").then((module) => module.default),
+  zh: () => import("./dictionaries/zh.json").then((module) => module.default),
 };
 
 // Define the raw dictionary type based on the actual JSON structure
