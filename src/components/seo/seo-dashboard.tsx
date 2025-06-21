@@ -15,6 +15,7 @@ import {
   BarChart3,
   LogOut,
   ArrowLeft,
+  Upload,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -44,6 +45,7 @@ export function SEODashboard() {
   const [metrics, setMetrics] = useState<SEOMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [submittingSitemap, setSubmittingSitemap] = useState(false);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -66,6 +68,30 @@ export function SEODashboard() {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const submitSitemap = async () => {
+    try {
+      setSubmittingSitemap(true);
+      const response = await fetch("/api/admin/seo/submit-sitemap", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to submit sitemap");
+      }
+
+      const data = await response.json();
+      // Sitemap submitted successfully
+      console.log("Sitemap submission result:", data);
+    } catch (err) {
+      console.error(
+        `Failed to submit sitemap: ${err instanceof Error ? err.message : "Unknown error"}`
+      );
+    } finally {
+      setSubmittingSitemap(false);
     }
   };
 
@@ -352,6 +378,10 @@ export function SEODashboard() {
         <Button onClick={fetchSEOMetrics}>Refresh Data</Button>
         <Button variant="outline">Generate Report</Button>
         <Button variant="outline">Export Data</Button>
+        <Button variant="outline" onClick={submitSitemap} disabled={submittingSitemap}>
+          <Upload className="h-4 w-4 mr-2" />
+          {submittingSitemap ? "Submitting..." : "Submit Sitemap"}
+        </Button>
       </div>
     </div>
   );

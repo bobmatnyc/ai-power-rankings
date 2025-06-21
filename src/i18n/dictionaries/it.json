@@ -18,7 +18,7 @@
   "common": {
     "appName": "Ranking AI",
     "appDescription": "Ranking data-driven di tool di coding AI",
-    "loading": "Loading...",
+    "loading": "Caricamento...",
     "error": "Errore",
     "tryAgain": "Riprova",
     "backToHome": "Torna alla Home",
@@ -47,7 +47,7 @@
     "quickLinks": "Link rapidi",
     "trending": "Trending",
     "categories": "Categorie",
-    "features": "Features",
+    "features": "Funzionalità",
     "clearFilters": "Cancella filtri",
     "allCategories": "Tutte le categorie"
   },
@@ -68,7 +68,7 @@
       "trendingUp": "In tendenza",
       "updates": "Aggiornamenti",
       "freeAccess": "Accesso gratuito",
-      "updateFrequency": "Weekly Updates"
+      "updateFrequency": "Aggiornamenti settimanali"
     },
     "trending": {
       "title": "Trend di questa settimana",
@@ -90,19 +90,19 @@
       "viewAllButton": "Visualizza tutti i recenti"
     },
     "categories": {
-      "title": "Explore by Category",
-      "explore": "Explore →",
+      "title": "Esplora per categoria",
+      "explore": "Esplora →",
       "ideAssistants": {
-        "name": "IDE Assistants",
-        "description": "AI-powered code completion and suggestions"
+        "name": "Assistenti IDE",
+        "description": "Completamento del codice e suggerimenti alimentati da AI"
       },
       "aiEditors": {
-        "name": "AI Editors",
-        "description": "Smart editors with AI integration"
+        "name": "Editor AI",
+        "description": "Editor intelligenti con integrazione AI"
       },
       "appBuilders": {
-        "name": "App Builders",
-        "description": "Build complete applications with AI assistance"
+        "name": "Costruttori di app",
+        "description": "Costruisci applicazioni complete con assistenza AI"
       },
       "autonomousAgents": {
         "name": "Autonomous Agents",
@@ -188,10 +188,11 @@
     "sortBy": "Sort by",
     "activeFilters": "Active filters",
     "sort": {
-      "rank": "Rank",
+      "rank": "Posizione",
       "trending": "Trending",
-      "score": "Score",
-      "name": "Name"
+      "score": "Punteggio",
+      "name": "Nome",
+      "category": "Categoria"
     },
     "algorithm": {
       "title": "About Algorithm v6.0",
@@ -221,18 +222,24 @@
       },
       "methodologyText": "[TRANSLATE] Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
       "viewMethodology": "[TRANSLATE] View Full Methodology"
-    }
+    },
+    "filters": {
+      "category": "Filtra per categoria",
+      "all": "Tutti"
+    },
+    "noResults": "Nessun risultato trovato",
+    "showingResults": "Mostrando {count} di {total} strumenti"
   },
   "news": {
-    "title": "AI Tools News",
-    "subtitle": "Latest updates, milestones, and announcements from AI coding tools",
+    "title": "Ultime notizie",
+    "subtitle": "Aggiornamenti e annunci dal mondo del coding AI",
     "filters": {
-      "all": "All News",
+      "all": "Tutti",
       "milestone": "Milestone",
-      "feature": "Feature",
+      "feature": "Funzionalità",
       "partnership": "Partnership",
-      "update": "Update",
-      "announcement": "Announcement"
+      "update": "Aggiornamenti",
+      "announcement": "Annunci"
     },
     "noItems": "No news items found.",
     "loadingMore": "Loading more news...",
@@ -240,8 +247,9 @@
     "viewTool": "View Tool",
     "metrics": {
       "users": "users",
-      "score": "score",
-      "rank": "rank"
+      "score": "Punteggio",
+      "rank": "Posizione",
+      "change": "Cambiamento"
     },
     "time": {
       "justNow": "Just now",
@@ -249,7 +257,10 @@
       "hoursAgo": "{count} hours ago",
       "dayAgo": "1 day ago",
       "daysAgo": "{count} days ago"
-    }
+    },
+    "readMore": "Leggi di più",
+    "publishedOn": "Pubblicato il",
+    "noResults": "Nessuna notizia trovata"
   },
   "tools": {
     "title": "Tool di Coding AI",
@@ -309,7 +320,7 @@
         "tokens": "tokens",
         "languages": "languages",
         "yes": "Yes",
-        "multiple": "Multiple"
+        "multiple": "Multiplo"
       },
       "businessMetrics": {
         "title": "Business Metrics",
@@ -317,8 +328,10 @@
         "monthlyArr": "ARR (Monthly)",
         "valuation": "Valuation",
         "totalFunding": "Total Funding",
-        "employees": "Employees",
-        "totalUsers": "Total Users"
+        "employees": "Dipendenti",
+        "totalUsers": "Total Users",
+        "funding": "Finanziamento",
+        "revenue": "Fatturato"
       },
       "rankingScores": {
         "title": "Ranking Scores",
@@ -357,20 +370,23 @@
   },
   "newsletter": {
     "form": {
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email",
-      "subscribe": "Subscribe",
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "email": "Indirizzo email",
+      "subscribe": "Iscriviti",
       "subscribing": "Subscribing...",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time."
+      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
+      "placeholder": {
+        "email": "tua@email.com"
+      }
     },
     "modal": {
-      "title": "Stay Updated",
+      "title": "Rimani aggiornato",
       "subtitle": "Get weekly updates on AI tool rankings, new features, and industry insights.",
       "firstName": "First name",
       "lastName": "Last name",
       "email": "Email",
-      "subscribe": "Subscribe",
+      "subscribe": "Iscriviti",
       "subscribing": "Subscribing...",
       "thankYou": "Thank you!",
       "checkEmail": "Please check your email to verify your subscription",
@@ -382,7 +398,9 @@
         "failed": "Failed to subscribe. Please try again.",
         "server": "Server configuration error",
         "email": "Email service configuration error"
-      }
+      },
+      "description": "Ricevi le ultime classifiche e aggiornamenti degli strumenti AI",
+      "close": "Chiudi"
     },
     "verification": {
       "title": "Email Verification",
@@ -421,8 +439,8 @@
       "title": "Unsubscribe from Newsletter",
       "processing": "Processing your request...",
       "success": {
-        "title": "Successfully Unsubscribed",
-        "message": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!",
+        "title": "Disiscrizione riuscita",
+        "message": "Sei stato rimosso dalla nostra mailing list",
         "description": "[TRANSLATE] You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
       },
       "errors": {
@@ -439,8 +457,8 @@
           "message": "We couldn't process your unsubscribe request. Please try again later."
         },
         "unexpected": {
-          "title": "Error",
-          "message": "An unexpected error occurred. Please try again."
+          "title": "Errore",
+          "message": "Si è verificato un errore imprevisto"
         },
         "unsubscribeFailed": "[TRANSLATE] We couldn't process your unsubscribe request. Please try again later.",
         "default": "[TRANSLATE] An unexpected error occurred. Please try again."
@@ -471,6 +489,16 @@
         "invalidToken": "[TRANSLATE] This verification link is invalid or has expired.",
         "verificationFailed": "[TRANSLATE] We couldn't verify your email at this time. Please try again later."
       }
+    },
+    "title": "Iscriviti agli aggiornamenti degli strumenti AI",
+    "description": "Ricevi aggiornamenti settimanali sui nuovi strumenti di coding AI e classifiche",
+    "success": {
+      "title": "Iscrizione riuscita!",
+      "message": "Riceverai presto i nostri aggiornamenti settimanali"
+    },
+    "error": {
+      "title": "Iscrizione fallita",
+      "message": "Per favore riprova"
     }
   },
   "methodology": {
@@ -525,13 +553,19 @@
         "details": "[TRANSLATE] Measures autonomous capabilities, multi-step reasoning, and complex task completion"
       },
       "innovation": {
-        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation"
+        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation",
+        "name": "Innovazione",
+        "description": "Funzionalità uniche e progressi tecnologici"
       },
       "performance": {
-        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
+        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks",
+        "name": "Prestazioni",
+        "description": "Capacità di generazione, completamento e debug del codice"
       },
       "adoption": {
-        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics"
+        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics",
+        "name": "Adozione",
+        "description": "Accettazione degli utenti e coinvolgimento della community"
       },
       "traction": {
         "details": "[TRANSLATE] Revenue growth, funding rounds, and business momentum indicators"
@@ -544,6 +578,10 @@
       },
       "resilience": {
         "details": "[TRANSLATE] Platform stability, backup options, and vendor independence"
+      },
+      "ecosystem": {
+        "name": "Ecosistema",
+        "description": "Integrazioni e supporto per sviluppatori"
       }
     },
     "modifiers": {
@@ -607,6 +645,10 @@
         "title": "[TRANSLATE] Update Schedule",
         "description": "[TRANSLATE] Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
       }
+    },
+    "overview": {
+      "title": "Panoramica della valutazione",
+      "description": "Il nostro approccio basato sui dati per valutare gli strumenti di coding AI"
     }
   },
   "about": {
@@ -617,9 +659,9 @@
       "subtitle": "We believe developers deserve transparent, objective rankings of AI coding tools to make informed decisions."
     },
     "mission": {
-      "title": "Our Mission",
+      "title": "La nostra missione",
       "content": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs.",
-      "description": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
+      "description": "Classifiche trasparenti e basate sui dati degli strumenti di coding AI per sviluppatori"
     },
     "whyWeBuiltThis": {
       "title": "Why We Built This",
@@ -631,8 +673,8 @@
       }
     },
     "team": {
-      "title": "The Team",
-      "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development.",
+      "title": "Il team",
+      "description": "Scopri le persone dietro AI Power Rankings",
       "description1": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
       "description2": "[TRANSLATE] I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
       "description3": "[TRANSLATE] Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
@@ -640,8 +682,8 @@
       "reportIssue": "[TRANSLATE] Report an Issue"
     },
     "contact": {
-      "title": "Get in Touch",
-      "description": "Have feedback or suggestions? We'd love to hear from you.",
+      "title": "Contatto",
+      "description": "Hai domande o feedback? Contattaci",
       "email": "Contact us at hello@aipowerranking.com"
     },
     "newsletter": {
@@ -718,14 +760,18 @@
       "description": "[TRANSLATE] Dive into our rankings to discover the best AI coding tools for your needs.",
       "exploreButton": "[TRANSLATE] Explore Rankings",
       "methodologyButton": "[TRANSLATE] Learn Our Methodology"
+    },
+    "methodology": {
+      "title": "Metodologia",
+      "description": "Criteri di valutazione rigorosi basati su prestazioni, adozione e innovazione"
     }
   },
   "sidebar": {
     "navigation": "Navigation",
-    "quickLinks": "Quick Links",
+    "quickLinks": "Link rapidi",
     "trending": "Trending",
-    "categories": "Categories",
-    "features": "Features",
+    "categories": "Categorie",
+    "features": "Funzionalità",
     "clearFilters": "Clear Filters"
   },
   "features": {
@@ -741,7 +787,8 @@
     "beta": "Beta",
     "deprecated": "Deprecato",
     "discontinued": "Discontinuo",
-    "acquired": "Acquisito"
+    "acquired": "Acquisito",
+    "coming-soon": "Prossimamente"
   },
   "errors": {
     "404": {

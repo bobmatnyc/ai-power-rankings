@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Settings, FileText, TrendingUp } from "lucide-react";
+import { BarChart3, Settings, FileText, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
 
 export function AdminDashboard() {
@@ -23,6 +23,14 @@ export function AdminDashboard() {
       icon: FileText,
       href: "/admin/tools",
       color: "bg-green-500",
+      disabled: false,
+    },
+    {
+      title: "Subscribers",
+      description: "Manage newsletter subscribers and email lists",
+      icon: Users,
+      href: "/admin/subscribers",
+      color: "bg-indigo-500",
       disabled: false,
     },
     {
@@ -108,8 +116,8 @@ export function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2</div>
-            <p className="text-xs text-muted-foreground">SEO & Tools Management</p>
+            <div className="text-2xl font-bold">3</div>
+            <p className="text-xs text-muted-foreground">SEO, Tools & Subscribers</p>
           </CardContent>
         </Card>
 

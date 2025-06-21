@@ -19,14 +19,14 @@
     "appName": "KI Power Rankings",
     "appDescription": "Datenbasierte Rankings von KI-Coding-Tools",
     "loading": "Lädt...",
-    "error": "Error",
+    "error": "Fehler",
     "tryAgain": "Retry",
-    "backToHome": "Back to Home",
+    "backToHome": "Zurück zur Startseite",
     "learnMore": "Mehr Infos",
     "viewAll": "Alle anzeigen",
     "close": "Schließen",
-    "cancel": "Cancel",
-    "save": "Save",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
     "search": "Suchen",
     "filter": "Filtern",
     "sort": "Sortieren",
@@ -36,12 +36,12 @@
     "users": "[TRANSLATE] Users"
   },
   "navigation": {
-    "home": "Home",
+    "home": "Startseite",
     "rankings": "Rankings",
     "news": "News",
     "tools": "Tools",
     "methodology": "Methodik",
-    "about": "About",
+    "about": "Über uns",
     "subscribeToUpdates": "Updates abonnieren",
     "navigation": "Navigation",
     "quickLinks": "Quick Links",
@@ -89,15 +89,15 @@
       "explore": "Erkunden →",
       "ideAssistants": {
         "name": "IDE-Assistenten",
-        "description": "KI-gestützte Code-Completion und Vorschläge"
+        "description": "KI-gestützte Code-Vervollständigung und Vorschläge"
       },
       "aiEditors": {
         "name": "KI-Editoren",
-        "description": "Smart Editoren mit KI-Integration"
+        "description": "Intelligente Editoren mit KI-Integration"
       },
       "appBuilders": {
         "name": "App-Builder",
-        "description": "Erstelle komplette Apps mit KI-Unterstützung"
+        "description": "Erstelle vollständige Anwendungen mit KI-Unterstützung"
       },
       "autonomousAgents": {
         "name": "Autonome Agenten",
@@ -188,10 +188,11 @@
     "sortBy": "Sortieren nach",
     "activeFilters": "Aktive Filter",
     "sort": {
-      "rank": "Rank",
+      "rank": "Rang",
       "trending": "Trending",
-      "score": "Score",
-      "name": "Name"
+      "score": "Bewertung",
+      "name": "Name",
+      "category": "Kategorie"
     },
     "algorithm": {
       "title": "About Algorithm v6.0",
@@ -221,18 +222,24 @@
       },
       "methodologyText": "[TRANSLATE] Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
       "viewMethodology": "[TRANSLATE] View Full Methodology"
-    }
+    },
+    "filters": {
+      "category": "Kategorie filtern",
+      "all": "Alle"
+    },
+    "noResults": "Keine Ergebnisse gefunden",
+    "showingResults": "Zeige {count} von {total} Tools"
   },
   "news": {
-    "title": "AI Tools News",
-    "subtitle": "Latest updates, milestones, and announcements from AI coding tools",
+    "title": "Neueste Nachrichten",
+    "subtitle": "Updates und Ankündigungen aus der KI-Coding-Welt",
     "filters": {
-      "all": "Alle News",
+      "all": "Alle",
       "milestone": "Milestone",
-      "feature": "Feature",
+      "feature": "Features",
       "partnership": "Partnership",
-      "update": "Update",
-      "announcement": "Announcement"
+      "update": "Updates",
+      "announcement": "Ankündigungen"
     },
     "noItems": "Keine News-Items gefunden.",
     "loadingMore": "Lade mehr News...",
@@ -240,8 +247,9 @@
     "viewTool": "Tool anzeigen",
     "metrics": {
       "users": "users",
-      "score": "score",
-      "rank": "rank"
+      "score": "Bewertung",
+      "rank": "Rang",
+      "change": "Veränderung"
     },
     "time": {
       "justNow": "Just now",
@@ -249,7 +257,10 @@
       "hoursAgo": "{count} hours ago",
       "dayAgo": "1 day ago",
       "daysAgo": "{count} days ago"
-    }
+    },
+    "readMore": "Weiterlesen",
+    "publishedOn": "Veröffentlicht am",
+    "noResults": "Keine Nachrichten gefunden"
   },
   "tools": {
     "title": "KI-Coding-Tools",
@@ -260,12 +271,12 @@
     "defaultDescription": "KI-Coding-Tools entdecken und vergleichen",
     "sort": {
       "name": "Name",
-      "category": "Category",
+      "category": "Kategorie",
       "status": "Status"
     },
     "stats": {
-      "total": "Total Tools",
-      "active": "Active",
+      "total": "Gesamt",
+      "active": "Aktiv",
       "categories": "Categories",
       "openSource": "Open Source"
     },
@@ -284,17 +295,17 @@
       "visitWebsite": "Website besuchen",
       "viewGithub": "GitHub",
       "viewOnGithub": "Auf GitHub anzeigen",
-      "overview": "Overview",
-      "description": "Description",
-      "company": "Company",
-      "pricing": "Pricing",
+      "overview": "Übersicht",
+      "description": "Beschreibung",
+      "company": "Unternehmen",
+      "pricing": "Preise",
       "users": "Users",
       "githubStars": "GitHub Stars",
       "tabs": {
-        "performance": "Performance",
+        "performance": "Leistung",
         "pricing": "Preise",
         "businessMetrics": "Business",
-        "scores": "Scores",
+        "scores": "Bewertungen",
         "history": "History"
       },
       "performance": {
@@ -306,10 +317,11 @@
         "languageSupport": "Language Support",
         "multiFileSupport": "Multi-file Support",
         "llmProviders": "LLM Providers",
-        "tokens": "tokens",
-        "languages": "languages",
-        "yes": "Yes",
-        "multiple": "Multiple"
+        "tokens": "Token",
+        "languages": "Sprachen",
+        "yes": "Ja",
+        "multiple": "Mehrere",
+        "no": "Nein"
       },
       "businessMetrics": {
         "title": "Business Metrics",
@@ -317,8 +329,10 @@
         "monthlyArr": "ARR (Monthly)",
         "valuation": "Valuation",
         "totalFunding": "Total Funding",
-        "employees": "Employees",
-        "totalUsers": "Total Users"
+        "employees": "Mitarbeiter",
+        "totalUsers": "Total Users",
+        "funding": "Finanzierung",
+        "revenue": "Umsatz"
       },
       "rankingScores": {
         "title": "Ranking Scores",
@@ -336,7 +350,7 @@
       }
     },
     "status": {
-      "active": "Active",
+      "active": "Aktiv",
       "beta": "Beta",
       "deprecated": "Deprecated",
       "discontinued": "Discontinued",
@@ -357,20 +371,23 @@
   },
   "newsletter": {
     "form": {
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email",
-      "subscribe": "Subscribe",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "email": "E-Mail-Adresse",
+      "subscribe": "Abonnieren",
       "subscribing": "Subscribing...",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time."
+      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
+      "placeholder": {
+        "email": "ihre@email.com"
+      }
     },
     "modal": {
-      "title": "Stay Updated",
+      "title": "Bleiben Sie auf dem Laufenden",
       "subtitle": "Get weekly updates on AI tool rankings, new features, and industry insights.",
       "firstName": "First name",
       "lastName": "Last name",
       "email": "Email",
-      "subscribe": "Subscribe",
+      "subscribe": "Abonnieren",
       "subscribing": "Subscribing...",
       "thankYou": "Thank you!",
       "checkEmail": "Please check your email to verify your subscription",
@@ -382,7 +399,9 @@
         "failed": "Failed to subscribe. Please try again.",
         "server": "Server configuration error",
         "email": "Email service configuration error"
-      }
+      },
+      "description": "Erhalten Sie die neuesten KI-Tool Rankings und Updates",
+      "close": "Schließen"
     },
     "verification": {
       "title": "Email Verification",
@@ -421,8 +440,8 @@
       "title": "Unsubscribe from Newsletter",
       "processing": "Processing your request...",
       "success": {
-        "title": "Successfully Unsubscribed",
-        "message": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!",
+        "title": "Erfolgreich abgemeldet",
+        "message": "Sie wurden von unserer Mailingliste entfernt",
         "description": "[TRANSLATE] You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
       },
       "errors": {
@@ -439,8 +458,8 @@
           "message": "We couldn't process your unsubscribe request. Please try again later."
         },
         "unexpected": {
-          "title": "Error",
-          "message": "An unexpected error occurred. Please try again."
+          "title": "Fehler",
+          "message": "Ein unerwarteter Fehler ist aufgetreten"
         },
         "unsubscribeFailed": "[TRANSLATE] We couldn't process your unsubscribe request. Please try again later.",
         "default": "[TRANSLATE] An unexpected error occurred. Please try again."
@@ -471,6 +490,16 @@
         "invalidToken": "[TRANSLATE] This verification link is invalid or has expired.",
         "verificationFailed": "[TRANSLATE] We couldn't verify your email at this time. Please try again later."
       }
+    },
+    "title": "KI-Tool Updates abonnieren",
+    "description": "Erhalten Sie wöchentliche Updates zu neuen KI-Coding-Tools und Rankings",
+    "success": {
+      "title": "Erfolgreich abonniert!",
+      "message": "Sie erhalten bald unsere wöchentlichen Updates"
+    },
+    "error": {
+      "title": "Abonnement fehlgeschlagen",
+      "message": "Bitte versuchen Sie es erneut"
     }
   },
   "methodology": {
@@ -525,13 +554,19 @@
         "details": "[TRANSLATE] Measures autonomous capabilities, multi-step reasoning, and complex task completion"
       },
       "innovation": {
-        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation"
+        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation",
+        "name": "Innovation",
+        "description": "Einzigartige Features und technologische Fortschritte"
       },
       "performance": {
-        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
+        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks",
+        "name": "Leistung",
+        "description": "Code-Generierung, Vervollständigung und Debugging-Fähigkeiten"
       },
       "adoption": {
-        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics"
+        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics",
+        "name": "Adoption",
+        "description": "Nutzerakzeptanz und Community-Engagement"
       },
       "traction": {
         "details": "[TRANSLATE] Revenue growth, funding rounds, and business momentum indicators"
@@ -544,6 +579,10 @@
       },
       "resilience": {
         "details": "[TRANSLATE] Platform stability, backup options, and vendor independence"
+      },
+      "ecosystem": {
+        "name": "Ökosystem",
+        "description": "Integrationen und Entwickler-Support"
       }
     },
     "modifiers": {
@@ -607,6 +646,10 @@
         "title": "[TRANSLATE] Update Schedule",
         "description": "[TRANSLATE] Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
       }
+    },
+    "overview": {
+      "title": "Bewertungsübersicht",
+      "description": "Unser datenbasierter Ansatz zur Bewertung von KI-Coding-Tools"
     }
   },
   "about": {
@@ -617,9 +660,9 @@
       "subtitle": "We believe developers deserve transparent, objective rankings of AI coding tools to make informed decisions."
     },
     "mission": {
-      "title": "Our Mission",
+      "title": "Unsere Mission",
       "content": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs.",
-      "description": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
+      "description": "Transparente, datenbasierte Rankings von KI-Coding-Tools für Entwickler"
     },
     "whyWeBuiltThis": {
       "title": "Why We Built This",
@@ -631,8 +674,8 @@
       }
     },
     "team": {
-      "title": "The Team",
-      "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development.",
+      "title": "Das Team",
+      "description": "Erfahren Sie mehr über die Menschen hinter AI Power Rankings",
       "description1": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
       "description2": "[TRANSLATE] I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
       "description3": "[TRANSLATE] Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
@@ -640,8 +683,8 @@
       "reportIssue": "[TRANSLATE] Report an Issue"
     },
     "contact": {
-      "title": "Get in Touch",
-      "description": "Have feedback or suggestions? We'd love to hear from you.",
+      "title": "Kontakt",
+      "description": "Haben Sie Fragen oder Feedback? Kontaktieren Sie uns",
       "email": "Contact us at hello@aipowerranking.com"
     },
     "newsletter": {
@@ -718,13 +761,17 @@
       "description": "[TRANSLATE] Dive into our rankings to discover the best AI coding tools for your needs.",
       "exploreButton": "[TRANSLATE] Explore Rankings",
       "methodologyButton": "[TRANSLATE] Learn Our Methodology"
+    },
+    "methodology": {
+      "title": "Methodik",
+      "description": "Rigorose Bewertungskriterien basierend auf Leistung, Adoption und Innovation"
     }
   },
   "sidebar": {
     "navigation": "Navigation",
-    "quickLinks": "Quick Links",
+    "quickLinks": "Schnellzugriff",
     "trending": "Trending",
-    "categories": "Categories",
+    "categories": "Kategorien",
     "features": "Features",
     "clearFilters": "Clear Filters"
   },
@@ -737,11 +784,12 @@
     "documentation": "Documentation"
   },
   "status": {
-    "active": "Active",
+    "active": "Aktiv",
     "beta": "Beta",
-    "deprecated": "Deprecated",
+    "deprecated": "Veraltet",
     "discontinued": "Discontinued",
-    "acquired": "Acquired"
+    "acquired": "Acquired",
+    "coming-soon": "Demnächst"
   },
   "errors": {
     "404": {
