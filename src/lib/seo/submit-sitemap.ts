@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 
 import { GoogleSearchConsole } from "../google-search-console";
+import { config } from "dotenv";
+
+// Load environment variables
+config({ path: ".env.local" });
 
 async function submitSitemap() {
   const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
