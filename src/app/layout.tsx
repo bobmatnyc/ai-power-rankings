@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import Script from "next/script";
 import { generateOrganizationSchema, createJsonLdScript } from "@/lib/schema";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -99,6 +100,9 @@ export default function RootLayout({
           }}
         />
         <AuthSessionProvider>{children}</AuthSessionProvider>
+        {process.env["NEXT_PUBLIC_GA_ID"] && (
+          <GoogleAnalytics gaId={process.env["NEXT_PUBLIC_GA_ID"]} />
+        )}
         <SpeedInsights />
         <Analytics />
       </body>

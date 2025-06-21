@@ -124,12 +124,6 @@ function calculateSEOScore(_metrics: any) {
   return 85; // Mock score
 }
 
-// Authentication check using NextAuth.js session
-async function checkAuth(): Promise<boolean> {
-  const session = await auth();
-  return session?.user?.email === "bob@matsuoka.com";
-}
-
 export async function GET() {
   try {
     // Get the session with access token
