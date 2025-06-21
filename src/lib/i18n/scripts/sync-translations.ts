@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join } from "path";
 
 // Define the base path for dictionaries
-const DICTIONARIES_PATH = join(__dirname, "../src/i18n/dictionaries");
+const DICTIONARIES_PATH = join(__dirname, "../../../i18n/dictionaries");
 
 // List of language codes (excluding English)
 const LANGUAGES = ["de", "fr", "hr", "it", "jp", "ko", "uk"];
@@ -184,9 +184,7 @@ function syncTranslations() {
   console.log('\n💡 Look for keys starting with "[TRANSLATE] " to find untranslated content');
 }
 
-// Run the script
-if (require.main === module) {
-  syncTranslations();
-}
+// Run the script if called directly
+syncTranslations();
 
 export { syncTranslations };
