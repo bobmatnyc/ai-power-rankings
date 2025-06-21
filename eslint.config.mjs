@@ -26,6 +26,7 @@ const eslintConfig = [
       "scripts/**",
       "src/scripts/**",
       "src/i18n/scripts/**",
+      "src/i18n/dictionaries/**/*.js",
     ],
     rules: {
       // TypeScript rules - more lenient for production

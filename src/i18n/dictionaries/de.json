@@ -13,7 +13,16 @@
     "ideAssistant": "IDE Assistant",
     "appBuilder": "App Builder",
     "codeReview": "Code Review",
-    "codeAssistant": "Code Assistant"
+    "codeAssistant": "Code Assistant",
+    "multimodal": "Multimodal",
+    "businessintelligence": "Business Intelligence",
+    "imageandvideo": "Bild und Video",
+    "apiandautomation": "API und Automatisierung",
+    "searchandknowledge": "Suche und Wissen",
+    "voiceandaudio": "Sprache und Audio",
+    "dataanalysis": "Datenanalyse",
+    "customerservice": "Kundenservice",
+    "contentgeneration": "Content-Generierung"
   },
   "common": {
     "appName": "AI Power Ranking",
@@ -49,7 +58,15 @@
     "categories": "Categories",
     "features": "Features",
     "clearFilters": "Clear Filters",
-    "allCategories": "All Categories"
+    "allCategories": "All Categories",
+    "newsletter": "Newsletter",
+    "contact": "Kontakt",
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "cookies": "Cookie-Richtlinie",
+    "subscribe": "Abonnieren",
+    "support": "Support",
+    "blog": "Blog"
   },
   "home": {
     "hero": {
@@ -61,14 +78,24 @@
       "viewTrending": "View Trending",
       "exploreButton": "Explore All Tools",
       "trendingButton": "View Trending",
-      "whatsNewButton": "What's New"
+      "whatsNewButton": "What's New",
+      "viewRankings": "Rankings anzeigen",
+      "subscribeNewsletter": "Newsletter abonnieren"
     },
     "stats": {
       "toolsRanked": "AI Tools Ranked",
       "trendingUp": "Trending Up",
       "updates": "Updates",
       "freeAccess": "Free Access",
-      "updateFrequency": "Weekly Updates"
+      "updateFrequency": "Weekly Updates",
+      "totalTools": "Tools insgesamt",
+      "totalCategories": "Kategorien insgesamt",
+      "weeklyUpdates": "Wöchentliche Updates",
+      "comprehensiveAnalysis": "Umfassende Analyse",
+      "categoriesTracked": "Kategorien verfolgt",
+      "usersServed": "Nutzer bedient",
+      "expertReviews": "Expertenberichte",
+      "monthlyUpdates": "Monatliche Updates"
     },
     "trending": {
       "title": "Trending This Week",
@@ -111,7 +138,10 @@
       "ideDescription": "AI-powered code completion and suggestions",
       "editorDescription": "Smart editors with AI integration",
       "builderDescription": "Build complete applications with AI assistance",
-      "agentDescription": "Fully autonomous AI software engineers"
+      "agentDescription": "Fully autonomous AI software engineers",
+      "subtitle": "AI-Tools finden, die zu Ihren Interessen passen",
+      "exploreCategory": "Kategorie erkunden",
+      "toolsInCategory": "Tools in dieser Kategorie"
     },
     "methodology": {
       "title": "Our Methodology",
@@ -174,6 +204,79 @@
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
+    },
+    "topTools": {
+      "title": "Top AI-Coding-Tools",
+      "subtitle": "Die besten Tools, gerankt nach Innovation, Funktionen und Benutzererfahrung",
+      "viewAll": "Alle anzeigen",
+      "exploreMore": "Mehr erkunden",
+      "getStarted": "Loslegen",
+      "learnMore": "Mehr erfahren",
+      "tryNow": "Jetzt ausprobieren",
+      "viewDetails": "Details anzeigen"
+    },
+    "newsletter": {
+      "title": "Bleiben Sie auf dem Laufenden",
+      "subtitle": "Erhalten Sie wöchentliche AI-Tool-Updates, neue Releases und tiefgreifende Analysen",
+      "placeholder": "E-Mail-Adresse eingeben",
+      "subscribe": "Abonnieren",
+      "subscribing": "Abonniert...",
+      "success": "Vielen Dank für Ihr Abonnement!",
+      "error": "Fehler beim Abonnieren. Bitte versuchen Sie es erneut.",
+      "description": "Kein Spam. Jederzeit abbestellbar."
+    },
+    "features": {
+      "title": "Warum AI Power Ranking wählen?",
+      "subtitle": "Eine umfassende Plattform zur Findung der besten AI-Coding-Tools",
+      "comprehensiveDatabase": {
+        "title": "Umfassende Datenbank",
+        "description": "Alle wichtigen AI-Coding-Tools an einem Ort organisiert"
+      },
+      "expertAnalysis": {
+        "title": "Expertenanalyse",
+        "description": "Tiefgreifende und faire Bewertung jedes Tools"
+      },
+      "regularUpdates": {
+        "title": "Regelmäßige Updates",
+        "description": "Wöchentlich aktualisiert mit den neuesten Tools und Features"
+      },
+      "communityDriven": {
+        "title": "Community-getrieben",
+        "description": "Rankings basierend auf Nutzerfeedback und echten Erfahrungen"
+      }
+    },
+    "cta": {
+      "title": "Finden Sie das perfekte AI-Coding-Tool",
+      "subtitle": "Entdecken Sie Tools, die Ihren Entwicklungs-Workflow revolutionieren",
+      "getStarted": "Loslegen",
+      "learnMore": "Mehr erfahren",
+      "browseTools": "Tools durchsuchen",
+      "viewMethodology": "Methodik anzeigen",
+      "subscribe": "Abonnieren",
+      "contact": "Kontakt"
+    },
+    "trust": {
+      "title": "Von Entwicklern vertraut",
+      "subtitle": "Tausende von Entwicklern weltweit vertrauen uns, um die besten AI-Tools zu finden",
+      "testimonial1": "Wirklich umfassende Plattform. Hat mir geholfen, das perfekte AI-Tool zu finden.",
+      "testimonial2": "Die regelmäßigen Updates und tiefgreifenden Analysen sind wirklich nützlich.",
+      "testimonial3": "Eine großartige Ressource, die Zeit spart."
+    },
+    "about": {
+      "title": "Datengesteuerte Rankings",
+      "subtitle": "Unsere Methodik ist transparent, fair und wird kontinuierlich verbessert",
+      "methodology": "Methodik anzeigen",
+      "algorithmVersion": "Algorithm v6.0",
+      "lastUpdated": "Zuletzt aktualisiert"
+    },
+    "faq": {
+      "title": "Häufig gestellte Fragen",
+      "subtitle": "Häufige Fragen zu AI-Coding-Tools und Rankings",
+      "question1": "Wie werden die Tools gerankt?",
+      "answer1": "Wir verwenden unseren Algorithm v6.0, um Innovation, Funktionen, Benutzerfreundlichkeit und Community-Feedback zu bewerten.",
+      "question2": "Wie oft werden die Rankings aktualisiert?",
+      "answer2": "Wöchentlich aktualisiert, um neue Tools, Feature-Updates und Nutzerfeedback zu berücksichtigen.",
+      "viewAll": "Alle FAQs anzeigen"
     }
   },
   "footer": {

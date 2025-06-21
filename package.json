@@ -42,7 +42,10 @@
     "i18n:check": "node src/lib/i18n/scripts/check-translations.mjs",
     "seo:submit-sitemap": "tsx src/lib/seo/submit-sitemap.ts",
     "check-deployment": "tsx src/scripts/check-vercel-deployment.ts",
-    "fix-deployment": "tsx src/scripts/fix-deployment-errors.ts"
+    "fix-deployment": "tsx src/scripts/fix-deployment-errors.ts",
+    "sitemap:check": "tsx src/scripts/check-sitemap-and-submit.ts",
+    "sitemap:monitor": "tsx src/scripts/monitor-and-submit-sitemap.ts",
+    "sitemap:status": "node src/scripts/check-sitemap-status.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",

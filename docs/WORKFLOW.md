@@ -514,6 +514,22 @@ node src/i18n/dictionaries/verify_i18n.js
 4. **Apply Batches**: Place translated files as `translate_[lang]_*.json` and run `apply_translations.js`
 5. **Verify**: Run `verify_i18n.js` to ensure all languages have consistent keys
 
+### ⚠️ Important: Translation Tool Scripts
+
+**DO NOT DELETE** the JavaScript files in `/src/i18n/dictionaries/`. These are internal translation management tools that should be:
+
+- ✅ Excluded from ESLint (configured in `eslint.config.mjs`)
+- ✅ Excluded from TypeScript checking
+- ✅ Excluded from build processes
+- ✅ Kept in the repository
+- ❌ NOT deleted
+- ❌ NOT included in CI/CD checks
+
+These tools use CommonJS syntax and are essential for managing translations. They include:
+- `verify_i18n.js`, `sync_structure.js`, `fix_untranslated.js`
+- `translate_batch.js`, `validate_translations.js`, `check_sizes.js`
+- `extract_used_keys.js`, `key_comparison.js`, `update_template.js`
+
 ---
 
 ## 👁️ Final Note
