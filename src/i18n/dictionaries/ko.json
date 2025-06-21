@@ -30,7 +30,10 @@
     "search": "검색",
     "filter": "필터",
     "sort": "정렬",
-    "share": "공유"
+    "share": "공유",
+    "explore": "[TRANSLATE] Explore",
+    "notAvailable": "[TRANSLATE] N/A",
+    "users": "[TRANSLATE] Users"
   },
   "navigation": {
     "home": "홈",
@@ -57,7 +60,8 @@
       "exploreTools": "모든 툴 탐색",
       "viewTrending": "트렌딩 보기",
       "exploreButton": "모든 툴 탐색",
-      "trendingButton": "트렌딩 보기"
+      "trendingButton": "트렌딩 보기",
+      "whatsNewButton": "[TRANSLATE] What's New"
     },
     "stats": {
       "toolsRanked": "AI 툴 랭킹됨",
@@ -117,16 +121,15 @@
       "keyModifiersDescription": "세 가지 정교한 수정자가 공정하고 정확한 랭킹을 보장합니다:",
       "factors": {
         "agenticCapability": "에이전틱 능력 (30%) - 자율 코딩 능력",
-        "innovation": "혁신 (15%) - 6개월 감쇠 반감기 포함",
+        "innovation": {
+          "name": "혁신",
+          "description": "기술적 돌파구와 기능 혁신"
+        },
         "technicalPerformance": "기술 성능 (12.5%) - SWE-bench 중심",
         "marketTraction": "시장 견인력 (12.5%) - 수익 품질 조정",
         "agentic": {
           "name": "에이전틱 능력",
           "description": "자율 코딩 능력과 다단계 작업 완료"
-        },
-        "innovation": {
-          "name": "혁신",
-          "description": "기술적 돌파구와 기능 혁신"
         },
         "performance": {
           "name": "기술 성능",
@@ -200,7 +203,24 @@
       },
       "primaryFactors": "주요 요인 (67.5%)",
       "secondaryFactors": "보조 요인 (32.5%)",
-      "description": "우리의 랭킹 알고리즘은 정량적 메트릭과 정성적 평가를 결합하여 AI 코딩 툴의 종합적인 관점을 제공합니다. 새로운 데이터를 기반으로 매주 랭킹을 업데이트하고 방법론을 지속적으로 개선합니다."
+      "description": "우리의 랭킹 알고리즘은 정량적 메트릭과 정성적 평가를 결합하여 AI 코딩 툴의 종합적인 관점을 제공합니다. 새로운 데이터를 기반으로 매주 랭킹을 업데이트하고 방법론을 지속적으로 개선합니다.",
+      "factors": {
+        "agentic": "[TRANSLATE] Agentic Capability",
+        "innovation": "[TRANSLATE] Innovation",
+        "performance": "[TRANSLATE] Performance",
+        "adoption": "[TRANSLATE] Adoption",
+        "traction": "[TRANSLATE] Traction",
+        "sentiment": "[TRANSLATE] Sentiment",
+        "velocity": "[TRANSLATE] Velocity",
+        "resilience": "[TRANSLATE] Resilience"
+      },
+      "modifiers": {
+        "decay": "[TRANSLATE] Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
+        "risk": "[TRANSLATE] Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
+        "revenue": "[TRANSLATE] Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
+      },
+      "methodologyText": "[TRANSLATE] Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
+      "viewMethodology": "[TRANSLATE] View Full Methodology"
     }
   },
   "news": {
@@ -331,7 +351,9 @@
       "testing-tool": "테스팅 툴",
       "code-review": "코드 리뷰",
       "code-generation": "코드 생성"
-    }
+    },
+    "notFound": "[TRANSLATE] Tool not found",
+    "backToTools": "[TRANSLATE] Back to Tools"
   },
   "newsletter": {
     "form": {
@@ -400,7 +422,8 @@
       "processing": "요청을 처리중...",
       "success": {
         "title": "성공적으로 구독 해지됨",
-        "message": "AI Power Rankings 뉴스레터 구독이 해지되었습니다. 떠나시는 것이 아쉽습니다!"
+        "message": "AI Power Rankings 뉴스레터 구독이 해지되었습니다. 떠나시는 것이 아쉽습니다!",
+        "description": "[TRANSLATE] You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
       },
       "errors": {
         "missingToken": {
@@ -418,10 +441,36 @@
         "unexpected": {
           "title": "오류",
           "message": "예상치 못한 오류가 발생했습니다. 다시 시도해주세요."
-        }
+        },
+        "unsubscribeFailed": "[TRANSLATE] We couldn't process your unsubscribe request. Please try again later.",
+        "default": "[TRANSLATE] An unexpected error occurred. Please try again."
       },
       "resubscribe": "마음이 바뀌셨나요? 언제든지 다시 구독할 수 있습니다.",
-      "subscribeAgain": "다시 구독"
+      "subscribeAgain": "다시 구독",
+      "error": {
+        "title": "[TRANSLATE] Unsubscribe Error"
+      }
+    },
+    "verify": {
+      "goToHomepage": "[TRANSLATE] Go to Homepage",
+      "tryAgain": "[TRANSLATE] Try Again",
+      "success": {
+        "title": "[TRANSLATE] Email Verified!",
+        "description": "[TRANSLATE] Your email has been successfully verified. You'll start receiving our weekly newsletter."
+      },
+      "alreadyVerified": {
+        "title": "[TRANSLATE] Already Verified",
+        "description": "[TRANSLATE] This email address has already been verified. You're all set!"
+      },
+      "error": {
+        "title": "[TRANSLATE] Verification Error"
+      },
+      "errors": {
+        "default": "[TRANSLATE] An unexpected error occurred. Please try again.",
+        "missingToken": "[TRANSLATE] The verification link appears to be incomplete.",
+        "invalidToken": "[TRANSLATE] This verification link is invalid or has expired.",
+        "verificationFailed": "[TRANSLATE] We couldn't verify your email at this time. Please try again later."
+      }
     }
   },
   "methodology": {
@@ -441,17 +490,122 @@
       "dataCollection": {
         "title": "데이터 수집",
         "intro": "정확성을 보장하기 위해 여러 소스에서 데이터를 수집합니다:",
-        "sources": [
-          "툴 제공자와의 직접 API 통합",
-          "공개 저장소 및 개발자 통계",
-          "업계 보고서 및 검증된 뉴스 소스",
-          "사용자 설문조사 및 커뮤니티 피드백",
-          "성능 벤치마크 (SWE-bench, HumanEval)"
-        ]
+        "sources": {
+          "0": "툴 제공자와의 직접 API 통합",
+          "1": "공개 저장소 및 개발자 통계",
+          "2": "업계 보고서 및 검증된 뉴스 소스",
+          "3": "사용자 설문조사 및 커뮤니티 피드백",
+          "4": "성능 벤치마크 (SWE-bench, HumanEval)"
+        }
       },
       "updateFrequency": {
         "title": "업데이트 빈도",
         "content": "빠르게 진화하는 AI 환경을 반영하기 위해 랭킹을 매주 재계산합니다. 주요 방법론 업데이트는 버전화되고 문서화됩니다."
+      }
+    },
+    "algorithm": {
+      "title": "[TRANSLATE] Algorithm v6.0",
+      "description": "[TRANSLATE] Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
+      "keyFeatures": "[TRANSLATE] Key Features",
+      "features": {
+        "innovationDecay": "[TRANSLATE] Innovation decay modeling to reflect tool freshness",
+        "platformRisk": "[TRANSLATE] Platform risk assessment for vendor dependencies",
+        "revenueQuality": "[TRANSLATE] Revenue quality adjustments based on business model",
+        "technicalWeighting": "[TRANSLATE] Technical capability weighting for different use cases",
+        "dataValidation": "[TRANSLATE] Multi-source data validation and normalization",
+        "logarithmicScaling": "[TRANSLATE] Logarithmic scaling for balanced comparisons"
+      }
+    },
+    "factors": {
+      "title": "[TRANSLATE] Scoring Factors",
+      "description": "[TRANSLATE] Tools are evaluated across 8 key dimensions with specific weightings",
+      "primary": "[TRANSLATE] Primary Factors (82.5%)",
+      "secondary": "[TRANSLATE] Secondary Factors (17.5%)",
+      "agentic": {
+        "details": "[TRANSLATE] Measures autonomous capabilities, multi-step reasoning, and complex task completion"
+      },
+      "innovation": {
+        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation"
+      },
+      "performance": {
+        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
+      },
+      "adoption": {
+        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics"
+      },
+      "traction": {
+        "details": "[TRANSLATE] Revenue growth, funding rounds, and business momentum indicators"
+      },
+      "sentiment": {
+        "details": "[TRANSLATE] Developer satisfaction, community feedback, and recommendation scores"
+      },
+      "velocity": {
+        "details": "[TRANSLATE] Feature release cadence, update frequency, and innovation speed"
+      },
+      "resilience": {
+        "details": "[TRANSLATE] Platform stability, backup options, and vendor independence"
+      }
+    },
+    "modifiers": {
+      "title": "[TRANSLATE] Dynamic Modifiers",
+      "description": "[TRANSLATE] Real-time adjustments that reflect market conditions and tool maturity",
+      "innovationDecay": {
+        "description": "[TRANSLATE] Innovation scores decay over time to reward continuous improvement and penalize stagnation"
+      },
+      "platformRisk": {
+        "description": "[TRANSLATE] Adjustments based on vendor lock-in, platform dependencies, and business risks",
+        "penalties": "[TRANSLATE] Risk Penalties",
+        "penaltyList": {
+          "acquired": "[TRANSLATE] Recently acquired by competitor",
+          "exclusive": "[TRANSLATE] Platform exclusive (single LLM)",
+          "competitor": "[TRANSLATE] Owned by competing platform",
+          "regulatory": "[TRANSLATE] Regulatory compliance issues",
+          "funding": "[TRANSLATE] Funding or sustainability concerns"
+        },
+        "bonuses": "[TRANSLATE] Risk Mitigation Bonuses",
+        "bonusList": {
+          "multiLLM": "[TRANSLATE] Supports multiple LLM providers",
+          "openSource": "[TRANSLATE] Open source availability",
+          "selfHosted": "[TRANSLATE] Self-hosting options"
+        }
+      },
+      "revenueQuality": {
+        "description": "[TRANSLATE] Revenue weighting based on business model sustainability and growth potential",
+        "models": {
+          "enterpriseHigh": "[TRANSLATE] Enterprise (High-touch)",
+          "enterpriseStandard": "[TRANSLATE] Enterprise (Standard)",
+          "smbSaas": "[TRANSLATE] SMB SaaS",
+          "consumerPremium": "[TRANSLATE] Consumer Premium",
+          "freemium": "[TRANSLATE] Freemium",
+          "openSource": "[TRANSLATE] Open Source"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "[TRANSLATE] Data Sources & Validation",
+      "description": "[TRANSLATE] We maintain rigorous standards for data collection and validation",
+      "collection": {
+        "title": "[TRANSLATE] Data Collection Methods",
+        "sources": {
+          "api": "[TRANSLATE] Direct API integrations with tool providers",
+          "research": "[TRANSLATE] Industry research reports and analyst data",
+          "announcements": "[TRANSLATE] Official company announcements and press releases",
+          "community": "[TRANSLATE] Developer surveys and community feedback",
+          "benchmarks": "[TRANSLATE] Standardized performance benchmarks"
+        }
+      },
+      "validation": {
+        "title": "[TRANSLATE] Validation Requirements",
+        "requirements": {
+          "completeness": "[TRANSLATE] All required metrics must be present",
+          "reliability": "[TRANSLATE] Multiple source verification for key metrics",
+          "outlier": "[TRANSLATE] Outlier detection and manual review",
+          "crossValidation": "[TRANSLATE] Cross-validation with industry benchmarks"
+        }
+      },
+      "updateFrequency": {
+        "title": "[TRANSLATE] Update Schedule",
+        "description": "[TRANSLATE] Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
       }
     }
   },
@@ -469,16 +623,21 @@
     },
     "whyWeBuiltThis": {
       "title": "우리가 이것을 만든 이유",
-      "reasons": [
-        "AI 툴 환경이 빠르게 진화하여 따라가기 어렵습니다",
-        "마케팅 주장이 종종 실제 성능과 일치하지 않습니다",
-        "개발자들은 툴 채택을 정당화하기 위해 객관적인 데이터가 필요합니다",
-        "모든 주요 AI 코딩 툴을 비교하는 단일 소스가 없었습니다"
-      ]
+      "reasons": {
+        "0": "AI 툴 환경이 빠르게 진화하여 따라가기 어렵습니다",
+        "1": "마케팅 주장이 종종 실제 성능과 일치하지 않습니다",
+        "2": "개발자들은 툴 채택을 정당화하기 위해 객관적인 데이터가 필요합니다",
+        "3": "모든 주요 AI 코딩 툴을 비교하는 단일 소스가 없었습니다"
+      }
     },
     "team": {
       "title": "팀",
-      "description": "AI Power Rankings는 AI와 소프트웨어 개발의 교차점에 열정을 가진 개발자와 데이터 사이언티스트 팀에 의해 관리됩니다."
+      "description": "AI Power Rankings는 AI와 소프트웨어 개발의 교차점에 열정을 가진 개발자와 데이터 사이언티스트 팀에 의해 관리됩니다.",
+      "description1": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description2": "[TRANSLATE] I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
+      "description3": "[TRANSLATE] Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
+      "hyperdevLink": "[TRANSLATE] HyperDev",
+      "reportIssue": "[TRANSLATE] Report an Issue"
     },
     "contact": {
       "title": "연락하기",
@@ -528,12 +687,37 @@
     "whyItMatters": {
       "title": "왜 중요한가",
       "description": "빠르게 진화하는 AI 환경에서 개발자들은 정보에 입각한 결정을 내리기 위해 신뢰할 수 있는 데이터가 필요합니다.",
-      "points": [
-        "툴 평가 시간 절약",
-        "데이터 드리븐 의사결정",
-        "앞서 나가기",
-        "필요에 맞는 툴 선택"
-      ]
+      "points": {
+        "0": "툴 평가 시간 절약",
+        "1": "데이터 드리븐 의사결정",
+        "2": "앞서 나가기",
+        "3": "필요에 맞는 툴 선택"
+      },
+      "challenges": {
+        "paralysis": {
+          "title": "[TRANSLATE] Decision Paralysis",
+          "description": "[TRANSLATE] With dozens of AI tools launching every week, developers face overwhelming choices"
+        },
+        "marketing": {
+          "title": "[TRANSLATE] Marketing vs Reality",
+          "description": "[TRANSLATE] Bold claims often don't match real-world performance and capabilities"
+        },
+        "change": {
+          "title": "[TRANSLATE] Rapid Change",
+          "description": "[TRANSLATE] Tools evolve quickly - what's best today might be obsolete tomorrow"
+        },
+        "risks": {
+          "title": "[TRANSLATE] Hidden Risks",
+          "description": "[TRANSLATE] Security, privacy, and vendor lock-in concerns are often overlooked"
+        }
+      },
+      "conclusion": "[TRANSLATE] That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
+    },
+    "cta": {
+      "title": "[TRANSLATE] Ready to Explore?",
+      "description": "[TRANSLATE] Dive into our rankings to discover the best AI coding tools for your needs.",
+      "exploreButton": "[TRANSLATE] Explore Rankings",
+      "methodologyButton": "[TRANSLATE] Learn Our Methodology"
     }
   },
   "sidebar": {
@@ -575,5 +759,11 @@
       "message": "인터넷 연결을 확인하고 다시 시도해주세요.",
       "action": "재시도"
     }
+  },
+  "footer": {
+    "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+    "quickLinks": "[TRANSLATE] Quick Links",
+    "categories": "[TRANSLATE] Categories",
+    "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved."
   }
 }
