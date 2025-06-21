@@ -240,6 +240,7 @@ npm run check-deployment  # Monitors Vercel deployment status
 ```
 
 This script:
+
 - Detects the latest commit SHA
 - Finds the corresponding Vercel deployment
 - Monitors deployment progress in real-time
@@ -326,11 +327,13 @@ When adding new features or changing processes:
 ### 📋 Step-by-Step Deployment Process
 
 1. **Pre-flight Checks**:
+
    ```bash
    npm run pre-deploy       # Run all tests and checks
    ```
 
 2. **Commit and Push**:
+
    ```bash
    git add .
    git commit -m "feat: your feature description"
@@ -338,11 +341,13 @@ When adding new features or changing processes:
    ```
 
 3. **Verify Deployment**:
+
    ```bash
    npm run check-deployment # Monitor Vercel deployment
    ```
 
 4. **If Deployment Fails**:
+
    - Check error logs from the script output
    - Common issues:
      - TypeScript errors: Run `npm run type-check` locally
@@ -358,16 +363,19 @@ When adding new features or changing processes:
 ### 🔄 Automated Deployment Recovery
 
 If a deployment fails, the check-deployment script will:
+
 1. Show the exact error from Vercel build logs
 2. Provide specific commands to debug locally
 3. Suggest fixes based on error type
 
 **Automatic Error Fixing**:
+
 ```bash
 npm run fix-deployment   # Automatically fix common deployment errors
 ```
 
 This script can fix:
+
 - ESLint errors (auto-fixable ones)
 - Prettier formatting issues
 - Missing dependencies
@@ -459,6 +467,52 @@ When updating pricing information:
    - Add dedicated pricing tab in tool details
    - Show primary plan price in overview
    - Format currency properly
+
+---
+
+## 🌐 11. Translation Management
+
+### 📝 Internal Translation Tools
+
+The project includes internal JavaScript tools for managing translations located in `src/i18n/dictionaries/`:
+
+- **apply_translations.js** - Applies translation batches to main dictionary files
+- **fix_untranslated.js** - Identifies strings that need translation
+- **monitor_i18n.js** - Tracks translation progress and completeness
+- **verify_i18n.js** - Ensures consistency across all language files
+
+### ⚠️ Important Notes
+
+1. **These are internal workflow tools** - They should NOT be included in builds or CI/CD
+2. **They use CommonJS** - Intentionally kept as `.js` files with `require()` syntax
+3. **They are excluded from**:
+   - TypeScript compilation (`tsconfig.json` excludes `src/scripts/**/*`)
+   - ESLint checking (via `.eslintignore` in the directory)
+   - Build process (not imported by any production code)
+
+### 🔧 Using Translation Tools
+
+```bash
+# Check translation status
+node src/i18n/dictionaries/monitor_i18n.js
+
+# Find untranslated strings
+node src/i18n/dictionaries/fix_untranslated.js
+
+# Apply translation batches
+node src/i18n/dictionaries/apply_translations.js
+
+# Verify consistency
+node src/i18n/dictionaries/verify_i18n.js
+```
+
+### 📋 Translation Workflow
+
+1. **Monitor Status**: Run `monitor_i18n.js` to see completion percentages
+2. **Identify Gaps**: Run `fix_untranslated.js` to create `translate_[lang]_needed.json` files
+3. **Get Translations**: Use external service or manual translation
+4. **Apply Batches**: Place translated files as `translate_[lang]_*.json` and run `apply_translations.js`
+5. **Verify**: Run `verify_i18n.js` to ensure all languages have consistent keys
 
 ---
 
