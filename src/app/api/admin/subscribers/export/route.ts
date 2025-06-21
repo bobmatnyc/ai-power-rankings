@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { supabaseAdmin } from "@/lib/supabase";
+import { createServiceClient } from "@/lib/supabase/server";
 import { format } from "date-fns";
 
 export async function GET() {
@@ -12,6 +12,7 @@ export async function GET() {
     }
 
     // Fetch all verified subscribers
+    const supabaseAdmin = createServiceClient();
     const { data: subscribers, error } = await supabaseAdmin
       .from("newsletter_subscriptions")
       .select("*")
