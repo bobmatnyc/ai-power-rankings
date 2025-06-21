@@ -1,121 +1,131 @@
 {
   "categories": {
-    "autonomousagent": "自律エージェント",
-    "codeeditor": "コードエディター",
-    "ideassistant": "IDEアシスタント",
-    "appbuilder": "アプリビルダー",
-    "opensourceframework": "オープンソースフレームワーク",
-    "testingtool": "テストツール",
-    "codereview": "コードレビュー",
-    "codeassistant": "コードアシスタント",
-    "autonomousAgent": "自律エージェント",
-    "codeEditor": "コードエディター",
-    "ideAssistant": "IDEアシスタント",
-    "appBuilder": "アプリビルダー",
-    "codeReview": "コードレビュー",
-    "codeAssistant": "コードアシスタント"
+    "autonomousagent": "Autonomous Agent",
+    "codeeditor": "Code Editor",
+    "ideassistant": "IDE Assistant",
+    "appbuilder": "App Builder",
+    "opensourceframework": "Open Source Framework",
+    "testingtool": "Testing Tool",
+    "codereview": "Code Review",
+    "codeassistant": "Code Assistant",
+    "autonomousAgent": "Autonomous Agent",
+    "codeEditor": "Code Editor",
+    "ideAssistant": "IDE Assistant",
+    "appBuilder": "App Builder",
+    "codeReview": "Code Review",
+    "codeAssistant": "Code Assistant"
   },
   "common": {
-    "appName": "AIパワーランキング",
-    "appDescription": "データドリブンなAIコーディングツールランキング",
-    "loading": "ローディング中...",
-    "error": "エラー",
-    "tryAgain": "リトライ",
-    "backToHome": "ホームに戻る",
-    "learnMore": "詳細を見る",
-    "viewAll": "全て見る",
-    "close": "閉じる",
-    "cancel": "キャンセル",
-    "save": "セーブ",
-    "search": "検索",
-    "filter": "フィルター",
-    "sort": "ソート",
-    "share": "シェア",
-    "explore": "[TRANSLATE] Explore",
-    "notAvailable": "[TRANSLATE] N/A",
-    "users": "[TRANSLATE] Users"
+    "appName": "AI Power Ranking",
+    "appDescription": "Data-driven ranking of AI coding tools",
+    "loading": "Loading...",
+    "error": "Error",
+    "tryAgain": "Try Again",
+    "backToHome": "Back to Home",
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "share": "Share",
+    "explore": "Explore",
+    "notAvailable": "N/A",
+    "users": "Users",
+    "delete": "削除",
+    "edit": "編集",
+    "view": "表示",
+    "copy": "コピー",
+    "copied": "コピーしました",
+    "email": "メール",
+    "retry": "再試行",
+    "open": "開く",
+    "yes": "はい",
+    "no": "いいえ"
   },
   "navigation": {
-    "home": "ホーム",
-    "rankings": "ランキング",
-    "news": "ニュース",
-    "tools": "ツール",
-    "methodology": "手法",
-    "about": "について",
-    "subscribeToUpdates": "アップデートを購読",
-    "navigation": "ナビゲーション",
-    "quickLinks": "クイックリンク",
-    "trending": "トレンド",
-    "categories": "カテゴリー",
-    "features": "機能",
-    "clearFilters": "フィルターをクリア",
-    "allCategories": "すべてのカテゴリー"
+    "home": "Home",
+    "rankings": "Rankings",
+    "news": "News",
+    "tools": "Tools",
+    "methodology": "Methodology",
+    "about": "About",
+    "subscribeToUpdates": "Subscribe To Updates",
+    "navigation": "Navigation",
+    "quickLinks": "Quick Links",
+    "trending": "Trending",
+    "categories": "Categories",
+    "features": "Features",
+    "clearFilters": "Clear Filters",
+    "allCategories": "All Categories"
   },
   "home": {
     "hero": {
-      "badge": "毎週更新",
-      "title": "AIパワーランキング",
-      "subtitle": "最も強力なAIコーディングツールを発見・比較。自律エージェントからIDEアシスタントまで、あなたの開発ワークフローに最適なAIコンパニオンを見つけよう。",
-      "description": "最も強力なAIコーディングツールを発見・比較。自律エージェントからIDEアシスタントまで、あなたの開発ワークフローに最適なAIコンパニオンを見つけよう。",
-      "exploreTools": "全ツールを探索",
-      "viewTrending": "トレンドを見る",
-      "exploreButton": "全ツールを探索",
-      "trendingButton": "トレンドを見る",
-      "whatsNewButton": "[TRANSLATE] What's New"
+      "badge": "Updated Weekly",
+      "title": "AI Power Ranking",
+      "subtitle": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
+      "description": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
+      "exploreTools": "Explore All Tools",
+      "viewTrending": "View Trending",
+      "exploreButton": "Explore All Tools",
+      "trendingButton": "View Trending",
+      "whatsNewButton": "What's New"
     },
     "stats": {
-      "toolsRanked": "AIツールランク済み",
-      "trendingUp": "上昇中",
-      "updates": "更新",
-      "freeAccess": "無料アクセス",
-      "updateFrequency": "毎週更新"
+      "toolsRanked": "AI Tools Ranked",
+      "trendingUp": "Trending Up",
+      "updates": "Updates",
+      "freeAccess": "Free Access",
+      "updateFrequency": "Weekly Updates"
     },
     "trending": {
-      "title": "今週のトレンド",
-      "subtitle": "勢いを増し、ランキングを上がっているAIツール",
-      "description": "勢いを増し、ランキングを上がっているAIツール",
-      "viewAll": "すべてのトレンドを見る",
-      "viewAllButton": "すべてのトレンドを見る"
+      "title": "Trending This Week",
+      "subtitle": "AI tools gaining momentum and climbing the rankings",
+      "description": "AI tools gaining momentum and climbing the rankings",
+      "viewAll": "View All Trending",
+      "viewAllButton": "View All Trending"
     },
     "recentlyUpdated": {
-      "title": "最近の更新",
-      "subtitle": "トップAIツールからの最新アップデートと新機能",
-      "description": "トップAIツールからの最新アップデートと新機能",
-      "viewAll": "すべてのランキングを見る",
-      "viewAllButton": "すべてのランキングを見る"
+      "title": "Recently Updated",
+      "subtitle": "Latest updates and new features from top AI tools",
+      "description": "Latest updates and new features from top AI tools",
+      "viewAll": "View All Rankings",
+      "viewAllButton": "View All Rankings"
     },
     "recent": {
-      "title": "最近の更新",
-      "description": "トップAIツールからの最新開発と機能リリース",
-      "viewAllButton": "すべての最近の更新を見る"
+      "title": "Recent Updates",
+      "description": "Latest developments and feature releases from top AI tools",
+      "viewAllButton": "View All Recent"
     },
     "categories": {
-      "title": "カテゴリ別に探索",
-      "explore": "探索 →",
+      "title": "Explore by Category",
+      "explore": "Explore →",
       "ideAssistants": {
-        "name": "IDE アシスタント",
-        "description": "AI による コード補完と提案"
+        "name": "IDE Assistants",
+        "description": "AI-powered code completion and suggestions"
       },
       "aiEditors": {
-        "name": "AI エディタ",
-        "description": "AI 統合によるスマートエディタ"
+        "name": "AI Editors",
+        "description": "Smart editors with AI integration"
       },
       "appBuilders": {
-        "name": "アプリビルダー",
-        "description": "AI サポートによる完全なアプリケーション構築"
+        "name": "App Builders",
+        "description": "Build complete applications with AI assistance"
       },
       "autonomousAgents": {
         "name": "Autonomous Agents",
         "description": "Fully autonomous AI software engineers"
       },
-      "ideDescription": "AI搭載のコード補完とサジェスト",
-      "editorDescription": "AI統合スマートエディター",
-      "builderDescription": "AIアシスタンスで完全なアプリを構築",
-      "agentDescription": "完全自律AIソフトウェアエンジニア"
+      "ideDescription": "AI-powered code completion and suggestions",
+      "editorDescription": "Smart editors with AI integration",
+      "builderDescription": "Build complete applications with AI assistance",
+      "agentDescription": "Fully autonomous AI software engineers"
     },
     "methodology": {
-      "title": "私たちの手法",
-      "algorithmTitle": "アルゴリズム v6.0",
+      "title": "Our Methodology",
+      "algorithmTitle": "Algorithm v6.0",
       "algorithmDescription": "Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
@@ -165,18 +175,25 @@
       "modifiersTitle": "Dynamic Modifiers",
       "modifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings",
       "readFull": "Read Full Methodology",
-      "readMoreButton": "Read Full Methodology"
+      "readMoreButton": "Read Full Methodology",
+      "caption": "世界をリードするAIツールの評価と順位付けの方法をご覧ください"
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
       "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
-      "copyright": "© 2025 AI Power Rankings. All rights reserved."
+      "copyright": "© 2025 AI Power Ranking. All rights reserved."
     }
   },
+  "footer": {
+    "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+    "quickLinks": "Quick Links",
+    "categories": "Categories",
+    "copyright": "© 2025 AI Power Ranking. All rights reserved."
+  },
   "rankings": {
-    "title": "AIツールランキング",
+    "title": "AI Power Ranking",
     "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v6.0",
     "stats": {
       "totalTools": "Total Tools",
@@ -188,10 +205,10 @@
     "sortBy": "Sort by",
     "activeFilters": "Active filters",
     "sort": {
-      "rank": "ランク",
-      "trending": "トレンド",
-      "score": "スコア",
-      "name": "名前",
+      "rank": "Rank",
+      "trending": "Trending",
+      "score": "Score",
+      "name": "Name",
       "category": "カテゴリ"
     },
     "algorithm": {
@@ -206,22 +223,22 @@
       "secondaryFactors": "Secondary Factors (32.5%)",
       "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
       "factors": {
-        "agentic": "[TRANSLATE] Agentic Capability",
-        "innovation": "[TRANSLATE] Innovation",
-        "performance": "[TRANSLATE] Performance",
-        "adoption": "[TRANSLATE] Adoption",
-        "traction": "[TRANSLATE] Traction",
-        "sentiment": "[TRANSLATE] Sentiment",
-        "velocity": "[TRANSLATE] Velocity",
-        "resilience": "[TRANSLATE] Resilience"
+        "agentic": "Agentic Capability",
+        "innovation": "Innovation",
+        "performance": "Performance",
+        "adoption": "Adoption",
+        "traction": "Traction",
+        "sentiment": "Sentiment",
+        "velocity": "Velocity",
+        "resilience": "Resilience"
       },
       "modifiers": {
-        "decay": "[TRANSLATE] Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
-        "risk": "[TRANSLATE] Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
-        "revenue": "[TRANSLATE] Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
+        "decay": "Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
+        "risk": "Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
+        "revenue": "Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
       },
-      "methodologyText": "[TRANSLATE] Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
-      "viewMethodology": "[TRANSLATE] View Full Methodology"
+      "methodologyText": "Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
+      "viewMethodology": "View Full Methodology"
     },
     "filters": {
       "category": "カテゴリでフィルター",
@@ -231,15 +248,15 @@
     "showingResults": "{total}個中{count}個のツールを表示"
   },
   "news": {
-    "title": "AIツールニュース",
-    "subtitle": "AIコーディング世界からのアップデートと発表",
+    "title": "AI Tools News",
+    "subtitle": "Latest updates, milestones, and announcements from AI coding tools",
     "filters": {
-      "all": "すべて",
-      "milestone": "マイルストーン",
-      "feature": "機能",
-      "partnership": "パートナーシップ",
-      "update": "更新",
-      "announcement": "発表"
+      "all": "All News",
+      "milestone": "Milestone",
+      "feature": "Feature",
+      "partnership": "Partnership",
+      "update": "Update",
+      "announcement": "Announcement"
     },
     "noItems": "No news items found.",
     "loadingMore": "Loading more news...",
@@ -247,8 +264,8 @@
     "viewTool": "View Tool",
     "metrics": {
       "users": "users",
-      "score": "スコア",
-      "rank": "ランク",
+      "score": "score",
+      "rank": "rank",
       "change": "変化"
     },
     "time": {
@@ -260,25 +277,37 @@
     },
     "readMore": "続きを読む",
     "publishedOn": "公開日",
-    "noResults": "ニュースが見つかりません"
+    "noResults": "ニュースが見つかりません",
+    "trending": {
+      "title": "トレンドニュース",
+      "description": "最も話題のAIツールニュース"
+    },
+    "latestUpdate": "最新の更新",
+    "more": "もっと見る",
+    "score": "スコア",
+    "rank": "ランク"
   },
   "tools": {
-    "title": "AIコーディングツール",
-    "subtitle": "データベース内の全{count}個のAIコーディングツールを探索",
-    "allCategories": "全カテゴリー",
-    "filterByCategory": "カテゴリーでフィルター",
-    "sortBy": "ソート順",
-    "defaultDescription": "AIコーディングツールを発見・比較",
+    "title": "AI Coding Tools",
+    "subtitle": "Explore all {count} AI coding tools in our database",
+    "allCategories": "All Categories",
+    "filterByCategory": "Filter by category",
+    "sortBy": "Sort by",
+    "defaultDescription": "Discover and compare AI coding tools",
+    "notFound": "Tool not found",
+    "backToTools": "Back to Tools",
     "sort": {
       "name": "Name",
       "category": "Category",
-      "status": "Status"
+      "status": "Status",
+      "score": "スコア",
+      "updated": "更新日時"
     },
     "stats": {
       "total": "Total Tools",
       "active": "Active",
       "categories": "Categories",
-      "openSource": "オープンソース"
+      "openSource": "Open Source"
     },
     "directory": {
       "title": "AI Coding Tools Directory",
@@ -298,21 +327,21 @@
       "overview": "Overview",
       "description": "Description",
       "company": "Company",
-      "pricing": "料金",
+      "pricing": "Pricing",
       "users": "Users",
-      "githubStars": "GitHub スター",
+      "githubStars": "GitHub Stars",
       "tabs": {
-        "performance": "パフォーマンス",
-        "pricing": "料金",
-        "businessMetrics": "ビジネス",
-        "scores": "スコア",
-        "history": "履歴"
+        "performance": "Performance",
+        "pricing": "Pricing",
+        "businessMetrics": "Business",
+        "scores": "Scores",
+        "history": "History"
       },
       "performance": {
-        "title": "技術パフォーマンス",
-        "subtitle": "ベンチマーク結果と技術的能力",
-        "description": "SWE-benchスコアと機能サポートを含むベンチマーク結果と技術的能力",
-        "sweScore": "SWE-benchスコア",
+        "title": "Technical Performance",
+        "subtitle": "Benchmark results and technical capabilities",
+        "description": "Benchmark results and technical capabilities including SWE-bench scores and feature support",
+        "sweScore": "SWE-bench Score",
         "contextWindow": "Context Window",
         "languageSupport": "Language Support",
         "multiFileSupport": "Multi-file Support",
@@ -320,7 +349,7 @@
         "tokens": "tokens",
         "languages": "languages",
         "yes": "Yes",
-        "multiple": "複数"
+        "multiple": "Multiple"
       },
       "businessMetrics": {
         "title": "Business Metrics",
@@ -328,10 +357,11 @@
         "monthlyArr": "ARR (Monthly)",
         "valuation": "Valuation",
         "totalFunding": "Total Funding",
-        "employees": "従業員",
+        "employees": "Employees",
         "totalUsers": "Total Users",
         "funding": "資金調達",
-        "revenue": "収益"
+        "revenue": "収益",
+        "founded": "設立年"
       },
       "rankingScores": {
         "title": "Ranking Scores",
@@ -346,11 +376,14 @@
         "noHistory": "No metric history available for this tool.",
         "update": "Update",
         "newMetrics": "New metrics reported for {tool}"
-      }
+      },
+      "features": "機能",
+      "documentation": "ドキュメント",
+      "website": "ウェブサイト"
     },
     "status": {
       "active": "Active",
-      "beta": "ベータ",
+      "beta": "Beta",
       "deprecated": "Deprecated",
       "discontinued": "Discontinued",
       "acquired": "Acquired"
@@ -363,17 +396,45 @@
       "open-source-framework": "Open Source Framework",
       "testing-tool": "Testing Tool",
       "code-review": "Code Review",
-      "code-generation": "Code Generation"
+      "code-generation": "Code Generation",
+      "ai-assistant": "AIアシスタント",
+      "ai-search": "AI検索",
+      "analytics": "分析",
+      "api": "API",
+      "browser-extension": "ブラウザ拡張",
+      "cli": "CLI",
+      "cloud-ide": "クラウドIDE",
+      "collaboration": "コラボレーション",
+      "data-science": "データサイエンス",
+      "database": "データベース",
+      "debugging": "デバッグ",
+      "deployment": "デプロイメント",
+      "documentation": "ドキュメント",
+      "enterprise": "エンタープライズ",
+      "ide-plugin": "IDEプラグイン",
+      "infrastructure": "インフラストラクチャ",
+      "learning": "学習",
+      "mobile": "モバイル",
+      "monitoring": "モニタリング",
+      "productivity": "生産性",
+      "security": "セキュリティ"
     },
-    "notFound": "[TRANSLATE] Tool not found",
-    "backToTools": "[TRANSLATE] Back to Tools"
+    "filters": {
+      "all": "すべて",
+      "category": "カテゴリー",
+      "pricing": "価格設定",
+      "features": "機能"
+    },
+    "noTools": "ツールが見つかりません",
+    "loading": "読み込み中...",
+    "noResults": "結果が見つかりません"
   },
   "newsletter": {
     "form": {
-      "firstName": "名",
-      "lastName": "姓",
-      "email": "メール",
-      "subscribe": "購読",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "subscribe": "Subscribe",
       "subscribing": "Subscribing...",
       "privacyNote": "We respect your privacy. Unsubscribe at any time.",
       "placeholder": {
@@ -381,12 +442,12 @@
       }
     },
     "modal": {
-      "title": "最新情報をキープ",
+      "title": "Stay Updated",
       "subtitle": "Get weekly updates on AI tool rankings, new features, and industry insights.",
       "firstName": "First name",
       "lastName": "Last name",
-      "email": "メール",
-      "subscribe": "購読",
+      "email": "Email",
+      "subscribe": "Subscribe",
       "subscribing": "Subscribing...",
       "thankYou": "Thank you!",
       "checkEmail": "Please check your email to verify your subscription",
@@ -433,79 +494,188 @@
       "actions": {
         "backToHome": "Back to Home",
         "subscribeAgain": "Subscribe Again"
+      },
+      "subtitle": "受信箱を確認して、メールアドレスを認証してください",
+      "resend": "認証メールを再送信"
+    },
+    "verify": {
+      "goToHomepage": "Go to Homepage",
+      "tryAgain": "Try Again",
+      "success": {
+        "title": "Email Verified!",
+        "description": "Your email has been successfully verified. You'll start receiving our weekly newsletter."
+      },
+      "alreadyVerified": {
+        "title": "Already Verified",
+        "description": "This email address has already been verified. You're all set!"
+      },
+      "error": {
+        "title": "Verification Error"
+      },
+      "errors": {
+        "default": "An unexpected error occurred. Please try again.",
+        "missingToken": "The verification link appears to be incomplete.",
+        "invalidToken": "This verification link is invalid or has expired.",
+        "verificationFailed": "We couldn't verify your email at this time. Please try again later."
       }
     },
     "unsubscribe": {
       "title": "Unsubscribe from Newsletter",
       "processing": "Processing your request...",
       "success": {
-        "title": "配信停止完了",
-        "message": "メーリングリストから削除されました",
-        "description": "[TRANSLATE] You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
+        "title": "Successfully Unsubscribed",
+        "message": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!",
+        "description": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
+      },
+      "error": {
+        "title": "Unsubscribe Error"
       },
       "errors": {
-        "missingToken": {
-          "title": "Missing Token",
-          "message": "The unsubscribe link appears to be incomplete."
-        },
-        "invalidToken": {
-          "title": "Invalid Link",
-          "message": "This unsubscribe link is invalid or has expired."
-        },
+        "missingToken": "The unsubscribe link appears to be incomplete.",
+        "invalidToken": "This unsubscribe link is invalid or has expired.",
+        "unsubscribeFailed": "We couldn't process your unsubscribe request. Please try again later.",
+        "default": "An unexpected error occurred. Please try again.",
         "failed": {
           "title": "Unsubscribe Failed",
           "message": "We couldn't process your unsubscribe request. Please try again later."
         },
         "unexpected": {
-          "title": "エラー",
-          "message": "予期しないエラーが発生しました"
-        },
-        "unsubscribeFailed": "[TRANSLATE] We couldn't process your unsubscribe request. Please try again later.",
-        "default": "[TRANSLATE] An unexpected error occurred. Please try again."
+          "title": "Error",
+          "message": "An unexpected error occurred. Please try again."
+        }
       },
       "resubscribe": "Changed your mind? You can subscribe again anytime.",
-      "subscribeAgain": "Subscribe Again",
-      "error": {
-        "title": "[TRANSLATE] Unsubscribe Error"
-      }
+      "subscribeAgain": "Subscribe Again"
     },
-    "verify": {
-      "goToHomepage": "[TRANSLATE] Go to Homepage",
-      "tryAgain": "[TRANSLATE] Try Again",
-      "success": {
-        "title": "[TRANSLATE] Email Verified!",
-        "description": "[TRANSLATE] Your email has been successfully verified. You'll start receiving our weekly newsletter."
-      },
-      "alreadyVerified": {
-        "title": "[TRANSLATE] Already Verified",
-        "description": "[TRANSLATE] This email address has already been verified. You're all set!"
-      },
-      "error": {
-        "title": "[TRANSLATE] Verification Error"
-      },
-      "errors": {
-        "default": "[TRANSLATE] An unexpected error occurred. Please try again.",
-        "missingToken": "[TRANSLATE] The verification link appears to be incomplete.",
-        "invalidToken": "[TRANSLATE] This verification link is invalid or has expired.",
-        "verificationFailed": "[TRANSLATE] We couldn't verify your email at this time. Please try again later."
-      }
-    },
-    "title": "AIツールアップデートを購読",
+    "title": "ニュースレター",
     "description": "新しいAIコーディングツールとランキングの週次アップデートを受信",
-    "success": {
-      "title": "購読成功！",
-      "message": "週次アップデートをまもなく受信します"
-    },
-    "error": {
-      "title": "購読失敗",
-      "message": "再度お試しください"
-    }
+    "success": "購読ありがとうございます！",
+    "error": "エラーが発生しました。もう一度お試しください。",
+    "subtitle": "最新のAIツールニュースとランキングの更新を受け取る",
+    "emailPlaceholder": "メールアドレスを入力",
+    "subscribe": "購読",
+    "subscribing": "購読中..."
   },
   "methodology": {
     "title": "Our Methodology",
     "subtitle": "How we rank AI coding tools",
     "lastUpdated": "Last updated: January 2025",
-    "intro": "AI Power Rankings uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "intro": "AI Power Ranking uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "algorithm": {
+      "title": "Algorithm v6.0",
+      "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
+      "keyFeatures": "Key Features",
+      "features": {
+        "innovationDecay": "Innovation decay modeling to reflect tool freshness",
+        "platformRisk": "Platform risk assessment for vendor dependencies",
+        "revenueQuality": "Revenue quality adjustments based on business model",
+        "technicalWeighting": "Technical capability weighting for different use cases",
+        "dataValidation": "Multi-source data validation and normalization",
+        "logarithmicScaling": "Logarithmic scaling for balanced comparisons"
+      }
+    },
+    "factors": {
+      "title": "Scoring Factors",
+      "description": "Tools are evaluated across 8 key dimensions with specific weightings",
+      "primary": "Primary Factors (82.5%)",
+      "secondary": "Secondary Factors (17.5%)",
+      "agentic": {
+        "details": "Measures autonomous capabilities, multi-step reasoning, and complex task completion"
+      },
+      "innovation": {
+        "details": "Evaluates breakthrough features, technical advances, and market differentiation",
+        "name": "イノベーション",
+        "description": "ユニークな機能と技術的進歩"
+      },
+      "performance": {
+        "details": "Benchmarks on SWE-bench, HumanEval, and real-world coding tasks",
+        "name": "パフォーマンス",
+        "description": "コード生成、補完、デバッグ機能"
+      },
+      "adoption": {
+        "details": "Active users, growth rate, and market penetration metrics",
+        "name": "普及度",
+        "description": "ユーザー受容とコミュニティエンゲージメント"
+      },
+      "traction": {
+        "details": "Revenue growth, funding rounds, and business momentum indicators"
+      },
+      "sentiment": {
+        "details": "Developer satisfaction, community feedback, and recommendation scores"
+      },
+      "velocity": {
+        "details": "Feature release cadence, update frequency, and innovation speed"
+      },
+      "resilience": {
+        "details": "Platform stability, backup options, and vendor independence"
+      },
+      "ecosystem": {
+        "name": "エコシステム",
+        "description": "統合と開発者サポート"
+      }
+    },
+    "modifiers": {
+      "title": "Dynamic Modifiers",
+      "description": "Real-time adjustments that reflect market conditions and tool maturity",
+      "innovationDecay": {
+        "description": "Innovation scores decay over time to reward continuous improvement and penalize stagnation"
+      },
+      "platformRisk": {
+        "description": "Adjustments based on vendor lock-in, platform dependencies, and business risks",
+        "penalties": "Risk Penalties",
+        "penaltyList": {
+          "acquired": "Recently acquired by competitor",
+          "exclusive": "Platform exclusive (single LLM)",
+          "competitor": "Owned by competing platform",
+          "regulatory": "Regulatory compliance issues",
+          "funding": "Funding or sustainability concerns"
+        },
+        "bonuses": "Risk Mitigation Bonuses",
+        "bonusList": {
+          "multiLLM": "Supports multiple LLM providers",
+          "openSource": "Open source availability",
+          "selfHosted": "Self-hosting options"
+        }
+      },
+      "revenueQuality": {
+        "description": "Revenue weighting based on business model sustainability and growth potential",
+        "models": {
+          "enterpriseHigh": "Enterprise (High-touch)",
+          "enterpriseStandard": "Enterprise (Standard)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "Consumer Premium",
+          "freemium": "Freemium",
+          "openSource": "Open Source"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "Data Sources & Validation",
+      "description": "We maintain rigorous standards for data collection and validation",
+      "collection": {
+        "title": "Data Collection Methods",
+        "sources": {
+          "api": "Direct API integrations with tool providers",
+          "research": "Industry research reports and analyst data",
+          "announcements": "Official company announcements and press releases",
+          "community": "Developer surveys and community feedback",
+          "benchmarks": "Standardized performance benchmarks"
+        }
+      },
+      "validation": {
+        "title": "Validation Requirements",
+        "requirements": {
+          "completeness": "All required metrics must be present",
+          "reliability": "Multiple source verification for key metrics",
+          "outlier": "Outlier detection and manual review",
+          "crossValidation": "Cross-validation with industry benchmarks"
+        }
+      },
+      "updateFrequency": {
+        "title": "Update Schedule",
+        "description": "Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
+      }
+    },
     "sections": {
       "scoringFactors": {
         "title": "Scoring Factors",
@@ -518,132 +688,26 @@
       "dataCollection": {
         "title": "Data Collection",
         "intro": "We gather data from multiple sources to ensure accuracy:",
-        "sources": {
-          "0": "Direct API integrations with tool providers",
-          "1": "Public repositories and developer statistics",
-          "2": "Industry reports and verified news sources",
-          "3": "User surveys and community feedback",
-          "4": "Performance benchmarks (SWE-bench, HumanEval)"
-        }
+        "sources": [
+          "Direct API integrations with tool providers",
+          "Public repositories and developer statistics",
+          "Industry reports and verified news sources",
+          "User surveys and community feedback",
+          "Performance benchmarks (SWE-bench, HumanEval)"
+        ]
       },
       "updateFrequency": {
         "title": "Update Frequency",
         "content": "Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
-      }
-    },
-    "algorithm": {
-      "title": "[TRANSLATE] Algorithm v6.0",
-      "description": "[TRANSLATE] Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
-      "keyFeatures": "[TRANSLATE] Key Features",
-      "features": {
-        "innovationDecay": "[TRANSLATE] Innovation decay modeling to reflect tool freshness",
-        "platformRisk": "[TRANSLATE] Platform risk assessment for vendor dependencies",
-        "revenueQuality": "[TRANSLATE] Revenue quality adjustments based on business model",
-        "technicalWeighting": "[TRANSLATE] Technical capability weighting for different use cases",
-        "dataValidation": "[TRANSLATE] Multi-source data validation and normalization",
-        "logarithmicScaling": "[TRANSLATE] Logarithmic scaling for balanced comparisons"
-      }
-    },
-    "factors": {
-      "title": "[TRANSLATE] Scoring Factors",
-      "description": "[TRANSLATE] Tools are evaluated across 8 key dimensions with specific weightings",
-      "primary": "[TRANSLATE] Primary Factors (82.5%)",
-      "secondary": "[TRANSLATE] Secondary Factors (17.5%)",
-      "agentic": {
-        "details": "[TRANSLATE] Measures autonomous capabilities, multi-step reasoning, and complex task completion"
       },
-      "innovation": {
-        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation",
-        "name": "イノベーション",
-        "description": "ユニークな機能と技術的進歩"
+      "overview": {
+        "title": "概要"
       },
-      "performance": {
-        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks",
-        "name": "パフォーマンス",
-        "description": "コード生成、補完、デバッグ機能"
+      "algorithm": {
+        "title": "アルゴリズム"
       },
-      "adoption": {
-        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics",
-        "name": "普及度",
-        "description": "ユーザー受容とコミュニティエンゲージメント"
-      },
-      "traction": {
-        "details": "[TRANSLATE] Revenue growth, funding rounds, and business momentum indicators"
-      },
-      "sentiment": {
-        "details": "[TRANSLATE] Developer satisfaction, community feedback, and recommendation scores"
-      },
-      "velocity": {
-        "details": "[TRANSLATE] Feature release cadence, update frequency, and innovation speed"
-      },
-      "resilience": {
-        "details": "[TRANSLATE] Platform stability, backup options, and vendor independence"
-      },
-      "ecosystem": {
-        "name": "エコシステム",
-        "description": "統合と開発者サポート"
-      }
-    },
-    "modifiers": {
-      "title": "[TRANSLATE] Dynamic Modifiers",
-      "description": "[TRANSLATE] Real-time adjustments that reflect market conditions and tool maturity",
-      "innovationDecay": {
-        "description": "[TRANSLATE] Innovation scores decay over time to reward continuous improvement and penalize stagnation"
-      },
-      "platformRisk": {
-        "description": "[TRANSLATE] Adjustments based on vendor lock-in, platform dependencies, and business risks",
-        "penalties": "[TRANSLATE] Risk Penalties",
-        "penaltyList": {
-          "acquired": "[TRANSLATE] Recently acquired by competitor",
-          "exclusive": "[TRANSLATE] Platform exclusive (single LLM)",
-          "competitor": "[TRANSLATE] Owned by competing platform",
-          "regulatory": "[TRANSLATE] Regulatory compliance issues",
-          "funding": "[TRANSLATE] Funding or sustainability concerns"
-        },
-        "bonuses": "[TRANSLATE] Risk Mitigation Bonuses",
-        "bonusList": {
-          "multiLLM": "[TRANSLATE] Supports multiple LLM providers",
-          "openSource": "[TRANSLATE] Open source availability",
-          "selfHosted": "[TRANSLATE] Self-hosting options"
-        }
-      },
-      "revenueQuality": {
-        "description": "[TRANSLATE] Revenue weighting based on business model sustainability and growth potential",
-        "models": {
-          "enterpriseHigh": "[TRANSLATE] Enterprise (High-touch)",
-          "enterpriseStandard": "[TRANSLATE] Enterprise (Standard)",
-          "smbSaas": "[TRANSLATE] SMB SaaS",
-          "consumerPremium": "[TRANSLATE] Consumer Premium",
-          "freemium": "[TRANSLATE] Freemium",
-          "openSource": "[TRANSLATE] Open Source"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "[TRANSLATE] Data Sources & Validation",
-      "description": "[TRANSLATE] We maintain rigorous standards for data collection and validation",
-      "collection": {
-        "title": "[TRANSLATE] Data Collection Methods",
-        "sources": {
-          "api": "[TRANSLATE] Direct API integrations with tool providers",
-          "research": "[TRANSLATE] Industry research reports and analyst data",
-          "announcements": "[TRANSLATE] Official company announcements and press releases",
-          "community": "[TRANSLATE] Developer surveys and community feedback",
-          "benchmarks": "[TRANSLATE] Standardized performance benchmarks"
-        }
-      },
-      "validation": {
-        "title": "[TRANSLATE] Validation Requirements",
-        "requirements": {
-          "completeness": "[TRANSLATE] All required metrics must be present",
-          "reliability": "[TRANSLATE] Multiple source verification for key metrics",
-          "outlier": "[TRANSLATE] Outlier detection and manual review",
-          "crossValidation": "[TRANSLATE] Cross-validation with industry benchmarks"
-        }
-      },
-      "updateFrequency": {
-        "title": "[TRANSLATE] Update Schedule",
-        "description": "[TRANSLATE] Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
+      "factors": {
+        "title": "要因"
       }
     },
     "overview": {
@@ -652,44 +716,50 @@
     }
   },
   "about": {
-    "title": "About AI Power Rankings",
+    "title": "About AI Power Ranking",
     "subtitle": "Empowering developers with data-driven AI tool insights",
     "hero": {
       "title": "Empowering developers with data-driven AI tool insights",
       "subtitle": "We believe developers deserve transparent, objective rankings of AI coding tools to make informed decisions."
     },
     "mission": {
-      "title": "私たちのミッション",
+      "title": "Our Mission",
       "content": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs.",
-      "description": "開発者向けAIコーディングツールの透明でデータ駆動な rankings"
+      "description": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
     },
     "whyWeBuiltThis": {
       "title": "Why We Built This",
-      "reasons": {
-        "0": "The AI tools landscape is evolving rapidly, making it hard to keep track",
-        "1": "Marketing claims often don't match real-world performance",
-        "2": "Developers need objective data to justify tool adoption",
-        "3": "There was no single source comparing all major AI coding tools"
-      }
+      "reasons": [
+        "The AI tools landscape is evolving rapidly, making it hard to keep track",
+        "Marketing claims often don't match real-world performance",
+        "Developers need objective data to justify tool adoption",
+        "There was no single source comparing all major AI coding tools"
+      ]
     },
     "team": {
-      "title": "チーム",
-      "description": "AI Power Rankingsの背後にいる人々について学ぶ",
-      "description1": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
-      "description2": "[TRANSLATE] I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
-      "description3": "[TRANSLATE] Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
-      "hyperdevLink": "[TRANSLATE] HyperDev",
-      "reportIssue": "[TRANSLATE] Report an Issue"
+      "title": "The Team",
+      "description": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description1": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description2": "I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
+      "description3": "Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "Report an Issue"
     },
     "contact": {
-      "title": "連絡先",
-      "description": "質問やフィードバックがありますか？お問い合わせください",
+      "title": "Get in Touch",
+      "description": "Have feedback or suggestions? We'd love to hear from you.",
       "email": "Contact us at hello@aipowerranking.com"
     },
     "newsletter": {
       "title": "Stay Updated",
       "description": "Get weekly insights on AI tool rankings and industry trends.",
       "subscribe": "Subscribe to Newsletter"
+    },
+    "cta": {
+      "title": "Ready to Explore?",
+      "description": "Dive into our rankings to discover the best AI coding tools for your needs.",
+      "exploreButton": "Explore Rankings",
+      "methodologyButton": "Learn Our Methodology"
     },
     "whatWeDo": {
       "title": "What We Do",
@@ -729,37 +799,31 @@
     "whyItMatters": {
       "title": "Why It Matters",
       "description": "In the rapidly evolving AI landscape, developers need reliable data to make informed decisions.",
-      "points": {
-        "0": "Save time evaluating tools",
-        "1": "Make data-driven decisions",
-        "2": "Stay ahead of the curve",
-        "3": "Choose tools that fit your needs"
-      },
+      "points": [
+        "Save time evaluating tools",
+        "Make data-driven decisions",
+        "Stay ahead of the curve",
+        "Choose tools that fit your needs"
+      ],
       "challenges": {
         "paralysis": {
-          "title": "[TRANSLATE] Decision Paralysis",
-          "description": "[TRANSLATE] With dozens of AI tools launching every week, developers face overwhelming choices"
+          "title": "Decision Paralysis",
+          "description": "With dozens of AI tools launching every week, developers face overwhelming choices"
         },
         "marketing": {
-          "title": "[TRANSLATE] Marketing vs Reality",
-          "description": "[TRANSLATE] Bold claims often don't match real-world performance and capabilities"
+          "title": "Marketing vs Reality",
+          "description": "Bold claims often don't match real-world performance and capabilities"
         },
         "change": {
-          "title": "[TRANSLATE] Rapid Change",
-          "description": "[TRANSLATE] Tools evolve quickly - what's best today might be obsolete tomorrow"
+          "title": "Rapid Change",
+          "description": "Tools evolve quickly - what's best today might be obsolete tomorrow"
         },
         "risks": {
-          "title": "[TRANSLATE] Hidden Risks",
-          "description": "[TRANSLATE] Security, privacy, and vendor lock-in concerns are often overlooked"
+          "title": "Hidden Risks",
+          "description": "Security, privacy, and vendor lock-in concerns are often overlooked"
         }
       },
-      "conclusion": "[TRANSLATE] That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
-    },
-    "cta": {
-      "title": "[TRANSLATE] Ready to Explore?",
-      "description": "[TRANSLATE] Dive into our rankings to discover the best AI coding tools for your needs.",
-      "exploreButton": "[TRANSLATE] Explore Rankings",
-      "methodologyButton": "[TRANSLATE] Learn Our Methodology"
+      "conclusion": "That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
     },
     "methodology": {
       "title": "方法論",
@@ -768,49 +832,65 @@
   },
   "sidebar": {
     "navigation": "Navigation",
-    "quickLinks": "クイックリンク",
-    "trending": "トレンド",
-    "categories": "カテゴリ",
-    "features": "機能",
-    "clearFilters": "Clear Filters"
+    "quickLinks": "Quick Links",
+    "trending": "Trending",
+    "categories": "Categories",
+    "features": "Features",
+    "clearFilters": "Clear Filters",
+    "rankings": "ランキング",
+    "news": "ニュース",
+    "tools": "ツール",
+    "methodology": "方法論"
   },
   "features": {
-    "autocomplete": "自動補完",
-    "chat": "チャット",
-    "codeGeneration": "コード生成",
-    "refactoring": "リファクタリング",
-    "testing": "テスト",
-    "documentation": "ドキュメンテーション"
+    "autocomplete": "Autocomplete",
+    "chat": "Chat Interface",
+    "codeGeneration": "Code Generation",
+    "refactoring": "Refactoring",
+    "testing": "Testing",
+    "documentation": "Documentation",
+    "debugging": "デバッグ",
+    "codeReview": "コードレビュー",
+    "translation": "コード翻訳",
+    "optimization": "最適化",
+    "collaboration": "コラボレーション",
+    "analytics": "分析",
+    "security": "セキュリティ",
+    "deployment": "デプロイメント",
+    "monitoring": "モニタリング"
   },
   "status": {
-    "active": "アクティブ",
-    "beta": "ベータ",
-    "deprecated": "非推奨",
-    "discontinued": "開発終了",
-    "acquired": "買収済み",
-    "coming-soon": "近日公開"
+    "active": "Active",
+    "beta": "Beta",
+    "deprecated": "Deprecated",
+    "discontinued": "Discontinued",
+    "acquired": "Acquired",
+    "coming-soon": "近日公開",
+    "inactive": "非アクティブ",
+    "alpha": "アルファ",
+    "stable": "安定版"
   },
   "errors": {
     "404": {
-      "title": "ページが見つかりません",
-      "message": "お探しのページは存在しません。",
-      "action": "ホームに戻る"
+      "title": "Page Not Found",
+      "message": "The page you're looking for doesn't exist.",
+      "action": "Go Home"
     },
     "500": {
-      "title": "何かがうまくいきませんでした",
-      "message": "技術的な問題が発生しています。後でもう一度お試しください。",
-      "action": "リトライ"
+      "title": "Something went wrong",
+      "message": "We're experiencing technical difficulties. Please try again later.",
+      "action": "Try Again"
     },
     "offline": {
       "title": "You're Offline",
       "message": "Please check your internet connection and try again.",
       "action": "Retry"
-    }
-  },
-  "footer": {
-    "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
-    "quickLinks": "[TRANSLATE] Quick Links",
-    "categories": "[TRANSLATE] Categories",
-    "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved."
+    },
+    "notFound": "見つかりません",
+    "serverError": "サーバーエラー",
+    "networkError": "ネットワークエラー",
+    "unauthorized": "認証されていません",
+    "forbidden": "アクセス禁止",
+    "generic": "何かが間違いました"
   }
 }
