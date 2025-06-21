@@ -30,7 +30,10 @@
     "search": "Cerca",
     "filter": "Filtra",
     "sort": "Ordina",
-    "share": "Condividi"
+    "share": "Condividi",
+    "explore": "[TRANSLATE] Explore",
+    "notAvailable": "[TRANSLATE] N/A",
+    "users": "[TRANSLATE] Users"
   },
   "navigation": {
     "home": "Home",
@@ -57,7 +60,8 @@
       "exploreTools": "Esplora tutti i tool",
       "viewTrending": "Vedi trending",
       "exploreButton": "Esplora tutti i tool",
-      "trendingButton": "Vedi trending"
+      "trendingButton": "Vedi trending",
+      "whatsNewButton": "[TRANSLATE] What's New"
     },
     "stats": {
       "toolsRanked": "Tool AI classificati",
@@ -199,7 +203,24 @@
       },
       "primaryFactors": "Primary Factors (67.5%)",
       "secondaryFactors": "Secondary Factors (32.5%)",
-      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology."
+      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
+      "factors": {
+        "agentic": "[TRANSLATE] Agentic Capability",
+        "innovation": "[TRANSLATE] Innovation",
+        "performance": "[TRANSLATE] Performance",
+        "adoption": "[TRANSLATE] Adoption",
+        "traction": "[TRANSLATE] Traction",
+        "sentiment": "[TRANSLATE] Sentiment",
+        "velocity": "[TRANSLATE] Velocity",
+        "resilience": "[TRANSLATE] Resilience"
+      },
+      "modifiers": {
+        "decay": "[TRANSLATE] Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
+        "risk": "[TRANSLATE] Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
+        "revenue": "[TRANSLATE] Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
+      },
+      "methodologyText": "[TRANSLATE] Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
+      "viewMethodology": "[TRANSLATE] View Full Methodology"
     }
   },
   "news": {
@@ -330,7 +351,9 @@
       "testing-tool": "Testing Tool",
       "code-review": "Code Review",
       "code-generation": "Code Generation"
-    }
+    },
+    "notFound": "[TRANSLATE] Tool not found",
+    "backToTools": "[TRANSLATE] Back to Tools"
   },
   "newsletter": {
     "form": {
@@ -399,7 +422,8 @@
       "processing": "Processing your request...",
       "success": {
         "title": "Successfully Unsubscribed",
-        "message": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!"
+        "message": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!",
+        "description": "[TRANSLATE] You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
       },
       "errors": {
         "missingToken": {
@@ -417,10 +441,36 @@
         "unexpected": {
           "title": "Error",
           "message": "An unexpected error occurred. Please try again."
-        }
+        },
+        "unsubscribeFailed": "[TRANSLATE] We couldn't process your unsubscribe request. Please try again later.",
+        "default": "[TRANSLATE] An unexpected error occurred. Please try again."
       },
       "resubscribe": "Changed your mind? You can subscribe again anytime.",
-      "subscribeAgain": "Subscribe Again"
+      "subscribeAgain": "Subscribe Again",
+      "error": {
+        "title": "[TRANSLATE] Unsubscribe Error"
+      }
+    },
+    "verify": {
+      "goToHomepage": "[TRANSLATE] Go to Homepage",
+      "tryAgain": "[TRANSLATE] Try Again",
+      "success": {
+        "title": "[TRANSLATE] Email Verified!",
+        "description": "[TRANSLATE] Your email has been successfully verified. You'll start receiving our weekly newsletter."
+      },
+      "alreadyVerified": {
+        "title": "[TRANSLATE] Already Verified",
+        "description": "[TRANSLATE] This email address has already been verified. You're all set!"
+      },
+      "error": {
+        "title": "[TRANSLATE] Verification Error"
+      },
+      "errors": {
+        "default": "[TRANSLATE] An unexpected error occurred. Please try again.",
+        "missingToken": "[TRANSLATE] The verification link appears to be incomplete.",
+        "invalidToken": "[TRANSLATE] This verification link is invalid or has expired.",
+        "verificationFailed": "[TRANSLATE] We couldn't verify your email at this time. Please try again later."
+      }
     }
   },
   "methodology": {
@@ -452,6 +502,111 @@
         "title": "Update Frequency",
         "content": "Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
       }
+    },
+    "algorithm": {
+      "title": "[TRANSLATE] Algorithm v6.0",
+      "description": "[TRANSLATE] Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
+      "keyFeatures": "[TRANSLATE] Key Features",
+      "features": {
+        "innovationDecay": "[TRANSLATE] Innovation decay modeling to reflect tool freshness",
+        "platformRisk": "[TRANSLATE] Platform risk assessment for vendor dependencies",
+        "revenueQuality": "[TRANSLATE] Revenue quality adjustments based on business model",
+        "technicalWeighting": "[TRANSLATE] Technical capability weighting for different use cases",
+        "dataValidation": "[TRANSLATE] Multi-source data validation and normalization",
+        "logarithmicScaling": "[TRANSLATE] Logarithmic scaling for balanced comparisons"
+      }
+    },
+    "factors": {
+      "title": "[TRANSLATE] Scoring Factors",
+      "description": "[TRANSLATE] Tools are evaluated across 8 key dimensions with specific weightings",
+      "primary": "[TRANSLATE] Primary Factors (82.5%)",
+      "secondary": "[TRANSLATE] Secondary Factors (17.5%)",
+      "agentic": {
+        "details": "[TRANSLATE] Measures autonomous capabilities, multi-step reasoning, and complex task completion"
+      },
+      "innovation": {
+        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation"
+      },
+      "performance": {
+        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
+      },
+      "adoption": {
+        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics"
+      },
+      "traction": {
+        "details": "[TRANSLATE] Revenue growth, funding rounds, and business momentum indicators"
+      },
+      "sentiment": {
+        "details": "[TRANSLATE] Developer satisfaction, community feedback, and recommendation scores"
+      },
+      "velocity": {
+        "details": "[TRANSLATE] Feature release cadence, update frequency, and innovation speed"
+      },
+      "resilience": {
+        "details": "[TRANSLATE] Platform stability, backup options, and vendor independence"
+      }
+    },
+    "modifiers": {
+      "title": "[TRANSLATE] Dynamic Modifiers",
+      "description": "[TRANSLATE] Real-time adjustments that reflect market conditions and tool maturity",
+      "innovationDecay": {
+        "description": "[TRANSLATE] Innovation scores decay over time to reward continuous improvement and penalize stagnation"
+      },
+      "platformRisk": {
+        "description": "[TRANSLATE] Adjustments based on vendor lock-in, platform dependencies, and business risks",
+        "penalties": "[TRANSLATE] Risk Penalties",
+        "penaltyList": {
+          "acquired": "[TRANSLATE] Recently acquired by competitor",
+          "exclusive": "[TRANSLATE] Platform exclusive (single LLM)",
+          "competitor": "[TRANSLATE] Owned by competing platform",
+          "regulatory": "[TRANSLATE] Regulatory compliance issues",
+          "funding": "[TRANSLATE] Funding or sustainability concerns"
+        },
+        "bonuses": "[TRANSLATE] Risk Mitigation Bonuses",
+        "bonusList": {
+          "multiLLM": "[TRANSLATE] Supports multiple LLM providers",
+          "openSource": "[TRANSLATE] Open source availability",
+          "selfHosted": "[TRANSLATE] Self-hosting options"
+        }
+      },
+      "revenueQuality": {
+        "description": "[TRANSLATE] Revenue weighting based on business model sustainability and growth potential",
+        "models": {
+          "enterpriseHigh": "[TRANSLATE] Enterprise (High-touch)",
+          "enterpriseStandard": "[TRANSLATE] Enterprise (Standard)",
+          "smbSaas": "[TRANSLATE] SMB SaaS",
+          "consumerPremium": "[TRANSLATE] Consumer Premium",
+          "freemium": "[TRANSLATE] Freemium",
+          "openSource": "[TRANSLATE] Open Source"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "[TRANSLATE] Data Sources & Validation",
+      "description": "[TRANSLATE] We maintain rigorous standards for data collection and validation",
+      "collection": {
+        "title": "[TRANSLATE] Data Collection Methods",
+        "sources": {
+          "api": "[TRANSLATE] Direct API integrations with tool providers",
+          "research": "[TRANSLATE] Industry research reports and analyst data",
+          "announcements": "[TRANSLATE] Official company announcements and press releases",
+          "community": "[TRANSLATE] Developer surveys and community feedback",
+          "benchmarks": "[TRANSLATE] Standardized performance benchmarks"
+        }
+      },
+      "validation": {
+        "title": "[TRANSLATE] Validation Requirements",
+        "requirements": {
+          "completeness": "[TRANSLATE] All required metrics must be present",
+          "reliability": "[TRANSLATE] Multiple source verification for key metrics",
+          "outlier": "[TRANSLATE] Outlier detection and manual review",
+          "crossValidation": "[TRANSLATE] Cross-validation with industry benchmarks"
+        }
+      },
+      "updateFrequency": {
+        "title": "[TRANSLATE] Update Schedule",
+        "description": "[TRANSLATE] Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
+      }
     }
   },
   "about": {
@@ -477,7 +632,12 @@
     },
     "team": {
       "title": "The Team",
-      "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development."
+      "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development.",
+      "description1": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description2": "[TRANSLATE] I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
+      "description3": "[TRANSLATE] Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
+      "hyperdevLink": "[TRANSLATE] HyperDev",
+      "reportIssue": "[TRANSLATE] Report an Issue"
     },
     "contact": {
       "title": "Get in Touch",
@@ -532,7 +692,32 @@
         "1": "Make data-driven decisions",
         "2": "Stay ahead of the curve",
         "3": "Choose tools that fit your needs"
-      }
+      },
+      "challenges": {
+        "paralysis": {
+          "title": "[TRANSLATE] Decision Paralysis",
+          "description": "[TRANSLATE] With dozens of AI tools launching every week, developers face overwhelming choices"
+        },
+        "marketing": {
+          "title": "[TRANSLATE] Marketing vs Reality",
+          "description": "[TRANSLATE] Bold claims often don't match real-world performance and capabilities"
+        },
+        "change": {
+          "title": "[TRANSLATE] Rapid Change",
+          "description": "[TRANSLATE] Tools evolve quickly - what's best today might be obsolete tomorrow"
+        },
+        "risks": {
+          "title": "[TRANSLATE] Hidden Risks",
+          "description": "[TRANSLATE] Security, privacy, and vendor lock-in concerns are often overlooked"
+        }
+      },
+      "conclusion": "[TRANSLATE] That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
+    },
+    "cta": {
+      "title": "[TRANSLATE] Ready to Explore?",
+      "description": "[TRANSLATE] Dive into our rankings to discover the best AI coding tools for your needs.",
+      "exploreButton": "[TRANSLATE] Explore Rankings",
+      "methodologyButton": "[TRANSLATE] Learn Our Methodology"
     }
   },
   "sidebar": {
@@ -574,5 +759,11 @@
       "message": "Please check your internet connection and try again.",
       "action": "Retry"
     }
+  },
+  "footer": {
+    "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+    "quickLinks": "[TRANSLATE] Quick Links",
+    "categories": "[TRANSLATE] Categories",
+    "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved."
   }
 }

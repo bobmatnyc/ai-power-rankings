@@ -36,7 +36,10 @@
     "version:minor": "npm version minor && echo $(npm pkg get version | tr -d '\"') > VERSION",
     "version:major": "npm version major && echo $(npm pkg get version | tr -d '\"') > VERSION",
     "i18n:crawl": "node scripts/crawl-missing-translations.js",
-    "i18n:debug": "curl -s http://localhost:3000/api/debug/missing-translations | jq"
+    "i18n:debug": "curl -s http://localhost:3000/api/debug/missing-translations | jq",
+    "i18n:sync": "tsx src/lib/i18n/scripts/sync-translations.ts",
+    "i18n:summary": "tsx src/lib/i18n/scripts/translation-summary.ts",
+    "i18n:check": "node src/lib/i18n/scripts/check-translations.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
