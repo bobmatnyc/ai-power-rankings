@@ -38,7 +38,7 @@
   "navigation": {
     "home": "Startseite",
     "rankings": "Rankings",
-    "news": "News",
+    "news": "Nachrichten",
     "tools": "Tools",
     "methodology": "Methodik",
     "about": "Über uns",
@@ -47,7 +47,7 @@
     "quickLinks": "Quick Links",
     "trending": "Trending",
     "categories": "Kategorien",
-    "features": "Features",
+    "features": "Funktionen",
     "clearFilters": "Filter löschen",
     "allCategories": "Alle Kategorien"
   },
@@ -65,9 +65,9 @@
     },
     "stats": {
       "toolsRanked": "KI-Tools gerankt",
-      "trendingUp": "Trending Up",
+      "trendingUp": "Aufsteigend",
       "updates": "Updates",
-      "freeAccess": "Free Access",
+      "freeAccess": "Kostenloser Zugang",
       "updateFrequency": "Wöchentliche Updates"
     },
     "trending": {
@@ -109,30 +109,30 @@
       "agentDescription": "Vollständig autonome KI-Software-Engineers"
     },
     "methodology": {
-      "title": "Our Methodology",
+      "title": "Unsere Methodik",
       "algorithmTitle": "Algorithmus v6.0",
       "algorithmDescription": "Unser fortgeschrittener Ranking-Algorithmus berücksichtigt 8 Schlüsselfaktoren mit sophistizierten Modifikatoren:",
-      "keyModifiersTitle": "Key Modifiers",
+      "keyModifiersTitle": "Wichtige Faktoren",
       "keyModifiersDescription": "Drei sophistizierte Modifikatoren gewährleisten faire und präzise Rankings:",
       "factors": {
-        "agenticCapability": "Agentic Capability (30%) - Autonomous coding abilities",
+        "agenticCapability": "Agentische Fähigkeiten (30%) - Autonome Programmierfähigkeiten",
         "innovation": {
           "name": "Innovation",
-          "description": "Technical breakthroughs and feature innovation"
+          "description": "Technische Durchbrüche und Feature-Innovation"
         },
-        "technicalPerformance": "Technical Performance (12.5%) - SWE-bench focus",
-        "marketTraction": "Market Traction (12.5%) - Revenue quality adjusted",
+        "technicalPerformance": "Technische Leistung (12.5%) - SWE-bench Fokus",
+        "marketTraction": "Markttraktion (12.5%) - Umsatzqualität angepasst",
         "agentic": {
-          "name": "Agentic Capability",
-          "description": "Autonomous coding abilities and multi-step task completion"
+          "name": "Agentische Fähigkeiten",
+          "description": "Autonome Programmierfähigkeiten und mehrstufige Aufgabenerledigung"
         },
         "performance": {
-          "name": "Technical Performance",
-          "description": "Code quality, speed, and benchmark results"
+          "name": "Technische Leistung",
+          "description": "Benchmark-Ergebnisse und technische Metriken"
         },
         "traction": {
-          "name": "Market Traction",
-          "description": "User adoption, growth rate, and market presence"
+          "name": "Markttraktion",
+          "description": "Nutzerakzeptanz und Wachstumsmetriken"
         }
       },
       "modifiers": {
@@ -141,26 +141,27 @@
         "revenueQuality": "Revenue Quality - Enterprise revenue weighted higher",
         "dataValidation": "Data Validation - 80% completeness required",
         "decay": {
-          "name": "Innovation Decay",
+          "name": "Innovationsverfall",
           "description": "Recent innovations weighted more heavily"
         },
         "risk": {
-          "name": "Platform Risk",
+          "name": "Plattformrisiko",
           "description": "Independence vs. platform lock-in factors"
         },
         "revenue": {
-          "name": "Revenue Quality",
+          "name": "Umsatzqualität",
           "description": "Enterprise revenue weighted higher than consumer"
         },
         "validation": {
-          "name": "Data Validation",
+          "name": "Datenvalidierung",
           "description": "Minimum 80% data completeness required"
         }
       },
       "modifiersTitle": "Dynamic Modifiers",
       "modifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings",
       "readFull": "Vollständige Methodik lesen",
-      "readMoreButton": "Vollständige Methodik lesen"
+      "readMoreButton": "Vollständige Methodik lesen",
+      "caption": "Entdecke wie wir die weltweit führenden AI-Tools bewerten und einstufen"
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
@@ -176,7 +177,7 @@
     }
   },
   "rankings": {
-    "title": "KI Power Rankings",
+    "title": "AI Tools Rankings",
     "subtitle": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v6.0",
     "stats": {
       "totalTools": "Total Tools",
