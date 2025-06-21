@@ -231,6 +231,21 @@ This runs:
 - `npm run format:check` - Code formatting verification
 - `npm run test` - Full test suite
 
+### 🚀 Post-Push Deployment Verification
+
+**After pushing to GitHub, verify Vercel deployment:**
+
+```bash
+npm run check-deployment  # Monitors Vercel deployment status
+```
+
+This script:
+- Detects the latest commit SHA
+- Finds the corresponding Vercel deployment
+- Monitors deployment progress in real-time
+- Shows build logs if deployment fails
+- Provides debugging guidance for failures
+
 ### ✅ Before Committing
 
 ```bash
@@ -306,7 +321,77 @@ When adding new features or changing processes:
 
 ---
 
-## 🚀 9. Quick Reference
+## 🚀 9. Complete Deployment Workflow
+
+### 📋 Step-by-Step Deployment Process
+
+1. **Pre-flight Checks**:
+   ```bash
+   npm run pre-deploy       # Run all tests and checks
+   ```
+
+2. **Commit and Push**:
+   ```bash
+   git add .
+   git commit -m "feat: your feature description"
+   git push origin main
+   ```
+
+3. **Verify Deployment**:
+   ```bash
+   npm run check-deployment # Monitor Vercel deployment
+   ```
+
+4. **If Deployment Fails**:
+   - Check error logs from the script output
+   - Common issues:
+     - TypeScript errors: Run `npm run type-check` locally
+     - ESLint errors: Run `npm run lint` locally
+     - Missing environment variables: Check Vercel dashboard
+   - Fix issues and push again
+
+5. **Verify Production**:
+   - Visit https://aipowerrankings.com
+   - Check new features are working
+   - Monitor error logs in Vercel dashboard
+
+### 🔄 Automated Deployment Recovery
+
+If a deployment fails, the check-deployment script will:
+1. Show the exact error from Vercel build logs
+2. Provide specific commands to debug locally
+3. Suggest fixes based on error type
+
+**Automatic Error Fixing**:
+```bash
+npm run fix-deployment   # Automatically fix common deployment errors
+```
+
+This script can fix:
+- ESLint errors (auto-fixable ones)
+- Prettier formatting issues
+- Missing dependencies
+- Provides guidance for TypeScript errors
+- Alerts about missing environment variables
+
+### 🎯 Complete Deployment Automation
+
+For a fully automated deployment workflow:
+
+```bash
+# 1. Fix any issues and prepare for deployment
+npm run fix-deployment && npm run pre-deploy
+
+# 2. Commit and push if all checks pass
+git add . && git commit -m "fix: deployment issues" && git push
+
+# 3. Monitor deployment
+npm run check-deployment
+```
+
+---
+
+## 📚 10. Quick Reference
 
 ### Common Commands
 

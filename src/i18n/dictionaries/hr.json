@@ -1,24 +1,24 @@
 {
   "categories": {
     "autonomousagent": "Autonomni Agent",
-    "codeeditor": "Code Editor",
+    "codeeditor": "Uređivač koda",
     "ideassistant": "IDE Asistent",
-    "appbuilder": "App Builder",
-    "opensourceframework": "Open Source Framework",
-    "testingtool": "Testing Tool",
-    "codereview": "Code Review",
+    "appbuilder": "Graditelj aplikacija",
+    "opensourceframework": "Open source okvir",
+    "testingtool": "Alat za testiranje",
+    "codereview": "Pregled koda",
     "codeassistant": "Code Asistent",
     "autonomousAgent": "Autonomni Agent",
-    "codeEditor": "Code Editor",
+    "codeEditor": "Uređivač koda",
     "ideAssistant": "IDE Asistent",
-    "appBuilder": "App Builder",
-    "codeReview": "Code Review",
+    "appBuilder": "Graditelj aplikacija",
+    "codeReview": "Pregled koda",
     "codeAssistant": "Code Asistent"
   },
   "common": {
     "appName": "AI Power Rankings",
     "appDescription": "Data-driven ranking AI coding alata",
-    "loading": "Loading...",
+    "loading": "Učitava...",
     "error": "Greška",
     "tryAgain": "Pokušaj ponovno",
     "backToHome": "Natrag na početnu",
@@ -45,9 +45,9 @@
     "subscribeToUpdates": "Pretplati se na updates",
     "navigation": "Navigacija",
     "quickLinks": "Brzi linkovi",
-    "trending": "Trending",
+    "trending": "Popularno",
     "categories": "Kategorije",
-    "features": "Features",
+    "features": "Značajke",
     "clearFilters": "Očisti filtere",
     "allCategories": "Sve kategorije"
   },
@@ -136,7 +136,7 @@
           "description": "Kvaliteta koda, brzina i benchmark rezultati"
         },
         "traction": {
-          "name": "Market Traction",
+          "name": "Tržišna privlačnost",
           "description": "User adoption, growth rate i market presence"
         }
       },
@@ -146,19 +146,19 @@
         "revenueQuality": "Revenue Quality - Enterprise revenue weighted više",
         "dataValidation": "Data Validation - 80% potpunost potrebna",
         "decay": {
-          "name": "Innovation Decay",
+          "name": "Opadanje inovacije",
           "description": "Recentne inovacije weighted više"
         },
         "risk": {
-          "name": "Platform Risk",
+          "name": "Platformski rizik",
           "description": "Independence vs platform lock-in faktori"
         },
         "revenue": {
-          "name": "Revenue Quality",
+          "name": "Kvaliteta prihoda",
           "description": "Enterprise revenue weighted više nego consumer"
         },
         "validation": {
-          "name": "Data Validation",
+          "name": "Validacija podataka",
           "description": "Minimum 80% data potpunost potrebna"
         }
       },
@@ -188,9 +188,9 @@
     "sortBy": "Sortiraj po",
     "activeFilters": "Aktivni filteri",
     "sort": {
-      "rank": "Rank",
-      "trending": "Trending",
-      "score": "Score",
+      "rank": "Rang",
+      "trending": "Popularno",
+      "score": "Rezultat",
       "name": "Ime"
     },
     "algorithm": {
@@ -228,10 +228,10 @@
     "subtitle": "Najnoviji updates, milestones i objave od AI coding alata",
     "filters": {
       "all": "Sve vijesti",
-      "milestone": "Milestone",
-      "feature": "Feature",
-      "partnership": "Partnership",
-      "update": "Update",
+      "milestone": "Prekretnica",
+      "feature": "Značajka",
+      "partnership": "Partnerstvo",
+      "update": "Ažuriranje",
       "announcement": "Objava"
     },
     "noItems": "Nema pronađenih news stavki.",
@@ -240,8 +240,8 @@
     "viewTool": "Pogledaj alat",
     "metrics": {
       "users": "korisnici",
-      "score": "score",
-      "rank": "rank"
+      "score": "rezultat",
+      "rank": "rang"
     },
     "time": {
       "justNow": "Upravo sada",
@@ -267,7 +267,7 @@
       "total": "Ukupno alata",
       "active": "Aktivni",
       "categories": "Kategorije",
-      "openSource": "Open Source"
+      "openSource": "Otvoreni kod"
     },
     "directory": {
       "title": "AI Coding Alati Directory",
@@ -287,25 +287,25 @@
       "overview": "Pregled",
       "description": "Opis",
       "company": "Tvrtka",
-      "pricing": "Pricing",
+      "pricing": "Cijena",
       "users": "Korisnici",
-      "githubStars": "GitHub Stars",
+      "githubStars": "GitHub zvjezdice",
       "tabs": {
-        "performance": "Performance",
+        "performance": "Performanse",
         "pricing": "Cijene",
-        "businessMetrics": "Business",
-        "scores": "Scores",
-        "history": "History"
+        "businessMetrics": "Poslovanje",
+        "scores": "Rezultati",
+        "history": "Povijest"
       },
       "performance": {
         "title": "Tehnička izvedba",
         "subtitle": "Rezultati benchmarkova i tehničke sposobnosti",
         "description": "Rezultati benchmarkova i tehničke sposobnosti uključujući SWE-bench rezultate i podršku funkcionalnosti",
         "sweScore": "SWE-bench rezultat",
-        "contextWindow": "Context Window",
-        "languageSupport": "Language Support",
-        "multiFileSupport": "Multi-file Support",
-        "llmProviders": "LLM Providers",
+        "contextWindow": "Kontekstni prozor",
+        "languageSupport": "Podrška jezika",
+        "multiFileSupport": "Podrška više datoteka",
+        "llmProviders": "LLM pružatelji",
         "tokens": "tokeni",
         "languages": "jezici",
         "yes": "Da",
@@ -315,23 +315,23 @@
         "title": "Business Metriky",
         "subtitle": "Financijski i growth metriky",
         "monthlyArr": "ARR (Mjesečni)",
-        "valuation": "Valuation",
+        "valuation": "Procjena",
         "totalFunding": "Ukupno financiranje",
         "employees": "Zaposlenici",
         "totalUsers": "Ukupno korisnika"
       },
       "rankingScores": {
-        "title": "Ranking Scores",
+        "title": "Rezultati rangiranja",
         "subtitle": "Detaljni breakdown ranking faktora",
         "overallScore": "Ukupni Score",
-        "breakdown": "Score Breakdown",
+        "breakdown": "Razdioba rezultata",
         "modifiers": "Primijenjeni Modifieri"
       },
       "metricHistory": {
-        "title": "Metric History",
+        "title": "Povijest metrika",
         "subtitle": "Nedavni metriky koji utječu na ranking scores",
         "noHistory": "Nema metric history za ovaj alat.",
-        "update": "Update",
+        "update": "Ažuriranje",
         "newMetrics": "Novi metriky prijavljeni za {tool}"
       }
     },
@@ -344,13 +344,13 @@
     },
     "categories": {
       "autonomous-agent": "Autonomni Agent",
-      "code-editor": "Code Editor",
+      "code-editor": "Uređivač koda",
       "ide-assistant": "IDE Asistent",
-      "app-builder": "App Builder",
-      "open-source-framework": "Open Source Framework",
-      "testing-tool": "Testing Tool",
-      "code-review": "Code Review",
-      "code-generation": "Code Generation"
+      "app-builder": "Graditelj aplikacija",
+      "open-source-framework": "Open source okvir",
+      "testing-tool": "Alat za testiranje",
+      "code-review": "Pregled koda",
+      "code-generation": "Generiranje koda"
     },
     "notFound": "[TRANSLATE] Tool not found",
     "backToTools": "[TRANSLATE] Back to Tools"
@@ -359,7 +359,7 @@
     "form": {
       "firstName": "Ime",
       "lastName": "Prezime",
-      "email": "Email",
+      "email": "E-pošta",
       "subscribe": "Pretplati se",
       "subscribing": "Pretplaćujem...",
       "privacyNote": "Poštujemo vašu privatnost. Odjavite se kad god želite."
@@ -369,7 +369,7 @@
       "subtitle": "Dobivaj tjedno updates o AI alat rangiranjima, novim features i industry insights.",
       "firstName": "Ime",
       "lastName": "Prezime",
-      "email": "Email",
+      "email": "E-pošta",
       "subscribe": "Pretplati se",
       "subscribing": "Pretplaćujem...",
       "thankYou": "Hvala!",
@@ -385,7 +385,7 @@
       }
     },
     "verification": {
-      "title": "Email Verification",
+      "title": "Verifikacija emaila",
       "success": {
         "title": "Email potvrđen!",
         "message": "Vaš email je uspješno potvrđen. Počet ćete primati naš tjedno newsletter s najnovijim AI alat rangiranjima i insights."
@@ -488,7 +488,7 @@
         "intro": "Da osiguramo da rangiranja reflektiraju trenutne market realnosti, primjenjujemo tri sophisticated modifiera:"
       },
       "dataCollection": {
-        "title": "Data Collection",
+        "title": "Prikupljanje podataka",
         "intro": "Prikupljamo data iz multiple izvora za osiguravanje točnosti:",
         "sources": {
           "0": "Direktne API integracije s tool providerima",
@@ -723,17 +723,17 @@
   "sidebar": {
     "navigation": "Navigacija",
     "quickLinks": "Brzi linkovi",
-    "trending": "Trending",
+    "trending": "Popularno",
     "categories": "Kategorije",
-    "features": "Features",
+    "features": "Značajke",
     "clearFilters": "Očisti filtere"
   },
   "features": {
-    "autocomplete": "Autocomplete",
-    "chat": "Chat Interface",
-    "codeGeneration": "Code Generation",
-    "refactoring": "Refactoring",
-    "testing": "Testing",
+    "autocomplete": "Automatsko dopunjavanje",
+    "chat": "Chat sučelje",
+    "codeGeneration": "Generiranje koda",
+    "refactoring": "Refaktoriranje",
+    "testing": "Testiranje",
     "documentation": "Dokumentacija"
   },
   "status": {
@@ -757,7 +757,7 @@
     "offline": {
       "title": "Offline ste",
       "message": "Molimo provjerite internetsku vezu i pokušajte ponovno.",
-      "action": "Retry"
+      "action": "Pokušaj ponovno"
     }
   },
   "footer": {

@@ -65,7 +65,7 @@
     },
     "stats": {
       "toolsRanked": "Outils IA classés",
-      "trendingUp": "En tendance",
+      "trendingUp": "En hausse",
       "updates": "Mises à jour",
       "freeAccess": "Accès gratuit",
       "updateFrequency": "Mises à jour hebdomadaires"
@@ -109,8 +109,8 @@
       "agentDescription": "Ingénieurs logiciels IA entièrement autonomes"
     },
     "methodology": {
-      "title": "Our Methodology",
-      "algorithmTitle": "Algorithm v6.0",
+      "title": "Notre méthodologie",
+      "algorithmTitle": "Algorithme v6.0",
       "algorithmDescription": "Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
@@ -176,7 +176,7 @@
     }
   },
   "rankings": {
-    "title": "AI Power Rankings",
+    "title": "Classement des outils IA",
     "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v6.0",
     "stats": {
       "totalTools": "Total Tools",
@@ -189,7 +189,7 @@
     "activeFilters": "Active filters",
     "sort": {
       "rank": "Rang",
-      "trending": "Trending",
+      "trending": "Tendances",
       "score": "Score",
       "name": "Nom",
       "category": "Catégorie"
@@ -231,14 +231,14 @@
     "showingResults": "Affichage de {count} sur {total} outils"
   },
   "news": {
-    "title": "Dernières nouvelles",
+    "title": "Actualités des outils IA",
     "subtitle": "Mises à jour et annonces du monde du codage IA",
     "filters": {
       "all": "Tous",
-      "milestone": "Milestone",
-      "feature": "Fonctionnalités",
-      "partnership": "Partnership",
-      "update": "Mises à jour",
+      "milestone": "Étape importante",
+      "feature": "Fonctionnalité",
+      "partnership": "Partenariat",
+      "update": "Mise à jour",
       "announcement": "Annonces"
     },
     "noItems": "No news items found.",
@@ -247,8 +247,8 @@
     "viewTool": "View Tool",
     "metrics": {
       "users": "users",
-      "score": "Score",
-      "rank": "Rang",
+      "score": "score",
+      "rank": "rang",
       "change": "Changement"
     },
     "time": {
@@ -298,15 +298,15 @@
       "overview": "Overview",
       "description": "Description",
       "company": "Company",
-      "pricing": "Pricing",
+      "pricing": "Tarification",
       "users": "Users",
-      "githubStars": "GitHub Stars",
+      "githubStars": "Étoiles GitHub",
       "tabs": {
         "performance": "Performance",
         "pricing": "Tarifs",
         "businessMetrics": "Business",
         "scores": "Scores",
-        "history": "History"
+        "history": "Historique"
       },
       "performance": {
         "title": "Performance technique",
@@ -350,7 +350,7 @@
     },
     "status": {
       "active": "Active",
-      "beta": "Beta",
+      "beta": "Bêta",
       "deprecated": "Deprecated",
       "discontinued": "Discontinued",
       "acquired": "Acquired"
@@ -372,7 +372,7 @@
     "form": {
       "firstName": "Prénom",
       "lastName": "Nom",
-      "email": "Adresse e-mail",
+      "email": "Email",
       "subscribe": "S'abonner",
       "subscribing": "Subscribing...",
       "privacyNote": "We respect your privacy. Unsubscribe at any time.",
@@ -776,10 +776,10 @@
   },
   "features": {
     "autocomplete": "Autocomplétion",
-    "chat": "Interface Chat",
-    "codeGeneration": "Génération de Code",
-    "refactoring": "Refactoring",
-    "testing": "Testing",
+    "chat": "Interface de chat",
+    "codeGeneration": "Génération de code",
+    "refactoring": "Refactorisation",
+    "testing": "Tests",
     "documentation": "Documentation"
   },
   "status": {

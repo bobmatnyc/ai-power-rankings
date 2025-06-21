@@ -101,7 +101,7 @@
         "description": "Smart редактори з AI інтеграцією"
       },
       "appBuilders": {
-        "name": "App Builders",
+        "name": "Будівельники додатків",
         "description": "Будуй повноцінні апи з AI assistance"
       },
       "autonomousAgents": {
@@ -136,7 +136,7 @@
           "description": "Якість коду, швидкість та benchmark результати"
         },
         "traction": {
-          "name": "Market Traction",
+          "name": "Ринкова привабливість",
           "description": "User adoption, growth rate та market presence"
         }
       },
@@ -144,21 +144,21 @@
         "innovationDecay": "Innovation Decay - Свіжі інновації score вище",
         "platformRisk": "Platform Risk - Independence бонуси, lock-in штрафи",
         "revenueQuality": "Revenue Quality - Enterprise revenue weighted вище",
-        "dataValidation": "Data Validation - 80% completeness required",
+        "dataValidation": "Валідація даних - потрібна 80% повнота",
         "decay": {
-          "name": "Innovation Decay",
+          "name": "Затухання інновацій",
           "description": "Свіжі інновації weighted більше"
         },
         "risk": {
-          "name": "Platform Risk",
+          "name": "Платформний ризик",
           "description": "Independence vs platform lock-in фактори"
         },
         "revenue": {
-          "name": "Revenue Quality",
+          "name": "Якість доходу",
           "description": "Enterprise revenue weighted вище ніж consumer"
         },
         "validation": {
-          "name": "Data Validation",
+          "name": "Валідація даних",
           "description": "Мінімум 80% data completeness required"
         }
       },
@@ -189,8 +189,8 @@
     "activeFilters": "Активні фільтри",
     "sort": {
       "rank": "Ранк",
-      "trending": "Trending",
-      "score": "Score",
+      "trending": "Популярне",
+      "score": "Оцінка",
       "name": "Ім'я"
     },
     "algorithm": {
@@ -224,15 +224,15 @@
     }
   },
   "news": {
-    "title": "AI Tools News",
+    "title": "Новини AI інструментів",
     "subtitle": "Останні updates, milestones та announcements від AI coding тулів",
     "filters": {
       "all": "Всі новини",
-      "milestone": "Milestone",
-      "feature": "Feature",
-      "partnership": "Partnership",
-      "update": "Update",
-      "announcement": "Announcement"
+      "milestone": "Віха",
+      "feature": "Функція",
+      "partnership": "Партнерство",
+      "update": "Оновлення",
+      "announcement": "Оголошення"
     },
     "noItems": "Не знайдено news items.",
     "loadingMore": "Loading більше news...",
@@ -240,8 +240,8 @@
     "viewTool": "Переглянути тул",
     "metrics": {
       "users": "користувачі",
-      "score": "score",
-      "rank": "rank"
+      "score": "оцінка",
+      "rank": "ранг"
     },
     "time": {
       "justNow": "Щойно",
@@ -267,7 +267,7 @@
       "total": "Всього тулів",
       "active": "Активні",
       "categories": "Категорії",
-      "openSource": "Open Source"
+      "openSource": "Відкритий код"
     },
     "directory": {
       "title": "AI Coding Тули Directory",
@@ -278,33 +278,33 @@
       "allStatuses": "Всі статуси"
     },
     "detail": {
-      "loading": "Loading tool details...",
+      "loading": "Завантаження деталей інструменту...",
       "notFound": "Тул не знайдено",
       "backToTools": "Назад до тулів",
       "visitWebsite": "Відвідати Website",
       "viewGithub": "GitHub",
       "viewOnGithub": "View на GitHub",
-      "overview": "Overview",
+      "overview": "Огляд",
       "description": "Опис",
       "company": "Компанія",
-      "pricing": "Pricing",
+      "pricing": "Ціноутворення",
       "users": "Користувачі",
-      "githubStars": "GitHub Stars",
+      "githubStars": "GitHub зірки",
       "tabs": {
-        "performance": "Performance",
+        "performance": "Продуктивність",
         "pricing": "Ціни",
-        "businessMetrics": "Business",
-        "scores": "Scores",
-        "history": "History"
+        "businessMetrics": "Бізнес",
+        "scores": "Оцінки",
+        "history": "Історія"
       },
       "performance": {
         "title": "Технічна продуктивність",
         "subtitle": "Результати бенчмарків та технічні можливості",
         "description": "Результати бенчмарків та технічні можливості включаючи SWE-bench оцінки та підтримку функцій",
         "sweScore": "SWE-bench Очки",
-        "contextWindow": "Context Window",
-        "languageSupport": "Language Support",
-        "multiFileSupport": "Multi-file Support",
+        "contextWindow": "Вікно контексту",
+        "languageSupport": "Підтримка мов",
+        "multiFileSupport": "Підтримка багатьох файлів",
         "llmProviders": "LLM Providers",
         "tokens": "tokens",
         "languages": "мови",

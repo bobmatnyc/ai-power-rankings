@@ -23,6 +23,9 @@ const eslintConfig = [
       "*.config.ts",
       "next-env.d.ts",
       "data/**",
+      "scripts/**",
+      "src/scripts/**",
+      "src/i18n/scripts/**",
     ],
     rules: {
       // TypeScript rules - more lenient for production

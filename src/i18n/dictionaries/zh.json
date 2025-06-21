@@ -230,6 +230,25 @@
       "secondary": "了解方法论",
       "newsletter": "订阅更新",
       "compare": "开始比较"
+    },
+    "testimonials": {
+      "title": "用户评价",
+      "developers": "开发者反馈",
+      "companies": "企业客户",
+      "experts": "专家推荐"
+    },
+    "partners": {
+      "title": "合作伙伴",
+      "strategic": "战略合作",
+      "technology": "技术伙伴",
+      "integration": "集成伙伴"
+    },
+    "resources": {
+      "title": "资源中心",
+      "guides": "指南文档",
+      "whitepapers": "白皮书",
+      "case-studies": "案例研究",
+      "webinars": "网络研讨会"
     }
   },
   "footer": {
@@ -365,6 +384,27 @@
       "patterns": "模式识别",
       "predictions": "趋势预测",
       "insights": "洞察报告"
+    },
+    "insights": {
+      "title": "排名洞察",
+      "trends": "趋势分析",
+      "predictions": "预测分析",
+      "marketShift": "市场变化",
+      "emergingTools": "新兴工具"
+    },
+    "historical": {
+      "title": "历史数据",
+      "timeline": "时间轴",
+      "snapshots": "历史快照",
+      "evolution": "演进过程",
+      "milestones": "重要节点"
+    },
+    "detailed": {
+      "title": "详细分析",
+      "methodology": "方法论说明",
+      "factors": "评分因子",
+      "weights": "权重分配",
+      "calculation": "计算过程"
     }
   },
   "news": {
@@ -402,14 +442,27 @@
       "launch": "新工具发布",
       "ranking": "排名变化",
       "analysis": "行业分析",
-      "interview": "专家访谈"
+      "interview": "专家访谈",
+      "title": "新闻分类",
+      "breaking": "重大新闻",
+      "product": "产品发布",
+      "funding": "融资消息",
+      "acquisition": "收购并购",
+      "partnership": "合作伙伴"
     },
     "author": "作者",
     "readTime": "阅读时间",
     "tags": "标签",
     "relatedArticles": "相关文章",
     "shareArticle": "分享文章",
-    "bookmarkArticle": "收藏文章"
+    "bookmarkArticle": "收藏文章",
+    "editorial": {
+      "title": "编辑观点",
+      "analysis": "深度分析",
+      "opinion": "观点评述",
+      "prediction": "趋势预测",
+      "commentary": "行业评论"
+    }
   },
   "tools": {
     "title": "AI 编程工具",
@@ -860,6 +913,29 @@
       "onboarding": "入门指导",
       "recommendations": "个性化推荐",
       "reminders": "提醒通知"
+    },
+    "segmentation": {
+      "title": "用户细分",
+      "developers": "开发者群体",
+      "managers": "技术管理者",
+      "enterprise": "企业决策者",
+      "students": "学生群体"
+    },
+    "content": {
+      "types": {
+        "weekly": "周刊摘要",
+        "product": "产品更新",
+        "industry": "行业洞察",
+        "tutorial": "教程指南",
+        "interview": "专家访谈"
+      }
+    },
+    "metrics": {
+      "title": "邮件指标",
+      "deliverability": "送达率",
+      "bounceRate": "退信率",
+      "unsubscribeRate": "退订率",
+      "forwardRate": "转发率"
     }
   },
   "methodology": {
@@ -1275,6 +1351,34 @@
       "interviews": "专访报道",
       "resources": "媒体资源",
       "contact": "媒体联系"
+    },
+    "company": {
+      "title": "公司信息",
+      "founded": "成立时间",
+      "location": "公司地址",
+      "size": "团队规模",
+      "funding": "融资情况",
+      "investors": "投资方"
+    },
+    "leadership": {
+      "title": "领导团队",
+      "ceo": "首席执行官",
+      "cto": "首席技术官",
+      "advisors": "顾问团队",
+      "board": "董事会"
+    },
+    "culture": {
+      "title": "企业文化",
+      "values": "价值观",
+      "diversity": "多元化",
+      "remote": "远程工作",
+      "benefits": "员工福利"
+    },
+    "awards": {
+      "title": "获奖荣誉",
+      "recognition": "行业认可",
+      "certifications": "资质认证",
+      "achievements": "重要成就"
     }
   },
   "sidebar": {
@@ -1436,5 +1540,43 @@
     "download": "下载",
     "share": "分享",
     "bookmark": "收藏"
+  },
+  "api": {
+    "title": "API 文档",
+    "overview": "API 概览",
+    "authentication": "身份验证",
+    "endpoints": "API 端点",
+    "examples": "示例代码",
+    "sdks": "SDK 下载",
+    "support": "API 支持"
+  },
+  "utils": {
+    "pagination": {
+      "first": "首页",
+      "last": "末页",
+      "previous": "上一页",
+      "next": "下一页",
+      "showing": "显示",
+      "of": "共",
+      "results": "个结果"
+    }
+  },
+  "content": {
+    "readingTime": "阅读时间",
+    "wordCount": "字数统计",
+    "lastModified": "最后修改",
+    "author": "作者",
+    "editor": "编辑",
+    "reviewer": "审核"
+  },
+  "social": {
+    "share": {
+      "title": "分享到",
+      "twitter": "分享到 Twitter",
+      "linkedin": "分享到 LinkedIn",
+      "facebook": "分享到 Facebook",
+      "email": "通过邮件分享",
+      "copy": "复制链接"
+    }
   }
 }
