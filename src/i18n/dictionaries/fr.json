@@ -13,7 +13,16 @@
     "ideAssistant": "IDE Assistant",
     "appBuilder": "App Builder",
     "codeReview": "Code Review",
-    "codeAssistant": "Code Assistant"
+    "codeAssistant": "Code Assistant",
+    "multimodal": "Multimodal",
+    "businessintelligence": "Intelligence d'Affaires",
+    "imageandvideo": "Image et Vidéo",
+    "apiandautomation": "API et Automatisation",
+    "searchandknowledge": "Recherche et Connaissance",
+    "voiceandaudio": "Voix et Audio",
+    "dataanalysis": "Analyse de Données",
+    "customerservice": "Service Client",
+    "contentgeneration": "Génération de Contenu"
   },
   "common": {
     "appName": "AI Power Ranking",
@@ -59,7 +68,15 @@
     "categories": "Categories",
     "features": "Features",
     "clearFilters": "Clear Filters",
-    "allCategories": "All Categories"
+    "allCategories": "All Categories",
+    "newsletter": "Newsletter",
+    "contact": "Contact",
+    "privacy": "Confidentialité",
+    "terms": "Conditions d'utilisation",
+    "cookies": "Politique de cookies",
+    "subscribe": "S'abonner",
+    "support": "Support",
+    "blog": "Blog"
   },
   "home": {
     "hero": {
@@ -71,14 +88,24 @@
       "viewTrending": "View Trending",
       "exploreButton": "Explore All Tools",
       "trendingButton": "View Trending",
-      "whatsNewButton": "What's New"
+      "whatsNewButton": "What's New",
+      "viewRankings": "Voir les classements",
+      "subscribeNewsletter": "S'abonner à la newsletter"
     },
     "stats": {
       "toolsRanked": "AI Tools Ranked",
       "trendingUp": "Trending Up",
       "updates": "Updates",
       "freeAccess": "Free Access",
-      "updateFrequency": "Weekly Updates"
+      "updateFrequency": "Weekly Updates",
+      "totalTools": "Total des outils",
+      "totalCategories": "Total des catégories",
+      "weeklyUpdates": "Mises à jour hebdomadaires",
+      "comprehensiveAnalysis": "Analyse complète",
+      "categoriesTracked": "Catégories suivies",
+      "usersServed": "Utilisateurs servis",
+      "expertReviews": "Avis d'experts",
+      "monthlyUpdates": "Mises à jour mensuelles"
     },
     "trending": {
       "title": "Trending This Week",
@@ -121,7 +148,10 @@
       "ideDescription": "AI-powered code completion and suggestions",
       "editorDescription": "Smart editors with AI integration",
       "builderDescription": "Build complete applications with AI assistance",
-      "agentDescription": "Fully autonomous AI software engineers"
+      "agentDescription": "Fully autonomous AI software engineers",
+      "subtitle": "Trouvez des outils IA qui correspondent à vos intérêts",
+      "exploreCategory": "Explorer la catégorie",
+      "toolsInCategory": "Outils dans cette catégorie"
     },
     "methodology": {
       "title": "Our Methodology",
@@ -184,6 +214,94 @@
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
+    },
+    "topTools": {
+      "title": "Top des outils de codage IA",
+      "subtitle": "Les meilleurs outils classés par innovation, fonctionnalités et expérience utilisateur",
+      "viewAll": "Voir tout",
+      "exploreMore": "Explorer plus",
+      "getStarted": "Commencer",
+      "learnMore": "En savoir plus",
+      "tryNow": "Essayer maintenant",
+      "viewDetails": "Voir les détails"
+    },
+    "newsletter": {
+      "title": "Restez informé",
+      "subtitle": "Recevez les mises à jour hebdomadaires des outils IA, les nouvelles versions et les analyses approfondies",
+      "placeholder": "Entrer l'adresse e-mail",
+      "subscribe": "S'abonner",
+      "subscribing": "Abonnement en cours...",
+      "success": "Merci pour votre abonnement !",
+      "error": "Erreur lors de l'abonnement. Veuillez réessayer.",
+      "description": "Pas de spam. Désabonnement possible à tout moment."
+    },
+    "features": {
+      "title": "Pourquoi choisir AI Power Ranking ?",
+      "subtitle": "Une plateforme complète pour trouver les meilleurs outils de codage IA",
+      "comprehensiveDatabase": {
+        "title": "Base de données complète",
+        "description": "Tous les principaux outils de codage IA organisés en un seul endroit"
+      },
+      "expertAnalysis": {
+        "title": "Analyse d'experts",
+        "description": "Évaluation approfondie et équitable de chaque outil"
+      },
+      "regularUpdates": {
+        "title": "Mises à jour régulières",
+        "description": "Mis à jour hebdomadairement avec les derniers outils et fonctionnalités"
+      },
+      "communityDriven": {
+        "title": "Piloté par la communauté",
+        "description": "Classements basés sur les retours des utilisateurs et les expériences réelles"
+      }
+    },
+    "cta": {
+      "title": "Trouvez l'outil de codage IA parfait",
+      "subtitle": "Découvrez des outils qui révolutionneront votre flux de travail de développement",
+      "getStarted": "Commencer",
+      "learnMore": "En savoir plus",
+      "browseTools": "Parcourir les outils",
+      "viewMethodology": "Voir la méthodologie",
+      "subscribe": "S'abonner",
+      "contact": "Contact"
+    },
+    "trust": {
+      "title": "Approuvé par les développeurs",
+      "subtitle": "Des milliers de développeurs dans le monde nous font confiance pour trouver les meilleurs outils IA",
+      "testimonial1": "Plateforme vraiment complète. M'a aidé à trouver l'outil IA parfait.",
+      "testimonial2": "Les mises à jour régulières et les analyses approfondies sont vraiment utiles.",
+      "testimonial3": "Une excellente ressource qui fait gagner du temps."
+    },
+    "about": {
+      "title": "Classements basés sur les données",
+      "subtitle": "Notre méthodologie est transparente, équitable et continuellement améliorée",
+      "methodology": "Voir la méthodologie",
+      "algorithmVersion": "Algorithm v6.0",
+      "lastUpdated": "Dernière mise à jour"
+    },
+    "faq": {
+      "title": "Questions fréquemment posées",
+      "subtitle": "Questions courantes sur les outils de codage IA et les classements",
+      "question1": "Comment les outils sont-ils classés ?",
+      "answer1": "Nous utilisons notre Algorithm v6.0 pour évaluer l'innovation, les fonctionnalités, l'utilisabilité et les retours de la communauté.",
+      "question2": "À quelle fréquence les classements sont-ils mis à jour ?",
+      "answer2": "Mis à jour hebdomadairement pour refléter les nouveaux outils, les mises à jour de fonctionnalités et les retours des utilisateurs.",
+      "viewAll": "Voir toutes les FAQ"
+    },
+    "recentUpdates": {
+      "title": "Mises à jour récentes",
+      "subtitle": "Dernières nouvelles et développements du monde des outils de codage IA",
+      "viewAll": "Voir toutes les mises à jour",
+      "readMore": "Lire la suite",
+      "publishedOn": "Publié le"
+    },
+    "search": {
+      "title": "Trouver des outils",
+      "subtitle": "Filtrer par catégorie, fonctionnalité et cas d'usage",
+      "placeholder": "Rechercher des outils ou fonctionnalités...",
+      "searchButton": "Rechercher",
+      "clearFilters": "Effacer les filtres",
+      "showResults": "Afficher les résultats"
     }
   },
   "footer": {

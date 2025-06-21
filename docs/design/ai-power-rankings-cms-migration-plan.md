@@ -1,35 +1,53 @@
-# Complete Migration Plan: AI Power Rankings to Payload CMS
+# AI Power Rankings Migration Plan: Vercel + Supabase Architecture
 
 ## Overview
-Migrate the AI Power Rankings platform from Supabase to Payload CMS while maintaining full data integrity, editorial workflows, and automated ranking capabilities.
+Migrate AI Power Rankings to Payload CMS while **keeping your existing Supabase database**. Deploy Payload CMS to Vercel and connect it to your current Supabase PostgreSQL instance.
+
+**Architecture:**
+```
+Vercel (Payload CMS App) ←→ Supabase (Existing PostgreSQL Database)
+```
 
 ## Pre-Migration Setup
 
-### 1. Environment Preparation
+### 1. Get Supabase Database Connection Details
+```bash
+# In your Supabase dashboard, go to Settings > Database
+# Copy the connection string:
+# postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
+
+# You'll need:
+SUPABASE_DATABASE_URL="postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres"
+SUPABASE_URL="https://[project].supabase.co"
+SUPABASE_ANON_KEY="your_anon_key"
+```
+
+### 2. Create Payload Project
 ```bash
 # Create new Payload project
 npx create-payload-app ai-power-rankings-cms
 cd ai-power-rankings-cms
 
 # Install additional dependencies
-npm install @payloadcms/richtext-slate @payloadcms/plugin-cloud-storage dotenv csv-parser
+npm install @payloadcms/richtext-slate @payloadcms/db-postgres dotenv
 
 # Set up environment variables
 cat > .env.local << EOF
-PAYLOAD_SECRET=your-secret-key-here
-MONGODB_URI=mongodb://localhost:27017/ai-power-rankings
-# Or use your existing PostgreSQL
-DATABASE_URI=postgresql://user:pass@localhost:5432/ai_power_rankings
+PAYLOAD_SECRET=your-payload-secret-key
+SUPABASE_DATABASE_URL=postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres
+SUPABASE_URL=https://[project].supabase.co
+SUPABASE_ANON_KEY=your_anon_key
 NEXT_PUBLIC_PAYLOAD_URL=http://localhost:3000
 EOF
 ```
 
-### 2. Database Configuration
+### 3. Payload Configuration for Supabase
 ```typescript
 // payload.config.ts
 import { buildConfig } from 'payload/config'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { slateEditor } from '@payloadcms/richtext-slate'
+import path from 'path'
 
 export default buildConfig({
   admin: {
@@ -42,8 +60,10 @@ export default buildConfig({
   editor: slateEditor({}),
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI,
+      connectionString: process.env.SUPABASE_DATABASE_URL,
     },
+    // Use different schema to avoid conflicts with existing tables
+    schemaName: 'payload',
   }),
   serverURL: process.env.NEXT_PUBLIC_PAYLOAD_URL,
   collections: [
@@ -58,7 +78,7 @@ export default buildConfig({
 })
 ```
 
-## Schema Migration
+## Payload Schema (New Tables in Existing Database)
 
 ### 1. Core Collections
 
@@ -87,9 +107,17 @@ export const Companies: CollectionConfig = {
       index: true,
     },
     {
+      name: 'supabase_company_id',
+      type: 'text',
+      admin: {
+        description: 'Reference to original Supabase companies.id for migration',
+        readOnly: true,
+      },
+      index: true,
+    },
+    {
       name: 'website_url',
       type: 'text',
-      validate: (val) => /^https?:\/\//.test(val) || 'Must be a valid URL',
     },
     {
       name: 'headquarters',
@@ -146,6 +174,15 @@ export const Tools: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
+      index: true,
+    },
+    {
+      name: 'supabase_tool_id',
+      type: 'text',
+      admin: {
+        description: 'Reference to original Supabase tools.id for migration',
+        readOnly: true,
+      },
       index: true,
     },
     {
@@ -263,9 +300,6 @@ export const Tools: CollectionConfig = {
     {
       name: 'key_developments',
       type: 'json',
-      admin: {
-        description: 'Array of recent developments affecting ranking',
-      },
     },
     {
       name: 'notable_events',
@@ -275,7 +309,6 @@ export const Tools: CollectionConfig = {
   hooks: {
     beforeChange: [
       ({ data }) => {
-        // Auto-generate slug from name if not provided
         if (data.name && !data.slug) {
           data.slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
         }
@@ -285,77 +318,7 @@ export const Tools: CollectionConfig = {
   },
 }
 
-// collections/ToolCapabilities.ts
-export const ToolCapabilities: CollectionConfig = {
-  slug: 'tool-capabilities',
-  admin: {
-    defaultColumns: ['tool', 'capability_type', 'value_display'],
-  },
-  fields: [
-    {
-      name: 'tool',
-      type: 'relationship',
-      relationTo: 'tools',
-      required: true,
-    },
-    {
-      name: 'capability_type',
-      type: 'select',
-      options: [
-        'autonomy_level',
-        'context_window_size', 
-        'supports_multi_file',
-        'supported_languages',
-        'supported_platforms',
-        'integration_types',
-        'llm_providers',
-        'deployment_options',
-        'swe_bench_score',
-        'max_file_size',
-        'offline_capable',
-        'custom_models'
-      ],
-      required: true,
-    },
-    {
-      name: 'value_text',
-      type: 'text',
-    },
-    {
-      name: 'value_number',
-      type: 'number',
-    },
-    {
-      name: 'value_boolean',
-      type: 'checkbox',
-    },
-    {
-      name: 'value_json',
-      type: 'json',
-    },
-    {
-      name: 'value_display',
-      type: 'text',
-      admin: {
-        readOnly: true,
-      },
-    },
-  ],
-  hooks: {
-    beforeChange: [
-      ({ data }) => {
-        // Generate display value for admin
-        if (data.value_text) data.value_display = data.value_text
-        else if (data.value_number) data.value_display = data.value_number.toString()
-        else if (data.value_boolean !== undefined) data.value_display = data.value_boolean ? 'Yes' : 'No'
-        else if (data.value_json) data.value_display = JSON.stringify(data.value_json).substring(0, 50) + '...'
-        return data
-      },
-    ],
-  },
-}
-
-// collections/Metrics.ts
+// collections/Metrics.ts  
 export const Metrics: CollectionConfig = {
   slug: 'metrics',
   admin: {
@@ -373,6 +336,14 @@ export const Metrics: CollectionConfig = {
       type: 'text',
       required: true,
       index: true,
+    },
+    {
+      name: 'supabase_metric_id',
+      type: 'text',
+      admin: {
+        description: 'Reference to original Supabase metrics_history.id',
+        readOnly: true,
+      },
     },
     // Flexible value storage
     {
@@ -439,6 +410,18 @@ export const Metrics: CollectionConfig = {
       },
     },
   ],
+  hooks: {
+    beforeChange: [
+      ({ data }) => {
+        // Generate display value
+        if (data.value_text) data.value_display = data.value_text
+        else if (data.value_number) data.value_display = data.value_number.toString()
+        else if (data.value_boolean !== undefined) data.value_display = data.value_boolean ? 'Yes' : 'No'
+        else if (data.value_json) data.value_display = JSON.stringify(data.value_json).substring(0, 50) + '...'
+        return data
+      },
+    ],
+  },
 }
 
 // collections/Rankings.ts
@@ -566,11 +549,6 @@ export const News: CollectionConfig = {
       index: true,
     },
     {
-      name: 'scraped_at',
-      type: 'date',
-      defaultValue: () => new Date(),
-    },
-    {
       name: 'category',
       type: 'select',
       options: ['funding', 'product', 'industry', 'acquisition', 'benchmark', 'partnership'],
@@ -669,12 +647,12 @@ export const SiteSettings: GlobalConfig = {
 }
 ```
 
-## Data Migration Scripts
+## Data Migration Strategy (Same Database)
 
-### 1. Core Migration Script
+### 1. Migration Script (Supabase → Payload in Same DB)
 
 ```typescript
-// scripts/migrate-data.ts
+// scripts/migrate-to-payload.ts
 import payload from 'payload'
 import { createClient } from '@supabase/supabase-js'
 import dotenv from 'dotenv'
@@ -687,7 +665,7 @@ const supabase = createClient(
 )
 
 interface MigrationContext {
-  companyMap: Map<string, string>
+  companyMap: Map<string, string> // supabase_id → payload_id
   toolMap: Map<string, string>
   errors: string[]
 }
@@ -697,11 +675,11 @@ async function initPayload() {
     secret: process.env.PAYLOAD_SECRET!,
     local: true,
   })
-  console.log('✅ Payload initialized')
+  console.log('✅ Payload initialized with existing Supabase database')
 }
 
 async function migrateCompanies(ctx: MigrationContext) {
-  console.log('🏢 Migrating companies...')
+  console.log('🏢 Migrating companies from public.companies to payload.companies...')
   
   const { data: companies, error } = await supabase
     .from('companies')
@@ -717,6 +695,7 @@ async function migrateCompanies(ctx: MigrationContext) {
         data: {
           name: company.name,
           slug: company.slug,
+          supabase_company_id: company.id, // Keep reference to original
           website_url: company.website_url,
           headquarters: company.headquarters,
           founded_year: company.founded_year,
@@ -744,7 +723,7 @@ async function migrateCompanies(ctx: MigrationContext) {
     }
   }
 
-  // Handle parent company relationships in second pass
+  // Handle parent company relationships
   for (const company of companies) {
     if (company.parent_company_id && ctx.companyMap.has(company.parent_company_id)) {
       try {
@@ -765,14 +744,11 @@ async function migrateCompanies(ctx: MigrationContext) {
 }
 
 async function migrateTools(ctx: MigrationContext) {
-  console.log('🔧 Migrating tools...')
+  console.log('🔧 Migrating tools from public.tools to payload.tools...')
   
   const { data: tools, error } = await supabase
     .from('tools')
-    .select(`
-      *,
-      companies!tools_company_id_fkey(name, slug)
-    `)
+    .select('*')
     .order('created_at')
 
   if (error) throw error
@@ -786,6 +762,7 @@ async function migrateTools(ctx: MigrationContext) {
         data: {
           name: tool.name,
           slug: tool.slug,
+          supabase_tool_id: tool.id, // Keep reference to original
           display_name: tool.display_name,
           company: companyId,
           category: tool.category,
@@ -826,52 +803,15 @@ async function migrateTools(ctx: MigrationContext) {
   console.log(`✅ Migrated ${tools.length} tools`)
 }
 
-async function migrateToolCapabilities(ctx: MigrationContext) {
-  console.log('⚙️ Migrating tool capabilities...')
-  
-  const { data: capabilities, error } = await supabase
-    .from('tool_capabilities')
-    .select('*')
-
-  if (error) throw error
-
-  for (const capability of capabilities) {
-    try {
-      const toolId = ctx.toolMap.get(capability.tool_id)
-      if (!toolId) {
-        console.warn(`⚠️ Tool not found for capability: ${capability.tool_id}`)
-        continue
-      }
-
-      await payload.create({
-        collection: 'tool-capabilities',
-        data: {
-          tool: toolId,
-          capability_type: capability.capability_type,
-          value_text: capability.value_text,
-          value_number: capability.value_number,
-          value_boolean: capability.value_boolean,
-          value_json: capability.value_json,
-        }
-      })
-    } catch (error) {
-      const errorMsg = `❌ Failed to migrate capability: ${error}`
-      console.error(errorMsg)
-      ctx.errors.push(errorMsg)
-    }
-  }
-
-  console.log(`✅ Migrated ${capabilities.length} capabilities`)
-}
-
 async function migrateMetrics(ctx: MigrationContext) {
-  console.log('📊 Migrating metrics...')
+  console.log('📊 Migrating recent metrics...')
   
+  // Start with recent metrics to validate approach
   const { data: metrics, error } = await supabase
     .from('metrics_history')
     .select('*')
     .order('recorded_at', { ascending: false })
-    .limit(10000) // Start with recent metrics
+    .limit(5000) // Start with recent 5k metrics
 
   if (error) throw error
 
@@ -889,6 +829,7 @@ async function migrateMetrics(ctx: MigrationContext) {
           data: {
             tool: toolId,
             metric_key: metric.metric_key,
+            supabase_metric_id: metric.id,
             value_integer: metric.value_integer,
             value_decimal: metric.value_decimal,
             value_text: metric.value_text,
@@ -911,7 +852,7 @@ async function migrateMetrics(ctx: MigrationContext) {
     console.log(`✅ Migrated metrics batch ${i / batchSize + 1}/${Math.ceil(metrics.length / batchSize)}`)
   }
 
-  console.log(`✅ Migrated ${metrics.length} metrics`)
+  console.log(`✅ Migrated ${metrics.length} recent metrics`)
 }
 
 async function migrateRankings(ctx: MigrationContext) {
@@ -957,66 +898,6 @@ async function migrateRankings(ctx: MigrationContext) {
   console.log(`✅ Migrated ${rankings.length} rankings`)
 }
 
-async function migrateNews(ctx: MigrationContext) {
-  console.log('📰 Migrating news...')
-  
-  const { data: news, error } = await supabase
-    .from('news_updates')
-    .select('*')
-    .order('published_at', { ascending: false })
-    .limit(1000) // Recent news
-
-  if (error) throw error
-
-  for (const article of news) {
-    try {
-      // Map related tools
-      const relatedToolIds = []
-      if (article.related_tools && Array.isArray(article.related_tools)) {
-        for (const toolId of article.related_tools) {
-          const payloadToolId = ctx.toolMap.get(toolId)
-          if (payloadToolId) relatedToolIds.push(payloadToolId)
-        }
-      }
-
-      const primaryToolId = article.primary_tool_id ? ctx.toolMap.get(article.primary_tool_id) : null
-
-      await payload.create({
-        collection: 'news',
-        data: {
-          title: article.title,
-          summary: article.summary,
-          content: article.content ? {
-            type: 'doc',
-            content: [
-              {
-                type: 'paragraph',
-                content: [{ type: 'text', text: article.content }]
-              }
-            ]
-          } : undefined,
-          url: article.url,
-          source: article.source,
-          author: article.author,
-          published_at: article.published_at,
-          scraped_at: article.scraped_at,
-          category: article.category,
-          importance_score: article.importance_score,
-          related_tools: relatedToolIds,
-          primary_tool: primaryToolId,
-          sentiment: article.sentiment,
-          key_topics: article.key_topics,
-          is_featured: article.is_featured,
-        }
-      })
-    } catch (error) {
-      console.error(`❌ Failed to migrate news article: ${error}`)
-    }
-  }
-
-  console.log(`✅ Migrated ${news.length} news articles`)
-}
-
 async function migrateEditorialContent(ctx: MigrationContext) {
   console.log('✍️ Migrating editorial content...')
   
@@ -1031,7 +912,6 @@ async function migrateEditorialContent(ctx: MigrationContext) {
       const toolId = ctx.toolMap.get(content.tool_id)
       if (!toolId) continue
 
-      // Update the tool with editorial content
       await payload.update({
         collection: 'tools',
         id: toolId,
@@ -1076,18 +956,21 @@ async function runMigration() {
   try {
     await initPayload()
     
-    // Run migrations in dependency order
+    console.log('🚀 Starting migration within same Supabase database...')
+    console.log('   Original tables: public.companies, public.tools, etc.')
+    console.log('   New tables: payload.companies, payload.tools, etc.')
+    
     await migrateCompanies(ctx)
     await migrateTools(ctx)
-    await migrateToolCapabilities(ctx)
     await migrateMetrics(ctx)
     await migrateRankings(ctx)
-    await migrateNews(ctx)
     await migrateEditorialContent(ctx)
 
     console.log('\n🎉 Migration completed!')
     console.log(`✅ Companies: ${ctx.companyMap.size}`)
     console.log(`✅ Tools: ${ctx.toolMap.size}`)
+    console.log('📝 Your original Supabase tables remain unchanged')
+    console.log('📝 New Payload tables created in "payload" schema')
     
     if (ctx.errors.length > 0) {
       console.log(`\n⚠️ ${ctx.errors.length} errors occurred:`)
@@ -1127,29 +1010,24 @@ async function validateMigration() {
 
   console.log('🔍 Validating migration...')
 
-  // Count records
+  // Count records in both systems
   const [
     supabaseCompanies,
-    supabaseTools, 
-    supabaseMetrics,
+    supabaseTools,
     payloadCompanies,
     payloadTools,
-    payloadMetrics
   ] = await Promise.all([
     supabase.from('companies').select('id', { count: 'exact' }),
     supabase.from('tools').select('id', { count: 'exact' }),
-    supabase.from('metrics_history').select('id', { count: 'exact' }),
     payload.find({ collection: 'companies', limit: 0 }),
     payload.find({ collection: 'tools', limit: 0 }),
-    payload.find({ collection: 'metrics', limit: 0 }),
   ])
 
   console.log('\n📊 Record counts:')
-  console.log(`Companies: ${supabaseCompanies.count} → ${payloadCompanies.totalDocs}`)
-  console.log(`Tools: ${supabaseTools.count} → ${payloadTools.totalDocs}`)
-  console.log(`Metrics: ${supabaseMetrics.count} → ${payloadMetrics.totalDocs}`)
+  console.log(`Companies: ${supabaseCompanies.count} (original) → ${payloadCompanies.totalDocs} (migrated)`)
+  console.log(`Tools: ${supabaseTools.count} (original) → ${payloadTools.totalDocs} (migrated)`)
 
-  // Validate relationships
+  // Test relationship integrity
   const toolsWithCompanies = await payload.find({
     collection: 'tools',
     where: {
@@ -1159,16 +1037,19 @@ async function validateMigration() {
 
   console.log(`\n🔗 Tools with company relationships: ${toolsWithCompanies.totalDocs}`)
 
-  // Check for missing critical data
-  const toolsWithoutSlugs = await payload.find({
+  // Verify Supabase references
+  const toolWithReference = await payload.find({
     collection: 'tools',
     where: {
-      slug: { exists: false }
-    }
+      supabase_tool_id: { exists: true }
+    },
+    limit: 1
   })
 
-  if (toolsWithoutSlugs.totalDocs > 0) {
-    console.log(`⚠️ Found ${toolsWithoutSlugs.totalDocs} tools without slugs`)
+  if (toolWithReference.totalDocs > 0) {
+    console.log(`✅ Supabase references preserved`)
+  } else {
+    console.log(`⚠️ Missing Supabase references`)
   }
 
   console.log('\n✅ Migration validation completed')
@@ -1177,287 +1058,9 @@ async function validateMigration() {
 validateMigration()
 ```
 
-## API Integration
+## Vercel Deployment
 
-### 1. Custom Endpoints
-
-```typescript
-// api/ranking-algorithm.ts
-import { Endpoint } from 'payload/config'
-import payload from 'payload'
-
-const calculateRankings: Endpoint = {
-  path: '/calculate-rankings',
-  method: 'post',
-  handler: async (req, res) => {
-    try {
-      const { period } = req.body
-
-      // Get all active tools with latest metrics
-      const tools = await payload.find({
-        collection: 'tools',
-        where: {
-          status: { equals: 'active' }
-        },
-        limit: 1000
-      })
-
-      // Get site settings for algorithm weights
-      const siteSettings = await payload.findGlobal({
-        slug: 'site-settings'
-      })
-
-      const rankings = []
-
-      for (const tool of tools.docs) {
-        // Get latest metrics for this tool
-        const metrics = await payload.find({
-          collection: 'metrics',
-          where: {
-            tool: { equals: tool.id }
-          },
-          sort: '-recorded_at',
-          limit: 100
-        })
-
-        // Calculate score using algorithm
-        const score = calculateToolScore(tool, metrics.docs, siteSettings.algorithm_weights)
-        
-        rankings.push({
-          tool: tool.id,
-          score,
-          // ... other calculated fields
-        })
-      }
-
-      // Sort by score and assign positions
-      rankings.sort((a, b) => b.score - a.score)
-      rankings.forEach((ranking, index) => {
-        ranking.position = index + 1
-      })
-
-      // Save rankings
-      for (const ranking of rankings) {
-        await payload.create({
-          collection: 'rankings',
-          data: {
-            period,
-            ...ranking
-          }
-        })
-      }
-
-      res.json({ success: true, rankings: rankings.length })
-    } catch (error) {
-      res.status(500).json({ error: error.message })
-    }
-  }
-}
-
-function calculateToolScore(tool, metrics, weights) {
-  // Implement your ranking algorithm here
-  // This should match your existing algorithm logic
-  return 8.5 // Placeholder
-}
-
-export default calculateRankings
-```
-
-### 2. Automated Data Collection
-
-```typescript
-// api/collect-data.ts
-import { Endpoint } from 'payload/config'
-
-const collectData: Endpoint = {
-  path: '/collect-data',
-  method: 'post',
-  handler: async (req, res) => {
-    try {
-      const { source } = req.body // 'github', 'news', 'social'
-
-      switch (source) {
-        case 'github':
-          await collectGitHubMetrics()
-          break
-        case 'news':
-          await collectNewsUpdates()
-          break
-        default:
-          throw new Error('Invalid source')
-      }
-
-      res.json({ success: true })
-    } catch (error) {
-      res.status(500).json({ error: error.message })
-    }
-  }
-}
-
-async function collectGitHubMetrics() {
-  const tools = await payload.find({
-    collection: 'tools',
-    where: {
-      github_repo: { exists: true }
-    }
-  })
-
-  for (const tool of tools.docs) {
-    if (!tool.github_repo) continue
-
-    try {
-      // Fetch GitHub data
-      const response = await fetch(`https://api.github.com/repos/${tool.github_repo}`)
-      const githubData = await response.json()
-
-      // Save metrics
-      await payload.create({
-        collection: 'metrics',
-        data: {
-          tool: tool.id,
-          metric_key: 'github_stars',
-          value_integer: githubData.stargazers_count,
-          recorded_at: new Date(),
-          source: 'github_api'
-        }
-      })
-
-      await payload.create({
-        collection: 'metrics',
-        data: {
-          tool: tool.id,
-          metric_key: 'github_forks',
-          value_integer: githubData.forks_count,
-          recorded_at: new Date(),
-          source: 'github_api'
-        }
-      })
-    } catch (error) {
-      console.error(`Failed to collect GitHub data for ${tool.name}:`, error)
-    }
-  }
-}
-
-export default collectData
-```
-
-## Testing Strategy
-
-### 1. Migration Testing
-
-```bash
-# Create test script
-cat > scripts/test-migration.sh << 'EOF'
-#!/bin/bash
-
-echo "🧪 Testing migration..."
-
-# Backup current data
-echo "📦 Creating backup..."
-pg_dump $DATABASE_URL > backup_pre_migration.sql
-
-# Run migration
-echo "🚀 Running migration..."
-npm run migrate:payload
-
-# Run validation
-echo "🔍 Validating data..."
-npm run validate:migration
-
-# Test API endpoints
-echo "🌐 Testing APIs..."
-curl -X POST http://localhost:3000/api/calculate-rankings \
-  -H "Content-Type: application/json" \
-  -d '{"period":"test-2025"}'
-
-echo "✅ Migration test completed"
-EOF
-
-chmod +x scripts/test-migration.sh
-```
-
-### 2. Data Integrity Checks
-
-```typescript
-// scripts/integrity-check.ts
-async function runIntegrityChecks() {
-  console.log('🔍 Running data integrity checks...')
-
-  // Check for orphaned records
-  const orphanedMetrics = await payload.find({
-    collection: 'metrics',
-    where: {
-      tool: { exists: false }
-    }
-  })
-
-  if (orphanedMetrics.totalDocs > 0) {
-    console.log(`⚠️ Found ${orphanedMetrics.totalDocs} orphaned metrics`)
-  }
-
-  // Check for duplicate slugs
-  const allTools = await payload.find({
-    collection: 'tools',
-    limit: 1000
-  })
-
-  const slugs = new Set()
-  const duplicates = []
-  
-  allTools.docs.forEach(tool => {
-    if (slugs.has(tool.slug)) {
-      duplicates.push(tool.slug)
-    }
-    slugs.add(tool.slug)
-  })
-
-  if (duplicates.length > 0) {
-    console.log(`⚠️ Found duplicate slugs: ${duplicates.join(', ')}`)
-  }
-
-  // Validate required relationships
-  const toolsWithoutCompanies = await payload.find({
-    collection: 'tools',
-    where: {
-      company: { exists: false }
-    }
-  })
-
-  if (toolsWithoutCompanies.totalDocs > 0) {
-    console.log(`⚠️ Found ${toolsWithoutCompanies.totalDocs} tools without companies`)
-  }
-
-  console.log('✅ Integrity checks completed')
-}
-```
-
-## Deployment Instructions
-
-### 1. Production Setup
-
-```bash
-# 1. Set up production environment
-export NODE_ENV=production
-export PAYLOAD_SECRET="your-super-secure-secret"
-export DATABASE_URI="your-production-db-url"
-
-# 2. Install dependencies
-npm ci
-
-# 3. Build the application
-npm run build
-
-# 4. Run database migrations
-npm run payload migrate
-
-# 5. Run data migration
-npm run migrate:data
-
-# 6. Start the application
-npm start
-```
-
-### 2. Vercel Deployment
+### 1. Vercel Configuration
 
 ```json
 // vercel.json
@@ -1484,35 +1087,305 @@ npm start
   ],
   "env": {
     "PAYLOAD_SECRET": "@payload-secret",
-    "DATABASE_URI": "@database-uri"
+    "SUPABASE_DATABASE_URL": "@supabase-database-url",
+    "SUPABASE_URL": "@supabase-url",
+    "SUPABASE_ANON_KEY": "@supabase-anon-key"
   }
 }
 ```
 
-## Post-Migration Tasks
+### 2. Package.json Scripts
 
-### 1. Content Audit
-- [ ] Verify all tools migrated correctly
-- [ ] Check editorial content formatting
-- [ ] Validate relationship integrity
-- [ ] Test ranking calculations
+```json
+{
+  "scripts": {
+    "dev": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts nodemon",
+    "build": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts next build",
+    "start": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts NODE_ENV=production node server.js",
+    "migrate:payload": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts ts-node scripts/migrate-to-payload.ts",
+    "validate:migration": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts ts-node scripts/validate-migration.ts"
+  }
+}
+```
 
-### 2. API Integration
-- [ ] Update data collection scripts
-- [ ] Test automated ranking generation
-- [ ] Verify webhook functionality
-- [ ] Update frontend API calls
+### 3. Server.js for Vercel
 
-### 3. Editorial Workflow
-- [ ] Train content team on new admin interface
-- [ ] Set up user roles and permissions
-- [ ] Test draft/publish workflow
-- [ ] Configure editorial notifications
+```javascript
+// server.js
+const express = require('express')
+const payload = require('payload')
+const next = require('next')
 
-### 4. Performance Optimization
-- [ ] Add database indexes
-- [ ] Configure caching
-- [ ] Optimize query performance
-- [ ] Set up monitoring
+const dev = process.env.NODE_ENV !== 'production'
+const app = next({ dev })
+const handle = app.getRequestHandler()
 
-This migration plan provides a complete path from your current Supabase setup to a fully functional Payload CMS implementation while preserving all data integrity and maintaining your existing workflows.
+const start = async () => {
+  await payload.init({
+    secret: process.env.PAYLOAD_SECRET,
+    express: express(),
+    onInit: () => {
+      payload.logger.info(`Payload Admin URL: ${payload.getAdminURL()}`)
+    },
+  })
+
+  await app.prepare()
+
+  const server = payload.express
+
+  server.get('*', (req, res) => {
+    return handle(req, res)
+  })
+
+  server.listen(process.env.PORT || 3000)
+}
+
+start()
+```
+
+## Deployment Steps
+
+### 1. Test Locally First
+
+```bash
+# 1. Set up environment
+cp .env.local .env
+
+# 2. Initialize Payload (creates schema)
+npm run payload migrate
+
+# 3. Run migration script
+npm run migrate:payload
+
+# 4. Validate migration
+npm run validate:migration
+
+# 5. Start local development
+npm run dev
+
+# Visit http://localhost:3000/admin to see Payload admin
+# Visit http://localhost:3000/api/tools to test API
+```
+
+### 2. Deploy to Vercel
+
+```bash
+# 1. Install Vercel CLI
+npm i -g vercel
+
+# 2. Login to Vercel
+vercel login
+
+# 3. Set environment variables in Vercel dashboard:
+# PAYLOAD_SECRET=your-secret
+# SUPABASE_DATABASE_URL=postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres
+# SUPABASE_URL=https://[project].supabase.co
+# SUPABASE_ANON_KEY=your-key
+
+# 4. Deploy
+vercel --prod
+
+# 5. Run migration on production (one-time)
+vercel env pull .env.production
+ENVIRONMENT=production npm run migrate:payload
+```
+
+## API Integration & Custom Endpoints
+
+### 1. Ranking Algorithm Endpoint
+
+```typescript
+// api/calculate-rankings.ts
+import { NextApiRequest, NextApiResponse } from 'next'
+import payload from 'payload'
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  try {
+    await payload.init({
+      secret: process.env.PAYLOAD_SECRET!,
+      local: true,
+    })
+
+    const { period } = req.body
+
+    // Get all active tools
+    const tools = await payload.find({
+      collection: 'tools',
+      where: {
+        status: { equals: 'active' }
+      },
+      limit: 1000
+    })
+
+    // Get algorithm weights
+    const siteSettings = await payload.findGlobal({
+      slug: 'site-settings'
+    })
+
+    const rankings = []
+
+    for (const tool of tools.docs) {
+      // Get latest metrics for this tool
+      const metrics = await payload.find({
+        collection: 'metrics',
+        where: {
+          tool: { equals: tool.id }
+        },
+        sort: '-recorded_at',
+        limit: 100
+      })
+
+      // Calculate score using your algorithm
+      const score = calculateToolScore(tool, metrics.docs, siteSettings.algorithm_weights)
+      
+      rankings.push({
+        tool: tool.id,
+        score,
+        period,
+        // Add other calculated fields...
+      })
+    }
+
+    // Sort and assign positions
+    rankings.sort((a, b) => b.score - a.score)
+    rankings.forEach((ranking, index) => {
+      ranking.position = index + 1
+    })
+
+    // Save rankings to Payload
+    for (const ranking of rankings) {
+      await payload.create({
+        collection: 'rankings',
+        data: ranking
+      })
+    }
+
+    res.json({ success: true, rankings: rankings.length })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+
+function calculateToolScore(tool, metrics, weights) {
+  // Your existing algorithm logic here
+  return 8.5 // Placeholder
+}
+```
+
+### 2. Data Collection from Supabase Tables
+
+```typescript
+// api/sync-with-supabase.ts
+import { NextApiRequest, NextApiResponse } from 'next'
+import { createClient } from '@supabase/supabase-js'
+import payload from 'payload'
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_ANON_KEY!
+)
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  try {
+    await payload.init({
+      secret: process.env.PAYLOAD_SECRET!,
+      local: true,
+    })
+
+    // Sync new metrics from Supabase to Payload
+    const { data: newMetrics } = await supabase
+      .from('metrics_history')
+      .select('*')
+      .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Last 24 hours
+
+    for (const metric of newMetrics || []) {
+      // Find corresponding Payload tool
+      const payloadTool = await payload.find({
+        collection: 'tools',
+        where: {
+          supabase_tool_id: { equals: metric.tool_id }
+        },
+        limit: 1
+      })
+
+      if (payloadTool.docs.length > 0) {
+        await payload.create({
+          collection: 'metrics',
+          data: {
+            tool: payloadTool.docs[0].id,
+            metric_key: metric.metric_key,
+            supabase_metric_id: metric.id,
+            value_integer: metric.value_integer,
+            value_decimal: metric.value_decimal,
+            value_text: metric.value_text,
+            value_boolean: metric.value_boolean,
+            value_json: metric.value_json,
+            recorded_at: metric.recorded_at,
+            source: metric.source,
+            // ... other fields
+          }
+        })
+      }
+    }
+
+    res.json({ success: true, synced: newMetrics?.length || 0 })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+```
+
+## Benefits of This Architecture
+
+### ✅ **Keep Current Data**
+- Your existing Supabase database stays intact
+- Original tables remain unchanged
+- Can run both systems in parallel during transition
+
+### ✅ **Minimal Risk**
+- No data migration between services
+- Easy rollback if needed
+- Gradual transition possible
+
+### ✅ **Cost Effective**
+- Keep existing Supabase plan
+- Vercel free tier for hosting Payload
+- No additional database costs
+
+### ✅ **Powerful CMS**
+- Rich text editing for "The Real Story"
+- User roles and permissions
+- Draft/publish workflows
+- Built-in API generation
+
+## Migration Timeline
+
+### Day 1: Setup & Schema
+- [ ] Create Payload project
+- [ ] Configure Supabase connection
+- [ ] Deploy Payload schema to Supabase
+
+### Day 2: Data Migration
+- [ ] Run migration script
+- [ ] Validate data integrity
+- [ ] Test Payload admin interface
+
+### Day 3: Deployment
+- [ ] Deploy to Vercel
+- [ ] Configure environment variables
+- [ ] Test production endpoints
+
+### Day 4: Integration
+- [ ] Update frontend to use Payload APIs
+- [ ] Set up automated syncing
+- [ ] Train team on new admin interface
+
+This approach gives you all the benefits of Payload CMS while keeping your existing, proven Supabase infrastructure!

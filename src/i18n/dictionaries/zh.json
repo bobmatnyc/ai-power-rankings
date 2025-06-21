@@ -13,7 +13,16 @@
     "ideAssistant": "IDE Assistant",
     "appBuilder": "App Builder",
     "codeReview": "Code Review",
-    "codeAssistant": "Code Assistant"
+    "codeAssistant": "Code Assistant",
+    "multimodal": "多模态",
+    "businessintelligence": "商业智能",
+    "imageandvideo": "图像和视频",
+    "apiandautomation": "API和自动化",
+    "searchandknowledge": "搜索和知识",
+    "voiceandaudio": "语音和音频",
+    "dataanalysis": "数据分析",
+    "customerservice": "客户服务",
+    "contentgeneration": "内容生成"
   },
   "common": {
     "appName": "AI Power Ranking",
@@ -49,7 +58,15 @@
     "categories": "Categories",
     "features": "Features",
     "clearFilters": "Clear Filters",
-    "allCategories": "All Categories"
+    "allCategories": "All Categories",
+    "newsletter": "新闻通讯",
+    "contact": "联系我们",
+    "privacy": "隐私政策",
+    "terms": "使用条款",
+    "cookies": "Cookie政策",
+    "subscribe": "订阅",
+    "support": "支持",
+    "blog": "博客"
   },
   "home": {
     "hero": {
@@ -61,7 +78,9 @@
       "viewTrending": "View Trending",
       "exploreButton": "Explore All Tools",
       "trendingButton": "View Trending",
-      "whatsNewButton": "What's New"
+      "whatsNewButton": "What's New",
+      "viewRankings": "查看排名",
+      "subscribeNewsletter": "订阅新闻通讯"
     },
     "stats": {
       "toolsRanked": "AI Tools Ranked",
@@ -71,14 +90,21 @@
       "updateFrequency": "Weekly Updates",
       "tools": "个工具",
       "categories": "个分类",
-      "totalTools": "总工具数",
+      "totalTools": "工具总数",
       "activeTools": "活跃工具",
       "weeklyGrowth": "周增长",
       "lastUpdated": "最后更新",
       "description": "基于全面评估的数据驱动洞察",
       "coverage": "覆盖范围",
       "accuracy": "准确性",
-      "freshness": "数据新鲜度"
+      "freshness": "数据新鲜度",
+      "totalCategories": "分类总数",
+      "weeklyUpdates": "每周更新",
+      "comprehensiveAnalysis": "全面分析",
+      "categoriesTracked": "已追踪分类",
+      "usersServed": "服务用户",
+      "expertReviews": "专家评测",
+      "monthlyUpdates": "每月更新"
     },
     "trending": {
       "title": "Trending This Week",
@@ -101,7 +127,9 @@
     "recent": {
       "title": "Recent Updates",
       "description": "Latest developments and feature releases from top AI tools",
-      "viewAllButton": "View All Recent"
+      "viewAllButton": "View All Recent",
+      "subtitle": "最新消息和更新",
+      "viewAll": "查看全部"
     },
     "categories": {
       "title": "Explore by Category",
@@ -133,7 +161,10 @@
       "codeReview": {
         "name": "代码审查",
         "description": "AI 驱动的代码分析和改进建议"
-      }
+      },
+      "subtitle": "找到符合您兴趣的AI工具",
+      "exploreCategory": "探索分类",
+      "toolsInCategory": "此分类中的工具"
     },
     "methodology": {
       "title": "Our Methodology",
@@ -229,7 +260,15 @@
       "primary": "探索 AI 工具",
       "secondary": "了解方法论",
       "newsletter": "订阅更新",
-      "compare": "开始比较"
+      "compare": "开始比较",
+      "title": "找到完美的AI编码工具",
+      "subtitle": "发现能革新您开发工作流程的工具",
+      "getStarted": "开始使用",
+      "learnMore": "了解更多",
+      "browseTools": "浏览工具",
+      "viewMethodology": "查看方法论",
+      "subscribe": "订阅",
+      "contact": "联系我们"
     },
     "testimonials": {
       "title": "用户评价",
@@ -249,6 +288,125 @@
       "whitepapers": "白皮书",
       "case-studies": "案例研究",
       "webinars": "网络研讨会"
+    },
+    "topTools": {
+      "title": "顶级AI编码工具",
+      "subtitle": "基于创新、功能和用户体验排名的最佳工具",
+      "viewAll": "查看全部",
+      "exploreMore": "探索更多",
+      "getStarted": "开始使用",
+      "learnMore": "了解更多",
+      "tryNow": "立即试用",
+      "viewDetails": "查看详情",
+      "rank": "排名",
+      "tool": "工具",
+      "category": "分类",
+      "score": "评分",
+      "change": "变化",
+      "trending": "趋势",
+      "new": "新增",
+      "rising": "上升",
+      "stable": "稳定"
+    },
+    "newsletter": {
+      "title": "获取最新资讯",
+      "subtitle": "接收每周AI工具更新、新发布和深度分析",
+      "placeholder": "输入邮箱地址",
+      "subscribe": "订阅",
+      "subscribing": "订阅中...",
+      "success": "感谢您的订阅！",
+      "error": "订阅时发生错误。请重试。",
+      "description": "无垃圾邮件。随时可以取消订阅。"
+    },
+    "features": {
+      "title": "为什么选择AI实力排行榜？",
+      "subtitle": "寻找最佳AI编码工具的综合平台",
+      "comprehensiveDatabase": {
+        "title": "全面数据库",
+        "description": "所有主要AI编码工具集中在一个地方"
+      },
+      "expertAnalysis": {
+        "title": "专家分析",
+        "description": "对每个工具进行深入公正的评估"
+      },
+      "regularUpdates": {
+        "title": "定期更新",
+        "description": "每周更新最新工具和功能"
+      },
+      "communityDriven": {
+        "title": "社区驱动",
+        "description": "基于用户反馈和真实体验的排名"
+      }
+    },
+    "trust": {
+      "title": "开发者信赖",
+      "subtitle": "全球数千名开发者信赖我们找到最佳AI工具",
+      "testimonial1": "真正全面的平台。帮助我找到了完美的AI工具。",
+      "testimonial2": "定期更新和深度分析非常有用。",
+      "testimonial3": "节省时间的优秀资源。"
+    },
+    "about": {
+      "title": "数据驱动排名",
+      "subtitle": "我们的方法论透明、公正且持续改进",
+      "methodology": "查看方法论",
+      "algorithmVersion": "Algorithm v6.0",
+      "lastUpdated": "最后更新"
+    },
+    "faq": {
+      "title": "常见问题",
+      "subtitle": "关于AI编码工具和排名的常见问题",
+      "question1": "工具是如何排名的？",
+      "answer1": "我们使用Algorithm v6.0评估创新、功能、可用性和社区反馈。",
+      "question2": "排名多久更新一次？",
+      "answer2": "每周更新，反映新工具、功能更新和用户反馈。",
+      "viewAll": "查看所有FAQ"
+    },
+    "updated": {
+      "title": "已更新",
+      "subtitle": "新功能和改进",
+      "description": "新功能和改进",
+      "viewAll": "查看所有更新"
+    },
+    "new": {
+      "title": "新增",
+      "subtitle": "新添加的AI工具",
+      "description": "新添加的AI工具",
+      "viewAll": "查看所有新工具"
+    },
+    "explore": {
+      "title": "探索",
+      "subtitle": "找到符合您兴趣的工具",
+      "description": "找到符合您兴趣的工具",
+      "button": "开始探索",
+      "allTools": "所有工具",
+      "byCategory": "按分类",
+      "trending": "趋势",
+      "recent": "最近"
+    },
+    "compare": {
+      "title": "比较",
+      "subtitle": "并排比较工具",
+      "description": "并排比较工具",
+      "button": "开始比较",
+      "selectTools": "选择工具",
+      "addToCompare": "添加到比较"
+    },
+    "search": {
+      "advancedFilters": "高级筛选",
+      "sortBy": "排序方式",
+      "filterBy": "筛选条件",
+      "noResults": "无结果",
+      "suggestions": "建议"
+    },
+    "ui": {
+      "showMore": "显示更多",
+      "showLess": "显示更少",
+      "loadMore": "加载更多",
+      "refresh": "刷新",
+      "close": "关闭",
+      "open": "打开",
+      "expand": "展开",
+      "collapse": "收起"
     }
   },
   "footer": {

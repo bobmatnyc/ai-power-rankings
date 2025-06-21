@@ -13,7 +13,16 @@
     "ideAssistant": "IDE Assistant",
     "appBuilder": "App Builder",
     "codeReview": "Code Review",
-    "codeAssistant": "Code Assistant"
+    "codeAssistant": "Code Assistant",
+    "multimodal": "マルチモーダル",
+    "businessintelligence": "ビジネスインテリジェンス",
+    "imageandvideo": "画像・動画",
+    "apiandautomation": "API・自動化",
+    "searchandknowledge": "検索・知識",
+    "voiceandaudio": "音声・オーディオ",
+    "dataanalysis": "データ分析",
+    "customerservice": "カスタマーサービス",
+    "contentgeneration": "コンテンツ生成"
   },
   "common": {
     "appName": "AI Power Ranking",
@@ -59,7 +68,15 @@
     "categories": "Categories",
     "features": "Features",
     "clearFilters": "Clear Filters",
-    "allCategories": "All Categories"
+    "allCategories": "All Categories",
+    "newsletter": "ニュースレター",
+    "contact": "お問い合わせ",
+    "privacy": "プライバシー",
+    "terms": "利用規約",
+    "cookies": "クッキーポリシー",
+    "subscribe": "購読する",
+    "support": "サポート",
+    "blog": "ブログ"
   },
   "home": {
     "hero": {
@@ -71,14 +88,24 @@
       "viewTrending": "View Trending",
       "exploreButton": "Explore All Tools",
       "trendingButton": "View Trending",
-      "whatsNewButton": "What's New"
+      "whatsNewButton": "What's New",
+      "viewRankings": "ランキングを見る",
+      "subscribeNewsletter": "ニュースレター購読"
     },
     "stats": {
       "toolsRanked": "AI Tools Ranked",
       "trendingUp": "Trending Up",
       "updates": "Updates",
       "freeAccess": "Free Access",
-      "updateFrequency": "Weekly Updates"
+      "updateFrequency": "Weekly Updates",
+      "totalTools": "総ツール数",
+      "totalCategories": "総カテゴリー数",
+      "weeklyUpdates": "週次更新",
+      "comprehensiveAnalysis": "包括的分析",
+      "categoriesTracked": "追跡されたカテゴリー",
+      "usersServed": "サービス提供ユーザー",
+      "expertReviews": "専門家レビュー",
+      "monthlyUpdates": "月次更新"
     },
     "trending": {
       "title": "Trending This Week",
@@ -97,7 +124,9 @@
     "recent": {
       "title": "Recent Updates",
       "description": "Latest developments and feature releases from top AI tools",
-      "viewAllButton": "View All Recent"
+      "viewAllButton": "View All Recent",
+      "subtitle": "最新ニュースと更新",
+      "viewAll": "すべて表示"
     },
     "categories": {
       "title": "Explore by Category",
@@ -121,7 +150,14 @@
       "ideDescription": "AI-powered code completion and suggestions",
       "editorDescription": "Smart editors with AI integration",
       "builderDescription": "Build complete applications with AI assistance",
-      "agentDescription": "Fully autonomous AI software engineers"
+      "agentDescription": "Fully autonomous AI software engineers",
+      "subtitle": "あなたの興味に合うAIツールを見つける",
+      "exploreCategory": "カテゴリーを探索",
+      "toolsInCategory": "このカテゴリーのツール",
+      "viewAll": "すべてのカテゴリーを表示",
+      "popular": "人気のカテゴリー",
+      "trending": "トレンドのカテゴリー",
+      "newest": "最新のカテゴリー"
     },
     "methodology": {
       "title": "Our Methodology",
@@ -184,6 +220,165 @@
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
+    },
+    "topTools": {
+      "title": "トップAIコーディングツール",
+      "subtitle": "イノベーション、機能、ユーザーエクスペリエンスに基づいてランク付けされた最高のツール",
+      "viewAll": "すべて表示",
+      "exploreMore": "さらに探索",
+      "getStarted": "始める",
+      "learnMore": "詳細を見る",
+      "tryNow": "今すぐ試す",
+      "viewDetails": "詳細を表示",
+      "rank": "ランク",
+      "tool": "ツール",
+      "category": "カテゴリー",
+      "score": "スコア",
+      "change": "変化",
+      "trending": "トレンド",
+      "new": "新着",
+      "rising": "上昇",
+      "stable": "安定"
+    },
+    "newsletter": {
+      "title": "最新情報を受け取る",
+      "subtitle": "週間AIツール更新、新リリース、詳細分析を受け取りましょう",
+      "placeholder": "メールアドレスを入力",
+      "subscribe": "購読する",
+      "subscribing": "購読中...",
+      "success": "購読ありがとうございます！",
+      "error": "購読中にエラーが発生しました。再試行してください。",
+      "description": "スパムはありません。いつでも購読解除できます。",
+      "benefits": "特典",
+      "weeklyDigest": "週間ダイジェスト",
+      "exclusiveContent": "限定コンテンツ",
+      "earlyAccess": "早期アクセス",
+      "communityUpdates": "コミュニティ更新"
+    },
+    "features": {
+      "title": "AI パワーランキングを選ぶ理由",
+      "subtitle": "最高のAIコーディングツールを見つけるための包括的プラットフォーム",
+      "comprehensiveDatabase": {
+        "title": "包括的データベース",
+        "description": "すべての主要なAIコーディングツールが一箇所にまとめられています"
+      },
+      "expertAnalysis": {
+        "title": "専門家分析",
+        "description": "各ツールの詳細で公正な評価"
+      },
+      "regularUpdates": {
+        "title": "定期更新",
+        "description": "最新のツールと機能で毎週更新"
+      },
+      "communityDriven": {
+        "title": "コミュニティ主導",
+        "description": "ユーザーフィードバックと実体験に基づいたランキング"
+      },
+      "dataAccuracy": {
+        "title": "データ精度",
+        "description": "信頼できるソースと検証済み情報に基づく正確なデータ"
+      },
+      "easyComparison": {
+        "title": "簡単比較",
+        "description": "ツールを並べて比較し、ニーズに最適な選択を"
+      },
+      "mobileOptimized": {
+        "title": "モバイル最適化",
+        "description": "すべてのデバイスで完璧に動作するレスポンシブデザイン"
+      }
+    },
+    "cta": {
+      "title": "完璧なAIコーディングツールを見つけよう",
+      "subtitle": "開発ワークフローを革新するツールを発見しましょう",
+      "getStarted": "始める",
+      "learnMore": "詳細を見る",
+      "browseTools": "ツールを閲覧",
+      "viewMethodology": "方法論を見る",
+      "subscribe": "購読する",
+      "contact": "お問い合わせ"
+    },
+    "trust": {
+      "title": "開発者に信頼されている",
+      "subtitle": "世界中の数千人の開発者が最高のAIツールを見つけるために私たちを信頼しています",
+      "testimonial1": "本当に包括的なプラットフォームです。完璧なAIツールを見つけるのに役立ちました。",
+      "testimonial2": "定期的な更新と詳細な分析が本当に有用です。",
+      "testimonial3": "時間を節約してくれる素晴らしいリソースです。"
+    },
+    "about": {
+      "title": "データ主導のランキング",
+      "subtitle": "私たちの方法論は透明で公正、継続的に改善されています",
+      "methodology": "方法論を見る",
+      "algorithmVersion": "Algorithm v6.0",
+      "lastUpdated": "最終更新"
+    },
+    "faq": {
+      "title": "よくある質問",
+      "subtitle": "AIコーディングツールとランキングに関する一般的な質問",
+      "question1": "ツールはどのようにランク付けされますか？",
+      "answer1": "私たちのAlgorithm v6.0を使用して、イノベーション、機能、使いやすさ、コミュニティフィードバックを評価します。",
+      "question2": "ランキングはどのくらいの頻度で更新されますか？",
+      "answer2": "新しいツール、機能更新、ユーザーフィードバックを反映して毎週更新されます。",
+      "viewAll": "すべてのFAQを見る"
+    },
+    "recentUpdates": {
+      "title": "最近の更新",
+      "subtitle": "AIコーディングツール界の最新ニュースと開発",
+      "viewAll": "すべての更新を見る",
+      "readMore": "続きを読む",
+      "publishedOn": "公開日"
+    },
+    "search": {
+      "title": "ツールを見つける",
+      "subtitle": "カテゴリー、機能、使用例でフィルタリング",
+      "placeholder": "ツールや機能を検索...",
+      "searchButton": "検索",
+      "clearFilters": "フィルターをクリア",
+      "showResults": "結果を表示",
+      "advancedFilters": "高度なフィルター",
+      "sortBy": "並び順",
+      "filterBy": "フィルター",
+      "noResults": "結果がありません",
+      "suggestions": "提案"
+    },
+    "updated": {
+      "title": "更新済み",
+      "subtitle": "新機能と改善",
+      "description": "新機能と改善",
+      "viewAll": "すべての更新を見る"
+    },
+    "new": {
+      "title": "新着",
+      "subtitle": "新しく追加されたAIツール",
+      "description": "新しく追加されたAIツール",
+      "viewAll": "すべての新しいツールを見る"
+    },
+    "explore": {
+      "title": "探索する",
+      "subtitle": "あなたの興味に合うツールを見つける",
+      "description": "あなたの興味に合うツールを見つける",
+      "button": "探索を開始",
+      "allTools": "すべてのツール",
+      "byCategory": "カテゴリー別",
+      "trending": "トレンド",
+      "recent": "最近"
+    },
+    "compare": {
+      "title": "比較する",
+      "subtitle": "ツールを並べて比較",
+      "description": "ツールを並べて比較",
+      "button": "比較を開始",
+      "selectTools": "ツールを選択",
+      "addToCompare": "比較に追加"
+    },
+    "ui": {
+      "showMore": "さらに表示",
+      "showLess": "簡潔に表示",
+      "loadMore": "さらに読み込む",
+      "refresh": "更新",
+      "close": "閉じる",
+      "open": "開く",
+      "expand": "展開",
+      "collapse": "折りたたむ"
     }
   },
   "footer": {

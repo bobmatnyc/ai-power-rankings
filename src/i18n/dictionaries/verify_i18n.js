@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const en = JSON.parse(fs.readFileSync('en.json', 'utf8'));
-const languageFiles = fs.readdirSync('.').filter(f => f.endsWith('.json') && f !== 'en.json' && !f.includes('batch') && !f.includes('translate'));
+const languageFiles = fs.readdirSync('.').filter(f => f.endsWith('.json') && f !== 'en.json' && !f.includes('batch') && !f.includes('backup') && !f.includes('translate'));
 
 function getAllKeys(obj, prefix = '') {
   let keys = [];
@@ -22,23 +22,16 @@ function getNestedValue(obj, path) {
 
 const allEnglishKeys = getAllKeys(en);
 console.log(`📊 Reference keys: ${allEnglishKeys.length}`);
-console.log('');
 
 languageFiles.forEach(langFile => {
   const langCode = langFile.replace('.json', '');
-  try {
-    const langData = JSON.parse(fs.readFileSync(langFile, 'utf8'));
-    const langKeys = getAllKeys(langData);
-    const missingKeys = allEnglishKeys.filter(key => !getNestedValue(langData, key));
-    const completeness = ((allEnglishKeys.length - missingKeys.length) / allEnglishKeys.length * 100).toFixed(1);
-    
-    console.log(`${langCode.toUpperCase()}: ${completeness}% complete (${allEnglishKeys.length - missingKeys.length}/${allEnglishKeys.length}), ${missingKeys.length} missing`);
-    if (missingKeys.length > 0 && missingKeys.length <= 5) {
-      console.log(`  Missing: ${missingKeys.join(', ')}`);
-    } else if (missingKeys.length > 5) {
-      console.log(`  Sample missing: ${missingKeys.slice(0, 5).join(', ')}...`);
-    }
-  } catch (e) {
-    console.log(`${langCode.toUpperCase()}: Error reading file - ${e.message}`);
+  const langData = JSON.parse(fs.readFileSync(langFile, 'utf8'));
+  const langKeys = getAllKeys(langData);
+  const missingKeys = allEnglishKeys.filter(key => !getNestedValue(langData, key));
+  const completeness = ((allEnglishKeys.length - missingKeys.length) / allEnglishKeys.length * 100).toFixed(1);
+  
+  console.log(`${langCode.toUpperCase()}: ${completeness}% complete, ${missingKeys.length} missing`);
+  if (missingKeys.length > 0) {
+    console.log(`Missing: ${missingKeys.slice(0, 5).join(', ')}`);
   }
 });
