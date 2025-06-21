@@ -35,8 +35,8 @@ node verify_i18n.js
 echo ""
 echo "📝 Step 7: Git commit (if changes detected)"
 if [[ -n $(git status --porcelain) ]]; then
-  git add *.json
-  git commit -m "feat(i18n): update translations - $(date '+%Y-%m-%d %H:%M')"
+  git add -A
+  git commit -m "feat(i18n): update translations and cleanup - $(date '+%Y-%m-%d %H:%M')"
   echo "✅ Changes committed to git"
 else
   echo "ℹ️  No changes to commit"
