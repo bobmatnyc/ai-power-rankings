@@ -39,7 +39,8 @@
     "i18n:debug": "curl -s http://localhost:3000/api/debug/missing-translations | jq",
     "i18n:sync": "tsx src/lib/i18n/scripts/sync-translations.ts",
     "i18n:summary": "tsx src/lib/i18n/scripts/translation-summary.ts",
-    "i18n:check": "node src/lib/i18n/scripts/check-translations.mjs"
+    "i18n:check": "node src/lib/i18n/scripts/check-translations.mjs",
+    "seo:submit-sitemap": "tsx src/lib/seo/submit-sitemap.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
