@@ -182,7 +182,7 @@ function calculateTechnicalScore(technical: SEOMetrics["technicalSEO"]): number 
   return Math.max(0, Math.min(100, score));
 }
 
-function calculateContentScore(content: SEOMetrics["contentQuality"]): number {
+function calculateContentScore(content: NonNullable<SEOMetrics["contentQuality"]>): number {
   let score = 0;
 
   // Word count (assuming average across pages)

@@ -7,7 +7,7 @@ import { join } from "path";
 const DICTIONARIES_PATH = join(__dirname, "../../../i18n/dictionaries");
 
 // List of language codes (excluding English)
-const LANGUAGES = ["de", "fr", "hr", "it", "jp", "ko", "uk"];
+const LANGUAGES = ["de", "fr", "hr", "it", "jp", "ko", "uk", "zh"];
 
 // Translation placeholder prefix
 const TRANSLATE_PREFIX = "[TRANSLATE] ";

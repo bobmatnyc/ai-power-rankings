@@ -4,7 +4,7 @@ import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 
 const DICTIONARIES_PATH = join(__dirname, "../../../i18n/dictionaries");
-const LANGUAGES = ["de", "fr", "hr", "it", "jp", "ko", "uk"];
+const LANGUAGES = ["de", "fr", "hr", "it", "jp", "ko", "uk", "zh"];
 const TRANSLATE_PREFIX = "[TRANSLATE] ";
 
 interface TranslationObject {
