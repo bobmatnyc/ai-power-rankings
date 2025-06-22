@@ -251,6 +251,54 @@ Strategic analysis including:
 4. **Market Reports**: Automated industry intelligence generation
 5. **Premium Features**: Enhanced analytics and early access
 
+## Deployment & Infrastructure
+
+### Deployment Platform
+
+// Created: 2025-06-21
+The application is deployed on Vercel with the following configuration:
+
+- **Platform**: Vercel (automatic deployments from GitHub)
+- **Production URL**: https://aipowerrankings.com
+- **Framework**: Next.js 15 with App Router
+- **Node Version**: 20.x
+- **Build Command**: `next build`
+- **Output Directory**: `.next`
+
+### Domain Configuration
+
+// Created: 2025-06-21
+**Current Issue**: The domain is resolving to `192.64.119.41` which is not responding.
+
+**Correct Vercel Configuration**:
+The domain should be configured in Namecheap with one of these options:
+
+**Option 1 - A Records** (Recommended):
+
+- A record: `@` → `76.76.21.142`
+- A record: `www` → `76.76.21.142`
+
+**Option 2 - CNAME Record**:
+
+- CNAME record: `@` → `cname.vercel-dns.com`
+- CNAME record: `www` → `cname.vercel-dns.com`
+
+**Current DNS Status** (as of 2025-06-21):
+
+- Domain resolves to: `192.64.119.41` (not a Vercel IP)
+- This IP is not responding to HTTPS requests
+- Vercel deployment is ready at: `https://ai-power-rankings-e8lh1czx6-1-m.vercel.app`
+
+### Vercel Project Configuration
+
+// Created: 2025-06-21
+
+- **Team**: 1-m
+- **Project**: ai-power-rankings
+- **Framework Preset**: Next.js
+- **Environment Variables**: Configured in Vercel dashboard
+- **Deployment Protection**: Enabled (requires authentication for preview URLs)
+
 ## Deployment & Usage
 
 ### Environment Setup
