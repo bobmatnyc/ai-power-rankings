@@ -16,7 +16,7 @@ const languageNames: Record<Locale, string> = {
   de: "DE",
   fr: "FR",
   it: "IT",
-  jp: "JP",
+  ja: "JA",
   ko: "KO",
   uk: "UK",
   hr: "HR",
