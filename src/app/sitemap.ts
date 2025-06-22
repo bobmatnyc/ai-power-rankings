@@ -93,10 +93,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Tool detail pages
   const toolPages: MetadataRoute.Sitemap = tools.flatMap((tool: any) => {
+    // Ensure we have a valid date
+    const toolDate =
+      tool.updated_at && !isNaN(Date.parse(tool.updated_at))
+        ? new Date(tool.updated_at).toISOString()
+        : currentDate;
+
     const pages = [
       {
         url: `${baseUrl}/tools/${tool.slug}`,
-        lastModified: tool.updated_at || currentDate,
+        lastModified: toolDate,
         changeFrequency: "weekly" as const,
         priority: 0.8,
       },
@@ -106,7 +112,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     languages.forEach((lang) => {
       pages.push({
         url: `${baseUrl}/${lang}/tools/${tool.slug}`,
-        lastModified: tool.updated_at || currentDate,
+        lastModified: toolDate,
         changeFrequency: "weekly" as const,
         priority: 0.7,
       });
