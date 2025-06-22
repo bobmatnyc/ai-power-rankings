@@ -12,6 +12,11 @@ function getLocale(_request: NextRequest): string {
 export default auth((req) => {
   const pathname = req.nextUrl.pathname;
 
+  // Allow sitemap.xml to be accessed without locale prefix
+  if (pathname === "/sitemap.xml") {
+    return NextResponse.next();
+  }
+
   // Handle OAuth routes with CORS
   if (pathname === "/.well-known/oauth-authorization-server" || pathname === "/register") {
     const response = NextResponse.next();
@@ -51,6 +56,6 @@ export default auth((req) => {
 export const config = {
   matcher: [
     // Skip all internal paths (_next, assets, api)
-    "/((?!api|_next/static|_next/image|assets|favicon.ico|crown-of-technology.png|robots.txt).*)",
+    "/((?!api|_next/static|_next/image|assets|favicon.ico|crown-of-technology.png|robots.txt|sitemap.xml).*)",
   ],
 };
