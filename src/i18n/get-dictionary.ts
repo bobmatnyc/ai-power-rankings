@@ -9,7 +9,7 @@ const dictionaries = {
   de: () => import("./dictionaries/de.json").then((module) => module.default),
   fr: () => import("./dictionaries/fr.json").then((module) => module.default),
   it: () => import("./dictionaries/it.json").then((module) => module.default),
-  jp: () => import("./dictionaries/jp.json").then((module) => module.default),
+  ja: () => import("./dictionaries/ja.json").then((module) => module.default),
   ko: () => import("./dictionaries/ko.json").then((module) => module.default),
   uk: () => import("./dictionaries/uk.json").then((module) => module.default),
   hr: () => import("./dictionaries/hr.json").then((module) => module.default),
