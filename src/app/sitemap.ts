@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { createServiceClient } from "@/lib/supabase/server";
+import { i18n } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600; // Revalidate every hour
@@ -27,7 +28,22 @@ async function getLatestRankingPeriod() {
   return data?.period;
 }
 
-const languages = ["en", "ja", "zh", "es", "fr", "de", "ko", "pt"];
+// Helper function to generate alternates for all languages
+function generateAlternates(basePath: string, baseUrl: string) {
+  const alternates: Record<string, string> = {
+    "x-default": `${baseUrl}${basePath}`, // Default to English
+    en: `${baseUrl}${basePath}`,
+  };
+
+  // Add all other language versions
+  i18n.locales.forEach((locale) => {
+    if (locale !== "en") {
+      alternates[locale] = `${baseUrl}/${locale}${basePath}`;
+    }
+  });
+
+  return alternates;
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
@@ -36,62 +52,87 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Get dynamic data
   const [tools, latestPeriod] = await Promise.all([getTools(), getLatestRankingPeriod()]);
 
-  // Core pages with high priority
+  // Core pages with high priority and language alternates
   const coreSitemap: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 1.0,
+      alternates: {
+        languages: generateAlternates("", baseUrl),
+      },
     },
     {
       url: `${baseUrl}/rankings`,
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 0.9,
+      alternates: {
+        languages: generateAlternates("/rankings", baseUrl),
+      },
     },
     {
       url: `${baseUrl}/tools`,
       lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.8,
+      alternates: {
+        languages: generateAlternates("/tools", baseUrl),
+      },
     },
     {
       url: `${baseUrl}/news`,
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 0.7,
+      alternates: {
+        languages: generateAlternates("/news", baseUrl),
+      },
     },
     {
       url: `${baseUrl}/methodology`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.6,
+      alternates: {
+        languages: generateAlternates("/methodology", baseUrl),
+      },
     },
     {
       url: `${baseUrl}/about`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.5,
+      alternates: {
+        languages: generateAlternates("/about", baseUrl),
+      },
     },
     {
       url: `${baseUrl}/updates`,
       lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.6,
+      alternates: {
+        languages: generateAlternates("/updates", baseUrl),
+      },
     },
   ];
 
   // Language-specific versions of core pages
-  const languagePages: MetadataRoute.Sitemap = languages.flatMap((lang) =>
-    coreSitemap.map((page) => ({
-      ...page,
-      url: page.url.replace(baseUrl, `${baseUrl}/${lang}`),
-      priority: (page.priority || 0.5) * 0.9, // Slightly lower priority for translated pages
-    }))
-  );
+  const languagePages: MetadataRoute.Sitemap = i18n.locales
+    .filter((locale) => locale !== "en") // English is already in coreSitemap
+    .flatMap((locale) =>
+      coreSitemap.map((page) => ({
+        ...page,
+        url: page.url.replace(baseUrl, `${baseUrl}/${locale}`),
+        priority: (page.priority || 0.5) * 0.9, // Slightly lower priority for translated pages
+        // Keep the same alternates as the original page
+        alternates: page.alternates,
+      }))
+    );
 
-  // Tool detail pages
+  // Tool detail pages with alternates
   const toolPages: MetadataRoute.Sitemap = tools.flatMap((tool: any) => {
     // Ensure we have a valid date
     const toolDate =
@@ -99,23 +140,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ? new Date(tool.updated_at).toISOString()
         : currentDate;
 
+    const alternates = generateAlternates(`/tools/${tool.slug}`, baseUrl);
     const pages = [
       {
         url: `${baseUrl}/tools/${tool.slug}`,
         lastModified: toolDate,
         changeFrequency: "weekly" as const,
         priority: 0.8,
+        alternates: {
+          languages: alternates,
+        },
       },
     ];
 
     // Add language-specific tool pages
-    languages.forEach((lang) => {
-      pages.push({
-        url: `${baseUrl}/${lang}/tools/${tool.slug}`,
-        lastModified: toolDate,
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      });
+    i18n.locales.forEach((locale) => {
+      if (locale !== "en") {
+        pages.push({
+          url: `${baseUrl}/${locale}/tools/${tool.slug}`,
+          lastModified: toolDate,
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+          alternates: {
+            languages: alternates,
+          },
+        });
+      }
     });
 
     return pages;
@@ -129,13 +179,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           lastModified: currentDate,
           changeFrequency: "never",
           priority: 0.6,
+          alternates: {
+            languages: generateAlternates(`/rankings/${latestPeriod}`, baseUrl),
+          },
         },
-        ...languages.map((lang) => ({
-          url: `${baseUrl}/${lang}/rankings/${latestPeriod}`,
-          lastModified: currentDate,
-          changeFrequency: "never" as const,
-          priority: 0.5,
-        })),
+        ...i18n.locales
+          .filter((locale) => locale !== "en")
+          .map((locale) => ({
+            url: `${baseUrl}/${locale}/rankings/${latestPeriod}`,
+            lastModified: currentDate,
+            changeFrequency: "never" as const,
+            priority: 0.5,
+            alternates: {
+              languages: generateAlternates(`/rankings/${latestPeriod}`, baseUrl),
+            },
+          })),
       ]
     : [];
 
