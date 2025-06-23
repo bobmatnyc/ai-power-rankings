@@ -2,7 +2,7 @@
 
 ## Overview
 
-The AI Power Rankings uses Supabase (PostgreSQL) as its database with two separate environments for safe development and production operations. This document covers everything you need to know about connecting to, querying, and managing both databases.
+The AI Power Rankings uses Supabase (PostgreSQL) as its database. This document covers everything you need to know about connecting to, querying, and managing the database.
 
 ## 🚨 CRITICAL DATABASE ACCESS RULES
 
@@ -42,86 +42,59 @@ kill $(lsof -ti:3000) && npm run dev
 
 ## Table of Contents
 
-1. [Two-Database System](#two-database-system)
-2. [Environment Management](#environment-management)
-3. [Connection Details](#connection-details)
-4. [Database Schema](#database-schema)
-5. [Key Tables](#key-tables)
-6. [Data Import System](#data-import-system)
-7. [Common Queries](#common-queries)
-8. [Data Manipulation](#data-manipulation)
-9. [Maintenance Tasks](#maintenance-tasks)
-10. [Troubleshooting](#troubleshooting)
+1. [Database Details](#database-details)
+2. [Connection Details](#connection-details)
+3. [Database Schema](#database-schema)
+4. [Key Tables](#key-tables)
+5. [Data Import System](#data-import-system)
+6. [Common Queries](#common-queries)
+7. [Data Manipulation](#data-manipulation)
+8. [Maintenance Tasks](#maintenance-tasks)
+9. [Troubleshooting](#troubleshooting)
 
-## Two-Database System
+## Database Details
 
-### Production Database
+### Primary Database
 
-- **Project ID**: `fukdwnsvjdgyakdvtdin`
-- **URL**: `https://fukdwnsvjdgyakdvtdin.supabase.co`
-- **Purpose**: Live data for the production website
-- **Access**: Read-only for development, write access only for production deployments
-
-### Development Database
-
-- **Project ID**: `iupygejzjkwyxtitescy` (NEW as of June 2025)
+- **Project ID**: `iupygejzjkwyxtitescy`
 - **URL**: `https://iupygejzjkwyxtitescy.supabase.co`
-- **Purpose**: Safe environment for development, testing, and experimentation
-- **Access**: Full read/write access for development work
-- **Note**: This is the enhanced database with the newer schema including the `info` field on tools table
+- **Purpose**: Main database for all operations
+- **Access**: Full read/write access
+- **Note**: Database schema includes the `info` field on tools table for structured metadata
 
-## Environment Management
+## Environment Configuration
 
-### Switching Between Environments
-
-Use the environment switching script to safely change between databases:
+### Environment File (`.env.local`)
 
 ```bash
-# Switch to development (safe for testing)
-./scripts/switch-env.sh dev
-
-# Switch to production (use with caution)
-./scripts/switch-env.sh prod
-
-# Check current environment
-./scripts/switch-env.sh status
-```
-
-### Environment Files
-
-#### Development Environment (`.env.local.dev`)
-
-```bash
-# DEVELOPMENT ENVIRONMENT - Safe Development Database
+# DATABASE CONFIGURATION
 NEXT_PUBLIC_SUPABASE_URL=https://iupygejzjkwyxtitescy.supabase.co
 SUPABASE_PROJECT_ID=iupygejzjkwyxtitescy
-SUPABASE_DATABASE_PASSWORD=DevPassword123!
+SUPABASE_DATABASE_PASSWORD=NIfbMAVvoBaxBMkX
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
-#### Production Environment (`.env.local.prod`)
+#### Production Configuration
+
+For production deployment, update the `NEXT_PUBLIC_BASE_URL` in your environment:
 
 ```bash
-# PRODUCTION ENVIRONMENT - Live Production Database
-NEXT_PUBLIC_SUPABASE_URL=https://fukdwnsvjdgyakdvtdin.supabase.co
-SUPABASE_PROJECT_ID=fukdwnsvjdgyakdvtdin
-# ... production keys
 NEXT_PUBLIC_BASE_URL=https://aipowerranking.com
 ```
 
 ### Safety Features
 
-- **Automatic Backup**: The switch script creates backup copies of your current `.env.local`
-- **Environment Indicators**: Clear terminal output shows which environment is active
-- **Development Default**: New setups default to development environment
+- **Environment Variables**: Use `.env.local` for local development
+- **Secure Storage**: Never commit environment files to version control
+- **Access Control**: Use appropriate keys (anon vs service role) based on operation type
 
 ## Connection Details
 
 ### JavaScript/TypeScript Client - AUTHORITATIVE METHODS
 
-There are **TWO WAYS** to access our databases. Use these patterns consistently:
+There are **TWO WAYS** to access the database. Use these patterns consistently:
 
 #### Method 1: Using the Centralized Database Client (RECOMMENDED)
 
@@ -210,25 +183,17 @@ const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 ### Direct SQL Access
 
 ```bash
-# Development database
-PGPASSWORD="DevPassword123!" psql -h db.iupygejzjkwyxtitescy.supabase.co -U postgres -d postgres
-
-# Production database (use with caution)
-PGPASSWORD="[PROD_PASSWORD]" psql -h db.fukdwnsvjdgyakdvtdin.supabase.co -U postgres -d postgres
+# Database connection
+PGPASSWORD="NIfbMAVvoBaxBMkX" psql -h db.iupygejzjkwyxtitescy.supabase.co -U postgres -d postgres
 ```
 
 ### REST API Access
 
 ```bash
-# Development API
+# API access
 curl "https://iupygejzjkwyxtitescy.supabase.co/rest/v1/tools" \
-  -H "apikey: YOUR_DEV_ANON_KEY" \
-  -H "Authorization: Bearer YOUR_DEV_ANON_KEY"
-
-# Production API
-curl "https://fukdwnsvjdgyakdvtdin.supabase.co/rest/v1/tools" \
-  -H "apikey: YOUR_PROD_ANON_KEY" \
-  -H "Authorization: Bearer YOUR_PROD_ANON_KEY"
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
 ```
 
 ## Database Schema
@@ -240,11 +205,9 @@ curl "https://fukdwnsvjdgyakdvtdin.supabase.co/rest/v1/tools" \
 - `docs/data/POPULATE.sql` - Seed data with research
 - `database/ranking-algorithm.sql` - Ranking calculation functions
 
-### Schema Differences Between Environments
+### Schema Features
 
-#### Enhanced Development Schema (June 2025)
-
-The development database includes an enhanced schema with:
+The database includes:
 
 ```sql
 -- tools table includes info JSONB column
@@ -683,40 +646,25 @@ WHERE slug = 'company-slug';
 
 ## Maintenance Tasks
 
-### 1. Database Synchronization
+### 1. Data Export and Import
 
-#### From Production to Development
+#### Export Current Data
 
 ```bash
-# 1. Switch to development environment
-./scripts/switch-env.sh dev
-
-# 2. Export production data
-./scripts/switch-env.sh prod
+# Export all current data
 node scripts/export-tools.js
-
-# 3. Switch back to development
-./scripts/switch-env.sh dev
-
-# 4. Import production data to development
-node scripts/import-data.js tools-export.json
 ```
 
-#### From Development to Production
+This creates `tools-export.json` with complete database export.
+
+#### Import Data
 
 ```bash
-# 1. Export development data
-./scripts/switch-env.sh dev
-node scripts/export-tools.js
-
-# 2. Review changes carefully
-cat tools-export.json | jq '.dataCount'
-
-# 3. Switch to production (with caution)
-./scripts/switch-env.sh prod
-
-# 4. Import changes (ensure this is what you want!)
+# Import data from JSON file
 node scripts/import-data.js tools-export.json
+
+# Validate data before import
+node scripts/import-data.js --validate-only tools-export.json
 ```
 
 ### 2. Data Validation
@@ -777,12 +725,10 @@ ORDER BY idx_scan DESC;
 ### 4. Backup Procedures
 
 ```bash
-# Development database backup
-./scripts/switch-env.sh dev
-pg_dump "postgresql://postgres:DevPassword123!@db.gqucazglcjgvnzycwwia.supabase.co:5432/postgres" > dev-backup-$(date +%Y%m%d).sql
+# Database backup
+pg_dump "postgresql://postgres:NIfbMAVvoBaxBMkX@db.iupygejzjkwyxtitescy.supabase.co:5432/postgres" > backup-$(date +%Y%m%d).sql
 
-# Production database backup (via Supabase dashboard recommended)
-# Or using CLI with proper credentials
+# Or use Supabase dashboard for automated backups
 ```
 
 ## Troubleshooting
@@ -849,9 +795,6 @@ const url = process.env["NEXT_PUBLIC_SUPABASE_URL"];
 #### Problem: "Can't connect to database"
 
 ```bash
-# Check current environment
-./scripts/switch-env.sh status
-
 # Verify environment variables
 echo $NEXT_PUBLIC_SUPABASE_URL
 echo $SUPABASE_SERVICE_ROLE_KEY
@@ -861,14 +804,14 @@ curl "$NEXT_PUBLIC_SUPABASE_URL/rest/v1/" \
   -H "apikey: $NEXT_PUBLIC_SUPABASE_ANON_KEY"
 ```
 
-#### Problem: "Wrong database - seeing unexpected data"
+#### Problem: "Database connection not working"
 
 ```bash
-# Check which environment you're in
-./scripts/switch-env.sh status
+# Ensure environment variables are loaded
+source .env.local
 
-# Switch to correct environment
-./scripts/switch-env.sh dev  # or prod
+# Restart the development server
+kill $(lsof -ti:3000) && npm run dev
 ```
 
 ### Import Issues
@@ -922,17 +865,18 @@ Check network access and correct database URL:
 
 ```bash
 # Test basic connectivity
-ping db.gqucazglcjgvnzycwwia.supabase.co
+ping db.iupygejzjkwyxtitescy.supabase.co
 ```
 
 ## Best Practices
 
 ### Development Workflow
 
-1. **Always work in development first**
+1. **Use local environment file**
 
    ```bash
-   ./scripts/switch-env.sh dev
+   # Ensure .env.local is configured
+   cp .env.example .env.local
    ```
 
 2. **Test imports with validation mode**
@@ -941,10 +885,10 @@ ping db.gqucazglcjgvnzycwwia.supabase.co
    node scripts/import-data.js --validate-only your-file.json
    ```
 
-3. **Keep environments synchronized**
+3. **Backup before major changes**
 
-   - Export production data periodically to development
-   - Test all changes in development before production
+   - Create database backups before schema changes
+   - Export data before bulk updates
 
 4. **Use version control for schema changes**
    - Keep migration files in `database/migrations/`
@@ -972,11 +916,11 @@ ping db.gqucazglcjgvnzycwwia.supabase.co
 
 ### Security
 
-1. **Environment separation**
+1. **Credential management**
 
-   - Never test destructive operations on production
-   - Use development environment for all experiments
-   - Keep production credentials secure
+   - Never commit `.env.local` to version control
+   - Use environment variables for all credentials
+   - Rotate keys periodically
 
 2. **Access control**
    - Use anon key for client-side operations
@@ -985,9 +929,9 @@ ping db.gqucazglcjgvnzycwwia.supabase.co
 
 ## Database Migration Strategies
 
-### Production to Development Migration
+### Schema Migration
 
-When migrating data between databases with different schemas:
+When migrating data to accommodate schema changes:
 
 #### 1. Handle Foreign Key Constraints
 
@@ -1006,7 +950,7 @@ ALTER TABLE tools ADD CONSTRAINT tools_company_id_fkey
 
 #### 2. Schema Transformation
 
-When migrating to enhanced schema (e.g., adding `info` field):
+When migrating data for schema updates (e.g., adding `info` field):
 
 ```typescript
 // Transform data during migration
@@ -1051,10 +995,10 @@ const { error } = await supabase
 
 Example migration scripts are available in `/scripts/`:
 
-- `migrate-prod-to-dev.ts` - Basic migration
+- `migrate-data.ts` - Basic data migration
 - `migrate-with-constraints.ts` - Advanced migration with constraint handling
-- `compare-databases.ts` - Compare data between environments
-- `check-schemas.ts` - Verify schema differences
+- `validate-data.ts` - Validate data integrity
+- `check-schemas.ts` - Verify schema structure
 
 ### Best Practices for Migration
 
@@ -1211,17 +1155,8 @@ $$ LANGUAGE plpgsql;
   - Schema: `database/schema-complete.sql`
   - Import Examples: `data/imports/`
   - Scripts: `scripts/`
-  - Environment Management: `scripts/switch-env.sh`
 
 ## Quick Reference
-
-### Environment Commands
-
-```bash
-./scripts/switch-env.sh dev     # Switch to development
-./scripts/switch-env.sh prod    # Switch to production
-./scripts/switch-env.sh status  # Check current environment
-```
 
 ### Data Operations
 
@@ -1231,7 +1166,7 @@ node scripts/import-data.js <file.json>         # Import data
 node scripts/import-data.js --validate <file>   # Validate only
 ```
 
-### Database URLs
+### Database Connection
 
-- **Development**: `https://gqucazglcjgvnzycwwia.supabase.co`
-- **Production**: `https://fukdwnsvjdgyakdvtdin.supabase.co`
+- **Database URL**: `https://iupygejzjkwyxtitescy.supabase.co`
+- **Project ID**: `iupygejzjkwyxtitescy`
