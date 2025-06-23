@@ -1,6 +1,6 @@
 {
   "name": "ai-power-rankings",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -52,6 +52,9 @@
     "@marsidev/react-turnstile": "^1.1.0",
     "@next/third-parties": "^15.3.4",
     "@octokit/rest": "^22.0.0",
+    "@payloadcms/db-postgres": "^3.43.0",
+    "@payloadcms/next": "^3.43.0",
+    "@payloadcms/richtext-lexical": "^3.43.0",
     "@radix-ui/react-collapsible": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
@@ -81,6 +84,7 @@
     "next": "15.3.3",
     "next-auth": "5.0.0-beta.28",
     "nodemailer": "^6.9.15",
+    "payload": "^3.43.0",
     "pino": "^9.7.0",
     "pino-pretty": "^13.0.0",
     "react": "^19.0.0",
