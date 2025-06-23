@@ -84,6 +84,8 @@ export const Companies: CollectionConfig = {
         { label: "Startup", value: "startup" },
         { label: "Public", value: "public" },
         { label: "Private", value: "private" },
+        { label: "Open Source", value: "open-source" },
+        { label: "Non-Profit", value: "non-profit" },
         { label: "Acquisition", value: "acquisition" },
       ],
     },

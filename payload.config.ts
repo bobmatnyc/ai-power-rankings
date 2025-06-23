@@ -9,7 +9,7 @@ import { Companies, Tools, Metrics, Rankings, News, Users } from "./src/collecti
 import { SiteSettings } from "./src/globals/SiteSettings";
 
 export default buildConfig({
-  secret: process.env["PAYLOAD_SECRET"] || "",
+  secret: process.env["PAYLOAD_SECRET"] || "fallback-secret-for-dev",
   editor: lexicalEditor(),
   db: postgresAdapter({
     pool: {

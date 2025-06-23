@@ -5,14 +5,31 @@
  * Usage: pnpm tsx scripts/payload-migration/migrate-to-payload.ts
  */
 
-import { getPayload, BasePayload } from 'payload'
-import config from '../../payload.config'
-import { supabase } from '../../src/lib/database'
+// Load environment variables FIRST before any other imports
 import dotenv from 'dotenv'
 import path from 'path'
-
-// Load environment variables
 dotenv.config({ path: path.resolve('.env.local') })
+
+// Verify critical env vars are loaded
+if (!process.env.PAYLOAD_SECRET) {
+  console.error('PAYLOAD_SECRET not found in environment')
+  process.exit(1)
+}
+if (!process.env.SUPABASE_DATABASE_URL) {
+  console.error('SUPABASE_DATABASE_URL not found in environment')
+  process.exit(1)
+}
+
+console.log('Environment variables loaded:')
+console.log('- PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? 'Set' : 'Missing')
+console.log('- SUPABASE_DATABASE_URL:', process.env.SUPABASE_DATABASE_URL ? 'Set' : 'Missing')
+console.log('- Database URL prefix:', process.env.SUPABASE_DATABASE_URL?.substring(0, 50) + '...')
+
+// Now import everything else
+import { getPayload, BasePayload } from 'payload'
+import { getSupabaseClient } from './lib/database'
+
+const supabase = getSupabaseClient()
 
 type PayloadInstance = BasePayload
 
@@ -30,6 +47,8 @@ interface MigrationContext {
 
 async function initializePayload() {
   console.log('🚀 Initializing Payload...')
+  // Import config after env vars are loaded
+  const config = (await import('./payload-config')).default
   const payload = await getPayload({ config })
   return payload
 }
@@ -56,17 +75,59 @@ async function migrateCompanies(payload: PayloadInstance, context: MigrationCont
     // First pass: Create all companies without parent relationships
     for (const company of companies) {
       try {
+        // Check if company already exists in Payload
+        const existingCompany = await payload.find({
+          collection: 'companies',
+          where: {
+            supabase_company_id: {
+              equals: company.id,
+            },
+          },
+          limit: 1,
+        })
+
+        if (existingCompany.docs.length > 0) {
+          console.log(`⏭️  Company already exists: ${company.name}`)
+          context.companyIdMap.set(company.id, existingCompany.docs[0].id)
+          context.stats.companies.migrated++
+          continue
+        }
+
+        // Generate a unique slug
+        let slug = company.slug || company.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        let slugSuffix = 1
+        let isUnique = false
+        
+        while (!isUnique) {
+          const existingSlug = await payload.find({
+            collection: 'companies',
+            where: {
+              slug: {
+                equals: slug,
+              },
+            },
+            limit: 1,
+          })
+          
+          if (existingSlug.docs.length === 0) {
+            isUnique = true
+          } else {
+            slug = `${company.slug || company.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${slugSuffix}`
+            slugSuffix++
+          }
+        }
+
         const payloadCompany = await payload.create({
           collection: 'companies',
           data: {
             name: company.name,
-            slug: company.slug || company.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+            slug: slug,
             supabase_company_id: company.id,
             website_url: company.website_url,
             headquarters: company.headquarters,
             founded_year: company.founded_year,
             company_size: company.company_size,
-            company_type: company.company_type,
+            company_type: company.company_type || 'startup', // Default to startup if null
             logo_url: company.logo_url,
             description: company.description ? [
               {
@@ -123,13 +184,10 @@ async function migrateTools(payload: PayloadInstance, context: MigrationContext)
   console.log('\n🛠️  Migrating Tools...')
   
   try {
-    // Fetch all tools from Supabase with their info
+    // Fetch all tools from Supabase
     const { data: tools, error } = await supabase
       .from('tools')
-      .select(`
-        *,
-        companies!inner(id, name)
-      `)
+      .select('*')
       .order('created_at', { ascending: true })
 
     if (error) throw error
@@ -143,40 +201,113 @@ async function migrateTools(payload: PayloadInstance, context: MigrationContext)
 
     for (const tool of tools) {
       try {
-        // Get the Payload company ID
-        const payloadCompanyId = context.companyIdMap.get(tool.company_id)
-        if (!payloadCompanyId) {
-          throw new Error(`Company not found in Payload for tool ${tool.name}`)
+        // Check if tool already exists in Payload
+        const existingTool = await payload.find({
+          collection: 'tools',
+          where: {
+            supabase_tool_id: {
+              equals: tool.id,
+            },
+          },
+          limit: 1,
+        })
+
+        if (existingTool.docs.length > 0) {
+          console.log(`⏭️  Tool already exists: ${tool.name}`)
+          context.toolIdMap.set(tool.id, existingTool.docs[0].id)
+          context.stats.tools.migrated++
+          continue
         }
 
-        // Parse the info JSON column
+        // Get the Payload company ID
+        let payloadCompanyId = context.companyIdMap.get(tool.company_id)
+        if (!payloadCompanyId) {
+          console.warn(`⚠️  Company not found in Payload for tool ${tool.name} (company_id: ${tool.company_id}). Creating placeholder company.`)
+          
+          // Create a placeholder company if it doesn't exist
+          // This ensures tools can be migrated even if companies are missing
+          const placeholderCompany = await payload.create({
+            collection: 'companies',
+            data: {
+              name: `Unknown Company (${tool.company_id})`,
+              slug: `unknown-${tool.company_id}`,
+              supabase_company_id: tool.company_id,
+              company_type: 'private',
+              company_size: 'startup',
+            },
+          })
+          
+          context.companyIdMap.set(tool.company_id, placeholderCompany.id)
+          context.stats.companies.migrated++
+          payloadCompanyId = placeholderCompany.id
+        }
+
+        // Parse the info JSON column if it exists, otherwise use direct fields
         const info = tool.info || {}
+        
+        // Generate a unique slug
+        let slug = tool.slug || tool.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        let slugSuffix = 1
+        let isUnique = false
+        
+        while (!isUnique) {
+          const existingSlug = await payload.find({
+            collection: 'tools',
+            where: {
+              slug: {
+                equals: slug,
+              },
+            },
+            limit: 1,
+          })
+          
+          if (existingSlug.docs.length === 0) {
+            isUnique = true
+          } else {
+            slug = `${tool.slug || tool.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${slugSuffix}`
+            slugSuffix++
+          }
+        }
 
         const payloadTool = await payload.create({
           collection: 'tools',
           data: {
             name: tool.name,
-            slug: tool.slug || tool.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+            slug: slug,
             supabase_tool_id: tool.id,
             display_name: tool.display_name || tool.name,
             company: payloadCompanyId,
-            category: info.category || 'code-editor',
-            subcategory: info.subcategory,
-            description: info.description ? [
+            category: (() => {
+              const cat = tool.category || info.category || 'code-editor'
+              // Map invalid categories to valid ones
+              if (cat === 'code-generation') return 'ide-assistant'
+              return cat
+            })(),
+            subcategory: tool.subcategory || info.subcategory,
+            description: (tool.description || info.description) ? [
               {
-                children: [{ text: info.description }],
+                children: [{ text: tool.description || info.description }],
               },
             ] : undefined,
-            tagline: info.tagline,
-            website_url: info.website_url,
-            github_repo: info.github_repo,
+            tagline: tool.tagline || info.tagline,
+            website_url: tool.website_url || info.website_url,
+            github_repo: (() => {
+              const repo = tool.github_repo || info.github_repo
+              if (!repo) return undefined
+              // Convert full URLs to owner/repo format
+              const match = repo.match(/github\.com\/([^\/]+\/[^\/]+)/)
+              if (match) return match[1]
+              // If already in correct format, return as is
+              if (/^[\w\-\.]+\/[\w\-\.]+$/.test(repo)) return repo
+              return undefined
+            })(),
             documentation_url: info.documentation_url,
-            founded_date: info.founded_date,
-            first_tracked_date: tool.created_at,
-            pricing_model: info.pricing_model || 'freemium',
-            license_type: info.license_type || 'proprietary',
+            founded_date: tool.founded_date || info.founded_date,
+            first_tracked_date: tool.first_tracked_date || tool.created_at,
+            pricing_model: tool.pricing_model || info.pricing_model || 'freemium',
+            license_type: tool.license_type || info.license_type || 'proprietary',
             status: tool.status || 'active',
-            logo_url: info.logo_url,
+            logo_url: tool.logo_url || info.logo_url,
             screenshot_url: info.screenshot_url,
             is_featured: tool.is_featured || false,
             current_ranking: tool.current_ranking,
@@ -265,8 +396,8 @@ async function migrateRecentMetrics(payload: PayloadInstance, context: Migration
               value_text: metric.value_text,
               value_boolean: metric.value_boolean,
               value_json: metric.value_json,
-              recorded_at: metric.recorded_at,
-              collected_at: metric.collected_at || metric.created_at,
+              recorded_at: metric.recorded_at || new Date().toISOString(),
+              collected_at: metric.collected_at || metric.created_at || new Date().toISOString(),
               source: metric.source,
               source_url: metric.source_url,
               confidence_score: metric.confidence_score || 1.0,
@@ -297,9 +428,9 @@ async function migrateRankings(payload: PayloadInstance, context: MigrationConte
   console.log('\n🏆 Migrating Rankings...')
   
   try {
-    // Fetch all rankings from Supabase
+    // Fetch all rankings from Supabase - using ranking_cache table
     const { data: rankings, error } = await supabase
-      .from('ai_tools_rankings')
+      .from('ranking_cache')
       .select('*')
       .order('period', { ascending: false })
 
@@ -332,6 +463,32 @@ async function migrateRankings(payload: PayloadInstance, context: MigrationConte
             continue
           }
 
+          // Check if ranking already exists
+          const existingRanking = await payload.find({
+            collection: 'rankings',
+            where: {
+              and: [
+                {
+                  period: {
+                    equals: ranking.period,
+                  },
+                },
+                {
+                  tool: {
+                    equals: payloadToolId,
+                  },
+                },
+              ],
+            },
+            limit: 1,
+          })
+
+          if (existingRanking.docs.length > 0) {
+            console.log(`⏭️  Ranking already exists for tool in period ${ranking.period}`)
+            context.stats.rankings.migrated++
+            continue
+          }
+
           await payload.create({
             collection: 'rankings',
             data: {
@@ -345,11 +502,11 @@ async function migrateRankings(payload: PayloadInstance, context: MigrationConte
               development_velocity_score: ranking.development_velocity_score,
               platform_resilience_score: ranking.platform_resilience_score,
               community_sentiment_score: ranking.community_sentiment_score,
-              previous_position: ranking.previous_position,
-              movement: ranking.movement,
-              movement_positions: ranking.movement_positions,
+              previous_position: ranking.previous_position || null,
+              movement: ranking.movement || null,
+              movement_positions: ranking.movement_positions || null,
               algorithm_version: ranking.algorithm_version || 'v4.0',
-              data_completeness: ranking.data_completeness,
+              data_completeness: ranking.data_completeness || null,
             },
           })
           context.stats.rankings.migrated++
