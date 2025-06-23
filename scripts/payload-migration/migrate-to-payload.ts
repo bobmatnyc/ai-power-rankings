@@ -48,7 +48,7 @@ interface MigrationContext {
 async function initializePayload() {
   console.log('🚀 Initializing Payload...')
   // Import config after env vars are loaded
-  const config = (await import('./payload-config')).default
+  const config = (await import('../../payload.config')).default
   const payload = await getPayload({ config })
   return payload
 }
@@ -245,8 +245,12 @@ async function migrateTools(payload: PayloadInstance, context: MigrationContext)
         // Parse the info JSON column if it exists, otherwise use direct fields
         const info = tool.info || {}
         
-        // Generate a unique slug
-        let slug = tool.slug || tool.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        // Generate a unique slug - ensure it matches the validation pattern
+        let baseSlug = tool.slug || tool.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        // Ensure slug doesn't end with hyphens
+        baseSlug = baseSlug.replace(/^-+|-+$/g, '')
+        
+        let slug = baseSlug
         let slugSuffix = 1
         let isUnique = false
         
@@ -264,7 +268,7 @@ async function migrateTools(payload: PayloadInstance, context: MigrationContext)
           if (existingSlug.docs.length === 0) {
             isUnique = true
           } else {
-            slug = `${tool.slug || tool.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${slugSuffix}`
+            slug = `${baseSlug}-${slugSuffix}`
             slugSuffix++
           }
         }
