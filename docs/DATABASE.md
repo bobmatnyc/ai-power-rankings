@@ -90,6 +90,23 @@ NEXT_PUBLIC_BASE_URL=https://aipowerranking.com
 - **Secure Storage**: Never commit environment files to version control
 - **Access Control**: Use appropriate keys (anon vs service role) based on operation type
 
+### Payload CMS Database Configuration
+
+For Payload CMS integration, add these environment variables:
+
+```bash
+# Payload CMS - Uses Session Pooler (us-east-2)
+PAYLOAD_SECRET=your-secret-key
+SUPABASE_DATABASE_URL=postgresql://postgres.iupygejzjkwyxtitescy:[PASSWORD]@aws-0-us-east-2.pooler.supabase.com:5432/postgres
+```
+
+**Important Notes:**
+
+- The database is hosted in `us-east-2` region
+- Use the session pooler (port 5432) for Payload CMS as it requires prepared statements
+- The transaction pooler (port 6543) is NOT compatible with Payload CMS
+- Direct database connection is not publicly accessible
+
 ## Connection Details
 
 ### JavaScript/TypeScript Client - AUTHORITATIVE METHODS

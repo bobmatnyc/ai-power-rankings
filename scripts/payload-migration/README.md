@@ -69,10 +69,23 @@ pnpm tsx scripts/payload-migration/clear-payload-data.ts
 ## Environment Requirements
 
 The scripts require the following environment variables:
-- `PAYLOAD_SECRET`
-- `SUPABASE_DATABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `PAYLOAD_SECRET` - Secret key for Payload CMS
+- `SUPABASE_DATABASE_URL` - PostgreSQL connection string (use session pooler)
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
+
+### Database Connection
+
+The Supabase database connection must use the **session pooler** format:
+```
+postgresql://postgres.iupygejzjkwyxtitescy:[PASSWORD]@aws-0-us-east-2.pooler.supabase.com:5432/postgres
+```
+
+**Important:**
+- Region: `us-east-2`
+- Port: `5432` (session mode)
+- Username format: `postgres.{PROJECT_ID}`
+- Do NOT use port `6543` (transaction mode) as it doesn't support prepared statements
 
 ## Notes
 

@@ -6,16 +6,17 @@
  * Usage: pnpm tsx scripts/payload-migration/clear-payload-data.ts
  */
 
-import { getPayload, BasePayload } from 'payload'
-import config from '../../payload.config'
+// Load environment variables FIRST before any other imports
 import dotenv from 'dotenv'
 import path from 'path'
+dotenv.config({ path: path.resolve('.env.local') })
+
+// Now import everything else
+import { getPayload, BasePayload } from 'payload'
+import config from '../../payload.config'
 import readline from 'readline'
 
 type PayloadInstance = BasePayload
-
-// Load environment variables
-dotenv.config({ path: path.resolve('.env.local') })
 
 const rl = readline.createInterface({
   input: process.stdin,
