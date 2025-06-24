@@ -18,25 +18,8 @@ export const config: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnAdmin = nextUrl.pathname.startsWith("/admin");
-      const isAuthPage = nextUrl.pathname.includes("/admin/auth");
-
-      if (isAuthPage) {
-        if (isLoggedIn) {
-          return Response.redirect(new URL("/admin", nextUrl));
-        }
-        return true;
-      }
-
-      if (isOnAdmin) {
-        if (isLoggedIn && auth.user?.email === "bob@matsuoka.com") {
-          return true;
-        }
-        return false; // Redirect unauthenticated users to login page
-      }
-
+    authorized() {
+      // Don't interfere with Payload's admin routes - let Payload handle its own auth
       return true;
     },
     async signIn({ user }) {
@@ -73,7 +56,7 @@ export const config: NextAuthConfig = {
   session: {
     strategy: "jwt",
   },
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env["NODE_ENV"] === "development",
 };
 
 export const { handlers, signIn, signOut, auth } = NextAuth(config);

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/database";
+import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
 
 type Params = {
@@ -11,23 +11,32 @@ type Params = {
 export async function GET(_request: Request, { params }: Params): Promise<NextResponse> {
   const { slug } = await params;
   try {
-    // Get tool details with info JSON
-    const { data: tool, error: toolError } = await supabase
-      .from("tools")
-      .select("*")
-      .eq("slug", slug)
-      .single();
+    // Get tool details
+    const tool = await payloadDirect.getTool(slug);
 
-    if (toolError || !tool) {
+    if (!tool) {
       return NextResponse.json({ error: "Tool not found" }, { status: 404 });
     }
 
-    // Ensure tool has info structure
+    // Handle company data - it might be populated or just an ID
+    const companyName = typeof tool.company === 'object' && tool.company ? tool.company.name : '';
+    
+    // Extract description text from rich text if needed
+    let description = '';
+    if (tool.description && Array.isArray(tool.description)) {
+      description = tool.description
+        .map((block: any) => block.children?.map((child: any) => child.text).join(''))
+        .join('\n');
+    } else if (typeof tool.description === 'string') {
+      description = tool.description;
+    }
+
+    // Ensure tool has info structure for backward compatibility
     if (!tool.info || typeof tool.info !== "object") {
       tool.info = {
-        company: { name: tool.company_name || "" },
+        company: { name: companyName },
         product: {
-          description: tool.description,
+          description: description,
           tagline: tool.tagline,
           pricing_model: tool.pricing_model,
           license_type: tool.license_type,
@@ -43,28 +52,28 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
     }
 
     // Get metrics history for the tool
-    const { data: toolMetrics } = await supabase
-      .from("metrics_history")
-      .select("*")
-      .eq("tool_id", tool.id)
-      .order("recorded_at", { ascending: false })
-      .limit(20);
+    const metricsResponse = await payloadDirect.getMetrics({
+      tool: tool.id,
+      sort: '-recorded_at',
+      limit: 20
+    });
+    const toolMetrics = metricsResponse.docs;
 
     // Get latest metrics from metrics_history
     const latestMetrics: Record<string, unknown> = {};
 
-    // Get the most recent value for each metric
-    const { data: recentMetrics } = await supabase
-      .from("metrics_history")
-      .select("metric_key, value_integer, value_decimal")
-      .eq("tool_id", tool.id)
-      .order("recorded_at", { ascending: false });
+    // Get all recent metrics for this tool
+    const recentMetricsResponse = await payloadDirect.getMetrics({
+      tool: tool.id,
+      sort: '-recorded_at',
+      limit: 100 // Get more to ensure we have all metric types
+    });
 
     // Group by metric_key and take the most recent value
     const metricMap = new Map<string, unknown>();
-    recentMetrics?.forEach((m) => {
-      if (!metricMap.has(m.metric_key)) {
-        metricMap.set(m.metric_key, m.value_integer || m.value_decimal);
+    recentMetricsResponse.docs?.forEach((m: any) => {
+      if (!metricMap.has(m['metric_key'])) {
+        metricMap.set(m['metric_key'], m['value_integer'] || m['value_decimal']);
       }
     });
 
@@ -73,103 +82,63 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       latestMetrics[key] = value;
     });
 
-    // Get current ranking data from ranking_cache
-    const { data: rankingData } = await supabase
-      .from("ranking_cache")
-      .select(
-        `
-        position,
-        score,
-        market_traction_score,
-        technical_capability_score,
-        developer_adoption_score,
-        development_velocity_score,
-        platform_resilience_score,
-        community_sentiment_score,
-        period
-      `
-      )
-      .eq("tool_id", tool.id)
-      .eq("period", "june-2025")
-      .single();
+    // Get current ranking data
+    const rankingResponse = await payloadDirect.getRankings({
+      period: 'june-2025',
+      limit: 100
+    });
+    
+    const rankingData = rankingResponse.docs.find((r: any) => {
+      const toolId = typeof r.tool === 'string' ? r.tool : r.tool?.id;
+      return toolId === tool.id;
+    });
 
-    // Get rankings history (last 12 months)
-    const { data: rankingsHistory, error: rankingsError } = await supabase
-      .from("ranking_cache")
-      .select(
-        `
-        position,
-        score,
-        period
-      `
-      )
-      .eq("tool_id", tool.id)
-      .order("period", { ascending: false })
-      .limit(12);
+    // Get rankings history (last 12 periods)
+    const rankingsHistoryResponse = await payloadDirect.getRankings({
+      sort: '-period',
+      limit: 1000 // Get all to filter by tool
+    });
 
-    // Get ranking periods info
-    let enrichedRankingsHistory: any[] = [];
-    if (rankingsHistory && rankingsHistory.length > 0) {
-      const periods = [...new Set(rankingsHistory.map((r) => r.period))];
-      const { data: periodData } = await supabase
-        .from("ranking_periods")
-        .select("period, display_name, calculation_date")
-        .in("period", periods);
+    // Filter for this tool's rankings
+    const rankingsHistory = rankingsHistoryResponse.docs
+      .filter((r: any) => {
+        const toolId = typeof r.tool === 'string' ? r.tool : r.tool?.id;
+        return toolId === tool.id;
+      })
+      .slice(0, 12);
 
-      if (periodData) {
-        const periodMap = new Map(periodData.map((p) => [p.period, p]));
-        enrichedRankingsHistory = rankingsHistory
-          .map((r) => ({
-            ...r,
-            ranking_periods: periodMap.get(r.period),
-          }))
-          .filter((r) => r.ranking_periods)
-          .sort((a, b) => {
-            const dateA = new Date(a.ranking_periods!.calculation_date);
-            const dateB = new Date(b.ranking_periods!.calculation_date);
-            return dateB.getTime() - dateA.getTime();
-          });
+    // Since Payload doesn't have ranking_periods, we'll create display data from the period
+    const enrichedRankingsHistory = rankingsHistory.map((r: any) => ({
+      position: r.position,
+      score: r.score,
+      period: r.period,
+      ranking_periods: {
+        period: r.period,
+        display_name: r.period.replace('-', ' ').charAt(0).toUpperCase() + r.period.replace('-', ' ').slice(1),
+        calculation_date: r.createdAt
       }
-    }
+    }));
 
-    if (rankingsError) {
-      loggers.api.error("Error fetching rankings history", {
-        error: rankingsError,
-        toolId: tool.id,
-      });
-    }
-
-    // Get all news items and filter client-side for now
-    // This handles both array format ["tool-id"] and object format [{"tool_id": "tool-id"}]
-    const { data: allNews, error: newsError } = await supabase
-      .from("news_updates")
-      .select("*")
-      .order("published_at", { ascending: false })
-      .limit(100);
-
-    if (newsError) {
-      loggers.api.error("Error fetching news items", { error: newsError, toolId: tool.id });
-    }
+    // Get news items related to this tool
+    const newsResponse = await payloadDirect.getNews({
+      sort: '-published_at',
+      limit: 100
+    });
 
     // Filter news items that mention this tool
-    const newsItems =
-      allNews
-        ?.filter((item) => {
-          if (!item.related_tools || !Array.isArray(item.related_tools)) {
-            return false;
-          }
+    const newsItems = newsResponse.docs
+      ?.filter((item: any) => {
+        if (!item.related_tools || !Array.isArray(item.related_tools)) {
+          return false;
+        }
 
-          // Check if tool is mentioned (handles both string array and object array)
-          return item.related_tools.some((relatedTool: any) => {
-            if (typeof relatedTool === "string") {
-              return relatedTool === tool.id;
-            } else if (relatedTool && typeof relatedTool === "object") {
-              return relatedTool.tool_id === tool.id;
-            }
-            return false;
-          });
-        })
-        .slice(0, 20) || [];
+        // Check if tool is mentioned
+        return item.related_tools.some((relatedTool: any) => {
+          const toolRef = typeof relatedTool === 'string' ? relatedTool : relatedTool?.id;
+          return toolRef === tool.id || toolRef === tool.slug;
+        });
+      })
+      .slice(0, 20) || [];
 
     let ranking = null;
     if (rankingData) {
@@ -200,22 +169,22 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       }
     >();
 
-    toolMetrics?.forEach((tm) => {
-      const key = `${tm.recorded_at}_${tm.source}`;
+    toolMetrics?.forEach((tm: any) => {
+      const key = `${tm['recorded_at']}_${tm['source']}`;
       if (!groupedMetrics.has(key)) {
         groupedMetrics.set(key, {
-          source_name: tm.source || "Unknown",
-          source_url: tm.source_url || "",
-          published_date: tm.recorded_at,
+          source_name: tm['source'] || "Unknown",
+          source_url: tm['source_url'] || "",
+          published_date: tm['recorded_at'],
           metrics: {},
         });
       }
 
       const group = groupedMetrics.get(key);
       if (group) {
-        const value = tm.value_integer || tm.value_decimal || tm.value_boolean || tm.value_json;
-        if (tm.metric_key && value !== null && value !== undefined) {
-          group.metrics[tm.metric_key] = value;
+        const value = tm['value_integer'] || tm['value_decimal'] || tm['value_boolean'] || tm['value_json'];
+        if (tm['metric_key'] && value !== null && value !== undefined) {
+          group.metrics[tm['metric_key']] = value;
         }
       }
     });
@@ -237,13 +206,8 @@ export async function GET(_request: Request, { params }: Params): Promise<NextRe
       metricHistoryCount: metricHistory?.length || 0,
     });
 
-    // Get pricing plans for this tool
-    const { data: pricingPlans } = await supabase
-      .from("pricing_plans")
-      .select("*")
-      .eq("tool_id", tool.id)
-      .eq("is_active", true)
-      .order("price_monthly", { ascending: true });
+    // TODO: Pricing plans are not yet migrated to Payload
+    const pricingPlans: any[] = [];
 
     return NextResponse.json({
       tool,

@@ -11,17 +11,26 @@ export function AdminDashboard() {
 
   const adminSections = [
     {
-      title: "SEO Dashboard",
+      title: "Payload CMS Admin",
+      description: "Access the full Payload CMS admin interface for content management",
+      icon: FileText,
+      href: "/admin",
+      color: "bg-blue-600",
+      disabled: false,
+      external: true,
+    },
+    {
+      title: "SEO Dashboard", 
       description: "Monitor website performance and search engine optimization metrics",
       icon: BarChart3,
-      href: "/admin/dashboard",
+      href: "/dashboard/seo",
       color: "bg-blue-500",
     },
     {
       title: "Tools Management",
-      description: "Manage AI tools, rankings, and information",
+      description: "Advanced tools interface with search, filtering, and rankings", 
       icon: FileText,
-      href: "/admin/tools",
+      href: "/dashboard/tools",
       color: "bg-green-500",
       disabled: false,
     },
@@ -29,7 +38,7 @@ export function AdminDashboard() {
       title: "Subscribers",
       description: "Manage newsletter subscribers and email lists",
       icon: Users,
-      href: "/admin/subscribers",
+      href: "/dashboard/subscribers",
       color: "bg-indigo-500",
       disabled: false,
     },
@@ -37,7 +46,7 @@ export function AdminDashboard() {
       title: "Analytics",
       description: "View detailed analytics and user engagement metrics",
       icon: TrendingUp,
-      href: "/admin/analytics",
+      href: "/dashboard/analytics",
       color: "bg-purple-500",
       disabled: true,
     },
@@ -45,7 +54,7 @@ export function AdminDashboard() {
       title: "Settings",
       description: "Configure site settings and preferences",
       icon: Settings,
-      href: "/admin/settings",
+      href: "/dashboard/settings",
       color: "bg-gray-500",
       disabled: true,
     },
@@ -97,6 +106,10 @@ export function AdminDashboard() {
                 >
                   {section.disabled ? (
                     <span>Coming Soon</span>
+                  ) : section.external ? (
+                    <a href={section.href} target="_blank" rel="noopener noreferrer">
+                      Access {section.title}
+                    </a>
                   ) : (
                     <Link href={section.href}>Access {section.title}</Link>
                   )}
@@ -105,6 +118,47 @@ export function AdminDashboard() {
             </Card>
           );
         })}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+        <Button 
+          onClick={() => window.open('/api/admin/generate-rankings', '_blank')}
+          className="h-auto p-4 flex flex-col items-center gap-2"
+          variant="outline"
+        >
+          <TrendingUp className="h-6 w-6" />
+          <span className="text-sm">Generate Rankings</span>
+        </Button>
+        
+        <Button 
+          onClick={() => window.open('/api/admin/subscribers/export', '_blank')}
+          className="h-auto p-4 flex flex-col items-center gap-2"
+          variant="outline"
+        >
+          <Users className="h-6 w-6" />
+          <span className="text-sm">Export Subscribers</span>
+        </Button>
+
+        <Button 
+          asChild
+          className="h-auto p-4 flex flex-col items-center gap-2"
+          variant="outline"
+        >
+          <Link href="/dashboard/seo">
+            <BarChart3 className="h-6 w-6" />
+            <span className="text-sm">SEO Dashboard</span>
+          </Link>
+        </Button>
+
+        <Button 
+          onClick={() => window.open('/admin', '_blank')}
+          className="h-auto p-4 flex flex-col items-center gap-2"
+          variant="outline"
+        >
+          <Settings className="h-6 w-6" />
+          <span className="text-sm">Payload CMS</span>
+        </Button>
       </div>
 
       {/* Quick Stats */}

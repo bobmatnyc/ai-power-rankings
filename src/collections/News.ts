@@ -6,6 +6,21 @@ export const News: CollectionConfig = {
     useAsTitle: "title",
     defaultColumns: ["title", "source", "published_at", "category", "is_featured"],
   },
+  access: {
+    create: ({ req: { user } }) => {
+      // Admins and editors can create news
+      return user?.['role'] === "admin" || user?.['role'] === "editor";
+    },
+    read: () => true, // All authenticated users can read news
+    update: ({ req: { user } }) => {
+      // Admins and editors can update news
+      return user?.['role'] === "admin" || user?.['role'] === "editor";
+    },
+    delete: ({ req: { user } }) => {
+      // Only admins can delete news
+      return user?.['role'] === "admin";
+    },
+  },
   fields: [
     {
       name: "title",
@@ -130,6 +145,13 @@ export const News: CollectionConfig = {
       admin: {
         position: "sidebar",
         description: "Feature this news prominently",
+      },
+    },
+    {
+      name: "metadata",
+      type: "json",
+      admin: {
+        description: "Additional metadata from ingestion process",
       },
     },
   ],

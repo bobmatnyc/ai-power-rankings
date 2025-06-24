@@ -1,37 +1,54 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/database";
+import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const { data: tools, error } = await supabase.from("tools").select("*").order("name");
+    const response = await payloadDirect.getTools({ 
+      sort: 'name',
+      limit: 1000 // Get all tools
+    });
+    const tools = response.docs;
 
-    if (error) {
-      loggers.api.error("Error fetching tools", { error });
+    if (!tools) {
+      loggers.api.error("No tools found");
       return NextResponse.json({ error: "Failed to fetch tools" }, { status: 500 });
     }
 
-    // Ensure all tools have proper info structure
-    const toolsWithInfo = (tools || []).map((tool) => {
-      if (!tool.info || typeof tool.info !== "object") {
-        tool.info = {
-          company: { name: tool.company_name || "" },
+    // Transform tools to match expected format with info structure
+    const toolsWithInfo = tools.map((tool: any) => {
+      // Handle company - it might be populated or just an ID
+      const companyName = typeof tool['company'] === 'object' && tool['company'] ? tool['company']['name'] : '';
+      
+      // Extract description text from rich text if needed
+      let description = '';
+      if (tool['description'] && Array.isArray(tool['description'])) {
+        description = tool['description']
+          .map((block: any) => block.children?.map((child: any) => child.text).join(''))
+          .join('\n');
+      } else if (typeof tool['description'] === 'string') {
+        description = tool['description'];
+      }
+      
+      return {
+        ...tool,
+        info: {
+          company: { name: companyName },
           product: {
-            description: tool.description,
-            tagline: tool.tagline,
-            pricing_model: tool.pricing_model,
-            license_type: tool.license_type,
+            description: description,
+            tagline: tool['tagline'],
+            pricing_model: tool['pricing_model'],
+            license_type: tool['license_type'],
           },
           links: {
-            website: tool.website_url,
-            github: tool.github_repo,
+            website: tool['website_url'],
+            github: tool['github_repo'],
           },
           metadata: {
-            logo_url: tool.logo_url,
+            logo_url: tool['logo_url'],
           },
-        };
-      }
-      return tool;
+        },
+      };
     });
 
     return NextResponse.json({ tools: toolsWithInfo });

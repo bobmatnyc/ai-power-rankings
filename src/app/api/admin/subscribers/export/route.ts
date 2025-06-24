@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { createServiceClient } from "@/lib/supabase/server";
+import { getPayload } from "payload";
+import config from "@payload-config";
 import { format } from "date-fns";
 
 export async function GET() {
@@ -11,31 +12,32 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch all verified subscribers
-    const supabaseAdmin = createServiceClient();
-    const { data: subscribers, error } = await supabaseAdmin
-      .from("newsletter_subscriptions")
-      .select("*")
-      .eq("status", "verified")
-      .order("created_at", { ascending: false });
+    // Initialize Payload
+    const payload = await getPayload({ config });
 
-    if (error) {
-      console.error("Error fetching subscribers:", error);
-      return NextResponse.json({ error: "Failed to fetch subscribers" }, { status: 500 });
-    }
+    // Fetch all verified subscribers
+    const { docs: subscribers } = await payload.find({
+      collection: "newsletter-subscribers",
+      where: {
+        status: { equals: "verified" },
+      },
+      limit: 10000,
+      sort: "-createdAt",
+    });
 
     // Create CSV content
     const headers = ["Email", "First Name", "Last Name", "Subscribed Date", "Verified Date"];
-    const rows =
-      subscribers?.map((subscriber) => [
-        subscriber.email,
-        subscriber.first_name,
-        subscriber.last_name,
-        format(new Date(subscriber.created_at), "yyyy-MM-dd HH:mm:ss"),
-        subscriber.verified_at
-          ? format(new Date(subscriber.verified_at), "yyyy-MM-dd HH:mm:ss")
-          : "",
-      ]) || [];
+    const rows = subscribers.map((subscriber) => [
+      subscriber['email'],
+      subscriber['first_name'],
+      subscriber['last_name'],
+      subscriber['createdAt'] 
+        ? format(new Date(subscriber['createdAt']), "yyyy-MM-dd HH:mm:ss")
+        : "",
+      subscriber['verified_at']
+        ? format(new Date(subscriber['verified_at']), "yyyy-MM-dd HH:mm:ss")
+        : "",
+    ]);
 
     const csvContent = [
       headers.join(","),

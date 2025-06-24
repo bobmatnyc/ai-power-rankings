@@ -5,6 +5,7 @@ export const Rankings: CollectionConfig = {
   admin: {
     useAsTitle: "period",
     defaultColumns: ["period", "tool", "position", "score", "movement"],
+    group: "Rankings",
   },
   fields: [
     {

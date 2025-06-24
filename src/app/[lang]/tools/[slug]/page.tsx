@@ -120,7 +120,7 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
   let loading = false;
 
   try {
-    const isDev = process.env.NODE_ENV === "development";
+    const isDev = process.env["NODE_ENV"] === "development";
     const baseUrl = isDev
       ? "http://localhost:3001"
       : process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
