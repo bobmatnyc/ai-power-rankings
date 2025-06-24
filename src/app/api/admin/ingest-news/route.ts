@@ -184,7 +184,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     for (let i = 0; i < newsItems.length; i++) {
       const item = newsItems[i];
       
-      if (!item) continue;
+      if (!item) {continue;}
       
       try {
         report.processing_log += `Processing item ${i + 1}: ${item.title}\n`;

@@ -36,7 +36,7 @@ interface RemovalSpecification {
   };
 }
 
-interface RemovalResult {
+interface _RemovalResult {
   success: boolean;
   report: {
     filename: string;

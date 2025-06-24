@@ -3,7 +3,7 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import { loggers } from "@/lib/logger";
 
-interface RollbackResult {
+interface _RollbackResult {
   success: boolean;
   report: {
     ingestion_report_id: string;
