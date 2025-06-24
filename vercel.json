@@ -1,4 +1,5 @@
 {
+  "regions": ["iad1"],
   "functions": {
     "src/app/api/no-auth/route.ts": {
       "maxDuration": 30
@@ -23,6 +24,15 @@
     },
     "src/app/api/admin/rollback-ingestion/route.ts": {
       "maxDuration": 180
+    },
+    "src/app/api/admin/refresh-tool-display/route.ts": {
+      "maxDuration": 120
+    },
+    "src/app/api/admin/fix-orphaned-data/route.ts": {
+      "maxDuration": 120
+    },
+    "src/app/api/admin/update-site-settings/route.ts": {
+      "maxDuration": 30
     }
   },
   "crons": [

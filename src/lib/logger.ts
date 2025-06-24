@@ -25,6 +25,7 @@ export { logger };
 export const loggers = {
   api: createLogger("API"),
   database: createLogger("DATABASE"),
+  db: createLogger("DB"), // Add alias for database logger
   auth: createLogger("AUTH"),
   import: createLogger("IMPORT"),
   ranking: createLogger("RANKING"),

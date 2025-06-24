@@ -4,7 +4,20 @@ export const Metrics: CollectionConfig = {
   slug: "metrics",
   admin: {
     useAsTitle: "metric_key",
-    defaultColumns: ["tool", "metric_key", "value_display", "recorded_at"],
+    defaultColumns: ["tool_display", "metric_key", "value_display", "recorded_at"],
+    group: "Data",
+    listSearchableFields: ["metric_key", "tool.name"],
+    pagination: {
+      defaultLimit: 25,
+    },
+    defaultSort: "-recorded_at",
+  },
+  defaultPopulate: {
+    tool: {
+      name: true,
+      slug: true,
+      category: true,
+    },
   },
   fields: [
     {
@@ -13,6 +26,68 @@ export const Metrics: CollectionConfig = {
       relationTo: "tools",
       required: true,
       index: true,
+      admin: {
+        allowCreate: false,
+      },
+      filterOptions: {
+        status: {
+          equals: "active",
+        },
+      },
+    },
+    {
+      name: "tool_display",
+      type: "text",
+      admin: {
+        readOnly: true,
+        description: "Tool name for display (auto-populated)",
+      },
+      hooks: {
+        beforeChange: [
+          async ({ data, req }) => {
+            if (data?.tool) {
+              try {
+                // Get the tool document to populate the name
+                const toolId = typeof data.tool === "string" ? data.tool : data.tool.id;
+                const tool = await req.payload.findByID({
+                  collection: "tools",
+                  id: toolId,
+                });
+                return tool?.name || "Unknown Tool";
+              } catch (error) {
+                console.error("Error fetching tool name:", error);
+                return "Error Loading Tool";
+              }
+            }
+            return "No Tool Selected";
+          },
+        ],
+        afterRead: [
+          async ({ data, req }) => {
+            if (data?.tool) {
+              try {
+                // Handle both populated and unpopulated tool references
+                if (typeof data.tool === "object" && data.tool.name) {
+                  return data.tool.name;
+                }
+
+                const toolId = typeof data.tool === "string" ? data.tool : data.tool.id;
+                if (toolId) {
+                  const tool = await req.payload.findByID({
+                    collection: "tools",
+                    id: toolId,
+                  });
+                  return tool?.name || "Unknown Tool";
+                }
+              } catch (error) {
+                console.error("Error fetching tool name:", error);
+                return "Error Loading Tool";
+              }
+            }
+            return "No Tool Selected";
+          },
+        ],
+      },
     },
     {
       name: "metric_key",
