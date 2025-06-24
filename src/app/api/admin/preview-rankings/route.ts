@@ -178,7 +178,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     for (let i = 0; i < newScores.length; i++) {
       const newScore = newScores[i];
       const tool = tools.find(t => t.id === newScore.toolId);
-      if (!tool) continue;
+      if (!tool) {continue;}
 
       const currentRanking = currentRankingsMap.get(tool.id);
       const newPosition = i + 1;
