@@ -18,26 +18,9 @@ export async function GET(request: NextRequest) {
       page,
       sort: "-published_at",
     });
-    let newsItems = response.docs;
+    const newsItems = response.docs;
 
-    // Apply filter if not "all" - map to news categories
-    if (filter !== "all") {
-      const categoryMap: Record<string, string[]> = {
-        milestone: ["funding", "acquisition"],
-        announcement: ["funding", "product-launch", "acquisition", "general"],
-        update: ["technical-achievement", "general"],
-        feature: ["product-launch", "technical-achievement"],
-        partnership: ["acquisition", "general"],
-      };
-
-      const filterCategories = categoryMap[filter];
-      if (filterCategories) {
-        // Filter results based on category mapping
-        newsItems = newsItems.filter((item: any) =>
-          filterCategories.includes(item.category || "general")
-        );
-      }
-    }
+    // Don't filter here - we'll filter after transformation based on event_type
 
     // Transform news data into the expected format
     const transformedNews =
@@ -269,9 +252,18 @@ export async function GET(request: NextRequest) {
           });
         }
 
+        // Get tool slug if available from the first tool object
+        let toolSlug = primaryToolId;
+        if (Array.isArray(article.related_tools) && article.related_tools.length > 0) {
+          const firstTool = article.related_tools[0];
+          if (typeof firstTool === "object" && firstTool?.slug) {
+            toolSlug = firstTool.slug;
+          }
+        }
+
         return {
           id: article.id,
-          tool_id: primaryToolId || "unknown",
+          tool_id: toolSlug || primaryToolId || "unknown", // Use slug if available
           tool_name: toolNames,
           tool_category: toolCategory,
           tool_website: toolWebsite,
@@ -289,10 +281,16 @@ export async function GET(request: NextRequest) {
         };
       }) || [];
 
+    // Apply filter after transformation based on event_type
+    let filteredNews = transformedNews;
+    if (filter !== "all") {
+      filteredNews = transformedNews.filter((item) => item.event_type === filter);
+    }
+
     const apiResponse = NextResponse.json({
-      news: transformedNews,
-      total: response.totalDocs,
-      hasMore: response.hasNextPage,
+      news: filteredNews,
+      total: filteredNews.length, // Use filtered count
+      hasMore: false, // Since we're filtering post-transformation, disable pagination for now
     });
 
     // Set cache headers for production

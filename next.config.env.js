@@ -3,6 +3,21 @@
  * This file sets up dynamic URLs based on the port the dev server is running on
  */
 
+// Fix MaxListenersExceededWarning in development
+if (process.env.NODE_ENV === "development") {
+  // Increase the max listeners limit for AbortSignal to prevent warnings
+  // This is common in Next.js development with hot reloading
+  if (typeof globalThis.setMaxListeners === "function") {
+    globalThis.setMaxListeners(20);
+  }
+  // Alternative approach for Node.js events
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const events = require("events");
+  if (events.EventEmitter && events.EventEmitter.defaultMaxListeners < 20) {
+    events.EventEmitter.defaultMaxListeners = 20;
+  }
+}
+
 // Get the current port from environment or default
 const PORT = process.env.PORT || "3000";
 
