@@ -210,6 +210,7 @@ export const payloadDirect = {
       page: params?.page || 1,
       where,
       sort: params?.sort,
+      depth: 2, // Populate related_tools
     });
   },
 

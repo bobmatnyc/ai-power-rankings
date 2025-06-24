@@ -439,6 +439,46 @@ SUPABASE_SERVICE_ROLE_KEY=your-key
 GITHUB_TOKEN=your-token
 ```
 
+### 🚀 Vercel Deployment Configuration
+
+**Setting up environment variables in Vercel:**
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Set environment variables for all environments
+vercel env add PAYLOAD_SECRET production
+vercel env add PAYLOAD_SECRET preview
+vercel env add PAYLOAD_SECRET development
+
+# Add database URL with transaction pooler (CRITICAL for serverless)
+vercel env add SUPABASE_DATABASE_URL production
+# Use format: postgresql://postgres.[project]:password@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1
+
+# Deploy to production
+vercel --prod
+```
+
+**Key Vercel Configuration Requirements:**
+
+1. **Database Connection**: Must use Supabase transaction pooler (port 6543) with `connection_limit=1`
+2. **Payload Secret**: Required for CMS authentication - generate with `openssl rand -base64 32`
+3. **Environment Sync**: Use `vercel env pull .env.vercel` to sync variables locally
+4. **Region Co-location**: Configure `vercel.json` to deploy in same region as database (US East)
+
+**Critical Environment Variables for Production:**
+
+```bash
+PAYLOAD_SECRET=<generated-secret>
+SUPABASE_DATABASE_URL=postgresql://postgres.[project]:[password]@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1
+NEXTAUTH_URL=https://aipowerrankings.com
+NODE_ENV=production
+```
+
 ### Pricing Data Management
 
 When updating pricing information:
@@ -526,6 +566,7 @@ node src/i18n/dictionaries/verify_i18n.js
 - ❌ NOT included in CI/CD checks
 
 These tools use CommonJS syntax and are essential for managing translations. They include:
+
 - `verify_i18n.js`, `sync_structure.js`, `fix_untranslated.js`
 - `translate_batch.js`, `validate_translations.js`, `check_sizes.js`
 - `extract_used_keys.js`, `key_comparison.js`, `update_template.js`

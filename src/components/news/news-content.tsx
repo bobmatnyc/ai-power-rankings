@@ -339,11 +339,43 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                     <>
                       <Separator orientation="vertical" className="h-4" />
                       <div className="flex gap-2">
-                        {item.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
+                        {item.tags
+                          .slice(0, 3)
+                          .map((tag) => {
+                            // Format tag display name
+                            let displayName = tag;
+
+                            // Skip if tag is just a number (likely tool ID)
+                            if (/^\d+$/.test(tag)) {
+                              return null;
+                            }
+
+                            // Handle category names
+                            if (
+                              tag === "product" ||
+                              tag === "autonomous-agent" ||
+                              tag === "ide-assistant" ||
+                              tag === "code-completion" ||
+                              tag === "testing" ||
+                              tag === "documentation" ||
+                              tag === "code-review" ||
+                              tag === "security" ||
+                              tag === "cloud-ide" ||
+                              tag === "collaboration" ||
+                              tag === "ai-chat"
+                            ) {
+                              displayName = tag
+                                .replace(/-/g, " ")
+                                .replace(/\b\w/g, (l) => l.toUpperCase());
+                            }
+
+                            return (
+                              <Badge key={tag} variant="secondary" className="text-xs">
+                                {displayName}
+                              </Badge>
+                            );
+                          })
+                          .filter(Boolean)}
                       </div>
                     </>
                   )}

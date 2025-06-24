@@ -160,7 +160,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             {trendingTools.map((tool: any, index: number) => (
               <div key={tool.tool.id} className="relative h-full">
                 <div className="absolute -top-2 -right-2 z-10">
-                  <Badge className="bg-accent text-white border-0 shadow-lg">
+                  <Badge className="bg-accent border-0 shadow-lg text-accent-foreground">
                     <ArrowUp className="h-3 w-3 mr-1" />+{3 - index}
                   </Badge>
                 </div>

@@ -1,0 +1,346 @@
+/* Custom styling for AI Power Rankings CMS */
+
+:root {
+  --theme-elevation-0: #ffffff;
+  --theme-elevation-50: #fafafa;
+  --theme-elevation-100: #f5f5f5;
+  --theme-elevation-150: #eeeeee;
+  --theme-elevation-200: #e0e0e0;
+  --theme-elevation-300: #d5d5d5;
+  --theme-elevation-400: #cccccc;
+  --theme-elevation-500: #b8b8b8;
+  --theme-elevation-600: #9e9e9e;
+  --theme-elevation-700: #757575;
+  --theme-elevation-800: #616161;
+  --theme-elevation-900: #424242;
+  --theme-elevation-1000: #212121;
+
+  /* AI Power Rankings brand colors */
+  --theme-success-50: #f0fdf4;
+  --theme-success-100: #dcfce7;
+  --theme-success-150: #bbf7d0;
+  --theme-success-300: #86efac;
+  --theme-success-500: #22c55e;
+  --theme-success-750: #15803d;
+
+  --theme-warning-50: #fffbeb;
+  --theme-warning-100: #fef3c7;
+  --theme-warning-150: #fde68a;
+  --theme-warning-300: #fcd34d;
+  --theme-warning-500: #f59e0b;
+  --theme-warning-750: #d97706;
+
+  --theme-error-50: #fef2f2;
+  --theme-error-100: #fee2e2;
+  --theme-error-150: #fecaca;
+  --theme-error-300: #fca5a5;
+  --theme-error-500: #ef4444;
+  --theme-error-750: #dc2626;
+
+  /* Brand primary colors */
+  --theme-text: #1f2937;
+  --theme-bg: #ffffff;
+  --theme-border: #e5e7eb;
+
+  /* Custom brand accent */
+  --ai-power-blue: #3b82f6;
+  --ai-power-purple: #8b5cf6;
+  --ai-power-gradient: linear-gradient(
+    135deg,
+    var(--ai-power-blue) 0%,
+    var(--ai-power-purple) 100%
+  );
+}
+
+/* Custom admin body styles */
+.payload-admin-body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+    sans-serif;
+  background: var(--theme-elevation-0);
+  color: var(--theme-text);
+}
+
+/* Header customization */
+.payload__nav-header {
+  background: var(--ai-power-gradient) !important;
+  border-bottom: 2px solid var(--ai-power-purple);
+}
+
+.payload__nav-header .payload__nav-header__content {
+  color: white !important;
+}
+
+.payload__nav-header .payload__nav-header__content a {
+  color: white !important;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.payload__nav-header .payload__nav-header__content a:hover {
+  opacity: 0.8;
+}
+
+/* Brand logo area */
+.payload__nav-header .payload__nav-header__content h1,
+.payload__nav-header .payload__nav-header__content .payload__nav-header__title {
+  color: white !important;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+/* Navigation items */
+.payload__nav-group__label {
+  color: var(--ai-power-blue) !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.payload__nav-group {
+  border-bottom: 1px solid var(--theme-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Collection nav items */
+.payload__nav-item a {
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  margin: 2px 0;
+}
+
+.payload__nav-item a:hover {
+  background: var(--theme-elevation-100) !important;
+  color: var(--ai-power-blue) !important;
+}
+
+.payload__nav-item.payload__nav-item--active a {
+  background: var(--ai-power-gradient) !important;
+  color: white !important;
+  font-weight: 500;
+}
+
+/* Custom "Back to Website" button styling */
+.payload__nav-item a[href*="aipowerrankings.com"],
+.payload__nav-item a[href*="localhost:3000"] {
+  background: var(--theme-success-100) !important;
+  color: var(--theme-success-750) !important;
+  border: 1px solid var(--theme-success-300);
+  font-weight: 500;
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.payload__nav-item a[href*="aipowerrankings.com"]:hover,
+.payload__nav-item a[href*="localhost:3000"]:hover {
+  background: var(--theme-success-150) !important;
+  border-color: var(--theme-success-500);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+}
+
+/* List view improvements */
+.payload__list-header {
+  background: var(--theme-elevation-50);
+  border-bottom: 2px solid var(--theme-border);
+  padding: 1.5rem;
+}
+
+.payload__list-header h1 {
+  color: var(--theme-text);
+  font-size: 1.875rem;
+  font-weight: 700;
+}
+
+/* Table styling */
+.payload__table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.payload__table th {
+  background: var(--theme-elevation-100) !important;
+  color: var(--theme-text) !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 1rem !important;
+}
+
+.payload__table td {
+  padding: 1rem !important;
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.payload__table tr:hover {
+  background: var(--theme-elevation-50) !important;
+}
+
+/* Form styling */
+.payload__form {
+  max-width: none;
+}
+
+.payload__field {
+  margin-bottom: 1.5rem;
+}
+
+.payload__field label {
+  color: var(--theme-text);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.payload__field input,
+.payload__field textarea,
+.payload__field select {
+  border: 2px solid var(--theme-border);
+  border-radius: 6px;
+  padding: 0.75rem;
+  transition: border-color 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.payload__field input:focus,
+.payload__field textarea:focus,
+.payload__field select:focus {
+  border-color: var(--ai-power-blue);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Button styling */
+.payload__button {
+  background: var(--ai-power-gradient) !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.payload__button:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.payload__button--secondary {
+  background: var(--theme-elevation-100) !important;
+  color: var(--theme-text) !important;
+  border: 1px solid var(--theme-border) !important;
+}
+
+.payload__button--secondary:hover {
+  background: var(--theme-elevation-200) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Status indicators */
+.payload__status--published {
+  background: var(--theme-success-100) !important;
+  color: var(--theme-success-750) !important;
+  border: 1px solid var(--theme-success-300) !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 4px !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+}
+
+.payload__status--draft {
+  background: var(--theme-warning-100) !important;
+  color: var(--theme-warning-750) !important;
+  border: 1px solid var(--theme-warning-300) !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 4px !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+}
+
+/* Sidebar improvements */
+.payload__sidebar {
+  background: var(--theme-elevation-50);
+  border-right: 1px solid var(--theme-border);
+}
+
+/* Dashboard cards */
+.payload__dashboard-card {
+  background: var(--theme-elevation-0);
+  border: 1px solid var(--theme-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.payload__dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Loading states */
+.payload__loading {
+  background: var(--ai-power-gradient);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.payload__loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .payload__nav {
+    width: 100%;
+  }
+
+  .payload__main {
+    margin-left: 0;
+  }
+
+  .payload__list-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Dark mode support (future enhancement) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --theme-bg: #111827;
+    --theme-text: #f9fafb;
+    --theme-border: #374151;
+    --theme-elevation-0: #1f2937;
+    --theme-elevation-50: #374151;
+    --theme-elevation-100: #4b5563;
+  }
+}

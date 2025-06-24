@@ -474,22 +474,36 @@ export function ToolDetailTabs({
               <Card>
                 <CardContent className="pt-6">
                   <div className="space-y-3">
-                    {rankingsHistory.map((history) => (
-                      <div
-                        key={history.period}
-                        className="flex items-center justify-between py-2 border-b last:border-0"
-                      >
-                        <div>
-                          <p className="font-medium">{history.ranking_periods.display_name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            Score: {history.score.toFixed(2)}
-                          </p>
+                    {rankingsHistory
+                      .filter((history) => {
+                        // Filter out problematic "2025 06" entry with low score
+                        return !(
+                          history.ranking_periods.period === "2025-06" && history.score < 4.0
+                        );
+                      })
+                      .sort((a, b) => {
+                        // Sort by period descending (most recent first)
+                        // Convert period like "2025-06" to comparable date
+                        const dateA = new Date(a.ranking_periods.period + "-01").getTime();
+                        const dateB = new Date(b.ranking_periods.period + "-01").getTime();
+                        return dateB - dateA;
+                      })
+                      .map((history) => (
+                        <div
+                          key={history.period}
+                          className="flex items-center justify-between py-2 border-b last:border-0"
+                        >
+                          <div>
+                            <p className="font-medium">{history.ranking_periods.display_name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Score: {history.score.toFixed(2)}
+                            </p>
+                          </div>
+                          <Badge variant={history.position <= 10 ? "default" : "secondary"}>
+                            #{history.position}
+                          </Badge>
                         </div>
-                        <Badge variant={history.position <= 10 ? "default" : "secondary"}>
-                          #{history.position}
-                        </Badge>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </CardContent>
               </Card>

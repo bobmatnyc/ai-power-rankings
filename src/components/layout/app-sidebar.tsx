@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/client";
+import { useRankingChanges } from "@/contexts/ranking-changes-context";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
 // Navigation items will be built dynamically with i18n
@@ -48,6 +49,7 @@ function SidebarContent(): React.JSX.Element {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { isMobile, setOpenMobile } = useSidebar();
+  const { changes } = useRankingChanges();
   const currentCategory = searchParams.get("category") || "all";
   const currentTags = searchParams.get("tags")?.split(",") || [];
   const [categories, setCategories] = useState<Category[]>([]);
@@ -192,22 +194,53 @@ function SidebarContent(): React.JSX.Element {
               {dict.sidebar.navigation}
             </h3>
             <nav className="space-y-1">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={handleNavClick}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors",
-                    pathname === item.href
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
-                >
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.title}</span>
-                </Link>
-              ))}
+              {navigationItems.map((item) => {
+                // Calculate badge count based on navigation item
+                let badgeCount = 0;
+                let badgeVariant: "default" | "secondary" | "success" | "destructive" = "default";
+
+                if (changes && changes.totalChanges > 0) {
+                  const hoursSinceUpdate =
+                    (Date.now() - new Date(changes.lastUpdated!).getTime()) / (1000 * 60 * 60);
+
+                  if (hoursSinceUpdate < 24) {
+                    if (item.href === `/${lang}/rankings`) {
+                      badgeCount = changes.totalChanges;
+                      badgeVariant = "default";
+                    } else if (item.href === `/${lang}/news`) {
+                      badgeCount = changes.newEntries;
+                      badgeVariant = "success";
+                    } else if (item.href === `/${lang}/tools`) {
+                      badgeCount = changes.movedUp + changes.movedDown;
+                      badgeVariant = "secondary";
+                    }
+                  }
+                }
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={handleNavClick}
+                    className={cn(
+                      "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors",
+                      pathname === item.href
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </div>
+                    {badgeCount > 0 && (
+                      <Badge variant={badgeVariant} className="ml-auto">
+                        {badgeCount}
+                      </Badge>
+                    )}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
 
@@ -256,7 +289,7 @@ function SidebarContent(): React.JSX.Element {
                   )}
                 >
                   <span>{category.name}</span>
-                  <Badge variant="secondary" className="text-xs text-white">
+                  <Badge variant="secondary" className="text-xs">
                     {category.count}
                   </Badge>
                 </Link>

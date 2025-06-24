@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { StatusIndicator } from "@/components/ui/status-indicator";
+import { getCategoryColor } from "@/lib/category-colors";
 
 interface Tool {
   id: string;
@@ -70,19 +71,6 @@ export default function ToolsPage(): React.JSX.Element {
         return 0;
     }
   });
-
-  const getCategoryColor = (category: string): string => {
-    const colors: Record<string, string> = {
-      "autonomous-agent": "bg-purple-500",
-      "code-editor": "bg-blue-500",
-      "ide-assistant": "bg-green-500",
-      "app-builder": "bg-orange-500",
-      "open-source-framework": "bg-cyan-500",
-      "testing-tool": "bg-red-500",
-      "code-review": "bg-yellow-500",
-    };
-    return colors[category] || "bg-gray-500";
-  };
 
   if (loading) {
     return (
@@ -159,7 +147,7 @@ export default function ToolsPage(): React.JSX.Element {
                     }}
                   >
                     <Badge
-                      className={`${getCategoryColor(tool.category)} text-white cursor-pointer hover:opacity-80`}
+                      className={`${getCategoryColor(tool.category)} cursor-pointer hover:opacity-80`}
                     >
                       {tool.category.replace(/-/g, " ")}
                     </Badge>

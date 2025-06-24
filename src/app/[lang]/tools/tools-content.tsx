@@ -13,11 +13,13 @@ import {
 } from "@/components/ui/select";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { StatusIndicator } from "@/components/ui/status-indicator";
+import { getCategoryColor } from "@/lib/category-colors";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
 interface Tool {
   id: string;
+  slug?: string;
   name: string;
   category: string;
   status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";
@@ -60,19 +62,6 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
         return 0;
     }
   });
-
-  const getCategoryColor = (category: string): string => {
-    const colors: Record<string, string> = {
-      "autonomous-agent": "bg-purple-500",
-      "code-editor": "bg-blue-500",
-      "ide-assistant": "bg-green-500",
-      "app-builder": "bg-orange-500",
-      "open-source-framework": "bg-cyan-500",
-      "testing-tool": "bg-red-500",
-      "code-review": "bg-yellow-500",
-    };
-    return colors[category] || "bg-gray-500";
-  };
 
   const getCategoryName = (category: string): string => {
     const categoryKey = category.replace(/-/g, "") as keyof typeof dict.categories;
@@ -132,7 +121,11 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
       {/* Tools Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedTools.map((tool) => (
-          <Link key={tool.id} href={`/${lang}/tools/${tool.id}`} className="flex h-full">
+          <Link
+            key={tool.id}
+            href={`/${lang}/tools/${tool.slug || tool.id}`}
+            className="flex h-full"
+          >
             <Card className="hover:shadow-lg transition-shadow cursor-pointer w-full flex flex-col">
               <CardHeader>
                 <div className="flex items-start justify-between mb-3">
@@ -155,7 +148,7 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
                     }}
                   >
                     <Badge
-                      className={`${getCategoryColor(tool.category)} text-white cursor-pointer hover:opacity-80`}
+                      className={`${getCategoryColor(tool.category)} cursor-pointer hover:opacity-80`}
                     >
                       {getCategoryName(tool.category)}
                     </Badge>
@@ -164,7 +157,9 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
               </CardHeader>
               <CardContent className="flex-1">
                 <p className="text-sm text-muted-foreground">
-                  {tool.description || dict.tools.defaultDescription}
+                  {typeof tool.description === "string"
+                    ? tool.description
+                    : tool.info?.product?.description || dict.tools.defaultDescription}
                 </p>
               </CardContent>
             </Card>

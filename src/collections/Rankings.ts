@@ -10,8 +10,8 @@ export const Rankings: CollectionConfig = {
     pagination: {
       defaultLimit: 25,
     },
-    defaultSort: "-position",
   },
+  defaultSort: "position",
   defaultPopulate: {
     tool: {
       name: true,
@@ -77,7 +77,8 @@ export const Rankings: CollectionConfig = {
               try {
                 // Handle both populated and unpopulated tool references
                 if (typeof data.tool === "object" && data.tool.name) {
-                  return data.tool.name;
+                  data.tool_display = data.tool.name;
+                  return data.tool_display;
                 }
 
                 const toolId = typeof data.tool === "string" ? data.tool : data.tool.id;
@@ -86,14 +87,17 @@ export const Rankings: CollectionConfig = {
                     collection: "tools",
                     id: toolId,
                   });
-                  return tool?.name || "Unknown Tool";
+                  data.tool_display = tool?.name || "Unknown Tool";
+                  return data.tool_display;
                 }
               } catch (error) {
                 console.error("Error fetching tool name:", error);
-                return "Error Loading Tool";
+                data.tool_display = "Error Loading Tool";
+                return data.tool_display;
               }
             }
-            return "No Tool Selected";
+            data.tool_display = "No Tool Selected";
+            return data.tool_display;
           },
         ],
       },

@@ -1,7 +1,7 @@
 import { buildConfig } from "payload";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
-import { nodemailerAdapter } from "@payloadcms/email-nodemailer";
+import { resendAdapter } from "@payloadcms/email-resend";
 
 // Collections
 import {
@@ -27,39 +27,30 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env["SUPABASE_DATABASE_URL"] || "",
-      max: process.env.NODE_ENV === "development" ? 5 : 1, // Higher for dev, 1 for serverless
-      min: process.env.NODE_ENV === "development" ? 1 : 0, // Allow pool to shrink to 0 in production
-      idleTimeoutMillis: 10000, // 10 seconds
-      connectionTimeoutMillis: 30000, // 30 seconds
+      max: parseInt(process.env["DATABASE_POOL_MAX"] || "1"),
+      min: parseInt(process.env["DATABASE_POOL_MIN"] || "0"),
+      idleTimeoutMillis: parseInt(process.env["DATABASE_IDLE_TIMEOUT"] || "10000"),
+      connectionTimeoutMillis: parseInt(process.env["DATABASE_CONNECT_TIMEOUT"] || "10000"),
     },
     schemaName: "payload",
     migrationDir: "./src/migrations",
-    logger: process.env["NODE_ENV"] === "development", // Enable for dev
+    logger: false, // Disable query logging
     push: false, // Disable automatic schema push in development
   }),
-  email:
-    process.env.NODE_ENV === "development"
-      ? undefined
-      : nodemailerAdapter({
-          defaultFromAddress: process.env["EMAIL_FROM"] || "noreply@localhost",
-          defaultFromName: "AI Power Rankings",
-          transportOptions: {
-            // Production SMTP settings
-            host: process.env["SMTP_HOST"] || "smtp.gmail.com",
-            port: parseInt(process.env["SMTP_PORT"] || "587"),
-            secure: process.env["SMTP_SECURE"] === "true",
-            auth: {
-              user: process.env["SMTP_USER"],
-              pass: process.env["SMTP_PASS"],
-            },
-          },
-        }),
+  email: process.env.RESEND_API_KEY
+    ? resendAdapter({
+        apiKey: process.env.RESEND_API_KEY,
+        defaultFromAddress: process.env["EMAIL_FROM"] || "noreply@aipowerrankings.com",
+        defaultFromName: "AI Power Rankings",
+      })
+    : undefined,
   admin: {
     user: Users.slug,
     meta: {
       titleSuffix: "- AI Power Rankings CMS",
     },
     disable: false,
+    dateFormat: "MMMM do, yyyy h:mm a",
   },
   collections: [
     Users,

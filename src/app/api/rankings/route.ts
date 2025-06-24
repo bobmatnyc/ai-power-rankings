@@ -54,9 +54,9 @@ function calculateTier(position: number): string {
 async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
   try {
     // Get all tools
-    const toolsResponse = await payloadDirect.getTools({ 
+    const toolsResponse = await payloadDirect.getTools({
       limit: 1000, // Get all tools
-      sort: 'name' 
+      sort: "name",
     });
     const tools = toolsResponse.docs;
 
@@ -66,9 +66,9 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
     }
 
     // Get all news
-    const newsResponse = await payloadDirect.getNews({ 
+    const newsResponse = await payloadDirect.getNews({
       limit: 1000, // Get recent news
-      sort: '-published_at' 
+      sort: "-published_at",
     });
     const news = newsResponse.docs;
 
@@ -86,7 +86,7 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
         if (article.related_tools && Array.isArray(article.related_tools)) {
           return article.related_tools.some((relatedTool: any) => {
             // Handle both string IDs and object references
-            const toolRef = typeof relatedTool === 'string' ? relatedTool : relatedTool.id;
+            const toolRef = typeof relatedTool === "string" ? relatedTool : relatedTool.id;
             return toolRef === tool.id || toolRef === tool.slug;
           });
         }
@@ -112,7 +112,11 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
       // News impact calculation
       let newsScore = 0;
       if (recentNews.length > 0) {
-        const totalImportance = recentNews.reduce((sum: number, n: any) => sum + ((n.impact_level === 'high' ? 8 : n.impact_level === 'medium' ? 5 : 3)), 0);
+        const totalImportance = recentNews.reduce(
+          (sum: number, n: any) =>
+            sum + (n.impact_level === "high" ? 8 : n.impact_level === "medium" ? 5 : 3),
+          0
+        );
         const avgImportance = totalImportance / recentNews.length;
 
         // Calculate volume bonus with logarithmic scale for better distribution
@@ -181,8 +185,8 @@ export async function GET(): Promise<NextResponse> {
     const toolsResponse = await payloadDirect.getTools({
       limit: 1000,
       where: {
-        id: { in: toolIds }
-      }
+        id: { in: toolIds },
+      },
     });
     const tools = toolsResponse.docs;
 
@@ -215,13 +219,13 @@ export async function GET(): Promise<NextResponse> {
         }
 
         // Fix tool names
-        let displayName = tool['display_name'] || tool['name'];
-        if (tool['id'] === "claude-artifacts") {
+        let displayName = tool["display_name"] || tool["name"];
+        if (tool["id"] === "claude-artifacts") {
           displayName = "Claude.ai";
         }
 
         // Calculate ranking change
-        const previousRank = previousRankings[tool['id']];
+        const previousRank = previousRankings[tool["id"]];
         const rankChange = previousRank ? previousRank - ranking.position : null;
 
         // Determine change reason
@@ -241,11 +245,11 @@ export async function GET(): Promise<NextResponse> {
         }
 
         // Extract description text from rich text if needed
-        let description = '';
-        if (tool['description'] && Array.isArray(tool['description'])) {
-          description = tool['description']
-            .map((block: any) => block.children?.map((child: any) => child.text).join(''))
-            .join('\n');
+        let description = "";
+        if (tool["description"] && Array.isArray(tool["description"])) {
+          description = tool["description"]
+            .map((block: any) => block.children?.map((child: any) => child.text).join(""))
+            .join("\n");
         }
 
         return {
@@ -254,11 +258,12 @@ export async function GET(): Promise<NextResponse> {
           rankChange,
           changeReason,
           tool: {
-            id: tool['id'],
+            id: tool["id"],
+            slug: tool["slug"] || tool["id"], // Use slug if available, fallback to id
             name: displayName,
-            category: tool['category'],
-            status: tool['status'],
-            website_url: tool['website_url'],
+            category: tool["category"],
+            status: tool["status"],
+            website_url: tool["website_url"],
             description: description,
           },
           total_score: ranking.score,
@@ -283,7 +288,7 @@ export async function GET(): Promise<NextResponse> {
       })
       .filter(Boolean);
 
-    return NextResponse.json({
+    const apiResponse = NextResponse.json({
       rankings: formattedRankings,
       algorithm: {
         version: "v6-news",
@@ -298,6 +303,16 @@ export async function GET(): Promise<NextResponse> {
         max_news_impact: Math.max(...rankings.map((r) => r.news_impact_score)),
       },
     });
+
+    // Set cache headers for production
+    apiResponse.headers.set(
+      "Cache-Control",
+      process.env.NODE_ENV === "production"
+        ? "public, s-maxage=3600, stale-while-revalidate=1800"
+        : "no-cache"
+    );
+
+    return apiResponse;
   } catch (error) {
     loggers.ranking.error("Error fetching rankings", { error });
     return NextResponse.json({ error: "Failed to fetch rankings" }, { status: 500 });

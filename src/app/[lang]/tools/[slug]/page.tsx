@@ -8,6 +8,7 @@ import { StatusIndicator } from "@/components/ui/status-indicator";
 import { ToolDetailTabs } from "@/components/tools/tool-detail-tabs";
 import { MetricHistory } from "@/types/database";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { getUrl } from "@/lib/get-url";
 import type { Locale } from "@/i18n/config";
 
 interface ToolDetail {
@@ -121,9 +122,7 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
 
   try {
     const isDev = process.env["NODE_ENV"] === "development";
-    const baseUrl = isDev
-      ? "http://localhost:3001"
-      : process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
+    const baseUrl = getUrl();
     const response = await fetch(`${baseUrl}/api/tools/${slug}`, {
       next: { revalidate: isDev ? 0 : 3600 }, // No cache in dev, 1 hour in prod
     });

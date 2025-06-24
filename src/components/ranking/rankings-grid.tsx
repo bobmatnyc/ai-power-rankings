@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Grid, List, ArrowUpDown, TrendingUp, Star } from "lucide-react";
 import { RankingCard } from "./ranking-card";
+import { getCategoryColor } from "@/lib/category-colors";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -263,7 +264,7 @@ function RankingsGridContent({
                 window.location.href = `/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`;
               }}
             >
-              {categoryParam.replace(/-/g, " ")} ✕
+              {categoryParam.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} ✕
             </Badge>
           )}
           {tagsParam.map((tag) => (

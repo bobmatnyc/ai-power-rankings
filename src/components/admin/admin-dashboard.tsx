@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Settings, FileText, TrendingUp, Users } from "lucide-react";
+import { BarChart3, Settings, FileText, TrendingUp, Users, FileUp, Trophy } from "lucide-react";
 import Link from "next/link";
 
 export function AdminDashboard() {
@@ -20,7 +20,7 @@ export function AdminDashboard() {
       external: true,
     },
     {
-      title: "SEO Dashboard", 
+      title: "SEO Dashboard",
       description: "Monitor website performance and search engine optimization metrics",
       icon: BarChart3,
       href: "/dashboard/seo",
@@ -28,7 +28,7 @@ export function AdminDashboard() {
     },
     {
       title: "Tools Management",
-      description: "Advanced tools interface with search, filtering, and rankings", 
+      description: "Advanced tools interface with search, filtering, and rankings",
       icon: FileText,
       href: "/dashboard/tools",
       color: "bg-green-500",
@@ -40,6 +40,22 @@ export function AdminDashboard() {
       icon: Users,
       href: "/dashboard/subscribers",
       color: "bg-indigo-500",
+      disabled: false,
+    },
+    {
+      title: "News Ingestion",
+      description: "Upload and manage news articles",
+      icon: FileUp,
+      href: "/dashboard/news-ingestion",
+      color: "bg-orange-500",
+      disabled: false,
+    },
+    {
+      title: "Rankings Management",
+      description: "Preview and generate AI tool rankings",
+      icon: Trophy,
+      href: "/dashboard/rankings",
+      color: "bg-yellow-500",
       disabled: false,
     },
     {
@@ -122,17 +138,17 @@ export function AdminDashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-        <Button 
-          onClick={() => window.open('/api/admin/generate-rankings', '_blank')}
+        <Button
+          onClick={() => window.open("/api/admin/generate-rankings", "_blank")}
           className="h-auto p-4 flex flex-col items-center gap-2"
           variant="outline"
         >
           <TrendingUp className="h-6 w-6" />
           <span className="text-sm">Generate Rankings</span>
         </Button>
-        
-        <Button 
-          onClick={() => window.open('/api/admin/subscribers/export', '_blank')}
+
+        <Button
+          onClick={() => window.open("/api/admin/subscribers/export", "_blank")}
           className="h-auto p-4 flex flex-col items-center gap-2"
           variant="outline"
         >
@@ -140,19 +156,15 @@ export function AdminDashboard() {
           <span className="text-sm">Export Subscribers</span>
         </Button>
 
-        <Button 
-          asChild
-          className="h-auto p-4 flex flex-col items-center gap-2"
-          variant="outline"
-        >
+        <Button asChild className="h-auto p-4 flex flex-col items-center gap-2" variant="outline">
           <Link href="/dashboard/seo">
             <BarChart3 className="h-6 w-6" />
             <span className="text-sm">SEO Dashboard</span>
           </Link>
         </Button>
 
-        <Button 
-          onClick={() => window.open('/admin', '_blank')}
+        <Button
+          onClick={() => window.open("/admin", "_blank")}
           className="h-auto p-4 flex flex-col items-center gap-2"
           variant="outline"
         >

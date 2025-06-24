@@ -60,10 +60,15 @@ export default async function UpdatesPage({ params }: PageProps) {
             <div>
               <h3 className="text-lg font-semibold mb-3">📰 New Articles Processed</h3>
               <div className="space-y-3">
-                <div className="border border-border rounded-lg p-4">
+                <Link
+                  href="https://techcrunch.com/2025/06/18/bolt-new-figma-integration-design-to-code"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block border border-border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
+                >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h4 className="font-medium">
+                      <h4 className="font-medium hover:text-primary transition-colors">
                         Bolt.new&apos;s Figma Integration Delivers 70% Faster Design-to-Code
                       </h4>
                       <p className="text-sm text-muted-foreground mt-1">
@@ -74,12 +79,17 @@ export default async function UpdatesPage({ params }: PageProps) {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
 
-                <div className="border border-border rounded-lg p-4">
+                <Link
+                  href="https://www.theverge.com/2025/06/17/google-jules-ai-coding-agent-beta-limitations"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block border border-border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
+                >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h4 className="font-medium">
+                      <h4 className="font-medium hover:text-primary transition-colors">
                         Google&apos;s Jules AI Coding Agent Faces User Backlash Over Beta
                         Limitations
                       </h4>
@@ -91,7 +101,7 @@ export default async function UpdatesPage({ params }: PageProps) {
                       </p>
                     </div>
                   </div>
-                </div>
+                </Link>
 
                 <div className="border border-border rounded-lg p-4">
                   <div className="flex items-start justify-between">
