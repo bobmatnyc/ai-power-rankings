@@ -31,7 +31,7 @@ export default async function ToolsPage({ params }: PageProps): Promise<React.JS
   let loading = false;
 
   try {
-    const isDev = process.env.NODE_ENV === "development";
+    const isDev = process.env["NODE_ENV"] === "development";
     const baseUrl = isDev
       ? "http://localhost:3001"
       : process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";

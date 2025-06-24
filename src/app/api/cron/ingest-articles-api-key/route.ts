@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { listFilesInFolder, downloadFileContent } from "@/lib/google-drive-api-key";
 import { validateNewsItems } from "@/lib/article-validator";
-import { ingestArticles, IngestionReport } from "@/lib/article-ingestion";
+import { ingestArticles, IngestionReport } from "@/lib/article-ingestion-payload";
 import { logger } from "@/lib/logger";
-import { createClient } from "@/lib/supabase/server";
+import { getPayload } from "payload";
+import config from "@payload-config";
 
 // Get folder IDs from environment
 const INCOMING_FOLDER_ID =
@@ -19,7 +20,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    logger.info("Starting article ingestion cron job (API key version)");
+    logger.info("Starting article ingestion cron job (Payload CMS version)");
+
+    // Initialize Payload
+    const payload = await getPayload({ config });
 
     // Use folder ID directly from environment
     const incomingFolderId = INCOMING_FOLDER_ID;
@@ -29,7 +33,6 @@ export async function GET() {
     logger.info(`Found ${files.length} files to process`);
 
     const reports: IngestionReport[] = [];
-    const supabase = await createClient();
 
     // Process each file
     for (const file of files) {
@@ -41,13 +44,15 @@ export async function GET() {
         logger.info(`Processing file: ${file.name}`);
 
         // Check if we've already processed this file
-        const { data: processedFile } = await supabase
-          .from("processed_files")
-          .select("id")
-          .eq("file_id", file.id)
-          .single();
+        const { docs: processedFiles } = await payload.find({
+          collection: "processed-files",
+          where: {
+            file_id: { equals: file.id },
+          },
+          limit: 1,
+        });
 
-        if (processedFile) {
+        if (processedFiles.length > 0) {
           logger.info(`File ${file.name} already processed, skipping`);
           continue;
         }
@@ -87,21 +92,33 @@ export async function GET() {
 
         reports.push(report);
 
-        // Store the report in database instead of creating a file
-        await supabase.from("ingestion_reports").insert({
-          file_name: file.name,
-          file_id: file.id,
-          report: report,
-          processed_at: new Date().toISOString(),
+        // Store the report in Payload
+        await payload.create({
+          collection: "ingestion-reports",
+          data: {
+            file_name: file.name,
+            file_id: file.id,
+            processed_at: new Date().toISOString(),
+            total_articles: report.total_articles,
+            ingested: report.ingested,
+            duplicates_removed: report.duplicates_removed,
+            validation_errors: report.validation_errors,
+            errors: report.errors,
+            ingested_articles: report.ingested_articles,
+            report: report,
+          },
         });
 
         // Mark file as processed
-        await supabase.from("processed_files").insert({
-          file_id: file.id,
-          file_name: file.name,
-          processed_at: new Date().toISOString(),
-          articles_ingested: report.ingested,
-          validation_errors: report.validation_errors,
+        await payload.create({
+          collection: "processed-files",
+          data: {
+            file_id: file.id,
+            file_name: file.name,
+            processed_at: new Date().toISOString(),
+            articles_ingested: report.ingested,
+            validation_errors: report.validation_errors,
+          },
         });
 
         logger.info(`Successfully processed ${file.name}: ${report.ingested} articles ingested`);

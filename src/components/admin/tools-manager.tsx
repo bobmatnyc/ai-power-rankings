@@ -29,7 +29,7 @@ import {
   Upload,
 } from "lucide-react";
 import Link from "next/link";
-import { useSupabase } from "@/hooks/use-supabase";
+import { usePayload } from "@/hooks/use-payload";
 import { Tool } from "@/types/database";
 
 interface ToolWithRanking extends Tool {
@@ -42,7 +42,7 @@ interface ToolWithRanking extends Tool {
 }
 
 export function ToolsManager() {
-  const { tools, rankings, loading, fetchTools, fetchRankings } = useSupabase();
+  const { tools, rankings, loading, fetchTools, fetchRankings } = usePayload();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [, setSelectedTool] = useState<Tool | null>(null);
@@ -103,10 +103,13 @@ export function ToolsManager() {
       {/* Navigation */}
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" asChild>
-          <Link href="/admin" className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Back to Admin
+            Back to Dashboard
           </Link>
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => window.open('/admin', '_blank')}>
+          Open Payload CMS
         </Button>
       </div>
 

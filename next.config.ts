@@ -14,6 +14,14 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  // Remove serverExternalPackages as it's handled by withPayload
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@payload-config': require.resolve('./payload.config.ts'),
+    }
+    return config
+  },
 };
 
 export default withPayload(nextConfig);

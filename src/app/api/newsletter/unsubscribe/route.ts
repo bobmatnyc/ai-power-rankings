@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/database";
+import { getPayload } from "payload";
+import config from "@payload-config";
 import { loggers } from "@/lib/logger";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -13,30 +14,45 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    // Find subscription by token
-    const { data: subscription, error: findError } = await supabaseAdmin
-      .from("newsletter_subscriptions")
-      .select("*")
-      .eq("verification_token", token)
-      .single();
+    // Initialize Payload
+    const payload = await getPayload({ config });
 
-    if (findError || !subscription) {
-      loggers.api.error("Newsletter unsubscribe find error", { findError, token });
+    // Find subscription by token
+    const { docs: subscriptions } = await payload.find({
+      collection: "newsletter-subscribers",
+      where: {
+        verification_token: { equals: token },
+      },
+      limit: 1,
+    });
+
+    if (!subscriptions || subscriptions.length === 0) {
+      loggers.api.error("Newsletter unsubscribe find error", { token });
+      return NextResponse.redirect(
+        new URL("/newsletter/unsubscribe?status=error&error=invalid-token", request.url)
+      );
+    }
+
+    const subscription = subscriptions[0];
+    
+    if (!subscription) {
+      loggers.api.error("Newsletter unsubscribe subscription not found", { token });
       return NextResponse.redirect(
         new URL("/newsletter/unsubscribe?status=error&error=invalid-token", request.url)
       );
     }
 
     // Update subscription status to unsubscribed
-    const { error: updateError } = await supabaseAdmin
-      .from("newsletter_subscriptions")
-      .update({
-        status: "unsubscribed",
-        unsubscribed_at: new Date().toISOString(),
-      })
-      .eq("verification_token", token);
-
-    if (updateError) {
+    try {
+      await payload.update({
+        collection: "newsletter-subscribers",
+        id: subscription['id'],
+        data: {
+          status: "unsubscribed",
+          unsubscribed_at: new Date().toISOString(),
+        },
+      });
+    } catch (updateError) {
       loggers.api.error("Newsletter unsubscribe update error", { updateError, token });
       return NextResponse.redirect(
         new URL("/newsletter/unsubscribe?status=error&error=unsubscribe-failed", request.url)

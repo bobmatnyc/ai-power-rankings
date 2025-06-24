@@ -1,31 +1,37 @@
 import { MetadataRoute } from "next";
-import { createServiceClient } from "@/lib/supabase/server";
+import { getPayload } from "payload";
+import config from "@payload-config";
 import { i18n } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600; // Revalidate every hour
 
 async function getTools() {
-  const supabase = createServiceClient();
-  const { data } = await supabase
-    .from("tools")
-    .select("slug, updated_at")
-    .eq("status", "active")
-    .order("updated_at", { ascending: false });
+  const payload = await getPayload({ config });
+  const { docs } = await payload.find({
+    collection: "tools",
+    where: {
+      status: { equals: "active" },
+    },
+    sort: "-updatedAt",
+    limit: 1000,
+  });
 
-  return data || [];
+  return docs.map(tool => ({
+    slug: tool['slug'],
+    updated_at: tool['updatedAt'],
+  }));
 }
 
 async function getLatestRankingPeriod() {
-  const supabase = createServiceClient();
-  const { data } = await supabase
-    .from("ranking_snapshots")
-    .select("period")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .single();
+  const payload = await getPayload({ config });
+  const { docs } = await payload.find({
+    collection: "rankings",
+    sort: "-createdAt",
+    limit: 1,
+  });
 
-  return data?.period;
+  return docs[0]?.['period'];
 }
 
 // Helper function to generate alternates for all languages

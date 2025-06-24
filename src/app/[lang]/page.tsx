@@ -23,10 +23,10 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
   let loading = false;
 
   try {
-    const isDev = process.env.NODE_ENV === "development";
+    const isDev = process.env["NODE_ENV"] === "development";
     // Always use local API in development, regardless of NEXT_PUBLIC_BASE_URL
     const baseUrl = isDev
-      ? "http://localhost:3001"
+      ? "http://localhost:3000"
       : process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
     const timestamp = Date.now();
     const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;

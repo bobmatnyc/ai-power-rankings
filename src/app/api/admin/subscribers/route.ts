@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { createServiceClient } from "@/lib/supabase/server";
+import { getPayload } from "payload";
+import config from "@payload-config";
 
 export async function GET() {
   try {
@@ -10,28 +11,26 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch all subscribers
-    const supabaseAdmin = createServiceClient();
-    const { data: subscribers, error } = await supabaseAdmin
-      .from("newsletter_subscriptions")
-      .select("*")
-      .order("created_at", { ascending: false });
+    // Initialize Payload
+    const payload = await getPayload({ config });
 
-    if (error) {
-      console.error("Error fetching subscribers:", error);
-      return NextResponse.json({ error: "Failed to fetch subscribers" }, { status: 500 });
-    }
+    // Fetch all subscribers
+    const { docs: subscribers } = await payload.find({
+      collection: "newsletter-subscribers",
+      limit: 1000,
+      sort: "-createdAt",
+    });
 
     // Calculate stats
     const stats = {
-      total: subscribers?.length || 0,
-      verified: subscribers?.filter((s) => s.status === "verified").length || 0,
-      pending: subscribers?.filter((s) => s.status === "pending").length || 0,
-      unsubscribed: subscribers?.filter((s) => s.status === "unsubscribed").length || 0,
+      total: subscribers.length,
+      verified: subscribers.filter((s) => s['status'] === "verified").length,
+      pending: subscribers.filter((s) => s['status'] === "pending").length,
+      unsubscribed: subscribers.filter((s) => s['status'] === "unsubscribed").length,
     };
 
     return NextResponse.json({
-      subscribers: subscribers || [],
+      subscribers,
       stats,
     });
   } catch (error) {

@@ -24,7 +24,7 @@ interface ToolData {
 export async function generateToolMetadata(slug: string): Promise<Metadata> {
   try {
     // Fetch tool data from API
-    const isDev = process.env.NODE_ENV === "development";
+    const isDev = process.env["NODE_ENV"] === "development";
     const baseUrl = isDev
       ? "http://localhost:3001"
       : process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";

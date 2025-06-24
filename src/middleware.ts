@@ -16,6 +16,11 @@ export default auth((req) => {
   if (pathname === "/sitemap.xml") {
     return NextResponse.next();
   }
+  
+  // Skip Payload CMS admin and API routes completely - they handle their own routing
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
 
   // Handle OAuth routes with CORS
   if (pathname === "/.well-known/oauth-authorization-server" || pathname === "/register") {
@@ -30,11 +35,12 @@ export default auth((req) => {
     return response;
   }
 
-  // Handle admin authentication
-  if (pathname.includes("/admin") && !pathname.includes("/admin/auth")) {
+  
+  // Handle our custom dashboard authentication
+  if (pathname.includes("/dashboard") && !pathname.includes("/dashboard/auth")) {
     if (!req.auth?.user || req.auth.user.email !== "bob@matsuoka.com") {
       const locale = getLocale(req);
-      return NextResponse.redirect(new URL(`/${locale}/admin/auth/signin`, req.url));
+      return NextResponse.redirect(new URL(`/${locale}/dashboard/auth/signin`, req.url));
     }
   }
 

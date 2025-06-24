@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/database";
+import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
 
 // News-enhanced ranking types
@@ -54,24 +54,26 @@ function calculateTier(position: number): string {
 async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
   try {
     // Get all tools
-    const { data: tools, error: toolsError } = await supabase
-      .from("tools")
-      .select("*")
-      .order("name");
+    const toolsResponse = await payloadDirect.getTools({ 
+      limit: 1000, // Get all tools
+      sort: 'name' 
+    });
+    const tools = toolsResponse.docs;
 
-    if (toolsError || !tools) {
-      loggers.ranking.error("Error fetching tools for news rankings", { error: toolsError });
+    if (!tools || tools.length === 0) {
+      loggers.ranking.error("No tools found for news rankings");
       return [];
     }
 
     // Get all news
-    const { data: news, error: newsError } = await supabase
-      .from("news_updates")
-      .select("*")
-      .order("published_at", { ascending: false });
+    const newsResponse = await payloadDirect.getNews({ 
+      limit: 1000, // Get recent news
+      sort: '-published_at' 
+    });
+    const news = newsResponse.docs;
 
-    if (newsError || !news) {
-      loggers.ranking.error("Error fetching news for rankings", { error: newsError });
+    if (!news) {
+      loggers.ranking.error("No news found for rankings");
       return [];
     }
 
@@ -79,22 +81,29 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
 
     for (const tool of tools) {
       // Get news for this tool
-      const toolNews = news.filter(
-        (article) =>
-          article.related_tools?.includes(tool.id) || article.related_tools?.includes(tool.slug)
-      );
+      const toolNews = news.filter((article: any) => {
+        // Check if this tool is in the related_tools
+        if (article.related_tools && Array.isArray(article.related_tools)) {
+          return article.related_tools.some((relatedTool: any) => {
+            // Handle both string IDs and object references
+            const toolRef = typeof relatedTool === 'string' ? relatedTool : relatedTool.id;
+            return toolRef === tool.id || toolRef === tool.slug;
+          });
+        }
+        return false;
+      });
 
       // Filter recent news (last 12 months)
-      const recentNews = toolNews.filter((article) => {
+      const recentNews = toolNews.filter((article: any) => {
         const publishedDate = new Date(article.published_at);
         const daysSince = (Date.now() - publishedDate.getTime()) / (1000 * 60 * 60 * 24);
         return daysSince <= 365;
       });
 
       // Calculate news metrics
-      const fundingNews = recentNews.filter((n) => n.category === "funding");
+      const fundingNews = recentNews.filter((n: any) => n.category === "funding");
       const productNews = recentNews.filter(
-        (n) => n.category === "product-launch" || n.category === "technical-achievement"
+        (n: any) => n.category === "product-launch" || n.category === "technical-achievement"
       );
 
       // Base score from category
@@ -103,7 +112,7 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
       // News impact calculation
       let newsScore = 0;
       if (recentNews.length > 0) {
-        const totalImportance = recentNews.reduce((sum, n) => sum + (n.importance_score || 5), 0);
+        const totalImportance = recentNews.reduce((sum: number, n: any) => sum + ((n.impact_level === 'high' ? 8 : n.impact_level === 'medium' ? 5 : 3)), 0);
         const avgImportance = totalImportance / recentNews.length;
 
         // Calculate volume bonus with logarithmic scale for better distribution
@@ -117,7 +126,7 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
 
         // Apply recency decay
         const avgDaysOld =
-          recentNews.reduce((sum, n) => {
+          recentNews.reduce((sum: number, n: any) => {
             const days = (Date.now() - new Date(n.published_at).getTime()) / (1000 * 60 * 60 * 24);
             return sum + days;
           }, 0) / recentNews.length;
@@ -167,14 +176,17 @@ export async function GET(): Promise<NextResponse> {
       return NextResponse.json({ error: "Failed to fetch rankings" }, { status: 500 });
     }
 
-    // Get tool details
+    // Get tool details - we already have them from the rankings calculation
     const toolIds = rankings.map((r) => r.tool_id);
-    const { data: tools } = await supabase
-      .from("tools")
-      .select("id, name, slug, category, status, website_url, description")
-      .in("id", toolIds);
+    const toolsResponse = await payloadDirect.getTools({
+      limit: 1000,
+      where: {
+        id: { in: toolIds }
+      }
+    });
+    const tools = toolsResponse.docs;
 
-    const toolMap = new Map(tools?.map((t) => [t.id, t]) || []);
+    const toolMap = new Map(tools?.map((t: any) => [t.id, t]) || []);
 
     // Previous rankings (simulated for now - in production, fetch from ranking_cache)
     const previousRankings: Record<string, number> = {
@@ -197,19 +209,19 @@ export async function GET(): Promise<NextResponse> {
     // Format response with news-enhanced data
     const formattedRankings = rankings
       .map((ranking) => {
-        const tool = toolMap.get(ranking.tool_id);
+        const tool = toolMap.get(ranking.tool_id) as any;
         if (!tool) {
           return null;
         }
 
         // Fix tool names
-        let displayName = tool.name;
-        if (tool.id === "claude-artifacts") {
+        let displayName = tool['display_name'] || tool['name'];
+        if (tool['id'] === "claude-artifacts") {
           displayName = "Claude.ai";
         }
 
         // Calculate ranking change
-        const previousRank = previousRankings[tool.id];
+        const previousRank = previousRankings[tool['id']];
         const rankChange = previousRank ? previousRank - ranking.position : null;
 
         // Determine change reason
@@ -228,18 +240,26 @@ export async function GET(): Promise<NextResponse> {
           }
         }
 
+        // Extract description text from rich text if needed
+        let description = '';
+        if (tool['description'] && Array.isArray(tool['description'])) {
+          description = tool['description']
+            .map((block: any) => block.children?.map((child: any) => child.text).join(''))
+            .join('\n');
+        }
+
         return {
           rank: ranking.position,
           previousRank,
           rankChange,
           changeReason,
           tool: {
-            id: tool.id,
+            id: tool['id'],
             name: displayName,
-            category: tool.category,
-            status: tool.status,
-            website_url: tool.website_url,
-            description: tool.description,
+            category: tool['category'],
+            status: tool['status'],
+            website_url: tool['website_url'],
+            description: description,
           },
           total_score: ranking.score,
           scores: {

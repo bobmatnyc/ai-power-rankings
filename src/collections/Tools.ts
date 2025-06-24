@@ -6,6 +6,21 @@ export const Tools: CollectionConfig = {
     useAsTitle: "name",
     defaultColumns: ["name", "company", "category", "status", "current_ranking"],
   },
+  access: {
+    create: ({ req: { user } }) => {
+      // Admins and editors can create tools
+      return user?.['role'] === "admin" || user?.['role'] === "editor";
+    },
+    read: () => true, // All authenticated users can read tools
+    update: ({ req: { user } }) => {
+      // Admins and editors can update tools
+      return user?.['role'] === "admin" || user?.['role'] === "editor";
+    },
+    delete: ({ req: { user } }) => {
+      // Only admins can delete tools
+      return user?.['role'] === "admin";
+    },
+  },
   fields: [
     {
       name: "name",

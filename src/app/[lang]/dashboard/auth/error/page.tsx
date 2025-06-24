@@ -51,7 +51,7 @@ function AuthErrorContent() {
 
           <div className="flex flex-col gap-2">
             <Button asChild>
-              <Link href="/admin/auth/signin">Try Again</Link>
+              <Link href="/dashboard/auth/signin">Try Again</Link>
             </Button>
             <Button variant="outline" asChild>
               <Link href="/">Return Home</Link>
