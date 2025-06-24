@@ -55,7 +55,7 @@ export async function GET(): Promise<NextResponse> {
         if (tools.length === 1) {
           // If only one tool references this company, we can infer the company name
           const tool = tools[0];
-          if (!tool) continue;
+          if (!tool) {continue;}
           
           const toolName = String(tool['name'] || '');
           let inferredCompanyName = toolName;
