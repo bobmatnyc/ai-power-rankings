@@ -8,6 +8,21 @@
     },
     "src/app/api/cron/ingest-articles/route.ts": {
       "maxDuration": 60
+    },
+    "src/app/api/admin/ingest-news/route.ts": {
+      "maxDuration": 300
+    },
+    "src/app/api/admin/preview-rankings/route.ts": {
+      "maxDuration": 300
+    },
+    "src/app/api/admin/generate-rankings/route.ts": {
+      "maxDuration": 300
+    },
+    "src/app/api/admin/remove-data/route.ts": {
+      "maxDuration": 300
+    },
+    "src/app/api/admin/rollback-ingestion/route.ts": {
+      "maxDuration": 180
     }
   },
   "crons": [
