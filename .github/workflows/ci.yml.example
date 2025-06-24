@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-type-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 8
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Run ESLint
+      run: pnpm run lint
+      # ESLint will automatically respect the ignores in eslint.config.mjs
+
+    - name: Run TypeScript check
+      run: pnpm run type-check
+
+    - name: Check formatting
+      run: pnpm run format:check
+
+  build:
+    runs-on: ubuntu-latest
+    needs: lint-and-type-check
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 8
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Build application
+      run: pnpm run build
