@@ -15,7 +15,7 @@ export const SiteSettings: GlobalConfig = {
             {
               name: "algorithm_version",
               type: "text",
-              defaultValue: "v4.0",
+              defaultValue: "v6.0",
               required: true,
               admin: {
                 description: "Current algorithm version",

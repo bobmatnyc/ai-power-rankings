@@ -4,7 +4,19 @@ import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { nodemailerAdapter } from "@payloadcms/email-nodemailer";
 
 // Collections
-import { Companies, Tools, Metrics, Rankings, RankingPeriods, News, NewsIngestionReports, Users, NewsletterSubscribers, ProcessedFiles, IngestionReports } from "./src/collections";
+import {
+  Companies,
+  Tools,
+  Metrics,
+  Rankings,
+  RankingPeriods,
+  News,
+  NewsIngestionReports,
+  Users,
+  NewsletterSubscribers,
+  ProcessedFiles,
+  IngestionReports,
+} from "./src/collections";
 
 // Globals
 import { SiteSettings } from "./src/globals/SiteSettings";
@@ -15,33 +27,33 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env["SUPABASE_DATABASE_URL"] || "",
-      max: 10,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 5000,
+      max: process.env.NODE_ENV === "development" ? 5 : 1, // Higher for dev, 1 for serverless
+      min: process.env.NODE_ENV === "development" ? 1 : 0, // Allow pool to shrink to 0 in production
+      idleTimeoutMillis: 10000, // 10 seconds
+      connectionTimeoutMillis: 30000, // 30 seconds
     },
     schemaName: "payload",
     migrationDir: "./src/migrations",
+    logger: process.env["NODE_ENV"] === "development", // Enable for dev
+    push: false, // Disable automatic schema push in development
   }),
-  email: nodemailerAdapter({
-    defaultFromAddress: process.env["EMAIL_FROM"] || "noreply@localhost",
-    defaultFromName: "AI Power Rankings",
-    transportOptions: process.env.NODE_ENV === "development" ? {
-      // Use SMTP transport stub for development
-      host: "localhost",
-      port: 1025,
-      secure: false,
-      ignoreTLS: true,
-    } : {
-      // Production SMTP settings
-      host: process.env["SMTP_HOST"] || "smtp.gmail.com",
-      port: parseInt(process.env["SMTP_PORT"] || "587"),
-      secure: process.env["SMTP_SECURE"] === "true",
-      auth: {
-        user: process.env["SMTP_USER"],
-        pass: process.env["SMTP_PASS"],
-      },
-    },
-  }),
+  email:
+    process.env.NODE_ENV === "development"
+      ? undefined
+      : nodemailerAdapter({
+          defaultFromAddress: process.env["EMAIL_FROM"] || "noreply@localhost",
+          defaultFromName: "AI Power Rankings",
+          transportOptions: {
+            // Production SMTP settings
+            host: process.env["SMTP_HOST"] || "smtp.gmail.com",
+            port: parseInt(process.env["SMTP_PORT"] || "587"),
+            secure: process.env["SMTP_SECURE"] === "true",
+            auth: {
+              user: process.env["SMTP_USER"],
+              pass: process.env["SMTP_PASS"],
+            },
+          },
+        }),
   admin: {
     user: Users.slug,
     meta: {
@@ -49,7 +61,19 @@ export default buildConfig({
     },
     disable: false,
   },
-  collections: [Users, Companies, Tools, Metrics, Rankings, RankingPeriods, News, NewsIngestionReports, NewsletterSubscribers, ProcessedFiles, IngestionReports],
+  collections: [
+    Users,
+    Companies,
+    Tools,
+    Metrics,
+    Rankings,
+    RankingPeriods,
+    News,
+    NewsIngestionReports,
+    NewsletterSubscribers,
+    ProcessedFiles,
+    IngestionReports,
+  ],
   globals: [SiteSettings],
   typescript: {
     outputFile: "src/types/payload-types.ts",

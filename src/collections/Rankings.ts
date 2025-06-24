@@ -4,8 +4,20 @@ export const Rankings: CollectionConfig = {
   slug: "rankings",
   admin: {
     useAsTitle: "period",
-    defaultColumns: ["period", "tool", "position", "score", "movement"],
+    defaultColumns: ["period", "tool_display", "position", "score", "movement"],
     group: "Rankings",
+    listSearchableFields: ["period", "tool.name"],
+    pagination: {
+      defaultLimit: 25,
+    },
+    defaultSort: "-position",
+  },
+  defaultPopulate: {
+    tool: {
+      name: true,
+      slug: true,
+      category: true,
+    },
   },
   fields: [
     {
@@ -23,6 +35,68 @@ export const Rankings: CollectionConfig = {
       relationTo: "tools",
       required: true,
       index: true,
+      admin: {
+        allowCreate: false,
+      },
+      filterOptions: {
+        status: {
+          equals: "active",
+        },
+      },
+    },
+    {
+      name: "tool_display",
+      type: "text",
+      admin: {
+        readOnly: true,
+        description: "Tool name for display (auto-populated)",
+      },
+      hooks: {
+        beforeChange: [
+          async ({ data, req }) => {
+            if (data?.tool) {
+              try {
+                // Get the tool document to populate the name
+                const toolId = typeof data.tool === "string" ? data.tool : data.tool.id;
+                const tool = await req.payload.findByID({
+                  collection: "tools",
+                  id: toolId,
+                });
+                return tool?.name || "Unknown Tool";
+              } catch (error) {
+                console.error("Error fetching tool name:", error);
+                return "Error Loading Tool";
+              }
+            }
+            return "No Tool Selected";
+          },
+        ],
+        afterRead: [
+          async ({ data, req }) => {
+            if (data?.tool) {
+              try {
+                // Handle both populated and unpopulated tool references
+                if (typeof data.tool === "object" && data.tool.name) {
+                  return data.tool.name;
+                }
+
+                const toolId = typeof data.tool === "string" ? data.tool : data.tool.id;
+                if (toolId) {
+                  const tool = await req.payload.findByID({
+                    collection: "tools",
+                    id: toolId,
+                  });
+                  return tool?.name || "Unknown Tool";
+                }
+              } catch (error) {
+                console.error("Error fetching tool name:", error);
+                return "Error Loading Tool";
+              }
+            }
+            return "No Tool Selected";
+          },
+        ],
+      },
     },
     {
       name: "position",
@@ -123,7 +197,7 @@ export const Rankings: CollectionConfig = {
     {
       name: "algorithm_version",
       type: "text",
-      defaultValue: "v4.0",
+      defaultValue: "v6.0",
       admin: {
         description: "Version of the ranking algorithm used",
       },
