@@ -112,12 +112,12 @@ export function getConnectionStats() {
   };
 }
 
-// Log connection stats periodically in development
-if (process.env.NODE_ENV === "development") {
-  setInterval(() => {
-    const stats = getConnectionStats();
-    if (stats.active > 0 || stats.failed > 0) {
-      loggers.db.info("Connection pool stats", stats);
-    }
-  }, 30000); // Every 30 seconds
-}
+// Log connection stats periodically in development (disabled)
+// if (process.env.NODE_ENV === "development") {
+//   setInterval(() => {
+//     const stats = getConnectionStats();
+//     if (stats.active > 0 || stats.failed > 0) {
+//       loggers.db.info("Connection pool stats", stats);
+//     }
+//   }, 30000); // Every 30 seconds
+// }

@@ -92,6 +92,31 @@ Updated: 2025-06-09
 
 ## ✅ 5. Best Practices
 
+### Package Selection Protocol
+
+1. **Always search for official or well-supported packages first**
+
+   - Check for official packages from the vendor (e.g., `@payloadcms/email-resend` for Resend + Payload)
+   - Look for packages with strong community support (weekly downloads, recent updates, active maintainers)
+   - Verify compatibility with our current stack versions
+   - Check package documentation and examples before implementation
+
+2. **Evaluate packages before custom development**
+
+   - NPM weekly downloads > 1,000 preferred
+   - Last publish date within 6 months
+   - Active issue resolution and maintenance
+   - Compatible license (MIT, Apache 2.0, etc.)
+   - Well-documented API and usage examples
+
+3. **Only build custom solutions when**
+   - No suitable package exists after thorough search
+   - Existing packages don't meet security requirements
+   - Custom requirements are significantly different from available solutions
+   - The team explicitly approves custom development
+
+### General Best Practices
+
 - Use modern, community-validated standards.
 - Prefer mature, well-supported libraries.
 - Explain any deviations from best practices.

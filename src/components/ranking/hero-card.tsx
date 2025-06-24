@@ -44,7 +44,9 @@ export function HeroCard({ ranking, index }: HeroCardProps) {
     >
       {index === 0 && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <Badge className="bg-gradient-primary text-white border-0 shadow-lg">🏆 #1 Ranked</Badge>
+          <Badge className="bg-gradient-primary border-0 shadow-lg text-primary-foreground">
+            🏆 #1 Ranked
+          </Badge>
         </div>
       )}
 

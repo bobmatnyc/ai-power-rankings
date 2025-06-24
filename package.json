@@ -46,7 +46,8 @@
     "fix-deployment": "tsx src/scripts/fix-deployment-errors.ts",
     "sitemap:check": "tsx src/scripts/check-sitemap-and-submit.ts",
     "sitemap:monitor": "tsx src/scripts/monitor-and-submit-sitemap.ts",
-    "sitemap:status": "node src/scripts/check-sitemap-status.js"
+    "sitemap:status": "node src/scripts/check-sitemap-status.js",
+    "check:orphaned-metrics": "tsx src/scripts/check-orphaned-metrics.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
@@ -55,8 +56,10 @@
     "@octokit/rest": "^22.0.0",
     "@payloadcms/db-postgres": "^3.43.0",
     "@payloadcms/email-nodemailer": "^3.43.0",
+    "@payloadcms/email-resend": "^3.43.0",
     "@payloadcms/next": "^3.43.0",
     "@payloadcms/richtext-lexical": "^3.43.0",
+    "@radix-ui/react-checkbox": "^1.3.2",
     "@radix-ui/react-collapsible": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",

@@ -9,21 +9,21 @@ export const Users: CollectionConfig = {
     lockTime: 600 * 1000, // 10 minutes
     strategies: [
       {
-        name: 'nextauth',
+        name: "nextauth",
         authenticate: async ({ payload }: any) => {
           // Dynamically import to avoid circular dependencies
-          const { auth } = await import('@/auth');
-          
+          const { auth } = await import("@/auth");
+
           try {
             const session = await auth();
-            
+
             if (!session?.user?.email) {
               return { user: null };
             }
 
             // Find or create user in Payload
             const users = await payload.find({
-              collection: 'users',
+              collection: "users",
               where: {
                 email: {
                   equals: session.user.email,
@@ -37,20 +37,20 @@ export const Users: CollectionConfig = {
             if (!user) {
               // Create user if doesn't exist
               user = await payload.create({
-                collection: 'users',
+                collection: "users",
                 data: {
                   email: session.user.email,
                   name: session.user.name || session.user.email,
-                  password: 'oauth-user',
-                  role: session.user.email === 'bob@matsuoka.com' ? 'admin' : 'viewer',
-                  authProvider: 'oauth',
+                  password: "oauth-user",
+                  role: session.user.email === "bob@matsuoka.com" ? "admin" : "viewer",
+                  authProvider: "oauth",
                   lastLoginAt: new Date().toISOString(),
                 },
               });
             } else {
               // Update last login
               await payload.update({
-                collection: 'users',
+                collection: "users",
                 id: user.id,
                 data: {
                   lastLoginAt: new Date().toISOString(),
@@ -58,15 +58,15 @@ export const Users: CollectionConfig = {
               });
             }
 
-            return { 
+            return {
               user: {
                 ...user,
-                collection: 'users',
-                _strategy: 'nextauth'
-              }
+                collection: "users",
+                _strategy: "nextauth",
+              },
             };
           } catch (error) {
-            console.error('NextAuth strategy error:', error);
+            console.error("NextAuth strategy error:", error);
             return { user: null };
           }
         },
@@ -80,11 +80,13 @@ export const Users: CollectionConfig = {
   access: {
     create: ({ req: { user } }) => {
       // Only admins can create new users
-      return user?.['role'] === "admin";
+      return user?.["role"] === "admin";
     },
     read: ({ req: { user } }) => {
       // Admins can read all users, others can only read themselves
-      if (user?.['role'] === "admin") return true;
+      if (user?.["role"] === "admin") {
+        return true;
+      }
       return {
         id: {
           equals: user?.id,
@@ -93,7 +95,9 @@ export const Users: CollectionConfig = {
     },
     update: ({ req: { user } }) => {
       // Admins can update all users, others can only update themselves
-      if (user?.['role'] === "admin") return true;
+      if (user?.["role"] === "admin") {
+        return true;
+      }
       return {
         id: {
           equals: user?.id,
@@ -102,7 +106,7 @@ export const Users: CollectionConfig = {
     },
     delete: ({ req: { user } }) => {
       // Only admins can delete users, and they can't delete themselves
-      if (user?.['role'] === "admin") {
+      if (user?.["role"] === "admin") {
         return {
           id: {
             not_equals: user?.id,
@@ -129,7 +133,7 @@ export const Users: CollectionConfig = {
       defaultValue: "viewer",
       required: true,
       access: {
-        update: ({ req: { user } }) => user?.['role'] === "admin",
+        update: ({ req: { user } }) => user?.["role"] === "admin",
       },
     },
     {

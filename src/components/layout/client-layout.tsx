@@ -10,6 +10,7 @@ import { Bell } from "lucide-react";
 import { I18nProvider, useI18n } from "@/i18n/client";
 import { LanguageSelector } from "@/components/layout/language-selector";
 import { Footer } from "@/components/layout/footer";
+import { RankingChangesProvider } from "@/contexts/ranking-changes-context";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -126,7 +127,9 @@ export function ClientLayout({
 }): React.JSX.Element {
   return (
     <I18nProvider dict={dict} lang={lang}>
-      <ClientLayoutContent>{children}</ClientLayoutContent>
+      <RankingChangesProvider>
+        <ClientLayoutContent>{children}</ClientLayoutContent>
+      </RankingChangesProvider>
     </I18nProvider>
   );
 }

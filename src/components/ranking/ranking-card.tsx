@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { RankingChange } from "@/components/ui/ranking-change";
+import { getCategoryColor } from "@/lib/category-colors";
 import Link from "next/link";
 
 interface RankingData {
@@ -11,6 +12,7 @@ interface RankingData {
   changeReason?: string;
   tool: {
     id: string;
+    slug?: string;
     name: string;
     category: string;
     status: string;
@@ -37,18 +39,6 @@ interface RankingCardProps {
 }
 
 export function RankingCard({ ranking, showDetails = true }: RankingCardProps): React.JSX.Element {
-  const getCategoryColor = (category: string): string => {
-    const colors: Record<string, string> = {
-      "code-assistant": "bg-primary/10 text-primary",
-      "ai-editor": "bg-secondary/10 text-secondary",
-      "app-builder": "bg-accent/10 text-accent",
-      "autonomous-agent": "bg-destructive/10 text-destructive",
-      "code-review": "bg-muted text-muted-foreground",
-      "data-analysis": "bg-primary/10 text-primary",
-    };
-    return colors[category] || "bg-muted text-muted-foreground";
-  };
-
   const getMedal = (rank: number): string => {
     switch (rank) {
       case 1:
@@ -63,7 +53,7 @@ export function RankingCard({ ranking, showDetails = true }: RankingCardProps): 
   };
 
   return (
-    <Link href={`/tools/${ranking.tool.id}`} className="block h-full">
+    <Link href={`/tools/${ranking.tool.slug || ranking.tool.id}`} className="block h-full">
       <Card className="group hover:shadow-lg transition-all duration-200 border-border/50 hover:border-primary/20 h-full flex flex-col cursor-pointer">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">

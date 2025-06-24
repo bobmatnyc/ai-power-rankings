@@ -2,6 +2,7 @@ import { ToolsContent } from "./tools-content";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 import { loggers } from "@/lib/logger";
+import { getUrl } from "@/lib/get-url";
 
 interface Tool {
   id: string;
@@ -32,9 +33,7 @@ export default async function ToolsPage({ params }: PageProps): Promise<React.JS
 
   try {
     const isDev = process.env["NODE_ENV"] === "development";
-    const baseUrl = isDev
-      ? "http://localhost:3001"
-      : process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
+    const baseUrl = getUrl();
     const response = await fetch(`${baseUrl}/api/tools`, {
       next: { revalidate: isDev ? 300 : 3600 }, // 5 min in dev, 1 hour in prod
       cache: isDev ? "no-store" : "default",

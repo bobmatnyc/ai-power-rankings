@@ -23,11 +23,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { getCategoryColor } from "@/lib/category-colors";
 
 interface RankingData {
   rank: number;
   tool: {
     id: string;
+    slug?: string;
     name: string;
     category: string;
     status: string;
@@ -99,19 +101,6 @@ function RankingsContentInner(): React.JSX.Element {
     selectedCategory === "all"
       ? rankings
       : rankings.filter((r) => r.tool.category === selectedCategory);
-
-  const getCategoryColor = (category: string): string => {
-    const colors: Record<string, string> = {
-      "autonomous-agent": "bg-purple-500",
-      "code-editor": "bg-blue-500",
-      "ide-assistant": "bg-green-500",
-      "app-builder": "bg-orange-500",
-      "open-source-framework": "bg-cyan-500",
-      "testing-tool": "bg-red-500",
-      "code-review": "bg-yellow-500",
-    };
-    return colors[category] || "bg-gray-500";
-  };
 
   const getStatusBadge = (status: string): React.JSX.Element => {
     const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
@@ -262,7 +251,7 @@ function RankingsContentInner(): React.JSX.Element {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Link
-                          href={`/tools/${ranking.tool.id}`}
+                          href={`/tools/${ranking.tool.slug || ranking.tool.id}`}
                           className="font-semibold hover:underline"
                         >
                           {ranking.tool.name}
@@ -272,7 +261,7 @@ function RankingsContentInner(): React.JSX.Element {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        className={`${getCategoryColor(ranking.tool.category)} text-white cursor-pointer hover:opacity-80`}
+                        className={`${getCategoryColor(ranking.tool.category)} cursor-pointer hover:opacity-80`}
                         onClick={() => setSelectedCategory(ranking.tool.category)}
                       >
                         {ranking.tool.category.replace("-", " ")}

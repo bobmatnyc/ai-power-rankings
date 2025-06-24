@@ -41,12 +41,16 @@ interface NewsItem {
 //   };
 // }
 
-async function findOrCreateTool(payload: any, toolIdentifier: string, newsSource: string): Promise<any> {
+async function findOrCreateTool(
+  payload: any,
+  toolIdentifier: string,
+  newsSource: string
+): Promise<any> {
   // First try to find by slug
   const { docs: toolsBySlug } = await payload.find({
     collection: "tools",
     where: {
-      slug: { equals: toolIdentifier.toLowerCase().replace(/\s+/g, '-') }
+      slug: { equals: toolIdentifier.toLowerCase().replace(/\s+/g, "-") },
     },
     limit: 1,
   });
@@ -59,7 +63,7 @@ async function findOrCreateTool(payload: any, toolIdentifier: string, newsSource
   const { docs: toolsByName } = await payload.find({
     collection: "tools",
     where: {
-      name: { equals: toolIdentifier }
+      name: { equals: toolIdentifier },
     },
     limit: 1,
   });
@@ -70,16 +74,16 @@ async function findOrCreateTool(payload: any, toolIdentifier: string, newsSource
 
   // Create new tool if not found
   loggers.api.info(`Creating new tool: ${toolIdentifier}`);
-  
+
   // Create a basic company for the tool
-  const companyName = toolIdentifier.includes(' ') ? toolIdentifier.split(' ')[0] : toolIdentifier;
-  const companySlug = companyName.toLowerCase().replace(/\s+/g, '-');
-  
+  const companyName = toolIdentifier.includes(" ") ? toolIdentifier.split(" ")[0] : toolIdentifier;
+  const companySlug = companyName.toLowerCase().replace(/\s+/g, "-");
+
   let company;
   const { docs: existingCompanies } = await payload.find({
     collection: "companies",
     where: {
-      slug: { equals: companySlug }
+      slug: { equals: companySlug },
     },
     limit: 1,
   });
@@ -102,7 +106,7 @@ async function findOrCreateTool(payload: any, toolIdentifier: string, newsSource
     collection: "tools",
     data: {
       name: toolIdentifier,
-      slug: toolIdentifier.toLowerCase().replace(/\s+/g, '-'),
+      slug: toolIdentifier.toLowerCase().replace(/\s+/g, "-"),
       display_name: toolIdentifier,
       company: company.id,
       category: "autonomous-agent", // Default category
@@ -112,12 +116,12 @@ async function findOrCreateTool(payload: any, toolIdentifier: string, newsSource
           children: [
             {
               text: `Tool created during news ingestion from ${newsSource}`,
-            }
-          ]
-        }
+            },
+          ],
+        },
       ],
       tagline: toolIdentifier,
-      pricing_model: "unknown",
+      pricing_model: "freemium", // Default to freemium for auto-created tools
       license_type: "proprietary",
     },
   });
@@ -127,41 +131,32 @@ async function findOrCreateTool(payload: any, toolIdentifier: string, newsSource
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
-  
+
   try {
     const payload = await getPayload({ config });
-    
+
     // Parse the multipart form data
     const formData = await request.formData();
-    const file = formData.get('file') as File;
-    const generatePreview = formData.get('generate_preview') === 'true';
-    
+    const file = formData.get("file") as File;
+    const generatePreview = formData.get("generate_preview") === "true";
+
     if (!file) {
-      return NextResponse.json(
-        { error: "No file provided" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    if (!file.name.endsWith('.json')) {
-      return NextResponse.json(
-        { error: "File must be a JSON file" },
-        { status: 400 }
-      );
+    if (!file.name.endsWith(".json")) {
+      return NextResponse.json({ error: "File must be a JSON file" }, { status: 400 });
     }
 
     // Read and parse the JSON file
     const fileContent = await file.text();
     let newsItems: NewsItem[];
-    
+
     try {
       const parsedData = JSON.parse(fileContent);
       newsItems = Array.isArray(parsedData) ? parsedData : [parsedData];
     } catch (error) {
-      return NextResponse.json(
-        { error: "Invalid JSON format" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid JSON format" }, { status: 400 });
     }
 
     // Initialize report
@@ -183,9 +178,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Process each news item
     for (let i = 0; i < newsItems.length; i++) {
       const item = newsItems[i];
-      
-      if (!item) {continue;}
-      
+
+      if (!item) {
+        continue;
+      }
+
       try {
         report.processing_log += `Processing item ${i + 1}: ${item.title}\n`;
 
@@ -193,7 +190,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const { docs: existingNews } = await payload.find({
           collection: "news",
           where: {
-            url: { equals: item.url }
+            url: { equals: item.url },
           },
           limit: 1,
         });
@@ -210,8 +207,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           for (const toolIdentifier of item.related_tools) {
             const tool = await findOrCreateTool(payload, toolIdentifier, item.source);
             relatedToolIds.push(tool.id);
-            
-            if (!report.created_tools.find(t => t.id === tool.id)) {
+
+            if (!report.created_tools.find((t) => t.id === tool.id)) {
               report.created_tools.push({
                 id: tool.id,
                 name: tool.name,
@@ -227,12 +224,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         if (item.primary_tool) {
           const primaryTool = await findOrCreateTool(payload, item.primary_tool, item.source);
           primaryToolId = primaryTool.id;
-          
+
           if (!relatedToolIds.includes(primaryTool.id)) {
             relatedToolIds.push(primaryTool.id);
           }
 
-          if (!report.created_tools.find(t => t.id === primaryTool.id)) {
+          if (!report.created_tools.find((t) => t.id === primaryTool.id)) {
             report.created_tools.push({
               id: primaryTool.id,
               name: primaryTool.name,
@@ -251,7 +248,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           source: item.source,
           author: item.author,
           published_at: new Date(String(item.published_at)).toISOString(),
-          category: item.category || 'industry',
+          category: item.category || "industry",
           importance_score: item.importance_score || 5,
           related_tools: relatedToolIds,
           primary_tool: primaryToolId,
@@ -273,10 +270,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         report.ingested_news_ids.push(createdNews.id);
         report.processed_items++;
         report.processing_log += `  - Created news item ID: ${createdNews.id}\n`;
-
       } catch (error) {
         report.failed_items++;
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
         report.errors.push({
           item_index: i,
           item_title: item.title,
@@ -292,12 +288,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (generatePreview && report.processed_items > 0) {
       try {
         report.processing_log += "Generating ranking preview...\n";
-        
+
         // Get current rankings for comparison
         const { docs: currentRankings } = await payload.find({
           collection: "rankings",
           where: {
-            period: { equals: new Date().toISOString().slice(0, 7) } // Current month
+            period: { equals: new Date().toISOString().slice(0, 7) }, // Current month
           },
           limit: 1000,
           sort: "position",
@@ -306,16 +302,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // TODO: Implement preview ranking calculation
         // This would involve re-running the ranking algorithm with the new data
         // and comparing against current rankings
-        
+
         rankingChangesPreview = {
           message: "Ranking preview calculation not yet implemented",
           current_rankings_count: currentRankings.length,
           potentially_affected_tools: report.created_tools.length,
         };
-        
+
         report.processing_log += "Ranking preview generated\n";
       } catch (error) {
-        report.processing_log += `Ranking preview failed: ${error instanceof Error ? error.message : 'Unknown error'}\n`;
+        report.processing_log += `Ranking preview failed: ${error instanceof Error ? error.message : "Unknown error"}\n`;
       }
     }
 
@@ -326,7 +322,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       collection: "news-ingestion-reports",
       data: {
         filename: file.name,
-        status: report.failed_items > 0 ? 'partial' : 'completed',
+        status: report.failed_items > 0 ? "partial" : "completed",
         total_items: report.total_items,
         processed_items: report.processed_items,
         failed_items: report.failed_items,
@@ -363,11 +359,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         ingestion_report_id: ingestionReport.id,
       },
     });
-
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     loggers.api.error("News ingestion failed:", error);
-    
+
     return NextResponse.json(
       {
         success: false,
