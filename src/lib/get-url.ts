@@ -6,11 +6,12 @@
 export function getUrl(): string {
   // Production URLs
   if (process.env.NODE_ENV === "production") {
-    if (process.env["NEXTAUTH_URL"]) {
-      return process.env["NEXTAUTH_URL"];
-    }
+    // Always prefer VERCEL_URL for preview deployments
     if (process.env["VERCEL_URL"]) {
       return `https://${process.env["VERCEL_URL"]}`;
+    }
+    if (process.env["NEXTAUTH_URL"]) {
+      return process.env["NEXTAUTH_URL"];
     }
     return "https://aipowerrankings.com";
   }
@@ -46,6 +47,11 @@ export function getApiUrl(): string {
  * Get the auth URL for NextAuth
  */
 export function getAuthUrl(): string {
+  // For Vercel preview deployments, always use the preview URL
+  if (process.env["VERCEL_URL"]) {
+    return `https://${process.env["VERCEL_URL"]}`;
+  }
+
   // If explicitly set, use it
   if (process.env["NEXTAUTH_URL"]) {
     return process.env["NEXTAUTH_URL"];
