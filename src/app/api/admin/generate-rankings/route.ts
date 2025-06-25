@@ -59,16 +59,17 @@ interface PayloadMetric {
 
 function transformToToolMetrics(tool: PayloadTool, metrics: PayloadMetric[]): ToolMetricsV6 {
   // Filter metrics for this tool
-  const toolMetrics = metrics.filter(m => m.tool === tool.id);
-  
+  const toolMetrics = metrics.filter((m) => m.tool === tool.id);
+
   // Create a metrics map for easy lookup
   const metricsMap = new Map<string, any>();
-  toolMetrics.forEach(metric => {
-    const value = metric.value_integer ?? 
-                  metric.value_decimal ?? 
-                  metric.value_text ?? 
-                  metric.value_boolean ?? 
-                  metric.value_json;
+  toolMetrics.forEach((metric) => {
+    const value =
+      metric.value_integer ??
+      metric.value_decimal ??
+      metric.value_text ??
+      metric.value_boolean ??
+      metric.value_json;
     metricsMap.set(metric.metric_key, value);
   });
 
@@ -81,7 +82,7 @@ function transformToToolMetrics(tool: PayloadTool, metrics: PayloadMetric[]): To
   return {
     tool_id: tool.id,
     status: tool.status,
-    
+
     // Agentic capabilities
     agentic_capability: metricsMap.get("agentic_capability") || 5,
     swe_bench_score: businessMetrics?.swe_bench_score || metricsMap.get("swe_bench_score") || 0,
@@ -111,7 +112,8 @@ function transformToToolMetrics(tool: PayloadTool, metrics: PayloadMetric[]): To
 
     // Development metrics
     release_frequency: metricsMap.get("release_frequency") || 5,
-    github_contributors: businessMetrics?.github_contributors || metricsMap.get("github_contributors") || 0,
+    github_contributors:
+      businessMetrics?.github_contributors || metricsMap.get("github_contributors") || 0,
 
     // Platform metrics
     llm_provider_count: metricsMap.get("llm_provider_count") || 1,
@@ -154,7 +156,7 @@ export async function POST() {
         const score = rankingEngine.calculateToolScore(toolMetrics);
         scores.push(score);
       } catch (error) {
-        logger.error(`Error calculating score for tool ${tool['name']}:`, error);
+        logger.error(`Error calculating score for tool ${tool["name"]}:`, error);
       }
     }
 
@@ -187,8 +189,8 @@ export async function POST() {
       if (!score) {
         continue;
       }
-      const tool = tools.find(t => t.id === score.toolId);
-      
+      const tool = tools.find((t) => t.id === score.toolId);
+
       if (!tool) {
         continue;
       }
@@ -198,22 +200,24 @@ export async function POST() {
         period: rankingPeriod,
         position: i + 1,
         score: Math.round(score.overallScore * 100) / 100, // Round to 2 decimal places
-        
+
         // Factor scores
         agentic_capability: Math.round((score.factorScores?.agenticCapability || 0) * 100) / 100,
         innovation: Math.round((score.factorScores?.innovation || 0) * 100) / 100,
-        technical_performance: Math.round((score.factorScores?.technicalPerformance || 0) * 100) / 100,
+        technical_performance:
+          Math.round((score.factorScores?.technicalPerformance || 0) * 100) / 100,
         developer_adoption: Math.round((score.factorScores?.developerAdoption || 0) * 100) / 100,
         market_traction: Math.round((score.factorScores?.marketTraction || 0) * 100) / 100,
         business_sentiment: Math.round((score.factorScores?.businessSentiment || 0) * 100) / 100,
-        development_velocity: Math.round((score.factorScores?.developmentVelocity || 0) * 100) / 100,
+        development_velocity:
+          Math.round((score.factorScores?.developmentVelocity || 0) * 100) / 100,
         platform_resilience: Math.round((score.factorScores?.platformResilience || 0) * 100) / 100,
-        
+
         // Modifiers
         innovation_decay_modifier: Math.round((score.modifiers?.innovationDecay || 0) * 100) / 100,
         platform_risk_modifier: Math.round((score.modifiers?.platformRisk || 0) * 100) / 100,
         revenue_quality_modifier: Math.round((score.modifiers?.revenueQuality || 0) * 100) / 100,
-        
+
         // Metadata
         algorithm_version: "v6.0",
         confidence_score: score.validationStatus?.confidence || 0,
@@ -228,13 +232,15 @@ export async function POST() {
 
       createdRankings.push({
         position: i + 1,
-        tool_name: tool['name'],
+        tool_name: tool["name"],
         score: score.overallScore,
         id: created.id,
       });
     }
 
-    logger.info(`Successfully generated rankings for ${scores.length} tools in period ${rankingPeriod}`);
+    logger.info(
+      `Successfully generated rankings for ${scores.length} tools in period ${rankingPeriod}`
+    );
 
     return NextResponse.json({
       success: true,
@@ -242,8 +248,8 @@ export async function POST() {
       period: rankingPeriod,
       top_10: createdRankings.slice(0, 10),
       total_tools: scores.length,
+      tools_ranked: scores.length, // Add this for frontend compatibility
     });
-
   } catch (error) {
     logger.error("Error generating rankings:", error);
     return NextResponse.json(
