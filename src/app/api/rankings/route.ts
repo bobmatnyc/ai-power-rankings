@@ -184,14 +184,21 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
 
 export async function GET(): Promise<NextResponse> {
   try {
+    // Debug logging for preview environment
+    if (process.env.VERCEL_ENV === "preview") {
+      console.log("Preview environment detected");
+      console.log("Has DB URL:", !!process.env.SUPABASE_DATABASE_URL);
+      console.log("DB URL prefix:", process.env.SUPABASE_DATABASE_URL?.substring(0, 50));
+    }
+
     // Get news-enhanced rankings using the v6-news algorithm
     const rankings = await getNewsEnhancedRankings();
 
     if (!rankings || rankings.length === 0) {
       loggers.ranking.error("No news-enhanced rankings available");
       // Return empty rankings instead of error to prevent client issues
-      return NextResponse.json({ 
-        rankings: [], 
+      return NextResponse.json({
+        rankings: [],
         algorithm: {
           version: "v6-news",
           name: "News-Enhanced Rankings",
