@@ -85,6 +85,11 @@ export interface QueryParams {
 export const payloadDirect = {
   async getTools(params?: QueryParams) {
     try {
+      // Debug logging for preview environment
+      if (process.env.VERCEL_ENV === "preview") {
+        console.log("payloadDirect.getTools called in preview environment");
+      }
+
       const payload = await getPayloadClient();
       const result = await payload.find({
         collection: "tools",
@@ -93,6 +98,15 @@ export const payloadDirect = {
         where: params?.where || {},
         sort: params?.sort,
       });
+
+      // Debug logging for preview environment
+      if (process.env.VERCEL_ENV === "preview") {
+        console.log("payloadDirect.getTools result:", {
+          hasResult: !!result,
+          docsCount: result?.docs?.length || 0,
+        });
+      }
+
       return (
         result || {
           docs: [],
@@ -109,6 +123,10 @@ export const payloadDirect = {
       );
     } catch (error) {
       loggers.db.error("Failed to fetch tools", { error, params });
+      // Debug logging for preview environment
+      if (process.env.VERCEL_ENV === "preview") {
+        console.error("payloadDirect.getTools error:", error);
+      }
       return {
         docs: [],
         totalDocs: 0,
