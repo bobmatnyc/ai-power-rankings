@@ -32,7 +32,7 @@ export function AboutContent({ lang, dict }: AboutContentProps): React.JSX.Eleme
   }, [searchParams]);
 
   return (
-    <div className="container mx-auto p-8 max-w-4xl">
+    <div className="container mx-auto p-4 md:p-8 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">{dict.about.title}</h1>

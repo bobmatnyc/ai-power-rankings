@@ -12,7 +12,7 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
   const { lang } = await params;
   const dict = await getDictionary(lang);
   return (
-    <div className="container mx-auto p-8 max-w-4xl">
+    <div className="container mx-auto p-4 md:p-8 max-w-7xl">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">{dict.methodology.title}</h1>
         <p className="text-muted-foreground text-lg">{dict.methodology.subtitle}</p>
