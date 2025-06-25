@@ -14,8 +14,9 @@ interface PageProps {
   params: Promise<{ lang: Locale }>;
 }
 
-// Use static generation with revalidation
-export const revalidate = 3600; // Revalidate every hour
+// Use dynamic rendering with optimized queries
+export const dynamic = "force-dynamic";
+// Consider ISR in the future: export const revalidate = 300;
 
 export default async function Home({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang } = await params;
@@ -27,32 +28,34 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
   let loading = false;
 
   try {
-    // During build, skip API calls to avoid database connectivity issues
-    if (process.env["NEXT_PHASE"] === "phase-production-build") {
-      loggers.api.info("Skipping API calls during build phase");
-      loading = true; // Show loading state during build
-    } else {
-      const isDev = process.env["NODE_ENV"] === "development";
-      const baseUrl = getUrl();
-      const timestamp = Date.now();
-      const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
-      const response = await fetch(url, {
-        next: { revalidate: isDev ? 0 : 300 }, // No cache in dev, 5 minutes in prod
-        cache: isDev ? "no-store" : "default", // No cache in development
-      });
-      const data = await response.json();
-      const rankings = data.rankings;
+    const isDev = process.env["NODE_ENV"] === "development";
+    const baseUrl = getUrl();
+    const timestamp = Date.now();
+    const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
+    
+    const response = await fetch(url, {
+      next: { revalidate: isDev ? 0 : 300 }, // No cache in dev, 5 minutes in prod
+      cache: isDev ? "no-store" : "default", // No cache in development
+      // Add timeout to prevent hanging
+      signal: AbortSignal.timeout(10000), // 10 second timeout
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch rankings: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    const rankings = data.rankings || [];
 
-      if (rankings && rankings.length > 0) {
-        topRankings = rankings.slice(0, 3);
-        // For now, simulate trending as the next 3 tools
-        trendingTools = rankings.slice(3, 6);
-        // And recently updated as the next 4
-        recentlyUpdated = rankings.slice(6, 10);
-      } else {
-        loggers.api.warn("No rankings data received", { data });
-        loading = true;
-      }
+    if (rankings && rankings.length > 0) {
+      topRankings = rankings.slice(0, 3);
+      // For now, simulate trending as the next 3 tools
+      trendingTools = rankings.slice(3, 6);
+      // And recently updated as the next 4
+      recentlyUpdated = rankings.slice(6, 10);
+    } else {
+      loggers.api.warn("No rankings data received", { data });
+      loading = true;
     }
   } catch (error) {
     loggers.api.error("Failed to fetch rankings", { error });
