@@ -14,7 +14,7 @@ export async function GET() {
 
     // Get rankings count for each period
     const periodData = await Promise.all(
-      periods.docs.map(async (period) => {
+      periods.docs.map(async (period: any) => {
         const rankings = await payload.find({
           collection: "rankings",
           where: {
