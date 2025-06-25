@@ -107,51 +107,51 @@
       "monthlyUpdates": "每月更新"
     },
     "trending": {
-      "title": "[TRANSLATE] Trending This Week",
-      "subtitle": "[TRANSLATE] AI tools gaining momentum and climbing the rankings",
-      "description": "[TRANSLATE] AI tools gaining momentum and climbing the rankings",
-      "viewAll": "[TRANSLATE] View All Trending",
-      "viewAllButton": "[TRANSLATE] View All Trending",
+      "title": "本周热门",
+      "subtitle": "正在获得关注并在排名中攀升的AI工具",
+      "description": "正在获得关注并在排名中攀升的AI工具",
+      "viewAll": "查看所有热门",
+      "viewAllButton": "查看所有热门",
       "weeklyRise": "周涨幅",
       "monthlyRise": "月涨幅",
       "newEntries": "新上榜",
       "fastRising": "快速上升"
     },
     "recentlyUpdated": {
-      "title": "[TRANSLATE] Recently Updated",
-      "subtitle": "[TRANSLATE] Latest updates and new features from top AI tools",
-      "description": "[TRANSLATE] Latest updates and new features from top AI tools",
-      "viewAll": "[TRANSLATE] View All Rankings",
-      "viewAllButton": "[TRANSLATE] View All Rankings"
+      "title": "最近更新",
+      "subtitle": "顶级AI工具的最新更新和新功能",
+      "description": "顶级AI工具的最新更新和新功能",
+      "viewAll": "查看所有排名",
+      "viewAllButton": "查看所有排名"
     },
     "recent": {
-      "title": "[TRANSLATE] Recent Updates",
-      "description": "[TRANSLATE] Latest developments and feature releases from top AI tools",
-      "viewAllButton": "[TRANSLATE] View All Recent",
+      "title": "最新动态",
+      "description": "顶级AI工具的最新开发和功能发布",
+      "viewAllButton": "查看所有最新",
       "subtitle": "最新消息和更新",
       "viewAll": "查看全部"
     },
     "categories": {
-      "title": "[TRANSLATE] Explore by Category",
-      "explore": "[TRANSLATE] Explore →",
+      "title": "按分类探索",
+      "explore": "探索 →",
       "ideAssistants": {
-        "name": "[TRANSLATE] IDE Assistants",
-        "description": "[TRANSLATE] AI-powered code completion and suggestions"
+        "name": "IDE助手",
+        "description": "AI驱动的代码补全和建议"
       },
       "aiEditors": {
-        "name": "[TRANSLATE] AI Editors",
-        "description": "[TRANSLATE] Smart editors with AI integration"
+        "name": "AI编辑器",
+        "description": "集成AI的智能编辑器"
       },
       "appBuilders": {
-        "name": "[TRANSLATE] App Builders",
-        "description": "[TRANSLATE] Build complete applications with AI assistance"
+        "name": "应用构建器",
+        "description": "在AI协助下构建完整应用"
       },
       "autonomousAgents": {
-        "name": "[TRANSLATE] Autonomous Agents",
-        "description": "[TRANSLATE] Fully autonomous AI software engineers"
+        "name": "自主代理",
+        "description": "完全自主的AI软件工程师"
       },
-      "ideDescription": "[TRANSLATE] AI-powered code completion and suggestions",
-      "editorDescription": "[TRANSLATE] Smart editors with AI integration",
+      "ideDescription": "AI驱动的代码补全和建议",
+      "editorDescription": "集成AI的智能编辑器",
       "builderDescription": "[TRANSLATE] Build complete applications with AI assistance",
       "agentDescription": "[TRANSLATE] Fully autonomous AI software engineers",
       "testingTools": {
@@ -456,25 +456,25 @@
       "category": "分类"
     },
     "algorithm": {
-      "title": "[TRANSLATE] About Algorithm v6.0",
-      "subtitle": "[TRANSLATE] Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
+      "title": "关于算法 v6.0",
+      "subtitle": "增强的排名系统，具有创新衰减、平台风险修正器和收入质量调整",
       "tabs": {
-        "factors": "[TRANSLATE] Scoring Factors",
-        "modifiers": "[TRANSLATE] Modifiers",
-        "methodology": "[TRANSLATE] Methodology"
+        "factors": "评分因素",
+        "modifiers": "修正器",
+        "methodology": "方法论"
       },
-      "primaryFactors": "[TRANSLATE] Primary Factors (67.5%)",
-      "secondaryFactors": "[TRANSLATE] Secondary Factors (32.5%)",
-      "description": "[TRANSLATE] Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
+      "primaryFactors": "主要因素 (67.5%)",
+      "secondaryFactors": "次要因素 (32.5%)",
+      "description": "我们的排名算法结合定量指标和定性评估，为AI编码工具提供全面视角。我们基于新数据每周更新排名，并持续改进我们的方法论。",
       "factors": {
-        "agentic": "[TRANSLATE] Agentic Capability",
-        "innovation": "[TRANSLATE] Innovation",
-        "performance": "[TRANSLATE] Performance",
-        "adoption": "[TRANSLATE] Adoption",
-        "traction": "[TRANSLATE] Traction",
-        "sentiment": "[TRANSLATE] Sentiment",
-        "velocity": "[TRANSLATE] Velocity",
-        "resilience": "[TRANSLATE] Resilience"
+        "agentic": "代理能力",
+        "innovation": "创新",
+        "performance": "性能",
+        "adoption": "采用率",
+        "traction": "市场牵引力",
+        "sentiment": "情感分析",
+        "velocity": "发展速度",
+        "resilience": "弹性"
       },
       "modifiers": {
         "decay": "[TRANSLATE] Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
@@ -566,31 +566,31 @@
     }
   },
   "news": {
-    "title": "[TRANSLATE] AI Tools News",
-    "subtitle": "[TRANSLATE] Latest updates, milestones, and announcements from AI coding tools",
+    "title": "AI工具新闻",
+    "subtitle": "AI编码工具的最新更新、里程碑和公告",
     "filters": {
-      "all": "[TRANSLATE] All News",
-      "milestone": "[TRANSLATE] Milestone",
-      "feature": "[TRANSLATE] Feature",
-      "partnership": "[TRANSLATE] Partnership",
-      "update": "[TRANSLATE] Update",
-      "announcement": "[TRANSLATE] Announcement"
+      "all": "所有新闻",
+      "milestone": "里程碑",
+      "feature": "新功能",
+      "partnership": "合作伙伴",
+      "update": "更新",
+      "announcement": "公告"
     },
-    "noItems": "[TRANSLATE] No news items found.",
-    "loadingMore": "[TRANSLATE] Loading more news...",
-    "noMore": "[TRANSLATE] No more news to load",
-    "viewTool": "[TRANSLATE] View Tool",
+    "noItems": "未找到新闻项目。",
+    "loadingMore": "加载更多新闻...",
+    "noMore": "没有更多新闻加载",
+    "viewTool": "查看工具",
     "metrics": {
-      "users": "[TRANSLATE] users",
-      "score": "[TRANSLATE] score",
-      "rank": "[TRANSLATE] rank"
+      "users": "用户",
+      "score": "分数",
+      "rank": "排名"
     },
     "time": {
-      "justNow": "[TRANSLATE] Just now",
-      "hourAgo": "[TRANSLATE] 1 hour ago",
-      "hoursAgo": "[TRANSLATE] {count} hours ago",
-      "dayAgo": "[TRANSLATE] 1 day ago",
-      "daysAgo": "[TRANSLATE] {count} days ago"
+      "justNow": "刚刚",
+      "hourAgo": "1小时前",
+      "hoursAgo": "{count}小时前",
+      "dayAgo": "1天前",
+      "daysAgo": "{count}天前"
     },
     "readMore": "阅读更多",
     "publishedOn": "发布于",
@@ -623,18 +623,18 @@
     }
   },
   "tools": {
-    "title": "[TRANSLATE] AI Coding Tools",
-    "subtitle": "[TRANSLATE] Explore all {count} AI coding tools in our database",
-    "allCategories": "[TRANSLATE] All Categories",
-    "filterByCategory": "[TRANSLATE] Filter by category",
-    "sortBy": "[TRANSLATE] Sort by",
-    "defaultDescription": "[TRANSLATE] Discover and compare AI coding tools",
-    "notFound": "[TRANSLATE] Tool not found",
-    "backToTools": "[TRANSLATE] Back to Tools",
+    "title": "AI编码工具",
+    "subtitle": "探索我们数据库中的所有 {count} 个AI编码工具",
+    "allCategories": "所有分类",
+    "filterByCategory": "按分类筛选",
+    "sortBy": "排序方式",
+    "defaultDescription": "发现并比较AI编码工具",
+    "notFound": "未找到工具",
+    "backToTools": "返回工具",
     "sort": {
-      "name": "[TRANSLATE] Name",
-      "category": "[TRANSLATE] Category",
-      "status": "[TRANSLATE] Status",
+      "name": "名称",
+      "category": "分类",
+      "status": "状态",
       "rank": "排名",
       "score": "评分"
     },
