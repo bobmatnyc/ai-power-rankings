@@ -343,31 +343,31 @@
   },
   "newsletter": {
     "form": {
-      "firstName": "First name",
-      "lastName": "Last name",
+      "firstName": "Nome",
+      "lastName": "Cognome",
       "email": "Email",
-      "subscribe": "Subscribe",
-      "subscribing": "Subscribing...",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time."
+      "subscribe": "Iscriviti",
+      "subscribing": "Iscrizione in corso...",
+      "privacyNote": "Rispettiamo la tua privacy. Disiscriviti in qualsiasi momento."
     },
     "modal": {
-      "title": "Stay Updated",
-      "subtitle": "Get weekly updates on AI tool rankings, new features, and industry insights.",
-      "firstName": "First name",
-      "lastName": "Last name",
+      "title": "Rimani aggiornato",
+      "subtitle": "Ricevi aggiornamenti settimanali sulle classifiche degli strumenti IA, nuove funzionalità e approfondimenti del settore.",
+      "firstName": "Nome",
+      "lastName": "Cognome",
       "email": "Email",
-      "subscribe": "Subscribe",
-      "subscribing": "Subscribing...",
-      "thankYou": "Thank you!",
-      "checkEmail": "Please check your email to verify your subscription",
-      "alreadySubscribed": "You are already subscribed to our newsletter!",
-      "resentEmail": "We've resent the verification email. Please check your inbox.",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
+      "subscribe": "Iscriviti",
+      "subscribing": "Iscrizione in corso...",
+      "thankYou": "Grazie!",
+      "checkEmail": "Controlla la tua email per verificare l'iscrizione",
+      "alreadySubscribed": "Sei già iscritto alla nostra newsletter!",
+      "resentEmail": "Abbiamo rinviato l'email di verifica. Controlla la tua casella di posta.",
+      "privacyNote": "Rispettiamo la tua privacy. Disiscriviti in qualsiasi momento.",
       "errors": {
-        "captcha": "Please complete the security check",
-        "failed": "Failed to subscribe. Please try again.",
-        "server": "Server configuration error",
-        "email": "Email service configuration error"
+        "captcha": "Completa il controllo di sicurezza",
+        "failed": "Iscrizione fallita. Riprova.",
+        "server": "Errore di configurazione del server",
+        "email": "Errore di configurazione del servizio email"
       }
     },
     "verification": {

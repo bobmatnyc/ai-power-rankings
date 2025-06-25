@@ -1,0 +1,764 @@
+{
+  "categories": {
+    "autonomousagent": "[TRANSLATE] Autonomer Agent",
+    "codeeditor": "[TRANSLATE] Code-Editor",
+    "ideassistant": "[TRANSLATE] IDE-Assistent",
+    "appbuilder": "[TRANSLATE] App-Builder",
+    "opensourceframework": "[TRANSLATE] Open-Source-Framework",
+    "testingtool": "[TRANSLATE] Testing-Tool",
+    "codereview": "[TRANSLATE] Code-Review",
+    "codeassistant": "[TRANSLATE] Code-Assistent",
+    "autonomousAgent": "[TRANSLATE] Autonomer Agent",
+    "codeEditor": "[TRANSLATE] Code-Editor",
+    "ideAssistant": "[TRANSLATE] IDE-Assistent",
+    "appBuilder": "[TRANSLATE] App-Builder",
+    "codeReview": "[TRANSLATE] Code-Review",
+    "codeAssistant": "[TRANSLATE] Code-Assistent"
+  },
+  "common": {
+    "appName": "[TRANSLATE] KI Power Rankings",
+    "appDescription": "[TRANSLATE] Datenbasierte Rankings von KI-Coding-Tools",
+    "loading": "Lädt...",
+    "error": "[TRANSLATE] Error",
+    "tryAgain": "[TRANSLATE] Retry",
+    "backToHome": "[TRANSLATE] Back to Home",
+    "learnMore": "[TRANSLATE] Mehr Infos",
+    "viewAll": "[TRANSLATE] Alle anzeigen",
+    "close": "Schließen",
+    "cancel": "[TRANSLATE] Cancel",
+    "save": "[TRANSLATE] Save",
+    "search": "[TRANSLATE] Suchen",
+    "filter": "[TRANSLATE] Filtern",
+    "sort": "[TRANSLATE] Sortieren",
+    "share": "[TRANSLATE] Teilen",
+    "explore": "[TRANSLATE] Entdecken",
+    "notAvailable": "Nicht verfügbar",
+    "users": "[TRANSLATE] User"
+  },
+  "navigation": {
+    "home": "[TRANSLATE] Home",
+    "rankings": "[TRANSLATE] Rankings",
+    "news": "[TRANSLATE] News",
+    "tools": "[TRANSLATE] Tools",
+    "methodology": "[TRANSLATE] Methodik",
+    "about": "[TRANSLATE] About",
+    "subscribeToUpdates": "[TRANSLATE] Updates abonnieren",
+    "navigation": "[TRANSLATE] Navigation",
+    "quickLinks": "[TRANSLATE] Quick Links",
+    "trending": "[TRANSLATE] Trending",
+    "categories": "[TRANSLATE] Kategorien",
+    "features": "[TRANSLATE] Features",
+    "clearFilters": "Filter löschen",
+    "allCategories": "[TRANSLATE] Alle Kategorien"
+  },
+  "home": {
+    "hero": {
+      "badge": "Wöchentlich aktualisiert",
+      "title": "[TRANSLATE] KI Power Rankings",
+      "subtitle": "Entdecke und vergleiche die mächtigsten KI-Coding-Tools. Von autonomen Agenten bis hin zu IDE-Assistenten – finde den perfekten KI-Companion für deinen Dev-Workflow.",
+      "description": "Entdecke und vergleiche die mächtigsten KI-Coding-Tools. Von autonomen Agenten bis hin zu IDE-Assistenten – finde den perfekten KI-Companion für deinen Dev-Workflow.",
+      "exploreTools": "[TRANSLATE] Alle Tools entdecken",
+      "viewTrending": "[TRANSLATE] Trending anzeigen",
+      "exploreButton": "[TRANSLATE] Alle Tools entdecken",
+      "trendingButton": "[TRANSLATE] Trending anzeigen",
+      "whatsNewButton": "[TRANSLATE] Was ist neu?"
+    },
+    "stats": {
+      "toolsRanked": "[TRANSLATE] KI-Tools gerankt",
+      "trendingUp": "[TRANSLATE] Trending Up",
+      "updates": "[TRANSLATE] Updates",
+      "freeAccess": "[TRANSLATE] Free Access",
+      "updateFrequency": "Wöchentliche Updates"
+    },
+    "trending": {
+      "title": "[TRANSLATE] Diese Woche im Trend",
+      "subtitle": "[TRANSLATE] KI-Tools mit Momentum, die in den Rankings aufsteigen",
+      "description": "[TRANSLATE] KI-Tools mit Momentum, die in den Rankings aufsteigen",
+      "viewAll": "[TRANSLATE] Alle Trending anzeigen",
+      "viewAllButton": "[TRANSLATE] Alle Trending anzeigen"
+    },
+    "recentlyUpdated": {
+      "title": "Kürzlich aktualisiert",
+      "subtitle": "[TRANSLATE] Neueste Updates und Features von Top-KI-Tools",
+      "description": "[TRANSLATE] Neueste Updates und Features von Top-KI-Tools",
+      "viewAll": "[TRANSLATE] Alle Rankings anzeigen",
+      "viewAllButton": "[TRANSLATE] Alle Rankings anzeigen"
+    },
+    "categories": {
+      "title": "[TRANSLATE] Nach Kategorie erkunden",
+      "explore": "[TRANSLATE] Erkunden →",
+      "ideAssistants": {
+        "name": "[TRANSLATE] IDE-Assistenten",
+        "description": "KI-gestützte Code-Completion und Vorschläge"
+      },
+      "aiEditors": {
+        "name": "[TRANSLATE] KI-Editoren",
+        "description": "[TRANSLATE] Smart Editoren mit KI-Integration"
+      },
+      "appBuilders": {
+        "name": "[TRANSLATE] App-Builder",
+        "description": "Erstelle komplette Apps mit KI-Unterstützung"
+      },
+      "autonomousAgents": {
+        "name": "[TRANSLATE] Autonome Agenten",
+        "description": "Vollständig autonome KI-Software-Engineers"
+      },
+      "ideDescription": "KI-gestützte Code-Completion und Suggestions",
+      "editorDescription": "[TRANSLATE] Smart Editoren mit KI-Integration",
+      "builderDescription": "Erstelle komplette Apps mit KI-Unterstützung",
+      "agentDescription": "Vollständig autonome KI-Software-Engineers"
+    },
+    "methodology": {
+      "title": "[TRANSLATE] Our Methodology",
+      "algorithmTitle": "[TRANSLATE] Algorithmus v6.0",
+      "algorithmDescription": "Unser fortgeschrittener Ranking-Algorithmus berücksichtigt 8 Schlüsselfaktoren mit sophistizierten Modifikatoren:",
+      "keyModifiersTitle": "[TRANSLATE] Key Modifiers",
+      "keyModifiersDescription": "Drei sophistizierte Modifikatoren gewährleisten faire und präzise Rankings:",
+      "factors": {
+        "agenticCapability": "[TRANSLATE] Agentic Capability (30%) - Autonomous coding abilities",
+        "innovation": {
+          "name": "[TRANSLATE] Innovation",
+          "description": "[TRANSLATE] Technical breakthroughs and feature innovation"
+        },
+        "technicalPerformance": "[TRANSLATE] Technical Performance (12.5%) - SWE-bench focus",
+        "marketTraction": "[TRANSLATE] Market Traction (12.5%) - Revenue quality adjusted",
+        "agentic": {
+          "name": "[TRANSLATE] Agentic Capability",
+          "description": "[TRANSLATE] Autonomous coding abilities and multi-step task completion"
+        },
+        "performance": {
+          "name": "[TRANSLATE] Technical Performance",
+          "description": "[TRANSLATE] Code quality, speed, and benchmark results"
+        },
+        "traction": {
+          "name": "[TRANSLATE] Market Traction",
+          "description": "[TRANSLATE] User adoption, growth rate, and market presence"
+        }
+      },
+      "modifiers": {
+        "innovationDecay": "[TRANSLATE] Innovation Decay - Recent innovations score higher",
+        "platformRisk": "[TRANSLATE] Platform Risk - Independence bonuses, lock-in penalties",
+        "revenueQuality": "[TRANSLATE] Revenue Quality - Enterprise revenue weighted higher",
+        "dataValidation": "[TRANSLATE] Data Validation - 80% completeness required",
+        "decay": {
+          "name": "[TRANSLATE] Innovation Decay",
+          "description": "[TRANSLATE] Recent innovations weighted more heavily"
+        },
+        "risk": {
+          "name": "[TRANSLATE] Platform Risk",
+          "description": "[TRANSLATE] Independence vs. platform lock-in factors"
+        },
+        "revenue": {
+          "name": "[TRANSLATE] Revenue Quality",
+          "description": "[TRANSLATE] Enterprise revenue weighted higher than consumer"
+        },
+        "validation": {
+          "name": "[TRANSLATE] Data Validation",
+          "description": "[TRANSLATE] Minimum 80% data completeness required"
+        }
+      },
+      "modifiersTitle": "[TRANSLATE] Dynamic Modifiers",
+      "modifiersDescription": "[TRANSLATE] Three sophisticated modifiers ensure fair and accurate rankings",
+      "readFull": "Vollständige Methodik lesen",
+      "readMoreButton": "Vollständige Methodik lesen"
+    },
+    "footer": {
+      "tagline": "[TRANSLATE] Data-driven insights for the AI revolution",
+      "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+      "quickLinks": "[TRANSLATE] Quick Links",
+      "categories": "[TRANSLATE] Categories",
+      "copyright": "[TRANSLATE] © 2025 AI Power Rankings. All rights reserved."
+    },
+    "recent": {
+      "title": "[TRANSLATE] Frisch released"
+    }
+  },
+  "rankings": {
+    "title": "[TRANSLATE] KI Power Rankings",
+    "subtitle": "[TRANSLATE] Umfassende Rankings von KI-Coding-Tools mit Algorithmus v6.0",
+    "stats": {
+      "totalTools": "[TRANSLATE] Total Tools",
+      "categories": "[TRANSLATE] Kategorien",
+      "avgScore": "[TRANSLATE] Avg Score",
+      "lastUpdate": "[TRANSLATE] Last Update",
+      "thisWeek": "[TRANSLATE] Diese Woche"
+    },
+    "sortBy": "[TRANSLATE] Sortieren nach",
+    "activeFilters": "[TRANSLATE] Aktive Filter",
+    "sort": {
+      "rank": "[TRANSLATE] Rank",
+      "trending": "[TRANSLATE] Trending",
+      "score": "[TRANSLATE] Score",
+      "name": "[TRANSLATE] Name"
+    },
+    "algorithm": {
+      "title": "[TRANSLATE] About Algorithm v6.0",
+      "subtitle": "[TRANSLATE] Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
+      "tabs": {
+        "factors": "[TRANSLATE] Scoring Factors",
+        "modifiers": "[TRANSLATE] Modifiers",
+        "methodology": "[TRANSLATE] Methodology"
+      },
+      "primaryFactors": "[TRANSLATE] Primary Factors (67.5%)",
+      "secondaryFactors": "[TRANSLATE] Secondary Factors (32.5%)",
+      "description": "[TRANSLATE] Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology."
+    }
+  },
+  "news": {
+    "title": "[TRANSLATE] AI Tools News",
+    "subtitle": "[TRANSLATE] Latest updates, milestones, and announcements from AI coding tools",
+    "filters": {
+      "all": "[TRANSLATE] Alle News",
+      "milestone": "[TRANSLATE] Milestone",
+      "feature": "[TRANSLATE] Feature",
+      "partnership": "[TRANSLATE] Partnership",
+      "update": "[TRANSLATE] Update",
+      "announcement": "[TRANSLATE] Announcement"
+    },
+    "noItems": "[TRANSLATE] Keine News-Items gefunden.",
+    "loadingMore": "[TRANSLATE] Lade mehr News...",
+    "noMore": "Keine weiteren News verfügbar",
+    "viewTool": "[TRANSLATE] Tool anzeigen",
+    "metrics": {
+      "users": "[TRANSLATE] users",
+      "score": "[TRANSLATE] score",
+      "rank": "[TRANSLATE] rank"
+    },
+    "time": {
+      "justNow": "[TRANSLATE] Just now",
+      "hourAgo": "[TRANSLATE] 1 hour ago",
+      "hoursAgo": "[TRANSLATE] {count} hours ago",
+      "dayAgo": "[TRANSLATE] 1 day ago",
+      "daysAgo": "[TRANSLATE] {count} days ago"
+    }
+  },
+  "tools": {
+    "title": "[TRANSLATE] KI-Coding-Tools",
+    "subtitle": "[TRANSLATE] Erkunde alle {count} KI-Coding-Tools in unserer DB",
+    "allCategories": "[TRANSLATE] Alle Kategorien",
+    "filterByCategory": "[TRANSLATE] Nach Kategorie filtern",
+    "sortBy": "[TRANSLATE] Sortieren nach",
+    "defaultDescription": "[TRANSLATE] KI-Coding-Tools entdecken und vergleichen",
+    "sort": {
+      "name": "[TRANSLATE] Name",
+      "category": "[TRANSLATE] Category",
+      "status": "[TRANSLATE] Status"
+    },
+    "stats": {
+      "total": "[TRANSLATE] Total Tools",
+      "active": "[TRANSLATE] Active",
+      "categories": "[TRANSLATE] Categories",
+      "openSource": "[TRANSLATE] Open Source"
+    },
+    "directory": {
+      "title": "[TRANSLATE] AI Coding Tools Directory",
+      "subtitle": "[TRANSLATE] Explore all {count} AI coding tools in our database",
+      "filterByCategory": "[TRANSLATE] Filter by category",
+      "filterByStatus": "[TRANSLATE] Filter by status",
+      "allCategories": "[TRANSLATE] All Categories",
+      "allStatuses": "[TRANSLATE] All Statuses"
+    },
+    "detail": {
+      "loading": "[TRANSLATE] Tool-Details werden geladen...",
+      "notFound": "[TRANSLATE] Tool nicht gefunden",
+      "backToTools": "Zurück zu Tools",
+      "visitWebsite": "[TRANSLATE] Website besuchen",
+      "viewGithub": "[TRANSLATE] GitHub",
+      "viewOnGithub": "[TRANSLATE] Auf GitHub anzeigen",
+      "overview": "[TRANSLATE] Overview",
+      "description": "[TRANSLATE] Description",
+      "company": "[TRANSLATE] Company",
+      "pricing": "[TRANSLATE] Pricing",
+      "users": "[TRANSLATE] Users",
+      "githubStars": "[TRANSLATE] GitHub Stars",
+      "tabs": {
+        "performance": "[TRANSLATE] Performance",
+        "businessMetrics": "[TRANSLATE] Business",
+        "scores": "[TRANSLATE] Scores",
+        "history": "[TRANSLATE] History"
+      },
+      "performance": {
+        "title": "[TRANSLATE] Technical Performance",
+        "subtitle": "[TRANSLATE] Benchmark results and technical capabilities",
+        "description": "Benchmark-Ergebnisse und technische Fähigkeiten einschließlich SWE-bench Scores und Feature-Unterstützung",
+        "sweScore": "[TRANSLATE] SWE-bench Score",
+        "contextWindow": "[TRANSLATE] Context Window",
+        "languageSupport": "[TRANSLATE] Language Support",
+        "multiFileSupport": "[TRANSLATE] Multi-file Support",
+        "llmProviders": "[TRANSLATE] LLM Providers",
+        "tokens": "[TRANSLATE] tokens",
+        "languages": "[TRANSLATE] languages",
+        "yes": "[TRANSLATE] Yes",
+        "multiple": "[TRANSLATE] Multiple"
+      },
+      "businessMetrics": {
+        "title": "[TRANSLATE] Business Metrics",
+        "subtitle": "[TRANSLATE] Financial and growth metrics",
+        "monthlyArr": "[TRANSLATE] ARR (Monthly)",
+        "valuation": "[TRANSLATE] Valuation",
+        "totalFunding": "[TRANSLATE] Total Funding",
+        "employees": "[TRANSLATE] Employees",
+        "totalUsers": "[TRANSLATE] Total Users"
+      },
+      "rankingScores": {
+        "title": "[TRANSLATE] Ranking Scores",
+        "subtitle": "[TRANSLATE] Detailed breakdown of ranking factors",
+        "overallScore": "[TRANSLATE] Overall Score",
+        "breakdown": "[TRANSLATE] Score Breakdown",
+        "modifiers": "[TRANSLATE] Applied Modifiers"
+      },
+      "metricHistory": {
+        "title": "[TRANSLATE] Metric History",
+        "subtitle": "[TRANSLATE] Recent metrics that affect ranking scores",
+        "noHistory": "[TRANSLATE] No metric history available for this tool.",
+        "update": "[TRANSLATE] Update",
+        "newMetrics": "[TRANSLATE] New metrics reported for {tool}"
+      }
+    },
+    "status": {
+      "active": "[TRANSLATE] Active",
+      "beta": "[TRANSLATE] Beta",
+      "deprecated": "[TRANSLATE] Deprecated",
+      "discontinued": "[TRANSLATE] Discontinued",
+      "acquired": "[TRANSLATE] Acquired"
+    },
+    "categories": {
+      "autonomous-agent": "[TRANSLATE] Autonomous Agent",
+      "code-editor": "[TRANSLATE] Code Editor",
+      "ide-assistant": "[TRANSLATE] IDE Assistant",
+      "app-builder": "[TRANSLATE] App Builder",
+      "open-source-framework": "[TRANSLATE] Open Source Framework",
+      "testing-tool": "[TRANSLATE] Testing Tool",
+      "code-review": "[TRANSLATE] Code Review",
+      "code-generation": "[TRANSLATE] Code Generation"
+    },
+    "agentic": "[TRANSLATE] Agentic",
+    "autonomy": "[TRANSLATE] Autonomie Level",
+    "codeGen": "[TRANSLATE] Code Generation",
+    "multiFile": "[TRANSLATE] Multi-File Support",
+    "contextWindow": "[TRANSLATE] Context Window",
+    "llmProvider": "[TRANSLATE] LLM Provider"
+  },
+  "newsletter": {
+    "form": {
+      "firstName": "[TRANSLATE] First name",
+      "lastName": "[TRANSLATE] Last name",
+      "email": "[TRANSLATE] Email",
+      "subscribe": "[TRANSLATE] Subscribe",
+      "subscribing": "[TRANSLATE] Subscribing...",
+      "privacyNote": "[TRANSLATE] We respect your privacy. Unsubscribe at any time."
+    },
+    "modal": {
+      "title": "[TRANSLATE] Stay Updated",
+      "subtitle": "[TRANSLATE] Get weekly updates on AI tool rankings, new features, and industry insights.",
+      "firstName": "[TRANSLATE] First name",
+      "lastName": "[TRANSLATE] Last name",
+      "email": "[TRANSLATE] Email",
+      "subscribe": "[TRANSLATE] Subscribe",
+      "subscribing": "[TRANSLATE] Subscribing...",
+      "thankYou": "[TRANSLATE] Thank you!",
+      "checkEmail": "[TRANSLATE] Please check your email to verify your subscription",
+      "alreadySubscribed": "[TRANSLATE] You are already subscribed to our newsletter!",
+      "resentEmail": "[TRANSLATE] We've resent the verification email. Please check your inbox.",
+      "privacyNote": "[TRANSLATE] We respect your privacy. Unsubscribe at any time.",
+      "errors": {
+        "captcha": "[TRANSLATE] Please complete the security check",
+        "failed": "[TRANSLATE] Failed to subscribe. Please try again.",
+        "server": "[TRANSLATE] Server configuration error",
+        "email": "[TRANSLATE] Email service configuration error"
+      }
+    },
+    "verification": {
+      "title": "[TRANSLATE] Email Verification",
+      "success": {
+        "title": "[TRANSLATE] Email Verified!",
+        "message": "[TRANSLATE] Your email has been successfully verified. You'll start receiving our weekly newsletter with the latest AI tool rankings and insights."
+      },
+      "alreadyVerified": {
+        "title": "[TRANSLATE] Already Verified",
+        "message": "[TRANSLATE] This email address has already been verified. You're all set to receive our newsletters!"
+      },
+      "errors": {
+        "missingToken": {
+          "title": "[TRANSLATE] Missing Verification Token",
+          "message": "[TRANSLATE] The verification link appears to be incomplete. Please check your email for the correct link."
+        },
+        "invalidToken": {
+          "title": "[TRANSLATE] Invalid Token",
+          "message": "[TRANSLATE] This verification link is invalid or has expired. Please subscribe again to receive a new verification email."
+        },
+        "failed": {
+          "title": "[TRANSLATE] Verification Failed",
+          "message": "[TRANSLATE] We couldn't verify your email at this time. Please try again later or contact support if the problem persists."
+        },
+        "unexpected": {
+          "title": "[TRANSLATE] Unexpected Error",
+          "message": "[TRANSLATE] An unexpected error occurred. Please try again later."
+        }
+      },
+      "actions": {
+        "backToHome": "[TRANSLATE] Back to Home",
+        "subscribeAgain": "[TRANSLATE] Subscribe Again"
+      }
+    },
+    "unsubscribe": {
+      "title": "[TRANSLATE] Unsubscribe from Newsletter",
+      "processing": "[TRANSLATE] Processing your request...",
+      "success": {
+        "title": "[TRANSLATE] Successfully Unsubscribed",
+        "message": "[TRANSLATE] You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!"
+      },
+      "errors": {
+        "missingToken": {
+          "title": "[TRANSLATE] Missing Token",
+          "message": "[TRANSLATE] The unsubscribe link appears to be incomplete."
+        },
+        "invalidToken": {
+          "title": "[TRANSLATE] Invalid Link",
+          "message": "[TRANSLATE] This unsubscribe link is invalid or has expired."
+        },
+        "failed": {
+          "title": "[TRANSLATE] Unsubscribe Failed",
+          "message": "[TRANSLATE] We couldn't process your unsubscribe request. Please try again later."
+        },
+        "unexpected": {
+          "title": "[TRANSLATE] Error",
+          "message": "[TRANSLATE] An unexpected error occurred. Please try again."
+        }
+      },
+      "resubscribe": "[TRANSLATE] Changed your mind? You can subscribe again anytime.",
+      "subscribeAgain": "[TRANSLATE] Subscribe Again"
+    }
+  },
+  "methodology": {
+    "title": "[TRANSLATE] Unsere Methodik",
+    "subtitle": "[TRANSLATE] Wie wir KI-Coding-Tools ranken",
+    "lastUpdated": "[TRANSLATE] Zuletzt aktualisiert: Januar 2025",
+    "intro": "[TRANSLATE] AI Power Rankings nutzt einen sophistizierten Algorithmus (v6.0) zur Bewertung und zum Ranking von KI-Coding-Tools basierend auf mehreren quantitativen und qualitativen Faktoren. Unsere Methodik ist darauf ausgelegt, Developern eine objektive, datengetriebene Bewertung der KI-Tools-Landschaft zu bieten.",
+    "sections": {
+      "scoringFactors": {
+        "title": "[TRANSLATE] Scoring Factors",
+        "intro": "[TRANSLATE] Our algorithm evaluates tools across 8 key dimensions, each weighted according to its importance to developers:"
+      },
+      "modifiers": {
+        "title": "[TRANSLATE] Dynamic Modifiers",
+        "intro": "[TRANSLATE] To ensure rankings reflect current market realities, we apply three sophisticated modifiers:"
+      },
+      "dataCollection": {
+        "title": "[TRANSLATE] Data Collection",
+        "intro": "[TRANSLATE] We gather data from multiple sources to ensure accuracy:",
+        "sources": {
+          "0": "[TRANSLATE] Direct API integrations with tool providers",
+          "1": "[TRANSLATE] Public repositories and developer statistics",
+          "2": "[TRANSLATE] Industry reports and verified news sources",
+          "3": "[TRANSLATE] User surveys and community feedback",
+          "4": "[TRANSLATE] Performance benchmarks (SWE-bench, HumanEval)"
+        }
+      },
+      "updateFrequency": {
+        "title": "[TRANSLATE] Update Frequency",
+        "content": "[TRANSLATE] Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
+      }
+    }
+  },
+  "about": {
+    "title": "[TRANSLATE] About AI Power Rankings",
+    "subtitle": "[TRANSLATE] Empowering developers with data-driven AI tool insights",
+    "hero": {
+      "title": "[TRANSLATE] Empowering developers with data-driven AI tool insights",
+      "subtitle": "[TRANSLATE] We believe developers deserve transparent, objective rankings of AI coding tools to make informed decisions."
+    },
+    "mission": {
+      "title": "[TRANSLATE] Our Mission",
+      "content": "[TRANSLATE] To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs.",
+      "description": "[TRANSLATE] To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
+    },
+    "whyWeBuiltThis": {
+      "title": "[TRANSLATE] Why We Built This",
+      "reasons": {
+        "0": "[TRANSLATE] The AI tools landscape is evolving rapidly, making it hard to keep track",
+        "1": "[TRANSLATE] Marketing claims often don't match real-world performance",
+        "2": "[TRANSLATE] Developers need objective data to justify tool adoption",
+        "3": "[TRANSLATE] There was no single source comparing all major AI coding tools"
+      }
+    },
+    "team": {
+      "title": "[TRANSLATE] The Team",
+      "description": "[TRANSLATE] AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development."
+    },
+    "contact": {
+      "title": "[TRANSLATE] Get in Touch",
+      "description": "[TRANSLATE] Have feedback or suggestions? We'd love to hear from you.",
+      "email": "[TRANSLATE] Contact us at hello@aipowerranking.com"
+    },
+    "newsletter": {
+      "title": "[TRANSLATE] Stay Updated",
+      "description": "[TRANSLATE] Get weekly insights on AI tool rankings and industry trends.",
+      "subscribe": "[TRANSLATE] Subscribe to Newsletter"
+    },
+    "whatWeDo": {
+      "title": "[TRANSLATE] What We Do",
+      "track": {
+        "title": "[TRANSLATE] Track AI Tools",
+        "description": "[TRANSLATE] Monitor and analyze the latest AI coding tools"
+      },
+      "analyze": {
+        "title": "[TRANSLATE] Analyze Performance",
+        "description": "[TRANSLATE] Evaluate tools based on real-world metrics"
+      },
+      "rank": {
+        "title": "[TRANSLATE] Rank Objectively",
+        "description": "[TRANSLATE] Apply our algorithm to provide unbiased rankings"
+      },
+      "update": {
+        "title": "[TRANSLATE] Update Weekly",
+        "description": "[TRANSLATE] Keep rankings current with the latest data"
+      },
+      "analysis": {
+        "title": "[TRANSLATE] Deep Analysis",
+        "description": "[TRANSLATE] Comprehensive evaluation of AI coding tools based on performance, features, and user feedback"
+      },
+      "methodology": {
+        "title": "[TRANSLATE] Transparent Methodology",
+        "description": "[TRANSLATE] Our ranking algorithm is fully documented and continuously refined based on community input"
+      },
+      "updates": {
+        "title": "[TRANSLATE] Weekly Updates",
+        "description": "[TRANSLATE] Rankings are refreshed every week to reflect the rapidly evolving AI tools landscape"
+      },
+      "community": {
+        "title": "[TRANSLATE] Community-Driven",
+        "description": "[TRANSLATE] We incorporate feedback from developers worldwide to improve our rankings and methodology"
+      }
+    },
+    "whyItMatters": {
+      "title": "[TRANSLATE] Why It Matters",
+      "description": "[TRANSLATE] In the rapidly evolving AI landscape, developers need reliable data to make informed decisions.",
+      "points": {
+        "0": "[TRANSLATE] Save time evaluating tools",
+        "1": "[TRANSLATE] Make data-driven decisions",
+        "2": "[TRANSLATE] Stay ahead of the curve",
+        "3": "[TRANSLATE] Choose tools that fit your needs"
+      }
+    }
+  },
+  "sidebar": {
+    "navigation": "[TRANSLATE] Navigation",
+    "quickLinks": "[TRANSLATE] Quick Links",
+    "trending": "[TRANSLATE] Trending",
+    "categories": "[TRANSLATE] Categories",
+    "features": "[TRANSLATE] Features",
+    "clearFilters": "[TRANSLATE] Clear Filters"
+  },
+  "features": {
+    "autocomplete": "[TRANSLATE] Autocomplete",
+    "chat": "[TRANSLATE] Chat Interface",
+    "codeGeneration": "[TRANSLATE] Code Generation",
+    "refactoring": "[TRANSLATE] Refactoring",
+    "testing": "[TRANSLATE] Testing",
+    "documentation": "[TRANSLATE] Documentation"
+  },
+  "status": {
+    "active": "[TRANSLATE] Active",
+    "beta": "[TRANSLATE] Beta",
+    "deprecated": "[TRANSLATE] Deprecated",
+    "discontinued": "[TRANSLATE] Discontinued",
+    "acquired": "[TRANSLATE] Acquired"
+  },
+  "errors": {
+    "toolNotFound": "Tool nicht gefunden",
+    "dataUnavailable": "Daten nicht verfügbar",
+    "loadingError": "Fehler beim Laden",
+    "networkError": "Netzwerkfehler",
+    "tryAgain": "Erneut versuchen",
+    "contactSupport": "Support kontaktieren"
+  },
+  "footer": {
+    "description": "Dein Data-Hub für AI Coding Tools. Wir tracken die wichtigsten agentic AI Entwicklertools und deren Performance.",
+    "quickLinks": "[TRANSLATE] Quick Links",
+    "resources": "[TRANSLATE] Resources",
+    "company": "[TRANSLATE] Company",
+    "legal": "[TRANSLATE] Legal",
+    "copyright": "[TRANSLATE] © 2025 AI Power Rankings. Made with ❤️ for Developers.",
+    "builtWith": "[TRANSLATE] Built with Next.js, Supabase & AI"
+  },
+  "toolDetails": {
+    "overview": "Überblick",
+    "capabilities": "Fähigkeiten",
+    "performance": "Leistung",
+    "pricing": "Preisgestaltung",
+    "integrations": "Integrationen",
+    "recentUpdates": "Aktuelle Updates",
+    "userReviews": "Nutzerbewertungen",
+    "competitiveAnalysis": "Wettbewerbsanalyse",
+    "category": "Kategorie",
+    "subcategory": "Unterkategorie",
+    "company": "Unternehmen",
+    "founded": "Gegründet",
+    "headquarters": "Hauptsitz",
+    "website": "Webseite",
+    "github": "GitHub Repository",
+    "documentation": "Dokumentation",
+    "autonomyLevel": "Autonomiegrad",
+    "contextWindow": "Kontextfenster",
+    "multiFileSupport": "Multi-Datei-Unterstützung",
+    "supportedLanguages": "Unterstützte Sprachen",
+    "supportedPlatforms": "Unterstützte Plattformen",
+    "llmProviders": "LLM-Anbieter",
+    "deploymentOptions": "Bereitstellungsoptionen",
+    "sweBenchScore": "SWE-bench Bewertung",
+    "humanEvalScore": "HumanEval Bewertung",
+    "completionAccuracy": "Vervollständigungsgenauigkeit",
+    "responseTime": "Antwortzeit",
+    "uptime": "Verfügbarkeit",
+    "monthlyUsers": "Monatliche Nutzer",
+    "totalFunding": "Gesamtfinanzierung",
+    "latestValuation": "Aktuelle Bewertung",
+    "monthlyRevenue": "Monatlicher Umsatz",
+    "growthRate": "Wachstumsrate",
+    "marketShare": "Marktanteil"
+  },
+  "analysis": {
+    "theRealStory": "Die wahre Geschichte",
+    "keyDevelopments": "Wichtige Entwicklungen",
+    "marketPosition": "Marktposition",
+    "competitiveAdvantages": "Wettbewerbsvorteile",
+    "challenges": "Herausforderungen",
+    "futureOutlook": "Zukunftsaussichten",
+    "breakingNews": "Eilmeldung",
+    "majorUpdate": "Wichtiges Update",
+    "fundingRound": "Finanzierungsrunde",
+    "productLaunch": "Produkteinführung",
+    "acquisition": "Übernahme",
+    "partnership": "Partnerschaft",
+    "benchmarkRecord": "Benchmark-Rekord",
+    "rocketShip": "Raketenanstieg",
+    "steadyClimb": "Stetiger Aufstieg",
+    "holdingGround": "Position halten",
+    "slightDip": "Leichter Rückgang",
+    "majorDecline": "Starker Rückgang",
+    "newEntry": "Neueintrag",
+    "comeback": "Comeback"
+  },
+  "algorithm": {
+    "methodology": "Methodik",
+    "rankingFactors": "Ranking-Faktoren",
+    "weightDistribution": "Gewichtungsverteilung",
+    "dataSource": "Datenquelle",
+    "updateFrequency": "Aktualisierungsfrequenz",
+    "factors": {
+      "marketTraction": "Markttraktion",
+      "technicalCapability": "Technische Fähigkeiten",
+      "developerAdoption": "Entwicklerakzeptanz",
+      "developmentVelocity": "Entwicklungsgeschwindigkeit",
+      "platformResilience": "Plattform-Resilienz",
+      "communitySentiment": "Community-Stimmung",
+      "agenticCapability": "Agentische Fähigkeiten",
+      "innovation": "Innovation"
+    },
+    "dataCollection": {
+      "automated": "Automatisiert",
+      "manual": "Manuell",
+      "community": "Community-beigesteuert",
+      "official": "Offiziell",
+      "estimated": "Geschätzt",
+      "verified": "Verifiziert"
+    },
+    "schedule": {
+      "realtime": "Echtzeit",
+      "daily": "Täglich",
+      "weekly": "Wöchentlich",
+      "monthly": "Monatlich",
+      "quarterly": "Vierteljährlich",
+      "irregular": "Unregelmäßig"
+    }
+  },
+  "ui": {
+    "viewDetails": "Details anzeigen",
+    "compareTo": "Vergleichen mit",
+    "addToWatchlist": "Zur Watchlist hinzufügen",
+    "shareRanking": "Ranking teilen",
+    "exportData": "Daten exportieren",
+    "downloadReport": "Bericht herunterladen",
+    "filterBy": "Filtern nach",
+    "sortBy": "Sortieren nach",
+    "showAll": "Alle anzeigen",
+    "hideFilters": "Filter ausblenden",
+    "clearFilters": "Filter zurücksetzen",
+    "applyFilters": "Filter anwenden",
+    "sortOptions": {
+      "rank": "Rang",
+      "movement": "Bewegung",
+      "score": "Bewertung",
+      "alphabetical": "Alphabetisch",
+      "recentUpdate": "Kürzlich aktualisiert",
+      "funding": "Finanzierung",
+      "users": "Nutzeranzahl"
+    },
+    "timePeriods": {
+      "thisMonth": "Diesen Monat",
+      "lastMonth": "Letzten Monat",
+      "last3Months": "Letzte 3 Monate",
+      "last6Months": "Letzte 6 Monate",
+      "thisYear": "Dieses Jahr",
+      "lastYear": "Letztes Jahr",
+      "allTime": "Gesamte Zeit"
+    },
+    "status": {
+      "active": "Aktiv",
+      "beta": "Beta",
+      "preview": "Vorschau",
+      "discontinued": "Eingestellt",
+      "acquired": "Übernommen",
+      "stealth": "Stealth-Modus"
+    }
+  },
+  "comparison": {
+    "compareTools": "Tools vergleichen",
+    "addToComparison": "Zum Vergleich hinzufügen",
+    "removeFromComparison": "Aus Vergleich entfernen",
+    "comparisonTable": "Vergleichstabelle",
+    "categories": {
+      "pricing": "Preisvergleich",
+      "features": "Feature-Vergleich",
+      "performance": "Leistungsvergleich",
+      "integration": "Integrations-Vergleich",
+      "support": "Support-Vergleich"
+    },
+    "better": "Besser",
+    "same": "Gleich",
+    "worse": "Schlechter",
+    "notAvailable": "Nicht verfügbar",
+    "comingSoon": "Demnächst verfügbar"
+  },
+  "pricing": {
+    "free": "Kostenlos",
+    "freeTier": "Kostenlose Version",
+    "freemium": "Freemium",
+    "paid": "Kostenpflichtig",
+    "enterprise": "Enterprise",
+    "custom": "Individuell",
+    "perMonth": "pro Monat",
+    "perUser": "pro Nutzer",
+    "perRequest": "pro Anfrage",
+    "unlimited": "Unbegrenzt",
+    "limited": "Begrenzt",
+    "features": "Features",
+    "limits": "Beschränkungen",
+    "support": "Support",
+    "sla": "Service Level Agreement",
+    "customization": "Anpassungen"
+  },
+  "loading": {
+    "loadingData": "Daten werden geladen...",
+    "updatingRankings": "Rankings werden aktualisiert...",
+    "fetchingNews": "Nachrichten werden abgerufen...",
+    "processingRequest": "Anfrage wird bearbeitet..."
+  },
+  "success": {
+    "dataUpdated": "Daten erfolgreich aktualisiert",
+    "reviewSubmitted": "Bewertung erfolgreich eingereicht",
+    "addedToWatchlist": "Zur Watchlist hinzugefügt",
+    "comparisonSaved": "Vergleich gespeichert"
+  }
+}
