@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
+import cachedNewsData from "@/data/cache/news.json";
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,6 +9,36 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20");
     const offset = parseInt(searchParams.get("offset") || "0");
     const filter = searchParams.get("filter") || "all";
+
+    // Check if we should use cache-first approach
+    const useCacheFirst =
+      process.env["USE_CACHE_FALLBACK"] === "true" || process.env["VERCEL_ENV"] === "preview";
+
+    // For preview environments, return cached data immediately
+    if (useCacheFirst) {
+      loggers.api.info("Using cache-first approach for news");
+
+      // Apply filter to cached data
+      let filteredNews = cachedNewsData.news;
+      if (filter !== "all") {
+        filteredNews = cachedNewsData.news.filter((item: any) => item.event_type === filter);
+      }
+
+      // Apply pagination
+      const paginatedNews = filteredNews.slice(offset, offset + limit);
+
+      const apiResponse = NextResponse.json({
+        news: paginatedNews,
+        total: filteredNews.length,
+        hasMore: offset + limit < filteredNews.length,
+        _cached: true,
+        _cachedAt: "2025-06-25T15:10:00.000Z",
+        _cacheReason: "Cache-first approach for preview environment",
+      });
+
+      apiResponse.headers.set("Cache-Control", "public, s-maxage=1800, stale-while-revalidate=900");
+      return apiResponse;
+    }
 
     // Calculate page from offset
     const page = Math.floor(offset / limit) + 1;
@@ -303,7 +334,19 @@ export async function GET(request: NextRequest) {
 
     return apiResponse;
   } catch (error) {
-    loggers.news.error("News API error", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    loggers.news.error("News API error, falling back to cached data", { error });
+
+    // Fall back to cached data on error - return all news without filtering
+    const apiResponse = NextResponse.json({
+      news: cachedNewsData.news.slice(0, 20), // Return first 20 items
+      total: cachedNewsData.news.length,
+      hasMore: cachedNewsData.news.length > 20,
+      _cached: true,
+      _cachedAt: "2025-06-25T15:10:00.000Z",
+      _cacheReason: "Database error fallback",
+    });
+
+    apiResponse.headers.set("Cache-Control", "public, s-maxage=1800, stale-while-revalidate=900");
+    return apiResponse;
   }
 }

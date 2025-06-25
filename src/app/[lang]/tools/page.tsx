@@ -2,7 +2,6 @@ import { ToolsContent } from "./tools-content";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 import { loggers } from "@/lib/logger";
-import { payloadDirect } from "@/lib/payload-direct";
 
 interface Tool {
   id: string;
@@ -36,50 +35,35 @@ export default async function ToolsPage({ params }: PageProps): Promise<React.JS
   let loading = false;
 
   try {
-    // Use direct database access with timeout
-    const response = await payloadDirect.getTools({
-      sort: "name",
-      limit: 1000,
+    // Fetch from the API endpoint which handles caching
+    const baseUrl =
+      process.env["NEXT_PUBLIC_PAYLOAD_URL"] ||
+      (process.env["NODE_ENV"] === "production"
+        ? "https://ai-power-rankings.vercel.app"
+        : "http://localhost:3000");
+
+    const response = await fetch(`${baseUrl}/api/tools`, {
+      next: { revalidate: 300 }, // Cache for 5 minutes
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
-    // Transform tools to match expected format
-    tools = (response.docs || []).map((tool: any) => {
-        // Handle company - it might be populated or just an ID
-        const companyName =
-          typeof tool["company"] === "object" && tool["company"] ? tool["company"]["name"] : "";
+    if (!response.ok) {
+      throw new Error(`Failed to fetch tools: ${response.status}`);
+    }
 
-        // Extract description text from rich text if needed
-        let description = "";
-        if (tool["description"] && Array.isArray(tool["description"])) {
-          description = tool["description"]
-            .map((block: any) => block.children?.map((child: any) => child.text).join(""))
-            .join("\n");
-        } else if (typeof tool["description"] === "string") {
-          description = tool["description"];
-        }
+    const data = await response.json();
+    tools = data.tools || [];
 
-        return {
-          ...tool,
-          info: {
-            company: { name: companyName },
-            product: {
-              description: description,
-              tagline: tool["tagline"],
-              pricing_model: tool["pricing_model"],
-              license_type: tool["license_type"],
-            },
-            links: {
-              website: tool["website_url"],
-              github: tool["github_repo"],
-            },
-            metadata: {
-              logo_url: tool["logo_url"],
-            },
-          },
-        };
-      });
+    loggers.tools.info(`Fetched ${tools.length} tools from API`, {
+      cached: data._cached,
+      cacheReason: data._cacheReason,
+    });
   } catch (error) {
-    loggers.tools.error("Failed to fetch tools", { error, lang });
+    loggers.tools.error("Failed to fetch tools from API", { error, lang });
+    // The API should have returned cached data, but if it failed completely,
+    // we'll show a loading state
     loading = true;
   }
 
