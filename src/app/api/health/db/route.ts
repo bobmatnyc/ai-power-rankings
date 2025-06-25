@@ -30,7 +30,7 @@ export async function GET(): Promise<NextResponse> {
         hasDbUrl,
         hasSupabaseUrl,
         hasSupabaseKey,
-        dbUrlPrefix: process.env["SUPABASE_DATABASE_URL"]?.substring(0, 20) + "...",
+        dbUrlPrefix: process.env["SUPABASE_DATABASE_URL"]?.substring(0, 25) + "...",
       },
       database: {
         connected: !dbError,
