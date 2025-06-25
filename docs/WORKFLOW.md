@@ -573,6 +573,169 @@ These tools use CommonJS syntax and are essential for managing translations. The
 
 ---
 
+## 🚨 12. Deployment Troubleshooting Guide
+
+### Common Vercel Deployment Issues & Solutions
+
+Based on extensive deployment experience, here are the most common issues and their solutions:
+
+#### 1. **Database Connection Errors**
+
+**Symptoms**:
+
+- `SASL authentication failed`
+- `connect ECONNREFUSED 127.0.0.1:5432`
+- Build fails with Postgres connection errors
+
+**Root Causes**:
+
+- Using wrong Supabase pooler port
+- Missing or incorrect environment variables
+- Database connection string not properly set
+
+**Solutions**:
+
+```bash
+# Use SESSION pooler (port 5432) NOT transaction pooler (port 6543)
+SUPABASE_DATABASE_URL=postgresql://postgres.[project]:[password]@aws-0-us-east-2.pooler.supabase.com:5432/postgres
+
+# Set both SUPABASE_DATABASE_URL and DATABASE_URL for redundancy
+vercel env add SUPABASE_DATABASE_URL production
+vercel env add DATABASE_URL production  # Same value as above
+```
+
+**Key Learning**: Vercel deployments need the session pooler (5432) despite documentation suggesting transaction pooler.
+
+#### 2. **React Rendering Errors in Translations**
+
+**Symptoms**:
+
+- `Objects are not valid as a React child`
+- Build fails on specific language pages (e.g., /fr/methodology, /it/methodology)
+
+**Root Causes**:
+
+- Duplicate translation structures in JSON files
+- Complex nested objects instead of strings in translation keys
+- Conflicting key definitions
+
+**Solutions**:
+
+```bash
+# 1. Check for duplicate keys in translation files
+grep -n "agenticCapability\|technicalPerformance\|marketTraction" src/i18n/dictionaries/[lang].json
+
+# 2. Look for duplicate structure blocks (usually 100+ lines)
+# Common pattern: duplicate methodology sections starting around line 480-600
+
+# 3. Remove entire duplicate blocks, not just individual keys
+```
+
+**Prevention**:
+
+- Use translation monitoring tools before deployment
+- Run `node src/i18n/dictionaries/verify_i18n.js`
+- Check for React-renderable values only (strings, not objects)
+
+#### 3. **Environment Variable Issues**
+
+**Symptoms**:
+
+- Site redirects to production URL from Vercel preview
+- Authentication failures
+- Missing functionality in deployed app
+
+**Root Causes**:
+
+- Hardcoded production URLs
+- Environment variables set incorrectly
+- VERCEL_URL not being used properly
+
+**Solutions**:
+
+```bash
+# Remove hardcoded URLs to allow Vercel automatic URL detection
+vercel env rm NEXTAUTH_URL production
+vercel env rm NEXT_PUBLIC_BASE_URL production
+vercel env rm NEXT_PUBLIC_PAYLOAD_URL production
+
+# Let Vercel use its automatic VERCEL_URL environment variable
+# Update getUrl() function to check VERCEL_URL first
+```
+
+#### 4. **Missing Translation Keys**
+
+**Symptoms**:
+
+- Warning logs: `Missing translation [it]: methodology.factors.xxx`
+- Pages render with missing text
+- Build succeeds but with 100+ translation warnings
+
+**Prevention & Fix**:
+
+```bash
+# 1. Before deployment, check translation completeness
+node src/i18n/dictionaries/monitor_i18n.js
+
+# 2. Generate list of missing translations
+node src/i18n/dictionaries/fix_untranslated.js
+
+# 3. Common missing keys pattern:
+# - methodology.algorithm.features.*
+# - methodology.factors.*
+# - methodology.modifiers.*
+# - methodology.dataSources.*
+# - rankings.algorithm.*
+```
+
+### Deployment Checklist
+
+Before pushing to production, verify:
+
+- [ ] Run `npm run ci:local` - catches TypeScript and lint errors
+- [ ] Check database connection uses port 5432 (session pooler)
+- [ ] Verify no duplicate structures in translation JSON files
+- [ ] Remove hardcoded production URLs for preview deployments
+- [ ] Run translation verification scripts
+- [ ] Test locally with production-like environment
+
+### Quick Fixes for Common Errors
+
+```bash
+# Fix TypeScript errors before deployment
+npm run type-check
+
+# Fix translation structure issues
+node src/i18n/dictionaries/verify_i18n.js
+
+# Check for duplicate translation keys
+for lang in fr it de ko uk hr; do
+  echo "Checking $lang..."
+  jq -r 'paths(scalars) as $p | "\($p|join("."))"' src/i18n/dictionaries/$lang.json | sort | uniq -d
+done
+
+# Verify environment variables are set correctly
+vercel env ls
+```
+
+### Emergency Deployment Recovery
+
+If deployment keeps failing:
+
+1. **Check Vercel build logs** for specific error
+2. **Database issues**: Verify connection string and port
+3. **Translation issues**: Remove duplicate blocks, not just keys
+4. **Environment issues**: Let Vercel handle URLs automatically
+5. **Last resort**: Revert to last known working commit
+
+```bash
+# Find last successful deployment
+git log --oneline | head -20
+# Revert if needed
+git revert HEAD
+git push
+```
+
 ## 👁️ Final Note
 
 Quality over quantity. Every metric should tell a story, backed by evidence.
