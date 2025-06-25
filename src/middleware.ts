@@ -35,6 +35,19 @@ export default auth((req) => {
     return response;
   }
 
+  // Special handling for /dashboard without locale
+  if (pathname === "/dashboard") {
+    // Check auth first
+    if (!req.auth?.user || req.auth.user.email !== "bob@matsuoka.com") {
+      const locale = getLocale(req);
+      return NextResponse.redirect(new URL(`/${locale}/dashboard/auth/signin`, req.url));
+    }
+    // If authenticated, add locale and redirect
+    const locale = getLocale(req);
+    req.nextUrl.pathname = `/${locale}/dashboard`;
+    return NextResponse.redirect(req.nextUrl);
+  }
+
   // Check if there is any supported locale in the pathname
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
