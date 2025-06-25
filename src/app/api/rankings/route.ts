@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
+import cachedRankingsData from "@/data/cache/rankings.json";
 
 // News-enhanced ranking types
 interface ToolRanking {
@@ -54,10 +55,16 @@ function calculateTier(position: number): string {
 async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
   try {
     // Get all tools
-    const toolsResponse = await payloadDirect.getTools({
-      limit: 1000, // Get all tools
-      sort: "name",
-    });
+    let toolsResponse;
+    try {
+      toolsResponse = await payloadDirect.getTools({
+        limit: 1000, // Get all tools
+        sort: "name",
+      });
+    } catch (error) {
+      loggers.ranking.error("Failed to fetch tools in getNewsEnhancedRankings", { error });
+      return [];
+    }
 
     if (!toolsResponse || !toolsResponse.docs) {
       loggers.ranking.error("Invalid tools response", { toolsResponse });
@@ -191,27 +198,28 @@ export async function GET(): Promise<NextResponse> {
       console.log("DB URL prefix:", process.env["SUPABASE_DATABASE_URL"]?.substring(0, 50));
     }
 
-    // Get news-enhanced rankings using the v6-news algorithm
-    const rankings = await getNewsEnhancedRankings();
+    // Check if we should use cache fallback
+    const useCacheFallback =
+      process.env["USE_CACHE_FALLBACK"] === "true" || process.env["VERCEL_ENV"] === "preview";
 
-    if (!rankings || rankings.length === 0) {
-      loggers.ranking.error("No news-enhanced rankings available");
-      // Return empty rankings instead of error to prevent client issues
-      return NextResponse.json({
-        rankings: [],
-        algorithm: {
-          version: "v6-news",
-          name: "News-Enhanced Rankings",
-          date: new Date().toISOString(),
-          weights: WEIGHTS,
-        },
-        stats: {
-          total_tools: 0,
-          tools_with_news: 0,
-          avg_news_boost: 0,
-          max_news_impact: 0,
-        },
-      });
+    // Try to get live rankings first
+    const rankings = await getNewsEnhancedRankings();
+    const isUsingCache = false;
+
+    // If no rankings available and cache fallback is enabled, use cached data
+    if ((!rankings || rankings.length === 0) && useCacheFallback) {
+      loggers.ranking.warn("No live rankings available, falling back to cached data");
+      console.log("Using cached rankings data");
+
+      // Return the cached data with a flag indicating it's cached
+      const cachedResponse = {
+        ...cachedRankingsData,
+        _cached: true,
+        _cachedAt: "2025-06-25T13:36:00.000Z",
+        _cacheReason: "Database connection unavailable",
+      };
+
+      return NextResponse.json(cachedResponse);
     }
 
     // Get tool details - we already have them from the rankings calculation
