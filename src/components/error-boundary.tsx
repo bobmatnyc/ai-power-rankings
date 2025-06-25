@@ -29,7 +29,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     logger.error("Error boundary caught error", { error, errorInfo });
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
