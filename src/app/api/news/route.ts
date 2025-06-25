@@ -11,29 +11,23 @@ export async function GET(request: NextRequest) {
     const filter = searchParams.get("filter") || "all";
 
     // Check if we should use cache-first approach
+    // Temporarily enabled for production due to database stability issues
     const useCacheFirst =
-      process.env["USE_CACHE_FALLBACK"] === "true" || process.env["VERCEL_ENV"] === "preview";
+      process.env["USE_CACHE_FALLBACK"] === "true" ||
+      process.env["VERCEL_ENV"] === "preview" ||
+      true; // Enable for all environments temporarily
 
-    // For preview environments, return cached data immediately
+    // For all environments, return cached data immediately
     if (useCacheFirst) {
       loggers.api.info("Using cache-first approach for news");
 
-      // Apply filter to cached data
-      let filteredNews = cachedNewsData.news;
-      if (filter !== "all") {
-        filteredNews = cachedNewsData.news.filter((item: any) => item.event_type === filter);
-      }
-
-      // Apply pagination
-      const paginatedNews = filteredNews.slice(offset, offset + limit);
-
+      // Return ALL news data - let client handle filtering and pagination
       const apiResponse = NextResponse.json({
-        news: paginatedNews,
-        total: filteredNews.length,
-        hasMore: offset + limit < filteredNews.length,
+        news: cachedNewsData.news,
+        total: cachedNewsData.news.length,
         _cached: true,
         _cachedAt: "2025-06-25T15:10:00.000Z",
-        _cacheReason: "Cache-first approach for preview environment",
+        _cacheReason: "Cache-first approach (database stability mode)",
       });
 
       apiResponse.headers.set("Cache-Control", "public, s-maxage=1800, stale-while-revalidate=900");

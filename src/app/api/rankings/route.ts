@@ -199,8 +199,11 @@ export async function GET(): Promise<NextResponse> {
     }
 
     // Check if we should use cache-first approach
+    // Temporarily enabled for production due to database stability issues
     const useCacheFirst =
-      process.env["USE_CACHE_FALLBACK"] === "true" || process.env["VERCEL_ENV"] === "preview";
+      process.env["USE_CACHE_FALLBACK"] === "true" ||
+      process.env["VERCEL_ENV"] === "preview" ||
+      true; // Enable for all environments temporarily
 
     // For preview environments or when cache is enabled, return cached data immediately
     if (useCacheFirst) {
@@ -212,7 +215,7 @@ export async function GET(): Promise<NextResponse> {
         ...cachedRankingsData,
         _cached: true,
         _cachedAt: "2025-06-25T13:36:00.000Z",
-        _cacheReason: "Cache-first approach for preview environment",
+        _cacheReason: "Cache-first approach (database stability mode)",
       };
 
       return NextResponse.json(cachedResponse);

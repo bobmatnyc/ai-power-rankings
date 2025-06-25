@@ -53,19 +53,25 @@ interface NewsContentProps {
 export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX.Element {
   const [newsItems, setNewsItems] = useState<MetricsHistory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [filter, setFilter] = useState<string>("all");
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   // Initial data fetch
   useEffect(() => {
     fetchNews(1, true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Set up intersection observer for infinite scroll
+  // Calculate totalPages early for use in effects
+  const filteredItemsCount =
+    filter === "all"
+      ? newsItems.length
+      : newsItems.filter((item) => item.event_type === filter).length;
+  const itemsPerPage = 20;
+  const totalPages = Math.ceil(filteredItemsCount / itemsPerPage);
+
+  // Set up intersection observer for infinite scroll (client-side)
   useEffect(() => {
     if (!loadMoreRef.current) {
       return;
@@ -74,8 +80,8 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
     observerRef.current = new IntersectionObserver(
       (entries) => {
         const first = entries[0];
-        if (first?.isIntersecting && hasMore && !loadingMore) {
-          fetchNews(page + 1, false);
+        if (first?.isIntersecting && page < totalPages && !loading) {
+          setPage(page + 1);
         }
       },
       { threshold: 0.1 }
@@ -88,45 +94,33 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
         observerRef.current.disconnect();
       }
     };
-  }, [page, hasMore, loadingMore]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [page, totalPages, loading]);
 
-  const fetchNews = async (pageNum: number, isInitial: boolean): Promise<void> => {
+  const fetchNews = async (_pageNum: number, isInitial: boolean): Promise<void> => {
     try {
-      if (isInitial) {
-        setLoading(true);
-      } else {
-        setLoadingMore(true);
+      // Only fetch on initial load
+      if (!isInitial) {
+        return;
       }
 
-      const itemsPerPage = 20;
-      const offset = (pageNum - 1) * itemsPerPage;
+      setLoading(true);
 
-      // Fetch from API
-      const response = await fetch(
-        `/api/news?limit=${itemsPerPage}&offset=${offset}&filter=${filter}`
-      );
+      // Fetch ALL news from API at once
+      const response = await fetch("/api/news");
 
       if (!response.ok) {
         throw new Error("Failed to fetch news");
       }
 
       const data = await response.json();
-      const newsData: MetricsHistory[] = data.news || [];
+      const allNews: MetricsHistory[] = data.news || [];
 
-      if (isInitial) {
-        setNewsItems(newsData);
-      } else {
-        setNewsItems((prev) => [...prev, ...newsData]);
-      }
-
-      setPage(pageNum);
-      setHasMore(data.hasMore || false);
+      // Store all news for client-side filtering
+      setNewsItems(allNews);
       setLoading(false);
-      setLoadingMore(false);
     } catch (error) {
-      loggers.news.error("Failed to fetch news", { error, pageNum, isInitial });
+      loggers.news.error("Failed to fetch news", { error });
       setLoading(false);
-      setLoadingMore(false);
     }
   };
 
@@ -199,12 +193,16 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
   useEffect(() => {
     setNewsItems([]);
     setPage(1);
-    setHasMore(true);
     fetchNews(1, true);
-  }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filter]);
 
+  // Client-side filtering
   const filteredNews =
     filter === "all" ? newsItems : newsItems.filter((item) => item.event_type === filter);
+
+  // Client-side pagination
+  const startIndex = (page - 1) * itemsPerPage;
+  const paginatedNews = filteredNews.slice(startIndex, startIndex + itemsPerPage);
 
   const eventTypes = ["all", "milestone", "feature", "partnership", "update", "announcement"];
 
@@ -243,12 +241,12 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
 
       {/* News List */}
       <div className="space-y-2 md:space-y-4">
-        {filteredNews.length === 0 ? (
+        {paginatedNews.length === 0 ? (
           <Card className="p-8 text-center">
             <p className="text-muted-foreground">{dict.news.noItems}</p>
           </Card>
         ) : (
-          filteredNews.map((item) => (
+          paginatedNews.map((item) => (
             <Card key={item.id} className="hover:shadow-lg transition-shadow duration-200">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -399,13 +397,13 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
       </div>
 
       {/* Infinite scroll trigger */}
-      {hasMore && (
+      {page < totalPages && (
         <div ref={loadMoreRef} className="h-20 flex items-center justify-center">
-          {loadingMore && <div className="text-muted-foreground">{dict.news.loadingMore}</div>}
+          <div className="text-muted-foreground">{dict.common.loading}</div>
         </div>
       )}
 
-      {!hasMore && filteredNews.length > 0 && (
+      {page >= totalPages && filteredNews.length > 0 && (
         <div className="text-center py-8 text-muted-foreground">{dict.news.noMore}</div>
       )}
     </div>
