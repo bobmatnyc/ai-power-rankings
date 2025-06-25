@@ -16,7 +16,7 @@ export default auth((req) => {
   if (pathname === "/sitemap.xml") {
     return NextResponse.next();
   }
-  
+
   // Skip Payload CMS admin and API routes completely - they handle their own routing
   if (pathname.startsWith("/admin") || pathname.startsWith("/api")) {
     return NextResponse.next();
@@ -35,28 +35,28 @@ export default auth((req) => {
     return response;
   }
 
-  
-  // Handle our custom dashboard authentication
-  if (pathname.includes("/dashboard") && !pathname.includes("/dashboard/auth")) {
-    if (!req.auth?.user || req.auth.user.email !== "bob@matsuoka.com") {
-      const locale = getLocale(req);
-      return NextResponse.redirect(new URL(`/${locale}/dashboard/auth/signin`, req.url));
-    }
-  }
-
   // Check if there is any supported locale in the pathname
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  if (pathnameHasLocale) {
-    return NextResponse.next();
+  // For paths without locale, add the locale prefix first
+  if (!pathnameHasLocale) {
+    const locale = getLocale(req);
+    req.nextUrl.pathname = `/${locale}${pathname}`;
+    return NextResponse.redirect(req.nextUrl);
   }
 
-  // Redirect if there is no locale
-  const locale = getLocale(req);
-  req.nextUrl.pathname = `/${locale}${pathname}`;
-  return NextResponse.redirect(req.nextUrl);
+  // Handle our custom dashboard authentication (after locale is ensured)
+  if (pathname.includes("/dashboard") && !pathname.includes("/dashboard/auth")) {
+    if (!req.auth?.user || req.auth.user.email !== "bob@matsuoka.com") {
+      // Extract locale from the pathname
+      const locale = pathname.split("/")[1] || getLocale(req);
+      return NextResponse.redirect(new URL(`/${locale}/dashboard/auth/signin`, req.url));
+    }
+  }
+
+  return NextResponse.next();
 });
 
 export const config = {
