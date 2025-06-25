@@ -48,71 +48,88 @@ async function findOrCreateTool(
   newsUrl?: string,
   newsContext?: string
 ): Promise<any> {
-  // First try to find by slug
-  const { docs: toolsBySlug } = await payload.find({
-    collection: "tools",
-    where: {
-      slug: { equals: toolIdentifier.toLowerCase().replace(/\s+/g, "-") },
-    },
-    limit: 1,
-  });
-
-  if (toolsBySlug.length > 0) {
-    return toolsBySlug[0];
-  }
-
-  // Then try to find by name
-  const { docs: toolsByName } = await payload.find({
-    collection: "tools",
-    where: {
-      name: { equals: toolIdentifier },
-    },
-    limit: 1,
-  });
-
-  if (toolsByName.length > 0) {
-    return toolsByName[0];
-  }
-
-  // Check if we already have a pending tool for this identifier
-  const { docs: pendingTools } = await payload.find({
-    collection: "pending-tools",
-    where: {
-      or: [
-        { slug: { equals: toolIdentifier.toLowerCase().replace(/\s+/g, "-") } },
-        { name: { equals: toolIdentifier } },
-      ],
-    },
-    limit: 1,
-  });
-
-  if (pendingTools.length > 0) {
-    loggers.api.info(`Found existing pending tool: ${toolIdentifier}`);
-    return null; // Don't create duplicate pending tools
-  }
-
-  // Create pending tool for admin review
-  loggers.api.info(`Creating pending tool for review: ${toolIdentifier}`);
-
-  const pendingTool = await payload.create({
-    collection: "pending-tools",
-    data: {
-      name: toolIdentifier,
-      slug: toolIdentifier.toLowerCase().replace(/\s+/g, "-"),
-      suggested_category: "autonomous-agent", // Default category
-      description: `Tool mentioned in news article`,
-      created_from: "news",
-      source_info: {
-        source_name: newsSource,
-        source_url: newsUrl,
-        context: newsContext || `Mentioned in article from ${newsSource}`,
+  try {
+    // First try to find by slug
+    const { docs: toolsBySlug } = await payload.find({
+      collection: "tools",
+      where: {
+        slug: { equals: toolIdentifier.toLowerCase().replace(/\s+/g, "-") },
       },
-      status: "pending",
-    },
-  });
+      limit: 1,
+    });
 
-  loggers.api.info(`Created pending tool: ${pendingTool.id} for ${toolIdentifier}`);
-  return null; // Return null since we're not creating a real tool
+    if (toolsBySlug.length > 0) {
+      return toolsBySlug[0];
+    }
+
+    // Then try to find by name
+    const { docs: toolsByName } = await payload.find({
+      collection: "tools",
+      where: {
+        name: { equals: toolIdentifier },
+      },
+      limit: 1,
+    });
+
+    if (toolsByName.length > 0) {
+      return toolsByName[0];
+    }
+
+    // Check if we already have a pending tool for this identifier
+    const { docs: pendingTools } = await payload.find({
+      collection: "pending-tools",
+      where: {
+        or: [
+          { slug: { equals: toolIdentifier.toLowerCase().replace(/\s+/g, "-") } },
+          { name: { equals: toolIdentifier } },
+        ],
+      },
+      limit: 1,
+    });
+
+    if (pendingTools.length > 0) {
+      loggers.api.info(`Found existing pending tool: ${toolIdentifier}`);
+      return null; // Don't create duplicate pending tools
+    }
+
+    // Create pending tool for admin review
+    loggers.api.info(`Creating pending tool for review: ${toolIdentifier}`);
+
+    const pendingTool = await payload.create({
+      collection: "pending-tools",
+      data: {
+        name: toolIdentifier,
+        slug: toolIdentifier.toLowerCase().replace(/\s+/g, "-"),
+        suggested_category: "autonomous-agent", // Default category
+        description: `Tool mentioned in news article`,
+        created_from: "news",
+        source_info: {
+          source_name: newsSource,
+          source_url: newsUrl,
+          context: newsContext || `Mentioned in article from ${newsSource}`,
+        },
+        status: "pending",
+      },
+    });
+
+    loggers.api.info(`Created pending tool: ${pendingTool.id} for ${toolIdentifier}`);
+    return null; // Return null since we're not creating a real tool
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+
+    // If it's a database connection error, re-throw it to be handled at the higher level
+    if (
+      errorMessage.includes("db_termination") ||
+      errorMessage.includes("connection terminated") ||
+      errorMessage.includes("Client has already been released")
+    ) {
+      throw error;
+    }
+
+    // For other errors, log and return null
+    loggers.api.error(`Error in findOrCreateTool for ${toolIdentifier}:`, error);
+    return null;
+  }
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -173,6 +190,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       try {
         report.processing_log += `Processing item ${i + 1}: ${item.title}\n`;
 
+        // Add a small delay between items to prevent overwhelming the database
+        if (i > 0) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
         // Check for duplicates by URL
         const { docs: existingNews } = await payload.find({
           collection: "news",
@@ -197,7 +219,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               toolIdentifier,
               item.source,
               item.url,
-              `Related tool mentioned in: ${item.title || (item as any)['headline']}`
+              `Related tool mentioned in: ${item.title || (item as any)["headline"]}`
             );
 
             // Only add to related tools if tool exists (not pending)
@@ -227,7 +249,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             item.primary_tool,
             item.source,
             item.url,
-            `Primary tool mentioned in: ${item.title || (item as any)['headline']}`
+            `Primary tool mentioned in: ${item.title || (item as any)["headline"]}`
           );
 
           // Only add to related tools if tool exists (not pending)
@@ -286,13 +308,29 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       } catch (error) {
         report.failed_items++;
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
-        report.errors.push({
-          item_index: i,
-          item_title: item.title,
-          error: errorMessage,
-        });
-        report.processing_log += `  - Failed: ${errorMessage}\n`;
-        loggers.api.error(`Error processing news item ${i}:`, error);
+
+        // Check if it's a database connection error
+        const isDbError =
+          errorMessage.includes("db_termination") ||
+          errorMessage.includes("connection terminated") ||
+          errorMessage.includes("Client has already been released");
+
+        if (isDbError) {
+          report.processing_log += `  - Failed: Database connection error - ${errorMessage}\n`;
+          loggers.api.error(`Database connection error on item ${i}:`, error);
+
+          // Stop processing remaining items if database is having issues
+          report.processing_log += `  - Stopping processing due to database connectivity issues\n`;
+          break;
+        } else {
+          report.errors.push({
+            item_index: i,
+            item_title: item.title,
+            error: errorMessage,
+          });
+          report.processing_log += `  - Failed: ${errorMessage}\n`;
+          loggers.api.error(`Error processing news item ${i}:`, error);
+        }
       }
     }
 
