@@ -203,7 +203,24 @@
       },
       "primaryFactors": "주요 요인 (67.5%)",
       "secondaryFactors": "보조 요인 (32.5%)",
-      "description": "우리의 랭킹 알고리즘은 정량적 메트릭과 정성적 평가를 결합하여 AI 코딩 툴의 종합적인 관점을 제공합니다. 새로운 데이터를 기반으로 매주 랭킹을 업데이트하고 방법론을 지속적으로 개선합니다."
+      "description": "우리의 랭킹 알고리즘은 정량적 메트릭과 정성적 평가를 결합하여 AI 코딩 툴의 종합적인 관점을 제공합니다. 새로운 데이터를 기반으로 매주 랭킹을 업데이트하고 방법론을 지속적으로 개선합니다.",
+      "factors": {
+        "agentic": "에이전틱 능력",
+        "innovation": "혁신",
+        "performance": "성능",
+        "adoption": "채택",
+        "traction": "견인력",
+        "sentiment": "감정",
+        "velocity": "속도",
+        "resilience": "복원력"
+      },
+      "modifiers": {
+        "decay": "혁신 감쇠 (6개월 반감기) - 최근 혁신이 더 높은 가중치를 받도록 보장",
+        "risk": "플랫폼 위험 수정자 - 플랫폼 의존성과 락인을 기반으로 점수 조정",
+        "revenue": "수익 품질 조정 - 지속 가능한 수익과 일회성 수익을 구분"
+      },
+      "methodologyText": "우리의 포괄적인 방법론은 여러 차원을 통해 AI 코딩 툴을 평가하여 실제 성능과 채택을 반영하는 공정하고 정확한 랭킹을 보장합니다.",
+      "viewMethodology": "전체 방법론 보기"
     }
   },
   "news": {
@@ -437,6 +454,111 @@
     "subtitle": "AI 코딩 툴을 랭킹하는 방법",
     "lastUpdated": "마지막 업데이트: 2025년 1월",
     "intro": "AI Power Rankings는 정교한 알고리즘 (v6.0)을 사용하여 여러 정량적 및 정성적 요인을 바탕으로 AI 코딩 툴을 평가하고 랭킹합니다. 우리의 방법론은 개발자들에게 AI 툴 환경의 객관적이고 데이터 드리븐한 평가를 제공하도록 설계되었습니다.",
+    "algorithm": {
+      "title": "알고리즘 v6.0",
+      "description": "실제 사용 패턴과 시장 역학을 포함한 우리의 최신 랭킹 알고리즘",
+      "keyFeatures": "핵심 기능",
+      "features": {
+        "innovationDecay": "도구 신선도를 반영하기 위한 혁신 감쇠 모델링",
+        "platformRisk": "벤더 의존성에 대한 플랫폼 위험 평가",
+        "revenueQuality": "비즈니스 모델을 기반으로 한 수익 품질 조정",
+        "technicalWeighting": "다양한 사용 사례에 대한 기술적 능력 가중치",
+        "dataValidation": "다중 소스 데이터 검증 및 정규화",
+        "logarithmicScaling": "균형 잡힌 비교를 위한 로그 스케일링"
+      }
+    },
+    "factors": {
+      "title": "점수 요인",
+      "description": "특정 가중치를 가진 8가지 핵심 차원을 통해 도구가 평가됩니다",
+      "primary": "주요 요인 (82.5%)",
+      "secondary": "보조 요인 (17.5%)",
+      "agentic": {
+        "details": "자율적 능력, 다단계 추론 및 복잡한 작업 완료를 측정"
+      },
+      "innovation": {
+        "details": "혁신적 기능, 기술적 발전 및 시장 차별화를 평가"
+      },
+      "performance": {
+        "details": "SWE-bench, HumanEval 및 실제 코딩 작업에 대한 벤치마크"
+      },
+      "adoption": {
+        "details": "활성 사용자, 성장률 및 시장 침투 메트릭"
+      },
+      "traction": {
+        "details": "수익 성장, 펀딩 라운드 및 비즈니스 모멘텀 지표"
+      },
+      "sentiment": {
+        "details": "개발자 만족도, 커뮤니티 피드백 및 추천 점수"
+      },
+      "velocity": {
+        "details": "기능 출시 주기, 업데이트 빈도 및 혁신 속도"
+      },
+      "resilience": {
+        "details": "플랫폼 안정성, 백업 옵션 및 벤더 독립성"
+      }
+    },
+    "modifiers": {
+      "title": "동적 수정자",
+      "description": "시장 조건과 도구 성숙도를 반영하는 실시간 조정",
+      "innovationDecay": {
+        "description": "지속적인 개선을 보상하고 정체를 벌하기 위해 시간이 지남에 따라 혁신 점수 감소"
+      },
+      "platformRisk": {
+        "description": "벤더 락인, 플랫폼 의존성 및 비즈니스 위험을 기반으로 한 조정",
+        "penalties": "위험 벌점",
+        "penaltyList": {
+          "acquired": "경쟁업체에 의해 최근 인수됨",
+          "exclusive": "플랫폼 독점 (단일 LLM)",
+          "competitor": "경쟁 플랫폼 소유",
+          "regulatory": "규제 준수 문제",
+          "funding": "펀딩 또는 지속가능성 우려"
+        },
+        "bonuses": "위험 완화 보너스",
+        "bonusList": {
+          "multiLLM": "여러 LLM 제공업체 지원",
+          "openSource": "오픈 소스 가용성",
+          "selfHosted": "셀프 호스팅 옵션"
+        }
+      },
+      "revenueQuality": {
+        "description": "비즈니스 모델 지속가능성과 성장 잠재력을 기반으로 한 수익 가중치",
+        "models": {
+          "enterpriseHigh": "엔터프라이즈 (하이터치)",
+          "enterpriseStandard": "엔터프라이즈 (표준)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "컨슈머 프리미엄",
+          "freemium": "프리미엄",
+          "openSource": "오픈 소스"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "데이터 소스 및 검증",
+      "description": "데이터 수집 및 검증에 대한 엄격한 표준을 유지합니다",
+      "collection": {
+        "title": "데이터 수집 방법",
+        "sources": {
+          "api": "도구 제공업체와의 직접 API 통합",
+          "research": "업계 연구 보고서 및 분석가 데이터",
+          "announcements": "공식 회사 발표 및 보도 자료",
+          "community": "개발자 설문조사 및 커뮤니티 피드백",
+          "benchmarks": "표준화된 성능 벤치마크"
+        }
+      },
+      "validation": {
+        "title": "검증 요구사항",
+        "requirements": {
+          "completeness": "모든 필수 메트릭이 있어야 함",
+          "reliability": "핵심 메트릭에 대한 다중 소스 검증",
+          "outlier": "이상치 탐지 및 수동 검토",
+          "crossValidation": "업계 벤치마크와의 교차 검증"
+        }
+      },
+      "updateFrequency": {
+        "title": "업데이트 일정",
+        "description": "지속적인 데이터 수집과 함께 랭킹이 매주 재계산됩니다. 주요 알고리즘 업데이트는 버전화되고 문서화됩니다."
+      }
+    },
     "sections": {
       "scoringFactors": {
         "title": "점수 요인",
@@ -486,7 +608,12 @@
     },
     "team": {
       "title": "팀",
-      "description": "AI Power Rankings는 AI와 소프트웨어 개발의 교차점에 열정을 가진 개발자와 데이터 사이언티스트 팀에 의해 관리됩니다."
+      "description": "AI Power Rankings는 2025년 3월부터 agentic coding 도구들을 추적해온 기술 임원이자 분할 CTO인 밥 마츠오카가 관리합니다.",
+      "description1": "AI Power Rankings는 2025년 3월부터 agentic coding 도구들을 추적해온 기술 임원이자 분할 CTO인 밥 마츠오카가 관리합니다.",
+      "description2": "production 애플리케이션 구축 hands-on 경험과 AI 개발 도구의 체계적 평가를 결합합니다. 이 사이트는 AI 에이전트로 코딩하는 실질적인 현실에 대해 작성하는 HyperDev에서의 전략적 분석에 대한 quantitative backbone을 제공합니다.",
+      "description3": "완전한 투명성: 이것은 이틀 만에 만들어진 1인 운영입니다. 개발자 도구 환경이 기존 분석 사이클에는 너무 빠르게 움직이기 때문에 실제 사용을 기반으로 배포하고 반복하고 있습니다.",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "문제 신고"
     },
     "contact": {
       "title": "연락하기",
@@ -541,7 +668,32 @@
         "데이터 드리븐 의사결정",
         "앞서 나가기",
         "필요에 맞는 툴 선택"
-      ]
+      ],
+      "challenges": {
+        "paralysis": {
+          "title": "결정 마비",
+          "description": "매주 수십 개의 AI 도구가 출시되면서 개발자들은 압도적인 선택에 직면하고 있습니다"
+        },
+        "marketing": {
+          "title": "마케팅 vs 현실",
+          "description": "과감한 주장들이 종종 실제 성능과 기능과 일치하지 않습니다"
+        },
+        "change": {
+          "title": "빠른 변화",
+          "description": "도구들이 빠르게 진화합니다 - 오늘 최고인 것이 내일은 구식이 될 수 있습니다"
+        },
+        "risks": {
+          "title": "숨겨진 위험",
+          "description": "보안, 프라이버시, vendor lock-in 우려 사항들이 종종 간과됩니다"
+        }
+      },
+      "conclusion": "그래서 우리가 AI Power Rankings를 만든 이유입니다 - 소음을 뚫고 명확한 데이터 드리븐 인사이트를 제공하기 위해서요."
+    },
+    "cta": {
+      "title": "탐색할 준비가 되셨나요?",
+      "description": "우리의 랭킹에 빠져들어 당신의 요구에 가장 적합한 AI 코딩 도구를 발견하세요.",
+      "exploreButton": "랭킹 탐색",
+      "methodologyButton": "우리의 방법론 학습"
     }
   },
   "sidebar": {

@@ -9,6 +9,7 @@ interface RankingData {
   changeReason?: string;
   tool: {
     id: string;
+    slug?: string;
     name: string;
     category: string;
     status: string;
@@ -31,15 +32,16 @@ interface HomeContentProps {
   topRankings: RankingData[];
   loading: boolean;
   loadingText: string;
+  lang?: string;
 }
 
-export function HomeContent({ topRankings, loading, loadingText }: HomeContentProps) {
+export function HomeContent({ topRankings, loading, loadingText, lang = "en" }: HomeContentProps) {
   return loading ? (
     <div className="text-center text-muted-foreground mb-12">{loadingText}</div>
   ) : (
     <div className="grid md:grid-cols-3 gap-3 md:gap-6 mb-12">
       {topRankings.map((ranking, index) => (
-        <HeroCard key={ranking.tool.id} ranking={ranking} index={index} />
+        <HeroCard key={ranking.tool.id} ranking={ranking} index={index} lang={lang} />
       ))}
     </div>
   );

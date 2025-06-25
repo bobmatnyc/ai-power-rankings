@@ -112,6 +112,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             topRankings={topRankings}
             loading={loading}
             loadingText={dict.common.loading}
+            lang={lang}
           />
 
           {/* Stats Row */}
@@ -165,7 +166,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                   </Badge>
                 </div>
                 <div className="h-full">
-                  <RankingCard ranking={tool} />
+                  <RankingCard ranking={tool} lang={lang} />
                 </div>
               </div>
             ))}
@@ -192,7 +193,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
           <div className="grid md:grid-cols-2 gap-3 md:gap-6">
             {recentlyUpdated.map((tool: any) => (
               <div key={tool.tool.id} className="h-full">
-                <RankingCard ranking={tool} />
+                <RankingCard ranking={tool} lang={lang} />
               </div>
             ))}
           </div>

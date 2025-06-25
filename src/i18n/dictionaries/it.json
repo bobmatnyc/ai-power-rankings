@@ -461,87 +461,246 @@
         "title": "Update Frequency",
         "content": "Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
       }
+    },
+    "algorithm": {
+      "title": "Il Nostro Algoritmo v6.0",
+      "description": "Un sistema di punteggio sofisticato che bilancia performance tecnica, innovazione e dinamiche di mercato",
+      "keyFeatures": "Caratteristiche chiave",
+      "features": {
+        "comprehensive": {
+          "title": "Valutazione completa",
+          "description": "8 fattori di punteggio che coprono aspetti tecnici e commerciali"
+        },
+        "dynamic": {
+          "title": "Modificatori dinamici",
+          "description": "Aggiustamenti in tempo reale per innovazione, rischio e qualità dei ricavi"
+        },
+        "transparent": {
+          "title": "Trasparenza totale",
+          "description": "Metodologia pubblica con aggiornamenti versionati"
+        },
+        "datadriven": {
+          "title": "Basato sui dati",
+          "description": "Fonti verificate con validazione dell'80% dei dati"
+        }
+      }
+    },
+    "factors": {
+      "title": "Fattori di Punteggio",
+      "subtitle": "8 dimensioni chiave valutate per ogni strumento",
+      "description": "Ogni strumento è valutato attraverso questi fattori critici, ponderati secondo il loro impatto sull'esperienza dello sviluppatore",
+      "primary": {
+        "title": "Fattori primari (67.5%)",
+        "agenticCapability": {
+          "title": "Capacità Agentica (30%)",
+          "description": "Misura le capacità di codifica autonoma e risoluzione di compiti multi-step",
+          "details": "Valuta la capacità di uno strumento di funzionare in modo indipendente, pianificare ed eseguire compiti di sviluppo complessi con minimo intervento umano."
+        },
+        "innovation": {
+          "title": "Innovazione (20%)",
+          "description": "Progressi tecnici e innovazione delle funzionalità",
+          "details": "Misura i progressi unici, le nuove capacità e l'innovazione tecnica che differenziano lo strumento dai concorrenti."
+        },
+        "technicalPerformance": {
+          "title": "Performance Tecnica (12.5%)",
+          "description": "Qualità del codice, velocità e risultati dei benchmark",
+          "details": "Valuta le metriche di performance inclusi i punteggi SWE-bench, velocità di esecuzione e qualità del codice generato."
+        },
+        "marketTraction": {
+          "title": "Trazione di Mercato (12.5%)",
+          "description": "Adozione degli utenti, tasso di crescita e presenza sul mercato",
+          "details": "Misura l'adozione reale, le metriche di crescita e la posizione competitiva nel mercato."
+        }
+      },
+      "secondary": {
+        "title": "Fattori secondari (32.5%)",
+        "developerExperience": {
+          "title": "Esperienza Sviluppatore (10%)",
+          "description": "Facilità d'uso, qualità della documentazione ed ecosistema"
+        },
+        "ecosystemHealth": {
+          "title": "Salute dell'Ecosistema (7.5%)",
+          "description": "Supporto della community, integrazioni e sostenibilità a lungo termine"
+        },
+        "securityPrivacy": {
+          "title": "Sicurezza & Privacy (7.5%)",
+          "description": "Misure di sicurezza, conformità e pratiche di privacy"
+        },
+        "costEffectiveness": {
+          "title": "Rapporto Costo-Efficacia (7.5%)",
+          "description": "Modello di prezzo, valore fornito e accessibilità"
+        }
+      }
+    },
+    "modifiers": {
+      "title": "Modificatori Dinamici",
+      "subtitle": "Aggiustamenti sofisticati per classifiche eque e accurate",
+      "description": "Questi modificatori si applicano ai punteggi base per riflettere le realtà attuali del mercato",
+      "innovationDecay": {
+        "title": "Decadimento dell'Innovazione",
+        "description": "Le innovazioni recenti sono ponderate più fortemente",
+        "details": "Applica un decadimento temporale per assicurare che le innovazioni recenti abbiano più impatto sulle classifiche rispetto ai risultati più vecchi."
+      },
+      "platformRisk": {
+        "title": "Rischio Piattaforma",
+        "description": "Fattori di indipendenza vs lock-in della piattaforma",
+        "details": "Aggiusta i punteggi in base al livello di dipendenza da una piattaforma specifica e ai rischi di lock-in."
+      },
+      "revenueQuality": {
+        "title": "Qualità dei Ricavi",
+        "description": "I ricavi enterprise sono ponderati più dei ricavi consumer",
+        "details": "Dà più peso ai ricavi provenienti da clienti enterprise, riflettendo stabilità e sostenibilità a lungo termine."
+      }
+    },
+    "revenueModels": {
+      "title": "Modelli di Ricavo",
+      "description": "Come valutiamo diversi modelli di business",
+      "models": {
+        "enterpriseHigh": "Enterprise (Alto supporto)",
+        "enterpriseStandard": "Enterprise (Standard)",
+        "smbSaas": "PMI SaaS",
+        "consumerPremium": "Consumer Premium",
+        "freemium": "Freemium",
+        "openSource": "Open Source"
+      }
+    },
+    "dataSources": {
+      "title": "Fonti Dati e Validazione",
+      "description": "Manteniamo standard rigorosi per la raccolta e validazione dei dati",
+      "collection": {
+        "title": "Metodi di Raccolta Dati",
+        "sources": {
+          "api": "Integrazioni API dirette con i fornitori di strumenti",
+          "research": "Report di ricerca industriale e dati di analisti",
+          "announcements": "Annunci ufficiali aziendali e comunicati stampa",
+          "community": "Sondaggi sviluppatori e feedback della community",
+          "benchmarks": "Benchmark di performance standardizzati"
+        }
+      },
+      "validation": {
+        "title": "Requisiti di Validazione",
+        "requirements": {
+          "completeness": "Tutte le metriche richieste devono essere presenti",
+          "reliability": "Verifica multi-fonte per le metriche chiave",
+          "outlier": "Rilevazione outlier e revisione manuale",
+          "crossValidation": "Validazione incrociata con benchmark industriali"
+        }
+      },
+      "updateFrequency": {
+        "title": "Programma di Aggiornamento",
+        "description": "Le classifiche vengono ricalcolate settimanalmente con raccolta dati continua. Gli aggiornamenti principali dell'algoritmo sono versionati e documentati."
+      }
     }
   },
   "about": {
-    "title": "About AI Power Rankings",
-    "subtitle": "Empowering developers with data-driven AI tool insights",
+    "title": "Informazioni su AI Power Rankings",
+    "subtitle": "Dare potere agli sviluppatori con insights di strumenti IA basati sui dati",
     "hero": {
-      "title": "Empowering developers with data-driven AI tool insights",
-      "subtitle": "We believe developers deserve transparent, objective rankings of AI coding tools to make informed decisions."
+      "title": "Dare potere agli sviluppatori con insights di strumenti IA basati sui dati",
+      "subtitle": "Crediamo che gli sviluppatori meritino classifiche trasparenti e oggettive degli strumenti di coding IA per prendere decisioni informate."
     },
     "mission": {
-      "title": "Our Mission",
-      "content": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs.",
-      "description": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
+      "title": "La Nostra Missione",
+      "content": "Fornire alla community degli sviluppatori le classifiche più complete, imparziali e aggiornate degli strumenti di coding IA, aiutando i team a scegliere gli strumenti giusti per le loro esigenze.",
+      "description": "Fornire alla community degli sviluppatori le classifiche più complete, imparziali e aggiornate degli strumenti di coding IA, aiutando i team a scegliere gli strumenti giusti per le loro esigenze."
     },
     "whyWeBuiltThis": {
-      "title": "Why We Built This",
-      "reasons": {
-        "0": "The AI tools landscape is evolving rapidly, making it hard to keep track",
-        "1": "Marketing claims often don't match real-world performance",
-        "2": "Developers need objective data to justify tool adoption",
-        "3": "There was no single source comparing all major AI coding tools"
-      }
+      "title": "Perché Abbiamo Costruito Questo",
+      "reasons": [
+        "Il panorama degli strumenti IA si evolve rapidamente, rendendo difficile tenere il passo",
+        "Le affermazioni di marketing spesso non corrispondono alle performance del mondo reale",
+        "Gli sviluppatori hanno bisogno di dati oggettivi per giustificare l'adozione di strumenti",
+        "Non c'era una fonte unica che confrontasse tutti i principali strumenti di coding IA"
+      ]
     },
     "team": {
-      "title": "The Team",
-      "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development."
+      "title": "Il Team",
+      "description": "AI Power Rankings è mantenuto da Bob Matsuoka, un dirigente tecnologico e CTO frazionale che segue gli strumenti di coding agentici da marzo 2025.",
+      "description1": "AI Power Rankings è mantenuto da Bob Matsuoka, un dirigente tecnologico e CTO frazionale che segue gli strumenti di coding agentici da marzo 2025.",
+      "description2": "Combino esperienza pratica nella costruzione di applicazioni di produzione con valutazione sistematica degli strumenti di sviluppo IA. Questo sito fornisce la base quantitativa per la mia analisi strategica presso HyperDev, dove scrivo sulle realtà pratiche del coding con agenti IA.",
+      "description3": "Piena trasparenza: questa è un'operazione di una sola persona costruita in due giorni. Sto spedendo e iterando basato sull'uso reale perché il panorama degli strumenti di sviluppo si muove troppo velocemente per i cicli di analisi tradizionali.",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "Segnala un Problema"
     },
     "contact": {
-      "title": "Get in Touch",
-      "description": "Have feedback or suggestions? We'd love to hear from you.",
-      "email": "Contact us at hello@aipowerranking.com"
+      "title": "Mettiti in Contatto",
+      "description": "Hai feedback o suggerimenti? Ci piacerebbe sentirti.",
+      "email": "Contattaci a hello@aipowerranking.com"
     },
     "newsletter": {
-      "title": "Stay Updated",
-      "description": "Get weekly insights on AI tool rankings and industry trends.",
-      "subscribe": "Subscribe to Newsletter"
+      "title": "Rimani Aggiornato",
+      "description": "Ricevi insights settimanali sulle classifiche degli strumenti IA e i trend del settore.",
+      "subscribe": "Iscriviti alla Newsletter"
+    },
+    "cta": {
+      "title": "Pronto ad Esplorare?",
+      "description": "Immergiti nelle nostre classifiche per scoprire i migliori strumenti di coding IA per le tue esigenze.",
+      "exploreButton": "Esplora le Classifiche",
+      "methodologyButton": "Impara la Nostra Metodologia"
     },
     "whatWeDo": {
-      "title": "What We Do",
+      "title": "Cosa Facciamo",
       "track": {
-        "title": "Track AI Tools",
-        "description": "Monitor and analyze the latest AI coding tools"
+        "title": "Tracciare Strumenti IA",
+        "description": "Monitorare e analizzare gli ultimi strumenti di coding IA"
       },
       "analyze": {
-        "title": "Analyze Performance",
-        "description": "Evaluate tools based on real-world metrics"
+        "title": "Analizzare le Performance",
+        "description": "Valutare gli strumenti basandosi su metriche del mondo reale"
       },
       "rank": {
-        "title": "Rank Objectively",
-        "description": "Apply our algorithm to provide unbiased rankings"
+        "title": "Classificare Obiettivamente",
+        "description": "Applicare il nostro algoritmo per fornire classifiche imparziali"
       },
       "update": {
-        "title": "Update Weekly",
-        "description": "Keep rankings current with the latest data"
+        "title": "Aggiornare Settimanalmente",
+        "description": "Mantenere le classifiche aggiornate con gli ultimi dati"
       },
       "analysis": {
-        "title": "Deep Analysis",
-        "description": "Comprehensive evaluation of AI coding tools based on performance, features, and user feedback"
+        "title": "Analisi Approfondita",
+        "description": "Valutazione completa degli strumenti di coding IA basata su performance, funzionalità e feedback degli utenti"
       },
       "methodology": {
-        "title": "Transparent Methodology",
-        "description": "Our ranking algorithm is fully documented and continuously refined based on community input"
+        "title": "Metodologia Trasparente",
+        "description": "Il nostro algoritmo di classificazione è completamente documentato e continuamente raffinato basandosi sui contributi della community"
       },
       "updates": {
-        "title": "Weekly Updates",
-        "description": "Rankings are refreshed every week to reflect the rapidly evolving AI tools landscape"
+        "title": "Aggiornamenti Settimanali",
+        "description": "Le classifiche vengono aggiornate ogni settimana per riflettere il panorama degli strumenti IA in rapida evoluzione"
       },
       "community": {
-        "title": "Community-Driven",
-        "description": "We incorporate feedback from developers worldwide to improve our rankings and methodology"
+        "title": "Guidato dalla Community",
+        "description": "Incorporiamo feedback dagli sviluppatori di tutto il mondo per migliorare le nostre classifiche e metodologia"
       }
     },
     "whyItMatters": {
-      "title": "Why It Matters",
-      "description": "In the rapidly evolving AI landscape, developers need reliable data to make informed decisions.",
-      "points": {
-        "0": "Save time evaluating tools",
-        "1": "Make data-driven decisions",
-        "2": "Stay ahead of the curve",
-        "3": "Choose tools that fit your needs"
-      }
+      "title": "Perché È Importante",
+      "description": "Nel panorama IA in rapida evoluzione, gli sviluppatori hanno bisogno di dati affidabili per prendere decisioni informate.",
+      "points": [
+        "Risparmiare tempo nella valutazione degli strumenti",
+        "Prendere decisioni basate sui dati",
+        "Stare avanti alla curva",
+        "Scegliere strumenti che si adattano alle tue esigenze"
+      ],
+      "challenges": {
+        "paralysis": {
+          "title": "Paralisi Decisionale",
+          "description": "Con decine di strumenti IA lanciati ogni settimana, gli sviluppatori affrontano scelte travolgenti"
+        },
+        "marketing": {
+          "title": "Marketing vs Realtà",
+          "description": "Le affermazioni audaci spesso non corrispondono alle performance e capacità del mondo reale"
+        },
+        "change": {
+          "title": "Cambiamento Rapido",
+          "description": "Gli strumenti evolvono rapidamente - quello che è migliore oggi potrebbe essere obsoleto domani"
+        },
+        "risks": {
+          "title": "Rischi Nascosti",
+          "description": "Le preoccupazioni di sicurezza, privacy e vendor lock-in sono spesso trascurate"
+        }
+      },
+      "conclusion": "Ecco perché abbiamo costruito AI Power Rankings - per tagliare attraverso il rumore e fornire insights chiari e basati sui dati."
     }
   },
   "sidebar": {
