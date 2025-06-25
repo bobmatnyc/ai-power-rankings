@@ -152,8 +152,8 @@
       },
       "ideDescription": "AI驱动的代码补全和建议",
       "editorDescription": "集成AI的智能编辑器",
-      "builderDescription": "[TRANSLATE] Build complete applications with AI assistance",
-      "agentDescription": "[TRANSLATE] Fully autonomous AI software engineers",
+      "builderDescription": "使用AI辅助构建完整应用程序",
+      "agentDescription": "完全自主的AI软件工程师",
       "testingTools": {
         "name": "测试工具",
         "description": "AI 驱动的自动化测试和质量保证"
@@ -349,7 +349,7 @@
       "title": "数据驱动排名",
       "subtitle": "我们的方法论透明、公正且持续改进",
       "methodology": "查看方法论",
-      "algorithmVersion": "[TRANSLATE] Algorithm v6.0",
+      "algorithmVersion": "算法 v6.0",
       "lastUpdated": "最后更新"
     },
     "faq": {
