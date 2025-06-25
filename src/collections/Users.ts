@@ -3,75 +3,13 @@ import type { CollectionConfig } from "payload";
 export const Users: CollectionConfig = {
   slug: "users",
   auth: {
-    tokenExpiration: 7200, // 2 hours
-    verify: false, // Disable email verification for OAuth users
-    maxLoginAttempts: 2,
-    lockTime: 600 * 1000, // 10 minutes
-    strategies: [
-      {
-        name: "nextauth",
-        authenticate: async ({ payload }: any) => {
-          // Dynamically import to avoid circular dependencies
-          const { auth } = await import("@/auth");
-
-          try {
-            const session = await auth();
-
-            if (!session?.user?.email) {
-              return { user: null };
-            }
-
-            // Find or create user in Payload
-            const users = await payload.find({
-              collection: "users",
-              where: {
-                email: {
-                  equals: session.user.email,
-                },
-              },
-              limit: 1,
-            });
-
-            let user = users.docs[0];
-
-            if (!user) {
-              // Create user if doesn't exist
-              user = await payload.create({
-                collection: "users",
-                data: {
-                  email: session.user.email,
-                  name: session.user.name || session.user.email,
-                  password: "oauth-user",
-                  role: session.user.email === "bob@matsuoka.com" ? "admin" : "viewer",
-                  authProvider: "oauth",
-                  lastLoginAt: new Date().toISOString(),
-                },
-              });
-            } else {
-              // Update last login
-              await payload.update({
-                collection: "users",
-                id: user.id,
-                data: {
-                  lastLoginAt: new Date().toISOString(),
-                },
-              });
-            }
-
-            return {
-              user: {
-                ...user,
-                collection: "users",
-                _strategy: "nextauth",
-              },
-            };
-          } catch (error) {
-            console.error("NextAuth strategy error:", error);
-            return { user: null };
-          }
-        },
-      },
-    ],
+    tokenExpiration: 7200,
+    verify: false,
+    useAPIKey: false,
+    cookies: {
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+    },
   },
   admin: {
     useAsTitle: "email",

@@ -150,6 +150,42 @@ export const payloadDirect = {
     });
   },
 
+  async getPendingTools(params?: QueryParams) {
+    const payload = await getPayloadClient();
+    return payload.find({
+      collection: "pending-tools",
+      limit: params?.limit || 10,
+      page: params?.page || 1,
+      where: params?.where || {},
+      sort: params?.sort,
+    });
+  },
+
+  async getPendingToolById(id: string) {
+    const payload = await getPayloadClient();
+    return payload.findByID({
+      collection: "pending-tools",
+      id,
+    });
+  },
+
+  async createTool(data: any) {
+    const payload = await getPayloadClient();
+    return payload.create({
+      collection: "tools",
+      data,
+    });
+  },
+
+  async updatePendingTool(id: string, data: any) {
+    const payload = await getPayloadClient();
+    return payload.update({
+      collection: "pending-tools",
+      id,
+      data,
+    });
+  },
+
   async getCompany(idOrSlug: string) {
     const payload = await getPayloadClient();
 

@@ -6,11 +6,11 @@
 export function getUrl(): string {
   // Production URLs
   if (process.env.NODE_ENV === "production") {
-    if (process.env.NEXTAUTH_URL) {
-      return process.env.NEXTAUTH_URL;
+    if (process.env["NEXTAUTH_URL"]) {
+      return process.env["NEXTAUTH_URL"];
     }
-    if (process.env.VERCEL_URL) {
-      return `https://${process.env.VERCEL_URL}`;
+    if (process.env["VERCEL_URL"]) {
+      return `https://${process.env["VERCEL_URL"]}`;
     }
     return "https://aipowerrankings.com";
   }
@@ -21,12 +21,12 @@ export function getUrl(): string {
   }
 
   // Development - server with headers (Next.js 13+)
-  if (typeof process !== "undefined" && process.env.__NEXT_PRIVATE_ORIGIN) {
-    return process.env.__NEXT_PRIVATE_ORIGIN;
+  if (typeof process !== "undefined" && process.env["__NEXT_PRIVATE_ORIGIN"]) {
+    return process.env["__NEXT_PRIVATE_ORIGIN"];
   }
 
   // Development - fallback to PORT
-  const port = process.env.PORT || "3000";
+  const port = process.env["PORT"] || "3000";
   return `http://localhost:${port}`;
 }
 
@@ -47,8 +47,8 @@ export function getApiUrl(): string {
  */
 export function getAuthUrl(): string {
   // If explicitly set, use it
-  if (process.env.NEXTAUTH_URL) {
-    return process.env.NEXTAUTH_URL;
+  if (process.env["NEXTAUTH_URL"]) {
+    return process.env["NEXTAUTH_URL"];
   }
 
   return getUrl();

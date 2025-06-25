@@ -1,5 +1,6 @@
 export { Companies } from "./Companies";
 export { Tools } from "./Tools";
+export { PendingTools } from "./PendingTools";
 export { Metrics } from "./Metrics";
 export { Rankings } from "./Rankings";
 export { RankingPeriods } from "./RankingPeriods";

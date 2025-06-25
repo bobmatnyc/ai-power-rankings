@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   try {
     const isDev = process.env["NODE_ENV"] === "development";
-    const rankingsUrl = isDev ? "http://localhost:3001/api/rankings" : `${baseUrl}/api/rankings`;
+    const rankingsUrl = isDev ? "http://localhost:3000/api/rankings" : `${baseUrl}/api/rankings`;
 
     const response = await fetch(rankingsUrl, {
       next: { revalidate: isDev ? 0 : 300 },
@@ -116,7 +116,7 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
   try {
     const isDev = process.env["NODE_ENV"] === "development";
     const baseUrl = isDev
-      ? "http://localhost:3001"
+      ? "http://localhost:3000"
       : process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
     const timestamp = Date.now();
     const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;

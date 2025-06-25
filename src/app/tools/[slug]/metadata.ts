@@ -26,7 +26,7 @@ export async function generateToolMetadata(slug: string): Promise<Metadata> {
     // Fetch tool data from API
     const isDev = process.env["NODE_ENV"] === "development";
     const baseUrl = isDev
-      ? "http://localhost:3001"
+      ? "http://localhost:3000"
       : process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
 
     const response = await fetch(`${baseUrl}/api/tools/${slug}`, {

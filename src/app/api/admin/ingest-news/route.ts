@@ -44,7 +44,9 @@ interface NewsItem {
 async function findOrCreateTool(
   payload: any,
   toolIdentifier: string,
-  newsSource: string
+  newsSource: string,
+  newsUrl?: string,
+  newsContext?: string
 ): Promise<any> {
   // First try to find by slug
   const { docs: toolsBySlug } = await payload.find({
@@ -72,61 +74,45 @@ async function findOrCreateTool(
     return toolsByName[0];
   }
 
-  // Create new tool if not found
-  loggers.api.info(`Creating new tool: ${toolIdentifier}`);
-
-  // Create a basic company for the tool
-  const companyName = toolIdentifier.includes(" ") ? toolIdentifier.split(" ")[0] : toolIdentifier;
-  const companySlug = companyName.toLowerCase().replace(/\s+/g, "-");
-
-  let company;
-  const { docs: existingCompanies } = await payload.find({
-    collection: "companies",
+  // Check if we already have a pending tool for this identifier
+  const { docs: pendingTools } = await payload.find({
+    collection: "pending-tools",
     where: {
-      slug: { equals: companySlug },
+      or: [
+        { slug: { equals: toolIdentifier.toLowerCase().replace(/\s+/g, "-") } },
+        { name: { equals: toolIdentifier } },
+      ],
     },
     limit: 1,
   });
 
-  if (existingCompanies.length > 0) {
-    company = existingCompanies[0];
-  } else {
-    company = await payload.create({
-      collection: "companies",
-      data: {
-        name: companyName,
-        slug: companySlug,
-        company_type: "private",
-        description: `Company created during news ingestion from ${newsSource}`,
-      },
-    });
+  if (pendingTools.length > 0) {
+    loggers.api.info(`Found existing pending tool: ${toolIdentifier}`);
+    return null; // Don't create duplicate pending tools
   }
 
-  const tool = await payload.create({
-    collection: "tools",
+  // Create pending tool for admin review
+  loggers.api.info(`Creating pending tool for review: ${toolIdentifier}`);
+
+  const pendingTool = await payload.create({
+    collection: "pending-tools",
     data: {
       name: toolIdentifier,
       slug: toolIdentifier.toLowerCase().replace(/\s+/g, "-"),
-      display_name: toolIdentifier,
-      company: company.id,
-      category: "autonomous-agent", // Default category
-      status: "active",
-      description: [
-        {
-          children: [
-            {
-              text: `Tool created during news ingestion from ${newsSource}`,
-            },
-          ],
-        },
-      ],
-      tagline: toolIdentifier,
-      pricing_model: "freemium", // Default to freemium for auto-created tools
-      license_type: "proprietary",
+      suggested_category: "autonomous-agent", // Default category
+      description: `Tool mentioned in news article`,
+      created_from: "news",
+      source_info: {
+        source_name: newsSource,
+        source_url: newsUrl,
+        context: newsContext || `Mentioned in article from ${newsSource}`,
+      },
+      status: "pending",
     },
   });
 
-  return tool;
+  loggers.api.info(`Created pending tool: ${pendingTool.id} for ${toolIdentifier}`);
+  return null; // Return null since we're not creating a real tool
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -168,6 +154,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       duplicate_items: 0,
       new_tools_created: 0,
       new_companies_created: 0,
+      pending_tools_created: 0,
       processing_log: `Started processing ${newsItems.length} news items\n`,
       errors: [] as any[],
       ingested_news_ids: [] as string[],
@@ -205,16 +192,29 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const relatedToolIds = [];
         if (item.related_tools) {
           for (const toolIdentifier of item.related_tools) {
-            const tool = await findOrCreateTool(payload, toolIdentifier, item.source);
-            relatedToolIds.push(tool.id);
+            const tool = await findOrCreateTool(
+              payload,
+              toolIdentifier,
+              item.source,
+              item.url,
+              `Related tool mentioned in: ${item.title || item.headline}`
+            );
 
-            if (!report.created_tools.find((t) => t.id === tool.id)) {
-              report.created_tools.push({
-                id: tool.id,
-                name: tool.name,
-                slug: tool.slug,
-              });
-              report.new_tools_created++;
+            // Only add to related tools if tool exists (not pending)
+            if (tool) {
+              relatedToolIds.push(tool.id);
+
+              if (!report.created_tools.find((t) => t.id === tool.id)) {
+                report.created_tools.push({
+                  id: tool.id,
+                  name: tool.name,
+                  slug: tool.slug,
+                });
+                report.new_tools_created++;
+              }
+            } else {
+              // Tool is pending approval, don't add to relationships
+              report.pending_tools_created++;
             }
           }
         }
@@ -222,20 +222,33 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // Process primary tool
         let primaryToolId = null;
         if (item.primary_tool) {
-          const primaryTool = await findOrCreateTool(payload, item.primary_tool, item.source);
-          primaryToolId = primaryTool.id;
+          const primaryTool = await findOrCreateTool(
+            payload,
+            item.primary_tool,
+            item.source,
+            item.url,
+            `Primary tool mentioned in: ${item.title || item.headline}`
+          );
 
-          if (!relatedToolIds.includes(primaryTool.id)) {
-            relatedToolIds.push(primaryTool.id);
-          }
+          // Only add to related tools if tool exists (not pending)
+          if (primaryTool) {
+            primaryToolId = primaryTool.id;
 
-          if (!report.created_tools.find((t) => t.id === primaryTool.id)) {
-            report.created_tools.push({
-              id: primaryTool.id,
-              name: primaryTool.name,
-              slug: primaryTool.slug,
-            });
-            report.new_tools_created++;
+            if (!relatedToolIds.includes(primaryTool.id)) {
+              relatedToolIds.push(primaryTool.id);
+            }
+
+            if (!report.created_tools.find((t) => t.id === primaryTool.id)) {
+              report.created_tools.push({
+                id: primaryTool.id,
+                name: primaryTool.name,
+                slug: primaryTool.slug,
+              });
+              report.new_tools_created++;
+            }
+          } else {
+            // Tool is pending approval, don't add to relationships
+            report.pending_tools_created++;
           }
         }
 
