@@ -341,31 +341,31 @@
   },
   "newsletter": {
     "form": {
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email",
-      "subscribe": "Subscribe",
-      "subscribing": "Subscribing...",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time."
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "email": "E-mail",
+      "subscribe": "S'abonner",
+      "subscribing": "Abonnement en cours...",
+      "privacyNote": "Nous respectons votre vie privée. Désabonnez-vous à tout moment."
     },
     "modal": {
-      "title": "Stay Updated",
-      "subtitle": "Get weekly updates on AI tool rankings, new features, and industry insights.",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email",
-      "subscribe": "Subscribe",
-      "subscribing": "Subscribing...",
-      "thankYou": "Thank you!",
-      "checkEmail": "Please check your email to verify your subscription",
-      "alreadySubscribed": "You are already subscribed to our newsletter!",
-      "resentEmail": "We've resent the verification email. Please check your inbox.",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
+      "title": "Restez informé",
+      "subtitle": "Recevez des mises à jour hebdomadaires sur les classements d'outils IA, nouvelles fonctionnalités et tendances du secteur.",
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "email": "E-mail",
+      "subscribe": "S'abonner",
+      "subscribing": "Abonnement en cours...",
+      "thankYou": "Merci !",
+      "checkEmail": "Veuillez vérifier votre e-mail pour confirmer votre abonnement",
+      "alreadySubscribed": "Vous êtes déjà abonné à notre newsletter !",
+      "resentEmail": "Nous avons renvoyé l'e-mail de vérification. Veuillez vérifier votre boîte de réception.",
+      "privacyNote": "Nous respectons votre vie privée. Désabonnez-vous à tout moment.",
       "errors": {
-        "captcha": "Please complete the security check",
-        "failed": "Failed to subscribe. Please try again.",
-        "server": "Server configuration error",
-        "email": "Email service configuration error"
+        "captcha": "Veuillez compléter la vérification de sécurité",
+        "failed": "Échec de l'abonnement. Veuillez réessayer.",
+        "server": "Erreur de configuration du serveur",
+        "email": "Erreur de configuration du service e-mail"
       }
     },
     "verification": {
