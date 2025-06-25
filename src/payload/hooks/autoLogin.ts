@@ -33,7 +33,7 @@ export const autoLoginHook = async (req: PayloadRequest) => {
       }
 
       // Set user on request
-      req.user = user;
+      req.user = user as any;
     }
   } catch (error) {
     console.error("Auto-login hook error:", error);

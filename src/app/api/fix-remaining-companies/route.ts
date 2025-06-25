@@ -86,7 +86,7 @@ export async function POST(): Promise<NextResponse> {
           // Company exists, just update the tool
           company = existingCompanies[0];
           report.updated.push({
-            company: company['name'],
+            company: company!['name'],
             action: "Existing company used",
           });
         } else {
@@ -96,25 +96,25 @@ export async function POST(): Promise<NextResponse> {
             data: item.company,
           });
           report.created.push({
-            company: company['name'],
-            slug: company['slug'],
+            company: company!['name'],
+            slug: company!['slug'],
           });
-          loggers.api.info(`Created company: ${company['name']}`);
+          loggers.api.info(`Created company: ${company!['name']}`);
         }
         
         // Update the tool to point to the correct company
         await payload.update({
           collection: "tools",
-          id: tool.id,
+          id: tool!.id,
           data: {
-            company: company.id,
+            company: company!.id,
           },
         });
         
-        loggers.api.info(`Updated tool ${tool['name']} to company ${company['name']}`);
+        loggers.api.info(`Updated tool ${tool!['name']} to company ${company!['name']}`);
         
         // Find and delete the Unknown Company if no other tools reference it
-        const currentCompanyId = typeof tool['company'] === 'object' ? tool['company']['id'] : tool['company'];
+        const currentCompanyId = typeof tool!['company'] === 'object' ? tool!['company']['id'] : tool!['company'];
         
         if (currentCompanyId) {
           const { totalDocs: remainingTools } = await payload.find({

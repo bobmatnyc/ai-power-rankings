@@ -17,14 +17,14 @@ export async function POST(_request: NextRequest) {
       data: {
         ...currentSettings,
         algorithm_version: "v6.0",
-        contact_email: currentSettings.contact_email || "contact@aipowerrankings.com",
+        contact_email: currentSettings['contact_email'] || "contact@aipowerrankings.com",
       },
     });
 
     return NextResponse.json({
       success: true,
       message: "Site settings updated successfully",
-      algorithm_version: updatedSettings.algorithm_version,
+      algorithm_version: updatedSettings['algorithm_version'],
     });
   } catch (error: any) {
     console.error("Error updating site settings:", error);
@@ -47,7 +47,7 @@ export async function GET() {
     });
 
     return NextResponse.json({
-      algorithm_version: settings.algorithm_version,
+      algorithm_version: settings['algorithm_version'],
       settings: settings,
     });
   } catch (error: any) {

@@ -51,7 +51,7 @@ export async function GET(): Promise<NextResponse> {
       }
     }
     
-    report.collections.companies = {
+    report.collections['companies'] = {
       total: totalCompanies,
       issues: companiesIssues,
       company_types: Array.from(companyTypes),
@@ -101,7 +101,7 @@ export async function GET(): Promise<NextResponse> {
       }
     }
     
-    report.collections.tools = {
+    report.collections['tools'] = {
       total: totalTools,
       issues: toolsIssues,
       tools_without_company: toolsWithoutCompany,
@@ -138,7 +138,7 @@ export async function GET(): Promise<NextResponse> {
       }
     }
     
-    report.collections.news = {
+    report.collections['news'] = {
       total: totalNews,
       sample_issues: newsIssues,
       latest_articles: sampleNews.map((article: any) => ({
@@ -155,7 +155,7 @@ export async function GET(): Promise<NextResponse> {
       limit: 0,
     });
     
-    report.collections.users = {
+    report.collections['users'] = {
       total: totalUsers,
     };
     
@@ -176,7 +176,7 @@ export async function GET(): Promise<NextResponse> {
       }
     }
     
-    report.relationships.tools_companies = {
+    report.relationships['tools_companies'] = {
       orphaned_tools: orphanedTools,
       tools_with_companies: tools.filter(t => t['company']).length,
       tools_without_companies: tools.filter(t => !t['company']).length,
@@ -219,9 +219,9 @@ export async function GET(): Promise<NextResponse> {
     };
     
     loggers.api.info("Payload data verification complete", {
-      totalRecords: report.summary.total_records,
+      totalRecords: report.summary['total_records'],
       totalIssues: totalIssues,
-      score: report.summary.data_integrity_score,
+      score: report.summary['data_integrity_score'],
     });
     
     return NextResponse.json({

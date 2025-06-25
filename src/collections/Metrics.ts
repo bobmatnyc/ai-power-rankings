@@ -45,15 +45,15 @@ export const Metrics: CollectionConfig = {
       hooks: {
         beforeChange: [
           async ({ data, req }) => {
-            if (data?.tool) {
+            if (data?.['tool']) {
               try {
                 // Get the tool document to populate the name
-                const toolId = typeof data.tool === "string" ? data.tool : data.tool.id;
+                const toolId = typeof data['tool'] === "string" ? data['tool'] : data['tool']['id'];
                 const tool = await req.payload.findByID({
                   collection: "tools",
                   id: toolId,
                 });
-                return tool?.name || "Unknown Tool";
+                return tool?.['name'] || "Unknown Tool";
               } catch (error) {
                 console.error("Error fetching tool name:", error);
                 return "Error Loading Tool";
@@ -64,31 +64,34 @@ export const Metrics: CollectionConfig = {
         ],
         afterRead: [
           async ({ data, req }) => {
-            if (data?.tool) {
+            if (data?.['tool']) {
               try {
                 // Handle both populated and unpopulated tool references
-                if (typeof data.tool === "object" && data.tool.name) {
-                  data.tool_display = data.tool.name;
-                  return data.tool_display;
+                if (typeof data['tool'] === "object" && data['tool']['name']) {
+                  data['tool_display'] = data['tool']['name'];
+                  return data['tool_display'];
                 }
 
-                const toolId = typeof data.tool === "string" ? data.tool : data.tool.id;
+                const toolId = typeof data['tool'] === "string" ? data['tool'] : data['tool']['id'];
                 if (toolId) {
                   const tool = await req.payload.findByID({
                     collection: "tools",
                     id: toolId,
                   });
-                  data.tool_display = tool?.name || "Unknown Tool";
-                  return data.tool_display;
+                  data['tool_display'] = tool?.['name'] || "Unknown Tool";
+                  return data['tool_display'];
                 }
               } catch (error) {
                 console.error("Error fetching tool name:", error);
-                data.tool_display = "Error Loading Tool";
-                return data.tool_display;
+                data['tool_display'] = "Error Loading Tool";
+                return data['tool_display'];
               }
             }
-            data.tool_display = "No Tool Selected";
-            return data.tool_display;
+            if (data) {
+              data['tool_display'] = "No Tool Selected";
+              return data['tool_display'];
+            }
+            return "No Tool Selected";
           },
         ],
       },

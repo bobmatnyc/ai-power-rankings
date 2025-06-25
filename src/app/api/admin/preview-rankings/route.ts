@@ -173,16 +173,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Create comparison data
     const comparisons: RankingComparison[] = [];
-    const currentRankingsMap = new Map(currentRankings.map(r => [r.tool.id || r.tool, r]));
+    const currentRankingsMap = new Map(currentRankings.map(r => [r['tool']['id'] || r['tool'], r]));
 
     for (let i = 0; i < newScores.length; i++) {
       const newScore = newScores[i];
-      const tool = tools.find(t => t.id === newScore.toolId);
+      const tool = tools.find(t => t.id === newScore?.toolId);
       if (!tool) {continue;}
 
       const currentRanking = currentRankingsMap.get(tool.id);
       const newPosition = i + 1;
-      const currentPosition = currentRanking?.position;
+      const currentPosition = currentRanking?.['position'];
       
       let positionChange = 0;
       let movement: RankingComparison['movement'] = 'new';
@@ -199,47 +199,47 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
 
       const scoreChange = currentRanking ? 
-        (newScore.overallScore - currentRanking.score) : 
-        newScore.overallScore;
+        (newScore!.overallScore - currentRanking['score']) : 
+        newScore!.overallScore;
 
       comparisons.push({
-        tool_id: tool.id,
+        tool_id: String(tool.id),
         tool_name: tool['name'],
         current_position: currentPosition,
         new_position: newPosition,
-        current_score: currentRanking?.score,
-        new_score: newScore.overallScore,
+        current_score: currentRanking?.['score'],
+        new_score: newScore!.overallScore,
         position_change: positionChange,
         score_change: scoreChange,
         movement,
         factor_changes: {
-          agentic_capability: newScore.factorScores?.agenticCapability || 0,
-          innovation: newScore.factorScores?.innovation || 0,
-          technical_performance: newScore.factorScores?.technicalPerformance || 0,
-          developer_adoption: newScore.factorScores?.developerAdoption || 0,
-          market_traction: newScore.factorScores?.marketTraction || 0,
-          business_sentiment: newScore.factorScores?.businessSentiment || 0,
-          development_velocity: newScore.factorScores?.developmentVelocity || 0,
-          platform_resilience: newScore.factorScores?.platformResilience || 0,
+          agentic_capability: newScore!.factorScores?.agenticCapability || 0,
+          innovation: newScore!.factorScores?.innovation || 0,
+          technical_performance: newScore!.factorScores?.technicalPerformance || 0,
+          developer_adoption: newScore!.factorScores?.developerAdoption || 0,
+          market_traction: newScore!.factorScores?.marketTraction || 0,
+          business_sentiment: newScore!.factorScores?.businessSentiment || 0,
+          development_velocity: newScore!.factorScores?.developmentVelocity || 0,
+          platform_resilience: newScore!.factorScores?.platformResilience || 0,
         },
       });
     }
 
     // Find dropped tools (in current but not in new)
     for (const currentRanking of currentRankings) {
-      const toolId = currentRanking.tool.id || currentRanking.tool;
+      const toolId = currentRanking['tool']['id'] || currentRanking['tool'];
       if (!comparisons.find(c => c.tool_id === toolId)) {
         const tool = tools.find(t => t.id === toolId);
         if (tool) {
           comparisons.push({
-            tool_id: toolId,
+            tool_id: String(toolId),
             tool_name: tool['name'],
-            current_position: currentRanking.position,
+            current_position: currentRanking['position'],
             new_position: -1, // Indicates dropped
-            current_score: currentRanking.score,
+            current_score: currentRanking['score'],
             new_score: 0,
-            position_change: -currentRanking.position,
-            score_change: -currentRanking.score,
+            position_change: -currentRanking['position'],
+            score_change: -currentRanking['score'],
             movement: 'dropped',
             factor_changes: {},
           });

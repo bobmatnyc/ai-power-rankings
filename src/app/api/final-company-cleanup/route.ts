@@ -93,18 +93,18 @@ export async function POST(): Promise<NextResponse> {
                 collection: "tools",
                 id: tool.id,
                 data: {
-                  company: existingCompany.id,
+                  company: existingCompany!.id,
                 },
               });
               
               report.reassigned.push({
                 tool: toolName,
                 from_company: unknownCompany['name'],
-                to_company: existingCompany['name'],
+                to_company: existingCompany!['name'],
               });
               
               reassigned = true;
-              loggers.api.info(`Reassigned tool ${toolName} to ${existingCompany['name']}`);
+              loggers.api.info(`Reassigned tool ${toolName} to ${existingCompany!['name']}`);
             }
           }
         }
