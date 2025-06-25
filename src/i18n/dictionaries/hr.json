@@ -436,30 +436,30 @@
     "title": "Naša metodologija",
     "subtitle": "Kako rangiramo AI coding alate",
     "lastUpdated": "Zadnje ažuriranje: siječanj 2025",
-    "intro": "AI Power Rankings koristi sophisticated algoritam (v6.0) za evaluaciju i rangiranje AI coding alata na osnovu multiple quantitative i qualitative faktora. Naša metodologija je dizajnirana da pruži developerima objective, data-driven procjenu AI tools landscape.",
+    "intro": "AI Power Rankings koristi napredni algoritam (v6.0) za evaluaciju i rangiranje AI alata za kodiranje na osnovu više kvantitativnih i kvalitativnih faktora. Naša metodologija je dizajnirana da pruži programerima objektivnu, podatkovnu procjenu AI alata.",
     "sections": {
       "scoringFactors": {
         "title": "Scoring Faktori",
-        "intro": "Naš algoritam evaluira alate kroz 8 ključnih dimenzija, svaku weighted prema važnosti za developere:"
+        "intro": "Naš algoritam evaluira alate kroz 8 ključnih dimenzija, svaku ponderirane prema važnosti za programere:"
       },
       "modifiers": {
         "title": "Dinamički Modifieri",
-        "intro": "Da osiguramo da rangiranja reflektiraju trenutne market realnosti, primjenjujemo tri sophisticated modifiera:"
+        "intro": "Kako bismo osigurali da rangiranja odražavaju trenutne tržišne realnosti, primjenjujemo tri napredna modifikatora:"
       },
       "dataCollection": {
-        "title": "Data Collection",
-        "intro": "Prikupljamo data iz multiple izvora za osiguravanje točnosti:",
+        "title": "Prikupljanje Podataka",
+        "intro": "Prikupljamo podatke iz više izvora za osiguravanje točnosti:",
         "sources": [
-          "Direktne API integracije s tool providerima",
-          "Javni repositoriji i developer statistike",
-          "Industry reporti i verificirani news izvori",
-          "User ankete i community feedback",
-          "Performance benchmarki (SWE-bench, HumanEval)"
+          "Izravne API integracije s pružateljima alata",
+          "Javni repozitoriji i statistike programera",
+          "Industrijski izvještaji i provjereni izvori vijesti",
+          "Korisničke ankete i povratne informacije zajednice",
+          "Performanse benchmarki (SWE-bench, HumanEval)"
         ]
       },
       "updateFrequency": {
-        "title": "Update Učestalost",
-        "content": "Rangiranja se prepočunavaju tjedno da reflektiraju brzo razvijajući AI landscape. Velika metodologija updates su verzionirana i dokumentirana."
+        "title": "Učestalost Ažuriranja",
+        "content": "Rangiranja se prepočunavaju tjedno kako bi odražavala brzo razvijajući AI krajolik. Velika ažuriranja metodologije su verzionirana i dokumentirana."
       }
     }
   },
@@ -472,16 +472,16 @@
     },
     "mission": {
       "title": "Naša misija",
-      "content": "Pružiti developer zajednici najpotpunija, nepristrana i najnovija rangiranja AI coding alata, pomažući timovima odabrati prave alate za njihove potrebe.",
-      "description": "Pružiti developer zajednici najpotpunija, nepristrana i najnovija rangiranja AI coding alata, pomažući timovima odabrati prave alate za njihove potrebe."
+      "content": "Pružiti zajednici programera najsveobuhvatnija, nepristrana i najnovija rangiranja AI alata za kodiranje, pomažući timovima odabrati prave alate za njihove potrebe.",
+      "description": "Pružiti zajednici programera najsveobuhvatnija, nepristrana i najnovija rangiranja AI alata za kodiranje, pomažući timovima odabrati prave alate za njihove potrebe."
     },
     "whyWeBuiltThis": {
       "title": "Zašto smo ovo izgradili",
       "reasons": [
-        "AI tools landscape se brzo razvija, što otežava praćenje",
-        "Marketing tvrdnje često se ne poklapaju s real-world performanceom",
-        "Developeri trebaju objektivnu data za opravdanje tool adoption",
-        "Nije bilo jedinstvenog izvora koji uspoređuje sve glavne AI coding alate"
+        "Krajolik AI alata se brzo razvija, što otežava praćenje",
+        "Marketinške tvrdnje često se ne poklapaju s performansama u stvarnom svijetu",
+        "Programeri trebaju objektivne podatke za opravdanje usvajanja alata",
+        "Nije bilo jedinstvenog izvora koji uspoređuje sve glavne AI alate za kodiranje"
       ]
     },
     "team": {

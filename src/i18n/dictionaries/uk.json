@@ -17,7 +17,7 @@
   },
   "common": {
     "appName": "AI Power Rankings",
-    "appDescription": "Data-driven рейтинги AI coding тулів",
+    "appDescription": "Рейтинги інструментів AI кодування на основі даних",
     "loading": "Завантаження...",
     "error": "Помилка",
     "tryAgain": "Спробуй знову",
@@ -55,27 +55,27 @@
     "hero": {
       "badge": "Оновлення щотижня",
       "title": "AI Power Rankings",
-      "subtitle": "Відкрий та порівняй найпотужніші AI coding тули. Від автономних агентів до IDE асистентів, знайди ідеального AI компаньйона для свого dev workflow.",
-      "description": "Відкрий та порівняй найпотужніші AI coding тули. Від автономних агентів до IDE асистентів, знайди ідеального AI компаньйона для свого dev workflow.",
-      "exploreTools": "Досліджуй всі тули",
-      "viewTrending": "Дивись trending",
-      "exploreButton": "Досліджуй всі тули",
-      "trendingButton": "Дивись trending",
+      "subtitle": "Відкрийте та порівняйте найпотужніші інструменти AI кодування. Від автономних агентів до асистентів IDE, знайдіть ідеального AI-партнера для вашого робочого процесу розробки.",
+      "description": "Відкрийте та порівняйте найпотужніші інструменти AI кодування. Від автономних агентів до асистентів IDE, знайдіть ідеального AI-партнера для вашого робочого процесу розробки.",
+      "exploreTools": "Дослідити всі інструменти",
+      "viewTrending": "Переглянути тренди",
+      "exploreButton": "Дослідити всі інструменти",
+      "trendingButton": "Переглянути тренди",
       "whatsNewButton": "Що нового?"
     },
     "stats": {
-      "toolsRanked": "AI тули ранжировані",
-      "trendingUp": "Трендінг вгору",
+      "toolsRanked": "Інструменти AI рейтинговані",
+      "trendingUp": "Тренди зростання",
       "updates": "Оновлення",
       "freeAccess": "Вільний доступ",
       "updateFrequency": "Щотижневі оновлення"
     },
     "trending": {
-      "title": "Трендінг цього тижня",
-      "subtitle": "AI тули що набирають momentum і піднімаються в рейтингах",
-      "description": "AI тули що набирають momentum і піднімаються в рейтингах",
-      "viewAll": "Переглянути весь trending",
-      "viewAllButton": "Переглянути весь trending"
+      "title": "Тренди цього тижня",
+      "subtitle": "Інструменти AI, які набирають популярність і піднімаються в рейтингах",
+      "description": "Інструменти AI, які набирають популярність і піднімаються в рейтингах",
+      "viewAll": "Переглянути всі тренди",
+      "viewAllButton": "Переглянути всі тренди"
     },
     "recentlyUpdated": {
       "title": "Нещодавно оновлені",
@@ -434,32 +434,32 @@
   },
   "methodology": {
     "title": "Наша методологія",
-    "subtitle": "Як ми ранкуємо AI coding тули",
-    "lastUpdated": "Last updated: Січень 2025",
-    "intro": "AI Power Rankings використовує sophisticated алгоритм (v6.0) для evaluate та rank AI coding тули базуючись на multiple quantitative та qualitative factors. Наша методологія designed для provide developers з objective, data-driven assessment AI tools landscape.",
+    "subtitle": "Як ми оцінюємо інструменти AI кодування",
+    "lastUpdated": "Останнє оновлення: січень 2025",
+    "intro": "AI Power Rankings використовує сучасний алгоритм (v6.0) для оцінки та рейтингування інструментів AI кодування на основі багатьох кількісних та якісних факторів. Наша методологія розроблена для надання розробникам об'єктивної оцінки ландшафту інструментів AI на основі даних.",
     "sections": {
       "scoringFactors": {
-        "title": "Scoring Factors",
-        "intro": "Наш алгоритм evaluates тули across 8 key dimensions, кожен weighted according до importance для developers:"
+        "title": "Фактори Оцінювання",
+        "intro": "Наш алгоритм оцінює інструменти за 8 ключовими вимірами, кожен з яких має вагу відповідно до важливості для розробників:"
       },
       "modifiers": {
-        "title": "Dynamic Modifiers",
-        "intro": "Щоб ensure рейтинги reflect current market realities, ми apply три sophisticated modifiers:"
+        "title": "Динамічні Модифікатори",
+        "intro": "Щоб забезпечити відображення рейтингами поточних ринкових реалій, ми застосовуємо три складні модифікатори:"
       },
       "dataCollection": {
-        "title": "Data Collection",
-        "intro": "Ми gather data з multiple sources для ensure accuracy:",
+        "title": "Збирання Даних",
+        "intro": "Ми збираємо дані з різних джерел для забезпечення точності:",
         "sources": [
-          "Direct API integrations з tool providers",
-          "Public repositories та developer statistics",
-          "Industry reports та verified news sources",
-          "User surveys та community feedback",
-          "Performance benchmarks (SWE-bench, HumanEval)"
+          "Прямі API-інтеграції з постачальниками інструментів",
+          "Публічні репозиторії та статистика розробників",
+          "Промислові звіти та перевірені джерела новин",
+          "Опитування користувачів та відгуки спільноти",
+          "Бенчмарки продуктивності (SWE-bench, HumanEval)"
         ]
       },
       "updateFrequency": {
-        "title": "Update Frequency",
-        "content": "Рейтинги recalculated щотижня для reflect rapidly evolving AI landscape. Major methodology updates versioned та documented."
+        "title": "Частота Оновлень",
+        "content": "Рейтинги переобчислюються щотижня для відображення швидко розвиваючогося ландшафту AI. Основні оновлення методології версіонуються та документуються."
       }
     }
   },
