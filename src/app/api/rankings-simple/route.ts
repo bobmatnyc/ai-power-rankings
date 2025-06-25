@@ -61,8 +61,8 @@ export async function GET(): Promise<NextResponse> {
       debug: {
         dbConnected: true,
         toolsFound: tools.length,
-        environment: process.env.VERCEL_ENV || "development",
-        hasDbUrl: !!process.env.SUPABASE_DATABASE_URL,
+        environment: process.env["VERCEL_ENV"] || "development",
+        hasDbUrl: !!process.env["SUPABASE_DATABASE_URL"],
       },
     });
   } catch (error) {
@@ -74,8 +74,8 @@ export async function GET(): Promise<NextResponse> {
         debug: {
           dbConnected: false,
           error: error instanceof Error ? error.message : String(error),
-          environment: process.env.VERCEL_ENV || "development",
-          hasDbUrl: !!process.env.SUPABASE_DATABASE_URL,
+          environment: process.env["VERCEL_ENV"] || "development",
+          hasDbUrl: !!process.env["SUPABASE_DATABASE_URL"],
         },
       },
       { status: 500 }
