@@ -167,11 +167,11 @@
       "toolsInCategory": "此分类中的工具"
     },
     "methodology": {
-      "title": "[TRANSLATE] Our Methodology",
-      "algorithmTitle": "[TRANSLATE] Algorithm v6.0",
-      "algorithmDescription": "[TRANSLATE] Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
-      "keyModifiersTitle": "[TRANSLATE] Key Modifiers",
-      "keyModifiersDescription": "[TRANSLATE] Three sophisticated modifiers ensure fair and accurate rankings:",
+      "title": "我们的方法论",
+      "algorithmTitle": "算法 v6.0",
+      "algorithmDescription": "我们的先进排名算法考虑8个关键因素和复杂的修正器：",
+      "keyModifiersTitle": "关键修正器",
+      "keyModifiersDescription": "三个复杂的修正器确保公平和准确的排名：",
       "factors": {
         "agenticCapability": "[TRANSLATE] Agentic Capability (30%) - Autonomous coding abilities",
         "innovation": {

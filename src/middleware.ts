@@ -5,7 +5,60 @@ import { i18n } from "./i18n/config";
 
 const locales = i18n.locales;
 
-function getLocale(_request: NextRequest): string {
+function getLocale(request: NextRequest): string {
+  // Check if locale is in URL path
+  const pathname = request.nextUrl.pathname;
+  const localeFromPath = locales.find(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  );
+
+  if (localeFromPath) {
+    return localeFromPath;
+  }
+
+  // Check Accept-Language header
+  const acceptLanguage = request.headers.get("accept-language");
+  if (acceptLanguage) {
+    const preferredLocales = acceptLanguage
+      .split(",")
+      .map((lang) => lang.split(";")[0]?.trim() || "")
+      .map((lang) => {
+        // Map language codes to our supported locales
+        const langCode = lang.toLowerCase();
+        if (langCode.startsWith("zh")) {
+          return "zh";
+        }
+        if (langCode.startsWith("ja")) {
+          return "ja";
+        }
+        if (langCode.startsWith("de")) {
+          return "de";
+        }
+        if (langCode.startsWith("fr")) {
+          return "fr";
+        }
+        if (langCode.startsWith("it")) {
+          return "it";
+        }
+        if (langCode.startsWith("ko")) {
+          return "ko";
+        }
+        if (langCode.startsWith("uk")) {
+          return "uk";
+        }
+        if (langCode.startsWith("hr")) {
+          return "hr";
+        }
+        return "en";
+      });
+
+    for (const locale of preferredLocales) {
+      if (locales.includes(locale as any)) {
+        return locale;
+      }
+    }
+  }
+
   return i18n.defaultLocale;
 }
 
