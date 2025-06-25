@@ -72,7 +72,7 @@ export default buildConfig({
     outputFile: "src/types/payload-types.ts",
   },
   localization: {
-    locales: ["en", "ja"],
+    locales: ["en", "de", "fr", "it", "ja", "ko", "uk", "hr", "zh"],
     defaultLocale: "en",
     fallback: true,
   },
