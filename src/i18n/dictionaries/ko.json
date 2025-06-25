@@ -739,6 +739,7 @@
   "footer": {
     "description": "AI 코딩 툴을 위한 데이터 허브. 최고의 agentic AI 개발자 도구들과 그들의 성능을 추적합니다.",
     "quickLinks": "빠른 링크",
+    "categories": "카테고리",
     "resources": "리소스",
     "company": "회사",
     "legal": "법적고지",

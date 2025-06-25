@@ -198,17 +198,33 @@ export async function GET(): Promise<NextResponse> {
       console.log("DB URL prefix:", process.env["SUPABASE_DATABASE_URL"]?.substring(0, 50));
     }
 
-    // Check if we should use cache fallback
-    const useCacheFallback =
+    // Check if we should use cache-first approach
+    const useCacheFirst =
       process.env["USE_CACHE_FALLBACK"] === "true" || process.env["VERCEL_ENV"] === "preview";
 
-    // Try to get live rankings first
+    // For preview environments or when cache is enabled, return cached data immediately
+    if (useCacheFirst) {
+      loggers.ranking.info("Using cache-first approach for rankings");
+      console.log("Returning cached rankings data immediately");
+
+      // Return the cached data with a flag indicating it's cached
+      const cachedResponse = {
+        ...cachedRankingsData,
+        _cached: true,
+        _cachedAt: "2025-06-25T13:36:00.000Z",
+        _cacheReason: "Cache-first approach for preview environment",
+      };
+
+      return NextResponse.json(cachedResponse);
+    }
+
+    // For production, try to get live rankings
     const rankings = await getNewsEnhancedRankings();
 
-    // If no rankings available and cache fallback is enabled, use cached data
-    if ((!rankings || rankings.length === 0) && useCacheFallback) {
+    // If no rankings available, use cached data as fallback
+    if (!rankings || rankings.length === 0) {
       loggers.ranking.warn("No live rankings available, falling back to cached data");
-      console.log("Using cached rankings data");
+      console.log("Using cached rankings data as fallback");
 
       // Return the cached data with a flag indicating it's cached
       const cachedResponse = {

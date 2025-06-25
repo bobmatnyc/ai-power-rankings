@@ -467,27 +467,27 @@
     "intro": "AI Power Rankings nutzt einen sophistizierten Algorithmus (v6.0) zur Bewertung und zum Ranking von KI-Coding-Tools basierend auf mehreren quantitativen und qualitativen Faktoren. Unsere Methodik ist darauf ausgelegt, Developern eine objektive, datengetriebene Bewertung der KI-Tools-Landschaft zu bieten.",
     "sections": {
       "scoringFactors": {
-        "title": "Scoring Factors",
-        "intro": "Our algorithm evaluates Tools across 8 key dimensions, each weighted according to its importance to developers:"
+        "title": "Bewertungsfaktoren",
+        "intro": "Unser Algorithmus bewertet Tools über 8 Schlüsseldimensionen, die jeweils nach ihrer Bedeutung für Entwickler gewichtet werden:"
       },
       "modifiers": {
-        "title": "Dynamic Modifiers",
-        "intro": "To ensure Rankings reflect current market realities, we apply three sophisticated modifiers:"
+        "title": "Dynamische Modifikatoren",
+        "intro": "Um sicherzustellen, dass Rankings die aktuellen Marktrealitäten widerspiegeln, wenden wir drei ausgefeilte Modifikatoren an:"
       },
       "dataCollection": {
-        "title": "Data Collection",
-        "intro": "We gather data from multiple sources to ensure accuracy:",
-        "sources": {
-          "0": "Direct API integrations with tool providers",
-          "1": "Public repositories and developer statistics",
-          "2": "Industry reports and verified Nachrichten sources",
-          "3": "Benutzer surveys and community feedback",
-          "4": "Performance benchmarks (SWE-bench, HumanEval)"
-        }
+        "title": "Datenerhebung",
+        "intro": "Wir sammeln Daten aus mehreren Quellen, um Genauigkeit zu gewährleisten:",
+        "sources": [
+          "Direkte API-Integrationen mit Tool-Anbietern",
+          "Öffentliche Repositories und Entwicklerstatistiken",
+          "Branchenberichte und verifizierte Nachrichtenquellen",
+          "Benutzerumfragen und Community-Feedback",
+          "Performance-Benchmarks (SWE-bench, HumanEval)"
+        ]
       },
       "updateFrequency": {
-        "title": "Update Frequency",
-        "content": "Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major Methodik updates are versioned and documented."
+        "title": "Aktualisierungshäufigkeit",
+        "content": "Rankings werden wöchentlich neu berechnet, um die sich schnell entwickelnde KI-Landschaft widerzuspiegeln. Größere Methodikaktualisierungen werden versioniert und dokumentiert."
       }
     },
     "algorithm": {
