@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { RankingChange } from "@/components/ui/ranking-change";
 import { getCategoryColor } from "@/lib/category-colors";
+import { extractTextFromRichText } from "@/lib/richtext-utils";
 import Link from "next/link";
 
 interface RankingData {
@@ -17,7 +18,7 @@ interface RankingData {
     category: string;
     status: string;
     website_url?: string;
-    description?: string;
+    description?: string | any[]; // Can be string or RichText array
   };
   scores: {
     overall: number;
@@ -96,7 +97,7 @@ export function RankingCard({ ranking, showDetails = true }: RankingCardProps): 
               {/* Description if available */}
               {ranking.tool.description && (
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                  {ranking.tool.description}
+                  {extractTextFromRichText(ranking.tool.description)}
                 </p>
               )}
 

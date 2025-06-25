@@ -2,12 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Star, Users, Code, Building, CheckCircle, XCircle } from "lucide-react";
 import { QuickAnswerBox } from "./quick-answer-box";
+import { extractTextFromRichText } from "@/lib/richtext-utils";
 
 interface ToolOverviewProps {
   tool: {
     name: string;
     category: string;
-    description: string;
+    description: string | any[]; // Can be string or RichText array
     company?: string;
     website?: string;
     keyFeatures?: string[];
@@ -34,7 +35,7 @@ export function ToolOverview({ tool }: ToolOverviewProps) {
       {/* Main Definition */}
       <QuickAnswerBox
         question={`What is ${tool.name}?`}
-        answer={tool.description}
+        answer={extractTextFromRichText(tool.description)}
         type="definition"
         className="mb-6"
       />

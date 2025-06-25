@@ -14,6 +14,7 @@ import {
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import { getCategoryColor } from "@/lib/category-colors";
+import { extractTextFromRichText } from "@/lib/richtext-utils";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -157,26 +158,7 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
               </CardHeader>
               <CardContent className="flex-1">
                 <p className="text-sm text-muted-foreground">
-                  {(() => {
-                    if (!tool.description) {
-                      return dict.tools.defaultDescription;
-                    }
-                    if (typeof tool.description === "string") {
-                      return tool.description;
-                    }
-                    // Handle RichText array structure
-                    if (Array.isArray(tool.description)) {
-                      return tool.description
-                        .map((block: any) => {
-                          if (block.children && Array.isArray(block.children)) {
-                            return block.children.map((child: any) => child.text || "").join("");
-                          }
-                          return "";
-                        })
-                        .join(" ");
-                    }
-                    return dict.tools.defaultDescription;
-                  })()}
+                  {extractTextFromRichText(tool.description) || dict.tools.defaultDescription}
                 </p>
               </CardContent>
             </Card>

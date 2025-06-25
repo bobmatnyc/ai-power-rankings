@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { RankingChange } from "@/components/ui/ranking-change";
+import { extractTextFromRichText } from "@/lib/richtext-utils";
 import Link from "next/link";
 
 interface RankingData {
@@ -16,7 +17,7 @@ interface RankingData {
     category: string;
     status: string;
     website_url?: string;
-    description?: string;
+    description?: string | any[]; // Can be string or RichText array
   };
   scores: {
     overall: number;
@@ -85,7 +86,9 @@ export function HeroCard({ ranking, index }: HeroCardProps) {
       <CardContent>
         <div className="space-y-4">
           {ranking.tool.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">{ranking.tool.description}</p>
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {extractTextFromRichText(ranking.tool.description)}
+            </p>
           )}
 
           <div className="grid grid-cols-2 gap-4 text-sm">
