@@ -30,7 +30,10 @@
     "search": "검색",
     "filter": "필터",
     "sort": "정렬",
-    "share": "공유"
+    "share": "공유",
+    "explore": "탐색하기",
+    "notAvailable": "N/A",
+    "users": "사용자"
   },
   "navigation": {
     "home": "홈",
@@ -57,7 +60,8 @@
       "exploreTools": "모든 툴 탐색",
       "viewTrending": "트렌딩 보기",
       "exploreButton": "모든 툴 탐색",
-      "trendingButton": "트렌딩 보기"
+      "trendingButton": "트렌딩 보기",
+      "whatsNewButton": "새로운 소식"
     },
     "stats": {
       "toolsRanked": "AI 툴 랭킹됨",
@@ -117,16 +121,15 @@
       "keyModifiersDescription": "세 가지 정교한 수정자가 공정하고 정확한 랭킹을 보장합니다:",
       "factors": {
         "agenticCapability": "에이전틱 능력 (30%) - 자율 코딩 능력",
-        "innovation": "혁신 (15%) - 6개월 감쇠 반감기 포함",
+        "innovation": {
+          "name": "혁신",
+          "description": "기술적 돌파구와 기능 혁신"
+        },
         "technicalPerformance": "기술 성능 (12.5%) - SWE-bench 중심",
         "marketTraction": "시장 견인력 (12.5%) - 수익 품질 조정",
         "agentic": {
           "name": "에이전틱 능력",
           "description": "자율 코딩 능력과 다단계 작업 완료"
-        },
-        "innovation": {
-          "name": "혁신",
-          "description": "기술적 돌파구와 기능 혁신"
         },
         "performance": {
           "name": "기술 성능",
@@ -330,7 +333,13 @@
       "testing-tool": "테스팅 툴",
       "code-review": "코드 리뷰",
       "code-generation": "코드 생성"
-    }
+    },
+    "agentic": "에이전틱",
+    "autonomy": "자율성 레벨",
+    "codeGen": "코드 생성",
+    "multiFile": "멀티파일 지원",
+    "contextWindow": "컨텍스트 윈도우",
+    "llmProvider": "LLM 프로바이더"
   },
   "newsletter": {
     "form": {
@@ -574,5 +583,14 @@
       "message": "인터넷 연결을 확인하고 다시 시도해주세요.",
       "action": "재시도"
     }
+  },
+  "footer": {
+    "description": "AI 코딩 툴을 위한 데이터 허브. 최고의 agentic AI 개발자 도구들과 그들의 성능을 추적합니다.",
+    "quickLinks": "빠른 링크",
+    "resources": "리소스",
+    "company": "회사",
+    "legal": "법적고지",
+    "copyright": "© 2025 AI Power Rankings. 개발자를 위해 ❤️로 제작.",
+    "builtWith": "Next.js, Supabase & AI로 구축"
   }
 }

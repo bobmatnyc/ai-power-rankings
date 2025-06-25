@@ -30,7 +30,10 @@
     "search": "Cerca",
     "filter": "Filtra",
     "sort": "Ordina",
-    "share": "Condividi"
+    "share": "Condividi",
+    "explore": "Esplora",
+    "notAvailable": "Non disponibile",
+    "users": "Users"
   },
   "navigation": {
     "home": "Home",
@@ -57,7 +60,8 @@
       "exploreTools": "Esplora tutti i tool",
       "viewTrending": "Vedi trending",
       "exploreButton": "Esplora tutti i tool",
-      "trendingButton": "Vedi trending"
+      "trendingButton": "Vedi trending",
+      "whatsNewButton": "Che c'è di nuovo?"
     },
     "stats": {
       "toolsRanked": "Tool AI classificati",
@@ -329,7 +333,13 @@
       "testing-tool": "Testing Tool",
       "code-review": "Code Review",
       "code-generation": "Code Generation"
-    }
+    },
+    "agentic": "Agentivo",
+    "autonomy": "Livello di autonomia",
+    "codeGen": "Generazione codice",
+    "multiFile": "Supporto multi-file",
+    "contextWindow": "Context Window",
+    "llmProvider": "Provider LLM"
   },
   "newsletter": {
     "form": {
@@ -573,5 +583,14 @@
       "message": "Please check your internet connection and try again.",
       "action": "Retry"
     }
+  },
+  "footer": {
+    "description": "Il tuo data hub per i tool AI di coding. Tracciamo i migliori agentic AI dev tools e le loro performance.",
+    "quickLinks": "Link veloci",
+    "resources": "Risorse",
+    "company": "Azienda",
+    "legal": "Legale",
+    "copyright": "© 2025 AI Power Rankings. Made with ❤️ per i Developer.",
+    "builtWith": "Built con Next.js, Supabase & AI"
   }
 }

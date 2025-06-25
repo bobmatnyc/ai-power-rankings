@@ -30,7 +30,10 @@
     "search": "Rechercher",
     "filter": "Filtrer",
     "sort": "Trier",
-    "share": "Partager"
+    "share": "Partager",
+    "explore": "Explorer",
+    "notAvailable": "Non dispo",
+    "users": "Users"
   },
   "navigation": {
     "home": "Accueil",
@@ -57,7 +60,8 @@
       "exploreTools": "Explorer tous les outils",
       "viewTrending": "Voir les tendances",
       "exploreButton": "Explorer tous les outils",
-      "trendingButton": "Voir les tendances"
+      "trendingButton": "Voir les tendances",
+      "whatsNewButton": "Quoi de neuf ?"
     },
     "stats": {
       "toolsRanked": "Outils IA classés",
@@ -164,6 +168,9 @@
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
+    },
+    "recent": {
+      "title": "Fraîchement sortis"
     }
   },
   "rankings": {
@@ -324,7 +331,13 @@
       "testing-tool": "Testing Tool",
       "code-review": "Code Review",
       "code-generation": "Code Generation"
-    }
+    },
+    "agentic": "Agentique",
+    "autonomy": "Niveau d'autonomie",
+    "codeGen": "Génération de code",
+    "multiFile": "Support multi-fichiers",
+    "contextWindow": "Context Window",
+    "llmProvider": "Provider LLM"
   },
   "newsletter": {
     "form": {
@@ -568,5 +581,14 @@
       "message": "Please check your internet connection and try again.",
       "action": "Retry"
     }
+  },
+  "footer": {
+    "description": "Votre hub data pour les outils AI de code. On track les meilleurs outils agentic AI pour devs et leur perf.",
+    "quickLinks": "Liens rapides",
+    "resources": "Ressources",
+    "company": "Entreprise",
+    "legal": "Légal",
+    "copyright": "© 2025 AI Power Rankings. Made with ❤️ pour les Devs.",
+    "builtWith": "Built avec Next.js, Supabase & AI"
   }
 }
