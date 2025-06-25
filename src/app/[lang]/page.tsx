@@ -14,9 +14,9 @@ interface PageProps {
   params: Promise<{ lang: Locale }>;
 }
 
-// Use dynamic rendering with optimized queries
+// Force dynamic rendering to ensure API calls work at runtime
 export const dynamic = "force-dynamic";
-// Consider ISR in the future: export const revalidate = 300;
+export const revalidate = 0;
 
 export default async function Home({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang } = await params;
@@ -30,10 +30,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
   const isDev = process.env["NODE_ENV"] === "development";
   const baseUrl = getUrl();
   const timestamp = Date.now();
-  // Use simple endpoint for debugging in preview environment
-  const isPreview = process.env["VERCEL_ENV"] === "preview";
-  const endpoint = isPreview ? "/api/rankings-simple" : "/api/rankings";
-  const url = `${baseUrl}${endpoint}${isDev ? `?_t=${timestamp}` : ""}`;
+  const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
 
   try {
     const response = await fetch(url, {
@@ -70,8 +67,6 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       baseUrl,
       env: process.env["VERCEL_ENV"],
       isDev,
-      endpoint,
-      isPreview,
     });
     loading = true; // Show loading state on error
   }
