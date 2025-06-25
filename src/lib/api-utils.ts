@@ -72,6 +72,6 @@ export function cachedResponse<T>(
   data: T,
   cacheOptions?: Parameters<typeof withCaching>[1]
 ): NextResponse<ApiResponse<T>> {
-  const response = NextResponse.json({ data, cached: true });
-  return withCaching(response, cacheOptions);
+  const response = NextResponse.json<ApiResponse<T>>({ data, cached: true });
+  return withCaching(response, cacheOptions) as NextResponse<ApiResponse<T>>;
 }
