@@ -39,7 +39,6 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
   const [trendingTools, setTrendingTools] = useState<RankingData[]>([]);
   const [recentlyUpdated, setRecentlyUpdated] = useState<RankingData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [debugInfo, setDebugInfo] = useState<string>("");
 
   useEffect(() => {
     async function fetchRankings() {
@@ -61,22 +60,15 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         const rankings = data.rankings || [];
         console.log("Rankings count:", rankings.length);
 
-        // Set debug info for display
-        setDebugInfo(
-          `API Response: ${rankings.length} rankings received at ${new Date().toISOString()}`
-        );
-
         if (rankings && rankings.length > 0) {
           setTopRankings(rankings.slice(0, 3));
           setTrendingTools(rankings.slice(3, 6));
           setRecentlyUpdated(rankings.slice(6, 10));
         } else {
           console.warn("No rankings data received", data);
-          setDebugInfo(`WARNING: No rankings data received. Response: ${JSON.stringify(data)}`);
         }
       } catch (error) {
         console.error("Failed to fetch rankings", error);
-        setDebugInfo(`ERROR: ${error instanceof Error ? error.message : String(error)}`);
       } finally {
         setLoading(false);
       }
@@ -93,13 +85,6 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         loadingText={loadingText}
         lang={lang}
       />
-
-      {/* Debug Info - only visible in development */}
-      {debugInfo && (
-        <div className="mb-4 p-4 bg-yellow-100 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 rounded-md">
-          <p className="text-sm font-mono">{debugInfo}</p>
-        </div>
-      )}
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
