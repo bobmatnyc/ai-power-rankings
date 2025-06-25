@@ -3,4 +3,6 @@ export const i18n = {
   locales: ["en", "de", "fr", "it", "ja", "ko", "uk", "hr", "zh"] as const,
 } as const;
 
+export const locales = i18n.locales;
+
 export type Locale = (typeof i18n)["locales"][number];
