@@ -84,14 +84,44 @@ export interface QueryParams {
 // Direct Payload API methods
 export const payloadDirect = {
   async getTools(params?: QueryParams) {
-    const payload = await getPayloadClient();
-    return payload.find({
-      collection: "tools",
-      limit: params?.limit || 10,
-      page: params?.page || 1,
-      where: params?.where || {},
-      sort: params?.sort,
-    });
+    try {
+      const payload = await getPayloadClient();
+      const result = await payload.find({
+        collection: "tools",
+        limit: params?.limit || 10,
+        page: params?.page || 1,
+        where: params?.where || {},
+        sort: params?.sort,
+      });
+      return (
+        result || {
+          docs: [],
+          totalDocs: 0,
+          limit: params?.limit || 10,
+          totalPages: 0,
+          page: params?.page || 1,
+          pagingCounter: 0,
+          hasPrevPage: false,
+          hasNextPage: false,
+          prevPage: null,
+          nextPage: null,
+        }
+      );
+    } catch (error) {
+      loggers.db.error("Failed to fetch tools", { error, params });
+      return {
+        docs: [],
+        totalDocs: 0,
+        limit: params?.limit || 10,
+        totalPages: 0,
+        page: params?.page || 1,
+        pagingCounter: 0,
+        hasPrevPage: false,
+        hasNextPage: false,
+        prevPage: null,
+        nextPage: null,
+      };
+    }
   },
 
   async getTool(idOrSlug: string) {
@@ -233,21 +263,51 @@ export const payloadDirect = {
   },
 
   async getNews(params?: QueryParams & { featured?: boolean }) {
-    const payload = await getPayloadClient();
-    const where = params?.where || {};
+    try {
+      const payload = await getPayloadClient();
+      const where = params?.where || {};
 
-    if (params?.featured !== undefined) {
-      where.is_featured = { equals: params.featured };
+      if (params?.featured !== undefined) {
+        where.is_featured = { equals: params.featured };
+      }
+
+      const result = await payload.find({
+        collection: "news",
+        limit: params?.limit || 10,
+        page: params?.page || 1,
+        where,
+        sort: params?.sort,
+        depth: 2, // Populate related_tools
+      });
+      return (
+        result || {
+          docs: [],
+          totalDocs: 0,
+          limit: params?.limit || 10,
+          totalPages: 0,
+          page: params?.page || 1,
+          pagingCounter: 0,
+          hasPrevPage: false,
+          hasNextPage: false,
+          prevPage: null,
+          nextPage: null,
+        }
+      );
+    } catch (error) {
+      loggers.db.error("Failed to fetch news", { error, params });
+      return {
+        docs: [],
+        totalDocs: 0,
+        limit: params?.limit || 10,
+        totalPages: 0,
+        page: params?.page || 1,
+        pagingCounter: 0,
+        hasPrevPage: false,
+        hasNextPage: false,
+        prevPage: null,
+        nextPage: null,
+      };
     }
-
-    return payload.find({
-      collection: "news",
-      limit: params?.limit || 10,
-      page: params?.page || 1,
-      where,
-      sort: params?.sort,
-      depth: 2, // Populate related_tools
-    });
   },
 
   async getNewsItem(idOrSlug: string) {

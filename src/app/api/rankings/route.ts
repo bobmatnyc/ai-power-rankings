@@ -58,6 +58,12 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
       limit: 1000, // Get all tools
       sort: "name",
     });
+
+    if (!toolsResponse || !toolsResponse.docs) {
+      loggers.ranking.error("Invalid tools response", { toolsResponse });
+      return [];
+    }
+
     const tools = toolsResponse.docs;
 
     if (!tools || tools.length === 0) {
@@ -70,6 +76,12 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
       limit: 1000, // Get recent news
       sort: "-published_at",
     });
+
+    if (!newsResponse || !newsResponse.docs) {
+      loggers.ranking.error("Invalid news response", { newsResponse });
+      return [];
+    }
+
     const news = newsResponse.docs;
 
     if (!news) {
@@ -193,6 +205,12 @@ export async function GET(): Promise<NextResponse> {
         id: { in: toolIds },
       },
     });
+
+    if (!toolsResponse || !toolsResponse.docs) {
+      loggers.ranking.error("Invalid tools response for tool details", { toolsResponse });
+      return NextResponse.json({ error: "Failed to fetch tool details" }, { status: 500 });
+    }
+
     const tools = toolsResponse.docs;
 
     const toolMap = new Map(tools?.map((t: any) => [t.id, t]) || []);
