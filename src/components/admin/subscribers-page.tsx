@@ -188,7 +188,12 @@ export function SubscribersPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card
+          className={`cursor-pointer transition-all hover:shadow-md ${
+            selectedStatus === "all" ? "ring-2 ring-primary" : ""
+          }`}
+          onClick={() => setSelectedStatus("all")}
+        >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <Users className="h-4 w-4" />
@@ -200,7 +205,12 @@ export function SubscribersPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          className={`cursor-pointer transition-all hover:shadow-md ${
+            selectedStatus === "verified" ? "ring-2 ring-primary" : ""
+          }`}
+          onClick={() => setSelectedStatus("verified")}
+        >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <UserCheck className="h-4 w-4 text-green-500" />
@@ -215,7 +225,12 @@ export function SubscribersPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          className={`cursor-pointer transition-all hover:shadow-md ${
+            selectedStatus === "pending" ? "ring-2 ring-primary" : ""
+          }`}
+          onClick={() => setSelectedStatus("pending")}
+        >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <Users className="h-4 w-4 text-yellow-500" />
@@ -230,7 +245,12 @@ export function SubscribersPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          className={`cursor-pointer transition-all hover:shadow-md ${
+            selectedStatus === "unsubscribed" ? "ring-2 ring-primary" : ""
+          }`}
+          onClick={() => setSelectedStatus("unsubscribed")}
+        >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <UserX className="h-4 w-4 text-red-500" />
@@ -246,47 +266,15 @@ export function SubscribersPage() {
         </Card>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by name or email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant={selectedStatus === "all" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedStatus("all")}
-          >
-            All
-          </Button>
-          <Button
-            variant={selectedStatus === "verified" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedStatus("verified")}
-          >
-            Verified
-          </Button>
-          <Button
-            variant={selectedStatus === "pending" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedStatus("pending")}
-          >
-            Pending
-          </Button>
-          <Button
-            variant={selectedStatus === "unsubscribed" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedStatus("unsubscribed")}
-          >
-            Unsubscribed
-          </Button>
-        </div>
+      {/* Search Filter */}
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search by name or email..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
       {/* Subscribers Table */}
