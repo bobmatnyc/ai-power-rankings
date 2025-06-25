@@ -9,16 +9,16 @@ export const News: CollectionConfig = {
   access: {
     create: ({ req: { user } }) => {
       // Admins and editors can create news
-      return user?.['role'] === "admin" || user?.['role'] === "editor";
+      return user?.["role"] === "admin" || user?.["role"] === "editor";
     },
     read: () => true, // All authenticated users can read news
     update: ({ req: { user } }) => {
       // Admins and editors can update news
-      return user?.['role'] === "admin" || user?.['role'] === "editor";
+      return user?.["role"] === "admin" || user?.["role"] === "editor";
     },
     delete: ({ req: { user } }) => {
       // Only admins can delete news
-      return user?.['role'] === "admin";
+      return user?.["role"] === "admin";
     },
   },
   fields: [
@@ -90,6 +90,7 @@ export const News: CollectionConfig = {
         { label: "Acquisition", value: "acquisition" },
         { label: "Benchmark", value: "benchmark" },
         { label: "Partnership", value: "partnership" },
+        { label: "Research", value: "research" },
       ],
       admin: {
         description: "Type of news",
@@ -110,6 +111,7 @@ export const News: CollectionConfig = {
       type: "relationship",
       relationTo: "tools",
       hasMany: true,
+      required: false,
       admin: {
         description: "Tools mentioned or affected by this news",
       },
@@ -118,6 +120,7 @@ export const News: CollectionConfig = {
       name: "primary_tool",
       type: "relationship",
       relationTo: "tools",
+      required: false,
       admin: {
         description: "Main tool this news is about",
       },
