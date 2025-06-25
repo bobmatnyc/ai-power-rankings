@@ -31,7 +31,10 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     const isDev = process.env["NODE_ENV"] === "development";
     const baseUrl = getUrl();
     const timestamp = Date.now();
-    const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
+    // Use simple endpoint for debugging in preview environment
+    const isPreview = process.env["VERCEL_ENV"] === "preview";
+    const endpoint = isPreview ? "/api/rankings-simple" : "/api/rankings";
+    const url = `${baseUrl}${endpoint}${isDev ? `?_t=${timestamp}` : ""}`;
 
     const response = await fetch(url, {
       next: { revalidate: isDev ? 0 : 300 }, // No cache in dev, 5 minutes in prod
@@ -45,6 +48,11 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     const data = await response.json();
     const rankings = data.rankings || [];
 
+    // Log debug info if available
+    if (data.debug) {
+      loggers.api.info("Rankings debug info", { debug: data.debug });
+    }
+
     if (rankings && rankings.length > 0) {
       topRankings = rankings.slice(0, 3);
       // For now, simulate trending as the next 3 tools
@@ -52,7 +60,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       // And recently updated as the next 4
       recentlyUpdated = rankings.slice(6, 10);
     } else {
-      loggers.api.warn("No rankings data received", { data });
+      loggers.api.warn("No rankings data received", { data, debug: data.debug });
       loading = true;
     }
   } catch (error) {
