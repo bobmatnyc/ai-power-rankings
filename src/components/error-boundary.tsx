@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
-import { loggers } from "@/lib/logger";
+import { logger } from "@/lib/logger";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -26,7 +26,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    loggers.error("Error boundary caught error", { error, errorInfo });
+    logger.error("Error boundary caught error", { error, errorInfo });
   }
 
   render() {
@@ -54,7 +54,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 // Hook version for functional components
 export function useErrorHandler() {
   return (error: Error) => {
-    loggers.error("Error handler called", { error });
+    logger.error("Error handler called", { error });
     // You can add custom error handling logic here
     // e.g., send to error tracking service
   };
