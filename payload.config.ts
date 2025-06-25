@@ -77,6 +77,14 @@ export default buildConfig({
     fallback: true,
   },
   onInit: async (payload) => {
+    // Skip database operations during build phase or if no database is configured
+    if (
+      process.env.NEXT_PHASE === "phase-production-build" ||
+      (!process.env["SUPABASE_DATABASE_URL"] && !process.env["DATABASE_URL"])
+    ) {
+      return;
+    }
+
     // Create initial admin user if none exists
     const existingUsers = await payload.find({
       collection: "users",
