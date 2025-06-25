@@ -221,10 +221,20 @@ npm run db:reset
 **ALWAYS run this before any deployment:**
 
 ```bash
+# 1. Run local build to catch TypeScript errors early
+npm run build
+
+# 2. Run comprehensive pre-deployment check
 npm run pre-deploy  # Comprehensive pre-deployment check
 ```
 
-This runs:
+The build process includes:
+
+- TypeScript compilation check (catches all type errors)
+- Next.js optimization
+- Static page generation
+
+The pre-deploy command runs:
 
 - `npm run lint` - ESLint checks
 - `npm run type-check` - TypeScript compilation check
@@ -250,7 +260,10 @@ This script:
 ### ✅ Before Committing
 
 ```bash
-# Run comprehensive checks (prevents Vercel deployment failures)
+# IMPORTANT: Always run a local build first!
+npm run build  # This catches TypeScript errors that will fail on Vercel
+
+# Then run comprehensive checks (prevents other deployment failures)
 npm run ci:local
 
 # Or run individual checks:
@@ -692,7 +705,8 @@ node src/i18n/dictionaries/fix_untranslated.js
 
 Before pushing to production, verify:
 
-- [ ] Run `npm run ci:local` - catches TypeScript and lint errors
+- [ ] Run `npm run build` - catches ALL TypeScript errors that will fail on Vercel
+- [ ] Run `npm run ci:local` - catches lint and other errors
 - [ ] Check database connection uses port 5432 (session pooler)
 - [ ] Verify no duplicate structures in translation JSON files
 - [ ] Remove hardcoded production URLs for preview deployments
