@@ -29,23 +29,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   let period = "";
 
   try {
-    const isDev = process.env["NODE_ENV"] === "development";
-    const rankingsUrl = `${baseUrl}/api/rankings`;
+    // Skip API calls during build phase
+    if (process.env["NEXT_PHASE"] !== "phase-production-build") {
+      const isDev = process.env["NODE_ENV"] === "development";
+      const rankingsUrl = `${baseUrl}/api/rankings`;
 
-    const response = await fetch(rankingsUrl, {
-      next: { revalidate: isDev ? 0 : 300 },
-    });
+      const response = await fetch(rankingsUrl, {
+        next: { revalidate: isDev ? 0 : 300 },
+      });
 
-    if (response.ok) {
-      const data = await response.json();
-      if (data.rankings?.length > 0) {
-        topTools = data.rankings.slice(0, 3).map((tool: any) => tool.name);
-        totalTools = data.rankings.length;
-        // Extract period from first ranking if available
-        const firstRanking = data.rankings[0];
-        if (firstRanking?.updated_at) {
-          const date = new Date(firstRanking.updated_at);
-          period = date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.rankings?.length > 0) {
+          topTools = data.rankings.slice(0, 3).map((tool: any) => tool.name);
+          totalTools = data.rankings.length;
+          // Extract period from first ranking if available
+          const firstRanking = data.rankings[0];
+          if (firstRanking?.updated_at) {
+            const date = new Date(firstRanking.updated_at);
+            period = date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
+          }
         }
       }
     }
@@ -108,8 +111,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-// Force dynamic rendering to avoid API calls during build
-export const dynamic = "force-dynamic";
+// Use static generation with revalidation
+export const revalidate = 3600; // Revalidate every hour
 
 export default async function RankingsPage({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang } = await params;
@@ -118,18 +121,23 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
   // Fetch rankings on the server (same as home page)
   let initialRankings = [];
   try {
-    const isDev = process.env["NODE_ENV"] === "development";
-    const baseUrl = getUrl();
-    const timestamp = Date.now();
-    const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
+    // Skip API calls during build phase
+    if (process.env["NEXT_PHASE"] === "phase-production-build") {
+      loggers.ranking.info("Skipping rankings fetch during build phase");
+    } else {
+      const isDev = process.env["NODE_ENV"] === "development";
+      const baseUrl = getUrl();
+      const timestamp = Date.now();
+      const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
 
-    const response = await fetch(url, {
-      next: { revalidate: isDev ? 0 : 300 },
-      cache: isDev ? "no-store" : "default",
-    });
+      const response = await fetch(url, {
+        next: { revalidate: isDev ? 0 : 300 },
+        cache: isDev ? "no-store" : "default",
+      });
 
-    const data = await response.json();
-    initialRankings = data.rankings || [];
+      const data = await response.json();
+      initialRankings = data.rankings || [];
+    }
   } catch (error) {
     loggers.ranking.error("Failed to fetch rankings on server", { error });
   }

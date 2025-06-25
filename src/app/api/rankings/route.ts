@@ -184,10 +184,7 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
 
 export async function GET(): Promise<NextResponse> {
   try {
-    // Return empty response during build phase
-    if (process.env["NEXT_PHASE"] === "phase-production-build") {
-      return NextResponse.json({ rankings: [] });
-    }
+    // No longer need build phase check since pages use static generation
 
     // Get news-enhanced rankings using the v6-news algorithm
     const rankings = await getNewsEnhancedRankings();
