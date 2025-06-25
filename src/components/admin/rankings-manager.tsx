@@ -16,9 +16,6 @@ import {
   Eye,
   Play,
   Loader2,
-  ArrowUp,
-  ArrowDown,
-  Minus,
 } from "lucide-react";
 
 interface RankingPreview {

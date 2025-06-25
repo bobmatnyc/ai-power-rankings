@@ -22,7 +22,7 @@ const companyUpdates = [
   { name: "Cognition AI", founded_year: 2023, website_url: "https://cognition.ai" },
 ];
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const payload = await getPayloadClient();
     logger.info("Updating missing company data...");

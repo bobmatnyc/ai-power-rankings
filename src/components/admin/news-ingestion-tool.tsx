@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -49,17 +48,17 @@ export function NewsIngestionTool() {
     setUploadResult(null);
 
     const formData = new FormData(event.currentTarget);
-    formData.append('generate_preview', generatePreview.toString());
+    formData.append("generate_preview", generatePreview.toString());
 
     try {
-      const response = await fetch('/api/admin/ingest-news', {
-        method: 'POST',
+      const response = await fetch("/api/admin/ingest-news", {
+        method: "POST",
         body: formData,
       });
 
       const result = await response.json();
       setUploadResult(result);
-      
+
       if (result.success) {
         // Refresh reports list
         await fetchReports();
@@ -67,7 +66,7 @@ export function NewsIngestionTool() {
     } catch (error) {
       setUploadResult({
         success: false,
-        error: error instanceof Error ? error.message : 'Upload failed',
+        error: error instanceof Error ? error.message : "Upload failed",
       });
     } finally {
       setIsUploading(false);
@@ -76,13 +75,13 @@ export function NewsIngestionTool() {
 
   const fetchReports = async () => {
     try {
-      const response = await fetch('/api/admin/ingestion-reports');
+      const response = await fetch("/api/admin/ingestion-reports");
       if (response.ok) {
         const data = await response.json();
         setReports(data.reports || []);
       }
     } catch (error) {
-      console.error('Failed to fetch reports:', error);
+      console.error("Failed to fetch reports:", error);
     }
   };
 
@@ -95,7 +94,7 @@ export function NewsIngestionTool() {
         setRollbackPreview(data.preview);
       }
     } catch (error) {
-      console.error('Failed to fetch rollback preview:', error);
+      console.error("Failed to fetch rollback preview:", error);
     } finally {
       setIsLoadingPreview(false);
     }
@@ -104,9 +103,9 @@ export function NewsIngestionTool() {
   const performRollback = async (reportId: string) => {
     setIsRollingBack(true);
     try {
-      const response = await fetch('/api/admin/rollback-ingestion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/admin/rollback-ingestion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ingestion_report_id: reportId,
           confirm_rollback: true,
@@ -123,7 +122,7 @@ export function NewsIngestionTool() {
     } catch (error) {
       setUploadResult({
         success: false,
-        error: error instanceof Error ? error.message : 'Rollback failed',
+        error: error instanceof Error ? error.message : "Rollback failed",
       });
     } finally {
       setIsRollingBack(false);
@@ -146,7 +145,7 @@ export function NewsIngestionTool() {
         sentiment: 0.7,
         key_topics: ["funding", "ai", "coding"],
         is_featured: true,
-      }
+      },
     ];
 
     const removalSpec = {
@@ -163,14 +162,14 @@ export function NewsIngestionTool() {
     return { newsItems, removalSpec };
   };
 
-  const downloadSampleFile = (type: 'news' | 'removal') => {
+  const downloadSampleFile = (type: "news" | "removal") => {
     const samples = generateSampleFiles();
-    const content = type === 'news' ? samples.newsItems : samples.removalSpec;
-    const filename = type === 'news' ? 'sample-news-items.json' : 'sample-removal-spec.json';
-    
-    const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
+    const content = type === "news" ? samples.newsItems : samples.removalSpec;
+    const filename = type === "news" ? "sample-news-items.json" : "sample-removal-spec.json";
+
+    const blob = new Blob([JSON.stringify(content, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = filename;
     a.click();
@@ -182,19 +181,11 @@ export function NewsIngestionTool() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">News Ingestion & Data Management</h2>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => downloadSampleFile('news')}
-          >
+          <Button variant="outline" size="sm" onClick={() => downloadSampleFile("news")}>
             <Download className="mr-2 h-4 w-4" />
             Sample News JSON
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => downloadSampleFile('removal')}
-          >
+          <Button variant="outline" size="sm" onClick={() => downloadSampleFile("removal")}>
             <Download className="mr-2 h-4 w-4" />
             Sample Removal JSON
           </Button>
@@ -260,14 +251,19 @@ export function NewsIngestionTool() {
               </form>
 
               {uploadResult && (
-                <Alert className={`mt-4 ${uploadResult.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+                <Alert
+                  className={`mt-4 ${uploadResult.success ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}
+                >
                   <AlertDescription>
                     {uploadResult.success ? (
                       <div>
                         <p className="font-medium text-green-800">{uploadResult.message}</p>
                         {uploadResult.report && (
                           <div className="mt-2 text-sm text-green-700">
-                            <p>Processed: {uploadResult.report.processed_items}/{uploadResult.report.total_items}</p>
+                            <p>
+                              Processed: {uploadResult.report.processed_items}/
+                              {uploadResult.report.total_items}
+                            </p>
                             <p>New Tools: {uploadResult.report.new_tools_created}</p>
                             <p>New Companies: {uploadResult.report.new_companies_created}</p>
                             {uploadResult.report.failed_items > 0 && (
@@ -277,7 +273,9 @@ export function NewsIngestionTool() {
                         )}
                       </div>
                     ) : (
-                      <p className="font-medium text-red-800">{uploadResult.error || uploadResult.message}</p>
+                      <p className="font-medium text-red-800">
+                        {uploadResult.error || uploadResult.message}
+                      </p>
                     )}
                   </AlertDescription>
                 </Alert>
@@ -305,11 +303,17 @@ export function NewsIngestionTool() {
                   <div key={report.id} className="border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-medium">{report.filename}</h3>
-                      <Badge variant={
-                        report.status === 'completed' ? 'default' :
-                        report.status === 'failed' ? 'destructive' :
-                        report.status === 'partial' ? 'secondary' : 'outline'
-                      }>
+                      <Badge
+                        variant={
+                          report.status === "completed"
+                            ? "default"
+                            : report.status === "failed"
+                              ? "destructive"
+                              : report.status === "partial"
+                                ? "secondary"
+                                : "outline"
+                        }
+                      >
                         {report.status}
                       </Badge>
                     </div>
@@ -349,11 +353,13 @@ export function NewsIngestionTool() {
                       className="w-full mt-1 p-2 border rounded-md"
                     >
                       <option value="">Select a report...</option>
-                      {reports.filter(r => r.status === 'completed' || r.status === 'partial').map((report) => (
-                        <option key={report.id} value={report.id}>
-                          {report.filename} - {new Date(report.createdAt).toLocaleDateString()}
-                        </option>
-                      ))}
+                      {reports
+                        .filter((r) => r.status === "completed" || r.status === "partial")
+                        .map((report) => (
+                          <option key={report.id} value={report.id}>
+                            {report.filename} - {new Date(report.createdAt).toLocaleDateString()}
+                          </option>
+                        ))}
                     </select>
                   </div>
 
@@ -391,9 +397,7 @@ export function NewsIngestionTool() {
             <Card>
               <CardHeader>
                 <CardTitle>Remove Data by Specification</CardTitle>
-                <CardDescription>
-                  Upload a JSON file specifying data to be removed.
-                </CardDescription>
+                <CardDescription>Upload a JSON file specifying data to be removed.</CardDescription>
               </CardHeader>
               <CardContent>
                 <form className="space-y-4">
@@ -438,19 +442,27 @@ export function NewsIngestionTool() {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-red-600">{rollbackPreview.news_items_to_delete}</div>
+                    <div className="text-2xl font-bold text-red-600">
+                      {rollbackPreview.news_items_to_delete}
+                    </div>
                     <div className="text-sm text-gray-600">News Items</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-600">{rollbackPreview.tools_to_review}</div>
+                    <div className="text-2xl font-bold text-orange-600">
+                      {rollbackPreview.tools_to_review}
+                    </div>
                     <div className="text-sm text-gray-600">Tools to Review</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-600">{rollbackPreview.companies_to_review}</div>
+                    <div className="text-2xl font-bold text-orange-600">
+                      {rollbackPreview.companies_to_review}
+                    </div>
                     <div className="text-sm text-gray-600">Companies to Review</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-600">{rollbackPreview.warnings.length}</div>
+                    <div className="text-2xl font-bold text-yellow-600">
+                      {rollbackPreview.warnings.length}
+                    </div>
                     <div className="text-sm text-gray-600">Warnings</div>
                   </div>
                 </div>
@@ -460,7 +472,10 @@ export function NewsIngestionTool() {
                     <h4 className="font-medium mb-2">Warnings:</h4>
                     <div className="space-y-2">
                       {rollbackPreview.warnings.map((warning, index) => (
-                        <div key={index} className="text-sm bg-yellow-50 border border-yellow-200 rounded p-2">
+                        <div
+                          key={index}
+                          className="text-sm bg-yellow-50 border border-yellow-200 rounded p-2"
+                        >
                           <strong>{warning.name}</strong>: {warning.reason}
                         </div>
                       ))}
