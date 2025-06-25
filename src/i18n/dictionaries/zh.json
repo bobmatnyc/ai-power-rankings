@@ -173,24 +173,24 @@
       "keyModifiersTitle": "关键修正器",
       "keyModifiersDescription": "三个复杂的修正器确保公平和准确的排名：",
       "factors": {
-        "agenticCapability": "[TRANSLATE] Agentic Capability (30%) - Autonomous coding abilities",
+        "agenticCapability": "代理能力 (30%) - 自主编程能力",
         "innovation": {
-          "name": "[TRANSLATE] Innovation",
-          "description": "[TRANSLATE] Technical breakthroughs and feature innovation"
+          "name": "创新性",
+          "description": "技术突破和功能创新"
         },
-        "technicalPerformance": "[TRANSLATE] Technical Performance (12.5%) - SWE-bench focus",
-        "marketTraction": "[TRANSLATE] Market Traction (12.5%) - Revenue quality adjusted",
+        "technicalPerformance": "技术性能 (12.5%) - 专注于SWE-bench基准",
+        "marketTraction": "市场牵引力 (12.5%) - 收入质量调整",
         "agentic": {
-          "name": "[TRANSLATE] Agentic Capability",
-          "description": "[TRANSLATE] Autonomous coding abilities and multi-step task completion"
+          "name": "代理能力",
+          "description": "自主编程能力和多步骤任务完成"
         },
         "performance": {
-          "name": "[TRANSLATE] Technical Performance",
-          "description": "[TRANSLATE] Code quality, speed, and benchmark results"
+          "name": "技术性能",
+          "description": "代码质量、速度和基准测试结果"
         },
         "traction": {
-          "name": "[TRANSLATE] Market Traction",
-          "description": "[TRANSLATE] User adoption, growth rate, and market presence"
+          "name": "市场牵引力",
+          "description": "用户采用度、增长率和市场影响力"
         },
         "adoption": {
           "name": "采用度"
@@ -200,29 +200,29 @@
         }
       },
       "modifiers": {
-        "innovationDecay": "[TRANSLATE] Innovation Decay - Recent innovations score higher",
-        "platformRisk": "[TRANSLATE] Platform Risk - Independence bonuses, lock-in penalties",
-        "revenueQuality": "[TRANSLATE] Revenue Quality - Enterprise revenue weighted higher",
-        "dataValidation": "[TRANSLATE] Data Validation - 80% completeness required",
+        "innovationDecay": "创新衰减 - 近期创新得分更高",
+        "platformRisk": "平台风险 - 独立性奖励，锁定惩罚",
+        "revenueQuality": "收入质量 - 企业收入权重更高",
+        "dataValidation": "数据验证 - 需要80%完整性",
         "decay": {
-          "name": "[TRANSLATE] Innovation Decay",
-          "description": "[TRANSLATE] Recent innovations weighted more heavily"
+          "name": "创新衰减",
+          "description": "近期创新权重更高"
         },
         "risk": {
-          "name": "[TRANSLATE] Platform Risk",
-          "description": "[TRANSLATE] Independence vs. platform lock-in factors"
+          "name": "平台风险",
+          "description": "独立性与平台锁定因素"
         },
         "revenue": {
-          "name": "[TRANSLATE] Revenue Quality",
-          "description": "[TRANSLATE] Enterprise revenue weighted higher than consumer"
+          "name": "收入质量",
+          "description": "企业收入权重高于消费者收入"
         },
         "validation": {
-          "name": "[TRANSLATE] Data Validation",
-          "description": "[TRANSLATE] Minimum 80% data completeness required"
+          "name": "数据验证",
+          "description": "需要最少80%数据完整性"
         }
       },
       "modifiersTitle": "[TRANSLATE] Dynamic Modifiers",
-      "modifiersDescription": "[TRANSLATE] Three sophisticated modifiers ensure fair and accurate rankings",
+      "modifiersDescription": "三个复杂的修正器确保公平准确的排名",
       "readFull": "[TRANSLATE] Read Full Methodology",
       "readMoreButton": "[TRANSLATE] Read Full Methodology",
       "description": "了解我们如何基于性能、采用度、创新和生态系统来评估 AI 编程工具",
@@ -230,7 +230,7 @@
     },
     "footer": {
       "tagline": "[TRANSLATE] Data-driven insights for the AI revolution",
-      "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+      "description": "使用算法v6.0对AI编程工具进行全面排名，包含创新衰减、平台风险修正器和收入质量调整。",
       "quickLinks": "[TRANSLATE] Quick Links",
       "categories": "[TRANSLATE] Categories",
       "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved."
@@ -410,10 +410,10 @@
     }
   },
   "footer": {
-    "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
-    "quickLinks": "[TRANSLATE] Quick Links",
-    "categories": "[TRANSLATE] Categories",
-    "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved.",
+    "description": "使用算法v6.0对AI编程工具进行全面排名，包含创新衰减、平台风险修正器和收入质量调整。",
+    "quickLinks": "快速链接",
+    "categories": "分类",
+    "copyright": "© 2025 AI 实力排行榜。保留所有权利。",
     "company": "公司",
     "product": "产品",
     "resources": "资源",
@@ -477,12 +477,12 @@
         "resilience": "弹性"
       },
       "modifiers": {
-        "decay": "[TRANSLATE] Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
-        "risk": "[TRANSLATE] Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
-        "revenue": "[TRANSLATE] Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
+        "decay": "创新衰减（6个月半衰期）- 确保近期创新权重更高",
+        "risk": "平台风险修正器 - 根据平台依赖性和锁定调整得分",
+        "revenue": "收入质量调整 - 区分可持续收入和一次性收入"
       },
-      "methodologyText": "[TRANSLATE] Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
-      "viewMethodology": "[TRANSLATE] View Full Methodology"
+      "methodologyText": "我们的综合方法论从多个维度评估AI编程工具，确保公平准确的排名，反映真实世界的性能和采用情况。",
+      "viewMethodology": "查看完整方法论"
     },
     "filters": {
       "category": "按分类筛选",
