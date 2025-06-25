@@ -37,9 +37,14 @@ interface RankingData {
 interface RankingCardProps {
   ranking: RankingData;
   showDetails?: boolean;
+  lang?: string;
 }
 
-export function RankingCard({ ranking, showDetails = true }: RankingCardProps): React.JSX.Element {
+export function RankingCard({
+  ranking,
+  showDetails = true,
+  lang = "en",
+}: RankingCardProps): React.JSX.Element {
   const getMedal = (rank: number): string => {
     switch (rank) {
       case 1:
@@ -54,7 +59,7 @@ export function RankingCard({ ranking, showDetails = true }: RankingCardProps): 
   };
 
   return (
-    <Link href={`/tools/${ranking.tool.slug || ranking.tool.id}`} className="block h-full">
+    <Link href={`/${lang}/tools/${ranking.tool.slug || ranking.tool.id}`} className="block h-full">
       <Card className="group hover:shadow-lg transition-all duration-200 border-border/50 hover:border-primary/20 h-full flex flex-col cursor-pointer">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">

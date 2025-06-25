@@ -13,6 +13,7 @@ interface RankingData {
   changeReason?: string;
   tool: {
     id: string;
+    slug?: string;
     name: string;
     category: string;
     status: string;
@@ -34,9 +35,10 @@ interface RankingData {
 interface HeroCardProps {
   ranking: RankingData;
   index: number;
+  lang?: string;
 }
 
-export function HeroCard({ ranking, index }: HeroCardProps) {
+export function HeroCard({ ranking, index, lang = "en" }: HeroCardProps) {
   return (
     <Card
       className={`relative group hover:shadow-xl transition-all duration-300 border-border/50 ${
@@ -54,7 +56,7 @@ export function HeroCard({ ranking, index }: HeroCardProps) {
       <CardHeader className="pb-3">
         <div className="flex items-center space-x-3">
           <Link
-            href={`/tools/${ranking.tool.id}`}
+            href={`/${lang}/tools/${ranking.tool.slug || ranking.tool.id}`}
             className="flex-shrink-0 hover:opacity-80 transition-opacity"
           >
             <ToolIcon name={ranking.tool.name} domain={ranking.tool.website_url} size={64} />
@@ -114,7 +116,9 @@ export function HeroCard({ ranking, index }: HeroCardProps) {
               size="sm"
               asChild
             >
-              <Link href={`/tools/${ranking.tool.id}`}>View Details</Link>
+              <Link href={`/${lang}/tools/${ranking.tool.slug || ranking.tool.id}`}>
+                View Details
+              </Link>
             </Button>
           </div>
         </div>

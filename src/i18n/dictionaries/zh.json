@@ -1352,34 +1352,34 @@
     }
   },
   "about": {
-    "title": "[TRANSLATE] About AI Power Ranking",
-    "subtitle": "[TRANSLATE] Empowering developers with data-driven AI tool insights",
+    "title": "关于 AI Power Ranking",
+    "subtitle": "用数据驱动的 AI 工具洞察赋能开发者",
     "hero": {
-      "title": "[TRANSLATE] Empowering developers with data-driven AI tool insights",
-      "subtitle": "[TRANSLATE] We believe developers deserve transparent, objective rankings of AI coding tools to make informed decisions."
+      "title": "用数据驱动的 AI 工具洞察赋能开发者",
+      "subtitle": "我们相信开发者应该拥有透明、客观的 AI 编码工具排名，以做出明智的决策。"
     },
     "mission": {
-      "title": "[TRANSLATE] Our Mission",
-      "content": "[TRANSLATE] To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs.",
-      "description": "[TRANSLATE] To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
+      "title": "我们的使命",
+      "content": "为开发者社区提供最全面、公正、最新的 AI 编码工具排名，帮助团队选择适合他们需求的正确工具。",
+      "description": "为开发者社区提供最全面、公正、最新的 AI 编码工具排名，帮助团队选择适合他们需求的正确工具。"
     },
     "whyWeBuiltThis": {
-      "title": "[TRANSLATE] Why We Built This",
+      "title": "为什么创建这个平台",
       "reasons": [
-        "[TRANSLATE] The AI tools landscape is evolving rapidly, making it hard to keep track",
-        "[TRANSLATE] Marketing claims often don't match real-world performance",
-        "[TRANSLATE] Developers need objective data to justify tool adoption",
-        "[TRANSLATE] There was no single source comparing all major AI coding tools"
+        "AI 工具领域发展迅速，难以跟踪最新动态",
+        "营销宣传往往与实际性能不符",
+        "开发者需要客观数据来证明工具采用的合理性",
+        "没有单一来源能够比较所有主要的 AI 编码工具"
       ]
     },
     "team": {
-      "title": "[TRANSLATE] The Team",
-      "description": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
-      "description1": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
-      "description2": "[TRANSLATE] I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
-      "description3": "[TRANSLATE] Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
-      "hyperdevLink": "[TRANSLATE] HyperDev",
-      "reportIssue": "[TRANSLATE] Report an Issue",
+      "title": "团队介绍",
+      "description": "AI Power Ranking 由技术执行官和兼职 CTO Bob Matsuoka 维护，他从 2025 年 3 月开始跟踪智能编码工具。",
+      "description1": "AI Power Ranking 由技术执行官和兼职 CTO Bob Matsuoka 维护，他从 2025 年 3 月开始跟踪智能编码工具。",
+      "description2": "我将构建生产应用的实践经验与 AI 开发工具的系统评估相结合。该网站为我在 HyperDev 的战略分析提供了定量支撑，在那里我撰写关于使用 AI 代理编码的实际情况。",
+      "description3": "完全透明：这是一个由一人在两天内构建的项目。我基于实际使用情况快速发布和迭代，因为开发工具领域的变化太快，传统的分析周期无法跟上。",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "报告问题",
       "roles": {
         "founders": "创始人",
         "engineers": "工程师",
@@ -1389,85 +1389,85 @@
       }
     },
     "contact": {
-      "title": "[TRANSLATE] Get in Touch",
-      "description": "[TRANSLATE] Have feedback or suggestions? We'd love to hear from you.",
-      "email": "[TRANSLATE] Contact us at hello@aipowerranking.com",
+      "title": "联系我们",
+      "description": "有反馈或建议吗？我们乐意听取您的意见。",
+      "email": "通过 hello@aipowerranking.com 联系我们",
       "response": "我们通常在 24 小时内回复"
     },
     "newsletter": {
-      "title": "[TRANSLATE] Stay Updated",
-      "description": "[TRANSLATE] Get weekly insights on AI tool rankings and industry trends.",
-      "subscribe": "[TRANSLATE] Subscribe to Newsletter"
+      "title": "保持更新",
+      "description": "获取每周 AI 工具排名和行业趋势的洞察。",
+      "subscribe": "订阅通讯"
     },
     "cta": {
-      "title": "[TRANSLATE] Ready to Explore?",
-      "description": "[TRANSLATE] Dive into our rankings to discover the best AI coding tools for your needs.",
-      "exploreButton": "[TRANSLATE] Explore Rankings",
-      "methodologyButton": "[TRANSLATE] Learn Our Methodology"
+      "title": "准备好探索了吗？",
+      "description": "深入了解我们的排名，发现满足您需求的最佳 AI 编码工具。",
+      "exploreButton": "探索排名",
+      "methodologyButton": "了解我们的方法论"
     },
     "whatWeDo": {
-      "title": "[TRANSLATE] What We Do",
+      "title": "我们做什么",
       "track": {
-        "title": "[TRANSLATE] Track AI Tools",
-        "description": "[TRANSLATE] Monitor and analyze the latest AI coding tools"
+        "title": "跟踪 AI 工具",
+        "description": "监测和分析最新的 AI 编码工具"
       },
       "analyze": {
-        "title": "[TRANSLATE] Analyze Performance",
-        "description": "[TRANSLATE] Evaluate tools based on real-world metrics"
+        "title": "分析性能",
+        "description": "基于真实指标评估工具"
       },
       "rank": {
-        "title": "[TRANSLATE] Rank Objectively",
-        "description": "[TRANSLATE] Apply our algorithm to provide unbiased rankings"
+        "title": "客观排名",
+        "description": "应用我们的算法提供公正的排名"
       },
       "update": {
-        "title": "[TRANSLATE] Update Weekly",
-        "description": "[TRANSLATE] Keep rankings current with the latest data"
+        "title": "每周更新",
+        "description": "使用最新数据保持排名的实时性"
       },
       "analysis": {
-        "title": "[TRANSLATE] Deep Analysis",
-        "description": "[TRANSLATE] Comprehensive evaluation of AI coding tools based on performance, features, and user feedback"
+        "title": "深度分析",
+        "description": "基于性能、功能和用户反馈对 AI 编码工具进行全面评估"
       },
       "methodology": {
-        "title": "[TRANSLATE] Transparent Methodology",
-        "description": "[TRANSLATE] Our ranking algorithm is fully documented and continuously refined based on community input"
+        "title": "透明的方法论",
+        "description": "我们的排名算法完全文档化，并根据社区反馈持续优化"
       },
       "updates": {
-        "title": "[TRANSLATE] Weekly Updates",
-        "description": "[TRANSLATE] Rankings are refreshed every week to reflect the rapidly evolving AI tools landscape"
+        "title": "每周更新",
+        "description": "每周刷新排名，反映快速发展的 AI 工具领域"
       },
       "community": {
-        "title": "[TRANSLATE] Community-Driven",
-        "description": "[TRANSLATE] We incorporate feedback from developers worldwide to improve our rankings and methodology"
+        "title": "社区驱动",
+        "description": "我们整合全球开发者的反馈来改进我们的排名和方法论"
       }
     },
     "whyItMatters": {
-      "title": "[TRANSLATE] Why It Matters",
-      "description": "[TRANSLATE] In the rapidly evolving AI landscape, developers need reliable data to make informed decisions.",
+      "title": "为什么重要",
+      "description": "在快速发展的 AI 领域，开发者需要可靠的数据来做出明智的决策。",
       "points": [
-        "[TRANSLATE] Save time evaluating tools",
-        "[TRANSLATE] Make data-driven decisions",
-        "[TRANSLATE] Stay ahead of the curve",
-        "[TRANSLATE] Choose tools that fit your needs"
+        "节省评估工具的时间",
+        "做出数据驱动的决策",
+        "保持领先地位",
+        "选择适合您需求的工具"
       ],
       "challenges": {
         "paralysis": {
-          "title": "[TRANSLATE] Decision Paralysis",
-          "description": "[TRANSLATE] With dozens of AI tools launching every week, developers face overwhelming choices"
+          "title": "决策困难",
+          "description": "每周有数十种 AI 工具发布，开发者面临难以应对的选择"
         },
         "marketing": {
-          "title": "[TRANSLATE] Marketing vs Reality",
-          "description": "[TRANSLATE] Bold claims often don't match real-world performance and capabilities"
+          "title": "营销与现实",
+          "description": "大胆的宣传往往与实际性能和功能不符"
         },
         "change": {
-          "title": "[TRANSLATE] Rapid Change",
-          "description": "[TRANSLATE] Tools evolve quickly - what's best today might be obsolete tomorrow"
+          "title": "快速变化",
+          "description": "工具发展迅速 - 今天最好的可能明天就过时了"
         },
         "risks": {
-          "title": "[TRANSLATE] Hidden Risks",
-          "description": "[TRANSLATE] Security, privacy, and vendor lock-in concerns are often overlooked"
+          "title": "隐藏风险",
+          "description": "安全、隐私和供应商锁定问题经常被忽视"
         }
       },
-      "conclusion": "[TRANSLATE] That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
+      "conclusion": "这就是我们创建 AI Power Ranking 的原因 - 为了穿过噪音，提供清晰、数据驱动的洞察。"
     },
     "methodology": {
       "title": "方法论",
@@ -1540,20 +1540,20 @@
     }
   },
   "sidebar": {
-    "navigation": "[TRANSLATE] Navigation",
-    "quickLinks": "[TRANSLATE] Quick Links",
-    "trending": "[TRANSLATE] Trending",
-    "categories": "[TRANSLATE] Categories",
-    "features": "[TRANSLATE] Features",
-    "clearFilters": "[TRANSLATE] Clear Filters"
+    "navigation": "导航",
+    "quickLinks": "快速链接",
+    "trending": "热门趋势",
+    "categories": "分类",
+    "features": "功能",
+    "clearFilters": "清除筛选"
   },
   "features": {
-    "autocomplete": "[TRANSLATE] Autocomplete",
-    "chat": "[TRANSLATE] Chat Interface",
-    "codeGeneration": "[TRANSLATE] Code Generation",
-    "refactoring": "[TRANSLATE] Refactoring",
-    "testing": "[TRANSLATE] Testing",
-    "documentation": "[TRANSLATE] Documentation",
+    "autocomplete": "自动补全",
+    "chat": "对话界面",
+    "codeGeneration": "代码生成",
+    "refactoring": "重构",
+    "testing": "测试",
+    "documentation": "文档",
     "search": {
       "title": "智能搜索",
       "description": "AI 驱动的工具发现",

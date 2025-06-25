@@ -203,7 +203,24 @@
       },
       "primaryFactors": "Primarni faktori (67.5%)",
       "secondaryFactors": "Sekundarni faktori (32.5%)",
-      "description": "Naš ranking algoritam kombinira quantitative metrike s qualitative procjenama za comprehensive pogled na AI coding alate. Ažuriramo rangiranja tjedno na osnovu nove data i kontinuirano refiniramo našu metodologiju."
+      "description": "Naš ranking algoritam kombinira quantitative metrike s qualitative procjenama za comprehensive pogled na AI coding alate. Ažuriramo rangiranja tjedno na osnovu nove data i kontinuirano refiniramo našu metodologiju.",
+      "factors": {
+        "agentic": "Agentic sposobnost",
+        "innovation": "Inovacija",
+        "performance": "Performance",
+        "adoption": "Prihvaćanje",
+        "traction": "Traction",
+        "sentiment": "Sentiment",
+        "velocity": "Brzina",
+        "resilience": "Otpornost"
+      },
+      "modifiers": {
+        "decay": "Innovation Decay (6-mjesečni half-life) - Osigurava da su recentne inovacije weighted više",
+        "risk": "Platform Risk Modifier - Prilagođava scores na osnovu platform ovisnosti i lock-in",
+        "revenue": "Revenue Quality Adjustment - Razlikuje sustainable i one-time revenue"
+      },
+      "methodologyText": "Naša comprehensive metodologija evaluira AI coding alate kroz multiple dimenzije, osiguravajući fer i točna rangiranja koja reflektiraju real-world performance i adoptaciju.",
+      "viewMethodology": "Pogledaj punu metodologiju"
     }
   },
   "news": {
@@ -437,6 +454,111 @@
     "subtitle": "Kako rangiramo AI coding alate",
     "lastUpdated": "Zadnje ažuriranje: siječanj 2025",
     "intro": "AI Power Rankings koristi napredni algoritam (v6.0) za evaluaciju i rangiranje AI alata za kodiranje na osnovu više kvantitativnih i kvalitativnih faktora. Naša metodologija je dizajnirana da pruži programerima objektivnu, podatkovnu procjenu AI alata.",
+    "algorithm": {
+      "title": "Algoritam v6.0",
+      "description": "Naš najnoviji ranking algoritam uključuje real-world usage patterns i market dynamics",
+      "keyFeatures": "Ključne karakteristike",
+      "features": {
+        "innovationDecay": "Innovation decay modeliranje za reflektiranje tool freshness",
+        "platformRisk": "Platform risk assessment za vendor ovisnosti",
+        "revenueQuality": "Revenue quality prilagodbe na osnovu business modela",
+        "technicalWeighting": "Technical capability weighting za različite use cases",
+        "dataValidation": "Multi-source data validacija i normalizacija",
+        "logarithmicScaling": "Logarithmic scaling za balanced usporedbe"
+      }
+    },
+    "factors": {
+      "title": "Scoring faktori",
+      "description": "Alati se evaluiraju kroz 8 ključnih dimenzija s specific weightings",
+      "primary": "Primarni faktori (82.5%)",
+      "secondary": "Sekundarni faktori (17.5%)",
+      "agentic": {
+        "details": "Mjeri autonomous sposobnosti, multi-step reasoning i complex task completion"
+      },
+      "innovation": {
+        "details": "Evaluira breakthrough features, technical advances i market differentiation"
+      },
+      "performance": {
+        "details": "Benchmarks na SWE-bench, HumanEval i real-world coding zadaci"
+      },
+      "adoption": {
+        "details": "Active users, growth rate i market penetration metrike"
+      },
+      "traction": {
+        "details": "Revenue growth, funding rounds i business momentum indikatori"
+      },
+      "sentiment": {
+        "details": "Developer satisfakcija, community feedback i recommendation scores"
+      },
+      "velocity": {
+        "details": "Feature release cadence, update frekvencija i innovation speed"
+      },
+      "resilience": {
+        "details": "Platform stabilnost, backup opcije i vendor independence"
+      }
+    },
+    "modifiers": {
+      "title": "Dinamički modifieri",
+      "description": "Real-time prilagodbe koji reflektiraju market uvjete i tool maturity",
+      "innovationDecay": {
+        "description": "Innovation scores decay over time da reward continuous improvement i penalize stagnation"
+      },
+      "platformRisk": {
+        "description": "Prilagodbe na osnovu vendor lock-in, platform ovisnosti i business rizika",
+        "penalties": "Risk kazne",
+        "penaltyList": {
+          "acquired": "Nedavno kupljen od konkurenta",
+          "exclusive": "Platform ekskluzivno (single LLM)",
+          "competitor": "U vlasništvu competing platforme",
+          "regulatory": "Regulatory compliance problemi",
+          "funding": "Funding ili sustainability zabrinutosti"
+        },
+        "bonuses": "Risk ublažavanje bonusi",
+        "bonusList": {
+          "multiLLM": "Podržava multiple LLM providere",
+          "openSource": "Open source dostupnost",
+          "selfHosted": "Self-hosting opcije"
+        }
+      },
+      "revenueQuality": {
+        "description": "Revenue weighting na osnovu business model sustainability i growth potencijala",
+        "models": {
+          "enterpriseHigh": "Enterprise (High-touch)",
+          "enterpriseStandard": "Enterprise (Standard)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "Consumer Premium",
+          "freemium": "Freemium",
+          "openSource": "Open Source"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "Data izvori i validacija",
+      "description": "Održavamo rigorozne standarde za data collection i validaciju",
+      "collection": {
+        "title": "Data collection metode",
+        "sources": {
+          "api": "Direktne API integracije s tool providerima",
+          "research": "Industry research reporti i analyst data",
+          "announcements": "Službene company najave i press releasesi",
+          "community": "Developer ankete i community feedback",
+          "benchmarks": "Standardizirani performance benchmarki"
+        }
+      },
+      "validation": {
+        "title": "Validation zahtjevi",
+        "requirements": {
+          "completeness": "Sve potrebne metrike moraju biti prisutne",
+          "reliability": "Multiple source verifikacija za key metrike",
+          "outlier": "Outlier detekcija i manual review",
+          "crossValidation": "Cross-validacija s industry benchmarkima"
+        }
+      },
+      "updateFrequency": {
+        "title": "Update raspored",
+        "description": "Rangiranja se rekalkuliraju tjedno s continuous data collection. Major algorithm updatesi su versionirani i dokumentirani."
+      }
+    },
     "sections": {
       "scoringFactors": {
         "title": "Scoring Faktori",
@@ -486,7 +608,12 @@
     },
     "team": {
       "title": "Tim",
-      "description": "AI Power Rankings održava tim developera i data scientista strastvenih o presjeku AI i software developmenta."
+      "description": "AI Power Rankings održava Bob Matsuoka, technology executive i fractional CTO koji prati agentic coding alate od ožujka 2025.",
+      "description1": "AI Power Rankings održava Bob Matsuoka, technology executive i fractional CTO koji prati agentic coding alate od ožujka 2025.",
+      "description2": "Kombinira hands-on iskustvo izgradnje production aplikacija sa sistematičkim evaluacijom AI development alata. Ova stranica pruža quantitative backbone za moju strategic analizu na HyperDev, gdje pišem o praktičnim realnostima kodiranja s AI agentima.",
+      "description3": "Potpuna transparentnost: ovo je one-person operacija izgrađena u dva dana. Shippam i iteriram na osnovu real usage jer developer tools landscape kreće prebrzo za traditional analysis cikluse.",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "Prijavi problem"
     },
     "contact": {
       "title": "Kontakt",
@@ -497,6 +624,12 @@
       "title": "Ostani updated",
       "description": "Dobivaj tjedno insights o AI alat rangiranjima i industry trendovima.",
       "subscribe": "Pretplati se na Newsletter"
+    },
+    "cta": {
+      "title": "Spreman za istraživanje?",
+      "description": "Zaroni u naša rangiranja i otkrij najbolje AI coding alate za svoje potrebe.",
+      "exploreButton": "Istraži rangiranja",
+      "methodologyButton": "Nauči našu metodologiju"
     },
     "whatWeDo": {
       "title": "Što radimo",
@@ -541,7 +674,26 @@
         "Donesi data-driven odluke",
         "Ostani ispred krivulje",
         "Odaberi alate koji odgovaraju tvojim potrebama"
-      ]
+      ],
+      "challenges": {
+        "paralysis": {
+          "title": "Paraliza odlučivanja",
+          "description": "S desecima AI alata koji se lansiraju svaki tjedan, developeri se suočavaju s overwhelmingim izborima"
+        },
+        "marketing": {
+          "title": "Marketing vs stvarnost",
+          "description": "Smjele tvrdnje često se ne poklapaju s performansama u stvarnom svijetu i sposobnostima"
+        },
+        "change": {
+          "title": "Brza promjena",
+          "description": "Alati se brzo razvijaju - ono što je najbolje danas možda će biti zastarjelo sutra"
+        },
+        "risks": {
+          "title": "Skriveni rizici",
+          "description": "Sigurnost, privatnost i vendor lock-in zabrinutosti često se zanemaruju"
+        }
+      },
+      "conclusion": "Zato smo izgradili AI Power Rankings - da probijemo kroz buku i pružimo jasne, data-driven insights."
     }
   },
   "sidebar": {

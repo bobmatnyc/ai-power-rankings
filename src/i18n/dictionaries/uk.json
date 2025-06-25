@@ -203,7 +203,24 @@
       },
       "primaryFactors": "Primary фактори (67.5%)",
       "secondaryFactors": "Secondary фактори (32.5%)",
-      "description": "Наш ranking алгоритм комбінує quantitative metrics з qualitative assessments для comprehensive view AI coding тулів. Ми оновлюємо рейтинги щотижня базуючись на новій data та continuously refine нашу методологію."
+      "description": "Наш ranking алгоритм комбінує quantitative metrics з qualitative assessments для comprehensive view AI coding тулів. Ми оновлюємо рейтинги щотижня базуючись на новій data та continuously refine нашу методологію.",
+      "factors": {
+        "agentic": "Agentic здатність",
+        "innovation": "Інновації",
+        "performance": "Performance",
+        "adoption": "Прийняття",
+        "traction": "Traction",
+        "sentiment": "Sentiment",
+        "velocity": "Швидкість",
+        "resilience": "Стійкість"
+      },
+      "modifiers": {
+        "decay": "Innovation Decay (6-місячний half-life) - Забезпечує, що недавні інновації weighted більше",
+        "risk": "Platform Risk Modifier - Коригує scores на основі platform залежностей та lock-in",
+        "revenue": "Revenue Quality Adjustment - Розмежовує sustainable і one-time revenue"
+      },
+      "methodologyText": "Наша comprehensive методологія evaluates AI coding інструменти через multiple виміри, забезпечуючи fair і accurate рейтинги, які відображають real-world performance і прийняття.",
+      "viewMethodology": "Переглянути повну методологію"
     }
   },
   "news": {
@@ -437,6 +454,111 @@
     "subtitle": "Як ми оцінюємо інструменти AI кодування",
     "lastUpdated": "Останнє оновлення: січень 2025",
     "intro": "AI Power Rankings використовує сучасний алгоритм (v6.0) для оцінки та рейтингування інструментів AI кодування на основі багатьох кількісних та якісних факторів. Наша методологія розроблена для надання розробникам об'єктивної оцінки ландшафту інструментів AI на основі даних.",
+    "algorithm": {
+      "title": "Алгоритм v6.0",
+      "description": "Наш найновіший ranking алгоритм включає real-world usage patterns і market dynamics",
+      "keyFeatures": "Ключові характеристики",
+      "features": {
+        "innovationDecay": "Innovation decay моделювання для відображення tool freshness",
+        "platformRisk": "Platform risk assessment для vendor залежностей",
+        "revenueQuality": "Revenue quality коригування на основі business моделі",
+        "technicalWeighting": "Technical capability weighting для різних use cases",
+        "dataValidation": "Multi-source data валідація і нормалізація",
+        "logarithmicScaling": "Logarithmic scaling для balanced порівнянь"
+      }
+    },
+    "factors": {
+      "title": "Scoring фактори",
+      "description": "Інструменти evaluируются через 8 ключових вимірів з specific weightings",
+      "primary": "Первинні фактори (82.5%)",
+      "secondary": "Вторинні фактори (17.5%)",
+      "agentic": {
+        "details": "Мірує autonomous можливості, multi-step reasoning і complex task completion"
+      },
+      "innovation": {
+        "details": "Evaluates breakthrough features, technical advances і market differentiation"
+      },
+      "performance": {
+        "details": "Benchmarks на SWE-bench, HumanEval і real-world coding завдання"
+      },
+      "adoption": {
+        "details": "Active users, growth rate і market penetration метрики"
+      },
+      "traction": {
+        "details": "Revenue growth, funding rounds і business momentum індикатори"
+      },
+      "sentiment": {
+        "details": "Developer задоволеність, community feedback і recommendation scores"
+      },
+      "velocity": {
+        "details": "Feature release cadence, update частота і innovation speed"
+      },
+      "resilience": {
+        "details": "Platform стабільність, backup опції і vendor independence"
+      }
+    },
+    "modifiers": {
+      "title": "Динамічні модифікатори",
+      "description": "Real-time коригування, які відображають market умови і tool maturity",
+      "innovationDecay": {
+        "description": "Innovation scores decay over time для reward continuous improvement і penalize stagnation"
+      },
+      "platformRisk": {
+        "description": "Коригування на основі vendor lock-in, platform залежностей і business ризиків",
+        "penalties": "Risk покарання",
+        "penaltyList": {
+          "acquired": "Недавно придбаний конкурентом",
+          "exclusive": "Platform ексклюзивно (single LLM)",
+          "competitor": "Належить competing платформі",
+          "regulatory": "Regulatory compliance проблеми",
+          "funding": "Funding або sustainability турботи"
+        },
+        "bonuses": "Risk пом'якшення бонуси",
+        "bonusList": {
+          "multiLLM": "Підтримує кілька LLM провайдерів",
+          "openSource": "Open source доступність",
+          "selfHosted": "Self-hosting опції"
+        }
+      },
+      "revenueQuality": {
+        "description": "Revenue weighting на основі business model sustainability і growth потенціалу",
+        "models": {
+          "enterpriseHigh": "Enterprise (High-touch)",
+          "enterpriseStandard": "Enterprise (Standard)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "Consumer Premium",
+          "freemium": "Freemium",
+          "openSource": "Open Source"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "Data джерела і валідація",
+      "description": "Ми підтримуємо суворі стандарти для data collection і валідації",
+      "collection": {
+        "title": "Data collection методи",
+        "sources": {
+          "api": "Прямі API інтеграції з tool провайдерами",
+          "research": "Industry research звіти і analyst data",
+          "announcements": "Офіційні company оголошення і press releases",
+          "community": "Developer опитування і community feedback",
+          "benchmarks": "Стандартизовані performance benchmarks"
+        }
+      },
+      "validation": {
+        "title": "Validation вимоги",
+        "requirements": {
+          "completeness": "Всі необхідні метрики мають бути присутні",
+          "reliability": "Multiple source верифікація для key метрик",
+          "outlier": "Outlier виявлення і manual review",
+          "crossValidation": "Cross-валідація з industry benchmarks"
+        }
+      },
+      "updateFrequency": {
+        "title": "Update розклад",
+        "description": "Рейтинги переобчислюються щотижня з continuous data collection. Major algorithm updates версіонуються і документуються."
+      }
+    },
     "sections": {
       "scoringFactors": {
         "title": "Фактори Оцінювання",
@@ -486,7 +608,12 @@
     },
     "team": {
       "title": "The Team",
-      "description": "AI Power Rankings maintained командою developers та data scientists passionate про intersection AI та software development."
+      "description": "AI Power Rankings maintained Боб Мацуока, technology executive і fractional CTO який відстежує agentic coding інструменти від березня 2025.",
+      "description1": "AI Power Rankings maintained Боб Мацуока, technology executive і fractional CTO який відстежує agentic coding інструменти від березня 2025.",
+      "description2": "Комбіную hands-on досвід створення production аплікацій з систематичною оцінкою AI development інструментів. Цей сайт провайдить quantitative backbone для мою strategic аналізу на HyperDev, де я пишу про practical реальності кодингу з AI агентами.",
+      "description3": "Full transparency: це one-person операція створена за два дні. Я shippam і iteriram на основі real usage бо developer tools landscape рухається надто швидко для traditional analysis циклів.",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "Повідомити про проблему"
     },
     "contact": {
       "title": "Get in Touch",
@@ -541,7 +668,32 @@
         "Make data-driven decisions",
         "Stay ahead curve",
         "Choose тули що fit your needs"
-      ]
+      ],
+      "challenges": {
+        "paralysis": {
+          "title": "Параліч рішень",
+          "description": "З десятками AI інструментів, які з'являються щотижня, розробники стикаються з overwhelming виборами"
+        },
+        "marketing": {
+          "title": "Marketing vs реальність",
+          "description": "Сміливі твердження часто не відповідають real-world продуктивності та можливостям"
+        },
+        "change": {
+          "title": "Швидкі зміни",
+          "description": "Інструменти розвиваються швидко - те, що найкраще сьогодні, може бути застарілим завтра"
+        },
+        "risks": {
+          "title": "Приховані ризики",
+          "description": "Безпека, приватність та vendor lock-in турботи часто ігноруються"
+        }
+      },
+      "conclusion": "Ось чому ми створили AI Power Rankings - щоб пробитися крізь шум і надати ясні, data-driven insights."
+    },
+    "cta": {
+      "title": "Готові досліджувати?",
+      "description": "Зануртесь у наші рейтинги і відкрийте найкращі AI coding інструменти для ваших потреб.",
+      "exploreButton": "Дослідити рейтинги",
+      "methodologyButton": "Вивчити нашу методологію"
     }
   },
   "sidebar": {
