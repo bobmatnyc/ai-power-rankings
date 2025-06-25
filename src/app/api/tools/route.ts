@@ -1,11 +1,33 @@
 import { NextResponse } from "next/server";
 import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
+import cachedToolsData from "@/data/cache/tools.json";
 
 export async function GET(): Promise<NextResponse> {
   try {
-    // No longer need build phase check since pages use static generation
+    // Check if we should use cache-first approach
+    const useCacheFirst =
+      process.env["USE_CACHE_FALLBACK"] === "true" || process.env["VERCEL_ENV"] === "preview";
 
+    // For preview environments, return cached data immediately
+    if (useCacheFirst) {
+      loggers.api.info("Using cache-first approach for tools");
+
+      const apiResponse = NextResponse.json({
+        tools: cachedToolsData.tools,
+        _cached: true,
+        _cachedAt: "2025-06-25T13:37:00.000Z",
+        _cacheReason: "Cache-first approach for preview environment",
+      });
+
+      apiResponse.headers.set(
+        "Cache-Control",
+        "public, s-maxage=3600, stale-while-revalidate=1800"
+      );
+      return apiResponse;
+    }
+
+    // For production, try to get live data
     const response = await payloadDirect.getTools({
       sort: "name",
       limit: 1000, // Get all tools
@@ -13,8 +35,21 @@ export async function GET(): Promise<NextResponse> {
     const tools = response.docs;
 
     if (!tools) {
-      loggers.api.error("No tools found");
-      return NextResponse.json({ error: "Failed to fetch tools" }, { status: 500 });
+      loggers.api.error("No tools found, falling back to cached data");
+
+      // Fall back to cached data
+      const apiResponse = NextResponse.json({
+        tools: cachedToolsData.tools,
+        _cached: true,
+        _cachedAt: "2025-06-25T13:37:00.000Z",
+        _cacheReason: "Database connection unavailable",
+      });
+
+      apiResponse.headers.set(
+        "Cache-Control",
+        "public, s-maxage=3600, stale-while-revalidate=1800"
+      );
+      return apiResponse;
     }
 
     // Transform tools to match expected format with info structure
