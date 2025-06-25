@@ -120,24 +120,21 @@
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
       "factors": {
-        "agenticCapability": "Agentic Capability (30%) - Autonomous coding abilities",
         "innovation": {
-          "name": "Innovation",
-          "description": "Technical breakthroughs and feature innovation"
+          "name": "Innovazione",
+          "description": "Innovazioni tecniche e innovazione di funzionalità"
         },
-        "technicalPerformance": "Technical Performance (12.5%) - SWE-bench focus",
-        "marketTraction": "Market Traction (12.5%) - Revenue quality adjusted",
         "agentic": {
-          "name": "Agentic Capability",
-          "description": "Autonomous coding abilities and multi-step task completion"
+          "name": "Capacità Agentica",
+          "description": "Capacità di codifica autonoma e completamento di attività multi-step"
         },
         "performance": {
-          "name": "Technical Performance",
-          "description": "Code quality, speed, and benchmark results"
+          "name": "Performance Tecnica",
+          "description": "Qualità del codice, velocità e risultati dei benchmark"
         },
         "traction": {
-          "name": "Market Traction",
-          "description": "User adoption, growth rate, and market presence"
+          "name": "Trazione di Mercato",
+          "description": "Adozione degli utenti, tasso di crescita e presenza sul mercato"
         }
       },
       "modifiers": {
@@ -483,112 +480,6 @@
           "title": "Basato sui dati",
           "description": "Fonti verificate con validazione dell'80% dei dati"
         }
-      }
-    },
-    "factors": {
-      "title": "Fattori di Punteggio",
-      "subtitle": "8 dimensioni chiave valutate per ogni strumento",
-      "description": "Ogni strumento è valutato attraverso questi fattori critici, ponderati secondo il loro impatto sull'esperienza dello sviluppatore",
-      "primary": {
-        "title": "Fattori primari (67.5%)",
-        "agenticCapability": {
-          "title": "Capacità Agentica (30%)",
-          "description": "Misura le capacità di codifica autonoma e risoluzione di compiti multi-step",
-          "details": "Valuta la capacità di uno strumento di funzionare in modo indipendente, pianificare ed eseguire compiti di sviluppo complessi con minimo intervento umano."
-        },
-        "innovation": {
-          "title": "Innovazione (20%)",
-          "description": "Progressi tecnici e innovazione delle funzionalità",
-          "details": "Misura i progressi unici, le nuove capacità e l'innovazione tecnica che differenziano lo strumento dai concorrenti."
-        },
-        "technicalPerformance": {
-          "title": "Performance Tecnica (12.5%)",
-          "description": "Qualità del codice, velocità e risultati dei benchmark",
-          "details": "Valuta le metriche di performance inclusi i punteggi SWE-bench, velocità di esecuzione e qualità del codice generato."
-        },
-        "marketTraction": {
-          "title": "Trazione di Mercato (12.5%)",
-          "description": "Adozione degli utenti, tasso di crescita e presenza sul mercato",
-          "details": "Misura l'adozione reale, le metriche di crescita e la posizione competitiva nel mercato."
-        }
-      },
-      "secondary": {
-        "title": "Fattori secondari (32.5%)",
-        "developerExperience": {
-          "title": "Esperienza Sviluppatore (10%)",
-          "description": "Facilità d'uso, qualità della documentazione ed ecosistema"
-        },
-        "ecosystemHealth": {
-          "title": "Salute dell'Ecosistema (7.5%)",
-          "description": "Supporto della community, integrazioni e sostenibilità a lungo termine"
-        },
-        "securityPrivacy": {
-          "title": "Sicurezza & Privacy (7.5%)",
-          "description": "Misure di sicurezza, conformità e pratiche di privacy"
-        },
-        "costEffectiveness": {
-          "title": "Rapporto Costo-Efficacia (7.5%)",
-          "description": "Modello di prezzo, valore fornito e accessibilità"
-        }
-      }
-    },
-    "modifiers": {
-      "title": "Modificatori Dinamici",
-      "subtitle": "Aggiustamenti sofisticati per classifiche eque e accurate",
-      "description": "Questi modificatori si applicano ai punteggi base per riflettere le realtà attuali del mercato",
-      "innovationDecay": {
-        "title": "Decadimento dell'Innovazione",
-        "description": "Le innovazioni recenti sono ponderate più fortemente",
-        "details": "Applica un decadimento temporale per assicurare che le innovazioni recenti abbiano più impatto sulle classifiche rispetto ai risultati più vecchi."
-      },
-      "platformRisk": {
-        "title": "Rischio Piattaforma",
-        "description": "Fattori di indipendenza vs lock-in della piattaforma",
-        "details": "Aggiusta i punteggi in base al livello di dipendenza da una piattaforma specifica e ai rischi di lock-in."
-      },
-      "revenueQuality": {
-        "title": "Qualità dei Ricavi",
-        "description": "I ricavi enterprise sono ponderati più dei ricavi consumer",
-        "details": "Dà più peso ai ricavi provenienti da clienti enterprise, riflettendo stabilità e sostenibilità a lungo termine."
-      }
-    },
-    "revenueModels": {
-      "title": "Modelli di Ricavo",
-      "description": "Come valutiamo diversi modelli di business",
-      "models": {
-        "enterpriseHigh": "Enterprise (Alto supporto)",
-        "enterpriseStandard": "Enterprise (Standard)",
-        "smbSaas": "PMI SaaS",
-        "consumerPremium": "Consumer Premium",
-        "freemium": "Freemium",
-        "openSource": "Open Source"
-      }
-    },
-    "dataSources": {
-      "title": "Fonti Dati e Validazione",
-      "description": "Manteniamo standard rigorosi per la raccolta e validazione dei dati",
-      "collection": {
-        "title": "Metodi di Raccolta Dati",
-        "sources": {
-          "api": "Integrazioni API dirette con i fornitori di strumenti",
-          "research": "Report di ricerca industriale e dati di analisti",
-          "announcements": "Annunci ufficiali aziendali e comunicati stampa",
-          "community": "Sondaggi sviluppatori e feedback della community",
-          "benchmarks": "Benchmark di performance standardizzati"
-        }
-      },
-      "validation": {
-        "title": "Requisiti di Validazione",
-        "requirements": {
-          "completeness": "Tutte le metriche richieste devono essere presenti",
-          "reliability": "Verifica multi-fonte per le metriche chiave",
-          "outlier": "Rilevazione outlier e revisione manuale",
-          "crossValidation": "Validazione incrociata con benchmark industriali"
-        }
-      },
-      "updateFrequency": {
-        "title": "Programma di Aggiornamento",
-        "description": "Le classifiche vengono ricalcolate settimanalmente con raccolta dati continua. Gli aggiornamenti principali dell'algoritmo sono versionati e documentati."
       }
     }
   },
