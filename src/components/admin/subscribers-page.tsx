@@ -321,9 +321,13 @@ export function SubscribersPage() {
                       {subscriber.first_name} {subscriber.last_name}
                     </TableCell>
                     <TableCell>{getStatusBadge(subscriber.status)}</TableCell>
-                    <TableCell>{format(new Date(subscriber.created_at), "MMM d, yyyy")}</TableCell>
                     <TableCell>
-                      {subscriber.verified_at
+                      {subscriber.created_at && !isNaN(new Date(subscriber.created_at).getTime())
+                        ? format(new Date(subscriber.created_at), "MMM d, yyyy")
+                        : "-"}
+                    </TableCell>
+                    <TableCell>
+                      {subscriber.verified_at && !isNaN(new Date(subscriber.verified_at).getTime())
                         ? format(new Date(subscriber.verified_at), "MMM d, yyyy")
                         : "-"}
                     </TableCell>
