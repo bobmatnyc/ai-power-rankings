@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { StatusIndicator } from "@/components/ui/status-indicator";
+import { ToolDetailTabs } from "@/components/tools/tool-detail-tabs";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
 interface Tool {
@@ -176,6 +177,9 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Tool Detail Tabs */}
+      <ToolDetailTabs tool={tool} dict={dict} />
 
       {/* Mobile Visit Site button - centered below content */}
       <div className="mt-8 flex flex-col items-center gap-3 md:hidden">
