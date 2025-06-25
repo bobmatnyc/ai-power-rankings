@@ -21,12 +21,10 @@ class ConnectionPoolManager {
 
   private maxConnections: number;
   private connectionTimeout: number;
-  private idleTimeout: number;
 
   constructor() {
-    this.maxConnections = parseInt(process.env.DATABASE_POOL_MAX || "10");
-    this.connectionTimeout = parseInt(process.env.DATABASE_CONNECT_TIMEOUT || "10000");
-    this.idleTimeout = parseInt(process.env.DATABASE_IDLE_TIMEOUT || "10000");
+    this.maxConnections = parseInt(process.env["DATABASE_POOL_MAX"] || "10");
+    this.connectionTimeout = parseInt(process.env["DATABASE_CONNECT_TIMEOUT"] || "10000");
   }
 
   /**
