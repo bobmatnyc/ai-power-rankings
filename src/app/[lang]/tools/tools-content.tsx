@@ -157,9 +157,7 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
               </CardHeader>
               <CardContent className="flex-1">
                 <p className="text-sm text-muted-foreground">
-                  {typeof tool.description === "string"
-                    ? tool.description
-                    : tool.info?.product?.description || dict.tools.defaultDescription}
+                  {tool.description || dict.tools.defaultDescription}
                 </p>
               </CardContent>
             </Card>
