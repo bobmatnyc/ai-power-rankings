@@ -91,10 +91,11 @@ function RankingsGridContent({
         cache: isDev ? "no-store" : "default",
       });
       const data = await response.json();
-      setRankings(data.rankings);
+      setRankings(data.rankings || []);
       setLoading(false);
     } catch (error) {
       loggers.ranking.error("Failed to fetch rankings", { error });
+      setRankings([]); // Ensure rankings is always an array
       setLoading(false);
     }
   };

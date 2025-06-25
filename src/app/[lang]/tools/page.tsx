@@ -24,8 +24,9 @@ interface PageProps {
   params: Promise<{ lang: Locale }>;
 }
 
-// Use static generation with revalidation
-export const revalidate = 3600; // Revalidate every hour
+// Use dynamic rendering with optimized queries
+export const dynamic = "force-dynamic";
+// Consider ISR in the future: export const revalidate = 300;
 
 export default async function ToolsPage({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang } = await params;
@@ -35,19 +36,14 @@ export default async function ToolsPage({ params }: PageProps): Promise<React.JS
   let loading = false;
 
   try {
-    // Skip database calls during build phase
-    if (process.env["NEXT_PHASE"] === "phase-production-build") {
-      loggers.api.info("Skipping tools fetch during build phase");
-      loading = true;
-    } else {
-      // Use direct database access
-      const response = await payloadDirect.getTools({
-        sort: "name",
-        limit: 1000,
-      });
+    // Use direct database access with timeout
+    const response = await payloadDirect.getTools({
+      sort: "name",
+      limit: 1000,
+    });
 
-      // Transform tools to match expected format
-      tools = response.docs.map((tool: any) => {
+    // Transform tools to match expected format
+    tools = (response.docs || []).map((tool: any) => {
         // Handle company - it might be populated or just an ID
         const companyName =
           typeof tool["company"] === "object" && tool["company"] ? tool["company"]["name"] : "";
@@ -82,7 +78,6 @@ export default async function ToolsPage({ params }: PageProps): Promise<React.JS
           },
         };
       });
-    }
   } catch (error) {
     loggers.tools.error("Failed to fetch tools", { error, lang });
     loading = true;
