@@ -49,10 +49,6 @@ export const config: NextAuthConfig = {
       return token;
     },
   },
-  pages: {
-    signIn: "/admin/auth/signin",
-    error: "/admin/auth/error",
-  },
   session: {
     strategy: "jwt",
   },

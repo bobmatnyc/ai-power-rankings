@@ -7,6 +7,7 @@ import { resendAdapter } from "@payloadcms/email-resend";
 import {
   Companies,
   Tools,
+  PendingTools,
   Metrics,
   Rankings,
   RankingPeriods,
@@ -37,9 +38,9 @@ export default buildConfig({
     logger: false, // Disable query logging
     push: false, // Disable automatic schema push in development
   }),
-  email: process.env.RESEND_API_KEY
+  email: process.env["RESEND_API_KEY"]
     ? resendAdapter({
-        apiKey: process.env.RESEND_API_KEY,
+        apiKey: process.env["RESEND_API_KEY"],
         defaultFromAddress: process.env["EMAIL_FROM"] || "noreply@aipowerrankings.com",
         defaultFromName: "AI Power Rankings",
       })
@@ -56,6 +57,7 @@ export default buildConfig({
     Users,
     Companies,
     Tools,
+    PendingTools,
     Metrics,
     Rankings,
     RankingPeriods,
