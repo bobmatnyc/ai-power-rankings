@@ -114,12 +114,15 @@
       "agentDescription": "Ingegneri software AI completamente autonomi"
     },
     "methodology": {
-      "title": "Our Methodology",
-      "algorithmTitle": "Algorithm v6.0",
-      "algorithmDescription": "Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
-      "keyModifiersTitle": "Key Modifiers",
-      "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
+      "title": "La Nostra Metodologia",
+      "algorithmTitle": "Algoritmo v6.0",
+      "algorithmDescription": "Il nostro algoritmo avanzato di classificazione considera 8 fattori chiave con modificatori sofisticati:",
+      "keyModifiersTitle": "Modificatori Chiave",
+      "keyModifiersDescription": "Tre modificatori sofisticati garantiscono classifiche eque e accurate:",
       "factors": {
+        "agenticCapability": "Capacità Agentica (30%) - Capacità di codifica autonoma",
+        "technicalPerformance": "Performance Tecnica (12.5%) - Focus su SWE-bench",
+        "marketTraction": "Trazione di Mercato (12.5%) - Ricavi aggiustati per qualità",
         "innovation": {
           "name": "Innovazione",
           "description": "Innovazioni tecniche e innovazione di funzionalità"
@@ -138,38 +141,38 @@
         }
       },
       "modifiers": {
-        "innovationDecay": "Innovation Decay - Recent innovations score higher",
-        "platformRisk": "Platform Risk - Independence bonuses, lock-in penalties",
-        "revenueQuality": "Revenue Quality - Enterprise revenue weighted higher",
-        "dataValidation": "Data Validation - 80% completeness required",
+        "innovationDecay": "Decadimento dell'Innovazione - Le innovazioni recenti ottengono punteggi più alti",
+        "platformRisk": "Rischio della Piattaforma - Bonus per l'indipendenza, penalità per il lock-in",
+        "revenueQuality": "Qualità dei Ricavi - I ricavi enterprise pesano di più",
+        "dataValidation": "Validazione dei Dati - Richiesta completezza dell'80%",
         "decay": {
-          "name": "Innovation Decay",
-          "description": "Recent innovations weighted more heavily"
+          "name": "Decadimento dell'Innovazione",
+          "description": "Le innovazioni recenti pesano di più"
         },
         "risk": {
-          "name": "Platform Risk",
-          "description": "Independence vs. platform lock-in factors"
+          "name": "Rischio della Piattaforma",
+          "description": "Fattori di indipendenza vs. lock-in della piattaforma"
         },
         "revenue": {
-          "name": "Revenue Quality",
-          "description": "Enterprise revenue weighted higher than consumer"
+          "name": "Qualità dei Ricavi",
+          "description": "I ricavi enterprise pesano più di quelli consumer"
         },
         "validation": {
-          "name": "Data Validation",
-          "description": "Minimum 80% data completeness required"
+          "name": "Validazione dei Dati",
+          "description": "Richiesta completezza minima dei dati dell'80%"
         }
       },
-      "modifiersTitle": "Dynamic Modifiers",
-      "modifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings",
-      "readFull": "Read Full Methodology",
-      "readMoreButton": "Read Full Methodology"
+      "modifiersTitle": "Modificatori Dinamici",
+      "modifiersDescription": "Tre modificatori sofisticati garantiscono classifiche eque e accurate",
+      "readFull": "Leggi la Metodologia Completa",
+      "readMoreButton": "Leggi la Metodologia Completa"
     },
     "footer": {
-      "tagline": "Data-driven insights for the AI revolution",
-      "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
-      "quickLinks": "Quick Links",
-      "categories": "Categories",
-      "copyright": "© 2025 AI Power Rankings. All rights reserved."
+      "tagline": "Insights basati sui dati per la rivoluzione dell'IA",
+      "description": "Classifiche complete degli strumenti di coding IA utilizzando l'Algoritmo v6.0 con decadimento dell'innovazione, modificatori di rischio della piattaforma e aggiustamenti della qualità dei ricavi.",
+      "quickLinks": "Link Rapidi",
+      "categories": "Categorie",
+      "copyright": "© 2025 AI Power Rankings. Tutti i diritti riservati."
     }
   },
   "rankings": {
@@ -191,16 +194,33 @@
       "name": "Name"
     },
     "algorithm": {
-      "title": "About Algorithm v6.0",
-      "subtitle": "Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
+      "title": "Informazioni sull'Algoritmo v6.0",
+      "subtitle": "Sistema di classificazione avanzato con decadimento dell'innovazione, modificatori di rischio della piattaforma e aggiustamenti della qualità dei ricavi",
       "tabs": {
-        "factors": "Scoring Factors",
-        "modifiers": "Modifiers",
-        "methodology": "Methodology"
+        "factors": "Fattori di Punteggio",
+        "modifiers": "Modificatori",
+        "methodology": "Metodologia"
       },
-      "primaryFactors": "Primary Factors (67.5%)",
-      "secondaryFactors": "Secondary Factors (32.5%)",
-      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology."
+      "primaryFactors": "Fattori Primari (67.5%)",
+      "secondaryFactors": "Fattori Secondari (32.5%)",
+      "description": "Il nostro algoritmo di classificazione combina metriche quantitative con valutazioni qualitative per fornire una visione completa degli strumenti di coding IA. Aggiorniamo le classifiche settimanalmente basandoci su nuovi dati e raffiniamo continuamente la nostra metodologia.",
+      "factors": {
+        "agentic": "Capacità Agentica",
+        "innovation": "Innovazione",
+        "performance": "Performance",
+        "adoption": "Adozione",
+        "traction": "Trazione",
+        "sentiment": "Sentiment",
+        "velocity": "Velocità",
+        "resilience": "Resilienza"
+      },
+      "modifiers": {
+        "decay": "Decadimento dell'Innovazione (emivita di 6 mesi) - Garantisce che le innovazioni recenti pesino di più",
+        "risk": "Modificatore di Rischio della Piattaforma - Aggiusta i punteggi basandosi sulle dipendenze della piattaforma e il lock-in",
+        "revenue": "Aggiustamento della Qualità dei Ricavi - Differenzia tra ricavi sostenibili e una tantum"
+      },
+      "methodologyText": "La nostra metodologia completa valuta gli strumenti di coding IA attraverso molteplici dimensioni, garantendo classifiche eque e accurate che riflettono performance e adozione nel mondo reale.",
+      "viewMethodology": "Visualizza la Metodologia Completa"
     }
   },
   "news": {
@@ -238,6 +258,8 @@
     "filterByCategory": "Filtra per categoria",
     "sortBy": "Ordina per",
     "defaultDescription": "Scopri e confronta tool di coding AI",
+    "notFound": "Tool non trovato",
+    "backToTools": "Torna ai Tool",
     "sort": {
       "name": "Name",
       "category": "Category",
@@ -272,6 +294,7 @@
       "githubStars": "GitHub Stars",
       "tabs": {
         "performance": "Performance",
+        "pricing": "Prezzi",
         "businessMetrics": "Business",
         "scores": "Scores",
         "history": "History"
@@ -400,40 +423,67 @@
         "subscribeAgain": "Subscribe Again"
       }
     },
-    "unsubscribe": {
-      "title": "Unsubscribe from Newsletter",
-      "processing": "Processing your request...",
+    "verify": {
+      "goToHomepage": "Vai alla Homepage",
+      "tryAgain": "Riprova",
       "success": {
-        "title": "Successfully Unsubscribed",
-        "message": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!"
+        "title": "Email Verificata!",
+        "description": "La tua email è stata verificata con successo. Inizierai a ricevere la nostra newsletter settimanale."
+      },
+      "alreadyVerified": {
+        "title": "Già Verificata",
+        "description": "Questo indirizzo email è già stato verificato. Sei pronto!"
+      },
+      "error": {
+        "title": "Errore di Verifica"
+      },
+      "errors": {
+        "default": "Si è verificato un errore imprevisto. Riprova.",
+        "missingToken": "Il link di verifica sembra essere incompleto.",
+        "invalidToken": "Questo link di verifica non è valido o è scaduto.",
+        "verificationFailed": "Non siamo riusciti a verificare la tua email in questo momento. Riprova più tardi."
+      }
+    },
+    "unsubscribe": {
+      "title": "Disiscriviti dalla Newsletter",
+      "processing": "Elaborazione della tua richiesta...",
+      "success": {
+        "title": "Disiscrizione Completata",
+        "message": "Sei stato disiscritto dalla newsletter AI Power Rankings. Ci dispiace vederti andare!",
+        "description": "Sei stato disiscritto dalla newsletter AI Power Rankings. Ci dispiace vederti andare!"
+      },
+      "error": {
+        "title": "Errore di Disiscrizione"
       },
       "errors": {
         "missingToken": {
-          "title": "Missing Token",
-          "message": "The unsubscribe link appears to be incomplete."
+          "title": "Token Mancante",
+          "message": "Il link di disiscrizione sembra essere incompleto."
         },
         "invalidToken": {
-          "title": "Invalid Link",
-          "message": "This unsubscribe link is invalid or has expired."
+          "title": "Link Non Valido",
+          "message": "Questo link di disiscrizione non è valido o è scaduto."
         },
+        "unsubscribeFailed": "Non siamo riusciti a elaborare la tua richiesta di disiscrizione. Riprova più tardi.",
+        "default": "Si è verificato un errore imprevisto. Riprova.",
         "failed": {
-          "title": "Unsubscribe Failed",
-          "message": "We couldn't process your unsubscribe request. Please try again later."
+          "title": "Disiscrizione Fallita",
+          "message": "Non siamo riusciti a elaborare la tua richiesta di disiscrizione. Riprova più tardi."
         },
         "unexpected": {
-          "title": "Error",
-          "message": "An unexpected error occurred. Please try again."
+          "title": "Errore",
+          "message": "Si è verificato un errore imprevisto. Riprova."
         }
       },
-      "resubscribe": "Changed your mind? You can subscribe again anytime.",
-      "subscribeAgain": "Subscribe Again"
+      "resubscribe": "Hai cambiato idea? Puoi iscriverti di nuovo in qualsiasi momento.",
+      "subscribeAgain": "Iscriviti di Nuovo"
     }
   },
   "methodology": {
-    "title": "Our Methodology",
-    "subtitle": "How we rank AI coding tools",
-    "lastUpdated": "Last updated: January 2025",
-    "intro": "AI Power Rankings uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "title": "La Nostra Metodologia",
+    "subtitle": "Come classifichiamo gli strumenti di coding IA",
+    "lastUpdated": "Ultimo aggiornamento: Gennaio 2025",
+    "intro": "AI Power Rankings utilizza un algoritmo sofisticato (v6.0) per valutare e classificare gli strumenti di coding IA basandosi su molteplici fattori quantitativi e qualitativi. La nostra metodologia è progettata per fornire agli sviluppatori una valutazione oggettiva e basata sui dati del panorama degli strumenti IA.",
     "sections": {
       "scoringFactors": {
         "title": "Scoring Factors",
@@ -464,6 +514,12 @@
       "description": "Un sistema di punteggio sofisticato che bilancia performance tecnica, innovazione e dinamiche di mercato",
       "keyFeatures": "Caratteristiche chiave",
       "features": {
+        "innovationDecay": "Modellazione del decadimento dell'innovazione per riflettere la freschezza degli strumenti",
+        "platformRisk": "Valutazione del rischio della piattaforma per le dipendenze dei fornitori",
+        "revenueQuality": "Aggiustamenti della qualità dei ricavi basati sul modello di business",
+        "technicalWeighting": "Ponderazione delle capacità tecniche per diversi casi d'uso",
+        "dataValidation": "Validazione e normalizzazione dei dati multi-fonte",
+        "logarithmicScaling": "Scalamento logaritmico per confronti bilanciati",
         "comprehensive": {
           "title": "Valutazione completa",
           "description": "8 fattori di punteggio che coprono aspetti tecnici e commerciali"
@@ -480,6 +536,98 @@
           "title": "Basato sui dati",
           "description": "Fonti verificate con validazione dell'80% dei dati"
         }
+      }
+    },
+    "factors": {
+      "title": "Fattori di Punteggio",
+      "description": "Gli strumenti sono valutati attraverso 8 dimensioni chiave con ponderazioni specifiche",
+      "primary": "Fattori Primari (82.5%)",
+      "secondary": "Fattori Secondari (17.5%)",
+      "agentic": {
+        "details": "Misura le capacità autonome, il ragionamento multi-step e il completamento di compiti complessi"
+      },
+      "innovation": {
+        "details": "Valuta le funzionalità innovative, i progressi tecnici e la differenziazione del mercato"
+      },
+      "performance": {
+        "details": "Benchmark su SWE-bench, HumanEval e compiti di codifica del mondo reale"
+      },
+      "adoption": {
+        "details": "Utenti attivi, tasso di crescita e metriche di penetrazione del mercato"
+      },
+      "traction": {
+        "details": "Crescita dei ricavi, round di finanziamento e indicatori di slancio aziendale"
+      },
+      "sentiment": {
+        "details": "Soddisfazione degli sviluppatori, feedback della community e punteggi di raccomandazione"
+      },
+      "velocity": {
+        "details": "Cadenza di rilascio delle funzionalità, frequenza di aggiornamento e velocità di innovazione"
+      },
+      "resilience": {
+        "details": "Stabilità della piattaforma, opzioni di backup e indipendenza del fornitore"
+      }
+    },
+    "modifiers": {
+      "title": "Modificatori Dinamici",
+      "description": "Aggiustamenti in tempo reale che riflettono le condizioni di mercato e la maturità degli strumenti",
+      "innovationDecay": {
+        "description": "I punteggi di innovazione decadono nel tempo per premiare il miglioramento continuo e penalizzare la stagnazione"
+      },
+      "platformRisk": {
+        "description": "Aggiustamenti basati sul vendor lock-in, dipendenze della piattaforma e rischi aziendali",
+        "penalties": "Penalità di Rischio",
+        "penaltyList": {
+          "acquired": "Recentemente acquisito da un concorrente",
+          "exclusive": "Esclusivo della piattaforma (singolo LLM)",
+          "competitor": "Di proprietà di una piattaforma concorrente",
+          "regulatory": "Problemi di conformità normativa",
+          "funding": "Preoccupazioni di finanziamento o sostenibilità"
+        },
+        "bonuses": "Bonus di Mitigazione del Rischio",
+        "bonusList": {
+          "multiLLM": "Supporta più provider LLM",
+          "openSource": "Disponibilità open source",
+          "selfHosted": "Opzioni di self-hosting"
+        }
+      },
+      "revenueQuality": {
+        "description": "Ponderazione dei ricavi basata sulla sostenibilità del modello di business e il potenziale di crescita",
+        "models": {
+          "enterpriseHigh": "Enterprise (High-touch)",
+          "enterpriseStandard": "Enterprise (Standard)",
+          "smbSaas": "PMI SaaS",
+          "consumerPremium": "Consumer Premium",
+          "freemium": "Freemium",
+          "openSource": "Open Source"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "Fonti di Dati e Validazione",
+      "description": "Manteniamo standard rigorosi per la raccolta e validazione dei dati",
+      "collection": {
+        "title": "Metodi di Raccolta Dati",
+        "sources": {
+          "api": "Integrazioni API dirette con i fornitori di strumenti",
+          "research": "Rapporti di ricerca del settore e dati degli analisti",
+          "announcements": "Annunci ufficiali delle aziende e comunicati stampa",
+          "community": "Sondaggi degli sviluppatori e feedback della community",
+          "benchmarks": "Benchmark di performance standardizzati"
+        }
+      },
+      "validation": {
+        "title": "Requisiti di Validazione",
+        "requirements": {
+          "completeness": "Tutte le metriche richieste devono essere presenti",
+          "reliability": "Verifica da più fonti per le metriche chiave",
+          "outlier": "Rilevamento degli outlier e revisione manuale",
+          "crossValidation": "Validazione incrociata con i benchmark del settore"
+        }
+      },
+      "updateFrequency": {
+        "title": "Programma di Aggiornamento",
+        "description": "Le classifiche sono ricalcolate settimanalmente con raccolta dati continua. Gli aggiornamenti principali dell'algoritmo sono versionati e documentati."
       }
     }
   },
@@ -637,6 +785,7 @@
   "footer": {
     "description": "Il tuo data hub per i tool AI di coding. Tracciamo i migliori agentic AI dev tools e le loro performance.",
     "quickLinks": "Link veloci",
+    "categories": "Categorie",
     "resources": "Risorse",
     "company": "Azienda",
     "legal": "Legale",
