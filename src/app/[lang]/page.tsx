@@ -36,8 +36,6 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     const response = await fetch(url, {
       next: { revalidate: isDev ? 0 : 300 }, // No cache in dev, 5 minutes in prod
       cache: isDev ? "no-store" : "default", // No cache in development
-      // Add timeout to prevent hanging
-      signal: AbortSignal.timeout(10000), // 10 second timeout
     });
     
     if (!response.ok) {
