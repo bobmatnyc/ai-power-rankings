@@ -23,7 +23,7 @@ interface Tool {
   name: string;
   category: string;
   status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";
-  description?: string;
+  description?: string | any[]; // Can be string or RichText array
   website?: string;
   website_url?: string;
   github_url?: string;
@@ -157,7 +157,26 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
               </CardHeader>
               <CardContent className="flex-1">
                 <p className="text-sm text-muted-foreground">
-                  {tool.description || dict.tools.defaultDescription}
+                  {(() => {
+                    if (!tool.description) {
+                      return dict.tools.defaultDescription;
+                    }
+                    if (typeof tool.description === "string") {
+                      return tool.description;
+                    }
+                    // Handle RichText array structure
+                    if (Array.isArray(tool.description)) {
+                      return tool.description
+                        .map((block: any) => {
+                          if (block.children && Array.isArray(block.children)) {
+                            return block.children.map((child: any) => child.text || "").join("");
+                          }
+                          return "";
+                        })
+                        .join(" ");
+                    }
+                    return dict.tools.defaultDescription;
+                  })()}
                 </p>
               </CardContent>
             </Card>

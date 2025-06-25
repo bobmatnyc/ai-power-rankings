@@ -9,7 +9,7 @@ interface Tool {
   name: string;
   category: string;
   status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";
-  description?: string;
+  description?: string | any[]; // Can be string or RichText array
   website?: string;
   website_url?: string;
   github_url?: string;
