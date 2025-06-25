@@ -6,19 +6,24 @@
 
 // Created: 2025-06-08
 // Updated: 2025-06-09 - Source-oriented metrics architecture
+// Updated: 2025-06-25 - Cache-first resilient architecture
 This project is a comprehensive web platform that tracks, ranks, and analyzes agentic AI coding tools through data-driven monthly power rankings. The platform serves as the definitive resource for developers seeking to understand the rapidly evolving landscape of autonomous AI development tools.
 
 The platform implements a source-oriented metrics architecture where each article, benchmark, or report can contain metrics for multiple tools, enabling natural representation of comparative data and market analysis. The system uses a transparent algorithmic ranking system (v4.0) that weights agentic capability as the primary factor.
+
+**Cache-First Architecture (v2.1)**: The platform now operates with a resilient cache-first approach, using static JSON files as the primary data source with database as optional enhancement. This ensures the site remains fully functional even during database outages, with client-side processing for optimal performance.
 
 ### Tech Stack
 
 // Created: 2025-06-08
 // Updated: 2025-06-25 - Added i18n support
+// Updated: 2025-06-25 - Cache-first architecture
 
 - **Frontend Framework**: Next.js 13+ (App Router)
-- **Language**: TypeScript
+- **Language**: TypeScript (strict mode)
 - **Styling**: Tailwind CSS
-- **Database**: Supabase (PostgreSQL)
+- **Database**: Supabase (PostgreSQL) - optional with cache fallback
+- **Cache Layer**: Static JSON files in /src/data/cache/
 - **UI Components**: Radix UI + shadcn/ui
 - **Data Visualization**: Recharts
 - **Authentication**: Supabase Auth
@@ -28,6 +33,7 @@ The platform implements a source-oriented metrics architecture where each articl
 - **Analytics**: Vercel Analytics
 - **News Management**: Google Drive integration for article ingestion
 - **Internationalization**: Custom i18n implementation with 9 languages
+- **Client Processing**: Filter, sort, and paginate data on client-side
 
 ### Core Components
 
@@ -98,7 +104,19 @@ Responsible for:
 - **Subscription Management**: Email list and preference handling
 - **Public API**: External access to ranking data (future)
 
-#### 6. Automation & Scheduling
+#### 6. Cache-First Architecture
+
+// Created: 2025-06-25
+Responsible for:
+
+- **Static Cache Files**: JSON files in `/src/data/cache/` for rankings, tools, and news
+- **Automatic Fallback**: Seamless failover when database is unavailable
+- **Client-Side Processing**: All filtering, sorting, and pagination happens on client
+- **Performance Optimization**: Single API call fetches all data, instant interactions after
+- **Resilient Operation**: Site remains fully functional during database outages
+- **Cache Updates**: Manual or automated generation from live database data
+
+#### 7. Automation & Scheduling
 
 // Created: 2025-06-08
 Responsible for:
@@ -115,7 +133,7 @@ Responsible for:
 
 // Created: 2025-06-08
 // Updated: 2025-06-09 - Added metrics extraction and migration scripts
-// Updated: 2025-06-25 - Added i18n structure
+// Updated: 2025-06-25 - Added i18n structure and cache layer
 
 - `src/app/`: Next.js 13+ app directory structure
   - `api/`: API routes for data access and collection
@@ -124,14 +142,20 @@ Responsible for:
     - `tools/[slug]/`: Dynamic tool detail pages
     - `methodology/`: Methodology documentation
     - `about/`: About page
+  - Client components for dynamic data fetching
 - `src/components/`: Reusable UI components
   - `ui/`: shadcn/ui base components
   - `ranking/`: Ranking-specific components
   - `tool/`: Tool profile components
+- `src/data/cache/`: Static JSON cache files
+  - `rankings.json`: Pre-calculated rankings data
+  - `tools.json`: Complete tools database
+  - `news.json`: News and updates feed
 - `src/lib/`: Core business logic and utilities
   - `database.ts`: Supabase client and queries
   - `ranking-algorithm.ts`: Core ranking calculations (v4.0)
   - `data-collectors/`: Data collection modules
+  - `api-utils.ts`: Cache-first data fetching utilities
 - `src/i18n/`: Internationalization configuration
   - `config.ts`: Language configuration and locales
   - `get-dictionary.ts`: Dictionary loading function

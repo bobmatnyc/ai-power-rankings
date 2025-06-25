@@ -1,8 +1,15 @@
 # 🔁 AI Power Rankings - Development Workflow
 
-**Version**: 2.0  
-**Updated**: 2025-06-09  
+**Version**: 2.1  
+**Updated**: 2025-06-25  
 **Reference**: This document contains the complete workflow procedures for the AI Power Rankings project. It should be referenced from `INSTRUCTIONS.md`.
+
+**Changes in v2.1**:
+
+- Added cache-first architecture documentation
+- Updated deployment workflow for resilient operation
+- Client-side data processing guidelines
+- Database fallback procedures
 
 **Changes in v2.0**:
 
@@ -171,7 +178,57 @@ Every metric must include:
 
 ---
 
-## 🗄️ 5. Database Operations
+## 🛡️ 5. Cache-First Architecture
+
+### 📦 Overview
+
+The AI Power Rankings uses a cache-first approach to ensure reliability even when database connections are unstable:
+
+- **Static JSON caches** in `/src/data/cache/` for rankings, tools, and news
+- **Automatic fallback** when database is unavailable
+- **Client-side processing** for filtering and sorting
+
+### 🔄 Updating Cache Files
+
+```bash
+# Generate fresh cache files from database
+npm run generate-cache
+
+# Or manually update individual caches
+npm run cache:rankings
+npm run cache:tools
+npm run cache:news
+```
+
+### 🚀 Cache Strategy by Environment
+
+- **Production**: Cache-first temporarily enabled (set `true` in route handlers)
+- **Preview**: Always uses cache-first approach
+- **Development**: Direct database access unless `USE_CACHE_FALLBACK=true`
+
+### 📊 Client-Side Data Flow
+
+1. **Initial Load**: Fetch all data from API (returns cached JSON)
+2. **Client Processing**: Filter, sort, and paginate on client
+3. **Performance**: Instant interactions after initial load
+4. **Reliability**: Works even with database issues
+
+### 🔍 Debugging Cache Issues
+
+```bash
+# Check cache status
+curl https://your-site.com/api/debug-static
+
+# Verify cache timestamps
+curl https://your-site.com/api/rankings | jq '._cached, ._cachedAt'
+
+# Test database connection
+curl https://your-site.com/api/health/db
+```
+
+---
+
+## 🗄️ 6. Database Operations
 
 ### 📥 Importing Metrics
 
@@ -214,7 +271,7 @@ npm run db:reset
 
 ---
 
-## 🧪 6. Testing & Validation
+## 🧪 7. Testing & Validation
 
 ### 🚨 CRITICAL: Pre-Deployment Checklist
 
@@ -295,7 +352,7 @@ npm run build  # Now includes type-check before building
 
 ---
 
-## 📅 7. Release Schedule
+## 📅 8. Release Schedule
 
 ### Monthly Cycle
 
@@ -314,7 +371,7 @@ For critical updates between monthly cycles:
 
 ---
 
-## 📚 8. Documentation Updates
+## 📚 9. Documentation Updates
 
 When adding new features or changing processes:
 
@@ -335,7 +392,7 @@ When adding new features or changing processes:
 
 ---
 
-## 🚀 9. Complete Deployment Workflow
+## 🚀 10. Complete Deployment Workflow
 
 ### 📋 Step-by-Step Deployment Process
 

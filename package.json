@@ -1,6 +1,6 @@
 {
   "name": "ai-power-rankings",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -47,7 +47,11 @@
     "sitemap:check": "tsx src/scripts/check-sitemap-and-submit.ts",
     "sitemap:monitor": "tsx src/scripts/monitor-and-submit-sitemap.ts",
     "sitemap:status": "node src/scripts/check-sitemap-status.js",
-    "check:orphaned-metrics": "tsx src/scripts/check-orphaned-metrics.ts"
+    "check:orphaned-metrics": "tsx src/scripts/check-orphaned-metrics.ts",
+    "cache:generate": "npm run cache:rankings && npm run cache:tools && npm run cache:news",
+    "cache:rankings": "tsx scripts/generate-rankings-cache.ts",
+    "cache:tools": "tsx scripts/generate-tools-cache.ts",
+    "cache:news": "tsx scripts/generate-news-cache.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
