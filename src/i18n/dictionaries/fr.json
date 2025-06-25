@@ -1,130 +1,84 @@
 {
   "categories": {
-    "autonomousagent": "Autonomous Agent",
-    "codeeditor": "Code Editor",
-    "ideassistant": "IDE Assistant",
+    "autonomousagent": "Agent Autonome",
+    "codeeditor": "Éditeur de Code",
+    "ideassistant": "Assistant IDE",
     "appbuilder": "App Builder",
-    "opensourceframework": "Open Source Framework",
-    "testingtool": "Testing Tool",
+    "opensourceframework": "Framework Open Source",
+    "testingtool": "Outil de Test",
     "codereview": "Code Review",
-    "codeassistant": "Code Assistant",
-    "autonomousAgent": "Autonomous Agent",
-    "codeEditor": "Code Editor",
-    "ideAssistant": "IDE Assistant",
+    "codeassistant": "Assistant Code",
+    "autonomousAgent": "Agent Autonome",
+    "codeEditor": "Éditeur de Code",
+    "ideAssistant": "Assistant IDE",
     "appBuilder": "App Builder",
     "codeReview": "Code Review",
-    "codeAssistant": "Code Assistant",
-    "multimodal": "Multimodal",
-    "businessintelligence": "Intelligence d'Affaires",
-    "imageandvideo": "Image et Vidéo",
-    "apiandautomation": "API et Automatisation",
-    "searchandknowledge": "Recherche et Connaissance",
-    "voiceandaudio": "Voix et Audio",
-    "dataanalysis": "Analyse de Données",
-    "customerservice": "Service Client",
-    "contentgeneration": "Génération de Contenu"
+    "codeAssistant": "Assistant Code"
   },
   "common": {
-    "appName": "AI Power Ranking",
-    "appDescription": "Data-driven ranking of AI coding tools",
+    "appName": "Classements IA",
+    "appDescription": "Rankings data-driven des outils de coding IA",
     "loading": "Loading...",
-    "error": "Error",
-    "tryAgain": "Try Again",
-    "backToHome": "Back to Home",
-    "learnMore": "Learn More",
-    "viewAll": "View All",
-    "close": "Close",
-    "cancel": "Cancel",
-    "save": "Save",
-    "search": "Search",
-    "filter": "Filter",
-    "sort": "Sort",
-    "share": "Share",
-    "explore": "Explore",
-    "notAvailable": "N/A",
-    "users": "Users",
-    "delete": "Supprimer",
-    "edit": "Modifier",
-    "view": "Voir",
-    "copy": "Copier",
-    "copied": "Copié",
-    "email": "Email",
-    "retry": "Réessayer",
-    "open": "Ouvrir",
-    "yes": "Oui",
-    "no": "Non"
+    "error": "Erreur",
+    "tryAgain": "Retry",
+    "backToHome": "Retour à l'accueil",
+    "learnMore": "En savoir plus",
+    "viewAll": "Voir tout",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "share": "Partager"
   },
   "navigation": {
-    "home": "Home",
-    "rankings": "Rankings",
-    "news": "News",
-    "tools": "Tools",
-    "methodology": "Methodology",
-    "about": "About",
-    "subscribeToUpdates": "Subscribe To Updates",
+    "home": "Accueil",
+    "rankings": "Classements",
+    "news": "Actualités",
+    "tools": "Outils",
+    "methodology": "Méthodologie",
+    "about": "À propos",
+    "subscribeToUpdates": "S'abonner aux mises à jour",
     "navigation": "Navigation",
-    "quickLinks": "Quick Links",
-    "trending": "Trending",
-    "categories": "Categories",
-    "features": "Features",
-    "clearFilters": "Clear Filters",
-    "allCategories": "All Categories",
-    "newsletter": "Newsletter",
-    "contact": "Contact",
-    "privacy": "Confidentialité",
-    "terms": "Conditions d'utilisation",
-    "cookies": "Politique de cookies",
-    "subscribe": "S'abonner",
-    "support": "Support",
-    "blog": "Blog"
+    "quickLinks": "Liens rapides",
+    "trending": "Tendances",
+    "categories": "Catégories",
+    "features": "Fonctionnalités",
+    "clearFilters": "Effacer les filtres",
+    "allCategories": "Toutes les catégories"
   },
   "home": {
     "hero": {
-      "badge": "Updated Weekly",
-      "title": "AI Power Ranking",
-      "subtitle": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
-      "description": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
-      "exploreTools": "Explore All Tools",
-      "viewTrending": "View Trending",
-      "exploreButton": "Explore All Tools",
-      "trendingButton": "View Trending",
-      "whatsNewButton": "What's New",
-      "viewRankings": "Voir les classements",
-      "subscribeNewsletter": "S'abonner à la newsletter"
+      "badge": "Mis à jour chaque semaine",
+      "title": "Classements IA",
+      "subtitle": "Découvrez et comparez les outils de codage IA les plus puissants. Des agents autonomes aux assistants IDE, trouvez le compagnon IA parfait pour votre workflow de dev.",
+      "description": "Découvrez et comparez les outils de codage IA les plus puissants. Des agents autonomes aux assistants IDE, trouvez le compagnon IA parfait pour votre workflow de dev.",
+      "exploreTools": "Explorer tous les outils",
+      "viewTrending": "Voir les tendances",
+      "exploreButton": "Explorer tous les outils",
+      "trendingButton": "Voir les tendances"
     },
     "stats": {
-      "toolsRanked": "AI Tools Ranked",
-      "trendingUp": "Trending Up",
-      "updates": "Updates",
-      "freeAccess": "Free Access",
-      "updateFrequency": "Weekly Updates",
-      "totalTools": "Total des outils",
-      "totalCategories": "Total des catégories",
-      "weeklyUpdates": "Mises à jour hebdomadaires",
-      "comprehensiveAnalysis": "Analyse complète",
-      "categoriesTracked": "Catégories suivies",
-      "usersServed": "Utilisateurs servis",
-      "expertReviews": "Avis d'experts",
-      "monthlyUpdates": "Mises à jour mensuelles"
+      "toolsRanked": "Outils IA classés",
+      "trendingUp": "En tendance",
+      "updates": "Mises à jour",
+      "freeAccess": "Accès gratuit",
+      "updateFrequency": "Weekly Updates"
     },
     "trending": {
-      "title": "Trending This Week",
-      "subtitle": "AI tools gaining momentum and climbing the rankings",
-      "description": "AI tools gaining momentum and climbing the rankings",
-      "viewAll": "View All Trending",
-      "viewAllButton": "View All Trending"
+      "title": "Tendances cette semaine",
+      "subtitle": "Outils IA qui gagnent en popularité et grimpent dans les classements",
+      "description": "Outils IA qui gagnent en popularité et grimpent dans les classements",
+      "viewAll": "Voir toutes les tendances",
+      "viewAllButton": "Voir toutes les tendances"
     },
     "recentlyUpdated": {
-      "title": "Recently Updated",
-      "subtitle": "Latest updates and new features from top AI tools",
-      "description": "Latest updates and new features from top AI tools",
-      "viewAll": "View All Rankings",
-      "viewAllButton": "View All Rankings"
-    },
-    "recent": {
-      "title": "Recent Updates",
-      "description": "Latest developments and feature releases from top AI tools",
-      "viewAllButton": "View All Recent"
+      "title": "Récemment mis à jour",
+      "subtitle": "Dernières mises à jour et nouvelles fonctionnalités des meilleurs outils IA",
+      "description": "Dernières mises à jour et nouvelles fonctionnalités des meilleurs outils IA",
+      "viewAll": "Voir tous les classements",
+      "viewAllButton": "Voir tous les classements"
     },
     "categories": {
       "title": "Explore by Category",
@@ -145,13 +99,10 @@
         "name": "Autonomous Agents",
         "description": "Fully autonomous AI software engineers"
       },
-      "ideDescription": "AI-powered code completion and suggestions",
-      "editorDescription": "Smart editors with AI integration",
-      "builderDescription": "Build complete applications with AI assistance",
-      "agentDescription": "Fully autonomous AI software engineers",
-      "subtitle": "Trouvez des outils IA qui correspondent à vos intérêts",
-      "exploreCategory": "Explorer la catégorie",
-      "toolsInCategory": "Outils dans cette catégorie"
+      "ideDescription": "Autocomplétion et suggestions de code alimentées par l'IA",
+      "editorDescription": "Éditeurs intelligents avec intégration IA",
+      "builderDescription": "Construire des applications complètes avec assistance IA",
+      "agentDescription": "Ingénieurs logiciels IA entièrement autonomes"
     },
     "methodology": {
       "title": "Our Methodology",
@@ -205,113 +156,18 @@
       "modifiersTitle": "Dynamic Modifiers",
       "modifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings",
       "readFull": "Read Full Methodology",
-      "readMoreButton": "Read Full Methodology",
-      "caption": "Découvrez comment nous évaluons et classons les outils IA leaders mondiaux"
+      "readMoreButton": "Read Full Methodology"
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
       "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
-      "copyright": "© 2025 AI Power Ranking. All rights reserved."
-    },
-    "topTools": {
-      "title": "Top des outils de codage IA",
-      "subtitle": "Les meilleurs outils classés par innovation, fonctionnalités et expérience utilisateur",
-      "viewAll": "Voir tout",
-      "exploreMore": "Explorer plus",
-      "getStarted": "Commencer",
-      "learnMore": "En savoir plus",
-      "tryNow": "Essayer maintenant",
-      "viewDetails": "Voir les détails"
-    },
-    "newsletter": {
-      "title": "Restez informé",
-      "subtitle": "Recevez les mises à jour hebdomadaires des outils IA, les nouvelles versions et les analyses approfondies",
-      "placeholder": "Entrer l'adresse e-mail",
-      "subscribe": "S'abonner",
-      "subscribing": "Abonnement en cours...",
-      "success": "Merci pour votre abonnement !",
-      "error": "Erreur lors de l'abonnement. Veuillez réessayer.",
-      "description": "Pas de spam. Désabonnement possible à tout moment."
-    },
-    "features": {
-      "title": "Pourquoi choisir AI Power Ranking ?",
-      "subtitle": "Une plateforme complète pour trouver les meilleurs outils de codage IA",
-      "comprehensiveDatabase": {
-        "title": "Base de données complète",
-        "description": "Tous les principaux outils de codage IA organisés en un seul endroit"
-      },
-      "expertAnalysis": {
-        "title": "Analyse d'experts",
-        "description": "Évaluation approfondie et équitable de chaque outil"
-      },
-      "regularUpdates": {
-        "title": "Mises à jour régulières",
-        "description": "Mis à jour hebdomadairement avec les derniers outils et fonctionnalités"
-      },
-      "communityDriven": {
-        "title": "Piloté par la communauté",
-        "description": "Classements basés sur les retours des utilisateurs et les expériences réelles"
-      }
-    },
-    "cta": {
-      "title": "Trouvez l'outil de codage IA parfait",
-      "subtitle": "Découvrez des outils qui révolutionneront votre flux de travail de développement",
-      "getStarted": "Commencer",
-      "learnMore": "En savoir plus",
-      "browseTools": "Parcourir les outils",
-      "viewMethodology": "Voir la méthodologie",
-      "subscribe": "S'abonner",
-      "contact": "Contact"
-    },
-    "trust": {
-      "title": "Approuvé par les développeurs",
-      "subtitle": "Des milliers de développeurs dans le monde nous font confiance pour trouver les meilleurs outils IA",
-      "testimonial1": "Plateforme vraiment complète. M'a aidé à trouver l'outil IA parfait.",
-      "testimonial2": "Les mises à jour régulières et les analyses approfondies sont vraiment utiles.",
-      "testimonial3": "Une excellente ressource qui fait gagner du temps."
-    },
-    "about": {
-      "title": "Classements basés sur les données",
-      "subtitle": "Notre méthodologie est transparente, équitable et continuellement améliorée",
-      "methodology": "Voir la méthodologie",
-      "algorithmVersion": "Algorithm v6.0",
-      "lastUpdated": "Dernière mise à jour"
-    },
-    "faq": {
-      "title": "Questions fréquemment posées",
-      "subtitle": "Questions courantes sur les outils de codage IA et les classements",
-      "question1": "Comment les outils sont-ils classés ?",
-      "answer1": "Nous utilisons notre Algorithm v6.0 pour évaluer l'innovation, les fonctionnalités, l'utilisabilité et les retours de la communauté.",
-      "question2": "À quelle fréquence les classements sont-ils mis à jour ?",
-      "answer2": "Mis à jour hebdomadairement pour refléter les nouveaux outils, les mises à jour de fonctionnalités et les retours des utilisateurs.",
-      "viewAll": "Voir toutes les FAQ"
-    },
-    "recentUpdates": {
-      "title": "Mises à jour récentes",
-      "subtitle": "Dernières nouvelles et développements du monde des outils de codage IA",
-      "viewAll": "Voir toutes les mises à jour",
-      "readMore": "Lire la suite",
-      "publishedOn": "Publié le"
-    },
-    "search": {
-      "title": "Trouver des outils",
-      "subtitle": "Filtrer par catégorie, fonctionnalité et cas d'usage",
-      "placeholder": "Rechercher des outils ou fonctionnalités...",
-      "searchButton": "Rechercher",
-      "clearFilters": "Effacer les filtres",
-      "showResults": "Afficher les résultats"
+      "copyright": "© 2025 AI Power Rankings. All rights reserved."
     }
   },
-  "footer": {
-    "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
-    "quickLinks": "Quick Links",
-    "categories": "Categories",
-    "copyright": "© 2025 AI Power Ranking. All rights reserved."
-  },
   "rankings": {
-    "title": "AI Power Ranking",
+    "title": "AI Power Rankings",
     "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v6.0",
     "stats": {
       "totalTools": "Total Tools",
@@ -326,8 +182,7 @@
       "rank": "Rank",
       "trending": "Trending",
       "score": "Score",
-      "name": "Name",
-      "category": "Catégorie"
+      "name": "Name"
     },
     "algorithm": {
       "title": "About Algorithm v6.0",
@@ -339,31 +194,8 @@
       },
       "primaryFactors": "Primary Factors (67.5%)",
       "secondaryFactors": "Secondary Factors (32.5%)",
-      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
-      "factors": {
-        "agentic": "Agentic Capability",
-        "innovation": "Innovation",
-        "performance": "Performance",
-        "adoption": "Adoption",
-        "traction": "Traction",
-        "sentiment": "Sentiment",
-        "velocity": "Velocity",
-        "resilience": "Resilience"
-      },
-      "modifiers": {
-        "decay": "Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
-        "risk": "Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
-        "revenue": "Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
-      },
-      "methodologyText": "Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
-      "viewMethodology": "View Full Methodology"
-    },
-    "filters": {
-      "category": "Filtrer par catégorie",
-      "all": "Tous"
-    },
-    "noResults": "Aucun résultat trouvé",
-    "showingResults": "Affichage de {count} sur {total} outils"
+      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology."
+    }
   },
   "news": {
     "title": "AI Tools News",
@@ -383,8 +215,7 @@
     "metrics": {
       "users": "users",
       "score": "score",
-      "rank": "rank",
-      "change": "Changement"
+      "rank": "rank"
     },
     "time": {
       "justNow": "Just now",
@@ -392,34 +223,19 @@
       "hoursAgo": "{count} hours ago",
       "dayAgo": "1 day ago",
       "daysAgo": "{count} days ago"
-    },
-    "readMore": "Lire la suite",
-    "publishedOn": "Publié le",
-    "noResults": "Aucune nouvelle trouvée",
-    "trending": {
-      "title": "Actualités Tendance",
-      "description": "Les actualités d'outils IA les plus populaires"
-    },
-    "latestUpdate": "Dernière mise à jour",
-    "more": "Voir plus",
-    "score": "Score",
-    "rank": "Rang"
+    }
   },
   "tools": {
-    "title": "AI Coding Tools",
-    "subtitle": "Explore all {count} AI coding tools in our database",
-    "allCategories": "All Categories",
-    "filterByCategory": "Filter by category",
-    "sortBy": "Sort by",
-    "defaultDescription": "Discover and compare AI coding tools",
-    "notFound": "Tool not found",
-    "backToTools": "Back to Tools",
+    "title": "Outils de Coding IA",
+    "subtitle": "Explorez tous les {count} outils de coding IA de notre DB",
+    "allCategories": "Toutes les Catégories",
+    "filterByCategory": "Filtrer par catégorie",
+    "sortBy": "Trier par",
+    "defaultDescription": "Découvrir et comparer les outils de coding IA",
     "sort": {
       "name": "Name",
       "category": "Category",
-      "status": "Status",
-      "score": "Score",
-      "updated": "Mis à jour"
+      "status": "Status"
     },
     "stats": {
       "total": "Total Tools",
@@ -450,16 +266,15 @@
       "githubStars": "GitHub Stars",
       "tabs": {
         "performance": "Performance",
-        "pricing": "Pricing",
         "businessMetrics": "Business",
         "scores": "Scores",
         "history": "History"
       },
       "performance": {
-        "title": "Technical Performance",
-        "subtitle": "Benchmark results and technical capabilities",
-        "description": "Benchmark results and technical capabilities including SWE-bench scores and feature support",
-        "sweScore": "SWE-bench Score",
+        "title": "Performance technique",
+        "subtitle": "Résultats de benchmark et capacités techniques",
+        "description": "Résultats de benchmark et capacités techniques incluant les scores SWE-bench et le support des fonctionnalités",
+        "sweScore": "Score SWE-bench",
         "contextWindow": "Context Window",
         "languageSupport": "Language Support",
         "multiFileSupport": "Multi-file Support",
@@ -476,10 +291,7 @@
         "valuation": "Valuation",
         "totalFunding": "Total Funding",
         "employees": "Employees",
-        "totalUsers": "Total Users",
-        "funding": "Financement",
-        "revenue": "Chiffre d'affaires",
-        "founded": "Fondé"
+        "totalUsers": "Total Users"
       },
       "rankingScores": {
         "title": "Ranking Scores",
@@ -494,10 +306,7 @@
         "noHistory": "No metric history available for this tool.",
         "update": "Update",
         "newMetrics": "New metrics reported for {tool}"
-      },
-      "features": "Fonctionnalités",
-      "documentation": "Documentation",
-      "website": "Site Web"
+      }
     },
     "status": {
       "active": "Active",
@@ -514,38 +323,8 @@
       "open-source-framework": "Open Source Framework",
       "testing-tool": "Testing Tool",
       "code-review": "Code Review",
-      "code-generation": "Code Generation",
-      "ai-assistant": "Assistant IA",
-      "ai-search": "Recherche IA",
-      "analytics": "Analytique",
-      "api": "API",
-      "browser-extension": "Extension Navigateur",
-      "cli": "CLI",
-      "cloud-ide": "IDE Cloud",
-      "collaboration": "Collaboration",
-      "data-science": "Science des Données",
-      "database": "Base de Données",
-      "debugging": "Débogage",
-      "deployment": "Déploiement",
-      "documentation": "Documentation",
-      "enterprise": "Entreprise",
-      "ide-plugin": "Plugin IDE",
-      "infrastructure": "Infrastructure",
-      "learning": "Apprentissage",
-      "mobile": "Mobile",
-      "monitoring": "Surveillance",
-      "productivity": "Productivité",
-      "security": "Sécurité"
-    },
-    "filters": {
-      "all": "Tous",
-      "category": "Catégorie",
-      "pricing": "Tarification",
-      "features": "Fonctionnalités"
-    },
-    "noTools": "Aucun outil trouvé",
-    "loading": "Chargement...",
-    "noResults": "Aucun résultat trouvé"
+      "code-generation": "Code Generation"
+    }
   },
   "newsletter": {
     "form": {
@@ -554,10 +333,7 @@
       "email": "Email",
       "subscribe": "Subscribe",
       "subscribing": "Subscribing...",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
-      "placeholder": {
-        "email": "votre@email.com"
-      }
+      "privacyNote": "We respect your privacy. Unsubscribe at any time."
     },
     "modal": {
       "title": "Stay Updated",
@@ -577,9 +353,7 @@
         "failed": "Failed to subscribe. Please try again.",
         "server": "Server configuration error",
         "email": "Email service configuration error"
-      },
-      "description": "Recevez les derniers classements et mises à jour d'outils IA",
-      "close": "Fermer"
+      }
     },
     "verification": {
       "title": "Email Verification",
@@ -612,29 +386,6 @@
       "actions": {
         "backToHome": "Back to Home",
         "subscribeAgain": "Subscribe Again"
-      },
-      "subtitle": "Vérifiez votre boîte de réception pour confirmer votre adresse email",
-      "resend": "Renvoyer l'email de vérification"
-    },
-    "verify": {
-      "goToHomepage": "Go to Homepage",
-      "tryAgain": "Try Again",
-      "success": {
-        "title": "Email Verified!",
-        "description": "Your email has been successfully verified. You'll start receiving our weekly newsletter."
-      },
-      "alreadyVerified": {
-        "title": "Already Verified",
-        "description": "This email address has already been verified. You're all set!"
-      },
-      "error": {
-        "title": "Verification Error"
-      },
-      "errors": {
-        "default": "An unexpected error occurred. Please try again.",
-        "missingToken": "The verification link appears to be incomplete.",
-        "invalidToken": "This verification link is invalid or has expired.",
-        "verificationFailed": "We couldn't verify your email at this time. Please try again later."
       }
     },
     "unsubscribe": {
@@ -642,17 +393,17 @@
       "processing": "Processing your request...",
       "success": {
         "title": "Successfully Unsubscribed",
-        "message": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!",
-        "description": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
-      },
-      "error": {
-        "title": "Unsubscribe Error"
+        "message": "You have been unsubscribed from the AI Power Rankings newsletter. We're sorry to see you go!"
       },
       "errors": {
-        "missingToken": "The unsubscribe link appears to be incomplete.",
-        "invalidToken": "This unsubscribe link is invalid or has expired.",
-        "unsubscribeFailed": "We couldn't process your unsubscribe request. Please try again later.",
-        "default": "An unexpected error occurred. Please try again.",
+        "missingToken": {
+          "title": "Missing Token",
+          "message": "The unsubscribe link appears to be incomplete."
+        },
+        "invalidToken": {
+          "title": "Invalid Link",
+          "message": "This unsubscribe link is invalid or has expired."
+        },
         "failed": {
           "title": "Unsubscribe Failed",
           "message": "We couldn't process your unsubscribe request. Please try again later."
@@ -664,136 +415,13 @@
       },
       "resubscribe": "Changed your mind? You can subscribe again anytime.",
       "subscribeAgain": "Subscribe Again"
-    },
-    "title": "Newsletter",
-    "description": "Recevez des mises à jour hebdomadaires sur les nouveaux outils de codage IA et classements",
-    "success": "Merci de vous être abonné!",
-    "error": "Une erreur s'est produite. Veuillez réessayer.",
-    "subtitle": "Recevez les dernières actualités d'outils IA et mises à jour de classements",
-    "emailPlaceholder": "Entrez votre email",
-    "subscribe": "S'abonner",
-    "subscribing": "Abonnement..."
+    }
   },
   "methodology": {
     "title": "Our Methodology",
     "subtitle": "How we rank AI coding tools",
     "lastUpdated": "Last updated: January 2025",
-    "intro": "AI Power Ranking uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
-    "algorithm": {
-      "title": "Algorithm v6.0",
-      "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
-      "keyFeatures": "Key Features",
-      "features": {
-        "innovationDecay": "Innovation decay modeling to reflect tool freshness",
-        "platformRisk": "Platform risk assessment for vendor dependencies",
-        "revenueQuality": "Revenue quality adjustments based on business model",
-        "technicalWeighting": "Technical capability weighting for different use cases",
-        "dataValidation": "Multi-source data validation and normalization",
-        "logarithmicScaling": "Logarithmic scaling for balanced comparisons"
-      }
-    },
-    "factors": {
-      "title": "Scoring Factors",
-      "description": "Tools are evaluated across 8 key dimensions with specific weightings",
-      "primary": "Primary Factors (82.5%)",
-      "secondary": "Secondary Factors (17.5%)",
-      "agentic": {
-        "details": "Measures autonomous capabilities, multi-step reasoning, and complex task completion"
-      },
-      "innovation": {
-        "details": "Evaluates breakthrough features, technical advances, and market differentiation",
-        "name": "Innovation",
-        "description": "Fonctionnalités uniques et avancées technologiques"
-      },
-      "performance": {
-        "details": "Benchmarks on SWE-bench, HumanEval, and real-world coding tasks",
-        "name": "Performance",
-        "description": "Capacités de génération, complétion et débogage de code"
-      },
-      "adoption": {
-        "details": "Active users, growth rate, and market penetration metrics",
-        "name": "Adoption",
-        "description": "Acceptation des utilisateurs et engagement communautaire"
-      },
-      "traction": {
-        "details": "Revenue growth, funding rounds, and business momentum indicators"
-      },
-      "sentiment": {
-        "details": "Developer satisfaction, community feedback, and recommendation scores"
-      },
-      "velocity": {
-        "details": "Feature release cadence, update frequency, and innovation speed"
-      },
-      "resilience": {
-        "details": "Platform stability, backup options, and vendor independence"
-      },
-      "ecosystem": {
-        "name": "Écosystème",
-        "description": "Intégrations et support développeur"
-      }
-    },
-    "modifiers": {
-      "title": "Dynamic Modifiers",
-      "description": "Real-time adjustments that reflect market conditions and tool maturity",
-      "innovationDecay": {
-        "description": "Innovation scores decay over time to reward continuous improvement and penalize stagnation"
-      },
-      "platformRisk": {
-        "description": "Adjustments based on vendor lock-in, platform dependencies, and business risks",
-        "penalties": "Risk Penalties",
-        "penaltyList": {
-          "acquired": "Recently acquired by competitor",
-          "exclusive": "Platform exclusive (single LLM)",
-          "competitor": "Owned by competing platform",
-          "regulatory": "Regulatory compliance issues",
-          "funding": "Funding or sustainability concerns"
-        },
-        "bonuses": "Risk Mitigation Bonuses",
-        "bonusList": {
-          "multiLLM": "Supports multiple LLM providers",
-          "openSource": "Open source availability",
-          "selfHosted": "Self-hosting options"
-        }
-      },
-      "revenueQuality": {
-        "description": "Revenue weighting based on business model sustainability and growth potential",
-        "models": {
-          "enterpriseHigh": "Enterprise (High-touch)",
-          "enterpriseStandard": "Enterprise (Standard)",
-          "smbSaas": "SMB SaaS",
-          "consumerPremium": "Consumer Premium",
-          "freemium": "Freemium",
-          "openSource": "Open Source"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "Data Sources & Validation",
-      "description": "We maintain rigorous standards for data collection and validation",
-      "collection": {
-        "title": "Data Collection Methods",
-        "sources": {
-          "api": "Direct API integrations with tool providers",
-          "research": "Industry research reports and analyst data",
-          "announcements": "Official company announcements and press releases",
-          "community": "Developer surveys and community feedback",
-          "benchmarks": "Standardized performance benchmarks"
-        }
-      },
-      "validation": {
-        "title": "Validation Requirements",
-        "requirements": {
-          "completeness": "All required metrics must be present",
-          "reliability": "Multiple source verification for key metrics",
-          "outlier": "Outlier detection and manual review",
-          "crossValidation": "Cross-validation with industry benchmarks"
-        }
-      },
-      "updateFrequency": {
-        "title": "Update Schedule",
-        "description": "Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
-      }
-    },
+    "intro": "AI Power Rankings uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
     "sections": {
       "scoringFactors": {
         "title": "Scoring Factors",
@@ -806,35 +434,22 @@
       "dataCollection": {
         "title": "Data Collection",
         "intro": "We gather data from multiple sources to ensure accuracy:",
-        "sources": [
-          "Direct API integrations with tool providers",
-          "Public repositories and developer statistics",
-          "Industry reports and verified news sources",
-          "User surveys and community feedback",
-          "Performance benchmarks (SWE-bench, HumanEval)"
-        ]
+        "sources": {
+          "0": "Direct API integrations with tool providers",
+          "1": "Public repositories and developer statistics",
+          "2": "Industry reports and verified news sources",
+          "3": "User surveys and community feedback",
+          "4": "Performance benchmarks (SWE-bench, HumanEval)"
+        }
       },
       "updateFrequency": {
         "title": "Update Frequency",
         "content": "Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
-      },
-      "overview": {
-        "title": "Aperçu"
-      },
-      "algorithm": {
-        "title": "Algorithme"
-      },
-      "factors": {
-        "title": "Facteurs"
       }
-    },
-    "overview": {
-      "title": "Aperçu de l'évaluation",
-      "description": "Notre approche basée sur les données pour évaluer les outils de codage IA"
     }
   },
   "about": {
-    "title": "About AI Power Ranking",
+    "title": "About AI Power Rankings",
     "subtitle": "Empowering developers with data-driven AI tool insights",
     "hero": {
       "title": "Empowering developers with data-driven AI tool insights",
@@ -847,21 +462,16 @@
     },
     "whyWeBuiltThis": {
       "title": "Why We Built This",
-      "reasons": [
-        "The AI tools landscape is evolving rapidly, making it hard to keep track",
-        "Marketing claims often don't match real-world performance",
-        "Developers need objective data to justify tool adoption",
-        "There was no single source comparing all major AI coding tools"
-      ]
+      "reasons": {
+        "0": "The AI tools landscape is evolving rapidly, making it hard to keep track",
+        "1": "Marketing claims often don't match real-world performance",
+        "2": "Developers need objective data to justify tool adoption",
+        "3": "There was no single source comparing all major AI coding tools"
+      }
     },
     "team": {
       "title": "The Team",
-      "description": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
-      "description1": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
-      "description2": "I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
-      "description3": "Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
-      "hyperdevLink": "HyperDev",
-      "reportIssue": "Report an Issue"
+      "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development."
     },
     "contact": {
       "title": "Get in Touch",
@@ -872,12 +482,6 @@
       "title": "Stay Updated",
       "description": "Get weekly insights on AI tool rankings and industry trends.",
       "subscribe": "Subscribe to Newsletter"
-    },
-    "cta": {
-      "title": "Ready to Explore?",
-      "description": "Dive into our rankings to discover the best AI coding tools for your needs.",
-      "exploreButton": "Explore Rankings",
-      "methodologyButton": "Learn Our Methodology"
     },
     "whatWeDo": {
       "title": "What We Do",
@@ -917,35 +521,12 @@
     "whyItMatters": {
       "title": "Why It Matters",
       "description": "In the rapidly evolving AI landscape, developers need reliable data to make informed decisions.",
-      "points": [
-        "Save time evaluating tools",
-        "Make data-driven decisions",
-        "Stay ahead of the curve",
-        "Choose tools that fit your needs"
-      ],
-      "challenges": {
-        "paralysis": {
-          "title": "Decision Paralysis",
-          "description": "With dozens of AI tools launching every week, developers face overwhelming choices"
-        },
-        "marketing": {
-          "title": "Marketing vs Reality",
-          "description": "Bold claims often don't match real-world performance and capabilities"
-        },
-        "change": {
-          "title": "Rapid Change",
-          "description": "Tools evolve quickly - what's best today might be obsolete tomorrow"
-        },
-        "risks": {
-          "title": "Hidden Risks",
-          "description": "Security, privacy, and vendor lock-in concerns are often overlooked"
-        }
-      },
-      "conclusion": "That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
-    },
-    "methodology": {
-      "title": "Méthodologie",
-      "description": "Critères d'évaluation rigoureux basés sur la performance, l'adoption et l'innovation"
+      "points": {
+        "0": "Save time evaluating tools",
+        "1": "Make data-driven decisions",
+        "2": "Stay ahead of the curve",
+        "3": "Choose tools that fit your needs"
+      }
     }
   },
   "sidebar": {
@@ -954,61 +535,38 @@
     "trending": "Trending",
     "categories": "Categories",
     "features": "Features",
-    "clearFilters": "Clear Filters",
-    "rankings": "Classements",
-    "news": "Actualités",
-    "tools": "Outils",
-    "methodology": "Méthodologie"
+    "clearFilters": "Clear Filters"
   },
   "features": {
-    "autocomplete": "Autocomplete",
-    "chat": "Chat Interface",
-    "codeGeneration": "Code Generation",
+    "autocomplete": "Autocomplétion",
+    "chat": "Interface Chat",
+    "codeGeneration": "Génération de Code",
     "refactoring": "Refactoring",
     "testing": "Testing",
-    "documentation": "Documentation",
-    "debugging": "Débogage",
-    "codeReview": "Révision de Code",
-    "translation": "Traduction de Code",
-    "optimization": "Optimisation",
-    "collaboration": "Collaboration",
-    "analytics": "Analytique",
-    "security": "Sécurité",
-    "deployment": "Déploiement",
-    "monitoring": "Surveillance"
+    "documentation": "Documentation"
   },
   "status": {
-    "active": "Active",
-    "beta": "Beta",
-    "deprecated": "Deprecated",
-    "discontinued": "Discontinued",
-    "acquired": "Acquired",
-    "coming-soon": "Bientôt disponible",
-    "inactive": "Inactif",
-    "alpha": "Alpha",
-    "stable": "Stable"
+    "active": "Actif",
+    "beta": "Bêta",
+    "deprecated": "Déprécié",
+    "discontinued": "Discontinué",
+    "acquired": "Acquis"
   },
   "errors": {
     "404": {
-      "title": "Page Not Found",
-      "message": "The page you're looking for doesn't exist.",
-      "action": "Go Home"
+      "title": "Page non trouvée",
+      "message": "La page que vous cherchez n'existe pas.",
+      "action": "Retour à l'accueil"
     },
     "500": {
-      "title": "Something went wrong",
-      "message": "We're experiencing technical difficulties. Please try again later.",
-      "action": "Try Again"
+      "title": "Une erreur s'est produite",
+      "message": "Nous rencontrons des difficultés techniques. Veuillez réessayer plus tard.",
+      "action": "Réessayer"
     },
     "offline": {
       "title": "You're Offline",
       "message": "Please check your internet connection and try again.",
       "action": "Retry"
-    },
-    "notFound": "Non trouvé",
-    "serverError": "Erreur Serveur",
-    "networkError": "Erreur Réseau",
-    "unauthorized": "Non autorisé",
-    "forbidden": "Interdit",
-    "generic": "Quelque chose a mal tourné"
+    }
   }
 }
