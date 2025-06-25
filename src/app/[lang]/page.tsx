@@ -1,14 +1,11 @@
 import Link from "next/link";
-import { loggers } from "@/lib/logger";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUp, ArrowRight, Star, TrendingUp, Newspaper } from "lucide-react";
-import { RankingCard } from "@/components/ranking/ranking-card";
-import { HomeContent } from "./home-content";
+import { ArrowRight, Newspaper, Star, ArrowUp } from "lucide-react";
+import { ClientRankings } from "./client-rankings";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
-import { getUrl } from "@/lib/get-url";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -17,59 +14,11 @@ interface PageProps {
 // Force dynamic rendering to ensure API calls work at runtime
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 export default async function Home({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang } = await params;
   const dict = await getDictionary(lang);
-  // Fetch rankings on the server
-  let topRankings = [];
-  let trendingTools = [];
-  let recentlyUpdated = [];
-  let loading = false;
-
-  const isDev = process.env["NODE_ENV"] === "development";
-  const baseUrl = getUrl();
-  const timestamp = Date.now();
-  const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
-
-  try {
-    const response = await fetch(url, {
-      next: { revalidate: isDev ? 0 : 300 }, // No cache in dev, 5 minutes in prod
-      cache: isDev ? "no-store" : "default", // No cache in development
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch rankings: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const rankings = data.rankings || [];
-
-    // Log debug info if available
-    if (data.debug) {
-      loggers.api.info("Rankings debug info", { debug: data.debug });
-    }
-
-    if (rankings && rankings.length > 0) {
-      topRankings = rankings.slice(0, 3);
-      // For now, simulate trending as the next 3 tools
-      trendingTools = rankings.slice(3, 6);
-      // And recently updated as the next 4
-      recentlyUpdated = rankings.slice(6, 10);
-    } else {
-      loggers.api.warn("No rankings data received", { data, debug: data.debug });
-      loading = true;
-    }
-  } catch (error) {
-    loggers.api.error("Failed to fetch rankings", {
-      error,
-      url,
-      baseUrl,
-      env: process.env["VERCEL_ENV"],
-      isDev,
-    });
-    loading = true; // Show loading state on error
-  }
 
   return (
     <div className="min-h-screen">
@@ -126,100 +75,8 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             </div>
           </div>
 
-          {/* Top 3 Tools */}
-          <HomeContent
-            topRankings={topRankings}
-            loading={loading}
-            loadingText={dict.common.loading}
-            lang={lang}
-          />
-
-          {/* Stats Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">
-                {loading ? 0 : topRankings.length > 0 ? 39 : 0}
-              </div>
-              <div className="text-sm text-muted-foreground">{dict.home.stats.toolsRanked}</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-secondary mb-1">
-                {loading ? 0 : trendingTools.length}
-              </div>
-              <div className="text-sm text-muted-foreground">{dict.home.stats.trendingUp}</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-accent mb-1">
-                {dict.home.stats.updateFrequency.split(" ")[0]}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                {dict.home.stats.updateFrequency.split(" ")[1]}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-foreground mb-1">100%</div>
-              <div className="text-sm text-muted-foreground">{dict.home.stats.freeAccess}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trending Section */}
-      <section className="px-3 md:px-6 py-12 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center">
-                <TrendingUp className="h-8 w-8 mr-2 text-accent" />
-                {dict.home.trending.title}
-              </h2>
-              <p className="text-muted-foreground">{dict.home.trending.subtitle}</p>
-            </div>
-            <Button variant="outline" asChild>
-              <Link href={`/${lang}/rankings?sort=trending`}>{dict.home.trending.viewAll}</Link>
-            </Button>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-3 md:gap-6">
-            {trendingTools.map((tool: any, index: number) => (
-              <div key={tool.tool.id} className="relative h-full">
-                <div className="absolute -top-2 -right-2 z-10">
-                  <Badge className="bg-accent border-0 shadow-lg text-accent-foreground">
-                    <ArrowUp className="h-3 w-3 mr-1" />+{3 - index}
-                  </Badge>
-                </div>
-                <div className="h-full">
-                  <RankingCard ranking={tool} lang={lang} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Recently Updated Section */}
-      <section className="px-3 md:px-6 py-12">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center">
-                <Star className="h-8 w-8 mr-2 text-primary" />
-                {dict.home.recentlyUpdated.title}
-              </h2>
-              <p className="text-muted-foreground">{dict.home.recentlyUpdated.subtitle}</p>
-            </div>
-            <Button variant="outline" asChild>
-              <Link href={`/${lang}/rankings`}>{dict.home.recentlyUpdated.viewAll}</Link>
-            </Button>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-3 md:gap-6">
-            {recentlyUpdated.map((tool: any) => (
-              <div key={tool.tool.id} className="h-full">
-                <RankingCard ranking={tool} lang={lang} />
-              </div>
-            ))}
-          </div>
+          {/* Top 3 Tools and all dynamic content */}
+          <ClientRankings loadingText={dict.common.loading} lang={lang} />
         </div>
       </section>
 
