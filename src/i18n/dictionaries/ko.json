@@ -1,983 +1,578 @@
 {
   "categories": {
-    "autonomousagent": "Autonomous Agent",
-    "codeeditor": "Code Editor",
-    "ideassistant": "IDE Assistant",
-    "appbuilder": "App Builder",
-    "opensourceframework": "Open Source Framework",
-    "testingtool": "Testing Tool",
-    "codereview": "Code Review",
-    "codeassistant": "Code Assistant",
-    "autonomousAgent": "Autonomous Agent",
-    "codeEditor": "Code Editor",
-    "ideAssistant": "IDE Assistant",
-    "appBuilder": "App Builder",
-    "codeReview": "Code Review",
-    "codeAssistant": "Code Assistant",
-    "multimodal": "멀티모달",
-    "businessintelligence": "비즈니스 인텔리전스",
-    "imageandvideo": "이미지 및 비디오",
-    "apiandautomation": "API 및 자동화",
-    "searchandknowledge": "검색 및 지식",
-    "voiceandaudio": "음성 및 오디오",
-    "dataanalysis": "데이터 분석",
-    "customerservice": "고객 서비스",
-    "contentgeneration": "콘텐츠 생성"
+    "autonomousagent": "자율 에이전트",
+    "codeeditor": "코드 에디터",
+    "ideassistant": "IDE 어시스턴트",
+    "appbuilder": "앱 빌더",
+    "opensourceframework": "오픈소스 프레임워크",
+    "testingtool": "테스팅 툴",
+    "codereview": "코드 리뷰",
+    "codeassistant": "코드 어시스턴트",
+    "autonomousAgent": "자율 에이전트",
+    "codeEditor": "코드 에디터",
+    "ideAssistant": "IDE 어시스턴트",
+    "appBuilder": "앱 빌더",
+    "codeReview": "코드 리뷰",
+    "codeAssistant": "코드 어시스턴트"
   },
   "common": {
-    "appName": "AI Power Ranking",
-    "appDescription": "Data-driven ranking of AI coding tools",
-    "loading": "Loading...",
-    "error": "Error",
-    "tryAgain": "Try Again",
-    "backToHome": "Back to Home",
-    "learnMore": "Learn More",
-    "viewAll": "View All",
-    "close": "Close",
-    "cancel": "Cancel",
-    "save": "Save",
-    "search": "Search",
-    "filter": "Filter",
-    "sort": "Sort",
-    "share": "Share",
-    "explore": "Explore",
-    "notAvailable": "N/A",
-    "users": "Users"
+    "appName": "AI 파워 랭킹",
+    "appDescription": "데이터 드리븐 AI 코딩 툴 랭킹",
+    "loading": "로딩중...",
+    "error": "에러",
+    "tryAgain": "다시 시도",
+    "backToHome": "홈으로 돌아가기",
+    "learnMore": "더 알아보기",
+    "viewAll": "전체 보기",
+    "close": "닫기",
+    "cancel": "취소",
+    "save": "저장",
+    "search": "검색",
+    "filter": "필터",
+    "sort": "정렬",
+    "share": "공유"
   },
   "navigation": {
-    "home": "Home",
-    "rankings": "Rankings",
-    "news": "News",
-    "tools": "Tools",
-    "methodology": "Methodology",
-    "about": "About",
-    "subscribeToUpdates": "Subscribe To Updates",
-    "navigation": "Navigation",
-    "quickLinks": "Quick Links",
-    "trending": "Trending",
-    "categories": "Categories",
-    "features": "Features",
-    "clearFilters": "Clear Filters",
-    "allCategories": "All Categories",
-    "newsletter": "뉴스레터",
-    "contact": "연락처",
-    "privacy": "개인정보보호",
-    "terms": "이용약관",
-    "cookies": "쿠키정책",
-    "subscribe": "구독하기",
-    "support": "지원",
-    "blog": "블로그"
+    "home": "홈",
+    "rankings": "랭킹",
+    "news": "뉴스",
+    "tools": "툴",
+    "methodology": "방법론",
+    "about": "소개",
+    "subscribeToUpdates": "업데이트 구독",
+    "navigation": "네비게이션",
+    "quickLinks": "퀵 링크",
+    "trending": "트렌딩",
+    "categories": "카테고리",
+    "features": "기능",
+    "clearFilters": "필터 초기화",
+    "allCategories": "모든 카테고리"
   },
   "home": {
     "hero": {
-      "badge": "Updated Weekly",
-      "title": "AI Power Ranking",
-      "subtitle": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
-      "description": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
-      "exploreTools": "Explore All Tools",
-      "viewTrending": "View Trending",
-      "exploreButton": "Explore All Tools",
-      "trendingButton": "View Trending",
-      "whatsNewButton": "What's New",
-      "viewRankings": "순위 보기",
-      "subscribeNewsletter": "뉴스레터 구독"
+      "badge": "매주 업데이트",
+      "title": "AI 파워 랭킹",
+      "subtitle": "가장 강력한 AI 코딩 툴을 발견하고 비교하세요. 자율 에이전트부터 IDE 어시스턴트까지, 당신의 개발 워크플로우에 완벽한 AI 컴패니언을 찾아보세요.",
+      "description": "가장 강력한 AI 코딩 툴을 발견하고 비교하세요. 자율 에이전트부터 IDE 어시스턴트까지, 당신의 개발 워크플로우에 완벽한 AI 컴패니언을 찾아보세요.",
+      "exploreTools": "모든 툴 탐색",
+      "viewTrending": "트렌딩 보기",
+      "exploreButton": "모든 툴 탐색",
+      "trendingButton": "트렌딩 보기"
     },
     "stats": {
-      "toolsRanked": "AI Tools Ranked",
-      "trendingUp": "Trending Up",
-      "updates": "Updates",
-      "freeAccess": "Free Access",
-      "updateFrequency": "Weekly Updates",
-      "totalTools": "총 도구 수",
-      "totalCategories": "총 카테고리 수",
-      "weeklyUpdates": "주간 업데이트",
-      "comprehensiveAnalysis": "종합 분석",
-      "categoriesTracked": "추적된 카테고리",
-      "usersServed": "서비스 제공 사용자",
-      "expertReviews": "전문가 리뷰",
-      "monthlyUpdates": "월간 업데이트"
+      "toolsRanked": "AI 툴 랭킹됨",
+      "trendingUp": "트렌딩 업",
+      "updates": "업데이트",
+      "freeAccess": "무료 액세스",
+      "updateFrequency": "주간 업데이트"
     },
     "trending": {
-      "title": "Trending This Week",
-      "subtitle": "AI tools gaining momentum and climbing the rankings",
-      "description": "AI tools gaining momentum and climbing the rankings",
-      "viewAll": "View All Trending",
-      "viewAllButton": "View All Trending"
+      "title": "이번 주 트렌딩",
+      "subtitle": "모멘텀을 얻고 있는 AI 툴들과 랭킹 상승",
+      "description": "모멘텀을 얻고 있는 AI 툴들과 랭킹 상승",
+      "viewAll": "모든 트렌딩 보기",
+      "viewAllButton": "모든 트렌딩 보기"
     },
     "recentlyUpdated": {
-      "title": "Recently Updated",
-      "subtitle": "Latest updates and new features from top AI tools",
-      "description": "Latest updates and new features from top AI tools",
-      "viewAll": "View All Rankings",
-      "viewAllButton": "View All Rankings"
+      "title": "최근 업데이트",
+      "subtitle": "탑 AI 툴들의 최신 업데이트와 새로운 기능",
+      "description": "탑 AI 툴들의 최신 업데이트와 새로운 기능",
+      "viewAll": "모든 랭킹 보기",
+      "viewAllButton": "모든 랭킹 보기"
     },
     "recent": {
-      "title": "Recent Updates",
-      "description": "Latest developments and feature releases from top AI tools",
-      "viewAllButton": "View All Recent",
-      "subtitle": "최신 소식과 업데이트",
-      "viewAll": "모두 보기"
+      "title": "최근 업데이트",
+      "description": "탑 AI 툴들의 최신 개발 사항과 기능 릴리스",
+      "viewAllButton": "모든 최근 업데이트 보기"
     },
     "categories": {
-      "title": "Explore by Category",
-      "explore": "Explore →",
+      "title": "카테고리별 탐색",
+      "explore": "탐색 →",
       "ideAssistants": {
-        "name": "IDE Assistants",
-        "description": "AI-powered code completion and suggestions"
+        "name": "IDE 어시스턴트",
+        "description": "AI 파워드 코드 컴플리션 및 제안"
       },
       "aiEditors": {
-        "name": "AI Editors",
-        "description": "Smart editors with AI integration"
+        "name": "AI 에디터",
+        "description": "AI 통합 스마트 에디터"
       },
       "appBuilders": {
-        "name": "App Builders",
-        "description": "Build complete applications with AI assistance"
+        "name": "앱 빌더",
+        "description": "AI 어시스턴스로 완전한 앱 빌드"
       },
       "autonomousAgents": {
-        "name": "Autonomous Agents",
-        "description": "Fully autonomous AI software engineers"
+        "name": "자율 에이전트",
+        "description": "완전 자율 AI 소프트웨어 엔지니어"
       },
-      "ideDescription": "AI-powered code completion and suggestions",
-      "editorDescription": "Smart editors with AI integration",
-      "builderDescription": "Build complete applications with AI assistance",
-      "agentDescription": "Fully autonomous AI software engineers",
-      "subtitle": "관심사에 맞는 AI 도구 찾기",
-      "exploreCategory": "카테고리 탐색",
-      "toolsInCategory": "이 카테고리의 도구",
-      "viewAll": "모든 카테고리 보기",
-      "popular": "인기 카테고리",
-      "trending": "트렌딩 카테고리",
-      "newest": "최신 카테고리"
+      "ideDescription": "AI 파워드 코드 컴플리션 및 제안",
+      "editorDescription": "AI 통합 스마트 에디터",
+      "builderDescription": "AI 어시스턴스로 완전한 앱 빌드",
+      "agentDescription": "완전 자율 AI 소프트웨어 엔지니어"
     },
     "methodology": {
-      "title": "Our Methodology",
-      "algorithmTitle": "Algorithm v6.0",
-      "algorithmDescription": "Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
-      "keyModifiersTitle": "Key Modifiers",
-      "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
+      "title": "우리의 방법론",
+      "algorithmTitle": "알고리즘 v6.0",
+      "algorithmDescription": "우리의 고급 랭킹 알고리즘은 정교한 수정자와 함께 8가지 핵심 요소를 고려합니다:",
+      "keyModifiersTitle": "핵심 수정자",
+      "keyModifiersDescription": "세 가지 정교한 수정자가 공정하고 정확한 랭킹을 보장합니다:",
       "factors": {
-        "agenticCapability": "Agentic Capability (30%) - Autonomous coding abilities",
-        "innovation": {
-          "name": "Innovation",
-          "description": "Technical breakthroughs and feature innovation"
-        },
-        "technicalPerformance": "Technical Performance (12.5%) - SWE-bench focus",
-        "marketTraction": "Market Traction (12.5%) - Revenue quality adjusted",
+        "agenticCapability": "에이전틱 능력 (30%) - 자율 코딩 능력",
+        "innovation": "혁신 (15%) - 6개월 감쇠 반감기 포함",
+        "technicalPerformance": "기술 성능 (12.5%) - SWE-bench 중심",
+        "marketTraction": "시장 견인력 (12.5%) - 수익 품질 조정",
         "agentic": {
-          "name": "Agentic Capability",
-          "description": "Autonomous coding abilities and multi-step task completion"
+          "name": "에이전틱 능력",
+          "description": "자율 코딩 능력과 다단계 작업 완료"
+        },
+        "innovation": {
+          "name": "혁신",
+          "description": "기술적 돌파구와 기능 혁신"
         },
         "performance": {
-          "name": "Technical Performance",
-          "description": "Code quality, speed, and benchmark results"
+          "name": "기술 성능",
+          "description": "코드 품질, 속도, 벤치마크 결과"
         },
         "traction": {
-          "name": "Market Traction",
-          "description": "User adoption, growth rate, and market presence"
+          "name": "시장 견인력",
+          "description": "사용자 채택, 성장률, 시장 존재감"
         }
       },
       "modifiers": {
-        "innovationDecay": "Innovation Decay - Recent innovations score higher",
-        "platformRisk": "Platform Risk - Independence bonuses, lock-in penalties",
-        "revenueQuality": "Revenue Quality - Enterprise revenue weighted higher",
-        "dataValidation": "Data Validation - 80% completeness required",
+        "innovationDecay": "혁신 감쇠 - 최근 혁신이 더 높은 점수",
+        "platformRisk": "플랫폼 리스크 - 독립성 보너스, 락인 패널티",
+        "revenueQuality": "수익 품질 - 엔터프라이즈 수익 가중치 높음",
+        "dataValidation": "데이터 검증 - 80% 완성도 필요",
         "decay": {
-          "name": "Innovation Decay",
-          "description": "Recent innovations weighted more heavily"
+          "name": "혁신 감쇠",
+          "description": "최근 혁신에 더 높은 가중치"
         },
         "risk": {
-          "name": "Platform Risk",
-          "description": "Independence vs. platform lock-in factors"
+          "name": "플랫폼 리스크",
+          "description": "독립성 vs 플랫폼 락인 요소"
         },
         "revenue": {
-          "name": "Revenue Quality",
-          "description": "Enterprise revenue weighted higher than consumer"
+          "name": "수익 품질",
+          "description": "엔터프라이즈 수익이 소비자보다 높은 가중치"
         },
         "validation": {
-          "name": "Data Validation",
-          "description": "Minimum 80% data completeness required"
+          "name": "데이터 검증",
+          "description": "최소 80% 데이터 완성도 필요"
         }
       },
-      "modifiersTitle": "Dynamic Modifiers",
-      "modifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings",
-      "readFull": "Read Full Methodology",
-      "readMoreButton": "Read Full Methodology"
+      "modifiersTitle": "동적 수정자",
+      "modifiersDescription": "세 가지 정교한 수정자가 공정하고 정확한 랭킹을 보장",
+      "readFull": "전체 방법론 읽기",
+      "readMoreButton": "전체 방법론 읽기"
     },
     "footer": {
-      "tagline": "Data-driven insights for the AI revolution",
-      "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
-      "quickLinks": "Quick Links",
-      "categories": "Categories",
-      "copyright": "© 2025 AI Power Ranking. All rights reserved."
-    },
-    "topTools": {
-      "title": "상위 AI 코딩 도구",
-      "subtitle": "혁신, 기능, 사용자 경험을 기반으로 순위가 매겨진 최고의 도구들",
-      "viewAll": "모두 보기",
-      "exploreMore": "더 살펴보기",
-      "getStarted": "시작하기",
-      "learnMore": "자세히 알아보기",
-      "tryNow": "지금 시도하기",
-      "viewDetails": "세부사항 보기",
-      "rank": "순위",
-      "tool": "도구",
-      "category": "카테고리",
-      "score": "점수",
-      "change": "변화",
-      "trending": "트렌딩",
-      "new": "신규",
-      "rising": "상승",
-      "stable": "안정"
-    },
-    "newsletter": {
-      "title": "최신 정보 받기",
-      "subtitle": "주간 AI 도구 업데이트, 새로운 릴리스, 심층 분석을 받아보세요",
-      "placeholder": "이메일 주소 입력",
-      "subscribe": "구독하기",
-      "subscribing": "구독 중...",
-      "success": "구독해주셔서 감사합니다!",
-      "error": "구독 중 오류가 발생했습니다. 다시 시도해주세요.",
-      "description": "스팸 없음. 언제든지 구독 취소할 수 있습니다.",
-      "benefits": "혜택",
-      "weeklyDigest": "주간 다이제스트",
-      "exclusiveContent": "독점 콘텐츠",
-      "earlyAccess": "조기 접근",
-      "communityUpdates": "커뮤니티 업데이트"
-    },
-    "features": {
-      "title": "왜 AI 파워 랭킹을 선택해야 할까요?",
-      "subtitle": "최고의 AI 코딩 도구를 찾기 위한 포괄적인 플랫폼",
-      "comprehensiveDatabase": {
-        "title": "포괄적인 데이터베이스",
-        "description": "모든 주요 AI 코딩 도구가 한 곳에 정리되어 있습니다"
-      },
-      "expertAnalysis": {
-        "title": "전문가 분석",
-        "description": "각 도구에 대한 심층적이고 공정한 평가"
-      },
-      "regularUpdates": {
-        "title": "정기 업데이트",
-        "description": "최신 도구와 기능으로 매주 업데이트"
-      },
-      "communityDriven": {
-        "title": "커뮤니티 주도",
-        "description": "사용자 피드백과 실제 경험을 기반으로 한 순위"
-      },
-      "dataAccuracy": {
-        "title": "데이터 정확성",
-        "description": "신뢰할 수 있는 소스와 검증된 정보를 기반으로 한 정확한 데이터"
-      },
-      "easyComparison": {
-        "title": "쉬운 비교",
-        "description": "도구를 나란히 비교하여 필요에 맞는 최적의 선택을 하세요"
-      },
-      "mobileOptimized": {
-        "title": "모바일 최적화",
-        "description": "모든 기기에서 완벽하게 작동하는 반응형 디자인"
-      }
-    },
-    "cta": {
-      "title": "완벽한 AI 코딩 도구를 찾아보세요",
-      "subtitle": "개발 워크플로우를 혁신할 도구를 발견하세요",
-      "getStarted": "시작하기",
-      "learnMore": "자세히 알아보기",
-      "browseTools": "도구 둘러보기",
-      "viewMethodology": "방법론 보기",
-      "subscribe": "구독하기",
-      "contact": "연락하기",
-      "exploreNow": "지금 탐색하기",
-      "findYourTool": "당신의 도구 찾기",
-      "joinCommunity": "커뮤니티 가입",
-      "startExploring": "탐색 시작하기",
-      "viewComparison": "비교 보기",
-      "readReviews": "리뷰 읽기"
-    },
-    "trust": {
-      "title": "개발자들이 신뢰하는",
-      "subtitle": "전 세계 수천 명의 개발자들이 최고의 AI 도구를 찾기 위해 저희를 신뢰합니다",
-      "testimonial1": "정말 포괄적인 플랫폼입니다. 완벽한 AI 도구를 찾는 데 도움이 되었습니다.",
-      "testimonial2": "정기적인 업데이트와 심층 분석이 정말 유용합니다.",
-      "testimonial3": "시간을 절약해 주는 훌륭한 리소스입니다."
-    },
-    "about": {
-      "title": "데이터 기반 순위",
-      "subtitle": "당사의 방법론은 투명하고 공정하며 지속적으로 개선됩니다",
-      "methodology": "방법론 보기",
-      "algorithmVersion": "Algorithm v6.0",
-      "lastUpdated": "마지막 업데이트"
-    },
-    "faq": {
-      "title": "자주 묻는 질문",
-      "subtitle": "AI 코딩 도구와 순위에 대한 일반적인 질문들",
-      "question1": "도구들은 어떻게 순위가 매겨지나요?",
-      "answer1": "당사의 Algorithm v6.0을 사용하여 혁신, 기능, 사용성, 커뮤니티 피드백을 평가합니다.",
-      "question2": "순위는 얼마나 자주 업데이트되나요?",
-      "answer2": "매주 새로운 도구, 기능 업데이트, 사용자 피드백을 반영하여 업데이트됩니다.",
-      "viewAll": "모든 FAQ 보기"
-    },
-    "recentUpdates": {
-      "title": "최근 업데이트",
-      "subtitle": "AI 코딩 도구 세계의 최신 뉴스와 개발 사항",
-      "viewAll": "모든 업데이트 보기",
-      "readMore": "더 읽기",
-      "publishedOn": "게시일"
-    },
-    "search": {
-      "title": "도구 찾기",
-      "subtitle": "카테고리, 기능, 사용 사례별로 필터링",
-      "placeholder": "도구 또는 기능 검색...",
-      "searchButton": "검색",
-      "clearFilters": "필터 지우기",
-      "showResults": "결과 보기",
-      "advancedFilters": "고급 필터",
-      "sortBy": "정렬 기준",
-      "filterBy": "필터 기준",
-      "noResults": "결과가 없습니다",
-      "suggestions": "제안"
-    },
-    "breadcrumb": {
-      "home": "홈"
-    },
-    "loading": "로딩 중...",
-    "error": "오류가 발생했습니다",
-    "retry": "다시 시도",
-    "backToTop": "맨 위로",
-    "shareThis": "공유하기",
-    "updated": {
-      "title": "업데이트됨",
-      "subtitle": "새로운 기능과 개선사항",
-      "description": "새로운 기능과 개선사항",
-      "viewAll": "모든 업데이트 보기"
-    },
-    "new": {
-      "title": "신규",
-      "subtitle": "새로 추가된 AI 도구",
-      "description": "새로 추가된 AI 도구",
-      "viewAll": "모든 신규 도구 보기"
-    },
-    "explore": {
-      "title": "탐색하기",
-      "subtitle": "관심사에 맞는 도구 찾기",
-      "description": "관심사에 맞는 도구 찾기",
-      "button": "탐색 시작",
-      "allTools": "모든 도구",
-      "byCategory": "카테고리별",
-      "trending": "트렌딩",
-      "recent": "최근"
-    },
-    "compare": {
-      "title": "비교하기",
-      "subtitle": "도구들을 나란히 비교",
-      "description": "도구들을 나란히 비교",
-      "button": "비교 시작",
-      "selectTools": "도구 선택",
-      "addToCompare": "비교에 추가"
-    },
-    "seo": {
-      "title": "AI 파워 랭킹 - 최고의 AI 코딩 도구",
-      "description": "최고의 AI 코딩 도구를 발견하고 비교하세요. Algorithm v6.0을 사용한 포괄적인 순위와 리뷰.",
-      "keywords": "AI 도구, 코딩, 개발, 순위, 비교, 리뷰"
-    },
-    "social": {
-      "share": "공유하기",
-      "twitter": "트위터에 공유",
-      "linkedin": "링크드인에 공유",
-      "facebook": "페이스북에 공유"
-    },
-    "ui": {
-      "showMore": "더 보기",
-      "showLess": "간단히 보기",
-      "loadMore": "더 로드",
-      "refresh": "새로고침",
-      "close": "닫기",
-      "open": "열기",
-      "expand": "확장",
-      "collapse": "축소"
+      "tagline": "AI 혁명을 위한 데이터 드리븐 인사이트",
+      "description": "혁신 감쇠, 플랫폼 리스크 수정자, 수익 품질 조정을 포함한 알고리즘 v6.0을 사용한 AI 코딩 툴의 종합적인 랭킹.",
+      "quickLinks": "퀵 링크",
+      "categories": "카테고리",
+      "copyright": "© 2025 AI Power Rankings. All rights reserved."
     }
   },
-  "footer": {
-    "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
-    "quickLinks": "Quick Links",
-    "categories": "Categories",
-    "copyright": "© 2025 AI Power Ranking. All rights reserved."
-  },
   "rankings": {
-    "title": "AI Power Ranking",
-    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v6.0",
+    "title": "AI 파워 랭킹",
+    "subtitle": "알고리즘 v6.0을 사용한 AI 코딩 툴의 종합적인 랭킹",
     "stats": {
-      "totalTools": "Total Tools",
-      "categories": "Categories",
-      "avgScore": "Avg Score",
-      "lastUpdate": "Last Update",
-      "thisWeek": "This Week"
+      "totalTools": "총 툴",
+      "categories": "카테고리",
+      "avgScore": "평균 점수",
+      "lastUpdate": "마지막 업데이트",
+      "thisWeek": "이번 주"
     },
-    "sortBy": "Sort by",
-    "activeFilters": "Active filters",
+    "sortBy": "정렬 기준",
+    "activeFilters": "활성 필터",
     "sort": {
-      "rank": "Rank",
-      "trending": "Trending",
-      "score": "Score",
-      "name": "Name"
+      "rank": "랭크",
+      "trending": "트렌딩",
+      "score": "점수",
+      "name": "이름"
     },
     "algorithm": {
-      "title": "About Algorithm v6.0",
-      "subtitle": "Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
+      "title": "알고리즘 v6.0에 대하여",
+      "subtitle": "혁신 감쇠, 플랫폼 리스크 수정자, 수익 품질 조정을 포함한 향상된 랭킹 시스템",
       "tabs": {
-        "factors": "Scoring Factors",
-        "modifiers": "Modifiers",
-        "methodology": "Methodology"
+        "factors": "점수 요인",
+        "modifiers": "수정자",
+        "methodology": "방법론"
       },
-      "primaryFactors": "Primary Factors (67.5%)",
-      "secondaryFactors": "Secondary Factors (32.5%)",
-      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
-      "factors": {
-        "agentic": "Agentic Capability",
-        "innovation": "Innovation",
-        "performance": "Performance",
-        "adoption": "Adoption",
-        "traction": "Traction",
-        "sentiment": "Sentiment",
-        "velocity": "Velocity",
-        "resilience": "Resilience"
-      },
-      "modifiers": {
-        "decay": "Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
-        "risk": "Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
-        "revenue": "Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
-      },
-      "methodologyText": "Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
-      "viewMethodology": "View Full Methodology"
+      "primaryFactors": "주요 요인 (67.5%)",
+      "secondaryFactors": "보조 요인 (32.5%)",
+      "description": "우리의 랭킹 알고리즘은 정량적 메트릭과 정성적 평가를 결합하여 AI 코딩 툴의 종합적인 관점을 제공합니다. 새로운 데이터를 기반으로 매주 랭킹을 업데이트하고 방법론을 지속적으로 개선합니다."
     }
   },
   "news": {
-    "title": "AI Tools News",
-    "subtitle": "Latest updates, milestones, and announcements from AI coding tools",
+    "title": "AI 툴 뉴스",
+    "subtitle": "AI 코딩 툴의 최신 업데이트, 마일스톤, 발표",
     "filters": {
-      "all": "All News",
-      "milestone": "Milestone",
-      "feature": "Feature",
-      "partnership": "Partnership",
-      "update": "Update",
-      "announcement": "Announcement"
+      "all": "모든 뉴스",
+      "milestone": "마일스톤",
+      "feature": "기능",
+      "partnership": "파트너십",
+      "update": "업데이트",
+      "announcement": "발표"
     },
-    "noItems": "No news items found.",
-    "loadingMore": "Loading more news...",
-    "noMore": "No more news to load",
-    "viewTool": "View Tool",
+    "noItems": "뉴스 항목을 찾을 수 없습니다.",
+    "loadingMore": "더 많은 뉴스 로딩중...",
+    "noMore": "더 이상 로드할 뉴스가 없습니다",
+    "viewTool": "툴 보기",
     "metrics": {
-      "users": "users",
-      "score": "score",
-      "rank": "rank"
+      "users": "사용자",
+      "score": "점수",
+      "rank": "랭크"
     },
     "time": {
-      "justNow": "Just now",
-      "hourAgo": "1 hour ago",
-      "hoursAgo": "{count} hours ago",
-      "dayAgo": "1 day ago",
-      "daysAgo": "{count} days ago"
+      "justNow": "방금 전",
+      "hourAgo": "1시간 전",
+      "hoursAgo": "{count}시간 전",
+      "dayAgo": "1일 전",
+      "daysAgo": "{count}일 전"
     }
   },
   "tools": {
-    "title": "AI Coding Tools",
-    "subtitle": "Explore all {count} AI coding tools in our database",
-    "allCategories": "All Categories",
-    "filterByCategory": "Filter by category",
-    "sortBy": "Sort by",
-    "defaultDescription": "Discover and compare AI coding tools",
-    "notFound": "Tool not found",
-    "backToTools": "Back to Tools",
+    "title": "AI 코딩 툴",
+    "subtitle": "데이터베이스의 모든 {count}개 AI 코딩 툴 탐색",
+    "allCategories": "모든 카테고리",
+    "filterByCategory": "카테고리별 필터",
+    "sortBy": "정렬 기준",
+    "defaultDescription": "AI 코딩 툴 발견 및 비교",
     "sort": {
-      "name": "Name",
-      "category": "Category",
-      "status": "Status"
+      "name": "이름",
+      "category": "카테고리",
+      "status": "상태"
     },
     "stats": {
-      "total": "Total Tools",
-      "active": "Active",
-      "categories": "Categories",
-      "openSource": "Open Source"
+      "total": "총 툴",
+      "active": "활성",
+      "categories": "카테고리",
+      "openSource": "오픈 소스"
     },
     "directory": {
-      "title": "AI Coding Tools Directory",
-      "subtitle": "Explore all {count} AI coding tools in our database",
-      "filterByCategory": "Filter by category",
-      "filterByStatus": "Filter by status",
-      "allCategories": "All Categories",
-      "allStatuses": "All Statuses"
+      "title": "AI 코딩 툴 디렉토리",
+      "subtitle": "데이터베이스의 모든 {count}개 AI 코딩 툴 탐색",
+      "filterByCategory": "카테고리별 필터",
+      "filterByStatus": "상태별 필터",
+      "allCategories": "모든 카테고리",
+      "allStatuses": "모든 상태"
     },
     "detail": {
-      "loading": "Loading tool details...",
-      "notFound": "Tool not found",
-      "backToTools": "Back to Tools",
-      "visitWebsite": "Visit Website",
+      "loading": "툴 세부 정보 로딩중...",
+      "notFound": "툴을 찾을 수 없음",
+      "backToTools": "툴로 돌아가기",
+      "visitWebsite": "웹사이트 방문",
       "viewGithub": "GitHub",
-      "viewOnGithub": "View on GitHub",
-      "overview": "Overview",
-      "description": "Description",
-      "company": "Company",
-      "pricing": "Pricing",
-      "users": "Users",
-      "githubStars": "GitHub Stars",
+      "viewOnGithub": "GitHub에서 보기",
+      "overview": "개요",
+      "description": "설명",
+      "company": "회사",
+      "pricing": "가격",
+      "users": "사용자",
+      "githubStars": "GitHub 스타",
       "tabs": {
-        "performance": "Performance",
-        "pricing": "Pricing",
-        "businessMetrics": "Business",
-        "scores": "Scores",
-        "history": "History"
+        "performance": "성능",
+        "businessMetrics": "비즈니스",
+        "scores": "점수",
+        "history": "히스토리"
       },
       "performance": {
-        "title": "Technical Performance",
-        "subtitle": "Benchmark results and technical capabilities",
-        "description": "Benchmark results and technical capabilities including SWE-bench scores and feature support",
-        "sweScore": "SWE-bench Score",
-        "contextWindow": "Context Window",
-        "languageSupport": "Language Support",
-        "multiFileSupport": "Multi-file Support",
-        "llmProviders": "LLM Providers",
-        "tokens": "tokens",
-        "languages": "languages",
-        "yes": "Yes",
-        "multiple": "Multiple"
+        "title": "기술 성능",
+        "subtitle": "벤치마크 결과 및 기술적 능력",
+        "description": "SWE-bench 점수와 기능 지원을 포함한 벤치마크 결과 및 기술적 역량",
+        "sweScore": "SWE-bench 점수",
+        "contextWindow": "컨텍스트 윈도우",
+        "languageSupport": "언어 지원",
+        "multiFileSupport": "다중 파일 지원",
+        "llmProviders": "LLM 제공자",
+        "tokens": "토큰",
+        "languages": "언어",
+        "yes": "예",
+        "multiple": "다중"
       },
       "businessMetrics": {
-        "title": "Business Metrics",
-        "subtitle": "Financial and growth metrics",
-        "monthlyArr": "ARR (Monthly)",
-        "valuation": "Valuation",
-        "totalFunding": "Total Funding",
-        "employees": "Employees",
-        "totalUsers": "Total Users"
+        "title": "비즈니스 메트릭",
+        "subtitle": "재무 및 성장 메트릭",
+        "monthlyArr": "ARR (월간)",
+        "valuation": "기업 가치",
+        "totalFunding": "총 펀딩",
+        "employees": "직원",
+        "totalUsers": "총 사용자"
       },
       "rankingScores": {
-        "title": "Ranking Scores",
-        "subtitle": "Detailed breakdown of ranking factors",
-        "overallScore": "Overall Score",
-        "breakdown": "Score Breakdown",
-        "modifiers": "Applied Modifiers"
+        "title": "랭킹 점수",
+        "subtitle": "랭킹 요인의 세부 분석",
+        "overallScore": "전체 점수",
+        "breakdown": "점수 분석",
+        "modifiers": "적용된 수정자"
       },
       "metricHistory": {
-        "title": "Metric History",
-        "subtitle": "Recent metrics that affect ranking scores",
-        "noHistory": "No metric history available for this tool.",
-        "update": "Update",
-        "newMetrics": "New metrics reported for {tool}"
+        "title": "메트릭 히스토리",
+        "subtitle": "랭킹 점수에 영향을 주는 최근 메트릭",
+        "noHistory": "이 툴에 대한 메트릭 히스토리가 없습니다.",
+        "update": "업데이트",
+        "newMetrics": "{tool}에 대한 새로운 메트릭 보고됨"
       }
     },
     "status": {
-      "active": "Active",
-      "beta": "Beta",
-      "deprecated": "Deprecated",
-      "discontinued": "Discontinued",
-      "acquired": "Acquired"
+      "active": "활성",
+      "beta": "베타",
+      "deprecated": "디프리케이티드",
+      "discontinued": "중단됨",
+      "acquired": "인수됨"
     },
     "categories": {
-      "autonomous-agent": "Autonomous Agent",
-      "code-editor": "Code Editor",
-      "ide-assistant": "IDE Assistant",
-      "app-builder": "App Builder",
-      "open-source-framework": "Open Source Framework",
-      "testing-tool": "Testing Tool",
-      "code-review": "Code Review",
-      "code-generation": "Code Generation"
+      "autonomous-agent": "자율 에이전트",
+      "code-editor": "코드 에디터",
+      "ide-assistant": "IDE 어시스턴트",
+      "app-builder": "앱 빌더",
+      "open-source-framework": "오픈 소스 프레임워크",
+      "testing-tool": "테스팅 툴",
+      "code-review": "코드 리뷰",
+      "code-generation": "코드 생성"
     }
   },
   "newsletter": {
     "form": {
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email",
-      "subscribe": "Subscribe",
-      "subscribing": "Subscribing...",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time."
+      "firstName": "이름",
+      "lastName": "성",
+      "email": "이메일",
+      "subscribe": "구독",
+      "subscribing": "구독중...",
+      "privacyNote": "우리는 귀하의 개인정보를 존중합니다. 언제든지 구독 해지할 수 있습니다."
     },
     "modal": {
-      "title": "Stay Updated",
-      "subtitle": "Get weekly updates on AI tool rankings, new features, and industry insights.",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email",
-      "subscribe": "Subscribe",
-      "subscribing": "Subscribing...",
-      "thankYou": "Thank you!",
-      "checkEmail": "Please check your email to verify your subscription",
-      "alreadySubscribed": "You are already subscribed to our newsletter!",
-      "resentEmail": "We've resent the verification email. Please check your inbox.",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
+      "title": "업데이트 받기",
+      "subtitle": "AI 툴 랭킹, 새로운 기능, 업계 인사이트에 대한 주간 업데이트를 받아보세요.",
+      "firstName": "이름",
+      "lastName": "성",
+      "email": "이메일",
+      "subscribe": "구독",
+      "subscribing": "구독중...",
+      "thankYou": "감사합니다!",
+      "checkEmail": "구독 확인을 위해 이메일을 확인해주세요",
+      "alreadySubscribed": "이미 우리 뉴스레터에 구독되어 있습니다!",
+      "resentEmail": "확인 이메일을 다시 보냈습니다. 받은편지함을 확인해주세요.",
+      "privacyNote": "우리는 귀하의 개인정보를 존중합니다. 언제든지 구독 해지할 수 있습니다.",
       "errors": {
-        "captcha": "Please complete the security check",
-        "failed": "Failed to subscribe. Please try again.",
-        "server": "Server configuration error",
-        "email": "Email service configuration error"
+        "captcha": "보안 확인을 완료해주세요",
+        "failed": "구독에 실패했습니다. 다시 시도해주세요.",
+        "server": "서버 구성 오류",
+        "email": "이메일 서비스 구성 오류"
       }
     },
     "verification": {
-      "title": "Email Verification",
+      "title": "이메일 확인",
       "success": {
-        "title": "Email Verified!",
-        "message": "Your email has been successfully verified. You'll start receiving our weekly newsletter with the latest AI tool rankings and insights."
+        "title": "이메일 확인됨!",
+        "message": "이메일이 성공적으로 확인되었습니다. 최신 AI 툴 랭킹과 인사이트가 포함된 주간 뉴스레터를 받기 시작합니다."
       },
       "alreadyVerified": {
-        "title": "Already Verified",
-        "message": "This email address has already been verified. You're all set to receive our newsletters!"
+        "title": "이미 확인됨",
+        "message": "이 이메일 주소는 이미 확인되었습니다. 뉴스레터를 받을 준비가 완료되었습니다!"
       },
       "errors": {
         "missingToken": {
-          "title": "Missing Verification Token",
-          "message": "The verification link appears to be incomplete. Please check your email for the correct link."
+          "title": "확인 토큰 누락",
+          "message": "확인 링크가 불완전한 것 같습니다. 올바른 링크를 위해 이메일을 확인해주세요."
         },
         "invalidToken": {
-          "title": "Invalid Token",
-          "message": "This verification link is invalid or has expired. Please subscribe again to receive a new verification email."
+          "title": "잘못된 토큰",
+          "message": "이 확인 링크가 잘못되었거나 만료되었습니다. 새로운 확인 이메일을 받기 위해 다시 구독해주세요."
         },
         "failed": {
-          "title": "Verification Failed",
-          "message": "We couldn't verify your email at this time. Please try again later or contact support if the problem persists."
+          "title": "확인 실패",
+          "message": "현재 이메일을 확인할 수 없습니다. 나중에 다시 시도하거나 문제가 지속되면 지원팀에 문의해주세요."
         },
         "unexpected": {
-          "title": "Unexpected Error",
-          "message": "An unexpected error occurred. Please try again later."
+          "title": "예상치 못한 오류",
+          "message": "예상치 못한 오류가 발생했습니다. 나중에 다시 시도해주세요."
         }
       },
       "actions": {
-        "backToHome": "Back to Home",
-        "subscribeAgain": "Subscribe Again"
-      }
-    },
-    "verify": {
-      "goToHomepage": "Go to Homepage",
-      "tryAgain": "Try Again",
-      "success": {
-        "title": "Email Verified!",
-        "description": "Your email has been successfully verified. You'll start receiving our weekly newsletter."
-      },
-      "alreadyVerified": {
-        "title": "Already Verified",
-        "description": "This email address has already been verified. You're all set!"
-      },
-      "error": {
-        "title": "Verification Error"
-      },
-      "errors": {
-        "default": "An unexpected error occurred. Please try again.",
-        "missingToken": "The verification link appears to be incomplete.",
-        "invalidToken": "This verification link is invalid or has expired.",
-        "verificationFailed": "We couldn't verify your email at this time. Please try again later."
+        "backToHome": "홈으로 돌아가기",
+        "subscribeAgain": "다시 구독"
       }
     },
     "unsubscribe": {
-      "title": "Unsubscribe from Newsletter",
-      "processing": "Processing your request...",
+      "title": "뉴스레터 구독 해지",
+      "processing": "요청을 처리중...",
       "success": {
-        "title": "Successfully Unsubscribed",
-        "message": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!",
-        "description": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
-      },
-      "error": {
-        "title": "Unsubscribe Error"
+        "title": "성공적으로 구독 해지됨",
+        "message": "AI Power Rankings 뉴스레터 구독이 해지되었습니다. 떠나시는 것이 아쉽습니다!"
       },
       "errors": {
-        "missingToken": "The unsubscribe link appears to be incomplete.",
-        "invalidToken": "This unsubscribe link is invalid or has expired.",
-        "unsubscribeFailed": "We couldn't process your unsubscribe request. Please try again later.",
-        "default": "An unexpected error occurred. Please try again.",
+        "missingToken": {
+          "title": "토큰 누락",
+          "message": "구독 해지 링크가 불완전한 것 같습니다."
+        },
+        "invalidToken": {
+          "title": "잘못된 링크",
+          "message": "이 구독 해지 링크가 잘못되었거나 만료되었습니다."
+        },
         "failed": {
-          "title": "Unsubscribe Failed",
-          "message": "We couldn't process your unsubscribe request. Please try again later."
+          "title": "구독 해지 실패",
+          "message": "구독 해지 요청을 처리할 수 없습니다. 나중에 다시 시도해주세요."
         },
         "unexpected": {
-          "title": "Error",
-          "message": "An unexpected error occurred. Please try again."
+          "title": "오류",
+          "message": "예상치 못한 오류가 발생했습니다. 다시 시도해주세요."
         }
       },
-      "resubscribe": "Changed your mind? You can subscribe again anytime.",
-      "subscribeAgain": "Subscribe Again"
+      "resubscribe": "마음이 바뀌셨나요? 언제든지 다시 구독할 수 있습니다.",
+      "subscribeAgain": "다시 구독"
     }
   },
   "methodology": {
-    "title": "Our Methodology",
-    "subtitle": "How we rank AI coding tools",
-    "lastUpdated": "Last updated: January 2025",
-    "intro": "AI Power Ranking uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
-    "algorithm": {
-      "title": "Algorithm v6.0",
-      "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
-      "keyFeatures": "Key Features",
-      "features": {
-        "innovationDecay": "Innovation decay modeling to reflect tool freshness",
-        "platformRisk": "Platform risk assessment for vendor dependencies",
-        "revenueQuality": "Revenue quality adjustments based on business model",
-        "technicalWeighting": "Technical capability weighting for different use cases",
-        "dataValidation": "Multi-source data validation and normalization",
-        "logarithmicScaling": "Logarithmic scaling for balanced comparisons"
-      }
-    },
-    "factors": {
-      "title": "Scoring Factors",
-      "description": "Tools are evaluated across 8 key dimensions with specific weightings",
-      "primary": "Primary Factors (82.5%)",
-      "secondary": "Secondary Factors (17.5%)",
-      "agentic": {
-        "details": "Measures autonomous capabilities, multi-step reasoning, and complex task completion"
-      },
-      "innovation": {
-        "details": "Evaluates breakthrough features, technical advances, and market differentiation"
-      },
-      "performance": {
-        "details": "Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
-      },
-      "adoption": {
-        "details": "Active users, growth rate, and market penetration metrics"
-      },
-      "traction": {
-        "details": "Revenue growth, funding rounds, and business momentum indicators"
-      },
-      "sentiment": {
-        "details": "Developer satisfaction, community feedback, and recommendation scores"
-      },
-      "velocity": {
-        "details": "Feature release cadence, update frequency, and innovation speed"
-      },
-      "resilience": {
-        "details": "Platform stability, backup options, and vendor independence"
-      }
-    },
-    "modifiers": {
-      "title": "Dynamic Modifiers",
-      "description": "Real-time adjustments that reflect market conditions and tool maturity",
-      "innovationDecay": {
-        "description": "Innovation scores decay over time to reward continuous improvement and penalize stagnation"
-      },
-      "platformRisk": {
-        "description": "Adjustments based on vendor lock-in, platform dependencies, and business risks",
-        "penalties": "Risk Penalties",
-        "penaltyList": {
-          "acquired": "Recently acquired by competitor",
-          "exclusive": "Platform exclusive (single LLM)",
-          "competitor": "Owned by competing platform",
-          "regulatory": "Regulatory compliance issues",
-          "funding": "Funding or sustainability concerns"
-        },
-        "bonuses": "Risk Mitigation Bonuses",
-        "bonusList": {
-          "multiLLM": "Supports multiple LLM providers",
-          "openSource": "Open source availability",
-          "selfHosted": "Self-hosting options"
-        }
-      },
-      "revenueQuality": {
-        "description": "Revenue weighting based on business model sustainability and growth potential",
-        "models": {
-          "enterpriseHigh": "Enterprise (High-touch)",
-          "enterpriseStandard": "Enterprise (Standard)",
-          "smbSaas": "SMB SaaS",
-          "consumerPremium": "Consumer Premium",
-          "freemium": "Freemium",
-          "openSource": "Open Source"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "Data Sources & Validation",
-      "description": "We maintain rigorous standards for data collection and validation",
-      "collection": {
-        "title": "Data Collection Methods",
-        "sources": {
-          "api": "Direct API integrations with tool providers",
-          "research": "Industry research reports and analyst data",
-          "announcements": "Official company announcements and press releases",
-          "community": "Developer surveys and community feedback",
-          "benchmarks": "Standardized performance benchmarks"
-        }
-      },
-      "validation": {
-        "title": "Validation Requirements",
-        "requirements": {
-          "completeness": "All required metrics must be present",
-          "reliability": "Multiple source verification for key metrics",
-          "outlier": "Outlier detection and manual review",
-          "crossValidation": "Cross-validation with industry benchmarks"
-        }
-      },
-      "updateFrequency": {
-        "title": "Update Schedule",
-        "description": "Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
-      }
-    },
+    "title": "우리의 방법론",
+    "subtitle": "AI 코딩 툴을 랭킹하는 방법",
+    "lastUpdated": "마지막 업데이트: 2025년 1월",
+    "intro": "AI Power Rankings는 정교한 알고리즘 (v6.0)을 사용하여 여러 정량적 및 정성적 요인을 바탕으로 AI 코딩 툴을 평가하고 랭킹합니다. 우리의 방법론은 개발자들에게 AI 툴 환경의 객관적이고 데이터 드리븐한 평가를 제공하도록 설계되었습니다.",
     "sections": {
       "scoringFactors": {
-        "title": "Scoring Factors",
-        "intro": "Our algorithm evaluates tools across 8 key dimensions, each weighted according to its importance to developers:"
+        "title": "점수 요인",
+        "intro": "우리의 알고리즘은 개발자에게 중요도에 따라 가중치가 부여된 8가지 핵심 차원에서 툴을 평가합니다:"
       },
       "modifiers": {
-        "title": "Dynamic Modifiers",
-        "intro": "To ensure rankings reflect current market realities, we apply three sophisticated modifiers:"
+        "title": "동적 수정자",
+        "intro": "랭킹이 현재 시장 현실을 반영하도록 세 가지 정교한 수정자를 적용합니다:"
       },
       "dataCollection": {
-        "title": "Data Collection",
-        "intro": "We gather data from multiple sources to ensure accuracy:",
+        "title": "데이터 수집",
+        "intro": "정확성을 보장하기 위해 여러 소스에서 데이터를 수집합니다:",
         "sources": [
-          "Direct API integrations with tool providers",
-          "Public repositories and developer statistics",
-          "Industry reports and verified news sources",
-          "User surveys and community feedback",
-          "Performance benchmarks (SWE-bench, HumanEval)"
+          "툴 제공자와의 직접 API 통합",
+          "공개 저장소 및 개발자 통계",
+          "업계 보고서 및 검증된 뉴스 소스",
+          "사용자 설문조사 및 커뮤니티 피드백",
+          "성능 벤치마크 (SWE-bench, HumanEval)"
         ]
       },
       "updateFrequency": {
-        "title": "Update Frequency",
-        "content": "Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
+        "title": "업데이트 빈도",
+        "content": "빠르게 진화하는 AI 환경을 반영하기 위해 랭킹을 매주 재계산합니다. 주요 방법론 업데이트는 버전화되고 문서화됩니다."
       }
     }
   },
   "about": {
-    "title": "About AI Power Ranking",
-    "subtitle": "Empowering developers with data-driven AI tool insights",
+    "title": "AI Power Rankings 소개",
+    "subtitle": "데이터 드리븐 AI 툴 인사이트로 개발자 지원",
     "hero": {
-      "title": "Empowering developers with data-driven AI tool insights",
-      "subtitle": "We believe developers deserve transparent, objective rankings of AI coding tools to make informed decisions."
+      "title": "데이터 드리븐 AI 툴 인사이트로 개발자 지원",
+      "subtitle": "개발자들은 정보에 입각한 결정을 내리기 위해 AI 코딩 툴의 투명하고 객관적인 랭킹을 받을 자격이 있다고 믿습니다."
     },
     "mission": {
-      "title": "Our Mission",
-      "content": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs.",
-      "description": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
+      "title": "우리의 미션",
+      "content": "개발자 커뮤니티에 가장 포괄적이고 편견 없으며 최신의 AI 코딩 툴 랭킹을 제공하여 팀이 필요에 맞는 올바른 툴을 선택할 수 있도록 돕습니다.",
+      "description": "개발자 커뮤니티에 가장 포괄적이고 편견 없으며 최신의 AI 코딩 툴 랭킹을 제공하여 팀이 필요에 맞는 올바른 툴을 선택할 수 있도록 돕습니다."
     },
     "whyWeBuiltThis": {
-      "title": "Why We Built This",
+      "title": "우리가 이것을 만든 이유",
       "reasons": [
-        "The AI tools landscape is evolving rapidly, making it hard to keep track",
-        "Marketing claims often don't match real-world performance",
-        "Developers need objective data to justify tool adoption",
-        "There was no single source comparing all major AI coding tools"
+        "AI 툴 환경이 빠르게 진화하여 따라가기 어렵습니다",
+        "마케팅 주장이 종종 실제 성능과 일치하지 않습니다",
+        "개발자들은 툴 채택을 정당화하기 위해 객관적인 데이터가 필요합니다",
+        "모든 주요 AI 코딩 툴을 비교하는 단일 소스가 없었습니다"
       ]
     },
     "team": {
-      "title": "The Team",
-      "description": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
-      "description1": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
-      "description2": "I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
-      "description3": "Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
-      "hyperdevLink": "HyperDev",
-      "reportIssue": "Report an Issue"
+      "title": "팀",
+      "description": "AI Power Rankings는 AI와 소프트웨어 개발의 교차점에 열정을 가진 개발자와 데이터 사이언티스트 팀에 의해 관리됩니다."
     },
     "contact": {
-      "title": "Get in Touch",
-      "description": "Have feedback or suggestions? We'd love to hear from you.",
-      "email": "Contact us at hello@aipowerranking.com"
+      "title": "연락하기",
+      "description": "피드백이나 제안이 있으신가요? 연락을 환영합니다.",
+      "email": "hello@aipowerranking.com으로 연락주세요"
     },
     "newsletter": {
-      "title": "Stay Updated",
-      "description": "Get weekly insights on AI tool rankings and industry trends.",
-      "subscribe": "Subscribe to Newsletter"
-    },
-    "cta": {
-      "title": "Ready to Explore?",
-      "description": "Dive into our rankings to discover the best AI coding tools for your needs.",
-      "exploreButton": "Explore Rankings",
-      "methodologyButton": "Learn Our Methodology"
+      "title": "업데이트 받기",
+      "description": "AI 툴 랭킹과 업계 트렌드에 대한 주간 인사이트를 받아보세요.",
+      "subscribe": "뉴스레터 구독"
     },
     "whatWeDo": {
-      "title": "What We Do",
+      "title": "우리가 하는 일",
       "track": {
-        "title": "Track AI Tools",
-        "description": "Monitor and analyze the latest AI coding tools"
+        "title": "AI 툴 추적",
+        "description": "최신 AI 코딩 툴을 모니터링하고 분석"
       },
       "analyze": {
-        "title": "Analyze Performance",
-        "description": "Evaluate tools based on real-world metrics"
+        "title": "성능 분석",
+        "description": "실제 메트릭을 기반으로 툴 평가"
       },
       "rank": {
-        "title": "Rank Objectively",
-        "description": "Apply our algorithm to provide unbiased rankings"
+        "title": "객관적 랭킹",
+        "description": "편견 없는 랭킹을 제공하기 위해 알고리즘 적용"
       },
       "update": {
-        "title": "Update Weekly",
-        "description": "Keep rankings current with the latest data"
+        "title": "주간 업데이트",
+        "description": "최신 데이터로 랭킹을 현재 상태로 유지"
       },
       "analysis": {
-        "title": "Deep Analysis",
-        "description": "Comprehensive evaluation of AI coding tools based on performance, features, and user feedback"
+        "title": "심층 분석",
+        "description": "성능, 기능, 사용자 피드백을 기반으로 한 AI 코딩 툴의 종합적인 평가"
       },
       "methodology": {
-        "title": "Transparent Methodology",
-        "description": "Our ranking algorithm is fully documented and continuously refined based on community input"
+        "title": "투명한 방법론",
+        "description": "우리의 랭킹 알고리즘은 완전히 문서화되어 있으며 커뮤니티 입력을 기반으로 지속적으로 개선됩니다"
       },
       "updates": {
-        "title": "Weekly Updates",
-        "description": "Rankings are refreshed every week to reflect the rapidly evolving AI tools landscape"
+        "title": "주간 업데이트",
+        "description": "빠르게 진화하는 AI 툴 환경을 반영하여 매주 랭킹을 새로 고칩니다"
       },
       "community": {
-        "title": "Community-Driven",
-        "description": "We incorporate feedback from developers worldwide to improve our rankings and methodology"
+        "title": "커뮤니티 주도",
+        "description": "랭킹과 방법론을 개선하기 위해 전 세계 개발자들의 피드백을 통합합니다"
       }
     },
     "whyItMatters": {
-      "title": "Why It Matters",
-      "description": "In the rapidly evolving AI landscape, developers need reliable data to make informed decisions.",
+      "title": "왜 중요한가",
+      "description": "빠르게 진화하는 AI 환경에서 개발자들은 정보에 입각한 결정을 내리기 위해 신뢰할 수 있는 데이터가 필요합니다.",
       "points": [
-        "Save time evaluating tools",
-        "Make data-driven decisions",
-        "Stay ahead of the curve",
-        "Choose tools that fit your needs"
-      ],
-      "challenges": {
-        "paralysis": {
-          "title": "Decision Paralysis",
-          "description": "With dozens of AI tools launching every week, developers face overwhelming choices"
-        },
-        "marketing": {
-          "title": "Marketing vs Reality",
-          "description": "Bold claims often don't match real-world performance and capabilities"
-        },
-        "change": {
-          "title": "Rapid Change",
-          "description": "Tools evolve quickly - what's best today might be obsolete tomorrow"
-        },
-        "risks": {
-          "title": "Hidden Risks",
-          "description": "Security, privacy, and vendor lock-in concerns are often overlooked"
-        }
-      },
-      "conclusion": "That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
+        "툴 평가 시간 절약",
+        "데이터 드리븐 의사결정",
+        "앞서 나가기",
+        "필요에 맞는 툴 선택"
+      ]
     }
   },
   "sidebar": {
-    "navigation": "Navigation",
-    "quickLinks": "Quick Links",
-    "trending": "Trending",
-    "categories": "Categories",
-    "features": "Features",
-    "clearFilters": "Clear Filters"
+    "navigation": "네비게이션",
+    "quickLinks": "퀵 링크",
+    "trending": "트렌딩",
+    "categories": "카테고리",
+    "features": "기능",
+    "clearFilters": "필터 초기화"
   },
   "features": {
-    "autocomplete": "Autocomplete",
-    "chat": "Chat Interface",
-    "codeGeneration": "Code Generation",
-    "refactoring": "Refactoring",
-    "testing": "Testing",
-    "documentation": "Documentation"
+    "autocomplete": "자동완성",
+    "chat": "채팅 인터페이스",
+    "codeGeneration": "코드 생성",
+    "refactoring": "리팩토링",
+    "testing": "테스팅",
+    "documentation": "문서화"
   },
   "status": {
-    "active": "Active",
-    "beta": "Beta",
-    "deprecated": "Deprecated",
-    "discontinued": "Discontinued",
-    "acquired": "Acquired"
+    "active": "활성",
+    "beta": "베타",
+    "deprecated": "디프리케이티드",
+    "discontinued": "중단됨",
+    "acquired": "인수됨"
   },
   "errors": {
     "404": {
-      "title": "Page Not Found",
-      "message": "The page you're looking for doesn't exist.",
-      "action": "Go Home"
+      "title": "페이지를 찾을 수 없음",
+      "message": "찾고 있는 페이지가 존재하지 않습니다.",
+      "action": "홈으로 가기"
     },
     "500": {
-      "title": "Something went wrong",
-      "message": "We're experiencing technical difficulties. Please try again later.",
-      "action": "Try Again"
+      "title": "문제가 발생했습니다",
+      "message": "기술적인 문제가 발생했습니다. 나중에 다시 시도해주세요.",
+      "action": "다시 시도"
     },
     "offline": {
-      "title": "You're Offline",
-      "message": "Please check your internet connection and try again.",
-      "action": "Retry"
+      "title": "오프라인 상태",
+      "message": "인터넷 연결을 확인하고 다시 시도해주세요.",
+      "action": "재시도"
     }
   }
 }
