@@ -639,38 +639,38 @@
       "score": "评分"
     },
     "stats": {
-      "total": "[TRANSLATE] Total Tools",
-      "active": "[TRANSLATE] Active",
-      "categories": "[TRANSLATE] Categories",
-      "openSource": "[TRANSLATE] Open Source"
+      "total": "工具总数",
+      "active": "活跃",
+      "categories": "分类",
+      "openSource": "开源"
     },
     "directory": {
-      "title": "[TRANSLATE] AI Coding Tools Directory",
-      "subtitle": "[TRANSLATE] Explore all {count} AI coding tools in our database",
-      "filterByCategory": "[TRANSLATE] Filter by category",
-      "filterByStatus": "[TRANSLATE] Filter by status",
-      "allCategories": "[TRANSLATE] All Categories",
-      "allStatuses": "[TRANSLATE] All Statuses"
+      "title": "AI编程工具目录",
+      "subtitle": "探索我们数据库中的所有 {count} 个AI编程工具",
+      "filterByCategory": "按分类筛选",
+      "filterByStatus": "按状态筛选",
+      "allCategories": "所有分类",
+      "allStatuses": "所有状态"
     },
     "detail": {
-      "loading": "[TRANSLATE] Loading tool details...",
-      "notFound": "[TRANSLATE] Tool not found",
-      "backToTools": "[TRANSLATE] Back to Tools",
-      "visitWebsite": "[TRANSLATE] Visit Website",
-      "viewGithub": "[TRANSLATE] GitHub",
-      "viewOnGithub": "[TRANSLATE] View on GitHub",
-      "overview": "[TRANSLATE] Overview",
-      "description": "[TRANSLATE] Description",
-      "company": "[TRANSLATE] Company",
-      "pricing": "[TRANSLATE] Pricing",
-      "users": "[TRANSLATE] Users",
-      "githubStars": "[TRANSLATE] GitHub Stars",
+      "loading": "加载工具详情中...",
+      "notFound": "未找到工具",
+      "backToTools": "返回工具",
+      "visitWebsite": "访问网站",
+      "viewGithub": "GitHub",
+      "viewOnGithub": "在GitHub上查看",
+      "overview": "概览",
+      "description": "描述",
+      "company": "公司",
+      "pricing": "价格",
+      "users": "用户",
+      "githubStars": "GitHub 星标",
       "tabs": {
-        "performance": "[TRANSLATE] Performance",
-        "pricing": "[TRANSLATE] Pricing",
-        "businessMetrics": "[TRANSLATE] Business",
-        "scores": "[TRANSLATE] Scores",
-        "history": "[TRANSLATE] History",
+        "performance": "性能",
+        "pricing": "价格",
+        "businessMetrics": "商业指标",
+        "scores": "评分",
+        "history": "历史",
         "overview": "概览",
         "features": "功能",
         "reviews": "评价",
@@ -977,36 +977,36 @@
       },
       "actions": {
         "backToHome": "[TRANSLATE] Back to Home",
-        "subscribeAgain": "[TRANSLATE] Subscribe Again"
+        "subscribeAgain": "重新订阅"
       }
     },
     "verify": {
-      "goToHomepage": "[TRANSLATE] Go to Homepage",
-      "tryAgain": "[TRANSLATE] Try Again",
+      "goToHomepage": "返回首页",
+      "tryAgain": "重试",
       "success": {
-        "title": "[TRANSLATE] Email Verified!",
-        "description": "[TRANSLATE] Your email has been successfully verified. You'll start receiving our weekly newsletter."
+        "title": "邮箱验证成功！",
+        "description": "您的邮箱已成功验证。您将开始收到我们的周报新闻通讯。"
       },
       "alreadyVerified": {
-        "title": "[TRANSLATE] Already Verified",
-        "description": "[TRANSLATE] This email address has already been verified. You're all set!"
+        "title": "已经验证",
+        "description": "此邮箱地址已经验证。您已准备就绪！"
       },
       "error": {
-        "title": "[TRANSLATE] Verification Error"
+        "title": "验证错误"
       },
       "errors": {
-        "default": "[TRANSLATE] An unexpected error occurred. Please try again.",
-        "missingToken": "[TRANSLATE] The verification link appears to be incomplete.",
-        "invalidToken": "[TRANSLATE] This verification link is invalid or has expired.",
-        "verificationFailed": "[TRANSLATE] We couldn't verify your email at this time. Please try again later."
+        "default": "发生了意外错误。请重试。",
+        "missingToken": "验证链接似乎不完整。",
+        "invalidToken": "此验证链接无效或已过期。",
+        "verificationFailed": "我们目前无法验证您的邮箱。请稍后重试。"
       }
     },
     "unsubscribe": {
-      "title": "[TRANSLATE] Unsubscribe from Newsletter",
-      "processing": "[TRANSLATE] Processing your request...",
+      "title": "取消订阅新闻通讯",
+      "processing": "正在处理您的请求...",
       "success": {
-        "title": "[TRANSLATE] Successfully Unsubscribed",
-        "message": "[TRANSLATE] You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!",
+        "title": "成功取消订阅",
+        "message": "您已成功取消订阅AI实力排行榜新闻通讯。我们很遗憾您的离开！",
         "description": "[TRANSLATE] You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
       },
       "error": {
@@ -1098,9 +1098,9 @@
   },
   "methodology": {
     "title": "[TRANSLATE] Our Methodology",
-    "subtitle": "[TRANSLATE] How we rank AI coding tools",
-    "lastUpdated": "[TRANSLATE] Last updated: January 2025",
-    "intro": "[TRANSLATE] AI Power Ranking uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "subtitle": "我们如何对AI编程工具进行排名",
+    "lastUpdated": "最后更新：2025年1月",
+    "intro": "AI实力排行榜使用复杂的算法（v6.0）基于多个定量和定性因素对AI编程工具进行评估和排名。我们的方法论旨在为开发者提供对AI工具领域的客观、数据驱动的评估。",
     "algorithm": {
       "title": "[TRANSLATE] Algorithm v6.0",
       "description": "[TRANSLATE] Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
