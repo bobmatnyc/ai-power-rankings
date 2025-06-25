@@ -120,46 +120,39 @@
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Drei sophistizierte Modifikatoren gewährleisten faire und präzise Rankings:",
       "factors": {
-        "agenticCapability": "Agentic Capability (30%) - Autonomous coding abilities",
+        "agentic": {
+          "name": "Agentische Fähigkeiten",
+          "description": "Autonome Codierfähigkeiten und mehrstufige Aufgabenbewältigung"
+        },
         "innovation": {
           "name": "Innovation",
-          "description": "Technical breakthroughs and feature innovation"
-        },
-        "technicalPerformance": "Technical Performance (12.5%) - SWE-bench focus",
-        "marketTraction": "Market Traction (12.5%) - Revenue quality adjusted",
-        "agentic": {
-          "name": "Agentic Capability",
-          "description": "Autonomous coding abilities and multi-step task completion"
+          "description": "Technische Durchbrüche und Feature-Innovation"
         },
         "performance": {
-          "name": "Technical Performance",
-          "description": "Code quality, speed, and benchmark results"
+          "name": "Technische Leistung",
+          "description": "Code-Qualität, Geschwindigkeit und Benchmark-Ergebnisse"
         },
         "traction": {
-          "name": "Market Traction",
-          "description": "Benutzer adoption, growth rate, and market presence"
+          "name": "Markttraktion",
+          "description": "Benutzeradoption, Wachstumsrate und Marktpräsenz"
         }
       },
       "modifiers": {
-        "innovationDecay": "Innovation Decay - Recent innovations score higher",
-        "platformRisk": "Platform Risk - Independence bonuses, lock-in penalties",
-        "revenueQuality": "Revenue Quality - Enterprise revenue weighted higher",
-        "dataValidation": "Data Validation - 80% completeness required",
         "decay": {
-          "name": "Innovation Decay",
-          "description": "Recent innovations weighted more heavily"
+          "name": "Innovationsverfall",
+          "description": "Neuere Innovationen werden stärker gewichtet"
         },
         "risk": {
-          "name": "Platform Risk",
-          "description": "Independence vs. platform lock-in factors"
+          "name": "Plattformrisiko",
+          "description": "Unabhängigkeit vs. Plattform-Lock-in-Faktoren"
         },
         "revenue": {
-          "name": "Revenue Quality",
-          "description": "Enterprise revenue weighted higher than consumer"
+          "name": "Umsatzqualität",
+          "description": "Enterprise-Umsatz wird höher gewichtet als Consumer"
         },
         "validation": {
-          "name": "Data Validation",
-          "description": "Minimum 80% data completeness required"
+          "name": "Datenvalidierung",
+          "description": "Mindestens 80% Datenvollständigkeit erforderlich"
         }
       },
       "modifiersTitle": "Dynamic Modifiers",
@@ -175,7 +168,9 @@
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
     },
     "recent": {
-      "title": "Frisch released"
+      "title": "Frisch released",
+      "description": "Die neuesten Entwicklungen und Feature-Releases der besten KI-Tools",
+      "viewAllButton": "Alle neuen anzeigen"
     }
   },
   "rankings": {
@@ -951,5 +946,133 @@
     "reviewSubmitted": "Bewertung erfolgreich eingereicht",
     "addedToWatchlist": "Zur Watchlist hinzugefügt",
     "comparisonSaved": "Vergleich gespeichert"
+  },
+  "methodology": {
+    "title": "Unsere Methodik",
+    "subtitle": "Wie wir KI-Coding-Tools bewerten",
+    "lastUpdated": "Zuletzt aktualisiert: Januar 2025",
+    "intro": "AI Power Ranking verwendet einen ausgefeilten Algorithmus (v6.0) zur Bewertung und Einstufung von KI-Coding-Tools basierend auf mehreren quantitativen und qualitativen Faktoren. Unsere Methodik wurde entwickelt, um Entwicklern eine objektive, datengesteuerte Bewertung der KI-Tools-Landschaft zu bieten.",
+    "algorithm": {
+      "title": "Algorithmus v6.0",
+      "description": "Unser neuester Ranking-Algorithmus berücksichtigt reale Nutzungsmuster und Marktdynamiken",
+      "keyFeatures": "Hauptmerkmale",
+      "features": {
+        "innovationDecay": "Innovationsverfall-Modellierung zur Bewertung der Toolaktualität",
+        "platformRisk": "Plattformrisiko-Bewertung für Anbieterabhängigkeiten",
+        "revenueQuality": "Umsatzqualitäts-Anpassungen basierend auf dem Geschäftsmodell",
+        "technicalWeighting": "Technische Fähigkeitsgewichtung für verschiedene Anwendungsfälle",
+        "dataValidation": "Multi-Source-Datenvalidierung und -normalisierung",
+        "logarithmicScaling": "Logarithmische Skalierung für ausgewogene Vergleiche"
+      }
+    },
+    "factors": {
+      "title": "Bewertungsfaktoren",
+      "description": "Tools werden über 8 Schlüsseldimensionen mit spezifischen Gewichtungen bewertet",
+      "primary": "Primäre Faktoren",
+      "secondary": "Sekundäre Faktoren",
+      "agentic": {
+        "details": "Fähigkeit zur selbstständigen Code-Generierung und mehrstufigen Aufgabenbewältigung"
+      },
+      "innovation": {
+        "details": "Technische Durchbrüche und Feature-Innovationen mit 6-monatiger Halbwertszeit"
+      },
+      "performance": {
+        "details": "Code-Qualität, Geschwindigkeit und Benchmark-Ergebnisse (SWE-bench Fokus)"
+      },
+      "adoption": {
+        "details": "GitHub-Sterne, npm-Downloads und Community-Metriken"
+      },
+      "traction": {
+        "details": "Benutzeradoption, Wachstumsrate und Marktpräsenz"
+      },
+      "sentiment": {
+        "details": "Community-Stimmung, Bewertungen und Entwicklerzufriedenheit"
+      },
+      "velocity": {
+        "details": "Entwicklungsgeschwindigkeit, Update-Häufigkeit und Feature-Veröffentlichungen"
+      },
+      "resilience": {
+        "details": "Stabilität, Fehlerrate und Anpassungsfähigkeit"
+      }
+    },
+    "modifiers": {
+      "title": "Dynamische Modifikatoren",
+      "description": "Drei ausgefeilte Modifikatoren gewährleisten faire und genaue Rankings",
+      "innovationDecay": {
+        "description": "Exponentieller Verfall mit 6-monatiger Halbwertszeit für Innovationsbewertungen"
+      },
+      "platformRisk": {
+        "description": "Bewertet Anbieterabhängigkeiten und Plattform-Lock-in-Risiken",
+        "penalties": "Strafen",
+        "bonuses": "Boni",
+        "penaltyList": {
+          "acquired": "Übernommen durch Großkonzern",
+          "exclusive": "Exklusiv für eine Plattform",
+          "competitor": "Im Besitz eines direkten Konkurrenten",
+          "regulatory": "Regulatorische Unsicherheiten",
+          "funding": "Finanzierungsprobleme"
+        },
+        "bonusList": {
+          "multiLLM": "Multi-LLM-Unterstützung",
+          "openSource": "Open Source verfügbar",
+          "selfHosted": "Selbst-Hosting Option"
+        }
+      },
+      "revenueQuality": {
+        "description": "Unterscheidet nachhaltigen von einmaligem Umsatz",
+        "models": {
+          "enterpriseHigh": "Enterprise (hochwertig)",
+          "enterpriseStandard": "Enterprise (Standard)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "Consumer Premium",
+          "freemium": "Freemium",
+          "openSource": "Open Source"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "Datenquellen",
+      "description": "Unsere Rankings basieren auf mehreren verifizierten Datenquellen",
+      "collection": {
+        "title": "Datenerfassung",
+        "sources": {
+          "api": "Offizielle Tool-APIs und Dokumentationen",
+          "research": "Proprietäre Marktforschung und Analysen",
+          "announcements": "Offizielle Ankündigungen und Pressemitteilungen",
+          "community": "Community-Feedback und Entwicklerumfragen",
+          "benchmarks": "Standardisierte Leistungsbenchmarks"
+        }
+      },
+      "validation": {
+        "title": "Datenvalidierung",
+        "requirements": {
+          "completeness": "Mindestens 80% Datenvollständigkeit erforderlich",
+          "reliability": "Kreuzvalidierung mit mehreren Quellen",
+          "outlier": "Automatische Ausreißererkennung und -überprüfung",
+          "crossValidation": "Manuelle Überprüfung signifikanter Änderungen"
+        }
+      },
+      "updateFrequency": {
+        "title": "Update-Häufigkeit",
+        "description": "Rankings werden wöchentlich mit den neuesten Daten aktualisiert"
+      }
+    }
+  },
+  "errors": {
+    "404": {
+      "title": "Seite nicht gefunden",
+      "message": "Die gesuchte Seite existiert nicht.",
+      "action": "Zur Startseite"
+    },
+    "500": {
+      "title": "Etwas ist schief gelaufen",
+      "message": "Wir haben technische Schwierigkeiten. Bitte versuchen Sie es später erneut.",
+      "action": "Erneut versuchen"
+    },
+    "offline": {
+      "title": "Sie sind offline",
+      "message": "Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+      "action": "Wiederholen"
+    }
   }
 }
