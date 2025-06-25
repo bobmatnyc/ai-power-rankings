@@ -14,6 +14,9 @@ interface PageProps {
   params: Promise<{ lang: Locale }>;
 }
 
+// Force dynamic rendering to avoid API calls during build
+export const dynamic = "force-dynamic";
+
 export default async function Home({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang } = await params;
   const dict = await getDictionary(lang);

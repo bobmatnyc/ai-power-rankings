@@ -7,31 +7,41 @@ export const dynamic = "force-dynamic";
 export const revalidate = 3600; // Revalidate every hour
 
 async function getTools() {
-  const payload = await getPayload({ config });
-  const { docs } = await payload.find({
-    collection: "tools",
-    where: {
-      status: { equals: "active" },
-    },
-    sort: "-updatedAt",
-    limit: 1000,
-  });
+  try {
+    const payload = await getPayload({ config });
+    const { docs } = await payload.find({
+      collection: "tools",
+      where: {
+        status: { equals: "active" },
+      },
+      sort: "-updatedAt",
+      limit: 1000,
+    });
 
-  return docs.map(tool => ({
-    slug: tool['slug'],
-    updated_at: tool['updatedAt'],
-  }));
+    return docs.map((tool) => ({
+      slug: tool["slug"],
+      updated_at: tool["updatedAt"],
+    }));
+  } catch (error) {
+    console.warn("Failed to fetch tools for sitemap:", error);
+    return [];
+  }
 }
 
 async function getLatestRankingPeriod() {
-  const payload = await getPayload({ config });
-  const { docs } = await payload.find({
-    collection: "rankings",
-    sort: "-createdAt",
-    limit: 1,
-  });
+  try {
+    const payload = await getPayload({ config });
+    const { docs } = await payload.find({
+      collection: "rankings",
+      sort: "-createdAt",
+      limit: 1,
+    });
 
-  return docs[0]?.['period'];
+    return docs[0]?.["period"];
+  } catch (error) {
+    console.warn("Failed to fetch latest ranking period for sitemap:", error);
+    return null;
+  }
 }
 
 // Helper function to generate alternates for all languages

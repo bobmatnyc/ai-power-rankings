@@ -4,6 +4,11 @@ import { loggers } from "@/lib/logger";
 
 export async function GET(): Promise<NextResponse> {
   try {
+    // Return empty response during build phase
+    if (process.env.NEXT_PHASE === "phase-production-build") {
+      return NextResponse.json({ tools: [] });
+    }
+
     const response = await payloadDirect.getTools({
       sort: "name",
       limit: 1000, // Get all tools
