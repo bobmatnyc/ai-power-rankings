@@ -77,7 +77,7 @@ export async function POST(_request: NextRequest) {
     });
 
     const rankedToolIds = new Set(
-      rankings.docs.map((r) => (typeof r.tool === "string" ? r.tool : r.tool?.id))
+      rankings.docs.map((r: any) => (typeof r.tool === "string" ? r.tool : r.tool?.id))
     );
 
     for (const tool of allTools.docs) {
@@ -162,7 +162,7 @@ export async function GET() {
 
     const rankingMap = new Map();
     if (rankings) {
-      rankings.docs.forEach((r) => {
+      rankings.docs.forEach((r: any) => {
         const toolId = typeof r.tool === "string" ? r.tool : r.tool?.id;
         rankingMap.set(toolId, r.position);
       });
@@ -172,7 +172,7 @@ export async function GET() {
       currentPeriod: currentPeriodId,
       toolsWithRanking: tools.docs.length,
       outOfSync: [] as any[],
-      samples: tools.docs.slice(0, 10).map((tool) => ({
+      samples: tools.docs.slice(0, 10).map((tool: any) => ({
         id: tool.id,
         name: tool.name,
         current_ranking: tool.current_ranking,
@@ -182,7 +182,7 @@ export async function GET() {
     };
 
     // Find out of sync tools
-    tools.docs.forEach((tool) => {
+    tools.docs.forEach((tool: any) => {
       const actualRanking = rankingMap.get(tool.id);
       if (tool.current_ranking !== actualRanking) {
         analysis.outOfSync.push({

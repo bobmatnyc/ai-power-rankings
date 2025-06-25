@@ -15,7 +15,7 @@ export async function GET() {
 
     // Get unique periods from rankings
     const uniquePeriods = new Set();
-    rankings.docs.forEach((r) => {
+    rankings.docs.forEach((r: any) => {
       if (r.period) {
         uniquePeriods.add(r.period);
       }
@@ -24,7 +24,7 @@ export async function GET() {
     return NextResponse.json({
       totalRankings: rankings.totalDocs,
       uniquePeriods: Array.from(uniquePeriods),
-      sampleRankings: rankings.docs.map((r) => ({
+      sampleRankings: rankings.docs.map((r: any) => ({
         id: r.id,
         tool: typeof r.tool === "object" ? r.tool.name : r.tool,
         position: r.position,

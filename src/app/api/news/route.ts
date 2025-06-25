@@ -284,7 +284,7 @@ export async function GET(request: NextRequest) {
     // Apply filter after transformation based on event_type
     let filteredNews = transformedNews;
     if (filter !== "all") {
-      filteredNews = transformedNews.filter((item) => item.event_type === filter);
+      filteredNews = transformedNews.filter((item: any) => item.event_type === filter);
     }
 
     const apiResponse = NextResponse.json({
