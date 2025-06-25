@@ -180,6 +180,12 @@
       "viewAllButton": "Alle neuen anzeigen"
     }
   },
+  "footer": {
+    "description": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v6.0 mit Innovationsverfall, Plattformrisiko-Modifikatoren und Umsatzqualitätsanpassungen.",
+    "quickLinks": "Schnellzugriff",
+    "categories": "Kategorien",
+    "copyright": "© 2025 AI Power Ranking. Alle Rechte vorbehalten."
+  },
   "rankings": {
     "title": "KI Power Rankings",
     "subtitle": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v6.0",

@@ -34,7 +34,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const response = await fetch(rankingsUrl, {
       next: { revalidate: isDev ? 0 : 300 },
-      signal: AbortSignal.timeout(5000), // 5 second timeout for metadata
     });
 
     if (response.ok) {
@@ -128,7 +127,6 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
     const response = await fetch(url, {
       next: { revalidate: isDev ? 0 : 300 },
       cache: isDev ? "no-store" : "default",
-      signal: AbortSignal.timeout(10000), // 10 second timeout
     });
 
     if (response.ok) {

@@ -189,7 +189,22 @@ export async function GET(): Promise<NextResponse> {
 
     if (!rankings || rankings.length === 0) {
       loggers.ranking.error("No news-enhanced rankings available");
-      return NextResponse.json({ error: "Failed to fetch rankings" }, { status: 500 });
+      // Return empty rankings instead of error to prevent client issues
+      return NextResponse.json({ 
+        rankings: [], 
+        algorithm: {
+          version: "v6-news",
+          name: "News-Enhanced Rankings",
+          date: new Date().toISOString(),
+          weights: WEIGHTS,
+        },
+        stats: {
+          total_tools: 0,
+          tools_with_news: 0,
+          avg_news_boost: 0,
+          max_news_impact: 0,
+        },
+      });
     }
 
     // Get tool details - we already have them from the rankings calculation
