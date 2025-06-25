@@ -115,9 +115,6 @@
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
       "factors": {
-        "agenticCapability": "Capacité Agentique (30%) - Capacités de codage autonomes",
-        "technicalPerformance": "Performance Technique (12.5%) - Focus SWE-bench",
-        "marketTraction": "Traction Marché (12.5%) - Qualité revenue ajustée",
         "agentic": {
           "name": "Capacité Agentique",
           "description": "Capacités de codage autonomes et complétion de tâches multi-étapes"
