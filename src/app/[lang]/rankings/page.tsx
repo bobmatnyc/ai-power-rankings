@@ -13,6 +13,7 @@ import {
 import { generateRankingOGImageUrl } from "@/lib/og-utils";
 import { QuickAnswerBox, FAQSection } from "@/components/seo";
 import { generalFAQs } from "@/data/seo-content";
+import { getUrl } from "@/lib/get-url";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -20,7 +21,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+  const baseUrl = getUrl();
 
   // Try to get current ranking period and top tools
   let topTools: string[] = [];
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   try {
     const isDev = process.env["NODE_ENV"] === "development";
-    const rankingsUrl = isDev ? "http://localhost:3000/api/rankings" : `${baseUrl}/api/rankings`;
+    const rankingsUrl = `${baseUrl}/api/rankings`;
 
     const response = await fetch(rankingsUrl, {
       next: { revalidate: isDev ? 0 : 300 },
@@ -115,9 +116,7 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
   let initialRankings = [];
   try {
     const isDev = process.env["NODE_ENV"] === "development";
-    const baseUrl = isDev
-      ? "http://localhost:3000"
-      : process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
+    const baseUrl = getUrl();
     const timestamp = Date.now();
     const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
 
@@ -133,14 +132,14 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
   }
 
   // Generate structured data
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+  const structuredDataBaseUrl = getUrl();
   const faqSchema = generateRankingFAQSchema();
   const breadcrumbSchema = generateBreadcrumbSchema(
     [
       { name: "Home", url: "/" },
       { name: "Rankings", url: "/rankings" },
     ],
-    baseUrl
+    structuredDataBaseUrl
   );
 
   return (

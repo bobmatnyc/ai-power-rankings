@@ -8,6 +8,7 @@ import { RankingCard } from "@/components/ranking/ranking-card";
 import { HomeContent } from "./home-content";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { getUrl } from "@/lib/get-url";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -24,10 +25,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
 
   try {
     const isDev = process.env["NODE_ENV"] === "development";
-    // Always use local API in development, regardless of NEXT_PUBLIC_BASE_URL
-    const baseUrl = isDev
-      ? "http://localhost:3000"
-      : process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
+    const baseUrl = getUrl();
     const timestamp = Date.now();
     const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
     const response = await fetch(url, {

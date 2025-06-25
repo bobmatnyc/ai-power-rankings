@@ -27,7 +27,7 @@ export default buildConfig({
   editor: lexicalEditor(),
   db: postgresAdapter({
     pool: {
-      connectionString: process.env["SUPABASE_DATABASE_URL"] || "",
+      connectionString: process.env["SUPABASE_DATABASE_URL"] || process.env["DATABASE_URL"] || "",
       max: parseInt(process.env["DATABASE_POOL_MAX"] || "1"),
       min: parseInt(process.env["DATABASE_POOL_MIN"] || "0"),
       idleTimeoutMillis: parseInt(process.env["DATABASE_IDLE_TIMEOUT"] || "10000"),
