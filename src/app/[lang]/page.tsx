@@ -27,15 +27,15 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
   let recentlyUpdated = [];
   let loading = false;
 
-  try {
-    const isDev = process.env["NODE_ENV"] === "development";
-    const baseUrl = getUrl();
-    const timestamp = Date.now();
-    // Use simple endpoint for debugging in preview environment
-    const isPreview = process.env["VERCEL_ENV"] === "preview";
-    const endpoint = isPreview ? "/api/rankings-simple" : "/api/rankings";
-    const url = `${baseUrl}${endpoint}${isDev ? `?_t=${timestamp}` : ""}`;
+  const isDev = process.env["NODE_ENV"] === "development";
+  const baseUrl = getUrl();
+  const timestamp = Date.now();
+  // Use simple endpoint for debugging in preview environment
+  const isPreview = process.env["VERCEL_ENV"] === "preview";
+  const endpoint = isPreview ? "/api/rankings-simple" : "/api/rankings";
+  const url = `${baseUrl}${endpoint}${isDev ? `?_t=${timestamp}` : ""}`;
 
+  try {
     const response = await fetch(url, {
       next: { revalidate: isDev ? 0 : 300 }, // No cache in dev, 5 minutes in prod
       cache: isDev ? "no-store" : "default", // No cache in development
@@ -70,6 +70,8 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       baseUrl,
       env: process.env["VERCEL_ENV"],
       isDev,
+      endpoint,
+      isPreview,
     });
     loading = true; // Show loading state on error
   }
