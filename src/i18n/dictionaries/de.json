@@ -120,6 +120,9 @@
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Drei sophistizierte Modifikatoren gewährleisten faire und präzise Rankings:",
       "factors": {
+        "agenticCapability": "Agentische Fähigkeiten (30%) - Autonome Codierfähigkeiten",
+        "technicalPerformance": "Technische Leistung (12,5%) - SWE-bench Fokus",
+        "marketTraction": "Markttraktion (12,5%) - Umsatzqualität angepasst",
         "agentic": {
           "name": "Agentische Fähigkeiten",
           "description": "Autonome Codierfähigkeiten und mehrstufige Aufgabenbewältigung"
@@ -138,6 +141,10 @@
         }
       },
       "modifiers": {
+        "innovationDecay": "Innovationsverfall - Neuere Innovationen erhalten höhere Bewertungen",
+        "platformRisk": "Plattformrisiko - Unabhängigkeitsboni, Lock-in-Strafen",
+        "revenueQuality": "Umsatzqualität - Enterprise-Umsatz höher gewichtet",
+        "dataValidation": "Datenvalidierung - 80% Vollständigkeit erforderlich",
         "decay": {
           "name": "Innovationsverfall",
           "description": "Neuere Innovationen werden stärker gewichtet"
