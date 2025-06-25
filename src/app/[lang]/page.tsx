@@ -32,16 +32,16 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     const baseUrl = getUrl();
     const timestamp = Date.now();
     const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
-    
+
     const response = await fetch(url, {
       next: { revalidate: isDev ? 0 : 300 }, // No cache in dev, 5 minutes in prod
       cache: isDev ? "no-store" : "default", // No cache in development
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch rankings: ${response.status}`);
     }
-    
+
     const data = await response.json();
     const rankings = data.rankings || [];
 
@@ -56,7 +56,13 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       loading = true;
     }
   } catch (error) {
-    loggers.api.error("Failed to fetch rankings", { error });
+    loggers.api.error("Failed to fetch rankings", {
+      error,
+      url,
+      baseUrl,
+      env: process.env["VERCEL_ENV"],
+      isDev,
+    });
     loading = true; // Show loading state on error
   }
 
@@ -126,11 +132,15 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
           {/* Stats Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary mb-1">39</div>
+              <div className="text-3xl font-bold text-primary mb-1">
+                {loading ? 0 : topRankings.length > 0 ? 39 : 0}
+              </div>
               <div className="text-sm text-muted-foreground">{dict.home.stats.toolsRanked}</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-secondary mb-1">{trendingTools.length}</div>
+              <div className="text-3xl font-bold text-secondary mb-1">
+                {loading ? 0 : trendingTools.length}
+              </div>
               <div className="text-sm text-muted-foreground">{dict.home.stats.trendingUp}</div>
             </div>
             <div className="text-center">
