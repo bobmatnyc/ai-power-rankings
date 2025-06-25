@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { HomeContent } from "./home-content";
-import { loggers } from "@/lib/logger";
 
 interface RankingData {
   rank: number;
