@@ -204,7 +204,6 @@ export async function GET(): Promise<NextResponse> {
 
     // Try to get live rankings first
     const rankings = await getNewsEnhancedRankings();
-    const isUsingCache = false;
 
     // If no rankings available and cache fallback is enabled, use cached data
     if ((!rankings || rankings.length === 0) && useCacheFallback) {
