@@ -388,52 +388,52 @@
     "copyright": "© 2025 AI Power Ranking. All rights reserved."
   },
   "rankings": {
-    "title": "AI Power Ranking",
-    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v6.0",
+    "title": "AI パワーランキング",
+    "subtitle": "アルゴリズム v6.0を使用したAIコーディングツールの包括的ランキング",
     "stats": {
-      "totalTools": "Total Tools",
-      "categories": "Categories",
-      "avgScore": "Avg Score",
-      "lastUpdate": "Last Update",
-      "thisWeek": "This Week"
+      "totalTools": "総ツール数",
+      "categories": "カテゴリー",
+      "avgScore": "平均スコア",
+      "lastUpdate": "最終更新",
+      "thisWeek": "今週"
     },
-    "sortBy": "Sort by",
-    "activeFilters": "Active filters",
+    "sortBy": "並び替え",
+    "activeFilters": "アクティブフィルター",
     "sort": {
-      "rank": "Rank",
-      "trending": "Trending",
-      "score": "Score",
-      "name": "Name",
+      "rank": "ランク",
+      "trending": "トレンド",
+      "score": "スコア",
+      "name": "名前",
       "category": "カテゴリ"
     },
     "algorithm": {
-      "title": "About Algorithm v6.0",
-      "subtitle": "Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
+      "title": "アルゴリズム v6.0について",
+      "subtitle": "イノベーション減衰、プラットフォームリスク修正器、収益品質調整を備えた強化ランキングシステム",
       "tabs": {
-        "factors": "Scoring Factors",
-        "modifiers": "Modifiers",
-        "methodology": "Methodology"
+        "factors": "スコアリング要素",
+        "modifiers": "修正器",
+        "methodology": "手法"
       },
-      "primaryFactors": "Primary Factors (67.5%)",
-      "secondaryFactors": "Secondary Factors (32.5%)",
-      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
+      "primaryFactors": "主要要素 (67.5%)",
+      "secondaryFactors": "副要素 (32.5%)",
+      "description": "私たちのランキングアルゴリズムは、定量的指標と定性的評価を組み合わせてAIコーディングツールの包括的な視点を提供します。新しいデータに基づいて週次でランキングを更新し、手法を継続的に改善しています。",
       "factors": {
-        "agentic": "Agentic Capability",
-        "innovation": "Innovation",
-        "performance": "Performance",
-        "adoption": "Adoption",
-        "traction": "Traction",
-        "sentiment": "Sentiment",
-        "velocity": "Velocity",
-        "resilience": "Resilience"
+        "agentic": "エージェント能力",
+        "innovation": "イノベーション",
+        "performance": "パフォーマンス",
+        "adoption": "採用率",
+        "traction": "牵引力",
+        "sentiment": "感情",
+        "velocity": "速度",
+        "resilience": "復元力"
       },
       "modifiers": {
-        "decay": "Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
-        "risk": "Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
-        "revenue": "Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
+        "decay": "イノベーション減衰（6ヶ月半減期） - 最近のイノベーションをより重視",
+        "risk": "プラットフォームリスク修正器 - プラットフォーム依存とロックインに基づいてスコア調整",
+        "revenue": "収益品質調整 - 持続的収益と一時的収益を区別"
       },
-      "methodologyText": "Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
-      "viewMethodology": "View Full Methodology"
+      "methodologyText": "私たちの包括的な手法はAIコーディングツールを多角的に評価し、実世界のパフォーマンスと採用を反映した公平で正確なランキングを保証します。",
+      "viewMethodology": "完全な手法を表示"
     },
     "filters": {
       "category": "カテゴリでフィルター",
@@ -626,34 +626,34 @@
   },
   "newsletter": {
     "form": {
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email",
-      "subscribe": "Subscribe",
-      "subscribing": "Subscribing...",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
+      "firstName": "名",
+      "lastName": "姓",
+      "email": "メール",
+      "subscribe": "購読",
+      "subscribing": "購読中...",
+      "privacyNote": "プライバシーを尊重します。いつでも購読解除できます。",
       "placeholder": {
         "email": "your@email.com"
       }
     },
     "modal": {
-      "title": "Stay Updated",
-      "subtitle": "Get weekly updates on AI tool rankings, new features, and industry insights.",
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email",
-      "subscribe": "Subscribe",
-      "subscribing": "Subscribing...",
-      "thankYou": "Thank you!",
-      "checkEmail": "Please check your email to verify your subscription",
-      "alreadySubscribed": "You are already subscribed to our newsletter!",
-      "resentEmail": "We've resent the verification email. Please check your inbox.",
-      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
+      "title": "最新情報を受け取る",
+      "subtitle": "AIツールランキング、新機能、業界インサイトの週次更新を受け取ります。",
+      "firstName": "名",
+      "lastName": "姓",
+      "email": "メール",
+      "subscribe": "購読",
+      "subscribing": "購読中...",
+      "thankYou": "ありがとうございます！",
+      "checkEmail": "メールを確認して購読を確認してください",
+      "alreadySubscribed": "すでにニュースレターを購読されています！",
+      "resentEmail": "確認メールを再送しました。受信ボックスを確認してください。",
+      "privacyNote": "プライバシーを尊重します。いつでも購読解除できます。",
       "errors": {
-        "captcha": "Please complete the security check",
-        "failed": "Failed to subscribe. Please try again.",
-        "server": "Server configuration error",
-        "email": "Email service configuration error"
+        "captcha": "セキュリティチェックを完了してください",
+        "failed": "購読に失敗しました。再試行してください。",
+        "server": "サーバー設定エラー",
+        "email": "メールサービス設定エラー"
       },
       "description": "最新のAIツールランキングとアップデートを受信",
       "close": "閉じる"
