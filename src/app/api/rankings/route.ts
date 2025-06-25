@@ -185,10 +185,10 @@ async function getNewsEnhancedRankings(): Promise<ToolRanking[]> {
 export async function GET(): Promise<NextResponse> {
   try {
     // Debug logging for preview environment
-    if (process.env.VERCEL_ENV === "preview") {
+    if (process.env["VERCEL_ENV"] === "preview") {
       console.log("Preview environment detected");
-      console.log("Has DB URL:", !!process.env.SUPABASE_DATABASE_URL);
-      console.log("DB URL prefix:", process.env.SUPABASE_DATABASE_URL?.substring(0, 50));
+      console.log("Has DB URL:", !!process.env["SUPABASE_DATABASE_URL"]);
+      console.log("DB URL prefix:", process.env["SUPABASE_DATABASE_URL"]?.substring(0, 50));
     }
 
     // Get news-enhanced rankings using the v6-news algorithm
