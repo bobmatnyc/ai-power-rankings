@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getPayloadClient } from "@/lib/payload-direct";
 
 export async function GET() {

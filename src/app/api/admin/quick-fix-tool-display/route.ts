@@ -3,7 +3,7 @@ import { getPayloadHMR } from "@payloadcms/next/utilities";
 import configPromise from "@payload-config";
 import { sql } from "drizzle-orm";
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const payload = await getPayloadHMR({ config: configPromise });
 

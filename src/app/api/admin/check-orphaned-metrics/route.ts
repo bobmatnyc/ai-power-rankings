@@ -27,7 +27,7 @@ interface MetricAnalysis {
   };
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const payload = await getPayloadClient();
     logger.info("Checking for orphaned metrics...");

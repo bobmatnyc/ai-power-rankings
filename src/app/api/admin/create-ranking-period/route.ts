@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPayloadClient } from "@/lib/payload-direct";
 import { logger } from "@/lib/logger";
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const payload = await getPayloadClient();
 

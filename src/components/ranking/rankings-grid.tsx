@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/select";
 import { Grid, List, ArrowUpDown, TrendingUp, Star } from "lucide-react";
 import { RankingCard } from "./ranking-card";
-import { getCategoryColor } from "@/lib/category-colors";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
