@@ -13,6 +13,7 @@ The platform implements a source-oriented metrics architecture where each articl
 ### Tech Stack
 
 // Created: 2025-06-08
+// Updated: 2025-06-25 - Added i18n support
 
 - **Frontend Framework**: Next.js 13+ (App Router)
 - **Language**: TypeScript
@@ -26,6 +27,7 @@ The platform implements a source-oriented metrics architecture where each articl
 - **Email**: Resend (for newsletters)
 - **Analytics**: Vercel Analytics
 - **News Management**: Google Drive integration for article ingestion
+- **Internationalization**: Custom i18n implementation with 9 languages
 
 ### Core Components
 
@@ -113,11 +115,15 @@ Responsible for:
 
 // Created: 2025-06-08
 // Updated: 2025-06-09 - Added metrics extraction and migration scripts
+// Updated: 2025-06-25 - Added i18n structure
 
 - `src/app/`: Next.js 13+ app directory structure
   - `api/`: API routes for data access and collection
-  - `rankings/`: Rankings page and filtering
-  - `tools/[slug]/`: Dynamic tool detail pages
+  - `[lang]/`: Internationalized pages with language routing
+    - `rankings/`: Rankings page and filtering
+    - `tools/[slug]/`: Dynamic tool detail pages
+    - `methodology/`: Methodology documentation
+    - `about/`: About page
 - `src/components/`: Reusable UI components
   - `ui/`: shadcn/ui base components
   - `ranking/`: Ranking-specific components
@@ -126,6 +132,12 @@ Responsible for:
   - `database.ts`: Supabase client and queries
   - `ranking-algorithm.ts`: Core ranking calculations (v4.0)
   - `data-collectors/`: Data collection modules
+- `src/i18n/`: Internationalization configuration
+  - `config.ts`: Language configuration and locales
+  - `get-dictionary.ts`: Dictionary loading function
+  - `dictionaries/`: Translation JSON files for each language
+    - `en.json`, `de.json`, `fr.json`, `it.json`, `ja.json`, `ko.json`, `uk.json`, `hr.json`, `zh.json`
+    - Internal JS tools for translation management (excluded from builds)
 - `src/types/`: TypeScript type definitions
 - `database/`: Schema, migrations, and seed data
   - `migrations/`: Source-oriented schema, metrics tables
@@ -139,6 +151,7 @@ Responsible for:
   - `METRICS-EXTRACTION-PROMPT.md`: AI prompt for article analysis
   - `GOOGLE_DRIVE_INTEGRATION.md`: Google Drive setup and usage guide
   - `DATABASE.md`: Complete database documentation with migration strategies
+  - `WORKFLOW.md`: Development workflow and deployment troubleshooting
 
 ### Data Quality Standards
 
@@ -423,3 +436,51 @@ npm test                 # Run test suite
 3. **Community Platform**: Developer forums and tool discussions
 4. **Educational Content**: Guides for evaluating and adopting AI tools
 5. **Enterprise Reports**: Custom analysis for organizational decision-making
+
+### Internationalization (i18n)
+
+// Created: 2025-06-25
+The platform supports 9 languages with a custom i18n implementation:
+
+#### Supported Languages
+
+- **English** (en) - Primary language
+- **German** (de)
+- **French** (fr)
+- **Italian** (it)
+- **Japanese** (ja)
+- **Korean** (ko)
+- **Ukrainian** (uk)
+- **Croatian** (hr)
+- **Chinese** (zh)
+
+#### Configuration Location
+
+- **Main config**: `/src/i18n/config.ts` - Defines supported locales and default language
+- **Dictionary loader**: `/src/i18n/get-dictionary.ts` - Async function to load translations
+- **Translation files**: `/src/i18n/dictionaries/[lang].json` - One file per language
+- **Middleware**: `/src/middleware.ts` - Handles locale detection and routing
+
+#### Key Implementation Details
+
+- Uses Next.js App Router with `[lang]` dynamic segments
+- Translations are loaded server-side for SSR
+- Locale detection based on URL path, then Accept-Language header
+- All routes are prefixed with locale (e.g., `/en/rankings`, `/it/methodology`)
+- Translation tools in `/src/i18n/dictionaries/*.js` are excluded from builds
+
+#### Common Translation Issues
+
+- **Duplicate structures**: Watch for duplicate nested objects in JSON files (lines 480-600)
+- **Missing keys**: Use `node src/i18n/dictionaries/monitor_i18n.js` to check completeness
+- **React rendering errors**: Ensure all values are strings, not objects
+
+## TODO / Future Improvements
+
+// Created: 2025-06-25
+
+1. **Complete translation coverage** - Add missing translations for all languages
+2. **Language switcher component** - Add UI for users to change language
+3. **RTL support** - Add support for right-to-left languages if needed
+4. **Translation management system** - Consider using a service like Crowdin
+5. **Locale-specific content** - Add region-specific tool recommendations
