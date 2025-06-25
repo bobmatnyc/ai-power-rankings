@@ -197,7 +197,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               toolIdentifier,
               item.source,
               item.url,
-              `Related tool mentioned in: ${item.title || item.headline}`
+              `Related tool mentioned in: ${item.title || (item as any)['headline']}`
             );
 
             // Only add to related tools if tool exists (not pending)
@@ -227,7 +227,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             item.primary_tool,
             item.source,
             item.url,
-            `Primary tool mentioned in: ${item.title || item.headline}`
+            `Primary tool mentioned in: ${item.title || (item as any)['headline']}`
           );
 
           // Only add to related tools if tool exists (not pending)
@@ -280,7 +280,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           data: newsData,
         });
 
-        report.ingested_news_ids.push(createdNews.id);
+        report.ingested_news_ids.push(String(createdNews.id));
         report.processed_items++;
         report.processing_log += `  - Created news item ID: ${createdNews.id}\n`;
       } catch (error) {

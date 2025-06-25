@@ -11,7 +11,7 @@ export async function GET() {
 
     if (!session?.user?.email || session.user.email !== "bob@matsuoka.com") {
       return NextResponse.redirect(
-        new URL("/admin/auth/signin", process.env.NEXTAUTH_URL || "http://localhost:3000")
+        new URL("/admin/auth/signin", process.env['NEXTAUTH_URL'] || "http://localhost:3000")
       );
     }
 
@@ -46,8 +46,8 @@ export async function GET() {
     const token = await payload.login({
       collection: "users",
       data: {
-        email: user.email,
-        password: user.password,
+        email: user['email'],
+        password: user['password'],
       },
     });
 
@@ -64,12 +64,12 @@ export async function GET() {
 
     // Redirect to admin
     return NextResponse.redirect(
-      new URL("/admin", process.env.NEXTAUTH_URL || "http://localhost:3000")
+      new URL("/admin", process.env['NEXTAUTH_URL'] || "http://localhost:3000")
     );
   } catch (error) {
     console.error("OAuth callback error:", error);
     return NextResponse.redirect(
-      new URL("/admin/auth/signin", process.env.NEXTAUTH_URL || "http://localhost:3000")
+      new URL("/admin/auth/signin", process.env['NEXTAUTH_URL'] || "http://localhost:3000")
     );
   }
 }

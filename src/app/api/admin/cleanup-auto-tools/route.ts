@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { getPayload } from "payload";
+import config from "@payload-config";
 import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
 
@@ -47,10 +49,15 @@ export async function DELETE() {
     const autoCreatedTools = toolsResponse.docs || [];
     const deletedTools = [];
 
+    const payload = await getPayload({ config });
+    
     for (const tool of autoCreatedTools) {
       try {
         // Delete the tool
-        await payloadDirect.deleteEntity("tools", tool.id);
+        await payload.delete({
+          collection: "tools",
+          id: tool.id,
+        });
         deletedTools.push({
           id: tool.id,
           slug: tool.slug,

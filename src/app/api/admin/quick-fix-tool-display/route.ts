@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPayloadHMR } from "@payloadcms/next/utilities";
 import configPromise from "@payload-config";
+// @ts-ignore - drizzle-orm is a dependency of @payloadcms/db-postgres
 import { sql } from "drizzle-orm";
 
 export async function POST(_request: NextRequest) {
@@ -34,10 +35,10 @@ export async function POST(_request: NextRequest) {
       success: true,
       message: "Tool display fields updated via direct SQL",
       metrics: {
-        updated: metricsResult.rowCount || 0,
+        updated: (metricsResult as any).rowCount || 0,
       },
       rankings: {
-        updated: rankingsResult.rowCount || 0,
+        updated: (rankingsResult as any).rowCount || 0,
       },
     });
   } catch (error: any) {

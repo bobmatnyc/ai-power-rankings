@@ -380,15 +380,17 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                     </>
                   )}
 
-                  {/* View Tool Link */}
-                  <div className="ml-auto">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/${lang}/tools/${item.tool_id}`}>
-                        {dict.news.viewTool || "View Tool"}
-                        <ArrowRight className="h-4 w-4 ml-1" />
-                      </Link>
-                    </Button>
-                  </div>
+                  {/* View Tool Link - only show if there's a valid tool */}
+                  {item.tool_id && item.tool_id !== "unknown" && (
+                    <div className="ml-auto">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/${lang}/tools/${item.tool_id}`}>
+                          {dict.news.viewTool || "View Tool"}
+                          <ArrowRight className="h-4 w-4 ml-1" />
+                        </Link>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

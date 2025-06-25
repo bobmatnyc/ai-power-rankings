@@ -49,7 +49,7 @@ export const PendingTools: CollectionConfig = {
     },
     {
       name: "website_url",
-      type: "url",
+      type: "text",
     },
     {
       name: "created_from",
@@ -74,7 +74,7 @@ export const PendingTools: CollectionConfig = {
         },
         {
           name: "source_url",
-          type: "url",
+          type: "text",
           admin: {
             description: "URL of the article/source that mentioned this tool",
           },
@@ -107,7 +107,7 @@ export const PendingTools: CollectionConfig = {
       relationTo: "tools",
       admin: {
         description: "If merging, select the existing tool to merge with",
-        condition: (data) => data.status === "approved_merge",
+        condition: (data) => data['status'] === "approved_merge",
       },
     },
     {
@@ -152,9 +152,9 @@ export const PendingTools: CollectionConfig = {
   hooks: {
     beforeChange: [
       ({ data, operation }) => {
-        if (operation === "create" && !data.slug) {
+        if (operation === "create" && !data['slug']) {
           // Auto-generate slug from name
-          data.slug = data.name
+          data['slug'] = data['name']
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/^-+|-+$/g, "");

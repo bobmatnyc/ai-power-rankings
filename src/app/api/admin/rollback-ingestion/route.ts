@@ -3,7 +3,8 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import { loggers } from "@/lib/logger";
 
-interface _RollbackResult {
+// @ts-ignore - Type definition for future use
+interface RollbackResult {
   success: boolean;
   report: {
     ingestion_report_id: string;

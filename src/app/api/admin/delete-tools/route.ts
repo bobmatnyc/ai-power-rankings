@@ -35,12 +35,12 @@ export async function POST(request: NextRequest) {
         // Update news articles to remove references
         for (const news of newsResponse.docs) {
           const updatedRelatedTools =
-            news.related_tools?.filter((id: any) => {
+            news['related_tools']?.filter((id: any) => {
               const toolRef = typeof id === "string" ? id : id.id;
               return toolRef !== toolId;
             }) || [];
 
-          const updatedPrimaryTool = news.primary_tool === toolId ? null : news.primary_tool;
+          const updatedPrimaryTool = news['primary_tool'] === toolId ? null : news['primary_tool'];
 
           await payload.update({
             collection: "news",
@@ -92,11 +92,11 @@ export async function POST(request: NextRequest) {
 
         deletedTools.push({
           id: tool.id,
-          slug: tool.slug,
-          name: tool.name,
+          slug: tool['slug'],
+          name: tool['name'],
         });
 
-        loggers.api.info(`Deleted tool: ${tool.name} (${tool.slug})`);
+        loggers.api.info(`Deleted tool: ${tool['name']} (${tool['slug']})`);
       } catch (deleteError) {
         const errorMsg = `Failed to delete tool ID ${toolId}: ${deleteError instanceof Error ? deleteError.message : "Unknown error"}`;
         errors.push(errorMsg);

@@ -76,8 +76,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         ranking_preview_generated: report['ranking_preview_generated'],
         processing_duration: report['processing_duration'],
         file_size: report['file_size'],
-        createdAt: report.createdAt,
-        updatedAt: report.updatedAt,
+        createdAt: report['createdAt'],
+        updatedAt: report['updatedAt'],
       })),
       pagination: {
         total: totalDocs,

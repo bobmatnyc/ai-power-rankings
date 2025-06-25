@@ -102,7 +102,7 @@ async function mergeWithExistingTool(
   adminNotes?: string
 ) {
   // Get the existing tool
-  const existingTool = await payloadDirect.getToolById(mergeWithToolId);
+  const existingTool = await payloadDirect.getTool(mergeWithToolId);
   if (!existingTool) {
     throw new Error("Target tool for merge not found");
   }

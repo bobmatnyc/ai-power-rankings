@@ -36,7 +36,8 @@ interface RemovalSpecification {
   };
 }
 
-interface _RemovalResult {
+// @ts-ignore - Type definition for future use
+interface RemovalResult {
   success: boolean;
   report: {
     filename: string;
