@@ -115,24 +115,24 @@
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
       "factors": {
-        "agenticCapability": "Agentic Capability (30%) - Autonomous coding abilities",
+        "agenticCapability": "Capacité Agentique (30%) - Capacités de codage autonomes",
+        "technicalPerformance": "Performance Technique (12.5%) - Focus SWE-bench",
+        "marketTraction": "Traction Marché (12.5%) - Qualité revenue ajustée",
+        "agentic": {
+          "name": "Capacité Agentique",
+          "description": "Capacités de codage autonomes et complétion de tâches multi-étapes"
+        },
         "innovation": {
           "name": "Innovation",
-          "description": "Technical breakthroughs and feature innovation"
-        },
-        "technicalPerformance": "Technical Performance (12.5%) - SWE-bench focus",
-        "marketTraction": "Market Traction (12.5%) - Revenue quality adjusted",
-        "agentic": {
-          "name": "Agentic Capability",
-          "description": "Autonomous coding abilities and multi-step task completion"
+          "description": "Percées techniques et innovation de fonctionnalités"
         },
         "performance": {
-          "name": "Technical Performance",
-          "description": "Code quality, speed, and benchmark results"
+          "name": "Performance Technique",
+          "description": "Qualité du code, vitesse et résultats de benchmarks"
         },
         "traction": {
-          "name": "Market Traction",
-          "description": "User adoption, growth rate, and market presence"
+          "name": "Traction Marché",
+          "description": "Adoption utilisateur, taux de croissance et présence marché"
         }
       },
       "modifiers": {
@@ -170,7 +170,9 @@
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
     },
     "recent": {
-      "title": "Fraîchement sortis"
+      "title": "Fraîchement sortis",
+      "description": "Les derniers développements et sorties de fonctionnalités des meilleurs outils IA",
+      "viewAllButton": "Voir tous les nouveaux"
     }
   },
   "rankings": {
@@ -448,10 +450,115 @@
     }
   },
   "methodology": {
-    "title": "Our Methodology",
-    "subtitle": "How we rank AI coding tools",
-    "lastUpdated": "Last updated: January 2025",
-    "intro": "AI Power Rankings uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "title": "Notre Méthodologie",
+    "subtitle": "Comment nous classons les outils de codage IA",
+    "lastUpdated": "Dernière mise à jour: Janvier 2025",
+    "intro": "AI Power Rankings utilise un algorithme sophistiqué (v6.0) pour évaluer et classer les outils de codage IA basé sur multiples facteurs quantitatifs et qualitatifs. Notre méthodologie est conçue pour fournir aux développeurs une évaluation objective et basée sur les données du paysage des outils IA.",
+    "factors": {
+      "title": "Facteurs de Notation",
+      "description": "Les outils sont évalués selon 8 dimensions clés avec des pondérations spécifiques",
+      "primary": "Facteurs Primaires (82.5%)",
+      "secondary": "Facteurs Secondaires (17.5%)",
+      "agentic": {
+        "details": "Mesure les capacités autonomes, le raisonnement multi-étapes et la complétion de tâches complexes"
+      },
+      "innovation": {
+        "details": "Évalue les fonctionnalités révolutionnaires, les avancées techniques et la différenciation marché"
+      },
+      "performance": {
+        "details": "Benchmarks sur SWE-bench, HumanEval et tâches de codage réelles"
+      },
+      "adoption": {
+        "details": "Utilisateurs actifs, taux de croissance et métriques de pénétration marché"
+      },
+      "traction": {
+        "details": "Croissance des revenus, tours de financement et indicateurs de momentum business"
+      },
+      "sentiment": {
+        "details": "Satisfaction développeur, feedback communauté et scores de recommandation"
+      },
+      "velocity": {
+        "details": "Cadence de sortie de fonctionnalités, fréquence de mise à jour et vitesse d'innovation"
+      },
+      "resilience": {
+        "details": "Stabilité plateforme, options de sauvegarde et indépendance vendeur"
+      }
+    },
+    "modifiers": {
+      "title": "Modifieurs Dynamiques",
+      "description": "Ajustements en temps réel qui reflètent les conditions du marché et la maturité des outils",
+      "innovationDecay": {
+        "description": "Les scores d'innovation se dégradent avec le temps pour récompenser l'amélioration continue et pénaliser la stagnation"
+      },
+      "platformRisk": {
+        "description": "Ajustements basés sur le verrouillage vendeur, les dépendances plateforme et les risques business",
+        "penalties": "Pénalités de Risque",
+        "penaltyList": {
+          "acquired": "Récemment acquis par un concurrent",
+          "exclusive": "Exclusif à une plateforme (LLM unique)",
+          "competitor": "Détenu par une plateforme concurrente",
+          "regulatory": "Problèmes de conformité réglementaire",
+          "funding": "Préoccupations de financement ou de durabilité"
+        },
+        "bonuses": "Bonus d'Atténuation des Risques",
+        "bonusList": {
+          "multiLLM": "Supporte plusieurs fournisseurs LLM",
+          "openSource": "Disponibilité open source",
+          "selfHosted": "Options d'auto-hébergement"
+        }
+      },
+      "revenueQuality": {
+        "description": "Pondération des revenus basée sur la durabilité du modèle business et le potentiel de croissance",
+        "models": {
+          "enterpriseHigh": "Entreprise (Haut contact)",
+          "enterpriseStandard": "Entreprise (Standard)",
+          "smbSaas": "PME SaaS",
+          "consumerPremium": "Consommateur Premium",
+          "freemium": "Freemium",
+          "openSource": "Open Source"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "Sources de Données & Validation",
+      "description": "Nous maintenons des standards rigoureux pour la collecte et validation des données",
+      "collection": {
+        "title": "Méthodes de Collecte de Données",
+        "sources": {
+          "api": "Intégrations API directes avec les fournisseurs d'outils",
+          "research": "Rapports de recherche industrielle et données d'analystes",
+          "announcements": "Annonces officielles d'entreprises et communiqués de presse",
+          "community": "Enquêtes développeur et feedback communauté",
+          "benchmarks": "Benchmarks de performance standardisés"
+        }
+      },
+      "validation": {
+        "title": "Exigences de Validation",
+        "requirements": {
+          "completeness": "Toutes les métriques requises doivent être présentes",
+          "reliability": "Vérification multi-sources pour les métriques clés",
+          "outlier": "Détection d'aberrations et révision manuelle",
+          "crossValidation": "Validation croisée avec les benchmarks industriels"
+        }
+      },
+      "updateFrequency": {
+        "title": "Planning de Mise à Jour",
+        "description": "Les classements sont recalculés hebdomadairement avec collecte de données continue. Les mises à jour majeures d'algorithme sont versionnées et documentées."
+      }
+    },
+    "algorithm": {
+      "title": "Algorithme v6.0",
+      "description": "Notre dernier algorithme de classement incorpore les modèles d'usage réels et les dynamiques de marché",
+      "keyFeatures": "Caractéristiques Clés",
+      "features": {
+        "innovationDecay": "Modélisation de dégradation d'innovation pour refléter la fraîcheur des outils",
+        "platformRisk": "Évaluation du risque plateforme pour les dépendances vendeur",
+        "revenueQuality": "Ajustements de qualité des revenus basés sur le modèle business",
+        "technicalWeighting": "Pondération des capacités techniques pour différents cas d'usage",
+        "dataValidation": "Validation et normalisation de données multi-sources",
+        "logarithmicScaling": "Mise à l'échelle logarithmique pour des comparaisons équilibrées"
+      }
+    },
     "sections": {
       "scoringFactors": {
         "title": "Scoring Factors",
