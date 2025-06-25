@@ -192,13 +192,21 @@ The AI Power Rankings uses a cache-first approach to ensure reliability even whe
 
 ```bash
 # Generate fresh cache files from database
-npm run generate-cache
+npm run cache:generate
 
 # Or manually update individual caches
 npm run cache:rankings
 npm run cache:tools
 npm run cache:news
 ```
+
+**When to Update Cache:**
+
+- After significant data changes in Payload CMS
+- Before major deployments
+- When adding/removing tools
+- After running monthly rankings
+- When news content is updated
 
 ### 🚀 Cache Strategy by Environment
 
@@ -402,7 +410,17 @@ When adding new features or changing processes:
    npm run pre-deploy       # Run all tests and checks
    ```
 
-2. **Commit and Push**:
+2. **Update Cache Files** (if data changed):
+
+   ```bash
+   npm run cache:generate   # Generate all cache files
+   # Or update individual caches:
+   # npm run cache:rankings
+   # npm run cache:tools
+   # npm run cache:news
+   ```
+
+3. **Commit and Push**:
 
    ```bash
    git add .
@@ -410,22 +428,23 @@ When adding new features or changing processes:
    git push origin main
    ```
 
-3. **Verify Deployment**:
+4. **Verify Deployment**:
 
    ```bash
    npm run check-deployment # Monitor Vercel deployment
    ```
 
-4. **If Deployment Fails**:
+5. **If Deployment Fails**:
 
    - Check error logs from the script output
    - Common issues:
      - TypeScript errors: Run `npm run type-check` locally
      - ESLint errors: Run `npm run lint` locally
      - Missing environment variables: Check Vercel dashboard
+     - Outdated cache files: Run `npm run cache:generate`
    - Fix issues and push again
 
-5. **Verify Production**:
+6. **Verify Production**:
    - Visit https://aipowerrankings.com
    - Check new features are working
    - Monitor error logs in Vercel dashboard
