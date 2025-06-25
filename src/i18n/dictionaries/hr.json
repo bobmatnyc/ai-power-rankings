@@ -30,7 +30,10 @@
     "search": "Pretraži",
     "filter": "Filtriraj",
     "sort": "Sortiraj",
-    "share": "Podijeli"
+    "share": "Podijeli",
+    "explore": "Istražuj",
+    "notAvailable": "Nije dostupno",
+    "users": "Korisnici"
   },
   "navigation": {
     "home": "Početna",
@@ -57,7 +60,8 @@
       "exploreTools": "Istraži sve alate",
       "viewTrending": "Vidi trending",
       "exploreButton": "Istraži sve alate",
-      "trendingButton": "Vidi trending"
+      "trendingButton": "Vidi trending",
+      "whatsNewButton": "Što je novo?"
     },
     "stats": {
       "toolsRanked": "AI alati rangirani",
@@ -117,16 +121,15 @@
       "keyModifiersDescription": "Tri sophisticated modifiera osiguravaju fer i točna rangiranja:",
       "factors": {
         "agenticCapability": "Agentic sposobnost (30%) - Autonomne coding mogućnosti",
-        "innovation": "Inovacija (15%) - S 6-mjesečnim decay half-life",
+        "innovation": {
+          "name": "Inovacija",
+          "description": "Tehnički breakthroughovi i feature inovacije"
+        },
         "technicalPerformance": "Tehnički performance (12.5%) - SWE-bench fokus",
         "marketTraction": "Market traction (12.5%) - Revenue quality adjusted",
         "agentic": {
           "name": "Agentic sposobnost",
           "description": "Autonomne coding sposobnosti i multi-step task completion"
-        },
-        "innovation": {
-          "name": "Inovacija",
-          "description": "Tehnički breakthroughovi i feature inovacije"
         },
         "performance": {
           "name": "Tehnički Performance",
@@ -330,7 +333,13 @@
       "testing-tool": "Testing Tool",
       "code-review": "Code Review",
       "code-generation": "Code Generation"
-    }
+    },
+    "agentic": "Agentski",
+    "autonomy": "Razina autonomije",
+    "codeGen": "Generiranje koda",
+    "multiFile": "Multi-file podrška",
+    "contextWindow": "Context Window",
+    "llmProvider": "LLM Provider"
   },
   "newsletter": {
     "form": {
@@ -574,5 +583,14 @@
       "message": "Molimo provjerite internetsku vezu i pokušajte ponovno.",
       "action": "Retry"
     }
+  },
+  "footer": {
+    "description": "Vaš data hub za AI coding alate. Pratimo najbolje agentic AI dev alate i njihovu performansu.",
+    "quickLinks": "Brzi linkovi",
+    "resources": "Resursi",
+    "company": "Kompanija",
+    "legal": "Pravno",
+    "copyright": "© 2025 AI Power Rankings. Made with ❤️ za developere.",
+    "builtWith": "Built s Next.js, Supabase & AI"
   }
 }

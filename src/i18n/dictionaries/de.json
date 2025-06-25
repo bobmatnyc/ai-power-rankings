@@ -30,7 +30,10 @@
     "search": "Suchen",
     "filter": "Filtern",
     "sort": "Sortieren",
-    "share": "Teilen"
+    "share": "Teilen",
+    "explore": "Entdecken",
+    "notAvailable": "Nicht verfügbar",
+    "users": "User"
   },
   "navigation": {
     "home": "Home",
@@ -57,7 +60,8 @@
       "exploreTools": "Alle Tools entdecken",
       "viewTrending": "Trending anzeigen",
       "exploreButton": "Alle Tools entdecken",
-      "trendingButton": "Trending anzeigen"
+      "trendingButton": "Trending anzeigen",
+      "whatsNewButton": "Was ist neu?"
     },
     "stats": {
       "toolsRanked": "KI-Tools gerankt",
@@ -164,6 +168,9 @@
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
+    },
+    "recent": {
+      "title": "Frisch released"
     }
   },
   "rankings": {
@@ -324,7 +331,13 @@
       "testing-tool": "Testing Tool",
       "code-review": "Code Review",
       "code-generation": "Code Generation"
-    }
+    },
+    "agentic": "Agentic",
+    "autonomy": "Autonomie Level",
+    "codeGen": "Code Generation",
+    "multiFile": "Multi-File Support",
+    "contextWindow": "Context Window",
+    "llmProvider": "LLM Provider"
   },
   "newsletter": {
     "form": {
@@ -568,5 +581,14 @@
       "message": "Bitte überprüfe deine Internetverbindung und versuche es erneut.",
       "action": "Retry"
     }
+  },
+  "footer": {
+    "description": "Dein Data-Hub für AI Coding Tools. Wir tracken die wichtigsten agentic AI Entwicklertools und deren Performance.",
+    "quickLinks": "Quick Links",
+    "resources": "Resources",
+    "company": "Company",
+    "legal": "Legal",
+    "copyright": "© 2025 AI Power Rankings. Made with ❤️ for Developers.",
+    "builtWith": "Built with Next.js, Supabase & AI"
   }
 }

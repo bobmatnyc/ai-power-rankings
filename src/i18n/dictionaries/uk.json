@@ -30,7 +30,10 @@
     "search": "Пошук",
     "filter": "Фільтр",
     "sort": "Сортування",
-    "share": "Поділитись"
+    "share": "Поділитись",
+    "explore": "Дослідити",
+    "notAvailable": "Недоступно",
+    "users": "Користувачі"
   },
   "navigation": {
     "home": "Головна",
@@ -57,7 +60,8 @@
       "exploreTools": "Досліджуй всі тули",
       "viewTrending": "Дивись trending",
       "exploreButton": "Досліджуй всі тули",
-      "trendingButton": "Дивись trending"
+      "trendingButton": "Дивись trending",
+      "whatsNewButton": "Що нового?"
     },
     "stats": {
       "toolsRanked": "AI тули ранжировані",
@@ -117,16 +121,15 @@
       "keyModifiersDescription": "Три sophisticated модифікатори забезпечують fair та accurate рейтинги:",
       "factors": {
         "agenticCapability": "Agentic здатність (30%) - Автономні coding можливості",
-        "innovation": "Інновації (15%) - З 6-місячним decay half-life",
+        "innovation": {
+          "name": "Інновації",
+          "description": "Технічні breakthroughs та feature інновації"
+        },
         "technicalPerformance": "Технічна performance (12.5%) - SWE-bench фокус",
         "marketTraction": "Market traction (12.5%) - Revenue якість adjusted",
         "agentic": {
           "name": "Agentic здатність",
           "description": "Автономні coding здібності та multi-step task completion"
-        },
-        "innovation": {
-          "name": "Інновації",
-          "description": "Технічні breakthroughs та feature інновації"
         },
         "performance": {
           "name": "Технічна Performance",
@@ -330,7 +333,13 @@
       "testing-tool": "Testing Tool",
       "code-review": "Code Review",
       "code-generation": "Code Generation"
-    }
+    },
+    "agentic": "Агентний",
+    "autonomy": "Рівень автономії",
+    "codeGen": "Генерація коду",
+    "multiFile": "Підтримка мульти-файлів",
+    "contextWindow": "Context Window",
+    "llmProvider": "LLM провайдер"
   },
   "newsletter": {
     "form": {
@@ -574,5 +583,14 @@
       "message": "Будь ласка check ваше internet connection та try again.",
       "action": "Retry"
     }
+  },
+  "footer": {
+    "description": "Ваш data hub для AI coding інструментів. Відстежуємо найкращі agentic AI dev tools та їх продуктивність.",
+    "quickLinks": "Швидкі посилання",
+    "resources": "Ресурси",
+    "company": "Компанія",
+    "legal": "Правові питання",
+    "copyright": "© 2025 AI Power Rankings. Зроблено з ❤️ для розробників.",
+    "builtWith": "Побудовано з Next.js, Supabase & AI"
   }
 }
