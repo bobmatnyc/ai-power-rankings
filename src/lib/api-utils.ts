@@ -20,31 +20,29 @@ export interface ApiResponse<T> {
 /**
  * Wrap API handlers with error handling and consistent response format
  */
-export function withApiErrorHandler<T>(
+export async function withApiErrorHandler<T>(
   handler: () => Promise<T>
 ): Promise<NextResponse<ApiResponse<T>>> {
-  return async () => {
-    try {
-      const data = await handler();
-      return NextResponse.json({ data });
-    } catch (error) {
-      loggers.api.error("API handler error", { error });
-      
-      const errorResponse: ApiError = {
-        error: error instanceof Error ? error.message : "An unexpected error occurred",
-        timestamp: new Date().toISOString(),
-      };
+  try {
+    const data = await handler();
+    return NextResponse.json({ data });
+  } catch (error) {
+    loggers.api.error("API handler error", { error });
+    
+    const errorResponse: ApiError = {
+      error: error instanceof Error ? error.message : "An unexpected error occurred",
+      timestamp: new Date().toISOString(),
+    };
 
-      if (process.env.NODE_ENV === "development") {
-        errorResponse.details = error;
-      }
-
-      return NextResponse.json(
-        { error: errorResponse },
-        { status: 500 }
-      );
+    if (process.env.NODE_ENV === "development") {
+      errorResponse.details = error;
     }
-  };
+
+    return NextResponse.json(
+      { error: errorResponse },
+      { status: 500 }
+    );
+  }
 }
 
 /**
