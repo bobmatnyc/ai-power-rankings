@@ -1,0 +1,123 @@
+
+> ai-power-rankings@2.2.0 dev /Users/masa/Projects/ai-power-rankings
+> node scripts/clear-next-cache.js && next dev
+
+🧹 Clearing Next.js cache...
+✅ Next.js cache cleared successfully
+🔧 Dynamic Environment Configuration:
+   PORT: 3000
+   NEXTAUTH_URL: Dynamic (via getUrl())
+   NEXT_PUBLIC_PAYLOAD_URL: Dynamic (via getUrl())
+🔧 Dynamic Environment Configuration:
+   PORT: 3000
+   NEXTAUTH_URL: Dynamic (via getUrl())
+   NEXT_PUBLIC_PAYLOAD_URL: Dynamic (via getUrl())
+   ▲ Next.js 15.3.3
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.5.254:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1081ms
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 721ms (245 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ ○ Compiling /[lang]/dashboard ...
+ ✓ Compiled /[lang]/dashboard in 3.3s (1124 modules)
+ ✓ Compiled in 219ms (486 modules)
+ ⨯ ReferenceError: TrendingUp is not defined
+    at AdminDashboard (src/components/admin/admin-dashboard.tsx:64:12)
+  62 |       title: "Analytics",
+  63 |       description: "View detailed analytics and user engagement metrics",
+> 64 |       icon: TrendingUp,
+     |            ^
+  65 |       href: "/dashboard/analytics",
+  66 |       color: "bg-gray-500",
+  67 |       disabled: true, {
+  digest: '798977626'
+}
+ GET /en/dashboard 500 in 4002ms
+ ✓ Compiled /favicon.ico in 359ms (636 modules)
+ GET /favicon.ico 200 in 492ms
+ ✓ Compiled in 466ms (1124 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /en/dashboard 200 in 204ms
+ GET /favicon.ico 200 in 140ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 3s (3010 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/tools 200 in 3485ms
+ GET /api/auth/session 200 in 3487ms
+ GET /api/auth/session 200 in 10ms
+ ○ Compiling /[lang]/dashboard/news-ingestion ...
+ ✓ Compiled /[lang]/dashboard/news-ingestion in 706ms (1135 modules)
+ GET /en/dashboard/news-ingestion 200 in 1193ms
+ ✓ Compiled in 125ms (737 modules)
+ ✓ Compiled /api/admin/ingest-news in 401ms (2795 modules)
+[13:32:54] [31mERROR[39m: [36mError running onInit function[39m
+    err: {
+      "type": "DrizzleQueryError",
+      "message": "Failed query: select \"id\", \"name\", \"role\", \"auth_provider\", \"last_login_at\", \"api_key\", \"enable_api_key\", \"updated_at\", \"created_at\", \"enable_a_p_i_key\", \"api_key\", \"api_key_index\", \"email\", \"reset_password_token\", \"reset_password_expiration\", \"salt\", \"hash\", \"login_attempts\", \"lock_until\" from \"payload\".\"users\" \"users\" order by \"users\".\"created_at\" desc limit $1\nparams: 1: column \"enable_a_p_i_key\" does not exist",
+      "stack":
+          Error: Failed query: select "id", "name", "role", "auth_provider", "last_login_at", "api_key", "enable_api_key", "updated_at", "created_at", "enable_a_p_i_key", "api_key", "api_key_index", "email", "reset_password_token", "reset_password_expiration", "salt", "hash", "login_attempts", "lock_until" from "payload"."users" "users" order by "users"."created_at" desc limit $1
+          params: 1
+              at NodePgPreparedQuery.queryWithCache (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/pg-core/session.js:55:15)
+              at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+              at async eval (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/node-postgres/session.js:131:22)
+              at async find (webpack-internal:///(rsc)/./node_modules/.pnpm/@payloadcms+drizzle@3.43.0_@types+pg@8.10.2_payload@3.43.0_pg@8.11.3/node_modules/@payloadcms/drizzle/dist/find/findMany.js:123:21)
+              at async findOperation (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/collections/operations/find.js:136:22)
+              at async Object.onInit (webpack-internal:///(rsc)/./payload.config.ts:89:31)
+              at async BasePayload.init (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:744:21)
+              at async getPayload (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:871:26)
+              at async POST (webpack-internal:///(rsc)/./src/app/api/admin/ingest-news/route.ts:116:25)
+              at async AppRouteRouteModule.do (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)
+              at async AppRouteRouteModule.handle (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)
+              at async doRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1518:42)
+              at async DevServer.renderToResponseWithComponentsImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1920:28)
+              at async DevServer.renderPageComponent (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2408:24)
+              at async DevServer.renderToResponseImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2445:32)
+              at async DevServer.pipeImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1008:25)
+              at async NextNodeServer.handleCatchallRenderRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/next-server.js:305:17)
+              at async DevServer.handleRequestImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:900:17)
+              at async /Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:371:20
+              at async Span.traceAsyncFn (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/trace/trace.js:157:20)
+              at async DevServer.handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:368:24)
+              at async invokeRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:237:21)
+              at async handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:428:24)
+              at async requestHandlerImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:452:13)
+              at async Server.requestListener (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/start-server.js:158:13)
+          caused by: error: column "enable_a_p_i_key" does not exist
+              at eval (webpack-internal:///(rsc)/./node_modules/.pnpm/pg-pool@3.10.1_pg@8.11.3/node_modules/pg-pool/index.js:45:11)
+              at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+              at async eval (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/node-postgres/session.js:138:18)
+              at async NodePgPreparedQuery.queryWithCache (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/pg-core/session.js:53:16)
+              at async eval (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/node-postgres/session.js:131:22)
+              at async find (webpack-internal:///(rsc)/./node_modules/.pnpm/@payloadcms+drizzle@3.43.0_@types+pg@8.10.2_payload@3.43.0_pg@8.11.3/node_modules/@payloadcms/drizzle/dist/find/findMany.js:123:21)
+              at async findOperation (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/collections/operations/find.js:136:22)
+              at async Object.onInit (webpack-internal:///(rsc)/./payload.config.ts:89:31)
+              at async BasePayload.init (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:744:21)
+              at async getPayload (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:871:26)
+              at async POST (webpack-internal:///(rsc)/./src/app/api/admin/ingest-news/route.ts:116:25)
+              at async AppRouteRouteModule.do (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)
+              at async AppRouteRouteModule.handle (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)
+              at async doRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1518:42)
+              at async DevServer.renderToResponseWithComponentsImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1920:28)
+              at async DevServer.renderPageComponent (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2408:24)
+              at async DevServer.renderToResponseImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2445:32)
+              at async DevServer.pipeImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1008:25)
+              at async NextNodeServer.handleCatchallRenderRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/next-server.js:305:17)
+              at async DevServer.handleRequestImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:900:17)
+              at async /Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:371:20
+              at async Span.traceAsyncFn (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/trace/trace.js:157:20)
+              at async DevServer.handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:368:24)
+              at async invokeRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:237:21)
+              at async handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:428:24)
+              at async requestHandlerImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:452:13)
+              at async Server.requestListener (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/start-server.js:158:13)
+      "query": "select \"id\", \"name\", \"role\", \"auth_provider\", \"last_login_at\", \"api_key\", \"enable_api_key\", \"updated_at\", \"created_at\", \"enable_a_p_i_key\", \"api_key\", \"api_key_index\", \"email\", \"reset_password_token\", \"reset_password_expiration\", \"salt\", \"hash\", \"login_attempts\", \"lock_until\" from \"payload\".\"users\" \"users\" order by \"users\".\"created_at\" desc limit $1",
+      "params": [
+        1
+      ]
+    }
+{"level":"ERROR","time":"2025-06-26T17:32:54.469Z","pid":93845,"hostname":"Masas-M4-Air.local","context":"API","msg":"News ingestion failed:"}
+ POST /api/admin/ingest-news 500 in 1234ms

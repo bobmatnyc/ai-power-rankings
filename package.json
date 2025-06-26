@@ -6,6 +6,8 @@
     "dev": "node scripts/clear-next-cache.js && next dev",
     "dev:default": "next dev",
     "dev:no-cache-clear": "next dev",
+    "dev:clean": "rm -rf .next && pnpm dev",
+    "dev:monitor": "./scripts/monitor-dev.sh",
     "build": "next build",
     "build:with-types": "npm run type-check && next build",
     "start": "next start",

@@ -933,6 +933,138 @@ git push
 
 **Remember**: Vercel deployments can fail even when local development works. The most common cause is TypeScript errors that aren't caught in development mode. ALWAYS run `npm run build` before pushing.
 
+---
+
+## 🐛 13. Development Debugging Workflow
+
+### Real-time Error Detection and Fixing
+
+**CRITICAL**: After every functional change, follow this debugging workflow to catch and fix errors immediately:
+
+#### 1. **Start Development Server with Logging**
+
+```bash
+# Kill any existing dev servers
+pkill -f "next dev" || true
+
+# Start server in background with logging
+nohup pnpm dev > dev-server.log 2>&1 &
+
+# Monitor logs in real-time
+tail -f dev-server.log
+```
+
+#### 2. **Common Development Errors and Fixes**
+
+| Error Type       | Example                                            | Immediate Fix                                               |
+| ---------------- | -------------------------------------------------- | ----------------------------------------------------------- |
+| Missing Import   | `ReferenceError: TrendingUp is not defined`        | Add to imports: `import { TrendingUp } from "lucide-react"` |
+| Module Not Found | `Cannot find module 'tailwind-merge'`              | Clear cache: `rm -rf .next && pnpm dev`                     |
+| Type Error       | `Type 'string' is not assignable to type 'number'` | Fix type or add type assertion                              |
+| Hook Error       | `Invalid hook call`                                | Check hook is at component top level                        |
+| Hydration Error  | `Text content does not match`                      | Ensure server/client render same content                    |
+
+#### 3. **Active Error Monitoring Script**
+
+Create a monitoring script at `scripts/monitor-dev.sh`:
+
+```bash
+#!/bin/bash
+
+# Start dev server
+echo "🚀 Starting development server..."
+pkill -f "next dev" || true
+nohup pnpm dev > dev-server.log 2>&1 &
+DEV_PID=$!
+
+# Wait for server to start
+sleep 5
+
+# Monitor for errors
+echo "👀 Monitoring for errors..."
+tail -f dev-server.log | while read line; do
+  if [[ $line == *"⨯"* ]] || [[ $line == *"Error:"* ]] || [[ $line == *"error:"* ]]; then
+    echo "🚨 ERROR DETECTED: $line"
+    echo "📍 Check the code at the indicated location"
+    echo "💡 Fix the error and save the file for hot reload"
+  fi
+
+  if [[ $line == *"✓ Compiled"* ]]; then
+    echo "✅ Compilation successful"
+  fi
+
+  if [[ $line == *"⚠"* ]]; then
+    echo "⚠️  WARNING: $line"
+  fi
+done
+```
+
+Make it executable: `chmod +x scripts/monitor-dev.sh`
+
+#### 4. **Debugging Checklist After Changes**
+
+- [ ] Run `pnpm dev` and monitor logs
+- [ ] Check for compilation errors
+- [ ] Test the changed functionality in browser
+- [ ] Watch for runtime errors in console
+- [ ] Verify hot reload is working
+- [ ] Check for TypeScript errors: `npm run type-check`
+- [ ] Run quick lint: `npm run lint`
+
+#### 5. **Common Module Resolution Issues**
+
+```bash
+# Clear all caches when modules are missing
+rm -rf .next
+rm -rf node_modules/.cache
+pnpm install
+pnpm dev
+```
+
+#### 6. **Port Conflicts**
+
+```bash
+# If port 3000 is in use
+lsof -ti:3000 | xargs kill -9
+
+# Or use a different port
+PORT=3001 pnpm dev
+```
+
+#### 7. **Environment Variable Issues**
+
+```bash
+# Verify env vars are loaded
+grep "Dynamic Environment Configuration" dev-server.log
+
+# Check specific env var
+echo $NEXT_PUBLIC_BASE_URL
+```
+
+### Quick Debug Commands
+
+```bash
+# Full reset and restart
+pnpm dev:clean  # Add to package.json: "dev:clean": "rm -rf .next && pnpm dev"
+
+# Check for TypeScript errors without full build
+pnpm type-check
+
+# Quick lint check on changed files
+pnpm lint --fix
+
+# Monitor specific error patterns
+tail -f dev-server.log | grep -E "(Error|error|⨯|failed)"
+```
+
+### Pro Tips
+
+1. **Keep logs visible**: Always have `tail -f dev-server.log` running in a terminal
+2. **Fix immediately**: Don't accumulate errors - fix them as they appear
+3. **Use Fast Refresh**: Save files to trigger hot reload instead of restarting
+4. **Check browser console**: Some errors only appear in browser DevTools
+5. **Network tab**: Monitor API calls for 500 errors indicating backend issues
+
 ## 👁️ Final Note
 
 Quality over quantity. Every metric should tell a story, backed by evidence.

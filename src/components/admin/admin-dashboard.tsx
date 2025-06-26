@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Users, FileUp, Trophy, Database } from "lucide-react";
+import { FileText, Users, FileUp, Trophy, Database, TrendingUp, Settings } from "lucide-react";
 import Link from "next/link";
 
 export function AdminDashboard() {
