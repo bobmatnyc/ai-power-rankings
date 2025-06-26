@@ -308,7 +308,7 @@ The pre-deploy command runs:
 
 ### 🚀 Post-Push Deployment Verification
 
-**After pushing to GitHub, verify Vercel deployment:**
+**After pushing to GitHub, ALWAYS verify Vercel deployment:**
 
 ```bash
 npm run check-deployment  # Monitors Vercel deployment status
@@ -321,6 +321,62 @@ This script:
 - Monitors deployment progress in real-time
 - Shows build logs if deployment fails
 - Provides debugging guidance for failures
+
+#### 📋 Manual Deployment Verification Steps
+
+If the automated script isn't available or you need to check manually:
+
+1. **Visit Vercel Dashboard**:
+
+   - Go to https://vercel.com/dashboard
+   - Find your project (ai-power-rankings)
+   - Click on the latest deployment
+
+2. **Check Build Logs**:
+
+   - Look for red error messages in the build output
+   - Common error patterns:
+     - `Type 'X' is not assignable to type 'Y'` - TypeScript errors
+     - `Module not found: Can't resolve '@vercel/blob'` - Missing dependencies
+     - `SASL authentication failed` - Database connection issues
+
+3. **Immediate Actions for Common Errors**:
+
+   **TypeScript Errors**:
+
+   ```bash
+   # Run locally to see all TypeScript errors
+   npm run build
+   # or
+   npm run type-check
+   ```
+
+   **Module Import Errors**:
+
+   ```bash
+   # Check if module should be dynamically imported
+   # Example: @vercel/blob should only load in production
+   ```
+
+   **Database Connection Errors**:
+
+   ```bash
+   # Verify environment variables in Vercel dashboard
+   # Ensure using session pooler (port 5432) not transaction pooler
+   ```
+
+4. **Fix and Redeploy**:
+
+   ```bash
+   # After fixing errors locally
+   npm run build  # Verify fix works
+   git add .
+   git commit -m "fix: deployment error - [brief description]"
+   git push
+
+   # Monitor the new deployment
+   npm run check-deployment
+   ```
 
 ### ✅ Before Committing
 
@@ -342,6 +398,31 @@ npm test src/lib/ranking-algorithm.test.ts
 # Validate metrics schema
 npm run validate-metrics
 ```
+
+### 🔍 Post-Deployment Error Detection Workflow
+
+**CRITICAL**: After every push to main branch:
+
+1. **Wait 2-3 minutes** for Vercel to start the deployment
+2. **Run deployment check**:
+   ```bash
+   npm run check-deployment
+   ```
+3. **If deployment fails**, the script will show you:
+
+   - The exact error from Vercel logs
+   - Suggested fix commands
+   - Links to relevant documentation
+
+4. **Common deployment failures and fixes**:
+
+   | Error Type | Example                                          | Fix Command                            |
+   | ---------- | ------------------------------------------------ | -------------------------------------- |
+   | TypeScript | `Type 'Date' is not assignable to type 'string'` | `npm run type-check` then fix the file |
+   | ESLint     | `Expected { after 'if' condition`                | `npm run lint:fix`                     |
+   | Import     | `Module not found: @vercel/blob`                 | Check dynamic imports in code          |
+   | Database   | `SASL authentication failed`                     | Verify env vars in Vercel dashboard    |
+   | Build      | `next build failed`                              | `npm run build` locally first          |
 
 ### 🚫 Never Deploy Without Type Checking
 
@@ -825,6 +906,32 @@ git log --oneline | head -20
 git revert HEAD
 git push
 ```
+
+### 🚨 Critical Deployment Workflow Summary
+
+**Every deployment MUST follow this sequence**:
+
+1. **Before Push**:
+
+   ```bash
+   npm run build         # Catch TypeScript errors
+   npm run ci:local      # Run all checks
+   ```
+
+2. **After Push**:
+
+   ```bash
+   npm run check-deployment  # Monitor deployment
+   ```
+
+3. **If Deployment Fails**:
+   - Read the error carefully
+   - Fix locally using the error-specific commands above
+   - Test the fix with `npm run build`
+   - Commit and push the fix
+   - Run `npm run check-deployment` again
+
+**Remember**: Vercel deployments can fail even when local development works. The most common cause is TypeScript errors that aren't caught in development mode. ALWAYS run `npm run build` before pushing.
 
 ## 👁️ Final Note
 

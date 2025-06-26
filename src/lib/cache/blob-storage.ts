@@ -240,7 +240,7 @@ export class CacheBlobStorage {
           const type = blob.pathname.split("/").pop()?.replace(".json", "") as CacheType;
           return {
             type,
-            generatedAt: blob.uploadedAt,
+            generatedAt: blob.uploadedAt.toISOString(),
             size: blob.size,
           };
         });
