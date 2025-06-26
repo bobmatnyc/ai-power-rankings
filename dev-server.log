@@ -3,7 +3,7 @@
 > node scripts/clear-next-cache.js && next dev
 
 🧹 Clearing Next.js cache...
-✅ Next.js cache cleared successfully
+ℹ️  No Next.js cache found
 🔧 Dynamic Environment Configuration:
    PORT: 3000
    NEXTAUTH_URL: Dynamic (via getUrl())
@@ -18,48 +18,15 @@
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 1081ms
- ○ Compiling /middleware ...
- ✓ Compiled /middleware in 721ms (245 modules)
-[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
- ○ Compiling /[lang]/dashboard ...
- ✓ Compiled /[lang]/dashboard in 3.3s (1124 modules)
- ✓ Compiled in 219ms (486 modules)
- ⨯ ReferenceError: TrendingUp is not defined
-    at AdminDashboard (src/components/admin/admin-dashboard.tsx:64:12)
-  62 |       title: "Analytics",
-  63 |       description: "View detailed analytics and user engagement metrics",
-> 64 |       icon: TrendingUp,
-     |            ^
-  65 |       href: "/dashboard/analytics",
-  66 |       color: "bg-gray-500",
-  67 |       disabled: true, {
-  digest: '798977626'
-}
- GET /en/dashboard 500 in 4002ms
- ✓ Compiled /favicon.ico in 359ms (636 modules)
- GET /favicon.ico 200 in 492ms
- ✓ Compiled in 466ms (1124 modules)
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- GET /en/dashboard 200 in 204ms
- GET /favicon.ico 200 in 140ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 3s (3010 modules)
-[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
- GET /api/tools 200 in 3485ms
- GET /api/auth/session 200 in 3487ms
- GET /api/auth/session 200 in 10ms
- ○ Compiling /[lang]/dashboard/news-ingestion ...
- ✓ Compiled /[lang]/dashboard/news-ingestion in 706ms (1135 modules)
- GET /en/dashboard/news-ingestion 200 in 1193ms
- ✓ Compiled in 125ms (737 modules)
- ✓ Compiled /api/admin/ingest-news in 401ms (2795 modules)
-[13:32:54] [31mERROR[39m: [36mError running onInit function[39m
+ ✓ Ready in 1177ms
+ ○ Compiling /api/admin/ingest-news ...
+ ✓ Compiled /api/admin/ingest-news in 3.1s (2012 modules)
+[13:42:15] [31mERROR[39m: [36mError running onInit function[39m
     err: {
       "type": "DrizzleQueryError",
-      "message": "Failed query: select \"id\", \"name\", \"role\", \"auth_provider\", \"last_login_at\", \"api_key\", \"enable_api_key\", \"updated_at\", \"created_at\", \"enable_a_p_i_key\", \"api_key\", \"api_key_index\", \"email\", \"reset_password_token\", \"reset_password_expiration\", \"salt\", \"hash\", \"login_attempts\", \"lock_until\" from \"payload\".\"users\" \"users\" order by \"users\".\"created_at\" desc limit $1\nparams: 1: column \"enable_a_p_i_key\" does not exist",
+      "message": "Failed query: select \"id\", \"name\", \"role\", \"auth_provider\", \"last_login_at\", \"apikey\", \"apikey_enabled\", \"updated_at\", \"created_at\", \"enable_a_p_i_key\", \"api_key\", \"api_key_index\", \"email\", \"reset_password_token\", \"reset_password_expiration\", \"salt\", \"hash\", \"login_attempts\", \"lock_until\" from \"payload\".\"users\" \"users\" order by \"users\".\"created_at\" desc limit $1\nparams: 1: column \"enable_a_p_i_key\" does not exist",
       "stack":
-          Error: Failed query: select "id", "name", "role", "auth_provider", "last_login_at", "api_key", "enable_api_key", "updated_at", "created_at", "enable_a_p_i_key", "api_key", "api_key_index", "email", "reset_password_token", "reset_password_expiration", "salt", "hash", "login_attempts", "lock_until" from "payload"."users" "users" order by "users"."created_at" desc limit $1
+          Error: Failed query: select "id", "name", "role", "auth_provider", "last_login_at", "apikey", "apikey_enabled", "updated_at", "created_at", "enable_a_p_i_key", "api_key", "api_key_index", "email", "reset_password_token", "reset_password_expiration", "salt", "hash", "login_attempts", "lock_until" from "payload"."users" "users" order by "users"."created_at" desc limit $1
           params: 1
               at NodePgPreparedQuery.queryWithCache (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/pg-core/session.js:55:15)
               at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
@@ -114,10 +81,70 @@
               at async handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:428:24)
               at async requestHandlerImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:452:13)
               at async Server.requestListener (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/start-server.js:158:13)
-      "query": "select \"id\", \"name\", \"role\", \"auth_provider\", \"last_login_at\", \"api_key\", \"enable_api_key\", \"updated_at\", \"created_at\", \"enable_a_p_i_key\", \"api_key\", \"api_key_index\", \"email\", \"reset_password_token\", \"reset_password_expiration\", \"salt\", \"hash\", \"login_attempts\", \"lock_until\" from \"payload\".\"users\" \"users\" order by \"users\".\"created_at\" desc limit $1",
+      "query": "select \"id\", \"name\", \"role\", \"auth_provider\", \"last_login_at\", \"apikey\", \"apikey_enabled\", \"updated_at\", \"created_at\", \"enable_a_p_i_key\", \"api_key\", \"api_key_index\", \"email\", \"reset_password_token\", \"reset_password_expiration\", \"salt\", \"hash\", \"login_attempts\", \"lock_until\" from \"payload\".\"users\" \"users\" order by \"users\".\"created_at\" desc limit $1",
       "params": [
         1
       ]
     }
-{"level":"ERROR","time":"2025-06-26T17:32:54.469Z","pid":93845,"hostname":"Masas-M4-Air.local","context":"API","msg":"News ingestion failed:"}
- POST /api/admin/ingest-news 500 in 1234ms
+{"level":"ERROR","time":"2025-06-26T17:42:15.275Z","pid":14448,"hostname":"Masas-M4-Air.local","context":"API","msg":"News ingestion failed:"}
+ POST /api/admin/ingest-news 500 in 4482ms
+[error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ⨯ uncaughtException: [error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ⨯ uncaughtException:  [error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}

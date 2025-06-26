@@ -94,7 +94,7 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      name: "api_key",
+      name: "apikey",
       type: "text",
       access: {
         read: ({ req: { user } }) => user?.["role"] === "admin",
@@ -105,7 +105,7 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      name: "enable_api_key",
+      name: "apikey_enabled",
       type: "checkbox",
       defaultValue: false,
       access: {
