@@ -18,8 +18,10 @@ let blobAPI: {
 
 // Only import @vercel/blob if we're in a Vercel environment
 async function getBlobAPI() {
-  if (blobAPI) {return blobAPI;}
-  
+  if (blobAPI) {
+    return blobAPI;
+  }
+
   if (process.env["BLOB_READ_WRITE_TOKEN"]) {
     try {
       const blob = await import("@vercel/blob");
@@ -35,7 +37,7 @@ async function getBlobAPI() {
       return null;
     }
   }
-  
+
   return null;
 }
 
@@ -45,7 +47,7 @@ async function getBlobAPI() {
  */
 export class CacheBlobStorage {
   private prefix = "cache";
-  
+
   /**
    * Check if we should use blob storage (only in production)
    */
@@ -75,7 +77,7 @@ export class CacheBlobStorage {
 
     const key = this.getCacheKey(type);
     const jsonData = JSON.stringify(data, null, 2);
-    
+
     try {
       await api.put(key, jsonData, {
         access: "public",
@@ -83,7 +85,7 @@ export class CacheBlobStorage {
         addRandomSuffix: false,
         cacheControlMaxAge: 60, // 1 minute cache
       });
-      
+
       loggers.api.info(`Stored cache in blob: ${key}`, {
         size: jsonData.length,
         type,
@@ -108,7 +110,7 @@ export class CacheBlobStorage {
     }
 
     const key = this.getCacheKey(type);
-    
+
     try {
       // Check if blob exists
       const metadata = await api.head(key);
@@ -123,12 +125,12 @@ export class CacheBlobStorage {
       }
 
       const data = await response.json();
-      
+
       loggers.api.info(`Retrieved cache from blob: ${key}`, {
         size: metadata.size,
         uploadedAt: metadata.uploadedAt,
       });
-      
+
       return data;
     } catch (error) {
       loggers.api.error(`Failed to get cache from blob: ${key}`, { error });
@@ -150,7 +152,7 @@ export class CacheBlobStorage {
     }
 
     const key = this.getCacheKey(type);
-    
+
     try {
       const metadata = await api.head(key);
       return !!metadata;
@@ -173,7 +175,7 @@ export class CacheBlobStorage {
     }
 
     const key = this.getCacheKey(type);
-    
+
     try {
       const metadata = await api.head(key);
       if (!metadata) {
@@ -182,7 +184,7 @@ export class CacheBlobStorage {
 
       return {
         type,
-        generatedAt: metadata.uploadedAt,
+        generatedAt: metadata.uploadedAt.toISOString(),
         size: metadata.size,
       };
     } catch {
@@ -204,7 +206,7 @@ export class CacheBlobStorage {
     }
 
     const key = this.getCacheKey(type);
-    
+
     try {
       await api.del(key);
       loggers.api.info(`Deleted cache from blob: ${key}`);
@@ -233,8 +235,8 @@ export class CacheBlobStorage {
       });
 
       return blobs
-        .filter(blob => blob.pathname.endsWith(".json"))
-        .map(blob => {
+        .filter((blob) => blob.pathname.endsWith(".json"))
+        .map((blob) => {
           const type = blob.pathname.split("/").pop()?.replace(".json", "") as CacheType;
           return {
             type,
