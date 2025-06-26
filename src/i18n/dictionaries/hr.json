@@ -1,350 +1,363 @@
 {
   "categories": {
-    "autonomousagent": "Autonomni Agent",
+    "autonomousagent": "Autonomous Agent",
     "codeeditor": "Code Editor",
-    "ideassistant": "IDE Asistent",
+    "ideassistant": "IDE Assistant",
     "appbuilder": "App Builder",
     "opensourceframework": "Open Source Framework",
     "testingtool": "Testing Tool",
     "codereview": "Code Review",
-    "codeassistant": "Code Asistent",
-    "autonomousAgent": "Autonomni Agent",
+    "codeassistant": "Code Assistant",
+    "autonomousAgent": "Autonomous Agent",
     "codeEditor": "Code Editor",
-    "ideAssistant": "IDE Asistent",
+    "ideAssistant": "IDE Assistant",
     "appBuilder": "App Builder",
     "codeReview": "Code Review",
-    "codeAssistant": "Code Asistent"
+    "codeAssistant": "Code Assistant"
   },
   "common": {
-    "appName": "AI Power Rankings",
-    "appDescription": "Data-driven ranking AI coding alata",
+    "appName": "AI Power Ranking",
+    "appDescription": "Data-driven ranking of AI coding tools",
     "loading": "Loading...",
-    "error": "Greška",
-    "tryAgain": "Pokušaj ponovno",
-    "backToHome": "Natrag na početnu",
-    "learnMore": "Saznaj više",
-    "viewAll": "Prikaži sve",
-    "close": "Zatvori",
-    "cancel": "Otkaži",
-    "save": "Spremi",
-    "search": "Pretraži",
-    "filter": "Filtriraj",
-    "sort": "Sortiraj",
-    "share": "Podijeli",
-    "explore": "Istražuj",
-    "notAvailable": "Nije dostupno",
-    "users": "Korisnici"
+    "error": "Error",
+    "tryAgain": "Try Again",
+    "backToHome": "Back to Home",
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "share": "Share",
+    "explore": "Explore",
+    "notAvailable": "N/A",
+    "users": "Users"
   },
   "navigation": {
-    "home": "Početna",
-    "rankings": "Rangiranje",
-    "news": "Vijesti",
-    "tools": "Alati",
-    "methodology": "Metodologija",
-    "about": "O nama",
-    "subscribeToUpdates": "Pretplati se na updates",
-    "navigation": "Navigacija",
-    "quickLinks": "Brzi linkovi",
+    "home": "Home",
+    "rankings": "Rankings",
+    "news": "News",
+    "tools": "Tools",
+    "methodology": "Methodology",
+    "about": "About",
+    "subscribeToUpdates": "Subscribe To Updates",
+    "navigation": "Navigation",
+    "quickLinks": "Quick Links",
     "trending": "Trending",
-    "categories": "Kategorije",
+    "categories": "Categories",
     "features": "Features",
-    "clearFilters": "Očisti filtere",
-    "allCategories": "Sve kategorije"
+    "clearFilters": "Clear Filters",
+    "allCategories": "All Categories"
   },
   "home": {
     "hero": {
-      "badge": "Ažurira se tjedno",
-      "title": "AI Power Rankings",
-      "subtitle": "Otkrij i usporedi najmoćnije AI coding alate. Od autonomnih agenata do IDE asistenata, pronađi savršenog AI partnera za svoj dev workflow.",
-      "description": "Otkrij i usporedi najmoćnije AI coding alate. Od autonomnih agenata do IDE asistenata, pronađi savršenog AI partnera za svoj dev workflow.",
-      "exploreTools": "Istraži sve alate",
-      "viewTrending": "Vidi trending",
-      "exploreButton": "Istraži sve alate",
-      "trendingButton": "Vidi trending",
-      "whatsNewButton": "Što je novo?"
+      "badge": "Updated Weekly",
+      "title": "AI Power Ranking",
+      "subtitle": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
+      "description": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
+      "exploreTools": "Explore All Tools",
+      "viewTrending": "View Trending",
+      "exploreButton": "Explore All Tools",
+      "trendingButton": "View Trending",
+      "whatsNewButton": "What's New"
     },
     "stats": {
-      "toolsRanked": "AI alati rangirani",
-      "trendingUp": "Trend raste",
-      "updates": "Ažuriranja",
-      "freeAccess": "Besplatan pristup",
-      "updateFrequency": "Tjedno ažuriranje"
+      "toolsRanked": "AI Tools Ranked",
+      "trendingUp": "Trending Up",
+      "updates": "Updates",
+      "freeAccess": "Free Access",
+      "updateFrequency": "Weekly Updates"
     },
     "trending": {
-      "title": "Trending ovaj tjedan",
-      "subtitle": "AI alati koji dobivaju momentum i penju se u rankingima",
-      "description": "AI alati koji dobivaju momentum i penju se u rankingima",
-      "viewAll": "Vidi sve trending",
-      "viewAllButton": "Vidi sve trending"
+      "title": "Trending This Week",
+      "subtitle": "AI tools gaining momentum and climbing the rankings",
+      "description": "AI tools gaining momentum and climbing the rankings",
+      "viewAll": "View All Trending",
+      "viewAllButton": "View All Trending"
     },
     "recentlyUpdated": {
-      "title": "Nedavno ažurirani",
-      "subtitle": "Najnoviji updates i features od top AI alata",
-      "description": "Najnoviji updates i features od top AI alata",
-      "viewAll": "Vidi sva rangiranja",
-      "viewAllButton": "Vidi sva rangiranja"
+      "title": "Recently Updated",
+      "subtitle": "Latest updates and new features from top AI tools",
+      "description": "Latest updates and new features from top AI tools",
+      "viewAll": "View All Rankings",
+      "viewAllButton": "View All Rankings"
     },
     "recent": {
-      "title": "Nedavni updates",
-      "description": "Najnoviji razvoji i izdanja funkcionalnosti od najboljih AI alata",
-      "viewAllButton": "Vidi sve nedavne"
+      "title": "Recent Updates",
+      "description": "Latest developments and feature releases from top AI tools",
+      "viewAllButton": "View All Recent"
     },
     "categories": {
-      "title": "Istraži po kategorijama",
-      "explore": "Istraži →",
+      "title": "Explore by Category",
+      "explore": "Explore →",
       "ideAssistants": {
-        "name": "IDE Asistenti",
-        "description": "AI-powered code completion i prijedlozi"
+        "name": "IDE Assistants",
+        "description": "AI-powered code completion and suggestions"
       },
       "aiEditors": {
-        "name": "AI Editori",
-        "description": "Pametni editori s AI integracijom"
+        "name": "AI Editors",
+        "description": "Smart editors with AI integration"
       },
       "appBuilders": {
-        "name": "App Builderi",
-        "description": "Gradi kompletne appove s AI assistance"
+        "name": "App Builders",
+        "description": "Build complete applications with AI assistance"
       },
       "autonomousAgents": {
-        "name": "Autonomni Agenti",
-        "description": "Potpuno autonomni AI software engineeri"
+        "name": "Autonomous Agents",
+        "description": "Fully autonomous AI software engineers"
       },
-      "ideDescription": "AI-powered code completion i prijedlozi",
-      "editorDescription": "Pametni editori s AI integracijom",
-      "builderDescription": "Gradi kompletne appove s AI assistance",
-      "agentDescription": "Potpuno autonomni AI software engineeri"
+      "ideDescription": "AI-powered code completion and suggestions",
+      "editorDescription": "Smart editors with AI integration",
+      "builderDescription": "Build complete applications with AI assistance",
+      "agentDescription": "Fully autonomous AI software engineers"
     },
     "methodology": {
-      "title": "Naša metodologija",
-      "algorithmTitle": "Algoritam v6.0",
-      "algorithmDescription": "Naš napredni ranking algoritam uzima u obzir 8 ključnih faktora s sophisticated modifierima:",
-      "keyModifiersTitle": "Ključni modifieri",
-      "keyModifiersDescription": "Tri sophisticated modifiera osiguravaju fer i točna rangiranja:",
+      "title": "Our Methodology",
+      "algorithmTitle": "Algorithm v6.0",
+      "algorithmDescription": "Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
+      "keyModifiersTitle": "Key Modifiers",
+      "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
       "factors": {
-        "agenticCapability": "Agentic sposobnost (30%) - Autonomne coding mogućnosti",
-        "innovation": {
-          "name": "Inovacija",
-          "description": "Tehnički breakthroughovi i feature inovacije"
-        },
-        "technicalPerformance": "Tehnički performance (12.5%) - SWE-bench fokus",
-        "marketTraction": "Market traction (12.5%) - Revenue quality adjusted",
+        "agenticCapability": "Agentic Capability (30%) - Autonomous coding abilities",
+        "technicalPerformance": "Technical Performance (12.5%) - SWE-bench focus",
+        "marketTraction": "Market Traction (12.5%) - Revenue quality adjusted",
         "agentic": {
-          "name": "Agentic sposobnost",
-          "description": "Autonomne coding sposobnosti i multi-step task completion"
+          "name": "Agentic Capability",
+          "description": "Autonomous coding abilities and multi-step task completion"
+        },
+        "innovation": {
+          "name": "Innovation",
+          "description": "Technical breakthroughs and feature innovation"
         },
         "performance": {
-          "name": "Tehnički Performance",
-          "description": "Kvaliteta koda, brzina i benchmark rezultati"
+          "name": "Technical Performance",
+          "description": "Code quality, speed, and benchmark results"
         },
         "traction": {
           "name": "Market Traction",
-          "description": "User adoption, growth rate i market presence"
+          "description": "User adoption, growth rate, and market presence"
         }
       },
       "modifiers": {
-        "innovationDecay": "Innovation Decay - Recentne inovacije score više",
-        "platformRisk": "Platform Risk - Independence bonusi, lock-in kazne",
-        "revenueQuality": "Revenue Quality - Enterprise revenue weighted više",
-        "dataValidation": "Data Validation - 80% potpunost potrebna",
+        "innovationDecay": "Innovation Decay - Recent innovations score higher",
+        "platformRisk": "Platform Risk - Independence bonuses, lock-in penalties",
+        "revenueQuality": "Revenue Quality - Enterprise revenue weighted higher",
+        "dataValidation": "Data Validation - 80% completeness required",
         "decay": {
           "name": "Innovation Decay",
-          "description": "Recentne inovacije weighted više"
+          "description": "Recent innovations weighted more heavily"
         },
         "risk": {
           "name": "Platform Risk",
-          "description": "Independence vs platform lock-in faktori"
+          "description": "Independence vs. platform lock-in factors"
         },
         "revenue": {
           "name": "Revenue Quality",
-          "description": "Enterprise revenue weighted više nego consumer"
+          "description": "Enterprise revenue weighted higher than consumer"
         },
         "validation": {
           "name": "Data Validation",
-          "description": "Minimum 80% data potpunost potrebna"
+          "description": "Minimum 80% data completeness required"
         }
       },
-      "modifiersTitle": "Dinamički modifieri",
-      "modifiersDescription": "Tri sophisticated modifiera osiguravaju fer i točna rangiranja",
-      "readFull": "Čitaj punu metodologiju",
-      "readMoreButton": "Čitaj punu metodologiju"
+      "modifiersTitle": "Dynamic Modifiers",
+      "modifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings",
+      "readFull": "Read Full Methodology",
+      "readMoreButton": "Read Full Methodology"
     },
     "footer": {
-      "tagline": "Data-driven insights za AI revoluciju",
-      "description": "Sveobuhvatna rangiranja AI coding alata koristeći Algorithm v6.0 s innovation decay, platform risk modifierima i revenue quality adjustmentima.",
-      "quickLinks": "Brzi linkovi",
-      "categories": "Kategorije",
-      "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."
+      "tagline": "Data-driven insights for the AI revolution",
+      "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+      "quickLinks": "Quick Links",
+      "categories": "Categories",
+      "copyright": "© 2025 AI Power Ranking. All rights reserved."
     }
   },
+  "footer": {
+    "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+    "quickLinks": "Quick Links",
+    "categories": "Categories",
+    "copyright": "© 2025 AI Power Ranking. All rights reserved.",
+    "resources": "Resursi",
+    "company": "Kompanija",
+    "legal": "Pravno",
+    "builtWith": "Built s Next.js, Supabase & AI"
+  },
   "rankings": {
-    "title": "AI Power Rankings",
-    "subtitle": "Sveobuhvatna rangiranja AI coding alata s Algorithm v6.0",
+    "title": "AI Power Ranking",
+    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v6.0",
     "stats": {
-      "totalTools": "Ukupno alata",
-      "categories": "Kategorije",
-      "avgScore": "Prosjek score",
-      "lastUpdate": "Zadnji update",
-      "thisWeek": "Ovaj tjedan"
+      "totalTools": "Total Tools",
+      "categories": "Categories",
+      "avgScore": "Avg Score",
+      "lastUpdate": "Last Update",
+      "thisWeek": "This Week"
     },
-    "sortBy": "Sortiraj po",
-    "activeFilters": "Aktivni filteri",
+    "sortBy": "Sort by",
+    "activeFilters": "Active filters",
     "sort": {
       "rank": "Rank",
       "trending": "Trending",
       "score": "Score",
-      "name": "Ime"
+      "name": "Name"
     },
     "algorithm": {
-      "title": "O Algorithm v6.0",
-      "subtitle": "Enhanced ranking sustav s innovation decay, platform risk modifierima i revenue quality adjustmentima",
+      "title": "About Algorithm v6.0",
+      "subtitle": "Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
       "tabs": {
-        "factors": "Scoring faktori",
-        "modifiers": "Modifieri",
-        "methodology": "Metodologija"
+        "factors": "Scoring Factors",
+        "modifiers": "Modifiers",
+        "methodology": "Methodology"
       },
-      "primaryFactors": "Primarni faktori (67.5%)",
-      "secondaryFactors": "Sekundarni faktori (32.5%)",
-      "description": "Naš ranking algoritam kombinira quantitative metrike s qualitative procjenama za comprehensive pogled na AI coding alate. Ažuriramo rangiranja tjedno na osnovu nove data i kontinuirano refiniramo našu metodologiju.",
+      "primaryFactors": "Primary Factors (67.5%)",
+      "secondaryFactors": "Secondary Factors (32.5%)",
+      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
       "factors": {
-        "agentic": "Agentic sposobnost",
-        "innovation": "Inovacija",
+        "agentic": "Agentic Capability",
+        "innovation": "Innovation",
         "performance": "Performance",
-        "adoption": "Prihvaćanje",
+        "adoption": "Adoption",
         "traction": "Traction",
         "sentiment": "Sentiment",
-        "velocity": "Brzina",
-        "resilience": "Otpornost"
+        "velocity": "Velocity",
+        "resilience": "Resilience"
       },
       "modifiers": {
-        "decay": "Innovation Decay (6-mjesečni half-life) - Osigurava da su recentne inovacije weighted više",
-        "risk": "Platform Risk Modifier - Prilagođava scores na osnovu platform ovisnosti i lock-in",
-        "revenue": "Revenue Quality Adjustment - Razlikuje sustainable i one-time revenue"
+        "decay": "Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
+        "risk": "Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
+        "revenue": "Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
       },
-      "methodologyText": "Naša comprehensive metodologija evaluira AI coding alate kroz multiple dimenzije, osiguravajući fer i točna rangiranja koja reflektiraju real-world performance i adoptaciju.",
-      "viewMethodology": "Pogledaj punu metodologiju"
+      "methodologyText": "Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
+      "viewMethodology": "View Full Methodology"
     }
   },
   "news": {
-    "title": "AI Alati Vijesti",
-    "subtitle": "Najnoviji updates, milestones i objave od AI coding alata",
+    "title": "AI Tools News",
+    "subtitle": "Latest updates, milestones, and announcements from AI coding tools",
     "filters": {
-      "all": "Sve vijesti",
+      "all": "All News",
       "milestone": "Milestone",
       "feature": "Feature",
       "partnership": "Partnership",
       "update": "Update",
-      "announcement": "Objava"
+      "announcement": "Announcement"
     },
-    "noItems": "Nema pronađenih news stavki.",
-    "loadingMore": "Loading više vijesti...",
-    "noMore": "Nema više vijesti za učitati",
-    "viewTool": "Pogledaj alat",
+    "noItems": "No news items found.",
+    "loadingMore": "Loading more news...",
+    "noMore": "No more news to load",
+    "viewTool": "View Tool",
     "metrics": {
-      "users": "korisnici",
+      "users": "users",
       "score": "score",
       "rank": "rank"
     },
     "time": {
-      "justNow": "Upravo sada",
-      "hourAgo": "1 sat prije",
-      "hoursAgo": "{count} sati prije",
-      "dayAgo": "1 dan prije",
-      "daysAgo": "{count} dana prije"
+      "justNow": "Just now",
+      "hourAgo": "1 hour ago",
+      "hoursAgo": "{count} hours ago",
+      "dayAgo": "1 day ago",
+      "daysAgo": "{count} days ago"
     }
   },
   "tools": {
-    "title": "AI Coding Alati",
-    "subtitle": "Istraži svih {count} AI coding alata u našoj bazi",
-    "allCategories": "Sve kategorije",
-    "filterByCategory": "Filtriraj po kategoriji",
-    "sortBy": "Sortiraj po",
-    "defaultDescription": "Otkrij i usporedi AI coding alate",
+    "title": "AI Coding Tools",
+    "subtitle": "Explore all {count} AI coding tools in our database",
+    "allCategories": "All Categories",
+    "filterByCategory": "Filter by category",
+    "sortBy": "Sort by",
+    "defaultDescription": "Discover and compare AI coding tools",
+    "notFound": "Tool not found",
+    "backToTools": "Back to Tools",
     "sort": {
-      "name": "Ime",
-      "category": "Kategorija",
+      "name": "Name",
+      "category": "Category",
       "status": "Status"
     },
     "stats": {
-      "total": "Ukupno alata",
-      "active": "Aktivni",
-      "categories": "Kategorije",
+      "total": "Total Tools",
+      "active": "Active",
+      "categories": "Categories",
       "openSource": "Open Source"
     },
     "directory": {
-      "title": "AI Coding Alati Directory",
-      "subtitle": "Istraži svih {count} AI coding alata u našoj database",
-      "filterByCategory": "Filtriraj po kategoriji",
-      "filterByStatus": "Filtriraj po statusu",
-      "allCategories": "Sve kategorije",
-      "allStatuses": "Svi statusi"
+      "title": "AI Coding Tools Directory",
+      "subtitle": "Explore all {count} AI coding tools in our database",
+      "filterByCategory": "Filter by category",
+      "filterByStatus": "Filter by status",
+      "allCategories": "All Categories",
+      "allStatuses": "All Statuses"
     },
     "detail": {
-      "loading": "Loading detalje alata...",
-      "notFound": "Alat nije pronađen",
-      "backToTools": "Natrag na alate",
-      "visitWebsite": "Posjeti website",
+      "loading": "Loading tool details...",
+      "notFound": "Tool not found",
+      "backToTools": "Back to Tools",
+      "visitWebsite": "Visit Website",
       "viewGithub": "GitHub",
-      "viewOnGithub": "Vidi na GitHubu",
-      "overview": "Pregled",
-      "description": "Opis",
-      "company": "Tvrtka",
+      "viewOnGithub": "View on GitHub",
+      "overview": "Overview",
+      "description": "Description",
+      "company": "Company",
       "pricing": "Pricing",
-      "users": "Korisnici",
+      "users": "Users",
       "githubStars": "GitHub Stars",
       "tabs": {
         "performance": "Performance",
+        "pricing": "Pricing",
         "businessMetrics": "Business",
         "scores": "Scores",
         "history": "History"
       },
       "performance": {
-        "title": "Tehnička izvedba",
-        "subtitle": "Rezultati benchmarkova i tehničke sposobnosti",
-        "description": "Rezultati benchmarkova i tehničke sposobnosti uključujući SWE-bench rezultate i podršku funkcionalnosti",
-        "sweScore": "SWE-bench rezultat",
+        "title": "Technical Performance",
+        "subtitle": "Benchmark results and technical capabilities",
+        "description": "Benchmark results and technical capabilities including SWE-bench scores and feature support",
+        "sweScore": "SWE-bench Score",
         "contextWindow": "Context Window",
         "languageSupport": "Language Support",
         "multiFileSupport": "Multi-file Support",
         "llmProviders": "LLM Providers",
-        "tokens": "tokeni",
-        "languages": "jezici",
-        "yes": "Da",
-        "multiple": "Više"
+        "tokens": "tokens",
+        "languages": "languages",
+        "yes": "Yes",
+        "multiple": "Multiple"
       },
       "businessMetrics": {
-        "title": "Business Metriky",
-        "subtitle": "Financijski i growth metriky",
-        "monthlyArr": "ARR (Mjesečni)",
+        "title": "Business Metrics",
+        "subtitle": "Financial and growth metrics",
+        "monthlyArr": "ARR (Monthly)",
         "valuation": "Valuation",
-        "totalFunding": "Ukupno financiranje",
-        "employees": "Zaposlenici",
-        "totalUsers": "Ukupno korisnika"
+        "totalFunding": "Total Funding",
+        "employees": "Employees",
+        "totalUsers": "Total Users"
       },
       "rankingScores": {
         "title": "Ranking Scores",
-        "subtitle": "Detaljni breakdown ranking faktora",
-        "overallScore": "Ukupni Score",
+        "subtitle": "Detailed breakdown of ranking factors",
+        "overallScore": "Overall Score",
         "breakdown": "Score Breakdown",
-        "modifiers": "Primijenjeni Modifieri"
+        "modifiers": "Applied Modifiers"
       },
       "metricHistory": {
         "title": "Metric History",
-        "subtitle": "Nedavni metriky koji utječu na ranking scores",
-        "noHistory": "Nema metric history za ovaj alat.",
+        "subtitle": "Recent metrics that affect ranking scores",
+        "noHistory": "No metric history available for this tool.",
         "update": "Update",
-        "newMetrics": "Novi metriky prijavljeni za {tool}"
+        "newMetrics": "New metrics reported for {tool}"
       }
     },
     "status": {
-      "active": "Aktivan",
+      "active": "Active",
       "beta": "Beta",
-      "deprecated": "Zastario",
-      "discontinued": "Prekinut",
-      "acquired": "Kupljen"
+      "deprecated": "Deprecated",
+      "discontinued": "Discontinued",
+      "acquired": "Acquired"
     },
     "categories": {
-      "autonomous-agent": "Autonomni Agent",
+      "autonomous-agent": "Autonomous Agent",
       "code-editor": "Code Editor",
-      "ide-assistant": "IDE Asistent",
+      "ide-assistant": "IDE Assistant",
       "app-builder": "App Builder",
       "open-source-framework": "Open Source Framework",
       "testing-tool": "Testing Tool",
@@ -360,168 +373,189 @@
   },
   "newsletter": {
     "form": {
-      "firstName": "Ime",
-      "lastName": "Prezime",
+      "firstName": "First name",
+      "lastName": "Last name",
       "email": "Email",
-      "subscribe": "Pretplati se",
-      "subscribing": "Pretplaćujem...",
-      "privacyNote": "Poštujemo vašu privatnost. Odjavite se kad god želite."
+      "subscribe": "Subscribe",
+      "subscribing": "Subscribing...",
+      "privacyNote": "We respect your privacy. Unsubscribe at any time."
     },
     "modal": {
-      "title": "Ostani updated",
-      "subtitle": "Dobivaj tjedno updates o AI alat rangiranjima, novim features i industry insights.",
-      "firstName": "Ime",
-      "lastName": "Prezime",
+      "title": "Stay Updated",
+      "subtitle": "Get weekly updates on AI tool rankings, new features, and industry insights.",
+      "firstName": "First name",
+      "lastName": "Last name",
       "email": "Email",
-      "subscribe": "Pretplati se",
-      "subscribing": "Pretplaćujem...",
-      "thankYou": "Hvala!",
-      "checkEmail": "Molimo provjeri svoj email za potvrdu pretplate",
-      "alreadySubscribed": "Već ste pretplaćeni na naš newsletter!",
-      "resentEmail": "Poslali smo ponovno verification email. Molimo provjeri inbox.",
-      "privacyNote": "Poštujemo vašu privatnost. Odjavite se kad god želite.",
+      "subscribe": "Subscribe",
+      "subscribing": "Subscribing...",
+      "thankYou": "Thank you!",
+      "checkEmail": "Please check your email to verify your subscription",
+      "alreadySubscribed": "You are already subscribed to our newsletter!",
+      "resentEmail": "We've resent the verification email. Please check your inbox.",
+      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
       "errors": {
-        "captcha": "Molimo završi security provjeru",
-        "failed": "Neuspjeh pretplate. Molimo pokušaj ponovno.",
-        "server": "Greška konfiguracije servera",
-        "email": "Greška konfiguracije email servisa"
+        "captcha": "Please complete the security check",
+        "failed": "Failed to subscribe. Please try again.",
+        "server": "Server configuration error",
+        "email": "Email service configuration error"
       }
     },
     "verification": {
       "title": "Email Verification",
       "success": {
-        "title": "Email potvrđen!",
-        "message": "Vaš email je uspješno potvrđen. Počet ćete primati naš tjedno newsletter s najnovijim AI alat rangiranjima i insights."
+        "title": "Email Verified!",
+        "message": "Your email has been successfully verified. You'll start receiving our weekly newsletter with the latest AI tool rankings and insights."
       },
       "alreadyVerified": {
-        "title": "Već potvrđeno",
-        "message": "Ova email adresa je već potvrđena. Spremni ste primati naše newslettere!"
+        "title": "Already Verified",
+        "message": "This email address has already been verified. You're all set to receive our newsletters!"
       },
       "errors": {
         "missingToken": {
-          "title": "Nedostaje Verification Token",
-          "message": "Verification link izgleda nepotpun. Molimo provjeri svoj email za ispravni link."
+          "title": "Missing Verification Token",
+          "message": "The verification link appears to be incomplete. Please check your email for the correct link."
         },
         "invalidToken": {
-          "title": "Neispravni Token",
-          "message": "Ovaj verification link je neispravan ili istekao. Molimo pretplati se ponovno za novi verification email."
+          "title": "Invalid Token",
+          "message": "This verification link is invalid or has expired. Please subscribe again to receive a new verification email."
         },
         "failed": {
-          "title": "Verification neuspješan",
-          "message": "Nismo mogli potvrditi vaš email trenutno. Molimo pokušaj kasnije ili kontaktiraj support ako problem perzistira."
+          "title": "Verification Failed",
+          "message": "We couldn't verify your email at this time. Please try again later or contact support if the problem persists."
         },
         "unexpected": {
-          "title": "Neočekivana greška",
-          "message": "Dogodila se neočekivana greška. Molimo pokušaj kasnije."
+          "title": "Unexpected Error",
+          "message": "An unexpected error occurred. Please try again later."
         }
       },
       "actions": {
-        "backToHome": "Natrag na početnu",
-        "subscribeAgain": "Pretplati se ponovno"
+        "backToHome": "Back to Home",
+        "subscribeAgain": "Subscribe Again"
+      }
+    },
+    "verify": {
+      "goToHomepage": "Go to Homepage",
+      "tryAgain": "Try Again",
+      "success": {
+        "title": "Email Verified!",
+        "description": "Your email has been successfully verified. You'll start receiving our weekly newsletter."
+      },
+      "alreadyVerified": {
+        "title": "Already Verified",
+        "description": "This email address has already been verified. You're all set!"
+      },
+      "error": {
+        "title": "Verification Error"
+      },
+      "errors": {
+        "default": "An unexpected error occurred. Please try again.",
+        "missingToken": "The verification link appears to be incomplete.",
+        "invalidToken": "This verification link is invalid or has expired.",
+        "verificationFailed": "We couldn't verify your email at this time. Please try again later."
       }
     },
     "unsubscribe": {
-      "title": "Odjava od Newslettera",
-      "processing": "Obrađujem vaš zahtjev...",
+      "title": "Unsubscribe from Newsletter",
+      "processing": "Processing your request...",
       "success": {
-        "title": "Uspješno odjavljen",
-        "message": "Odjavili ste se od AI Power Rankings newslettera. Žao nam je što idete!"
+        "title": "Successfully Unsubscribed",
+        "message": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!",
+        "description": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
+      },
+      "error": {
+        "title": "Unsubscribe Error"
       },
       "errors": {
-        "missingToken": {
-          "title": "Nedostaje Token",
-          "message": "Unsubscribe link izgleda nepotpun."
-        },
-        "invalidToken": {
-          "title": "Neispravan Link",
-          "message": "Ovaj unsubscribe link je neispravan ili istekao."
-        },
+        "missingToken": "The unsubscribe link appears to be incomplete.",
+        "invalidToken": "This unsubscribe link is invalid or has expired.",
+        "unsubscribeFailed": "We couldn't process your unsubscribe request. Please try again later.",
+        "default": "An unexpected error occurred. Please try again.",
         "failed": {
-          "title": "Odjava neuspješna",
-          "message": "Nismo mogli obraditi vaš unsubscribe zahtjev. Molimo pokušaj kasnije."
+          "title": "Unsubscribe Failed",
+          "message": "We couldn't process your unsubscribe request. Please try again later."
         },
         "unexpected": {
-          "title": "Greška",
-          "message": "Dogodila se neočekivana greška. Molimo pokušaj ponovno."
+          "title": "Error",
+          "message": "An unexpected error occurred. Please try again."
         }
       },
-      "resubscribe": "Predomislili ste se? Možete se pretplatiti ponovno kad god.",
-      "subscribeAgain": "Pretplati se ponovno"
+      "resubscribe": "Changed your mind? You can subscribe again anytime.",
+      "subscribeAgain": "Subscribe Again"
     }
   },
   "methodology": {
-    "title": "Naša metodologija",
-    "subtitle": "Kako rangiramo AI coding alate",
-    "lastUpdated": "Zadnje ažuriranje: siječanj 2025",
-    "intro": "AI Power Rankings koristi napredni algoritam (v6.0) za evaluaciju i rangiranje AI alata za kodiranje na osnovu više kvantitativnih i kvalitativnih faktora. Naša metodologija je dizajnirana da pruži programerima objektivnu, podatkovnu procjenu AI alata.",
+    "title": "Our Methodology",
+    "subtitle": "How we rank AI coding tools",
+    "lastUpdated": "Last updated: January 2025",
+    "intro": "AI Power Ranking uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
     "algorithm": {
-      "title": "Algoritam v6.0",
-      "description": "Naš najnoviji ranking algoritam uključuje real-world usage patterns i market dynamics",
-      "keyFeatures": "Ključne karakteristike",
+      "title": "Algorithm v6.0",
+      "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
+      "keyFeatures": "Key Features",
       "features": {
-        "innovationDecay": "Innovation decay modeliranje za reflektiranje tool freshness",
-        "platformRisk": "Platform risk assessment za vendor ovisnosti",
-        "revenueQuality": "Revenue quality prilagodbe na osnovu business modela",
-        "technicalWeighting": "Technical capability weighting za različite use cases",
-        "dataValidation": "Multi-source data validacija i normalizacija",
-        "logarithmicScaling": "Logarithmic scaling za balanced usporedbe"
+        "innovationDecay": "Innovation decay modeling to reflect tool freshness",
+        "platformRisk": "Platform risk assessment for vendor dependencies",
+        "revenueQuality": "Revenue quality adjustments based on business model",
+        "technicalWeighting": "Technical capability weighting for different use cases",
+        "dataValidation": "Multi-source data validation and normalization",
+        "logarithmicScaling": "Logarithmic scaling for balanced comparisons"
       }
     },
     "factors": {
-      "title": "Scoring faktori",
-      "description": "Alati se evaluiraju kroz 8 ključnih dimenzija s specific weightings",
-      "primary": "Primarni faktori (82.5%)",
-      "secondary": "Sekundarni faktori (17.5%)",
+      "title": "Scoring Factors",
+      "description": "Tools are evaluated across 8 key dimensions with specific weightings",
+      "primary": "Primary Factors (82.5%)",
+      "secondary": "Secondary Factors (17.5%)",
       "agentic": {
-        "details": "Mjeri autonomous sposobnosti, multi-step reasoning i complex task completion"
+        "details": "Measures autonomous capabilities, multi-step reasoning, and complex task completion"
       },
       "innovation": {
-        "details": "Evaluira breakthrough features, technical advances i market differentiation"
+        "details": "Evaluates breakthrough features, technical advances, and market differentiation"
       },
       "performance": {
-        "details": "Benchmarks na SWE-bench, HumanEval i real-world coding zadaci"
+        "details": "Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
       },
       "adoption": {
-        "details": "Active users, growth rate i market penetration metrike"
+        "details": "Active users, growth rate, and market penetration metrics"
       },
       "traction": {
-        "details": "Revenue growth, funding rounds i business momentum indikatori"
+        "details": "Revenue growth, funding rounds, and business momentum indicators"
       },
       "sentiment": {
-        "details": "Developer satisfakcija, community feedback i recommendation scores"
+        "details": "Developer satisfaction, community feedback, and recommendation scores"
       },
       "velocity": {
-        "details": "Feature release cadence, update frekvencija i innovation speed"
+        "details": "Feature release cadence, update frequency, and innovation speed"
       },
       "resilience": {
-        "details": "Platform stabilnost, backup opcije i vendor independence"
+        "details": "Platform stability, backup options, and vendor independence"
       }
     },
     "modifiers": {
-      "title": "Dinamički modifieri",
-      "description": "Real-time prilagodbe koji reflektiraju market uvjete i tool maturity",
+      "title": "Dynamic Modifiers",
+      "description": "Real-time adjustments that reflect market conditions and tool maturity",
       "innovationDecay": {
-        "description": "Innovation scores decay over time da reward continuous improvement i penalize stagnation"
+        "description": "Innovation scores decay over time to reward continuous improvement and penalize stagnation"
       },
       "platformRisk": {
-        "description": "Prilagodbe na osnovu vendor lock-in, platform ovisnosti i business rizika",
-        "penalties": "Risk kazne",
+        "description": "Adjustments based on vendor lock-in, platform dependencies, and business risks",
+        "penalties": "Risk Penalties",
         "penaltyList": {
-          "acquired": "Nedavno kupljen od konkurenta",
-          "exclusive": "Platform ekskluzivno (single LLM)",
-          "competitor": "U vlasništvu competing platforme",
-          "regulatory": "Regulatory compliance problemi",
-          "funding": "Funding ili sustainability zabrinutosti"
+          "acquired": "Recently acquired by competitor",
+          "exclusive": "Platform exclusive (single LLM)",
+          "competitor": "Owned by competing platform",
+          "regulatory": "Regulatory compliance issues",
+          "funding": "Funding or sustainability concerns"
         },
-        "bonuses": "Risk ublažavanje bonusi",
+        "bonuses": "Risk Mitigation Bonuses",
         "bonusList": {
-          "multiLLM": "Podržava multiple LLM providere",
-          "openSource": "Open source dostupnost",
-          "selfHosted": "Self-hosting opcije"
+          "multiLLM": "Supports multiple LLM providers",
+          "openSource": "Open source availability",
+          "selfHosted": "Self-hosting options"
         }
       },
       "revenueQuality": {
-        "description": "Revenue weighting na osnovu business model sustainability i growth potencijala",
+        "description": "Revenue weighting based on business model sustainability and growth potential",
         "models": {
           "enterpriseHigh": "Enterprise (High-touch)",
           "enterpriseStandard": "Enterprise (Standard)",
@@ -533,176 +567,176 @@
       }
     },
     "dataSources": {
-      "title": "Data izvori i validacija",
-      "description": "Održavamo rigorozne standarde za data collection i validaciju",
+      "title": "Data Sources & Validation",
+      "description": "We maintain rigorous standards for data collection and validation",
       "collection": {
-        "title": "Data collection metode",
+        "title": "Data Collection Methods",
         "sources": {
-          "api": "Direktne API integracije s tool providerima",
-          "research": "Industry research reporti i analyst data",
-          "announcements": "Službene company najave i press releasesi",
-          "community": "Developer ankete i community feedback",
-          "benchmarks": "Standardizirani performance benchmarki"
+          "api": "Direct API integrations with tool providers",
+          "research": "Industry research reports and analyst data",
+          "announcements": "Official company announcements and press releases",
+          "community": "Developer surveys and community feedback",
+          "benchmarks": "Standardized performance benchmarks"
         }
       },
       "validation": {
-        "title": "Validation zahtjevi",
+        "title": "Validation Requirements",
         "requirements": {
-          "completeness": "Sve potrebne metrike moraju biti prisutne",
-          "reliability": "Multiple source verifikacija za key metrike",
-          "outlier": "Outlier detekcija i manual review",
-          "crossValidation": "Cross-validacija s industry benchmarkima"
+          "completeness": "All required metrics must be present",
+          "reliability": "Multiple source verification for key metrics",
+          "outlier": "Outlier detection and manual review",
+          "crossValidation": "Cross-validation with industry benchmarks"
         }
       },
       "updateFrequency": {
-        "title": "Update raspored",
-        "description": "Rangiranja se rekalkuliraju tjedno s continuous data collection. Major algorithm updatesi su versionirani i dokumentirani."
+        "title": "Update Schedule",
+        "description": "Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
       }
     },
     "sections": {
       "scoringFactors": {
-        "title": "Scoring Faktori",
-        "intro": "Naš algoritam evaluira alate kroz 8 ključnih dimenzija, svaku ponderirane prema važnosti za programere:"
+        "title": "Scoring Factors",
+        "intro": "Our algorithm evaluates tools across 8 key dimensions, each weighted according to its importance to developers:"
       },
       "modifiers": {
-        "title": "Dinamički Modifieri",
-        "intro": "Kako bismo osigurali da rangiranja odražavaju trenutne tržišne realnosti, primjenjujemo tri napredna modifikatora:"
+        "title": "Dynamic Modifiers",
+        "intro": "To ensure rankings reflect current market realities, we apply three sophisticated modifiers:"
       },
       "dataCollection": {
-        "title": "Prikupljanje Podataka",
-        "intro": "Prikupljamo podatke iz više izvora za osiguravanje točnosti:",
+        "title": "Data Collection",
+        "intro": "We gather data from multiple sources to ensure accuracy:",
         "sources": [
-          "Izravne API integracije s pružateljima alata",
-          "Javni repozitoriji i statistike programera",
-          "Industrijski izvještaji i provjereni izvori vijesti",
-          "Korisničke ankete i povratne informacije zajednice",
-          "Performanse benchmarki (SWE-bench, HumanEval)"
+          "Direct API integrations with tool providers",
+          "Public repositories and developer statistics",
+          "Industry reports and verified news sources",
+          "User surveys and community feedback",
+          "Performance benchmarks (SWE-bench, HumanEval)"
         ]
       },
       "updateFrequency": {
-        "title": "Učestalost Ažuriranja",
-        "content": "Rangiranja se prepočunavaju tjedno kako bi odražavala brzo razvijajući AI krajolik. Velika ažuriranja metodologije su verzionirana i dokumentirana."
+        "title": "Update Frequency",
+        "content": "Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
       }
     }
   },
   "about": {
-    "title": "O AI Power Rankings",
-    "subtitle": "Osnažujemo developere s data-driven AI alat insights",
+    "title": "About AI Power Ranking",
+    "subtitle": "Empowering developers with data-driven AI tool insights",
     "hero": {
-      "title": "Osnažujemo developere s data-driven AI alat insights",
-      "subtitle": "Vjerujemo da developeri zaslužuju transparentna, objektivna rangiranja AI coding alata za donošenje informiranih odluka."
+      "title": "Empowering developers with data-driven AI tool insights",
+      "subtitle": "We believe developers deserve transparent, objective rankings of AI coding tools to make informed decisions."
     },
     "mission": {
-      "title": "Naša misija",
-      "content": "Pružiti zajednici programera najsveobuhvatnija, nepristrana i najnovija rangiranja AI alata za kodiranje, pomažući timovima odabrati prave alate za njihove potrebe.",
-      "description": "Pružiti zajednici programera najsveobuhvatnija, nepristrana i najnovija rangiranja AI alata za kodiranje, pomažući timovima odabrati prave alate za njihove potrebe."
+      "title": "Our Mission",
+      "content": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs.",
+      "description": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
     },
     "whyWeBuiltThis": {
-      "title": "Zašto smo ovo izgradili",
+      "title": "Why We Built This",
       "reasons": [
-        "Krajolik AI alata se brzo razvija, što otežava praćenje",
-        "Marketinške tvrdnje često se ne poklapaju s performansama u stvarnom svijetu",
-        "Programeri trebaju objektivne podatke za opravdanje usvajanja alata",
-        "Nije bilo jedinstvenog izvora koji uspoređuje sve glavne AI alate za kodiranje"
+        "The AI tools landscape is evolving rapidly, making it hard to keep track",
+        "Marketing claims often don't match real-world performance",
+        "Developers need objective data to justify tool adoption",
+        "There was no single source comparing all major AI coding tools"
       ]
     },
     "team": {
-      "title": "Tim",
-      "description": "AI Power Rankings održava Bob Matsuoka, technology executive i fractional CTO koji prati agentic coding alate od ožujka 2025.",
-      "description1": "AI Power Rankings održava Bob Matsuoka, technology executive i fractional CTO koji prati agentic coding alate od ožujka 2025.",
-      "description2": "Kombinira hands-on iskustvo izgradnje production aplikacija sa sistematičkim evaluacijom AI development alata. Ova stranica pruža quantitative backbone za moju strategic analizu na HyperDev, gdje pišem o praktičnim realnostima kodiranja s AI agentima.",
-      "description3": "Potpuna transparentnost: ovo je one-person operacija izgrađena u dva dana. Shippam i iteriram na osnovu real usage jer developer tools landscape kreće prebrzo za traditional analysis cikluse.",
+      "title": "The Team",
+      "description": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description1": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description2": "I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
+      "description3": "Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
       "hyperdevLink": "HyperDev",
-      "reportIssue": "Prijavi problem"
+      "reportIssue": "Report an Issue"
     },
     "contact": {
-      "title": "Kontakt",
-      "description": "Imate feedback ili prijedloge? Voljeli bismo čuti od vas.",
-      "email": "Kontaktirajte nas na hello@aipowerranking.com"
+      "title": "Get in Touch",
+      "description": "Have feedback or suggestions? We'd love to hear from you.",
+      "email": "Contact us at hello@aipowerranking.com"
     },
     "newsletter": {
-      "title": "Ostani updated",
-      "description": "Dobivaj tjedno insights o AI alat rangiranjima i industry trendovima.",
-      "subscribe": "Pretplati se na Newsletter"
+      "title": "Stay Updated",
+      "description": "Get weekly insights on AI tool rankings and industry trends.",
+      "subscribe": "Subscribe to Newsletter"
     },
     "cta": {
-      "title": "Spreman za istraživanje?",
-      "description": "Zaroni u naša rangiranja i otkrij najbolje AI coding alate za svoje potrebe.",
-      "exploreButton": "Istraži rangiranja",
-      "methodologyButton": "Nauči našu metodologiju"
+      "title": "Ready to Explore?",
+      "description": "Dive into our rankings to discover the best AI coding tools for your needs.",
+      "exploreButton": "Explore Rankings",
+      "methodologyButton": "Learn Our Methodology"
     },
     "whatWeDo": {
-      "title": "Što radimo",
+      "title": "What We Do",
       "track": {
-        "title": "Pratimo AI Alate",
-        "description": "Monitoriziramo i analiziramo najnovije AI coding alate"
+        "title": "Track AI Tools",
+        "description": "Monitor and analyze the latest AI coding tools"
       },
       "analyze": {
-        "title": "Analiziramo Performance",
-        "description": "Evaluiramo alate na osnovu real-world metrika"
+        "title": "Analyze Performance",
+        "description": "Evaluate tools based on real-world metrics"
       },
       "rank": {
-        "title": "Rangiramo objektivno",
-        "description": "Primjenjujemo naš algoritam za pružanje nepristranih rangiranja"
+        "title": "Rank Objectively",
+        "description": "Apply our algorithm to provide unbiased rankings"
       },
       "update": {
-        "title": "Ažuriramo tjedno",
-        "description": "Održavamo rangiranja aktualna s najnovijom data"
+        "title": "Update Weekly",
+        "description": "Keep rankings current with the latest data"
       },
       "analysis": {
-        "title": "Duboka analiza",
-        "description": "Sveobuhvatna evaluacija AI coding alata na osnovu performancea, features i user feedbacka"
+        "title": "Deep Analysis",
+        "description": "Comprehensive evaluation of AI coding tools based on performance, features, and user feedback"
       },
       "methodology": {
-        "title": "Transparentna metodologija",
-        "description": "Naš ranking algoritam je potpuno dokumentiran i kontinuirano se refinira na osnovu community inputa"
+        "title": "Transparent Methodology",
+        "description": "Our ranking algorithm is fully documented and continuously refined based on community input"
       },
       "updates": {
-        "title": "Tjedno ažuriranje",
-        "description": "Rangiranja se osvježavaju svaki tjedan da reflektiraju brzo razvijajući AI tools landscape"
+        "title": "Weekly Updates",
+        "description": "Rankings are refreshed every week to reflect the rapidly evolving AI tools landscape"
       },
       "community": {
-        "title": "Community-driven",
-        "description": "Uključujemo feedback od developera diljem svijeta za poboljšanje naših rangiranja i metodologije"
+        "title": "Community-Driven",
+        "description": "We incorporate feedback from developers worldwide to improve our rankings and methodology"
       }
     },
     "whyItMatters": {
-      "title": "Zašto je važno",
-      "description": "U brzo razvijajućem AI landscape, developeri trebaju pouzdanu data za donošenje informiranih odluka.",
+      "title": "Why It Matters",
+      "description": "In the rapidly evolving AI landscape, developers need reliable data to make informed decisions.",
       "points": [
-        "Uštedi vrijeme na evaluaciji alata",
-        "Donesi data-driven odluke",
-        "Ostani ispred krivulje",
-        "Odaberi alate koji odgovaraju tvojim potrebama"
+        "Save time evaluating tools",
+        "Make data-driven decisions",
+        "Stay ahead of the curve",
+        "Choose tools that fit your needs"
       ],
       "challenges": {
         "paralysis": {
-          "title": "Paraliza odlučivanja",
-          "description": "S desecima AI alata koji se lansiraju svaki tjedan, developeri se suočavaju s overwhelmingim izborima"
+          "title": "Decision Paralysis",
+          "description": "With dozens of AI tools launching every week, developers face overwhelming choices"
         },
         "marketing": {
-          "title": "Marketing vs stvarnost",
-          "description": "Smjele tvrdnje često se ne poklapaju s performansama u stvarnom svijetu i sposobnostima"
+          "title": "Marketing vs Reality",
+          "description": "Bold claims often don't match real-world performance and capabilities"
         },
         "change": {
-          "title": "Brza promjena",
-          "description": "Alati se brzo razvijaju - ono što je najbolje danas možda će biti zastarjelo sutra"
+          "title": "Rapid Change",
+          "description": "Tools evolve quickly - what's best today might be obsolete tomorrow"
         },
         "risks": {
-          "title": "Skriveni rizici",
-          "description": "Sigurnost, privatnost i vendor lock-in zabrinutosti često se zanemaruju"
+          "title": "Hidden Risks",
+          "description": "Security, privacy, and vendor lock-in concerns are often overlooked"
         }
       },
-      "conclusion": "Zato smo izgradili AI Power Rankings - da probijemo kroz buku i pružimo jasne, data-driven insights."
+      "conclusion": "That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
     }
   },
   "sidebar": {
-    "navigation": "Navigacija",
-    "quickLinks": "Brzi linkovi",
+    "navigation": "Navigation",
+    "quickLinks": "Quick Links",
     "trending": "Trending",
-    "categories": "Kategorije",
+    "categories": "Categories",
     "features": "Features",
-    "clearFilters": "Očisti filtere"
+    "clearFilters": "Clear Filters"
   },
   "features": {
     "autocomplete": "Autocomplete",
@@ -710,40 +744,35 @@
     "codeGeneration": "Code Generation",
     "refactoring": "Refactoring",
     "testing": "Testing",
-    "documentation": "Dokumentacija"
+    "documentation": "Documentation"
   },
   "status": {
-    "active": "Aktivan",
+    "active": "Active",
     "beta": "Beta",
-    "deprecated": "Zastario",
-    "discontinued": "Prekinut",
-    "acquired": "Kupljen"
+    "deprecated": "Deprecated",
+    "discontinued": "Discontinued",
+    "acquired": "Acquired"
   },
   "errors": {
     "404": {
-      "title": "Stranica nije pronađena",
-      "message": "Stranica koju tražite ne postoji.",
-      "action": "Idi na početnu"
+      "title": "Page Not Found",
+      "message": "The page you're looking for doesn't exist.",
+      "action": "Go Home"
     },
     "500": {
-      "title": "Nešto je pošlo po zlu",
-      "message": "Imamo tehnički problem. Molimo pokušajte kasnije.",
-      "action": "Pokušaj ponovno"
+      "title": "Something went wrong",
+      "message": "We're experiencing technical difficulties. Please try again later.",
+      "action": "Try Again"
     },
     "offline": {
-      "title": "Offline ste",
-      "message": "Molimo provjerite internetsku vezu i pokušajte ponovno.",
+      "title": "You're Offline",
+      "message": "Please check your internet connection and try again.",
       "action": "Retry"
     }
   },
-  "footer": {
-    "description": "Vaš data hub za AI coding alate. Pratimo najbolje agentic AI dev alate i njihovu performansu.",
-    "quickLinks": "Brzi linkovi",
-    "categories": "Kategorije",
-    "resources": "Resursi",
-    "company": "Kompanija",
-    "legal": "Pravno",
-    "copyright": "© 2025 AI Power Rankings. Made with ❤️ za developere.",
-    "builtWith": "Built s Next.js, Supabase & AI"
+  "seo": {
+    "title": "AI Power Rankings - The Definitive Monthly Rankings of AI Coding Tools",
+    "description": "The definitive monthly rankings and analysis of agentic AI coding tools. Compare Cursor, GitHub Copilot, Claude, and 50+ AI assistants trusted by programerima diljem svijeta",
+    "keywords": "AI coding tools, agentic AI, autonomous coding, developer tools rankings, AI assistants comparison, coding AI benchmarks, SWE-bench results, Claude vs Cursor vs GitHub Copilot"
   }
 }

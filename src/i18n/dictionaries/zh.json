@@ -1,19 +1,19 @@
 {
   "categories": {
-    "autonomousagent": "自主代理",
-    "codeeditor": "代码编辑器",
-    "ideassistant": "IDE助手",
-    "appbuilder": "应用构建器",
-    "opensourceframework": "开源框架",
-    "testingtool": "测试工具",
-    "codereview": "代码审查",
-    "codeassistant": "代码助手",
-    "autonomousAgent": "自主代理",
-    "codeEditor": "代码编辑器",
-    "ideAssistant": "IDE助手",
-    "appBuilder": "应用构建器",
-    "codeReview": "代码审查",
-    "codeAssistant": "代码助手",
+    "autonomousagent": "Autonomous Agent",
+    "codeeditor": "Code Editor",
+    "ideassistant": "IDE Assistant",
+    "appbuilder": "App Builder",
+    "opensourceframework": "Open Source Framework",
+    "testingtool": "Testing Tool",
+    "codereview": "Code Review",
+    "codeassistant": "Code Assistant",
+    "autonomousAgent": "Autonomous Agent",
+    "codeEditor": "Code Editor",
+    "ideAssistant": "IDE Assistant",
+    "appBuilder": "App Builder",
+    "codeReview": "Code Review",
+    "codeAssistant": "Code Assistant",
     "multimodal": "多模态",
     "businessintelligence": "商业智能",
     "imageandvideo": "图像和视频",
@@ -25,40 +25,40 @@
     "contentgeneration": "内容生成"
   },
   "common": {
-    "appName": "AI 实力排行榜",
-    "appDescription": "基于数据驱动的AI编码工具排名",
-    "loading": "加载中...",
-    "error": "错误",
-    "tryAgain": "重试",
-    "backToHome": "返回首页",
-    "learnMore": "了解更多",
-    "viewAll": "查看全部",
-    "close": "关闭",
-    "cancel": "取消",
-    "save": "保存",
-    "search": "搜索",
-    "filter": "筛选",
-    "sort": "排序",
-    "share": "分享",
-    "explore": "探索",
-    "notAvailable": "不可用",
-    "users": "用户"
+    "appName": "AI Power Ranking",
+    "appDescription": "Data-driven ranking of AI coding tools",
+    "loading": "Loading...",
+    "error": "Error",
+    "tryAgain": "Try Again",
+    "backToHome": "Back to Home",
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "share": "Share",
+    "explore": "Explore",
+    "notAvailable": "N/A",
+    "users": "Users"
   },
   "navigation": {
-    "home": "首页",
-    "rankings": "排行榜",
-    "news": "新闻",
-    "tools": "工具",
-    "methodology": "方法论",
-    "about": "关于",
-    "subscribeToUpdates": "订阅更新",
-    "navigation": "导航",
-    "quickLinks": "快速链接",
-    "trending": "热门",
-    "categories": "分类",
-    "features": "功能",
-    "clearFilters": "清除筛选",
-    "allCategories": "所有分类",
+    "home": "Home",
+    "rankings": "Rankings",
+    "news": "News",
+    "tools": "Tools",
+    "methodology": "Methodology",
+    "about": "About",
+    "subscribeToUpdates": "Subscribe To Updates",
+    "navigation": "Navigation",
+    "quickLinks": "Quick Links",
+    "trending": "Trending",
+    "categories": "Categories",
+    "features": "Features",
+    "clearFilters": "Clear Filters",
+    "allCategories": "All Categories",
     "newsletter": "新闻通讯",
     "contact": "联系我们",
     "privacy": "隐私政策",
@@ -70,24 +70,24 @@
   },
   "home": {
     "hero": {
-      "badge": "每周更新",
-      "title": "AI 实力排行榜",
-      "subtitle": "发现并比较最强大的AI编码工具。从自主代理到IDE助手，为您的开发工作流程找到完美的AI伙伴。",
-      "description": "发现并比较最强大的AI编码工具。从自主代理到IDE助手，为您的开发工作流程找到完美的AI伙伴。",
-      "exploreTools": "探索所有工具",
-      "viewTrending": "查看热门",
-      "exploreButton": "探索所有工具",
-      "trendingButton": "查看热门",
-      "whatsNewButton": "最新动态",
+      "badge": "Updated Weekly",
+      "title": "AI Power Ranking",
+      "subtitle": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
+      "description": "Discover and compare the most powerful AI coding tools. From autonomous agents to IDE assistants, find the perfect AI companion for your development workflow.",
+      "exploreTools": "Explore All Tools",
+      "viewTrending": "View Trending",
+      "exploreButton": "Explore All Tools",
+      "trendingButton": "View Trending",
+      "whatsNewButton": "What's New",
       "viewRankings": "查看排名",
       "subscribeNewsletter": "订阅新闻通讯"
     },
     "stats": {
-      "toolsRanked": "AI工具已排名",
-      "trendingUp": "热门上升",
-      "updates": "更新",
-      "freeAccess": "免费访问",
-      "updateFrequency": "每周更新",
+      "toolsRanked": "AI Tools Ranked",
+      "trendingUp": "Trending Up",
+      "updates": "Updates",
+      "freeAccess": "Free Access",
+      "updateFrequency": "Weekly Updates",
       "tools": "个工具",
       "categories": "个分类",
       "totalTools": "工具总数",
@@ -107,53 +107,53 @@
       "monthlyUpdates": "每月更新"
     },
     "trending": {
-      "title": "本周热门",
-      "subtitle": "正在获得关注并在排名中攀升的AI工具",
-      "description": "正在获得关注并在排名中攀升的AI工具",
-      "viewAll": "查看所有热门",
-      "viewAllButton": "查看所有热门",
+      "title": "Trending This Week",
+      "subtitle": "AI tools gaining momentum and climbing the rankings",
+      "description": "AI tools gaining momentum and climbing the rankings",
+      "viewAll": "View All Trending",
+      "viewAllButton": "View All Trending",
       "weeklyRise": "周涨幅",
       "monthlyRise": "月涨幅",
       "newEntries": "新上榜",
       "fastRising": "快速上升"
     },
     "recentlyUpdated": {
-      "title": "最近更新",
-      "subtitle": "顶级AI工具的最新更新和新功能",
-      "description": "顶级AI工具的最新更新和新功能",
-      "viewAll": "查看所有排名",
-      "viewAllButton": "查看所有排名"
+      "title": "Recently Updated",
+      "subtitle": "Latest updates and new features from top AI tools",
+      "description": "Latest updates and new features from top AI tools",
+      "viewAll": "View All Rankings",
+      "viewAllButton": "View All Rankings"
     },
     "recent": {
-      "title": "最新动态",
-      "description": "顶级AI工具的最新开发和功能发布",
-      "viewAllButton": "查看所有最新",
+      "title": "Recent Updates",
+      "description": "Latest developments and feature releases from top AI tools",
+      "viewAllButton": "View All Recent",
       "subtitle": "最新消息和更新",
       "viewAll": "查看全部"
     },
     "categories": {
-      "title": "按分类探索",
-      "explore": "探索 →",
+      "title": "Explore by Category",
+      "explore": "Explore →",
       "ideAssistants": {
-        "name": "IDE助手",
-        "description": "AI驱动的代码补全和建议"
+        "name": "IDE Assistants",
+        "description": "AI-powered code completion and suggestions"
       },
       "aiEditors": {
-        "name": "AI编辑器",
-        "description": "集成AI的智能编辑器"
+        "name": "AI Editors",
+        "description": "Smart editors with AI integration"
       },
       "appBuilders": {
-        "name": "应用构建器",
-        "description": "在AI协助下构建完整应用"
+        "name": "App Builders",
+        "description": "Build complete applications with AI assistance"
       },
       "autonomousAgents": {
-        "name": "自主代理",
-        "description": "完全自主的AI软件工程师"
+        "name": "Autonomous Agents",
+        "description": "Fully autonomous AI software engineers"
       },
-      "ideDescription": "AI驱动的代码补全和建议",
-      "editorDescription": "集成AI的智能编辑器",
-      "builderDescription": "使用AI辅助构建完整应用程序",
-      "agentDescription": "完全自主的AI软件工程师",
+      "ideDescription": "AI-powered code completion and suggestions",
+      "editorDescription": "Smart editors with AI integration",
+      "builderDescription": "Build complete applications with AI assistance",
+      "agentDescription": "Fully autonomous AI software engineers",
       "testingTools": {
         "name": "测试工具",
         "description": "AI 驱动的自动化测试和质量保证"
@@ -167,30 +167,30 @@
       "toolsInCategory": "此分类中的工具"
     },
     "methodology": {
-      "title": "我们的方法论",
-      "algorithmTitle": "算法 v6.0",
-      "algorithmDescription": "我们的先进排名算法考虑8个关键因素和复杂的修正器：",
-      "keyModifiersTitle": "关键修正器",
-      "keyModifiersDescription": "三个复杂的修正器确保公平和准确的排名：",
+      "title": "Our Methodology",
+      "algorithmTitle": "Algorithm v6.0",
+      "algorithmDescription": "Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
+      "keyModifiersTitle": "Key Modifiers",
+      "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
       "factors": {
-        "agenticCapability": "代理能力 (30%) - 自主编程能力",
-        "innovation": {
-          "name": "创新性",
-          "description": "技术突破和功能创新"
-        },
-        "technicalPerformance": "技术性能 (12.5%) - 专注于SWE-bench基准",
-        "marketTraction": "市场牵引力 (12.5%) - 收入质量调整",
+        "agenticCapability": "Agentic Capability (30%) - Autonomous coding abilities",
+        "technicalPerformance": "Technical Performance (12.5%) - SWE-bench focus",
+        "marketTraction": "Market Traction (12.5%) - Revenue quality adjusted",
         "agentic": {
-          "name": "代理能力",
-          "description": "自主编程能力和多步骤任务完成"
+          "name": "Agentic Capability",
+          "description": "Autonomous coding abilities and multi-step task completion"
+        },
+        "innovation": {
+          "name": "Innovation",
+          "description": "Technical breakthroughs and feature innovation"
         },
         "performance": {
-          "name": "技术性能",
-          "description": "代码质量、速度和基准测试结果"
+          "name": "Technical Performance",
+          "description": "Code quality, speed, and benchmark results"
         },
         "traction": {
-          "name": "市场牵引力",
-          "description": "用户采用度、增长率和市场影响力"
+          "name": "Market Traction",
+          "description": "User adoption, growth rate, and market presence"
         },
         "adoption": {
           "name": "采用度"
@@ -200,40 +200,40 @@
         }
       },
       "modifiers": {
-        "innovationDecay": "创新衰减 - 近期创新得分更高",
-        "platformRisk": "平台风险 - 独立性奖励，锁定惩罚",
-        "revenueQuality": "收入质量 - 企业收入权重更高",
-        "dataValidation": "数据验证 - 需要80%完整性",
+        "innovationDecay": "Innovation Decay - Recent innovations score higher",
+        "platformRisk": "Platform Risk - Independence bonuses, lock-in penalties",
+        "revenueQuality": "Revenue Quality - Enterprise revenue weighted higher",
+        "dataValidation": "Data Validation - 80% completeness required",
         "decay": {
-          "name": "创新衰减",
-          "description": "近期创新权重更高"
+          "name": "Innovation Decay",
+          "description": "Recent innovations weighted more heavily"
         },
         "risk": {
-          "name": "平台风险",
-          "description": "独立性与平台锁定因素"
+          "name": "Platform Risk",
+          "description": "Independence vs. platform lock-in factors"
         },
         "revenue": {
-          "name": "收入质量",
-          "description": "企业收入权重高于消费者收入"
+          "name": "Revenue Quality",
+          "description": "Enterprise revenue weighted higher than consumer"
         },
         "validation": {
-          "name": "数据验证",
-          "description": "需要最少80%数据完整性"
+          "name": "Data Validation",
+          "description": "Minimum 80% data completeness required"
         }
       },
-      "modifiersTitle": "[TRANSLATE] Dynamic Modifiers",
-      "modifiersDescription": "三个复杂的修正器确保公平准确的排名",
-      "readFull": "[TRANSLATE] Read Full Methodology",
-      "readMoreButton": "[TRANSLATE] Read Full Methodology",
+      "modifiersTitle": "Dynamic Modifiers",
+      "modifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings",
+      "readFull": "Read Full Methodology",
+      "readMoreButton": "Read Full Methodology",
       "description": "了解我们如何基于性能、采用度、创新和生态系统来评估 AI 编程工具",
       "learnMore": "了解更多"
     },
     "footer": {
-      "tagline": "[TRANSLATE] Data-driven insights for the AI revolution",
-      "description": "使用算法v6.0对AI编程工具进行全面排名，包含创新衰减、平台风险修正器和收入质量调整。",
-      "quickLinks": "[TRANSLATE] Quick Links",
-      "categories": "[TRANSLATE] Categories",
-      "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved."
+      "tagline": "Data-driven insights for the AI revolution",
+      "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+      "quickLinks": "Quick Links",
+      "categories": "Categories",
+      "copyright": "© 2025 AI Power Ranking. All rights reserved."
     },
     "featured": {
       "title": "精选工具",
@@ -410,10 +410,10 @@
     }
   },
   "footer": {
-    "description": "使用算法v6.0对AI编程工具进行全面排名，包含创新衰减、平台风险修正器和收入质量调整。",
-    "quickLinks": "快速链接",
-    "categories": "分类",
-    "copyright": "© 2025 AI 实力排行榜。保留所有权利。",
+    "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+    "quickLinks": "Quick Links",
+    "categories": "Categories",
+    "copyright": "© 2025 AI Power Ranking. All rights reserved.",
     "company": "公司",
     "product": "产品",
     "resources": "资源",
@@ -437,52 +437,52 @@
     }
   },
   "rankings": {
-    "title": "AI 实力排行榜",
-    "subtitle": "使用算法v6.0的AI编码工具综合排名",
+    "title": "AI Power Ranking",
+    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v6.0",
     "stats": {
-      "totalTools": "工具总数",
-      "categories": "分类",
-      "avgScore": "平均分",
-      "lastUpdate": "最后更新",
-      "thisWeek": "本周"
+      "totalTools": "Total Tools",
+      "categories": "Categories",
+      "avgScore": "Avg Score",
+      "lastUpdate": "Last Update",
+      "thisWeek": "This Week"
     },
-    "sortBy": "排序方式",
-    "activeFilters": "活跃筛选",
+    "sortBy": "Sort by",
+    "activeFilters": "Active filters",
     "sort": {
-      "rank": "排名",
-      "trending": "热门",
-      "score": "分数",
-      "name": "名称",
+      "rank": "Rank",
+      "trending": "Trending",
+      "score": "Score",
+      "name": "Name",
       "category": "分类"
     },
     "algorithm": {
-      "title": "关于算法 v6.0",
-      "subtitle": "增强的排名系统，具有创新衰减、平台风险修正器和收入质量调整",
+      "title": "About Algorithm v6.0",
+      "subtitle": "Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
       "tabs": {
-        "factors": "评分因素",
-        "modifiers": "修正器",
-        "methodology": "方法论"
+        "factors": "Scoring Factors",
+        "modifiers": "Modifiers",
+        "methodology": "Methodology"
       },
-      "primaryFactors": "主要因素 (67.5%)",
-      "secondaryFactors": "次要因素 (32.5%)",
-      "description": "我们的排名算法结合定量指标和定性评估，为AI编码工具提供全面视角。我们基于新数据每周更新排名，并持续改进我们的方法论。",
+      "primaryFactors": "Primary Factors (67.5%)",
+      "secondaryFactors": "Secondary Factors (32.5%)",
+      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
       "factors": {
-        "agentic": "代理能力",
-        "innovation": "创新",
-        "performance": "性能",
-        "adoption": "采用率",
-        "traction": "市场牵引力",
-        "sentiment": "情感分析",
-        "velocity": "发展速度",
-        "resilience": "弹性"
+        "agentic": "Agentic Capability",
+        "innovation": "Innovation",
+        "performance": "Performance",
+        "adoption": "Adoption",
+        "traction": "Traction",
+        "sentiment": "Sentiment",
+        "velocity": "Velocity",
+        "resilience": "Resilience"
       },
       "modifiers": {
-        "decay": "创新衰减（6个月半衰期）- 确保近期创新权重更高",
-        "risk": "平台风险修正器 - 根据平台依赖性和锁定调整得分",
-        "revenue": "收入质量调整 - 区分可持续收入和一次性收入"
+        "decay": "Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
+        "risk": "Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
+        "revenue": "Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
       },
-      "methodologyText": "我们的综合方法论从多个维度评估AI编程工具，确保公平准确的排名，反映真实世界的性能和采用情况。",
-      "viewMethodology": "查看完整方法论"
+      "methodologyText": "Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
+      "viewMethodology": "View Full Methodology"
     },
     "filters": {
       "category": "按分类筛选",
@@ -566,31 +566,31 @@
     }
   },
   "news": {
-    "title": "AI工具新闻",
-    "subtitle": "AI编码工具的最新更新、里程碑和公告",
+    "title": "AI Tools News",
+    "subtitle": "Latest updates, milestones, and announcements from AI coding tools",
     "filters": {
-      "all": "所有新闻",
-      "milestone": "里程碑",
-      "feature": "新功能",
-      "partnership": "合作伙伴",
-      "update": "更新",
-      "announcement": "公告"
+      "all": "All News",
+      "milestone": "Milestone",
+      "feature": "Feature",
+      "partnership": "Partnership",
+      "update": "Update",
+      "announcement": "Announcement"
     },
-    "noItems": "未找到新闻项目。",
-    "loadingMore": "加载更多新闻...",
-    "noMore": "没有更多新闻加载",
-    "viewTool": "查看工具",
+    "noItems": "No news items found.",
+    "loadingMore": "Loading more news...",
+    "noMore": "No more news to load",
+    "viewTool": "View Tool",
     "metrics": {
-      "users": "用户",
-      "score": "分数",
-      "rank": "排名"
+      "users": "users",
+      "score": "score",
+      "rank": "rank"
     },
     "time": {
-      "justNow": "刚刚",
-      "hourAgo": "1小时前",
-      "hoursAgo": "{count}小时前",
-      "dayAgo": "1天前",
-      "daysAgo": "{count}天前"
+      "justNow": "Just now",
+      "hourAgo": "1 hour ago",
+      "hoursAgo": "{count} hours ago",
+      "dayAgo": "1 day ago",
+      "daysAgo": "{count} days ago"
     },
     "readMore": "阅读更多",
     "publishedOn": "发布于",
@@ -623,72 +623,72 @@
     }
   },
   "tools": {
-    "title": "AI编码工具",
-    "subtitle": "探索我们数据库中的所有 {count} 个AI编码工具",
-    "allCategories": "所有分类",
-    "filterByCategory": "按分类筛选",
-    "sortBy": "排序方式",
-    "defaultDescription": "发现并比较AI编码工具",
-    "notFound": "未找到工具",
-    "backToTools": "返回工具",
+    "title": "AI Coding Tools",
+    "subtitle": "Explore all {count} AI coding tools in our database",
+    "allCategories": "All Categories",
+    "filterByCategory": "Filter by category",
+    "sortBy": "Sort by",
+    "defaultDescription": "Discover and compare AI coding tools",
+    "notFound": "Tool not found",
+    "backToTools": "Back to Tools",
     "sort": {
-      "name": "名称",
-      "category": "分类",
-      "status": "状态",
+      "name": "Name",
+      "category": "Category",
+      "status": "Status",
       "rank": "排名",
       "score": "评分"
     },
     "stats": {
-      "total": "工具总数",
-      "active": "活跃",
-      "categories": "分类",
-      "openSource": "开源"
+      "total": "Total Tools",
+      "active": "Active",
+      "categories": "Categories",
+      "openSource": "Open Source"
     },
     "directory": {
-      "title": "AI编程工具目录",
-      "subtitle": "探索我们数据库中的所有 {count} 个AI编程工具",
-      "filterByCategory": "按分类筛选",
-      "filterByStatus": "按状态筛选",
-      "allCategories": "所有分类",
-      "allStatuses": "所有状态"
+      "title": "AI Coding Tools Directory",
+      "subtitle": "Explore all {count} AI coding tools in our database",
+      "filterByCategory": "Filter by category",
+      "filterByStatus": "Filter by status",
+      "allCategories": "All Categories",
+      "allStatuses": "All Statuses"
     },
     "detail": {
-      "loading": "加载工具详情中...",
-      "notFound": "未找到工具",
-      "backToTools": "返回工具",
-      "visitWebsite": "访问网站",
+      "loading": "Loading tool details...",
+      "notFound": "Tool not found",
+      "backToTools": "Back to Tools",
+      "visitWebsite": "Visit Website",
       "viewGithub": "GitHub",
-      "viewOnGithub": "在GitHub上查看",
-      "overview": "概览",
-      "description": "描述",
-      "company": "公司",
-      "pricing": "价格",
-      "users": "用户",
-      "githubStars": "GitHub 星标",
+      "viewOnGithub": "View on GitHub",
+      "overview": "Overview",
+      "description": "Description",
+      "company": "Company",
+      "pricing": "Pricing",
+      "users": "Users",
+      "githubStars": "GitHub Stars",
       "tabs": {
-        "performance": "性能",
-        "pricing": "价格",
-        "businessMetrics": "商业指标",
-        "scores": "评分",
-        "history": "历史",
+        "performance": "Performance",
+        "pricing": "Pricing",
+        "businessMetrics": "Business",
+        "scores": "Scores",
+        "history": "History",
         "overview": "概览",
         "features": "功能",
         "reviews": "评价",
         "alternatives": "替代方案"
       },
       "performance": {
-        "title": "[TRANSLATE] Technical Performance",
-        "subtitle": "[TRANSLATE] Benchmark results and technical capabilities",
-        "description": "[TRANSLATE] Benchmark results and technical capabilities including SWE-bench scores and feature support",
-        "sweScore": "[TRANSLATE] SWE-bench Score",
-        "contextWindow": "[TRANSLATE] Context Window",
-        "languageSupport": "[TRANSLATE] Language Support",
-        "multiFileSupport": "[TRANSLATE] Multi-file Support",
-        "llmProviders": "[TRANSLATE] LLM Providers",
-        "tokens": "[TRANSLATE] tokens",
-        "languages": "[TRANSLATE] languages",
-        "yes": "[TRANSLATE] Yes",
-        "multiple": "[TRANSLATE] Multiple",
+        "title": "Technical Performance",
+        "subtitle": "Benchmark results and technical capabilities",
+        "description": "Benchmark results and technical capabilities including SWE-bench scores and feature support",
+        "sweScore": "SWE-bench Score",
+        "contextWindow": "Context Window",
+        "languageSupport": "Language Support",
+        "multiFileSupport": "Multi-file Support",
+        "llmProviders": "LLM Providers",
+        "tokens": "tokens",
+        "languages": "languages",
+        "yes": "Yes",
+        "multiple": "Multiple",
         "no": "否",
         "benchmarks": "基准测试",
         "metrics": "性能指标",
@@ -698,29 +698,29 @@
         "scalability": "可扩展性"
       },
       "businessMetrics": {
-        "title": "[TRANSLATE] Business Metrics",
-        "subtitle": "[TRANSLATE] Financial and growth metrics",
-        "monthlyArr": "[TRANSLATE] ARR (Monthly)",
-        "valuation": "[TRANSLATE] Valuation",
-        "totalFunding": "[TRANSLATE] Total Funding",
-        "employees": "[TRANSLATE] Employees",
-        "totalUsers": "[TRANSLATE] Total Users",
+        "title": "Business Metrics",
+        "subtitle": "Financial and growth metrics",
+        "monthlyArr": "ARR (Monthly)",
+        "valuation": "Valuation",
+        "totalFunding": "Total Funding",
+        "employees": "Employees",
+        "totalUsers": "Total Users",
         "funding": "融资",
         "revenue": "收入"
       },
       "rankingScores": {
-        "title": "[TRANSLATE] Ranking Scores",
-        "subtitle": "[TRANSLATE] Detailed breakdown of ranking factors",
-        "overallScore": "[TRANSLATE] Overall Score",
-        "breakdown": "[TRANSLATE] Score Breakdown",
-        "modifiers": "[TRANSLATE] Applied Modifiers"
+        "title": "Ranking Scores",
+        "subtitle": "Detailed breakdown of ranking factors",
+        "overallScore": "Overall Score",
+        "breakdown": "Score Breakdown",
+        "modifiers": "Applied Modifiers"
       },
       "metricHistory": {
-        "title": "[TRANSLATE] Metric History",
-        "subtitle": "[TRANSLATE] Recent metrics that affect ranking scores",
-        "noHistory": "[TRANSLATE] No metric history available for this tool.",
-        "update": "[TRANSLATE] Update",
-        "newMetrics": "[TRANSLATE] New metrics reported for {tool}"
+        "title": "Metric History",
+        "subtitle": "Recent metrics that affect ranking scores",
+        "noHistory": "No metric history available for this tool.",
+        "update": "Update",
+        "newMetrics": "New metrics reported for {tool}"
       },
       "website": "官网",
       "features": {
@@ -804,22 +804,22 @@
       }
     },
     "status": {
-      "active": "[TRANSLATE] Active",
-      "beta": "[TRANSLATE] Beta",
-      "deprecated": "[TRANSLATE] Deprecated",
-      "discontinued": "[TRANSLATE] Discontinued",
-      "acquired": "[TRANSLATE] Acquired",
+      "active": "Active",
+      "beta": "Beta",
+      "deprecated": "Deprecated",
+      "discontinued": "Discontinued",
+      "acquired": "Acquired",
       "coming-soon": "即将推出"
     },
     "categories": {
-      "autonomous-agent": "[TRANSLATE] Autonomous Agent",
-      "code-editor": "[TRANSLATE] Code Editor",
-      "ide-assistant": "[TRANSLATE] IDE Assistant",
-      "app-builder": "[TRANSLATE] App Builder",
-      "open-source-framework": "[TRANSLATE] Open Source Framework",
-      "testing-tool": "[TRANSLATE] Testing Tool",
-      "code-review": "[TRANSLATE] Code Review",
-      "code-generation": "[TRANSLATE] Code Generation"
+      "autonomous-agent": "Autonomous Agent",
+      "code-editor": "Code Editor",
+      "ide-assistant": "IDE Assistant",
+      "app-builder": "App Builder",
+      "open-source-framework": "Open Source Framework",
+      "testing-tool": "Testing Tool",
+      "code-review": "Code Review",
+      "code-generation": "Code Generation"
     },
     "category": "分类",
     "filters": {
@@ -913,121 +913,121 @@
   },
   "newsletter": {
     "form": {
-      "firstName": "名字",
-      "lastName": "姓氏",
-      "email": "邮箱",
-      "subscribe": "订阅",
-      "subscribing": "订阅中...",
-      "privacyNote": "我们尊重您的隐私。随时可以取消订阅。",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "subscribe": "Subscribe",
+      "subscribing": "Subscribing...",
+      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
       "placeholder": {
         "firstName": "请输入您的名字",
         "lastName": "请输入您的姓氏"
       }
     },
     "modal": {
-      "title": "保持更新",
-      "subtitle": "获取AI工具排名、新功能和行业见解的每周更新。",
-      "firstName": "名字",
-      "lastName": "姓氏",
-      "email": "邮箱",
-      "subscribe": "订阅",
-      "subscribing": "订阅中...",
-      "thankYou": "谢谢！",
-      "checkEmail": "请检查您的邮箱以验证订阅",
-      "alreadySubscribed": "您已经订阅了我们的新闻通讯！",
-      "resentEmail": "我们已重新发送验证邮件。请检查您的收件箱。",
-      "privacyNote": "我们尊重您的隐私。随时可以取消订阅。",
+      "title": "Stay Updated",
+      "subtitle": "Get weekly updates on AI tool rankings, new features, and industry insights.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "subscribe": "Subscribe",
+      "subscribing": "Subscribing...",
+      "thankYou": "Thank you!",
+      "checkEmail": "Please check your email to verify your subscription",
+      "alreadySubscribed": "You are already subscribed to our newsletter!",
+      "resentEmail": "We've resent the verification email. Please check your inbox.",
+      "privacyNote": "We respect your privacy. Unsubscribe at any time.",
       "errors": {
-        "captcha": "请完成安全验证",
-        "failed": "订阅失败。请重试。",
-        "server": "服务器配置错误",
-        "email": "邮件服务配置错误"
+        "captcha": "Please complete the security check",
+        "failed": "Failed to subscribe. Please try again.",
+        "server": "Server configuration error",
+        "email": "Email service configuration error"
       },
       "description": "获取最新的 AI 工具排名和更新",
       "close": "关闭",
       "privacy": "我们尊重您的隐私，绝不会分享您的邮箱"
     },
     "verification": {
-      "title": "邮箱验证",
+      "title": "Email Verification",
       "success": {
-        "title": "邮箱已验证！",
-        "message": "您的邮箱已成功验证。您将开始接收我们的每周新闻通讯，包含最新的AI工具排名和见解。"
+        "title": "Email Verified!",
+        "message": "Your email has been successfully verified. You'll start receiving our weekly newsletter with the latest AI tool rankings and insights."
       },
       "alreadyVerified": {
-        "title": "已验证",
-        "message": "此邮箱地址已经验证过了。您已准备好接收我们的新闻通讯！"
+        "title": "Already Verified",
+        "message": "This email address has already been verified. You're all set to receive our newsletters!"
       },
       "errors": {
         "missingToken": {
-          "title": "[TRANSLATE] Missing Verification Token",
-          "message": "[TRANSLATE] The verification link appears to be incomplete. Please check your email for the correct link."
+          "title": "Missing Verification Token",
+          "message": "The verification link appears to be incomplete. Please check your email for the correct link."
         },
         "invalidToken": {
-          "title": "[TRANSLATE] Invalid Token",
-          "message": "[TRANSLATE] This verification link is invalid or has expired. Please subscribe again to receive a new verification email."
+          "title": "Invalid Token",
+          "message": "This verification link is invalid or has expired. Please subscribe again to receive a new verification email."
         },
         "failed": {
-          "title": "[TRANSLATE] Verification Failed",
-          "message": "[TRANSLATE] We couldn't verify your email at this time. Please try again later or contact support if the problem persists."
+          "title": "Verification Failed",
+          "message": "We couldn't verify your email at this time. Please try again later or contact support if the problem persists."
         },
         "unexpected": {
-          "title": "[TRANSLATE] Unexpected Error",
-          "message": "[TRANSLATE] An unexpected error occurred. Please try again later."
+          "title": "Unexpected Error",
+          "message": "An unexpected error occurred. Please try again later."
         }
       },
       "actions": {
-        "backToHome": "[TRANSLATE] Back to Home",
-        "subscribeAgain": "重新订阅"
+        "backToHome": "Back to Home",
+        "subscribeAgain": "Subscribe Again"
       }
     },
     "verify": {
-      "goToHomepage": "返回首页",
-      "tryAgain": "重试",
+      "goToHomepage": "Go to Homepage",
+      "tryAgain": "Try Again",
       "success": {
-        "title": "邮箱验证成功！",
-        "description": "您的邮箱已成功验证。您将开始收到我们的周报新闻通讯。"
+        "title": "Email Verified!",
+        "description": "Your email has been successfully verified. You'll start receiving our weekly newsletter."
       },
       "alreadyVerified": {
-        "title": "已经验证",
-        "description": "此邮箱地址已经验证。您已准备就绪！"
+        "title": "Already Verified",
+        "description": "This email address has already been verified. You're all set!"
       },
       "error": {
-        "title": "验证错误"
+        "title": "Verification Error"
       },
       "errors": {
-        "default": "发生了意外错误。请重试。",
-        "missingToken": "验证链接似乎不完整。",
-        "invalidToken": "此验证链接无效或已过期。",
-        "verificationFailed": "我们目前无法验证您的邮箱。请稍后重试。"
+        "default": "An unexpected error occurred. Please try again.",
+        "missingToken": "The verification link appears to be incomplete.",
+        "invalidToken": "This verification link is invalid or has expired.",
+        "verificationFailed": "We couldn't verify your email at this time. Please try again later."
       }
     },
     "unsubscribe": {
-      "title": "取消订阅新闻通讯",
-      "processing": "正在处理您的请求...",
+      "title": "Unsubscribe from Newsletter",
+      "processing": "Processing your request...",
       "success": {
-        "title": "成功取消订阅",
-        "message": "您已成功取消订阅AI实力排行榜新闻通讯。我们很遗憾您的离开！",
-        "description": "[TRANSLATE] You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
+        "title": "Successfully Unsubscribed",
+        "message": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!",
+        "description": "You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
       },
       "error": {
-        "title": "[TRANSLATE] Unsubscribe Error"
+        "title": "Unsubscribe Error"
       },
       "errors": {
-        "missingToken": "[TRANSLATE] The unsubscribe link appears to be incomplete.",
-        "invalidToken": "[TRANSLATE] This unsubscribe link is invalid or has expired.",
-        "unsubscribeFailed": "[TRANSLATE] We couldn't process your unsubscribe request. Please try again later.",
-        "default": "[TRANSLATE] An unexpected error occurred. Please try again.",
+        "missingToken": "The unsubscribe link appears to be incomplete.",
+        "invalidToken": "This unsubscribe link is invalid or has expired.",
+        "unsubscribeFailed": "We couldn't process your unsubscribe request. Please try again later.",
+        "default": "An unexpected error occurred. Please try again.",
         "failed": {
-          "title": "[TRANSLATE] Unsubscribe Failed",
-          "message": "[TRANSLATE] We couldn't process your unsubscribe request. Please try again later."
+          "title": "Unsubscribe Failed",
+          "message": "We couldn't process your unsubscribe request. Please try again later."
         },
         "unexpected": {
-          "title": "[TRANSLATE] Error",
-          "message": "[TRANSLATE] An unexpected error occurred. Please try again."
+          "title": "Error",
+          "message": "An unexpected error occurred. Please try again."
         }
       },
-      "resubscribe": "[TRANSLATE] Changed your mind? You can subscribe again anytime.",
-      "subscribeAgain": "[TRANSLATE] Subscribe Again",
+      "resubscribe": "Changed your mind? You can subscribe again anytime.",
+      "subscribeAgain": "Subscribe Again",
       "confirm": "确认取消订阅",
       "reason": "告诉我们取消的原因（可选）"
     },
@@ -1097,35 +1097,35 @@
     }
   },
   "methodology": {
-    "title": "[TRANSLATE] Our Methodology",
-    "subtitle": "我们如何对AI编程工具进行排名",
-    "lastUpdated": "最后更新：2025年1月",
-    "intro": "AI实力排行榜使用复杂的算法（v6.0）基于多个定量和定性因素对AI编程工具进行评估和排名。我们的方法论旨在为开发者提供对AI工具领域的客观、数据驱动的评估。",
+    "title": "Our Methodology",
+    "subtitle": "How we rank AI coding tools",
+    "lastUpdated": "Last updated: January 2025",
+    "intro": "AI Power Ranking uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
     "algorithm": {
-      "title": "[TRANSLATE] Algorithm v6.0",
-      "description": "[TRANSLATE] Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
-      "keyFeatures": "[TRANSLATE] Key Features",
+      "title": "Algorithm v6.0",
+      "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
+      "keyFeatures": "Key Features",
       "features": {
-        "innovationDecay": "[TRANSLATE] Innovation decay modeling to reflect tool freshness",
-        "platformRisk": "[TRANSLATE] Platform risk assessment for vendor dependencies",
-        "revenueQuality": "[TRANSLATE] Revenue quality adjustments based on business model",
-        "technicalWeighting": "[TRANSLATE] Technical capability weighting for different use cases",
-        "dataValidation": "[TRANSLATE] Multi-source data validation and normalization",
-        "logarithmicScaling": "[TRANSLATE] Logarithmic scaling for balanced comparisons"
+        "innovationDecay": "Innovation decay modeling to reflect tool freshness",
+        "platformRisk": "Platform risk assessment for vendor dependencies",
+        "revenueQuality": "Revenue quality adjustments based on business model",
+        "technicalWeighting": "Technical capability weighting for different use cases",
+        "dataValidation": "Multi-source data validation and normalization",
+        "logarithmicScaling": "Logarithmic scaling for balanced comparisons"
       },
       "version": "版本 6.0",
       "updateFrequency": "算法每季度更新"
     },
     "factors": {
-      "title": "[TRANSLATE] Scoring Factors",
-      "description": "[TRANSLATE] Tools are evaluated across 8 key dimensions with specific weightings",
-      "primary": "[TRANSLATE] Primary Factors (82.5%)",
-      "secondary": "[TRANSLATE] Secondary Factors (17.5%)",
+      "title": "Scoring Factors",
+      "description": "Tools are evaluated across 8 key dimensions with specific weightings",
+      "primary": "Primary Factors (82.5%)",
+      "secondary": "Secondary Factors (17.5%)",
       "agentic": {
-        "details": "[TRANSLATE] Measures autonomous capabilities, multi-step reasoning, and complex task completion"
+        "details": "Measures autonomous capabilities, multi-step reasoning, and complex task completion"
       },
       "innovation": {
-        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation",
+        "details": "Evaluates breakthrough features, technical advances, and market differentiation",
         "name": "创新",
         "description": "独特功能和技术进步",
         "weight": "权重: 25%",
@@ -1137,7 +1137,7 @@
         }
       },
       "performance": {
-        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks",
+        "details": "Benchmarks on SWE-bench, HumanEval, and real-world coding tasks",
         "name": "性能",
         "description": "代码生成、补全和调试能力",
         "weight": "权重: 35%",
@@ -1153,7 +1153,7 @@
         "realWorld": "实际使用场景测试"
       },
       "adoption": {
-        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics",
+        "details": "Active users, growth rate, and market penetration metrics",
         "name": "采用度",
         "description": "用户接受度和社区参与度",
         "weight": "权重: 25%",
@@ -1165,16 +1165,16 @@
         }
       },
       "traction": {
-        "details": "[TRANSLATE] Revenue growth, funding rounds, and business momentum indicators"
+        "details": "Revenue growth, funding rounds, and business momentum indicators"
       },
       "sentiment": {
-        "details": "[TRANSLATE] Developer satisfaction, community feedback, and recommendation scores"
+        "details": "Developer satisfaction, community feedback, and recommendation scores"
       },
       "velocity": {
-        "details": "[TRANSLATE] Feature release cadence, update frequency, and innovation speed"
+        "details": "Feature release cadence, update frequency, and innovation speed"
       },
       "resilience": {
-        "details": "[TRANSLATE] Platform stability, backup options, and vendor independence"
+        "details": "Platform stability, backup options, and vendor independence"
       },
       "ecosystem": {
         "name": "生态系统",
@@ -1195,90 +1195,90 @@
       }
     },
     "modifiers": {
-      "title": "[TRANSLATE] Dynamic Modifiers",
-      "description": "[TRANSLATE] Real-time adjustments that reflect market conditions and tool maturity",
+      "title": "Dynamic Modifiers",
+      "description": "Real-time adjustments that reflect market conditions and tool maturity",
       "innovationDecay": {
-        "description": "[TRANSLATE] Innovation scores decay over time to reward continuous improvement and penalize stagnation"
+        "description": "Innovation scores decay over time to reward continuous improvement and penalize stagnation"
       },
       "platformRisk": {
-        "description": "[TRANSLATE] Adjustments based on vendor lock-in, platform dependencies, and business risks",
-        "penalties": "[TRANSLATE] Risk Penalties",
+        "description": "Adjustments based on vendor lock-in, platform dependencies, and business risks",
+        "penalties": "Risk Penalties",
         "penaltyList": {
-          "acquired": "[TRANSLATE] Recently acquired by competitor",
-          "exclusive": "[TRANSLATE] Platform exclusive (single LLM)",
-          "competitor": "[TRANSLATE] Owned by competing platform",
-          "regulatory": "[TRANSLATE] Regulatory compliance issues",
-          "funding": "[TRANSLATE] Funding or sustainability concerns"
+          "acquired": "Recently acquired by competitor",
+          "exclusive": "Platform exclusive (single LLM)",
+          "competitor": "Owned by competing platform",
+          "regulatory": "Regulatory compliance issues",
+          "funding": "Funding or sustainability concerns"
         },
-        "bonuses": "[TRANSLATE] Risk Mitigation Bonuses",
+        "bonuses": "Risk Mitigation Bonuses",
         "bonusList": {
-          "multiLLM": "[TRANSLATE] Supports multiple LLM providers",
-          "openSource": "[TRANSLATE] Open source availability",
-          "selfHosted": "[TRANSLATE] Self-hosting options"
+          "multiLLM": "Supports multiple LLM providers",
+          "openSource": "Open source availability",
+          "selfHosted": "Self-hosting options"
         }
       },
       "revenueQuality": {
-        "description": "[TRANSLATE] Revenue weighting based on business model sustainability and growth potential",
+        "description": "Revenue weighting based on business model sustainability and growth potential",
         "models": {
-          "enterpriseHigh": "[TRANSLATE] Enterprise (High-touch)",
-          "enterpriseStandard": "[TRANSLATE] Enterprise (Standard)",
-          "smbSaas": "[TRANSLATE] SMB SaaS",
-          "consumerPremium": "[TRANSLATE] Consumer Premium",
-          "freemium": "[TRANSLATE] Freemium",
-          "openSource": "[TRANSLATE] Open Source"
+          "enterpriseHigh": "Enterprise (High-touch)",
+          "enterpriseStandard": "Enterprise (Standard)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "Consumer Premium",
+          "freemium": "Freemium",
+          "openSource": "Open Source"
         }
       }
     },
     "dataSources": {
-      "title": "[TRANSLATE] Data Sources & Validation",
-      "description": "[TRANSLATE] We maintain rigorous standards for data collection and validation",
+      "title": "Data Sources & Validation",
+      "description": "We maintain rigorous standards for data collection and validation",
       "collection": {
-        "title": "[TRANSLATE] Data Collection Methods",
+        "title": "Data Collection Methods",
         "sources": {
-          "api": "[TRANSLATE] Direct API integrations with tool providers",
-          "research": "[TRANSLATE] Industry research reports and analyst data",
-          "announcements": "[TRANSLATE] Official company announcements and press releases",
-          "community": "[TRANSLATE] Developer surveys and community feedback",
-          "benchmarks": "[TRANSLATE] Standardized performance benchmarks"
+          "api": "Direct API integrations with tool providers",
+          "research": "Industry research reports and analyst data",
+          "announcements": "Official company announcements and press releases",
+          "community": "Developer surveys and community feedback",
+          "benchmarks": "Standardized performance benchmarks"
         }
       },
       "validation": {
-        "title": "[TRANSLATE] Validation Requirements",
+        "title": "Validation Requirements",
         "requirements": {
-          "completeness": "[TRANSLATE] All required metrics must be present",
-          "reliability": "[TRANSLATE] Multiple source verification for key metrics",
-          "outlier": "[TRANSLATE] Outlier detection and manual review",
-          "crossValidation": "[TRANSLATE] Cross-validation with industry benchmarks"
+          "completeness": "All required metrics must be present",
+          "reliability": "Multiple source verification for key metrics",
+          "outlier": "Outlier detection and manual review",
+          "crossValidation": "Cross-validation with industry benchmarks"
         }
       },
       "updateFrequency": {
-        "title": "[TRANSLATE] Update Schedule",
-        "description": "[TRANSLATE] Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
+        "title": "Update Schedule",
+        "description": "Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
       }
     },
     "sections": {
       "scoringFactors": {
-        "title": "[TRANSLATE] Scoring Factors",
-        "intro": "[TRANSLATE] Our algorithm evaluates tools across 8 key dimensions, each weighted according to its importance to developers:"
+        "title": "Scoring Factors",
+        "intro": "Our algorithm evaluates tools across 8 key dimensions, each weighted according to its importance to developers:"
       },
       "modifiers": {
-        "title": "[TRANSLATE] Dynamic Modifiers",
-        "intro": "[TRANSLATE] To ensure rankings reflect current market realities, we apply three sophisticated modifiers:"
+        "title": "Dynamic Modifiers",
+        "intro": "To ensure rankings reflect current market realities, we apply three sophisticated modifiers:"
       },
       "dataCollection": {
-        "title": "[TRANSLATE] Data Collection",
-        "intro": "[TRANSLATE] We gather data from multiple sources to ensure accuracy:",
+        "title": "Data Collection",
+        "intro": "We gather data from multiple sources to ensure accuracy:",
         "sources": [
-          "[TRANSLATE] Direct API integrations with tool providers",
-          "[TRANSLATE] Public repositories and developer statistics",
-          "[TRANSLATE] Industry reports and verified news sources",
-          "[TRANSLATE] User surveys and community feedback",
-          "[TRANSLATE] Performance benchmarks (SWE-bench, HumanEval)"
+          "Direct API integrations with tool providers",
+          "Public repositories and developer statistics",
+          "Industry reports and verified news sources",
+          "User surveys and community feedback",
+          "Performance benchmarks (SWE-bench, HumanEval)"
         ]
       },
       "updateFrequency": {
-        "title": "[TRANSLATE] Update Frequency",
-        "content": "[TRANSLATE] Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
+        "title": "Update Frequency",
+        "content": "Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
       }
     },
     "overview": {
@@ -1352,34 +1352,34 @@
     }
   },
   "about": {
-    "title": "关于 AI Power Ranking",
-    "subtitle": "用数据驱动的 AI 工具洞察赋能开发者",
+    "title": "About AI Power Ranking",
+    "subtitle": "Empowering developers with data-driven AI tool insights",
     "hero": {
-      "title": "用数据驱动的 AI 工具洞察赋能开发者",
-      "subtitle": "我们相信开发者应该拥有透明、客观的 AI 编码工具排名，以做出明智的决策。"
+      "title": "Empowering developers with data-driven AI tool insights",
+      "subtitle": "We believe developers deserve transparent, objective rankings of AI coding tools to make informed decisions."
     },
     "mission": {
-      "title": "我们的使命",
-      "content": "为开发者社区提供最全面、公正、最新的 AI 编码工具排名，帮助团队选择适合他们需求的正确工具。",
-      "description": "为开发者社区提供最全面、公正、最新的 AI 编码工具排名，帮助团队选择适合他们需求的正确工具。"
+      "title": "Our Mission",
+      "content": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs.",
+      "description": "To provide the developer community with the most comprehensive, unbiased, and up-to-date rankings of AI coding tools, helping teams choose the right tools for their needs."
     },
     "whyWeBuiltThis": {
-      "title": "为什么创建这个平台",
+      "title": "Why We Built This",
       "reasons": [
-        "AI 工具领域发展迅速，难以跟踪最新动态",
-        "营销宣传往往与实际性能不符",
-        "开发者需要客观数据来证明工具采用的合理性",
-        "没有单一来源能够比较所有主要的 AI 编码工具"
+        "The AI tools landscape is evolving rapidly, making it hard to keep track",
+        "Marketing claims often don't match real-world performance",
+        "Developers need objective data to justify tool adoption",
+        "There was no single source comparing all major AI coding tools"
       ]
     },
     "team": {
-      "title": "团队介绍",
-      "description": "AI Power Ranking 由技术执行官和兼职 CTO Bob Matsuoka 维护，他从 2025 年 3 月开始跟踪智能编码工具。",
-      "description1": "AI Power Ranking 由技术执行官和兼职 CTO Bob Matsuoka 维护，他从 2025 年 3 月开始跟踪智能编码工具。",
-      "description2": "我将构建生产应用的实践经验与 AI 开发工具的系统评估相结合。该网站为我在 HyperDev 的战略分析提供了定量支撑，在那里我撰写关于使用 AI 代理编码的实际情况。",
-      "description3": "完全透明：这是一个由一人在两天内构建的项目。我基于实际使用情况快速发布和迭代，因为开发工具领域的变化太快，传统的分析周期无法跟上。",
+      "title": "The Team",
+      "description": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description1": "AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description2": "I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
+      "description3": "Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
       "hyperdevLink": "HyperDev",
-      "reportIssue": "报告问题",
+      "reportIssue": "Report an Issue",
       "roles": {
         "founders": "创始人",
         "engineers": "工程师",
@@ -1389,85 +1389,85 @@
       }
     },
     "contact": {
-      "title": "联系我们",
-      "description": "有反馈或建议吗？我们乐意听取您的意见。",
-      "email": "通过 hello@aipowerranking.com 联系我们",
+      "title": "Get in Touch",
+      "description": "Have feedback or suggestions? We'd love to hear from you.",
+      "email": "Contact us at hello@aipowerranking.com",
       "response": "我们通常在 24 小时内回复"
     },
     "newsletter": {
-      "title": "保持更新",
-      "description": "获取每周 AI 工具排名和行业趋势的洞察。",
-      "subscribe": "订阅通讯"
+      "title": "Stay Updated",
+      "description": "Get weekly insights on AI tool rankings and industry trends.",
+      "subscribe": "Subscribe to Newsletter"
     },
     "cta": {
-      "title": "准备好探索了吗？",
-      "description": "深入了解我们的排名，发现满足您需求的最佳 AI 编码工具。",
-      "exploreButton": "探索排名",
-      "methodologyButton": "了解我们的方法论"
+      "title": "Ready to Explore?",
+      "description": "Dive into our rankings to discover the best AI coding tools for your needs.",
+      "exploreButton": "Explore Rankings",
+      "methodologyButton": "Learn Our Methodology"
     },
     "whatWeDo": {
-      "title": "我们做什么",
+      "title": "What We Do",
       "track": {
-        "title": "跟踪 AI 工具",
-        "description": "监测和分析最新的 AI 编码工具"
+        "title": "Track AI Tools",
+        "description": "Monitor and analyze the latest AI coding tools"
       },
       "analyze": {
-        "title": "分析性能",
-        "description": "基于真实指标评估工具"
+        "title": "Analyze Performance",
+        "description": "Evaluate tools based on real-world metrics"
       },
       "rank": {
-        "title": "客观排名",
-        "description": "应用我们的算法提供公正的排名"
+        "title": "Rank Objectively",
+        "description": "Apply our algorithm to provide unbiased rankings"
       },
       "update": {
-        "title": "每周更新",
-        "description": "使用最新数据保持排名的实时性"
+        "title": "Update Weekly",
+        "description": "Keep rankings current with the latest data"
       },
       "analysis": {
-        "title": "深度分析",
-        "description": "基于性能、功能和用户反馈对 AI 编码工具进行全面评估"
+        "title": "Deep Analysis",
+        "description": "Comprehensive evaluation of AI coding tools based on performance, features, and user feedback"
       },
       "methodology": {
-        "title": "透明的方法论",
-        "description": "我们的排名算法完全文档化，并根据社区反馈持续优化"
+        "title": "Transparent Methodology",
+        "description": "Our ranking algorithm is fully documented and continuously refined based on community input"
       },
       "updates": {
-        "title": "每周更新",
-        "description": "每周刷新排名，反映快速发展的 AI 工具领域"
+        "title": "Weekly Updates",
+        "description": "Rankings are refreshed every week to reflect the rapidly evolving AI tools landscape"
       },
       "community": {
-        "title": "社区驱动",
-        "description": "我们整合全球开发者的反馈来改进我们的排名和方法论"
+        "title": "Community-Driven",
+        "description": "We incorporate feedback from developers worldwide to improve our rankings and methodology"
       }
     },
     "whyItMatters": {
-      "title": "为什么重要",
-      "description": "在快速发展的 AI 领域，开发者需要可靠的数据来做出明智的决策。",
+      "title": "Why It Matters",
+      "description": "In the rapidly evolving AI landscape, developers need reliable data to make informed decisions.",
       "points": [
-        "节省评估工具的时间",
-        "做出数据驱动的决策",
-        "保持领先地位",
-        "选择适合您需求的工具"
+        "Save time evaluating tools",
+        "Make data-driven decisions",
+        "Stay ahead of the curve",
+        "Choose tools that fit your needs"
       ],
       "challenges": {
         "paralysis": {
-          "title": "决策困难",
-          "description": "每周有数十种 AI 工具发布，开发者面临难以应对的选择"
+          "title": "Decision Paralysis",
+          "description": "With dozens of AI tools launching every week, developers face overwhelming choices"
         },
         "marketing": {
-          "title": "营销与现实",
-          "description": "大胆的宣传往往与实际性能和功能不符"
+          "title": "Marketing vs Reality",
+          "description": "Bold claims often don't match real-world performance and capabilities"
         },
         "change": {
-          "title": "快速变化",
-          "description": "工具发展迅速 - 今天最好的可能明天就过时了"
+          "title": "Rapid Change",
+          "description": "Tools evolve quickly - what's best today might be obsolete tomorrow"
         },
         "risks": {
-          "title": "隐藏风险",
-          "description": "安全、隐私和供应商锁定问题经常被忽视"
+          "title": "Hidden Risks",
+          "description": "Security, privacy, and vendor lock-in concerns are often overlooked"
         }
       },
-      "conclusion": "这就是我们创建 AI Power Ranking 的原因 - 为了穿过噪音，提供清晰、数据驱动的洞察。"
+      "conclusion": "That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
     },
     "methodology": {
       "title": "方法论",
@@ -1540,20 +1540,20 @@
     }
   },
   "sidebar": {
-    "navigation": "导航",
-    "quickLinks": "快速链接",
-    "trending": "热门趋势",
-    "categories": "分类",
-    "features": "功能",
-    "clearFilters": "清除筛选"
+    "navigation": "Navigation",
+    "quickLinks": "Quick Links",
+    "trending": "Trending",
+    "categories": "Categories",
+    "features": "Features",
+    "clearFilters": "Clear Filters"
   },
   "features": {
-    "autocomplete": "自动补全",
-    "chat": "对话界面",
-    "codeGeneration": "代码生成",
-    "refactoring": "重构",
-    "testing": "测试",
-    "documentation": "文档",
+    "autocomplete": "Autocomplete",
+    "chat": "Chat Interface",
+    "codeGeneration": "Code Generation",
+    "refactoring": "Refactoring",
+    "testing": "Testing",
+    "documentation": "Documentation",
     "search": {
       "title": "智能搜索",
       "description": "AI 驱动的工具发现",
@@ -1582,11 +1582,11 @@
     }
   },
   "status": {
-    "active": "[TRANSLATE] Active",
-    "beta": "[TRANSLATE] Beta",
-    "deprecated": "[TRANSLATE] Deprecated",
-    "discontinued": "[TRANSLATE] Discontinued",
-    "acquired": "[TRANSLATE] Acquired",
+    "active": "Active",
+    "beta": "Beta",
+    "deprecated": "Deprecated",
+    "discontinued": "Discontinued",
+    "acquired": "Acquired",
     "loading": "加载中",
     "success": "成功",
     "error": "错误",
@@ -1595,19 +1595,19 @@
   },
   "errors": {
     "404": {
-      "title": "[TRANSLATE] Page Not Found",
-      "message": "[TRANSLATE] The page you're looking for doesn't exist.",
-      "action": "[TRANSLATE] Go Home"
+      "title": "Page Not Found",
+      "message": "The page you're looking for doesn't exist.",
+      "action": "Go Home"
     },
     "500": {
-      "title": "[TRANSLATE] Something went wrong",
-      "message": "[TRANSLATE] We're experiencing technical difficulties. Please try again later.",
-      "action": "[TRANSLATE] Try Again"
+      "title": "Something went wrong",
+      "message": "We're experiencing technical difficulties. Please try again later.",
+      "action": "Try Again"
     },
     "offline": {
-      "title": "[TRANSLATE] You're Offline",
-      "message": "[TRANSLATE] Please check your internet connection and try again.",
-      "action": "[TRANSLATE] Retry"
+      "title": "You're Offline",
+      "message": "Please check your internet connection and try again.",
+      "action": "Retry"
     },
     "general": {
       "title": "出现错误",
@@ -1633,6 +1633,11 @@
       "title": "输入有误",
       "message": "请检查输入信息"
     }
+  },
+  "seo": {
+    "title": "AI Power Rankings - The Definitive Monthly Rankings of AI Coding Tools",
+    "description": "The definitive monthly rankings and analysis of agentic AI coding tools. Compare Cursor, GitHub Copilot, Claude, and 50+ AI assistants trusted by 全球开发者",
+    "keywords": "AI coding tools, agentic AI, autonomous coding, developer tools rankings, AI assistants comparison, coding AI benchmarks, SWE-bench results, Claude vs Cursor vs GitHub Copilot"
   },
   "comparison": {
     "title": "工具对比",

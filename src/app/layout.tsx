@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     template: "%s | AI Power Rankings",
   },
   description:
-    "The definitive monthly rankings and analysis of agentic AI coding tools. Compare Cursor, GitHub Copilot, Claude, and 50+ AI assistants trusted by 500K+ developers.",
+    "The definitive monthly rankings and analysis of agentic AI coding tools. Compare Cursor, GitHub Copilot, Claude, and 50+ AI assistants trusted by developers worldwide.",
   keywords: [
     "AI coding tools",
     "developer tools rankings",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     siteName: "AI Power Rankings",
     title: "AI Power Rankings - Developer Tool Intelligence",
     description:
-      "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by 500K+ developers worldwide.",
+      "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by developers worldwide.",
     images: [
       {
         url: "/api/og?title=AI%20Power%20Rankings&subtitle=Developer%20Tool%20Intelligence",
@@ -86,7 +86,7 @@ export default function RootLayout({
     name: "AI Power Rankings",
     url: baseUrl,
     description:
-      "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by 500K+ developers worldwide.",
+      "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by developers worldwide.",
   });
 
   return (

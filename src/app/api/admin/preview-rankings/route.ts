@@ -3,6 +3,7 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, ToolMetricsV6, ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
+import { RankingChangeAnalyzer, RankingChangeAnalysis } from "@/lib/ranking-change-analyzer";
 
 interface RankingComparison {
   tool_id: string;
@@ -24,6 +25,7 @@ interface RankingComparison {
     development_velocity?: number;
     platform_resilience?: number;
   };
+  change_analysis?: RankingChangeAnalysis;
 }
 
 interface PreviewResult {
@@ -45,6 +47,15 @@ interface PreviewResult {
     average_score_change: number;
     highest_score: number;
     lowest_score: number;
+  };
+  change_report?: {
+    summary: string;
+    majorMovers: {
+      rises: RankingChangeAnalysis[];
+      declines: RankingChangeAnalysis[];
+    };
+    factorTrends: Record<string, { improving: number; declining: number }>;
+    narrativeSummary: string;
   };
 }
 
@@ -155,6 +166,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     loggers.api.info(`Fetched ${tools.length} tools and ${metrics.length} metrics for preview`);
 
     const rankingEngine = new RankingEngineV6();
+    const changeAnalyzer = new RankingChangeAnalyzer();
     const newScores: ToolScoreV6[] = [];
 
     // Calculate new scores for each tool
@@ -173,6 +185,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Create comparison data
     const comparisons: RankingComparison[] = [];
+    const changeAnalyses: RankingChangeAnalysis[] = [];
     const currentRankingsMap = new Map(currentRankings.map(r => [r['tool']['id'] || r['tool'], r]));
 
     for (let i = 0; i < newScores.length; i++) {
@@ -202,6 +215,40 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         (newScore!.overallScore - currentRanking['score']) : 
         newScore!.overallScore;
 
+      // Get previous factor scores if available
+      const previousFactorScores = currentRanking ? {
+        agenticCapability: currentRanking['agentic_capability'] || 0,
+        innovation: currentRanking['innovation'] || 0,
+        technicalPerformance: currentRanking['technical_performance'] || 0,
+        developerAdoption: currentRanking['developer_adoption'] || 0,
+        marketTraction: currentRanking['market_traction'] || 0,
+        businessSentiment: currentRanking['business_sentiment'] || 0,
+        developmentVelocity: currentRanking['development_velocity'] || 0,
+        platformResilience: currentRanking['platform_resilience'] || 0,
+      } : undefined;
+
+      // Generate change analysis
+      const changeAnalysis = changeAnalyzer.analyzeRankingChange(
+        { 
+          tool_id: tool.id, 
+          tool_name: tool['name'], 
+          position: newPosition,
+          score: newScore!.overallScore,
+          new_position: newPosition,
+          new_score: newScore!.overallScore
+        },
+        currentRanking ? {
+          position: currentPosition,
+          score: currentRanking['score'],
+          current_position: currentPosition,
+          current_score: currentRanking['score']
+        } : undefined,
+        newScore!.factorScores || {},
+        previousFactorScores
+      );
+
+      changeAnalyses.push(changeAnalysis);
+
       comparisons.push({
         tool_id: String(tool.id),
         tool_name: tool['name'],
@@ -222,6 +269,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           development_velocity: newScore!.factorScores?.developmentVelocity || 0,
           platform_resilience: newScore!.factorScores?.platformResilience || 0,
         },
+        change_analysis: changeAnalysis,
       });
     }
 
@@ -270,6 +318,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       lowest_score: Math.min(...comparisons.map(c => c.new_score)),
     };
 
+    // Generate overall change report
+    const changeReport = changeAnalyzer.generateChangeReport(changeAnalyses);
+
     const result: PreviewResult = {
       period,
       algorithm_version,
@@ -285,6 +336,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         down: moversDown,
       },
       summary,
+      change_report: changeReport,
     };
 
     loggers.api.info("Ranking preview generated successfully", {

@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Settings, FileText, TrendingUp, Users, FileUp, Trophy } from "lucide-react";
+import { Settings, FileText, TrendingUp, Users, FileUp, Trophy, Database } from "lucide-react";
 import Link from "next/link";
 
 export function AdminDashboard() {
@@ -18,13 +18,6 @@ export function AdminDashboard() {
       color: "bg-blue-600",
       disabled: false,
       external: true,
-    },
-    {
-      title: "SEO Dashboard",
-      description: "Monitor website performance and search engine optimization metrics",
-      icon: BarChart3,
-      href: "/dashboard/seo",
-      color: "bg-blue-500",
     },
     {
       title: "Tools Management",
@@ -59,11 +52,19 @@ export function AdminDashboard() {
       disabled: false,
     },
     {
+      title: "Cache Management",
+      description: "Manage static JSON cache files for offline functionality",
+      icon: Database,
+      href: "/dashboard/cache",
+      color: "bg-purple-500",
+      disabled: false,
+    },
+    {
       title: "Analytics",
       description: "View detailed analytics and user engagement metrics",
       icon: TrendingUp,
       href: "/dashboard/analytics",
-      color: "bg-purple-500",
+      color: "bg-gray-500",
       disabled: true,
     },
     {
@@ -156,12 +157,6 @@ export function AdminDashboard() {
           <span className="text-sm">Export Subscribers</span>
         </Button>
 
-        <Button asChild className="h-auto p-4 flex flex-col items-center gap-2" variant="outline">
-          <Link href="/dashboard/seo">
-            <BarChart3 className="h-6 w-6" />
-            <span className="text-sm">SEO Dashboard</span>
-          </Link>
-        </Button>
 
         <Button
           onClick={() => window.open("/admin", "_blank")}
@@ -182,8 +177,8 @@ export function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">SEO, Tools & Subscribers</p>
+            <div className="text-2xl font-bold">5</div>
+            <p className="text-xs text-muted-foreground">Tools, Subscribers, News, Rankings & Cache</p>
           </CardContent>
         </Card>
 

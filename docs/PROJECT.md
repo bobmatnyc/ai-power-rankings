@@ -18,15 +18,17 @@ The platform implements a source-oriented metrics architecture where each articl
 // Created: 2025-06-08
 // Updated: 2025-06-25 - Added i18n support
 // Updated: 2025-06-25 - Cache-first architecture
+// Updated: 2025-06-26 - Added Payload CMS
 
 - **Frontend Framework**: Next.js 13+ (App Router)
 - **Language**: TypeScript (strict mode)
 - **Styling**: Tailwind CSS
+- **CMS**: Payload CMS v3 - see [PAYLOAD.md](./PAYLOAD.md)
 - **Database**: Supabase (PostgreSQL) - optional with cache fallback
 - **Cache Layer**: Static JSON files in /src/data/cache/
 - **UI Components**: Radix UI + shadcn/ui
 - **Data Visualization**: Recharts
-- **Authentication**: Supabase Auth
+- **Authentication**: NextAuth with Google OAuth
 - **Deployment**: Vercel
 - **Data Collection**: GitHub API, Perplexity AI API, Web Scraping, Google Drive API
 - **Email**: Resend (for newsletters)
@@ -115,6 +117,8 @@ Responsible for:
 - **Performance Optimization**: Single API call fetches all data, instant interactions after
 - **Resilient Operation**: Site remains fully functional during database outages
 - **Cache Updates**: Manual or automated generation from live database data
+
+**📚 For detailed cache management documentation, see: [/docs/CACHE.md](/docs/CACHE.md)**
 
 #### 7. Automation & Scheduling
 

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
-import cachedToolsData from "@/data/cache/tools.json";
+import { loadCacheWithFallback } from "@/lib/cache/load-cache";
+import { CacheManager } from "@/lib/cache/cache-manager";
 
 export async function GET(): Promise<NextResponse> {
   try {
@@ -15,12 +16,16 @@ export async function GET(): Promise<NextResponse> {
     // For preview environments, return cached data immediately
     if (useCacheFirst) {
       loggers.api.info("Using cache-first approach for tools");
+      
+      const cachedToolsData = await loadCacheWithFallback("tools");
+      const cacheInfo = await new CacheManager().getInfo("tools");
 
       const apiResponse = NextResponse.json({
         tools: cachedToolsData.tools,
         _cached: true,
-        _cachedAt: "2025-06-25T13:37:00.000Z",
+        _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Cache-first approach (database stability mode)",
+        _cacheSource: cacheInfo.source,
       });
 
       apiResponse.headers.set(
@@ -41,11 +46,15 @@ export async function GET(): Promise<NextResponse> {
       loggers.api.error("No tools found, falling back to cached data");
 
       // Fall back to cached data
+      const cachedToolsData = await loadCacheWithFallback("tools");
+      const cacheInfo = await new CacheManager().getInfo("tools");
+      
       const apiResponse = NextResponse.json({
         tools: cachedToolsData.tools,
         _cached: true,
-        _cachedAt: "2025-06-25T13:37:00.000Z",
+        _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Database connection unavailable",
+        _cacheSource: cacheInfo.source,
       });
 
       apiResponse.headers.set(

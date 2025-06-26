@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
-import cachedRankingsData from "@/data/cache/rankings.json";
+import { loadCacheWithFallback } from "@/lib/cache/load-cache";
+import { CacheManager } from "@/lib/cache/cache-manager";
 
 // News-enhanced ranking types
 interface ToolRanking {
@@ -208,14 +209,18 @@ export async function GET(): Promise<NextResponse> {
     // For preview environments or when cache is enabled, return cached data immediately
     if (useCacheFirst) {
       loggers.ranking.info("Using cache-first approach for rankings");
-      console.log("Returning cached rankings data immediately");
+      console.log("Loading rankings from cache");
 
-      // Return the cached data with a flag indicating it's cached
+      const cachedRankingsData = await loadCacheWithFallback("rankings");
+      const cacheInfo = await new CacheManager().getInfo("rankings");
+      
+      // Return the cached data with metadata
       const cachedResponse = {
         ...cachedRankingsData,
         _cached: true,
-        _cachedAt: "2025-06-25T13:36:00.000Z",
+        _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Cache-first approach (database stability mode)",
+        _cacheSource: cacheInfo.source,
       };
 
       return NextResponse.json(cachedResponse);
@@ -229,12 +234,16 @@ export async function GET(): Promise<NextResponse> {
       loggers.ranking.warn("No live rankings available, falling back to cached data");
       console.log("Using cached rankings data as fallback");
 
-      // Return the cached data with a flag indicating it's cached
+      const cachedRankingsData = await loadCacheWithFallback("rankings");
+      const cacheInfo = await new CacheManager().getInfo("rankings");
+      
+      // Return the cached data with metadata
       const cachedResponse = {
         ...cachedRankingsData,
         _cached: true,
-        _cachedAt: "2025-06-25T13:36:00.000Z",
+        _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Database connection unavailable",
+        _cacheSource: cacheInfo.source,
       };
 
       return NextResponse.json(cachedResponse);

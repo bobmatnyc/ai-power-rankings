@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
-import cachedNewsData from "@/data/cache/news.json";
+import { loadCacheWithFallback } from "@/lib/cache/load-cache";
+import { CacheManager } from "@/lib/cache/cache-manager";
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,12 +23,16 @@ export async function GET(request: NextRequest) {
       loggers.api.info("Using cache-first approach for news");
 
       // Return ALL news data - let client handle filtering and pagination
+      const cachedNewsData = await loadCacheWithFallback("news");
+      const cacheInfo = await new CacheManager().getInfo("news");
+      
       const apiResponse = NextResponse.json({
         news: cachedNewsData.news,
         total: cachedNewsData.news.length,
         _cached: true,
-        _cachedAt: "2025-06-25T15:10:00.000Z",
+        _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Cache-first approach (database stability mode)",
+        _cacheSource: cacheInfo.source,
       });
 
       apiResponse.headers.set("Cache-Control", "public, s-maxage=1800, stale-while-revalidate=900");
@@ -331,13 +336,17 @@ export async function GET(request: NextRequest) {
     loggers.news.error("News API error, falling back to cached data", { error });
 
     // Fall back to cached data on error - return all news without filtering
+    const cachedNewsData = await loadCacheWithFallback("news");
+    const cacheInfo = await new CacheManager().getInfo("news");
+    
     const apiResponse = NextResponse.json({
       news: cachedNewsData.news.slice(0, 20), // Return first 20 items
       total: cachedNewsData.news.length,
       hasMore: cachedNewsData.news.length > 20,
       _cached: true,
-      _cachedAt: "2025-06-25T15:10:00.000Z",
+      _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
       _cacheReason: "Database error fallback",
+      _cacheSource: cacheInfo.source,
     });
 
     apiResponse.headers.set("Cache-Control", "public, s-maxage=1800, stale-while-revalidate=900");

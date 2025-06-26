@@ -28,8 +28,9 @@ export async function generateMetadata({
   const dict = await getDictionary(lang);
 
   return {
-    title: `${dict.common.appName} - ${dict.common.appDescription}`,
-    description: dict.home.methodology.algorithmDescription,
+    title: dict.seo?.title || `${dict.common.appName} - ${dict.common.appDescription}`,
+    description: dict.seo?.description || dict.home.methodology.algorithmDescription,
+    keywords: dict.seo?.keywords?.split(", ") || [],
   };
 }
 

@@ -18,34 +18,32 @@ import {
   Loader2,
 } from "lucide-react";
 
+interface RankingComparison {
+  tool_id: string;
+  tool_name: string;
+  current_position?: number;
+  new_position: number;
+  current_score?: number;
+  new_score: number;
+  position_change: number;
+  score_change: number;
+  movement: "up" | "down" | "same" | "new" | "dropped";
+  change_analysis?: {
+    narrativeExplanation: string;
+    primaryReason: string;
+    secondaryReasons: string[];
+    changeCategory: string;
+  };
+}
+
 interface RankingPreview {
   period: string;
   algorithm_version: string;
   total_tools: number;
   new_entries: number;
   dropped_entries: number;
-  rankings_comparison: Array<{
-    tool_id: string;
-    tool_name: string;
-    current_position?: number;
-    new_position: number;
-    current_score?: number;
-    new_score: number;
-    position_change: number;
-    score_change: number;
-    movement: "up" | "down" | "same" | "new" | "dropped";
-  }>;
-  top_10_changes: Array<{
-    tool_id: string;
-    tool_name: string;
-    current_position?: number;
-    new_position: number;
-    current_score?: number;
-    new_score: number;
-    position_change: number;
-    score_change: number;
-    movement: "up" | "down" | "same" | "new" | "dropped";
-  }>;
+  rankings_comparison: RankingComparison[];
+  top_10_changes: RankingComparison[];
   biggest_movers: {
     up: Array<{
       tool_id: string;
@@ -71,6 +69,11 @@ interface RankingPreview {
     average_score_change: number;
     highest_score: number;
     lowest_score: number;
+  };
+  change_report?: {
+    summary: string;
+    narrativeSummary: string;
+    factorTrends: Record<string, { improving: number; declining: number }>;
   };
 }
 
@@ -272,8 +275,9 @@ export function RankingsManager() {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="summary" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="summary">Summary</TabsTrigger>
+                <TabsTrigger value="report">Analysis</TabsTrigger>
                 <TabsTrigger value="up">Moved Up ({preview.summary.tools_moved_up})</TabsTrigger>
                 <TabsTrigger value="down">
                   Moved Down ({preview.summary.tools_moved_down})
@@ -350,6 +354,95 @@ export function RankingsManager() {
                 </div>
               </TabsContent>
 
+              <TabsContent value="report" className="space-y-4">
+                {preview.change_report ? (
+                  <>
+                    {/* Narrative Summary */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-sm">Movement Analysis</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm">{preview.change_report.narrativeSummary}</p>
+                      </CardContent>
+                    </Card>
+
+                    {/* Factor Trends */}
+                    {preview.change_report.factorTrends && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-sm">Factor Trends</CardTitle>
+                          <CardDescription>Which factors drove the most changes</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2">
+                            {Object.entries(preview.change_report.factorTrends).map(([factor, trend]) => {
+                              const netTrend = trend.improving - trend.declining;
+                              return (
+                                <div key={factor} className="flex items-center justify-between p-2 rounded">
+                                  <span className="text-sm font-medium capitalize">
+                                    {factor.replace(/([A-Z])/g, ' $1').trim()}
+                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm text-green-600">
+                                      +{trend.improving}
+                                    </span>
+                                    <span className="text-sm text-red-600">
+                                      -{trend.declining}
+                                    </span>
+                                    <Badge variant={netTrend > 0 ? "default" : netTrend < 0 ? "destructive" : "secondary"}>
+                                      {netTrend > 0 ? '+' : ''}{netTrend}
+                                    </Badge>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {/* Top Movers with Explanations */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-sm">Top Movers</CardTitle>
+                        <CardDescription>Tools with the biggest changes and why</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        {preview.rankings_comparison
+                          .filter(tool => tool.change_analysis && Math.abs(tool.position_change) >= 3)
+                          .sort((a, b) => Math.abs(b.position_change) - Math.abs(a.position_change))
+                          .slice(0, 10)
+                          .map((tool, idx) => (
+                            <div key={idx} className="p-3 border rounded-lg space-y-2">
+                              <div className="flex items-center justify-between">
+                                <div className="font-medium">{tool.tool_name}</div>
+                                <div className="flex items-center gap-2">
+                                  {tool.position_change > 0 ? (
+                                    <TrendingUp className="h-4 w-4 text-green-600" />
+                                  ) : (
+                                    <TrendingDown className="h-4 w-4 text-red-600" />
+                                  )}
+                                  <Badge variant={tool.position_change > 0 ? "default" : "destructive"}>
+                                    {tool.position_change > 0 ? '+' : ''}{tool.position_change}
+                                  </Badge>
+                                </div>
+                              </div>
+                              {tool.change_analysis && (
+                                <p className="text-sm text-muted-foreground">
+                                  {tool.change_analysis.narrativeExplanation}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                      </CardContent>
+                    </Card>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No detailed analysis available</p>
+                )}
+              </TabsContent>
+
               <TabsContent value="up">
                 <div className="space-y-2">
                   {preview.rankings_comparison
@@ -359,13 +452,18 @@ export function RankingsManager() {
                         key={idx}
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-1">
                           <TrendingUp className="h-5 w-5 text-green-600" />
-                          <div>
+                          <div className="flex-1">
                             <div className="font-medium">{tool.tool_name}</div>
                             <div className="text-sm text-muted-foreground">
                               Position: {tool.current_position} → {tool.new_position}
                             </div>
+                            {tool.change_analysis && (
+                              <div className="mt-1 text-sm text-muted-foreground italic">
+                                {tool.change_analysis.primaryReason}
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -388,13 +486,18 @@ export function RankingsManager() {
                         key={idx}
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-1">
                           <TrendingDown className="h-5 w-5 text-red-600" />
-                          <div>
+                          <div className="flex-1">
                             <div className="font-medium">{tool.tool_name}</div>
                             <div className="text-sm text-muted-foreground">
                               Position: {tool.current_position} → {tool.new_position}
                             </div>
+                            {tool.change_analysis && (
+                              <div className="mt-1 text-sm text-muted-foreground italic">
+                                {tool.change_analysis.primaryReason}
+                              </div>
+                            )}
                           </div>
                         </div>
                         <div className="flex items-center gap-2">

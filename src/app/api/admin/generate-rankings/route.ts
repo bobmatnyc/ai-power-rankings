@@ -165,6 +165,27 @@ export async function POST() {
 
     // Store rankings in Payload
     const rankingPeriod = new Date().toISOString().slice(0, 7); // YYYY-MM format
+    
+    // Get previous month's rankings for movement calculation
+    const previousDate = new Date();
+    previousDate.setMonth(previousDate.getMonth() - 1);
+    const previousPeriod = previousDate.toISOString().slice(0, 7);
+    
+    const { docs: previousRankings } = await payload.find({
+      collection: "rankings",
+      where: {
+        period: { equals: previousPeriod },
+      },
+      limit: 1000,
+    });
+    
+    // Create a map of previous rankings by tool ID
+    const previousRankingsMap = new Map(
+      previousRankings.map(r => [
+        typeof r['tool'] === 'object' ? r['tool']['id'] : r['tool'],
+        r
+      ])
+    );
 
     // Clear existing rankings for this period
     const { docs: existingRankings } = await payload.find({
@@ -184,6 +205,7 @@ export async function POST() {
 
     // Create new rankings
     const createdRankings = [];
+    
     for (let i = 0; i < scores.length; i++) {
       const score = scores[i];
       if (!score) {
@@ -194,24 +216,49 @@ export async function POST() {
       if (!tool) {
         continue;
       }
+      
+      // Get previous ranking for this tool
+      const previousRanking = previousRankingsMap.get(tool.id);
+      const currentPosition = i + 1;
+      const previousPosition = previousRanking?.['position'];
+      
+      // Calculate movement
+      let movement: string = 'new';
+      let movementPositions = 0;
+      
+      if (previousPosition) {
+        movementPositions = previousPosition - currentPosition;
+        if (movementPositions > 0) {
+          movement = 'up';
+        } else if (movementPositions < 0) {
+          movement = 'down';
+        } else {
+          movement = 'same';
+        }
+      }
 
       const rankingData = {
         tool: tool.id,
         period: rankingPeriod,
-        position: i + 1,
+        position: currentPosition,
         score: Math.round(score.overallScore * 100) / 100, // Round to 2 decimal places
+        
+        // Movement tracking
+        previous_position: previousPosition || null,
+        movement: movement,
+        movement_positions: movementPositions,
 
-        // Factor scores
+        // Factor scores (map to collection field names)
+        market_traction_score: Math.round((score.factorScores?.marketTraction || 0) * 100) / 100,
+        technical_capability_score: Math.round((score.factorScores?.technicalPerformance || 0) * 100) / 100,
+        developer_adoption_score: Math.round((score.factorScores?.developerAdoption || 0) * 100) / 100,
+        development_velocity_score: Math.round((score.factorScores?.developmentVelocity || 0) * 100) / 100,
+        platform_resilience_score: Math.round((score.factorScores?.platformResilience || 0) * 100) / 100,
+        community_sentiment_score: Math.round((score.factorScores?.businessSentiment || 0) * 100) / 100,
+        
+        // Store additional v6 factors in appropriate fields
         agentic_capability: Math.round((score.factorScores?.agenticCapability || 0) * 100) / 100,
         innovation: Math.round((score.factorScores?.innovation || 0) * 100) / 100,
-        technical_performance:
-          Math.round((score.factorScores?.technicalPerformance || 0) * 100) / 100,
-        developer_adoption: Math.round((score.factorScores?.developerAdoption || 0) * 100) / 100,
-        market_traction: Math.round((score.factorScores?.marketTraction || 0) * 100) / 100,
-        business_sentiment: Math.round((score.factorScores?.businessSentiment || 0) * 100) / 100,
-        development_velocity:
-          Math.round((score.factorScores?.developmentVelocity || 0) * 100) / 100,
-        platform_resilience: Math.round((score.factorScores?.platformResilience || 0) * 100) / 100,
 
         // Modifiers
         innovation_decay_modifier: Math.round((score.modifiers?.innovationDecay || 0) * 100) / 100,

@@ -5,7 +5,7 @@ export const Users: CollectionConfig = {
   auth: {
     tokenExpiration: 7200,
     verify: false,
-    useAPIKey: false,
+    useAPIKey: true,
     cookies: {
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
@@ -91,6 +91,29 @@ export const Users: CollectionConfig = {
       type: "date",
       admin: {
         readOnly: true,
+      },
+    },
+    {
+      name: "apiKey",
+      type: "text",
+      access: {
+        read: ({ req: { user } }) => user?.["role"] === "admin",
+        update: ({ req: { user } }) => user?.["role"] === "admin",
+      },
+      admin: {
+        description: "API key for programmatic access. Only visible to admins.",
+      },
+    },
+    {
+      name: "enableAPIKey",
+      type: "checkbox",
+      defaultValue: false,
+      access: {
+        read: ({ req: { user } }) => user?.["role"] === "admin",
+        update: ({ req: { user } }) => user?.["role"] === "admin",
+      },
+      admin: {
+        description: "Enable API key authentication for this user.",
       },
     },
   ],
