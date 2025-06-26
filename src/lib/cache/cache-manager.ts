@@ -20,7 +20,7 @@ export interface CacheInfo {
 
 /**
  * Unified cache manager that handles both filesystem (dev) and blob storage (prod)
- * 
+ *
  * Priority order:
  * 1. Blob storage (if available in production)
  * 2. Filesystem (src/data/cache/)
@@ -39,7 +39,7 @@ export class CacheManager {
     if (CacheBlobStorage.shouldUseBlob()) {
       const blobData = await this.blobStorage.get(type);
       if (blobData) {
-        loggers.api.info(`Using cache from blob storage: ${type}`);
+        loggers.api.debug(`Using cache from blob storage: ${type}`);
         return blobData;
       }
     }
@@ -49,8 +49,8 @@ export class CacheManager {
       const filePath = this.getFilePath(type);
       const fileContent = await fs.readFile(filePath, "utf-8");
       const data = JSON.parse(fileContent);
-      
-      loggers.api.info(`Using cache from filesystem: ${type}`);
+
+      loggers.api.debug(`Using cache from filesystem: ${type}`);
       return data;
     } catch (error) {
       loggers.api.error(`Failed to read cache from filesystem: ${type}`, { error });
@@ -71,12 +71,12 @@ export class CacheManager {
       // Development: Use filesystem
       const filePath = this.getFilePath(type);
       const jsonData = JSON.stringify(data, null, 2);
-      
+
       // Ensure directory exists
       await fs.mkdir(this.cacheDir, { recursive: true });
-      
+
       await fs.writeFile(filePath, jsonData, "utf-8");
-      loggers.api.info(`Stored cache in filesystem: ${type}`, {
+      loggers.api.debug(`Stored cache in filesystem: ${type}`, {
         size: jsonData.length,
         path: filePath,
       });
@@ -113,7 +113,7 @@ export class CacheManager {
     try {
       const filePath = this.getFilePath(type);
       const stats = await fs.stat(filePath);
-      
+
       return {
         source: "filesystem",
         exists: true,
@@ -137,7 +137,7 @@ export class CacheManager {
       try {
         const filePath = this.getFilePath(type);
         await fs.unlink(filePath);
-        loggers.api.info(`Deleted cache from filesystem: ${type}`);
+        loggers.api.debug(`Deleted cache from filesystem: ${type}`);
       } catch (error) {
         loggers.api.error(`Failed to delete cache: ${type}`, { error });
       }

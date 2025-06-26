@@ -20,12 +20,12 @@ export async function GET(request: NextRequest) {
 
     // For all environments, return cached data immediately
     if (useCacheFirst) {
-      loggers.api.info("Using cache-first approach for news");
+      loggers.api.debug("Using cache-first approach for news");
 
       // Return ALL news data - let client handle filtering and pagination
       const cachedNewsData = await loadCacheWithFallback("news");
       const cacheInfo = await new CacheManager().getInfo("news");
-      
+
       const apiResponse = NextResponse.json({
         news: cachedNewsData.news,
         total: cachedNewsData.news.length,
@@ -338,7 +338,7 @@ export async function GET(request: NextRequest) {
     // Fall back to cached data on error - return all news without filtering
     const cachedNewsData = await loadCacheWithFallback("news");
     const cacheInfo = await new CacheManager().getInfo("news");
-    
+
     const apiResponse = NextResponse.json({
       news: cachedNewsData.news.slice(0, 20), // Return first 20 items
       total: cachedNewsData.news.length,

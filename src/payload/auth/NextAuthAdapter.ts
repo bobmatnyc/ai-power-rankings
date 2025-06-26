@@ -42,7 +42,7 @@ export class NextAuthAdapter {
             name: session.user.name || session.user.email,
             password: `oauth-${Math.random().toString(36).slice(2)}`, // Random password
             role: "admin",
-            authProvider: "oauth",
+            auth_provider: "oauth",
           },
         });
       }

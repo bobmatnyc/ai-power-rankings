@@ -208,12 +208,12 @@ export async function GET(): Promise<NextResponse> {
 
     // For preview environments or when cache is enabled, return cached data immediately
     if (useCacheFirst) {
-      loggers.ranking.info("Using cache-first approach for rankings");
+      loggers.ranking.debug("Using cache-first approach for rankings");
       console.log("Loading rankings from cache");
 
       const cachedRankingsData = await loadCacheWithFallback("rankings");
       const cacheInfo = await new CacheManager().getInfo("rankings");
-      
+
       // Return the cached data with metadata
       const cachedResponse = {
         ...cachedRankingsData,
@@ -236,7 +236,7 @@ export async function GET(): Promise<NextResponse> {
 
       const cachedRankingsData = await loadCacheWithFallback("rankings");
       const cacheInfo = await new CacheManager().getInfo("rankings");
-      
+
       // Return the cached data with metadata
       const cachedResponse = {
         ...cachedRankingsData,

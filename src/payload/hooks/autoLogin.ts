@@ -27,7 +27,7 @@ export const autoLoginHook = async (req: PayloadRequest) => {
             name: session.user.name || session.user.email,
             password: "nextauth-user-" + Math.random(), // Random password since we don't use it
             role: "admin",
-            authProvider: "oauth",
+            auth_provider: "oauth",
           },
         });
       }

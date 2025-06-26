@@ -13,7 +13,7 @@ export const Users: CollectionConfig = {
   },
   admin: {
     useAsTitle: "email",
-    defaultColumns: ["email", "name", "role", "lastLoginAt"],
+    defaultColumns: ["email", "name", "role", "last_login_at"],
   },
   access: {
     create: ({ req: { user } }) => {
@@ -75,7 +75,7 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      name: "authProvider",
+      name: "auth_provider",
       type: "select",
       options: [
         { label: "OAuth (Google)", value: "oauth" },
@@ -87,14 +87,14 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      name: "lastLoginAt",
+      name: "last_login_at",
       type: "date",
       admin: {
         readOnly: true,
       },
     },
     {
-      name: "apiKey",
+      name: "api_key",
       type: "text",
       access: {
         read: ({ req: { user } }) => user?.["role"] === "admin",
@@ -105,7 +105,7 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      name: "enableAPIKey",
+      name: "enable_api_key",
       type: "checkbox",
       defaultValue: false,
       access: {

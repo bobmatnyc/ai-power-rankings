@@ -86,7 +86,7 @@ export class CacheBlobStorage {
         cacheControlMaxAge: 60, // 1 minute cache
       });
 
-      loggers.api.info(`Stored cache in blob: ${key}`, {
+      loggers.api.debug(`Stored cache in blob: ${key}`, {
         size: jsonData.length,
         type,
       });
@@ -126,7 +126,7 @@ export class CacheBlobStorage {
 
       const data = await response.json();
 
-      loggers.api.info(`Retrieved cache from blob: ${key}`, {
+      loggers.api.debug(`Retrieved cache from blob: ${key}`, {
         size: metadata.size,
         uploadedAt: metadata.uploadedAt,
       });
@@ -209,7 +209,7 @@ export class CacheBlobStorage {
 
     try {
       await api.del(key);
-      loggers.api.info(`Deleted cache from blob: ${key}`);
+      loggers.api.debug(`Deleted cache from blob: ${key}`);
     } catch (error) {
       loggers.api.error(`Failed to delete cache from blob: ${key}`, { error });
       throw error;

@@ -21,19 +21,19 @@ const fallbackData: Record<CacheType, any> = {
  */
 export async function loadCacheWithFallback(type: CacheType): Promise<any> {
   const cacheManager = new CacheManager();
-  
+
   try {
     // Try to get from cache manager (blob or filesystem)
     const cachedData = await cacheManager.get(type);
     if (cachedData) {
-      loggers.api.info(`Loaded ${type} from cache manager`);
+      loggers.api.debug(`Loaded ${type} from cache manager`);
       return cachedData;
     }
   } catch (error) {
     loggers.api.error(`Failed to load ${type} from cache manager`, { error });
   }
-  
+
   // Fall back to imported JSON
-  loggers.api.info(`Using fallback ${type} data from imported JSON`);
+  loggers.api.debug(`Using fallback ${type} data from imported JSON`);
   return fallbackData[type];
 }

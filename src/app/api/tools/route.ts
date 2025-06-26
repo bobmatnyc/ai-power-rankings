@@ -15,8 +15,8 @@ export async function GET(): Promise<NextResponse> {
 
     // For preview environments, return cached data immediately
     if (useCacheFirst) {
-      loggers.api.info("Using cache-first approach for tools");
-      
+      loggers.api.debug("Using cache-first approach for tools");
+
       const cachedToolsData = await loadCacheWithFallback("tools");
       const cacheInfo = await new CacheManager().getInfo("tools");
 
@@ -48,7 +48,7 @@ export async function GET(): Promise<NextResponse> {
       // Fall back to cached data
       const cachedToolsData = await loadCacheWithFallback("tools");
       const cacheInfo = await new CacheManager().getInfo("tools");
-      
+
       const apiResponse = NextResponse.json({
         tools: cachedToolsData.tools,
         _cached: true,
