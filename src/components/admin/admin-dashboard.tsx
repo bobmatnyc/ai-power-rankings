@@ -2,8 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Settings, FileText, TrendingUp, Users, FileUp, Trophy, Database } from "lucide-react";
+import { FileText, Users, FileUp, Trophy, Database } from "lucide-react";
 import Link from "next/link";
 
 export function AdminDashboard() {
@@ -91,11 +90,13 @@ export function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
         {adminSections.map((section) => {
           const Icon = section.icon;
-          return (
+
+          const cardContent = (
             <Card
-              key={section.title}
-              className={`transition-all hover:shadow-lg ${
-                section.disabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
+              className={`transition-all hover:shadow-lg h-full ${
+                section.disabled
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:scale-105 cursor-pointer hover:border-primary/20"
               }`}
             >
               <CardHeader className="pb-4">
@@ -114,58 +115,39 @@ export function AdminDashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">{section.description}</p>
-                <Button
-                  asChild={!section.disabled}
-                  disabled={section.disabled}
-                  className="w-full"
-                  variant={section.disabled ? "secondary" : "default"}
-                >
-                  {section.disabled ? (
-                    <span>Coming Soon</span>
-                  ) : section.external ? (
-                    <a href={section.href} target="_blank" rel="noopener noreferrer">
-                      Access {section.title}
-                    </a>
-                  ) : (
-                    <Link href={section.href}>Access {section.title}</Link>
-                  )}
-                </Button>
+                <p className="text-muted-foreground">{section.description}</p>
               </CardContent>
             </Card>
           );
+
+          if (section.disabled) {
+            return (
+              <div key={section.title} className="block">
+                {cardContent}
+              </div>
+            );
+          }
+
+          if (section.external) {
+            return (
+              <a
+                key={section.title}
+                href={section.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block h-full"
+              >
+                {cardContent}
+              </a>
+            );
+          }
+
+          return (
+            <Link key={section.title} href={section.href} className="block h-full">
+              {cardContent}
+            </Link>
+          );
         })}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-        <Button
-          onClick={() => window.open("/api/admin/generate-rankings", "_blank")}
-          className="h-auto p-4 flex flex-col items-center gap-2"
-          variant="outline"
-        >
-          <TrendingUp className="h-6 w-6" />
-          <span className="text-sm">Generate Rankings</span>
-        </Button>
-
-        <Button
-          onClick={() => window.open("/api/admin/subscribers/export", "_blank")}
-          className="h-auto p-4 flex flex-col items-center gap-2"
-          variant="outline"
-        >
-          <Users className="h-6 w-6" />
-          <span className="text-sm">Export Subscribers</span>
-        </Button>
-
-
-        <Button
-          onClick={() => window.open("/admin", "_blank")}
-          className="h-auto p-4 flex flex-col items-center gap-2"
-          variant="outline"
-        >
-          <Settings className="h-6 w-6" />
-          <span className="text-sm">Payload CMS</span>
-        </Button>
       </div>
 
       {/* Quick Stats */}
@@ -178,7 +160,9 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">5</div>
-            <p className="text-xs text-muted-foreground">Tools, Subscribers, News, Rankings & Cache</p>
+            <p className="text-xs text-muted-foreground">
+              Tools, Subscribers, News, Rankings & Cache
+            </p>
           </CardContent>
         </Card>
 
