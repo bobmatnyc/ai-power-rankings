@@ -77,13 +77,10 @@ export function AdminDashboard() {
   ];
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, {session?.user?.email}</p>
-        </div>
+    <div className="space-y-6">
+      {/* User Welcome */}
+      <div className="text-sm text-muted-foreground">
+        Welcome back, {session?.user?.email}
       </div>
 
       {/* Admin Sections Grid */}

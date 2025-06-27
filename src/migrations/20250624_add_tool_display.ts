@@ -1,5 +1,5 @@
 import { MigrateUpArgs, MigrateDownArgs } from "@payloadcms/db-postgres";
-// @ts-ignore - drizzle-orm is a dependency of @payloadcms/db-postgres
+// @ts-expect-error - drizzle-orm is a dependency of @payloadcms/db-postgres
 import { sql } from "drizzle-orm";
 
 export async function up({ payload }: MigrateUpArgs): Promise<void> {

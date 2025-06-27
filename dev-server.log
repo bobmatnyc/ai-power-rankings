@@ -3,7 +3,7 @@
 > node scripts/clear-next-cache.js && next dev
 
 🧹 Clearing Next.js cache...
-ℹ️  No Next.js cache found
+✅ Next.js cache cleared successfully
 🔧 Dynamic Environment Configuration:
    PORT: 3000
    NEXTAUTH_URL: Dynamic (via getUrl())
@@ -18,76 +18,116 @@
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 1177ms
- ○ Compiling /api/admin/ingest-news ...
- ✓ Compiled /api/admin/ingest-news in 3.1s (2012 modules)
-[13:42:15] [31mERROR[39m: [36mError running onInit function[39m
-    err: {
-      "type": "DrizzleQueryError",
-      "message": "Failed query: select \"id\", \"name\", \"role\", \"auth_provider\", \"last_login_at\", \"apikey\", \"apikey_enabled\", \"updated_at\", \"created_at\", \"enable_a_p_i_key\", \"api_key\", \"api_key_index\", \"email\", \"reset_password_token\", \"reset_password_expiration\", \"salt\", \"hash\", \"login_attempts\", \"lock_until\" from \"payload\".\"users\" \"users\" order by \"users\".\"created_at\" desc limit $1\nparams: 1: column \"enable_a_p_i_key\" does not exist",
-      "stack":
-          Error: Failed query: select "id", "name", "role", "auth_provider", "last_login_at", "apikey", "apikey_enabled", "updated_at", "created_at", "enable_a_p_i_key", "api_key", "api_key_index", "email", "reset_password_token", "reset_password_expiration", "salt", "hash", "login_attempts", "lock_until" from "payload"."users" "users" order by "users"."created_at" desc limit $1
-          params: 1
-              at NodePgPreparedQuery.queryWithCache (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/pg-core/session.js:55:15)
-              at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-              at async eval (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/node-postgres/session.js:131:22)
-              at async find (webpack-internal:///(rsc)/./node_modules/.pnpm/@payloadcms+drizzle@3.43.0_@types+pg@8.10.2_payload@3.43.0_pg@8.11.3/node_modules/@payloadcms/drizzle/dist/find/findMany.js:123:21)
-              at async findOperation (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/collections/operations/find.js:136:22)
-              at async Object.onInit (webpack-internal:///(rsc)/./payload.config.ts:89:31)
-              at async BasePayload.init (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:744:21)
-              at async getPayload (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:871:26)
-              at async POST (webpack-internal:///(rsc)/./src/app/api/admin/ingest-news/route.ts:116:25)
-              at async AppRouteRouteModule.do (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)
-              at async AppRouteRouteModule.handle (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)
-              at async doRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1518:42)
-              at async DevServer.renderToResponseWithComponentsImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1920:28)
-              at async DevServer.renderPageComponent (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2408:24)
-              at async DevServer.renderToResponseImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2445:32)
-              at async DevServer.pipeImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1008:25)
-              at async NextNodeServer.handleCatchallRenderRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/next-server.js:305:17)
-              at async DevServer.handleRequestImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:900:17)
-              at async /Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:371:20
-              at async Span.traceAsyncFn (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/trace/trace.js:157:20)
-              at async DevServer.handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:368:24)
-              at async invokeRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:237:21)
-              at async handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:428:24)
-              at async requestHandlerImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:452:13)
-              at async Server.requestListener (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/start-server.js:158:13)
-          caused by: error: column "enable_a_p_i_key" does not exist
-              at eval (webpack-internal:///(rsc)/./node_modules/.pnpm/pg-pool@3.10.1_pg@8.11.3/node_modules/pg-pool/index.js:45:11)
-              at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-              at async eval (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/node-postgres/session.js:138:18)
-              at async NodePgPreparedQuery.queryWithCache (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/pg-core/session.js:53:16)
-              at async eval (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/node-postgres/session.js:131:22)
-              at async find (webpack-internal:///(rsc)/./node_modules/.pnpm/@payloadcms+drizzle@3.43.0_@types+pg@8.10.2_payload@3.43.0_pg@8.11.3/node_modules/@payloadcms/drizzle/dist/find/findMany.js:123:21)
-              at async findOperation (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/collections/operations/find.js:136:22)
-              at async Object.onInit (webpack-internal:///(rsc)/./payload.config.ts:89:31)
-              at async BasePayload.init (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:744:21)
-              at async getPayload (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:871:26)
-              at async POST (webpack-internal:///(rsc)/./src/app/api/admin/ingest-news/route.ts:116:25)
-              at async AppRouteRouteModule.do (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)
-              at async AppRouteRouteModule.handle (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)
-              at async doRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1518:42)
-              at async DevServer.renderToResponseWithComponentsImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1920:28)
-              at async DevServer.renderPageComponent (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2408:24)
-              at async DevServer.renderToResponseImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2445:32)
-              at async DevServer.pipeImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1008:25)
-              at async NextNodeServer.handleCatchallRenderRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/next-server.js:305:17)
-              at async DevServer.handleRequestImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:900:17)
-              at async /Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:371:20
-              at async Span.traceAsyncFn (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/trace/trace.js:157:20)
-              at async DevServer.handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:368:24)
-              at async invokeRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:237:21)
-              at async handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:428:24)
-              at async requestHandlerImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:452:13)
-              at async Server.requestListener (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/start-server.js:158:13)
-      "query": "select \"id\", \"name\", \"role\", \"auth_provider\", \"last_login_at\", \"apikey\", \"apikey_enabled\", \"updated_at\", \"created_at\", \"enable_a_p_i_key\", \"api_key\", \"api_key_index\", \"email\", \"reset_password_token\", \"reset_password_expiration\", \"salt\", \"hash\", \"login_attempts\", \"lock_until\" from \"payload\".\"users\" \"users\" order by \"users\".\"created_at\" desc limit $1",
-      "params": [
-        1
-      ]
-    }
-{"level":"ERROR","time":"2025-06-26T17:42:15.275Z","pid":14448,"hostname":"Masas-M4-Air.local","context":"API","msg":"News ingestion failed:"}
- POST /api/admin/ingest-news 500 in 4482ms
+ ✓ Ready in 1293ms
+ ✓ Compiled /middleware in 490ms (245 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ ○ Compiling /[lang] ...
+ ✓ Compiled /[lang] in 2.8s (1186 modules)
+ ✓ Compiled in 227ms (508 modules)
+ GET /en 200 in 3536ms
+ ○ Compiling /api/tools ...
+ ✓ Compiled /api/tools in 3.4s (3070 modules)
+Loading rankings from cache
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/tools 200 in 3804ms
+ GET /api/rankings 200 in 3880ms
+ GET /api/auth/session 200 in 3877ms
+ GET /api/auth/session 200 in 10ms
+ ✓ Compiled /[lang]/dashboard in 463ms (3091 modules)
+ GET /en/dashboard 200 in 901ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 69ms
+ GET /api/tools 200 in 229ms
+ GET /api/auth/session 200 in 227ms
+ ○ Compiling /[lang]/dashboard/rankings ...
+ ✓ Compiled /[lang]/dashboard/rankings in 572ms (3121 modules)
+ GET /en/dashboard/rankings 200 in 868ms
+ ✓ Compiled /api/admin/preview-rankings in 261ms (3125 modules)
+{"level":"INFO","time":"2025-06-26T18:59:23.390Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Generating ranking preview for period: 2025-06"}
+{"level":"INFO","time":"2025-06-26T18:59:23.844Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Fetched 30 tools and 108 metrics for preview"}
+ POST /api/admin/preview-rankings 200 in 1494ms
+{"level":"INFO","time":"2025-06-26T18:59:23.846Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Ranking preview generated successfully"}
+ ✓ Compiled in 720ms (530 modules)
+ GET /en/dashboard/rankings 200 in 62ms
+ GET /api/tools 200 in 37ms
+ ✓ Compiled in 149ms (530 modules)
+ GET /en/dashboard/rankings 200 in 27ms
+ GET /api/tools 200 in 19ms
+ ✓ Compiled in 912ms (2992 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /en/dashboard/rankings 200 in 121ms
+ GET /en/dashboard/rankings 200 in 177ms
+ ✓ Compiled /api/auth/[...nextauth] in 270ms (2474 modules)
+ ✓ Compiled (2610 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/tools 200 in 1451ms
+ GET /favicon.ico 200 in 1531ms
+ GET /api/auth/session 200 in 1453ms
+ GET /api/auth/session 200 in 9ms
+ ✓ Compiled /api/admin/preview-rankings in 211ms (2614 modules)
+{"level":"INFO","time":"2025-06-26T19:02:21.540Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Generating ranking preview for period: 2025-06"}
+{"level":"INFO","time":"2025-06-26T19:02:22.457Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Fetched 30 tools and 108 metrics for preview"}
+ POST /api/admin/preview-rankings 200 in 1323ms
+{"level":"INFO","time":"2025-06-26T19:02:22.460Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Ranking preview generated successfully"}
+ ✓ Compiled in 464ms (3148 modules)
+ GET /en/dashboard/rankings 200 in 58ms
+ GET /favicon.ico 200 in 197ms
+ GET /api/tools 200 in 194ms
+ GET /favicon.ico 200 in 28ms
+ GET /favicon.ico 200 in 31ms
+ ✓ Compiled in 528ms (3134 modules)
+ GET /en/dashboard/rankings 200 in 52ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /en/dashboard/rankings 200 in 149ms
+ GET /favicon.ico 200 in 144ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 236ms
+ GET /api/tools 200 in 160ms
+ GET /api/auth/session 200 in 5ms
+ ○ Compiling /[lang]/rankings ...
+ ✓ Compiled /[lang]/rankings in 564ms (3201 modules)
+ ✓ Compiled /api/rankings in 274ms (2662 modules)
+Loading rankings from cache
+Loading rankings from cache
+ GET /api/rankings 200 in 395ms
+ GET /api/rankings?_t=1750964567349 200 in 396ms
+ GET /en/rankings?category=ide-assistant 200 in 1357ms
+ ✓ Compiled /api/favicon in 303ms (3205 modules)
+ GET /api/favicon?domain=https%3A%2F%2Faws.amazon.com%2Fq%2Fdeveloper%2F&size=48 200 in 450ms
+ GET /api/favicon?domain=https%3A%2F%2Ftabnine.com&size=48 200 in 476ms
+ GET /api/favicon?domain=https%3A%2F%2Fgithub.com%2Ffeatures%2Fcopilot&size=48 200 in 481ms
+ GET /api/favicon?domain=https%3A%2F%2Fcloud.google.com%2Fcode-assist&size=48 200 in 484ms
+ GET /api/favicon?domain=https%3A%2F%2Freplit.com&size=48 200 in 494ms
+ GET /api/favicon?domain=https%3A%2F%2Faugmentcode.com&size=48 200 in 508ms
+ GET /api/favicon?domain=https%3A%2F%2Fvisualstudio.microsoft.com%2Fservices%2Fintellicode%2F&size=48 200 in 67ms
+ GET /api/favicon?domain=https%3A%2F%2Fjetbrains.com%2Fai%2F&size=48 200 in 96ms
+ GET /api/favicon?domain=https%3A%2F%2Fsourcegraph.com%2Fcody&size=48 200 in 71ms
+ ✓ Compiled in 231ms (555 modules)
+ ✓ Compiled /_not-found in 415ms (3223 modules)
+ GET /en/rankings?category=ide-assistant 404 in 443ms
+Loading rankings from cache
+ GET /api/rankings?_t=1750964578612 200 in 172ms
+ GET /en/rankings?category=ide-assistant 200 in 257ms
+Loading rankings from cache
+ GET /api/rankings?_t=1750964578877 200 in 35ms
+Loading rankings from cache
+ GET /api/rankings 200 in 193ms
+ GET /en/rankings?category=ide-assistant 200 in 510ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 92ms
+ GET /api/tools 200 in 25ms
+ GET /api/auth/session 200 in 6ms
+ ✓ Compiled in 168ms (558 modules)
+ GET /en/rankings?category=ide-assistant 200 in 111ms
+ GET /api/rankings?_t=1750964586051 404 in 77ms
+Loading rankings from cache
+ GET /api/rankings?_t=1750964586196 200 in 7ms
+ GET /api/tools 200 in 14ms
+ GET /en/dashboard/rankings 200 in 63ms
+{"level":"INFO","time":"2025-06-26T19:03:30.593Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Generating ranking preview for period: 2025-06"}
+{"level":"INFO","time":"2025-06-26T19:03:31.220Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Fetched 30 tools and 108 metrics for preview"}
+ POST /api/admin/preview-rankings 200 in 691ms
+{"level":"INFO","time":"2025-06-26T19:03:31.223Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Ranking preview generated successfully"}
 [error: {:shutdown, :db_termination}] {
   length: 56,
   severity: 'FATAL',
@@ -148,86 +188,1142 @@
   routine: undefined,
   client: [Client]
 }
- ○ Compiling /middleware ...
- ✓ Compiled /middleware in 565ms (245 modules)
-[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ ✓ Compiled in 397ms (555 modules)
+ GET /en/dashboard/rankings 200 in 92ms
+ GET /api/tools 200 in 11ms
+ ✓ Compiled in 125ms (555 modules)
+ GET /en/dashboard/rankings 200 in 17ms
+ GET /api/tools 200 in 9ms
+ ✓ Compiled in 197ms (555 modules)
+ GET /en/dashboard/rankings 200 in 30ms
+ GET /api/tools 200 in 11ms
+ ✓ Compiled in 124ms (555 modules)
+ GET /en/dashboard/rankings 200 in 17ms
+ GET /api/tools 200 in 10ms
+ ✓ Compiled in 228ms (555 modules)
+ GET /en/dashboard/rankings 200 in 20ms
+ GET /api/tools 200 in 7ms
+ ✓ Compiled in 113ms (555 modules)
+ GET /en/dashboard/rankings 200 in 15ms
+ GET /api/tools 200 in 41ms
+ ✓ Compiled in 171ms (555 modules)
+ GET /en/dashboard/rankings 200 in 44ms
+ GET /api/tools 200 in 27ms
+ GET /api/auth/session 200 in 35ms
+ GET /api/auth/session 200 in 6ms
  ○ Compiling /[lang]/dashboard/news-ingestion ...
- ✓ Compiled /[lang]/dashboard/news-ingestion in 2.4s (1148 modules)
- ✓ Compiled in 201ms (499 modules)
- GET /en/dashboard/news-ingestion 200 in 3121ms
- ✓ Compiled /api/tools in 182ms (647 modules)
- ✓ Compiled in 453ms (485 modules)
- GET /favicon.ico 200 in 1889ms
- GET /api/tools 200 in 1773ms
+ ✓ Compiled /[lang]/dashboard/news-ingestion in 863ms (1461 modules)
+ GET /en/dashboard/news-ingestion 200 in 1315ms
+ ✓ Compiled /[lang]/dashboard/subscribers in 429ms (1555 modules)
+ GET /en/dashboard/subscribers 200 in 784ms
+ ○ Compiling /api/admin/subscribers ...
+ ✓ Compiled /api/admin/subscribers in 744ms (3198 modules)
 [33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
- GET /api/auth/session 200 in 2085ms
+ GET /api/admin/subscribers 200 in 1308ms
+ GET /api/admin/subscribers 200 in 86ms
+ ○ Compiling /admin/[[...segments]] ...
+ ✓ Compiled /admin/[[...segments]] in 5.3s (5897 modules)
+ GET /admin 200 in 6783ms
+ GET /admin 200 in 191ms
+ ○ Compiling /api/[...slug] ...
+ ✓ Compiled /api/[...slug] in 1491ms (5829 modules)
+ GET /admin/login 200 in 1599ms
+ GET /admin/login 200 in 56ms
+ GET /api/users/me 200 in 2451ms
+ GET /api/users/me 200 in 8ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/admin/subscribers 200 in 343ms
+ ○ Compiling /api/tools ...
+ ✓ Compiled /api/tools in 1092ms (4418 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/tools 200 in 1794ms
+ GET /api/tools 200 in 4ms
+ GET /api/admin/subscribers 200 in 1575ms
+ ✓ Compiled in 1875ms (5939 modules)
+ GET /en/dashboard/subscribers 200 in 67ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /en/dashboard/subscribers 200 in 149ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 505ms (4411 modules)
+ ✓ Compiled (4413 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/tools 200 in 1213ms
+ GET /favicon.ico 200 in 1319ms
+ GET /api/auth/session 200 in 1285ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/admin/subscribers 200 in 1551ms
+ ✓ Compiled in 186ms (1530 modules)
+ GET /en/dashboard/subscribers 200 in 170ms
+ GET /favicon.ico 200 in 74ms
+ GET /favicon.ico 200 in 38ms
+ GET /favicon.ico 200 in 34ms
+[error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ⨯ uncaughtException: [error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ⨯ uncaughtException:  [error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ✓ Compiled in 224ms (1530 modules)
+ GET /en/dashboard/subscribers 200 in 23ms
+ GET /api/tools 200 in 26ms
+ GET /favicon.ico 200 in 41ms
+ GET /favicon.ico 200 in 36ms
+ GET /favicon.ico 200 in 42ms
+ GET /favicon.ico 200 in 27ms
+ ✓ Compiled in 280ms (1530 modules)
+ GET /en/dashboard/subscribers 200 in 22ms
+ GET /favicon.ico 200 in 49ms
+ GET /api/tools 200 in 54ms
+ GET /favicon.ico 200 in 30ms
+ GET /favicon.ico 200 in 35ms
+ GET /en/dashboard/subscribers 200 in 321ms
+ GET /favicon.ico 200 in 148ms
+ GET /api/tools 200 in 80ms
+ GET /api/auth/session 200 in 89ms
+ GET /api/auth/session 200 in 78ms
+ ○ Compiling /api/rankings ...
+ GET /api/admin/subscribers 200 in 1117ms
+ ✓ Compiled /api/rankings in 1766ms (4092 modules)
+Loading rankings from cache
+Loading rankings from cache
+ GET /api/rankings 200 in 2217ms
+ GET /api/rankings?_t=1750965242442 200 in 2218ms
+ GET /en/rankings?sort=trending 200 in 2316ms
+ GET /en/dashboard/rankings 200 in 450ms
+ ✓ Compiled in 891ms (1530 modules)
+ GET /en/dashboard/rankings 200 in 55ms
+ GET /api/tools 200 in 12ms
+ ⨯ ./src/components/admin/enhanced-rankings-manager.tsx:13:1
+Module not found: Can't resolve '@/components/ui/calendar'
+  11 | import { Label } from "@/components/ui/label";
+  12 | import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+> 13 | import { Calendar } from "@/components/ui/calendar";
+     | ^
+  14 | import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+  15 | import { cn } from "@/lib/utils";
+  16 | import {
+
+https://nextjs.org/docs/messages/module-not-found
+ ✓ Compiled in 1015ms (5496 modules)
+ GET /en/dashboard/rankings 200 in 124ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled /api/auth/[...nextauth] in 947ms (5496 modules)
+ ✓ Compiled (5941 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/admin/ranking-periods 404 in 1944ms
+ GET /api/tools 200 in 1983ms
+ GET /api/auth/session 200 in 2146ms
+ GET /en/dashboard/rankings 200 in 1758ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 905ms (4412 modules)
+ GET /api/admin/ranking-periods 404 in 1520ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /favicon.ico 200 in 1672ms
+ GET /api/tools 200 in 1507ms
+ GET /api/auth/session 200 in 1513ms
+ GET /api/auth/session 200 in 6ms
+ ✓ Compiled in 1307ms (5943 modules)
+ GET /en/dashboard/rankings 200 in 93ms
+ GET /favicon.ico 200 in 198ms
+ GET /api/tools 200 in 199ms
+ GET /favicon.ico 200 in 27ms
+ GET /favicon.ico 200 in 27ms
+ ✓ Compiled in 1164ms (5943 modules)
+ GET /en/dashboard/rankings 200 in 61ms
+ GET /api/admin/ranking-periods 404 in 148ms
+ GET /favicon.ico 200 in 110ms
+ GET /api/tools 200 in 112ms
+ GET /favicon.ico 200 in 37ms
+ GET /favicon.ico 200 in 49ms
+ GET /favicon.ico 200 in 29ms
+ ✓ Compiled in 2.1s (6174 modules)
+ GET /en/dashboard/rankings 200 in 1744ms
+ GET /en/dashboard/rankings 200 in 20ms
+ GET /favicon.ico 200 in 176ms
+ GET /api/tools 200 in 406ms
+ GET /favicon.ico 200 in 42ms
+ GET /favicon.ico 200 in 36ms
+ ✓ Compiled in 256ms (1531 modules)
+ GET /en/dashboard/rankings 200 in 67ms
+ ✓ Compiled in 1206ms (6174 modules)
+ GET /en/dashboard/rankings 200 in 1124ms
+ GET /en/dashboard/rankings 200 in 17ms
+ GET /api/tools 200 in 263ms
+ GET /favicon.ico 200 in 274ms
+ GET /favicon.ico 200 in 35ms
+ GET /favicon.ico 200 in 30ms
+ ✓ Compiled in 308ms (1531 modules)
+ GET /en/dashboard/rankings 200 in 105ms
+ ✓ Compiled in 1131ms (6174 modules)
+ GET /en/dashboard/rankings 200 in 1002ms
+ GET /en/dashboard/rankings 200 in 13ms
+ GET /favicon.ico 200 in 319ms
+ GET /api/tools 200 in 316ms
+ GET /favicon.ico 200 in 28ms
+ GET /favicon.ico 200 in 27ms
+ ✓ Compiled in 302ms (1531 modules)
+ GET /en/dashboard/rankings 200 in 19ms
+ GET /favicon.ico 200 in 44ms
+ GET /api/tools 200 in 46ms
+ GET /favicon.ico 200 in 30ms
+ GET /favicon.ico 200 in 31ms
+ ✓ Compiled in 231ms (1531 modules)
+ GET /en/dashboard/rankings 200 in 31ms
+ GET /favicon.ico 200 in 42ms
+ GET /api/tools 200 in 52ms
+ GET /favicon.ico 200 in 31ms
+ GET /favicon.ico 200 in 35ms
+ ✓ Compiled in 198ms (1531 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1540ms (5488 modules)
+ GET /en/dashboard/rankings 404 in 1643ms
+ GET /en/dashboard/rankings 200 in 238ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 1744ms (5612 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/tools 200 in 1956ms
+ GET /api/auth/session 200 in 2036ms
+ GET /api/auth/session 200 in 8ms
+{"level":"INFO","time":"2025-06-26T19:21:58.722Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 2563ms
+ ✓ Compiled in 745ms (5626 modules)
+ GET /en/dashboard/rankings 200 in 52ms
+ GET /api/tools 200 in 207ms
+ ✓ Compiled in 195ms (1534 modules)
+ GET /en/dashboard/rankings 404 in 28ms
+ GET /en/dashboard/rankings 200 in 154ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 98ms
+ GET /api/auth/session 200 in 7ms
+{"level":"INFO","time":"2025-06-26T19:22:20.707Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 308ms
+ ✓ Compiled in 2.2s (5626 modules)
+ GET /en/dashboard/rankings 200 in 50ms
+ GET /api/tools 200 in 130ms
+ ✓ Compiled in 903ms (5626 modules)
+ ✓ Compiled in 0ms (4092 modules)
+ ✓ Compiled in 0ms (4092 modules)
+ ✓ Compiled in 0ms (4092 modules)
+{"level":"INFO","time":"2025-06-26T19:22:35.784Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 2392ms
+ GET /en/dashboard/rankings 200 in 1899ms
+ GET /api/tools 200 in 133ms
+ ✓ Compiled in 729ms (5624 modules)
+ GET /en/dashboard/rankings 200 in 42ms
+ GET /api/tools 200 in 117ms
+ ✓ Compiled in 868ms (5624 modules)
+ GET /en/dashboard/rankings 200 in 49ms
+ GET /api/tools 200 in 123ms
+ GET /en/dashboard/rankings 200 in 294ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 182ms
+ GET /api/tools 200 in 83ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/auth/session 200 in 9ms
+{"level":"INFO","time":"2025-06-26T19:45:02.570Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 556ms
+ ○ Compiling /api/admin/preview-rankings ...
+ ✓ Compiled /api/admin/preview-rankings in 1728ms (4093 modules)
+{"level":"INFO","time":"2025-06-26T19:45:12.835Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Generating ranking preview for period: 2025-05"}
+ GET /en/dashboard/rankings 200 in 64ms
+ GET /en/dashboard/rankings 200 in 36ms
+ GET /api/tools 200 in 26ms
+ GET /api/tools 200 in 8ms
+{"level":"INFO","time":"2025-06-26T19:45:13.386Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Fetched 30 tools and 108 metrics for preview"}
+ POST /api/admin/preview-rankings 200 in 2609ms
+{"level":"INFO","time":"2025-06-26T19:45:13.389Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Ranking preview generated successfully"}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 2.7s (5362 modules)
+ GET /en/dashboard/rankings 200 in 692ms
+ GET /en/dashboard/rankings 200 in 1520ms
+ ○ Compiling /api/tools ...
+ ✓ Compiled /api/admin/ranking-periods in 1823ms (3847 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 0ms (3969 modules)
+ ✓ Compiled in 1ms (4091 modules)
+ ✓ Compiled in 0ms (4091 modules)
+ GET /favicon.ico 200 in 4818ms
+ ✓ Compiled in 0ms (4091 modules)
+ GET /api/tools 200 in 6215ms
+{"level":"INFO","time":"2025-06-26T19:46:30.877Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 5307ms
+ ✓ Compiled in 1408ms (5622 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 5924ms
+ ✓ Compiled in 1ms (4091 modules)
+ GET /favicon.ico 200 in 6592ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 3712ms
+ GET /en/dashboard/rankings 200 in 3561ms
+ GET /api/auth/session 200 in 30ms
+ GET /en/dashboard/rankings 200 in 142ms
+ GET /api/tools 200 in 29ms
+ GET /api/tools 200 in 15ms
+ GET /favicon.ico 200 in 27ms
+ GET /favicon.ico 200 in 27ms
+ GET /favicon.ico 200 in 25ms
+ ✓ Compiled in 2.5s (5622 modules)
+ GET /en/dashboard/rankings 200 in 52ms
+ GET /en/dashboard/rankings 200 in 37ms
+ GET /api/tools 200 in 196ms
+ GET /api/tools 200 in 96ms
+ GET /favicon.ico 200 in 100ms
+ GET /favicon.ico 200 in 29ms
+ GET /favicon.ico 200 in 36ms
+ ✓ Compiled in 337ms (1531 modules)
+ GET /en/dashboard/rankings 200 in 40ms
+ GET /en/dashboard/rankings 200 in 80ms
+ GET /favicon.ico 200 in 65ms
+ GET /api/tools 200 in 69ms
+ GET /favicon.ico 200 in 46ms
+ GET /api/tools 200 in 41ms
+ GET /favicon.ico 200 in 35ms
+ GET /en/dashboard/rankings 200 in 325ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 168ms
+ GET /api/tools 200 in 139ms
+ GET /api/auth/session 200 in 17ms
+ GET /api/auth/session 200 in 20ms
+ GET /api/auth/session 200 in 8ms
+{"level":"INFO","time":"2025-06-26T19:47:27.792Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 568ms
+ ○ Compiling /api/admin/preview-rankings ...
+ ✓ Compiled /api/admin/preview-rankings in 1838ms (4095 modules)
+{"level":"INFO","time":"2025-06-26T19:47:33.703Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Generating ranking preview for period: 2025-05"}
+ GET /en/dashboard/rankings 200 in 89ms
+ GET /en/dashboard/rankings 200 in 117ms
+ GET /favicon.ico 200 in 282ms
+ GET /api/tools 200 in 273ms
+ GET /api/tools 200 in 102ms
+ GET /en/dashboard/rankings 200 in 266ms
+ GET /favicon.ico 200 in 125ms
+ GET /favicon.ico 200 in 79ms
+ GET /api/tools 200 in 43ms
+{"level":"INFO","time":"2025-06-26T19:47:34.531Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Fetched 30 tools and 108 metrics for preview"}
+ POST /api/admin/preview-rankings 200 in 2915ms
+{"level":"INFO","time":"2025-06-26T19:47:34.534Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Ranking preview generated successfully"}
+ ✓ Compiled in 1833ms (5502 modules)
+ GET /en/dashboard/rankings 200 in 62ms
+ GET /en/dashboard/rankings 200 in 57ms
+ GET /api/tools 200 in 279ms
+ GET /api/tools 200 in 25ms
+ GET /en/dashboard/rankings 200 in 34ms
+ GET /api/tools 200 in 13ms
+ GET /favicon.ico 200 in 71ms
+ GET /favicon.ico 200 in 26ms
+ GET /favicon.ico 200 in 24ms
+ ○ Compiling /api/admin/ranking-periods ...
+ ✓ Compiled /api/admin/ranking-periods in 862ms (5498 modules)
+ ✓ Compiled in 0ms (3969 modules)
+ GET /en/dashboard/rankings 200 in 1079ms
+ GET /en/dashboard/rankings 200 in 45ms
+ GET /api/tools 200 in 34ms
+ GET /en/dashboard/rankings 200 in 41ms
+ GET /api/tools 200 in 28ms
+ GET /api/tools 200 in 7ms
+{"level":"INFO","time":"2025-06-26T19:48:46.594Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 2142ms
+{"level":"INFO","time":"2025-06-26T19:48:46.775Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 181ms
+{"level":"INFO","time":"2025-06-26T19:48:46.982Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 207ms
+ GET /favicon.ico 200 in 148ms
+ GET /favicon.ico 200 in 49ms
+ GET /favicon.ico 200 in 30ms
+ ✓ Compiled in 999ms (5500 modules)
+ GET /en/dashboard/rankings 200 in 62ms
+ GET /en/dashboard/rankings 200 in 62ms
+ GET /api/tools 200 in 174ms
+ GET /favicon.ico 200 in 271ms
+ GET /api/tools 200 in 100ms
+ GET /favicon.ico 200 in 63ms
+ GET /en/dashboard/rankings 200 in 175ms
+ GET /favicon.ico 200 in 54ms
+ ✓ Compiled in 4s (5500 modules)
+ GET /en/dashboard/rankings 200 in 118ms
+ GET /en/dashboard/rankings 200 in 36ms
+ GET /en/dashboard/rankings 200 in 94ms
+ GET /api/tools 200 in 293ms
+ GET /api/tools 200 in 18ms
+ GET /api/tools 200 in 16ms
+ GET /favicon.ico 200 in 109ms
+ GET /favicon.ico 200 in 30ms
+ GET /favicon.ico 200 in 25ms
+ ✓ Compiled in 1361ms (5500 modules)
+ GET /en/dashboard/rankings 200 in 60ms
+ GET /en/dashboard/rankings 200 in 33ms
+ GET /api/tools 200 in 243ms
+ GET /en/dashboard/rankings 200 in 256ms
+ GET /api/tools 200 in 13ms
+ GET /api/tools 200 in 11ms
+ GET /favicon.ico 200 in 75ms
+ GET /favicon.ico 200 in 29ms
+ GET /favicon.ico 200 in 24ms
+ ✓ Compiled in 1332ms (5729 modules)
+ GET /en/dashboard/rankings 200 in 942ms
+ GET /en/dashboard/rankings 200 in 27ms
+ GET /en/dashboard/rankings 200 in 23ms
+ GET /en/dashboard/rankings 200 in 27ms
+ GET /en/dashboard/rankings 200 in 29ms
+ GET /en/dashboard/rankings 200 in 84ms
+ GET /api/tools 200 in 164ms
+ GET /favicon.ico 200 in 275ms
+ GET /api/tools 200 in 126ms
+ GET /favicon.ico 200 in 35ms
+ GET /favicon.ico 200 in 32ms
+ ✓ Compiled in 2.1s (5498 modules)
+ GET /en/dashboard/rankings 200 in 63ms
+ GET /en/dashboard/rankings 200 in 49ms
+ GET /favicon.ico 200 in 109ms
+ GET /api/tools 200 in 429ms
+ GET /favicon.ico 200 in 454ms
+ GET /api/tools 200 in 345ms
+ GET /en/dashboard/rankings 200 in 787ms
+ GET /favicon.ico 200 in 103ms
+ GET /api/tools 200 in 16ms
+ GET /en/dashboard/rankings 200 in 261ms
+ GET /favicon.ico 200 in 54ms
+ ○ Compiling /api/tools ...
+ ✓ Compiled /api/tools in 1074ms (3851 modules)
+ ✓ Compiled (4091 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 2901ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 6ms
  GET /api/auth/session 200 in 10ms
- ✓ Compiled /api/admin/ingest-news in 213ms (2548 modules)
-[13:47:21] [31mERROR[39m: [36mError running onInit function[39m
-    err: {
-      "type": "DrizzleQueryError",
-      "message": "Failed query: select \"id\", \"name\", \"role\", \"auth_provider\", \"last_login_at\", \"apikey\", \"apikey_enabled\", \"updated_at\", \"created_at\", \"enable_a_p_i_key\", \"api_key\", \"api_key_index\", \"email\", \"reset_password_token\", \"reset_password_expiration\", \"salt\", \"hash\", \"login_attempts\", \"lock_until\" from \"payload\".\"users\" \"users\" order by \"users\".\"created_at\" desc limit $1\nparams: 1: column \"enable_a_p_i_key\" does not exist",
-      "stack":
-          Error: Failed query: select "id", "name", "role", "auth_provider", "last_login_at", "apikey", "apikey_enabled", "updated_at", "created_at", "enable_a_p_i_key", "api_key", "api_key_index", "email", "reset_password_token", "reset_password_expiration", "salt", "hash", "login_attempts", "lock_until" from "payload"."users" "users" order by "users"."created_at" desc limit $1
-          params: 1
-              at NodePgPreparedQuery.queryWithCache (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/pg-core/session.js:55:15)
-              at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-              at async eval (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/node-postgres/session.js:131:22)
-              at async find (webpack-internal:///(rsc)/./node_modules/.pnpm/@payloadcms+drizzle@3.43.0_@types+pg@8.10.2_payload@3.43.0_pg@8.11.3/node_modules/@payloadcms/drizzle/dist/find/findMany.js:123:21)
-              at async findOperation (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/collections/operations/find.js:136:22)
-              at async Object.onInit (webpack-internal:///(rsc)/./payload.config.ts:89:31)
-              at async BasePayload.init (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:744:21)
-              at async getPayload (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:871:26)
-              at async POST (webpack-internal:///(rsc)/./src/app/api/admin/ingest-news/route.ts:116:25)
-              at async AppRouteRouteModule.do (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)
-              at async AppRouteRouteModule.handle (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)
-              at async doRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1518:42)
-              at async DevServer.renderToResponseWithComponentsImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1920:28)
-              at async DevServer.renderPageComponent (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2408:24)
-              at async DevServer.renderToResponseImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2445:32)
-              at async DevServer.pipeImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1008:25)
-              at async NextNodeServer.handleCatchallRenderRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/next-server.js:305:17)
-              at async DevServer.handleRequestImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:900:17)
-              at async /Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:371:20
-              at async Span.traceAsyncFn (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/trace/trace.js:157:20)
-              at async DevServer.handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:368:24)
-              at async invokeRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:237:21)
-              at async handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:428:24)
-              at async requestHandlerImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:452:13)
-              at async Server.requestListener (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/start-server.js:158:13)
-          caused by: error: column "enable_a_p_i_key" does not exist
-              at eval (webpack-internal:///(rsc)/./node_modules/.pnpm/pg-pool@3.10.1_pg@8.11.3/node_modules/pg-pool/index.js:45:11)
-              at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-              at async eval (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/node-postgres/session.js:138:18)
-              at async NodePgPreparedQuery.queryWithCache (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/pg-core/session.js:53:16)
-              at async eval (webpack-internal:///(rsc)/./node_modules/.pnpm/drizzle-orm@0.44.2_@types+pg@8.10.2_pg@8.11.3/node_modules/drizzle-orm/node-postgres/session.js:131:22)
-              at async find (webpack-internal:///(rsc)/./node_modules/.pnpm/@payloadcms+drizzle@3.43.0_@types+pg@8.10.2_payload@3.43.0_pg@8.11.3/node_modules/@payloadcms/drizzle/dist/find/findMany.js:123:21)
-              at async findOperation (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/collections/operations/find.js:136:22)
-              at async Object.onInit (webpack-internal:///(rsc)/./payload.config.ts:89:31)
-              at async BasePayload.init (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:744:21)
-              at async getPayload (webpack-internal:///(rsc)/./node_modules/.pnpm/payload@3.43.0_graphql@16.11.0_typescript@5.8.3/node_modules/payload/dist/index.js:871:26)
-              at async POST (webpack-internal:///(rsc)/./src/app/api/admin/ingest-news/route.ts:116:25)
-              at async AppRouteRouteModule.do (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)
-              at async AppRouteRouteModule.handle (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)
-              at async doRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1518:42)
-              at async DevServer.renderToResponseWithComponentsImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1920:28)
-              at async DevServer.renderPageComponent (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2408:24)
-              at async DevServer.renderToResponseImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:2445:32)
-              at async DevServer.pipeImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:1008:25)
-              at async NextNodeServer.handleCatchallRenderRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/next-server.js:305:17)
-              at async DevServer.handleRequestImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/base-server.js:900:17)
-              at async /Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:371:20
-              at async Span.traceAsyncFn (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/trace/trace.js:157:20)
-              at async DevServer.handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/dev/next-dev-server.js:368:24)
-              at async invokeRender (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:237:21)
-              at async handleRequest (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:428:24)
-              at async requestHandlerImpl (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/router-server.js:452:13)
-              at async Server.requestListener (/Users/masa/Projects/ai-power-rankings/node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/server/lib/start-server.js:158:13)
-      "query": "select \"id\", \"name\", \"role\", \"auth_provider\", \"last_login_at\", \"apikey\", \"apikey_enabled\", \"updated_at\", \"created_at\", \"enable_a_p_i_key\", \"api_key\", \"api_key_index\", \"email\", \"reset_password_token\", \"reset_password_expiration\", \"salt\", \"hash\", \"login_attempts\", \"lock_until\" from \"payload\".\"users\" \"users\" order by \"users\".\"created_at\" desc limit $1",
-      "params": [
-        1
-      ]
-    }
-{"level":"ERROR","time":"2025-06-26T17:47:21.347Z","pid":14448,"hostname":"Masas-M4-Air.local","context":"API","msg":"News ingestion failed:"}
- POST /api/admin/ingest-news 500 in 872ms
- POST /api/admin/ingest-news 400 in 558ms
+{"level":"INFO","time":"2025-06-26T19:52:12.060Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 3302ms
+ ✓ Compiled in 1625ms (5622 modules)
+ GET /en/dashboard/rankings 200 in 155ms
+ GET /en/dashboard/rankings 200 in 53ms
+ GET /api/tools 200 in 262ms
+ GET /favicon.ico 200 in 332ms
+ GET /api/tools 200 in 96ms
+ GET /en/dashboard/rankings 200 in 351ms
+ GET /favicon.ico 200 in 53ms
+ GET /favicon.ico 200 in 44ms
+ GET /favicon.ico 200 in 40ms
+ GET /api/tools 200 in 35ms
+ GET /favicon.ico 200 in 28ms
+ GET /favicon.ico 200 in 27ms
+ ✓ Compiled in 660ms (5622 modules)
+ GET /en/dashboard/rankings 200 in 48ms
+ GET /en/dashboard/rankings 200 in 39ms
+ GET /api/tools 200 in 176ms
+ GET /en/dashboard/rankings 200 in 210ms
+ GET /favicon.ico 200 in 125ms
+ GET /api/tools 200 in 132ms
+ GET /favicon.ico 200 in 56ms
+ GET /favicon.ico 200 in 31ms
+ GET /favicon.ico 200 in 32ms
+ GET /favicon.ico 200 in 29ms
+ GET /favicon.ico 200 in 31ms
+ GET /favicon.ico 200 in 27ms
+ ✓ Compiled in 2.7s (5622 modules)
+ GET /en/dashboard/rankings 200 in 56ms
+ GET /en/dashboard/rankings 200 in 95ms
+ GET /api/tools 200 in 561ms
+ GET /favicon.ico 200 in 665ms
+ GET /api/tools 200 in 114ms
+ GET /favicon.ico 200 in 91ms
+ GET /en/dashboard/rankings 200 in 99ms
+ GET /favicon.ico 200 in 99ms
+ GET /api/tools 200 in 304ms
+ GET /favicon.ico 200 in 320ms
+ GET /favicon.ico 200 in 43ms
+ GET /favicon.ico 200 in 39ms
+ ✓ Compiled in 1807ms (5498 modules)
+ GET /en/dashboard/rankings 200 in 67ms
+ GET /en/dashboard/rankings 200 in 35ms
+ GET /api/tools 200 in 256ms
+ GET /en/dashboard/rankings 200 in 289ms
+ GET /favicon.ico 200 in 128ms
+ GET /api/tools 200 in 106ms
+ GET /favicon.ico 200 in 60ms
+ GET /favicon.ico 200 in 33ms
+ GET /favicon.ico 200 in 31ms
+ GET /favicon.ico 200 in 25ms
+ GET /favicon.ico 200 in 30ms
+ ✓ Compiled /api/admin/ranking-periods in 1021ms (5498 modules)
+ ✓ Compiled in 0ms (3969 modules)
+ GET /en/dashboard/rankings 200 in 1340ms
+ GET /en/dashboard/rankings 200 in 76ms
+ GET /api/tools 200 in 59ms
+ GET /en/dashboard/rankings 200 in 52ms
+ GET /api/tools 200 in 59ms
+{"level":"INFO","time":"2025-06-26T19:53:48.342Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 2371ms
+ GET /favicon.ico 200 in 164ms
+{"level":"INFO","time":"2025-06-26T19:53:48.649Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 304ms
+ GET /favicon.ico 200 in 92ms
+ GET /favicon.ico 200 in 144ms
+ GET /favicon.ico 200 in 77ms
+ GET /favicon.ico 200 in 75ms
+{"level":"INFO","time":"2025-06-26T19:53:49.035Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 380ms
+ GET /favicon.ico 200 in 72ms
+ ✓ Compiled in 832ms (5500 modules)
+ GET /en/dashboard/rankings 200 in 50ms
+ GET /en/dashboard/rankings 200 in 44ms
+ GET /api/tools 200 in 160ms
+ GET /favicon.ico 200 in 100ms
+ GET /api/tools 200 in 98ms
+ GET /en/dashboard/rankings 200 in 271ms
+ GET /favicon.ico 200 in 46ms
+ GET /favicon.ico 200 in 39ms
+ GET /api/tools 200 in 12ms
+ GET /favicon.ico 200 in 39ms
+ GET /favicon.ico 200 in 26ms
+ GET /favicon.ico 200 in 31ms
+ ✓ Compiled in 918ms (5500 modules)
+ GET /en/dashboard/rankings 200 in 61ms
+ GET /en/dashboard/rankings 200 in 49ms
+ GET /en/dashboard/rankings 200 in 43ms
+ GET /api/tools 200 in 211ms
+ GET /favicon.ico 200 in 280ms
+ GET /api/tools 200 in 112ms
+ GET /favicon.ico 200 in 57ms
+ GET /api/tools 200 in 28ms
+ GET /favicon.ico 200 in 90ms
+ GET /favicon.ico 200 in 428ms
+ GET /favicon.ico 200 in 41ms
+ GET /favicon.ico 200 in 61ms
+ ✓ Compiled in 1400ms (5500 modules)
+ GET /en/dashboard/rankings 200 in 99ms
+ GET /en/dashboard/rankings 200 in 72ms
+ GET /favicon.ico 200 in 131ms
+ GET /api/tools 200 in 243ms
+ GET /favicon.ico 200 in 203ms
+ GET /en/dashboard/rankings 200 in 291ms
+ GET /favicon.ico 200 in 66ms
+ GET /favicon.ico 200 in 70ms
+ GET /api/tools 200 in 85ms
+ GET /favicon.ico 200 in 80ms
+ GET /favicon.ico 200 in 77ms
+[error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ⨯ uncaughtException: [error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ⨯ uncaughtException:  [error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ✓ Compiled in 4.7s (5502 modules)
+ GET /en/dashboard/rankings 200 in 485ms
+ GET /en/dashboard/rankings 200 in 92ms
+ GET /api/tools 200 in 1254ms
+ GET /favicon.ico 200 in 626ms
+ GET /api/tools 200 in 538ms
+ GET /favicon.ico 200 in 84ms
+ GET /en/dashboard/rankings 200 in 412ms
+ GET /favicon.ico 200 in 119ms
+ GET /favicon.ico 200 in 62ms
+ GET /favicon.ico 200 in 100ms
+ GET /favicon.ico 200 in 127ms
+ GET /en/dashboard/rankings 200 in 296ms
+ GET /favicon.ico 200 in 70ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 2.7s (4092 modules)
+ GET /api/tools 200 in 3535ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 3585ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 7ms
+{"level":"INFO","time":"2025-06-26T19:58:10.805Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 3989ms
+ ✓ Compiled in 1649ms (5624 modules)
+ GET /en/dashboard/rankings 200 in 70ms
+ GET /en/dashboard/rankings 200 in 33ms
+ GET /api/tools 200 in 215ms
+ GET /api/tools 200 in 19ms
+ GET /en/dashboard/rankings 200 in 243ms
+ GET /api/tools 200 in 27ms
+ GET /favicon.ico 200 in 118ms
+ GET /favicon.ico 200 in 32ms
+ GET /favicon.ico 200 in 27ms
+ GET /favicon.ico 200 in 30ms
+ GET /favicon.ico 200 in 25ms
+ GET /favicon.ico 200 in 28ms
+ ✓ Compiled in 641ms (5624 modules)
+ GET /en/dashboard/rankings 200 in 74ms
+ GET /en/dashboard/rankings 200 in 33ms
+ GET /api/tools 200 in 149ms
+ GET /favicon.ico 200 in 101ms
+ GET /api/tools 200 in 103ms
+ GET /en/dashboard/rankings 200 in 112ms
+ GET /favicon.ico 200 in 35ms
+ GET /api/tools 200 in 37ms
+ GET /favicon.ico 200 in 33ms
+ GET /favicon.ico 200 in 34ms
+ GET /favicon.ico 200 in 30ms
+ GET /favicon.ico 200 in 31ms
+ GET /favicon.ico 200 in 65ms
+ ✓ Compiled in 1006ms (5624 modules)
+ GET /en/dashboard/rankings 200 in 48ms
+ GET /en/dashboard/rankings 200 in 35ms
+ GET /api/tools 200 in 224ms
+ GET /en/dashboard/rankings 200 in 252ms
+ GET /favicon.ico 200 in 250ms
+ GET /api/tools 200 in 106ms
+ GET /favicon.ico 200 in 46ms
+ GET /api/tools 200 in 25ms
+ GET /favicon.ico 200 in 33ms
+ GET /favicon.ico 200 in 31ms
+ GET /favicon.ico 200 in 26ms
+ GET /favicon.ico 200 in 29ms
+ GET /en/dashboard/rankings 200 in 300ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 162ms
+ GET /api/tools 200 in 111ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 16ms
+ GET /api/auth/session 200 in 10ms
+ GET /api/auth/session 200 in 44ms
+{"level":"INFO","time":"2025-06-26T20:58:57.143Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 608ms
+ GET /en/dashboard/rankings 200 in 99ms
+ GET /api/auth/session 200 in 70ms
+ GET /api/tools 200 in 17ms
+ ○ Compiling /_not-found ...
+{"level":"INFO","time":"2025-06-26T20:59:06.103Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 775ms
+ GET /api/auth/session 200 in 722ms
+ GET /api/auth/session 200 in 78ms
+ GET /api/auth/session 200 in 301ms
+ ✓ Compiled /_not-found in 2.4s (5612 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 1802ms
+ GET /en/icon.png?6e221f2bfb70fe6b= 404 in 2960ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 797ms (4093 modules)
+ GET /favicon.ico 200 in 920ms
+ ✓ Compiled in 1585ms (5628 modules)
+ GET /en/dashboard/rankings 200 in 96ms
+ GET /en/dashboard/rankings 200 in 35ms
+ GET /api/tools 200 in 307ms
+ GET /favicon.ico 200 in 123ms
+ GET /api/tools 200 in 123ms
+ GET /en/dashboard/rankings 200 in 442ms
+ GET /favicon.ico 200 in 56ms
+ GET /favicon.ico 200 in 45ms
+ GET /api/tools 200 in 50ms
+ GET /en/dashboard/rankings 200 in 70ms
+ GET /favicon.ico 200 in 42ms
+ GET /favicon.ico 200 in 34ms
+ GET /favicon.ico 200 in 28ms
+ GET /favicon.ico 200 in 102ms
+ GET /favicon.ico 200 in 41ms
+ GET /favicon.ico 200 in 34ms
+ ✓ Compiled in 2.6s (5628 modules)
+ GET /en/dashboard/rankings 200 in 59ms
+ GET /en/dashboard/rankings 200 in 71ms
+ GET /api/tools 200 in 386ms
+ GET /favicon.ico 200 in 124ms
+ GET /api/tools 200 in 127ms
+ GET /en/dashboard/rankings 200 in 154ms
+ GET /favicon.ico 200 in 52ms
+ GET /favicon.ico 200 in 47ms
+ GET /favicon.ico 200 in 52ms
+ GET /en/dashboard/rankings 200 in 97ms
+ GET /api/tools 200 in 7ms
+ GET /favicon.ico 200 in 31ms
+ GET /favicon.ico 200 in 46ms
+ GET /favicon.ico 200 in 39ms
+ GET /favicon.ico 200 in 82ms
+ GET /favicon.ico 200 in 60ms
+ GET /favicon.ico 200 in 79ms
+ ✓ Compiled in 1322ms (5628 modules)
+ GET /en/dashboard/rankings 200 in 86ms
+ GET /en/dashboard/rankings 200 in 202ms
+ GET /favicon.ico 200 in 191ms
+ GET /api/tools 200 in 523ms
+ GET /favicon.ico 200 in 96ms
+ GET /api/tools 200 in 53ms
+ GET /en/dashboard/rankings 200 in 182ms
+ GET /favicon.ico 200 in 103ms
+ GET /favicon.ico 200 in 53ms
+ GET /api/tools 200 in 951ms
+ GET /favicon.ico 200 in 877ms
+ GET /en/dashboard/rankings 200 in 1391ms
+ GET /favicon.ico 200 in 236ms
+ GET /api/tools 200 in 27ms
+ GET /favicon.ico 200 in 41ms
+ GET /favicon.ico 200 in 26ms
+ GET /favicon.ico 200 in 29ms
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 87ms
+ GET /api/auth/session 200 in 13ms
+ GET /api/auth/session 200 in 10ms
+ GET /api/auth/session 200 in 15ms
+ GET /api/auth/session 200 in 8ms
+ GET /en/dashboard/rankings 200 in 217ms
+ GET /favicon.ico 200 in 55ms
+ GET /api/auth/session 200 in 100ms
+ GET /api/tools 200 in 30ms
+ GET /api/auth/session 200 in 22ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 7ms
+{"level":"INFO","time":"2025-06-26T21:12:17.657Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 520ms
+ ✓ Compiled in 3.9s (5595 modules)
+ GET /en/dashboard/rankings 200 in 2566ms
+ GET /en/dashboard/rankings 200 in 26ms
+ GET /en/dashboard/rankings 200 in 42ms
+ GET /en/dashboard/rankings 200 in 35ms
+ GET /en/dashboard/rankings 200 in 60ms
+ ○ Compiling /api/tools ...
+ ✓ Compiled /api/tools in 723ms (3966 modules)
+ GET /en/dashboard/rankings 200 in 1620ms
+ GET /api/tools 200 in 1867ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 2.5s (3968 modules)
+ GET /api/tools 200 in 2500ms
+ GET /favicon.ico 200 in 3559ms
+ GET /en/dashboard/rankings 200 in 2692ms
+ GET /favicon.ico 200 in 95ms
+ GET /favicon.ico 200 in 71ms
+ GET /api/tools 200 in 57ms
+ GET /en/dashboard/rankings 200 in 101ms
+ GET /favicon.ico 200 in 57ms
+ GET /favicon.ico 200 in 41ms
+ GET /favicon.ico 200 in 34ms
+ GET /favicon.ico 200 in 66ms
+ GET /favicon.ico 200 in 59ms
+ GET /favicon.ico 200 in 73ms
+ ○ Compiling /api/admin/ranking-periods ...
+ ✓ Compiled /api/admin/ranking-periods in 2.9s (5500 modules)
+ ✓ Compiled in 1ms (3970 modules)
+ GET /en/dashboard/rankings 200 in 1528ms
+ GET /en/dashboard/rankings 200 in 50ms
+ GET /api/tools 200 in 38ms
+ GET /en/dashboard/rankings 200 in 70ms
+ GET /api/tools 200 in 63ms
+ GET /favicon.ico 200 in 131ms
+ GET /favicon.ico 200 in 68ms
+ GET /api/tools 200 in 69ms
+ GET /favicon.ico 200 in 89ms
+ GET /en/dashboard/rankings 200 in 149ms
+ GET /favicon.ico 200 in 63ms
+ GET /api/tools 200 in 39ms
+{"level":"INFO","time":"2025-06-26T21:13:42.953Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 4464ms
+ GET /favicon.ico 200 in 93ms
+ GET /favicon.ico 200 in 35ms
+ GET /favicon.ico 200 in 35ms
+ GET /favicon.ico 200 in 37ms
+ GET /favicon.ico 200 in 30ms
+ GET /favicon.ico 200 in 26ms
+{"level":"INFO","time":"2025-06-26T21:13:43.170Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 192ms
+{"level":"INFO","time":"2025-06-26T21:13:43.352Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 178ms
+{"level":"INFO","time":"2025-06-26T21:13:43.534Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 179ms
+ ✓ Compiled in 1090ms (5502 modules)
+ GET /en/dashboard/rankings 200 in 67ms
+ GET /en/dashboard/rankings 200 in 46ms
+ GET /api/tools 200 in 230ms
+ GET /favicon.ico 200 in 123ms
+ GET /api/tools 200 in 117ms
+ GET /en/dashboard/rankings 200 in 374ms
+ GET /favicon.ico 200 in 55ms
+ GET /favicon.ico 200 in 63ms
+ GET /en/dashboard/rankings 200 in 83ms
+ GET /favicon.ico 200 in 59ms
+ GET /api/tools 200 in 42ms
+ GET /favicon.ico 200 in 49ms
+ GET /favicon.ico 200 in 38ms
+ GET /favicon.ico 200 in 40ms
+ GET /favicon.ico 200 in 49ms
+ GET /favicon.ico 200 in 48ms
+ ✓ Compiled in 1738ms (5502 modules)
+ GET /en/dashboard/rankings 200 in 51ms
+ GET /en/dashboard/rankings 200 in 35ms
+ GET /en/dashboard/rankings 200 in 40ms
+ GET /favicon.ico 200 in 291ms
+ GET /api/tools 200 in 281ms
+ GET /favicon.ico 200 in 56ms
+ GET /api/tools 200 in 62ms
+ GET /en/dashboard/rankings 200 in 295ms
+ GET /favicon.ico 200 in 63ms
+ GET /api/tools 200 in 55ms
+ GET /favicon.ico 200 in 37ms
+ GET /api/tools 200 in 33ms
+ GET /favicon.ico 200 in 26ms
+ GET /favicon.ico 200 in 28ms
+ GET /favicon.ico 200 in 47ms
+ GET /favicon.ico 200 in 31ms
+ GET /favicon.ico 200 in 26ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 2.1s (4092 modules)
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev
+ GET /api/auth/session 200 in 2177ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 11ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 47ms
+ GET /api/auth/session 200 in 16ms
+ GET /api/auth/session 200 in 15ms
+ GET /api/auth/session 200 in 9ms
+ GET /api/auth/session 200 in 10ms
+ GET /en/dashboard/rankings 200 in 277ms
+ GET /favicon.ico 200 in 213ms
+ GET /api/tools 200 in 250ms
+ GET /api/auth/session 200 in 255ms
+ GET /api/auth/session 200 in 13ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 14ms
+ GET /api/auth/session 200 in 12ms
+{"level":"INFO","time":"2025-06-26T21:20:49.421Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 840ms
+ ○ Compiling /api/admin/rename-ranking ...
+ ✓ Compiled /api/admin/rename-ranking in 2.3s (5612 modules)
+ POST /api/admin/rename-ranking 400 in 2489ms
+ ✓ Compiled in 1325ms (5626 modules)
+ GET /en/dashboard/rankings 200 in 55ms
+ GET /en/dashboard/rankings 200 in 39ms
+ GET /en/dashboard/rankings 200 in 32ms
+ GET /api/tools 200 in 164ms
+ GET /favicon.ico 200 in 280ms
+ GET /en/dashboard/rankings 200 in 316ms
+ GET /api/tools 200 in 120ms
+ GET /favicon.ico 200 in 89ms
+ GET /api/tools 200 in 73ms
+ GET /favicon.ico 200 in 43ms
+ GET /api/tools 200 in 40ms
+ GET /favicon.ico 200 in 30ms
+ GET /favicon.ico 200 in 30ms
+ GET /favicon.ico 200 in 29ms
+ GET /favicon.ico 200 in 25ms
+ GET /favicon.ico 200 in 28ms
+ GET /favicon.ico 200 in 25ms
+ ✓ Compiled in 847ms (5626 modules)
+ GET /en/dashboard/rankings 200 in 259ms
+ GET /api/tools 200 in 527ms
+ GET /en/dashboard/rankings 200 in 421ms
+ GET /favicon.ico 200 in 90ms
+ GET /api/tools 200 in 26ms
+ GET /favicon.ico 200 in 51ms
+ GET /en/dashboard/rankings 200 in 124ms
+ GET /favicon.ico 200 in 73ms
+ GET /api/tools 200 in 48ms
+ GET /favicon.ico 200 in 73ms
+ GET /en/dashboard/rankings 200 in 107ms
+ GET /favicon.ico 200 in 53ms
+ GET /favicon.ico 200 in 40ms
+ GET /api/tools 200 in 38ms
+ GET /favicon.ico 200 in 32ms
+ GET /favicon.ico 200 in 47ms
+ GET /favicon.ico 200 in 28ms
+ GET /favicon.ico 200 in 29ms
+{"level":"INFO","time":"2025-06-26T21:22:43.996Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Renaming ranking period"}
+Error fetching tool name: NotFound: Not Found
+    at async Rankings.fields.hooks.beforeChange (src/collections/Rankings.ts:61:29)
+    at async POST (src/app/api/admin/rename-ranking/route.ts:70:8)
+  59 |                 // Get the tool document to populate the name
+  60 |                 const toolId = typeof data['tool'] === "string" ? data['tool'] : data['tool']['id'];
+> 61 |                 const tool = await req.payload.findByID({
+     |                             ^
+  62 |                   collection: "tools",
+  63 |                   id: toolId,
+  64 |                 }); {
+  data: null,
+  isOperational: true,
+  isPublic: false,
+  status: 404,
+  [cause]: null
+}
+Error fetching tool name: NotFound: Not Found
+    at async Rankings.fields.hooks.beforeChange (src/collections/Rankings.ts:61:29)
+    at async POST (src/app/api/admin/rename-ranking/route.ts:70:8)
+  59 |                 // Get the tool document to populate the name
+  60 |                 const toolId = typeof data['tool'] === "string" ? data['tool'] : data['tool']['id'];
+> 61 |                 const tool = await req.payload.findByID({
+     |                             ^
+  62 |                   collection: "tools",
+  63 |                   id: toolId,
+  64 |                 }); {
+  data: null,
+  isOperational: true,
+  isPublic: false,
+  status: 404,
+  [cause]: null
+}
+Error fetching tool name: NotFound: Not Found
+    at async Rankings.fields.hooks.beforeChange (src/collections/Rankings.ts:61:29)
+    at async POST (src/app/api/admin/rename-ranking/route.ts:70:8)
+  59 |                 // Get the tool document to populate the name
+  60 |                 const toolId = typeof data['tool'] === "string" ? data['tool'] : data['tool']['id'];
+> 61 |                 const tool = await req.payload.findByID({
+     |                             ^
+  62 |                   collection: "tools",
+  63 |                   id: toolId,
+  64 |                 }); {
+  data: null,
+  isOperational: true,
+  isPublic: false,
+  status: 404,
+  [cause]: null
+}
+Error fetching tool name: NotFound: Not Found
+    at async Rankings.fields.hooks.beforeChange (src/collections/Rankings.ts:61:29)
+    at async POST (src/app/api/admin/rename-ranking/route.ts:70:8)
+  59 |                 // Get the tool document to populate the name
+  60 |                 const toolId = typeof data['tool'] === "string" ? data['tool'] : data['tool']['id'];
+> 61 |                 const tool = await req.payload.findByID({
+     |                             ^
+  62 |                   collection: "tools",
+  63 |                   id: toolId,
+  64 |                 }); {
+  data: null,
+  isOperational: true,
+  isPublic: false,
+  status: 404,
+  [cause]: null
+}
+Error fetching tool name: NotFound: Not Found
+    at async Rankings.fields.hooks.beforeChange (src/collections/Rankings.ts:61:29)
+    at async POST (src/app/api/admin/rename-ranking/route.ts:70:8)
+  59 |                 // Get the tool document to populate the name
+  60 |                 const toolId = typeof data['tool'] === "string" ? data['tool'] : data['tool']['id'];
+> 61 |                 const tool = await req.payload.findByID({
+     |                             ^
+  62 |                   collection: "tools",
+  63 |                   id: toolId,
+  64 |                 }); {
+  data: null,
+  isOperational: true,
+  isPublic: false,
+  status: 404,
+  [cause]: null
+}
+Error fetching tool name: NotFound: Not Found
+    at async Rankings.fields.hooks.beforeChange (src/collections/Rankings.ts:61:29)
+    at async POST (src/app/api/admin/rename-ranking/route.ts:70:8)
+  59 |                 // Get the tool document to populate the name
+  60 |                 const toolId = typeof data['tool'] === "string" ? data['tool'] : data['tool']['id'];
+> 61 |                 const tool = await req.payload.findByID({
+     |                             ^
+  62 |                   collection: "tools",
+  63 |                   id: toolId,
+  64 |                 }); {
+  data: null,
+  isOperational: true,
+  isPublic: false,
+  status: 404,
+  [cause]: null
+}
+Error fetching tool name: NotFound: Not Found
+    at async Rankings.fields.hooks.beforeChange (src/collections/Rankings.ts:61:29)
+    at async POST (src/app/api/admin/rename-ranking/route.ts:70:8)
+  59 |                 // Get the tool document to populate the name
+  60 |                 const toolId = typeof data['tool'] === "string" ? data['tool'] : data['tool']['id'];
+> 61 |                 const tool = await req.payload.findByID({
+     |                             ^
+  62 |                   collection: "tools",
+  63 |                   id: toolId,
+  64 |                 }); {
+  data: null,
+  isOperational: true,
+  isPublic: false,
+  status: 404,
+  [cause]: null
+}
+{"level":"INFO","time":"2025-06-26T21:22:47.233Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Ranking period renamed successfully"}
+ POST /api/admin/rename-ranking 200 in 3290ms
+{"level":"INFO","time":"2025-06-26T21:22:47.497Z","pid":45797,"hostname":"Masas-M4-Air.local","context":"API","msg":"Retrieved ranking periods"}
+ GET /api/admin/ranking-periods 200 in 261ms
+[error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ⨯ uncaughtException: [error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ⨯ uncaughtException:  [error: {:shutdown, :db_termination}] {
+  length: 56,
+  severity: 'FATAL',
+  code: 'XX000',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: undefined,
+  line: undefined,
+  routine: undefined,
+  client: [Client]
+}
+ ✓ Compiled in 3.7s (5595 modules)
+ GET /en/dashboard/rankings 200 in 1998ms
+ GET /en/dashboard/rankings 200 in 35ms
+ GET /en/dashboard/rankings 200 in 76ms
+ GET /en/dashboard/rankings 200 in 60ms
+ GET /en/dashboard/rankings 200 in 68ms
+ GET /en/dashboard/rankings 200 in 161ms
+ ○ Compiling /api/tools ...
+ ✓ Compiled /api/tools in 652ms (3848 modules)
+ ✓ Compiled (3968 modules)
+ GET /favicon.ico 200 in 1479ms
+ GET /api/tools 200 in 1385ms
+ GET /en/dashboard/rankings 200 in 1451ms
+ GET /favicon.ico 200 in 234ms
+ GET /favicon.ico 200 in 127ms
+ GET /api/tools 200 in 243ms
+ GET /favicon.ico 200 in 179ms
+ GET /en/dashboard/rankings 200 in 310ms
+ GET /favicon.ico 200 in 60ms
+ GET /favicon.ico 200 in 64ms
+ GET /api/tools 200 in 68ms
+ GET /favicon.ico 200 in 36ms
+ GET /favicon.ico 200 in 42ms
+ GET /favicon.ico 200 in 38ms
+ ○ Compiling /api/admin/ranking-periods ...

@@ -124,7 +124,12 @@ function transformToToolMetrics(tool: any, metrics: any[]): ToolMetricsV6 {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const { period, algorithm_version = "v6.0" } = await request.json();
+    const { 
+      period, 
+      algorithm_version = "v6.0", 
+      preview_date,
+      compare_with 
+    } = await request.json();
     
     if (!period) {
       return NextResponse.json(
@@ -135,17 +140,51 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const payload = await getPayload({ config });
     
-    loggers.api.info(`Generating ranking preview for period: ${period}`);
-
-    // Get current rankings for comparison
-    const { docs: currentRankings } = await payload.find({
-      collection: "rankings",
-      where: {
-        period: { equals: period }
-      },
-      limit: 1000,
-      sort: "position",
+    loggers.api.info(`Generating ranking preview for period: ${period}`, {
+      preview_date,
+      compare_with
     });
+
+    // Determine comparison period
+    let comparisonPeriod = compare_with;
+    let currentRankings: any[] = [];
+    
+    if (compare_with === "auto" || !compare_with) {
+      // Find the most recent ranking period before the preview period
+      const { docs: availablePeriods } = await payload.find({
+        collection: "rankings",
+        where: {
+          period: {
+            not_equals: period,
+          },
+        },
+        limit: 1000,
+        sort: "-period",
+      });
+      
+      const periodSet = new Set(availablePeriods.map(r => r["period"]));
+      const sortedPeriods = Array.from(periodSet).sort().reverse();
+      
+      for (const p of sortedPeriods) {
+        if (p < period) {
+          comparisonPeriod = p;
+          break;
+        }
+      }
+    }
+
+    // Get comparison rankings if available
+    if (comparisonPeriod && comparisonPeriod !== "none") {
+      const { docs: rankings } = await payload.find({
+        collection: "rankings",
+        where: {
+          period: { equals: comparisonPeriod }
+        },
+        limit: 1000,
+        sort: "position",
+      });
+      currentRankings = rankings;
+    }
 
     // Fetch all active tools
     const { docs: tools } = await payload.find({
@@ -306,16 +345,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       .sort((a, b) => a.position_change - b.position_change)
       .slice(0, 10);
 
+    const validScoreChanges = comparisons.filter(c => c.current_score !== undefined);
+    const validScores = comparisons.map(c => c.new_score).filter(score => score != null && !isNaN(score));
+    
     const summary = {
       tools_moved_up: comparisons.filter(c => c.movement === 'up').length,
       tools_moved_down: comparisons.filter(c => c.movement === 'down').length,
       tools_stayed_same: comparisons.filter(c => c.movement === 'same').length,
-      average_score_change: comparisons
-        .filter(c => c.current_score !== undefined)
-        .reduce((sum, c) => sum + c.score_change, 0) / 
-        comparisons.filter(c => c.current_score !== undefined).length,
-      highest_score: Math.max(...comparisons.map(c => c.new_score)),
-      lowest_score: Math.min(...comparisons.map(c => c.new_score)),
+      average_score_change: validScoreChanges.length > 0 
+        ? validScoreChanges.reduce((sum, c) => sum + c.score_change, 0) / validScoreChanges.length
+        : 0,
+      highest_score: validScores.length > 0 ? Math.max(...validScores) : 0,
+      lowest_score: validScores.length > 0 ? Math.min(...validScores) : 0,
     };
 
     // Generate overall change report
@@ -337,7 +378,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
       summary,
       change_report: changeReport,
-    };
+      comparison_period: comparisonPeriod,
+      is_initial_ranking: !comparisonPeriod || comparisonPeriod === "none" || currentRankings.length === 0,
+    } as any;
 
     loggers.api.info("Ranking preview generated successfully", {
       period,

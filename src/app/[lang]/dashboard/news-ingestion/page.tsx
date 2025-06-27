@@ -1,10 +1,14 @@
 import { NewsIngestionTool } from "@/components/admin/news-ingestion-tool";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 
 export default function NewsIngestionPage() {
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">News Ingestion</h1>
+    <DashboardLayout 
+      title="News Ingestion"
+      description="Upload and manage news articles"
+      backHref="/en"
+    >
       <NewsIngestionTool />
-    </div>
+    </DashboardLayout>
   );
 }

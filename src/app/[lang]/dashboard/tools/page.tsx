@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 import { ToolsManager } from "@/components/admin/tools-manager";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 
 export const metadata: Metadata = generateSEOMetadata({
   title: "Tools Management - Admin",
@@ -10,5 +11,13 @@ export const metadata: Metadata = generateSEOMetadata({
 });
 
 export default function AdminToolsPage() {
-  return <ToolsManager />;
+  return (
+    <DashboardLayout 
+      title="Tools Management"
+      description="Manage AI tools, rankings, and information"
+      backHref="/en"
+    >
+      <ToolsManager />
+    </DashboardLayout>
+  );
 }

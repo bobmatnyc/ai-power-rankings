@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 
 export const metadata: Metadata = generateSEOMetadata({
   title: "Admin Panel",
@@ -10,5 +11,14 @@ export const metadata: Metadata = generateSEOMetadata({
 });
 
 export default function AdminPage() {
-  return <AdminDashboard />;
+  return (
+    <DashboardLayout 
+      title="Admin Dashboard"
+      description="Welcome to the AI Power Rankings admin panel"
+      showBackButton={true}
+      backHref="/en"
+    >
+      <AdminDashboard />
+    </DashboardLayout>
+  );
 }

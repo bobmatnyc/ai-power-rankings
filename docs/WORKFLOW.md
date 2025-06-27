@@ -1,8 +1,15 @@
 # 🔁 AI Power Rankings - Development Workflow
 
-**Version**: 2.1  
-**Updated**: 2025-06-25  
+**Version**: 3.0  
+**Updated**: 2025-06-27  
 **Reference**: This document contains the complete workflow procedures for the AI Power Rankings project. It should be referenced from `INSTRUCTIONS.md`.
+
+**Changes in v3.0**:
+
+- Migrated from GitHub Issues to TrackDown for project management
+- Added TrackDown workflow documentation
+- Integrated markdown-based project tracking
+- Git-native project management approach
 
 **Changes in v2.1**:
 
@@ -63,7 +70,148 @@ chore/update-deps
 
 ---
 
-## 📊 2. Metrics Collection Workflow
+## 📋 2. Project Management with TrackDown
+
+We use TrackDown, a markdown-based project tracking system that stores all project management artifacts as code within the repository.
+
+### 📁 TrackDown Structure
+
+```
+trackdown/
+├── BACKLOG.md              # Central tracking file for all work items
+├── ROADMAP.md              # High-level planning and milestones
+├── RETROSPECTIVES.md       # Sprint retrospectives
+├── METRICS.md              # Project metrics and velocity tracking
+├── templates/              # Work item templates
+├── archive/                # Completed sprints and historical data
+└── scripts/                # Automation tools
+```
+
+### 📝 Work Item Management
+
+#### Creating New Work Items
+
+1. **Open BACKLOG.md** in your editor
+2. **Add to appropriate section** (Current Sprint, Backlog, or Epic)
+3. **Use consistent format**:
+
+```markdown
+## **[T-XXX]** Task Title
+
+**Type:** Task/Bug/Story  
+**Epic:** EP-XXX (if applicable)  
+**Priority:** Critical/High/Medium/Low  
+**Story Points:** 1-13  
+**Assignee:** @username  
+**Status:** Backlog/Ready/In Progress/Done  
+**Sprint:** X  
+
+**Description:**
+Clear description of what needs to be done.
+
+**Acceptance Criteria:**
+- [ ] Specific measurable outcome
+- [ ] Another verifiable criterion
+
+**Technical Notes:**
+Implementation details, considerations, or constraints.
+
+**Definition of Done:**
+- [ ] Code reviewed and approved
+- [ ] Tests written and passing
+- [ ] Documentation updated
+```
+
+### 🏃 Daily Workflow
+
+1. **Morning Sync**
+   ```bash
+   # Pull latest changes
+   git pull
+   
+   # Review current sprint in BACKLOG.md
+   grep -A5 "## 🎯 Current Sprint" trackdown/BACKLOG.md
+   
+   # Update your task status
+   # Change - [ ] to - [x] for completed items
+   ```
+
+2. **During Development**
+   - Update task status in BACKLOG.md as you progress
+   - Add technical notes discoveries
+   - Create sub-tasks if needed
+
+3. **End of Day**
+   ```bash
+   # Commit BACKLOG updates
+   git add trackdown/BACKLOG.md
+   git commit -m "chore(trackdown): update task T-XXX status to in-progress"
+   git push
+   ```
+
+### 📊 Status Values
+
+- `Backlog` - Not yet prioritized
+- `Ready` - Ready for development
+- `In Progress` - Currently being worked on
+- `In Review` - Under code/design review
+- `Testing` - In QA testing phase
+- `Done` - Completed and deployed
+- `Blocked` - Cannot proceed
+
+### 🎯 Sprint Management
+
+#### Sprint Planning
+1. Review items in backlog
+2. Move committed items to "Current Sprint" section
+3. Update sprint number in frontmatter
+4. Commit changes with message: `chore(trackdown): start sprint X`
+
+#### Sprint Completion
+1. Move completed items to archive
+2. Update RETROSPECTIVES.md with learnings
+3. Calculate velocity in METRICS.md
+4. Plan next sprint
+
+### 🔗 Linking Code to Tasks
+
+In pull requests and commits, reference TrackDown items:
+
+```bash
+# In commit messages
+git commit -m "feat(rankings): implement JSON storage - closes T-007"
+
+# In PR descriptions
+Related to EP-001
+Implements T-007, T-008
+```
+
+### 📈 Tracking Progress
+
+```bash
+# Count completed tasks in current sprint
+grep -c "\- \[x\]" trackdown/BACKLOG.md
+
+# Find all in-progress tasks
+grep -B5 "Status: In Progress" trackdown/BACKLOG.md
+
+# Generate simple status report
+echo "Sprint Progress:"
+echo "Completed: $(grep -c '- \[x\]' trackdown/BACKLOG.md)"
+echo "In Progress: $(grep -c 'Status: In Progress' trackdown/BACKLOG.md)"
+echo "Remaining: $(grep -c '- \[ \]' trackdown/BACKLOG.md)"
+```
+
+### 🚨 Important TrackDown Principles
+
+1. **Single Source of Truth**: BACKLOG.md is the authoritative source
+2. **Atomic Updates**: Commit BACKLOG changes separately from code
+3. **Regular Syncs**: Pull before editing to avoid conflicts
+4. **Clear History**: Use descriptive commit messages for tracking changes
+
+---
+
+## 📊 3. Metrics Collection Workflow
 
 ### 🤖 AI-Powered Extraction
 
@@ -111,7 +259,7 @@ Each source URL is unique - updates replace existing data.
 
 ---
 
-## 🏆 3. Monthly Ranking Process
+## 🏆 4. Monthly Ranking Process
 
 ### 📅 Schedule (1st of each month)
 
@@ -151,7 +299,7 @@ Each source URL is unique - updates replace existing data.
 
 ---
 
-## 📋 4. Metrics Guidelines
+## 📋 5. Metrics Guidelines
 
 ### 🎯 Scoring Criteria
 
@@ -178,7 +326,7 @@ Every metric must include:
 
 ---
 
-## 🛡️ 5. Cache-First Architecture
+## 🛡️ 6. Cache-First Architecture
 
 ### 📦 Overview
 
@@ -236,7 +384,7 @@ curl https://your-site.com/api/health/db
 
 ---
 
-## 🗄️ 6. Database Operations
+## 🗄️ 7. Database Operations
 
 ### 📥 Importing Metrics
 
@@ -279,7 +427,7 @@ npm run db:reset
 
 ---
 
-## 🧪 7. Testing & Validation
+## 🧪 8. Testing & Validation
 
 ### 🚨 CRITICAL: Pre-Deployment Checklist
 
@@ -441,7 +589,7 @@ npm run build  # Now includes type-check before building
 
 ---
 
-## 📅 8. Release Schedule
+## 📅 9. Release Schedule
 
 ### Monthly Cycle
 
@@ -460,7 +608,7 @@ For critical updates between monthly cycles:
 
 ---
 
-## 📚 9. Documentation Updates
+## 📚 10. Documentation Updates
 
 When adding new features or changing processes:
 
@@ -481,7 +629,7 @@ When adding new features or changing processes:
 
 ---
 
-## 🚀 10. Complete Deployment Workflow
+## 🚀 11. Complete Deployment Workflow
 
 ### 📋 Step-by-Step Deployment Process
 
@@ -569,7 +717,7 @@ npm run check-deployment
 
 ---
 
-## 📚 10. Quick Reference
+## 📚 12. Quick Reference
 
 ### Common Commands
 
@@ -680,7 +828,7 @@ When updating pricing information:
 
 ---
 
-## 🌐 11. Translation Management
+## 🌐 13. Translation Management
 
 ### 📝 Internal Translation Tools
 
@@ -743,7 +891,7 @@ These tools use CommonJS syntax and are essential for managing translations. The
 
 ---
 
-## 🚨 12. Deployment Troubleshooting Guide
+## 🚨 14. Deployment Troubleshooting Guide
 
 ### Common Vercel Deployment Issues & Solutions
 
@@ -935,7 +1083,7 @@ git push
 
 ---
 
-## 🐛 13. Development Debugging Workflow
+## 🐛 15. Development Debugging Workflow
 
 ### Real-time Error Detection and Fixing
 
@@ -1065,7 +1213,7 @@ tail -f dev-server.log | grep -E "(Error|error|⨯|failed)"
 4. **Check browser console**: Some errors only appear in browser DevTools
 5. **Network tab**: Monitor API calls for 500 errors indicating backend issues
 
-## 👁️ Final Note
+## 👁️ 16. Final Note
 
 Quality over quantity. Every metric should tell a story, backed by evidence.
 

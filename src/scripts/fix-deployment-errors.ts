@@ -2,8 +2,7 @@
 
 import { exec } from "child_process";
 import { promisify } from "util";
-import fs from "fs/promises";
-import path from "path";
+// Removed unused imports - fs and path not currently used
 
 const execAsync = promisify(exec);
 
@@ -22,9 +21,9 @@ const errorPatterns: ErrorPattern[] = [
       try {
         const { stdout } = await execAsync("npm run type-check");
         console.log(stdout);
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.log("\n❌ TypeScript errors found:");
-        console.log(error.stdout);
+        console.log((error as any).stdout);
         console.log("\n💡 Please fix the TypeScript errors manually");
         process.exit(1);
       }
@@ -39,7 +38,7 @@ const errorPatterns: ErrorPattern[] = [
         const { stdout } = await execAsync("npm run lint:fix");
         console.log(stdout);
         console.log("✅ ESLint errors fixed");
-      } catch (error) {
+      } catch (_error) {
         console.log("❌ Some ESLint errors couldn't be auto-fixed");
         console.log("💡 Run 'npm run lint' to see remaining issues");
       }
@@ -53,7 +52,7 @@ const errorPatterns: ErrorPattern[] = [
       try {
         await execAsync("npm install");
         console.log("✅ Dependencies installed");
-      } catch (error) {
+      } catch (_error) {
         console.log("❌ Failed to install dependencies");
       }
     },
@@ -77,7 +76,7 @@ const errorPatterns: ErrorPattern[] = [
       try {
         await execAsync("npm run format");
         console.log("✅ Code formatting fixed");
-      } catch (error) {
+      } catch (_error) {
         console.log("❌ Failed to fix formatting");
       }
     },
@@ -103,8 +102,8 @@ async function fixDeploymentErrors(errorLog?: string) {
       await execAsync("npm run pre-deploy");
       console.log("✅ All checks passed! No errors to fix.");
       return;
-    } catch (error: any) {
-      errorLog = error.stdout + error.stderr;
+    } catch (error: unknown) {
+      errorLog = (error as any).stdout + (error as any).stderr;
     }
   }
 
@@ -134,7 +133,7 @@ async function fixDeploymentErrors(errorLog?: string) {
     console.log("   2. git commit -m \"fix: deployment errors\"");
     console.log("   3. git push");
     console.log("   4. npm run check-deployment");
-  } catch (error) {
+  } catch (_error) {
     console.log("\n⚠️  Some issues remain. Please fix them manually.");
     console.log("💡 Run 'npm run pre-deploy' to see remaining issues");
   }
