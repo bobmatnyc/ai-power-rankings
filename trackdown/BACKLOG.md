@@ -75,7 +75,7 @@ Migrate from the current hybrid Payload CMS + Supabase database architecture to 
 **Priority:** High  
 **Story Points:** 5  
 **Assignee:** @developer  
-**Status:** Ready  
+**Status:** In Progress  
 **Sprint:** 1  
 
 **Description:**
