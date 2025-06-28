@@ -1,0 +1,1787 @@
+{
+  "companies": [
+    {
+      "id": "31",
+      "slug": "aider",
+      "name": "Aider",
+      "website": "https://aider.chat",
+      "founded": "2023",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:39.175Z",
+      "updated_at": "2025-06-24T22:12:39.205Z"
+    },
+    {
+      "id": "48",
+      "slug": "amazon",
+      "name": "Amazon",
+      "website": "https://amazon.com",
+      "founded": "1994",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:48.702Z",
+      "updated_at": "2025-06-24T22:12:35.073Z"
+    },
+    {
+      "id": "47",
+      "slug": "augment",
+      "name": "Augment",
+      "website": "https://augmentcode.com",
+      "founded": "2022",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:48.194Z",
+      "updated_at": "2025-06-24T22:12:35.399Z"
+    },
+    {
+      "id": "7",
+      "slug": "stackblitz",
+      "name": "StackBlitz",
+      "description": [
+        {
+          "children": [
+            {
+              "text": "Web development platform, creator of Bolt.new"
+            }
+          ]
+        }
+      ],
+      "website": "https://stackblitz.com",
+      "founded": "2017",
+      "headquarters": "Boston, MA",
+      "size": "startup",
+      "created_at": "2025-06-23T15:20:05.637Z",
+      "updated_at": "2025-06-23T15:20:05.634Z"
+    },
+    {
+      "id": "42",
+      "slug": "openai",
+      "name": "OpenAI",
+      "website": "https://openai.com",
+      "founded": "2015",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:44.747Z",
+      "updated_at": "2025-06-24T22:12:37.220Z"
+    },
+    {
+      "id": "4",
+      "slug": "anthropic",
+      "name": "Anthropic",
+      "description": [
+        {
+          "children": [
+            {
+              "text": "AI safety focused company, creator of Claude"
+            }
+          ]
+        }
+      ],
+      "website": "https://anthropic.com",
+      "founded": "2021",
+      "headquarters": "San Francisco, CA",
+      "size": "startup",
+      "created_at": "2025-06-23T15:20:05.170Z",
+      "updated_at": "2025-06-23T15:20:05.169Z"
+    },
+    {
+      "id": "77",
+      "slug": "cline-ai",
+      "name": "Cline (Open Source)",
+      "description": "Open-source AI coding assistant VSCode extension, previously known as Claude Dev.",
+      "website": "https://cline.bot",
+      "founded": "2024",
+      "created_at": "2025-06-24T03:10:12.432Z",
+      "updated_at": "2025-06-24T03:10:12.458Z"
+    },
+    {
+      "id": "50",
+      "slug": "coderabbit",
+      "name": "CodeRabbit",
+      "website": "https://coderabbit.ai",
+      "founded": "2023",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:49.971Z",
+      "updated_at": "2025-06-24T22:12:34.739Z"
+    },
+    {
+      "id": "32",
+      "slug": "continue",
+      "name": "Continue",
+      "website": "https://continue.dev",
+      "founded": "2023",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:39.675Z",
+      "updated_at": "2025-06-24T22:12:38.874Z"
+    },
+    {
+      "id": "2",
+      "slug": "anysphere",
+      "name": "Anysphere Inc.",
+      "description": [
+        {
+          "children": [
+            {
+              "text": "Creator of Cursor, the AI-powered code editor"
+            }
+          ]
+        }
+      ],
+      "website": "https://cursor.com",
+      "founded": "2022",
+      "headquarters": "San Francisco, CA",
+      "size": "startup",
+      "created_at": "2025-06-23T15:20:04.855Z",
+      "updated_at": "2025-06-23T15:20:04.853Z"
+    },
+    {
+      "id": "27",
+      "slug": "cognition-ai",
+      "name": "Cognition AI",
+      "website": "https://cognition.ai",
+      "founded": "2023",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:37.128Z",
+      "updated_at": "2025-06-24T22:12:39.557Z"
+    },
+    {
+      "id": "43",
+      "slug": "diffblue",
+      "name": "Diffblue",
+      "website": "https://diffblue.com",
+      "founded": "2016",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:45.601Z",
+      "updated_at": "2025-06-24T22:12:36.890Z"
+    },
+    {
+      "id": "1",
+      "slug": "github",
+      "name": "GitHub (Microsoft)",
+      "description": [
+        {
+          "children": [
+            {
+              "text": "Platform for version control and collaborative software development"
+            }
+          ]
+        }
+      ],
+      "website": "https://github.com",
+      "founded": "2008",
+      "headquarters": "San Francisco, CA",
+      "size": "large",
+      "created_at": "2025-06-23T15:20:04.698Z",
+      "updated_at": "2025-06-23T15:20:04.697Z"
+    },
+    {
+      "id": "5",
+      "slug": "google",
+      "name": "Google",
+      "description": [
+        {
+          "children": [
+            {
+              "text": "Technology conglomerate, creator of Jules and Gemini"
+            }
+          ]
+        }
+      ],
+      "website": "https://google.com",
+      "founded": "1998",
+      "headquarters": "Mountain View, CA",
+      "size": "large",
+      "created_at": "2025-06-23T15:20:05.328Z",
+      "updated_at": "2025-06-23T15:20:05.326Z"
+    },
+    {
+      "id": "45",
+      "slug": "jetbrains",
+      "name": "JetBrains",
+      "website": "https://jetbrains.com",
+      "founded": "2000",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:46.596Z",
+      "updated_at": "2025-06-24T22:12:36.135Z"
+    },
+    {
+      "id": "76",
+      "slug": "lovable-dev",
+      "name": "Lovable",
+      "description": "Stockholm-based AI startup building an AI-powered app builder that enables users to create full-stack web applications without coding.",
+      "website": "https://lovable.dev",
+      "founded": "2023",
+      "created_at": "2025-06-24T03:10:11.541Z",
+      "updated_at": "2025-06-24T03:10:11.561Z"
+    },
+    {
+      "id": "53",
+      "slug": "microsoft",
+      "name": "Microsoft",
+      "website": "https://microsoft.com",
+      "founded": "1975",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:51.336Z",
+      "updated_at": "2025-06-24T22:12:34.116Z"
+    },
+    {
+      "id": "37",
+      "slug": "openhands",
+      "name": "OpenHands",
+      "website": "https://all-hands.dev",
+      "founded": "2024",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:42.259Z",
+      "updated_at": "2025-06-24T22:12:38.549Z"
+    },
+    {
+      "id": "40",
+      "slug": "qodo",
+      "name": "Qodo",
+      "website": "https://qodo.ai",
+      "founded": "2022",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:43.765Z",
+      "updated_at": "2025-06-24T22:12:37.872Z"
+    },
+    {
+      "id": "10",
+      "slug": "replit",
+      "name": "Replit Inc.",
+      "description": [
+        {
+          "children": [
+            {
+              "text": "Online IDE and development platform"
+            }
+          ]
+        }
+      ],
+      "website": "https://replit.com",
+      "founded": "2016",
+      "headquarters": "San Francisco, CA",
+      "size": "startup",
+      "created_at": "2025-06-23T15:20:06.385Z",
+      "updated_at": "2025-06-23T15:20:06.382Z"
+    },
+    {
+      "id": "41",
+      "slug": "snyk",
+      "name": "Snyk",
+      "website": "https://snyk.io",
+      "founded": "2015",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:44.257Z",
+      "updated_at": "2025-06-24T22:12:37.541Z"
+    },
+    {
+      "id": "51",
+      "slug": "sourcegraph",
+      "name": "Sourcegraph",
+      "website": "https://sourcegraph.com",
+      "founded": "2013",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:50.473Z",
+      "updated_at": "2025-06-24T22:12:34.434Z"
+    },
+    {
+      "id": "39",
+      "slug": "sourcery-ai",
+      "name": "Sourcery AI",
+      "website": "https://sourcery.ai",
+      "founded": "2020",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:43.278Z",
+      "updated_at": "2025-06-24T22:12:38.217Z"
+    },
+    {
+      "id": "44",
+      "slug": "tabnine",
+      "name": "Tabnine",
+      "website": "https://tabnine.com",
+      "founded": "2013",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:46.105Z",
+      "updated_at": "2025-06-24T22:12:36.509Z"
+    },
+    {
+      "id": "8",
+      "slug": "vercel",
+      "name": "Vercel",
+      "description": [
+        {
+          "children": [
+            {
+              "text": "Frontend platform, creator of v0"
+            }
+          ]
+        }
+      ],
+      "website": "https://vercel.com",
+      "founded": "2015",
+      "headquarters": "San Francisco, CA",
+      "size": "startup",
+      "created_at": "2025-06-23T15:20:05.794Z",
+      "updated_at": "2025-06-23T15:20:05.791Z"
+    },
+    {
+      "id": "6",
+      "slug": "codeium",
+      "name": "Codeium Inc.",
+      "description": [
+        {
+          "children": [
+            {
+              "text": "Creator of Windsurf and Codeium coding assistant"
+            }
+          ]
+        }
+      ],
+      "website": "https://codeium.com",
+      "founded": "2021",
+      "headquarters": "Mountain View, CA",
+      "size": "startup",
+      "created_at": "2025-06-23T15:20:05.482Z",
+      "updated_at": "2025-06-23T15:20:05.479Z"
+    },
+    {
+      "id": "46",
+      "slug": "zed-industries",
+      "name": "Zed Industries",
+      "website": "https://zed.dev",
+      "founded": "2021",
+      "size": "startup",
+      "created_at": "2025-06-23T15:40:47.092Z",
+      "updated_at": "2025-06-24T22:12:35.736Z"
+    },
+    {
+      "id": "4257f187-2bed-41f2-bc5e-a6d069fdd834",
+      "slug": "codeium",
+      "name": "Codeium Inc.",
+      "description": "Creator of Windsurf and Codeium coding assistant",
+      "website": "https://codeium.com",
+      "founded": "2021",
+      "headquarters": "Mountain View, CA",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T05:17:45.853392"
+    },
+    {
+      "id": "c94062bd-d3b0-4e7f-baca-0e27326173c3",
+      "slug": "cognition-labs",
+      "name": "Cognition Labs",
+      "description": "Building Devin, the autonomous AI software engineer",
+      "website": "https://cognition.ai",
+      "founded": "2023",
+      "headquarters": "New York, NY",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "f26ced5b-d67b-4631-afec-2997c07a1a82",
+      "slug": "anthropic",
+      "name": "Anthropic",
+      "description": "AI safety focused company, creator of Claude",
+      "website": "https://anthropic.com",
+      "founded": "2021",
+      "headquarters": "San Francisco, CA",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "45040654-745b-4b58-856d-621a2c1835e8",
+      "slug": "google",
+      "name": "Google",
+      "description": "Technology conglomerate, creator of Jules and Gemini",
+      "website": "https://google.com",
+      "founded": "1998",
+      "headquarters": "Mountain View, CA",
+      "size": "large",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "ed2b44dc-176a-4ef1-95a5-45635e15a77a",
+      "slug": "stackblitz",
+      "name": "StackBlitz",
+      "description": "Web development platform, creator of Bolt.new",
+      "website": "https://stackblitz.com",
+      "founded": "2017",
+      "headquarters": "Boston, MA",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "7ba3b9dc-4283-425c-9201-0813fd29cde3",
+      "slug": "vercel",
+      "name": "Vercel",
+      "description": "Frontend platform, creator of v0",
+      "website": "https://vercel.com",
+      "founded": "2015",
+      "headquarters": "San Francisco, CA",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "ef6a5910-c542-45ec-b3c5-c1ed00a8d3c2",
+      "slug": "lovable",
+      "name": "Lovable",
+      "description": "AI-powered app builder for full-stack development",
+      "website": "https://lovable.dev",
+      "founded": "2023",
+      "headquarters": "Stockholm, Sweden",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "b0b92c60-e9dd-47c3-883c-c77fc42fdf33",
+      "slug": "all-hands-ai",
+      "name": "All-Hands-AI",
+      "description": "Open source organization behind OpenHands",
+      "website": "https://all-hands.dev",
+      "founded": "2024",
+      "headquarters": "Open Source",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "a33dbe13-c7f0-4f35-bc91-30c7ae72ec31",
+      "slug": "aider-ai",
+      "name": "Aider-AI",
+      "description": "Creator of Aider terminal-based AI pair programming",
+      "website": "https://aider.chat",
+      "founded": "2023",
+      "headquarters": "Open Source",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "daf04a8b-da4e-4e4a-b4d9-ff2679f584e0",
+      "slug": "continue-dev",
+      "name": "Continue Dev",
+      "description": "Open source coding assistant framework",
+      "website": "https://continue.dev",
+      "founded": "2023",
+      "headquarters": "Open Source",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "27b34417-3851-44fb-b99e-b342b4a67faa",
+      "slug": "cline",
+      "name": "Cline",
+      "description": "VS Code extension for autonomous coding",
+      "website": "https://cline.bot",
+      "founded": "2024",
+      "headquarters": "Open Source",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "6bce2830-c467-45fa-b03a-5984f6b4adf2",
+      "slug": "replit",
+      "name": "Replit Inc.",
+      "description": "Online IDE and development platform",
+      "website": "https://replit.com",
+      "founded": "2016",
+      "headquarters": "San Francisco, CA",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "7b2d2a2f-8bb1-49d4-bf27-8a4febf46d5e",
+      "slug": "github",
+      "name": "GitHub (Microsoft)",
+      "description": "Platform for version control and collaborative software development",
+      "website": "https://github.com",
+      "founded": "2008",
+      "headquarters": "San Francisco, CA",
+      "size": "large",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T04:58:08.085264"
+    },
+    {
+      "id": "03e6f675-e5e7-4b5c-aa0f-bc449e236a52",
+      "slug": "anysphere",
+      "name": "Anysphere Inc.",
+      "description": "Creator of Cursor, the AI-powered code editor",
+      "website": "https://cursor.com",
+      "founded": "2022",
+      "headquarters": "San Francisco, CA",
+      "size": "startup",
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-09T05:17:45.853392"
+    },
+    {
+      "id": "c1f2e450-a8d5-4433-b36d-27373a8cf26d",
+      "slug": "openai",
+      "name": "OpenAI",
+      "description": "AI research company, creator of ChatGPT and GPT models",
+      "website": "https://openai.com",
+      "founded": "2015",
+      "headquarters": "San Francisco, CA",
+      "size": "startup",
+      "created_at": "2025-06-09T05:12:33.111705",
+      "updated_at": "2025-06-09T05:12:33.111705"
+    },
+    {
+      "id": "fb9242b6-99ff-4e83-9850-5753944d511c",
+      "slug": "qodo",
+      "name": "Qodo (formerly CodiumAI)",
+      "description": "Quality-first AI coding platform with multi-agent testing capabilities",
+      "website": "https://qodo.ai",
+      "founded": "2022",
+      "headquarters": "Tel Aviv, Israel",
+      "size": "startup",
+      "created_at": "2025-06-09T05:17:45.261036",
+      "updated_at": "2025-06-09T05:17:45.261036"
+    },
+    {
+      "id": "e7fa85cb-e6b0-4778-a0f0-7aa96a152c41",
+      "slug": "diffblue",
+      "name": "Diffblue Ltd.",
+      "description": "AI-powered unit test generation for Java applications",
+      "website": "https://diffblue.com",
+      "founded": "2016",
+      "headquarters": "Oxford, UK",
+      "size": "startup",
+      "created_at": "2025-06-09T05:17:45.261036",
+      "updated_at": "2025-06-09T05:17:45.261036"
+    },
+    {
+      "id": "3d464715-f770-4cf8-9f52-a3b2743e9c18",
+      "slug": "sourcery",
+      "name": "Sourcery Ltd.",
+      "description": "AI code review and refactoring tool focusing on code quality",
+      "website": "https://sourcery.ai",
+      "founded": "2020",
+      "headquarters": "London, UK",
+      "size": "startup",
+      "created_at": "2025-06-09T05:17:45.261036",
+      "updated_at": "2025-06-09T05:17:45.261036"
+    },
+    {
+      "id": "12ce01b3-5cd6-403d-90c1-8c3d25ba18df",
+      "slug": "jetbrains",
+      "name": "JetBrains",
+      "description": "IDE and development tools company with AI assistant integration",
+      "website": "https://jetbrains.com",
+      "founded": "2000",
+      "headquarters": "Prague, Czech Republic",
+      "size": "medium",
+      "created_at": "2025-06-09T05:17:45.261036",
+      "updated_at": "2025-06-09T05:17:45.261036"
+    },
+    {
+      "id": "95a33476-42e4-407e-becf-2c69088ea580",
+      "slug": "tabnine",
+      "name": "Tabnine Ltd.",
+      "description": "AI code completion assistant emphasizing privacy and local models",
+      "website": "https://tabnine.com",
+      "founded": "2013",
+      "headquarters": "Tel Aviv, Israel",
+      "size": "startup",
+      "created_at": "2025-06-09T05:17:45.261036",
+      "updated_at": "2025-06-09T05:17:45.261036"
+    },
+    {
+      "id": "f775888b-87b8-4faa-9c31-e1e6eec826a0",
+      "slug": "snyk",
+      "name": "Snyk Ltd.",
+      "description": "Developer security platform with AI-powered code analysis",
+      "website": "https://snyk.io",
+      "founded": "2015",
+      "headquarters": "London, UK",
+      "size": "startup",
+      "created_at": "2025-06-09T05:17:45.261036",
+      "updated_at": "2025-06-09T05:17:45.261036"
+    },
+    {
+      "id": "be475d22-1df6-448a-8cfc-3a7613e66a55",
+      "slug": "zed-industries",
+      "name": "Zed Industries",
+      "description": "Creators of Zed, a high-performance collaborative code editor built in Rust",
+      "website": "https://zed.dev",
+      "founded": "2021",
+      "headquarters": "Boulder, CO",
+      "size": "startup",
+      "created_at": "2025-06-09T05:33:15.983665",
+      "updated_at": "2025-06-09T05:33:15.983665"
+    },
+    {
+      "id": "c0055e1d-623a-4c75-a9ba-4418508abdf8",
+      "slug": "augment",
+      "name": "Augment",
+      "description": "AI-powered coding assistant for enterprise software development",
+      "website": "https://augmentcode.com",
+      "founded": "2022",
+      "headquarters": "Palo Alto, CA",
+      "size": "startup",
+      "created_at": "2025-06-09T20:40:40.11905",
+      "updated_at": "2025-06-09T20:40:40.11905"
+    },
+    {
+      "id": "b04d5097-d8a8-40d7-acdf-7c0c32f44af8",
+      "slug": "aws",
+      "name": "Amazon Web Services",
+      "description": "Amazon Web Services - Technology company",
+      "website": "https://aws.com",
+      "founded": "2020",
+      "headquarters": "United States",
+      "size": "large",
+      "created_at": "2025-06-09T21:01:09.825371",
+      "updated_at": "2025-06-09T21:01:09.825371"
+    },
+    {
+      "id": "5ad44997-31a7-4598-bbfe-3c36c7db94c2",
+      "slug": "google-cloud",
+      "name": "Google Cloud",
+      "description": "Google Cloud - Technology company",
+      "website": "https://google-cloud.com",
+      "founded": "2020",
+      "headquarters": "United States",
+      "size": "large",
+      "created_at": "2025-06-09T21:02:06.222526",
+      "updated_at": "2025-06-09T21:02:06.222526"
+    },
+    {
+      "id": "e8d7c313-ca1d-4294-a04d-feacee27eab0",
+      "slug": "openbmb",
+      "name": "OpenBMB",
+      "description": "OpenBMB - Technology company",
+      "website": "https://openbmb.com",
+      "founded": "2020",
+      "headquarters": "United States",
+      "size": "large",
+      "created_at": "2025-06-09T21:02:54.78774",
+      "updated_at": "2025-06-09T21:02:54.78774"
+    },
+    {
+      "id": "e61d30ce-c36e-43c8-83cf-a972d50c6fe6",
+      "slug": "coderabbit",
+      "name": "CodeRabbit Inc.",
+      "description": "CodeRabbit Inc. - Technology company",
+      "website": "https://coderabbit.com",
+      "founded": "2020",
+      "headquarters": "United States",
+      "size": "large",
+      "created_at": "2025-06-09T21:02:54.983891",
+      "updated_at": "2025-06-09T21:02:54.983891"
+    }
+  ],
+  "index": {
+    "byId": {
+      "1": {
+        "id": "1",
+        "slug": "github",
+        "name": "GitHub (Microsoft)",
+        "description": [
+          {
+            "children": [
+              {
+                "text": "Platform for version control and collaborative software development"
+              }
+            ]
+          }
+        ],
+        "website": "https://github.com",
+        "founded": "2008",
+        "headquarters": "San Francisco, CA",
+        "size": "large",
+        "created_at": "2025-06-23T15:20:04.698Z",
+        "updated_at": "2025-06-23T15:20:04.697Z"
+      },
+      "2": {
+        "id": "2",
+        "slug": "anysphere",
+        "name": "Anysphere Inc.",
+        "description": [
+          {
+            "children": [
+              {
+                "text": "Creator of Cursor, the AI-powered code editor"
+              }
+            ]
+          }
+        ],
+        "website": "https://cursor.com",
+        "founded": "2022",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-23T15:20:04.855Z",
+        "updated_at": "2025-06-23T15:20:04.853Z"
+      },
+      "4": {
+        "id": "4",
+        "slug": "anthropic",
+        "name": "Anthropic",
+        "description": [
+          {
+            "children": [
+              {
+                "text": "AI safety focused company, creator of Claude"
+              }
+            ]
+          }
+        ],
+        "website": "https://anthropic.com",
+        "founded": "2021",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-23T15:20:05.170Z",
+        "updated_at": "2025-06-23T15:20:05.169Z"
+      },
+      "5": {
+        "id": "5",
+        "slug": "google",
+        "name": "Google",
+        "description": [
+          {
+            "children": [
+              {
+                "text": "Technology conglomerate, creator of Jules and Gemini"
+              }
+            ]
+          }
+        ],
+        "website": "https://google.com",
+        "founded": "1998",
+        "headquarters": "Mountain View, CA",
+        "size": "large",
+        "created_at": "2025-06-23T15:20:05.328Z",
+        "updated_at": "2025-06-23T15:20:05.326Z"
+      },
+      "6": {
+        "id": "6",
+        "slug": "codeium",
+        "name": "Codeium Inc.",
+        "description": [
+          {
+            "children": [
+              {
+                "text": "Creator of Windsurf and Codeium coding assistant"
+              }
+            ]
+          }
+        ],
+        "website": "https://codeium.com",
+        "founded": "2021",
+        "headquarters": "Mountain View, CA",
+        "size": "startup",
+        "created_at": "2025-06-23T15:20:05.482Z",
+        "updated_at": "2025-06-23T15:20:05.479Z"
+      },
+      "7": {
+        "id": "7",
+        "slug": "stackblitz",
+        "name": "StackBlitz",
+        "description": [
+          {
+            "children": [
+              {
+                "text": "Web development platform, creator of Bolt.new"
+              }
+            ]
+          }
+        ],
+        "website": "https://stackblitz.com",
+        "founded": "2017",
+        "headquarters": "Boston, MA",
+        "size": "startup",
+        "created_at": "2025-06-23T15:20:05.637Z",
+        "updated_at": "2025-06-23T15:20:05.634Z"
+      },
+      "8": {
+        "id": "8",
+        "slug": "vercel",
+        "name": "Vercel",
+        "description": [
+          {
+            "children": [
+              {
+                "text": "Frontend platform, creator of v0"
+              }
+            ]
+          }
+        ],
+        "website": "https://vercel.com",
+        "founded": "2015",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-23T15:20:05.794Z",
+        "updated_at": "2025-06-23T15:20:05.791Z"
+      },
+      "10": {
+        "id": "10",
+        "slug": "replit",
+        "name": "Replit Inc.",
+        "description": [
+          {
+            "children": [
+              {
+                "text": "Online IDE and development platform"
+              }
+            ]
+          }
+        ],
+        "website": "https://replit.com",
+        "founded": "2016",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-23T15:20:06.385Z",
+        "updated_at": "2025-06-23T15:20:06.382Z"
+      },
+      "27": {
+        "id": "27",
+        "slug": "cognition-ai",
+        "name": "Cognition AI",
+        "website": "https://cognition.ai",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:37.128Z",
+        "updated_at": "2025-06-24T22:12:39.557Z"
+      },
+      "31": {
+        "id": "31",
+        "slug": "aider",
+        "name": "Aider",
+        "website": "https://aider.chat",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:39.175Z",
+        "updated_at": "2025-06-24T22:12:39.205Z"
+      },
+      "32": {
+        "id": "32",
+        "slug": "continue",
+        "name": "Continue",
+        "website": "https://continue.dev",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:39.675Z",
+        "updated_at": "2025-06-24T22:12:38.874Z"
+      },
+      "37": {
+        "id": "37",
+        "slug": "openhands",
+        "name": "OpenHands",
+        "website": "https://all-hands.dev",
+        "founded": "2024",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:42.259Z",
+        "updated_at": "2025-06-24T22:12:38.549Z"
+      },
+      "39": {
+        "id": "39",
+        "slug": "sourcery-ai",
+        "name": "Sourcery AI",
+        "website": "https://sourcery.ai",
+        "founded": "2020",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:43.278Z",
+        "updated_at": "2025-06-24T22:12:38.217Z"
+      },
+      "40": {
+        "id": "40",
+        "slug": "qodo",
+        "name": "Qodo",
+        "website": "https://qodo.ai",
+        "founded": "2022",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:43.765Z",
+        "updated_at": "2025-06-24T22:12:37.872Z"
+      },
+      "41": {
+        "id": "41",
+        "slug": "snyk",
+        "name": "Snyk",
+        "website": "https://snyk.io",
+        "founded": "2015",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:44.257Z",
+        "updated_at": "2025-06-24T22:12:37.541Z"
+      },
+      "42": {
+        "id": "42",
+        "slug": "openai",
+        "name": "OpenAI",
+        "website": "https://openai.com",
+        "founded": "2015",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:44.747Z",
+        "updated_at": "2025-06-24T22:12:37.220Z"
+      },
+      "43": {
+        "id": "43",
+        "slug": "diffblue",
+        "name": "Diffblue",
+        "website": "https://diffblue.com",
+        "founded": "2016",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:45.601Z",
+        "updated_at": "2025-06-24T22:12:36.890Z"
+      },
+      "44": {
+        "id": "44",
+        "slug": "tabnine",
+        "name": "Tabnine",
+        "website": "https://tabnine.com",
+        "founded": "2013",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:46.105Z",
+        "updated_at": "2025-06-24T22:12:36.509Z"
+      },
+      "45": {
+        "id": "45",
+        "slug": "jetbrains",
+        "name": "JetBrains",
+        "website": "https://jetbrains.com",
+        "founded": "2000",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:46.596Z",
+        "updated_at": "2025-06-24T22:12:36.135Z"
+      },
+      "46": {
+        "id": "46",
+        "slug": "zed-industries",
+        "name": "Zed Industries",
+        "website": "https://zed.dev",
+        "founded": "2021",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:47.092Z",
+        "updated_at": "2025-06-24T22:12:35.736Z"
+      },
+      "47": {
+        "id": "47",
+        "slug": "augment",
+        "name": "Augment",
+        "website": "https://augmentcode.com",
+        "founded": "2022",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:48.194Z",
+        "updated_at": "2025-06-24T22:12:35.399Z"
+      },
+      "48": {
+        "id": "48",
+        "slug": "amazon",
+        "name": "Amazon",
+        "website": "https://amazon.com",
+        "founded": "1994",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:48.702Z",
+        "updated_at": "2025-06-24T22:12:35.073Z"
+      },
+      "50": {
+        "id": "50",
+        "slug": "coderabbit",
+        "name": "CodeRabbit",
+        "website": "https://coderabbit.ai",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:49.971Z",
+        "updated_at": "2025-06-24T22:12:34.739Z"
+      },
+      "51": {
+        "id": "51",
+        "slug": "sourcegraph",
+        "name": "Sourcegraph",
+        "website": "https://sourcegraph.com",
+        "founded": "2013",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:50.473Z",
+        "updated_at": "2025-06-24T22:12:34.434Z"
+      },
+      "53": {
+        "id": "53",
+        "slug": "microsoft",
+        "name": "Microsoft",
+        "website": "https://microsoft.com",
+        "founded": "1975",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:51.336Z",
+        "updated_at": "2025-06-24T22:12:34.116Z"
+      },
+      "76": {
+        "id": "76",
+        "slug": "lovable-dev",
+        "name": "Lovable",
+        "description": "Stockholm-based AI startup building an AI-powered app builder that enables users to create full-stack web applications without coding.",
+        "website": "https://lovable.dev",
+        "founded": "2023",
+        "created_at": "2025-06-24T03:10:11.541Z",
+        "updated_at": "2025-06-24T03:10:11.561Z"
+      },
+      "77": {
+        "id": "77",
+        "slug": "cline-ai",
+        "name": "Cline (Open Source)",
+        "description": "Open-source AI coding assistant VSCode extension, previously known as Claude Dev.",
+        "website": "https://cline.bot",
+        "founded": "2024",
+        "created_at": "2025-06-24T03:10:12.432Z",
+        "updated_at": "2025-06-24T03:10:12.458Z"
+      },
+      "4257f187-2bed-41f2-bc5e-a6d069fdd834": {
+        "id": "4257f187-2bed-41f2-bc5e-a6d069fdd834",
+        "slug": "codeium",
+        "name": "Codeium Inc.",
+        "description": "Creator of Windsurf and Codeium coding assistant",
+        "website": "https://codeium.com",
+        "founded": "2021",
+        "headquarters": "Mountain View, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T05:17:45.853392"
+      },
+      "c94062bd-d3b0-4e7f-baca-0e27326173c3": {
+        "id": "c94062bd-d3b0-4e7f-baca-0e27326173c3",
+        "slug": "cognition-labs",
+        "name": "Cognition Labs",
+        "description": "Building Devin, the autonomous AI software engineer",
+        "website": "https://cognition.ai",
+        "founded": "2023",
+        "headquarters": "New York, NY",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "f26ced5b-d67b-4631-afec-2997c07a1a82": {
+        "id": "f26ced5b-d67b-4631-afec-2997c07a1a82",
+        "slug": "anthropic",
+        "name": "Anthropic",
+        "description": "AI safety focused company, creator of Claude",
+        "website": "https://anthropic.com",
+        "founded": "2021",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "45040654-745b-4b58-856d-621a2c1835e8": {
+        "id": "45040654-745b-4b58-856d-621a2c1835e8",
+        "slug": "google",
+        "name": "Google",
+        "description": "Technology conglomerate, creator of Jules and Gemini",
+        "website": "https://google.com",
+        "founded": "1998",
+        "headquarters": "Mountain View, CA",
+        "size": "large",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "ed2b44dc-176a-4ef1-95a5-45635e15a77a": {
+        "id": "ed2b44dc-176a-4ef1-95a5-45635e15a77a",
+        "slug": "stackblitz",
+        "name": "StackBlitz",
+        "description": "Web development platform, creator of Bolt.new",
+        "website": "https://stackblitz.com",
+        "founded": "2017",
+        "headquarters": "Boston, MA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "7ba3b9dc-4283-425c-9201-0813fd29cde3": {
+        "id": "7ba3b9dc-4283-425c-9201-0813fd29cde3",
+        "slug": "vercel",
+        "name": "Vercel",
+        "description": "Frontend platform, creator of v0",
+        "website": "https://vercel.com",
+        "founded": "2015",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "ef6a5910-c542-45ec-b3c5-c1ed00a8d3c2": {
+        "id": "ef6a5910-c542-45ec-b3c5-c1ed00a8d3c2",
+        "slug": "lovable",
+        "name": "Lovable",
+        "description": "AI-powered app builder for full-stack development",
+        "website": "https://lovable.dev",
+        "founded": "2023",
+        "headquarters": "Stockholm, Sweden",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "b0b92c60-e9dd-47c3-883c-c77fc42fdf33": {
+        "id": "b0b92c60-e9dd-47c3-883c-c77fc42fdf33",
+        "slug": "all-hands-ai",
+        "name": "All-Hands-AI",
+        "description": "Open source organization behind OpenHands",
+        "website": "https://all-hands.dev",
+        "founded": "2024",
+        "headquarters": "Open Source",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "a33dbe13-c7f0-4f35-bc91-30c7ae72ec31": {
+        "id": "a33dbe13-c7f0-4f35-bc91-30c7ae72ec31",
+        "slug": "aider-ai",
+        "name": "Aider-AI",
+        "description": "Creator of Aider terminal-based AI pair programming",
+        "website": "https://aider.chat",
+        "founded": "2023",
+        "headquarters": "Open Source",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "daf04a8b-da4e-4e4a-b4d9-ff2679f584e0": {
+        "id": "daf04a8b-da4e-4e4a-b4d9-ff2679f584e0",
+        "slug": "continue-dev",
+        "name": "Continue Dev",
+        "description": "Open source coding assistant framework",
+        "website": "https://continue.dev",
+        "founded": "2023",
+        "headquarters": "Open Source",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "27b34417-3851-44fb-b99e-b342b4a67faa": {
+        "id": "27b34417-3851-44fb-b99e-b342b4a67faa",
+        "slug": "cline",
+        "name": "Cline",
+        "description": "VS Code extension for autonomous coding",
+        "website": "https://cline.bot",
+        "founded": "2024",
+        "headquarters": "Open Source",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "6bce2830-c467-45fa-b03a-5984f6b4adf2": {
+        "id": "6bce2830-c467-45fa-b03a-5984f6b4adf2",
+        "slug": "replit",
+        "name": "Replit Inc.",
+        "description": "Online IDE and development platform",
+        "website": "https://replit.com",
+        "founded": "2016",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "7b2d2a2f-8bb1-49d4-bf27-8a4febf46d5e": {
+        "id": "7b2d2a2f-8bb1-49d4-bf27-8a4febf46d5e",
+        "slug": "github",
+        "name": "GitHub (Microsoft)",
+        "description": "Platform for version control and collaborative software development",
+        "website": "https://github.com",
+        "founded": "2008",
+        "headquarters": "San Francisco, CA",
+        "size": "large",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "03e6f675-e5e7-4b5c-aa0f-bc449e236a52": {
+        "id": "03e6f675-e5e7-4b5c-aa0f-bc449e236a52",
+        "slug": "anysphere",
+        "name": "Anysphere Inc.",
+        "description": "Creator of Cursor, the AI-powered code editor",
+        "website": "https://cursor.com",
+        "founded": "2022",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T05:17:45.853392"
+      },
+      "c1f2e450-a8d5-4433-b36d-27373a8cf26d": {
+        "id": "c1f2e450-a8d5-4433-b36d-27373a8cf26d",
+        "slug": "openai",
+        "name": "OpenAI",
+        "description": "AI research company, creator of ChatGPT and GPT models",
+        "website": "https://openai.com",
+        "founded": "2015",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T05:12:33.111705",
+        "updated_at": "2025-06-09T05:12:33.111705"
+      },
+      "fb9242b6-99ff-4e83-9850-5753944d511c": {
+        "id": "fb9242b6-99ff-4e83-9850-5753944d511c",
+        "slug": "qodo",
+        "name": "Qodo (formerly CodiumAI)",
+        "description": "Quality-first AI coding platform with multi-agent testing capabilities",
+        "website": "https://qodo.ai",
+        "founded": "2022",
+        "headquarters": "Tel Aviv, Israel",
+        "size": "startup",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "e7fa85cb-e6b0-4778-a0f0-7aa96a152c41": {
+        "id": "e7fa85cb-e6b0-4778-a0f0-7aa96a152c41",
+        "slug": "diffblue",
+        "name": "Diffblue Ltd.",
+        "description": "AI-powered unit test generation for Java applications",
+        "website": "https://diffblue.com",
+        "founded": "2016",
+        "headquarters": "Oxford, UK",
+        "size": "startup",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "3d464715-f770-4cf8-9f52-a3b2743e9c18": {
+        "id": "3d464715-f770-4cf8-9f52-a3b2743e9c18",
+        "slug": "sourcery",
+        "name": "Sourcery Ltd.",
+        "description": "AI code review and refactoring tool focusing on code quality",
+        "website": "https://sourcery.ai",
+        "founded": "2020",
+        "headquarters": "London, UK",
+        "size": "startup",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "12ce01b3-5cd6-403d-90c1-8c3d25ba18df": {
+        "id": "12ce01b3-5cd6-403d-90c1-8c3d25ba18df",
+        "slug": "jetbrains",
+        "name": "JetBrains",
+        "description": "IDE and development tools company with AI assistant integration",
+        "website": "https://jetbrains.com",
+        "founded": "2000",
+        "headquarters": "Prague, Czech Republic",
+        "size": "medium",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "95a33476-42e4-407e-becf-2c69088ea580": {
+        "id": "95a33476-42e4-407e-becf-2c69088ea580",
+        "slug": "tabnine",
+        "name": "Tabnine Ltd.",
+        "description": "AI code completion assistant emphasizing privacy and local models",
+        "website": "https://tabnine.com",
+        "founded": "2013",
+        "headquarters": "Tel Aviv, Israel",
+        "size": "startup",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "f775888b-87b8-4faa-9c31-e1e6eec826a0": {
+        "id": "f775888b-87b8-4faa-9c31-e1e6eec826a0",
+        "slug": "snyk",
+        "name": "Snyk Ltd.",
+        "description": "Developer security platform with AI-powered code analysis",
+        "website": "https://snyk.io",
+        "founded": "2015",
+        "headquarters": "London, UK",
+        "size": "startup",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "be475d22-1df6-448a-8cfc-3a7613e66a55": {
+        "id": "be475d22-1df6-448a-8cfc-3a7613e66a55",
+        "slug": "zed-industries",
+        "name": "Zed Industries",
+        "description": "Creators of Zed, a high-performance collaborative code editor built in Rust",
+        "website": "https://zed.dev",
+        "founded": "2021",
+        "headquarters": "Boulder, CO",
+        "size": "startup",
+        "created_at": "2025-06-09T05:33:15.983665",
+        "updated_at": "2025-06-09T05:33:15.983665"
+      },
+      "c0055e1d-623a-4c75-a9ba-4418508abdf8": {
+        "id": "c0055e1d-623a-4c75-a9ba-4418508abdf8",
+        "slug": "augment",
+        "name": "Augment",
+        "description": "AI-powered coding assistant for enterprise software development",
+        "website": "https://augmentcode.com",
+        "founded": "2022",
+        "headquarters": "Palo Alto, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T20:40:40.11905",
+        "updated_at": "2025-06-09T20:40:40.11905"
+      },
+      "b04d5097-d8a8-40d7-acdf-7c0c32f44af8": {
+        "id": "b04d5097-d8a8-40d7-acdf-7c0c32f44af8",
+        "slug": "aws",
+        "name": "Amazon Web Services",
+        "description": "Amazon Web Services - Technology company",
+        "website": "https://aws.com",
+        "founded": "2020",
+        "headquarters": "United States",
+        "size": "large",
+        "created_at": "2025-06-09T21:01:09.825371",
+        "updated_at": "2025-06-09T21:01:09.825371"
+      },
+      "5ad44997-31a7-4598-bbfe-3c36c7db94c2": {
+        "id": "5ad44997-31a7-4598-bbfe-3c36c7db94c2",
+        "slug": "google-cloud",
+        "name": "Google Cloud",
+        "description": "Google Cloud - Technology company",
+        "website": "https://google-cloud.com",
+        "founded": "2020",
+        "headquarters": "United States",
+        "size": "large",
+        "created_at": "2025-06-09T21:02:06.222526",
+        "updated_at": "2025-06-09T21:02:06.222526"
+      },
+      "e8d7c313-ca1d-4294-a04d-feacee27eab0": {
+        "id": "e8d7c313-ca1d-4294-a04d-feacee27eab0",
+        "slug": "openbmb",
+        "name": "OpenBMB",
+        "description": "OpenBMB - Technology company",
+        "website": "https://openbmb.com",
+        "founded": "2020",
+        "headquarters": "United States",
+        "size": "large",
+        "created_at": "2025-06-09T21:02:54.78774",
+        "updated_at": "2025-06-09T21:02:54.78774"
+      },
+      "e61d30ce-c36e-43c8-83cf-a972d50c6fe6": {
+        "id": "e61d30ce-c36e-43c8-83cf-a972d50c6fe6",
+        "slug": "coderabbit",
+        "name": "CodeRabbit Inc.",
+        "description": "CodeRabbit Inc. - Technology company",
+        "website": "https://coderabbit.com",
+        "founded": "2020",
+        "headquarters": "United States",
+        "size": "large",
+        "created_at": "2025-06-09T21:02:54.983891",
+        "updated_at": "2025-06-09T21:02:54.983891"
+      }
+    },
+    "bySlug": {
+      "aider": {
+        "id": "31",
+        "slug": "aider",
+        "name": "Aider",
+        "website": "https://aider.chat",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:39.175Z",
+        "updated_at": "2025-06-24T22:12:39.205Z"
+      },
+      "amazon": {
+        "id": "48",
+        "slug": "amazon",
+        "name": "Amazon",
+        "website": "https://amazon.com",
+        "founded": "1994",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:48.702Z",
+        "updated_at": "2025-06-24T22:12:35.073Z"
+      },
+      "augment": {
+        "id": "c0055e1d-623a-4c75-a9ba-4418508abdf8",
+        "slug": "augment",
+        "name": "Augment",
+        "description": "AI-powered coding assistant for enterprise software development",
+        "website": "https://augmentcode.com",
+        "founded": "2022",
+        "headquarters": "Palo Alto, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T20:40:40.11905",
+        "updated_at": "2025-06-09T20:40:40.11905"
+      },
+      "stackblitz": {
+        "id": "ed2b44dc-176a-4ef1-95a5-45635e15a77a",
+        "slug": "stackblitz",
+        "name": "StackBlitz",
+        "description": "Web development platform, creator of Bolt.new",
+        "website": "https://stackblitz.com",
+        "founded": "2017",
+        "headquarters": "Boston, MA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "openai": {
+        "id": "c1f2e450-a8d5-4433-b36d-27373a8cf26d",
+        "slug": "openai",
+        "name": "OpenAI",
+        "description": "AI research company, creator of ChatGPT and GPT models",
+        "website": "https://openai.com",
+        "founded": "2015",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T05:12:33.111705",
+        "updated_at": "2025-06-09T05:12:33.111705"
+      },
+      "anthropic": {
+        "id": "f26ced5b-d67b-4631-afec-2997c07a1a82",
+        "slug": "anthropic",
+        "name": "Anthropic",
+        "description": "AI safety focused company, creator of Claude",
+        "website": "https://anthropic.com",
+        "founded": "2021",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "cline-ai": {
+        "id": "77",
+        "slug": "cline-ai",
+        "name": "Cline (Open Source)",
+        "description": "Open-source AI coding assistant VSCode extension, previously known as Claude Dev.",
+        "website": "https://cline.bot",
+        "founded": "2024",
+        "created_at": "2025-06-24T03:10:12.432Z",
+        "updated_at": "2025-06-24T03:10:12.458Z"
+      },
+      "coderabbit": {
+        "id": "e61d30ce-c36e-43c8-83cf-a972d50c6fe6",
+        "slug": "coderabbit",
+        "name": "CodeRabbit Inc.",
+        "description": "CodeRabbit Inc. - Technology company",
+        "website": "https://coderabbit.com",
+        "founded": "2020",
+        "headquarters": "United States",
+        "size": "large",
+        "created_at": "2025-06-09T21:02:54.983891",
+        "updated_at": "2025-06-09T21:02:54.983891"
+      },
+      "continue": {
+        "id": "32",
+        "slug": "continue",
+        "name": "Continue",
+        "website": "https://continue.dev",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:39.675Z",
+        "updated_at": "2025-06-24T22:12:38.874Z"
+      },
+      "anysphere": {
+        "id": "03e6f675-e5e7-4b5c-aa0f-bc449e236a52",
+        "slug": "anysphere",
+        "name": "Anysphere Inc.",
+        "description": "Creator of Cursor, the AI-powered code editor",
+        "website": "https://cursor.com",
+        "founded": "2022",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T05:17:45.853392"
+      },
+      "cognition-ai": {
+        "id": "27",
+        "slug": "cognition-ai",
+        "name": "Cognition AI",
+        "website": "https://cognition.ai",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:37.128Z",
+        "updated_at": "2025-06-24T22:12:39.557Z"
+      },
+      "diffblue": {
+        "id": "e7fa85cb-e6b0-4778-a0f0-7aa96a152c41",
+        "slug": "diffblue",
+        "name": "Diffblue Ltd.",
+        "description": "AI-powered unit test generation for Java applications",
+        "website": "https://diffblue.com",
+        "founded": "2016",
+        "headquarters": "Oxford, UK",
+        "size": "startup",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "github": {
+        "id": "7b2d2a2f-8bb1-49d4-bf27-8a4febf46d5e",
+        "slug": "github",
+        "name": "GitHub (Microsoft)",
+        "description": "Platform for version control and collaborative software development",
+        "website": "https://github.com",
+        "founded": "2008",
+        "headquarters": "San Francisco, CA",
+        "size": "large",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "google": {
+        "id": "45040654-745b-4b58-856d-621a2c1835e8",
+        "slug": "google",
+        "name": "Google",
+        "description": "Technology conglomerate, creator of Jules and Gemini",
+        "website": "https://google.com",
+        "founded": "1998",
+        "headquarters": "Mountain View, CA",
+        "size": "large",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "jetbrains": {
+        "id": "12ce01b3-5cd6-403d-90c1-8c3d25ba18df",
+        "slug": "jetbrains",
+        "name": "JetBrains",
+        "description": "IDE and development tools company with AI assistant integration",
+        "website": "https://jetbrains.com",
+        "founded": "2000",
+        "headquarters": "Prague, Czech Republic",
+        "size": "medium",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "lovable-dev": {
+        "id": "76",
+        "slug": "lovable-dev",
+        "name": "Lovable",
+        "description": "Stockholm-based AI startup building an AI-powered app builder that enables users to create full-stack web applications without coding.",
+        "website": "https://lovable.dev",
+        "founded": "2023",
+        "created_at": "2025-06-24T03:10:11.541Z",
+        "updated_at": "2025-06-24T03:10:11.561Z"
+      },
+      "microsoft": {
+        "id": "53",
+        "slug": "microsoft",
+        "name": "Microsoft",
+        "website": "https://microsoft.com",
+        "founded": "1975",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:51.336Z",
+        "updated_at": "2025-06-24T22:12:34.116Z"
+      },
+      "openhands": {
+        "id": "37",
+        "slug": "openhands",
+        "name": "OpenHands",
+        "website": "https://all-hands.dev",
+        "founded": "2024",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:42.259Z",
+        "updated_at": "2025-06-24T22:12:38.549Z"
+      },
+      "qodo": {
+        "id": "fb9242b6-99ff-4e83-9850-5753944d511c",
+        "slug": "qodo",
+        "name": "Qodo (formerly CodiumAI)",
+        "description": "Quality-first AI coding platform with multi-agent testing capabilities",
+        "website": "https://qodo.ai",
+        "founded": "2022",
+        "headquarters": "Tel Aviv, Israel",
+        "size": "startup",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "replit": {
+        "id": "6bce2830-c467-45fa-b03a-5984f6b4adf2",
+        "slug": "replit",
+        "name": "Replit Inc.",
+        "description": "Online IDE and development platform",
+        "website": "https://replit.com",
+        "founded": "2016",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "snyk": {
+        "id": "f775888b-87b8-4faa-9c31-e1e6eec826a0",
+        "slug": "snyk",
+        "name": "Snyk Ltd.",
+        "description": "Developer security platform with AI-powered code analysis",
+        "website": "https://snyk.io",
+        "founded": "2015",
+        "headquarters": "London, UK",
+        "size": "startup",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "sourcegraph": {
+        "id": "51",
+        "slug": "sourcegraph",
+        "name": "Sourcegraph",
+        "website": "https://sourcegraph.com",
+        "founded": "2013",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:50.473Z",
+        "updated_at": "2025-06-24T22:12:34.434Z"
+      },
+      "sourcery-ai": {
+        "id": "39",
+        "slug": "sourcery-ai",
+        "name": "Sourcery AI",
+        "website": "https://sourcery.ai",
+        "founded": "2020",
+        "size": "startup",
+        "created_at": "2025-06-23T15:40:43.278Z",
+        "updated_at": "2025-06-24T22:12:38.217Z"
+      },
+      "tabnine": {
+        "id": "95a33476-42e4-407e-becf-2c69088ea580",
+        "slug": "tabnine",
+        "name": "Tabnine Ltd.",
+        "description": "AI code completion assistant emphasizing privacy and local models",
+        "website": "https://tabnine.com",
+        "founded": "2013",
+        "headquarters": "Tel Aviv, Israel",
+        "size": "startup",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "vercel": {
+        "id": "7ba3b9dc-4283-425c-9201-0813fd29cde3",
+        "slug": "vercel",
+        "name": "Vercel",
+        "description": "Frontend platform, creator of v0",
+        "website": "https://vercel.com",
+        "founded": "2015",
+        "headquarters": "San Francisco, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "codeium": {
+        "id": "4257f187-2bed-41f2-bc5e-a6d069fdd834",
+        "slug": "codeium",
+        "name": "Codeium Inc.",
+        "description": "Creator of Windsurf and Codeium coding assistant",
+        "website": "https://codeium.com",
+        "founded": "2021",
+        "headquarters": "Mountain View, CA",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T05:17:45.853392"
+      },
+      "zed-industries": {
+        "id": "be475d22-1df6-448a-8cfc-3a7613e66a55",
+        "slug": "zed-industries",
+        "name": "Zed Industries",
+        "description": "Creators of Zed, a high-performance collaborative code editor built in Rust",
+        "website": "https://zed.dev",
+        "founded": "2021",
+        "headquarters": "Boulder, CO",
+        "size": "startup",
+        "created_at": "2025-06-09T05:33:15.983665",
+        "updated_at": "2025-06-09T05:33:15.983665"
+      },
+      "cognition-labs": {
+        "id": "c94062bd-d3b0-4e7f-baca-0e27326173c3",
+        "slug": "cognition-labs",
+        "name": "Cognition Labs",
+        "description": "Building Devin, the autonomous AI software engineer",
+        "website": "https://cognition.ai",
+        "founded": "2023",
+        "headquarters": "New York, NY",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "lovable": {
+        "id": "ef6a5910-c542-45ec-b3c5-c1ed00a8d3c2",
+        "slug": "lovable",
+        "name": "Lovable",
+        "description": "AI-powered app builder for full-stack development",
+        "website": "https://lovable.dev",
+        "founded": "2023",
+        "headquarters": "Stockholm, Sweden",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "all-hands-ai": {
+        "id": "b0b92c60-e9dd-47c3-883c-c77fc42fdf33",
+        "slug": "all-hands-ai",
+        "name": "All-Hands-AI",
+        "description": "Open source organization behind OpenHands",
+        "website": "https://all-hands.dev",
+        "founded": "2024",
+        "headquarters": "Open Source",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "aider-ai": {
+        "id": "a33dbe13-c7f0-4f35-bc91-30c7ae72ec31",
+        "slug": "aider-ai",
+        "name": "Aider-AI",
+        "description": "Creator of Aider terminal-based AI pair programming",
+        "website": "https://aider.chat",
+        "founded": "2023",
+        "headquarters": "Open Source",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "continue-dev": {
+        "id": "daf04a8b-da4e-4e4a-b4d9-ff2679f584e0",
+        "slug": "continue-dev",
+        "name": "Continue Dev",
+        "description": "Open source coding assistant framework",
+        "website": "https://continue.dev",
+        "founded": "2023",
+        "headquarters": "Open Source",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "cline": {
+        "id": "27b34417-3851-44fb-b99e-b342b4a67faa",
+        "slug": "cline",
+        "name": "Cline",
+        "description": "VS Code extension for autonomous coding",
+        "website": "https://cline.bot",
+        "founded": "2024",
+        "headquarters": "Open Source",
+        "size": "startup",
+        "created_at": "2025-06-09T04:58:08.085264",
+        "updated_at": "2025-06-09T04:58:08.085264"
+      },
+      "sourcery": {
+        "id": "3d464715-f770-4cf8-9f52-a3b2743e9c18",
+        "slug": "sourcery",
+        "name": "Sourcery Ltd.",
+        "description": "AI code review and refactoring tool focusing on code quality",
+        "website": "https://sourcery.ai",
+        "founded": "2020",
+        "headquarters": "London, UK",
+        "size": "startup",
+        "created_at": "2025-06-09T05:17:45.261036",
+        "updated_at": "2025-06-09T05:17:45.261036"
+      },
+      "aws": {
+        "id": "b04d5097-d8a8-40d7-acdf-7c0c32f44af8",
+        "slug": "aws",
+        "name": "Amazon Web Services",
+        "description": "Amazon Web Services - Technology company",
+        "website": "https://aws.com",
+        "founded": "2020",
+        "headquarters": "United States",
+        "size": "large",
+        "created_at": "2025-06-09T21:01:09.825371",
+        "updated_at": "2025-06-09T21:01:09.825371"
+      },
+      "google-cloud": {
+        "id": "5ad44997-31a7-4598-bbfe-3c36c7db94c2",
+        "slug": "google-cloud",
+        "name": "Google Cloud",
+        "description": "Google Cloud - Technology company",
+        "website": "https://google-cloud.com",
+        "founded": "2020",
+        "headquarters": "United States",
+        "size": "large",
+        "created_at": "2025-06-09T21:02:06.222526",
+        "updated_at": "2025-06-09T21:02:06.222526"
+      },
+      "openbmb": {
+        "id": "e8d7c313-ca1d-4294-a04d-feacee27eab0",
+        "slug": "openbmb",
+        "name": "OpenBMB",
+        "description": "OpenBMB - Technology company",
+        "website": "https://openbmb.com",
+        "founded": "2020",
+        "headquarters": "United States",
+        "size": "large",
+        "created_at": "2025-06-09T21:02:54.78774",
+        "updated_at": "2025-06-09T21:02:54.78774"
+      }
+    }
+  },
+  "metadata": {
+    "total": 54,
+    "last_updated": "2025-06-28T02:37:01.467Z",
+    "version": "1.0.0"
+  }
+}

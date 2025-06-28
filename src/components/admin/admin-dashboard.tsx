@@ -1,23 +1,38 @@
 "use client";
 
 import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Users, FileUp, Trophy, Database, TrendingUp, Settings } from "lucide-react";
+import { FileText, Users, FileUp, Trophy, Database, TrendingUp, Settings, Globe } from "lucide-react";
 import Link from "next/link";
 
 export function AdminDashboard() {
   const { data: session } = useSession();
+  const [currentLiveRanking, setCurrentLiveRanking] = useState<string | null>(null);
+  const [isLoadingRanking, setIsLoadingRanking] = useState(true);
+
+  useEffect(() => {
+    loadCurrentRanking();
+  }, []);
+
+  const loadCurrentRanking = async () => {
+    try {
+      const response = await fetch("/api/admin/ranking-periods");
+      if (response.ok) {
+        const data = await response.json();
+        const current = data.periods?.find((p: any) => p.is_current);
+        if (current) {
+          setCurrentLiveRanking(current.period);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load current ranking:", err);
+    } finally {
+      setIsLoadingRanking(false);
+    }
+  };
 
   const adminSections = [
-    {
-      title: "Payload CMS Admin",
-      description: "Access the full Payload CMS admin interface for content management",
-      icon: FileText,
-      href: "/admin",
-      color: "bg-blue-600",
-      disabled: false,
-      external: true,
-    },
     {
       title: "Tools Management",
       description: "Advanced tools interface with search, filtering, and rankings",
@@ -125,19 +140,6 @@ export function AdminDashboard() {
             );
           }
 
-          if (section.external) {
-            return (
-              <a
-                key={section.title}
-                href={section.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block h-full"
-              >
-                {cardContent}
-              </a>
-            );
-          }
 
           return (
             <Link key={section.title} href={section.href} className="block h-full">
@@ -148,7 +150,32 @@ export function AdminDashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Current Live Ranking
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <Globe className="h-5 w-5 text-green-600" />
+              <div className="text-2xl font-bold">
+                {isLoadingRanking ? (
+                  <span className="text-sm text-muted-foreground">Loading...</span>
+                ) : currentLiveRanking ? (
+                  currentLiveRanking
+                ) : (
+                  <span className="text-sm text-red-600">Not Set</span>
+                )}
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {currentLiveRanking ? 'Currently showing on live site' : 'No ranking set as live'}
+            </p>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">

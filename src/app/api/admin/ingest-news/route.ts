@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@payload-config";
 import { loggers } from "@/lib/logger";
-// import { RankingEngineV6, ToolMetricsV6 } from "@/lib/ranking-algorithm-v6";
+import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
+import crypto from "crypto";
+import { ToolsRepository } from "@/lib/json-db/tools-repository";
 
 interface NewsItem {
   title: string;
@@ -42,91 +42,38 @@ interface NewsItem {
 // }
 
 async function findOrCreateTool(
-  payload: any,
+  toolsRepo: ToolsRepository,
   toolIdentifier: string,
   newsSource: string,
   newsUrl?: string,
   newsContext?: string
 ): Promise<any> {
   try {
+    const slug = toolIdentifier.toLowerCase().replace(/\s+/g, "-");
+    
     // First try to find by slug
-    const { docs: toolsBySlug } = await payload.find({
-      collection: "tools",
-      where: {
-        slug: { equals: toolIdentifier.toLowerCase().replace(/\s+/g, "-") },
-      },
-      limit: 1,
-    });
-
-    if (toolsBySlug.length > 0) {
-      return toolsBySlug[0];
+    const toolBySlug = await toolsRepo.getBySlug(slug);
+    if (toolBySlug) {
+      return toolBySlug;
     }
 
-    // Then try to find by name
-    const { docs: toolsByName } = await payload.find({
-      collection: "tools",
-      where: {
-        name: { equals: toolIdentifier },
-      },
-      limit: 1,
-    });
-
-    if (toolsByName.length > 0) {
-      return toolsByName[0];
+    // Then try to find by name (search through all tools)
+    const allTools = await toolsRepo.getAll();
+    const toolByName = allTools.find(tool => tool.name.toLowerCase() === toolIdentifier.toLowerCase());
+    if (toolByName) {
+      return toolByName;
     }
 
-    // Check if we already have a pending tool for this identifier
-    const { docs: pendingTools } = await payload.find({
-      collection: "pending-tools",
-      where: {
-        or: [
-          { slug: { equals: toolIdentifier.toLowerCase().replace(/\s+/g, "-") } },
-          { name: { equals: toolIdentifier } },
-        ],
-      },
-      limit: 1,
+    // For now, we'll just log that a tool needs to be created
+    // In a full implementation, you might want to create pending tools
+    loggers.api.info(`Tool not found, needs manual creation: ${toolIdentifier}`, {
+      source: newsSource,
+      url: newsUrl,
+      context: newsContext
     });
-
-    if (pendingTools.length > 0) {
-      loggers.api.info(`Found existing pending tool: ${toolIdentifier}`);
-      return null; // Don't create duplicate pending tools
-    }
-
-    // Create pending tool for admin review
-    loggers.api.info(`Creating pending tool for review: ${toolIdentifier}`);
-
-    const pendingTool = await payload.create({
-      collection: "pending-tools",
-      data: {
-        name: toolIdentifier,
-        slug: toolIdentifier.toLowerCase().replace(/\s+/g, "-"),
-        suggested_category: "autonomous-agent", // Default category
-        description: `Tool mentioned in news article`,
-        created_from: "news",
-        source_info: {
-          source_name: newsSource,
-          source_url: newsUrl,
-          context: newsContext || `Mentioned in article from ${newsSource}`,
-        },
-        status: "pending",
-      },
-    });
-
-    loggers.api.info(`Created pending tool: ${pendingTool.id} for ${toolIdentifier}`);
-    return null; // Return null since we're not creating a real tool
+    
+    return null; // Return null since tool doesn't exist
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-
-    // If it's a database connection error, re-throw it to be handled at the higher level
-    if (
-      errorMessage.includes("db_termination") ||
-      errorMessage.includes("connection terminated") ||
-      errorMessage.includes("Client has already been released")
-    ) {
-      throw error;
-    }
-
-    // For other errors, log and return null
     loggers.api.error(`Error in findOrCreateTool for ${toolIdentifier}:`, error);
     return null;
   }
@@ -136,7 +83,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const startTime = Date.now();
 
   try {
-    const payload = await getPayload({ config });
+    // Initialize repositories
+    const newsRepo = getNewsRepo();
+    const toolsRepo = getToolsRepo();
 
     // Parse the multipart form data
     const formData = await request.formData();
@@ -196,15 +145,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         }
 
         // Check for duplicates by URL
-        const { docs: existingNews } = await payload.find({
-          collection: "news",
-          where: {
-            url: { equals: item.url },
-          },
-          limit: 1,
-        });
+        const allNews = await newsRepo.getAll();
+        const existingNews = allNews.find(article => article.source_url === item.url);
 
-        if (existingNews.length > 0) {
+        if (existingNews) {
           report.duplicate_items++;
           report.processing_log += `  - Skipped: duplicate URL\n`;
           continue;
@@ -215,96 +159,84 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         if (item.related_tools) {
           for (const toolIdentifier of item.related_tools) {
             const tool = await findOrCreateTool(
-              payload,
+              toolsRepo,
               toolIdentifier,
               item.source,
               item.url,
               `Related tool mentioned in: ${item.title || (item as any)["headline"]}`
             );
 
-            // Only add to related tools if tool exists (not pending)
+            // Only add to related tools if tool exists
             if (tool) {
               relatedToolIds.push(tool.id);
 
-              if (!report.created_tools.find((t) => t.id === tool.id)) {
+              if (!report.created_tools.find((t: any) => t.id === tool.id)) {
                 report.created_tools.push({
                   id: tool.id,
                   name: tool.name,
                   slug: tool.slug,
                 });
-                report.new_tools_created++;
+                // Note: not incrementing new_tools_created since we're only finding existing tools
               }
             } else {
-              // Tool is pending approval, don't add to relationships
+              // Tool doesn't exist, log for manual creation
               report.pending_tools_created++;
             }
           }
         }
 
-        // Process primary tool
-        let primaryToolId = null;
+        // Process primary tool (currently not used in article creation)
         if (item.primary_tool) {
           const primaryTool = await findOrCreateTool(
-            payload,
+            toolsRepo,
             item.primary_tool,
             item.source,
             item.url,
             `Primary tool mentioned in: ${item.title || (item as any)["headline"]}`
           );
 
-          // Only add to related tools if tool exists (not pending)
+          // Only add to related tools if tool exists
           if (primaryTool) {
-            primaryToolId = primaryTool.id;
-
             if (!relatedToolIds.includes(primaryTool.id)) {
               relatedToolIds.push(primaryTool.id);
             }
 
-            if (!report.created_tools.find((t) => t.id === primaryTool.id)) {
+            if (!report.created_tools.find((t: any) => t.id === primaryTool.id)) {
               report.created_tools.push({
                 id: primaryTool.id,
                 name: primaryTool.name,
                 slug: primaryTool.slug,
               });
-              report.new_tools_created++;
+              // Note: not incrementing new_tools_created since we're only finding existing tools
             }
           } else {
-            // Tool is pending approval, don't add to relationships
+            // Tool doesn't exist, log for manual creation
             report.pending_tools_created++;
           }
         }
 
         // Create the news item
-        const newsData = {
+        const newsArticle = {
+          id: crypto.randomUUID(),
+          slug: item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
           title: item.title,
           summary: item.summary,
-          content: item.content ? [{ children: [{ text: item.content }] }] : undefined,
-          url: item.url,
+          content: item.content || '',
           source: item.source,
+          source_url: item.url,
           author: item.author,
-          published_at: new Date(String(item.published_at)).toISOString(),
-          category: item.category || "industry",
-          importance_score: item.importance_score || 5,
-          related_tools: relatedToolIds,
-          primary_tool: primaryToolId,
-          sentiment: item.sentiment || 0,
-          key_topics: item.key_topics || [],
-          is_featured: item.is_featured || false,
-          metadata: {
-            ...item.metadata,
-            ingestion_source: file.name,
-            ingestion_date: new Date().toISOString(),
-          },
+          published_date: new Date(String(item.published_at)).toISOString(),
+          tags: item.key_topics || [],
+          tool_mentions: relatedToolIds,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         };
 
-        const createdNews = await payload.create({
-          collection: "news",
-          data: newsData,
-        });
+        await newsRepo.upsert(newsArticle);
 
-        report.ingested_news_ids.push(String(createdNews.id));
+        report.ingested_news_ids.push(newsArticle.id);
         report.processed_items++;
-        report.processing_log += `  - Created news item ID: ${createdNews.id}\n`;
+        report.processing_log += `  - Created news item ID: ${newsArticle.id}\n`;
       } catch (error) {
         report.failed_items++;
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -340,23 +272,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       try {
         report.processing_log += "Generating ranking preview...\n";
 
-        // Get current rankings for comparison
-        const { docs: currentRankings } = await payload.find({
-          collection: "rankings",
-          where: {
-            period: { equals: new Date().toISOString().slice(0, 7) }, // Current month
-          },
-          limit: 1000,
-          sort: "position",
-        });
-
-        // TODO: Implement preview ranking calculation
+        // TODO: Implement preview ranking calculation with JSON repositories
         // This would involve re-running the ranking algorithm with the new data
         // and comparing against current rankings
 
         rankingChangesPreview = {
-          message: "Ranking preview calculation not yet implemented",
-          current_rankings_count: currentRankings.length,
+          message: "Ranking preview calculation not yet implemented for JSON repositories",
           potentially_affected_tools: report.created_tools.length,
         };
 
@@ -369,27 +290,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const processingDuration = Date.now() - startTime;
 
     // Create ingestion report
-    const ingestionReport = await payload.create({
-      collection: "news-ingestion-reports",
-      data: {
-        filename: file.name,
-        status: report.failed_items > 0 ? "partial" : "completed",
-        total_items: report.total_items,
-        processed_items: report.processed_items,
-        failed_items: report.failed_items,
-        duplicate_items: report.duplicate_items,
-        new_tools_created: report.new_tools_created,
-        new_companies_created: report.new_companies_created,
-        ranking_preview_generated: generatePreview && rankingChangesPreview !== null,
-        processing_log: report.processing_log,
-        errors: report.errors,
-        ingested_news_ids: report.ingested_news_ids,
-        created_tools: report.created_tools,
-        created_companies: report.created_companies,
-        ranking_changes_preview: rankingChangesPreview,
-        file_size: file.size,
-        processing_duration: processingDuration,
-      },
+    const ingestionReport = await newsRepo.createIngestionReport({
+      filename: file.name,
+      status: report.failed_items > 0 ? "partial" : "completed",
+      total_items: report.total_items,
+      processed_items: report.processed_items,
+      failed_items: report.failed_items,
+      duplicate_items: report.duplicate_items,
+      new_tools_created: report.new_tools_created,
+      new_companies_created: report.new_companies_created,
+      pending_tools_created: report.pending_tools_created || 0,
+      ranking_preview_generated: generatePreview && rankingChangesPreview !== null,
+      processing_log: report.processing_log,
+      errors: report.errors,
+      ingested_news_ids: report.ingested_news_ids,
+      created_tools: report.created_tools,
+      created_companies: report.created_companies,
+      ranking_changes_preview: rankingChangesPreview,
+      file_size: file.size,
+      processing_duration: processingDuration,
     });
 
     loggers.api.info("News ingestion completed", {

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@payload-config";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, ToolMetricsV6, ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 import { RankingChangeAnalyzer, RankingChangeAnalysis } from "@/lib/ranking-change-analyzer";
+import { getToolsRepo, getRankingsRepo, getNewsRepo } from "@/lib/json-db";
 
 interface RankingComparison {
   tool_id: string;
@@ -59,77 +58,68 @@ interface PreviewResult {
   };
 }
 
-function transformToToolMetrics(tool: any, metrics: any[]): ToolMetricsV6 {
-  // Filter metrics for this tool
-  const toolMetrics = metrics.filter(m => m.tool === tool.id);
-  
-  // Create a metrics map for easy lookup
-  const metricsMap = new Map<string, any>();
-  toolMetrics.forEach(metric => {
-    const value = metric.value_integer ?? 
-                  metric.value_decimal ?? 
-                  metric.value_text ?? 
-                  metric.value_boolean ?? 
-                  metric.value_json;
-    metricsMap.set(metric.metric_key, value);
-  });
-
-  // Extract metrics from tool.info and metrics collection
+function transformToToolMetrics(tool: any): ToolMetricsV6 {
+  // Extract metrics from tool.info structure (JSON format)
   const info = tool.info;
-  const technical = info?.technical;
-  const businessMetrics = info?.metrics;
-  const business = info?.business;
+  const technical = info?.technical || {};
+  const businessMetrics = info?.metrics || {};
+  const business = info?.business || {};
 
+  // For preview, we'll use default values for most metrics
+  // In a real implementation, these would come from news analysis or other sources
   return {
     tool_id: tool.id,
     status: tool.status,
     
-    // Agentic capabilities
-    agentic_capability: metricsMap.get("agentic_capability") || 5,
-    swe_bench_score: businessMetrics?.swe_bench_score || metricsMap.get("swe_bench_score") || 0,
-    multi_file_capability: metricsMap.get("multi_file_capability") || 5,
-    planning_depth: metricsMap.get("planning_depth") || 5,
-    context_utilization: metricsMap.get("context_utilization") || 5,
+    // Agentic capabilities (default values for preview)
+    agentic_capability: 50,
+    swe_bench_score: businessMetrics.swe_bench_score || 0,
+    multi_file_capability: technical.multi_file_support ? 75 : 25,
+    planning_depth: 50,
+    context_utilization: 50,
 
     // Technical metrics
-    context_window: technical?.context_window || metricsMap.get("context_window") || 100000,
-    language_support: technical?.supported_languages || metricsMap.get("language_support") || 10,
-    github_stars: businessMetrics?.github_stars || metricsMap.get("github_stars") || 0,
+    context_window: technical.context_window || 100000,
+    language_support: technical.supported_languages || 10,
+    github_stars: businessMetrics.github_stars || 0,
 
-    // Innovation metrics
-    innovation_score: metricsMap.get("innovation_score") || 5,
-    innovations: metricsMap.get("innovations") || [],
+    // Innovation metrics (default values)
+    innovation_score: 50,
+    innovations: [],
 
     // Market metrics
-    estimated_users: businessMetrics?.estimated_users || metricsMap.get("estimated_users") || 0,
-    monthly_arr: businessMetrics?.monthly_arr || metricsMap.get("monthly_arr") || 0,
-    valuation: businessMetrics?.valuation || metricsMap.get("valuation") || 0,
-    funding: businessMetrics?.funding_total || metricsMap.get("funding") || 0,
-    business_model: business?.business_model || metricsMap.get("business_model") || "freemium",
+    estimated_users: businessMetrics.estimated_users || 0,
+    monthly_arr: businessMetrics.monthly_arr || 0,
+    valuation: businessMetrics.valuation || 0,
+    funding: businessMetrics.funding_total || 0,
+    business_model: business.business_model || "freemium",
 
-    // Risk and sentiment
-    business_sentiment: metricsMap.get("business_sentiment") || 5,
-    risk_factors: metricsMap.get("risk_factors") || [],
+    // Risk and sentiment (default values)
+    business_sentiment: 50,
+    risk_factors: [],
 
     // Development metrics
-    release_frequency: metricsMap.get("release_frequency") || 5,
-    github_contributors: businessMetrics?.github_contributors || metricsMap.get("github_contributors") || 0,
+    release_frequency: 50,
+    github_contributors: businessMetrics.github_contributors || 0,
 
     // Platform metrics
-    llm_provider_count: metricsMap.get("llm_provider_count") || 1,
-    multi_model_support: metricsMap.get("multi_model_support") || false,
-    community_size: metricsMap.get("community_size") || 0,
+    llm_provider_count: 1,
+    multi_model_support: technical.multi_file_support || false,
+    community_size: 0,
   };
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    const body = await request.json();
     const { 
       period, 
       algorithm_version = "v6.0", 
       preview_date,
       compare_with 
-    } = await request.json();
+    } = body;
+    
+    loggers.api.info("Preview rankings request received", { body });
     
     if (!period) {
       return NextResponse.json(
@@ -138,7 +128,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const payload = await getPayload({ config });
+    const toolsRepo = getToolsRepo();
+    const rankingsRepo = getRankingsRepo();
+    const newsRepo = getNewsRepo();
     
     loggers.api.info(`Generating ranking preview for period: ${period}`, {
       preview_date,
@@ -151,58 +143,45 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     
     if (compare_with === "auto" || !compare_with) {
       // Find the most recent ranking period before the preview period
-      const { docs: availablePeriods } = await payload.find({
-        collection: "rankings",
-        where: {
-          period: {
-            not_equals: period,
-          },
-        },
-        limit: 1000,
-        sort: "-period",
-      });
-      
-      const periodSet = new Set(availablePeriods.map(r => r["period"]));
-      const sortedPeriods = Array.from(periodSet).sort().reverse();
-      
-      for (const p of sortedPeriods) {
-        if (p < period) {
-          comparisonPeriod = p;
-          break;
+      try {
+        const availablePeriods = await rankingsRepo.getPeriods();
+        loggers.api.info(`Available periods: ${availablePeriods.join(', ')}`);
+        
+        for (const p of availablePeriods) {
+          if (p < period) {
+            comparisonPeriod = p;
+            break;
+          }
         }
+        loggers.api.info(`Selected comparison period: ${comparisonPeriod || 'none'}`);
+      } catch (error) {
+        loggers.api.error("Failed to get periods", { error });
       }
     }
 
     // Get comparison rankings if available
     if (comparisonPeriod && comparisonPeriod !== "none") {
-      const { docs: rankings } = await payload.find({
-        collection: "rankings",
-        where: {
-          period: { equals: comparisonPeriod }
-        },
-        limit: 1000,
-        sort: "position",
-      });
-      currentRankings = rankings;
+      const periodData = await rankingsRepo.getRankingsForPeriod(comparisonPeriod);
+      if (periodData) {
+        currentRankings = periodData.rankings;
+      }
     }
 
     // Fetch all active tools
-    const { docs: tools } = await payload.find({
-      collection: "tools",
-      where: {
-        status: { equals: "active" },
-      },
-      limit: 1000,
-    });
+    let tools = [];
+    try {
+      tools = await toolsRepo.getByStatus('active');
+      loggers.api.info(`Fetched ${tools.length} active tools`);
+    } catch (error) {
+      loggers.api.error("Failed to fetch tools", { error });
+      throw new Error("Failed to fetch tools");
+    }
 
-    // Fetch latest metrics for all tools
-    const { docs: metrics } = await payload.find({
-      collection: "metrics",
-      limit: 10000,
-      sort: "-collected_at",
-    });
+    // For now, we'll use simplified metrics since we don't have a metrics collection in JSON
+    // In the future, this could be extended to fetch from news analysis or other sources
+    const metrics: any[] = [];
 
-    loggers.api.info(`Fetched ${tools.length} tools and ${metrics.length} metrics for preview`);
+    loggers.api.info(`Processing ${tools.length} tools for preview`);
 
     const rankingEngine = new RankingEngineV6();
     const changeAnalyzer = new RankingChangeAnalyzer();
@@ -211,11 +190,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Calculate new scores for each tool
     for (const tool of tools) {
       try {
-        const toolMetrics = transformToToolMetrics(tool, metrics);
+        const toolMetrics = transformToToolMetrics(tool);
         const score = rankingEngine.calculateToolScore(toolMetrics);
         newScores.push(score);
       } catch (error) {
-        loggers.api.error(`Error calculating score for tool ${tool['name']}:`, error);
+        loggers.api.error(`Error calculating score for tool ${tool.name}:`, error);
       }
     }
 
@@ -225,7 +204,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Create comparison data
     const comparisons: RankingComparison[] = [];
     const changeAnalyses: RankingChangeAnalysis[] = [];
-    const currentRankingsMap = new Map(currentRankings.map(r => [r['tool']['id'] || r['tool'], r]));
+    const currentRankingsMap = new Map(currentRankings.map(r => [r.tool_id, r]));
 
     for (let i = 0; i < newScores.length; i++) {
       const newScore = newScores[i];
@@ -234,7 +213,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       const currentRanking = currentRankingsMap.get(tool.id);
       const newPosition = i + 1;
-      const currentPosition = currentRanking?.['position'];
+      const currentPosition = currentRanking?.position;
       
       let positionChange = 0;
       let movement: RankingComparison['movement'] = 'new';
@@ -251,26 +230,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
 
       const scoreChange = currentRanking ? 
-        (newScore!.overallScore - currentRanking['score']) : 
+        (newScore!.overallScore - currentRanking.score) : 
         newScore!.overallScore;
 
       // Get previous factor scores if available
-      const previousFactorScores = currentRanking ? {
-        agenticCapability: currentRanking['agentic_capability'] || 0,
-        innovation: currentRanking['innovation'] || 0,
-        technicalPerformance: currentRanking['technical_performance'] || 0,
-        developerAdoption: currentRanking['developer_adoption'] || 0,
-        marketTraction: currentRanking['market_traction'] || 0,
-        businessSentiment: currentRanking['business_sentiment'] || 0,
-        developmentVelocity: currentRanking['development_velocity'] || 0,
-        platformResilience: currentRanking['platform_resilience'] || 0,
+      const previousFactorScores = currentRanking?.factor_scores ? {
+        agenticCapability: currentRanking.factor_scores.agentic_capability || 0,
+        innovation: currentRanking.factor_scores.innovation || 0,
+        technicalPerformance: currentRanking.factor_scores.technical_performance || 0,
+        developerAdoption: currentRanking.factor_scores.developer_adoption || 0,
+        marketTraction: currentRanking.factor_scores.market_traction || 0,
+        businessSentiment: currentRanking.factor_scores.business_sentiment || 0,
+        developmentVelocity: currentRanking.factor_scores.development_velocity || 0,
+        platformResilience: currentRanking.factor_scores.platform_resilience || 0,
       } : undefined;
 
       // Generate change analysis
       const changeAnalysis = changeAnalyzer.analyzeRankingChange(
         { 
           tool_id: tool.id, 
-          tool_name: tool['name'], 
+          tool_name: tool.name, 
           position: newPosition,
           score: newScore!.overallScore,
           new_position: newPosition,
@@ -278,9 +257,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         },
         currentRanking ? {
           position: currentPosition,
-          score: currentRanking['score'],
+          score: currentRanking.score,
           current_position: currentPosition,
-          current_score: currentRanking['score']
+          current_score: currentRanking.score
         } : undefined,
         newScore!.factorScores || {},
         previousFactorScores
@@ -290,10 +269,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       comparisons.push({
         tool_id: String(tool.id),
-        tool_name: tool['name'],
+        tool_name: tool.name,
         current_position: currentPosition,
         new_position: newPosition,
-        current_score: currentRanking?.['score'],
+        current_score: currentRanking?.score,
         new_score: newScore!.overallScore,
         position_change: positionChange,
         score_change: scoreChange,
@@ -314,23 +293,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Find dropped tools (in current but not in new)
     for (const currentRanking of currentRankings) {
-      const toolId = currentRanking['tool']['id'] || currentRanking['tool'];
+      const toolId = currentRanking.tool_id;
       if (!comparisons.find(c => c.tool_id === toolId)) {
-        const tool = tools.find(t => t.id === toolId);
-        if (tool) {
-          comparisons.push({
-            tool_id: String(toolId),
-            tool_name: tool['name'],
-            current_position: currentRanking['position'],
-            new_position: -1, // Indicates dropped
-            current_score: currentRanking['score'],
-            new_score: 0,
-            position_change: -currentRanking['position'],
-            score_change: -currentRanking['score'],
-            movement: 'dropped',
-            factor_changes: {},
-          });
-        }
+        comparisons.push({
+          tool_id: String(toolId),
+          tool_name: currentRanking.tool_name,
+          current_position: currentRanking.position,
+          new_position: -1, // Indicates dropped
+          current_score: currentRanking.score,
+          new_score: 0,
+          position_change: -currentRanking.position,
+          score_change: -currentRanking.score,
+          movement: 'dropped',
+          factor_changes: {},
+        });
       }
     }
 

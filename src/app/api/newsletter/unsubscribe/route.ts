@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@payload-config";
 import { loggers } from "@/lib/logger";
+import { getSubscribersRepo } from "@/lib/json-db";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const searchParams = request.nextUrl.searchParams;
@@ -14,27 +13,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    // Initialize Payload
-    const payload = await getPayload({ config });
+    // Initialize subscriber repository
+    const subscribersRepo = getSubscribersRepo();
 
     // Find subscription by token
-    const { docs: subscriptions } = await payload.find({
-      collection: "newsletter-subscribers",
-      where: {
-        verification_token: { equals: token },
-      },
-      limit: 1,
-    });
+    const subscribers = await subscribersRepo.getAll();
+    const subscription = subscribers.find(s => s.verification_token === token);
 
-    if (!subscriptions || subscriptions.length === 0) {
-      loggers.api.error("Newsletter unsubscribe find error", { token });
-      return NextResponse.redirect(
-        new URL("/newsletter/unsubscribe?status=error&error=invalid-token", request.url)
-      );
-    }
-
-    const subscription = subscriptions[0];
-    
     if (!subscription) {
       loggers.api.error("Newsletter unsubscribe subscription not found", { token });
       return NextResponse.redirect(
@@ -44,13 +29,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Update subscription status to unsubscribed
     try {
-      await payload.update({
-        collection: "newsletter-subscribers",
-        id: subscription['id'],
-        data: {
-          status: "unsubscribed",
-          unsubscribed_at: new Date().toISOString(),
-        },
+      await subscribersRepo.updateSubscriber(subscription.id, {
+        status: "unsubscribed",
+        unsubscribed_at: new Date().toISOString(),
       });
     } catch (updateError) {
       loggers.api.error("Newsletter unsubscribe update error", { updateError, token });

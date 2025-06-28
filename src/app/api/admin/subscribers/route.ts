@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { getPayload } from "payload";
-import config from "@payload-config";
+import { getSubscribersRepo } from "@/lib/json-db";
 
 export async function GET() {
   try {
@@ -11,26 +10,22 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Initialize Payload
-    const payload = await getPayload({ config });
+    // Initialize subscriber repository
+    const subscribersRepo = getSubscribersRepo();
 
     // Fetch all subscribers
-    const { docs: subscribers } = await payload.find({
-      collection: "newsletter-subscribers",
-      limit: 1000,
-      sort: "-createdAt",
-    });
+    const subscribers = await subscribersRepo.getAll();
+    
+    // Sort by created date (newest first)
+    const sortedSubscribers = subscribers.sort((a, b) => 
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 
-    // Calculate stats
-    const stats = {
-      total: subscribers.length,
-      verified: subscribers.filter((s) => s['status'] === "verified").length,
-      pending: subscribers.filter((s) => s['status'] === "pending").length,
-      unsubscribed: subscribers.filter((s) => s['status'] === "unsubscribed").length,
-    };
+    // Get stats
+    const stats = await subscribersRepo.getStatistics();
 
     return NextResponse.json({
-      subscribers,
+      subscribers: sortedSubscribers,
       stats,
     });
   } catch (error) {

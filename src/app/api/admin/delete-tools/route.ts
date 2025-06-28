@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@payload-config";
 import { loggers } from "@/lib/logger";
+import { getToolsRepo, getNewsRepo } from "@/lib/json-db";
 
 export async function POST(request: NextRequest) {
   try {
-    const payload = await getPayload({ config });
+    const toolsRepo = getToolsRepo();
+    const newsRepo = getNewsRepo();
     const { toolIds } = await request.json();
 
     if (!Array.isArray(toolIds) || toolIds.length === 0) {
@@ -18,85 +18,46 @@ export async function POST(request: NextRequest) {
     for (const toolId of toolIds) {
       try {
         // First get the tool info
-        const tool = await payload.findByID({
-          collection: "tools",
-          id: toolId,
-        });
-
-        // First, remove references from news articles
-        const newsResponse = await payload.find({
-          collection: "news",
-          where: {
-            or: [{ related_tools: { in: [toolId] } }, { primary_tool: { equals: toolId } }],
-          },
-          limit: 1000,
-        });
-
-        // Update news articles to remove references
-        for (const news of newsResponse.docs) {
-          const updatedRelatedTools =
-            news['related_tools']?.filter((id: any) => {
-              const toolRef = typeof id === "string" ? id : id.id;
-              return toolRef !== toolId;
-            }) || [];
-
-          const updatedPrimaryTool = news['primary_tool'] === toolId ? null : news['primary_tool'];
-
-          await payload.update({
-            collection: "news",
-            id: news.id,
-            data: {
-              related_tools: updatedRelatedTools,
-              primary_tool: updatedPrimaryTool,
-            },
-          });
+        const tool = await toolsRepo.getById(toolId);
+        
+        if (!tool) {
+          errors.push(`Tool with ID ${toolId} not found`);
+          continue;
         }
 
-        // Remove from rankings
-        const rankingsResponse = await payload.find({
-          collection: "rankings",
-          where: {
-            tool: { equals: toolId },
-          },
-          limit: 1000,
-        });
-
-        for (const ranking of rankingsResponse.docs) {
-          await payload.delete({
-            collection: "rankings",
-            id: ranking.id,
-          });
+        // Remove references from news articles
+        const newsWithTool = await newsRepo.getByToolMention(toolId);
+        
+        for (const news of newsWithTool) {
+          // Update the article to remove tool mentions
+          const updatedToolMentions = news.tool_mentions?.filter(id => id !== toolId) || [];
+          
+          const updatedNews = {
+            ...news,
+            tool_mentions: updatedToolMentions,
+            updated_at: new Date().toISOString(),
+          };
+          
+          await newsRepo.upsert(updatedNews);
         }
 
-        // Remove from metrics
-        const metricsResponse = await payload.find({
-          collection: "metrics",
-          where: {
-            tool: { equals: toolId },
-          },
-          limit: 1000,
-        });
+        // Note: Rankings and metrics would need their own repositories to clean up
+        // For now, we'll just delete the tool and log warnings about orphaned data
+        loggers.api.warn(`Deleting tool ${tool.name} - rankings and metrics may need manual cleanup`);
 
-        for (const metric of metricsResponse.docs) {
-          await payload.delete({
-            collection: "metrics",
-            id: metric.id,
+        // Delete the tool
+        const deleted = await toolsRepo.delete(toolId);
+        
+        if (deleted) {
+          deletedTools.push({
+            id: tool.id,
+            slug: tool.slug,
+            name: tool.name,
           });
+          loggers.api.info(`Deleted tool: ${tool.name} (${tool.slug})`);
+        } else {
+          errors.push(`Failed to delete tool ${tool.name}`);
         }
-
-        // Finally delete the tool
-        await payload.delete({
-          collection: "tools",
-          id: toolId,
-        });
-
-        deletedTools.push({
-          id: tool.id,
-          slug: tool['slug'],
-          name: tool['name'],
-        });
-
-        loggers.api.info(`Deleted tool: ${tool['name']} (${tool['slug']})`);
       } catch (deleteError) {
         const errorMsg = `Failed to delete tool ID ${toolId}: ${deleteError instanceof Error ? deleteError.message : "Unknown error"}`;
         errors.push(errorMsg);

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@payload-config";
+import { RankingsRepository } from "@/lib/json-db/rankings-repository";
 import { loggers } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
@@ -15,71 +14,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const payload = await getPayload({ config });
+    const rankingsRepo = RankingsRepository.getInstance();
 
     loggers.api.info("Setting live ranking", { period });
 
-    // First, unset all current live rankings
-    const currentRankings = await payload.find({
-      collection: "rankings",
-      where: {
-        is_current: {
-          equals: true,
-        },
-      },
-      limit: 1000,
-    });
-
-    // Update all current rankings to not be current
-    for (const ranking of currentRankings.docs) {
-      await payload.update({
-        collection: "rankings",
-        id: ranking.id,
-        data: {
-          is_current: false,
-        },
-      });
-    }
-
-    // Set the new period as current
-    const newCurrentRankings = await payload.find({
-      collection: "rankings",
-      where: {
-        period: {
-          equals: period,
-        },
-      },
-      limit: 1000,
-    });
-
-    let updatedCount = 0;
-    for (const ranking of newCurrentRankings.docs) {
-      await payload.update({
-        collection: "rankings",
-        id: ranking.id,
-        data: {
-          is_current: true,
-        },
-      });
-      updatedCount++;
-    }
-
-    if (updatedCount === 0) {
+    // Check if the period exists
+    const periodRankings = await rankingsRepo.getRankingsForPeriod(period);
+    if (!periodRankings) {
       return NextResponse.json(
         { error: "No rankings found for the specified period" },
         { status: 404 }
       );
     }
 
+    // Set the new period as current
+    await rankingsRepo.setCurrentPeriod(period);
+
     loggers.api.info("Live ranking set successfully", { 
       period,
-      tools_updated: updatedCount 
+      tools_updated: periodRankings.rankings.length 
     });
 
     return NextResponse.json({
       success: true,
       period,
-      tools_updated: updatedCount,
+      tools_updated: periodRankings.rankings.length,
     });
 
   } catch (error) {

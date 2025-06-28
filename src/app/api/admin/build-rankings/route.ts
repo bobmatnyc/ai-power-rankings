@@ -48,11 +48,17 @@ export async function POST(request: NextRequest) {
     
     for (const comparison of preview_data.rankings_comparison) {
       try {
+        // Skip dropped tools
+        if (comparison.movement === 'dropped' || comparison.new_position === -1) {
+          continue;
+        }
+
         await payload.create({
           collection: "rankings",
           data: {
             period,
             algorithm_version: algorithm_version || "v6.0",
+            tool: comparison.tool_id, // This is the relationship field
             tool_id: comparison.tool_id,
             tool_name: comparison.tool_name,
             position: comparison.new_position,
@@ -65,6 +71,15 @@ export async function POST(request: NextRequest) {
             score_change: comparison.score_change || 0,
             primary_reason: comparison.change_analysis?.primaryReason || null,
             narrative_explanation: comparison.change_analysis?.narrativeExplanation || null,
+            // Save factor scores
+            agentic_capability: comparison.factor_changes?.agentic_capability || null,
+            innovation: comparison.factor_changes?.innovation || null,
+            technical_performance: comparison.factor_changes?.technical_performance || null,
+            developer_adoption: comparison.factor_changes?.developer_adoption || null,
+            market_traction: comparison.factor_changes?.market_traction || null,
+            business_sentiment: comparison.factor_changes?.business_sentiment || null,
+            development_velocity: comparison.factor_changes?.development_velocity || null,
+            platform_resilience: comparison.factor_changes?.platform_resilience || null,
           },
         });
         toolsSaved++;

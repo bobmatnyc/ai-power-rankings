@@ -74,8 +74,8 @@ Migrate from the current hybrid Payload CMS + Supabase database architecture to 
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 5  
-**Assignee:** @developer  
-**Status:** In Progress  
+**Assignee:** @bobmatnyc  
+**Status:** Completed  
 **Sprint:** 1  
 
 **Description:**
@@ -112,8 +112,8 @@ Install and configure the necessary packages and create the directory structure 
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 8  
-**Assignee:** @developer  
-**Status:** Ready  
+**Assignee:** @bobmatnyc  
+**Status:** Completed  
 **Sprint:** 1  
 
 **Description:**
@@ -148,8 +148,8 @@ Create scripts to export data from Payload CMS and Supabase, transform it to the
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 5  
-**Assignee:** @developer  
-**Status:** Backlog  
+**Assignee:** @bobmatnyc  
+**Status:** Completed  
 **Sprint:** 1  
 
 **Description:**
@@ -184,8 +184,8 @@ Migrate all tools data from the database to JSON files with proper schema valida
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 8  
-**Assignee:** @developer  
-**Status:** Backlog  
+**Assignee:** @bobmatnyc  
+**Status:** In Progress  
 **Sprint:** 1  
 
 **Description:**
@@ -220,7 +220,7 @@ Migrate all historical rankings data to period-based JSON files.
 **Epic:** EP-001  
 **Priority:** Medium  
 **Story Points:** 5  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -256,7 +256,7 @@ Migrate news articles to date-based JSON file structure.
 **Epic:** EP-001  
 **Priority:** Low  
 **Story Points:** 3  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -289,7 +289,7 @@ Migrate company data to JSON format.
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 5  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -325,7 +325,7 @@ Update /api/tools endpoints to read from JSON files instead of database.
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 5  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -360,7 +360,7 @@ Update rankings API endpoints to use JSON files.
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 8  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -395,7 +395,7 @@ Update the preview rankings API to work with JSON data for calculating new ranki
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 5  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -430,7 +430,7 @@ Update build rankings API to save rankings to JSON files instead of database.
 **Epic:** EP-001  
 **Priority:** Medium  
 **Story Points:** 3  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -464,7 +464,7 @@ Update news API endpoints to read from JSON files.
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 5  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -499,7 +499,7 @@ Update all dashboard components to use the new JSON-based APIs.
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 3  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -533,7 +533,7 @@ Update public-facing pages to use new JSON-based APIs.
 **Epic:** EP-001  
 **Priority:** Medium  
 **Story Points:** 5  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -568,7 +568,7 @@ Remove all Payload CMS code and dependencies from the project.
 **Epic:** EP-001  
 **Priority:** Medium  
 **Story Points:** 3  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -602,7 +602,7 @@ Remove Supabase client and all database query code.
 **Epic:** EP-001  
 **Priority:** High  
 **Story Points:** 3  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -637,7 +637,7 @@ Implement backup and rollback procedures for JSON data.
 **Epic:** EP-001  
 **Priority:** Medium  
 **Story Points:** 3  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 
@@ -672,7 +672,7 @@ Update all documentation to reflect the new JSON-based architecture.
 **Epic:** EP-001  
 **Priority:** Critical  
 **Story Points:** 5  
-**Assignee:** @developer  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog  
 **Sprint:** 1  
 

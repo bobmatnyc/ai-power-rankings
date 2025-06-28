@@ -1,30 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayloadHMR } from "@payloadcms/next/utilities";
-import configPromise from "@payload-config";
+import { getSiteSettingsRepo } from "@/lib/json-db";
 
 export async function POST(_request: NextRequest) {
   try {
-    const payload = await getPayloadHMR({ config: configPromise });
-
-    // Get current site settings
-    const currentSettings = await payload.findGlobal({
-      slug: "site-settings",
-    });
+    const siteSettingsRepo = getSiteSettingsRepo();
 
     // Update algorithm version to v6.0
-    const updatedSettings = await payload.updateGlobal({
-      slug: "site-settings",
-      data: {
-        ...currentSettings,
-        algorithm_version: "v6.0",
-        contact_email: currentSettings['contact_email'] || "contact@aipowerrankings.com",
-      },
+    const updatedSettings = await siteSettingsRepo.updateSettings({
+      algorithm_version: "v6.0",
     });
 
     return NextResponse.json({
       success: true,
       message: "Site settings updated successfully",
-      algorithm_version: updatedSettings['algorithm_version'],
+      algorithm_version: updatedSettings.algorithm_version,
     });
   } catch (error: any) {
     console.error("Error updating site settings:", error);
@@ -40,14 +29,12 @@ export async function POST(_request: NextRequest) {
 
 export async function GET() {
   try {
-    const payload = await getPayloadHMR({ config: configPromise });
+    const siteSettingsRepo = getSiteSettingsRepo();
 
-    const settings = await payload.findGlobal({
-      slug: "site-settings",
-    });
+    const settings = await siteSettingsRepo.getSettings();
 
     return NextResponse.json({
-      algorithm_version: settings['algorithm_version'],
+      algorithm_version: settings.algorithm_version,
       settings: settings,
     });
   } catch (error: any) {

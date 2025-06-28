@@ -1,31 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayloadClient } from "@/lib/payload-direct";
-import { logger } from "@/lib/logger";
+import { loggers } from "@/lib/logger";
+import { getCompaniesRepo } from "@/lib/json-db";
 
 const companyUpdates = [
-  { name: "Microsoft", founded_year: 1975, website_url: "https://microsoft.com" },
-  { name: "Sourcegraph", founded_year: 2013, website_url: "https://sourcegraph.com" },
-  { name: "CodeRabbit", founded_year: 2023, website_url: "https://coderabbit.ai" },
-  { name: "Amazon", founded_year: 1994, website_url: "https://amazon.com" },
-  { name: "Augment", founded_year: 2022, website_url: "https://augmentcode.com" },
-  { name: "Zed Industries", founded_year: 2021, website_url: "https://zed.dev" },
-  { name: "JetBrains", founded_year: 2000, website_url: "https://jetbrains.com" },
-  { name: "Tabnine", founded_year: 2013, website_url: "https://tabnine.com" },
-  { name: "Diffblue", founded_year: 2016, website_url: "https://diffblue.com" },
-  { name: "OpenAI", founded_year: 2015, website_url: "https://openai.com" },
-  { name: "Snyk", founded_year: 2015, website_url: "https://snyk.io" },
-  { name: "Qodo", founded_year: 2022, website_url: "https://qodo.ai" },
-  { name: "Sourcery AI", founded_year: 2020, website_url: "https://sourcery.ai" },
-  { name: "OpenHands", founded_year: 2024, website_url: "https://all-hands.dev" },
-  { name: "Continue", founded_year: 2023, website_url: "https://continue.dev" },
-  { name: "Aider", founded_year: 2023, website_url: "https://aider.chat" },
-  { name: "Cognition AI", founded_year: 2023, website_url: "https://cognition.ai" },
+  { name: "Microsoft", founded: "1975", website: "https://microsoft.com" },
+  { name: "Sourcegraph", founded: "2013", website: "https://sourcegraph.com" },
+  { name: "CodeRabbit", founded: "2023", website: "https://coderabbit.ai" },
+  { name: "Amazon", founded: "1994", website: "https://amazon.com" },
+  { name: "Augment", founded: "2022", website: "https://augmentcode.com" },
+  { name: "Zed Industries", founded: "2021", website: "https://zed.dev" },
+  { name: "JetBrains", founded: "2000", website: "https://jetbrains.com" },
+  { name: "Tabnine", founded: "2013", website: "https://tabnine.com" },
+  { name: "Diffblue", founded: "2016", website: "https://diffblue.com" },
+  { name: "OpenAI", founded: "2015", website: "https://openai.com" },
+  { name: "Snyk", founded: "2015", website: "https://snyk.io" },
+  { name: "Qodo", founded: "2022", website: "https://qodo.ai" },
+  { name: "Sourcery AI", founded: "2020", website: "https://sourcery.ai" },
+  { name: "OpenHands", founded: "2024", website: "https://all-hands.dev" },
+  { name: "Continue", founded: "2023", website: "https://continue.dev" },
+  { name: "Aider", founded: "2023", website: "https://aider.chat" },
+  { name: "Cognition AI", founded: "2023", website: "https://cognition.ai" },
 ];
 
 export async function POST(_request: NextRequest) {
   try {
-    const payload = await getPayloadClient();
-    logger.info("Updating missing company data...");
+    const companiesRepo = getCompaniesRepo();
+    loggers.api.info("Updating missing company data...");
 
     const results = {
       total: companyUpdates.length,
@@ -34,52 +34,46 @@ export async function POST(_request: NextRequest) {
       errors: [] as string[],
     };
 
+    // Get all companies
+    const allCompanies = await companiesRepo.getAll();
+
     for (const update of companyUpdates) {
       try {
         // Find company by name
-        const companies = await payload.find({
-          collection: "companies",
-          where: {
-            name: {
-              equals: update.name,
-            },
-          },
-          limit: 1,
-        });
+        const company = allCompanies.find(c => c.name.toLowerCase() === update.name.toLowerCase());
 
-        if (companies.docs.length === 0) {
+        if (!company) {
           results.notFound.push(update.name);
           continue;
         }
 
-        const company = companies.docs[0];
-        const updateData: any = {};
+        let needsUpdate = false;
+        const updatedCompany = { ...company };
 
         // Only update if the field is missing
-        if (!company.founded_year && update.founded_year) {
-          updateData.founded_year = update.founded_year;
+        if (!company.founded && update.founded) {
+          updatedCompany.founded = update.founded;
+          needsUpdate = true;
         }
-        if (!company.website_url && update.website_url) {
-          updateData.website_url = update.website_url;
+        if (!company.website && update.website) {
+          updatedCompany.website = update.website;
+          needsUpdate = true;
         }
 
         // If there's something to update
-        if (Object.keys(updateData).length > 0) {
-          await payload.update({
-            collection: "companies",
-            id: company.id,
-            data: updateData,
-          });
+        if (needsUpdate) {
+          updatedCompany.updated_at = new Date().toISOString();
+          await companiesRepo.upsert(updatedCompany);
           results.updated++;
-          logger.info(`Updated ${update.name}:`, updateData);
+          loggers.api.info(`Updated ${update.name}`);
         }
       } catch (error: any) {
         results.errors.push(`${update.name}: ${error.message}`);
-        logger.error(`Error updating ${update.name}:`, error);
+        loggers.api.error(`Error updating ${update.name}:`, error);
       }
     }
 
-    logger.info(`Update complete: ${results.updated} companies updated`);
+    loggers.api.info(`Update complete: ${results.updated} companies updated`);
 
     return NextResponse.json({
       success: true,
@@ -87,7 +81,7 @@ export async function POST(_request: NextRequest) {
       results,
     });
   } catch (error: any) {
-    logger.error("Error updating company data:", error);
+    loggers.api.error("Error updating company data:", error);
     return NextResponse.json(
       {
         success: false,
@@ -101,48 +95,35 @@ export async function POST(_request: NextRequest) {
 
 export async function GET() {
   try {
-    const payload = await getPayloadClient();
+    const companiesRepo = getCompaniesRepo();
 
-    // Get companies with missing data
-    const companies = await payload.find({
-      collection: "companies",
-      where: {
-        or: [
-          {
-            founded_year: {
-              exists: false,
-            },
-          },
-          {
-            website_url: {
-              exists: false,
-            },
-          },
-        ],
-      },
-      limit: 100,
-    });
+    // Get all companies and filter for missing data
+    const allCompanies = await companiesRepo.getAll();
+    
+    const companiesWithMissingData = allCompanies.filter(company => 
+      !company.founded || !company.website
+    );
 
-    const missingData = companies.docs.map((company: any) => ({
+    const missingData = companiesWithMissingData.map(company => ({
       id: company.id,
       name: company.name,
       slug: company.slug,
       missing: {
-        founded_year: !company.founded_year,
-        website_url: !company.website_url,
+        founded: !company.founded,
+        website: !company.website,
       },
       current: {
-        founded_year: company.founded_year || null,
-        website_url: company.website_url || null,
+        founded: company.founded || null,
+        website: company.website || null,
       },
     }));
 
     return NextResponse.json({
-      total: companies.totalDocs,
+      total: companiesWithMissingData.length,
       companies: missingData,
     });
   } catch (error: any) {
-    logger.error("Error checking company data:", error);
+    loggers.api.error("Error checking company data:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

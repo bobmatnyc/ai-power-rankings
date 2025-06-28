@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { getPayload } from "payload";
-import config from "@payload-config";
+import { getSubscribersRepo } from "@/lib/json-db";
 import { format } from "date-fns";
 
 export async function GET() {
@@ -12,37 +11,11 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Initialize Payload
-    const payload = await getPayload({ config });
+    // Initialize subscriber repository
+    const subscribersRepo = getSubscribersRepo();
 
-    // Fetch all verified subscribers
-    const { docs: subscribers } = await payload.find({
-      collection: "newsletter-subscribers",
-      where: {
-        status: { equals: "verified" },
-      },
-      limit: 10000,
-      sort: "-createdAt",
-    });
-
-    // Create CSV content
-    const headers = ["Email", "First Name", "Last Name", "Subscribed Date", "Verified Date"];
-    const rows = subscribers.map((subscriber) => [
-      subscriber['email'],
-      subscriber['first_name'],
-      subscriber['last_name'],
-      subscriber['createdAt'] 
-        ? format(new Date(subscriber['createdAt']), "yyyy-MM-dd HH:mm:ss")
-        : "",
-      subscriber['verified_at']
-        ? format(new Date(subscriber['verified_at']), "yyyy-MM-dd HH:mm:ss")
-        : "",
-    ]);
-
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
-    ].join("\n");
+    // Get CSV export from repository
+    const csvContent = await subscribersRepo.exportToCsv();
 
     // Return CSV file
     return new NextResponse(csvContent, {

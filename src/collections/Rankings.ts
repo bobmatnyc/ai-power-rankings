@@ -218,6 +218,129 @@ export const Rankings: CollectionConfig = {
         description: "Percentage of data points available (0-1)",
       },
     },
+    {
+      name: "is_current",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        description: "Whether this ranking period is the current/live one",
+      },
+      index: true,
+    },
+    // Factor scores (v6 algorithm)
+    {
+      name: "agentic_capability",
+      type: "number",
+      admin: {
+        description: "Agentic capability score (0-10)",
+      },
+    },
+    {
+      name: "innovation",
+      type: "number",
+      admin: {
+        description: "Innovation score (0-10)",
+      },
+    },
+    {
+      name: "technical_performance",
+      type: "number",
+      admin: {
+        description: "Technical performance score (0-10)",
+      },
+    },
+    {
+      name: "developer_adoption",
+      type: "number",
+      admin: {
+        description: "Developer adoption score (0-10)",
+      },
+    },
+    {
+      name: "market_traction",
+      type: "number",
+      admin: {
+        description: "Market traction score (0-10)",
+      },
+    },
+    {
+      name: "business_sentiment",
+      type: "number",
+      admin: {
+        description: "Business sentiment score (0-10)",
+      },
+    },
+    {
+      name: "development_velocity",
+      type: "number",
+      admin: {
+        description: "Development velocity score (0-10)",
+      },
+    },
+    {
+      name: "platform_resilience",
+      type: "number",
+      admin: {
+        description: "Platform resilience score (0-10)",
+      },
+    },
+    // Additional metadata
+    {
+      name: "tool_id",
+      type: "text",
+      admin: {
+        description: "Tool ID for reference",
+      },
+    },
+    {
+      name: "tool_name",
+      type: "text",
+      admin: {
+        description: "Tool name for reference",
+      },
+    },
+    {
+      name: "position_change",
+      type: "number",
+      admin: {
+        description: "Change in position from previous period",
+      },
+    },
+    {
+      name: "score_change",
+      type: "number",
+      admin: {
+        description: "Change in score from previous period",
+      },
+    },
+    {
+      name: "tier",
+      type: "text",
+      admin: {
+        description: "Tier classification (S, A, B, C, D)",
+      },
+    },
+    {
+      name: "preview_date",
+      type: "text",
+      admin: {
+        description: "Date used for preview calculation",
+      },
+    },
+    {
+      name: "primary_reason",
+      type: "text",
+      admin: {
+        description: "Primary reason for ranking change",
+      },
+    },
+    {
+      name: "narrative_explanation",
+      type: "textarea",
+      admin: {
+        description: "Detailed explanation of ranking position",
+      },
+    },
   ],
   timestamps: true,
   indexes: [

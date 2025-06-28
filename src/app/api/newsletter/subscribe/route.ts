@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@payload-config";
 import { Resend } from "resend";
-import crypto from "crypto";
 import { loggers } from "@/lib/logger";
+import { getSubscribersRepo } from "@/lib/json-db";
 
 const resend = new Resend(process.env["RESEND_API_KEY"]);
 const TURNSTILE_SECRET_KEY = process.env["TURNSTILE_SECRET_KEY"] || "YOUR_TURNSTILE_SECRET_KEY";
@@ -20,7 +18,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Debug environment variables
     loggers.api.info("Environment check", {
       hasResendKey: !!process.env["RESEND_API_KEY"],
-      hasPayloadSecret: !!process.env["PAYLOAD_SECRET"],
       nodeEnv: process.env["NODE_ENV"],
     });
 
@@ -73,35 +70,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       loggers.api.info("Skipping Turnstile verification in development");
     }
 
-    // Initialize Payload
-    const payload = await getPayload({ config });
+    // Initialize subscriber repository
+    const subscribersRepo = getSubscribersRepo();
 
     // Check if email already exists
-    const existing = await payload.find({
-      collection: "newsletter-subscribers",
-      where: {
-        email: { equals: email },
-      },
-      limit: 1,
-    });
+    const existing = await subscribersRepo.getByEmail(email);
 
-    if (existing.docs.length > 0) {
-      const subscriber = existing.docs[0];
-      
+    if (existing) {
       // If already verified, return error
-      if (subscriber && subscriber['status'] === "verified") {
+      if (existing.status === "verified") {
         return NextResponse.json({ error: "Email already registered" }, { status: 409 });
       }
       
       // If pending, resend verification email
-      if (subscriber && subscriber['status'] === "pending" && subscriber['verification_token']) {
-        // Update the subscriber's name in case it changed
-        await payload.update({
-          collection: "newsletter-subscribers",
-          id: subscriber['id'],
-          data: {
-            first_name: firstName,
-            last_name: lastName,
+      if (existing.status === "pending" && existing.verification_token) {
+        // Update the subscriber's metadata in case it changed
+        await subscribersRepo.updateSubscriber(existing.id, {
+          metadata: {
+            ...existing.metadata,
+            firstName,
+            lastName,
           },
         });
 
@@ -110,7 +98,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
             ? `https://${process.env["VERCEL_URL"]}`
             : new URL(request.url).origin;
-        const verificationUrl = `${baseUrl}/api/newsletter/verify/${subscriber['verification_token']}`;
+        const verificationUrl = `${baseUrl}/api/newsletter/verify/${existing.verification_token}`;
 
         await sendVerificationEmail(email, firstName, verificationUrl, baseUrl);
 
@@ -123,18 +111,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Generate a verification token
-    const verificationToken = crypto.randomUUID();
+    const verificationToken = subscribersRepo.generateVerificationToken();
 
     // Create new subscription
     try {
-      await payload.create({
-        collection: "newsletter-subscribers",
-        data: {
-          email,
-          first_name: firstName,
-          last_name: lastName,
-          status: "pending",
-          verification_token: verificationToken,
+      await subscribersRepo.create({
+        email,
+        status: "pending",
+        verification_token: verificationToken,
+        metadata: {
+          source: "website",
+          user_agent: request.headers.get("user-agent") || undefined,
+          firstName,
+          lastName,
         },
       });
     } catch (dbError: any) {
@@ -145,7 +134,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       });
 
       // Return more specific error based on the error
-      if (dbError.message?.includes("duplicate") || dbError.message?.includes("unique")) {
+      if (dbError.message?.includes("Email already exists")) {
         return NextResponse.json({ error: "Email already registered" }, { status: 409 });
       }
 

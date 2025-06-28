@@ -1,31 +1,26 @@
 import { NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@payload-config";
-import { payloadDirect } from "@/lib/payload-direct";
 import { loggers } from "@/lib/logger";
+import { getToolsRepo } from "@/lib/json-db";
 
 export async function GET() {
   try {
-    // Get all tools that were auto-created during news ingestion
-    const toolsResponse = await payloadDirect.getTools({
-      limit: 1000,
-      where: {
-        description: {
-          contains: "Tool created during news ingestion",
-        },
-      },
-    });
-
-    const autoCreatedTools = toolsResponse.docs || [];
+    const toolsRepo = getToolsRepo();
+    
+    // Get all tools that contain auto-creation description
+    const allTools = await toolsRepo.getAll();
+    const autoCreatedTools = allTools.filter(tool => 
+      tool.info?.description?.includes("Tool created during news ingestion") ||
+      tool.info?.description?.includes("Tool mentioned in news article")
+    );
 
     return NextResponse.json({
       message: "Found auto-created tools",
       count: autoCreatedTools.length,
-      tools: autoCreatedTools.map((tool: any) => ({
+      tools: autoCreatedTools.map(tool => ({
         id: tool.id,
         slug: tool.slug,
         name: tool.name,
-        description: tool.description,
+        description: tool.info?.description,
       })),
     });
   } catch (error) {
@@ -36,34 +31,29 @@ export async function GET() {
 
 export async function DELETE() {
   try {
-    // Get all tools that were auto-created during news ingestion
-    const toolsResponse = await payloadDirect.getTools({
-      limit: 1000,
-      where: {
-        description: {
-          contains: "Tool created during news ingestion",
-        },
-      },
-    });
-
-    const autoCreatedTools = toolsResponse.docs || [];
+    const toolsRepo = getToolsRepo();
+    
+    // Get all tools that contain auto-creation description
+    const allTools = await toolsRepo.getAll();
+    const autoCreatedTools = allTools.filter(tool => 
+      tool.info?.description?.includes("Tool created during news ingestion") ||
+      tool.info?.description?.includes("Tool mentioned in news article")
+    );
+    
     const deletedTools = [];
-
-    const payload = await getPayload({ config });
     
     for (const tool of autoCreatedTools) {
       try {
         // Delete the tool
-        await payload.delete({
-          collection: "tools",
-          id: tool.id,
-        });
-        deletedTools.push({
-          id: tool.id,
-          slug: tool.slug,
-          name: tool.name,
-        });
-        loggers.api.info(`Deleted auto-created tool: ${tool.name} (${tool.slug})`);
+        const deleted = await toolsRepo.delete(tool.id);
+        if (deleted) {
+          deletedTools.push({
+            id: tool.id,
+            slug: tool.slug,
+            name: tool.name,
+          });
+          loggers.api.info(`Deleted auto-created tool: ${tool.name} (${tool.slug})`);
+        }
       } catch (deleteError) {
         loggers.api.error(`Failed to delete tool ${tool.name}`, { error: deleteError });
       }

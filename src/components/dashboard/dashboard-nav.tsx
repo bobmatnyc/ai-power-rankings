@@ -12,8 +12,7 @@ import {
   Trophy, 
   Database,
   ArrowLeft,
-  Settings,
-  TrendingUp
+  Settings
 } from "lucide-react";
 
 const dashboardNavItems = [
@@ -52,13 +51,6 @@ const dashboardNavItems = [
     href: "/dashboard/cache",
     icon: Database,
     description: "Static file management",
-  },
-  {
-    title: "Analytics",
-    href: "/dashboard/analytics",
-    icon: TrendingUp,
-    description: "Coming soon",
-    disabled: true,
   },
   {
     title: "Settings",

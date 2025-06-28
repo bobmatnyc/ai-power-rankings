@@ -1,59 +1,40 @@
 import { NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@payload-config";
+import { RankingsRepository } from "@/lib/json-db/rankings-repository";
 import { loggers } from "@/lib/logger";
 
 export async function GET() {
   try {
-    const payload = await getPayload({ config });
-
-    // Get all ranking periods from the database
-    const rankingsResult = await payload.find({
-      collection: "rankings",
-      limit: 1000,
-      sort: "-period",
-      where: {
-        period: {
-          exists: true,
-        },
-      },
-    });
-
-    // Group by period and get metadata
-    const periodMap = new Map();
+    const rankingsRepo = RankingsRepository.getInstance();
     
-    for (const ranking of rankingsResult.docs) {
-      const period = ranking["period"] as string;
-      if (!periodMap.has(period)) {
-        periodMap.set(period, {
-          id: ranking.id,
+    // Get all available periods
+    const periods = await rankingsRepo.getPeriods();
+    const currentPeriod = await rankingsRepo.getCurrentPeriod();
+    
+    // Build period metadata
+    const periodData = await Promise.all(
+      periods.map(async (period) => {
+        const rankings = await rankingsRepo.getRankingsForPeriod(period);
+        return {
+          id: period,
           period,
-          algorithm_version: ranking["algorithm_version"] || "v6.0",
-          created_at: ranking["createdAt"],
-          is_current: ranking["is_current"] || false,
-          total_tools: 1,
-        });
-      } else {
-        periodMap.get(period)!.total_tools += 1;
-      }
-    }
-
-    // Convert to array and sort by period (newest first)
-    const periods = Array.from(periodMap.values()).sort((a, b) => {
-      // Sort by period (YYYY-MM format, newest first)
-      return a.period.localeCompare(b.period) * -1;
-    });
+          algorithm_version: rankings?.algorithm_version || "v6.0",
+          created_at: rankings?.created_at || new Date().toISOString(),
+          is_current: period === currentPeriod,
+          total_tools: rankings?.rankings.length || 0,
+        };
+      })
+    );
 
     loggers.api.info("Retrieved ranking periods", { 
-      total_periods: periods.length,
-      current_period: periods.find(p => p.is_current)?.period || "none",
-      periods_order: periods.map(p => p.period)
+      total_periods: periodData.length,
+      current_period: currentPeriod || "none",
+      periods_order: periods
     });
 
     return NextResponse.json({
       success: true,
-      periods,
-      total: periods.length,
+      periods: periodData,
+      total: periodData.length,
     });
 
   } catch (error) {

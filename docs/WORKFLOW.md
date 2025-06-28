@@ -93,7 +93,7 @@ trackdown/
 
 1. **Open BACKLOG.md** in your editor
 2. **Add to appropriate section** (Current Sprint, Backlog, or Epic)
-3. **Use consistent format**:
+3. **Use consistent format** (default assignee is @bobmatnyc):
 
 ```markdown
 ## **[T-XXX]** Task Title
@@ -102,7 +102,7 @@ trackdown/
 **Epic:** EP-XXX (if applicable)  
 **Priority:** Critical/High/Medium/Low  
 **Story Points:** 1-13  
-**Assignee:** @username  
+**Assignee:** @bobmatnyc  
 **Status:** Backlog/Ready/In Progress/Done  
 **Sprint:** X  
 

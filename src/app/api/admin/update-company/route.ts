@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@payload-config";
 import { loggers } from "@/lib/logger";
+import { getCompaniesRepo } from "@/lib/json-db";
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
@@ -14,27 +13,36 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
     
-    const payload = await getPayload({ config });
+    const companiesRepo = getCompaniesRepo();
+    
+    // Get the existing company
+    const existingCompany = await companiesRepo.getById(id);
+    
+    if (!existingCompany) {
+      return NextResponse.json(
+        { error: "Company not found" },
+        { status: 404 }
+      );
+    }
     
     // Update the company
-    const updated = await payload.update({
-      collection: "companies",
-      id,
-      data: {
-        name,
-        slug,
-        company_type: "private", // Default value
-      },
-    });
+    const updatedCompany = {
+      ...existingCompany,
+      name,
+      slug,
+      updated_at: new Date().toISOString(),
+    };
+    
+    await companiesRepo.upsert(updatedCompany);
     
     loggers.api.info(`Updated company ${id}: ${name}`);
     
     return NextResponse.json({
       success: true,
       company: {
-        id: updated.id,
-        name: updated['name'],
-        slug: updated['slug'],
+        id: updatedCompany.id,
+        name: updatedCompany.name,
+        slug: updatedCompany.slug,
       },
     });
     

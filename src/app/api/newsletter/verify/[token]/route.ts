@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@payload-config";
 import { loggers } from "@/lib/logger";
+import { getSubscribersRepo } from "@/lib/json-db";
 
 type RouteParams = Promise<{ token: string }>;
 
@@ -17,48 +16,19 @@ export async function GET(
       return NextResponse.redirect(new URL("/newsletter/verify?error=missing-token", request.url));
     }
 
-    // Initialize Payload
-    const payload = await getPayload({ config });
+    // Initialize subscriber repository
+    const subscribersRepo = getSubscribersRepo();
 
-    // Find subscription by token
-    const { docs: subscriptions } = await payload.find({
-      collection: "newsletter-subscribers",
-      where: {
-        verification_token: { equals: token },
-      },
-      limit: 1,
-    });
+    // Find and verify subscription by token
+    const subscription = await subscribersRepo.verifyWithToken(token);
 
-    if (!subscriptions || subscriptions.length === 0) {
-      return NextResponse.redirect(new URL("/newsletter/verify?error=invalid-token", request.url));
-    }
-
-    const subscription = subscriptions[0];
-    
     if (!subscription) {
       return NextResponse.redirect(new URL("/newsletter/verify?error=invalid-token", request.url));
     }
 
-    if (subscription['status'] === "verified") {
+    if (subscription.status === "verified") {
       return NextResponse.redirect(
         new URL("/newsletter/verify?status=already-verified", request.url)
-      );
-    }
-
-    // Update subscription status
-    try {
-      await payload.update({
-        collection: "newsletter-subscribers",
-        id: subscription['id'],
-        data: {
-          status: "verified",
-          verified_at: new Date().toISOString(),
-        },
-      });
-    } catch (updateError) {
-      loggers.api.error("Failed to verify subscription", { updateError, token });
-      return NextResponse.redirect(
-        new URL("/newsletter/verify?error=verification-failed", request.url)
       );
     }
 

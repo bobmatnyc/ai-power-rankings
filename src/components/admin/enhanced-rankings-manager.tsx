@@ -162,7 +162,7 @@ export function EnhancedRankingsManager() {
         body.compare_with = compareWithPeriod;
       }
 
-      const response = await fetch("/api/admin/preview-rankings", {
+      const response = await fetch("/api/admin/preview-rankings-json", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -190,14 +190,14 @@ export function EnhancedRankingsManager() {
     setSuccess(null);
 
     try {
-      const response = await fetch("/api/admin/build-rankings", {
+      const response = await fetch("/api/admin/build-rankings-json", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           period: preview.period,
           algorithm_version: preview.algorithm_version,
           preview_date: format(previewDate, "yyyy-MM-dd"),
-          preview_data: preview,
+          rankings: preview.rankings_comparison,
         }),
       });
 
@@ -307,7 +307,7 @@ export function EnhancedRankingsManager() {
         throw new Error(errorData.error || "Failed to rename ranking");
       }
 
-      const data = await response.json();
+      await response.json();
       setSuccess(`Successfully renamed ranking period from ${selectedRanking.period} to ${editingName}`);
       
       // Update the selected ranking with new name
@@ -335,6 +335,27 @@ export function EnhancedRankingsManager() {
     }
   };
 
+  const loadRankingData = async (period: string) => {
+    setIsLoadingRankingData(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/admin/rankings/${encodeURIComponent(period)}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to load rankings");
+      }
+      
+      const data = await response.json();
+      setSelectedRankingData(data.period?.rankings || data.rankings || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load rankings");
+      setSelectedRankingData([]);
+    } finally {
+      setIsLoadingRankingData(false);
+    }
+  };
+
   const getMovementIcon = (movement: string, _change: number) => {
     switch (movement) {
       case "up":
@@ -350,6 +371,53 @@ export function EnhancedRankingsManager() {
       default:
         return <ArrowUpDown className="h-4 w-4 text-gray-400" />;
     }
+  };
+
+  // Helper function to parse different period formats into dates
+  const parsePeriodToDate = (period: string): Date => {
+    // Handle YYYY-MM format
+    if (/^\d{4}-\d{2}$/.test(period)) {
+      return new Date(period + "-01");
+    }
+    
+    // Handle month-year format (e.g., "january-2024", "march-2025")
+    const monthYearMatch = period.match(/^(\w+)-(\d{4})$/);
+    if (monthYearMatch) {
+      const [_, month, year] = monthYearMatch;
+      const monthMap: Record<string, number> = {
+        january: 0, february: 1, march: 2, april: 3,
+        may: 4, june: 5, july: 6, august: 7,
+        september: 8, october: 9, november: 10, december: 11
+      };
+      const monthIndex = monthMap[month?.toLowerCase() || ""];
+      if (monthIndex !== undefined && year) {
+        return new Date(parseInt(year), monthIndex, 1);
+      }
+    }
+    
+    // Handle "Month Year" format (e.g., "June 2025")
+    const monthSpaceYearMatch = period.match(/^(\w+)\s+(\d{4})$/);
+    if (monthSpaceYearMatch) {
+      const [_, month, year] = monthSpaceYearMatch;
+      const monthMap: Record<string, number> = {
+        january: 0, february: 1, march: 2, april: 3,
+        may: 4, june: 5, july: 6, august: 7,
+        september: 8, october: 9, november: 10, december: 11
+      };
+      const monthIndex = monthMap[month?.toLowerCase() || ""];
+      if (monthIndex !== undefined && year) {
+        return new Date(parseInt(year), monthIndex, 1);
+      }
+    }
+    
+    // Fallback: try to parse as-is
+    const date = new Date(period);
+    if (!isNaN(date.getTime())) {
+      return date;
+    }
+    
+    // If all else fails, return current date (will sort to top)
+    return new Date();
   };
 
   const getChangeBadge = (change: number, movement: string) => {
@@ -383,7 +451,9 @@ export function EnhancedRankingsManager() {
                 value={format(previewDate, "yyyy-MM-dd")}
                 onChange={(e) => {
                   if (e.target.value) {
-                    setPreviewDate(new Date(e.target.value));
+                    // Parse the date string to avoid timezone issues
+                    const [year, month, day] = e.target.value.split('-').map(Number);
+                    setPreviewDate(new Date(year, month - 1, day, 12, 0, 0));
                   }
                 }}
                 className="w-full"
@@ -403,7 +473,11 @@ export function EnhancedRankingsManager() {
                 <SelectContent>
                   <SelectItem value="auto">Auto (Previous Available)</SelectItem>
                   {availablePeriods
-                    .sort((a, b) => a.period.localeCompare(b.period) * -1)
+                    .sort((a, b) => {
+                      const dateA = parsePeriodToDate(a.period);
+                      const dateB = parsePeriodToDate(b.period);
+                      return dateB.getTime() - dateA.getTime();
+                    })
                     .map((period) => (
                     <SelectItem key={period.id} value={period.period}>
                       {period.period} ({period.total_tools} tools)
@@ -481,8 +555,9 @@ export function EnhancedRankingsManager() {
             <div className="space-y-2">
               {(() => {
                 const sorted = availablePeriods.sort((a, b) => {
-                  const result = a.period.localeCompare(b.period) * -1;
-                  return result;
+                  const dateA = parsePeriodToDate(a.period);
+                  const dateB = parsePeriodToDate(b.period);
+                  return dateB.getTime() - dateA.getTime();
                 });
                 console.log("Sorted periods (newest first):", sorted.map(p => p.period));
                 return sorted;
@@ -496,7 +571,10 @@ export function EnhancedRankingsManager() {
                     <div className="flex-1">
                       <div 
                         className="font-medium cursor-pointer hover:text-primary transition-colors"
-                        onClick={() => setSelectedRanking(period)}
+                        onClick={() => {
+                          setSelectedRanking(period);
+                          loadRankingData(period.period);
+                        }}
                       >
                         {period.period}
                       </div>
@@ -650,21 +728,59 @@ export function EnhancedRankingsManager() {
                 )}
               </div>
 
-              {/* TODO: Add ranking list view here */}
+              {/* Rankings List */}
               <div className="space-y-2">
-                <Label>Actions</Label>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      // TODO: Load and display rankings for this period
-                      setSuccess("Ranking list view coming soon!");
-                    }}
-                  >
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Rankings
-                  </Button>
-                </div>
+                <Label>Rankings List</Label>
+                {isLoadingRankingData ? (
+                  <div className="flex items-center justify-center p-8">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                ) : selectedRankingData.length > 0 ? (
+                  <div className="border rounded-lg max-h-96 overflow-y-auto">
+                    <div className="space-y-1">
+                      {selectedRankingData.map((ranking, index) => (
+                        <div
+                          key={ranking.tool_id || index}
+                          className="flex items-center justify-between p-3 border-b last:border-b-0 hover:bg-muted/50"
+                        >
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className="w-10 text-center font-mono text-sm font-medium">
+                              #{ranking.position}
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-medium">{ranking.tool_name}</div>
+                              <div className="text-xs text-muted-foreground">
+                                Score: {ranking.score.toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-4 gap-2 text-xs">
+                            <div className="text-center">
+                              <div className="text-muted-foreground">Agentic</div>
+                              <div className="font-medium">{ranking.factor_scores?.agentic_capability?.toFixed(1) || "-"}</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-muted-foreground">Tech</div>
+                              <div className="font-medium">{ranking.factor_scores?.technical_performance?.toFixed(1) || "-"}</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-muted-foreground">Market</div>
+                              <div className="font-medium">{ranking.factor_scores?.market_traction?.toFixed(1) || "-"}</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-muted-foreground">Dev</div>
+                              <div className="font-medium">{ranking.factor_scores?.developer_adoption?.toFixed(1) || "-"}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center p-4 text-muted-foreground">
+                    No rankings data available
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

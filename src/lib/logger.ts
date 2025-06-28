@@ -32,6 +32,8 @@ export const loggers = {
   news: createLogger("NEWS"),
   tools: createLogger("TOOLS"),
   test: createLogger("TEST"),
+  migration: createLogger("MIGRATION"),
+  validation: createLogger("VALIDATION"),
 };
 
 export default logger;

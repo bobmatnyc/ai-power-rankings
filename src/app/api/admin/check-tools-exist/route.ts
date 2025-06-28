@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getPayloadClient } from "@/lib/payload-direct";
+import { getToolsRepo } from "@/lib/json-db";
 
 export async function GET() {
   try {
-    const payload = await getPayloadClient();
+    const toolsRepo = getToolsRepo();
 
     // Check for specific tools
     const toolsToCheck = ["gemini", "chatgpt"];
@@ -11,27 +11,16 @@ export async function GET() {
 
     for (const toolName of toolsToCheck) {
       // Check by slug
-      const { docs: bySlug } = await payload.find({
-        collection: "tools",
-        where: {
-          slug: { equals: toolName },
-        },
-        limit: 1,
-      });
+      const bySlug = await toolsRepo.getBySlug(toolName);
 
       // Check by name
-      const { docs: byName } = await payload.find({
-        collection: "tools",
-        where: {
-          name: { equals: toolName },
-        },
-        limit: 1,
-      });
+      const allTools = await toolsRepo.getAll();
+      const byName = allTools.find(tool => tool.name.toLowerCase() === toolName.toLowerCase());
 
       results[toolName] = {
-        foundBySlug: bySlug.length > 0,
-        foundByName: byName.length > 0,
-        tool: bySlug[0] || byName[0] || null,
+        foundBySlug: !!bySlug,
+        foundByName: !!byName,
+        tool: bySlug || byName || null,
       };
     }
 

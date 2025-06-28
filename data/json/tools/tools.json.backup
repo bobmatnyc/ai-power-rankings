@@ -1,0 +1,1887 @@
+{
+  "tools": [
+    {
+      "id": "7",
+      "slug": "aider",
+      "name": "Aider",
+      "category": "open-source-framework",
+      "status": "active",
+      "company_id": "31",
+      "info": {
+        "summary": "AI pair programming in your terminal",
+        "description": "AI pair programming in your terminal with git integration",
+        "website": "https://aider.chat",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "open-source"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:39.415Z",
+      "updated_at": "2025-06-25T02:48:36.969Z"
+    },
+    {
+      "id": "26",
+      "slug": "amazon-q-developer",
+      "name": "Amazon Q Developer",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "48",
+      "info": {
+        "summary": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration...",
+        "description": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration with the entire AWS ecosystem. Features agent architecture for autonomous cloud development tasks, from code generation to infrastructure deployment. Particularly valuable for teams building on AWS, offering specialized knowledge of AWS services and best practices.",
+        "website": "https://aws.amazon.com/q/developer/",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:48.929Z",
+      "updated_at": "2025-06-25T02:48:31.756Z"
+    },
+    {
+      "id": "25",
+      "slug": "augment-code",
+      "name": "Augment Code",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "47",
+      "info": {
+        "summary": "AI Coding Assistant for Enterprises",
+        "description": "Enterprise-grade AI coding assistant with 200K token context and deep codebase understanding",
+        "website": "https://augmentcode.com",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "enterprise"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:48.425Z",
+      "updated_at": "2025-06-25T02:48:32.034Z"
+    },
+    {
+      "id": "5",
+      "slug": "bolt-new",
+      "name": "Bolt.new",
+      "category": "app-builder",
+      "status": "active",
+      "company_id": "7",
+      "info": {
+        "summary": "Prompt, run, edit, and deploy full-stack web applications",
+        "description": "AI-powered full-stack web application builder with in-browser development environment",
+        "website": "https://bolt.new",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:38.390Z",
+      "updated_at": "2025-06-25T02:48:37.495Z"
+    },
+    {
+      "id": "18",
+      "slug": "chatgpt-canvas",
+      "name": "ChatGPT Canvas",
+      "category": "autonomous-agent",
+      "status": "active",
+      "company_id": "42",
+      "info": {
+        "summary": "Collaborative AI workspace",
+        "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions",
+        "website": "https://openai.com/chatgpt",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:44.960Z",
+      "updated_at": "2025-06-25T02:48:33.954Z"
+    },
+    {
+      "id": "19",
+      "slug": "claude-artifacts",
+      "name": "Claude Artifacts",
+      "category": "app-builder",
+      "status": "active",
+      "company_id": "4",
+      "info": {
+        "summary": "Interactive AI development companion",
+        "description": "Interactive component generation feature within Claude that creates and iterates on code, diagrams, and applications in a side panel",
+        "website": "https://claude.ai",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:45.342Z",
+      "updated_at": "2025-06-25T02:48:33.684Z"
+    },
+    {
+      "id": "4",
+      "slug": "claude-code",
+      "name": "Claude Code",
+      "category": "autonomous-agent",
+      "status": "active",
+      "company_id": "4",
+      "info": {
+        "summary": "Deep Coding at Terminal Velocity",
+        "description": "Terminal-based coding agent with deep codebase understanding and multi-file editing",
+        "website": "https://anthropic.com/claude-code",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "paid"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:37.842Z",
+      "updated_at": "2025-06-25T02:48:37.759Z"
+    },
+    {
+      "id": "6",
+      "slug": "cline",
+      "name": "Cline",
+      "category": "open-source-framework",
+      "status": "active",
+      "company_id": "77",
+      "info": {
+        "summary": "Meet Cline, an AI assistant that can use your CLI and editor",
+        "description": "Autonomous coding agent VS Code extension with multi-modal capabilities",
+        "website": "https://cline.bot",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "open-source"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:38.891Z",
+      "updated_at": "2025-06-25T02:48:37.237Z"
+    },
+    {
+      "id": "28",
+      "slug": "coderabbit",
+      "name": "CodeRabbit",
+      "category": "code-review",
+      "status": "active",
+      "company_id": "50",
+      "info": {
+        "summary": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code under...",
+        "description": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code understanding beyond surface-level pattern matching. With 10M+ pull requests processed, CodeRabbit demonstrates the scalability and effectiveness of AI-powered code review, helping teams maintain code quality and accelerate development cycles.",
+        "website": "https://coderabbit.ai",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:50.194Z",
+      "updated_at": "2025-06-25T02:48:31.202Z"
+    },
+    {
+      "id": "8",
+      "slug": "continue-dev",
+      "name": "Continue",
+      "category": "open-source-framework",
+      "status": "active",
+      "company_id": "32",
+      "info": {
+        "summary": "The open-source autopilot for your IDE",
+        "description": "Open source autopilot for your IDE with customizable LLM backends",
+        "website": "https://continue.dev",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "open-source"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:39.907Z",
+      "updated_at": "2025-06-25T02:48:36.689Z"
+    },
+    {
+      "id": "1",
+      "slug": "cursor",
+      "name": "Cursor",
+      "category": "code-editor",
+      "status": "active",
+      "company_id": "2",
+      "info": {
+        "summary": "The AI-first code editor",
+        "description": "AI-powered code editor with $500M ARR and 360K+ paying developers",
+        "website": "https://cursor.com",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:36.303Z",
+      "updated_at": "2025-06-25T02:48:38.580Z"
+    },
+    {
+      "id": "3",
+      "slug": "devin",
+      "name": "Devin",
+      "category": "autonomous-agent",
+      "status": "active",
+      "company_id": "27",
+      "info": {
+        "summary": "The first AI software engineer",
+        "description": "Autonomous AI software engineer capable of planning, coding, debugging, and deploying applications",
+        "website": "https://cognition.ai",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "paid"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:37.350Z",
+      "updated_at": "2025-06-25T02:48:38.034Z"
+    },
+    {
+      "id": "20",
+      "slug": "diffblue-cover",
+      "name": "Diffblue Cover",
+      "category": "testing-tool",
+      "status": "active",
+      "company_id": "43",
+      "info": {
+        "summary": "Autonomous unit test generation for Java",
+        "description": "AI-powered unit test generation tool that autonomously writes entire suites of JUnit tests for Java code using reinforcement learning",
+        "website": "https://diffblue.com/products/cover",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:45.833Z",
+      "updated_at": "2025-06-25T02:48:33.408Z"
+    },
+    {
+      "id": "2",
+      "slug": "github-copilot",
+      "name": "GitHub Copilot",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "1",
+      "info": {
+        "summary": "Your AI pair programmer",
+        "description": "AI pair programmer providing code suggestions, chat, and autonomous agents",
+        "website": "https://github.com/features/copilot",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "paid"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:36.825Z",
+      "updated_at": "2025-06-25T02:48:38.311Z"
+    },
+    {
+      "id": "27",
+      "slug": "gemini-code-assist",
+      "name": "Google Gemini Code Assist",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "5",
+      "info": {
+        "summary": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window...",
+        "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models.",
+        "website": "https://cloud.google.com/code-assist",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:49.277Z",
+      "updated_at": "2025-06-25T02:48:31.479Z"
+    },
+    {
+      "id": "11",
+      "slug": "jules",
+      "name": "Google Jules",
+      "category": "autonomous-agent",
+      "status": "active",
+      "company_id": "5",
+      "info": {
+        "summary": "Google's autonomous AI coding agent",
+        "description": "Asynchronous AI coding agent that works in background cloud VMs for GitHub workflows",
+        "website": "https://jules.google.com",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:41.438Z",
+      "updated_at": "2025-06-25T02:48:35.878Z"
+    },
+    {
+      "id": "22",
+      "slug": "jetbrains-ai",
+      "name": "JetBrains AI Assistant",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "45",
+      "info": {
+        "summary": "AI assistant for JetBrains IDEs",
+        "description": "AI assistant integrated into JetBrains IDEs providing code completions, chat assistance, and multi-file editing with Junie agent",
+        "website": "https://jetbrains.com/ai/",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:46.826Z",
+      "updated_at": "2025-06-25T02:48:32.867Z"
+    },
+    {
+      "id": "12",
+      "slug": "lovable",
+      "name": "Lovable",
+      "category": "app-builder",
+      "status": "active",
+      "company_id": "76",
+      "info": {
+        "summary": "The last piece of software you'll ever need",
+        "description": "AI full-stack engineer that builds entire web applications from natural language descriptions",
+        "website": "https://lovable.dev",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:41.946Z",
+      "updated_at": "2025-06-25T02:48:35.596Z"
+    },
+    {
+      "id": "30",
+      "slug": "microsoft-intellicode",
+      "name": "Microsoft IntelliCode",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "53",
+      "info": {
+        "summary": "AI-assisted development",
+        "description": "AI-assisted development feature included in Visual Studio and VS Code that provides smarter IntelliSense by using ML to rank code suggestions by context and API usage patterns",
+        "website": "https://visualstudio.microsoft.com/services/intellicode/",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "free"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:51.565Z",
+      "updated_at": "2025-06-25T02:48:30.656Z"
+    },
+    {
+      "id": "24",
+      "slug": "openai-codex-cli",
+      "name": "OpenAI Codex CLI",
+      "category": "autonomous-agent",
+      "status": "active",
+      "company_id": "42",
+      "info": {
+        "summary": "Terminal-based AI coding agent",
+        "description": "Modern CLI tool powered by o3 reasoning model for autonomous software engineering",
+        "website": "https://openai.com/research/codex-cli",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "open-source"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:47.647Z",
+      "updated_at": "2025-06-25T02:48:32.312Z"
+    },
+    {
+      "id": "13",
+      "slug": "openhands",
+      "name": "OpenHands",
+      "category": "open-source-framework",
+      "status": "active",
+      "company_id": "37",
+      "info": {
+        "summary": "Code Less, Make More",
+        "description": "Open source autonomous AI agent for software engineering tasks",
+        "website": "https://all-hands.dev",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "open-source"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:42.497Z",
+      "updated_at": "2025-06-25T02:48:35.331Z"
+    },
+    {
+      "id": "16",
+      "slug": "qodo-gen",
+      "name": "Qodo Gen",
+      "category": "testing-tool",
+      "status": "active",
+      "company_id": "40",
+      "info": {
+        "summary": "Quality-first AI coding platform",
+        "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents",
+        "website": "https://qodo.ai",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:43.986Z",
+      "updated_at": "2025-06-25T02:48:34.514Z"
+    },
+    {
+      "id": "9",
+      "slug": "replit-agent",
+      "name": "Replit Agent",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "10",
+      "info": {
+        "summary": "Build software collaboratively with the power of AI",
+        "description": "AI agent integrated into Replit online IDE for autonomous coding",
+        "website": "https://replit.com",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "paid"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:40.434Z",
+      "updated_at": "2025-06-25T02:48:36.426Z"
+    },
+    {
+      "id": "17",
+      "slug": "snyk-code",
+      "name": "Snyk Code",
+      "category": "code-review",
+      "status": "active",
+      "company_id": "41",
+      "info": {
+        "summary": "Developer security platform",
+        "description": "AI-driven static code analysis tool that continuously scans code for security vulnerabilities, bugs, and quality issues in real-time",
+        "website": "https://snyk.io/product/snyk-code/",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:44.487Z",
+      "updated_at": "2025-06-25T02:48:34.239Z"
+    },
+    {
+      "id": "29",
+      "slug": "sourcegraph-cody",
+      "name": "Sourcegraph Cody",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "51",
+      "info": {
+        "summary": "AI that knows your entire codebase",
+        "description": "AI coding assistant that indexes entire repositories with embeddings to answer questions, generate code with full project context, and explain existing code",
+        "website": "https://sourcegraph.com/cody",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:50.689Z",
+      "updated_at": "2025-06-25T02:48:30.930Z"
+    },
+    {
+      "id": "15",
+      "slug": "sourcery",
+      "name": "Sourcery",
+      "category": "code-review",
+      "status": "active",
+      "company_id": "39",
+      "info": {
+        "summary": "AI code review and refactoring",
+        "description": "AI code review and refactoring tool that automatically suggests improvements for code readability, efficiency, and maintainability",
+        "website": "https://sourcery.ai",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:43.511Z",
+      "updated_at": "2025-06-25T02:48:34.802Z"
+    },
+    {
+      "id": "21",
+      "slug": "tabnine",
+      "name": "Tabnine",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "44",
+      "info": {
+        "summary": "AI assistant for software developers",
+        "description": "AI code completion assistant emphasizing privacy with option for local models, supporting 30+ languages and most IDEs",
+        "website": "https://tabnine.com",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:46.335Z",
+      "updated_at": "2025-06-25T02:48:33.135Z"
+    },
+    {
+      "id": "10",
+      "slug": "v0-vercel",
+      "name": "v0",
+      "category": "app-builder",
+      "status": "active",
+      "company_id": "8",
+      "info": {
+        "summary": "Generate UI with simple text prompts",
+        "description": "AI-powered UI generator creating React components from text prompts and images",
+        "website": "https://v0.dev",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:40.935Z",
+      "updated_at": "2025-06-25T02:48:36.153Z"
+    },
+    {
+      "id": "14",
+      "slug": "windsurf",
+      "name": "Windsurf",
+      "category": "code-editor",
+      "status": "active",
+      "company_id": "6",
+      "info": {
+        "summary": "The most powerful AI Code Editor",
+        "description": "AI-powered IDE assistant acquired by OpenAI for $3 billion in April 2025",
+        "website": "https://windsurf.com",
+        "features": [],
+        "technical": {},
+        "business": {
+          "pricing_model": "freemium"
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-06-23T15:40:43.003Z",
+      "updated_at": "2025-06-25T02:48:35.065Z"
+    }
+  ],
+  "index": {
+    "byId": {
+      "1": {
+        "id": "1",
+        "slug": "cursor",
+        "name": "Cursor",
+        "category": "code-editor",
+        "status": "active",
+        "company_id": "2",
+        "info": {
+          "summary": "The AI-first code editor",
+          "description": "AI-powered code editor with $500M ARR and 360K+ paying developers",
+          "website": "https://cursor.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:36.303Z",
+        "updated_at": "2025-06-25T02:48:38.580Z"
+      },
+      "2": {
+        "id": "2",
+        "slug": "github-copilot",
+        "name": "GitHub Copilot",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "1",
+        "info": {
+          "summary": "Your AI pair programmer",
+          "description": "AI pair programmer providing code suggestions, chat, and autonomous agents",
+          "website": "https://github.com/features/copilot",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "paid"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:36.825Z",
+        "updated_at": "2025-06-25T02:48:38.311Z"
+      },
+      "3": {
+        "id": "3",
+        "slug": "devin",
+        "name": "Devin",
+        "category": "autonomous-agent",
+        "status": "active",
+        "company_id": "27",
+        "info": {
+          "summary": "The first AI software engineer",
+          "description": "Autonomous AI software engineer capable of planning, coding, debugging, and deploying applications",
+          "website": "https://cognition.ai",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "paid"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:37.350Z",
+        "updated_at": "2025-06-25T02:48:38.034Z"
+      },
+      "4": {
+        "id": "4",
+        "slug": "claude-code",
+        "name": "Claude Code",
+        "category": "autonomous-agent",
+        "status": "active",
+        "company_id": "4",
+        "info": {
+          "summary": "Deep Coding at Terminal Velocity",
+          "description": "Terminal-based coding agent with deep codebase understanding and multi-file editing",
+          "website": "https://anthropic.com/claude-code",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "paid"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:37.842Z",
+        "updated_at": "2025-06-25T02:48:37.759Z"
+      },
+      "5": {
+        "id": "5",
+        "slug": "bolt-new",
+        "name": "Bolt.new",
+        "category": "app-builder",
+        "status": "active",
+        "company_id": "7",
+        "info": {
+          "summary": "Prompt, run, edit, and deploy full-stack web applications",
+          "description": "AI-powered full-stack web application builder with in-browser development environment",
+          "website": "https://bolt.new",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:38.390Z",
+        "updated_at": "2025-06-25T02:48:37.495Z"
+      },
+      "6": {
+        "id": "6",
+        "slug": "cline",
+        "name": "Cline",
+        "category": "open-source-framework",
+        "status": "active",
+        "company_id": "77",
+        "info": {
+          "summary": "Meet Cline, an AI assistant that can use your CLI and editor",
+          "description": "Autonomous coding agent VS Code extension with multi-modal capabilities",
+          "website": "https://cline.bot",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "open-source"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:38.891Z",
+        "updated_at": "2025-06-25T02:48:37.237Z"
+      },
+      "7": {
+        "id": "7",
+        "slug": "aider",
+        "name": "Aider",
+        "category": "open-source-framework",
+        "status": "active",
+        "company_id": "31",
+        "info": {
+          "summary": "AI pair programming in your terminal",
+          "description": "AI pair programming in your terminal with git integration",
+          "website": "https://aider.chat",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "open-source"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:39.415Z",
+        "updated_at": "2025-06-25T02:48:36.969Z"
+      },
+      "8": {
+        "id": "8",
+        "slug": "continue-dev",
+        "name": "Continue",
+        "category": "open-source-framework",
+        "status": "active",
+        "company_id": "32",
+        "info": {
+          "summary": "The open-source autopilot for your IDE",
+          "description": "Open source autopilot for your IDE with customizable LLM backends",
+          "website": "https://continue.dev",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "open-source"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:39.907Z",
+        "updated_at": "2025-06-25T02:48:36.689Z"
+      },
+      "9": {
+        "id": "9",
+        "slug": "replit-agent",
+        "name": "Replit Agent",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "10",
+        "info": {
+          "summary": "Build software collaboratively with the power of AI",
+          "description": "AI agent integrated into Replit online IDE for autonomous coding",
+          "website": "https://replit.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "paid"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:40.434Z",
+        "updated_at": "2025-06-25T02:48:36.426Z"
+      },
+      "10": {
+        "id": "10",
+        "slug": "v0-vercel",
+        "name": "v0",
+        "category": "app-builder",
+        "status": "active",
+        "company_id": "8",
+        "info": {
+          "summary": "Generate UI with simple text prompts",
+          "description": "AI-powered UI generator creating React components from text prompts and images",
+          "website": "https://v0.dev",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:40.935Z",
+        "updated_at": "2025-06-25T02:48:36.153Z"
+      },
+      "11": {
+        "id": "11",
+        "slug": "jules",
+        "name": "Google Jules",
+        "category": "autonomous-agent",
+        "status": "active",
+        "company_id": "5",
+        "info": {
+          "summary": "Google's autonomous AI coding agent",
+          "description": "Asynchronous AI coding agent that works in background cloud VMs for GitHub workflows",
+          "website": "https://jules.google.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:41.438Z",
+        "updated_at": "2025-06-25T02:48:35.878Z"
+      },
+      "12": {
+        "id": "12",
+        "slug": "lovable",
+        "name": "Lovable",
+        "category": "app-builder",
+        "status": "active",
+        "company_id": "76",
+        "info": {
+          "summary": "The last piece of software you'll ever need",
+          "description": "AI full-stack engineer that builds entire web applications from natural language descriptions",
+          "website": "https://lovable.dev",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:41.946Z",
+        "updated_at": "2025-06-25T02:48:35.596Z"
+      },
+      "13": {
+        "id": "13",
+        "slug": "openhands",
+        "name": "OpenHands",
+        "category": "open-source-framework",
+        "status": "active",
+        "company_id": "37",
+        "info": {
+          "summary": "Code Less, Make More",
+          "description": "Open source autonomous AI agent for software engineering tasks",
+          "website": "https://all-hands.dev",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "open-source"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:42.497Z",
+        "updated_at": "2025-06-25T02:48:35.331Z"
+      },
+      "14": {
+        "id": "14",
+        "slug": "windsurf",
+        "name": "Windsurf",
+        "category": "code-editor",
+        "status": "active",
+        "company_id": "6",
+        "info": {
+          "summary": "The most powerful AI Code Editor",
+          "description": "AI-powered IDE assistant acquired by OpenAI for $3 billion in April 2025",
+          "website": "https://windsurf.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:43.003Z",
+        "updated_at": "2025-06-25T02:48:35.065Z"
+      },
+      "15": {
+        "id": "15",
+        "slug": "sourcery",
+        "name": "Sourcery",
+        "category": "code-review",
+        "status": "active",
+        "company_id": "39",
+        "info": {
+          "summary": "AI code review and refactoring",
+          "description": "AI code review and refactoring tool that automatically suggests improvements for code readability, efficiency, and maintainability",
+          "website": "https://sourcery.ai",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:43.511Z",
+        "updated_at": "2025-06-25T02:48:34.802Z"
+      },
+      "16": {
+        "id": "16",
+        "slug": "qodo-gen",
+        "name": "Qodo Gen",
+        "category": "testing-tool",
+        "status": "active",
+        "company_id": "40",
+        "info": {
+          "summary": "Quality-first AI coding platform",
+          "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents",
+          "website": "https://qodo.ai",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:43.986Z",
+        "updated_at": "2025-06-25T02:48:34.514Z"
+      },
+      "17": {
+        "id": "17",
+        "slug": "snyk-code",
+        "name": "Snyk Code",
+        "category": "code-review",
+        "status": "active",
+        "company_id": "41",
+        "info": {
+          "summary": "Developer security platform",
+          "description": "AI-driven static code analysis tool that continuously scans code for security vulnerabilities, bugs, and quality issues in real-time",
+          "website": "https://snyk.io/product/snyk-code/",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:44.487Z",
+        "updated_at": "2025-06-25T02:48:34.239Z"
+      },
+      "18": {
+        "id": "18",
+        "slug": "chatgpt-canvas",
+        "name": "ChatGPT Canvas",
+        "category": "autonomous-agent",
+        "status": "active",
+        "company_id": "42",
+        "info": {
+          "summary": "Collaborative AI workspace",
+          "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions",
+          "website": "https://openai.com/chatgpt",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:44.960Z",
+        "updated_at": "2025-06-25T02:48:33.954Z"
+      },
+      "19": {
+        "id": "19",
+        "slug": "claude-artifacts",
+        "name": "Claude Artifacts",
+        "category": "app-builder",
+        "status": "active",
+        "company_id": "4",
+        "info": {
+          "summary": "Interactive AI development companion",
+          "description": "Interactive component generation feature within Claude that creates and iterates on code, diagrams, and applications in a side panel",
+          "website": "https://claude.ai",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:45.342Z",
+        "updated_at": "2025-06-25T02:48:33.684Z"
+      },
+      "20": {
+        "id": "20",
+        "slug": "diffblue-cover",
+        "name": "Diffblue Cover",
+        "category": "testing-tool",
+        "status": "active",
+        "company_id": "43",
+        "info": {
+          "summary": "Autonomous unit test generation for Java",
+          "description": "AI-powered unit test generation tool that autonomously writes entire suites of JUnit tests for Java code using reinforcement learning",
+          "website": "https://diffblue.com/products/cover",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:45.833Z",
+        "updated_at": "2025-06-25T02:48:33.408Z"
+      },
+      "21": {
+        "id": "21",
+        "slug": "tabnine",
+        "name": "Tabnine",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "44",
+        "info": {
+          "summary": "AI assistant for software developers",
+          "description": "AI code completion assistant emphasizing privacy with option for local models, supporting 30+ languages and most IDEs",
+          "website": "https://tabnine.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:46.335Z",
+        "updated_at": "2025-06-25T02:48:33.135Z"
+      },
+      "22": {
+        "id": "22",
+        "slug": "jetbrains-ai",
+        "name": "JetBrains AI Assistant",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "45",
+        "info": {
+          "summary": "AI assistant for JetBrains IDEs",
+          "description": "AI assistant integrated into JetBrains IDEs providing code completions, chat assistance, and multi-file editing with Junie agent",
+          "website": "https://jetbrains.com/ai/",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:46.826Z",
+        "updated_at": "2025-06-25T02:48:32.867Z"
+      },
+      "24": {
+        "id": "24",
+        "slug": "openai-codex-cli",
+        "name": "OpenAI Codex CLI",
+        "category": "autonomous-agent",
+        "status": "active",
+        "company_id": "42",
+        "info": {
+          "summary": "Terminal-based AI coding agent",
+          "description": "Modern CLI tool powered by o3 reasoning model for autonomous software engineering",
+          "website": "https://openai.com/research/codex-cli",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "open-source"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:47.647Z",
+        "updated_at": "2025-06-25T02:48:32.312Z"
+      },
+      "25": {
+        "id": "25",
+        "slug": "augment-code",
+        "name": "Augment Code",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "47",
+        "info": {
+          "summary": "AI Coding Assistant for Enterprises",
+          "description": "Enterprise-grade AI coding assistant with 200K token context and deep codebase understanding",
+          "website": "https://augmentcode.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "enterprise"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:48.425Z",
+        "updated_at": "2025-06-25T02:48:32.034Z"
+      },
+      "26": {
+        "id": "26",
+        "slug": "amazon-q-developer",
+        "name": "Amazon Q Developer",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "48",
+        "info": {
+          "summary": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration...",
+          "description": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration with the entire AWS ecosystem. Features agent architecture for autonomous cloud development tasks, from code generation to infrastructure deployment. Particularly valuable for teams building on AWS, offering specialized knowledge of AWS services and best practices.",
+          "website": "https://aws.amazon.com/q/developer/",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:48.929Z",
+        "updated_at": "2025-06-25T02:48:31.756Z"
+      },
+      "27": {
+        "id": "27",
+        "slug": "gemini-code-assist",
+        "name": "Google Gemini Code Assist",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "5",
+        "info": {
+          "summary": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window...",
+          "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models.",
+          "website": "https://cloud.google.com/code-assist",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:49.277Z",
+        "updated_at": "2025-06-25T02:48:31.479Z"
+      },
+      "28": {
+        "id": "28",
+        "slug": "coderabbit",
+        "name": "CodeRabbit",
+        "category": "code-review",
+        "status": "active",
+        "company_id": "50",
+        "info": {
+          "summary": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code under...",
+          "description": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code understanding beyond surface-level pattern matching. With 10M+ pull requests processed, CodeRabbit demonstrates the scalability and effectiveness of AI-powered code review, helping teams maintain code quality and accelerate development cycles.",
+          "website": "https://coderabbit.ai",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:50.194Z",
+        "updated_at": "2025-06-25T02:48:31.202Z"
+      },
+      "29": {
+        "id": "29",
+        "slug": "sourcegraph-cody",
+        "name": "Sourcegraph Cody",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "51",
+        "info": {
+          "summary": "AI that knows your entire codebase",
+          "description": "AI coding assistant that indexes entire repositories with embeddings to answer questions, generate code with full project context, and explain existing code",
+          "website": "https://sourcegraph.com/cody",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:50.689Z",
+        "updated_at": "2025-06-25T02:48:30.930Z"
+      },
+      "30": {
+        "id": "30",
+        "slug": "microsoft-intellicode",
+        "name": "Microsoft IntelliCode",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "53",
+        "info": {
+          "summary": "AI-assisted development",
+          "description": "AI-assisted development feature included in Visual Studio and VS Code that provides smarter IntelliSense by using ML to rank code suggestions by context and API usage patterns",
+          "website": "https://visualstudio.microsoft.com/services/intellicode/",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "free"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:51.565Z",
+        "updated_at": "2025-06-25T02:48:30.656Z"
+      }
+    },
+    "bySlug": {
+      "aider": {
+        "id": "7",
+        "slug": "aider",
+        "name": "Aider",
+        "category": "open-source-framework",
+        "status": "active",
+        "company_id": "31",
+        "info": {
+          "summary": "AI pair programming in your terminal",
+          "description": "AI pair programming in your terminal with git integration",
+          "website": "https://aider.chat",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "open-source"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:39.415Z",
+        "updated_at": "2025-06-25T02:48:36.969Z"
+      },
+      "amazon-q-developer": {
+        "id": "26",
+        "slug": "amazon-q-developer",
+        "name": "Amazon Q Developer",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "48",
+        "info": {
+          "summary": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration...",
+          "description": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration with the entire AWS ecosystem. Features agent architecture for autonomous cloud development tasks, from code generation to infrastructure deployment. Particularly valuable for teams building on AWS, offering specialized knowledge of AWS services and best practices.",
+          "website": "https://aws.amazon.com/q/developer/",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:48.929Z",
+        "updated_at": "2025-06-25T02:48:31.756Z"
+      },
+      "augment-code": {
+        "id": "25",
+        "slug": "augment-code",
+        "name": "Augment Code",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "47",
+        "info": {
+          "summary": "AI Coding Assistant for Enterprises",
+          "description": "Enterprise-grade AI coding assistant with 200K token context and deep codebase understanding",
+          "website": "https://augmentcode.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "enterprise"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:48.425Z",
+        "updated_at": "2025-06-25T02:48:32.034Z"
+      },
+      "bolt-new": {
+        "id": "5",
+        "slug": "bolt-new",
+        "name": "Bolt.new",
+        "category": "app-builder",
+        "status": "active",
+        "company_id": "7",
+        "info": {
+          "summary": "Prompt, run, edit, and deploy full-stack web applications",
+          "description": "AI-powered full-stack web application builder with in-browser development environment",
+          "website": "https://bolt.new",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:38.390Z",
+        "updated_at": "2025-06-25T02:48:37.495Z"
+      },
+      "chatgpt-canvas": {
+        "id": "18",
+        "slug": "chatgpt-canvas",
+        "name": "ChatGPT Canvas",
+        "category": "autonomous-agent",
+        "status": "active",
+        "company_id": "42",
+        "info": {
+          "summary": "Collaborative AI workspace",
+          "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions",
+          "website": "https://openai.com/chatgpt",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:44.960Z",
+        "updated_at": "2025-06-25T02:48:33.954Z"
+      },
+      "claude-artifacts": {
+        "id": "19",
+        "slug": "claude-artifacts",
+        "name": "Claude Artifacts",
+        "category": "app-builder",
+        "status": "active",
+        "company_id": "4",
+        "info": {
+          "summary": "Interactive AI development companion",
+          "description": "Interactive component generation feature within Claude that creates and iterates on code, diagrams, and applications in a side panel",
+          "website": "https://claude.ai",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:45.342Z",
+        "updated_at": "2025-06-25T02:48:33.684Z"
+      },
+      "claude-code": {
+        "id": "4",
+        "slug": "claude-code",
+        "name": "Claude Code",
+        "category": "autonomous-agent",
+        "status": "active",
+        "company_id": "4",
+        "info": {
+          "summary": "Deep Coding at Terminal Velocity",
+          "description": "Terminal-based coding agent with deep codebase understanding and multi-file editing",
+          "website": "https://anthropic.com/claude-code",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "paid"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:37.842Z",
+        "updated_at": "2025-06-25T02:48:37.759Z"
+      },
+      "cline": {
+        "id": "6",
+        "slug": "cline",
+        "name": "Cline",
+        "category": "open-source-framework",
+        "status": "active",
+        "company_id": "77",
+        "info": {
+          "summary": "Meet Cline, an AI assistant that can use your CLI and editor",
+          "description": "Autonomous coding agent VS Code extension with multi-modal capabilities",
+          "website": "https://cline.bot",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "open-source"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:38.891Z",
+        "updated_at": "2025-06-25T02:48:37.237Z"
+      },
+      "coderabbit": {
+        "id": "28",
+        "slug": "coderabbit",
+        "name": "CodeRabbit",
+        "category": "code-review",
+        "status": "active",
+        "company_id": "50",
+        "info": {
+          "summary": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code under...",
+          "description": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code understanding beyond surface-level pattern matching. With 10M+ pull requests processed, CodeRabbit demonstrates the scalability and effectiveness of AI-powered code review, helping teams maintain code quality and accelerate development cycles.",
+          "website": "https://coderabbit.ai",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:50.194Z",
+        "updated_at": "2025-06-25T02:48:31.202Z"
+      },
+      "continue-dev": {
+        "id": "8",
+        "slug": "continue-dev",
+        "name": "Continue",
+        "category": "open-source-framework",
+        "status": "active",
+        "company_id": "32",
+        "info": {
+          "summary": "The open-source autopilot for your IDE",
+          "description": "Open source autopilot for your IDE with customizable LLM backends",
+          "website": "https://continue.dev",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "open-source"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:39.907Z",
+        "updated_at": "2025-06-25T02:48:36.689Z"
+      },
+      "cursor": {
+        "id": "1",
+        "slug": "cursor",
+        "name": "Cursor",
+        "category": "code-editor",
+        "status": "active",
+        "company_id": "2",
+        "info": {
+          "summary": "The AI-first code editor",
+          "description": "AI-powered code editor with $500M ARR and 360K+ paying developers",
+          "website": "https://cursor.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:36.303Z",
+        "updated_at": "2025-06-25T02:48:38.580Z"
+      },
+      "devin": {
+        "id": "3",
+        "slug": "devin",
+        "name": "Devin",
+        "category": "autonomous-agent",
+        "status": "active",
+        "company_id": "27",
+        "info": {
+          "summary": "The first AI software engineer",
+          "description": "Autonomous AI software engineer capable of planning, coding, debugging, and deploying applications",
+          "website": "https://cognition.ai",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "paid"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:37.350Z",
+        "updated_at": "2025-06-25T02:48:38.034Z"
+      },
+      "diffblue-cover": {
+        "id": "20",
+        "slug": "diffblue-cover",
+        "name": "Diffblue Cover",
+        "category": "testing-tool",
+        "status": "active",
+        "company_id": "43",
+        "info": {
+          "summary": "Autonomous unit test generation for Java",
+          "description": "AI-powered unit test generation tool that autonomously writes entire suites of JUnit tests for Java code using reinforcement learning",
+          "website": "https://diffblue.com/products/cover",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:45.833Z",
+        "updated_at": "2025-06-25T02:48:33.408Z"
+      },
+      "github-copilot": {
+        "id": "2",
+        "slug": "github-copilot",
+        "name": "GitHub Copilot",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "1",
+        "info": {
+          "summary": "Your AI pair programmer",
+          "description": "AI pair programmer providing code suggestions, chat, and autonomous agents",
+          "website": "https://github.com/features/copilot",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "paid"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:36.825Z",
+        "updated_at": "2025-06-25T02:48:38.311Z"
+      },
+      "gemini-code-assist": {
+        "id": "27",
+        "slug": "gemini-code-assist",
+        "name": "Google Gemini Code Assist",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "5",
+        "info": {
+          "summary": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window...",
+          "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models.",
+          "website": "https://cloud.google.com/code-assist",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:49.277Z",
+        "updated_at": "2025-06-25T02:48:31.479Z"
+      },
+      "jules": {
+        "id": "11",
+        "slug": "jules",
+        "name": "Google Jules",
+        "category": "autonomous-agent",
+        "status": "active",
+        "company_id": "5",
+        "info": {
+          "summary": "Google's autonomous AI coding agent",
+          "description": "Asynchronous AI coding agent that works in background cloud VMs for GitHub workflows",
+          "website": "https://jules.google.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:41.438Z",
+        "updated_at": "2025-06-25T02:48:35.878Z"
+      },
+      "jetbrains-ai": {
+        "id": "22",
+        "slug": "jetbrains-ai",
+        "name": "JetBrains AI Assistant",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "45",
+        "info": {
+          "summary": "AI assistant for JetBrains IDEs",
+          "description": "AI assistant integrated into JetBrains IDEs providing code completions, chat assistance, and multi-file editing with Junie agent",
+          "website": "https://jetbrains.com/ai/",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:46.826Z",
+        "updated_at": "2025-06-25T02:48:32.867Z"
+      },
+      "lovable": {
+        "id": "12",
+        "slug": "lovable",
+        "name": "Lovable",
+        "category": "app-builder",
+        "status": "active",
+        "company_id": "76",
+        "info": {
+          "summary": "The last piece of software you'll ever need",
+          "description": "AI full-stack engineer that builds entire web applications from natural language descriptions",
+          "website": "https://lovable.dev",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:41.946Z",
+        "updated_at": "2025-06-25T02:48:35.596Z"
+      },
+      "microsoft-intellicode": {
+        "id": "30",
+        "slug": "microsoft-intellicode",
+        "name": "Microsoft IntelliCode",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "53",
+        "info": {
+          "summary": "AI-assisted development",
+          "description": "AI-assisted development feature included in Visual Studio and VS Code that provides smarter IntelliSense by using ML to rank code suggestions by context and API usage patterns",
+          "website": "https://visualstudio.microsoft.com/services/intellicode/",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "free"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:51.565Z",
+        "updated_at": "2025-06-25T02:48:30.656Z"
+      },
+      "openai-codex-cli": {
+        "id": "24",
+        "slug": "openai-codex-cli",
+        "name": "OpenAI Codex CLI",
+        "category": "autonomous-agent",
+        "status": "active",
+        "company_id": "42",
+        "info": {
+          "summary": "Terminal-based AI coding agent",
+          "description": "Modern CLI tool powered by o3 reasoning model for autonomous software engineering",
+          "website": "https://openai.com/research/codex-cli",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "open-source"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:47.647Z",
+        "updated_at": "2025-06-25T02:48:32.312Z"
+      },
+      "openhands": {
+        "id": "13",
+        "slug": "openhands",
+        "name": "OpenHands",
+        "category": "open-source-framework",
+        "status": "active",
+        "company_id": "37",
+        "info": {
+          "summary": "Code Less, Make More",
+          "description": "Open source autonomous AI agent for software engineering tasks",
+          "website": "https://all-hands.dev",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "open-source"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:42.497Z",
+        "updated_at": "2025-06-25T02:48:35.331Z"
+      },
+      "qodo-gen": {
+        "id": "16",
+        "slug": "qodo-gen",
+        "name": "Qodo Gen",
+        "category": "testing-tool",
+        "status": "active",
+        "company_id": "40",
+        "info": {
+          "summary": "Quality-first AI coding platform",
+          "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents",
+          "website": "https://qodo.ai",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:43.986Z",
+        "updated_at": "2025-06-25T02:48:34.514Z"
+      },
+      "replit-agent": {
+        "id": "9",
+        "slug": "replit-agent",
+        "name": "Replit Agent",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "10",
+        "info": {
+          "summary": "Build software collaboratively with the power of AI",
+          "description": "AI agent integrated into Replit online IDE for autonomous coding",
+          "website": "https://replit.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "paid"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:40.434Z",
+        "updated_at": "2025-06-25T02:48:36.426Z"
+      },
+      "snyk-code": {
+        "id": "17",
+        "slug": "snyk-code",
+        "name": "Snyk Code",
+        "category": "code-review",
+        "status": "active",
+        "company_id": "41",
+        "info": {
+          "summary": "Developer security platform",
+          "description": "AI-driven static code analysis tool that continuously scans code for security vulnerabilities, bugs, and quality issues in real-time",
+          "website": "https://snyk.io/product/snyk-code/",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:44.487Z",
+        "updated_at": "2025-06-25T02:48:34.239Z"
+      },
+      "sourcegraph-cody": {
+        "id": "29",
+        "slug": "sourcegraph-cody",
+        "name": "Sourcegraph Cody",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "51",
+        "info": {
+          "summary": "AI that knows your entire codebase",
+          "description": "AI coding assistant that indexes entire repositories with embeddings to answer questions, generate code with full project context, and explain existing code",
+          "website": "https://sourcegraph.com/cody",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:50.689Z",
+        "updated_at": "2025-06-25T02:48:30.930Z"
+      },
+      "sourcery": {
+        "id": "15",
+        "slug": "sourcery",
+        "name": "Sourcery",
+        "category": "code-review",
+        "status": "active",
+        "company_id": "39",
+        "info": {
+          "summary": "AI code review and refactoring",
+          "description": "AI code review and refactoring tool that automatically suggests improvements for code readability, efficiency, and maintainability",
+          "website": "https://sourcery.ai",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:43.511Z",
+        "updated_at": "2025-06-25T02:48:34.802Z"
+      },
+      "tabnine": {
+        "id": "21",
+        "slug": "tabnine",
+        "name": "Tabnine",
+        "category": "ide-assistant",
+        "status": "active",
+        "company_id": "44",
+        "info": {
+          "summary": "AI assistant for software developers",
+          "description": "AI code completion assistant emphasizing privacy with option for local models, supporting 30+ languages and most IDEs",
+          "website": "https://tabnine.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:46.335Z",
+        "updated_at": "2025-06-25T02:48:33.135Z"
+      },
+      "v0-vercel": {
+        "id": "10",
+        "slug": "v0-vercel",
+        "name": "v0",
+        "category": "app-builder",
+        "status": "active",
+        "company_id": "8",
+        "info": {
+          "summary": "Generate UI with simple text prompts",
+          "description": "AI-powered UI generator creating React components from text prompts and images",
+          "website": "https://v0.dev",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:40.935Z",
+        "updated_at": "2025-06-25T02:48:36.153Z"
+      },
+      "windsurf": {
+        "id": "14",
+        "slug": "windsurf",
+        "name": "Windsurf",
+        "category": "code-editor",
+        "status": "active",
+        "company_id": "6",
+        "info": {
+          "summary": "The most powerful AI Code Editor",
+          "description": "AI-powered IDE assistant acquired by OpenAI for $3 billion in April 2025",
+          "website": "https://windsurf.com",
+          "features": [],
+          "technical": {},
+          "business": {
+            "pricing_model": "freemium"
+          },
+          "metrics": {}
+        },
+        "created_at": "2025-06-23T15:40:43.003Z",
+        "updated_at": "2025-06-25T02:48:35.065Z"
+      }
+    },
+    "byCategory": {
+      "open-source-framework": [
+        "7",
+        "6",
+        "8",
+        "13"
+      ],
+      "ide-assistant": [
+        "26",
+        "25",
+        "2",
+        "27",
+        "22",
+        "30",
+        "9",
+        "29",
+        "21"
+      ],
+      "app-builder": [
+        "5",
+        "19",
+        "12",
+        "10"
+      ],
+      "autonomous-agent": [
+        "18",
+        "4",
+        "3",
+        "11",
+        "24"
+      ],
+      "code-review": [
+        "28",
+        "17",
+        "15"
+      ],
+      "code-editor": [
+        "1",
+        "14"
+      ],
+      "testing-tool": [
+        "20",
+        "16"
+      ]
+    }
+  },
+  "metadata": {
+    "total": 29,
+    "last_updated": "2025-06-27T21:04:56.162Z",
+    "version": "1.0.0"
+  }
+}
