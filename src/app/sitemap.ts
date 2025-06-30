@@ -56,9 +56,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [tools, latestPeriod] = await Promise.all([getTools(), getLatestRankingPeriod()]);
 
   // Core pages with high priority and language alternates
+  // Use /en/ prefixed URLs as canonical since root URLs redirect to /en/
   const coreSitemap: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
+      url: `${baseUrl}/en`,
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 1.0,
@@ -67,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     },
     {
-      url: `${baseUrl}/rankings`,
+      url: `${baseUrl}/en/rankings`,
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 0.9,
@@ -76,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     },
     {
-      url: `${baseUrl}/tools`,
+      url: `${baseUrl}/en/tools`,
       lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -85,7 +86,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     },
     {
-      url: `${baseUrl}/news`,
+      url: `${baseUrl}/en/news`,
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 0.7,
@@ -94,7 +95,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     },
     {
-      url: `${baseUrl}/methodology`,
+      url: `${baseUrl}/en/methodology`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.6,
@@ -103,7 +104,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     },
     {
-      url: `${baseUrl}/about`,
+      url: `${baseUrl}/en/about`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.5,
@@ -112,7 +113,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     },
     {
-      url: `${baseUrl}/updates`,
+      url: `${baseUrl}/en/updates`,
       lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.6,
@@ -128,7 +129,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .flatMap((locale) =>
       coreSitemap.map((page) => ({
         ...page,
-        url: page.url.replace(baseUrl, `${baseUrl}/${locale}`),
+        url: page.url.replace(`${baseUrl}/en`, `${baseUrl}/${locale}`),
         priority: (page.priority || 0.5) * 0.9, // Slightly lower priority for translated pages
         // Keep the same alternates as the original page
         alternates: page.alternates,
@@ -146,7 +147,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const alternates = generateAlternates(`/tools/${tool.slug}`, baseUrl);
     const pages = [
       {
-        url: `${baseUrl}/tools/${tool.slug}`,
+        url: `${baseUrl}/en/tools/${tool.slug}`,
         lastModified: toolDate,
         changeFrequency: "weekly" as const,
         priority: 0.8,
@@ -178,7 +179,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const rankingPages: MetadataRoute.Sitemap = latestPeriod
     ? [
         {
-          url: `${baseUrl}/rankings/${latestPeriod}`,
+          url: `${baseUrl}/en/rankings/${latestPeriod}`,
           lastModified: currentDate,
           changeFrequency: "never",
           priority: 0.6,

@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { getNewsRepo } from "@/lib/json-db";
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     loggers.api.debug("Getting news article by ID", { id });
 
