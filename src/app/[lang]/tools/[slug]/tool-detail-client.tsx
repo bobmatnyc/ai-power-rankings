@@ -86,7 +86,6 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
   const info = tool.info || {};
   const links = info.links || {};
   const product = info.product || {};
-  const company = info.company || {};
   const business = info.business || {};
   const metrics = info.metrics || {};
 
@@ -94,7 +93,6 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
   const githubUrl = links.github || tool.github_repo;
   const description = product.description || tool.description;
   const tagline = product.tagline || tool.tagline;
-  const pricingModel = product.pricing_model || tool.pricing_model;
 
   // Transform pricing data to expected format
   const pricingPlans = business.pricing_details
@@ -195,14 +193,10 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">{dict.tools.detail.company}</p>
-              <p className="font-medium">{company.name || dict.common.notAvailable}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">{dict.tools.detail.pricing}</p>
-              <p className="font-medium">{pricingModel || dict.common.notAvailable}</p>
+              <p className="font-medium">{tool.info?.company?.name || dict.common.notAvailable}</p>
             </div>
           </div>
         </CardContent>

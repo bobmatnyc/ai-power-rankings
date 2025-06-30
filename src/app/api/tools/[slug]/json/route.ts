@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToolsRepo, getRankingsRepo, getNewsRepo } from "@/lib/json-db";
+import { getToolsRepo, getRankingsRepo, getNewsRepo, getCompaniesRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
   const { slug } = await params;
   try {
     const toolsRepo = getToolsRepo();
-    // Companies repo not needed - company info in tool.info
+    const companiesRepo = getCompaniesRepo();
     const rankingsRepo = getRankingsRepo();
     const newsRepo = getNewsRepo();
 
@@ -23,10 +23,20 @@ export async function GET(
       return NextResponse.json({ error: "Tool not found" }, { status: 404 });
     }
 
-    // Get company details
-    // Company info available in tool.info if needed
-
-    // Tool already has proper info structure from JSON database
+    // Get company details and add to tool info
+    if (tool.company_id && tool.info) {
+      const company = await companiesRepo.getById(tool.company_id);
+      if (company) {
+        // Add company data to tool info
+        tool.info.company = {
+          id: company.id,
+          name: company.name,
+          website: company.website,
+          founded: company.founded,
+          size: company.size,
+        };
+      }
+    }
 
     // Get current ranking
     const currentPeriod = await rankingsRepo.getCurrentPeriod();

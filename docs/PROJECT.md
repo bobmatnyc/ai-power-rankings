@@ -166,7 +166,7 @@ Responsible for:
 - `src/i18n/`: Internationalization configuration
   - `config.ts`: Language configuration and locales
   - `get-dictionary.ts`: Dictionary loading function
-  - `dictionaries/`: Translation JSON files for each language
+  - `dictionaries/`: Translation JSON files for each language (located at `/src/i18n/dictionaries/`)
     - `en.json`, `de.json`, `fr.json`, `it.json`, `ja.json`, `ko.json`, `uk.json`, `hr.json`, `zh.json`
     - Internal JS tools for translation management (excluded from builds)
 - `src/types/`: TypeScript type definitions
@@ -488,7 +488,9 @@ The platform supports 9 languages with a custom i18n implementation:
 
 - **Main config**: `/src/i18n/config.ts` - Defines supported locales and default language
 - **Dictionary loader**: `/src/i18n/get-dictionary.ts` - Async function to load translations
-- **Translation files**: `/src/i18n/dictionaries/[lang].json` - One file per language
+- **Translation files**: `/src/i18n/dictionaries/[lang].json` - One JSON file per language
+  - Full path: `/src/i18n/dictionaries/` contains all translation files
+  - Example: `/src/i18n/dictionaries/en.json` for English translations
 - **Middleware**: `/src/middleware.ts` - Handles locale detection and routing
 
 #### Key Implementation Details

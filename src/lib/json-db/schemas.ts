@@ -5,7 +5,7 @@ export interface Tool {
   slug: string;
   name: string;
   category: string;
-  status: "active" | "inactive" | "deprecated";
+  status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";
   company_id?: string;
   launch_date?: string; // Actual launch/release date of the tool
   info: {
@@ -25,6 +25,8 @@ export interface Tool {
       business_model?: string;
       base_price?: number;
       enterprise_pricing?: boolean;
+      free_tier?: boolean;
+      pricing_details?: Record<string, string>;
     };
     metrics: {
       github_stars?: number;
@@ -35,6 +37,13 @@ export interface Tool {
       funding_total?: number;
       last_funding_date?: string;
       swe_bench_score?: number;
+    };
+    company?: {
+      id: string;
+      name: string;
+      website?: string;
+      founded?: string;
+      size?: string;
     };
   };
   tags?: string[];
