@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-06-28T02:32:09.460Z",
+  "migration_type": "historical-rankings-to-json",
+  "stats": {
+    "periods": 1,
+    "rankings": 38,
+    "errors": []
+  },
+  "success": true,
+  "source": "production exports and historical files"
+}

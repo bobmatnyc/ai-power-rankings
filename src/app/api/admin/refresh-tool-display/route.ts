@@ -4,7 +4,7 @@ export async function POST(_request: NextRequest) {
   try {
     // This endpoint requires metrics and rankings repositories which don't exist yet
     // Returning info about what would need to be done
-    
+
     return NextResponse.json({
       success: false,
       message: "Tool display refresh not available - metrics and rankings repositories needed",
@@ -27,7 +27,7 @@ export async function POST(_request: NextRequest) {
 export async function GET() {
   try {
     // This endpoint requires metrics and rankings repositories which don't exist yet
-    
+
     return NextResponse.json({
       message: "Tool display status check not available - metrics and rankings repositories needed",
       note: "This endpoint requires metrics and rankings JSON repositories to be implemented first",

@@ -5,11 +5,11 @@ import { loggers } from "@/lib/logger";
 export async function GET() {
   try {
     const rankingsRepo = RankingsRepository.getInstance();
-    
+
     // Get all available periods
     const periods = await rankingsRepo.getPeriods();
     const currentPeriod = await rankingsRepo.getCurrentPeriod();
-    
+
     // Build period metadata
     const periodData = await Promise.all(
       periods.map(async (period) => {
@@ -25,10 +25,10 @@ export async function GET() {
       })
     );
 
-    loggers.api.info("Retrieved ranking periods", { 
+    loggers.api.info("Retrieved ranking periods", {
       total_periods: periodData.length,
       current_period: currentPeriod || "none",
-      periods_order: periods
+      periods_order: periods,
     });
 
     return NextResponse.json({
@@ -36,12 +36,8 @@ export async function GET() {
       periods: periodData,
       total: periodData.length,
     });
-
   } catch (error) {
     loggers.api.error("Failed to get ranking periods", { error });
-    return NextResponse.json(
-      { error: "Failed to retrieve ranking periods" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to retrieve ranking periods" }, { status: 500 });
   }
 }

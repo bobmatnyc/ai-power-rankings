@@ -3,10 +3,7 @@ import { auth } from "@/auth";
 import { getSubscribersRepo } from "@/lib/json-db";
 import { sendTestEmail } from "@/lib/email/email-service";
 
-export async function POST(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     // Check authentication
     const session = await auth();

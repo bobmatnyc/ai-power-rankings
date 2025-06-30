@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCompaniesRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
+import { cachedJsonResponse } from "@/lib/api-cache";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,9 +12,9 @@ export async function GET(request: NextRequest) {
     const size = searchParams.get("size");
 
     const companiesRepo = getCompaniesRepo();
-    
+
     let companies;
-    
+
     // Apply filters
     if (search) {
       companies = await companiesRepo.search(search);
@@ -22,36 +23,29 @@ export async function GET(request: NextRequest) {
     } else {
       companies = await companiesRepo.getAll();
     }
-    
+
     // Sort alphabetically by name
     companies.sort((a, b) => a.name.localeCompare(b.name));
-    
+
     // Apply pagination
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedCompanies = companies.slice(startIndex, endIndex);
-    
-    const response = {
-      companies: paginatedCompanies,
-      total: companies.length,
-      page,
-      totalPages: Math.ceil(companies.length / limit),
-      hasMore: endIndex < companies.length,
-      _source: "json-db",
-    };
-    
-    const apiResponse = NextResponse.json(response);
-    
-    // Set cache headers
-    apiResponse.headers.set(
-      "Cache-Control",
-      "public, s-maxage=3600, stale-while-revalidate=1800"
+
+    return cachedJsonResponse(
+      {
+        companies: paginatedCompanies,
+        total: companies.length,
+        page,
+        totalPages: Math.ceil(companies.length / limit),
+        hasMore: endIndex < companies.length,
+        _source: "json-db",
+      },
+      "/api/companies"
     );
-    
-    return apiResponse;
   } catch (error) {
     loggers.api.error("Companies API error", { error });
-    
+
     return NextResponse.json(
       {
         error: "Failed to fetch companies",
@@ -66,18 +60,20 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // TODO: Add authentication check here
-    
+
     const body = await request.json();
     const companiesRepo = getCompaniesRepo();
-    
+
     // Generate slug if not provided
-    const slug = body.slug || 
-      body.name.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
+    const slug =
+      body.slug ||
+      body.name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
         .trim();
-    
+
     const company = {
       id: body.id || `company-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       slug,
@@ -93,16 +89,16 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    
+
     await companiesRepo.upsert(company);
-    
+
     return NextResponse.json({
       success: true,
       company,
     });
   } catch (error) {
     loggers.api.error("Create company error", { error });
-    
+
     return NextResponse.json(
       {
         error: "Failed to create company",

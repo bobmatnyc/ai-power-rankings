@@ -9,7 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 // import { Calendar } from "@/components/ui/calendar";
 // import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -91,13 +97,13 @@ interface RankingPeriod {
 
 export function EnhancedRankingsManager() {
   // const { setChanges } = useRankingChanges();
-  
+
   // State for UI controls
   const [previewDate, setPreviewDate] = useState<Date>(new Date());
   const [compareWithPeriod, setCompareWithPeriod] = useState<string>("auto");
   const [availablePeriods, setAvailablePeriods] = useState<RankingPeriod[]>([]);
   const [currentLiveRanking, setCurrentLiveRanking] = useState<string>("");
-  
+
   // State for operations
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isBuildingRanking, setIsBuildingRanking] = useState(false);
@@ -109,12 +115,12 @@ export function EnhancedRankingsManager() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [editingName, setEditingName] = useState("");
   const [isRenamingRanking, setIsRenamingRanking] = useState(false);
-  
+
   // State for data
   const [preview, setPreview] = useState<RankingPreview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
+
   // State for UI
   // const [showCalendar, setShowCalendar] = useState(false);
   const [selectedRankingData, setSelectedRankingData] = useState<any[]>([]);
@@ -131,7 +137,10 @@ export function EnhancedRankingsManager() {
       const response = await fetch("/api/admin/ranking-periods");
       if (response.ok) {
         const data = await response.json();
-        console.log("Loaded periods from API:", data.periods?.map((p: RankingPeriod) => p.period));
+        console.log(
+          "Loaded periods from API:",
+          data.periods?.map((p: RankingPeriod) => p.period)
+        );
         setAvailablePeriods(data.periods || []);
         const current = data.periods?.find((p: RankingPeriod) => p.is_current);
         if (current) {
@@ -183,7 +192,9 @@ export function EnhancedRankingsManager() {
   };
 
   const handleBuildRankings = async () => {
-    if (!preview) {return;}
+    if (!preview) {
+      return;
+    }
 
     setIsBuildingRanking(true);
     setError(null);
@@ -207,14 +218,15 @@ export function EnhancedRankingsManager() {
       }
 
       const data = await response.json();
-      setSuccess(`Successfully built rankings for ${data.tools_saved} tools in period ${preview.period}`);
-      
+      setSuccess(
+        `Successfully built rankings for ${data.tools_saved} tools in period ${preview.period}`
+      );
+
       // Reload periods after building
       await loadAvailablePeriods();
-      
+
       // Clear preview after successful build
       setPreview(null);
-
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -242,7 +254,6 @@ export function EnhancedRankingsManager() {
       setCurrentLiveRanking(period);
       setSuccess(`Successfully set ${period} as the live ranking`);
       await loadAvailablePeriods();
-
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -256,10 +267,8 @@ export function EnhancedRankingsManager() {
     setSuccess(null);
 
     try {
-      const response = await fetch("/api/admin/delete-ranking", {
+      const response = await fetch(`/api/admin/rankings/${period}/delete`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ period }),
       });
 
       if (!response.ok) {
@@ -269,15 +278,14 @@ export function EnhancedRankingsManager() {
 
       setSuccess(`Successfully deleted ranking period ${period}`);
       setDeleteConfirmPeriod(null);
-      
+
       // If we deleted the current live ranking, clear it
       if (currentLiveRanking === period) {
         setCurrentLiveRanking("");
       }
-      
+
       // Reload periods after deletion
       await loadAvailablePeriods();
-
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -296,9 +304,9 @@ export function EnhancedRankingsManager() {
       const response = await fetch("/api/admin/rename-ranking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           old_period: selectedRanking.period,
-          new_period: editingName 
+          new_period: editingName,
         }),
       });
 
@@ -308,26 +316,27 @@ export function EnhancedRankingsManager() {
       }
 
       await response.json();
-      setSuccess(`Successfully renamed ranking period from ${selectedRanking.period} to ${editingName}`);
-      
+      setSuccess(
+        `Successfully renamed ranking period from ${selectedRanking.period} to ${editingName}`
+      );
+
       // Update the selected ranking with new name
       setSelectedRanking({
         ...selectedRanking,
-        period: editingName
+        period: editingName,
       });
-      
+
       // If we renamed the current live ranking, update it
       if (currentLiveRanking === selectedRanking.period) {
         setCurrentLiveRanking(editingName);
       }
-      
+
       // Close editing mode
       setIsEditingName(false);
       setEditingName("");
-      
+
       // Reload periods after renaming
       await loadAvailablePeriods();
-
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -338,14 +347,14 @@ export function EnhancedRankingsManager() {
   const loadRankingData = async (period: string) => {
     setIsLoadingRankingData(true);
     setError(null);
-    
+
     try {
       const response = await fetch(`/api/admin/rankings/${encodeURIComponent(period)}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to load rankings");
       }
-      
+
       const data = await response.json();
       setSelectedRankingData(data.period?.rankings || data.rankings || []);
     } catch (err) {
@@ -365,9 +374,17 @@ export function EnhancedRankingsManager() {
       case "same":
         return <Minus className="h-4 w-4 text-gray-400" />;
       case "new":
-        return <Badge variant="secondary" className="h-4 px-1 text-xs">NEW</Badge>;
+        return (
+          <Badge variant="secondary" className="h-4 px-1 text-xs">
+            NEW
+          </Badge>
+        );
       case "dropped":
-        return <Badge variant="destructive" className="h-4 px-1 text-xs">OUT</Badge>;
+        return (
+          <Badge variant="destructive" className="h-4 px-1 text-xs">
+            OUT
+          </Badge>
+        );
       default:
         return <ArrowUpDown className="h-4 w-4 text-gray-400" />;
     }
@@ -379,53 +396,79 @@ export function EnhancedRankingsManager() {
     if (/^\d{4}-\d{2}$/.test(period)) {
       return new Date(period + "-01");
     }
-    
+
     // Handle month-year format (e.g., "january-2024", "march-2025")
     const monthYearMatch = period.match(/^(\w+)-(\d{4})$/);
     if (monthYearMatch) {
       const [_, month, year] = monthYearMatch;
       const monthMap: Record<string, number> = {
-        january: 0, february: 1, march: 2, april: 3,
-        may: 4, june: 5, july: 6, august: 7,
-        september: 8, october: 9, november: 10, december: 11
+        january: 0,
+        february: 1,
+        march: 2,
+        april: 3,
+        may: 4,
+        june: 5,
+        july: 6,
+        august: 7,
+        september: 8,
+        october: 9,
+        november: 10,
+        december: 11,
       };
       const monthIndex = monthMap[month?.toLowerCase() || ""];
       if (monthIndex !== undefined && year) {
         return new Date(parseInt(year), monthIndex, 1);
       }
     }
-    
+
     // Handle "Month Year" format (e.g., "June 2025")
     const monthSpaceYearMatch = period.match(/^(\w+)\s+(\d{4})$/);
     if (monthSpaceYearMatch) {
       const [_, month, year] = monthSpaceYearMatch;
       const monthMap: Record<string, number> = {
-        january: 0, february: 1, march: 2, april: 3,
-        may: 4, june: 5, july: 6, august: 7,
-        september: 8, october: 9, november: 10, december: 11
+        january: 0,
+        february: 1,
+        march: 2,
+        april: 3,
+        may: 4,
+        june: 5,
+        july: 6,
+        august: 7,
+        september: 8,
+        october: 9,
+        november: 10,
+        december: 11,
       };
       const monthIndex = monthMap[month?.toLowerCase() || ""];
       if (monthIndex !== undefined && year) {
         return new Date(parseInt(year), monthIndex, 1);
       }
     }
-    
+
     // Fallback: try to parse as-is
     const date = new Date(period);
     if (!isNaN(date.getTime())) {
       return date;
     }
-    
+
     // If all else fails, return current date (will sort to top)
     return new Date();
   };
 
   const getChangeBadge = (change: number, movement: string) => {
-    if (movement === "new") {return <Badge variant="secondary">NEW</Badge>;}
-    if (movement === "dropped") {return <Badge variant="destructive">DROPPED</Badge>;}
-    
+    if (movement === "new") {
+      return <Badge variant="secondary">NEW</Badge>;
+    }
+    if (movement === "dropped") {
+      return <Badge variant="destructive">DROPPED</Badge>;
+    }
+
     if (change > 0) {
-      return <Badge variant="default" className="text-green-700 bg-green-100">+{change}</Badge>;
+      return (
+        <Badge variant="default" className="text-green-700 bg-green-100">
+          +{change}
+        </Badge>
+      );
     }
     if (change < 0) {
       return <Badge variant="destructive">{change}</Badge>;
@@ -452,7 +495,11 @@ export function EnhancedRankingsManager() {
                 onChange={(e) => {
                   if (e.target.value) {
                     // Parse the date string to avoid timezone issues
-                    const [year, month, day] = e.target.value.split('-').map(Number);
+                    const [year, month, day] = e.target.value.split("-").map(Number) as [
+                      number,
+                      number,
+                      number,
+                    ];
                     setPreviewDate(new Date(year, month - 1, day, 12, 0, 0));
                   }
                 }}
@@ -479,16 +526,14 @@ export function EnhancedRankingsManager() {
                       return dateB.getTime() - dateA.getTime();
                     })
                     .map((period) => (
-                    <SelectItem key={period.id} value={period.period}>
-                      {period.period} ({period.total_tools} tools)
-                    </SelectItem>
-                  ))}
+                      <SelectItem key={period.id} value={period.period}>
+                        {period.period} ({period.total_tools} tools)
+                      </SelectItem>
+                    ))}
                   <SelectItem value="none">No Comparison</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-xs text-muted-foreground">
-                Base period for movement comparison
-              </p>
+              <p className="text-xs text-muted-foreground">Base period for movement comparison</p>
             </div>
 
             {/* Live Ranking */}
@@ -507,19 +552,13 @@ export function EnhancedRankingsManager() {
                   <RefreshCw className={cn("h-3 w-3", isLoadingPeriods && "animate-spin")} />
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Currently displayed on the site
-              </p>
+              <p className="text-xs text-muted-foreground">Currently displayed on the site</p>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3">
-            <Button
-              onClick={handlePreviewRankings}
-              disabled={isPreviewLoading}
-              variant="outline"
-            >
+            <Button onClick={handlePreviewRankings} disabled={isPreviewLoading} variant="outline">
               {isPreviewLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
@@ -559,17 +598,19 @@ export function EnhancedRankingsManager() {
                   const dateB = parsePeriodToDate(b.period);
                   return dateB.getTime() - dateA.getTime();
                 });
-                console.log("Sorted periods (newest first):", sorted.map(p => p.period));
+                console.log(
+                  "Sorted periods (newest first):",
+                  sorted.map((p) => p.period)
+                );
                 return sorted;
-              })()
-                .map((period) => (
+              })().map((period) => (
                 <div
                   key={period.id}
                   className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex-1">
-                      <div 
+                      <div
                         className="font-medium cursor-pointer hover:text-primary transition-colors"
                         onClick={() => {
                           setSelectedRanking(period);
@@ -608,7 +649,7 @@ export function EnhancedRankingsManager() {
                           )}
                           Set Live
                         </Button>
-                        
+
                         {deleteConfirmPeriod === period.period ? (
                           <div className="flex items-center gap-1">
                             <span className="text-xs text-muted-foreground">Confirm delete?</span>
@@ -661,15 +702,11 @@ export function EnhancedRankingsManager() {
               <div>
                 <CardTitle>Ranking Details: {selectedRanking.period}</CardTitle>
                 <CardDescription>
-                  {selectedRanking.total_tools} tools • {selectedRanking.algorithm_version} • 
+                  {selectedRanking.total_tools} tools • {selectedRanking.algorithm_version} •
                   Created {format(parseISO(selectedRanking.created_at), "MMM d, yyyy")}
                 </CardDescription>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedRanking(null)}
-              >
+              <Button variant="outline" size="sm" onClick={() => setSelectedRanking(null)}>
                 <X className="h-4 w-4" />
                 Close
               </Button>
@@ -691,7 +728,9 @@ export function EnhancedRankingsManager() {
                     <Button
                       size="sm"
                       onClick={handleRenameRanking}
-                      disabled={isRenamingRanking || !editingName || editingName === selectedRanking.period}
+                      disabled={
+                        isRenamingRanking || !editingName || editingName === selectedRanking.period
+                      }
                     >
                       {isRenamingRanking ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -757,19 +796,27 @@ export function EnhancedRankingsManager() {
                           <div className="grid grid-cols-4 gap-2 text-xs">
                             <div className="text-center">
                               <div className="text-muted-foreground">Agentic</div>
-                              <div className="font-medium">{ranking.factor_scores?.agentic_capability?.toFixed(1) || "-"}</div>
+                              <div className="font-medium">
+                                {ranking.factor_scores?.agentic_capability?.toFixed(1) || "-"}
+                              </div>
                             </div>
                             <div className="text-center">
                               <div className="text-muted-foreground">Tech</div>
-                              <div className="font-medium">{ranking.factor_scores?.technical_performance?.toFixed(1) || "-"}</div>
+                              <div className="font-medium">
+                                {ranking.factor_scores?.technical_performance?.toFixed(1) || "-"}
+                              </div>
                             </div>
                             <div className="text-center">
                               <div className="text-muted-foreground">Market</div>
-                              <div className="font-medium">{ranking.factor_scores?.market_traction?.toFixed(1) || "-"}</div>
+                              <div className="font-medium">
+                                {ranking.factor_scores?.market_traction?.toFixed(1) || "-"}
+                              </div>
                             </div>
                             <div className="text-center">
                               <div className="text-muted-foreground">Dev</div>
-                              <div className="font-medium">{ranking.factor_scores?.developer_adoption?.toFixed(1) || "-"}</div>
+                              <div className="font-medium">
+                                {ranking.factor_scores?.developer_adoption?.toFixed(1) || "-"}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -809,16 +856,13 @@ export function EnhancedRankingsManager() {
             <CardTitle className="flex items-center justify-between">
               <span>Ranking Preview</span>
               <div className="flex items-center gap-2">
-                {preview.is_initial_ranking && (
-                  <Badge variant="secondary">Initial Ranking</Badge>
-                )}
-                <Badge variant="outline">
-                  {format(previewDate, "MMM d, yyyy")}
-                </Badge>
+                {preview.is_initial_ranking && <Badge variant="secondary">Initial Ranking</Badge>}
+                <Badge variant="outline">{format(previewDate, "MMM d, yyyy")}</Badge>
               </div>
             </CardTitle>
             <CardDescription>
-              Period: {preview.period} | Algorithm: {preview.algorithm_version} | Tools: {preview.total_tools}
+              Period: {preview.period} | Algorithm: {preview.algorithm_version} | Tools:{" "}
+              {preview.total_tools}
               {preview.comparison_period && ` | Compared with: ${preview.comparison_period}`}
             </CardDescription>
           </CardHeader>
@@ -828,7 +872,9 @@ export function EnhancedRankingsManager() {
                 <TabsTrigger value="summary">Summary</TabsTrigger>
                 <TabsTrigger value="analysis">Analysis</TabsTrigger>
                 <TabsTrigger value="up">Moved Up ({preview.summary.tools_moved_up})</TabsTrigger>
-                <TabsTrigger value="down">Moved Down ({preview.summary.tools_moved_down})</TabsTrigger>
+                <TabsTrigger value="down">
+                  Moved Down ({preview.summary.tools_moved_down})
+                </TabsTrigger>
                 <TabsTrigger value="new">New ({preview.new_entries})</TabsTrigger>
                 <TabsTrigger value="all">All Rankings</TabsTrigger>
               </TabsList>
@@ -841,7 +887,9 @@ export function EnhancedRankingsManager() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">
-                        {preview.summary.tools_moved_up + preview.summary.tools_moved_down + preview.new_entries}
+                        {preview.summary.tools_moved_up +
+                          preview.summary.tools_moved_down +
+                          preview.new_entries}
                       </div>
                     </CardContent>
                   </Card>
@@ -863,7 +911,8 @@ export function EnhancedRankingsManager() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-lg font-bold">
-                        {preview.summary.lowest_score?.toFixed(1) || "0.0"} - {preview.summary.highest_score?.toFixed(1) || "0.0"}
+                        {preview.summary.lowest_score?.toFixed(1) || "0.0"} -{" "}
+                        {preview.summary.highest_score?.toFixed(1) || "0.0"}
                       </div>
                     </CardContent>
                   </Card>
@@ -884,8 +933,9 @@ export function EnhancedRankingsManager() {
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      This is an initial ranking calculation as no previous rankings exist for comparison.
-                      All tools will be ranked based on their scores up to {format(previewDate, "MMM d, yyyy")}.
+                      This is an initial ranking calculation as no previous rankings exist for
+                      comparison. All tools will be ranked based on their scores up to{" "}
+                      {format(previewDate, "MMM d, yyyy")}.
                     </AlertDescription>
                   </Alert>
                 )}
@@ -911,23 +961,41 @@ export function EnhancedRankingsManager() {
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-2">
-                            {Object.entries(preview.change_report.factorTrends).map(([factor, trend]) => {
-                              const netTrend = trend.improving - trend.declining;
-                              return (
-                                <div key={factor} className="flex items-center justify-between p-2 rounded">
-                                  <span className="text-sm font-medium capitalize">
-                                    {factor.replace(/([A-Z])/g, ' $1').trim()}
-                                  </span>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm text-green-600">+{trend.improving}</span>
-                                    <span className="text-sm text-red-600">-{trend.declining}</span>
-                                    <Badge variant={netTrend > 0 ? "default" : netTrend < 0 ? "destructive" : "secondary"}>
-                                      {netTrend > 0 ? '+' : ''}{netTrend}
-                                    </Badge>
+                            {Object.entries(preview.change_report.factorTrends).map(
+                              ([factor, trend]) => {
+                                const netTrend = trend.improving - trend.declining;
+                                return (
+                                  <div
+                                    key={factor}
+                                    className="flex items-center justify-between p-2 rounded"
+                                  >
+                                    <span className="text-sm font-medium capitalize">
+                                      {factor.replace(/([A-Z])/g, " $1").trim()}
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm text-green-600">
+                                        +{trend.improving}
+                                      </span>
+                                      <span className="text-sm text-red-600">
+                                        -{trend.declining}
+                                      </span>
+                                      <Badge
+                                        variant={
+                                          netTrend > 0
+                                            ? "default"
+                                            : netTrend < 0
+                                              ? "destructive"
+                                              : "secondary"
+                                        }
+                                      >
+                                        {netTrend > 0 ? "+" : ""}
+                                        {netTrend}
+                                      </Badge>
+                                    </div>
                                   </div>
-                                </div>
-                              );
-                            })}
+                                );
+                              }
+                            )}
                           </div>
                         </CardContent>
                       </Card>
@@ -937,10 +1005,9 @@ export function EnhancedRankingsManager() {
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      {preview.is_initial_ranking 
+                      {preview.is_initial_ranking
                         ? "This is an initial ranking - no movement analysis available."
-                        : "No detailed analysis available for this comparison."
-                      }
+                        : "No detailed analysis available for this comparison."}
                     </AlertDescription>
                   </Alert>
                 )}
@@ -952,7 +1019,10 @@ export function EnhancedRankingsManager() {
                     .filter((tool) => tool.movement === "up")
                     .sort((a, b) => b.position_change - a.position_change)
                     .map((tool, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between p-3 border rounded-lg"
+                      >
                         <div className="flex items-center gap-3 flex-1">
                           {getMovementIcon(tool.movement, tool.position_change)}
                           <div className="flex-1">
@@ -984,7 +1054,10 @@ export function EnhancedRankingsManager() {
                     .filter((tool) => tool.movement === "down")
                     .sort((a, b) => a.position_change - b.position_change)
                     .map((tool, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between p-3 border rounded-lg"
+                      >
                         <div className="flex items-center gap-3 flex-1">
                           {getMovementIcon(tool.movement, tool.position_change)}
                           <div className="flex-1">
@@ -1016,7 +1089,10 @@ export function EnhancedRankingsManager() {
                     .filter((tool) => tool.movement === "new")
                     .sort((a, b) => a.new_position - b.new_position)
                     .map((tool, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3 border rounded-lg bg-green-50">
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between p-3 border rounded-lg bg-green-50"
+                      >
                         <div className="flex items-center gap-3 flex-1">
                           {getMovementIcon(tool.movement, tool.position_change)}
                           <div className="flex-1">
@@ -1047,7 +1123,10 @@ export function EnhancedRankingsManager() {
                   {preview.rankings_comparison
                     .sort((a, b) => a.new_position - b.new_position)
                     .map((tool, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between p-3 border rounded-lg"
+                      >
                         <div className="flex items-center gap-3 flex-1">
                           <div className="w-8 text-center font-mono text-sm text-muted-foreground">
                             #{tool.new_position}
@@ -1056,12 +1135,11 @@ export function EnhancedRankingsManager() {
                           <div className="flex-1">
                             <div className="font-medium">{tool.tool_name}</div>
                             <div className="text-sm text-muted-foreground">
-                              {tool.movement === "new" 
+                              {tool.movement === "new"
                                 ? `New entry at position ${tool.new_position}`
                                 : tool.movement === "dropped"
-                                ? `Previously at position ${tool.current_position}`
-                                : `Position: ${tool.current_position} → ${tool.new_position}`
-                              }
+                                  ? `Previously at position ${tool.current_position}`
+                                  : `Position: ${tool.current_position} → ${tool.new_position}`}
                             </div>
                           </div>
                         </div>

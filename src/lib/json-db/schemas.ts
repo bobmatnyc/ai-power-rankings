@@ -5,8 +5,9 @@ export interface Tool {
   slug: string;
   name: string;
   category: string;
-  status: 'active' | 'inactive' | 'deprecated';
+  status: "active" | "inactive" | "deprecated";
   company_id?: string;
+  launch_date?: string; // Actual launch/release date of the tool
   info: {
     summary: string;
     description: string;
@@ -55,7 +56,7 @@ export interface RankingEntry {
   tool_name: string;
   position: number;
   score: number;
-  tier?: 'S' | 'A' | 'B' | 'C' | 'D';
+  tier?: "S" | "A" | "B" | "C" | "D";
   factor_scores: {
     agentic_capability: number;
     innovation: number;
@@ -69,7 +70,7 @@ export interface RankingEntry {
   movement?: {
     previous_position?: number;
     change: number;
-    direction: 'up' | 'down' | 'same' | 'new';
+    direction: "up" | "down" | "same" | "new";
   };
   change_analysis?: {
     primary_reason?: string;
@@ -112,7 +113,7 @@ export interface Company {
 export interface Subscriber {
   id: string;
   email: string;
-  status: 'pending' | 'verified' | 'unsubscribed';
+  status: "pending" | "verified" | "unsubscribed";
   verification_token?: string;
   verified_at?: string;
   unsubscribed_at?: string;
@@ -158,7 +159,7 @@ export interface RankingsData {
 export interface IngestionReport {
   id: string;
   filename: string;
-  status: 'completed' | 'partial' | 'failed';
+  status: "completed" | "partial" | "failed";
   total_items: number;
   processed_items: number;
   failed_items: number;
@@ -240,7 +241,7 @@ export interface SubscribersData {
 }
 
 export interface SiteSettings {
-  id: 'settings';
+  id: "settings";
   site_name: string;
   description: string;
   contact_email: string;

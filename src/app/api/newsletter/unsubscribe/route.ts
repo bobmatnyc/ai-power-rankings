@@ -18,7 +18,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Find subscription by token
     const subscribers = await subscribersRepo.getAll();
-    const subscription = subscribers.find(s => s.verification_token === token);
+    const subscription = subscribers.find((s) => s.verification_token === token);
 
     if (!subscription) {
       loggers.api.error("Newsletter unsubscribe subscription not found", { token });

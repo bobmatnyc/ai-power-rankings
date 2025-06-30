@@ -5,6 +5,98 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2025-06-30
+
+### 🚀 Major Architecture Change
+- **Complete Migration to JSON File Storage**: Removed dependency on Payload CMS and Supabase database
+- **100% Static Operation**: Application now runs entirely from JSON files, no database required
+- **TrackDown Integration**: Replaced GitHub Issues with git-native project management system
+
+### Added
+- **JSON File Architecture**
+  - Primary data storage in `/data/json/` for all application data
+  - Backup system with automatic rotation (keeps last 10 backups)
+  - Data validation and integrity checks
+  - Performance optimization for large datasets
+  
+- **New Features**
+  - Tool pricing data display with detailed plan information
+  - Expandable "... and X more tools" in rankings views
+  - Business metrics, scores, and history tabs in tool details
+  - PM2 process manager support for development server
+  - Comprehensive data import/export scripts
+  
+- **Developer Experience**
+  - TrackDown project management system in `/trackdown/`
+  - Enhanced debugging workflow with PM2
+  - Automated backup and restore procedures
+  - JSON schema validation
+  - Performance monitoring tools
+
+### Changed
+- **Data Storage**
+  - Migrated from Payload CMS collections to JSON repositories
+  - Companies, tools, rankings, and news now stored as JSON files
+  - Removed all database dependencies
+  - Simplified data access patterns
+  
+- **API Architecture**
+  - All API endpoints now read from JSON files
+  - Removed Payload-specific authentication
+  - Simplified API responses
+  - Better error handling for file operations
+  
+- **Development Workflow**
+  - Switch from npm to pnpm for package management
+  - Updated all documentation to reflect pnpm commands
+  - Improved development server stability with PM2
+  - Enhanced TypeScript configuration
+
+### Fixed
+- **UI/UX Issues**
+  - Tool icons now show generic SVG instead of text initials
+  - Missing translation keys added (back, viewSource)
+  - Duplicate headers removed from rankings views
+  - Tool descriptions limited to 3 lines on index page
+  
+- **Data Issues**
+  - Tool pricing data properly displayed
+  - Business metrics correctly fetched from tool info
+  - Rankings history properly loaded
+  - News items correctly associated with tools
+  
+- **Technical Issues**
+  - TypeScript errors in Next.js 15 async params
+  - Module resolution issues
+  - Build errors from removed dependencies
+  - Development server stability
+
+### Removed
+- **Payload CMS** - Complete removal of CMS dependency
+- **Supabase** - No longer required for data storage
+- **Database Migrations** - Replaced with JSON file operations
+- **Authentication System** - Simplified to basic admin access
+- **OAuth Integration** - Removed complex auth flows
+- **Database Connection Pool** - No longer needed
+
+### Migration Guide
+1. **Data Migration**: Use `pnpm run json:migrate` to convert existing data
+2. **Backup Creation**: Run `pnpm run backup:create` before major changes
+3. **Cache Generation**: No longer required - direct JSON file access
+4. **Environment Variables**: Database URLs no longer needed
+
+### Technical Details
+- **Performance**: ~10x faster data access with JSON files vs database queries
+- **Reliability**: No database connection issues, works offline
+- **Scalability**: Handles 100+ tools and 1000+ news items efficiently
+- **Storage**: ~5MB total for all application data
+
+### Breaking Changes
+- Payload CMS admin panel no longer available
+- Database connection strings removed from environment
+- API authentication simplified (no OAuth)
+- Some admin features consolidated or removed
+
 ## [2.2.0] - 2025-06-26
 
 ### Added

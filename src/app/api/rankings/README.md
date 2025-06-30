@@ -1,28 +1,35 @@
 # Rankings API Migration Status
 
 ## Overview
+
 The rankings API is being migrated from Payload CMS to the JSON database.
 
 ## Public Endpoints
 
 ### Get Current Rankings
+
 **GET** `/api/rankings`
+
 - **Current**: `route.ts` - Uses Payload CMS with news-enhanced algorithm
 - **JSON Version**: `route.json.ts` - Uses JSON database
 
 ### Get Rankings with Options
+
 **GET** `/api/rankings/json`
 
 Query parameters:
+
 - `period` - Specific period (YYYY-MM format). If not provided, returns current period
 - `limit` - Number of rankings to return (default: 100)
 
 Response includes tool details, scores, movement, and tier information.
 
 ### Get Available Periods
+
 **POST** `/api/rankings/json`
 
 Request body:
+
 ```json
 {
   "action": "get-periods"
@@ -32,19 +39,23 @@ Request body:
 ## Admin Endpoints
 
 ### List All Periods
+
 **GET** `/api/admin/rankings/periods`
 
 Returns all ranking periods with metadata.
 
 ### Get/Update/Delete Period
+
 **GET/PUT/DELETE** `/api/admin/rankings/[period]`
 
 Manage specific ranking periods.
 
 ### Build New Rankings
+
 **POST** `/api/admin/rankings/build`
 
 Request body:
+
 ```json
 {
   "period": "2025-07",
@@ -55,9 +66,11 @@ Request body:
 Builds rankings using the v6-news algorithm.
 
 ### Set Current Period
+
 **POST** `/api/admin/rankings/set-current`
 
 Request body:
+
 ```json
 {
   "period": "2025-06"
@@ -77,6 +90,7 @@ Request body:
 ## Data Structure
 
 ### Ranking Entry
+
 ```typescript
 {
   tool_id: string;
@@ -109,10 +123,12 @@ Request body:
 ## Algorithm
 
 The v6-news algorithm uses:
+
 - 70% base score (from tool category)
 - 30% news impact score (from recent news coverage)
 
 Categories have different base scores ranging from 45-75.
 
 ## Testing
+
 Run `npm run test:api:rankings` to test all rankings API endpoints.

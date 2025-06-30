@@ -9,24 +9,25 @@ import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import Link from "next/link";
 import {
-  Award,
-  Sparkles,
   GitBranch,
-  Zap,
-  AlertCircle,
-  Clock,
   Users,
   DollarSign,
   TrendingUp,
   TrendingDown,
   ArrowRight,
+  ExternalLink,
+  Globe,
+  Newspaper,
+  FileText,
 } from "lucide-react";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
 interface MetricsHistory {
   id: string;
+  slug: string;
   tool_id: string;
+  tool_slug?: string;
   tool_name: string;
   tool_category: string;
   tool_website: string;
@@ -41,6 +42,7 @@ interface MetricsHistory {
     revenue?: number;
     score_change?: number;
     rank_change?: number;
+    importance_score?: number;
   };
   tags?: string[];
 }
@@ -106,7 +108,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
       setLoading(true);
 
       // Fetch ALL news from API at once
-      const response = await fetch("/api/news");
+      const response = await fetch("/api/news?limit=100");
 
       if (!response.ok) {
         throw new Error("Failed to fetch news");
@@ -121,23 +123,6 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
     } catch (error) {
       loggers.news.error("Failed to fetch news", { error });
       setLoading(false);
-    }
-  };
-
-  const getEventIcon = (eventType: string): React.JSX.Element => {
-    switch (eventType) {
-      case "milestone":
-        return <Award className="h-4 w-4" />;
-      case "feature":
-        return <Sparkles className="h-4 w-4" />;
-      case "partnership":
-        return <GitBranch className="h-4 w-4" />;
-      case "update":
-        return <Zap className="h-4 w-4" />;
-      case "announcement":
-        return <AlertCircle className="h-4 w-4" />;
-      default:
-        return <Clock className="h-4 w-4" />;
     }
   };
 
@@ -156,6 +141,24 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
       default:
         return "bg-muted text-muted-foreground";
     }
+  };
+
+  const getSourceIcon = (sourceName: string): React.JSX.Element => {
+    const source = sourceName?.toLowerCase() || "";
+    if (source.includes("github") || source.includes("git")) {
+      return <GitBranch className="h-4 w-4" />;
+    } else if (
+      source.includes("news") ||
+      source.includes("techcrunch") ||
+      source.includes("verge")
+    ) {
+      return <Newspaper className="h-4 w-4" />;
+    } else if (source.includes("blog") || source.includes("medium")) {
+      return <FileText className="h-4 w-4" />;
+    } else if (source.includes("twitter") || source.includes("x.com")) {
+      return <Globe className="h-4 w-4" />;
+    }
+    return <ExternalLink className="h-4 w-4" />;
   };
 
   const formatDate = (dateString: string): string => {
@@ -247,151 +250,196 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
           </Card>
         ) : (
           paginatedNews.map((item) => (
-            <Card key={item.id} className="hover:shadow-lg transition-shadow duration-200">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-3 flex-1">
-                    <ToolIcon
-                      name={item.tool_name}
-                      domain={item.tool_website}
-                      size={40}
-                      className="flex-shrink-0 mt-1"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge className={getEventColor(item.event_type)}>
-                          {getEventIcon(item.event_type)}
-                          <span className="ml-1">{item.event_type}</span>
-                        </Badge>
-                        <span className="text-sm text-muted-foreground">
-                          {formatDate(item.event_date)}
-                        </span>
+            <Link key={item.id} href={`/${lang}/news/${item.slug}`} className="block">
+              <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-3 flex-1">
+                      <div className="flex flex-col gap-2">
+                        {/* Tool Icon */}
+                        <ToolIcon
+                          name={item.tool_name}
+                          domain={item.tool_website}
+                          size={40}
+                          className="flex-shrink-0"
+                        />
+                        {/* Source Icon */}
+                        {item.source_name && (
+                          <div className="flex items-center justify-center w-6 h-6 rounded bg-muted/50">
+                            {getSourceIcon(item.source_name)}
+                          </div>
+                        )}
                       </div>
-                      <CardTitle className="text-lg mb-1">{item.title}</CardTitle>
-                      <CardDescription>{item.description}</CardDescription>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <Badge className={getEventColor(item.event_type)}>
+                            <span>{item.event_type}</span>
+                          </Badge>
+                          {item.source_name && (
+                            <Badge variant="outline" className="text-xs">
+                              {getSourceIcon(item.source_name)}
+                              <span className="ml-1">{item.source_name}</span>
+                            </Badge>
+                          )}
+                          <span className="text-sm text-muted-foreground">
+                            {formatDate(item.event_date)}
+                          </span>
+                        </div>
+                        <CardTitle className="text-lg mb-1 hover:text-primary transition-colors">
+                          {item.title}
+                        </CardTitle>
+                        <CardDescription>{item.description}</CardDescription>
+
+                        {/* Tool mentions after summary */}
+                        {item.tool_name && item.tool_name !== "Various Tools" && (
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="text-xs text-muted-foreground">Related to:</span>
+                            <Badge variant="secondary" className="text-xs">
+                              <ToolIcon
+                                name={item.tool_name}
+                                domain={item.tool_website}
+                                size={12}
+                                className="mr-1"
+                              />
+                              {item.tool_name}
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardHeader>
+                </CardHeader>
 
-              <CardContent className="pt-0">
-                <div className="flex flex-wrap items-center gap-4">
-                  {/* Metrics */}
-                  {item.metrics && (
-                    <div className="flex flex-wrap gap-3 text-sm">
-                      {item.metrics.users && (
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4 text-muted-foreground" />
-                          <span>
-                            {(item.metrics.users / 1000).toFixed(0)}K{" "}
-                            {dict.news.metrics?.users || "users"}
-                          </span>
-                        </div>
-                      )}
-                      {item.metrics.revenue && (
-                        <div className="flex items-center gap-1">
-                          <DollarSign className="h-4 w-4 text-muted-foreground" />
-                          <span>${(item.metrics.revenue / 1000000).toFixed(0)}M</span>
-                        </div>
-                      )}
-                      {item.metrics.score_change && (
-                        <div className="flex items-center gap-1">
-                          {item.metrics.score_change > 0 ? (
-                            <TrendingUp className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <TrendingDown className="h-4 w-4 text-red-500" />
-                          )}
-                          <span
-                            className={
-                              item.metrics.score_change > 0 ? "text-green-500" : "text-red-500"
-                            }
-                          >
-                            {item.metrics.score_change > 0 ? "+" : ""}
-                            {item.metrics.score_change.toFixed(1)}{" "}
-                            {dict.news.metrics?.score || "score"}
-                          </span>
-                        </div>
-                      )}
-                      {item.metrics.rank_change && (
-                        <div className="flex items-center gap-1">
-                          {item.metrics.rank_change > 0 ? (
-                            <TrendingUp className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <TrendingDown className="h-4 w-4 text-red-500" />
-                          )}
-                          <span
-                            className={
-                              item.metrics.rank_change > 0 ? "text-green-500" : "text-red-500"
-                            }
-                          >
-                            {item.metrics.rank_change > 0 ? "+" : ""}
-                            {item.metrics.rank_change} {dict.news.metrics?.rank || "rank"}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Tags */}
-                  {item.tags && item.tags.length > 0 && (
-                    <>
-                      <Separator orientation="vertical" className="h-4" />
-                      <div className="flex gap-2">
-                        {item.tags
-                          .slice(0, 3)
-                          .map((tag) => {
-                            // Format tag display name
-                            let displayName = tag;
-
-                            // Skip if tag is just a number (likely tool ID)
-                            if (/^\d+$/.test(tag)) {
-                              return null;
-                            }
-
-                            // Handle category names
-                            if (
-                              tag === "product" ||
-                              tag === "autonomous-agent" ||
-                              tag === "ide-assistant" ||
-                              tag === "code-completion" ||
-                              tag === "testing" ||
-                              tag === "documentation" ||
-                              tag === "code-review" ||
-                              tag === "security" ||
-                              tag === "cloud-ide" ||
-                              tag === "collaboration" ||
-                              tag === "ai-chat"
-                            ) {
-                              displayName = tag
-                                .replace(/-/g, " ")
-                                .replace(/\b\w/g, (l) => l.toUpperCase());
-                            }
-
-                            return (
-                              <Badge key={tag} variant="secondary" className="text-xs">
-                                {displayName}
-                              </Badge>
-                            );
-                          })
-                          .filter(Boolean)}
+                <CardContent className="pt-0">
+                  <div className="flex flex-wrap items-center gap-4">
+                    {/* Metrics */}
+                    {item.metrics && (
+                      <div className="flex flex-wrap gap-3 text-sm">
+                        {item.metrics.users && (
+                          <div className="flex items-center gap-1">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <span>
+                              {(item.metrics.users / 1000).toFixed(0)}K{" "}
+                              {dict.news.metrics?.users || "users"}
+                            </span>
+                          </div>
+                        )}
+                        {item.metrics.revenue && (
+                          <div className="flex items-center gap-1">
+                            <DollarSign className="h-4 w-4 text-muted-foreground" />
+                            <span>${(item.metrics.revenue / 1000000).toFixed(0)}M</span>
+                          </div>
+                        )}
+                        {item.metrics.score_change && (
+                          <div className="flex items-center gap-1">
+                            {item.metrics.score_change > 0 ? (
+                              <TrendingUp className="h-4 w-4 text-green-500" />
+                            ) : (
+                              <TrendingDown className="h-4 w-4 text-red-500" />
+                            )}
+                            <span
+                              className={
+                                item.metrics.score_change > 0 ? "text-green-500" : "text-red-500"
+                              }
+                            >
+                              {item.metrics.score_change > 0 ? "+" : ""}
+                              {item.metrics.score_change.toFixed(1)}{" "}
+                              {dict.news.metrics?.score || "score"}
+                            </span>
+                          </div>
+                        )}
+                        {item.metrics.rank_change && (
+                          <div className="flex items-center gap-1">
+                            {item.metrics.rank_change > 0 ? (
+                              <TrendingUp className="h-4 w-4 text-green-500" />
+                            ) : (
+                              <TrendingDown className="h-4 w-4 text-red-500" />
+                            )}
+                            <span
+                              className={
+                                item.metrics.rank_change > 0 ? "text-green-500" : "text-red-500"
+                              }
+                            >
+                              {item.metrics.rank_change > 0 ? "+" : ""}
+                              {item.metrics.rank_change} {dict.news.metrics?.rank || "rank"}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                    </>
-                  )}
+                    )}
 
-                  {/* View Tool Link - only show if there's a valid tool */}
-                  {item.tool_id && item.tool_id !== "unknown" && (
-                    <div className="ml-auto">
-                      <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/${lang}/tools/${item.tool_id}`}>
-                          {dict.news.viewTool || "View Tool"}
-                          <ArrowRight className="h-4 w-4 ml-1" />
-                        </Link>
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                    {/* Tags */}
+                    {item.tags && item.tags.length > 0 && (
+                      <>
+                        <Separator orientation="vertical" className="h-4" />
+                        <div className="flex gap-2">
+                          {item.tags
+                            .slice(0, 3)
+                            .map((tag) => {
+                              // Format tag display name
+                              let displayName = tag;
+
+                              // Skip if tag is just a number, UUID, or empty
+                              if (
+                                /^\d+$/.test(tag) ||
+                                /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(
+                                  tag
+                                ) ||
+                                !tag.trim()
+                              ) {
+                                return null;
+                              }
+
+                              // Handle category names
+                              if (
+                                tag === "product" ||
+                                tag === "autonomous-agent" ||
+                                tag === "ide-assistant" ||
+                                tag === "code-completion" ||
+                                tag === "testing" ||
+                                tag === "documentation" ||
+                                tag === "code-review" ||
+                                tag === "security" ||
+                                tag === "cloud-ide" ||
+                                tag === "collaboration" ||
+                                tag === "ai-chat"
+                              ) {
+                                displayName = tag
+                                  .replace(/-/g, " ")
+                                  .replace(/\b\w/g, (l) => l.toUpperCase());
+                              }
+
+                              return (
+                                <Badge key={tag} variant="secondary" className="text-xs">
+                                  {displayName}
+                                </Badge>
+                              );
+                            })
+                            .filter(Boolean)}
+                        </div>
+                      </>
+                    )}
+
+                    {/* View Tool Link - only show if there's a valid tool slug */}
+                    {item.tool_slug && (
+                      <div className="ml-auto">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Link href={`/${lang}/tools/${item.tool_slug}`}>
+                            {dict.news.viewTool || "View Tool"}
+                            <ArrowRight className="h-4 w-4 ml-1" />
+                          </Link>
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))
         )}
       </div>

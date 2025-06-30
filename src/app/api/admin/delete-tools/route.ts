@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       try {
         // First get the tool info
         const tool = await toolsRepo.getById(toolId);
-        
+
         if (!tool) {
           errors.push(`Tool with ID ${toolId} not found`);
           continue;
@@ -27,27 +27,29 @@ export async function POST(request: NextRequest) {
 
         // Remove references from news articles
         const newsWithTool = await newsRepo.getByToolMention(toolId);
-        
+
         for (const news of newsWithTool) {
           // Update the article to remove tool mentions
-          const updatedToolMentions = news.tool_mentions?.filter(id => id !== toolId) || [];
-          
+          const updatedToolMentions = news.tool_mentions?.filter((id) => id !== toolId) || [];
+
           const updatedNews = {
             ...news,
             tool_mentions: updatedToolMentions,
             updated_at: new Date().toISOString(),
           };
-          
+
           await newsRepo.upsert(updatedNews);
         }
 
         // Note: Rankings and metrics would need their own repositories to clean up
         // For now, we'll just delete the tool and log warnings about orphaned data
-        loggers.api.warn(`Deleting tool ${tool.name} - rankings and metrics may need manual cleanup`);
+        loggers.api.warn(
+          `Deleting tool ${tool.name} - rankings and metrics may need manual cleanup`
+        );
 
         // Delete the tool
         const deleted = await toolsRepo.delete(toolId);
-        
+
         if (deleted) {
           deletedTools.push({
             id: tool.id,

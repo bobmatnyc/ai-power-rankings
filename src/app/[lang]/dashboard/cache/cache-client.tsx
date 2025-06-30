@@ -84,23 +84,23 @@ export function CacheManagementClient() {
 
   const generateCache = async (type: string) => {
     setGenerating({ ...generating, [type]: true });
-    
+
     try {
       const response = await fetch("/api/admin/cache/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type }),
       });
-      
+
       if (!response.ok) {
         throw new Error("Failed to generate cache");
       }
-      
+
       const data = await response.json();
       const result = data.results[0];
-      
+
       setLastGeneration({ ...lastGeneration, [type]: result });
-      
+
       if (result.success) {
         // Success - status will be shown in UI
         fetchCacheStatus(); // Refresh status
@@ -121,7 +121,7 @@ export function CacheManagementClient() {
       if (!response.ok) {
         throw new Error("Failed to download cache");
       }
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -131,7 +131,7 @@ export function CacheManagementClient() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      
+
       // Download started
     } catch (error) {
       setError(`Failed to download ${type} cache`);
@@ -157,7 +157,8 @@ export function CacheManagementClient() {
     );
   }
 
-  const isProduction = status?.environment.isVercel && status?.environment.vercelEnv === "production";
+  const isProduction =
+    status?.environment.isVercel && status?.environment.vercelEnv === "production";
   const usingBlobStorage = status?.storage.blobAvailable;
 
   return (
@@ -287,7 +288,9 @@ export function CacheManagementClient() {
                       </div>
                       {file.source === "blob" && file.blobMetadata && (
                         <div className="pt-2 border-t">
-                          <p className="text-xs text-muted-foreground mb-1">Blob Storage Details:</p>
+                          <p className="text-xs text-muted-foreground mb-1">
+                            Blob Storage Details:
+                          </p>
                           <div className="space-y-1">
                             <div className="flex justify-between text-xs">
                               <span className="text-muted-foreground">Generated:</span>
@@ -309,8 +312,7 @@ export function CacheManagementClient() {
                       className="text-sm"
                     >
                       <AlertDescription>
-                        Last generation:{" "}
-                        {lastGeneration[file.type]?.success ? "Success" : "Failed"}
+                        Last generation: {lastGeneration[file.type]?.success ? "Success" : "Failed"}
                         {lastGeneration[file.type]?.error && (
                           <span className="block mt-1">{lastGeneration[file.type]?.error}</span>
                         )}
@@ -365,8 +367,8 @@ export function CacheManagementClient() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                The rankings cache includes tool positions, scores, and tier assignments based on the
-                v6-news algorithm.
+                The rankings cache includes tool positions, scores, and tier assignments based on
+                the v6-news algorithm.
               </p>
             </CardContent>
           </Card>
@@ -417,13 +419,14 @@ export function CacheManagementClient() {
               <li>Commit the updated files to version control</li>
             </ol>
           </div>
-          
+
           <div className="space-y-2">
             <h4 className="font-medium">For Production (Vercel):</h4>
             {usingBlobStorage ? (
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  ✅ <strong>Blob Storage is enabled!</strong> Cache updates are stored in Vercel Blob.
+                  ✅ <strong>Blob Storage is enabled!</strong> Cache updates are stored in Vercel
+                  Blob.
                 </p>
                 <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
                   <li>Click &quot;Generate&quot; to create fresh cache data</li>

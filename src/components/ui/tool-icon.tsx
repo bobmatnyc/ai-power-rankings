@@ -14,17 +14,10 @@ interface ToolIconProps {
 export function ToolIcon({ name, domain, size = 48, className }: ToolIconProps) {
   const [imageError, setImageError] = useState(false);
 
-  // Generate placeholder based on tool name
-  const getPlaceholder = () => {
-    const initials = name
-      .split(/\s+/)
-      .map((word) => word[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-
-    return initials || name.slice(0, 2).toUpperCase();
-  };
+  // Debug log to understand what's happening
+  if (process.env.NODE_ENV === "development") {
+    console.log("ToolIcon:", { name, domain, imageError });
+  }
 
   // Generate a consistent color based on the tool name
   const getGradientClass = (name: string) => {
@@ -49,22 +42,34 @@ export function ToolIcon({ name, domain, size = 48, className }: ToolIconProps) 
     return colors[Math.abs(hash) % colors.length];
   };
 
-  if (!domain || imageError) {
-    // Show placeholder
-    return (
-      <div
-        className={cn(
-          "flex items-center justify-center rounded-lg border-2 border-border",
-          getGradientClass(name),
-          className
-        )}
-        style={{ width: size, height: size }}
+  // Generic tool icon fallback
+  const GenericToolIcon = () => (
+    <div
+      className={cn(
+        "flex items-center justify-center rounded-lg border-2 border-border",
+        getGradientClass(name),
+        className
+      )}
+      style={{ width: size, height: size }}
+    >
+      <svg
+        width={size * 0.6}
+        height={size * 0.6}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="text-white"
       >
-        <span className="text-white font-semibold" style={{ fontSize: size * 0.4 }}>
-          {getPlaceholder()}
-        </span>
-      </div>
-    );
+        <path
+          d="M12 2L13.09 5.26L16 2L14.21 5.63L18 3L15.5 6.5L20 4L16.5 8.5L22 6L17.5 11.5L22 10L17 14L22 13L16 17L20 16L14.5 19.5L18 18L13.09 21.74L16 22L12 22L10.91 18.74L8 22L9.79 18.37L6 21L8.5 17.5L4 20L7.5 15.5L2 18L6.5 12.5L2 14L7 10L2 11L8 7L4 8L9.5 4.5L6 6L10.91 2.26L8 2L12 2Z"
+          fill="currentColor"
+        />
+      </svg>
+    </div>
+  );
+
+  if (!domain || imageError) {
+    return <GenericToolIcon />;
   }
 
   return (

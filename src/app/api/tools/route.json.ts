@@ -37,15 +37,15 @@ export async function GET(): Promise<NextResponse> {
     // Get tools from JSON database
     const toolsRepo = getToolsRepo();
     const companiesRepo = getCompaniesRepo();
-    
+
     const tools = await toolsRepo.getAll();
-    
+
     // Filter out deprecated tools
-    const activeTools = tools.filter(tool => tool.status !== 'deprecated');
-    
+    const activeTools = tools.filter((tool) => tool.status !== "deprecated");
+
     // Sort by name
     activeTools.sort((a, b) => a.name.localeCompare(b.name));
-    
+
     // Transform tools to match expected format with info structure
     const toolsWithInfo = await Promise.all(
       activeTools.map(async (tool) => {
@@ -57,32 +57,18 @@ export async function GET(): Promise<NextResponse> {
             companyName = company.name;
           }
         }
-        
+
         return {
           ...tool,
-          info: {
-            company: { name: companyName },
-            product: {
-              description: tool.description || "",
-              tagline: tool.tagline || "",
-              pricing_model: tool.pricing_model,
-              license_type: tool.license_type,
-            },
-            links: {
-              website: tool.website_url,
-              github: tool.github_repo,
-            },
-            metadata: {
-              logo_url: tool.logo_url,
-            },
-          },
+          // Tool already has info structure from JSON database
+          company_name: companyName, // Add for backward compatibility
         };
       })
     );
 
-    const apiResponse = NextResponse.json({ 
+    const apiResponse = NextResponse.json({
       tools: toolsWithInfo,
-      _source: "json-db" 
+      _source: "json-db",
     });
 
     // Set cache headers for production
@@ -96,7 +82,7 @@ export async function GET(): Promise<NextResponse> {
     return apiResponse;
   } catch (error) {
     loggers.api.error("Error in tools API", { error });
-    
+
     // Fall back to cached data on error
     try {
       const cachedToolsData = await loadCacheWithFallback("tools");

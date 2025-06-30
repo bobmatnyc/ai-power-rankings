@@ -11,11 +11,17 @@ export function getCategoryColor(category: string): string {
     "cloud-ide": "bg-cyan-100 text-cyan-900 dark:bg-cyan-900/20 dark:text-cyan-400",
     collaboration: "bg-teal-100 text-teal-900 dark:bg-teal-900/20 dark:text-teal-400",
     "ai-chat": "bg-violet-100 text-violet-900 dark:bg-violet-900/20 dark:text-violet-400",
+    "devops-assistant":
+      "bg-emerald-100 text-emerald-900 dark:bg-emerald-900/20 dark:text-emerald-400",
     product: "bg-amber-100 text-amber-900 dark:bg-amber-900/20 dark:text-amber-400",
     default: "bg-gray-100 text-gray-900 dark:bg-gray-900/20 dark:text-gray-400",
   };
 
-  return colors[category] || colors["default"] || "bg-gray-100 text-gray-900 dark:bg-gray-900/20 dark:text-gray-400";
+  return (
+    colors[category] ||
+    colors["default"] ||
+    "bg-gray-100 text-gray-900 dark:bg-gray-900/20 dark:text-gray-400"
+  );
 }
 
 // Get just the background color class (for cases where text color is handled separately)
@@ -31,6 +37,7 @@ export function getCategoryBgColor(category: string): string {
     "cloud-ide": "bg-cyan-100 dark:bg-cyan-900/20",
     collaboration: "bg-teal-100 dark:bg-teal-900/20",
     "ai-chat": "bg-violet-100 dark:bg-violet-900/20",
+    "devops-assistant": "bg-emerald-100 dark:bg-emerald-900/20",
     product: "bg-amber-100 dark:bg-amber-900/20",
     default: "bg-gray-100 dark:bg-gray-900/20",
   };
@@ -51,6 +58,7 @@ export function getCategoryTextColor(category: string): string {
     "cloud-ide": "text-cyan-900 dark:text-cyan-400",
     collaboration: "text-teal-900 dark:text-teal-400",
     "ai-chat": "text-violet-900 dark:text-violet-400",
+    "devops-assistant": "text-emerald-900 dark:text-emerald-400",
     product: "text-amber-900 dark:text-amber-400",
     default: "text-gray-900 dark:text-gray-400",
   };

@@ -91,7 +91,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col">
+      <body>
         <Script
           id="organization-schema"
           type="application/ld+json"

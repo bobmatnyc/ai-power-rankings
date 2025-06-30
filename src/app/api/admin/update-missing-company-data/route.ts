@@ -40,7 +40,9 @@ export async function POST(_request: NextRequest) {
     for (const update of companyUpdates) {
       try {
         // Find company by name
-        const company = allCompanies.find(c => c.name.toLowerCase() === update.name.toLowerCase());
+        const company = allCompanies.find(
+          (c) => c.name.toLowerCase() === update.name.toLowerCase()
+        );
 
         if (!company) {
           results.notFound.push(update.name);
@@ -99,12 +101,12 @@ export async function GET() {
 
     // Get all companies and filter for missing data
     const allCompanies = await companiesRepo.getAll();
-    
-    const companiesWithMissingData = allCompanies.filter(company => 
-      !company.founded || !company.website
+
+    const companiesWithMissingData = allCompanies.filter(
+      (company) => !company.founded || !company.website
     );
 
-    const missingData = companiesWithMissingData.map(company => ({
+    const missingData = companiesWithMissingData.map((company) => ({
       id: company.id,
       name: company.name,
       slug: company.slug,

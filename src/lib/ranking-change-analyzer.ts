@@ -1,4 +1,3 @@
-
 export interface FactorChange {
   factor: string;
   previousValue: number;
@@ -22,7 +21,14 @@ export interface RankingChangeAnalysis {
   secondaryReasons: string[];
   factorChanges: FactorChange[];
   narrativeExplanation: string;
-  changeCategory: "major_rise" | "rise" | "stable" | "decline" | "major_decline" | "new_entry" | "dropped";
+  changeCategory:
+    | "major_rise"
+    | "rise"
+    | "stable"
+    | "decline"
+    | "major_decline"
+    | "new_entry"
+    | "dropped";
 }
 
 export class RankingChangeAnalyzer {
@@ -111,12 +117,24 @@ export class RankingChangeAnalyzer {
     scoreChange: number,
     isNew: boolean
   ): RankingChangeAnalysis["changeCategory"] {
-    if (isNew) {return "new_entry";}
-    if (rankChange >= 5) {return "major_rise";}
-    if (rankChange >= 1) {return "rise";}
-    if (rankChange <= -5) {return "major_decline";}
-    if (rankChange <= -1) {return "decline";}
-    if (Math.abs(scoreChange) < 0.1) {return "stable";}
+    if (isNew) {
+      return "new_entry";
+    }
+    if (rankChange >= 5) {
+      return "major_rise";
+    }
+    if (rankChange >= 1) {
+      return "rise";
+    }
+    if (rankChange <= -5) {
+      return "major_decline";
+    }
+    if (rankChange <= -1) {
+      return "decline";
+    }
+    if (Math.abs(scoreChange) < 0.1) {
+      return "stable";
+    }
     return "stable";
   }
 
@@ -151,14 +169,14 @@ export class RankingChangeAnalyzer {
     factorChanges: FactorChange[],
     changeCategory: RankingChangeAnalysis["changeCategory"]
   ): { primaryReason: string; secondaryReasons: string[] } {
-    const significantChanges = factorChanges.filter(fc => Math.abs(fc.change) > 0.5);
-    
+    const significantChanges = factorChanges.filter((fc) => Math.abs(fc.change) > 0.5);
+
     if (changeCategory === "new_entry") {
       return {
         primaryReason: "New entry to rankings",
         secondaryReasons: significantChanges
           .slice(0, 3)
-          .map(fc => `Strong ${this.FACTOR_NAMES[fc.factor]} (${fc.currentValue.toFixed(1)}/10)`),
+          .map((fc) => `Strong ${this.FACTOR_NAMES[fc.factor]} (${fc.currentValue.toFixed(1)}/10)`),
       };
     }
 
@@ -182,7 +200,7 @@ export class RankingChangeAnalyzer {
     // Secondary reasons are other significant changes
     const secondaryReasons = significantChanges
       .slice(1, 4)
-      .map(fc => this.generateFactorChangeReason(fc));
+      .map((fc) => this.generateFactorChangeReason(fc));
 
     return { primaryReason, secondaryReasons };
   }
@@ -230,8 +248,8 @@ export class RankingChangeAnalyzer {
     factorChanges: FactorChange[],
     primaryReason: string
   ): string {
-    const significantImprovements = factorChanges.filter(fc => fc.change > 1);
-    const significantDeclines = factorChanges.filter(fc => fc.change < -1);
+    const significantImprovements = factorChanges.filter((fc) => fc.change > 1);
+    const significantDeclines = factorChanges.filter((fc) => fc.change < -1);
     const topImprovements = significantImprovements.slice(0, 3);
     const topDeclines = significantDeclines.slice(0, 3);
 
@@ -241,7 +259,7 @@ export class RankingChangeAnalyzer {
           topImprovements.length > 1
             ? `Multiple factors contributed to this rise, including improvements in ${topImprovements
                 .slice(0, 2)
-                .map(fc => this.FACTOR_NAMES[fc.factor]?.toLowerCase() || fc.factor)
+                .map((fc) => this.FACTOR_NAMES[fc.factor]?.toLowerCase() || fc.factor)
                 .join(" and ")}.`
             : ""
         }`;
@@ -254,7 +272,7 @@ export class RankingChangeAnalyzer {
           topDeclines.length > 1
             ? `Additional factors include declining ${topDeclines
                 .slice(1, 3)
-                .map(fc => this.FACTOR_NAMES[fc.factor]?.toLowerCase() || fc.factor)
+                .map((fc) => this.FACTOR_NAMES[fc.factor]?.toLowerCase() || fc.factor)
                 .join(" and ")}.`
             : ""
         }`;
@@ -270,7 +288,7 @@ export class RankingChangeAnalyzer {
 
       case "new_entry":
         return `${toolName} enters the rankings with strong scores in ${topImprovements
-          .map(fc => this.FACTOR_NAMES[fc.factor]?.toLowerCase() || fc.factor)
+          .map((fc) => this.FACTOR_NAMES[fc.factor]?.toLowerCase() || fc.factor)
           .join(", ")}.`;
 
       default:
@@ -291,11 +309,11 @@ export class RankingChangeAnalyzer {
     narrativeSummary: string;
   } {
     const majorRises = analyses
-      .filter(a => a.changeCategory === "major_rise")
+      .filter((a) => a.changeCategory === "major_rise")
       .sort((a, b) => b.rankChange - a.rankChange);
-    
+
     const majorDeclines = analyses
-      .filter(a => a.changeCategory === "major_decline")
+      .filter((a) => a.changeCategory === "major_decline")
       .sort((a, b) => a.rankChange - b.rankChange);
 
     // Analyze factor trends
@@ -342,8 +360,8 @@ export class RankingChangeAnalyzer {
     majorDeclines: RankingChangeAnalysis[],
     factorTrends: Record<string, { improving: number; declining: number }>
   ): string {
-    const newEntries = analyses.filter(a => a.changeCategory === "new_entry");
-    
+    const newEntries = analyses.filter((a) => a.changeCategory === "new_entry");
+
     let narrative = `This month's rankings show significant movement across the AI coding tools landscape. `;
 
     if (majorRises.length > 0 && majorRises[0]) {
@@ -372,7 +390,7 @@ export class RankingChangeAnalyzer {
     if (newEntries.length > 0) {
       narrative += `${newEntries.length} new tool${newEntries.length > 1 ? "s" : ""} entered the rankings, including ${newEntries
         .slice(0, 2)
-        .map(e => e.toolName)
+        .map((e) => e.toolName)
         .join(" and ")}. `;
     }
 

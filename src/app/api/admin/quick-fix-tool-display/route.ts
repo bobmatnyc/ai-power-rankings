@@ -4,7 +4,7 @@ export async function POST(_request: NextRequest) {
   try {
     // This endpoint used direct SQL to update metrics and rankings
     // Since we're using JSON repositories, this operation is not applicable
-    
+
     return NextResponse.json({
       success: false,
       message: "Quick fix tool display not available - JSON repositories don't need this operation",

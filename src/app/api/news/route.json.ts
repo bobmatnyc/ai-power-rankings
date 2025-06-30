@@ -39,17 +39,17 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate page from offset
-    const page = Math.floor(offset / limit) + 1;
+    // Page calculated from offset but not used directly
 
     // Get news from JSON database
     const newsRepo = getNewsRepo();
     const toolsRepo = getToolsRepo();
-    
+
     const allNews = await newsRepo.getAll();
-    
+
     // Sort by published date descending
-    const sortedNews = allNews.sort((a, b) => 
-      new Date(b.published_date).getTime() - new Date(a.published_date).getTime()
+    const sortedNews = allNews.sort(
+      (a, b) => new Date(b.published_date).getTime() - new Date(a.published_date).getTime()
     );
 
     // Transform news data into the expected format
@@ -61,80 +61,59 @@ export async function GET(request: NextRequest) {
         const summary = (article.summary || "").toLowerCase();
         const text = `${headline} ${summary}`;
 
-        // First check explicit category
-        switch (article.category) {
-          case "funding":
-            eventType = "milestone";
-            break;
-          case "acquisition":
-            eventType = "partnership";
-            break;
-          case "product-launch":
-          case "product":
-            eventType = "feature";
-            break;
-          case "technical-achievement":
-          case "technical":
-            eventType = "update";
-            break;
-          case "general":
-            eventType = "update";
-            break;
-          default:
-            // Use keyword-based detection for all categories including unknown ones
-            if (
-              text.includes("funding") ||
-              text.includes("raised") ||
-              text.includes("million") ||
-              text.includes("billion") ||
-              text.includes("investment") ||
-              text.includes("series") ||
-              text.includes("venture") ||
-              text.includes("valuation") ||
-              text.includes("round")
-            ) {
-              eventType = "milestone";
-            } else if (
-              text.includes("launch") ||
-              text.includes("released") ||
-              text.includes("announced") ||
-              text.includes("introduces") ||
-              text.includes("unveils") ||
-              text.includes("debuts") ||
-              text.includes("feature") ||
-              text.includes("version") ||
-              text.includes("update") ||
-              text.includes("beta") ||
-              text.includes("integration") ||
-              text.includes("new")
-            ) {
-              eventType = "feature";
-            } else if (
-              text.includes("acquired") ||
-              text.includes("partnership") ||
-              text.includes("merger") ||
-              text.includes("collaboration") ||
-              text.includes("deal") ||
-              text.includes("agreement") ||
-              text.includes("partners") ||
-              text.includes("joins")
-            ) {
-              eventType = "partnership";
-            } else if (
-              text.includes("hiring") ||
-              text.includes("leadership") ||
-              text.includes("ceo") ||
-              text.includes("expansion") ||
-              text.includes("growth") ||
-              text.includes("news") ||
-              text.includes("appoints") ||
-              text.includes("names") ||
-              text.includes("announces")
-            ) {
-              eventType = "announcement";
-            } else {
-              eventType = "update";
-            }
+        // Use keyword-based detection
+        if (
+          text.includes("funding") ||
+          text.includes("raised") ||
+          text.includes("million") ||
+          text.includes("billion") ||
+          text.includes("investment") ||
+          text.includes("series") ||
+          text.includes("venture") ||
+          text.includes("valuation") ||
+          text.includes("round")
+        ) {
+          eventType = "milestone";
+        } else if (
+          text.includes("launch") ||
+          text.includes("released") ||
+          text.includes("announced") ||
+          text.includes("introduces") ||
+          text.includes("unveils") ||
+          text.includes("debuts") ||
+          text.includes("feature") ||
+          text.includes("version") ||
+          text.includes("update") ||
+          text.includes("beta") ||
+          text.includes("integration") ||
+          text.includes("new")
+        ) {
+          eventType = "feature";
+        } else if (
+          text.includes("acquired") ||
+          text.includes("partnership") ||
+          text.includes("merger") ||
+          text.includes("collaboration") ||
+          text.includes("deal") ||
+          text.includes("agreement") ||
+          text.includes("partners") ||
+          text.includes("joins")
+        ) {
+          eventType = "partnership";
+        } else if (
+          text.includes("hiring") ||
+          text.includes("leadership") ||
+          text.includes("ceo") ||
+          text.includes("expansion") ||
+          text.includes("growth") ||
+          text.includes("news") ||
+          text.includes("appoints") ||
+          text.includes("names") ||
+          text.includes("announces")
+        ) {
+          eventType = "announcement";
+        } else {
+          eventType = "update";
         }
 
         // Get the main tool from tool_mentions array
@@ -154,15 +133,15 @@ export async function GET(request: NextRequest) {
           );
 
           const validTools = tools.filter(Boolean);
-          
+
           if (validTools.length > 0) {
             const firstTool = validTools[0];
-            primaryToolId = firstTool.id;
-            toolSlug = firstTool.slug;
-            toolCategory = firstTool.category || "ai-coding-tool";
-            toolWebsite = firstTool.website_url || "";
-            
-            toolNames = validTools.map(tool => tool.name).join(", ");
+            primaryToolId = firstTool!.id;
+            toolSlug = firstTool!.slug;
+            toolCategory = firstTool!.category || "ai-coding-tool";
+            toolWebsite = firstTool!.info?.website || "";
+
+            toolNames = validTools.map((tool) => tool!.name).join(", ");
           } else {
             // Fallback to tool name mapping if tools not found
             const toolNameMap: Record<string, string> = {
@@ -183,20 +162,15 @@ export async function GET(request: NextRequest) {
               "amazon-q-developer": "Amazon Q Developer",
             };
 
-            toolNames = article.tool_mentions
-              .map(id => toolNameMap[id] || id)
-              .join(", ");
-            
+            toolNames = article.tool_mentions.map((id) => toolNameMap[id] || id).join(", ");
+
             primaryToolId = article.tool_mentions[0];
             toolSlug = primaryToolId;
           }
         }
 
-        // Map tags array or create from category
+        // Map tags array
         const tags = [...(article.tags || [])];
-        if (article.category) {
-          tags.push(article.category);
-        }
         if (article.tool_mentions) {
           tags.push(...article.tool_mentions);
         }
@@ -214,7 +188,7 @@ export async function GET(request: NextRequest) {
           source_url: article.source_url,
           source_name: article.source || "AI News",
           metrics: {
-            importance_score: article.importance_score || 5,
+            importance_score: 5, // Default importance
           },
           tags: [...new Set(tags)], // Remove duplicates
         };

@@ -63,7 +63,9 @@ const errorPatterns: ErrorPattern[] = [
     fix: async () => {
       console.log("⚠️  Missing environment variables detected");
       console.log("💡 Please add the missing variables to Vercel:");
-      console.log("   1. Go to https://vercel.com/ai-power-rankings/settings/environment-variables");
+      console.log(
+        "   1. Go to https://vercel.com/ai-power-rankings/settings/environment-variables"
+      );
       console.log("   2. Add the missing variables");
       console.log("   3. Redeploy from Vercel dashboard");
     },
@@ -130,7 +132,7 @@ async function fixDeploymentErrors(errorLog?: string) {
     console.log("\n✅ All errors fixed! You can now commit and push.");
     console.log("\n📝 Next steps:");
     console.log("   1. git add .");
-    console.log("   2. git commit -m \"fix: deployment errors\"");
+    console.log('   2. git commit -m "fix: deployment errors"');
     console.log("   3. git push");
     console.log("   4. npm run check-deployment");
   } catch (_error) {

@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-06-27T21:04:56.168Z",
+  "migration_type": "cache-to-json",
+  "stats": {
+    "companies": 27,
+    "tools": 30,
+    "rankings": 1,
+    "news": 0,
+    "errors": []
+  },
+  "success": true,
+  "source": "cache files"
+}

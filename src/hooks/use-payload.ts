@@ -18,7 +18,7 @@ export function usePayload() {
       if (!response.ok) {
         throw new Error("Failed to fetch tools");
       }
-      
+
       const data = await response.json();
       setTools(data.tools || []);
     } catch (err) {
@@ -38,7 +38,7 @@ export function usePayload() {
       if (!response.ok) {
         throw new Error("Failed to fetch rankings");
       }
-      
+
       const data = await response.json();
       setRankings(data.rankings || []);
     } catch (err) {

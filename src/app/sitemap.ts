@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
-import { getPayload } from "payload";
-import config from "@payload-config";
+import { getToolsRepo, getRankingsRepo } from "@/lib/json-db";
 import { i18n } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
@@ -8,19 +7,12 @@ export const revalidate = 3600; // Revalidate every hour
 
 async function getTools() {
   try {
-    const payload = await getPayload({ config });
-    const { docs } = await payload.find({
-      collection: "tools",
-      where: {
-        status: { equals: "active" },
-      },
-      sort: "-updatedAt",
-      limit: 1000,
-    });
+    const toolsRepo = getToolsRepo();
+    const tools = await toolsRepo.getByStatus("active");
 
-    return docs.map((tool) => ({
-      slug: tool["slug"],
-      updated_at: tool["updatedAt"],
+    return tools.map((tool) => ({
+      slug: tool.slug,
+      updated_at: tool.updated_at,
     }));
   } catch (error) {
     console.warn("Failed to fetch tools for sitemap:", error);
@@ -30,14 +22,9 @@ async function getTools() {
 
 async function getLatestRankingPeriod() {
   try {
-    const payload = await getPayload({ config });
-    const { docs } = await payload.find({
-      collection: "rankings",
-      sort: "-createdAt",
-      limit: 1,
-    });
-
-    return docs[0]?.["period"];
+    const rankingsRepo = getRankingsRepo();
+    const currentPeriod = await rankingsRepo.getCurrentPeriod();
+    return currentPeriod;
   } catch (error) {
     console.warn("Failed to fetch latest ranking period for sitemap:", error);
     return null;
@@ -149,7 +136,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
 
   // Tool detail pages with alternates
-  const toolPages: MetadataRoute.Sitemap = tools.flatMap((tool: any) => {
+  const toolPages: MetadataRoute.Sitemap = tools.flatMap((tool) => {
     // Ensure we have a valid date
     const toolDate =
       tool.updated_at && !isNaN(Date.parse(tool.updated_at))

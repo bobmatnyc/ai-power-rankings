@@ -34,6 +34,9 @@ export const loggers = {
   test: createLogger("TEST"),
   migration: createLogger("MIGRATION"),
   validation: createLogger("VALIDATION"),
+  backup: createLogger("BACKUP"),
+  cache: createLogger("CACHE"),
+  performance: createLogger("PERFORMANCE"),
 };
 
 export default logger;

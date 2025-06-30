@@ -12,7 +12,7 @@ export const metadata: Metadata = generateSEOMetadata({
 
 export default function AdminToolsPage() {
   return (
-    <DashboardLayout 
+    <DashboardLayout
       title="Tools Management"
       description="Manage AI tools, rankings, and information"
       backHref="/en"

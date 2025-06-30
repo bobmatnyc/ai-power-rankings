@@ -218,7 +218,7 @@ echo "Remaining: $(grep -c '- \[ \]' trackdown/BACKLOG.md)"
 1. **Identify Source**: Find relevant article, benchmark, or report
 2. **Extract Metrics**: Use `extract-metrics-from-article.ts`
    ```bash
-   npm run extract-metrics "https://article-url.com"
+   pnpm run extract-metrics "https://article-url.com"
    ```
 3. **Review JSON**: Verify extracted metrics follow schema
 4. **Store in Database**: Metrics automatically stored with unique source URL
@@ -272,7 +272,7 @@ Each source URL is unique - updates replace existing data.
 2. **Algorithm Execution** (1st, 9 AM UTC)
 
    ```bash
-   npm run generate-rankings
+   pnpm run generate-rankings
    ```
 
 3. **Quality Assurance** (1st, 10 AM UTC)
@@ -326,48 +326,51 @@ Every metric must include:
 
 ---
 
-## 🛡️ 6. Cache-First Architecture
+## 🛡️ 6. JSON Storage Architecture
 
 ### 📦 Overview
 
-The AI Power Rankings uses a cache-first approach to ensure reliability even when database connections are unstable:
+The AI Power Rankings uses a JSON file-based storage system for all data:
 
-- **Static JSON caches** in `/src/data/cache/` for rankings, tools, and news
-- **Automatic fallback** when database is unavailable
+- **Primary storage** in `/data/json/` for all application data
+- **Static caches** in `/src/data/cache/` for production performance
 - **Client-side processing** for filtering and sorting
 
-### 🔄 Updating Cache Files
+### 🔄 Managing Data Files
 
 ```bash
-# Generate fresh cache files from database
-npm run cache:generate
+# Generate cache files from JSON data
+pnpm run cache:generate
 
 # Or manually update individual caches
-npm run cache:rankings
-npm run cache:tools
-npm run cache:news
+pnpm run cache:rankings
+pnpm run cache:tools
+pnpm run cache:news
+
+# Backup JSON data
+pnpm run backup:create
 ```
 
 **When to Update Cache:**
 
-- After significant data changes in Payload CMS
+- After modifying JSON data files
 - Before major deployments
 - When adding/removing tools
-- After running monthly rankings
+- After running daily rankings
 - When news content is updated
 
-### 🚀 Cache Strategy by Environment
+### 🚀 Data Strategy by Environment
 
-- **Production**: Cache-first temporarily enabled (set `true` in route handlers)
-- **Preview**: Always uses cache-first approach
-- **Development**: Direct database access unless `USE_CACHE_FALLBACK=true`
+- **Production**: Pre-generated cache files for optimal performance
+- **Preview**: Direct JSON file access with caching
+- **Development**: Direct JSON file access for real-time updates
 
 ### 📊 Client-Side Data Flow
 
-1. **Initial Load**: Fetch all data from API (returns cached JSON)
+1. **Initial Load**: Fetch all data from API (returns JSON data)
 2. **Client Processing**: Filter, sort, and paginate on client
 3. **Performance**: Instant interactions after initial load
-4. **Reliability**: Works even with database issues
+4. **Reliability**: No external dependencies
 
 ### 🔍 Debugging Cache Issues
 
@@ -384,45 +387,48 @@ curl https://your-site.com/api/health/db
 
 ---
 
-## 🗄️ 7. Database Operations
+## 🗄️ 7. JSON Data Operations
 
-### 📥 Importing Metrics
+### 📥 Importing Data
 
 ```bash
-# Extract from article
-npm run extract-metrics "https://article-url.com"
+# Import tools from CSV
+pnpm run import:tools --file=tools.csv
 
-# Bulk import from JSON
-npm run import-metrics data/metrics-2025-06.json
+# Import rankings data
+pnpm run import:rankings --file=rankings-2025-01.json
 
-# Update specific metrics
-npm run update-tool cursor --metric innovation_score --value 8.5
+# Import news articles
+pnpm run import:news --source=google-drive
 ```
 
 ### 📤 Exporting Data
 
 ```bash
-# Export by date (for manageable file sizes)
-npm run export-by-date
+# Export all data
+pnpm run export:all --format=json
 
-# Export specific month
-npm run export-month 2025-06
+# Export specific data type
+pnpm run export:tools --format=csv
 
 # Export for analysis
-npm run export-for-analysis
+pnpm run export:rankings --format=sql
 ```
 
-### 🔄 Migration Commands
+### 🔄 Data Management
 
 ```bash
-# Run database migrations
-npm run db:migrate
+# Validate all JSON files
+pnpm run validate:all
 
-# Seed initial data
-npm run db:seed
+# Create backup
+pnpm run backup:create
 
-# Reset and rebuild
-npm run db:reset
+# Restore from backup
+pnpm run backup:restore --date=2025-01-29
+
+# Check data integrity
+pnpm run health:check
 ```
 
 ---
@@ -435,10 +441,10 @@ npm run db:reset
 
 ```bash
 # 1. Run local build to catch TypeScript errors early
-npm run build
+pnpm run build
 
 # 2. Run comprehensive pre-deployment check
-npm run pre-deploy  # Comprehensive pre-deployment check
+pnpm run pre-deploy  # Comprehensive pre-deployment check
 ```
 
 The build process includes:
@@ -449,17 +455,17 @@ The build process includes:
 
 The pre-deploy command runs:
 
-- `npm run lint` - ESLint checks
-- `npm run type-check` - TypeScript compilation check
-- `npm run format:check` - Code formatting verification
-- `npm run test` - Full test suite
+- `pnpm run lint` - ESLint checks
+- `pnpm run type-check` - TypeScript compilation check
+- `pnpm run format:check` - Code formatting verification
+- `pnpm run test` - Full test suite
 
 ### 🚀 Post-Push Deployment Verification
 
 **After pushing to GitHub, ALWAYS verify Vercel deployment:**
 
 ```bash
-npm run check-deployment  # Monitors Vercel deployment status
+pnpm run check-deployment  # Monitors Vercel deployment status
 ```
 
 This script:
@@ -494,9 +500,9 @@ If the automated script isn't available or you need to check manually:
 
    ```bash
    # Run locally to see all TypeScript errors
-   npm run build
+   pnpm run build
    # or
-   npm run type-check
+   pnpm run type-check
    ```
 
    **Module Import Errors**:
@@ -517,34 +523,34 @@ If the automated script isn't available or you need to check manually:
 
    ```bash
    # After fixing errors locally
-   npm run build  # Verify fix works
+   pnpm run build  # Verify fix works
    git add .
    git commit -m "fix: deployment error - [brief description]"
    git push
 
    # Monitor the new deployment
-   npm run check-deployment
+   pnpm run check-deployment
    ```
 
 ### ✅ Before Committing
 
 ```bash
 # IMPORTANT: Always run a local build first!
-npm run build  # This catches TypeScript errors that will fail on Vercel
+pnpm run build  # This catches TypeScript errors that will fail on Vercel
 
 # Then run comprehensive checks (prevents other deployment failures)
-npm run ci:local
+pnpm run ci:local
 
 # Or run individual checks:
-npm run lint
-npm run type-check
-npm run test
+pnpm run lint
+pnpm run type-check
+pnpm run test
 
 # Test algorithm calculations
 npm test src/lib/ranking-algorithm.test.ts
 
 # Validate metrics schema
-npm run validate-metrics
+pnpm run validate-metrics
 ```
 
 ### 🔍 Post-Deployment Error Detection Workflow
@@ -554,7 +560,7 @@ npm run validate-metrics
 1. **Wait 2-3 minutes** for Vercel to start the deployment
 2. **Run deployment check**:
    ```bash
-   npm run check-deployment
+   pnpm run check-deployment
    ```
 3. **If deployment fails**, the script will show you:
 
@@ -566,18 +572,18 @@ npm run validate-metrics
 
    | Error Type | Example                                          | Fix Command                            |
    | ---------- | ------------------------------------------------ | -------------------------------------- |
-   | TypeScript | `Type 'Date' is not assignable to type 'string'` | `npm run type-check` then fix the file |
-   | ESLint     | `Expected { after 'if' condition`                | `npm run lint:fix`                     |
+   | TypeScript | `Type 'Date' is not assignable to type 'string'` | `pnpm run type-check` then fix the file |
+   | ESLint     | `Expected { after 'if' condition`                | `pnpm run lint:fix`                     |
    | Import     | `Module not found: @vercel/blob`                 | Check dynamic imports in code          |
    | Database   | `SASL authentication failed`                     | Verify env vars in Vercel dashboard    |
-   | Build      | `next build failed`                              | `npm run build` locally first          |
+   | Build      | `next build failed`                              | `pnpm run build` locally first          |
 
 ### 🚫 Never Deploy Without Type Checking
 
 TypeScript errors will cause Vercel deployment failures. The build process now includes automatic type checking to catch errors early:
 
 ```bash
-npm run build  # Now includes type-check before building
+pnpm run build  # Now includes type-check before building
 ```
 
 ### 🔍 Data Quality Checks
@@ -622,7 +628,7 @@ When adding new features or changing processes:
 2. Keep exports current:
 
    ```bash
-   npm run export-docs
+   pnpm run export-docs
    ```
 
 3. Update CLAUDE.md if adding new reference docs
@@ -636,17 +642,17 @@ When adding new features or changing processes:
 1. **Pre-flight Checks**:
 
    ```bash
-   npm run pre-deploy       # Run all tests and checks
+   pnpm run pre-deploy       # Run all tests and checks
    ```
 
 2. **Update Cache Files** (if data changed):
 
    ```bash
-   npm run cache:generate   # Generate all cache files
+   pnpm run cache:generate   # Generate all cache files
    # Or update individual caches:
-   # npm run cache:rankings
-   # npm run cache:tools
-   # npm run cache:news
+   # pnpm run cache:rankings
+   # pnpm run cache:tools
+   # pnpm run cache:news
    ```
 
 3. **Commit and Push**:
@@ -660,17 +666,17 @@ When adding new features or changing processes:
 4. **Verify Deployment**:
 
    ```bash
-   npm run check-deployment # Monitor Vercel deployment
+   pnpm run check-deployment # Monitor Vercel deployment
    ```
 
 5. **If Deployment Fails**:
 
    - Check error logs from the script output
    - Common issues:
-     - TypeScript errors: Run `npm run type-check` locally
-     - ESLint errors: Run `npm run lint` locally
+     - TypeScript errors: Run `pnpm run type-check` locally
+     - ESLint errors: Run `pnpm run lint` locally
      - Missing environment variables: Check Vercel dashboard
-     - Outdated cache files: Run `npm run cache:generate`
+     - Outdated cache files: Run `pnpm run cache:generate`
    - Fix issues and push again
 
 6. **Verify Production**:
@@ -689,7 +695,7 @@ If a deployment fails, the check-deployment script will:
 **Automatic Error Fixing**:
 
 ```bash
-npm run fix-deployment   # Automatically fix common deployment errors
+pnpm run fix-deployment   # Automatically fix common deployment errors
 ```
 
 This script can fix:
@@ -706,13 +712,13 @@ For a fully automated deployment workflow:
 
 ```bash
 # 1. Fix any issues and prepare for deployment
-npm run fix-deployment && npm run pre-deploy
+pnpm run fix-deployment && pnpm run pre-deploy
 
 # 2. Commit and push if all checks pass
 git add . && git commit -m "fix: deployment issues" && git push
 
 # 3. Monitor deployment
-npm run check-deployment
+pnpm run check-deployment
 ```
 
 ---
@@ -723,24 +729,24 @@ npm run check-deployment
 
 ```bash
 # Data collection
-npm run extract-metrics [URL]          # Extract from article
-npm run collect:github                 # Update GitHub metrics
-npm run collect:all                    # Run all collectors
+pnpm run extract-metrics [URL]          # Extract from article
+pnpm run collect:github                 # Update GitHub metrics
+pnpm run collect:all                    # Run all collectors
 
 # Rankings
-npm run generate-rankings              # Calculate new rankings
-npm run preview-rankings               # Preview without saving
-npm run export-rankings                # Export for publication
+pnpm run generate-rankings              # Calculate new rankings
+pnpm run preview-rankings               # Preview without saving
+pnpm run export-rankings                # Export for publication
 
 # Database
-npm run db:migrate                     # Run migrations
-npm run db:backup                      # Backup database
-npm run db:restore [file]              # Restore from backup
+pnpm run db:migrate                     # Run migrations
+pnpm run db:backup                      # Backup database
+pnpm run db:restore [file]              # Restore from backup
 
 # Exports
-npm run export-by-date                 # Organized by month
-npm run export-showcase                # Top tools summary
-npm run export-all                     # Complete export
+pnpm run export-by-date                 # Organized by month
+pnpm run export-showcase                # Top tools summary
+pnpm run export-all                     # Complete export
 ```
 
 ### Environment Variables
@@ -748,13 +754,15 @@ npm run export-all                     # Complete export
 ```bash
 # Required for metrics extraction
 OPENAI_API_KEY=your-key-here
+PERPLEXITY_API_KEY=your-key-here
 
-# Required for database
-SUPABASE_URL=your-url
-SUPABASE_SERVICE_ROLE_KEY=your-key
-
-# Optional
+# Required for data collection
 GITHUB_TOKEN=your-token
+GOOGLE_API_KEY=your-key
+GOOGLE_DRIVE_FOLDER_ID=your-folder-id
+
+# Required for features
+RESEND_API_KEY=your-key
 ```
 
 ### 🚀 Vercel Deployment Configuration
@@ -763,19 +771,16 @@ GITHUB_TOKEN=your-token
 
 ```bash
 # Install Vercel CLI
-npm i -g vercel
+pnpm i -g vercel
 
 # Login to Vercel
 vercel login
 
 # Set environment variables for all environments
-vercel env add PAYLOAD_SECRET production
-vercel env add PAYLOAD_SECRET preview
-vercel env add PAYLOAD_SECRET development
-
-# Add database URL with transaction pooler (CRITICAL for serverless)
-vercel env add SUPABASE_DATABASE_URL production
-# Use format: postgresql://postgres.[project]:password@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1
+vercel env add GITHUB_TOKEN production
+vercel env add PERPLEXITY_API_KEY production
+vercel env add GOOGLE_API_KEY production
+vercel env add RESEND_API_KEY production
 
 # Deploy to production
 vercel --prod
@@ -783,17 +788,20 @@ vercel --prod
 
 **Key Vercel Configuration Requirements:**
 
-1. **Database Connection**: Must use Supabase transaction pooler (port 6543) with `connection_limit=1`
-2. **Payload Secret**: Required for CMS authentication - generate with `openssl rand -base64 32`
+1. **File System Access**: Ensure build process has access to generate cache files
+2. **API Keys**: All data collection APIs must be configured
 3. **Environment Sync**: Use `vercel env pull .env.vercel` to sync variables locally
-4. **Region Co-location**: Configure `vercel.json` to deploy in same region as database (US East)
+4. **Build Cache**: Configure proper caching for JSON files
 
 **Critical Environment Variables for Production:**
 
 ```bash
-PAYLOAD_SECRET=<generated-secret>
-SUPABASE_DATABASE_URL=postgresql://postgres.[project]:[password]@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1
-NEXTAUTH_URL=https://aipowerrankings.com
+GITHUB_TOKEN=<your-github-token>
+PERPLEXITY_API_KEY=<your-perplexity-key>
+GOOGLE_API_KEY=<your-google-key>
+GOOGLE_DRIVE_FOLDER_ID=<your-folder-id>
+RESEND_API_KEY=<your-resend-key>
+NEXT_PUBLIC_BASE_URL=https://aipowerrankings.com
 NODE_ENV=production
 ```
 
@@ -897,32 +905,39 @@ These tools use CommonJS syntax and are essential for managing translations. The
 
 Based on extensive deployment experience, here are the most common issues and their solutions:
 
-#### 1. **Database Connection Errors**
+#### 1. **File System Access Errors**
 
 **Symptoms**:
 
-- `SASL authentication failed`
-- `connect ECONNREFUSED 127.0.0.1:5432`
-- Build fails with Postgres connection errors
+- `ENOENT: no such file or directory`
+- Build fails when generating cache files
+- Missing JSON data files in production
 
 **Root Causes**:
 
-- Using wrong Supabase pooler port
-- Missing or incorrect environment variables
-- Database connection string not properly set
+- JSON files not included in build
+- Cache generation failing during build
+- Incorrect file paths in production
 
 **Solutions**:
 
 ```bash
-# Use SESSION pooler (port 5432) NOT transaction pooler (port 6543)
-SUPABASE_DATABASE_URL=postgresql://postgres.[project]:[password]@aws-0-us-east-2.pooler.supabase.com:5432/postgres
+# Ensure JSON files are included in build
+# Add to vercel.json:
+{
+  "functions": {
+    "app/api/*": {
+      "includeFiles": "data/json/**"
+    }
+  }
+}
 
-# Set both SUPABASE_DATABASE_URL and DATABASE_URL for redundancy
-vercel env add SUPABASE_DATABASE_URL production
-vercel env add DATABASE_URL production  # Same value as above
+# Generate cache during build
+# Add to package.json scripts:
+"vercel-build": "next build && pnpm run cache:generate"
 ```
 
-**Key Learning**: Vercel deployments need the session pooler (5432) despite documentation suggesting transaction pooler.
+**Key Learning**: JSON files must be explicitly included in Vercel builds and cache must be generated during build process.
 
 #### 2. **React Rendering Errors in Translations**
 
@@ -1010,9 +1025,10 @@ node src/i18n/dictionaries/fix_untranslated.js
 
 Before pushing to production, verify:
 
-- [ ] Run `npm run build` - catches ALL TypeScript errors that will fail on Vercel
-- [ ] Run `npm run ci:local` - catches lint and other errors
-- [ ] Check database connection uses port 5432 (session pooler)
+- [ ] Run `pnpm run build` - catches ALL TypeScript errors that will fail on Vercel
+- [ ] Run `pnpm run ci:local` - catches lint and other errors
+- [ ] Generate cache files with `pnpm run cache:generate`
+- [ ] Verify JSON data files are valid with `pnpm run validate:all`
 - [ ] Verify no duplicate structures in translation JSON files
 - [ ] Remove hardcoded production URLs for preview deployments
 - [ ] Run translation verification scripts
@@ -1022,7 +1038,7 @@ Before pushing to production, verify:
 
 ```bash
 # Fix TypeScript errors before deployment
-npm run type-check
+pnpm run type-check
 
 # Fix translation structure issues
 node src/i18n/dictionaries/verify_i18n.js
@@ -1062,24 +1078,24 @@ git push
 1. **Before Push**:
 
    ```bash
-   npm run build         # Catch TypeScript errors
-   npm run ci:local      # Run all checks
+   pnpm run build         # Catch TypeScript errors
+   pnpm run ci:local      # Run all checks
    ```
 
 2. **After Push**:
 
    ```bash
-   npm run check-deployment  # Monitor deployment
+   pnpm run check-deployment  # Monitor deployment
    ```
 
 3. **If Deployment Fails**:
    - Read the error carefully
    - Fix locally using the error-specific commands above
-   - Test the fix with `npm run build`
+   - Test the fix with `pnpm run build`
    - Commit and push the fix
-   - Run `npm run check-deployment` again
+   - Run `pnpm run check-deployment` again
 
-**Remember**: Vercel deployments can fail even when local development works. The most common cause is TypeScript errors that aren't caught in development mode. ALWAYS run `npm run build` before pushing.
+**Remember**: Vercel deployments can fail even when local development works. The most common cause is TypeScript errors that aren't caught in development mode. ALWAYS run `pnpm run build` before pushing.
 
 ---
 
@@ -1089,17 +1105,65 @@ git push
 
 **CRITICAL**: After every functional change, follow this debugging workflow to catch and fix errors immediately:
 
-#### 1. **Start Development Server with Logging**
+#### 1. **Start Development Server with PM2 (Recommended)**
 
 ```bash
 # Kill any existing dev servers
 pkill -f "next dev" || true
 
-# Start server in background with logging
-nohup pnpm dev > dev-server.log 2>&1 &
+# Start server with PM2 for better process management
+ppnpm run dev:pm2 start
 
 # Monitor logs in real-time
-tail -f dev-server.log
+ppnpm run dev:pm2 logs
+
+# Or use the simple server script
+ppnpm run dev:server
+```
+
+**Why PM2?**
+- Keeps server running even if terminal closes
+- Auto-restarts on crashes
+- Better log management
+- Easy process control
+
+#### 2. **Development Server Management**
+
+```bash
+# Start the dev server
+ppnpm run dev:pm2 start
+
+# Check server status
+ppnpm run dev:pm2 status
+
+# View logs
+ppnpm run dev:pm2 logs
+
+# Restart server (useful after major changes)
+ppnpm run dev:pm2 restart
+
+# Stop server
+ppnpm run dev:pm2 stop
+```
+
+#### 3. **AI Assistant Workflow: After Each Task**
+
+**IMPORTANT**: After completing any development task, follow this routine:
+
+```bash
+# 1. Restart the dev server to ensure clean state
+ppnpm run dev:pm2 restart
+
+# 2. Monitor logs for any errors
+ppnpm run dev:pm2 logs
+
+# 3. Run type checking to catch TypeScript errors
+ppnpm run type-check
+
+# 4. Run linting to catch code style issues
+ppnpm run lint
+
+# 5. If everything looks good, the server is ready
 ```
 
 #### 2. **Common Development Errors and Fixes**
@@ -1156,8 +1220,8 @@ Make it executable: `chmod +x scripts/monitor-dev.sh`
 - [ ] Test the changed functionality in browser
 - [ ] Watch for runtime errors in console
 - [ ] Verify hot reload is working
-- [ ] Check for TypeScript errors: `npm run type-check`
-- [ ] Run quick lint: `npm run lint`
+- [ ] Check for TypeScript errors: `pnpm run type-check`
+- [ ] Run quick lint: `pnpm run lint`
 
 #### 5. **Common Module Resolution Issues**
 
@@ -1165,7 +1229,7 @@ Make it executable: `chmod +x scripts/monitor-dev.sh`
 # Clear all caches when modules are missing
 rm -rf .next
 rm -rf node_modules/.cache
-pnpm install
+ppnpm install
 pnpm dev
 ```
 

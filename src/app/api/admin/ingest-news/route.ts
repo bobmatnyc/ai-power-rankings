@@ -50,7 +50,7 @@ async function findOrCreateTool(
 ): Promise<any> {
   try {
     const slug = toolIdentifier.toLowerCase().replace(/\s+/g, "-");
-    
+
     // First try to find by slug
     const toolBySlug = await toolsRepo.getBySlug(slug);
     if (toolBySlug) {
@@ -59,7 +59,9 @@ async function findOrCreateTool(
 
     // Then try to find by name (search through all tools)
     const allTools = await toolsRepo.getAll();
-    const toolByName = allTools.find(tool => tool.name.toLowerCase() === toolIdentifier.toLowerCase());
+    const toolByName = allTools.find(
+      (tool) => tool.name.toLowerCase() === toolIdentifier.toLowerCase()
+    );
     if (toolByName) {
       return toolByName;
     }
@@ -69,9 +71,9 @@ async function findOrCreateTool(
     loggers.api.info(`Tool not found, needs manual creation: ${toolIdentifier}`, {
       source: newsSource,
       url: newsUrl,
-      context: newsContext
+      context: newsContext,
     });
-    
+
     return null; // Return null since tool doesn't exist
   } catch (error) {
     loggers.api.error(`Error in findOrCreateTool for ${toolIdentifier}:`, error);
@@ -146,7 +148,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         // Check for duplicates by URL
         const allNews = await newsRepo.getAll();
-        const existingNews = allNews.find(article => article.source_url === item.url);
+        const existingNews = allNews.find((article) => article.source_url === item.url);
 
         if (existingNews) {
           report.duplicate_items++;
@@ -218,10 +220,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // Create the news item
         const newsArticle = {
           id: crypto.randomUUID(),
-          slug: item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+          slug: item.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, ""),
           title: item.title,
           summary: item.summary,
-          content: item.content || '',
+          content: item.content || "",
           source: item.source,
           source_url: item.url,
           author: item.author,

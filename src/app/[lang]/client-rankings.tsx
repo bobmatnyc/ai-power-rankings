@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { HomeContent } from "./home-content";
 
 interface RankingData {
@@ -149,14 +150,18 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
             {trendingTools.length > 0
               ? // Show actual trending tools
                 trendingTools.map((tool: any) => (
-                  <div key={tool.tool.id} className="relative h-full">
+                  <Link
+                    key={tool.tool.id}
+                    href={`/${lang}/tools/${tool.tool.slug || tool.tool.id}`}
+                    className="relative h-full block"
+                  >
                     <div className="absolute -top-2 -right-2 z-10">
                       <span className="bg-accent border-0 shadow-lg text-accent-foreground px-2 py-1 rounded text-sm">
                         +{tool.rank_change}
                       </span>
                     </div>
                     <div className="h-full">
-                      <div className="bg-card border rounded-lg p-4 h-full">
+                      <div className="bg-card border rounded-lg p-4 h-full hover:shadow-lg transition-shadow cursor-pointer">
                         <h3 className="font-semibold text-lg">{tool.tool.name}</h3>
                         <p className="text-sm text-muted-foreground">{tool.tool.category}</p>
                         <div className="mt-2 text-sm">Score: {tool.scores.overall.toFixed(1)}</div>
@@ -165,24 +170,28 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
                         )}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))
               : // Fall back to top performers if no rank changes
                 topRankings.map((tool: any) => (
-                  <div key={tool.tool.id} className="relative h-full">
+                  <Link
+                    key={tool.tool.id}
+                    href={`/${lang}/tools/${tool.tool.slug || tool.tool.id}`}
+                    className="relative h-full block"
+                  >
                     <div className="absolute -top-2 -right-2 z-10">
                       <span className="bg-accent border-0 shadow-lg text-accent-foreground px-2 py-1 rounded text-sm">
                         #{tool.rank}
                       </span>
                     </div>
                     <div className="h-full">
-                      <div className="bg-card border rounded-lg p-4 h-full">
+                      <div className="bg-card border rounded-lg p-4 h-full hover:shadow-lg transition-shadow cursor-pointer">
                         <h3 className="font-semibold text-lg">{tool.tool.name}</h3>
                         <p className="text-sm text-muted-foreground">{tool.tool.category}</p>
                         <div className="mt-2 text-sm">Score: {tool.scores.overall.toFixed(1)}</div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
           </div>
         </div>
@@ -203,13 +212,17 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
 
           <div className="grid md:grid-cols-2 gap-3 md:gap-6">
             {recentlyUpdated.map((tool: any) => (
-              <div key={tool.tool.id} className="h-full">
-                <div className="bg-card border rounded-lg p-4 h-full">
+              <Link
+                key={tool.tool.id}
+                href={`/${lang}/tools/${tool.tool.slug || tool.tool.id}`}
+                className="h-full block"
+              >
+                <div className="bg-card border rounded-lg p-4 h-full hover:shadow-lg transition-shadow cursor-pointer">
                   <h3 className="font-semibold text-lg">{tool.tool.name}</h3>
                   <p className="text-sm text-muted-foreground">{tool.tool.category}</p>
                   <div className="mt-2 text-sm">Score: {tool.scores.overall.toFixed(1)}</div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

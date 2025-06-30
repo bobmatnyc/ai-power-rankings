@@ -3,7 +3,7 @@ import { CacheManagementClient } from "./cache-client";
 
 export default function CacheManagementPage() {
   return (
-    <DashboardLayout 
+    <DashboardLayout
       title="Cache Management"
       description="Manage static JSON cache files for offline functionality"
       backHref="/en"

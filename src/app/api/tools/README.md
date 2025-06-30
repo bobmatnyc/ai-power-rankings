@@ -1,20 +1,24 @@
 # Tools API Migration Status
 
 ## Overview
+
 The tools API is being migrated from Supabase/Payload CMS to the JSON database.
 
 ## Endpoints
 
 ### Main Tools Endpoint
+
 - **Current**: `/api/tools/route.ts` - Uses Payload CMS with cache fallback
 - **JSON Version**: `/api/tools/route.json.ts` - Uses JSON database
 - **New JSON API**: `/api/tools/json/route.ts` - Enhanced JSON API with more features
 
 ### Tool Details
+
 - **Current**: `/api/tools/[slug]/route.ts` - Uses Payload CMS
 - **JSON Version**: `/api/tools/[slug]/json/route.ts` - Uses JSON database
 
 ### Additional Endpoints
+
 - `/api/tools/categories` - Get all tool categories with counts
 - `/api/tools/stats` - Get tool statistics and analytics
 
@@ -31,6 +35,7 @@ The tools API is being migrated from Supabase/Payload CMS to the JSON database.
 ## Query Parameters
 
 ### `/api/tools/json`
+
 - `limit` - Number of items per page (default: 1000)
 - `page` - Page number (default: 1)
 - `category` - Filter by category
@@ -39,12 +44,15 @@ The tools API is being migrated from Supabase/Payload CMS to the JSON database.
 - `includeDeprecated` - Include deprecated tools (default: false)
 
 ### Response Format
+
 All endpoints return consistent response format with `_source: "json-db"` to indicate data source.
 
 ## Testing
+
 Run `npm run test:api:tools` to test all tools API endpoints.
 
 ## Tool Schema
+
 ```typescript
 interface Tool {
   id: string;
@@ -55,7 +63,7 @@ interface Tool {
   subcategory?: string;
   description?: string;
   tagline?: string;
-  status: 'active' | 'inactive' | 'deprecated';
+  status: "active" | "inactive" | "deprecated";
   launch_date?: string;
   company_id?: string;
   website_url?: string;

@@ -376,27 +376,41 @@ export function RankingsManager() {
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-2">
-                            {Object.entries(preview.change_report.factorTrends).map(([factor, trend]) => {
-                              const netTrend = trend.improving - trend.declining;
-                              return (
-                                <div key={factor} className="flex items-center justify-between p-2 rounded">
-                                  <span className="text-sm font-medium capitalize">
-                                    {factor.replace(/([A-Z])/g, ' $1').trim()}
-                                  </span>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm text-green-600">
-                                      +{trend.improving}
+                            {Object.entries(preview.change_report.factorTrends).map(
+                              ([factor, trend]) => {
+                                const netTrend = trend.improving - trend.declining;
+                                return (
+                                  <div
+                                    key={factor}
+                                    className="flex items-center justify-between p-2 rounded"
+                                  >
+                                    <span className="text-sm font-medium capitalize">
+                                      {factor.replace(/([A-Z])/g, " $1").trim()}
                                     </span>
-                                    <span className="text-sm text-red-600">
-                                      -{trend.declining}
-                                    </span>
-                                    <Badge variant={netTrend > 0 ? "default" : netTrend < 0 ? "destructive" : "secondary"}>
-                                      {netTrend > 0 ? '+' : ''}{netTrend}
-                                    </Badge>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm text-green-600">
+                                        +{trend.improving}
+                                      </span>
+                                      <span className="text-sm text-red-600">
+                                        -{trend.declining}
+                                      </span>
+                                      <Badge
+                                        variant={
+                                          netTrend > 0
+                                            ? "default"
+                                            : netTrend < 0
+                                              ? "destructive"
+                                              : "secondary"
+                                        }
+                                      >
+                                        {netTrend > 0 ? "+" : ""}
+                                        {netTrend}
+                                      </Badge>
+                                    </div>
                                   </div>
-                                </div>
-                              );
-                            })}
+                                );
+                              }
+                            )}
                           </div>
                         </CardContent>
                       </Card>
@@ -410,7 +424,9 @@ export function RankingsManager() {
                       </CardHeader>
                       <CardContent className="space-y-3">
                         {preview.rankings_comparison
-                          .filter(tool => tool.change_analysis && Math.abs(tool.position_change) >= 3)
+                          .filter(
+                            (tool) => tool.change_analysis && Math.abs(tool.position_change) >= 3
+                          )
                           .sort((a, b) => Math.abs(b.position_change) - Math.abs(a.position_change))
                           .slice(0, 10)
                           .map((tool, idx) => (
@@ -423,8 +439,11 @@ export function RankingsManager() {
                                   ) : (
                                     <TrendingDown className="h-4 w-4 text-red-600" />
                                   )}
-                                  <Badge variant={tool.position_change > 0 ? "default" : "destructive"}>
-                                    {tool.position_change > 0 ? '+' : ''}{tool.position_change}
+                                  <Badge
+                                    variant={tool.position_change > 0 ? "default" : "destructive"}
+                                  >
+                                    {tool.position_change > 0 ? "+" : ""}
+                                    {tool.position_change}
                                   </Badge>
                                 </div>
                               </div>

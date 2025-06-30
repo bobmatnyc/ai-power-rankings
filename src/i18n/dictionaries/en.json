@@ -8,12 +8,14 @@
     "testingtool": "Testing Tool",
     "codereview": "Code Review",
     "codeassistant": "Code Assistant",
+    "devopsassistant": "DevOps Assistant",
     "autonomousAgent": "Autonomous Agent",
     "codeEditor": "Code Editor",
     "ideAssistant": "IDE Assistant",
     "appBuilder": "App Builder",
     "codeReview": "Code Review",
-    "codeAssistant": "Code Assistant"
+    "codeAssistant": "Code Assistant",
+    "devopsAssistant": "DevOps Assistant"
   },
   "common": {
     "appName": "AI Power Ranking",
@@ -33,7 +35,8 @@
     "share": "Share",
     "explore": "Explore",
     "notAvailable": "N/A",
-    "users": "Users"
+    "users": "Users",
+    "back": "Back"
   },
   "navigation": {
     "home": "Home",
@@ -255,7 +258,8 @@
       "hoursAgo": "{count} hours ago",
       "dayAgo": "1 day ago",
       "daysAgo": "{count} days ago"
-    }
+    },
+    "viewSource": "View Source"
   },
   "tools": {
     "title": "AI Coding Tools",

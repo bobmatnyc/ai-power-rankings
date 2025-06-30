@@ -15,7 +15,7 @@ export async function GET() {
 
       // Check by name
       const allTools = await toolsRepo.getAll();
-      const byName = allTools.find(tool => tool.name.toLowerCase() === toolName.toLowerCase());
+      const byName = allTools.find((tool) => tool.name.toLowerCase() === toolName.toLowerCase());
 
       results[toolName] = {
         foundBySlug: !!bySlug,

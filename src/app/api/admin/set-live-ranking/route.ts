@@ -8,10 +8,7 @@ export async function POST(request: NextRequest) {
     const { period } = body;
 
     if (!period) {
-      return NextResponse.json(
-        { error: "Missing required field: period" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing required field: period" }, { status: 400 });
     }
 
     const rankingsRepo = RankingsRepository.getInstance();
@@ -30,9 +27,9 @@ export async function POST(request: NextRequest) {
     // Set the new period as current
     await rankingsRepo.setCurrentPeriod(period);
 
-    loggers.api.info("Live ranking set successfully", { 
+    loggers.api.info("Live ranking set successfully", {
       period,
-      tools_updated: periodRankings.rankings.length 
+      tools_updated: periodRankings.rankings.length,
     });
 
     return NextResponse.json({
@@ -40,12 +37,8 @@ export async function POST(request: NextRequest) {
       period,
       tools_updated: periodRankings.rankings.length,
     });
-
   } catch (error) {
     loggers.api.error("Failed to set live ranking", { error });
-    return NextResponse.json(
-      { error: "Failed to set live ranking" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to set live ranking" }, { status: 500 });
   }
 }

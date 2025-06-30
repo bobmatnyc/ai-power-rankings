@@ -65,7 +65,10 @@ async function getProjectId(): Promise<string | null> {
   }
 }
 
-async function getDeploymentByCommit(projectId: string, commitSha: string): Promise<Deployment | null> {
+async function getDeploymentByCommit(
+  projectId: string,
+  commitSha: string
+): Promise<Deployment | null> {
   try {
     const response = await axios.get(
       `https://api.vercel.com/v6/deployments?projectId=${projectId}&limit=10`,
@@ -89,14 +92,11 @@ async function getDeploymentByCommit(projectId: string, commitSha: string): Prom
 
 async function getDeploymentStatus(deploymentId: string): Promise<Deployment | null> {
   try {
-    const response = await axios.get(
-      `https://api.vercel.com/v13/deployments/${deploymentId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${VERCEL_TOKEN}`,
-        },
-      }
-    );
+    const response = await axios.get(`https://api.vercel.com/v13/deployments/${deploymentId}`, {
+      headers: {
+        Authorization: `Bearer ${VERCEL_TOKEN}`,
+      },
+    });
 
     return response.data;
   } catch (error) {
@@ -127,10 +127,10 @@ async function getBuildLogs(deploymentId: string): Promise<string[]> {
 
 async function waitForDeployment(deploymentId: string): Promise<boolean> {
   const startTime = Date.now();
-  
+
   while (Date.now() - startTime < MAX_WAIT_TIME) {
     const deployment = await getDeploymentStatus(deploymentId);
-    
+
     if (!deployment) {
       console.error("Failed to get deployment status");
       return false;
@@ -146,19 +146,19 @@ async function waitForDeployment(deploymentId: string): Promise<boolean> {
 
     if (deployment.state === "ERROR" || deployment.state === "CANCELED") {
       console.error(`❌ Deployment failed with state: ${deployment.state}`);
-      
+
       // Get build logs
       const logs = await getBuildLogs(deploymentId);
       if (logs.length > 0) {
         console.log("\n📋 Build logs:");
-        logs.slice(-50).forEach(log => console.log(log)); // Last 50 lines
+        logs.slice(-50).forEach((log) => console.log(log)); // Last 50 lines
       }
-      
+
       return false;
     }
 
     // Wait before next check
-    await new Promise(resolve => setTimeout(resolve, CHECK_INTERVAL));
+    await new Promise((resolve) => setTimeout(resolve, CHECK_INTERVAL));
   }
 
   console.error("❌ Deployment timed out");
@@ -197,7 +197,7 @@ async function checkVercelDeployment() {
       deployment = await getDeploymentByCommit(projectId, commitSha);
       if (!deployment) {
         attempts++;
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        await new Promise((resolve) => setTimeout(resolve, 10000));
       }
     }
 

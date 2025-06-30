@@ -4,7 +4,7 @@ export async function POST() {
   try {
     // User management is no longer needed with JSON repositories
     // Authentication is handled by NextAuth.js directly
-    
+
     return NextResponse.json({
       message: "User creation not needed - using NextAuth.js for authentication",
       note: "JSON repositories don't require CMS user management",

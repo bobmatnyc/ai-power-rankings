@@ -7,52 +7,46 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const period = searchParams.get("period");
     const limit = parseInt(searchParams.get("limit") || "100");
-    
+
     const rankingsRepo = getRankingsRepo();
     const toolsRepo = getToolsRepo();
     const companiesRepo = getCompaniesRepo();
-    
+
     // Get the period to fetch
     let targetPeriod = period;
     if (!targetPeriod) {
       targetPeriod = await rankingsRepo.getCurrentPeriod();
     }
-    
+
     if (!targetPeriod) {
-      return NextResponse.json(
-        { error: "No rankings available" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "No rankings available" }, { status: 404 });
     }
-    
+
     // Get rankings for the period
     const periodData = await rankingsRepo.getRankingsForPeriod(targetPeriod);
-    
+
     if (!periodData) {
-      return NextResponse.json(
-        { error: "Rankings not found for period" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Rankings not found for period" }, { status: 404 });
     }
-    
+
     // Get all tools for enrichment
     const tools = await toolsRepo.getAll();
-    const toolMap = new Map(tools.map(t => [t.id, t]));
-    
+    const toolMap = new Map(tools.map((t) => [t.id, t]));
+
     // Get all companies for enrichment
     const companies = await companiesRepo.getAll();
-    const companyMap = new Map(companies.map(c => [c.id, c]));
-    
+    const companyMap = new Map(companies.map((c) => [c.id, c]));
+
     // Format rankings with tool details
     const formattedRankings = await Promise.all(
       periodData.rankings.slice(0, limit).map(async (ranking) => {
         const tool = toolMap.get(ranking.tool_id);
-        
+
         if (!tool) {
           loggers.api.warn("Tool not found for ranking", { toolId: ranking.tool_id });
           return null;
         }
-        
+
         // Get company name
         let companyName = "";
         if (tool.company_id) {
@@ -61,23 +55,23 @@ export async function GET(request: NextRequest) {
             companyName = company.name;
           }
         }
-        
+
         // Calculate ranking change if movement data exists
         let rankChange = null;
         let changeReason = "";
-        
+
         if (ranking.movement) {
-          if (ranking.movement.direction === 'up') {
+          if (ranking.movement.direction === "up") {
             rankChange = ranking.movement.change;
             changeReason = ranking.change_analysis?.primary_reason || "Improved performance";
-          } else if (ranking.movement.direction === 'down') {
+          } else if (ranking.movement.direction === "down") {
             rankChange = -ranking.movement.change;
             changeReason = ranking.change_analysis?.primary_reason || "Other tools gained momentum";
-          } else if (ranking.movement.direction === 'new') {
+          } else if (ranking.movement.direction === "new") {
             changeReason = "New to rankings";
           }
         }
-        
+
         return {
           rank: ranking.position,
           previousRank: ranking.movement?.previous_position,
@@ -86,11 +80,11 @@ export async function GET(request: NextRequest) {
           tool: {
             id: tool.id,
             slug: tool.slug,
-            name: tool.display_name || tool.name,
+            name: tool.name,
             category: tool.category,
             status: tool.status,
-            website_url: tool.website_url,
-            description: tool.description || "",
+            website_url: tool.info?.website || "",
+            description: tool.info?.description || "",
             company: companyName,
           },
           total_score: ranking.score,
@@ -117,10 +111,10 @@ export async function GET(request: NextRequest) {
         };
       })
     );
-    
+
     // Filter out nulls
     const validRankings = formattedRankings.filter(Boolean);
-    
+
     const response = {
       rankings: validRankings,
       period: targetPeriod,
@@ -131,24 +125,23 @@ export async function GET(request: NextRequest) {
       },
       stats: {
         total_tools: periodData.rankings.length,
-        period_display: targetPeriod.replace('-', ' ').charAt(0).toUpperCase() + targetPeriod.replace('-', ' ').slice(1),
+        period_display:
+          targetPeriod.replace("-", " ").charAt(0).toUpperCase() +
+          targetPeriod.replace("-", " ").slice(1),
         is_current: periodData.is_current,
       },
       _source: "json-db",
     };
-    
+
     const apiResponse = NextResponse.json(response);
-    
+
     // Set cache headers
-    apiResponse.headers.set(
-      "Cache-Control",
-      "public, s-maxage=3600, stale-while-revalidate=1800"
-    );
-    
+    apiResponse.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=1800");
+
     return apiResponse;
   } catch (error) {
     loggers.api.error("Rankings JSON API error", { error });
-    
+
     return NextResponse.json(
       {
         error: "Failed to fetch rankings",
@@ -163,19 +156,20 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     if (body.action === "get-periods") {
       const rankingsRepo = getRankingsRepo();
       const periods = await rankingsRepo.getAvailablePeriods();
       const currentPeriod = await rankingsRepo.getCurrentPeriod();
-      
+
       // Get metadata for each period
       const periodsWithMetadata = await Promise.all(
         periods.map(async (period) => {
           const data = await rankingsRepo.getRankingsForPeriod(period);
           return {
             period,
-            display_name: period.replace('-', ' ').charAt(0).toUpperCase() + period.replace('-', ' ').slice(1),
+            display_name:
+              period.replace("-", " ").charAt(0).toUpperCase() + period.replace("-", " ").slice(1),
             is_current: period === currentPeriod,
             tool_count: data?.rankings.length || 0,
             created_at: data?.created_at,
@@ -183,21 +177,18 @@ export async function POST(request: NextRequest) {
           };
         })
       );
-      
+
       return NextResponse.json({
         periods: periodsWithMetadata,
         current: currentPeriod,
         _source: "json-db",
       });
     }
-    
-    return NextResponse.json(
-      { error: "Invalid action" },
-      { status: 400 }
-    );
+
+    return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (error) {
     loggers.api.error("Rankings POST error", { error });
-    
+
     return NextResponse.json(
       {
         error: "Failed to process request",

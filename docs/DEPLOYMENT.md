@@ -16,16 +16,6 @@
 Required environment variables for production:
 
 ```env
-# Supabase - CRITICAL: Use transaction pooler for Vercel
-SUPABASE_DATABASE_URL=postgresql://[user]:[password]@[host]:6543/postgres?pgbouncer=true&connection_limit=1
-NEXT_PUBLIC_SUPABASE_URL=https://[project].supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=[anon-key]
-SUPABASE_SERVICE_KEY=[service-key]
-
-# Payload CMS
-PAYLOAD_SECRET=[strong-random-secret]
-NEXT_PUBLIC_PAYLOAD_URL=https://aipowerrankings.com
-
 # Authentication
 NEXTAUTH_SECRET=[strong-random-secret]
 NEXTAUTH_URL=https://aipowerrankings.com
@@ -48,226 +38,182 @@ VERCEL_TOKEN=[vercel-api-token]
 # OpenAI (for embeddings)
 OPENAI_API_KEY=[openai-key]
 
-# Feature Flags
-NODE_ENV=production
+# Google Analytics
+NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 ```
 
-### 3. Database Configuration
+### 3. Data Validation
 
-**CRITICAL**: For Vercel deployment, you MUST use:
+- [ ] Run `npm run validate:all` to check JSON data integrity
+- [ ] Create backup: `npm run backup:create`
+- [ ] Verify cache generation: `npm run cache:generate`
 
-- Supabase Transaction Pooler (port 6543)
-- Connection limit = 1
-- Pool max = 1 in payload.config.ts
+## Deployment Steps
 
-Update `payload.config.ts`:
+### 1. Prepare Build
 
-```typescript
-db: postgresAdapter({
-  pool: {
-    connectionString: process.env["SUPABASE_DATABASE_URL"] || "",
-    max: 1, // REQUIRED for Vercel
-    min: 0,
-    idleTimeoutMillis: 10000,
-    connectionTimeoutMillis: 30000,
-  },
-  schemaName: "payload",
-  push: false, // Disable auto schema push in production
-}),
+```bash
+# Install dependencies
+pnpm install
+
+# Run pre-deployment checks
+npm run pre-deploy
+
+# Generate cache files
+npm run cache:generate
+
+# Create data backup
+npm run backup:create
 ```
 
-### 4. Vercel Configuration
+### 2. Deploy to Vercel
 
-Ensure `vercel.json` includes:
+```bash
+# Deploy to production
+vercel --prod
+
+# Or use GitHub integration for automatic deployments
+```
+
+### 3. Post-Deployment Verification
+
+1. **Check Application Health**
+   ```bash
+   curl https://aipowerrankings.com/api/health
+   ```
+
+2. **Verify Data Loading**
+   - Tools: https://aipowerrankings.com/api/tools
+   - Rankings: https://aipowerrankings.com/api/rankings
+   - News: https://aipowerrankings.com/api/news
+
+3. **Test Critical Paths**
+   - [ ] Homepage loads with rankings
+   - [ ] Tool detail pages work
+   - [ ] News section displays articles
+   - [ ] Admin dashboard accessible (authenticated)
+
+## Environment Configuration
+
+### Vercel Settings
 
 ```json
 {
-  "regions": ["iad1"], // Co-locate with Supabase US East
+  "framework": "nextjs",
+  "buildCommand": "pnpm build",
+  "outputDirectory": ".next",
+  "installCommand": "pnpm install",
+  "regions": ["iad1"], // US East
   "functions": {
-    "src/app/api/admin/*/route.ts": {
+    "app/api/admin/build-rankings/route.ts": {
       "maxDuration": 60
-    },
-    "src/app/api/cron/*/route.ts": {
-      "maxDuration": 300
     }
   }
 }
 ```
 
-### 5. Pre-Deployment Scripts
+### Performance Optimization
 
-```bash
-# 1. Install dependencies
-npm ci
+1. **Cache Headers**
+   - Static assets: 1 year
+   - API responses: 5 minutes
+   - JSON data: 1 hour
 
-# 2. Build locally to test
-npm run build
+2. **Edge Functions**
+   - Use for read-only endpoints
+   - Reduces latency globally
 
-# 3. Run production build checks
-npm run pre-deploy
-
-# 4. Update algorithm version if needed
-# Edit src/globals/SiteSettings.ts and src/collections/Rankings.ts
-```
-
-## Deployment Steps
-
-### Option 1: Vercel CLI
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy to production
-vercel --prod
-```
-
-### Option 2: Git Push (Recommended)
-
-```bash
-# 1. Commit all changes
-git add .
-git commit -m "feat: payload cms migration with v6.0 algorithm"
-
-# 2. Push to main branch
-git push origin main
-
-# Vercel will automatically deploy
-```
-
-### Option 3: Vercel Dashboard
-
-1. Go to https://vercel.com/dashboard
-2. Select your project
-3. Click "Redeploy" or push to connected Git branch
-
-## Post-Deployment Verification
-
-### 1. Check Application Health
-
-```bash
-# Check main site
-curl -I https://aipowerrankings.com
-
-# Check API
-curl https://aipowerrankings.com/api/tools?limit=1
-
-# Check admin panel
-curl -I https://aipowerrankings.com/admin
-```
-
-### 2. Verify Database Connection
-
-```bash
-# Test rankings API
-curl https://aipowerrankings.com/api/rankings?period=2025-06&limit=5
-```
-
-### 3. Check Logs
-
-- Vercel Dashboard > Functions > Logs
-- Look for database connection errors
-- Monitor response times
-
-### 4. Run Post-Deployment Scripts
-
-```bash
-# Update site settings to v6.0
-curl -X POST https://aipowerrankings.com/api/admin/update-site-settings \
-  -H "Authorization: Bearer $CRON_SECRET"
-
-# Refresh tool display fields if needed
-curl -X POST https://aipowerrankings.com/api/admin/refresh-tool-display \
-  -H "Authorization: Bearer $CRON_SECRET"
-```
-
-## Rollback Procedure
-
-If issues occur:
-
-1. **Vercel Dashboard**:
-
-   - Go to Deployments
-   - Find previous working deployment
-   - Click "..." menu > "Promote to Production"
-
-2. **Git Revert**:
-   ```bash
-   git revert HEAD
-   git push origin main
-   ```
-
-## Common Issues
-
-### 1. Database Connection Timeouts
-
-**Symptom**: `{:shutdown, :db_termination}` errors
-
-**Solution**:
-
-- Ensure using transaction pooler (port 6543)
-- Set connection_limit=1 in connection string
-- Use pool max=1 in payload config
-
-### 2. Schema Migration Prompts
-
-**Symptom**: Deployment hangs on schema questions
-
-**Solution**:
-
-- Set `push: false` in payload.config.ts
-- Run migrations manually if needed
-
-### 3. Authentication Issues
-
-**Symptom**: Can't log into admin panel
-
-**Solution**:
-
-- Verify OAuth credentials are set
-- Check NEXTAUTH_URL matches production URL
-- Ensure user exists in database
-
-### 4. Performance Issues
-
-**Symptom**: Slow API responses
-
-**Solution**:
-
-- Check Vercel function logs
-- Verify region configuration
-- Consider increasing function timeout
+3. **Image Optimization**
+   - Use Next.js Image component
+   - Configure remote patterns
 
 ## Monitoring
 
-1. **Vercel Analytics**:
+### 1. Application Monitoring
 
-   - Web Vitals
-   - Function execution times
-   - Error rates
+- **Vercel Analytics**: Built-in performance metrics
+- **Error Tracking**: Check Vercel Functions logs
+- **Uptime Monitoring**: Set up external monitoring
 
-2. **Database Monitoring**:
+### 2. Data Integrity
 
-   - Supabase Dashboard > Database
-   - Connection pool usage
-   - Query performance
+```bash
+# Check data health
+npm run health:check
 
-3. **Error Tracking**:
-   - Set up Sentry or similar
-   - Monitor console errors
-   - Track API failures
+# Validate JSON files
+npm run validate:all
+
+# Monitor backup status
+ls -la data/backups/
+```
+
+### 3. Performance Metrics
+
+- Core Web Vitals < 2.5s
+- API response time < 200ms
+- Cache hit rate > 90%
+
+## Rollback Procedures
+
+### Quick Rollback
+
+1. **Vercel Dashboard**
+   - Go to Deployments
+   - Find previous working deployment
+   - Click "Promote to Production"
+
+2. **Data Rollback**
+   ```bash
+   # List available backups
+   npm run backup:restore
+
+   # Restore specific backup
+   npm run backup:restore --backup=backup-2025-06-29-220000
+   ```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Build Failures**
+   - Check TypeScript errors: `npm run type-check`
+   - Verify environment variables
+   - Clear cache: `rm -rf .next`
+
+2. **Data Not Loading**
+   - Check JSON file validity
+   - Verify file permissions
+   - Check API routes
+
+3. **Performance Issues**
+   - Regenerate cache files
+   - Check JSON file sizes
+   - Monitor API response times
+
+### Debug Commands
+
+```bash
+# Check build locally
+npm run build
+
+# Test production build
+npm run start
+
+# Validate all systems
+npm run health:check
+```
 
 ## Security Checklist
 
-- [ ] All secrets are in environment variables
-- [ ] No hardcoded API keys in code
-- [ ] OAuth redirect URLs updated for production
-- [ ] CORS settings configured properly
-- [ ] Rate limiting enabled on APIs
-- [ ] Admin routes protected by authentication
+- [ ] Environment variables set correctly
+- [ ] Authentication configured
+- [ ] CORS headers appropriate
+- [ ] Rate limiting enabled
+- [ ] No sensitive data in logs
 
-## Support
+## Support Resources
 
-- Vercel Support: https://vercel.com/support
-- Supabase Support: https://supabase.com/support
-- Payload CMS Docs: https://payloadcms.com/docs
+- Vercel Documentation: https://vercel.com/docs
+- Next.js Deployment: https://nextjs.org/docs/deployment
+- GitHub Issues: https://github.com/yourusername/ai-power-rankings/issues

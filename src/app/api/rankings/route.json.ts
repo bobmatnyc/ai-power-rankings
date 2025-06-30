@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getRankingsRepo, getToolsRepo, getCompaniesRepo } from "@/lib/json-db";
+import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 import { loadCacheWithFallback } from "@/lib/cache/load-cache";
 import { CacheManager } from "@/lib/cache/cache-manager";
@@ -34,14 +34,14 @@ export async function GET(): Promise<NextResponse> {
     // Get rankings from JSON database
     const rankingsRepo = getRankingsRepo();
     const toolsRepo = getToolsRepo();
-    const companiesRepo = getCompaniesRepo();
-    
+    // Companies not needed for this endpoint
+
     // Get current period
     const currentPeriod = await rankingsRepo.getCurrentPeriod();
-    
+
     if (!currentPeriod) {
       loggers.ranking.warn("No current ranking period set, falling back to cache");
-      
+
       const cachedRankingsData = await loadCacheWithFallback("rankings");
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
@@ -55,13 +55,13 @@ export async function GET(): Promise<NextResponse> {
 
       return NextResponse.json(cachedResponse);
     }
-    
+
     // Get rankings for current period
     const periodData = await rankingsRepo.getRankingsForPeriod(currentPeriod);
-    
+
     if (!periodData || !periodData.rankings || periodData.rankings.length === 0) {
       loggers.ranking.warn("No rankings available for current period, falling back to cache");
-      
+
       const cachedRankingsData = await loadCacheWithFallback("rankings");
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
@@ -75,48 +75,43 @@ export async function GET(): Promise<NextResponse> {
 
       return NextResponse.json(cachedResponse);
     }
-    
+
     // Get all tools and companies for enrichment
     const tools = await toolsRepo.getAll();
-    const toolMap = new Map(tools.map(t => [t.id, t]));
-    
-    const companies = await companiesRepo.getAll();
-    const companyMap = new Map(companies.map(c => [c.id, c]));
-    
+    const toolMap = new Map(tools.map((t) => [t.id, t]));
+
+    // Companies not needed for this endpoint
+
     // Format rankings with tool details
     const formattedRankings = periodData.rankings
-      .map(ranking => {
+      .map((ranking) => {
         const tool = toolMap.get(ranking.tool_id);
-        
+
         if (!tool) {
           loggers.ranking.warn("Tool not found for ranking", { toolId: ranking.tool_id });
           return null;
         }
-        
+
         // Get company name
-        let companyName = "";
-        if (tool.company_id) {
-          const company = companyMap.get(tool.company_id);
-          if (company) {
-            companyName = company.name;
-          }
-        }
-        
+        // Company info not needed for this response
+
         // Calculate ranking change
         let rankChange = null;
         let changeReason = "";
-        
+
         if (ranking.movement) {
-          if (ranking.movement.direction === 'up') {
+          if (ranking.movement.direction === "up") {
             rankChange = ranking.movement.change;
-          } else if (ranking.movement.direction === 'down') {
+          } else if (ranking.movement.direction === "down") {
             rankChange = -ranking.movement.change;
           }
-          
-          changeReason = ranking.change_analysis?.primary_reason || 
-            ranking.change_analysis?.narrative_explanation || "";
+
+          changeReason =
+            ranking.change_analysis?.primary_reason ||
+            ranking.change_analysis?.narrative_explanation ||
+            "";
         }
-        
+
         return {
           rank: ranking.position,
           previousRank: ranking.movement?.previous_position,
@@ -125,11 +120,11 @@ export async function GET(): Promise<NextResponse> {
           tool: {
             id: tool.id,
             slug: tool.slug,
-            name: tool.display_name || tool.name,
+            name: tool.name,
             category: tool.category,
             status: tool.status,
-            website_url: tool.website_url,
-            description: tool.description || "",
+            website_url: tool.info?.website || "",
+            description: tool.info?.description || "",
           },
           total_score: ranking.score,
           scores: {
@@ -152,7 +147,7 @@ export async function GET(): Promise<NextResponse> {
         };
       })
       .filter(Boolean);
-    
+
     const apiResponse = NextResponse.json({
       rankings: formattedRankings,
       algorithm: {
@@ -185,7 +180,7 @@ export async function GET(): Promise<NextResponse> {
     return apiResponse;
   } catch (error) {
     loggers.ranking.error("Error fetching rankings", { error });
-    
+
     // Fall back to cached data on error
     try {
       const cachedRankingsData = await loadCacheWithFallback("rankings");

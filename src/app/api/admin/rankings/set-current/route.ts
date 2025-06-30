@@ -6,35 +6,29 @@ import { loggers } from "@/lib/logger";
 export async function POST(request: NextRequest) {
   try {
     // TODO: Add authentication check here
-    
+
     const body = await request.json();
     const { period } = body;
-    
+
     if (!period) {
-      return NextResponse.json(
-        { error: "Period is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Period is required" }, { status: 400 });
     }
-    
+
     const rankingsRepo = getRankingsRepo();
-    
+
     // Check if period exists
     const periodData = await rankingsRepo.getRankingsForPeriod(period);
     if (!periodData) {
-      return NextResponse.json(
-        { error: "Ranking period not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Ranking period not found" }, { status: 404 });
     }
-    
+
     // Set as current period
     await rankingsRepo.setCurrentPeriod(period);
-    
+
     // Update the period data to mark it as current
     periodData.is_current = true;
     await rankingsRepo.saveRankingsForPeriod(periodData);
-    
+
     // Get all periods and mark others as not current
     const allPeriods = await rankingsRepo.getAvailablePeriods();
     for (const otherPeriod of allPeriods) {
@@ -46,7 +40,7 @@ export async function POST(request: NextRequest) {
         }
       }
     }
-    
+
     return NextResponse.json({
       success: true,
       period,
@@ -54,7 +48,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     loggers.api.error("Set current rankings error", { error });
-    
+
     return NextResponse.json(
       {
         error: "Failed to set current rankings",

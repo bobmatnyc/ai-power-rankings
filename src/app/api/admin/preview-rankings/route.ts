@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, ToolMetricsV6, ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 import { RankingChangeAnalyzer, RankingChangeAnalysis } from "@/lib/ranking-change-analyzer";
-import { getToolsRepo, getRankingsRepo, getNewsRepo } from "@/lib/json-db";
+import { getToolsRepo, getRankingsRepo } from "@/lib/json-db";
 
 interface RankingComparison {
   tool_id: string;
@@ -13,7 +13,7 @@ interface RankingComparison {
   new_score: number;
   position_change: number;
   score_change: number;
-  movement: 'up' | 'down' | 'same' | 'new' | 'dropped';
+  movement: "up" | "down" | "same" | "new" | "dropped";
   factor_changes: {
     agentic_capability?: number;
     innovation?: number;
@@ -70,7 +70,7 @@ function transformToToolMetrics(tool: any): ToolMetricsV6 {
   return {
     tool_id: tool.id,
     status: tool.status,
-    
+
     // Agentic capabilities (default values for preview)
     agentic_capability: 50,
     swe_bench_score: businessMetrics.swe_bench_score || 0,
@@ -112,48 +112,39 @@ function transformToToolMetrics(tool: any): ToolMetricsV6 {
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
-    const { 
-      period, 
-      algorithm_version = "v6.0", 
-      preview_date,
-      compare_with 
-    } = body;
-    
+    const { period, algorithm_version = "v6.0", preview_date, compare_with } = body;
+
     loggers.api.info("Preview rankings request received", { body });
-    
+
     if (!period) {
-      return NextResponse.json(
-        { error: "Period parameter is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Period parameter is required" }, { status: 400 });
     }
 
     const toolsRepo = getToolsRepo();
     const rankingsRepo = getRankingsRepo();
-    const newsRepo = getNewsRepo();
-    
+
     loggers.api.info(`Generating ranking preview for period: ${period}`, {
       preview_date,
-      compare_with
+      compare_with,
     });
 
     // Determine comparison period
     let comparisonPeriod = compare_with;
     let currentRankings: any[] = [];
-    
+
     if (compare_with === "auto" || !compare_with) {
       // Find the most recent ranking period before the preview period
       try {
         const availablePeriods = await rankingsRepo.getPeriods();
-        loggers.api.info(`Available periods: ${availablePeriods.join(', ')}`);
-        
+        loggers.api.info(`Available periods: ${availablePeriods.join(", ")}`);
+
         for (const p of availablePeriods) {
           if (p < period) {
             comparisonPeriod = p;
             break;
           }
         }
-        loggers.api.info(`Selected comparison period: ${comparisonPeriod || 'none'}`);
+        loggers.api.info(`Selected comparison period: ${comparisonPeriod || "none"}`);
       } catch (error) {
         loggers.api.error("Failed to get periods", { error });
       }
@@ -170,8 +161,28 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Fetch all active tools
     let tools = [];
     try {
-      tools = await toolsRepo.getByStatus('active');
+      tools = await toolsRepo.getByStatus("active");
       loggers.api.info(`Fetched ${tools.length} active tools`);
+
+      // If preview_date is provided, filter tools that didn't exist yet
+      if (preview_date) {
+        const cutoffDate = new Date(preview_date);
+        const beforeFilter = tools.length;
+        tools = tools.filter((tool) => {
+          // Use launch_date if available, otherwise fall back to created_at
+          const toolDate = tool.launch_date
+            ? new Date(tool.launch_date)
+            : new Date(tool.created_at);
+          return toolDate <= cutoffDate;
+        });
+        const afterFilter = tools.length;
+
+        if (beforeFilter !== afterFilter) {
+          loggers.api.info(
+            `Filtered tools from ${beforeFilter} to ${afterFilter} based on launch/creation date (cutoff: ${preview_date})`
+          );
+        }
+      }
     } catch (error) {
       loggers.api.error("Failed to fetch tools", { error });
       throw new Error("Failed to fetch tools");
@@ -179,7 +190,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // For now, we'll use simplified metrics since we don't have a metrics collection in JSON
     // In the future, this could be extended to fetch from news analysis or other sources
-    const metrics: any[] = [];
 
     loggers.api.info(`Processing ${tools.length} tools for preview`);
 
@@ -204,63 +214,69 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Create comparison data
     const comparisons: RankingComparison[] = [];
     const changeAnalyses: RankingChangeAnalysis[] = [];
-    const currentRankingsMap = new Map(currentRankings.map(r => [r.tool_id, r]));
+    const currentRankingsMap = new Map(currentRankings.map((r) => [r.tool_id, r]));
 
     for (let i = 0; i < newScores.length; i++) {
       const newScore = newScores[i];
-      const tool = tools.find(t => t.id === newScore?.toolId);
-      if (!tool) {continue;}
+      const tool = tools.find((t) => t.id === newScore?.toolId);
+      if (!tool) {
+        continue;
+      }
 
       const currentRanking = currentRankingsMap.get(tool.id);
       const newPosition = i + 1;
       const currentPosition = currentRanking?.position;
-      
+
       let positionChange = 0;
-      let movement: RankingComparison['movement'] = 'new';
-      
+      let movement: RankingComparison["movement"] = "new";
+
       if (currentPosition) {
         positionChange = currentPosition - newPosition;
         if (positionChange > 0) {
-          movement = 'up';
+          movement = "up";
         } else if (positionChange < 0) {
-          movement = 'down';
+          movement = "down";
         } else {
-          movement = 'same';
+          movement = "same";
         }
       }
 
-      const scoreChange = currentRanking ? 
-        (newScore!.overallScore - currentRanking.score) : 
-        newScore!.overallScore;
+      const scoreChange = currentRanking
+        ? newScore!.overallScore - currentRanking.score
+        : newScore!.overallScore;
 
       // Get previous factor scores if available
-      const previousFactorScores = currentRanking?.factor_scores ? {
-        agenticCapability: currentRanking.factor_scores.agentic_capability || 0,
-        innovation: currentRanking.factor_scores.innovation || 0,
-        technicalPerformance: currentRanking.factor_scores.technical_performance || 0,
-        developerAdoption: currentRanking.factor_scores.developer_adoption || 0,
-        marketTraction: currentRanking.factor_scores.market_traction || 0,
-        businessSentiment: currentRanking.factor_scores.business_sentiment || 0,
-        developmentVelocity: currentRanking.factor_scores.development_velocity || 0,
-        platformResilience: currentRanking.factor_scores.platform_resilience || 0,
-      } : undefined;
+      const previousFactorScores = currentRanking?.factor_scores
+        ? {
+            agenticCapability: currentRanking.factor_scores.agentic_capability || 0,
+            innovation: currentRanking.factor_scores.innovation || 0,
+            technicalPerformance: currentRanking.factor_scores.technical_performance || 0,
+            developerAdoption: currentRanking.factor_scores.developer_adoption || 0,
+            marketTraction: currentRanking.factor_scores.market_traction || 0,
+            businessSentiment: currentRanking.factor_scores.business_sentiment || 0,
+            developmentVelocity: currentRanking.factor_scores.development_velocity || 0,
+            platformResilience: currentRanking.factor_scores.platform_resilience || 0,
+          }
+        : undefined;
 
       // Generate change analysis
       const changeAnalysis = changeAnalyzer.analyzeRankingChange(
-        { 
-          tool_id: tool.id, 
-          tool_name: tool.name, 
+        {
+          tool_id: tool.id,
+          tool_name: tool.name,
           position: newPosition,
           score: newScore!.overallScore,
           new_position: newPosition,
-          new_score: newScore!.overallScore
+          new_score: newScore!.overallScore,
         },
-        currentRanking ? {
-          position: currentPosition,
-          score: currentRanking.score,
-          current_position: currentPosition,
-          current_score: currentRanking.score
-        } : undefined,
+        currentRanking
+          ? {
+              position: currentPosition,
+              score: currentRanking.score,
+              current_position: currentPosition,
+              current_score: currentRanking.score,
+            }
+          : undefined,
         newScore!.factorScores || {},
         previousFactorScores
       );
@@ -294,7 +310,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Find dropped tools (in current but not in new)
     for (const currentRanking of currentRankings) {
       const toolId = currentRanking.tool_id;
-      if (!comparisons.find(c => c.tool_id === toolId)) {
+      if (!comparisons.find((c) => c.tool_id === toolId)) {
         comparisons.push({
           tool_id: String(toolId),
           tool_name: currentRanking.tool_name,
@@ -304,7 +320,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           new_score: 0,
           position_change: -currentRanking.position,
           score_change: -currentRanking.score,
-          movement: 'dropped',
+          movement: "dropped",
           factor_changes: {},
         });
       }
@@ -312,25 +328,28 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Generate analytics
     const moversUp = comparisons
-      .filter(c => c.movement === 'up')
+      .filter((c) => c.movement === "up")
       .sort((a, b) => b.position_change - a.position_change)
       .slice(0, 10);
 
     const moversDown = comparisons
-      .filter(c => c.movement === 'down')
+      .filter((c) => c.movement === "down")
       .sort((a, b) => a.position_change - b.position_change)
       .slice(0, 10);
 
-    const validScoreChanges = comparisons.filter(c => c.current_score !== undefined);
-    const validScores = comparisons.map(c => c.new_score).filter(score => score != null && !isNaN(score));
-    
+    const validScoreChanges = comparisons.filter((c) => c.current_score !== undefined);
+    const validScores = comparisons
+      .map((c) => c.new_score)
+      .filter((score) => score != null && !isNaN(score));
+
     const summary = {
-      tools_moved_up: comparisons.filter(c => c.movement === 'up').length,
-      tools_moved_down: comparisons.filter(c => c.movement === 'down').length,
-      tools_stayed_same: comparisons.filter(c => c.movement === 'same').length,
-      average_score_change: validScoreChanges.length > 0 
-        ? validScoreChanges.reduce((sum, c) => sum + c.score_change, 0) / validScoreChanges.length
-        : 0,
+      tools_moved_up: comparisons.filter((c) => c.movement === "up").length,
+      tools_moved_down: comparisons.filter((c) => c.movement === "down").length,
+      tools_stayed_same: comparisons.filter((c) => c.movement === "same").length,
+      average_score_change:
+        validScoreChanges.length > 0
+          ? validScoreChanges.reduce((sum, c) => sum + c.score_change, 0) / validScoreChanges.length
+          : 0,
       highest_score: validScores.length > 0 ? Math.max(...validScores) : 0,
       lowest_score: validScores.length > 0 ? Math.min(...validScores) : 0,
     };
@@ -342,11 +361,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       period,
       algorithm_version,
       total_tools: newScores.length,
-      new_entries: comparisons.filter(c => c.movement === 'new').length,
-      dropped_entries: comparisons.filter(c => c.movement === 'dropped').length,
+      new_entries: comparisons.filter((c) => c.movement === "new").length,
+      dropped_entries: comparisons.filter((c) => c.movement === "dropped").length,
       rankings_comparison: comparisons.sort((a, b) => a.new_position - b.new_position),
       top_10_changes: comparisons
-        .filter(c => c.new_position <= 10 || (c.current_position && c.current_position <= 10))
+        .filter((c) => c.new_position <= 10 || (c.current_position && c.current_position <= 10))
         .sort((a, b) => a.new_position - b.new_position),
       biggest_movers: {
         up: moversUp,
@@ -355,7 +374,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       summary,
       change_report: changeReport,
       comparison_period: comparisonPeriod,
-      is_initial_ranking: !comparisonPeriod || comparisonPeriod === "none" || currentRankings.length === 0,
+      is_initial_ranking:
+        !comparisonPeriod || comparisonPeriod === "none" || currentRankings.length === 0,
     } as any;
 
     loggers.api.info("Ranking preview generated successfully", {
@@ -370,7 +390,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       success: true,
       preview: result,
     });
-
   } catch (error) {
     loggers.api.error("Failed to generate ranking preview:", error);
     return NextResponse.json(

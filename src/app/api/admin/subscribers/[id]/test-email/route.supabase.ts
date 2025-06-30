@@ -3,10 +3,7 @@ import { auth } from "@/auth";
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendTestEmail } from "@/lib/email/email-service";
 
-export async function POST(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     // Check authentication
     const session = await auth();

@@ -34,23 +34,21 @@ interface ToolDetailClientProps {
 
 export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
   const [tool, setTool] = useState<Tool | null>(null);
+  const [toolData, setToolData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchTools() {
+    async function fetchToolDetails() {
       try {
-        const response = await fetch("/api/tools");
+        const response = await fetch(`/api/tools/${slug}/json`);
         if (!response.ok) {
-          throw new Error("Failed to fetch tools");
+          throw new Error("Failed to fetch tool details");
         }
 
         const data = await response.json();
-        const tools = data.tools || [];
 
-        // Find the tool by slug
-        const foundTool = tools.find((t: Tool) => (t.slug || t.id) === slug);
-
-        setTool(foundTool || null);
+        setTool(data.tool);
+        setToolData(data);
       } catch (error) {
         console.error("Failed to fetch tool details", error);
       } finally {
@@ -58,7 +56,7 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
       }
     }
 
-    fetchTools();
+    fetchToolDetails();
   }, [slug]);
 
   if (loading) {
@@ -89,12 +87,44 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
   const links = info.links || {};
   const product = info.product || {};
   const company = info.company || {};
+  const business = info.business || {};
+  const metrics = info.metrics || {};
 
-  const websiteUrl = links.website || tool.website_url;
+  const websiteUrl = links.website || tool.website_url || info.website;
   const githubUrl = links.github || tool.github_repo;
   const description = product.description || tool.description;
   const tagline = product.tagline || tool.tagline;
   const pricingModel = product.pricing_model || tool.pricing_model;
+
+  // Transform pricing data to expected format
+  const pricingPlans = business.pricing_details
+    ? Object.entries(business.pricing_details).map(([planName, details], index) => {
+        // Extract price from the details string (basic parsing)
+        const detailsStr = details ? String(details) : "";
+        const priceMatch = detailsStr.match(/\$(\d+)\/month/);
+        const price =
+          priceMatch && priceMatch[1]
+            ? parseInt(priceMatch[1], 10)
+            : planName.toLowerCase().includes("free")
+              ? 0
+              : undefined;
+
+        return {
+          id: `${tool.id}-${index}`,
+          tool_id: tool.id,
+          plan_name: planName,
+          price_monthly: price,
+          price_annually: undefined,
+          currency: "USD",
+          billing_cycle: "monthly",
+          features: [detailsStr],
+          limits: {},
+          is_primary:
+            planName.toLowerCase().includes("pro") || planName.toLowerCase().includes("standard"),
+          is_active: true,
+        };
+      })
+    : undefined;
 
   return (
     <div className="container mx-auto p-4 md:p-8 max-w-6xl">
@@ -179,7 +209,16 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
       </Card>
 
       {/* Tool Detail Tabs */}
-      <ToolDetailTabs tool={tool} dict={dict} />
+      <ToolDetailTabs
+        tool={tool}
+        ranking={toolData?.ranking}
+        metrics={toolData?.metrics || metrics}
+        metricHistory={toolData?.metricHistory}
+        rankingsHistory={toolData?.rankingsHistory}
+        newsItems={toolData?.newsItems}
+        pricingPlans={pricingPlans}
+        dict={dict}
+      />
 
       {/* Mobile Visit Site button - centered below content */}
       <div className="mt-8 flex flex-col items-center gap-3 md:hidden">

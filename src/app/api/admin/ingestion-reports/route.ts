@@ -5,17 +5,17 @@ import { getNewsRepo } from "@/lib/json-db";
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const status = searchParams.get('status') || undefined;
-    
+    const limit = parseInt(searchParams.get("limit") || "50");
+    const status = searchParams.get("status") || undefined;
+
     const newsRepo = getNewsRepo();
-    
+
     // Get reports with optional status filter and limit
     const reports = await newsRepo.getIngestionReports(status, limit);
-    
+
     // Get summary statistics
     const stats = await newsRepo.getIngestionReportStats();
-    
+
     // Calculate totals from returned reports
     let totalItemsProcessed = 0;
     let totalToolsCreated = 0;
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({
       success: true,
-      reports: reports.map(report => ({
+      reports: reports.map((report) => ({
         id: report.id,
         filename: report.filename,
         status: report.status,
@@ -63,7 +63,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         total_news_items: totalNewsItems,
       },
     });
-
   } catch (error) {
     loggers.api.error("Failed to fetch ingestion reports:", error);
     return NextResponse.json(
@@ -79,23 +78,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 export async function DELETE(request: NextRequest): Promise<NextResponse> {
   try {
     const { report_id } = await request.json();
-    
+
     if (!report_id) {
-      return NextResponse.json(
-        { error: "Report ID is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Report ID is required" }, { status: 400 });
     }
 
     const newsRepo = getNewsRepo();
-    
+
     const deleted = await newsRepo.deleteIngestionReport(report_id);
-    
+
     if (!deleted) {
-      return NextResponse.json(
-        { error: "Ingestion report not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Ingestion report not found" }, { status: 404 });
     }
 
     loggers.api.info("Deleted ingestion report", { report_id });
@@ -104,7 +97,6 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
       success: true,
       message: "Ingestion report deleted successfully",
     });
-
   } catch (error) {
     loggers.api.error("Failed to delete ingestion report:", error);
     return NextResponse.json(

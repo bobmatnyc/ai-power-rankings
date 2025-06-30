@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
-
+import { cachedJsonResponse } from "@/lib/api-cache";
 
 export async function GET(): Promise<NextResponse> {
   try {
@@ -9,23 +9,23 @@ export async function GET(): Promise<NextResponse> {
 
     const rankingsRepo = getRankingsRepo();
     const toolsRepo = getToolsRepo();
-    
+
     // Get current rankings
     const currentRankings = await rankingsRepo.getCurrentRankings();
-    
+
     if (!currentRankings) {
       return NextResponse.json({ error: "No current rankings available" }, { status: 404 });
     }
-    
+
     // Transform to expected format with tool details
     const formattedRankings = await Promise.all(
       currentRankings.rankings.map(async (ranking: any) => {
         const tool = await toolsRepo.getById(ranking.tool_id);
-        
+
         if (!tool) {
           return null;
         }
-        
+
         return {
           rank: ranking.position,
           previousRank: ranking.movement?.previous_position || null,
@@ -59,37 +59,30 @@ export async function GET(): Promise<NextResponse> {
         };
       })
     );
-    
+
     // Filter out null values
     const validRankings = formattedRankings.filter(Boolean);
 
-    const apiResponse = NextResponse.json({
-      rankings: validRankings,
-      algorithm: {
-        version: currentRankings.algorithm_version,
-        name: "JSON-Based Rankings",
-        date: currentRankings.created_at,
-        weights: { newsImpact: 0.3, baseScore: 0.7 },
+    return cachedJsonResponse(
+      {
+        rankings: validRankings,
+        algorithm: {
+          version: currentRankings.algorithm_version,
+          name: "JSON-Based Rankings",
+          date: currentRankings.created_at,
+          weights: { newsImpact: 0.3, baseScore: 0.7 },
+        },
+        stats: {
+          total_tools: validRankings.length,
+          tools_with_news: 0,
+          avg_news_boost: 0,
+          max_news_impact: 0,
+        },
+        _source: "json-db",
+        _timestamp: new Date().toISOString(),
       },
-      stats: {
-        total_tools: validRankings.length,
-        tools_with_news: 0,
-        avg_news_boost: 0,
-        max_news_impact: 0,
-      },
-      _source: "json-db",
-      _timestamp: new Date().toISOString()
-    });
-
-    // Set cache headers
-    apiResponse.headers.set(
-      "Cache-Control",
-      process.env.NODE_ENV === "production"
-        ? "public, s-maxage=3600, stale-while-revalidate=1800"
-        : "no-cache"
+      "/api/rankings"
     );
-
-    return apiResponse;
   } catch (error) {
     loggers.api.error("Error fetching rankings", { error });
     return NextResponse.json({ error: "Failed to fetch rankings" }, { status: 500 });

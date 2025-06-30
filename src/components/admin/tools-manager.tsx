@@ -108,7 +108,7 @@ export function ToolsManager() {
             Back to Dashboard
           </Link>
         </Button>
-        <Button variant="outline" size="sm" onClick={() => window.open('/admin', '_blank')}>
+        <Button variant="outline" size="sm" onClick={() => window.open("/admin", "_blank")}>
           Open Payload CMS
         </Button>
       </div>

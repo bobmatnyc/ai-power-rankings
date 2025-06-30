@@ -12,7 +12,7 @@ export const metadata: Metadata = generateSEOMetadata({
 
 export default function AdminPage() {
   return (
-    <DashboardLayout 
+    <DashboardLayout
       title="Admin Dashboard"
       description="Welcome to the AI Power Rankings admin panel"
       showBackButton={true}

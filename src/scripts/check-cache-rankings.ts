@@ -7,24 +7,26 @@ const cacheFile = path.join(process.cwd(), "src/data/cache/rankings.json");
 
 if (fs.existsSync(cacheFile)) {
   const data = JSON.parse(fs.readFileSync(cacheFile, "utf-8"));
-  
+
   console.log("=== Rankings Cache Analysis ===");
   console.log(`Total tools: ${data.rankings.length}`);
   console.log(`Algorithm: ${data.algorithm.version}`);
   console.log(`Generated: ${data.algorithm.date}`);
-  
+
   // Check scores
   const scores = data.rankings.map((r: any) => r.total_score);
   const uniqueScores = [...new Set(scores)];
   console.log(`\nUnique scores: ${uniqueScores.length}`);
-  
+
   // Show score distribution
   console.log("\nScore distribution:");
-  uniqueScores.sort((a, b) => b - a).forEach(score => {
-    const count = scores.filter((s: number) => s === score).length;
-    console.log(`  ${score.toFixed(2)}: ${count} tool(s)`);
-  });
-  
+  uniqueScores
+    .sort((a, b) => b - a)
+    .forEach((score) => {
+      const count = scores.filter((s: number) => s === score).length;
+      console.log(`  ${score.toFixed(2)}: ${count} tool(s)`);
+    });
+
   // Show top 10
   console.log("\nTop 10 Rankings:");
   data.rankings.slice(0, 10).forEach((r: any) => {

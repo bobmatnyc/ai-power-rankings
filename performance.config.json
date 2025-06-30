@@ -1,0 +1,23 @@
+{
+  "cache": {
+    "maxAge": 3600,
+    "staleWhileRevalidate": 1800,
+    "public": true
+  },
+  "compression": {
+    "preferBrotli": true,
+    "gzipFallback": true
+  },
+  "chunking": {
+    "maxFileSizeKB": 500,
+    "enableForNews": true,
+    "enableForRankings": false
+  },
+  "indexing": {
+    "minItemsForIndex": 100,
+    "indexFields": [
+      "id",
+      "slug"
+    ]
+  }
+}

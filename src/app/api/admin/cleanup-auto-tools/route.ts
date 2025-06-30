@@ -5,18 +5,19 @@ import { getToolsRepo } from "@/lib/json-db";
 export async function GET() {
   try {
     const toolsRepo = getToolsRepo();
-    
+
     // Get all tools that contain auto-creation description
     const allTools = await toolsRepo.getAll();
-    const autoCreatedTools = allTools.filter(tool => 
-      tool.info?.description?.includes("Tool created during news ingestion") ||
-      tool.info?.description?.includes("Tool mentioned in news article")
+    const autoCreatedTools = allTools.filter(
+      (tool) =>
+        tool.info?.description?.includes("Tool created during news ingestion") ||
+        tool.info?.description?.includes("Tool mentioned in news article")
     );
 
     return NextResponse.json({
       message: "Found auto-created tools",
       count: autoCreatedTools.length,
-      tools: autoCreatedTools.map(tool => ({
+      tools: autoCreatedTools.map((tool) => ({
         id: tool.id,
         slug: tool.slug,
         name: tool.name,
@@ -32,16 +33,17 @@ export async function GET() {
 export async function DELETE() {
   try {
     const toolsRepo = getToolsRepo();
-    
+
     // Get all tools that contain auto-creation description
     const allTools = await toolsRepo.getAll();
-    const autoCreatedTools = allTools.filter(tool => 
-      tool.info?.description?.includes("Tool created during news ingestion") ||
-      tool.info?.description?.includes("Tool mentioned in news article")
+    const autoCreatedTools = allTools.filter(
+      (tool) =>
+        tool.info?.description?.includes("Tool created during news ingestion") ||
+        tool.info?.description?.includes("Tool mentioned in news article")
     );
-    
+
     const deletedTools = [];
-    
+
     for (const tool of autoCreatedTools) {
       try {
         // Delete the tool

@@ -90,20 +90,20 @@ function RankingsGridContent({
       const response = await fetch(url, {
         cache: isDev ? "no-store" : "default",
       });
-      
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (!data || !data.rankings) {
         loggers.ranking.warn("Invalid API response", { data });
         setRankings([]);
       } else {
         setRankings(data.rankings);
       }
-      
+
       setLoading(false);
     } catch (error) {
       loggers.ranking.error("Failed to fetch rankings", { error });

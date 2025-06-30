@@ -3,7 +3,16 @@
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Users, FileUp, Trophy, Database, TrendingUp, Settings, Globe } from "lucide-react";
+import {
+  FileText,
+  Users,
+  FileUp,
+  Trophy,
+  Database,
+  TrendingUp,
+  Settings,
+  Globe,
+} from "lucide-react";
 import Link from "next/link";
 
 export function AdminDashboard() {
@@ -94,9 +103,7 @@ export function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* User Welcome */}
-      <div className="text-sm text-muted-foreground">
-        Welcome back, {session?.user?.email}
-      </div>
+      <div className="text-sm text-muted-foreground">Welcome back, {session?.user?.email}</div>
 
       {/* Admin Sections Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -140,7 +147,6 @@ export function AdminDashboard() {
             );
           }
 
-
           return (
             <Link key={section.title} href={section.href} className="block h-full">
               {cardContent}
@@ -171,7 +177,7 @@ export function AdminDashboard() {
               </div>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {currentLiveRanking ? 'Currently showing on live site' : 'No ranking set as live'}
+              {currentLiveRanking ? "Currently showing on live site" : "No ranking set as live"}
             </p>
           </CardContent>
         </Card>

@@ -101,7 +101,7 @@ export function RankingCard({
             <div className="flex-1 flex flex-col">
               {/* Description if available */}
               {ranking.tool.description && (
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                <p className="text-sm text-muted-foreground mb-3 line-clamp-3">
                   {extractTextFromRichText(ranking.tool.description)}
                 </p>
               )}

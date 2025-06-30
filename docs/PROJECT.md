@@ -18,14 +18,15 @@ The platform implements a source-oriented metrics architecture where each articl
 // Created: 2025-06-08
 // Updated: 2025-06-25 - Added i18n support
 // Updated: 2025-06-25 - Cache-first architecture
-// Updated: 2025-06-26 - Added Payload CMS
+// Updated: 2025-06-26 - Added CMS capabilities
+// Updated: 2025-01-29 - Migrated to JSON file storage
+// Updated: 2025-01-29 - Migrated to JSON-only storage
 
 - **Frontend Framework**: Next.js 13+ (App Router)
 - **Language**: TypeScript (strict mode)
 - **Styling**: Tailwind CSS
-- **CMS**: Payload CMS v3 - see [PAYLOAD.md](./PAYLOAD.md)
-- **Database**: Supabase (PostgreSQL) - optional with cache fallback
-- **Cache Layer**: Static JSON files in /src/data/cache/
+- **Data Storage**: JSON file-based system - see [JSON-STORAGE.md](./JSON-STORAGE.md)
+- **Cache Layer**: Pre-generated static JSON files for production performance
 - **UI Components**: Radix UI + shadcn/ui
 - **Data Visualization**: Recharts
 - **Authentication**: NextAuth with Google OAuth
@@ -39,17 +40,18 @@ The platform implements a source-oriented metrics architecture where each articl
 
 ### Core Components
 
-#### 1. Database Layer (Supabase)
+#### 1. Data Storage Layer (JSON Files)
 
 // Created: 2025-06-08
 // Updated: 2025-06-09 - Source-oriented schema
+// Updated: 2025-01-29 - Migrated to JSON file storage
 Responsible for:
 
-- **Source-Oriented Storage**: Each source (article, benchmark) can contain metrics for multiple tools
+- **JSON File Storage**: All data stored in structured JSON files under /data/json/
 - **Tool Profiles**: Comprehensive tool information including companies, capabilities, and status
-- **Metrics History**: Pure JSON records with unique source URLs for easy updates
-- **Ranking Cache**: Pre-calculated rankings using algorithm v4.0 (25% agentic capability weight)
-- **Materialized Views**: Tool-centric queries from source-oriented data
+- **Metrics History**: Historical data preserved in timestamped JSON files
+- **Ranking Periods**: Daily rankings stored as YYYY-MM-DD.json files
+- **Repository Pattern**: Type-safe data access through repository classes
 
 #### 2. Data Collection Pipeline
 
@@ -98,13 +100,14 @@ Responsible for:
 #### 5. API Layer
 
 // Created: 2025-06-08
+// Updated: 2025-01-29 - JSON file-based APIs
 Responsible for:
 
-- **Data Access**: RESTful endpoints for tool data and rankings
+- **Data Access**: RESTful endpoints serving JSON file data
 - **Collection Triggers**: Automated data collection via cron jobs
-- **Ranking Generation**: Monthly ranking calculation endpoints
+- **Ranking Generation**: Daily ranking calculation and storage
 - **Subscription Management**: Email list and preference handling
-- **Public API**: External access to ranking data (future)
+- **Cache-First Response**: Pre-generated JSON responses for performance
 
 #### 6. Cache-First Architecture
 
@@ -156,7 +159,7 @@ Responsible for:
   - `tools.json`: Complete tools database
   - `news.json`: News and updates feed
 - `src/lib/`: Core business logic and utilities
-  - `database.ts`: Supabase client and queries
+  - `json-db/`: JSON database repositories and schemas
   - `ranking-algorithm.ts`: Core ranking calculations (v4.0)
   - `data-collectors/`: Data collection modules
   - `api-utils.ts`: Cache-first data fetching utilities
@@ -345,14 +348,10 @@ The domain should be configured in Namecheap with one of these options:
 ### Environment Setup
 
 // Created: 2025-06-08
+// Updated: 2025-01-29 - Removed database dependencies
 Required environment variables:
 
 ```bash
-# Database
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
 # Data Collection APIs
 GITHUB_TOKEN=your_github_token
 PERPLEXITY_API_KEY=your_perplexity_key
@@ -362,6 +361,10 @@ GOOGLE_DRIVE_FOLDER_ID=your_folder_id
 # Email & Analytics
 RESEND_API_KEY=your_resend_key
 NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your_analytics_id
+
+# Optional Performance Settings
+USE_CACHE_FALLBACK=true
+NODE_ENV=production
 ```
 
 ### Development Workflow
@@ -372,11 +375,10 @@ NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your_analytics_id
 # Setup
 npm install
 cp .env.example .env.local
-npm run db:seed
 
 # Development
 npm run dev              # Start development server
-npm run db:reset         # Reset and reseed database
+npm run cache:generate   # Generate all cache files
 npm run collect:github   # Manual data collection
 npm run generate:rankings # Manual ranking generation
 npx tsx scripts/run-ingestion-lenient.ts # Ingest news from Google Drive

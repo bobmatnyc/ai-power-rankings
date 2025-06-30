@@ -625,7 +625,7 @@
   "tools": {
     "title": "[TRANSLATE] AI Coding Tools",
     "subtitle": "[TRANSLATE] Explore all {count} AI coding tools in our database",
-    "allCategories": "[TRANSLATE] All Categories",
+    "allCategories": "所有类别",
     "filterByCategory": "[TRANSLATE] Filter by category",
     "sortBy": "[TRANSLATE] Sort by",
     "defaultDescription": "[TRANSLATE] Discover and compare AI coding tools",
@@ -649,7 +649,7 @@
       "subtitle": "[TRANSLATE] Explore all {count} AI coding tools in our database",
       "filterByCategory": "[TRANSLATE] Filter by category",
       "filterByStatus": "[TRANSLATE] Filter by status",
-      "allCategories": "[TRANSLATE] All Categories",
+      "allCategories": "所有类别",
       "allStatuses": "[TRANSLATE] All Statuses"
     },
     "detail": {

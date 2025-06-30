@@ -46,7 +46,7 @@ export default async function RootLayout({
 
   return (
     <html lang={lang}>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}>
         <ClientLayout lang={lang} dict={dict}>
           {children}
         </ClientLayout>

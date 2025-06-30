@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToolsRepo, getCompaniesRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
+import type { Tool } from "@/lib/json-db/schemas";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,9 +15,9 @@ export async function GET(request: NextRequest) {
 
     const toolsRepo = getToolsRepo();
     const companiesRepo = getCompaniesRepo();
-    
+
     let tools;
-    
+
     // Apply filters
     if (search) {
       tools = await toolsRepo.search(search);
@@ -27,15 +28,15 @@ export async function GET(request: NextRequest) {
     } else {
       tools = await toolsRepo.getAll();
     }
-    
+
     // Filter out deprecated unless explicitly requested
     if (!includeDeprecated) {
-      tools = tools.filter(tool => tool.status !== 'deprecated');
+      tools = tools.filter((tool) => tool.status !== "deprecated");
     }
-    
+
     // Sort by name
     tools.sort((a, b) => a.name.localeCompare(b.name));
-    
+
     // Transform tools to match expected format with info structure
     const toolsWithInfo = await Promise.all(
       tools.map(async (tool) => {
@@ -47,34 +48,20 @@ export async function GET(request: NextRequest) {
             companyName = company.name;
           }
         }
-        
+
         return {
           ...tool,
-          info: {
-            company: { name: companyName },
-            product: {
-              description: tool.description || "",
-              tagline: tool.tagline || "",
-              pricing_model: tool.pricing_model,
-              license_type: tool.license_type,
-            },
-            links: {
-              website: tool.website_url,
-              github: tool.github_repo,
-            },
-            metadata: {
-              logo_url: tool.logo_url,
-            },
-          },
+          // Tool already has info structure from JSON database
+          company_name: companyName, // Add company name for backward compatibility
         };
       })
     );
-    
+
     // Apply pagination
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedTools = toolsWithInfo.slice(startIndex, endIndex);
-    
+
     const response = {
       tools: paginatedTools,
       total: toolsWithInfo.length,
@@ -83,19 +70,16 @@ export async function GET(request: NextRequest) {
       hasMore: endIndex < toolsWithInfo.length,
       _source: "json-db",
     };
-    
+
     const apiResponse = NextResponse.json(response);
-    
+
     // Set cache headers
-    apiResponse.headers.set(
-      "Cache-Control",
-      "public, s-maxage=3600, stale-while-revalidate=1800"
-    );
-    
+    apiResponse.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=1800");
+
     return apiResponse;
   } catch (error) {
     loggers.api.error("Tools JSON API error", { error });
-    
+
     return NextResponse.json(
       {
         error: "Failed to fetch tools",
@@ -110,55 +94,61 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // TODO: Add authentication check here
-    
+
     const body = await request.json();
     const toolsRepo = getToolsRepo();
-    
+
     // Generate slug if not provided
-    const slug = body.slug || 
-      body.name.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
+    const slug =
+      body.slug ||
+      body.name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
         .trim();
-    
-    const tool = {
+
+    const tool: Tool = {
       id: body.id || `tool-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       slug,
       name: body.name,
-      display_name: body.display_name || body.name,
       category: body.category || "ai-coding-tool",
-      subcategory: body.subcategory,
-      description: body.description,
-      tagline: body.tagline,
-      status: body.status || 'active',
-      launch_date: body.launch_date,
+      status: body.status || ("active" as const),
       company_id: body.company_id,
-      website_url: body.website_url,
-      github_repo: body.github_repo,
-      documentation_url: body.documentation_url,
-      logo_url: body.logo_url,
-      pricing_model: body.pricing_model,
-      pricing_tiers: body.pricing_tiers || [],
-      license_type: body.license_type,
-      key_features: body.key_features || [],
-      supported_platforms: body.supported_platforms || [],
-      integration_capabilities: body.integration_capabilities || [],
-      target_audience: body.target_audience || [],
-      use_cases: body.use_cases || [],
+      info: {
+        summary: body.summary || body.tagline || "",
+        description: body.description || "",
+        website: body.website_url || "",
+        features: body.key_features || body.features || [],
+        technical: {
+          context_window: body.context_window,
+          supported_languages: body.supported_languages,
+          has_api: body.has_api,
+          multi_file_support: body.multi_file_support,
+          languages: body.programming_languages,
+        },
+        business: {
+          pricing_model: body.pricing_model,
+          business_model: body.business_model,
+          base_price: body.base_price,
+          enterprise_pricing: body.enterprise_pricing,
+        },
+        metrics: body.metrics || {},
+      },
+      tags: body.tags || [],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    
+
     await toolsRepo.upsert(tool);
-    
+
     return NextResponse.json({
       success: true,
       tool,
     });
   } catch (error) {
     loggers.api.error("Create tool error", { error });
-    
+
     return NextResponse.json(
       {
         error: "Failed to create tool",

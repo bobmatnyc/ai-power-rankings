@@ -38,10 +38,7 @@ class ConnectionPoolManager {
    * Check if pool is healthy
    */
   isHealthy(): boolean {
-    return (
-      this.stats.active < this.maxConnections &&
-      this.stats.waiting === 0
-    );
+    return this.stats.active < this.maxConnections && this.stats.waiting === 0;
   }
 
   /**
@@ -59,17 +56,14 @@ class ConnectionPoolManager {
     try {
       // Add timeout to prevent hanging connections
       const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(
-          () => reject(new Error("Connection timeout")),
-          this.connectionTimeout
-        )
+        setTimeout(() => reject(new Error("Connection timeout")), this.connectionTimeout)
       );
 
       const result = await Promise.race([operation(), timeoutPromise]);
-      
+
       this.stats.active--;
       this.stats.idle++;
-      
+
       return result;
     } catch (error) {
       this.stats.active--;

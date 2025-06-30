@@ -85,7 +85,7 @@ export function HeroCard({ ranking, index, lang = "en" }: HeroCardProps) {
         <CardContent>
           <div className="space-y-4">
             {ranking.tool.description && (
-              <p className="text-sm text-muted-foreground line-clamp-2">
+              <p className="text-sm text-muted-foreground line-clamp-3">
                 {extractTextFromRichText(ranking.tool.description)}
               </p>
             )}

@@ -1,12 +1,24 @@
-const fs = require('fs');
+const fs = require("fs");
 
-const en = JSON.parse(fs.readFileSync('en.json', 'utf8'));
-const languageFiles = fs.readdirSync('.').filter(f => f.endsWith('.json') && f !== 'en.json' && !f.includes('batch') && !f.includes('backup') && !f.includes('translate') && !f.includes('project_summary'));
+const en = JSON.parse(fs.readFileSync("en.json", "utf8"));
+const languageFiles = fs
+  .readdirSync(".")
+  .filter(
+    (f) =>
+      f.endsWith(".json") &&
+      f !== "en.json" &&
+      !f.includes("batch") &&
+      !f.includes("backup") &&
+      !f.includes("translate") &&
+      !f.includes("project_summary")
+  );
 
 function deepMerge(target, source) {
   for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      if (!target[key]) {target[key] = {};}
+    if (source[key] && typeof source[key] === "object" && !Array.isArray(source[key])) {
+      if (!target[key]) {
+        target[key] = {};
+      }
       deepMerge(target[key], source[key]);
     } else if (!target[key]) {
       target[key] = source[key]; // Use English as fallback
@@ -14,11 +26,11 @@ function deepMerge(target, source) {
   }
 }
 
-languageFiles.forEach(langFile => {
-  const existing = JSON.parse(fs.readFileSync(langFile, 'utf8'));
+languageFiles.forEach((langFile) => {
+  const existing = JSON.parse(fs.readFileSync(langFile, "utf8"));
   const synced = JSON.parse(JSON.stringify(en)); // Deep copy English structure
   deepMerge(synced, existing); // Overlay existing translations
-  
+
   fs.writeFileSync(langFile, JSON.stringify(synced, null, 2));
   console.log(`🔄 Synced ${langFile}`);
 });

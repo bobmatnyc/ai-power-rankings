@@ -3,19 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
-import {
-  TrendingUp,
-  TrendingDown,
-  Zap,
-  Users,
-  DollarSign,
-  GitBranch,
-  Award,
-  AlertCircle,
-  Sparkles,
-  Clock,
-  ExternalLink,
-} from "lucide-react";
+import { TrendingUp, TrendingDown, Users, DollarSign, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 export interface NewsItem {
@@ -45,23 +33,6 @@ interface NewsCardProps {
 }
 
 export function NewsCard({ item }: NewsCardProps) {
-  const getEventIcon = (eventType: string) => {
-    switch (eventType) {
-      case "milestone":
-        return <Award className="h-4 w-4" />;
-      case "feature":
-        return <Sparkles className="h-4 w-4" />;
-      case "partnership":
-        return <GitBranch className="h-4 w-4" />;
-      case "update":
-        return <Zap className="h-4 w-4" />;
-      case "announcement":
-        return <AlertCircle className="h-4 w-4" />;
-      default:
-        return <Clock className="h-4 w-4" />;
-    }
-  };
-
   const getEventColor = (eventType: string) => {
     switch (eventType) {
       case "milestone":
@@ -116,8 +87,7 @@ export function NewsCard({ item }: NewsCardProps) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <Badge className={getEventColor(item.event_type)}>
-                  {getEventIcon(item.event_type)}
-                  <span className="ml-1">{item.event_type}</span>
+                  <span>{item.event_type}</span>
                 </Badge>
                 <span className="text-sm text-muted-foreground">{formatDate(item.event_date)}</span>
               </div>

@@ -4,16 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { 
-  Home, 
-  FileText, 
-  Users, 
-  FileUp, 
-  Trophy, 
-  Database,
-  ArrowLeft,
-  Settings
-} from "lucide-react";
+import { Home, FileText, Users, FileUp, Trophy, Database, ArrowLeft, Settings } from "lucide-react";
 
 const dashboardNavItems = [
   {
@@ -68,11 +59,11 @@ interface DashboardNavProps {
   className?: string;
 }
 
-export function DashboardNav({ 
-  showBackButton = true, 
+export function DashboardNav({
+  showBackButton = true,
   backHref = "/",
   variant = "horizontal",
-  className 
+  className,
 }: DashboardNavProps) {
   const pathname = usePathname();
 
@@ -88,12 +79,12 @@ export function DashboardNav({
               </Link>
             </Button>
           )}
-          
+
           <nav className="space-y-2">
             {dashboardNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
-              
+
               if (item.disabled) {
                 return (
                   <div
@@ -135,7 +126,12 @@ export function DashboardNav({
   }
 
   return (
-    <div className={cn("border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60", className)}>
+    <div
+      className={cn(
+        "border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
+        className
+      )}
+    >
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -147,12 +143,12 @@ export function DashboardNav({
                 </Link>
               </Button>
             )}
-            
+
             <nav className="flex items-center space-x-6">
               {dashboardNavItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
-                
+
                 if (item.disabled) {
                   return (
                     <div

@@ -20,12 +20,9 @@ interface RollbackResult {
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const { ingestion_report_id, confirm_rollback = false } = await request.json();
-    
+
     if (!ingestion_report_id) {
-      return NextResponse.json(
-        { error: "Ingestion report ID is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Ingestion report ID is required" }, { status: 400 });
     }
 
     if (!confirm_rollback) {
@@ -38,15 +35,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const newsRepo = getNewsRepo();
     const toolsRepo = getToolsRepo();
     const companiesRepo = getCompaniesRepo();
-    
+
     // Get the ingestion report
     const ingestionReport = await newsRepo.getIngestionReportById(ingestion_report_id);
 
     if (!ingestionReport) {
-      return NextResponse.json(
-        { error: "Ingestion report not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Ingestion report not found" }, { status: 404 });
     }
 
     const report = {
@@ -62,7 +56,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Step 1: Delete news items that were created during this ingestion
     const ingestedNewsIds = ingestionReport.ingested_news_ids || [];
-    
+
     for (const newsId of ingestedNewsIds) {
       try {
         const deleted = await newsRepo.delete(newsId);
@@ -73,9 +67,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           report.rollback_log += `News item not found: ${newsId}\n`;
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
         report.errors.push({
-          type: 'news_deletion',
+          type: "news_deletion",
           id: newsId,
           error: errorMessage,
         });
@@ -85,7 +79,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Step 2: Handle tools that were created during ingestion
     const createdTools = ingestionReport.created_tools || [];
-    
+
     for (const toolInfo of createdTools) {
       try {
         // Check if the tool has any news items associated with it (from other sources)
@@ -93,9 +87,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         if (relatedNews.length > 0) {
           report.warnings.push({
-            type: 'tool_has_other_news',
+            type: "tool_has_other_news",
             tool: toolInfo,
-            message: 'Tool has news from other sources, not removing',
+            message: "Tool has news from other sources, not removing",
           });
           report.rollback_log += `Warning: Tool ${toolInfo.name} has other news references, keeping it\n`;
           continue;
@@ -104,16 +98,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // For now, we'll warn about removing tools since they might have other data
         // In a full implementation, you'd check rankings and metrics repositories
         report.warnings.push({
-          type: 'tool_removal_skipped',
+          type: "tool_removal_skipped",
           tool: toolInfo,
-          message: 'Tool removal skipped - manual review required',
+          message: "Tool removal skipped - manual review required",
         });
         report.rollback_log += `Warning: Tool ${toolInfo.name} removal skipped - manual review required\n`;
-
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
         report.errors.push({
-          type: 'tool_removal',
+          type: "tool_removal",
           tool: toolInfo,
           error: errorMessage,
         });
@@ -123,18 +116,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Step 3: Handle companies that were created during ingestion
     const createdCompanies = ingestionReport.created_companies || [];
-    
+
     for (const companyInfo of createdCompanies) {
       try {
         // Check if the company has any tools associated with it
         const allTools = await toolsRepo.getAll();
-        const companyTools = allTools.filter(tool => tool.company_id === companyInfo.id);
+        const companyTools = allTools.filter((tool) => tool.company_id === companyInfo.id);
 
         if (companyTools.length > 0) {
           report.warnings.push({
-            type: 'company_has_tools',
+            type: "company_has_tools",
             company: companyInfo,
-            message: 'Company has tools associated, not removing',
+            message: "Company has tools associated, not removing",
           });
           report.rollback_log += `Warning: Company ${companyInfo.name} has tools, keeping it\n`;
           continue;
@@ -148,11 +141,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         } else {
           report.rollback_log += `Company not found: ${companyInfo.name} (${companyInfo.id})\n`;
         }
-
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
         report.errors.push({
-          type: 'company_removal',
+          type: "company_removal",
           company: companyInfo,
           error: errorMessage,
         });
@@ -162,8 +154,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Step 4: Update the ingestion report status
     await newsRepo.updateIngestionReport(ingestion_report_id, {
-      status: 'failed', // Mark as failed since it was rolled back
-      processing_log: (ingestionReport.processing_log || '') + 
+      status: "failed", // Mark as failed since it was rolled back
+      processing_log:
+        (ingestionReport.processing_log || "") +
         `\n--- ROLLBACK PERFORMED ---\n${report.rollback_log}`,
     });
 
@@ -189,7 +182,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       message: `Rollback completed for ${report.filename}`,
       report,
     });
-
   } catch (error) {
     loggers.api.error("Failed to rollback ingestion:", error);
     return NextResponse.json(
@@ -206,26 +198,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
-    const ingestionReportId = searchParams.get('id');
-    
+    const ingestionReportId = searchParams.get("id");
+
     if (!ingestionReportId) {
-      return NextResponse.json(
-        { error: "Ingestion report ID is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Ingestion report ID is required" }, { status: 400 });
     }
 
     const newsRepo = getNewsRepo();
     const toolsRepo = getToolsRepo();
-    
+
     // Get the ingestion report
     const ingestionReport = await newsRepo.getIngestionReportById(ingestionReportId);
 
     if (!ingestionReport) {
-      return NextResponse.json(
-        { error: "Ingestion report not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Ingestion report not found" }, { status: 404 });
     }
 
     const preview = {
@@ -246,9 +232,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         // For preview, assume tools with news should be kept
         if (relatedNews.length > 0) {
           preview.warnings.push({
-            type: 'tool',
+            type: "tool",
             name: toolInfo.name,
-            reason: 'Has news references - will be kept',
+            reason: "Has news references - will be kept",
             dependencies: {
               news: relatedNews.length,
               metrics: 0, // Would need metrics repository to check
@@ -261,17 +247,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       }
     }
 
-    // Check each created company for dependencies  
+    // Check each created company for dependencies
     for (const companyInfo of preview.created_companies) {
       try {
         const allTools = await toolsRepo.getAll();
-        const companyTools = allTools.filter(tool => tool.company_id === companyInfo.id);
+        const companyTools = allTools.filter((tool) => tool.company_id === companyInfo.id);
 
         if (companyTools.length > 0) {
           preview.warnings.push({
-            type: 'company',
+            type: "company",
             name: companyInfo.name,
-            reason: 'Has tools associated - will be kept',
+            reason: "Has tools associated - will be kept",
             dependencies: {
               tools: companyTools.length,
             },
@@ -286,7 +272,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       success: true,
       preview,
     });
-
   } catch (error) {
     loggers.api.error("Failed to generate rollback preview:", error);
     return NextResponse.json(

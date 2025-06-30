@@ -485,7 +485,7 @@
   "tools": {
     "title": "AI Coding Tools",
     "subtitle": "Explore all {count} AI coding tools in our database",
-    "allCategories": "All Categories",
+    "allCategories": "すべてのカテゴリー",
     "filterByCategory": "Filter by category",
     "sortBy": "Sort by",
     "defaultDescription": "Discover and compare AI coding tools",
@@ -509,7 +509,7 @@
       "subtitle": "Explore all {count} AI coding tools in our database",
       "filterByCategory": "Filter by category",
       "filterByStatus": "Filter by status",
-      "allCategories": "All Categories",
+      "allCategories": "すべてのカテゴリー",
       "allStatuses": "All Statuses"
     },
     "detail": {

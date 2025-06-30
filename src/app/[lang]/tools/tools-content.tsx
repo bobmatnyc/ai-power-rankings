@@ -32,6 +32,11 @@ interface Tool {
     links?: {
       website?: string;
     };
+    business?: {
+      pricing_model?: string;
+      base_price?: number;
+      pricing_details?: Record<string, string>;
+    };
   };
 }
 
@@ -156,10 +161,35 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
                   </div>
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex-1">
-                <p className="text-sm text-muted-foreground">
+              <CardContent className="flex-1 space-y-3">
+                <p className="text-sm text-muted-foreground line-clamp-3">
                   {extractTextFromRichText(tool.description) || dict.tools.defaultDescription}
                 </p>
+
+                {/* Show pricing model if available */}
+                {tool.info?.business?.pricing_model && (
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-xs">
+                      {tool.info.business.pricing_model === "freemium"
+                        ? "Freemium"
+                        : tool.info.business.pricing_model === "free"
+                          ? "Free"
+                          : tool.info.business.pricing_model === "subscription"
+                            ? "Subscription"
+                            : tool.info.business.pricing_model === "usage-based"
+                              ? "Usage-based"
+                              : tool.info.business.pricing_model === "enterprise"
+                                ? "Enterprise"
+                                : tool.info.business.pricing_model}
+                    </Badge>
+                    {tool.info.business.base_price !== undefined &&
+                      tool.info.business.base_price > 0 && (
+                        <span className="text-xs text-muted-foreground">
+                          from ${tool.info.business.base_price}/mo
+                        </span>
+                      )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </Link>

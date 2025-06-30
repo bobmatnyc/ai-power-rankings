@@ -12,7 +12,7 @@ export const metadata: Metadata = generateSEOMetadata({
 
 export default function Subscribers() {
   return (
-    <DashboardLayout 
+    <DashboardLayout
       title="Subscriber Management"
       description="Manage newsletter subscribers and email lists"
       backHref="/en"

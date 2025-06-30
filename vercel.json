@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm run build && npm run cache:generate && npm run optimize:json",
+  "outputDirectory": ".next",
   "regions": ["iad1"],
   "functions": {
     "src/app/api/no-auth/route.ts": {
@@ -39,6 +41,47 @@
     {
       "path": "/api/cron/ingest-articles-api-key",
       "schedule": "0 */6 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/data/cache/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=43200"
+        },
+        {
+          "key": "CDN-Cache-Control",
+          "value": "max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=3600, stale-while-revalidate=1800"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
     }
   ]
 }

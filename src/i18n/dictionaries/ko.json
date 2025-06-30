@@ -30,7 +30,10 @@
     "search": "검색",
     "filter": "필터",
     "sort": "정렬",
-    "share": "공유"
+    "share": "공유",
+    "explore": "탐색",
+    "notAvailable": "해당 없음",
+    "users": "사용자"
   },
   "navigation": {
     "home": "홈",
@@ -172,6 +175,12 @@
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
     }
   },
+  "footer": {
+    "description": "혁신 감쇠, 플랫폼 리스크 수정자, 수익 품질 조정을 포함한 알고리즘 v6.0을 사용한 AI 코딩 툴의 종합적인 랭킹.",
+    "quickLinks": "퀵 링크",
+    "categories": "카테고리",
+    "copyright": "© 2025 AI Power Ranking. 모든 권리 보유."
+  },
   "rankings": {
     "title": "AI 파워 랭킹",
     "subtitle": "알고리즘 v6.0을 사용한 AI 코딩 툴의 종합적인 랭킹",
@@ -200,7 +209,24 @@
       },
       "primaryFactors": "주요 요인 (67.5%)",
       "secondaryFactors": "보조 요인 (32.5%)",
-      "description": "우리의 랭킹 알고리즘은 정량적 메트릭과 정성적 평가를 결합하여 AI 코딩 툴의 종합적인 관점을 제공합니다. 새로운 데이터를 기반으로 매주 랭킹을 업데이트하고 방법론을 지속적으로 개선합니다."
+      "description": "우리의 랭킹 알고리즘은 정량적 메트릭과 정성적 평가를 결합하여 AI 코딩 툴의 종합적인 관점을 제공합니다. 새로운 데이터를 기반으로 매주 랭킹을 업데이트하고 방법론을 지속적으로 개선합니다.",
+      "factors": {
+        "agentic": "에이전틱 능력",
+        "innovation": "혁신",
+        "performance": "성능",
+        "adoption": "채택",
+        "traction": "견인력",
+        "sentiment": "감정",
+        "velocity": "속도",
+        "resilience": "복원력"
+      },
+      "modifiers": {
+        "decay": "혁신 감쇠 (6개월 반감기) - 최근 혁신이 더 높은 가중치를 받도록 보장",
+        "risk": "플랫폼 리스크 수정자 - 플랫폼 의존성과 락인을 기반으로 점수 조정",
+        "revenue": "수익 품질 조정 - 지속 가능한 수익과 일회성 수익을 구분"
+      },
+      "methodologyText": "우리의 포괄적인 방법론은 여러 차원에서 AI 코딩 툴을 평가하여 실제 성능과 채택을 반영하는 공정하고 정확한 랭킹을 보장합니다.",
+      "viewMethodology": "전체 방법론 보기"
     }
   },
   "news": {
@@ -428,6 +454,111 @@
     "subtitle": "AI 코딩 툴을 랭킹하는 방법",
     "lastUpdated": "마지막 업데이트: 2025년 1월",
     "intro": "AI Power Rankings는 정교한 알고리즘 (v6.0)을 사용하여 여러 정량적 및 정성적 요인을 바탕으로 AI 코딩 툴을 평가하고 랭킹합니다. 우리의 방법론은 개발자들에게 AI 툴 환경의 객관적이고 데이터 드리븐한 평가를 제공하도록 설계되었습니다.",
+    "algorithm": {
+      "title": "알고리즘 v6.0",
+      "description": "우리의 최신 랭킹 알고리즘은 실제 사용 패턴과 시장 역학을 통합합니다",
+      "keyFeatures": "주요 기능",
+      "features": {
+        "innovationDecay": "툴의 신선도를 반영하는 혁신 감쇠 모델링",
+        "platformRisk": "벤더 의존성에 대한 플랫폼 리스크 평가",
+        "revenueQuality": "비즈니스 모델 기반 수익 품질 조정",
+        "technicalWeighting": "다양한 사용 사례에 대한 기술적 역량 가중치",
+        "dataValidation": "다중 소스 데이터 검증 및 정규화",
+        "logarithmicScaling": "균형 잡힌 비교를 위한 로그 스케일링"
+      }
+    },
+    "factors": {
+      "title": "점수 요인",
+      "description": "툴은 특정 가중치를 가진 8가지 주요 차원에서 평가됩니다",
+      "primary": "주요 요인 (82.5%)",
+      "secondary": "보조 요인 (17.5%)",
+      "agentic": {
+        "details": "자율 능력, 다단계 추론, 복잡한 작업 완료를 측정합니다"
+      },
+      "innovation": {
+        "details": "획기적인 기능, 기술적 진보, 시장 차별화를 평가합니다"
+      },
+      "performance": {
+        "details": "SWE-bench, HumanEval 및 실제 코딩 작업에 대한 벤치마크"
+      },
+      "adoption": {
+        "details": "활성 사용자, 성장률, 시장 침투 메트릭"
+      },
+      "traction": {
+        "details": "수익 성장, 펀딩 라운드, 비즈니스 모멘텀 지표"
+      },
+      "sentiment": {
+        "details": "개발자 만족도, 커뮤니티 피드백, 추천 점수"
+      },
+      "velocity": {
+        "details": "기능 릴리스 케이던스, 업데이트 빈도, 혁신 속도"
+      },
+      "resilience": {
+        "details": "플랫폼 안정성, 백업 옵션, 벤더 독립성"
+      }
+    },
+    "modifiers": {
+      "title": "동적 수정자",
+      "description": "시장 상황과 툴 성숙도를 반영하는 실시간 조정",
+      "innovationDecay": {
+        "description": "혁신 점수는 시간이 지남에 따라 감소하여 지속적인 개선을 보상하고 정체를 처벌합니다"
+      },
+      "platformRisk": {
+        "description": "벤더 락인, 플랫폼 의존성, 비즈니스 리스크를 기반으로 한 조정",
+        "penalties": "리스크 패널티",
+        "penaltyList": {
+          "acquired": "경쟁사에 최근 인수됨",
+          "exclusive": "플랫폼 독점 (단일 LLM)",
+          "competitor": "경쟁 플랫폼 소유",
+          "regulatory": "규제 준수 문제",
+          "funding": "펀딩 또는 지속 가능성 우려"
+        },
+        "bonuses": "리스크 완화 보너스",
+        "bonusList": {
+          "multiLLM": "여러 LLM 제공자 지원",
+          "openSource": "오픈 소스 사용 가능",
+          "selfHosted": "셀프 호스팅 옵션"
+        }
+      },
+      "revenueQuality": {
+        "description": "비즈니스 모델 지속 가능성 및 성장 잠재력 기반 수익 가중치",
+        "models": {
+          "enterpriseHigh": "엔터프라이즈 (하이터치)",
+          "enterpriseStandard": "엔터프라이즈 (표준)",
+          "smbSaas": "중소기업 SaaS",
+          "consumerPremium": "컨슈머 프리미엄",
+          "freemium": "프리미엄",
+          "openSource": "오픈 소스"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "데이터 소스 및 검증",
+      "description": "우리는 데이터 수집 및 검증에 대한 엄격한 표준을 유지합니다",
+      "collection": {
+        "title": "데이터 수집 방법",
+        "sources": {
+          "api": "툴 제공자와의 직접 API 통합",
+          "research": "업계 연구 보고서 및 분석가 데이터",
+          "announcements": "공식 회사 발표 및 보도 자료",
+          "community": "개발자 설문 조사 및 커뮤니티 피드백",
+          "benchmarks": "표준화된 성능 벤치마크"
+        }
+      },
+      "validation": {
+        "title": "검증 요구 사항",
+        "requirements": {
+          "completeness": "모든 필수 메트릭이 있어야 함",
+          "reliability": "주요 메트릭에 대한 다중 소스 검증",
+          "outlier": "이상치 감지 및 수동 검토",
+          "crossValidation": "업계 벤치마크와의 교차 검증"
+        }
+      },
+      "updateFrequency": {
+        "title": "업데이트 일정",
+        "description": "랭킹은 지속적인 데이터 수집과 함께 매주 재계산됩니다. 주요 알고리즘 업데이트는 버전화되고 문서화됩니다."
+      }
+    },
     "sections": {
       "scoringFactors": {
         "title": "점수 요인",
@@ -532,7 +663,26 @@
         "데이터 드리븐 의사결정",
         "앞서 나가기",
         "필요에 맞는 툴 선택"
-      ]
+      ],
+      "challenges": {
+        "paralysis": {
+          "title": "결정 마비",
+          "description": "매주 수십 개의 AI 툴이 출시되면서 개발자들은 압도적인 선택에 직면합니다"
+        },
+        "marketing": {
+          "title": "마케팅 vs 현실",
+          "description": "대담한 주장이 종종 실제 성능 및 기능과 일치하지 않습니다"
+        },
+        "change": {
+          "title": "급속한 변화",
+          "description": "툴은 빠르게 진화합니다 - 오늘 최고인 것이 내일은 구식이 될 수 있습니다"
+        },
+        "risks": {
+          "title": "숨겨진 위험",
+          "description": "보안, 개인 정보 보호 및 벤더 락인 우려가 종종 간과됩니다"
+        }
+      },
+      "conclusion": "그래서 우리는 AI Power Ranking을 만들었습니다 - 노이즈를 뚫고 명확하고 데이터 드리븐한 인사이트를 제공하기 위해."
     }
   },
   "sidebar": {
@@ -574,5 +724,10 @@
       "message": "인터넷 연결을 확인하고 다시 시도해주세요.",
       "action": "재시도"
     }
+  },
+  "seo": {
+    "title": "AI 파워 랭킹 - AI 코딩 툴의 결정적인 월간 랭킹",
+    "description": "에이전틱 AI 코딩 툴의 결정적인 월간 랭킹 및 분석. 전 세계 개발자들이 신뢰하는 Cursor, GitHub Copilot, Claude 및 50개 이상의 AI 어시스턴트를 비교하세요.",
+    "keywords": "AI 코딩 툴, 에이전틱 AI, 자율 코딩, 개발자 툴 랭킹, AI 어시스턴트 비교, 코딩 AI 벤치마크, SWE-bench 결과, Claude vs Cursor vs GitHub Copilot"
   }
 }

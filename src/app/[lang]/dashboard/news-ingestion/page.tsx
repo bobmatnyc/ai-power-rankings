@@ -3,7 +3,7 @@ import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 
 export default function NewsIngestionPage() {
   return (
-    <DashboardLayout 
+    <DashboardLayout
       title="News Ingestion"
       description="Upload and manage news articles"
       backHref="/en"

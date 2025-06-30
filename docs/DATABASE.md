@@ -1,1189 +1,342 @@
-# AI Power Rankings Database Documentation
+# Database Architecture - JSON Storage System
 
 ## Overview
 
-The AI Power Rankings uses Supabase (PostgreSQL) as its database. This document covers everything you need to know about connecting to, querying, and managing the database.
+AI Power Rankings uses a static JSON file-based database system for all data storage. This architecture eliminates traditional database dependencies, improves development velocity, and enables version control for all data changes.
 
-## 🚨 CRITICAL DATABASE ACCESS RULES
+## Architecture
 
-**ALWAYS follow these rules to avoid database connection issues:**
+### Directory Structure
 
-### 1. Use Centralized Database Clients
+```
+data/
+├── json/
+│   ├── tools/
+│   │   └── tools.json          # All AI tools data
+│   ├── rankings/
+│   │   ├── index.json          # Rankings metadata
+│   │   └── periods/            # Individual ranking periods
+│   │       ├── 2025-01.json
+│   │       └── 2025-06.json
+│   ├── news/
+│   │   └── news.json           # News articles
+│   ├── companies/
+│   │   └── companies.json      # Company data
+│   ├── subscribers/
+│   │   └── subscribers.json    # Newsletter subscribers
+│   └── settings/
+│       └── site-settings.json  # Site configuration
+└── backups/                    # Automated backups
+    └── backup-YYYY-MM-DD-HHMMSS/
+```
+
+## Repository Pattern
+
+All data access is managed through repository classes that extend `BaseRepository`:
+
+### BaseRepository
 
 ```typescript
-// ✅ CORRECT - use this in ALL API routes
-import { supabase } from "@/lib/database";
+import { BaseRepository } from '@/lib/json-db/base-repository';
 
-// ❌ WRONG - never manually create clients in API routes
-import { createClient } from "@supabase/supabase-js";
-const supabase = createClient(url, key);
-```
-
-### 2. Use Anon Key for 99% of Operations
-
-- ✅ `supabase` (anon key) - for tools, rankings, news, metrics
-- ⚠️ `supabaseAdmin` (service role) - only for admin operations
-
-### 3. Use Bracket Notation for Environment Variables
-
-```typescript
-// ✅ CORRECT
-process.env["NEXT_PUBLIC_SUPABASE_URL"];
-
-// ❌ WRONG - fails in production
-process.env.NEXT_PUBLIC_SUPABASE_URL;
-```
-
-### 4. Restart Dev Server After Environment Changes
-
-```bash
-kill $(lsof -ti:3000) && npm run dev
-```
-
-## Table of Contents
-
-1. [Database Details](#database-details)
-2. [Connection Details](#connection-details)
-3. [Database Schema](#database-schema)
-4. [Key Tables](#key-tables)
-5. [Data Import System](#data-import-system)
-6. [Common Queries](#common-queries)
-7. [Data Manipulation](#data-manipulation)
-8. [Maintenance Tasks](#maintenance-tasks)
-9. [Troubleshooting](#troubleshooting)
-
-## Database Details
-
-### Primary Database
-
-- **Project ID**: `iupygejzjkwyxtitescy`
-- **URL**: `https://iupygejzjkwyxtitescy.supabase.co`
-- **Purpose**: Main database for all operations
-- **Access**: Full read/write access
-- **Note**: Database schema includes the `info` field on tools table for structured metadata
-
-## Environment Configuration
-
-### Environment File (`.env.local`)
-
-```bash
-# DATABASE CONFIGURATION
-NEXT_PUBLIC_SUPABASE_URL=https://iupygejzjkwyxtitescy.supabase.co
-SUPABASE_PROJECT_ID=iupygejzjkwyxtitescy
-SUPABASE_DATABASE_PASSWORD=NIfbMAVvoBaxBMkX
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-```
-
-#### Production Configuration
-
-For production deployment, update the `NEXT_PUBLIC_BASE_URL` in your environment:
-
-```bash
-NEXT_PUBLIC_BASE_URL=https://aipowerranking.com
-```
-
-### Safety Features
-
-- **Environment Variables**: Use `.env.local` for local development
-- **Secure Storage**: Never commit environment files to version control
-- **Access Control**: Use appropriate keys (anon vs service role) based on operation type
-
-### Payload CMS Database Configuration
-
-For Payload CMS integration, add these environment variables:
-
-```bash
-# Payload CMS - Uses Session Pooler (us-east-2)
-PAYLOAD_SECRET=your-secret-key
-SUPABASE_DATABASE_URL=postgresql://postgres.iupygejzjkwyxtitescy:[PASSWORD]@aws-0-us-east-2.pooler.supabase.com:5432/postgres
-```
-
-**Important Notes:**
-
-- The database is hosted in `us-east-2` region
-- Use the session pooler (port 5432) for Payload CMS as it requires prepared statements
-- The transaction pooler (port 6543) is NOT compatible with Payload CMS
-- Direct database connection is not publicly accessible
-
-## Connection Details
-
-### JavaScript/TypeScript Client - AUTHORITATIVE METHODS
-
-There are **TWO WAYS** to access the database. Use these patterns consistently:
-
-#### Method 1: Using the Centralized Database Client (RECOMMENDED)
-
-**Always use this for API routes and server-side code:**
-
-```typescript
-// Import the centralized client from our database module
-import { supabase } from "@/lib/database"; // Uses anon key - works for 99% of operations
-
-// For admin operations (if you really need them)
-import { supabaseAdmin } from "@/lib/database"; // Uses service role key
-```
-
-**Examples:**
-
-```typescript
-// API routes - use this pattern
-import { supabase } from "@/lib/database";
-
-export async function GET() {
-  const { data: tools, error } = await supabase.from("tools").select("*").order("name");
-
-  if (error) {
-    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
-  }
-
-  return NextResponse.json({ tools });
-}
-```
-
-#### Method 2: Manual Client Creation (AVOID UNLESS NECESSARY)
-
-```typescript
-import { createClient } from "@supabase/supabase-js";
-
-// For client-side operations (uses anon key)
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-// For server-side operations (uses service role key)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-);
-```
-
-### CRITICAL: When to Use Which Client
-
-#### Use `supabase` (anon key) for:
-
-- ✅ **API routes** - tools, rankings, news endpoints
-- ✅ **Reading public data** - tools, rankings, metrics_history
-- ✅ **Client-side operations** - all React components
-- ✅ **99% of all database operations**
-
-#### Use `supabaseAdmin` (service role key) ONLY for:
-
-- ⚠️ **Admin operations** - creating/deleting tables
-- ⚠️ **Bypassing RLS** - when you need unrestricted access
-- ⚠️ **Bulk operations** - large data imports/exports
-
-#### NEVER manually create clients in API routes - use the centralized clients
-
-### Environment Variable Access
-
-**CRITICAL**: Always use bracket notation for environment variables in Next.js:
-
-```typescript
-// ✅ CORRECT
-const url = process.env["NEXT_PUBLIC_SUPABASE_URL"];
-const key = process.env["SUPABASE_SERVICE_ROLE_KEY"];
-
-// ❌ WRONG - will fail in production
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-```
-
-### Direct SQL Access
-
-```bash
-# Database connection
-PGPASSWORD="NIfbMAVvoBaxBMkX" psql -h db.iupygejzjkwyxtitescy.supabase.co -U postgres -d postgres
-```
-
-### REST API Access
-
-```bash
-# API access
-curl "https://iupygejzjkwyxtitescy.supabase.co/rest/v1/tools" \
-  -H "apikey: YOUR_ANON_KEY" \
-  -H "Authorization: Bearer YOUR_ANON_KEY"
-```
-
-## Database Schema
-
-### Core Schema Files
-
-- `database/schema-complete.sql` - Full database schema
-- `database/migrations/` - Migration files for schema updates
-- `docs/data/POPULATE.sql` - Seed data with research
-- `database/ranking-algorithm.sql` - Ranking calculation functions
-
-### Schema Features
-
-The database includes:
-
-```sql
--- tools table includes info JSONB column
-ALTER TABLE tools ADD COLUMN info JSONB;
-
--- Example info structure:
-{
-  "company": {
-    "name": "Company Name",
-    "website": "https://example.com",
-    "founded_date": "2020-01-01"
-  },
-  "product": {
-    "tagline": "Product tagline",
-    "description": "Detailed description",
-    "pricing_model": "freemium",
-    "license_type": "proprietary"
-  },
-  "links": {
-    "website": "https://tool.com",
-    "github": "https://github.com/org/repo",
-    "documentation": "https://docs.tool.com"
-  },
-  "features": {
-    "key_features": ["feature1", "feature2"],
-    "languages_supported": ["python", "javascript"],
-    "ide_support": ["vscode", "jetbrains"]
-  },
-  "metadata": {
-    "logo_url": "https://logo.url"
+class YourRepository extends BaseRepository<YourDataType> {
+  constructor() {
+    super(filePath, defaultData);
   }
 }
 ```
 
-This consolidated structure improves data organization and query performance.
+**Features:**
+- Atomic writes with automatic backups
+- File locking to prevent race conditions
+- Automatic JSON validation
+- Built-in error recovery
+- Logging for all operations
 
-### Entity Relationship Overview
+### Available Repositories
 
-```
-companies (1) ─── (n) tools
-    │                   │
-    │                   ├── tool_capabilities
-    │                   ├── pricing_plans
-    │                   ├── metrics_history
-    │                   ├── performance_benchmarks
-    │                   └── ranking_cache
-    │
-    └── funding_rounds
+1. **ToolsRepository** - `/lib/json-db/tools-repository.ts`
+   - Manages AI tools data
+   - Methods: `getAll()`, `getById()`, `getBySlug()`, `getByStatus()`, `create()`, `update()`, `delete()`
 
-algorithm_versions ─── ranking_periods ─── ranking_cache
-                                           │
-                                           └── ranking_editorial
+2. **RankingsRepository** - `/lib/json-db/rankings-repository.ts`
+   - Manages ranking periods and entries
+   - Methods: `getPeriods()`, `getRankingsForPeriod()`, `saveRankingsForPeriod()`, `getCurrentPeriod()`, `setCurrentPeriod()`
 
-metric_definitions ─── metrics_history
+3. **NewsRepository** - `/lib/json-db/news-repository.ts`
+   - Manages news articles
+   - Methods: `getAll()`, `getById()`, `getBySlug()`, `getByDate()`, `getRecent()`, `create()`, `update()`
 
-news_updates (related_tools[])
-data_collection_jobs (target_tools[])
-```
+4. **CompaniesRepository** - `/lib/json-db/companies-repository.ts`
+   - Manages company data
+   - Methods: `getAll()`, `getById()`, `getBySlug()`, `create()`, `update()`, `delete()`
 
-## Key Tables
+5. **SubscribersRepository** - `/lib/json-db/subscribers-repository.ts`
+   - Manages newsletter subscribers
+   - Methods: `getAll()`, `getByEmail()`, `getByStatus()`, `create()`, `update()`, `verifySubscriber()`
 
-### 1. **tools**
+## Data Schemas
 
-Primary table for AI coding tools.
+All data structures are defined in `/lib/json-db/schemas.ts`:
 
-```sql
-CREATE TABLE tools (
-    id VARCHAR(50) PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    slug VARCHAR(100) UNIQUE NOT NULL,
-    company_id UUID REFERENCES companies(id),
-    category VARCHAR(50) NOT NULL,
-    subcategory VARCHAR(50),
-    description TEXT,
-    tagline VARCHAR(255),
-    website_url VARCHAR(255),
-    github_repo VARCHAR(255),
-    founded_date DATE,
-    pricing_model VARCHAR(20) CHECK (pricing_model IN ('free', 'freemium', 'paid', 'open-source', 'enterprise')),
-    license_type VARCHAR(20) CHECK (license_type IN ('mit', 'apache', 'gpl', 'proprietary', 'other')),
-    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'beta', 'deprecated', 'discontinued')),
-    logo_url VARCHAR(500),
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-### 2. **companies**
-
-Companies and organizations behind the tools.
-
-```sql
-CREATE TABLE companies (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    slug VARCHAR(100) UNIQUE NOT NULL,
-    website_url VARCHAR(255),
-    headquarters VARCHAR(100),
-    founded_year INTEGER,
-    company_size VARCHAR(20) CHECK (company_size IN ('startup', 'small', 'medium', 'large', 'enterprise')),
-    company_type VARCHAR(20) CHECK (company_type IN ('private', 'public', 'open-source', 'non-profit')),
-    logo_url VARCHAR(500),
-    description TEXT,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-### 3. **metrics_history**
-
-Time-series data for all metrics.
-
-```sql
-CREATE TABLE metrics_history (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tool_id VARCHAR(50) REFERENCES tools(id) ON DELETE CASCADE,
-    metric_key VARCHAR(50) REFERENCES metric_definitions(metric_key),
-    value_integer BIGINT,
-    value_decimal DECIMAL(15,2),
-    value_boolean BOOLEAN,
-    value_json JSONB,
-    recorded_at TIMESTAMP NOT NULL,
-    source VARCHAR(50),
-    source_url VARCHAR(500),
-    notes TEXT,
-    is_interpolated BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE(tool_id, metric_key, recorded_at)
-);
-```
-
-### 4. **ranking_cache**
-
-Pre-calculated rankings for each period.
-
-```sql
-CREATE TABLE ranking_cache (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    period VARCHAR(20) REFERENCES ranking_periods(period),
-    tool_id VARCHAR(50) REFERENCES tools(id) ON DELETE CASCADE,
-    position INTEGER NOT NULL,
-    score DECIMAL(5,2) NOT NULL,
-    market_traction_score DECIMAL(5,2),
-    technical_capability_score DECIMAL(5,2),
-    developer_adoption_score DECIMAL(5,2),
-    development_velocity_score DECIMAL(5,2),
-    platform_resilience_score DECIMAL(5,2),
-    community_sentiment_score DECIMAL(5,2),
-    algorithm_version VARCHAR(10) REFERENCES algorithm_versions(version),
-    created_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-## Data Import System
-
-### Export Tools Data
-
-Export all current tools data for updating:
-
-```bash
-# Export all tools data to JSON
-node scripts/export-tools.js
-```
-
-This creates `tools-export.json` with complete database export including:
-
-- Tools table data
-- Tool capabilities
-- Pricing plans
-- Companies
-- Recent metrics history (30 days)
-
-### Import Data Using JSON Files
-
-The project includes a comprehensive data import system with schema validation:
-
-#### 1. **Schema Definition**
-
-Location: `data/imports/schema.json`
-
-Defines the complete JSON schema for importing:
-
-- Tools data
-- Metrics history
-- Company information
-- Tool capabilities
-- Pricing plans
-
-#### 2. **Example Files**
-
-- `data/imports/example-metrics-history.json` - Metrics data import example
-- `data/imports/example-tool-details.json` - Tool information import example
-- `data/imports/example-capabilities.json` - Tool capabilities import example
-
-#### 3. **Import Script**
-
-Location: `scripts/import-data.js`
-
-Features:
-
-- **Schema Validation**: Validates against JSON schema before import
-- **Batch Processing**: Handles large datasets efficiently
-- **Upsert Support**: Updates existing records or creates new ones
-- **Error Handling**: Detailed error reporting for failed records
-- **Validation Mode**: Test imports without making changes
-
-#### 4. **Usage Examples**
-
-```bash
-# Import metrics history
-node scripts/import-data.js data/imports/example-metrics-history.json
-
-# Import tool details with validation only
-node scripts/import-data.js data/imports/example-tool-details.json
-
-# Import capabilities data
-node scripts/import-data.js data/imports/example-capabilities.json
-```
-
-#### 5. **Creating Import Files**
-
-##### Metrics History Import Format
-
-```json
-{
-  "importType": "metrics_history",
-  "data": [
-    {
-      "tool_id": "claude-code",
-      "metric_key": "users",
-      "value_integer": 150000,
-      "recorded_at": "2025-06-10T12:00:00Z",
-      "source": "company_report",
-      "source_url": "https://anthropic.com/metrics",
-      "notes": "Active monthly users as reported in Q2 2025"
-    }
-  ],
-  "options": {
-    "upsert": true,
-    "validateOnly": false,
-    "batchSize": 50
-  }
-}
-```
-
-##### Tool Details Import Format
-
-```json
-{
-  "importType": "tools",
-  "data": [
-    {
-      "id": "new-ai-tool",
-      "name": "New AI Coding Tool",
-      "slug": "new-ai-tool",
-      "category": "ide-assistant",
-      "description": "An innovative AI-powered coding assistant...",
-      "website_url": "https://newaitool.com",
-      "status": "active"
-    }
-  ],
-  "options": {
-    "upsert": true,
-    "batchSize": 10
-  }
-}
-```
-
-### Supported Metrics
-
-The system supports these metric types:
-
-#### Core Metrics
-
-- `users` - Total or monthly active users
-- `monthly_arr` - Monthly Annual Recurring Revenue
-- `github_stars` - GitHub repository stars
-- `github_commits_last_month` - Recent development activity
-- `swe_bench_score` - SWE-bench coding benchmark score
-- `context_window_tokens` - AI model context window size
-- `supported_languages_count` - Number of programming languages supported
-- `valuation_usd` - Company valuation
-- `total_funding_usd` - Total funding raised
-- `employees_count` - Company employee count
-
-#### Data Types
-
-- **Integer values**: Use `value_integer` (e.g., users, stars, employee count)
-- **Decimal values**: Use `value_decimal` (e.g., scores, revenue, funding)
-- **Boolean values**: Use `value_boolean` (e.g., feature availability)
-- **Complex data**: Use `value_json` (e.g., feature lists, timeline events)
-
-## Common Queries
-
-### Get Current Top 10 Rankings
-
-```sql
-SELECT
-  rc.position,
-  t.name as tool_name,
-  c.name as company_name,
-  rc.score,
-  rc.market_traction_score,
-  rc.technical_capability_score,
-  rc.developer_adoption_score
-FROM ranking_cache rc
-JOIN tools t ON t.id = rc.tool_id
-LEFT JOIN companies c ON c.id = t.company_id
-WHERE rc.period = (
-  SELECT period FROM ranking_periods WHERE is_current = true
-)
-ORDER BY rc.position
-LIMIT 10;
-```
-
-### Track Tool Progress Over Time
-
-```sql
-SELECT
-  rp.display_name as period,
-  rc.position,
-  rc.score
-FROM ranking_cache rc
-JOIN ranking_periods rp ON rp.period = rc.period
-WHERE rc.tool_id = 'cursor'
-ORDER BY rp.calculation_date;
-```
-
-### Get Latest Metrics for a Tool
-
-```sql
-SELECT DISTINCT ON (metric_key)
-  metric_key,
-  COALESCE(value_integer, value_decimal) as value,
-  recorded_at,
-  source
-FROM metrics_history
-WHERE tool_id = 'claude-code'
-ORDER BY metric_key, recorded_at DESC;
-```
-
-### Find Tools by Category with Rankings
-
-```sql
-SELECT
-  t.name,
-  t.slug,
-  t.category,
-  t.subcategory,
-  COALESCE(rc.position, 999) as position,
-  rc.score
-FROM tools t
-LEFT JOIN ranking_cache rc ON rc.tool_id = t.id
-  AND rc.period = (SELECT period FROM ranking_periods WHERE is_current = true)
-WHERE t.category = 'autonomous-agent'
-  AND t.status = 'active'
-ORDER BY COALESCE(rc.position, 999);
-```
-
-## Data Manipulation
-
-### Adding New Tools
-
-```sql
--- 1. Add company (if needed)
-INSERT INTO companies (name, slug, website_url, company_type)
-VALUES ('NewAI Corp', 'newai-corp', 'https://newai.com', 'private');
-
--- 2. Add tool
-INSERT INTO tools (
-  id, name, slug, company_id, category,
-  description, website_url, status
-) VALUES (
-  'newai-assistant',
-  'NewAI Assistant',
-  'newai-assistant',
-  (SELECT id FROM companies WHERE slug = 'newai-corp'),
-  'ide-assistant',
-  'AI-powered coding assistant',
-  'https://newai.com/assistant',
-  'active'
-);
-
--- 3. Add capabilities
-INSERT INTO tool_capabilities (tool_id, capability_type, value_boolean)
-VALUES
-  ('newai-assistant', 'autocomplete', true),
-  ('newai-assistant', 'chat_interface', true),
-  ('newai-assistant', 'code_generation', true);
-```
-
-### Adding Metrics Data
-
-```sql
--- Add user count
-INSERT INTO metrics_history (
-  tool_id, metric_key, value_integer,
-  recorded_at, source, notes
-) VALUES (
-  'claude-code', 'users', 200000,
-  CURRENT_TIMESTAMP, 'company_report',
-  'Monthly active users Q2 2025'
-);
-
--- Add benchmark score
-INSERT INTO metrics_history (
-  tool_id, metric_key, value_decimal,
-  recorded_at, source, source_url
-) VALUES (
-  'cursor', 'swe_bench_score', 85.2,
-  CURRENT_TIMESTAMP, 'swe_bench',
-  'https://www.swebench.com/leaderboard'
-);
-```
-
-### Updating Tool Information
-
-```sql
--- Update tool description and website
-UPDATE tools
-SET
-  description = 'Updated comprehensive description of the tool capabilities',
-  website_url = 'https://newtool.com/updated',
-  updated_at = CURRENT_TIMESTAMP
-WHERE id = 'tool-id';
-
--- Update company information
-UPDATE companies
-SET
-  headquarters = 'San Francisco, CA',
-  employee_count_min = 50,
-  employee_count_max = 100,
-  updated_at = CURRENT_TIMESTAMP
-WHERE slug = 'company-slug';
-```
-
-## Maintenance Tasks
-
-### 1. Data Export and Import
-
-#### Export Current Data
-
-```bash
-# Export all current data
-node scripts/export-tools.js
-```
-
-This creates `tools-export.json` with complete database export.
-
-#### Import Data
-
-```bash
-# Import data from JSON file
-node scripts/import-data.js tools-export.json
-
-# Validate data before import
-node scripts/import-data.js --validate-only tools-export.json
-```
-
-### 2. Data Validation
-
-```sql
--- Check for orphaned records
-SELECT t.* FROM tools t
-LEFT JOIN companies c ON c.id = t.company_id
-WHERE c.id IS NULL;
-
--- Check for missing rankings
-SELECT t.id, t.name
-FROM tools t
-LEFT JOIN ranking_cache rc ON rc.tool_id = t.id
-  AND rc.period = (SELECT period FROM ranking_periods WHERE is_current = true)
-WHERE rc.id IS NULL AND t.status = 'active';
-
--- Validate metrics data integrity
-SELECT
-  tool_id,
-  metric_key,
-  COUNT(*) as record_count,
-  MIN(recorded_at) as earliest,
-  MAX(recorded_at) as latest
-FROM metrics_history
-GROUP BY tool_id, metric_key
-ORDER BY tool_id, metric_key;
-```
-
-### 3. Performance Monitoring
-
-```sql
--- Check database size
-SELECT
-  schemaname,
-  tablename,
-  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
-FROM pg_tables
-WHERE schemaname = 'public'
-ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
-
--- Monitor query performance
-EXPLAIN ANALYZE
-SELECT * FROM latest_rankings LIMIT 10;
-
--- Check index usage
-SELECT
-  schemaname,
-  tablename,
-  indexname,
-  idx_scan,
-  idx_tup_read,
-  idx_tup_fetch
-FROM pg_stat_user_indexes
-ORDER BY idx_scan DESC;
-```
-
-### 4. Backup Procedures
-
-```bash
-# Database backup
-pg_dump "postgresql://postgres:NIfbMAVvoBaxBMkX@db.iupygejzjkwyxtitescy.supabase.co:5432/postgres" > backup-$(date +%Y%m%d).sql
-
-# Or use Supabase dashboard for automated backups
-```
-
-## Troubleshooting
-
-### Database Access Issues (COMMON PROBLEMS)
-
-#### Problem: "Invalid API key" or "Failed to fetch"
-
-**SOLUTION**: Use the centralized database client, not manual client creation:
-
+### Tool Schema
 ```typescript
-// ❌ WRONG - causes "Invalid API key" errors
-import { createClient } from "@supabase/supabase-js";
-const supabase = createClient(url, serviceRoleKey);
-
-// ✅ CORRECT - use centralized client
-import { supabase } from "@/lib/database";
-```
-
-**Why this happens**: Manual client creation often uses wrong keys or fails environment variable access.
-
-#### Problem: "Categories showing as null" or missing data
-
-**SOLUTION**: Restart the Next.js dev server after environment changes:
-
-```bash
-# Kill existing server
-kill $(lsof -ti:3000)
-
-# Restart
-npm run dev
-```
-
-**Why this happens**: Environment variables are cached, new connections need fresh env vars.
-
-#### Problem: "Service role key not working"
-
-**SOLUTION**: Use anon key client for 99% of operations:
-
-```typescript
-// ❌ Most operations don't need admin access
-import { supabaseAdmin } from "@/lib/database";
-
-// ✅ Use regular client for API routes
-import { supabase } from "@/lib/database";
-```
-
-**Why this happens**: Our database permissions allow anon key access to most tables.
-
-#### Problem: "Environment variables undefined"
-
-**SOLUTION**: Use bracket notation:
-
-```typescript
-// ❌ WRONG - fails in production
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-
-// ✅ CORRECT - works everywhere
-const url = process.env["NEXT_PUBLIC_SUPABASE_URL"];
-```
-
-### Environment Issues
-
-#### Problem: "Can't connect to database"
-
-```bash
-# Verify environment variables
-echo $NEXT_PUBLIC_SUPABASE_URL
-echo $SUPABASE_SERVICE_ROLE_KEY
-
-# Test connection
-curl "$NEXT_PUBLIC_SUPABASE_URL/rest/v1/" \
-  -H "apikey: $NEXT_PUBLIC_SUPABASE_ANON_KEY"
-```
-
-#### Problem: "Database connection not working"
-
-```bash
-# Ensure environment variables are loaded
-source .env.local
-
-# Restart the development server
-kill $(lsof -ti:3000) && npm run dev
-```
-
-### Import Issues
-
-#### Problem: "Schema validation failed"
-
-```bash
-# Run validation only mode first
-node scripts/import-data.js data/imports/your-file.json
-
-# Check the example files for correct format
-cat data/imports/example-metrics-history.json
-```
-
-#### Problem: "Duplicate key error"
-
-```bash
-# Use upsert mode to update existing records
-# Ensure your JSON has "upsert": true in options
-```
-
-#### Problem: "Foreign key constraint violation"
-
-```bash
-# Ensure referenced records exist first
-# For tools: company_id must exist in companies table
-# For metrics: tool_id must exist in tools table
-```
-
-### Common Database Issues
-
-#### 1. "relation does not exist"
-
-The schema hasn't been created. Run the schema creation:
-
-```sql
--- Run contents of database/schema-complete.sql
-```
-
-#### 2. "permission denied"
-
-Use the service role key for admin operations:
-
-```typescript
-const supabase = createClient(url, process.env.SUPABASE_SERVICE_ROLE_KEY);
-```
-
-#### 3. Connection timeouts
-
-Check network access and correct database URL:
-
-```bash
-# Test basic connectivity
-ping db.iupygejzjkwyxtitescy.supabase.co
-```
-
-## Best Practices
-
-### Development Workflow
-
-1. **Use local environment file**
-
-   ```bash
-   # Ensure .env.local is configured
-   cp .env.example .env.local
-   ```
-
-2. **Test imports with validation mode**
-
-   ```bash
-   node scripts/import-data.js --validate-only your-file.json
-   ```
-
-3. **Backup before major changes**
-
-   - Create database backups before schema changes
-   - Export data before bulk updates
-
-4. **Use version control for schema changes**
-   - Keep migration files in `database/migrations/`
-   - Document all manual database changes
-
-### Data Management
-
-1. **Use appropriate value columns**
-
-   - `value_integer` for whole numbers (users, stars)
-   - `value_decimal` for precise numbers (scores, money)
-   - `value_boolean` for yes/no values
-   - `value_json` for complex data structures
-
-2. **Include source attribution**
-
-   - Always specify `source` for metrics
-   - Include `source_url` when available
-   - Add `notes` for context
-
-3. **Maintain data quality**
-   - Validate data before import
-   - Use consistent naming conventions
-   - Regular data integrity checks
-
-### Security
-
-1. **Credential management**
-
-   - Never commit `.env.local` to version control
-   - Use environment variables for all credentials
-   - Rotate keys periodically
-
-2. **Access control**
-   - Use anon key for client-side operations
-   - Use service role key only for admin operations
-   - Monitor database access logs
-
-## Database Migration Strategies
-
-### Schema Migration
-
-When migrating data to accommodate schema changes:
-
-#### 1. Handle Foreign Key Constraints
-
-```typescript
-// Option A: Drop constraints temporarily
-ALTER TABLE tools DROP CONSTRAINT IF EXISTS tools_company_id_fkey;
-// ... perform migration ...
-ALTER TABLE tools ADD CONSTRAINT tools_company_id_fkey
-  FOREIGN KEY (company_id) REFERENCES companies(id);
-
-// Option B: Use upsert with proper ordering
-// 1. Migrate referenced tables first (companies)
-// 2. Then migrate dependent tables (tools)
-// 3. Finally migrate junction/history tables
-```
-
-#### 2. Schema Transformation
-
-When migrating data for schema updates (e.g., adding `info` field):
-
-```typescript
-// Transform data during migration
-const toolsWithInfo = prodTools.map((tool) => ({
-  ...tool,
+interface Tool {
+  id: string;
+  slug: string;
+  name: string;
+  category: string;
+  status: 'active' | 'inactive' | 'deprecated';
+  company_id?: string;
   info: {
-    company: {
-      name: tool.name,
-      website: tool.website_url,
-      founded_date: tool.founded_date,
-    },
-    product: {
-      tagline: tool.tagline,
-      description: tool.description,
-      pricing_model: tool.pricing_model,
-      license_type: tool.license_type,
-    },
-    links: {
-      website: tool.website_url,
-      github: tool.github_repo,
-    },
-    metadata: {
-      logo_url: tool.logo_url,
-    },
-  },
-}));
-```
-
-#### 3. Handling Duplicate Keys
-
-```typescript
-// Use upsert to handle existing records
-const { error } = await supabase.from("table_name").upsert(data, { onConflict: "id" });
-
-// For unique constraints on multiple columns
-const { error } = await supabase
-  .from("metrics_history")
-  .upsert(data, { onConflict: "tool_id,metric_key,recorded_at" });
-```
-
-### Migration Scripts
-
-Example migration scripts are available in `/scripts/`:
-
-- `migrate-data.ts` - Basic data migration
-- `migrate-with-constraints.ts` - Advanced migration with constraint handling
-- `validate-data.ts` - Validate data integrity
-- `check-schemas.ts` - Verify schema structure
-
-### Best Practices for Migration
-
-1. **Always backup before migration**
-
-   ```bash
-   pg_dump "postgresql://..." > backup-$(date +%Y%m%d).sql
-   ```
-
-2. **Test migrations with small datasets first**
-
-   ```typescript
-   const testBatch = data.slice(0, 10);
-   // Test with small batch before full migration
-   ```
-
-3. **Use transactions for critical operations**
-
-   ```sql
-   BEGIN;
-   -- migration operations
-   COMMIT; -- or ROLLBACK if issues
-   ```
-
-4. **Monitor for orphaned records**
-   ```sql
-   SELECT t.* FROM tools t
-   LEFT JOIN companies c ON c.id = t.company_id
-   WHERE c.id IS NULL;
-   ```
-
-## Working with Upsert Operations
-
-### Check Table Constraints Before Using Upsert
-
-When using Supabase's `.upsert()` method, ensure the table has appropriate unique constraints:
-
-```typescript
-// ❌ Will fail if no unique constraint exists
-const { error } = await supabase.from("table_name").upsert(data, { onConflict: "column1,column2" });
-```
-
-**Error**: `there is no unique or exclusion constraint matching the ON CONFLICT specification`
-
-### Solution: Check and Insert/Update Manually
-
-```typescript
-// ✅ Check existence first, then insert or update
-const { data: existing } = await supabase
-  .from("table_name")
-  .select("id")
-  .eq("column1", value1)
-  .eq("column2", value2)
-  .single();
-
-if (existing) {
-  await supabase.from("table_name").update(updateData).eq("id", existing.id);
-} else {
-  await supabase.from("table_name").insert(insertData);
+    summary: string;
+    description: string;
+    website: string;
+    features: string[];
+    technical: {
+      context_window?: number;
+      supported_languages?: number;
+      // ...
+    };
+    business: {
+      pricing_model?: string;
+      business_model?: string;
+      // ...
+    };
+    metrics: {
+      github_stars?: number;
+      estimated_users?: number;
+      // ...
+    };
+  };
+  created_at: string;
+  updated_at: string;
 }
 ```
 
-### Creating Unique Constraints
+### Ranking Schema
+```typescript
+interface RankingPeriod {
+  period: string;          // "2025-06"
+  algorithm_version: string;
+  is_current: boolean;
+  created_at: string;
+  rankings: RankingEntry[];
+}
 
-If you need upsert functionality, create the constraint:
-
-```sql
-ALTER TABLE pricing_plans
-ADD CONSTRAINT unique_tool_plan
-UNIQUE (tool_id, plan_name);
+interface RankingEntry {
+  tool_id: string;
+  tool_name: string;
+  position: number;
+  score: number;
+  tier?: 'S' | 'A' | 'B' | 'C' | 'D';
+  factor_scores: {
+    agentic_capability: number;
+    innovation: number;
+    // ...
+  };
+}
 ```
 
-## Querying JSONB Fields in Supabase
+## Usage Examples
 
-### Working with JSONB Arrays
-
-When querying JSONB arrays (like `related_tools` in `news_updates`), be aware of format variations:
-
-#### Mixed Array Formats
-
-The `related_tools` field may contain:
-
-- Simple string arrays: `["tool-id-1", "tool-id-2"]`
-- Object arrays: `[{"tool_id": "tool-id-1", "sentiment": "positive"}]`
-- Mixed formats in the same database
-
-#### Query Strategies
-
-1. **PostgREST Contains Operator Issues**
+### Reading Data
 
 ```typescript
-// ❌ May not work reliably with mixed formats
-.contains('related_tools', [tool.id])
-.contains('related_tools', [{tool_id: tool.id}])
+import { getToolsRepo, getRankingsRepo } from '@/lib/json-db';
+
+// Get all active tools
+const toolsRepo = getToolsRepo();
+const activeTools = await toolsRepo.getByStatus('active');
+
+// Get current rankings
+const rankingsRepo = getRankingsRepo();
+const currentPeriod = await rankingsRepo.getCurrentPeriod();
+const rankings = await rankingsRepo.getRankingsForPeriod(currentPeriod);
 ```
 
-2. **Client-Side Filtering (More Reliable)**
+### Writing Data
 
 ```typescript
-// ✅ Fetch and filter client-side for mixed formats
-const { data: allNews } = await supabase.from("news_updates").select("*").limit(100);
-
-const filtered = allNews?.filter((item) => {
-  if (!item.related_tools || !Array.isArray(item.related_tools)) return false;
-
-  return item.related_tools.some((relatedTool: any) => {
-    if (typeof relatedTool === "string") {
-      return relatedTool === tool.id;
-    } else if (relatedTool && typeof relatedTool === "object") {
-      return relatedTool.tool_id === tool.id;
+// Update a tool
+await toolsRepo.update(toolId, {
+  info: {
+    metrics: {
+      github_stars: 25000
     }
-    return false;
-  });
+  }
+});
+
+// Create a new ranking period
+await rankingsRepo.saveRankingsForPeriod({
+  period: "2025-07",
+  algorithm_version: "v6.0",
+  is_current: false,
+  created_at: new Date().toISOString(),
+  rankings: calculatedRankings
 });
 ```
 
-3. **SQL Function Approach (Most Efficient)**
+## Backup and Recovery
 
-Create a database function to handle both formats:
+### Automated Backups
 
-```sql
-CREATE OR REPLACE FUNCTION find_news_by_tool(p_tool_id text)
-RETURNS SETOF news_updates AS $$
-BEGIN
-  RETURN QUERY
-  SELECT * FROM news_updates
-  WHERE
-    -- Check string array format
-    related_tools::jsonb @> to_jsonb(ARRAY[p_tool_id])
-    OR
-    -- Check object array format
-    EXISTS (
-      SELECT 1 FROM jsonb_array_elements(related_tools) AS elem
-      WHERE elem->>'tool_id' = p_tool_id
-    );
-END;
-$$ LANGUAGE plpgsql;
-```
+The system automatically creates backups:
+1. **Before every write operation** - Ensures data safety
+2. **Daily at 2 AM** - Scheduled backups in production
+3. **Rotation policy** - Keeps last 10 backups
 
-### Best Practices for JSONB Queries
-
-1. **Know Your Data Format**: Check the actual format stored in your database
-2. **Use Indexes**: Create GIN indexes on JSONB columns for better performance
-3. **Consider Migration**: Standardize data format if possible
-4. **Fallback Strategies**: Have client-side filtering as a backup
-5. **Test Thoroughly**: JSONB queries can behave differently with different data
-
-## Additional Resources
-
-- [Supabase Documentation](https://supabase.com/docs)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [PostgreSQL JSONB Functions](https://www.postgresql.org/docs/current/functions-json.html)
-- **Project Files**:
-  - Schema: `database/schema-complete.sql`
-  - Import Examples: `data/imports/`
-  - Scripts: `scripts/`
-
-## Quick Reference
-
-### Data Operations
+### Manual Backup Commands
 
 ```bash
-node scripts/export-tools.js                    # Export all data
-node scripts/import-data.js <file.json>         # Import data
-node scripts/import-data.js --validate <file>   # Validate only
+# Create backup
+npm run backup:create
+
+# Restore from latest backup
+npm run backup:restore:latest
+
+# Interactive restore (choose backup)
+npm run backup:restore
 ```
 
-### Database Connection
+### Backup Structure
+```
+data/backups/
+└── backup-2025-06-29-220000/
+    ├── tools/
+    ├── rankings/
+    ├── news/
+    ├── companies/
+    ├── subscribers/
+    ├── settings/
+    └── backup-metadata.json
+```
 
-- **Database URL**: `https://iupygejzjkwyxtitescy.supabase.co`
-- **Project ID**: `iupygejzjkwyxtitescy`
+## Performance Optimization
+
+### Caching
+- In-memory caching via LowDB
+- File reads are cached until write operations
+- No cache expiration needed (data changes infrequently)
+
+### Indexing
+Each repository maintains indices for fast lookups:
+- `byId` - O(1) lookup by ID
+- `bySlug` - O(1) lookup by slug
+- `byDate` - O(1) lookup by date (news)
+- `byStatus` - O(1) filtering by status
+
+### File Size Management
+- Tools: ~65KB (30 tools)
+- Rankings: ~10KB per period
+- News: ~50KB (20 articles)
+- All files remain under 100KB for fast parsing
+
+## Migration from Previous System
+
+### From Payload CMS + Supabase
+```bash
+# Run migration scripts
+npm run json:migrate
+npm run json:migrate:historical
+npm run json:validate
+```
+
+### Rollback if needed
+```bash
+# List available rollback points
+npm run json:rollback:list
+
+# Rollback to specific point
+npm run json:rollback
+```
+
+## API Integration
+
+All API endpoints use the repository pattern:
+
+```typescript
+// Example: /api/tools/route.ts
+import { getToolsRepo } from '@/lib/json-db';
+
+export async function GET() {
+  const toolsRepo = getToolsRepo();
+  const tools = await toolsRepo.getAll();
+  
+  return NextResponse.json({
+    tools,
+    _source: 'json-db'
+  });
+}
+```
+
+## Development Workflow
+
+### Local Development
+1. Data files are tracked in git (except backups)
+2. Changes to data create diffs for review
+3. Commits capture data history
+
+### Testing
+```bash
+# Validate all JSON files
+npm run validate:all
+
+# Test specific repository
+npm run test:api:tools
+npm run test:api:rankings
+```
+
+### Deployment
+1. Data files are included in the build
+2. Vercel serves them as static assets
+3. No database connection needed
+4. Zero cold starts
+
+## Troubleshooting
+
+### Common Issues
+
+1. **File locked error**
+   - Another process is writing
+   - Wait and retry
+   - Check for hung processes
+
+2. **Invalid JSON error**
+   - Run validation: `npm run validate:all`
+   - Check file syntax
+   - Restore from backup if corrupted
+
+3. **Missing data**
+   - Check file exists in correct location
+   - Verify file permissions
+   - Run initialization: `npm run json:migrate`
+
+### Debug Commands
+
+```bash
+# Check file integrity
+npm run health:check
+
+# View backup list
+ls -la data/backups/
+
+# Manually inspect JSON
+cat data/json/tools/tools.json | jq '.tools | length'
+```
+
+## Security Considerations
+
+1. **No SQL injection** - No SQL queries
+2. **No connection strings** - No database credentials
+3. **File permissions** - Managed by OS/deployment platform
+4. **Validation** - All inputs validated before writing
+5. **Backups** - Automatic recovery from corruption
+
+## Future Enhancements
+
+- [ ] Implement file-based transactions
+- [ ] Add compression for large datasets
+- [ ] Create data migration tooling
+- [ ] Build admin UI for data management
+- [ ] Add real-time sync capabilities

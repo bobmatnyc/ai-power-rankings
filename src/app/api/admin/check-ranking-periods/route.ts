@@ -9,11 +9,11 @@ export async function GET() {
     const availablePeriods = await rankingsRepo.getAvailablePeriods();
     const currentPeriod = await rankingsRepo.getCurrentPeriod();
 
-    const periodData = availablePeriods.map(period => {
+    const periodData = availablePeriods.map((period) => {
       return {
         period: period,
         is_current: period === currentPeriod,
-        status: period === currentPeriod ? 'current' : 'archived',
+        status: period === currentPeriod ? "current" : "archived",
         display_name: period, // Using period as display name for now
         calculation_date: null, // Would need ranking periods repository
         ranking_count: 0, // Would need to count rankings per period

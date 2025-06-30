@@ -5,6 +5,7 @@ export interface Tool {
   category: string;
   subcategory?: string;
   status: "active" | "discontinued" | "beta" | "acquired";
+  launch_date?: string; // Actual launch/release date of the tool
   info: ToolInfo;
   created_at: string;
   updated_at: string;

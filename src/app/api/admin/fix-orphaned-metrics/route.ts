@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(_request: NextRequest) {
   try {
     // This endpoint requires a metrics repository which doesn't exist yet
-    
+
     return NextResponse.json({
       success: false,
       message: "Orphaned metrics cleanup not available - requires MetricsRepository",
@@ -32,7 +32,7 @@ export async function POST(_request: NextRequest) {
 export async function GET() {
   try {
     // This endpoint requires a metrics repository which doesn't exist yet
-    
+
     return NextResponse.json({
       message: "Orphaned metrics check not available - requires MetricsRepository",
       note: "This endpoint needs a metrics JSON repository to be implemented first",

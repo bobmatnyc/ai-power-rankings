@@ -81,7 +81,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       if (existing.status === "verified") {
         return NextResponse.json({ error: "Email already registered" }, { status: 409 });
       }
-      
+
       // If pending, resend verification email
       if (existing.status === "pending" && existing.verification_token) {
         // Update the subscriber's metadata in case it changed
@@ -364,7 +364,7 @@ async function sendVerificationEmail(
       toEmail: email,
       fromEmail: "AI Power Ranking <newsletter@aipowerranking.com>",
     });
-    
+
     throw new Error(
       process.env["NODE_ENV"] === "development"
         ? `Failed to send verification email: ${emailError.message}`

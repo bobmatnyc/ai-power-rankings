@@ -15,10 +15,10 @@ export async function GET() {
 
     // Fetch all subscribers
     const subscribers = await subscribersRepo.getAll();
-    
+
     // Sort by created date (newest first)
-    const sortedSubscribers = subscribers.sort((a, b) => 
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    const sortedSubscribers = subscribers.sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
 
     // Get stats

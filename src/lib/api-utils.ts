@@ -28,7 +28,7 @@ export async function withApiErrorHandler<T>(
     return NextResponse.json({ data });
   } catch (error) {
     loggers.api.error("API handler error", { error });
-    
+
     const errorResponse: ApiError = {
       error: error instanceof Error ? error.message : "An unexpected error occurred",
       timestamp: new Date().toISOString(),
@@ -38,29 +38,29 @@ export async function withApiErrorHandler<T>(
       errorResponse.details = error;
     }
 
-    return NextResponse.json(
-      { error: errorResponse },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: errorResponse }, { status: 500 });
   }
 }
 
 /**
  * Add caching headers to response
  */
-export function withCaching(response: NextResponse, options: {
-  maxAge?: number;
-  sMaxAge?: number;
-  staleWhileRevalidate?: number;
-} = {}) {
+export function withCaching(
+  response: NextResponse,
+  options: {
+    maxAge?: number;
+    sMaxAge?: number;
+    staleWhileRevalidate?: number;
+  } = {}
+) {
   const { maxAge = 0, sMaxAge = 300, staleWhileRevalidate = 1800 } = options;
-  
+
   const cacheControl = [
     `max-age=${maxAge}`,
     `s-maxage=${sMaxAge}`,
     `stale-while-revalidate=${staleWhileRevalidate}`,
   ].join(", ");
-  
+
   response.headers.set("Cache-Control", cacheControl);
   return response;
 }

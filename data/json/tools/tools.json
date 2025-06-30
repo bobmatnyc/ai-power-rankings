@@ -12,9 +12,37 @@
         "description": "AI pair programming in your terminal with git integration",
         "website": "https://aider.chat",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 200000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust"
+          ],
+          "llm_providers": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Local models",
+            "Custom APIs"
+          ]
+        },
         "business": {
-          "pricing_model": "open-source"
+          "pricing_model": "free",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Open Source": "Free - ~$0.007 per file processed, users pay LLM API costs only, Git integration, multiple LLM support"
+          }
         },
         "metrics": {}
       },
@@ -25,7 +53,7 @@
       "id": "26",
       "slug": "amazon-q-developer",
       "name": "Amazon Q Developer",
-      "category": "ide-assistant",
+      "category": "devops-assistant",
       "status": "active",
       "company_id": "48",
       "info": {
@@ -35,7 +63,14 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - 50 chat interactions monthly, 10 agent invocations monthly",
+            "Pro": "$19/month - Unlimited chat and agent invocations, 4,000 lines of code transformation monthly, additional transformation at $0.003/line"
+          }
         },
         "metrics": {}
       },
@@ -56,12 +91,18 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "enterprise"
+          "pricing_model": "enterprise",
+          "enterprise_pricing": true,
+          "free_tier": false,
+          "pricing_details": {
+            "Enterprise": "Custom pricing - AI Coding Assistant for Enterprises with 200K token context and deep codebase understanding"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:48.425Z",
-      "updated_at": "2025-06-25T02:48:32.034Z"
+      "updated_at": "2025-06-30T03:49:42.695Z",
+      "launch_date": "2024-01-01"
     },
     {
       "id": "5",
@@ -77,12 +118,25 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - Limited tokens, basic app building",
+            "Pro": "$20/month - Higher token limits, advanced features, priority support, additional token reloads at $30",
+            "pricing_note": "Reached $20M ARR in 2 months - fastest startup growth ever"
+          }
         },
-        "metrics": {}
+        "metrics": {
+          "monthly_arr": 20000000,
+          "users": 85000,
+          "valuation": 2500000000
+        }
       },
       "created_at": "2025-06-23T15:40:38.390Z",
-      "updated_at": "2025-06-25T02:48:37.495Z"
+      "updated_at": "2025-06-30T03:49:42.688Z",
+      "launch_date": "2024-10-01"
     },
     {
       "id": "18",
@@ -96,9 +150,36 @@
         "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions",
         "website": "https://openai.com/chatgpt",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 128000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4o",
+            "GPT-4.1",
+            "O1 Pro"
+          ]
+        },
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - Limited access (gradual rollout), basic Canvas features",
+            "Plus": "$20/month - Full Canvas access, GPT-4o access, collaborative workspace",
+            "Pro": "$200/month - Unlimited o1 access, O1 Pro mode, GPT-4.1 access, advanced Canvas features"
+          }
         },
         "metrics": {}
       },
@@ -140,12 +221,21 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "paid"
+          "pricing_model": "subscription",
+          "base_price": 20,
+          "enterprise_pricing": false,
+          "free_tier": false,
+          "pricing_details": {
+            "Pro": "$20/month - 10-40 prompts per 5 hours, terminal-based coding agent, Claude web access included, secure Google Cloud VMs",
+            "5x Pro": "$100/month - 5x higher limits, priority access",
+            "20x Pro": "$200/month - 20x higher limits, maximum priority, enterprise features"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:37.842Z",
-      "updated_at": "2025-06-25T02:48:37.759Z"
+      "updated_at": "2025-06-30T03:49:42.684Z",
+      "launch_date": "2024-12-15"
     },
     {
       "id": "6",
@@ -159,14 +249,43 @@
         "description": "Autonomous coding agent VS Code extension with multi-modal capabilities",
         "website": "https://cline.bot",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 200000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust"
+          ],
+          "llm_providers": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Local models",
+            "Custom APIs"
+          ]
+        },
         "business": {
-          "pricing_model": "open-source"
+          "pricing_model": "free",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Open Source": "Free - Costs vary: minimal to $50+ daily, depends on usage intensity and model choice, VS Code extension, multiple provider support"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:38.891Z",
-      "updated_at": "2025-06-25T02:48:37.237Z"
+      "updated_at": "2025-06-30T03:49:42.694Z",
+      "launch_date": "2024-01-01"
     },
     {
       "id": "28",
@@ -182,7 +301,14 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "subscription",
+          "base_price": 12,
+          "enterprise_pricing": false,
+          "free_tier": false,
+          "pricing_details": {
+            "Lite": "$12/month per PR creator - Seat-based pricing (PR creators only), Basic code review",
+            "Pro": "$20/month per PR creator - Advanced features, Bitbucket and Azure DevOps support, Processes millions of PRs monthly"
+          }
         },
         "metrics": {}
       },
@@ -201,14 +327,43 @@
         "description": "Open source autopilot for your IDE with customizable LLM backends",
         "website": "https://continue.dev",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 200000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust"
+          ],
+          "llm_providers": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Local models",
+            "Custom APIs"
+          ]
+        },
         "business": {
-          "pricing_model": "open-source"
+          "pricing_model": "free",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Open Source": "Free - Users pay only LLM API costs, version 1.0 released February 2025, $3M seed funding, Continue Hub for sharing custom assistants"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:39.907Z",
-      "updated_at": "2025-06-25T02:48:36.689Z"
+      "updated_at": "2025-06-30T03:49:42.693Z",
+      "launch_date": "2023-01-01"
     },
     {
       "id": "1",
@@ -222,14 +377,49 @@
         "description": "AI-powered code editor with $500M ARR and 360K+ paying developers",
         "website": "https://cursor.com",
         "features": [],
-        "technical": {},
-        "business": {
-          "pricing_model": "freemium"
+        "technical": {
+          "context_window": 200000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust"
+          ],
+          "llm_providers": [
+            "Anthropic Claude",
+            "OpenAI GPT-4",
+            "Others"
+          ]
         },
-        "metrics": {}
+        "business": {
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - Limited completions and chat messages",
+            "Pro": "$20/month - Unlimited completions and chat, Claude 4 access, GPT-4 access, privacy mode",
+            "Ultra": "$200/month - Everything in Pro, Max Mode with token-based billing, model provider API costs + 20% margin, Claude 4 requests ~$0.30 each"
+          }
+        },
+        "metrics": {
+          "users": 360000,
+          "monthly_arr": 500000000,
+          "valuation": 4000000000,
+          "employees": 45,
+          "funding": 100000000
+        }
       },
       "created_at": "2025-06-23T15:40:36.303Z",
-      "updated_at": "2025-06-25T02:48:38.580Z"
+      "updated_at": "2025-06-30T03:49:42.677Z",
+      "launch_date": "2023-05-01"
     },
     {
       "id": "3",
@@ -245,12 +435,20 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "paid"
+          "pricing_model": "usage-based",
+          "base_price": 20,
+          "enterprise_pricing": false,
+          "free_tier": false,
+          "pricing_details": {
+            "Core Plan": "$20/month - 9 ACUs included, additional ACUs at $2.25 each",
+            "pricing_note": "96% price reduction from original $500/month in April 2025"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:37.350Z",
-      "updated_at": "2025-06-25T02:48:38.034Z"
+      "updated_at": "2025-06-30T03:49:42.685Z",
+      "launch_date": "2024-03-12"
     },
     {
       "id": "20",
@@ -266,7 +464,13 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "enterprise",
+          "base_price": 175,
+          "enterprise_pricing": true,
+          "free_tier": false,
+          "pricing_details": {
+            "Enterprise": "$2,100/developer/year ($175/month) - Java/Kotlin focus, Reinforcement learning (not LLMs), 250x faster than manual test writing, Custom pricing for scale"
+          }
         },
         "metrics": {}
       },
@@ -285,14 +489,49 @@
         "description": "AI pair programmer providing code suggestions, chat, and autonomous agents",
         "website": "https://github.com/features/copilot",
         "features": [],
-        "technical": {},
-        "business": {
-          "pricing_model": "paid"
+        "technical": {
+          "context_window": 100000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust",
+            "Swift",
+            "Kotlin"
+          ],
+          "llm_providers": [
+            "OpenAI Codex",
+            "GPT-4"
+          ],
+          "swe_bench_score": 45.2
         },
-        "metrics": {}
+        "business": {
+          "pricing_model": "subscription",
+          "base_price": 10,
+          "enterprise_pricing": false,
+          "free_tier": false,
+          "pricing_details": {
+            "Pro": "$10/month - 300 premium requests, code completions and chat, additional requests at $0.04 each",
+            "Pro+": "$39/month - 1,500 premium requests, everything in Pro, priority access, advanced features",
+            "pricing_note": "Premium requests vary by model complexity"
+          }
+        },
+        "metrics": {
+          "users": 1500000,
+          "github_stars": 5000,
+          "monthly_arr": 400000000
+        }
       },
       "created_at": "2025-06-23T15:40:36.825Z",
-      "updated_at": "2025-06-25T02:48:38.311Z"
+      "updated_at": "2025-06-30T03:49:42.691Z",
+      "launch_date": "2021-06-01"
     },
     {
       "id": "27",
@@ -306,14 +545,41 @@
         "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models.",
         "website": "https://cloud.google.com/code-assist",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 2000000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust"
+          ],
+          "llm_providers": [
+            "Google Gemini"
+          ]
+        },
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": true,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - 180,000 code completions monthly (most generous), basic AI assistance, Google Cloud integration",
+            "Standard": "$19/month (monthly) / $45/month (annual) - Unlimited completions, advanced features, priority support",
+            "Enterprise": "$75/month per user - Everything in Standard, private repository customization, enterprise support, advanced security"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:49.277Z",
-      "updated_at": "2025-06-25T02:48:31.479Z"
+      "updated_at": "2025-06-30T03:49:42.692Z",
+      "launch_date": "2024-02-01"
     },
     {
       "id": "11",
@@ -329,12 +595,20 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "free",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Public Beta": "Free - 5 free tasks per calendar day, Gemini 2.5 Pro powered, secure Google Cloud VMs, code execution capabilities",
+            "pricing_note": "Future pricing expected as platform matures"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:41.438Z",
-      "updated_at": "2025-06-25T02:48:35.878Z"
+      "updated_at": "2025-06-30T03:49:42.686Z",
+      "launch_date": "2024-12-11"
     },
     {
       "id": "22",
@@ -348,9 +622,36 @@
         "description": "AI assistant integrated into JetBrains IDEs providing code completions, chat assistance, and multi-file editing with Junie agent",
         "website": "https://jetbrains.com/ai/",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 120000,
+          "multi_file_support": true,
+          "language_support": [
+            "Java",
+            "Kotlin",
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "C#",
+            "PHP",
+            "Go",
+            "Rust",
+            "C++"
+          ],
+          "llm_providers": [
+            "Multiple models",
+            "Local models supported"
+          ]
+        },
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": true,
+          "free_tier": true,
+          "pricing_details": {
+            "AI Free": "$0/month - Unlimited local model support, limited cloud features, basic AI assistance",
+            "AI Pro": "$10/month - Enhanced cloud features, better quotas, priority support",
+            "AI Ultimate": "$20/month - Highest quota levels, priority access to latest models, premium features, advanced support"
+          }
         },
         "metrics": {}
       },
@@ -369,14 +670,41 @@
         "description": "AI full-stack engineer that builds entire web applications from natural language descriptions",
         "website": "https://lovable.dev",
         "features": [],
-        "technical": {},
-        "business": {
-          "pricing_model": "freemium"
+        "technical": {
+          "context_window": 200000,
+          "multi_file_support": true,
+          "language_support": [
+            "JavaScript",
+            "TypeScript",
+            "React",
+            "Node.js",
+            "Python"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Claude"
+          ]
         },
-        "metrics": {}
+        "business": {
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - Limited credits, basic features, community support",
+            "Pro": "$25/month - 100 credits monthly, advanced features, priority support, credit-based system",
+            "pricing_note": "Reached $13.5M ARR in 3 months, $50M total funding"
+          }
+        },
+        "metrics": {
+          "monthly_arr": 13500000,
+          "funding": 50000000,
+          "users": 45000
+        }
       },
       "created_at": "2025-06-23T15:40:41.946Z",
-      "updated_at": "2025-06-25T02:48:35.596Z"
+      "updated_at": "2025-06-30T03:49:42.690Z",
+      "launch_date": "2025-01-13"
     },
     {
       "id": "30",
@@ -432,9 +760,37 @@
         "description": "Open source autonomous AI agent for software engineering tasks",
         "website": "https://all-hands.dev",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 200000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust"
+          ],
+          "llm_providers": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Local models",
+            "Custom APIs"
+          ]
+        },
         "business": {
-          "pricing_model": "open-source"
+          "pricing_model": "free",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Open Source": "Free - Users pay only LLM API costs, self-hosted deployment, community support, full autonomy features"
+          }
         },
         "metrics": {}
       },
@@ -453,14 +809,38 @@
         "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents",
         "website": "https://qodo.ai",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 150000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Claude",
+            "Others"
+          ]
+        },
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Developer": "Free - Generous free tier, basic testing capabilities",
+            "Teams": "$19/month per user - Seat-based pricing (active contributors only), advanced testing features, team collaboration"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:43.986Z",
-      "updated_at": "2025-06-25T02:48:34.514Z"
+      "updated_at": "2025-06-30T03:49:42.696Z",
+      "launch_date": "2022-01-01"
     },
     {
       "id": "9",
@@ -474,14 +854,40 @@
         "description": "AI agent integrated into Replit online IDE for autonomous coding",
         "website": "https://replit.com",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 128000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust"
+          ],
+          "llm_providers": [
+            "Custom AI models"
+          ]
+        },
         "business": {
-          "pricing_model": "paid"
+          "pricing_model": "subscription",
+          "base_price": 20,
+          "enterprise_pricing": true,
+          "free_tier": true,
+          "pricing_details": {
+            "Core": "$20/month - Full agent access, $25 in monthly credits (~100 agent checkpoints), integrated development environment",
+            "Teams": "$35/month per user - $40 in monthly credits, centralized billing, team collaboration features"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:40.434Z",
-      "updated_at": "2025-06-25T02:48:36.426Z"
+      "updated_at": "2025-06-30T03:49:42.687Z",
+      "launch_date": "2024-09-26"
     },
     {
       "id": "17",
@@ -497,7 +903,14 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": true,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - 100 security scans monthly, Basic vulnerability detection",
+            "Team": "$25/month per contributing developer - Full security features"
+          }
         },
         "metrics": {}
       },
@@ -518,7 +931,15 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": true,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - Limited usage, Basic features",
+            "Pro": "$12/month - Enhanced features, Higher limits",
+            "Enterprise": "Custom pricing - Self-hosted option, Advanced security"
+          }
         },
         "metrics": {}
       },
@@ -539,7 +960,15 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "Open source projects",
+            "Pro": "$10/month per user - Individual developers, Advanced refactoring",
+            "Team": "$19/month per user - Team features, 20% annual discount available"
+          }
         },
         "metrics": {}
       },
@@ -558,9 +987,39 @@
         "description": "AI code completion assistant emphasizing privacy with option for local models, supporting 30+ languages and most IDEs",
         "website": "https://tabnine.com",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 100000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust",
+            "Swift",
+            "Kotlin"
+          ],
+          "llm_providers": [
+            "Custom models",
+            "Local processing",
+            "Cloud models"
+          ]
+        },
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": true,
+          "free_tier": true,
+          "pricing_details": {
+            "Basic": "$0/month - Basic code completion (ends April 2, 2025)",
+            "Pro": "$12/month - Advanced AI completion, privacy-focused, local processing option, enhanced features",
+            "Enterprise": "$39/month per user - Private deployment, custom AI models, fine-tuning on organizational codebases, enterprise support"
+          }
         },
         "metrics": {}
       },
@@ -579,14 +1038,35 @@
         "description": "AI-powered UI generator creating React components from text prompts and images",
         "website": "https://v0.dev",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 100000,
+          "multi_file_support": true,
+          "language_support": [
+            "JavaScript",
+            "TypeScript",
+            "React",
+            "Tailwind CSS"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Custom models"
+          ]
+        },
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - $5 in monthly credits, React component generation, Tailwind CSS support",
+            "Premium": "$20/month - $20 in monthly credits, backend generation capabilities, advanced features, priority access"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:40.935Z",
-      "updated_at": "2025-06-25T02:48:36.153Z"
+      "updated_at": "2025-06-30T03:49:42.689Z",
+      "launch_date": "2023-10-01"
     },
     {
       "id": "14",
@@ -600,14 +1080,43 @@
         "description": "AI-powered IDE assistant acquired by OpenAI for $3 billion in April 2025",
         "website": "https://windsurf.com",
         "features": [],
-        "technical": {},
+        "technical": {
+          "context_window": 150000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Claude",
+            "Others"
+          ]
+        },
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - 25 prompt credits monthly (increased from 5), basic AI assistance, credit-based system",
+            "Pro": "$15/month - Unlimited prompt credits, advanced AI features, priority support, OpenAI integration",
+            "pricing_note": "Acquired by OpenAI"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:43.003Z",
-      "updated_at": "2025-06-25T02:48:35.065Z"
+      "updated_at": "2025-06-30T03:49:42.697Z",
+      "launch_date": "2024-11-13"
     },
     {
       "id": "23",
@@ -623,12 +1132,20 @@
         "features": [],
         "technical": {},
         "business": {
-          "pricing_model": "freemium"
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "$0/month - Open source editor, Basic features",
+            "Pro": "Coming soon - Advanced collaboration features"
+          }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:47.312Z",
-      "updated_at": "2025-06-25T02:48:32.596Z"
+      "updated_at": "2025-06-30T03:49:42.682Z",
+      "launch_date": "2024-08-01"
     }
   ],
   "index": {
@@ -645,14 +1162,49 @@
           "description": "AI-powered code editor with $500M ARR and 360K+ paying developers",
           "website": "https://cursor.com",
           "features": [],
-          "technical": {},
-          "business": {
-            "pricing_model": "freemium"
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "Anthropic Claude",
+              "OpenAI GPT-4",
+              "Others"
+            ]
           },
-          "metrics": {}
+          "business": {
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Limited completions and chat messages",
+              "Pro": "$20/month - Unlimited completions and chat, Claude 4 access, GPT-4 access, privacy mode",
+              "Ultra": "$200/month - Everything in Pro, Max Mode with token-based billing, model provider API costs + 20% margin, Claude 4 requests ~$0.30 each"
+            }
+          },
+          "metrics": {
+            "users": 360000,
+            "monthly_arr": 500000000,
+            "valuation": 4000000000,
+            "employees": 45,
+            "funding": 100000000
+          }
         },
         "created_at": "2025-06-23T15:40:36.303Z",
-        "updated_at": "2025-06-25T02:48:38.580Z"
+        "updated_at": "2025-06-30T03:49:42.677Z",
+        "launch_date": "2023-05-01"
       },
       "2": {
         "id": "2",
@@ -666,14 +1218,49 @@
           "description": "AI pair programmer providing code suggestions, chat, and autonomous agents",
           "website": "https://github.com/features/copilot",
           "features": [],
-          "technical": {},
-          "business": {
-            "pricing_model": "paid"
+          "technical": {
+            "context_window": 100000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust",
+              "Swift",
+              "Kotlin"
+            ],
+            "llm_providers": [
+              "OpenAI Codex",
+              "GPT-4"
+            ],
+            "swe_bench_score": 45.2
           },
-          "metrics": {}
+          "business": {
+            "pricing_model": "subscription",
+            "base_price": 10,
+            "enterprise_pricing": false,
+            "free_tier": false,
+            "pricing_details": {
+              "Pro": "$10/month - 300 premium requests, code completions and chat, additional requests at $0.04 each",
+              "Pro+": "$39/month - 1,500 premium requests, everything in Pro, priority access, advanced features",
+              "pricing_note": "Premium requests vary by model complexity"
+            }
+          },
+          "metrics": {
+            "users": 1500000,
+            "github_stars": 5000,
+            "monthly_arr": 400000000
+          }
         },
         "created_at": "2025-06-23T15:40:36.825Z",
-        "updated_at": "2025-06-25T02:48:38.311Z"
+        "updated_at": "2025-06-30T03:49:42.691Z",
+        "launch_date": "2021-06-01"
       },
       "3": {
         "id": "3",
@@ -689,12 +1276,20 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "paid"
+            "pricing_model": "usage-based",
+            "base_price": 20,
+            "enterprise_pricing": false,
+            "free_tier": false,
+            "pricing_details": {
+              "Core Plan": "$20/month - 9 ACUs included, additional ACUs at $2.25 each",
+              "pricing_note": "96% price reduction from original $500/month in April 2025"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:37.350Z",
-        "updated_at": "2025-06-25T02:48:38.034Z"
+        "updated_at": "2025-06-30T03:49:42.685Z",
+        "launch_date": "2024-03-12"
       },
       "4": {
         "id": "4",
@@ -710,12 +1305,21 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "paid"
+            "pricing_model": "subscription",
+            "base_price": 20,
+            "enterprise_pricing": false,
+            "free_tier": false,
+            "pricing_details": {
+              "Pro": "$20/month - 10-40 prompts per 5 hours, terminal-based coding agent, Claude web access included, secure Google Cloud VMs",
+              "5x Pro": "$100/month - 5x higher limits, priority access",
+              "20x Pro": "$200/month - 20x higher limits, maximum priority, enterprise features"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:37.842Z",
-        "updated_at": "2025-06-25T02:48:37.759Z"
+        "updated_at": "2025-06-30T03:49:42.684Z",
+        "launch_date": "2024-12-15"
       },
       "5": {
         "id": "5",
@@ -731,12 +1335,25 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Limited tokens, basic app building",
+              "Pro": "$20/month - Higher token limits, advanced features, priority support, additional token reloads at $30",
+              "pricing_note": "Reached $20M ARR in 2 months - fastest startup growth ever"
+            }
           },
-          "metrics": {}
+          "metrics": {
+            "monthly_arr": 20000000,
+            "users": 85000,
+            "valuation": 2500000000
+          }
         },
         "created_at": "2025-06-23T15:40:38.390Z",
-        "updated_at": "2025-06-25T02:48:37.495Z"
+        "updated_at": "2025-06-30T03:49:42.688Z",
+        "launch_date": "2024-10-01"
       },
       "6": {
         "id": "6",
@@ -750,14 +1367,43 @@
           "description": "Autonomous coding agent VS Code extension with multi-modal capabilities",
           "website": "https://cline.bot",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "OpenAI",
+              "Anthropic",
+              "Google",
+              "Local models",
+              "Custom APIs"
+            ]
+          },
           "business": {
-            "pricing_model": "open-source"
+            "pricing_model": "free",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Open Source": "Free - Costs vary: minimal to $50+ daily, depends on usage intensity and model choice, VS Code extension, multiple provider support"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:38.891Z",
-        "updated_at": "2025-06-25T02:48:37.237Z"
+        "updated_at": "2025-06-30T03:49:42.694Z",
+        "launch_date": "2024-01-01"
       },
       "7": {
         "id": "7",
@@ -771,9 +1417,37 @@
           "description": "AI pair programming in your terminal with git integration",
           "website": "https://aider.chat",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "OpenAI",
+              "Anthropic",
+              "Google",
+              "Local models",
+              "Custom APIs"
+            ]
+          },
           "business": {
-            "pricing_model": "open-source"
+            "pricing_model": "free",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Open Source": "Free - ~$0.007 per file processed, users pay LLM API costs only, Git integration, multiple LLM support"
+            }
           },
           "metrics": {}
         },
@@ -792,14 +1466,43 @@
           "description": "Open source autopilot for your IDE with customizable LLM backends",
           "website": "https://continue.dev",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "OpenAI",
+              "Anthropic",
+              "Google",
+              "Local models",
+              "Custom APIs"
+            ]
+          },
           "business": {
-            "pricing_model": "open-source"
+            "pricing_model": "free",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Open Source": "Free - Users pay only LLM API costs, version 1.0 released February 2025, $3M seed funding, Continue Hub for sharing custom assistants"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:39.907Z",
-        "updated_at": "2025-06-25T02:48:36.689Z"
+        "updated_at": "2025-06-30T03:49:42.693Z",
+        "launch_date": "2023-01-01"
       },
       "9": {
         "id": "9",
@@ -813,14 +1516,40 @@
           "description": "AI agent integrated into Replit online IDE for autonomous coding",
           "website": "https://replit.com",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 128000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "Custom AI models"
+            ]
+          },
           "business": {
-            "pricing_model": "paid"
+            "pricing_model": "subscription",
+            "base_price": 20,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "Core": "$20/month - Full agent access, $25 in monthly credits (~100 agent checkpoints), integrated development environment",
+              "Teams": "$35/month per user - $40 in monthly credits, centralized billing, team collaboration features"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:40.434Z",
-        "updated_at": "2025-06-25T02:48:36.426Z"
+        "updated_at": "2025-06-30T03:49:42.687Z",
+        "launch_date": "2024-09-26"
       },
       "10": {
         "id": "10",
@@ -834,14 +1563,35 @@
           "description": "AI-powered UI generator creating React components from text prompts and images",
           "website": "https://v0.dev",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 100000,
+            "multi_file_support": true,
+            "language_support": [
+              "JavaScript",
+              "TypeScript",
+              "React",
+              "Tailwind CSS"
+            ],
+            "llm_providers": [
+              "OpenAI GPT-4",
+              "Custom models"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - $5 in monthly credits, React component generation, Tailwind CSS support",
+              "Premium": "$20/month - $20 in monthly credits, backend generation capabilities, advanced features, priority access"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:40.935Z",
-        "updated_at": "2025-06-25T02:48:36.153Z"
+        "updated_at": "2025-06-30T03:49:42.689Z",
+        "launch_date": "2023-10-01"
       },
       "11": {
         "id": "11",
@@ -857,12 +1607,20 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "free",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Public Beta": "Free - 5 free tasks per calendar day, Gemini 2.5 Pro powered, secure Google Cloud VMs, code execution capabilities",
+              "pricing_note": "Future pricing expected as platform matures"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:41.438Z",
-        "updated_at": "2025-06-25T02:48:35.878Z"
+        "updated_at": "2025-06-30T03:49:42.686Z",
+        "launch_date": "2024-12-11"
       },
       "12": {
         "id": "12",
@@ -876,14 +1634,41 @@
           "description": "AI full-stack engineer that builds entire web applications from natural language descriptions",
           "website": "https://lovable.dev",
           "features": [],
-          "technical": {},
-          "business": {
-            "pricing_model": "freemium"
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "JavaScript",
+              "TypeScript",
+              "React",
+              "Node.js",
+              "Python"
+            ],
+            "llm_providers": [
+              "OpenAI GPT-4",
+              "Claude"
+            ]
           },
-          "metrics": {}
+          "business": {
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Limited credits, basic features, community support",
+              "Pro": "$25/month - 100 credits monthly, advanced features, priority support, credit-based system",
+              "pricing_note": "Reached $13.5M ARR in 3 months, $50M total funding"
+            }
+          },
+          "metrics": {
+            "monthly_arr": 13500000,
+            "funding": 50000000,
+            "users": 45000
+          }
         },
         "created_at": "2025-06-23T15:40:41.946Z",
-        "updated_at": "2025-06-25T02:48:35.596Z"
+        "updated_at": "2025-06-30T03:49:42.690Z",
+        "launch_date": "2025-01-13"
       },
       "13": {
         "id": "13",
@@ -897,9 +1682,37 @@
           "description": "Open source autonomous AI agent for software engineering tasks",
           "website": "https://all-hands.dev",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "OpenAI",
+              "Anthropic",
+              "Google",
+              "Local models",
+              "Custom APIs"
+            ]
+          },
           "business": {
-            "pricing_model": "open-source"
+            "pricing_model": "free",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Open Source": "Free - Users pay only LLM API costs, self-hosted deployment, community support, full autonomy features"
+            }
           },
           "metrics": {}
         },
@@ -918,14 +1731,43 @@
           "description": "AI-powered IDE assistant acquired by OpenAI for $3 billion in April 2025",
           "website": "https://windsurf.com",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 150000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "OpenAI GPT-4",
+              "Claude",
+              "Others"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - 25 prompt credits monthly (increased from 5), basic AI assistance, credit-based system",
+              "Pro": "$15/month - Unlimited prompt credits, advanced AI features, priority support, OpenAI integration",
+              "pricing_note": "Acquired by OpenAI"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:43.003Z",
-        "updated_at": "2025-06-25T02:48:35.065Z"
+        "updated_at": "2025-06-30T03:49:42.697Z",
+        "launch_date": "2024-11-13"
       },
       "15": {
         "id": "15",
@@ -941,7 +1783,15 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "Open source projects",
+              "Pro": "$10/month per user - Individual developers, Advanced refactoring",
+              "Team": "$19/month per user - Team features, 20% annual discount available"
+            }
           },
           "metrics": {}
         },
@@ -960,14 +1810,38 @@
           "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents",
           "website": "https://qodo.ai",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 150000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#"
+            ],
+            "llm_providers": [
+              "OpenAI GPT-4",
+              "Claude",
+              "Others"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Developer": "Free - Generous free tier, basic testing capabilities",
+              "Teams": "$19/month per user - Seat-based pricing (active contributors only), advanced testing features, team collaboration"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:43.986Z",
-        "updated_at": "2025-06-25T02:48:34.514Z"
+        "updated_at": "2025-06-30T03:49:42.696Z",
+        "launch_date": "2022-01-01"
       },
       "17": {
         "id": "17",
@@ -983,7 +1857,14 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - 100 security scans monthly, Basic vulnerability detection",
+              "Team": "$25/month per contributing developer - Full security features"
+            }
           },
           "metrics": {}
         },
@@ -1002,9 +1883,36 @@
           "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions",
           "website": "https://openai.com/chatgpt",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 128000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go"
+            ],
+            "llm_providers": [
+              "OpenAI GPT-4o",
+              "GPT-4.1",
+              "O1 Pro"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Limited access (gradual rollout), basic Canvas features",
+              "Plus": "$20/month - Full Canvas access, GPT-4o access, collaborative workspace",
+              "Pro": "$200/month - Unlimited o1 access, O1 Pro mode, GPT-4.1 access, advanced Canvas features"
+            }
           },
           "metrics": {}
         },
@@ -1046,7 +1954,13 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "enterprise",
+            "base_price": 175,
+            "enterprise_pricing": true,
+            "free_tier": false,
+            "pricing_details": {
+              "Enterprise": "$2,100/developer/year ($175/month) - Java/Kotlin focus, Reinforcement learning (not LLMs), 250x faster than manual test writing, Custom pricing for scale"
+            }
           },
           "metrics": {}
         },
@@ -1065,9 +1979,39 @@
           "description": "AI code completion assistant emphasizing privacy with option for local models, supporting 30+ languages and most IDEs",
           "website": "https://tabnine.com",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 100000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust",
+              "Swift",
+              "Kotlin"
+            ],
+            "llm_providers": [
+              "Custom models",
+              "Local processing",
+              "Cloud models"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "Basic": "$0/month - Basic code completion (ends April 2, 2025)",
+              "Pro": "$12/month - Advanced AI completion, privacy-focused, local processing option, enhanced features",
+              "Enterprise": "$39/month per user - Private deployment, custom AI models, fine-tuning on organizational codebases, enterprise support"
+            }
           },
           "metrics": {}
         },
@@ -1086,9 +2030,36 @@
           "description": "AI assistant integrated into JetBrains IDEs providing code completions, chat assistance, and multi-file editing with Junie agent",
           "website": "https://jetbrains.com/ai/",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 120000,
+            "multi_file_support": true,
+            "language_support": [
+              "Java",
+              "Kotlin",
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "C#",
+              "PHP",
+              "Go",
+              "Rust",
+              "C++"
+            ],
+            "llm_providers": [
+              "Multiple models",
+              "Local models supported"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "AI Free": "$0/month - Unlimited local model support, limited cloud features, basic AI assistance",
+              "AI Pro": "$10/month - Enhanced cloud features, better quotas, priority support",
+              "AI Ultimate": "$20/month - Highest quota levels, priority access to latest models, premium features, advanced support"
+            }
           },
           "metrics": {}
         },
@@ -1109,12 +2080,20 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Open source editor, Basic features",
+              "Pro": "Coming soon - Advanced collaboration features"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:47.312Z",
-        "updated_at": "2025-06-25T02:48:32.596Z"
+        "updated_at": "2025-06-30T03:49:42.682Z",
+        "launch_date": "2024-08-01"
       },
       "24": {
         "id": "24",
@@ -1151,18 +2130,24 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "enterprise"
+            "pricing_model": "enterprise",
+            "enterprise_pricing": true,
+            "free_tier": false,
+            "pricing_details": {
+              "Enterprise": "Custom pricing - AI Coding Assistant for Enterprises with 200K token context and deep codebase understanding"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:48.425Z",
-        "updated_at": "2025-06-25T02:48:32.034Z"
+        "updated_at": "2025-06-30T03:49:42.695Z",
+        "launch_date": "2024-01-01"
       },
       "26": {
         "id": "26",
         "slug": "amazon-q-developer",
         "name": "Amazon Q Developer",
-        "category": "ide-assistant",
+        "category": "devops-assistant",
         "status": "active",
         "company_id": "48",
         "info": {
@@ -1172,7 +2157,14 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - 50 chat interactions monthly, 10 agent invocations monthly",
+              "Pro": "$19/month - Unlimited chat and agent invocations, 4,000 lines of code transformation monthly, additional transformation at $0.003/line"
+            }
           },
           "metrics": {}
         },
@@ -1191,14 +2183,41 @@
           "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models.",
           "website": "https://cloud.google.com/code-assist",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 2000000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "Google Gemini"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - 180,000 code completions monthly (most generous), basic AI assistance, Google Cloud integration",
+              "Standard": "$19/month (monthly) / $45/month (annual) - Unlimited completions, advanced features, priority support",
+              "Enterprise": "$75/month per user - Everything in Standard, private repository customization, enterprise support, advanced security"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:49.277Z",
-        "updated_at": "2025-06-25T02:48:31.479Z"
+        "updated_at": "2025-06-30T03:49:42.692Z",
+        "launch_date": "2024-02-01"
       },
       "28": {
         "id": "28",
@@ -1214,7 +2233,14 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "subscription",
+            "base_price": 12,
+            "enterprise_pricing": false,
+            "free_tier": false,
+            "pricing_details": {
+              "Lite": "$12/month per PR creator - Seat-based pricing (PR creators only), Basic code review",
+              "Pro": "$20/month per PR creator - Advanced features, Bitbucket and Azure DevOps support, Processes millions of PRs monthly"
+            }
           },
           "metrics": {}
         },
@@ -1235,7 +2261,15 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Limited usage, Basic features",
+              "Pro": "$12/month - Enhanced features, Higher limits",
+              "Enterprise": "Custom pricing - Self-hosted option, Advanced security"
+            }
           },
           "metrics": {}
         },
@@ -1277,9 +2311,37 @@
           "description": "AI pair programming in your terminal with git integration",
           "website": "https://aider.chat",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "OpenAI",
+              "Anthropic",
+              "Google",
+              "Local models",
+              "Custom APIs"
+            ]
+          },
           "business": {
-            "pricing_model": "open-source"
+            "pricing_model": "free",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Open Source": "Free - ~$0.007 per file processed, users pay LLM API costs only, Git integration, multiple LLM support"
+            }
           },
           "metrics": {}
         },
@@ -1290,7 +2352,7 @@
         "id": "26",
         "slug": "amazon-q-developer",
         "name": "Amazon Q Developer",
-        "category": "ide-assistant",
+        "category": "devops-assistant",
         "status": "active",
         "company_id": "48",
         "info": {
@@ -1300,7 +2362,14 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - 50 chat interactions monthly, 10 agent invocations monthly",
+              "Pro": "$19/month - Unlimited chat and agent invocations, 4,000 lines of code transformation monthly, additional transformation at $0.003/line"
+            }
           },
           "metrics": {}
         },
@@ -1321,12 +2390,18 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "enterprise"
+            "pricing_model": "enterprise",
+            "enterprise_pricing": true,
+            "free_tier": false,
+            "pricing_details": {
+              "Enterprise": "Custom pricing - AI Coding Assistant for Enterprises with 200K token context and deep codebase understanding"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:48.425Z",
-        "updated_at": "2025-06-25T02:48:32.034Z"
+        "updated_at": "2025-06-30T03:49:42.695Z",
+        "launch_date": "2024-01-01"
       },
       "bolt-new": {
         "id": "5",
@@ -1342,12 +2417,25 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Limited tokens, basic app building",
+              "Pro": "$20/month - Higher token limits, advanced features, priority support, additional token reloads at $30",
+              "pricing_note": "Reached $20M ARR in 2 months - fastest startup growth ever"
+            }
           },
-          "metrics": {}
+          "metrics": {
+            "monthly_arr": 20000000,
+            "users": 85000,
+            "valuation": 2500000000
+          }
         },
         "created_at": "2025-06-23T15:40:38.390Z",
-        "updated_at": "2025-06-25T02:48:37.495Z"
+        "updated_at": "2025-06-30T03:49:42.688Z",
+        "launch_date": "2024-10-01"
       },
       "chatgpt-canvas": {
         "id": "18",
@@ -1361,9 +2449,36 @@
           "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions",
           "website": "https://openai.com/chatgpt",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 128000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go"
+            ],
+            "llm_providers": [
+              "OpenAI GPT-4o",
+              "GPT-4.1",
+              "O1 Pro"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Limited access (gradual rollout), basic Canvas features",
+              "Plus": "$20/month - Full Canvas access, GPT-4o access, collaborative workspace",
+              "Pro": "$200/month - Unlimited o1 access, O1 Pro mode, GPT-4.1 access, advanced Canvas features"
+            }
           },
           "metrics": {}
         },
@@ -1405,12 +2520,21 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "paid"
+            "pricing_model": "subscription",
+            "base_price": 20,
+            "enterprise_pricing": false,
+            "free_tier": false,
+            "pricing_details": {
+              "Pro": "$20/month - 10-40 prompts per 5 hours, terminal-based coding agent, Claude web access included, secure Google Cloud VMs",
+              "5x Pro": "$100/month - 5x higher limits, priority access",
+              "20x Pro": "$200/month - 20x higher limits, maximum priority, enterprise features"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:37.842Z",
-        "updated_at": "2025-06-25T02:48:37.759Z"
+        "updated_at": "2025-06-30T03:49:42.684Z",
+        "launch_date": "2024-12-15"
       },
       "cline": {
         "id": "6",
@@ -1424,14 +2548,43 @@
           "description": "Autonomous coding agent VS Code extension with multi-modal capabilities",
           "website": "https://cline.bot",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "OpenAI",
+              "Anthropic",
+              "Google",
+              "Local models",
+              "Custom APIs"
+            ]
+          },
           "business": {
-            "pricing_model": "open-source"
+            "pricing_model": "free",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Open Source": "Free - Costs vary: minimal to $50+ daily, depends on usage intensity and model choice, VS Code extension, multiple provider support"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:38.891Z",
-        "updated_at": "2025-06-25T02:48:37.237Z"
+        "updated_at": "2025-06-30T03:49:42.694Z",
+        "launch_date": "2024-01-01"
       },
       "coderabbit": {
         "id": "28",
@@ -1447,7 +2600,14 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "subscription",
+            "base_price": 12,
+            "enterprise_pricing": false,
+            "free_tier": false,
+            "pricing_details": {
+              "Lite": "$12/month per PR creator - Seat-based pricing (PR creators only), Basic code review",
+              "Pro": "$20/month per PR creator - Advanced features, Bitbucket and Azure DevOps support, Processes millions of PRs monthly"
+            }
           },
           "metrics": {}
         },
@@ -1466,14 +2626,43 @@
           "description": "Open source autopilot for your IDE with customizable LLM backends",
           "website": "https://continue.dev",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "OpenAI",
+              "Anthropic",
+              "Google",
+              "Local models",
+              "Custom APIs"
+            ]
+          },
           "business": {
-            "pricing_model": "open-source"
+            "pricing_model": "free",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Open Source": "Free - Users pay only LLM API costs, version 1.0 released February 2025, $3M seed funding, Continue Hub for sharing custom assistants"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:39.907Z",
-        "updated_at": "2025-06-25T02:48:36.689Z"
+        "updated_at": "2025-06-30T03:49:42.693Z",
+        "launch_date": "2023-01-01"
       },
       "cursor": {
         "id": "1",
@@ -1487,14 +2676,49 @@
           "description": "AI-powered code editor with $500M ARR and 360K+ paying developers",
           "website": "https://cursor.com",
           "features": [],
-          "technical": {},
-          "business": {
-            "pricing_model": "freemium"
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "Anthropic Claude",
+              "OpenAI GPT-4",
+              "Others"
+            ]
           },
-          "metrics": {}
+          "business": {
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Limited completions and chat messages",
+              "Pro": "$20/month - Unlimited completions and chat, Claude 4 access, GPT-4 access, privacy mode",
+              "Ultra": "$200/month - Everything in Pro, Max Mode with token-based billing, model provider API costs + 20% margin, Claude 4 requests ~$0.30 each"
+            }
+          },
+          "metrics": {
+            "users": 360000,
+            "monthly_arr": 500000000,
+            "valuation": 4000000000,
+            "employees": 45,
+            "funding": 100000000
+          }
         },
         "created_at": "2025-06-23T15:40:36.303Z",
-        "updated_at": "2025-06-25T02:48:38.580Z"
+        "updated_at": "2025-06-30T03:49:42.677Z",
+        "launch_date": "2023-05-01"
       },
       "devin": {
         "id": "3",
@@ -1510,12 +2734,20 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "paid"
+            "pricing_model": "usage-based",
+            "base_price": 20,
+            "enterprise_pricing": false,
+            "free_tier": false,
+            "pricing_details": {
+              "Core Plan": "$20/month - 9 ACUs included, additional ACUs at $2.25 each",
+              "pricing_note": "96% price reduction from original $500/month in April 2025"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:37.350Z",
-        "updated_at": "2025-06-25T02:48:38.034Z"
+        "updated_at": "2025-06-30T03:49:42.685Z",
+        "launch_date": "2024-03-12"
       },
       "diffblue-cover": {
         "id": "20",
@@ -1531,7 +2763,13 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "enterprise",
+            "base_price": 175,
+            "enterprise_pricing": true,
+            "free_tier": false,
+            "pricing_details": {
+              "Enterprise": "$2,100/developer/year ($175/month) - Java/Kotlin focus, Reinforcement learning (not LLMs), 250x faster than manual test writing, Custom pricing for scale"
+            }
           },
           "metrics": {}
         },
@@ -1550,14 +2788,49 @@
           "description": "AI pair programmer providing code suggestions, chat, and autonomous agents",
           "website": "https://github.com/features/copilot",
           "features": [],
-          "technical": {},
-          "business": {
-            "pricing_model": "paid"
+          "technical": {
+            "context_window": 100000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust",
+              "Swift",
+              "Kotlin"
+            ],
+            "llm_providers": [
+              "OpenAI Codex",
+              "GPT-4"
+            ],
+            "swe_bench_score": 45.2
           },
-          "metrics": {}
+          "business": {
+            "pricing_model": "subscription",
+            "base_price": 10,
+            "enterprise_pricing": false,
+            "free_tier": false,
+            "pricing_details": {
+              "Pro": "$10/month - 300 premium requests, code completions and chat, additional requests at $0.04 each",
+              "Pro+": "$39/month - 1,500 premium requests, everything in Pro, priority access, advanced features",
+              "pricing_note": "Premium requests vary by model complexity"
+            }
+          },
+          "metrics": {
+            "users": 1500000,
+            "github_stars": 5000,
+            "monthly_arr": 400000000
+          }
         },
         "created_at": "2025-06-23T15:40:36.825Z",
-        "updated_at": "2025-06-25T02:48:38.311Z"
+        "updated_at": "2025-06-30T03:49:42.691Z",
+        "launch_date": "2021-06-01"
       },
       "gemini-code-assist": {
         "id": "27",
@@ -1571,14 +2844,41 @@
           "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models.",
           "website": "https://cloud.google.com/code-assist",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 2000000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "Google Gemini"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - 180,000 code completions monthly (most generous), basic AI assistance, Google Cloud integration",
+              "Standard": "$19/month (monthly) / $45/month (annual) - Unlimited completions, advanced features, priority support",
+              "Enterprise": "$75/month per user - Everything in Standard, private repository customization, enterprise support, advanced security"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:49.277Z",
-        "updated_at": "2025-06-25T02:48:31.479Z"
+        "updated_at": "2025-06-30T03:49:42.692Z",
+        "launch_date": "2024-02-01"
       },
       "jules": {
         "id": "11",
@@ -1594,12 +2894,20 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "free",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Public Beta": "Free - 5 free tasks per calendar day, Gemini 2.5 Pro powered, secure Google Cloud VMs, code execution capabilities",
+              "pricing_note": "Future pricing expected as platform matures"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:41.438Z",
-        "updated_at": "2025-06-25T02:48:35.878Z"
+        "updated_at": "2025-06-30T03:49:42.686Z",
+        "launch_date": "2024-12-11"
       },
       "jetbrains-ai": {
         "id": "22",
@@ -1613,9 +2921,36 @@
           "description": "AI assistant integrated into JetBrains IDEs providing code completions, chat assistance, and multi-file editing with Junie agent",
           "website": "https://jetbrains.com/ai/",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 120000,
+            "multi_file_support": true,
+            "language_support": [
+              "Java",
+              "Kotlin",
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "C#",
+              "PHP",
+              "Go",
+              "Rust",
+              "C++"
+            ],
+            "llm_providers": [
+              "Multiple models",
+              "Local models supported"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "AI Free": "$0/month - Unlimited local model support, limited cloud features, basic AI assistance",
+              "AI Pro": "$10/month - Enhanced cloud features, better quotas, priority support",
+              "AI Ultimate": "$20/month - Highest quota levels, priority access to latest models, premium features, advanced support"
+            }
           },
           "metrics": {}
         },
@@ -1634,14 +2969,41 @@
           "description": "AI full-stack engineer that builds entire web applications from natural language descriptions",
           "website": "https://lovable.dev",
           "features": [],
-          "technical": {},
-          "business": {
-            "pricing_model": "freemium"
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "JavaScript",
+              "TypeScript",
+              "React",
+              "Node.js",
+              "Python"
+            ],
+            "llm_providers": [
+              "OpenAI GPT-4",
+              "Claude"
+            ]
           },
-          "metrics": {}
+          "business": {
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Limited credits, basic features, community support",
+              "Pro": "$25/month - 100 credits monthly, advanced features, priority support, credit-based system",
+              "pricing_note": "Reached $13.5M ARR in 3 months, $50M total funding"
+            }
+          },
+          "metrics": {
+            "monthly_arr": 13500000,
+            "funding": 50000000,
+            "users": 45000
+          }
         },
         "created_at": "2025-06-23T15:40:41.946Z",
-        "updated_at": "2025-06-25T02:48:35.596Z"
+        "updated_at": "2025-06-30T03:49:42.690Z",
+        "launch_date": "2025-01-13"
       },
       "microsoft-intellicode": {
         "id": "30",
@@ -1697,9 +3059,37 @@
           "description": "Open source autonomous AI agent for software engineering tasks",
           "website": "https://all-hands.dev",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 200000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "OpenAI",
+              "Anthropic",
+              "Google",
+              "Local models",
+              "Custom APIs"
+            ]
+          },
           "business": {
-            "pricing_model": "open-source"
+            "pricing_model": "free",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Open Source": "Free - Users pay only LLM API costs, self-hosted deployment, community support, full autonomy features"
+            }
           },
           "metrics": {}
         },
@@ -1718,14 +3108,38 @@
           "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents",
           "website": "https://qodo.ai",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 150000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#"
+            ],
+            "llm_providers": [
+              "OpenAI GPT-4",
+              "Claude",
+              "Others"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Developer": "Free - Generous free tier, basic testing capabilities",
+              "Teams": "$19/month per user - Seat-based pricing (active contributors only), advanced testing features, team collaboration"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:43.986Z",
-        "updated_at": "2025-06-25T02:48:34.514Z"
+        "updated_at": "2025-06-30T03:49:42.696Z",
+        "launch_date": "2022-01-01"
       },
       "replit-agent": {
         "id": "9",
@@ -1739,14 +3153,40 @@
           "description": "AI agent integrated into Replit online IDE for autonomous coding",
           "website": "https://replit.com",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 128000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "Custom AI models"
+            ]
+          },
           "business": {
-            "pricing_model": "paid"
+            "pricing_model": "subscription",
+            "base_price": 20,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "Core": "$20/month - Full agent access, $25 in monthly credits (~100 agent checkpoints), integrated development environment",
+              "Teams": "$35/month per user - $40 in monthly credits, centralized billing, team collaboration features"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:40.434Z",
-        "updated_at": "2025-06-25T02:48:36.426Z"
+        "updated_at": "2025-06-30T03:49:42.687Z",
+        "launch_date": "2024-09-26"
       },
       "snyk-code": {
         "id": "17",
@@ -1762,7 +3202,14 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - 100 security scans monthly, Basic vulnerability detection",
+              "Team": "$25/month per contributing developer - Full security features"
+            }
           },
           "metrics": {}
         },
@@ -1783,7 +3230,15 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Limited usage, Basic features",
+              "Pro": "$12/month - Enhanced features, Higher limits",
+              "Enterprise": "Custom pricing - Self-hosted option, Advanced security"
+            }
           },
           "metrics": {}
         },
@@ -1804,7 +3259,15 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "Open source projects",
+              "Pro": "$10/month per user - Individual developers, Advanced refactoring",
+              "Team": "$19/month per user - Team features, 20% annual discount available"
+            }
           },
           "metrics": {}
         },
@@ -1823,9 +3286,39 @@
           "description": "AI code completion assistant emphasizing privacy with option for local models, supporting 30+ languages and most IDEs",
           "website": "https://tabnine.com",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 100000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust",
+              "Swift",
+              "Kotlin"
+            ],
+            "llm_providers": [
+              "Custom models",
+              "Local processing",
+              "Cloud models"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": true,
+            "free_tier": true,
+            "pricing_details": {
+              "Basic": "$0/month - Basic code completion (ends April 2, 2025)",
+              "Pro": "$12/month - Advanced AI completion, privacy-focused, local processing option, enhanced features",
+              "Enterprise": "$39/month per user - Private deployment, custom AI models, fine-tuning on organizational codebases, enterprise support"
+            }
           },
           "metrics": {}
         },
@@ -1844,14 +3337,35 @@
           "description": "AI-powered UI generator creating React components from text prompts and images",
           "website": "https://v0.dev",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 100000,
+            "multi_file_support": true,
+            "language_support": [
+              "JavaScript",
+              "TypeScript",
+              "React",
+              "Tailwind CSS"
+            ],
+            "llm_providers": [
+              "OpenAI GPT-4",
+              "Custom models"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - $5 in monthly credits, React component generation, Tailwind CSS support",
+              "Premium": "$20/month - $20 in monthly credits, backend generation capabilities, advanced features, priority access"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:40.935Z",
-        "updated_at": "2025-06-25T02:48:36.153Z"
+        "updated_at": "2025-06-30T03:49:42.689Z",
+        "launch_date": "2023-10-01"
       },
       "windsurf": {
         "id": "14",
@@ -1865,14 +3379,43 @@
           "description": "AI-powered IDE assistant acquired by OpenAI for $3 billion in April 2025",
           "website": "https://windsurf.com",
           "features": [],
-          "technical": {},
+          "technical": {
+            "context_window": 150000,
+            "multi_file_support": true,
+            "language_support": [
+              "Python",
+              "JavaScript",
+              "TypeScript",
+              "Java",
+              "C++",
+              "C#",
+              "PHP",
+              "Ruby",
+              "Go",
+              "Rust"
+            ],
+            "llm_providers": [
+              "OpenAI GPT-4",
+              "Claude",
+              "Others"
+            ]
+          },
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - 25 prompt credits monthly (increased from 5), basic AI assistance, credit-based system",
+              "Pro": "$15/month - Unlimited prompt credits, advanced AI features, priority support, OpenAI integration",
+              "pricing_note": "Acquired by OpenAI"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:43.003Z",
-        "updated_at": "2025-06-25T02:48:35.065Z"
+        "updated_at": "2025-06-30T03:49:42.697Z",
+        "launch_date": "2024-11-13"
       },
       "zed": {
         "id": "23",
@@ -1888,12 +3431,20 @@
           "features": [],
           "technical": {},
           "business": {
-            "pricing_model": "freemium"
+            "pricing_model": "freemium",
+            "base_price": 0,
+            "enterprise_pricing": false,
+            "free_tier": true,
+            "pricing_details": {
+              "Free": "$0/month - Open source editor, Basic features",
+              "Pro": "Coming soon - Advanced collaboration features"
+            }
           },
           "metrics": {}
         },
         "created_at": "2025-06-23T15:40:47.312Z",
-        "updated_at": "2025-06-25T02:48:32.596Z"
+        "updated_at": "2025-06-30T03:49:42.682Z",
+        "launch_date": "2024-08-01"
       }
     },
     "byCategory": {
@@ -1903,8 +3454,10 @@
         "8",
         "13"
       ],
+      "devops-assistant": [
+        "26"
+      ],
       "ide-assistant": [
-        "26",
         "25",
         "2",
         "27",
@@ -1945,7 +3498,7 @@
   },
   "metadata": {
     "total": 30,
-    "last_updated": "2025-06-27T21:04:56.163Z",
+    "last_updated": "2025-06-30T14:50:08.090Z",
     "version": "1.0.0"
   }
 }

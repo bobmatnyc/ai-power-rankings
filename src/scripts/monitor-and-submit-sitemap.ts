@@ -13,11 +13,13 @@ let attempts = 0;
 
 async function checkSiteAvailability(): Promise<boolean> {
   return new Promise((resolve) => {
-    https.get(SITE_URL, { timeout: 10000 }, (res) => {
-      resolve(res.statusCode === 200 || res.statusCode === 301 || res.statusCode === 302);
-    }).on("error", () => {
-      resolve(false);
-    });
+    https
+      .get(SITE_URL, { timeout: 10000 }, (res) => {
+        resolve(res.statusCode === 200 || res.statusCode === 301 || res.statusCode === 302);
+      })
+      .on("error", () => {
+        resolve(false);
+      });
   });
 }
 
@@ -33,23 +35,21 @@ async function submitSitemap() {
     });
 
     console.log("📤 Submitting sitemap to Google Search Console...");
-    
+
     await searchconsole.sitemaps.submit({
       siteUrl: SITE_URL,
       feedpath: SITEMAP_URL,
     });
-    
+
     console.log("✅ Sitemap submitted successfully!");
-    
+
     // Check submission status
     const sitemapList = await searchconsole.sitemaps.list({
       siteUrl: SITE_URL,
     });
-    
-    const submittedSitemap = sitemapList.data.sitemap?.find(
-      s => s.path === SITEMAP_URL
-    );
-    
+
+    const submittedSitemap = sitemapList.data.sitemap?.find((s) => s.path === SITEMAP_URL);
+
     if (submittedSitemap) {
       console.log("\n📊 Sitemap Status:");
       console.log(`  - Path: ${submittedSitemap.path}`);
@@ -58,10 +58,13 @@ async function submitSitemap() {
       console.log(`  - Warnings: ${submittedSitemap.warnings || 0}`);
       console.log(`  - Errors: ${submittedSitemap.errors || 0}`);
     }
-    
+
     return true;
   } catch (error) {
-    console.error("❌ Failed to submit sitemap:", error instanceof Error ? error.message : String(error));
+    console.error(
+      "❌ Failed to submit sitemap:",
+      error instanceof Error ? error.message : String(error)
+    );
     return false;
   }
 }
@@ -76,36 +79,43 @@ async function monitorAndSubmit() {
   const checkSite = async () => {
     attempts++;
     console.log(`[${new Date().toLocaleTimeString()}] Attempt ${attempts}/${MAX_ATTEMPTS}`);
-    
+
     const isAvailable = await checkSiteAvailability();
-    
+
     if (isAvailable) {
       console.log("✅ Site is now available!");
-      
+
       // Wait a bit for sitemap to be fully available
       console.log("⏳ Waiting 10 seconds for sitemap to be ready...");
-      await new Promise(resolve => setTimeout(resolve, 10000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+
       const success = await submitSitemap();
-      
+
       if (success) {
         console.log("\n🎉 Sitemap submission completed successfully!");
-        
+
         // Save a success marker
         const successFile = path.join(process.cwd(), "sitemap-submitted.json");
-        fs.writeFileSync(successFile, JSON.stringify({
-          siteUrl: SITE_URL,
-          sitemapUrl: SITEMAP_URL,
-          submittedAt: new Date().toISOString(),
-        }, null, 2));
-        
+        fs.writeFileSync(
+          successFile,
+          JSON.stringify(
+            {
+              siteUrl: SITE_URL,
+              sitemapUrl: SITEMAP_URL,
+              submittedAt: new Date().toISOString(),
+            },
+            null,
+            2
+          )
+        );
+
         console.log(`📝 Success details saved to: ${successFile}`);
       }
-      
+
       process.exit(0);
     } else {
       console.log("❌ Site not available yet...");
-      
+
       if (attempts >= MAX_ATTEMPTS) {
         console.error("\n⏰ Maximum attempts reached. Site is still not available.");
         console.error("Please check:");
@@ -114,7 +124,7 @@ async function monitorAndSubmit() {
         console.error("  3. Domain settings");
         process.exit(1);
       }
-      
+
       // Schedule next check
       setTimeout(checkSite, CHECK_INTERVAL);
     }
@@ -144,10 +154,7 @@ if (fs.existsSync(statusFile)) {
 `;
 
 // Save the status check script
-fs.writeFileSync(
-  path.join(process.cwd(), "src/scripts/check-sitemap-status.js"),
-  statusScript
-);
+fs.writeFileSync(path.join(process.cwd(), "src/scripts/check-sitemap-status.js"), statusScript);
 
 // Main execution
 console.log("🚀 Sitemap Monitor and Submitter");

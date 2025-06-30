@@ -6,27 +6,19 @@ import { RankingPeriod } from "@/lib/json-db/schemas";
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
-    const { 
-      period, 
-      algorithm_version = "v6.0", 
-      preview_date,
-      rankings 
-    } = body;
-    
-    loggers.api.info("Build rankings JSON request received", { 
+    const { period, algorithm_version = "v6.0", preview_date, rankings } = body;
+
+    loggers.api.info("Build rankings JSON request received", {
       period,
-      rankings_count: rankings?.length 
+      rankings_count: rankings?.length,
     });
-    
+
     if (!period || !rankings) {
-      return NextResponse.json(
-        { error: "Period and rankings are required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Period and rankings are required" }, { status: 400 });
     }
 
     const rankingsRepo = getRankingsRepo();
-    
+
     // Build the ranking period data
     const rankingPeriod: RankingPeriod = {
       period,
@@ -50,21 +42,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           development_velocity: r.factor_changes?.development_velocity || 50,
           platform_resilience: r.factor_changes?.platform_resilience || 50,
         },
-        movement: r.movement ? {
-          previous_position: r.current_position || null,
-          change: r.position_change || 0,
-          direction: r.movement as any,
-        } : undefined,
+        movement: r.movement
+          ? {
+              previous_position: r.current_position || null,
+              change: r.position_change || 0,
+              direction: r.movement as "up" | "down" | "same",
+            }
+          : undefined,
         change_analysis: r.change_analysis,
       })),
     };
-    
+
     // Save the rankings
     await rankingsRepo.saveRankingsForPeriod(rankingPeriod);
-    
-    loggers.api.info("Rankings built and saved", { 
+
+    loggers.api.info("Rankings built and saved", {
       period,
-      tools_count: rankingPeriod.rankings.length 
+      tools_count: rankingPeriod.rankings.length,
     });
 
     return NextResponse.json({
@@ -73,7 +67,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       message: "Rankings built and saved successfully",
       tools_count: rankingPeriod.rankings.length,
     });
-
   } catch (error) {
     loggers.api.error("Failed to build rankings", { error });
     return NextResponse.json(
@@ -86,11 +79,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 }
 
-function getTier(score: number): 'S' | 'A' | 'B' | 'C' | 'D' | null {
-  if (score >= 90) return 'S';
-  if (score >= 80) return 'A';
-  if (score >= 70) return 'B';
-  if (score >= 60) return 'C';
-  if (score >= 50) return 'D';
+function getTier(score: number): "S" | "A" | "B" | "C" | "D" | null {
+  if (score >= 90) {
+    return "S";
+  }
+  if (score >= 80) {
+    return "A";
+  }
+  if (score >= 70) {
+    return "B";
+  }
+  if (score >= 60) {
+    return "C";
+  }
+  if (score >= 50) {
+    return "D";
+  }
   return null;
 }

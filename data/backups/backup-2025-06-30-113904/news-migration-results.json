@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-06-28T02:35:55.800Z",
+  "migration_type": "news-to-json",
+  "stats": {
+    "articles": 18,
+    "errors": []
+  },
+  "success": true,
+  "source": "production exports and sample files"
+}
