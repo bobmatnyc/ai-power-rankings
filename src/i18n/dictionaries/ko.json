@@ -8,12 +8,14 @@
     "testingtool": "테스팅 툴",
     "codereview": "코드 리뷰",
     "codeassistant": "코드 어시스턴트",
+    "devopsassistant": "DevOps 어시스턴트",
     "autonomousAgent": "자율 에이전트",
     "codeEditor": "코드 에디터",
     "ideAssistant": "IDE 어시스턴트",
     "appBuilder": "앱 빌더",
     "codeReview": "코드 리뷰",
-    "codeAssistant": "코드 어시스턴트"
+    "codeAssistant": "코드 어시스턴트",
+    "devopsAssistant": "DevOps 어시스턴트"
   },
   "common": {
     "appName": "AI 파워 랭킹",
@@ -33,7 +35,8 @@
     "share": "공유",
     "explore": "탐색",
     "notAvailable": "해당 없음",
-    "users": "사용자"
+    "users": "사용자",
+    "back": "뒤로"
   },
   "navigation": {
     "home": "홈",
@@ -60,7 +63,8 @@
       "exploreTools": "모든 툴 탐색",
       "viewTrending": "트렌딩 보기",
       "exploreButton": "모든 툴 탐색",
-      "trendingButton": "트렌딩 보기"
+      "trendingButton": "트렌딩 보기",
+      "whatsNewButton": "새로운 기능"
     },
     "stats": {
       "toolsRanked": "AI 툴 랭킹됨",
@@ -255,7 +259,8 @@
       "hoursAgo": "{count}시간 전",
       "dayAgo": "1일 전",
       "daysAgo": "{count}일 전"
-    }
+    },
+    "viewSource": "소스 보기"
   },
   "tools": {
     "title": "AI 코딩 툴",

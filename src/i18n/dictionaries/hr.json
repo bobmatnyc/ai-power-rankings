@@ -8,12 +8,14 @@
     "testingtool": "Testing Tool",
     "codereview": "Code Review",
     "codeassistant": "Code Asistent",
+    "devopsassistant": "DevOps Asistent",
     "autonomousAgent": "Autonomni Agent",
     "codeEditor": "Code Editor",
     "ideAssistant": "IDE Asistent",
     "appBuilder": "App Builder",
     "codeReview": "Code Review",
-    "codeAssistant": "Code Asistent"
+    "codeAssistant": "Code Asistent",
+    "devopsAssistant": "DevOps Asistent"
   },
   "common": {
     "appName": "AI Power Rankings",
@@ -30,7 +32,11 @@
     "search": "Pretraži",
     "filter": "Filtriraj",
     "sort": "Sortiraj",
-    "share": "Podijeli"
+    "share": "Podijeli",
+    "explore": "Istraži",
+    "notAvailable": "N/D",
+    "users": "Korisnici",
+    "back": "Natrag"
   },
   "navigation": {
     "home": "Početna",
@@ -57,7 +63,8 @@
       "exploreTools": "Istraži sve alate",
       "viewTrending": "Vidi trending",
       "exploreButton": "Istraži sve alate",
-      "trendingButton": "Vidi trending"
+      "trendingButton": "Vidi trending",
+      "whatsNewButton": "Što je novo"
     },
     "stats": {
       "toolsRanked": "AI alati rangirani",
@@ -117,16 +124,15 @@
       "keyModifiersDescription": "Tri sophisticated modifiera osiguravaju fer i točna rangiranja:",
       "factors": {
         "agenticCapability": "Agentic sposobnost (30%) - Autonomne coding mogućnosti",
-        "innovation": "Inovacija (15%) - S 6-mjesečnim decay half-life",
+        "innovation": {
+          "name": "Inovacija",
+          "description": "Tehnički breakthroughovi i feature inovacije"
+        },
         "technicalPerformance": "Tehnički performance (12.5%) - SWE-bench fokus",
         "marketTraction": "Market traction (12.5%) - Revenue quality adjusted",
         "agentic": {
           "name": "Agentic sposobnost",
           "description": "Autonomne coding sposobnosti i multi-step task completion"
-        },
-        "innovation": {
-          "name": "Inovacija",
-          "description": "Tehnički breakthroughovi i feature inovacije"
         },
         "performance": {
           "name": "Tehnički Performance",
@@ -229,7 +235,8 @@
       "hoursAgo": "{count} sati prije",
       "dayAgo": "1 dan prije",
       "daysAgo": "{count} dana prije"
-    }
+    },
+    "viewSource": "Pogledaj izvor"
   },
   "tools": {
     "title": "AI Coding Alati",
@@ -574,5 +581,10 @@
       "message": "Molimo provjerite internetsku vezu i pokušajte ponovno.",
       "action": "Retry"
     }
+  },
+  "seo": {
+    "title": "AI Power Rankings - Konačno mjesečno rangiranje AI alata za kodiranje",
+    "description": "Konačno mjesečno rangiranje i analiza agentskih AI alata za kodiranje. Usporedite Cursor, GitHub Copilot, Claude i preko 50 AI asistenata kojima vjeruju developeri diljem svijeta.",
+    "keywords": "AI alati za kodiranje, agentska AI, autonomno kodiranje, rangiranje alata za developere, usporedba AI asistenata, benchmarkovi AI kodiranja, SWE-bench rezultati, Claude vs Cursor vs GitHub Copilot"
   }
 }

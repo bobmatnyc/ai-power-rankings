@@ -8,12 +8,14 @@
     "testingtool": "测试工具",
     "codereview": "代码审查",
     "codeassistant": "代码助手",
+    "devopsassistant": "DevOps助手",
     "autonomousAgent": "自主代理",
     "codeEditor": "代码编辑器",
     "ideAssistant": "IDE助手",
     "appBuilder": "应用构建器",
     "codeReview": "代码审查",
     "codeAssistant": "代码助手",
+    "devopsAssistant": "DevOps助手",
     "multimodal": "多模态",
     "businessintelligence": "商业智能",
     "imageandvideo": "图像和视频",
@@ -42,7 +44,8 @@
     "share": "分享",
     "explore": "探索",
     "notAvailable": "不可用",
-    "users": "用户"
+    "users": "用户",
+    "back": "返回"
   },
   "navigation": {
     "home": "首页",
@@ -566,32 +569,33 @@
     }
   },
   "news": {
-    "title": "[TRANSLATE] AI Tools News",
-    "subtitle": "[TRANSLATE] Latest updates, milestones, and announcements from AI coding tools",
+    "title": "AI工具新闻",
+    "subtitle": "AI编码工具的最新更新、里程碑和公告",
     "filters": {
-      "all": "[TRANSLATE] All News",
-      "milestone": "[TRANSLATE] Milestone",
-      "feature": "[TRANSLATE] Feature",
-      "partnership": "[TRANSLATE] Partnership",
-      "update": "[TRANSLATE] Update",
-      "announcement": "[TRANSLATE] Announcement"
+      "all": "全部新闻",
+      "milestone": "里程碑",
+      "feature": "功能",
+      "partnership": "合作伙伴",
+      "update": "更新",
+      "announcement": "公告"
     },
-    "noItems": "[TRANSLATE] No news items found.",
-    "loadingMore": "[TRANSLATE] Loading more news...",
-    "noMore": "[TRANSLATE] No more news to load",
-    "viewTool": "[TRANSLATE] View Tool",
+    "noItems": "未找到新闻项目。",
+    "loadingMore": "加载更多新闻...",
+    "noMore": "没有更多新闻可加载",
+    "viewTool": "查看工具",
     "metrics": {
-      "users": "[TRANSLATE] users",
-      "score": "[TRANSLATE] score",
-      "rank": "[TRANSLATE] rank"
+      "users": "用户",
+      "score": "分数",
+      "rank": "排名"
     },
     "time": {
-      "justNow": "[TRANSLATE] Just now",
-      "hourAgo": "[TRANSLATE] 1 hour ago",
-      "hoursAgo": "[TRANSLATE] {count} hours ago",
-      "dayAgo": "[TRANSLATE] 1 day ago",
-      "daysAgo": "[TRANSLATE] {count} days ago"
+      "justNow": "刚刚",
+      "hourAgo": "1小时前",
+      "hoursAgo": "{count}小时前",
+      "dayAgo": "1天前",
+      "daysAgo": "{count}天前"
     },
+    "viewSource": "查看来源",
     "readMore": "阅读更多",
     "publishedOn": "发布于",
     "noResults": "未找到新闻",
@@ -1736,5 +1740,10 @@
       "email": "通过邮件分享",
       "copy": "复制链接"
     }
+  },
+  "seo": {
+    "title": "AI 实力排行榜 - AI编码工具的权威月度排名",
+    "description": "自主AI编码工具的权威月度排名和分析。比较Cursor、GitHub Copilot、Claude以及50多个深受全球开发者信赖的AI助手。",
+    "keywords": "AI编码工具, 自主AI, 自动编码, 开发工具排名, AI助手对比, 编码AI基准测试, SWE-bench结果, Claude对Cursor对GitHub Copilot"
   }
 }

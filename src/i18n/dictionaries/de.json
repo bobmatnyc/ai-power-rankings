@@ -8,12 +8,14 @@
     "testingtool": "Testing-Tool",
     "codereview": "Code-Review",
     "codeassistant": "Code-Assistent",
+    "devopsassistant": "DevOps-Assistent",
     "autonomousAgent": "Autonomer Agent",
     "codeEditor": "Code-Editor",
     "ideAssistant": "IDE-Assistent",
     "appBuilder": "App-Builder",
     "codeReview": "Code-Review",
-    "codeAssistant": "Code-Assistent"
+    "codeAssistant": "Code-Assistent",
+    "devopsAssistant": "DevOps-Assistent"
   },
   "common": {
     "appName": "KI Power Rankings",
@@ -30,7 +32,11 @@
     "search": "Suchen",
     "filter": "Filtern",
     "sort": "Sortieren",
-    "share": "Teilen"
+    "share": "Teilen",
+    "explore": "Erkunden",
+    "notAvailable": "N/V",
+    "users": "Benutzer",
+    "back": "Zurück"
   },
   "navigation": {
     "home": "Home",
@@ -57,7 +63,8 @@
       "exploreTools": "Alle Tools entdecken",
       "viewTrending": "Trending anzeigen",
       "exploreButton": "Alle Tools entdecken",
-      "trendingButton": "Trending anzeigen"
+      "trendingButton": "Trending anzeigen",
+      "whatsNewButton": "Was ist neu"
     },
     "stats": {
       "toolsRanked": "KI-Tools gerankt",
@@ -223,7 +230,8 @@
       "hoursAgo": "{count} hours ago",
       "dayAgo": "1 day ago",
       "daysAgo": "{count} days ago"
-    }
+    },
+    "viewSource": "Quelle anzeigen"
   },
   "tools": {
     "title": "KI-Coding-Tools",
@@ -568,5 +576,10 @@
       "message": "Bitte überprüfe deine Internetverbindung und versuche es erneut.",
       "action": "Retry"
     }
+  },
+  "seo": {
+    "title": "AI Power Rankings - Die maßgebliche monatliche Rangliste der AI-Coding-Tools",
+    "description": "Die maßgebliche monatliche Rangliste und Analyse von agentischen AI-Coding-Tools. Vergleiche Cursor, GitHub Copilot, Claude und über 50 AI-Assistenten, denen Entwickler weltweit vertrauen.",
+    "keywords": "AI-Coding-Tools, agentische AI, autonomes Coding, Entwickler-Tools-Rankings, AI-Assistenten-Vergleich, Coding-AI-Benchmarks, SWE-Bench-Ergebnisse, Claude vs Cursor vs GitHub Copilot"
   }
 }

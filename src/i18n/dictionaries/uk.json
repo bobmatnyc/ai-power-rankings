@@ -8,12 +8,14 @@
     "testingtool": "Тул для Тестування",
     "codereview": "Код Рев'ю",
     "codeassistant": "Код Асистент",
+    "devopsassistant": "DevOps Асистент",
     "autonomousAgent": "Автономний Агент",
     "codeEditor": "Редактор Коду",
     "ideAssistant": "IDE Асистент",
     "appBuilder": "Білдер Додатків",
     "codeReview": "Код Рев'ю",
-    "codeAssistant": "Код Асистент"
+    "codeAssistant": "Код Асистент",
+    "devopsAssistant": "DevOps Асистент"
   },
   "common": {
     "appName": "AI Power Rankings",
@@ -30,7 +32,11 @@
     "search": "Пошук",
     "filter": "Фільтр",
     "sort": "Сортування",
-    "share": "Поділитись"
+    "share": "Поділитись",
+    "explore": "Дослідити",
+    "notAvailable": "Н/Д",
+    "users": "Користувачі",
+    "back": "Назад"
   },
   "navigation": {
     "home": "Головна",
@@ -57,7 +63,8 @@
       "exploreTools": "Досліджуй всі тули",
       "viewTrending": "Дивись trending",
       "exploreButton": "Досліджуй всі тули",
-      "trendingButton": "Дивись trending"
+      "trendingButton": "Дивись trending",
+      "whatsNewButton": "Що нового"
     },
     "stats": {
       "toolsRanked": "AI тули ранжировані",
@@ -117,16 +124,15 @@
       "keyModifiersDescription": "Три sophisticated модифікатори забезпечують fair та accurate рейтинги:",
       "factors": {
         "agenticCapability": "Agentic здатність (30%) - Автономні coding можливості",
-        "innovation": "Інновації (15%) - З 6-місячним decay half-life",
+        "innovation": {
+          "name": "Інновації",
+          "description": "Технічні breakthroughs та feature інновації"
+        },
         "technicalPerformance": "Технічна performance (12.5%) - SWE-bench фокус",
         "marketTraction": "Market traction (12.5%) - Revenue якість adjusted",
         "agentic": {
           "name": "Agentic здатність",
           "description": "Автономні coding здібності та multi-step task completion"
-        },
-        "innovation": {
-          "name": "Інновації",
-          "description": "Технічні breakthroughs та feature інновації"
         },
         "performance": {
           "name": "Технічна Performance",
@@ -229,7 +235,8 @@
       "hoursAgo": "{count} годин тому",
       "dayAgo": "1 день тому",
       "daysAgo": "{count} днів тому"
-    }
+    },
+    "viewSource": "Переглянути джерело"
   },
   "tools": {
     "title": "AI Coding Тули",
@@ -574,5 +581,10 @@
       "message": "Будь ласка check ваше internet connection та try again.",
       "action": "Retry"
     }
+  },
+  "seo": {
+    "title": "AI Power Rankings - Остаточний щомісячний рейтинг інструментів кодування AI",
+    "description": "Остаточний щомісячний рейтинг та аналіз агентських інструментів кодування AI. Порівняйте Cursor, GitHub Copilot, Claude та понад 50 AI-асистентів, яким довіряють розробники по всьому світу.",
+    "keywords": "інструменти кодування AI, агентська AI, автономне кодування, рейтинги інструментів розробників, порівняння AI-асистентів, бенчмарки AI кодування, результати SWE-bench, Claude проти Cursor проти GitHub Copilot"
   }
 }

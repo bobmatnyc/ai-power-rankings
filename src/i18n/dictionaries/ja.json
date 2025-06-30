@@ -8,12 +8,14 @@
     "testingtool": "テストツール",
     "codereview": "コードレビュー",
     "codeassistant": "コードアシスタント",
+    "devopsassistant": "DevOpsアシスタント",
     "autonomousAgent": "自律エージェント",
     "codeEditor": "コードエディター",
     "ideAssistant": "IDEアシスタント",
     "appBuilder": "アプリビルダー",
     "codeReview": "コードレビュー",
     "codeAssistant": "コードアシスタント",
+    "devopsAssistant": "DevOpsアシスタント",
     "multimodal": "マルチモーダル",
     "businessintelligence": "ビジネスインテリジェンス",
     "imageandvideo": "画像・動画",
@@ -52,6 +54,7 @@
     "retry": "再試行",
     "open": "開く",
     "yes": "はい",
+    "back": "戻る",
     "no": "いいえ"
   },
   "navigation": {
@@ -480,7 +483,8 @@
     "latestUpdate": "最新の更新",
     "more": "もっと見る",
     "score": "スコア",
-    "rank": "ランク"
+    "rank": "ランク",
+    "viewSource": "ソースを見る"
   },
   "tools": {
     "title": "AI Coding Tools",
@@ -1087,5 +1091,10 @@
     "unauthorized": "認証されていません",
     "forbidden": "アクセス禁止",
     "generic": "何かが間違いました"
+  },
+  "seo": {
+    "title": "AI パワーランキング - AIコーディングツールの決定版月次ランキング",
+    "description": "エージェント型AIコーディングツールの決定版月次ランキングと分析。Cursor、GitHub Copilot、Claude、その他50以上の開発者に信頼されているAIアシスタントを比較。",
+    "keywords": "AIコーディングツール, エージェント型AI, 自律型コーディング, 開発ツールランキング, AIアシスタント比較, コーディングAIベンチマーク, SWE-bench結果, Claude対Cursor対GitHub Copilot"
   }
 }

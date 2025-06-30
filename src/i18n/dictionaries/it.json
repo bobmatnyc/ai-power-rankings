@@ -8,12 +8,14 @@
     "testingtool": "Tool di Testing",
     "codereview": "Code Review",
     "codeassistant": "Assistente Codice",
+    "devopsassistant": "Assistente DevOps",
     "autonomousAgent": "Agente Autonomo",
     "codeEditor": "Editor di Codice",
     "ideAssistant": "Assistente IDE",
     "appBuilder": "App Builder",
     "codeReview": "Code Review",
-    "codeAssistant": "Assistente Codice"
+    "codeAssistant": "Assistente Codice",
+    "devopsAssistant": "Assistente DevOps"
   },
   "common": {
     "appName": "Ranking AI",
@@ -30,7 +32,11 @@
     "search": "Cerca",
     "filter": "Filtra",
     "sort": "Ordina",
-    "share": "Condividi"
+    "share": "Condividi",
+    "explore": "Esplora",
+    "notAvailable": "N/D",
+    "users": "Utenti",
+    "back": "Indietro"
   },
   "navigation": {
     "home": "Home",
@@ -57,7 +63,8 @@
       "exploreTools": "Esplora tutti i tool",
       "viewTrending": "Vedi trending",
       "exploreButton": "Esplora tutti i tool",
-      "trendingButton": "Vedi trending"
+      "trendingButton": "Vedi trending",
+      "whatsNewButton": "Novità"
     },
     "stats": {
       "toolsRanked": "Tool AI classificati",
@@ -228,7 +235,8 @@
       "hoursAgo": "{count} hours ago",
       "dayAgo": "1 day ago",
       "daysAgo": "{count} days ago"
-    }
+    },
+    "viewSource": "Visualizza sorgente"
   },
   "tools": {
     "title": "Tool di Coding AI",
@@ -573,5 +581,10 @@
       "message": "Please check your internet connection and try again.",
       "action": "Retry"
     }
+  },
+  "seo": {
+    "title": "AI Power Rankings - La classifica mensile definitiva degli strumenti di codifica AI",
+    "description": "La classifica mensile definitiva e l'analisi degli strumenti di codifica AI agentici. Confronta Cursor, GitHub Copilot, Claude e oltre 50 assistenti AI di cui si fidano gli sviluppatori di tutto il mondo.",
+    "keywords": "strumenti di codifica AI, AI agentici, codifica autonoma, classifiche strumenti sviluppatori, confronto assistenti AI, benchmark AI di codifica, risultati SWE-bench, Claude vs Cursor vs GitHub Copilot"
   }
 }

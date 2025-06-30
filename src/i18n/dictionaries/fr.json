@@ -8,12 +8,14 @@
     "testingtool": "Outil de Test",
     "codereview": "Code Review",
     "codeassistant": "Assistant Code",
+    "devopsassistant": "Assistant DevOps",
     "autonomousAgent": "Agent Autonome",
     "codeEditor": "Éditeur de Code",
     "ideAssistant": "Assistant IDE",
     "appBuilder": "App Builder",
     "codeReview": "Code Review",
-    "codeAssistant": "Assistant Code"
+    "codeAssistant": "Assistant Code",
+    "devopsAssistant": "Assistant DevOps"
   },
   "common": {
     "appName": "Classements IA",
@@ -30,7 +32,11 @@
     "search": "Rechercher",
     "filter": "Filtrer",
     "sort": "Trier",
-    "share": "Partager"
+    "share": "Partager",
+    "explore": "Explorer",
+    "notAvailable": "N/D",
+    "users": "Utilisateurs",
+    "back": "Retour"
   },
   "navigation": {
     "home": "Accueil",
@@ -57,7 +63,8 @@
       "exploreTools": "Explorer tous les outils",
       "viewTrending": "Voir les tendances",
       "exploreButton": "Explorer tous les outils",
-      "trendingButton": "Voir les tendances"
+      "trendingButton": "Voir les tendances",
+      "whatsNewButton": "Quoi de neuf"
     },
     "stats": {
       "toolsRanked": "Outils IA classés",
@@ -223,7 +230,8 @@
       "hoursAgo": "{count} hours ago",
       "dayAgo": "1 day ago",
       "daysAgo": "{count} days ago"
-    }
+    },
+    "viewSource": "Voir la source"
   },
   "tools": {
     "title": "Outils de Coding IA",
@@ -568,5 +576,10 @@
       "message": "Please check your internet connection and try again.",
       "action": "Retry"
     }
+  },
+  "seo": {
+    "title": "AI Power Rankings - Le classement mensuel définitif des outils de codage IA",
+    "description": "Le classement mensuel définitif et l'analyse des outils de codage IA agentiques. Comparez Cursor, GitHub Copilot, Claude et plus de 50 assistants IA approuvés par les développeurs du monde entier.",
+    "keywords": "outils de codage IA, IA agentique, codage autonome, classements d'outils de développement, comparaison d'assistants IA, benchmarks IA de codage, résultats SWE-bench, Claude vs Cursor vs GitHub Copilot"
   }
 }
