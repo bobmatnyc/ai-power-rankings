@@ -26,6 +26,7 @@ sprint_current: 2
 - [ ] **[T-027]** Create innovation tracking system for tool features
 - [ ] **[T-028]** Build automated SWE-bench score collection
 - [ ] **[T-029]** Develop business metrics ingestion pipeline
+- [ ] **[T-030]** Fix missing translations for DE, FR, HR, IT, UK languages
 
 ## ✅ Completed Tasks
 
@@ -393,6 +394,41 @@ Create a pipeline to ingest business metrics (funding, revenue, users) from vari
 
 ---
 
+### **[T-030]** Fix missing translations for DE, FR, HR, IT, UK languages
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** High  
+**Story Points:** 8  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Fix missing translations for German (118 keys), French (118 keys), Croatian (112 keys), Italian (115 keys), and Ukrainian (112 keys) to ensure complete internationalization coverage.
+
+**Acceptance Criteria:**
+- [ ] All missing translation keys added for each language
+- [ ] Translation quality verified by native speakers or AI
+- [ ] No console warnings for missing translations
+- [ ] Footer, methodology, and algorithm sections fully translated
+- [ ] Newsletter and about page sections translated
+
+**Technical Notes:**
+- Missing keys identified in docs/translations/missing-translations.txt
+- Focus on critical UI sections first (footer, navigation)
+- Use consistent terminology across languages
+- Maintain translation file structure matching en.json
+
+**Key Missing Sections:**
+- `footer.*` - Footer content and links
+- `rankings.algorithm.factors.*` - Algorithm factor descriptions
+- `methodology.*` - Full methodology documentation
+- `about.team.*` - Team and company information
+- `newsletter.verify.*` and `newsletter.unsubscribe.*` - Email flows
+
+---
+
 ## Sprint History
 
 ### Sprint 1 (2025-06-27 to 2025-01-15)
@@ -408,10 +444,10 @@ Create a pipeline to ingest business metrics (funding, revenue, users) from vari
 
 ## Metrics Summary
 
-- **Total Tasks:** 25
-- **Completed:** 23 (92%)
+- **Total Tasks:** 26
+- **Completed:** 23 (88.5%)
 - **In Progress:** 0 (0%)
-- **Remaining:** 2 (8%)
+- **Remaining:** 3 (11.5%)
 - **Epic Progress:** 95% complete
 
 ## Risk Register

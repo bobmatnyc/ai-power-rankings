@@ -2,7 +2,15 @@
   "extends": "next/core-web-vitals",
   "rules": {
     "@typescript-eslint/no-explicit-any": "warn",
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
     "no-alert": "warn",
     "@next/next/no-html-link-for-pages": "warn"
   },
@@ -10,7 +18,15 @@
     {
       "files": ["src/scripts/**/*.ts", "scripts/**/*.ts"],
       "rules": {
-        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrors": "all",
+            "caughtErrorsIgnorePattern": "^_"
+          }
+        ],
         "@typescript-eslint/no-explicit-any": "warn",
         "no-alert": "off"
       }

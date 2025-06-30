@@ -5,8 +5,6 @@
  */
 
 import { getNewsRepo } from "../lib/json-db";
-import fs from "fs/promises";
-import path from "path";
 
 interface NewsArticle {
   id: string;
@@ -417,7 +415,7 @@ async function importNewsFromResearch() {
       }
 
       // Ensure unique slug
-      let baseSlug = article.slug;
+      const baseSlug = article.slug;
       let counter = 1;
       while (
         existingSlugs.has(article.slug) ||

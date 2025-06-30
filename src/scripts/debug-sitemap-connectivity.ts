@@ -44,14 +44,14 @@ async function checkDNS() {
   try {
     const { stdout: aRecord } = await execAsync("dig aipowerrankings.com A +short");
     console.log(`  A Record: ${aRecord.trim() || "Not found"}`);
-  } catch (_error) {
+  } catch {
     console.log("  A Record: Error checking");
   }
 
   try {
     const { stdout: cnameRecord } = await execAsync("dig aipowerrankings.com CNAME +short");
     console.log(`  CNAME: ${cnameRecord.trim() || "Not found"}`);
-  } catch (_error) {
+  } catch {
     console.log("  CNAME: Error checking");
   }
 
@@ -62,7 +62,7 @@ async function checkDNS() {
     if (addressLine) {
       console.log(`  nslookup: ${addressLine.trim()}`);
     }
-  } catch (_error) {
+  } catch {
     console.log("  nslookup: Error");
   }
 }
@@ -79,7 +79,7 @@ async function checkVercelDomains() {
         console.log(`  ${line}`);
       }
     });
-  } catch (_error) {
+  } catch {
     console.log("  Error checking Vercel domains");
   }
 }
@@ -95,7 +95,7 @@ async function checkLocalSitemap() {
     // Check local dev server
     const localUrl = "http://localhost:3000/sitemap.xml";
     await checkUrl(localUrl);
-  } catch (_error) {
+  } catch {
     console.log("  Error checking local sitemap");
   }
 }

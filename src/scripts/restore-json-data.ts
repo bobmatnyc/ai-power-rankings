@@ -8,11 +8,7 @@ import fs from "fs/promises";
 import path from "path";
 import { parseISO, format } from "date-fns";
 import { loggers } from "../lib/logger";
-// Import inquirer types only
-interface InquirerAnswers {
-  backup: string;
-  confirm: boolean;
-}
+import readline from "readline";
 
 const JSON_DATA_DIR = path.join(process.cwd(), "data", "json");
 const BACKUP_DIR = path.join(process.cwd(), "data", "backups");
@@ -42,7 +38,7 @@ async function getBackupMetadata(backupName: string): Promise<BackupMetadata | n
     const metadataPath = path.join(BACKUP_DIR, backupName, "backup-metadata.json");
     const content = await fs.readFile(metadataPath, "utf-8");
     return JSON.parse(content);
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -166,14 +162,14 @@ async function interactiveRestore() {
 
   // Simple prompt without inquirer
   console.log("\nEnter the number of the backup to restore (or 0 to cancel):");
-  const readline = require("readline").createInterface({
+  const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  readline.question("> ", async (answer) => {
+  rl.question("> ", async (answer) => {
     const choice = parseInt(answer);
-    readline.close();
+    rl.close();
 
     if (choice === 0 || choice > backups.length || isNaN(choice)) {
       console.log("❌ Restore cancelled");
@@ -185,7 +181,7 @@ async function interactiveRestore() {
     console.log(`\nYou selected: ${selectedBackup}`);
     console.log("Current data will be backed up first. Continue? (y/N)");
 
-    const rl2 = require("readline").createInterface({
+    const rl2 = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
     });

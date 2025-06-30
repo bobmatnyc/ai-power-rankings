@@ -1,10 +1,12 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 import { RankingsViewer } from "@/components/admin/rankings-viewer";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = generateSEOMetadata({
   title: "Rankings Management - Admin",
@@ -12,6 +14,14 @@ export const metadata: Metadata = generateSEOMetadata({
   path: "/dashboard/rankings",
   noIndex: true,
 });
+
+function LoadingFallback() {
+  return (
+    <div className="flex items-center justify-center h-64">
+      <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+    </div>
+  );
+}
 
 export default function RankingsPage() {
   return (
@@ -28,7 +38,9 @@ export default function RankingsPage() {
         </Link>
       }
     >
-      <RankingsViewer />
+      <Suspense fallback={<LoadingFallback />}>
+        <RankingsViewer />
+      </Suspense>
     </DashboardLayout>
   );
 }

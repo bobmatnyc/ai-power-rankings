@@ -60,7 +60,7 @@ function parseRelatedTools(relatedToolsStr: string): string[] {
       .split(",")
       .map((tool) => tool.trim())
       .filter(Boolean);
-  } catch (error) {
+  } catch {
     console.warn(`Failed to parse related tools: ${relatedToolsStr}`);
     return [];
   }
@@ -77,7 +77,7 @@ function convertCSVToArticle(row: CSVNewsRow): NewsArticle {
   try {
     // Ensure it's in ISO format
     publishedDate = new Date(row.published_at).toISOString();
-  } catch (error) {
+  } catch {
     console.warn(`Invalid date format for article ${row.id}: ${row.published_at}`);
     publishedDate = now;
   }
@@ -86,7 +86,7 @@ function convertCSVToArticle(row: CSVNewsRow): NewsArticle {
   let createdDate = row.created_at;
   try {
     createdDate = new Date(row.created_at).toISOString();
-  } catch (error) {
+  } catch {
     createdDate = now;
   }
 
@@ -164,7 +164,7 @@ async function importNewsFromCSV() {
       const article = convertCSVToArticle(row);
 
       // Ensure unique slug
-      let baseSlug = article.slug;
+      const baseSlug = article.slug;
       let counter = 1;
       while (
         existingSlugs.has(article.slug) ||
@@ -210,8 +210,8 @@ async function importNewsFromCSV() {
           console.log(
             `   ✓ [${new Date(article.published_date).toISOString().split("T")[0]}] ${article.title.substring(0, 50)}...`
           );
-        } catch (error) {
-          console.error(`   ✗ Failed to import: ${article.title}`, error);
+        } catch (_error) {
+          console.error(`   ✗ Failed to import: ${article.title}`, _error);
         }
       }
 
@@ -226,8 +226,8 @@ async function importNewsFromCSV() {
     // Verify final count
     const finalArticles = await newsRepo.getAll();
     console.log(`\n📊 Final database count: ${finalArticles.length} articles`);
-  } catch (error) {
-    console.error("❌ Import failed:", error);
+  } catch (_error) {
+    console.error("❌ Import failed:", _error);
     process.exit(1);
   }
 }
@@ -239,8 +239,8 @@ if (require.main === module) {
       console.log("\n✅ Import completed!");
       process.exit(0);
     })
-    .catch((error) => {
-      console.error("❌ Import failed:", error);
+    .catch((_error) => {
+      console.error("❌ Import failed:", _error);
       process.exit(1);
     });
 }

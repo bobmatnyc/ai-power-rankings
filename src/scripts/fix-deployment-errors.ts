@@ -23,7 +23,7 @@ const errorPatterns: ErrorPattern[] = [
         console.log(stdout);
       } catch (error: unknown) {
         console.log("\n❌ TypeScript errors found:");
-        console.log((error as any).stdout);
+        console.log((error as { stdout?: string }).stdout);
         console.log("\n💡 Please fix the TypeScript errors manually");
         process.exit(1);
       }
@@ -38,7 +38,7 @@ const errorPatterns: ErrorPattern[] = [
         const { stdout } = await execAsync("npm run lint:fix");
         console.log(stdout);
         console.log("✅ ESLint errors fixed");
-      } catch (_error) {
+      } catch {
         console.log("❌ Some ESLint errors couldn't be auto-fixed");
         console.log("💡 Run 'npm run lint' to see remaining issues");
       }
@@ -52,7 +52,7 @@ const errorPatterns: ErrorPattern[] = [
       try {
         await execAsync("npm install");
         console.log("✅ Dependencies installed");
-      } catch (_error) {
+      } catch {
         console.log("❌ Failed to install dependencies");
       }
     },
@@ -78,7 +78,7 @@ const errorPatterns: ErrorPattern[] = [
       try {
         await execAsync("npm run format");
         console.log("✅ Code formatting fixed");
-      } catch (_error) {
+      } catch {
         console.log("❌ Failed to fix formatting");
       }
     },
@@ -105,7 +105,9 @@ async function fixDeploymentErrors(errorLog?: string) {
       console.log("✅ All checks passed! No errors to fix.");
       return;
     } catch (error: unknown) {
-      errorLog = (error as any).stdout + (error as any).stderr;
+      errorLog =
+        ((error as { stdout?: string; stderr?: string }).stdout || "") +
+        ((error as { stdout?: string; stderr?: string }).stderr || "");
     }
   }
 
@@ -135,7 +137,7 @@ async function fixDeploymentErrors(errorLog?: string) {
     console.log('   2. git commit -m "fix: deployment errors"');
     console.log("   3. git push");
     console.log("   4. npm run check-deployment");
-  } catch (_error) {
+  } catch {
     console.log("\n⚠️  Some issues remain. Please fix them manually.");
     console.log("💡 Run 'npm run pre-deploy' to see remaining issues");
   }
