@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2025-07-01
+
+### Added
+- **Interactive Tool Links**: Top 10 rankings on the updates page now link directly to tool detail pages
+- **Innovation Ontology**: Detailed innovation scoring framework documentation in `/data/innovation/`
+- **Dynamic Updates Page**: Real-time generation of ranking changes and statistics from latest data
+
+### Fixed
+- **Domain Correction**: Fixed all references from plural "aipowerrankings.com" to singular "aipowerranking.com"
+- **Translation Completeness**: All language files (DE, FR, HR, IT, UK) now have complete translations
+- **TypeScript Errors**: Resolved all ESLint errors in scripts directory
+- **Tool Company Data**: Fixed missing company information display for tools like GitHub Copilot
+
+### Changed
+- **Updates Page**: Migrated from static markdown to dynamic data generation using UpdatesGenerator
+- **API Enhancement**: Tool API endpoints now properly fetch and include company data
+
 ## [3.0.0] - 2025-06-30
 
 ### 🚀 Major Architecture Change
