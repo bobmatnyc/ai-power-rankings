@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +9,7 @@ import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
 import { RankingsTableSkeleton } from "@/components/ui/skeleton";
 import type { Locale } from "@/i18n/config";
 import dynamicImport from "next/dynamic";
+import { getUrl } from "@/lib/get-url";
 
 // Dynamic import for T-031 performance optimization
 const ClientRankings = dynamicImport(
@@ -26,12 +28,120 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { lang } = await params;
+  const dict = await getDictionary(lang);
+  const baseUrl = getUrl();
+
+  // Fetch all tools to include in keywords
+  let toolNames: string[] = [];
+  try {
+    const toolsUrl = `${baseUrl}/api/tools`;
+    const response = await fetch(toolsUrl, {
+      next: { revalidate: 300 }, // Cache for 5 minutes
+    });
+
+    if (response.ok) {
+      const tools = await response.json();
+      // Get all active tool names
+      toolNames = tools
+        .filter((tool: any) => tool.status === "active")
+        .map((tool: any) => tool.name);
+    }
+  } catch (error) {
+    console.error("Error fetching tools for SEO:", error);
+  }
+
+  // Get existing keywords from dictionary
+  const baseKeywords = dict.seo.keywords || "";
+
+  // Add all tool names to keywords
+  const allKeywords = [
+    baseKeywords,
+    ...toolNames,
+    // Add tool comparison keywords
+    ...toolNames.slice(0, 5).map((tool) => `${tool} AI`),
+    ...toolNames.slice(0, 5).map((tool) => `${tool} ranking`),
+    // Add category keywords
+    "AI coding assistant",
+    "AI code editor",
+    "autonomous coding agent",
+    "AI app builder",
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  return {
+    title: dict.seo.title,
+    description: dict.seo.description,
+    keywords: allKeywords,
+    openGraph: {
+      title: dict.seo.title,
+      description: dict.seo.description,
+      type: "website",
+      locale: lang,
+      url: `${baseUrl}/${lang}`,
+      siteName: dict.common.appName,
+      images: [
+        {
+          url: `${baseUrl}/og-image.png`,
+          width: 1200,
+          height: 630,
+          alt: dict.common.appName,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.seo.title,
+      description: dict.seo.description,
+      images: [`${baseUrl}/og-image.png`],
+    },
+    alternates: {
+      canonical: `${baseUrl}/${lang}`,
+      languages: {
+        en: `${baseUrl}/en`,
+        ja: `${baseUrl}/ja`,
+        zh: `${baseUrl}/zh`,
+        ko: `${baseUrl}/ko`,
+        de: `${baseUrl}/de`,
+        fr: `${baseUrl}/fr`,
+        it: `${baseUrl}/it`,
+        uk: `${baseUrl}/uk`,
+        hr: `${baseUrl}/hr`,
+      },
+    },
+  };
+}
+
 export default async function Home({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang } = await params;
   const dict = await getDictionary(lang);
+  const baseUrl = getUrl();
+
+  // Create structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: dict.common.appName,
+    description: dict.seo.description,
+    url: `${baseUrl}/${lang}`,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${baseUrl}/${lang}/rankings?search={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
 
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background gradient */}
