@@ -26,3 +26,9 @@ export default async function AboutPage({ params }: PageProps): Promise<React.JS
     </Suspense>
   );
 }
+
+// Generate static params for all locales
+export async function generateStaticParams() {
+  const locales: Locale[] = ["en", "de", "fr", "hr", "it", "ja", "ko", "uk", "zh"];
+  return locales.map((lang) => ({ lang }));
+}
