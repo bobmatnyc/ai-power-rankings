@@ -8,7 +8,7 @@ export async function GET() {
     const dataPath = path.join(publicPath, "data");
     const rankingsPath = path.join(dataPath, "rankings.json");
 
-    const checks = {
+    const checks: any = {
       cwd: process.cwd(),
       publicExists: fs.existsSync(publicPath),
       dataExists: fs.existsSync(dataPath),
