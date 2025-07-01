@@ -80,7 +80,10 @@
     "test:api:all": "npm run test:api:news && npm run test:api:companies && npm run test:api:tools && npm run test:api:rankings",
     "perf:audit": "node scripts/performance-audit.js",
     "perf:audit:prod": "node scripts/performance-audit.js https://aipowerranking.com/en",
-    "perf:monitor": "node scripts/performance-audit.js && echo 'Performance audit completed for T-031'"
+    "perf:monitor": "node scripts/performance-audit.js && echo 'Performance audit completed for T-031'",
+    "analyze": "ANALYZE=true npm run build",
+    "analyze:server": "ANALYZE=true npm run build && echo 'Bundle analysis complete - check .next/analyze/'",
+    "bundle:analyze": "npm run analyze"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
@@ -175,6 +178,20 @@
     ],
     "*.{json,md,css,scss}": [
       "prettier --write"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      "> 1%",
+      "last 2 versions",
+      "not dead",
+      "not ie 11",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ]
   },
   "packageManager": "pnpm@8.15.4+sha512.0bd3a9be9eb0e9a692676deec00a303ba218ba279d99241475616b398dbaeedd11146f92c2843458f557b1d127e09d4c171e105bdcd6b61002b39685a8016b9e"

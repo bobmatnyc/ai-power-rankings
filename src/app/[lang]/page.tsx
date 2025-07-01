@@ -3,10 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Newspaper, Star, ArrowUp } from "lucide-react";
-import { ClientRankings } from "./client-rankings";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
+import { RankingsTableSkeleton } from "@/components/ui/skeleton";
 import type { Locale } from "@/i18n/config";
+import dynamicImport from "next/dynamic";
+
+// Dynamic import for T-031 performance optimization
+const ClientRankings = dynamicImport(() => import("./client-rankings").then(mod => ({ default: mod.ClientRankings })), {
+  loading: () => <RankingsTableSkeleton />
+});
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;

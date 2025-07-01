@@ -4,7 +4,6 @@ import { Analytics } from "@vercel/analytics/react";
 import Script from "next/script";
 import { generateOrganizationSchema, createJsonLdScript } from "@/lib/schema";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -134,11 +133,28 @@ export default function RootLayout({
           }}
         />
         <AuthSessionProvider>{children}</AuthSessionProvider>
-        {process.env["NEXT_PUBLIC_GA_ID"] && (
-          <GoogleAnalytics gaId={process.env["NEXT_PUBLIC_GA_ID"]} />
-        )}
+
+        {/* Defer analytics loading for T-031 performance optimization */}
         <SpeedInsights />
         <Analytics />
+
+        {/* Load Google Analytics after page interaction for T-031 */}
+        {process.env["NEXT_PUBLIC_GA_ID"] && (
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${process.env["NEXT_PUBLIC_GA_ID"]}`}
+            strategy="afterInteractive"
+          />
+        )}
+        {process.env["NEXT_PUBLIC_GA_ID"] && (
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${process.env["NEXT_PUBLIC_GA_ID"]}');
+            `}
+          </Script>
+        )}
       </body>
     </html>
   );
