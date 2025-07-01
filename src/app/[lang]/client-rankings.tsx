@@ -48,19 +48,19 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
   useEffect(() => {
     async function fetchRankings() {
       try {
-        console.log("Fetching rankings from /api/rankings");
-        const response = await fetch("/api/rankings");
+        console.log("Fetching rankings from static data");
+        const response = await fetch("/data/rankings.json");
 
         console.log("Response status:", response.status);
 
         if (!response.ok) {
           const errorText = await response.text();
-          console.error("API Error:", errorText);
-          throw new Error(`Failed to fetch rankings: ${response.status}`);
+          console.error("Static data fetch error:", errorText);
+          throw new Error(`Failed to fetch static rankings: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log("Received data:", data);
+        console.log("Received static data:", data);
 
         const rankings = data.rankings || [];
         console.log("Rankings count:", rankings.length);

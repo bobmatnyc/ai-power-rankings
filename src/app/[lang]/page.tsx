@@ -21,8 +21,10 @@ interface PageProps {
   params: Promise<{ lang: Locale }>;
 }
 
-// Use static generation to prevent SSR timeout issues
-export const dynamic = "force-static";
+// Force dynamic rendering to ensure API calls work at runtime
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 export default async function Home({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang } = await params;
