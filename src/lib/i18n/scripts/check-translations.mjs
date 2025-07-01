@@ -8,9 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Configuration
-const DICTIONARIES_PATH = path.join(__dirname, '../../dictionaries');
+const DICTIONARIES_PATH = path.join(__dirname, '../../../i18n/dictionaries');
 const REFERENCE_LANG = 'en';
-const LANGUAGES = ['de', 'fr', 'hr', 'it', 'jp', 'ko', 'uk'];
+const LANGUAGES = ['de', 'fr', 'hr', 'it', 'ja', 'ko', 'uk', 'zh'];
 
 // Load translation file
 function loadTranslation(lang) {
