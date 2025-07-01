@@ -20,10 +20,10 @@ interface TestResult {
   test: string;
   success: boolean;
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
-async function makeContactRequest(data: any, headers: Record<string, string> = {}): Promise<Response> {
+async function makeContactRequest(data: Record<string, unknown>, headers: Record<string, string> = {}): Promise<Response> {
   return fetch(`${BASE_URL}/api/contact`, {
     method: "POST",
     headers: {
@@ -34,7 +34,7 @@ async function makeContactRequest(data: any, headers: Record<string, string> = {
   });
 }
 
-async function makeAdminRequest(endpoint: string, method: string = "GET", body?: any): Promise<Response> {
+async function makeAdminRequest(endpoint: string, method: string = "GET", body?: Record<string, unknown>): Promise<Response> {
   const url = `${BASE_URL}/api/admin/rate-limit${endpoint}`;
   const options: RequestInit = {
     method,

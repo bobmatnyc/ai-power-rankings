@@ -36,7 +36,7 @@ describe("Rate Limiting", () => {
       const request = {
         headers: {
           get: vi.fn((header) => {
-            if (header === "x-forwarded-for") return "192.168.1.1, 10.0.0.1";
+            if (header === "x-forwarded-for") {return "192.168.1.1, 10.0.0.1";}
             return null;
           }),
         },
@@ -51,7 +51,7 @@ describe("Rate Limiting", () => {
       const request = {
         headers: {
           get: vi.fn((header) => {
-            if (header === "x-real-ip") return "192.168.1.2";
+            if (header === "x-real-ip") {return "192.168.1.2";}
             return null;
           }),
         },
@@ -66,7 +66,7 @@ describe("Rate Limiting", () => {
       const request = {
         headers: {
           get: vi.fn((header) => {
-            if (header === "cf-connecting-ip") return "192.168.1.3";
+            if (header === "cf-connecting-ip") {return "192.168.1.3";}
             return null;
           }),
         },

@@ -60,7 +60,7 @@ export function getClientIP(request: NextRequest): string {
 
 // Check if user is admin and can bypass rate limits
 export function isAdminUser(email?: string): boolean {
-  if (!email) return false;
+  if (!email) {return false;}
   return ADMIN_EMAILS.includes(email.toLowerCase());
 }
 
@@ -206,7 +206,7 @@ export async function getRateLimitAnalytics(): Promise<{
       uniqueIPs: 0,
     };
     
-    return analytics as any;
+    return analytics as { totalRequests: number; blockedRequests: number; uniqueIPs: number };
   } catch (error) {
     console.error("Failed to get rate limit analytics:", error);
     return {
