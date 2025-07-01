@@ -271,7 +271,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
                   >
                     <div className="absolute -top-2 -right-2 z-10">
                       <span className="bg-accent border-0 shadow-lg text-accent-foreground px-2 py-1 rounded text-sm">
-                        +{tool.rank_change}
+                        +{tool.rankChange}
                       </span>
                     </div>
                     <div className="h-full">
@@ -279,8 +279,8 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
                         <h3 className="font-semibold text-lg">{tool.tool.name}</h3>
                         <p className="text-sm text-muted-foreground">{tool.tool.category}</p>
                         <div className="mt-2 text-sm">Score: {tool.scores.overall.toFixed(1)}</div>
-                        {tool.change_reason && (
-                          <p className="mt-2 text-xs text-muted-foreground">{tool.change_reason}</p>
+                        {tool.changeReason && (
+                          <p className="mt-2 text-xs text-muted-foreground">{tool.changeReason}</p>
                         )}
                       </div>
                     </div>
