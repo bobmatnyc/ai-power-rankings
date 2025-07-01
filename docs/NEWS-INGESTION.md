@@ -2,25 +2,15 @@
 
 ## Overview
 
-The AI Power Rankings system ingests news articles from Google Drive to track updates about AI coding tools. This document explains the ingestion process and common issues.
+The AI Power Rankings system ingests news articles via the admin dashboard to track updates about AI coding tools. This document explains the manual ingestion process.
 
-## Google Drive Setup
+## Manual News Ingestion
 
-### Folder Structure
+### Admin Dashboard
 
-- **Incoming Folder**: `1TVEXlX3PDHDtyRgjR1VenDUywrIEAVy8` (AI Power Rankings Inbox)
-- **Processed Folder**: `1VCEJc1USJ3iRs2aSVBCpaWW47e9jog12` (archive)
+News articles can be ingested through the admin dashboard at `/admin/news-ingestion`.
 
-### Environment Variables
-
-Add to `.env.local`:
-
-```bash
-GOOGLE_DRIVE_INCOMING_FOLDER_ID=1TVEXlX3PDHDtyRgjR1VenDUywrIEAVy8
-GOOGLE_DRIVE_PROCESSED_FOLDER_ID=1VCEJc1USJ3iRs2aSVBCpaWW47e9jog12
-```
-
-## File Format
+### File Format
 
 News items must be in JSON format with filename pattern: `news-items-YYYY-MM.json`
 
@@ -78,71 +68,30 @@ News items must be in JSON format with filename pattern: `news-items-YYYY-MM.jso
 }
 ```
 
-## Running Ingestion
+## Manual Upload Process
 
-### Available Scripts
-
-1. **Standard Ingestion** (Strict validation):
-
-   ```bash
-   tsx scripts/run-ingestion.ts
-   ```
-
-   - Validates all fields according to schema
-   - Rejects items with validation errors
-   - Best for production data
-
-2. **Lenient Ingestion** (Relaxed validation):
-
-   ```bash
-   tsx scripts/run-ingestion-lenient.ts
-   ```
-
-   - Accepts null values for optional fields
-   - Fixes common format issues automatically
-   - Recommended for initial imports
-
-3. **Fixed Ingestion** (Service role):
-   ```bash
-   tsx scripts/run-ingestion-fixed.ts
-   ```
-   - Uses service role to avoid auth issues
-   - Same as lenient but with better error handling
+1. **Prepare the JSON file** following the schema above
+2. **Navigate to Admin Dashboard** at `/admin/news-ingestion`
+3. **Upload the file** using the upload interface
+4. **Review the validation results**
+5. **Confirm ingestion** if validation passes
 
 ### Common Issues and Solutions
 
 #### 1. Validation Errors
 
 **Problem**: Fields like `author`, `content`, `region`, `embargo_until` must be strings but are null
-**Solution**: Use lenient ingestion script or ensure fields are properly formatted
+**Solution**: Ensure fields are properly formatted or use null for optional fields
 
 #### 2. Date Format Issues
 
 **Problem**: `discovered_date` must match ISO format "date-time"
 **Solution**: Use format `2025-06-20T02:34:24.363779+00:00`
 
-#### 3. Authentication Errors
-
-**Problem**: `cookies was called outside a request scope`
-**Solution**: Use `run-ingestion-fixed.ts` which uses service role authentication
-
-#### 4. Missing Tool IDs
+#### 3. Missing Tool IDs
 
 **Problem**: Tool mentioned in news doesn't exist in database
 **Solution**: Check tool slug matches exactly with database entries
-
-## Checking Available Files
-
-```bash
-# Check files in Google Drive
-tsx scripts/check-drive-folder.ts
-
-# Inspect JSON file content
-tsx scripts/inspect-json-files.ts
-
-# Download specific file for inspection
-tsx scripts/test-file-download.ts FILE_ID
-```
 
 ## Best Practices
 
@@ -150,29 +99,19 @@ tsx scripts/test-file-download.ts FILE_ID
 2. **Tool IDs**: Verify tool slugs exist in database before referencing
 3. **Dates**: Always use ISO 8601 format with timezone
 4. **Null Values**: Use `null` for optional fields, not empty strings
-5. **Validation**: Test with standard ingestion first, fall back to lenient if needed
+5. **Validation**: Test with the upload interface which provides immediate feedback
 
 ## Post-Ingestion
 
 After successful ingestion:
 
-1. Files are automatically moved to the processed folder
-2. News items appear in the database `news_articles` table
-3. Rankings can be recalculated to include news impact
+1. News items appear in the database `news_articles` table
+2. Rankings can be recalculated to include news impact
+3. News appears on the website immediately
 
 ## Troubleshooting Checklist
 
-- [ ] Environment variables set correctly in `.env.local`
-- [ ] Google Drive API credentials configured
 - [ ] File format matches schema requirements
 - [ ] Tool IDs exist in database
 - [ ] Date formats are ISO 8601 compliant
-- [ ] Using appropriate ingestion script for data quality
-
-## Contact
-
-For issues with news ingestion, check:
-
-- Google Drive folder permissions
-- API quota limits
-- Database connection status
+- [ ] JSON is valid and properly formatted
