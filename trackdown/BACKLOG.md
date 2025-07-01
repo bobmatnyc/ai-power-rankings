@@ -1041,13 +1041,14 @@ Fix critical mobile performance issues identified in Lighthouse audit, particula
 
 ### **[T-041]** Fix Accessibility Issues - ARIA, Contrast, and Navigation
 
-**Type:** Task  
-**Epic:** TBD  
-**Priority:** High  
-**Story Points:** 8  
-**Assignee:** Unassigned  
-**Status:** Backlog  
-**Sprint:** Future  
+**Type:** Task
+**Epic:** TBD
+**Priority:** High
+**Story Points:** 8
+**Assignee:** @bobmatnyc
+**Status:** Completed
+**Sprint:** Current
+**Completed:** 2025-01-01
 
 **Description:**
 Fix accessibility issues identified in audit to ensure the site is usable by all users, including those with disabilities. This is important for inclusivity, legal compliance (WCAG 2.1), and SEO benefits.

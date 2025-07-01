@@ -45,17 +45,28 @@ function ClientLayoutContent({ children }: { children: React.ReactNode }): React
 
   return (
     <SidebarProvider>
+      {/* Skip to content link for keyboard navigation */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
-        <main className="flex-1 flex flex-col overflow-hidden relative">
-          <div
+        <main className="flex-1 flex flex-col overflow-hidden relative" role="main">
+          <header
             className={`fixed top-0 left-0 right-0 md:left-auto md:relative z-20 bg-background/95 backdrop-blur-sm border-b border-border/50 transition-transform duration-300 md:translate-y-0 ${
               shouldHideHeader ? "-translate-y-full md:translate-y-0" : "translate-y-0"
             }`}
+            role="banner"
           >
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <SidebarTrigger className="hover:bg-muted" />
+                <SidebarTrigger
+                  className="hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  aria-label="Toggle navigation menu"
+                />
                 {/* Mobile logo */}
                 <div className="flex items-center gap-2 md:hidden">
                   <CrownIcon size="sm" className="w-6 h-6" />
@@ -77,9 +88,10 @@ function ClientLayoutContent({ children }: { children: React.ReactNode }): React
                 <Button
                   onClick={handleSubscribeClick}
                   size="sm"
-                  className="hidden md:flex items-center gap-2"
+                  className="hidden md:flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  aria-label={dict.navigation.subscribeToUpdates}
                 >
-                  <Bell className="h-4 w-4" />
+                  <Bell className="h-4 w-4" aria-hidden="true" />
                   {dict.navigation.subscribeToUpdates}
                 </Button>
 
@@ -88,14 +100,14 @@ function ClientLayoutContent({ children }: { children: React.ReactNode }): React
                   onClick={handleSubscribeClick}
                   size="icon"
                   variant="ghost"
-                  className="md:hidden"
+                  className="md:hidden focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  aria-label={dict.navigation.subscribeToUpdates}
                 >
-                  <Bell className="h-5 w-5" />
-                  <span className="sr-only">{dict.navigation.subscribeToUpdates}</span>
+                  <Bell className="h-5 w-5" aria-hidden="true" />
                 </Button>
               </div>
             </div>
-          </div>
+          </header>
 
           <div
             className={`flex-1 overflow-auto transition-all duration-300 ${
@@ -103,7 +115,9 @@ function ClientLayoutContent({ children }: { children: React.ReactNode }): React
             }`}
           >
             <div className="min-h-full flex flex-col">
-              <div className="flex-1">{children}</div>
+              <div id="main-content" className="flex-1">
+                {children}
+              </div>
               <Footer />
             </div>
           </div>
