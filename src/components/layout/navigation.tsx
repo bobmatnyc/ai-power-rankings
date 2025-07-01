@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { CrownIcon } from "@/components/ui/optimized-image";
 
 const navItems = [
   { href: "/rankings", label: "Rankings" },
@@ -20,11 +21,7 @@ export function Navigation(): React.ReactElement {
       {/* Desktop Navigation */}
       <div className="mr-4 hidden md:flex">
         <Link href="/" className="mr-6 flex items-center space-x-3 group">
-          <img
-            src="/crown-of-technology.png"
-            alt="AI Power Ranking"
-            className="w-9 h-9 object-contain"
-          />
+          <CrownIcon size="sm" className="w-9 h-9" />
           <div className="flex flex-col">
             <span className="font-bold text-foreground group-hover:text-primary transition-colors">
               AI <span className="text-gradient">Power Rankings</span>

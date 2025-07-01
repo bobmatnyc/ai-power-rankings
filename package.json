@@ -77,7 +77,10 @@
     "test:api:companies": "tsx scripts/test-companies-api.ts",
     "test:api:tools": "tsx scripts/test-tools-api.ts",
     "test:api:rankings": "tsx scripts/test-rankings-api.ts",
-    "test:api:all": "npm run test:api:news && npm run test:api:companies && npm run test:api:tools && npm run test:api:rankings"
+    "test:api:all": "npm run test:api:news && npm run test:api:companies && npm run test:api:tools && npm run test:api:rankings",
+    "perf:audit": "node scripts/performance-audit.js",
+    "perf:audit:prod": "node scripts/performance-audit.js https://aipowerranking.com/en",
+    "perf:monitor": "node scripts/performance-audit.js && echo 'Performance audit completed for T-031'"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
@@ -136,6 +139,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.3.4",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -157,6 +161,7 @@
     "node-fetch": "^3.3.2",
     "postcss": "^8.5.4",
     "prettier": "^3.5.3",
+    "sharp": "^0.34.2",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.19.4",

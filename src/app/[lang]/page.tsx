@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Newspaper, Star, ArrowUp } from "lucide-react";
 import { ClientRankings } from "./client-rankings";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
 import type { Locale } from "@/i18n/config";
 
 interface PageProps {
@@ -34,11 +35,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
               {dict.home.hero.badge}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
-              <img
-                src="/crown-of-technology.png"
-                alt="AI Power Ranking Icon"
-                className="w-12 h-12 md:w-16 md:h-16 object-contain"
-              />
+              <ResponsiveCrownIcon priority={true} />
               <span>
                 {dict.common.appName.split(" ")[0]}{" "}
                 <span className="text-gradient">

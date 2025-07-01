@@ -1,7 +1,7 @@
 ---
 title: "AI Power Rankings Project Backlog"
 last_updated: 2025-01-29
-sprint_current: 2
+sprint_current: 3
 ---
 
 # AI Power Rankings Project Backlog
@@ -27,6 +27,7 @@ sprint_current: 2
 - [ ] **[T-028]** Build automated SWE-bench score collection
 - [ ] **[T-029]** Develop business metrics ingestion pipeline
 - [ ] **[T-030]** Fix missing translations for DE, FR, HR, IT, UK languages
+- [ ] **[T-031]** Optimize Lighthouse performance scores and Core Web Vitals
 
 ## ✅ Completed Tasks
 
@@ -466,3 +467,155 @@ Fix missing translations for German (118 keys), French (118 keys), Croatian (112
    - **Impact:** Medium
    - **Probability:** Medium
    - **Mitigation:** Performance optimization (T-024), caching, monitoring
+
+---
+
+## **[T-031]** Optimize Lighthouse Performance Scores and Core Web Vitals
+
+**Type:** Task
+**Epic:** N/A
+**Priority:** High
+**Story Points:** 8
+**Assignee:** @bobmatnyc
+**Status:** Backlog
+**Sprint:** TBD
+
+**Description:**
+Address critical Lighthouse performance issues affecting user experience and SEO rankings. Current performance audit reveals significant issues with Core Web Vitals, particularly Largest Contentful Paint (4.6s) and Cumulative Layout Shift (0.242).
+
+**Current Performance Issues:**
+
+1. **Largest Contentful Paint (LCP): 4.6s** - Critical
+   - 87% render delay (4,000ms)
+   - Main document TTFB: 950ms
+   - Target: <2.5s
+
+2. **Cumulative Layout Shift (CLS): 0.242** - Poor
+   - Layout shift in stats grid component
+   - Target: <0.1
+
+3. **JavaScript Performance Issues:**
+   - Total blocking time: 1.9s
+   - Main thread work: 2.6s
+   - 7 long tasks identified
+   - Large JavaScript bundles (6191 chunk: 1.66s execution)
+
+4. **Image Optimization Issues:**
+   - Crown icon: 1,067 KiB (needs WebP conversion)
+   - Estimated savings: 1,037 KiB
+   - Improperly sized images
+
+5. **Third-party Performance:**
+   - Google Tag Manager blocking: 113ms
+   - Unused JavaScript: 54 KiB
+
+**Acceptance Criteria:**
+
+- [ ] **LCP improved to <2.5s** (currently 4.6s)
+- [ ] **CLS reduced to <0.1** (currently 0.242)
+- [ ] **JavaScript execution time <1s** (currently 1.9s)
+- [ ] **Main thread blocking <500ms** (currently 2.6s)
+- [ ] **Crown icon converted to WebP format**
+- [ ] **Image sizes optimized for responsive display**
+- [ ] **Critical CSS inlined for above-the-fold content**
+- [ ] **JavaScript bundles code-split and lazy-loaded**
+- [ ] **Third-party scripts deferred or optimized**
+- [ ] **Layout shifts eliminated in stats grid**
+- [ ] **Cache policies optimized for static assets**
+- [ ] **Lighthouse Performance score >90**
+- [ ] **All Core Web Vitals in "Good" range**
+
+**Technical Implementation Plan:**
+
+1. **Image Optimization:**
+   ```bash
+   # Convert crown-of-technology.png to WebP
+   # Add responsive image sizes
+   # Implement next/image with proper sizing
+   ```
+
+2. **JavaScript Optimization:**
+   ```bash
+   # Analyze bundle with webpack-bundle-analyzer
+   # Implement code splitting for large chunks
+   # Lazy load non-critical components
+   # Remove unused polyfills for modern browsers
+   ```
+
+3. **Layout Stability:**
+   ```bash
+   # Add explicit dimensions to stats grid
+   # Implement skeleton loading states
+   # Reserve space for dynamic content
+   ```
+
+4. **Critical Resource Optimization:**
+   ```bash
+   # Inline critical CSS
+   # Preload key resources
+   # Optimize font loading strategy
+   ```
+
+5. **Third-party Optimization:**
+   ```bash
+   # Defer Google Analytics loading
+   # Implement consent-based loading
+   # Use Partytown for web workers
+   ```
+
+**Files to Modify:**
+- `/public/crown-of-technology.png` → Convert to WebP
+- `/src/components/layout/stats-grid.tsx` → Fix layout shifts
+- `/src/app/layout.tsx` → Optimize font and script loading
+- `/next.config.ts` → Add image optimization config
+- `/src/components/ui/` → Add loading states
+- `/src/lib/analytics.ts` → Defer third-party scripts
+
+**Performance Targets:**
+- Lighthouse Performance: >90 (currently ~60)
+- LCP: <2.5s (currently 4.6s)
+- CLS: <0.1 (currently 0.242)
+- FID: <100ms
+- TTI: <3.5s
+
+**Testing Requirements:**
+- [ ] Lighthouse CI integration
+- [ ] Performance regression tests
+- [ ] Core Web Vitals monitoring
+- [ ] Mobile performance validation
+- [ ] Cross-browser performance testing
+
+**Success Metrics:**
+- Google PageSpeed Insights score improvement
+- Reduced bounce rate from performance issues
+- Improved SEO rankings
+- Better user experience metrics
+- Faster time-to-interactive
+
+**Dependencies:**
+- Next.js image optimization features
+- WebP image conversion tools
+- Bundle analysis tools
+- Performance monitoring setup
+
+**Risks:**
+- Image conversion may affect visual quality
+- Code splitting could introduce loading delays
+- Third-party script changes may affect analytics
+- Layout changes could impact existing functionality
+
+**Notes:**
+- Focus on mobile performance first (mobile-first approach)
+- Implement progressive enhancement
+- Monitor real user metrics post-deployment
+- Consider implementing performance budgets
+- Document performance optimization guidelines for future development
+
+**Definition of Done:**
+
+- [ ] Code reviewed and approved
+- [ ] Performance tests written and passing
+- [ ] Lighthouse CI integration implemented
+- [ ] Documentation updated with performance guidelines
+- [ ] Real user monitoring configured
+- [ ] Performance budget established

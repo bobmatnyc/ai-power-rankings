@@ -187,19 +187,34 @@ function RankingsGridContent({
         <p className="text-muted-foreground text-lg">{dict.rankings.subtitle}</p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-8">
-        <Card className="border-border/50">
+      {/* Stats Cards - Optimized for T-031 CLS fix */}
+      <div
+        className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-8"
+        style={{ minHeight: '140px' }} // Reserve space to prevent layout shift
+      >
+        <Card
+          className="border-border/50"
+          style={{ minHeight: '120px' }} // Consistent card height
+        >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {dict.rankings.stats.totalTools}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{rankings.length}</div>
+            <div className="text-2xl font-bold">
+              {loading ? (
+                <div className="animate-pulse bg-gray-200 h-8 w-12 rounded" />
+              ) : (
+                rankings.length
+              )}
+            </div>
           </CardContent>
         </Card>
-        <Card className="border-border/50">
+        <Card
+          className="border-border/50"
+          style={{ minHeight: '120px' }}
+        >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {dict.rankings.stats.categories}
@@ -207,11 +222,18 @@ function RankingsGridContent({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {new Set(rankings.map((r) => r.tool.category)).size}
+              {loading ? (
+                <div className="animate-pulse bg-gray-200 h-8 w-8 rounded" />
+              ) : (
+                new Set(rankings.map((r) => r.tool.category)).size
+              )}
             </div>
           </CardContent>
         </Card>
-        <Card className="border-border/50">
+        <Card
+          className="border-border/50"
+          style={{ minHeight: '120px' }}
+        >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {dict.rankings.stats.avgScore}
@@ -219,13 +241,18 @@ function RankingsGridContent({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {(
-                rankings.reduce((acc, r) => acc + (r.scores?.overall || 0), 0) / rankings.length
-              ).toFixed(1)}
+              {loading ? (
+                <div className="animate-pulse bg-gray-200 h-8 w-12 rounded" />
+              ) : (
+                (rankings.reduce((acc, r) => acc + (r.scores?.overall || 0), 0) / rankings.length).toFixed(1)
+              )}
             </div>
           </CardContent>
         </Card>
-        <Card className="border-border/50">
+        <Card
+          className="border-border/50"
+          style={{ minHeight: '120px' }}
+        >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {dict.rankings.stats.lastUpdate}
@@ -233,7 +260,11 @@ function RankingsGridContent({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {lastUpdateDate || dict.rankings.stats.thisWeek}
+              {loading ? (
+                <div className="animate-pulse bg-gray-200 h-8 w-16 rounded" />
+              ) : (
+                lastUpdateDate || dict.rankings.stats.thisWeek
+              )}
             </div>
           </CardContent>
         </Card>

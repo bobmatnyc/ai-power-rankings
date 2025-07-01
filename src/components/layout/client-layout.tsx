@@ -11,6 +11,7 @@ import { I18nProvider, useI18n } from "@/i18n/client";
 import { LanguageSelector } from "@/components/layout/language-selector";
 import { Footer } from "@/components/layout/footer";
 import { RankingChangesProvider } from "@/contexts/ranking-changes-context";
+import { CrownIcon } from "@/components/ui/optimized-image";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -57,11 +58,7 @@ function ClientLayoutContent({ children }: { children: React.ReactNode }): React
                 <SidebarTrigger className="hover:bg-muted" />
                 {/* Mobile logo */}
                 <div className="flex items-center gap-2 md:hidden">
-                  <img
-                    src="/crown-of-technology.png"
-                    alt="AI Power Ranking"
-                    className="w-6 h-6 object-contain"
-                  />
+                  <CrownIcon size="sm" className="w-6 h-6" />
                   <span className="font-bold text-sm">{dict.common.appName}</span>
                 </div>
               </div>
