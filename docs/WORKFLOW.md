@@ -104,12 +104,13 @@ trackdown/
 **Story Points:** 1-13  
 **Assignee:** @bobmatnyc  
 **Status:** Backlog/Ready/In Progress/Done  
-**Sprint:** X  
+**Sprint:** X
 
 **Description:**
 Clear description of what needs to be done.
 
 **Acceptance Criteria:**
+
 - [ ] Specific measurable outcome
 - [ ] Another verifiable criterion
 
@@ -117,6 +118,7 @@ Clear description of what needs to be done.
 Implementation details, considerations, or constraints.
 
 **Definition of Done:**
+
 - [ ] Code reviewed and approved
 - [ ] Tests written and passing
 - [ ] Documentation updated
@@ -125,18 +127,20 @@ Implementation details, considerations, or constraints.
 ### 🏃 Daily Workflow
 
 1. **Morning Sync**
+
    ```bash
    # Pull latest changes
    git pull
-   
+
    # Review current sprint in BACKLOG.md
    grep -A5 "## 🎯 Current Sprint" trackdown/BACKLOG.md
-   
+
    # Update your task status
    # Change - [ ] to - [x] for completed items
    ```
 
 2. **During Development**
+
    - Update task status in BACKLOG.md as you progress
    - Add technical notes discoveries
    - Create sub-tasks if needed
@@ -162,12 +166,14 @@ Implementation details, considerations, or constraints.
 ### 🎯 Sprint Management
 
 #### Sprint Planning
+
 1. Review items in backlog
 2. Move committed items to "Current Sprint" section
 3. Update sprint number in frontmatter
 4. Commit changes with message: `chore(trackdown): start sprint X`
 
 #### Sprint Completion
+
 1. Move completed items to archive
 2. Update RETROSPECTIVES.md with learnings
 3. Calculate velocity in METRICS.md
@@ -570,12 +576,12 @@ pnpm run validate-metrics
 
 4. **Common deployment failures and fixes**:
 
-   | Error Type | Example                                          | Fix Command                            |
-   | ---------- | ------------------------------------------------ | -------------------------------------- |
+   | Error Type | Example                                          | Fix Command                             |
+   | ---------- | ------------------------------------------------ | --------------------------------------- |
    | TypeScript | `Type 'Date' is not assignable to type 'string'` | `pnpm run type-check` then fix the file |
    | ESLint     | `Expected { after 'if' condition`                | `pnpm run lint:fix`                     |
-   | Import     | `Module not found: @vercel/blob`                 | Check dynamic imports in code          |
-   | Database   | `SASL authentication failed`                     | Verify env vars in Vercel dashboard    |
+   | Import     | `Module not found: @vercel/blob`                 | Check dynamic imports in code           |
+   | Database   | `SASL authentication failed`                     | Verify env vars in Vercel dashboard     |
    | Build      | `next build failed`                              | `pnpm run build` locally first          |
 
 ### 🚫 Never Deploy Without Type Checking
@@ -680,7 +686,7 @@ When adding new features or changing processes:
    - Fix issues and push again
 
 6. **Verify Production**:
-   - Visit https://aipowerrankings.com
+   - Visit https://aipowerranking.com
    - Check new features are working
    - Monitor error logs in Vercel dashboard
 
@@ -801,7 +807,7 @@ PERPLEXITY_API_KEY=<your-perplexity-key>
 GOOGLE_API_KEY=<your-google-key>
 GOOGLE_DRIVE_FOLDER_ID=<your-folder-id>
 RESEND_API_KEY=<your-resend-key>
-NEXT_PUBLIC_BASE_URL=https://aipowerrankings.com
+NEXT_PUBLIC_BASE_URL=https://aipowerranking.com
 NODE_ENV=production
 ```
 
@@ -1122,6 +1128,7 @@ ppnpm run dev:server
 ```
 
 **Why PM2?**
+
 - Keeps server running even if terminal closes
 - Auto-restarts on crashes
 - Better log management

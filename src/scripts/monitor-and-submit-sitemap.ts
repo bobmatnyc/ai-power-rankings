@@ -4,7 +4,7 @@ import https from "https";
 import * as fs from "fs";
 import * as path from "path";
 
-const SITE_URL = "https://aipowerrankings.com";
+const SITE_URL = "https://aipowerranking.com";
 const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;
 const CHECK_INTERVAL = 60000; // Check every minute
 const MAX_ATTEMPTS = 60; // Try for up to 1 hour

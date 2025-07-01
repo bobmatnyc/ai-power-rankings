@@ -49,7 +49,7 @@ function generateAlternates(basePath: string, baseUrl: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
   const currentDate = new Date().toISOString();
 
   // Get dynamic data

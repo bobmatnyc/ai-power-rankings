@@ -166,7 +166,7 @@ export default function ToolDetailClientPage({
   const { tool, ranking, metrics, metricHistory } = toolData;
 
   // Generate structured data
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
 
   const toolSchemaData = {
     name: tool.name,

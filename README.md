@@ -175,7 +175,7 @@ This project is proprietary software. All rights reserved.
 
 ## 🔗 Links
 
-- **Production**: [https://aipowerrankings.com](https://aipowerrankings.com)
+- **Production**: [https://aipowerranking.com](https://aipowerranking.com)
 - **Documentation**: [/docs](./docs)
 - **Issues**: [GitHub Issues](https://github.com/yourusername/ai-power-rankings/issues)
 

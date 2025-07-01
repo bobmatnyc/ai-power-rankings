@@ -1,6 +1,6 @@
 # AI Power Rankings SEO Implementation Guide - MCP + NPM Stack
 
-This comprehensive guide provides actionable SEO implementation steps for aipowerrankings.com, leveraging both MCP plugins and NPM packages for maximum effectiveness.
+This comprehensive guide provides actionable SEO implementation steps for aipowerranking.com, leveraging both MCP plugins and NPM packages for maximum effectiveness.
 
 ## Phase 1: Technical Foundation & Analysis (Weeks 1-2)
 
@@ -172,10 +172,10 @@ export function createOrganizationSchema(): WithContext<Organization> {
     "@type": "Organization",
     name: "AI Power Rankings",
     alternateName: "AI Power Rankings - Developer Tool Intelligence",
-    url: "https://aipowerrankings.com",
+    url: "https://aipowerranking.com",
     logo: {
       "@type": "ImageObject",
-      url: "https://aipowerrankings.com/logo-1200x630.png",
+      url: "https://aipowerranking.com/logo-1200x630.png",
       width: 1200,
       height: 630,
     },
@@ -197,7 +197,7 @@ export function createOrganizationSchema(): WithContext<Organization> {
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
-      email: "hello@aipowerrankings.com",
+      email: "hello@aipowerranking.com",
     },
   };
 }
@@ -265,7 +265,7 @@ export function createRankingSchema(rankings: RankedTool[], period: string): Wit
     "@type": "ItemList",
     name: `AI Power Rankings - ${period}`,
     description: `Monthly rankings of the best agentic AI coding tools for ${period}`,
-    url: `https://aipowerrankings.com/rankings/${period}`,
+    url: `https://aipowerranking.com/rankings/${period}`,
     numberOfItems: rankings.length,
     itemListOrder: "https://schema.org/ItemListOrderAscending",
     itemListElement: rankings.map((tool, index) => ({
@@ -275,7 +275,7 @@ export function createRankingSchema(rankings: RankedTool[], period: string): Wit
       item: {
         "@type": "SoftwareApplication",
         name: tool.name,
-        url: `https://aipowerrankings.com/tools/${tool.slug}`,
+        url: `https://aipowerranking.com/tools/${tool.slug}`,
         description: tool.description,
         applicationCategory: "DeveloperApplication",
       },
@@ -289,7 +289,7 @@ export function createComparisonSchema(tool1: Tool, tool2: Tool): WithContext<an
     "@type": "ComparisonPage",
     name: `${tool1.name} vs ${tool2.name} - AI Coding Tools Comparison`,
     description: `Detailed comparison between ${tool1.name} and ${tool2.name} covering features, pricing, performance, and use cases`,
-    url: `https://aipowerrankings.com/compare/${tool1.slug}-vs-${tool2.slug}`,
+    url: `https://aipowerranking.com/compare/${tool1.slug}-vs-${tool2.slug}`,
     mainEntity: [
       {
         "@type": "SoftwareApplication",
@@ -321,7 +321,7 @@ const nextConfig = {
     webVitalsAttribution: ["CLS", "LCP", "FCP", "FID", "TTFB", "INP"],
   },
   images: {
-    domains: ["aipowerrankings.com", "images.unsplash.com"],
+    domains: ["aipowerranking.com", "images.unsplash.com"],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31536000, // 1 year
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
@@ -574,7 +574,7 @@ import { NextSitemap } from "next-sitemap";
 
 // Advanced sitemap configuration
 export const sitemapConfig: NextSitemap = {
-  siteUrl: "https://aipowerrankings.com",
+  siteUrl: "https://aipowerranking.com",
   generateRobotsTxt: true,
   generateIndexSitemap: true,
   changefreq: "daily",
@@ -642,9 +642,9 @@ export const sitemapConfig: NextSitemap = {
       },
     ],
     additionalSitemaps: [
-      "https://aipowerrankings.com/sitemap-tools.xml",
-      "https://aipowerrankings.com/sitemap-rankings.xml",
-      "https://aipowerrankings.com/sitemap-comparisons.xml",
+      "https://aipowerranking.com/sitemap-tools.xml",
+      "https://aipowerranking.com/sitemap-rankings.xml",
+      "https://aipowerranking.com/sitemap-comparisons.xml",
     ],
   },
 };
@@ -710,7 +710,7 @@ class SEOSearchIntegration {
     try {
       // This would use Google Search Console API via MCP
       const searchData = await this.mcpClient.searchConsole.query({
-        siteUrl: "https://aipowerrankings.com",
+        siteUrl: "https://aipowerranking.com",
         startDate: "2025-01-01",
         endDate: new Date().toISOString().split("T")[0],
         dimensions: ["query", "page"],

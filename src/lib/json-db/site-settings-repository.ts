@@ -41,7 +41,7 @@ export class SiteSettingsRepository extends BaseRepository<SiteSettingsData> {
         id: "settings",
         site_name: "AI Power Ranking",
         description: "The comprehensive ranking of AI coding tools",
-        contact_email: "contact@aipowerrankings.com",
+        contact_email: "contact@aipowerranking.com",
         algorithm_version: "v6.0",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),

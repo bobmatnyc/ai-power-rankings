@@ -2,7 +2,7 @@
 
 ## Introduction
 
-AI Power Rankings ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website aipowerrankings.com.
+AI Power Rankings ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website aipowerranking.com.
 
 ## Information We Collect
 
@@ -97,7 +97,7 @@ We may update this Privacy Policy periodically. We will notify you of material c
 For privacy-related questions or concerns:
 
 **Email**: hyperdev@matsuoka.com  
-**Website**: https://aipowerrankings.com/contact
+**Website**: https://aipowerranking.com/contact
 
 ## Data Protection Officer
 

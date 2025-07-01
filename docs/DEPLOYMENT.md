@@ -18,7 +18,7 @@ Required environment variables for production:
 ```env
 # Authentication
 NEXTAUTH_SECRET=[strong-random-secret]
-NEXTAUTH_URL=https://aipowerrankings.com
+NEXTAUTH_URL=https://aipowerranking.com
 GOOGLE_CLIENT_ID=[google-oauth-id]
 GOOGLE_CLIENT_SECRET=[google-oauth-secret]
 GITHUB_CLIENT_ID=[github-oauth-id]
@@ -29,7 +29,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=[email]
 SMTP_PASS=[app-password]
-EMAIL_FROM=noreply@aipowerrankings.com
+EMAIL_FROM=noreply@aipowerranking.com
 
 # API Keys
 CRON_SECRET=[strong-random-secret]
@@ -78,14 +78,16 @@ vercel --prod
 ### 3. Post-Deployment Verification
 
 1. **Check Application Health**
+
    ```bash
-   curl https://aipowerrankings.com/api/health
+   curl https://aipowerranking.com/api/health
    ```
 
 2. **Verify Data Loading**
-   - Tools: https://aipowerrankings.com/api/tools
-   - Rankings: https://aipowerrankings.com/api/rankings
-   - News: https://aipowerrankings.com/api/news
+
+   - Tools: https://aipowerranking.com/api/tools
+   - Rankings: https://aipowerranking.com/api/rankings
+   - News: https://aipowerranking.com/api/news
 
 3. **Test Critical Paths**
    - [ ] Homepage loads with rankings
@@ -115,11 +117,13 @@ vercel --prod
 ### Performance Optimization
 
 1. **Cache Headers**
+
    - Static assets: 1 year
    - API responses: 5 minutes
    - JSON data: 1 hour
 
 2. **Edge Functions**
+
    - Use for read-only endpoints
    - Reduces latency globally
 
@@ -159,11 +163,13 @@ ls -la data/backups/
 ### Quick Rollback
 
 1. **Vercel Dashboard**
+
    - Go to Deployments
    - Find previous working deployment
    - Click "Promote to Production"
 
 2. **Data Rollback**
+
    ```bash
    # List available backups
    npm run backup:restore
@@ -177,11 +183,13 @@ ls -la data/backups/
 ### Common Issues
 
 1. **Build Failures**
+
    - Check TypeScript errors: `npm run type-check`
    - Verify environment variables
    - Clear cache: `rm -rf .next`
 
 2. **Data Not Loading**
+
    - Check JSON file validity
    - Verify file permissions
    - Check API routes

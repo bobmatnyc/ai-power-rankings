@@ -8,7 +8,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com"),
+  metadataBase: new URL(process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com"),
   title: {
     default: "AI Power Rankings - The Definitive Monthly Rankings of AI Coding Tools",
     template: "%s | AI Power Rankings",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://aipowerrankings.com",
+    url: "https://aipowerranking.com",
     siteName: "AI Power Rankings",
     title: "AI Power Rankings - Developer Tool Intelligence",
     description:
@@ -81,7 +81,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>): React.JSX.Element {
   // Generate organization schema
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
   const organizationSchema = generateOrganizationSchema({
     name: "AI Power Rankings",
     url: baseUrl,

@@ -6,7 +6,7 @@
 
 ## Welcome to AI Power Rankings
 
-AI Power Rankings provides data-driven analysis and rankings of agentic AI coding tools to help developers make informed decisions. By accessing or using our website at aipowerrankings.com (the "Service"), you agree to these Terms of Use ("Terms").
+AI Power Rankings provides data-driven analysis and rankings of agentic AI coding tools to help developers make informed decisions. By accessing or using our website at aipowerranking.com (the "Service"), you agree to these Terms of Use ("Terms").
 
 ## 1. Acceptance of Terms
 
@@ -99,7 +99,7 @@ You may:
 
 When referencing our rankings or analysis publicly:
 
-- Credit "AI Power Rankings (aipowerrankings.com)"
+- Credit "AI Power Rankings (aipowerranking.com)"
 - Link back to the original source when possible
 - Indicate the date of the ranking or analysis
 - Don't imply endorsement of your products or services
@@ -222,8 +222,8 @@ If any provision of these Terms is found unenforceable, the remaining provisions
 
 For questions about these Terms, data corrections, or other inquiries:
 
-**Email:** legal@aipowerrankings.com  
-**Website:** https://aipowerrankings.com/contact  
+**Email:** legal@aipowerranking.com  
+**Website:** https://aipowerranking.com/contact  
 **Response Time:** We aim to respond within 5 business days
 
 For urgent issues related to data accuracy or Terms violations, please mark your message as "URGENT" in the subject line.

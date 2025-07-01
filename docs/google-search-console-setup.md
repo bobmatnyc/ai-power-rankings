@@ -1,6 +1,7 @@
 # Google Search Console API Setup Guide
 
 ## Prerequisites
+
 - Google account with access to your website in Search Console
 - Google Cloud Project (same one used for OAuth)
 
@@ -48,35 +49,40 @@ Add these to your `.env.local`:
 
 ```bash
 # Google Search Console
-GOOGLE_SEARCH_CONSOLE_SITE_URL=https://aipowerrankings.com
+GOOGLE_SEARCH_CONSOLE_SITE_URL=https://aipowerranking.com
 GOOGLE_SERVICE_ACCOUNT_EMAIL=search-console-reader@your-project.iam.gserviceaccount.com
 GOOGLE_SERVICE_ACCOUNT_KEY='{"type":"service_account","project_id":"..."}' # Full JSON key
 ```
 
 ## API Quotas
+
 - Default: 200 queries per day
 - 2000 queries per 100 seconds
 
 ## Common API Calls
 
 ### Search Analytics
+
 - Get search queries
 - Click-through rates
 - Impressions
 - Average position
 
 ### URL Inspection
+
 - Check indexing status
 - Mobile usability
 - Rich results
 
 ### Sitemaps
+
 - Submit sitemaps
 - Check sitemap status
 
 ## Testing the Connection
 
 Use the provided test script:
+
 ```bash
 node scripts/test-search-console.js
 ```

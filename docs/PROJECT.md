@@ -303,7 +303,7 @@ Strategic analysis including:
 The application is deployed on Vercel with the following configuration:
 
 - **Platform**: Vercel (automatic deployments from GitHub)
-- **Production URL**: https://aipowerrankings.com
+- **Production URL**: https://aipowerranking.com
 - **Framework**: Next.js 15 with App Router
 - **Node Version**: 20.x
 - **Build Command**: `next build`

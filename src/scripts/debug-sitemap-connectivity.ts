@@ -6,9 +6,9 @@ import { promisify } from "util";
 const execAsync = promisify(exec);
 
 const URLS_TO_CHECK = [
-  "https://aipowerrankings.com",
-  "https://www.aipowerrankings.com",
-  "https://aipowerrankings.com/sitemap.xml",
+  "https://aipowerranking.com",
+  "https://www.aipowerranking.com",
+  "https://aipowerranking.com/sitemap.xml",
   "https://ai-power-rankings-g6lb1iphe-1-m.vercel.app",
   "https://ai-power-rankings-g6lb1iphe-1-m.vercel.app/sitemap.xml",
 ];
@@ -42,21 +42,21 @@ async function checkDNS() {
   console.log("\n📡 DNS Information:");
 
   try {
-    const { stdout: aRecord } = await execAsync("dig aipowerrankings.com A +short");
+    const { stdout: aRecord } = await execAsync("dig aipowerranking.com A +short");
     console.log(`  A Record: ${aRecord.trim() || "Not found"}`);
   } catch {
     console.log("  A Record: Error checking");
   }
 
   try {
-    const { stdout: cnameRecord } = await execAsync("dig aipowerrankings.com CNAME +short");
+    const { stdout: cnameRecord } = await execAsync("dig aipowerranking.com CNAME +short");
     console.log(`  CNAME: ${cnameRecord.trim() || "Not found"}`);
   } catch {
     console.log("  CNAME: Error checking");
   }
 
   try {
-    const { stdout: nsLookup } = await execAsync("nslookup aipowerrankings.com");
+    const { stdout: nsLookup } = await execAsync("nslookup aipowerranking.com");
     const lines = nsLookup.split("\n");
     const addressLine = lines.find((line) => line.includes("Address:") && !line.includes("#"));
     if (addressLine) {
