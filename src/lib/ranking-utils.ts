@@ -3,10 +3,18 @@
  * S: 1-5, A: 6-15, B: 16-25, C: 26-35, D: 36+
  */
 export function calculateTier(rank: number): string {
-  if (rank <= 5) return "S";
-  if (rank <= 15) return "A";
-  if (rank <= 25) return "B";
-  if (rank <= 35) return "C";
+  if (rank <= 5) {
+    return "S";
+  }
+  if (rank <= 15) {
+    return "A";
+  }
+  if (rank <= 25) {
+    return "B";
+  }
+  if (rank <= 35) {
+    return "C";
+  }
   return "D";
 }
 

@@ -1,0 +1,13 @@
+# ESLint ignore patterns
+node_modules/
+.next/
+out/
+dist/
+build/
+*.d.ts
+
+# Utility scripts that use CommonJS
+src/i18n/dictionaries/*.js
+
+# Auto-generated files
+*.generated.*

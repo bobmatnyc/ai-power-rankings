@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { getNewsRepo, getToolsRepo, getCompaniesRepo } from "@/lib/json-db";
 
-// @ts-ignore - Type definition for future use
-interface RollbackResult {
+// @ts-expect-error - Type definition for future use
+interface _RollbackResult {
   success: boolean;
   report: {
     ingestion_report_id: string;

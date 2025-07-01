@@ -35,7 +35,7 @@ async function getProjectId() {
   } catch (error) {
     console.error(
       "❌ Error fetching projects:",
-      (error as any).response?.data || (error as Error).message
+      (error as { response?: { data?: unknown } }).response?.data || (error as Error).message
     );
     return null;
   }
@@ -54,7 +54,7 @@ async function getEnvironmentVariables(projectId: string) {
   } catch (error) {
     console.error(
       "❌ Error fetching environment variables:",
-      (error as any).response?.data || (error as Error).message
+      (error as { response?: { data?: unknown } }).response?.data || (error as Error).message
     );
     return [];
   }

@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 "use client";
 
 import { useState, useEffect } from "react";

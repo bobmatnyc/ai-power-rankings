@@ -179,18 +179,22 @@ async function checkDataIntegrity(): Promise<void> {
   const tools = JSON.parse(await fs.readFile(toolsFile, "utf-8"));
   const companies = JSON.parse(await fs.readFile(companiesFile, "utf-8"));
 
-  const companyIds = new Set(companies.map((c: any) => c.id));
-  const toolIds = new Set(tools.map((t: any) => t.id));
+  const companyIds = new Set(companies.map((c: { id: string }) => c.id));
+  const toolIds = new Set(tools.map((t: { id: string }) => t.id));
 
   // Check tool company references
   const orphanedTools = tools.filter(
-    (tool: any) => tool.company_id && !companyIds.has(tool.company_id)
+    (tool: { company_id?: string }) => tool.company_id && !companyIds.has(tool.company_id)
   );
 
   if (orphanedTools.length > 0) {
     loggers.validation.warn("Found tools with invalid company references", {
       count: orphanedTools.length,
-      tools: orphanedTools.map((t: any) => ({ id: t.id, name: t.name, company_id: t.company_id })),
+      tools: orphanedTools.map((t: { id: string; name: string; company_id?: string }) => ({
+        id: t.id,
+        name: t.name,
+        company_id: t.company_id,
+      })),
     });
   }
 
@@ -204,12 +208,14 @@ async function checkDataIntegrity(): Promise<void> {
       const period = JSON.parse(await fs.readFile(filePath, "utf-8"));
 
       if (period.rankings) {
-        const orphanedRankings = period.rankings.filter((r: any) => !toolIds.has(r.tool_id));
+        const orphanedRankings = period.rankings.filter(
+          (r: { tool_id: string }) => !toolIds.has(r.tool_id)
+        );
 
         if (orphanedRankings.length > 0) {
           loggers.validation.warn(`Found rankings with invalid tool references in ${file}`, {
             count: orphanedRankings.length,
-            toolIds: orphanedRankings.map((r: any) => r.tool_id),
+            toolIds: orphanedRankings.map((r: { tool_id: string }) => r.tool_id),
           });
         }
       }

@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -87,8 +88,7 @@ export function ToolsManager() {
   };
 
   const handleDeleteTool = async (toolId: string) => {
-    // eslint-disable-next-line no-alert
-    if (!window.confirm("Are you sure you want to delete this tool?")) {
+    if (!confirm("Are you sure you want to delete this tool?")) {
       return;
     }
 
@@ -98,7 +98,7 @@ export function ToolsManager() {
     } catch (error) {
       console.error("Error deleting tool:", error);
       // TODO: Use toast notification instead of alert
-      window.alert("Failed to delete tool. Please try again.");
+      alert("Failed to delete tool. Please try again.");
     }
   };
 
@@ -163,13 +163,16 @@ export function ToolsManager() {
               {(() => {
                 // Get latest ranking for each tool
                 const latestScores = tools
-                  .map(tool => getLatestRanking(tool.id))
-                  .filter(ranking => ranking && ranking.score > 0)
-                  .map(ranking => ranking!.score);
-                
-                if (latestScores.length === 0) return "0";
-                
-                const avgScore = latestScores.reduce((sum, score) => sum + score, 0) / latestScores.length;
+                  .map((tool) => getLatestRanking(tool.id))
+                  .filter((ranking) => ranking && ranking.score > 0)
+                  .map((ranking) => ranking!.score);
+
+                if (latestScores.length === 0) {
+                  return "0";
+                }
+
+                const avgScore =
+                  latestScores.reduce((sum, score) => sum + score, 0) / latestScores.length;
                 return avgScore.toFixed(1);
               })()}
             </div>

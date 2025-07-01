@@ -340,7 +340,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const validScoreChanges = comparisons.filter((c) => c.current_score !== undefined);
     const validScores = comparisons
       .map((c) => c.new_score)
-      .filter((score) => score != null && !isNaN(score));
+      .filter((score) => score !== null && !isNaN(score));
 
     const summary = {
       tools_moved_up: comparisons.filter((c) => c.movement === "up").length,
