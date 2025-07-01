@@ -1,0 +1,234 @@
+[
+  {
+    "id": "197bf3f57a0-c51dd5b9-91d3dc4c",
+    "slug": "chatgpt-canvas-full-release",
+    "title": "ChatGPT Canvas Full Release",
+    "content": "ChatGPT Canvas exits beta and becomes available to all ChatGPT users, offering enhanced coding workflows with inline editing and version control.",
+    "summary": "ChatGPT Canvas exits beta and becomes available to all ChatGPT users, offering enhanced coding workflows with inline editing and version control....",
+    "published_date": "2024-12-01T00:00:00.000Z",
+    "source": "OpenAI Blog",
+    "tags": [
+      "launch",
+      "openai",
+      "general-availability"
+    ],
+    "tool_mentions": [
+      "ChatGPT Canvas"
+    ],
+    "created_at": "2025-06-30T05:11:28.927Z",
+    "updated_at": "2025-06-30T05:11:28.927Z"
+  },
+  {
+    "id": "197bf3f57a0-e0219969-f463170b",
+    "slug": "openai-releases-codex-cli-tool",
+    "title": "OpenAI Releases Codex CLI Tool",
+    "content": "OpenAI launches Codex CLI, bringing GPT-4 powered code generation directly to the command line for developers seeking terminal-based AI assistance.",
+    "summary": "OpenAI launches Codex CLI, bringing GPT-4 powered code generation directly to the command line for developers seeking terminal-based AI assistance....",
+    "published_date": "2024-12-01T00:00:00.000Z",
+    "source": "OpenAI Documentation",
+    "tags": [
+      "launch",
+      "cli",
+      "openai"
+    ],
+    "tool_mentions": [
+      "OpenAI Codex CLI"
+    ],
+    "created_at": "2025-06-30T05:11:28.927Z",
+    "updated_at": "2025-06-30T05:11:28.927Z"
+  },
+  {
+    "id": "33f61999-3d14-4779-9bf8-468ad3d61540",
+    "slug": "a-beginner-s-guide-to-codeium",
+    "title": "A Beginner's Guide to Codeium",
+    "content": "Codeium is an AI-powered coding assistant that offers features like intelligent code autocomplete, support for over 70 programming languages, and integration with popular IDEs. It aims to streamline the development process and enhance developer productivity.",
+    "summary": "Codeium is an AI-powered coding assistant that offers features like intelligent code autocomplete, support for over 70 programming languages, and integration with popular IDEs. It aims to streamline the development process and enhance developer productivity.",
+    "published_date": "2024-11-26T05:00:00.000Z",
+    "source": "Perplexity",
+    "source_url": "https://www.perplexity.ai/page/a-beginner-s-guide-to-codeium-EA3l1fBuR3mIjB93MYeOZw",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [
+      "codeium-extension"
+    ],
+    "created_at": "2025-06-17T23:25:07.074Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "60cd518c-6635-4fdd-8023-dbe43a826ce4",
+    "slug": "top-8-stories-in-recent-ai-news-november-2024-ai-spotlight",
+    "title": "Top 8 Stories in Recent AI News: November 2024 AI Spotlight",
+    "content": "The article covers significant AI news from November 2024, including Microsoft's announcements at Ignite 2024 and Cerebras Systems' record-breaking achievements. It also mentions the expanding role of AI in driving innovation across various sectors.",
+    "summary": "The article covers significant AI news from November 2024, including Microsoft's announcements at Ignite 2024 and Cerebras Systems' record-breaking achievements. It also mentions the expanding role of AI in driving innovation across various sectors.",
+    "published_date": "2024-11-26T05:00:00.000Z",
+    "source": "Neudesic",
+    "source_url": "https://www.neudesic.com/blog/top-8-stories-recent-ai-news-november-2024-ai-spotlight/",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-06-17T23:25:06.272Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "9fc556fe-9d66-4cf1-93ae-5f94c129858e",
+    "slug": "getting-started-with-amazon-q-developer-enhancing-your-coding-experience-in-visual-studio-code",
+    "title": "Getting Started with Amazon Q Developer: Enhancing Your Coding Experience in Visual Studio Code",
+    "content": "This tutorial by Rohini Gaonkar, Sr. Developer Advocate at AWS, demonstrates how to install and use the Amazon Q extension for Visual Studio Code. It showcases AI-powered features like inline code completion and code analysis designed to enhance developer productivity.",
+    "summary": "This tutorial by Rohini Gaonkar, Sr. Developer Advocate at AWS, demonstrates how to install and use the Amazon Q extension for Visual Studio Code. It showcases AI-powered features like inline code completion and code analysis designed to enhance developer productivity.",
+    "published_date": "2024-11-22T05:00:00.000Z",
+    "source": "Aws.Amazon",
+    "source_url": "https://aws.amazon.com/awstv/watch/d2a2b019175/",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [
+      "amazon-q-developer"
+    ],
+    "created_at": "2025-06-17T23:25:07.230Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "3775e899-c6cb-4b05-af47-e52eb8b22b49",
+    "slug": "2024-the-state-of-generative-ai-in-the-enterprise",
+    "title": "2024: The State of Generative AI in the Enterprise",
+    "content": "This article discusses the state of generative AI in the enterprise, highlighting that 2024 marked a critical year for AI spending. The article notes that AI spending surged to $13 billion, emphasizing the imperative for enterprises to adopt generative AI.",
+    "summary": "This article discusses the state of generative AI in the enterprise, highlighting that 2024 marked a critical year for AI spending. The article notes that AI spending surged to $13 billion, emphasizing the imperative for enterprises to adopt generative AI.",
+    "published_date": "2024-11-20T05:00:00.000Z",
+    "source": "Menlovc",
+    "source_url": "https://menlovc.com/2024-the-state-of-generative-ai-in-the-enterprise/",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-06-17T23:25:06.946Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "93e2964b-071d-4357-b2c9-e15451b9a5ce",
+    "slug": "generative-ai-coding-assistants-market-to-reach-valuation-of-usd-138-36-million-by-2032",
+    "title": "Generative AI Coding Assistants Market to Reach Valuation of USD 138.36 Million by 2032",
+    "content": "The article provides a market forecast for generative AI coding assistants, predicting a valuation of USD 138.36 million by 2032 with a CAGR of 25.4%. It explains how these assistants assist developers by understanding programming languages, coding patterns, and syntax rules after being trained on large datasets.",
+    "summary": "The article provides a market forecast for generative AI coding assistants, predicting a valuation of USD 138.36 million by 2032 with a CAGR of 25.4%. It explains how these assistants assist developers by understanding programming languages, coding patterns, and syntax rules after being trained on large datasets.",
+    "published_date": "2024-11-18T05:00:00.000Z",
+    "source": "Globenewswire",
+    "source_url": "https://www.globenewswire.com/news-release/2024/11/18/2982621/0/en/Generative-AI-Coding-Assistants-Market-to-Reach-Valuation-of-USD-138-36-Million-by-2032-With-a-CAGR-of-25-4-Polaris-Market-Research.html",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-06-17T23:25:06.005Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "feef5269-a0fc-4134-917c-f7dc3db083a5",
+    "slug": "top-10-things-developers-want-from-their-ai-code-assistants-in-2024",
+    "title": "Top 10 Things Developers Want from their AI Code Assistants in 2024",
+    "content": "The article discusses the evolving needs of developers in relation to AI code assistants. It highlights that 76% of respondents rely on AI for tasks like code writing, summarizing information, and code explanation, and 67% report that AI helps them improve their code. The post also lists various AI code assistants, including GitHub Copilot, Sourcegraph’s Cody, Amazon CodeWhisperer, and others.",
+    "summary": "The article discusses the evolving needs of developers in relation to AI code assistants. It highlights that 76% of respondents rely on AI for tasks like code writing, summarizing information, and code explanation, and 67% report that AI helps them improve their code. The post also lists various AI code assistants, including GitHub Copilot, Sourcegraph’s Cody, Amazon CodeWhisperer, and others.",
+    "published_date": "2024-11-18T05:00:00.000Z",
+    "source": "Redmonk",
+    "source_url": "https://redmonk.com/kholterhoff/2024/11/18/top-10-things-developers-want-from-their-ai-code-assistants-in-2024/",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [
+      "github-copilot",
+      "cody"
+    ],
+    "created_at": "2025-06-17T23:25:05.852Z",
+    "updated_at": "2025-06-30T05:07:05.213Z"
+  },
+  {
+    "id": "7fadf07c-2a69-4f58-8c73-6fa4d16b535e",
+    "slug": "ai-code-assistants-revolutionizing-development-with-github-copilot",
+    "title": "AI Code Assistants: Revolutionizing Development with GitHub Copilot",
+    "content": "The article discusses the impact of AI code assistants like GitHub Copilot on software development. It highlights how these tools offer real-time coding suggestions powered by machine learning algorithms, streamlining tasks such as writing code. Future developments are expected to include improved context understanding, support for domain-specific languages, and integration with other development tools.",
+    "summary": "The article discusses the impact of AI code assistants like GitHub Copilot on software development. It highlights how these tools offer real-time coding suggestions powered by machine learning algorithms, streamlining tasks such as writing code. Future developments are expected to include improved context understanding, support for domain-specific languages, and integration with other development tools.",
+    "published_date": "2024-11-12T05:00:00.000Z",
+    "source": "Digital.Neweratech",
+    "source_url": "https://digital.neweratech.com/articles/ai-code-assistants",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [
+      "github-copilot"
+    ],
+    "created_at": "2025-06-17T23:25:06.143Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "45f8c4a9-2ce3-4284-a33a-ac974c4939f9",
+    "slug": "how-amazon-q-stands-out-a-comparison-with-microsoft-copilot-and-google-gemini",
+    "title": "How Amazon Q Stands Out: A Comparison with Microsoft Copilot and Google Gemini",
+    "content": "Amazon Q is a generative AI assistant that helps businesses and developers automate tasks, improve workflows, and respond to natural language requests. It integrates seamlessly with AWS and popular third-party tools, offering advanced features like code transformation and responsible coding.",
+    "summary": "Amazon Q is a generative AI assistant that helps businesses and developers automate tasks, improve workflows, and respond to natural language requests. It integrates seamlessly with AWS and popular third-party tools, offering advanced features like code transformation and responsible coding.",
+    "published_date": "2024-11-10T05:00:00.000Z",
+    "source": "Dev.to",
+    "source_url": "https://dev.to/aws-builders/how-amazon-q-stands-out-a-comparison-with-microsoft-copilot-and-google-gemini-1bj",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [
+      "gemini-code-assist",
+      "github-copilot",
+      "amazon-q-developer"
+    ],
+    "created_at": "2025-06-17T23:25:07.426Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "c43401fb-0c67-4ac2-9a27-9f1c4d1ab20d",
+    "slug": "7-of-the-best-code-playgrounds-codepen-alternatives",
+    "title": "7 of the Best Code Playgrounds & CodePen Alternatives",
+    "content": "The article discusses seven of the best front-end code playgrounds, including CodePen, JSFiddle, JS Bin, CSS Deck, CodeSandbox, PLAYCODE, and Plunker. It highlights their features such as color-coded editors, code command auto-complete, live reloading preview windows, and coding collaboration facilities.",
+    "summary": "The article discusses seven of the best front-end code playgrounds, including CodePen, JSFiddle, JS Bin, CSS Deck, CodeSandbox, PLAYCODE, and Plunker. It highlights their features such as color-coded editors, code command auto-complete, live reloading preview windows, and coding collaboration facilities.",
+    "published_date": "2024-11-06T05:00:00.000Z",
+    "source": "Sitepoint",
+    "source_url": "https://www.sitepoint.com/code-playgrounds/",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [
+      "codesandbox"
+    ],
+    "created_at": "2025-06-17T23:25:07.638Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "447d561c-db21-403a-912a-643050cee392",
+    "slug": "24-best-ai-code-generators-of-2024-free-and-paid",
+    "title": "24 Best AI Code Generators of 2024: Free and Paid",
+    "content": "This article provides a comprehensive list of the latest free and paid AI code generators, including their features and pricing plans. The list aims to enhance productivity for developers.",
+    "summary": "This article provides a comprehensive list of the latest free and paid AI code generators, including their features and pricing plans. The list aims to enhance productivity for developers.",
+    "published_date": "2024-11-02T04:00:00.000Z",
+    "source": "Blog.Fabrichq",
+    "source_url": "https://blog.fabrichq.ai/latest-ai-code-generators-a-comprehensive-list-b7ce1a461fac",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-06-17T23:25:06.765Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "1d041140-d1b6-46aa-b603-301c7985afa8",
+    "slug": "claude-3-5-sonnet-is-now-available-to-all-copilot-users-in-public-preview",
+    "title": "Claude 3.5 Sonnet is now available to all Copilot users in public preview",
+    "content": "Announced at GitHub Universe 2024, Claude 3.5 Sonnet is now available to all GitHub Copilot customers. Users can start using the new model via the model selector in Copilot Chat in VS Code and immersive chat on GitHub.com. Copilot Business and Enterprise users need to grant access via a new policy in Copilot settings.",
+    "summary": "Announced at GitHub Universe 2024, Claude 3.5 Sonnet is now available to all GitHub Copilot customers. Users can start using the new model via the model selector in Copilot Chat in VS Code and immersive chat on GitHub.com. Copilot Business and Enterprise users need to grant access via a new policy in Copilot settings.",
+    "published_date": "2024-11-01T04:00:00.000Z",
+    "source": "Github.Blog",
+    "source_url": "https://github.blog/changelog/2024-11-01-claude-3-5-sonnet-is-now-available-to-all-copilot-users-in-public-preview/",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [
+      "claude-code",
+      "github-copilot"
+    ],
+    "created_at": "2025-06-17T23:25:06.427Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  }
+]

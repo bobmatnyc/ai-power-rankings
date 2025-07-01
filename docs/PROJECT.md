@@ -572,9 +572,76 @@ The platform supports 9 languages with a custom i18n implementation:
 ## TODO / Future Improvements
 
 // Created: 2025-06-25
+// Updated: 2025-07-01 - Added items from latest development session
 
+### High Priority
 1. **Complete translation coverage** - Add missing translations for all languages
 2. **Language switcher component** - Add UI for users to change language
-3. **RTL support** - Add support for right-to-left languages if needed
-4. **Translation management system** - Consider using a service like Crowdin
-5. **Locale-specific content** - Add region-specific tool recommendations
+3. **Convert remaining static content pages to markdown** - Complete migration to src/content/[locale]/[filename].md format
+4. **Copy hyperdev@matsuoka.com for site subscriptions** - Set up email forwarding/copying
+5. **Fix mobile Lighthouse scores** - Performance optimization (Current: 66, Target: 90+)
+   - FCP: 2.4s → <1.5s
+   - LCP: 7.3s → <2.5s 
+   - TBT: 180ms → <100ms
+   - SI: 5.8s → <3.0s
+
+### Medium Priority
+6. **Update Technical Stack documentation** - Reflect current Next.js 15 + JSON storage architecture
+7. **RTL support** - Add support for right-to-left languages if needed
+8. **Translation management system** - Consider using a service like Crowdin
+9. **Locale-specific content** - Add region-specific tool recommendations
+
+### Infrastructure & Performance
+10. **Optimize news loading performance** - Further improve monthly file loading
+11. **Add comprehensive error monitoring** - Implement structured error tracking
+12. **Improve ranking generation resilience** - Add retry logic and better validation
+13. **Create automated testing for ranking system** - Prevent regression issues
+
+### User Experience
+14. **Enhanced contact form features** - Add file upload for tool submissions
+15. **Implement newsletter subscription system** - Connect with email service
+16. **Add advanced search and filtering** - Improve tool discovery
+17. **Create user feedback system** - Collect user input on rankings accuracy
+
+### Content Management
+18. **Implement automated tool discovery** - Reduce manual tool addition overhead
+19. **Create tool update notification system** - Alert when tools have major updates
+20. **Add community contribution features** - Allow users to suggest corrections
+
+### Technical Debt
+21. **Refactor ranking algorithm** - Improve maintainability and add unit tests
+22. **Standardize API response formats** - Ensure consistency across all endpoints
+23. **Improve TypeScript coverage** - Add stricter types for better type safety
+24. **Create comprehensive API documentation** - Document all internal APIs
+
+## Key Development Lessons Learned
+
+// Added: 2025-07-01
+
+### Schema Validation Issues
+- **Always ensure all required JSON schema fields are populated** - Empty objects will fail validation
+- **Run `pnpm run type-check` before debugging runtime issues** - TypeScript errors can cause mysterious runtime failures
+- **Use detailed error logging with stack traces** - Generic error messages hide root causes
+
+### Rankings System Architecture
+- **Preview and save operations must use identical data structures** - Mismatches cause "NEW" status for all tools
+- **Factor scores require all 8 fields**: agentic_capability, innovation, technical_performance, developer_adoption, market_traction, business_sentiment, development_velocity, platform_resilience
+- **Movement data preservation requires complete transformation** - Partial data transformation loses ranking history
+
+### News System Migration
+- **Update repository imports after structural changes** - NewsRepositoryV2 needed after monthly file split
+- **Monthly file structure improves performance** - 228 articles split into 27 monthly files for better loading
+- **Maintain backwards compatibility during migrations** - Graceful fallbacks prevent system breakage
+
+### Error Debugging Best Practices
+1. Check browser console for actual HTTP status codes
+2. Use PM2 logs to find server-side errors: `pnpm run dev:pm2 logs`
+3. Test API endpoints directly with curl to isolate issues
+4. Add console.error() logging for debugging in addition to structured logs
+
+### Contact Form Implementation
+- **Use native HTML elements when UI components are missing** - Prevents TypeScript compilation errors
+- **Hide email addresses while maintaining functionality** - Use mailto: links generated client-side
+- **Categorize inquiries for better user experience** - Dropdown with specific inquiry types
+
+For detailed troubleshooting information, see [TROUBLESHOOTING-RANKINGS.md](./TROUBLESHOOTING-RANKINGS.md).

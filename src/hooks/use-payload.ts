@@ -34,7 +34,7 @@ export function usePayload() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/rankings");
+      const response = await fetch("/api/admin/rankings/all");
       if (!response.ok) {
         throw new Error("Failed to fetch rankings");
       }
@@ -54,12 +54,18 @@ export function usePayload() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/admin/tools/${toolId}`, {
-        method: "PATCH",
+      // Find the tool to get its slug
+      const tool = tools.find(t => t.id === toolId);
+      if (!tool) {
+        throw new Error("Tool not found");
+      }
+
+      const response = await fetch(`/api/tools/${tool.slug}/json`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updates),
+        body: JSON.stringify({ ...tool, ...updates }),
       });
 
       if (!response.ok) {
@@ -69,9 +75,9 @@ export function usePayload() {
       const data = await response.json();
 
       // Update local state
-      setTools((prevTools) => prevTools.map((tool) => (tool.id === toolId ? data : tool)));
+      setTools((prevTools) => prevTools.map((t) => (t.id === toolId ? data.tool : t)));
 
-      return data;
+      return data.tool;
     } catch (err) {
       setError(err as Error);
       console.error("Error updating tool:", err);
@@ -79,14 +85,20 @@ export function usePayload() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [tools]);
 
   const deleteTool = useCallback(async (toolId: string) => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/admin/tools/${toolId}`, {
+      // Find the tool to get its slug
+      const tool = tools.find(t => t.id === toolId);
+      if (!tool) {
+        throw new Error("Tool not found");
+      }
+
+      const response = await fetch(`/api/tools/${tool.slug}/json`, {
         method: "DELETE",
       });
 
@@ -94,8 +106,10 @@ export function usePayload() {
         throw new Error("Failed to delete tool");
       }
 
-      // Update local state
-      setTools((prevTools) => prevTools.filter((tool) => tool.id !== toolId));
+      // Update local state - the API soft deletes by setting status to "discontinued"
+      setTools((prevTools) => prevTools.map((t) => 
+        t.id === toolId ? { ...t, status: "discontinued" as const } : t
+      ));
     } catch (err) {
       setError(err as Error);
       console.error("Error deleting tool:", err);
@@ -103,7 +117,7 @@ export function usePayload() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [tools]);
 
   return {
     tools,

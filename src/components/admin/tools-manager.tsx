@@ -16,7 +16,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  ArrowLeft,
   Search,
   Plus,
   Edit,
@@ -28,7 +27,6 @@ import {
   Download,
   Upload,
 } from "lucide-react";
-import Link from "next/link";
 import { usePayload } from "@/hooks/use-payload";
 import { Tool } from "@/types/database";
 
@@ -42,7 +40,7 @@ interface ToolWithRanking extends Tool {
 }
 
 export function ToolsManager() {
-  const { tools, rankings, loading, fetchTools, fetchRankings } = usePayload();
+  const { tools, rankings, loading, fetchTools, fetchRankings, deleteTool } = usePayload();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [, setSelectedTool] = useState<Tool | null>(null);
@@ -94,45 +92,32 @@ export function ToolsManager() {
       return;
     }
 
-    // TODO: Implement delete functionality
-    console.log("Delete tool:", toolId);
+    try {
+      await deleteTool(toolId);
+      // No need to refresh, the hook updates the local state
+    } catch (error) {
+      console.error("Error deleting tool:", error);
+      // TODO: Use toast notification instead of alert
+      window.alert("Failed to delete tool. Please try again.");
+    }
   };
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      {/* Navigation */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Dashboard
-          </Link>
+      {/* Actions */}
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" size="sm">
+          <Upload className="h-4 w-4 mr-2" />
+          Import
         </Button>
-        <Button variant="outline" size="sm" onClick={() => window.open("/admin", "_blank")}>
-          Open Payload CMS
+        <Button variant="outline" size="sm">
+          <Download className="h-4 w-4 mr-2" />
+          Export
         </Button>
-      </div>
-
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Tools Management</h1>
-          <p className="text-muted-foreground">Manage AI tools, rankings, and information</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Upload className="h-4 w-4 mr-2" />
-            Import
-          </Button>
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
-          <Button size="sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Tool
-          </Button>
-        </div>
+        <Button size="sm">
+          <Plus className="h-4 w-4 mr-2" />
+          Add Tool
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -175,9 +160,18 @@ export function ToolsManager() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {rankings.length > 0
-                ? (rankings.reduce((sum, r) => sum + r.score, 0) / rankings.length).toFixed(1)
-                : "0"}
+              {(() => {
+                // Get latest ranking for each tool
+                const latestScores = tools
+                  .map(tool => getLatestRanking(tool.id))
+                  .filter(ranking => ranking && ranking.score > 0)
+                  .map(ranking => ranking!.score);
+                
+                if (latestScores.length === 0) return "0";
+                
+                const avgScore = latestScores.reduce((sum, score) => sum + score, 0) / latestScores.length;
+                return avgScore.toFixed(1);
+              })()}
             </div>
             <p className="text-xs text-muted-foreground">Across all tools</p>
           </CardContent>

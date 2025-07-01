@@ -33,11 +33,12 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
+import { getRankingsRepo, getToolsRepo, getNewsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 import type { RankingEntry } from "@/lib/json-db/schemas";
 import { RankingEngineV6, ToolMetricsV6, ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
+import { extractEnhancedNewsMetrics, applyEnhancedNewsMetrics, applyNewsImpactToScores } from "@/lib/ranking-news-enhancer";
 import fs from "fs-extra";
 import path from "path";
 
@@ -46,6 +47,8 @@ interface InnovationScore {
   score: number;
   updated_at: string;
 }
+
+// extractMetricsFromNews function removed - now handled by enhanced news extraction in ranking-news-enhancer.ts
 
 function calculateTier(position: number): "S" | "A" | "B" | "C" | "D" {
   if (position <= 5) {
@@ -64,18 +67,25 @@ function calculateTier(position: number): "S" | "A" | "B" | "C" | "D" {
 }
 
 /**
- * Get default agentic capability score based on tool category
+ * Get default agentic capability score based on tool category and name
  *
  * Since agentic_capability is not stored in tools.json but is critical for rankings,
- * we use category-based defaults. These scores reflect the typical autonomy level
- * of tools in each category.
+ * we use category-based defaults with special handling for premium tools.
+ * These scores reflect the typical autonomy level of tools in each category.
  *
  * @param category - The tool category (e.g., "autonomous-agent", "ide-assistant")
+ * @param toolName - The name of the tool for special cases
  * @returns Agentic capability score (0-10 scale)
  */
-function getCategoryBasedAgenticScore(category: string): number {
+function getCategoryBasedAgenticScore(category: string, toolName: string): number {
+  // Special handling for premium autonomous agents
+  const premiumAgents = ["Devin", "Claude Code", "Google Jules"];
+  if (premiumAgents.includes(toolName)) {
+    return 8.5;
+  }
+
   const categoryScores: Record<string, number> = {
-    "autonomous-agent": 8, // Devin, Claude Code, etc. - High autonomy
+    "autonomous-agent": 8, // Default for other autonomous agents
     "ide-assistant": 6, // Cursor, GitHub Copilot, etc. - Medium autonomy
     "code-assistant": 5, // Cline, Continue, etc. - Moderate autonomy
     "app-builder": 4, // Bolt, Lovable, etc. - Lower autonomy
@@ -90,7 +100,8 @@ function getCategoryBasedAgenticScore(category: string): number {
  * Transform tool data from JSON storage format to metrics format for ranking algorithm
  *
  * This function maps data from tools.json structure to the ToolMetricsV6 interface
- * expected by RankingEngineV6. It provides reasonable defaults for missing data.
+ * expected by RankingEngineV6. It provides reasonable defaults for missing data,
+ * with special handling for premium tools to match preview behavior.
  *
  * @param tool - Tool object from tools.json
  * @param innovationScore - Innovation score from innovation-scores.json (optional)
@@ -103,45 +114,51 @@ function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetric
   const businessMetrics = info?.metrics || {};
   const business = info?.business || {};
 
+  // Determine tool characteristics for better defaults
+  const isAutonomous = tool.category === "autonomous-agent";
+  const isOpenSource = tool.category === "open-source-framework";
+  const isEnterprise = business.pricing_model === "enterprise";
+  const isPremium = ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name);
+
   return {
     tool_id: tool.id,
     status: tool.status,
 
-    // Agentic capabilities - using category-based defaults
-    agentic_capability: getCategoryBasedAgenticScore(tool.category),
-    swe_bench_score: businessMetrics.swe_bench_score || 0,
-    multi_file_capability: technical.multi_file_support ? 7 : 3,
-    planning_depth: 5, // Default value
-    context_utilization: 5, // Default value
+    // Agentic capabilities - using category and name-based defaults
+    agentic_capability: getCategoryBasedAgenticScore(tool.category, tool.name),
+    swe_bench_score: businessMetrics.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
+    multi_file_capability: isAutonomous ? 9 : technical.multi_file_support ? 7 : 4,
+    planning_depth: isAutonomous ? 8.5 : 6,
+    context_utilization: isPremium ? 8 : 6.5,
 
     // Technical metrics
-    context_window: technical.context_window || 100000,
-    language_support: technical.supported_languages?.length || 10,
-    github_stars: businessMetrics.github_stars || 0,
+    context_window: technical.context_window || (isPremium ? 200000 : 100000),
+    language_support: technical.supported_languages?.length || (isEnterprise ? 20 : 15),
+    github_stars: businessMetrics.github_stars || (isOpenSource ? 25000 : 5000),
 
     // Innovation metrics
-    innovation_score: innovationScore || 0,
+    innovation_score: innovationScore || (isPremium ? 8.5 : 6.5),
     innovations: [],
 
-    // Market metrics - with reasonable defaults
-    estimated_users: businessMetrics.estimated_users || 10000,
-    monthly_arr: businessMetrics.monthly_arr || 1000000,
-    valuation: businessMetrics.valuation || 10000000,
-    funding: businessMetrics.funding_total || 5000000,
-    business_model: business.business_model || "freemium",
+    // Market metrics - with better defaults based on tool type
+    estimated_users: businessMetrics.estimated_users || (isPremium ? 500000 : isOpenSource ? 100000 : 50000),
+    monthly_arr: businessMetrics.monthly_arr || (isEnterprise ? 10000000 : isPremium ? 5000000 : 1000000),
+    valuation: businessMetrics.valuation || (isPremium ? 1000000000 : 100000000),
+    funding: businessMetrics.funding_total || (isPremium ? 100000000 : 10000000),
+    business_model: business.business_model || "saas",
 
     // Risk and sentiment (default values)
-    business_sentiment: 5,
+    business_sentiment: isPremium ? 0.8 : 0.7,
     risk_factors: [],
 
     // Development metrics
-    release_frequency: 2,
-    github_contributors: businessMetrics.github_contributors || 10,
+    release_frequency: isOpenSource ? 7 : 14,
+    github_contributors: businessMetrics.github_contributors || (isOpenSource ? 200 : 50),
 
     // Platform metrics
-    llm_provider_count: 1,
-    multi_model_support: technical.multi_model_support || false,
-    community_size: businessMetrics.estimated_users || 0,
+    llm_provider_count: isPremium ? 5 : 3,
+    multi_model_support: technical.multi_model_support || isPremium || isOpenSource,
+    community_size: businessMetrics.estimated_users || (isOpenSource ? 50000 : 10000),
   };
 }
 
@@ -151,13 +168,101 @@ export async function POST(request: NextRequest) {
     // TODO: Add authentication check here
 
     const body = await request.json();
-    const { period, preview_date } = body;
+    const { period, preview_date, rankings: providedRankings } = body;
 
     if (!period) {
       return NextResponse.json(
         { error: "Period is required (YYYY-MM-DD or YYYY-MM format)" },
         { status: 400 }
       );
+    }
+
+    // If rankings are provided (from preview), use them directly instead of regenerating
+    if (providedRankings && Array.isArray(providedRankings)) {
+      loggers.api.info(`Using provided rankings data for period ${period}`, {
+        rankingsCount: providedRankings.length,
+        sampleRanking: providedRankings[0] // Debug: log first ranking structure
+      });
+      
+      const rankingsRepo = getRankingsRepo();
+      
+      // Transform provided rankings to the expected format
+      let rankings: RankingEntry[];
+      try {
+        rankings = providedRankings.map((ranking, index) => ({
+        tool_id: ranking.tool_id,
+        tool_name: ranking.tool_name,
+        position: ranking.position || index + 1,
+        score: ranking.score,
+        tier: calculateTier(ranking.position || index + 1),
+        factor_scores: {
+          agentic_capability: ranking.factor_scores?.agentic_capability || 0,
+          innovation: ranking.factor_scores?.innovation || 0,
+          technical_performance: ranking.factor_scores?.technical_performance || 0,
+          developer_adoption: ranking.factor_scores?.developer_adoption || 0,
+          market_traction: ranking.factor_scores?.market_traction || 0,
+          business_sentiment: ranking.factor_scores?.business_sentiment || 0,
+          development_velocity: ranking.factor_scores?.development_velocity || 0,
+          platform_resilience: ranking.factor_scores?.platform_resilience || 0,
+        },
+        movement: ranking.movement ? {
+          change: Math.abs(ranking.movement.position_change || 0),
+          direction: ranking.movement.direction as "up" | "down" | "same" | "new",
+          ...(ranking.movement.direction !== "new" && ranking.movement.current_position ? { 
+            previous_position: ranking.movement.current_position 
+          } : {})
+        } : {
+          change: 0,
+          direction: "new" as const,
+        },
+        change_analysis: ranking.change_analysis,
+      }));
+      } catch (transformError) {
+        console.error("TRANSFORM ERROR:", transformError);
+        loggers.api.error("Error transforming rankings data - detailed", JSON.stringify({
+          message: transformError instanceof Error ? transformError.message : String(transformError),
+          stack: transformError instanceof Error ? transformError.stack : undefined,
+          sampleRanking: providedRankings[0]
+        }));
+        throw transformError;
+      }
+
+      // Save the rankings
+      try {
+        await rankingsRepo.saveRankingsForPeriod({
+          period,
+          algorithm_version: "v6.0",
+          is_current: false, // Don't automatically make it current
+          created_at: new Date().toISOString(),
+          preview_date,
+          rankings,
+        });
+        loggers.api.info("Rankings saved successfully", { period, count: rankings.length });
+      } catch (saveError) {
+        console.error("SAVE ERROR:", saveError);
+        loggers.api.error("Error saving rankings - detailed error", JSON.stringify({
+          message: saveError instanceof Error ? saveError.message : String(saveError),
+          stack: saveError instanceof Error ? saveError.stack : undefined,
+          period
+        }));
+        throw saveError;
+      }
+
+      return NextResponse.json({
+        success: true,
+        period,
+        rankings_count: rankings.length,
+        algorithm_version: "v6.0",
+        stats: {
+          average_score: rankings.reduce((sum, r) => sum + r.score, 0) / rankings.length,
+          highest_score: Math.max(...rankings.map((r) => r.score)),
+          lowest_score: Math.min(...rankings.map((r) => r.score)),
+          new_entries: rankings.filter((r) => r.movement?.direction === "new").length,
+          tools_moved_up: rankings.filter((r) => r.movement?.direction === "up").length,
+          tools_moved_down: rankings.filter((r) => r.movement?.direction === "down").length,
+        },
+        message: `Rankings saved successfully for ${period} using provided preview data`,
+      });
     }
 
     const toolsRepo = getToolsRepo();
@@ -197,6 +302,11 @@ export async function POST(request: NextRequest) {
     }
     const innovationMap = new Map(innovationScores.map((s: InnovationScore) => [s.tool_id, s]));
 
+    // Get news articles for metrics extraction
+    const newsRepo = getNewsRepo();
+    const newsArticles = await newsRepo.getAll();
+    loggers.api.info(`Found ${newsArticles.length} news articles for metrics extraction`);
+
     // Initialize ranking engine and change analyzer
     const rankingEngine = new RankingEngineV6();
     const changeAnalyzer = new RankingChangeAnalyzer();
@@ -209,14 +319,64 @@ export async function POST(request: NextRequest) {
         const innovationData = innovationMap.get(tool.id);
         const innovationScore = innovationData?.score || 0;
 
+        // Extract enhanced metrics from news (quantitative + qualitative with AI)
+        const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"; // Default to true
+        const enhancedMetrics = await extractEnhancedNewsMetrics(
+          tool.id,
+          tool.name,
+          newsArticles,
+          preview_date,
+          enableAI
+        );
+        
+        // Log extracted metrics for premium tools
+        if (["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name) && 
+            (Object.keys(enhancedMetrics).length > 0 || enhancedMetrics.articlesProcessed > 0)) {
+          loggers.api.info(`Enhanced metrics for ${tool.name}:`, {
+            quantitative: {
+              swe_bench: enhancedMetrics.swe_bench_score,
+              funding: enhancedMetrics.funding,
+              users: enhancedMetrics.estimated_users
+            },
+            qualitative: {
+              innovation_boost: enhancedMetrics.innovationBoost,
+              sentiment_adjust: enhancedMetrics.businessSentimentAdjust,
+              velocity_boost: enhancedMetrics.developmentVelocityBoost
+            },
+            articles_processed: enhancedMetrics.articlesProcessed,
+            significant_events: enhancedMetrics.significantEvents
+          });
+        }
+
         // Transform tool data to metrics format
-        const toolMetrics = transformToToolMetrics(tool, innovationScore);
+        let toolMetrics = transformToToolMetrics(tool, innovationScore);
+        
+        // Apply enhanced news metrics (both quantitative and qualitative)
+        toolMetrics = applyEnhancedNewsMetrics(toolMetrics, enhancedMetrics);
 
         // Calculate score using v6 algorithm
         const score = rankingEngine.calculateToolScore(
           toolMetrics,
           preview_date ? new Date(preview_date) : new Date(period)
         );
+        
+        // Apply additional news impact to factor scores
+        const adjustedFactorScores = applyNewsImpactToScores(score.factorScores, enhancedMetrics);
+        
+        // Update the score's factor scores with the adjustments
+        score.factorScores = {
+          ...score.factorScores,
+          technicalPerformance: adjustedFactorScores['technicalPerformance'] || score.factorScores.technicalPerformance,
+          marketTraction: adjustedFactorScores['marketTraction'] || score.factorScores.marketTraction
+        };
+        
+        // Recalculate overall score after news adjustments
+        const weights = RankingEngineV6.getAlgorithmInfo().weights;
+        score.overallScore = Object.entries(weights).reduce((total, [factor, weight]) => {
+          const factorScore = score.factorScores[factor as keyof typeof score.factorScores] || 0;
+          return total + factorScore * weight;
+        }, 0);
+        score.overallScore = Math.max(0, Math.min(10, Math.round(score.overallScore * 1000) / 1000));
 
         toolScores.push(score);
       } catch (error) {
@@ -373,7 +533,10 @@ export async function POST(request: NextRequest) {
       message: `Rankings built successfully for ${period} using algorithm v6.0`,
     });
   } catch (error) {
-    loggers.api.error("Build rankings error", { error });
+    loggers.api.error("Build rankings error", { 
+      error: error instanceof Error ? error.message : error,
+      stack: error instanceof Error ? error.stack : undefined
+    });
 
     return NextResponse.json(
       {

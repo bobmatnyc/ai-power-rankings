@@ -78,7 +78,7 @@ We use TrackDown, a markdown-based project tracking system that stores all proje
 
 ```
 trackdown/
-├── BACKLOG.md              # Central tracking file for all work items
+├── BACKLOG.md              # Central tracking file for all work items (T-XXX tickets)
 ├── ROADMAP.md              # High-level planning and milestones
 ├── RETROSPECTIVES.md       # Sprint retrospectives
 ├── METRICS.md              # Project metrics and velocity tracking
@@ -86,6 +86,8 @@ trackdown/
 ├── archive/                # Completed sprints and historical data
 └── scripts/                # Automation tools
 ```
+
+**IMPORTANT**: All tickets (T-XXX) are tracked in `/trackdown/BACKLOG.md` - this is the ONLY place to look for ticket information. The main project backlog is located at `/trackdown/BACKLOG.md` (not `/docs/BACKLOG.md`)
 
 ### 📝 Work Item Management
 

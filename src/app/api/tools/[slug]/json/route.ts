@@ -219,15 +219,15 @@ export async function DELETE(
       return NextResponse.json({ error: "Tool not found" }, { status: 404 });
     }
 
-    // Soft delete by setting status to deprecated
-    tool.status = "deprecated";
+    // Soft delete by setting status to discontinued
+    tool.status = "discontinued";
     tool.updated_at = new Date().toISOString();
 
     await toolsRepo.upsert(tool);
 
     return NextResponse.json({
       success: true,
-      message: "Tool marked as deprecated",
+      message: "Tool marked as discontinued",
     });
   } catch (error) {
     loggers.api.error("Delete tool error", { error, slug });

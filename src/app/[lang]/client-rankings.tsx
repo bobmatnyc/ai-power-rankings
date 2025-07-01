@@ -42,6 +42,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
   const [loading, setLoading] = useState(true);
   const [totalTools, setTotalTools] = useState(0);
   const [trendingUpCount, setTrendingUpCount] = useState(0);
+  const [trendingDownCount, setTrendingDownCount] = useState(0);
   const [lastUpdateDate, setLastUpdateDate] = useState<string>("");
 
   useEffect(() => {
@@ -74,18 +75,25 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           setTrendingTools(actualTrendingTools.slice(0, 3));
           setTrendingUpCount(actualTrendingTools.length);
 
+          // Calculate tools trending down (those with negative rank changes)
+          const trendingDownTools = rankings.filter(
+            (r: any) => r.rank_change && r.rank_change < 0
+          );
+          setTrendingDownCount(trendingDownTools.length);
+
           setRecentlyUpdated(rankings.slice(6, 10));
 
           // Set total tools from stats or count rankings
           setTotalTools(data.stats?.total_tools || rankings.length);
 
-          // Set last update date
+          // Set last update date - show actual date
           if (data.algorithm?.date) {
             const updateDate = new Date(data.algorithm.date);
-            const isToday = new Date().toDateString() === updateDate.toDateString();
-            const isYesterday =
-              new Date(Date.now() - 86400000).toDateString() === updateDate.toDateString();
-            setLastUpdateDate(isToday ? "Today" : isYesterday ? "Yesterday" : "Daily");
+            // Format as "Jan 1, 2025" or similar
+            const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
+            setLastUpdateDate(updateDate.toLocaleDateString('en-US', options));
+          } else {
+            setLastUpdateDate("Daily");
           }
         } else {
           console.warn("No rankings data received", data);
@@ -117,15 +125,15 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         </div>
         <div className="text-center">
           <div className="text-3xl font-bold text-secondary mb-1">
-            {loading ? 0 : trendingUpCount}
+            {loading ? "0/0" : `${trendingUpCount}/${trendingDownCount}`}
           </div>
-          <div className="text-sm text-muted-foreground">Trending Up</div>
+          <div className="text-sm text-muted-foreground">Trending ↑/↓</div>
         </div>
         <div className="text-center">
           <div className="text-3xl font-bold text-accent mb-1">
             {loading ? "..." : lastUpdateDate || "Daily"}
           </div>
-          <div className="text-sm text-muted-foreground">Updates</div>
+          <div className="text-sm text-muted-foreground">Last Update</div>
         </div>
         <div className="text-center">
           <div className="text-3xl font-bold text-foreground mb-1">100%</div>

@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-07-01-071800",
+  "date": "2025-07-01T11:18:00.962Z",
+  "files": [
+    "companies-migration-results.json",
+    "historical-migration-results.json",
+    "migration-results.json",
+    "news-migration-results.json",
+    "tool-terms-mapping.json"
+  ],
+  "fileCount": 5
+}

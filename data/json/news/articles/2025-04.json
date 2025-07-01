@@ -1,0 +1,93 @@
+[
+  {
+    "id": "185e5100-0261-454c-9405-a73caf902ca7",
+    "slug": "endor-labs-raises-93m-to-secure-ai-generated-code-from-vulnerabilities",
+    "title": "Endor Labs raises $93M to secure AI-generated code from vulnerabilities",
+    "content": "Endor Labs Inc. raised $93 million in Series B funding to secure AI-generated code from vulnerabilities. The funding round was led by DFJ Growth, with participation from new investor Salesforce Ventures and existing backers.",
+    "summary": "Endor Labs Inc. raised $93 million in Series B funding to secure AI-generated code from vulnerabilities. The funding round was led by DFJ Growth, with participation from new investor Salesforce Ventures and existing backers.",
+    "published_date": "2025-04-23T04:00:00.000Z",
+    "source": "Siliconangle",
+    "source_url": "https://siliconangle.com/2025/04/23/endor-labs-raises-93m-secure-ai-generated-code-vulnerabilities/",
+    "tags": [
+      "funding"
+    ],
+    "tool_mentions": [
+      "endor-labs-inc-"
+    ],
+    "created_at": "2025-06-17T23:28:11.894Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "c48be512-c6eb-48c9-b77f-93ccbc30b71c",
+    "slug": "openai-acquires-windsurf-for-3-billion-in-major-ai-coding-consolidation",
+    "title": "OpenAI Acquires Windsurf for $3 Billion in Major AI Coding Consolidation",
+    "content": "OpenAI has completed its acquisition of Windsurf (formerly Codeium) for approximately $3 billion, marking one of the largest AI coding tool acquisitions and validating the agentic IDE market.",
+    "summary": "OpenAI has completed its acquisition of Windsurf (formerly Codeium) for approximately $3 billion, marking one of the largest AI coding tool acquisitions and validating the agentic IDE market.",
+    "published_date": "2025-04-16T04:00:00.000Z",
+    "source": "TechCrunch",
+    "source_url": "https://techcrunch.com/2025/04/16/openai-is-reportedly-in-talks-to-buy-windsurf-for-3b-with-news-expected-later-this-week/",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [
+      "windsurf"
+    ],
+    "created_at": "2025-06-18T00:04:17.611Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "0ddf9705-5038-45c2-b3cc-1be7b9f28b94",
+    "slug": "chatgpt-can-now-reference-all-past-conversations-april-10-2025",
+    "title": "ChatGPT can now reference all past conversations – April 10, 2025",
+    "content": "OpenAI has updated ChatGPT to include a new memory feature that allows it to reference all past conversations automatically. This feature includes semantically-relevant chat items from the past.",
+    "summary": "OpenAI has updated ChatGPT to include a new memory feature that allows it to reference all past conversations automatically. This feature includes semantically-relevant chat items from the past.",
+    "published_date": "2025-04-10T04:00:00.000Z",
+    "source": "Community.Openai",
+    "source_url": "https://community.openai.com/t/chatgpt-can-now-reference-all-past-conversations-april-10-2025/1229453?page=2",
+    "tags": [
+      "general"
+    ],
+    "tool_mentions": [
+      "chatgpt"
+    ],
+    "created_at": "2025-06-17T23:28:12.106Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  },
+  {
+    "id": "197bf3f57a0-692ff711-fe49462d",
+    "slug": "github-copilot-adds-multi-model-support",
+    "title": "GitHub Copilot Adds Multi-Model Support",
+    "content": "GitHub Copilot now supports multiple AI models including Claude 3.7, o3-mini, and Gemini Flash 2.0, giving developers choice in their AI assistance.",
+    "summary": "GitHub Copilot now supports multiple AI models including Claude 3.7, o3-mini, and Gemini Flash 2.0, giving developers choice in their AI assistance....",
+    "published_date": "2025-04-04T00:00:00.000Z",
+    "source": "GitHub Announcement",
+    "tags": [
+      "feature-update",
+      "multi-model",
+      "flexibility"
+    ],
+    "tool_mentions": [
+      "GitHub Copilot"
+    ],
+    "created_at": "2025-06-30T05:11:28.927Z",
+    "updated_at": "2025-06-30T05:11:28.927Z"
+  },
+  {
+    "id": "6fe7c61d-944b-40ff-a68a-eb0490178d93",
+    "slug": "devin-the-viral-coding-ai-agent-gets-a-new-pay-as-you-go-plan",
+    "title": "Devin, the viral coding AI agent, gets a new pay-as-you-go plan",
+    "content": "Cognition introduced a new low-cost plan for Devin, its AI coding tool. The plan offers a $20 entry-level option with pay-as-you-go pricing, aimed at incentivizing more users to try the AI programming assistant.",
+    "summary": "Cognition introduced a new low-cost plan for Devin, its AI coding tool. The plan offers a $20 entry-level option with pay-as-you-go pricing, aimed at incentivizing more users to try the AI programming assistant.",
+    "published_date": "2025-04-03T04:00:00.000Z",
+    "source": "Unknown",
+    "source_url": "https://techcrunch.com/2025/04/03/devin-the-viral-coding-ai-agent-gets-a-new-pay-as-you-go-plan/",
+    "tags": [
+      "product-update"
+    ],
+    "tool_mentions": [
+      "devin"
+    ],
+    "created_at": "2025-06-17T23:28:12.504Z",
+    "updated_at": "2025-06-30T05:07:05.212Z"
+  }
+]

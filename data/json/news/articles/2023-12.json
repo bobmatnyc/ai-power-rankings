@@ -1,0 +1,21 @@
+[
+  {
+    "id": "197bf3f57a0-e63c9ab8-8464ae59",
+    "slug": "sourcegraph-cody-v1-0-general-availability",
+    "title": "Sourcegraph Cody v1.0 General Availability",
+    "content": "Sourcegraph Cody reaches v1.0 general availability, offering enterprise-ready AI coding assistance with advanced code understanding and security features.",
+    "summary": "Sourcegraph Cody reaches v1.0 general availability, offering enterprise-ready AI coding assistance with advanced code understanding and security features....",
+    "published_date": "2023-12-14T00:00:00.000Z",
+    "source": "Sourcegraph Blog",
+    "tags": [
+      "launch",
+      "general-availability",
+      "enterprise"
+    ],
+    "tool_mentions": [
+      "Sourcegraph Cody"
+    ],
+    "created_at": "2025-06-30T05:11:28.927Z",
+    "updated_at": "2025-06-30T05:11:28.927Z"
+  }
+]

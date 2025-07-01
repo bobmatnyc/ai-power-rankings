@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Grid, List, ArrowUpDown, TrendingUp, Star } from "lucide-react";
 import { RankingCard } from "./ranking-card";
+import { TierLegend } from "./tier-legend";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -237,6 +238,11 @@ function RankingsGridContent({
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Tier Legend */}
+      <div className="mb-6">
+        <TierLegend dict={dict} />
       </div>
 
       {/* Controls */}

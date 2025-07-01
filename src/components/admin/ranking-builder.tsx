@@ -184,7 +184,13 @@ export function RankingBuilder() {
             tool_name: comparison.tool_name,
             position: comparison.new_position,
             score: comparison.new_score,
-            movement: comparison.movement,
+            movement: {
+              direction: comparison.movement,
+              position_change: comparison.position_change,
+              current_position: comparison.current_position,
+              score_change: comparison.score_change,
+            },
+            change_analysis: comparison.change_analysis,
             factor_scores: {}, // Will be filled by the algorithm
           })),
         }),
@@ -293,22 +299,6 @@ export function RankingBuilder() {
 
   return (
     <div className="space-y-6">
-      {/* Navigation */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Build New Rankings</h1>
-          <p className="text-muted-foreground">
-            Select date and build new AI tool rankings with live preview
-          </p>
-        </div>
-        <Link href="/dashboard/rankings">
-          <Button variant="outline">
-            <Trophy className="h-4 w-4 mr-2" />
-            View Existing Rankings
-          </Button>
-        </Link>
-      </div>
-
       {/* Configuration Form */}
       <Card>
         <CardHeader>
