@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import type { NextAuthConfig } from "next-auth";
+import { isAuthorizedEmail } from "@/lib/auth-config";
 
 export const config: NextAuthConfig = {
   providers: [
@@ -23,14 +24,11 @@ export const config: NextAuthConfig = {
       return true;
     },
     async signIn({ user }) {
-      // Only allow specific email to sign in
-      if (user.email === "bob@matsuoka.com") {
-        return true;
-      }
-      return false;
+      // Only allow authorized emails to sign in
+      return isAuthorizedEmail(user.email);
     },
     async session({ session, token }) {
-      if (session.user?.email === "bob@matsuoka.com") {
+      if (isAuthorizedEmail(session.user?.email)) {
         session.user.isAdmin = true;
       }
       // Pass the access token to the session
@@ -38,7 +36,7 @@ export const config: NextAuthConfig = {
       return session;
     },
     async jwt({ token, user, account }) {
-      if (user?.email === "bob@matsuoka.com") {
+      if (isAuthorizedEmail(user?.email)) {
         token["isAdmin"] = true;
       }
       // Persist the OAuth access_token to the token right after signin

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { i18n } from "./i18n/config";
+import { isAuthorizedEmail } from "@/lib/auth-config";
 
 const locales = i18n.locales;
 
@@ -91,7 +92,7 @@ export default auth((req) => {
   // Special handling for /dashboard without locale
   if (pathname === "/dashboard") {
     // Check auth first
-    if (!req.auth?.user || req.auth.user.email !== "bob@matsuoka.com") {
+    if (!req.auth?.user || !isAuthorizedEmail(req.auth.user.email)) {
       const locale = getLocale(req);
       return NextResponse.redirect(new URL(`/${locale}/dashboard/auth/signin`, req.url));
     }
@@ -115,7 +116,7 @@ export default auth((req) => {
 
   // Handle our custom dashboard authentication (after locale is ensured)
   if (pathname.includes("/dashboard") && !pathname.includes("/dashboard/auth")) {
-    if (!req.auth?.user || req.auth.user.email !== "bob@matsuoka.com") {
+    if (!req.auth?.user || !isAuthorizedEmail(req.auth.user.email)) {
       // Extract locale from the pathname
       const locale = pathname.split("/")[1] || getLocale(req);
       return NextResponse.redirect(new URL(`/${locale}/dashboard/auth/signin`, req.url));
