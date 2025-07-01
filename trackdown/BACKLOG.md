@@ -26,7 +26,7 @@ sprint_current: 2
 - [ ] **[T-027]** Create innovation tracking system for tool features
 - [ ] **[T-028]** Build automated SWE-bench score collection
 - [ ] **[T-029]** Develop business metrics ingestion pipeline
-- [ ] **[T-030]** Fix missing translations for DE, FR, HR, IT, UK languages
+- [x] **[T-030]** Fix missing translations for DE, FR, HR, IT, UK languages (In Progress)
 
 ## ✅ Completed Tasks
 
@@ -400,9 +400,9 @@ Create a pipeline to ingest business metrics (funding, revenue, users) from vari
 **Epic:** TBD  
 **Priority:** High  
 **Story Points:** 8  
-**Assignee:** Unassigned  
-**Status:** Backlog  
-**Sprint:** Future  
+**Assignee:** Claude
+**Status:** In Progress
+**Sprint:** 3
 
 **Description:**
 Fix missing translations for German (118 keys), French (118 keys), Croatian (112 keys), Italian (115 keys), and Ukrainian (112 keys) to ensure complete internationalization coverage.

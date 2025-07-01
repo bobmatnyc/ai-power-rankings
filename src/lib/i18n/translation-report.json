@@ -1,0 +1,70 @@
+{
+  "timestamp": "2025-07-01T13:39:24.035Z",
+  "reference": "en",
+  "results": {
+    "de": {
+      "totalKeys": 485,
+      "missingKeys": [],
+      "emptyKeys": [],
+      "missingCount": 0,
+      "emptyCount": 0,
+      "completeness": "100.00%"
+    },
+    "fr": {
+      "totalKeys": 485,
+      "missingKeys": [],
+      "emptyKeys": [],
+      "missingCount": 0,
+      "emptyCount": 0,
+      "completeness": "100.00%"
+    },
+    "hr": {
+      "totalKeys": 485,
+      "missingKeys": [],
+      "emptyKeys": [],
+      "missingCount": 0,
+      "emptyCount": 0,
+      "completeness": "100.00%"
+    },
+    "it": {
+      "totalKeys": 485,
+      "missingKeys": [],
+      "emptyKeys": [],
+      "missingCount": 0,
+      "emptyCount": 0,
+      "completeness": "100.00%"
+    },
+    "ja": {
+      "totalKeys": 750,
+      "missingKeys": [],
+      "emptyKeys": [],
+      "missingCount": 0,
+      "emptyCount": 0,
+      "completeness": "100.00%"
+    },
+    "ko": {
+      "totalKeys": 484,
+      "missingKeys": [],
+      "emptyKeys": [],
+      "missingCount": 0,
+      "emptyCount": 0,
+      "completeness": "100.00%"
+    },
+    "uk": {
+      "totalKeys": 485,
+      "missingKeys": [],
+      "emptyKeys": [],
+      "missingCount": 0,
+      "emptyCount": 0,
+      "completeness": "100.00%"
+    },
+    "zh": {
+      "totalKeys": 1203,
+      "missingKeys": [],
+      "emptyKeys": [],
+      "missingCount": 0,
+      "emptyCount": 0,
+      "completeness": "100.00%"
+    }
+  }
+}
