@@ -56,7 +56,26 @@ const toolSchema = {
             funding_total: { type: ["number", "null"] },
             last_funding_date: { type: ["string", "null"], format: "date" },
             swe_bench_score: { type: ["number", "null"] },
+            swe_bench: {
+              type: "object",
+              properties: {
+                verified: { type: ["number", "null"] },
+                verified_basic: { type: ["number", "null"] },
+                lite: { type: ["number", "null"] },
+                full: { type: ["number", "null"] },
+                date: { type: ["string", "null"] },
+                source: { type: ["string", "null"] },
+                model: { type: ["string", "null"] },
+                note: { type: ["string", "null"] },
+                methodology: { type: ["string", "null"] },
+                achievement: { type: ["string", "null"] },
+                context: { type: ["string", "null"] },
+                updates: { type: ["string", "null"] },
+              },
+              additionalProperties: false,
+            },
           },
+          additionalProperties: false,
         },
       },
     },
@@ -242,5 +261,14 @@ export class ToolsRepository extends BaseRepository<ToolsData> {
     }
 
     return counts;
+  }
+
+  /**
+   * Force rebuild indices (useful for fixing corrupted indices)
+   */
+  async forceRebuildIndices(): Promise<void> {
+    await this.update(async (data) => {
+      this.rebuildIndices(data);
+    });
   }
 }
