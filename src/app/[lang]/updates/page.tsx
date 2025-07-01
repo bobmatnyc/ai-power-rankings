@@ -2,10 +2,12 @@ import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, TrendingUp, Star } from "lucide-react";
+import { ArrowLeft, Calendar, TrendingUp, Star, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { UpdatesGenerator } from "@/lib/updates-generator";
+import { format } from "date-fns";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -22,6 +24,32 @@ export default async function UpdatesPage({ params }: PageProps) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
 
+  // Generate dynamic updates
+  const generator = new UpdatesGenerator();
+  let updates;
+
+  try {
+    updates = await generator.generateUpdates();
+  } catch (error) {
+    console.error("Failed to generate updates:", error);
+    // Fallback to empty data
+    updates = {
+      lastUpdate: new Date().toISOString(),
+      newArticles: [],
+      topRankings: [],
+      statistics: {
+        newArticlesCount: 0,
+        totalArticles: 0,
+        toolsWithNews: 0,
+        totalTools: 0,
+        maxImpact: { toolName: "N/A", impact: 0 },
+      },
+      majorChanges: [],
+    };
+  }
+
+  const formattedDate = format(new Date(updates.lastUpdate), "MMMM d, yyyy");
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -37,7 +65,7 @@ export default async function UpdatesPage({ params }: PageProps) {
           <div className="flex items-center gap-4 mb-4">
             <Badge className="bg-primary/10 text-primary border-primary/20">
               <Calendar className="h-3 w-3 mr-1" />
-              June 18, 2025
+              {formattedDate}
             </Badge>
           </div>
 
@@ -57,86 +85,80 @@ export default async function UpdatesPage({ params }: PageProps) {
           </CardHeader>
           <CardContent className="space-y-6">
             {/* New Articles */}
-            <div>
-              <h3 className="text-lg font-semibold mb-3">📰 New Articles Processed</h3>
-              <div className="space-y-3">
-                <Link
-                  href="https://techcrunch.com/2025/06/18/bolt-new-figma-integration-design-to-code"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block border border-border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-medium hover:text-primary transition-colors">
-                        Bolt.new&apos;s Figma Integration Delivers 70% Faster Design-to-Code
-                      </h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        <Badge variant="secondary" className="mr-2">
-                          Product Integration
-                        </Badge>
-                        Affects: Bolt.new
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-
-                <Link
-                  href="https://www.theverge.com/2025/06/17/google-jules-ai-coding-agent-beta-limitations"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block border border-border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-medium hover:text-primary transition-colors">
-                        Google&apos;s Jules AI Coding Agent Faces User Backlash Over Beta
-                        Limitations
-                      </h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        <Badge variant="secondary" className="mr-2">
-                          User Feedback
-                        </Badge>
-                        Affects: Google Jules
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-
-                <div className="border border-border rounded-lg p-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-medium">
-                        Firebase Studio Growth Overshadowed by Preview Phase Limitations
-                      </h4>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        <Badge variant="secondary" className="mr-2">
-                          Market Analysis
-                        </Badge>
-                        Affects: Google Firebase
-                      </p>
-                    </div>
-                  </div>
+            {updates.newArticles.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3">📰 New Articles Processed</h3>
+                <div className="space-y-3">
+                  {updates.newArticles.map((article) => (
+                    <Link
+                      key={article.id}
+                      href={article.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block border border-border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-medium hover:text-primary transition-colors">
+                            {article.title}
+                          </h4>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            <Badge variant="secondary" className="mr-2 capitalize">
+                              {article.category.replace(/_/g, " ")}
+                            </Badge>
+                            {article.toolMentions.length > 0 && (
+                              <span>Affects: {article.toolMentions.join(", ")}</span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* Major Changes */}
+            {updates.majorChanges.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5" />
+                  Major Ranking Changes
+                </h3>
+                <div className="space-y-2">
+                  {updates.majorChanges.map((change, index) => (
+                    <div key={index} className="p-3 bg-muted/50 rounded-lg">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-medium">{change.toolName}</span>
+                        <Badge
+                          variant={change.changeCategory.includes("rise") ? "default" : "secondary"}
+                          className={
+                            change.changeCategory === "new_entry"
+                              ? "bg-green-100 text-green-800"
+                              : change.changeCategory.includes("rise")
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                          }
+                        >
+                          {change.changeCategory === "new_entry"
+                            ? "NEW"
+                            : change.currentRank < change.previousRank
+                              ? `↑${change.previousRank - change.currentRank}`
+                              : `↓${change.currentRank - change.previousRank}`}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{change.explanation}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Top Ranking Changes */}
             <div>
               <h3 className="text-lg font-semibold mb-3">🏆 Top 10 Current Rankings</h3>
               <div className="grid gap-2">
-                {[
-                  { rank: 1, name: "Cursor", score: 105.1, change: "↑1", tier: "S" },
-                  { rank: 2, name: "Devin", score: 94.5, change: "↑1", tier: "S" },
-                  { rank: 3, name: "Lovable", score: 80.4, change: "↑5", tier: "S" },
-                  { rank: 4, name: "Claude Code", score: 75.6, change: "↓3", tier: "S" },
-                  { rank: 5, name: "Google Jules", score: 73.9, change: "NEW", tier: "S" },
-                  { rank: 6, name: "GitHub Copilot", score: 73.5, change: "↓1", tier: "A" },
-                  { rank: 7, name: "Bolt.new", score: 71.0, change: "—", tier: "A" },
-                  { rank: 8, name: "Windsurf", score: 67.3, change: "↓4", tier: "A" },
-                  { rank: 9, name: "OpenAI Codex CLI", score: 67.2, change: "NEW", tier: "A" },
-                  { rank: 10, name: "ChatGPT Canvas", score: 66.5, change: "NEW", tier: "A" },
-                ].map((tool) => (
+                {updates.topRankings.map((tool) => (
                   <div
                     key={tool.rank}
                     className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
@@ -148,22 +170,24 @@ export default async function UpdatesPage({ params }: PageProps) {
                       >
                         {tool.rank}
                       </Badge>
-                      <span className="font-medium">{tool.name}</span>
+                      <span className="font-medium">{tool.toolName}</span>
                       <Badge variant={tool.tier === "S" ? "default" : "secondary"}>
                         {tool.tier}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-mono">{tool.score}</span>
+                      <span className="text-sm font-mono">{tool.score.toFixed(1)}</span>
                       {tool.change !== "—" && (
                         <Badge
                           variant={tool.change === "NEW" ? "default" : "secondary"}
                           className={
                             tool.change === "NEW"
                               ? "bg-green-100 text-green-800"
-                              : tool.change.startsWith("↑")
+                              : tool.changeType === "up"
                                 ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
+                                : tool.changeType === "down"
+                                  ? "bg-red-100 text-red-800"
+                                  : ""
                           }
                         >
                           {tool.change}
@@ -180,20 +204,26 @@ export default async function UpdatesPage({ params }: PageProps) {
               <h3 className="text-lg font-semibold mb-3">📊 Impact Statistics</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold">4</div>
+                  <div className="text-2xl font-bold">{updates.statistics.newArticlesCount}</div>
                   <div className="text-sm text-muted-foreground">New Articles</div>
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold">107</div>
+                  <div className="text-2xl font-bold">{updates.statistics.totalArticles}</div>
                   <div className="text-sm text-muted-foreground">Total Articles</div>
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold">19/39</div>
+                  <div className="text-2xl font-bold">
+                    {updates.statistics.toolsWithNews}/{updates.statistics.totalTools}
+                  </div>
                   <div className="text-sm text-muted-foreground">Tools with News</div>
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <div className="text-2xl font-bold">210.4</div>
-                  <div className="text-sm text-muted-foreground">Max Impact (Cursor)</div>
+                  <div className="text-2xl font-bold">
+                    {updates.statistics.maxImpact.impact.toFixed(1)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Max Impact ({updates.statistics.maxImpact.toolName})
+                  </div>
                 </div>
               </div>
             </div>
@@ -216,7 +246,7 @@ export default async function UpdatesPage({ params }: PageProps) {
                   <li>• 70% base score + 30% news impact weighting</li>
                   <li>• Exponential news aging over 12 months</li>
                   <li>• Category-specific impact multipliers</li>
-                  <li>• NEW: Logarithmic volume scaling for better distribution</li>
+                  <li>• Logarithmic volume scaling for better distribution</li>
                   <li>• Company announcement discount (0.7x)</li>
                 </ul>
               </div>

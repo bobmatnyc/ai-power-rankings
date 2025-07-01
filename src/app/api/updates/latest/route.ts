@@ -1,26 +1,21 @@
 import { NextResponse } from "next/server";
-import { readFileSync } from "fs";
-import path from "path";
+import { UpdatesGenerator } from "@/lib/updates-generator";
 
 export async function GET() {
   try {
-    // Get the latest update file
-    const updatePath = path.resolve(process.cwd(), "data/updates/2025-06-17-ranking-update.md");
-
-    const updateContent = readFileSync(updatePath, "utf8");
+    const generator = new UpdatesGenerator();
+    const updates = await generator.generateUpdates();
 
     return NextResponse.json({
       success: true,
-      content: updateContent,
-      date: "2025-06-17",
-      title: "Ranking Update - June 17, 2025",
+      data: updates,
     });
   } catch (error) {
-    console.error("Error fetching latest update:", error);
+    console.error("Error generating updates:", error);
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to fetch latest update",
+        error: "Failed to generate updates",
       },
       { status: 500 }
     );
