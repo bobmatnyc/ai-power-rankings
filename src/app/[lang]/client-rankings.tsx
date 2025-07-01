@@ -59,15 +59,30 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
+          console.log("Attempting to fetch /data/rankings.json");
           response = await fetch("/data/rankings.json", {
             signal: controller.signal,
             cache: "no-store",
           });
           clearTimeout(timeoutId);
 
+          console.log("Static file response status:", response.status);
+          console.log("Static file response headers:", response.headers);
+
           if (response.ok) {
-            data = await response.json();
-            console.log("Loaded from static file");
+            const text = await response.text();
+            console.log("Static file response length:", text.length);
+            console.log("First 100 chars:", text.substring(0, 100));
+
+            try {
+              data = JSON.parse(text);
+              console.log("Successfully parsed static file data");
+            } catch (parseError) {
+              console.error("Failed to parse static file JSON:", parseError);
+              console.log("Raw response:", text);
+            }
+          } else {
+            console.warn("Static file not OK:", response.status, response.statusText);
           }
         } catch (e) {
           console.warn("Static file fetch failed:", e);
