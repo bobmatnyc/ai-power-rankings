@@ -139,7 +139,7 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next, assets, api, data)
-    "/((?!api|_next/static|_next/image|assets|data|favicon.ico|crown-of-technology.png|robots.txt|sitemap.xml).*)",
+    // Skip all internal paths (_next, assets, api, data, and static files)
+    "/((?!api|_next/static|_next/image|assets|data|favicon.ico|crown.*|robots.txt|sitemap.xml).*)",
   ],
 };
