@@ -79,6 +79,7 @@
     "test:api:tools": "tsx scripts/test-tools-api.ts",
     "test:api:rankings": "tsx scripts/test-rankings-api.ts",
     "test:api:all": "npm run test:api:news && npm run test:api:companies && npm run test:api:tools && npm run test:api:rankings",
+    "test:i18n": "tsx scripts/test-i18n-imports.ts",
     "perf:audit": "node scripts/performance-audit.js",
     "perf:audit:prod": "node scripts/performance-audit.js https://aipowerranking.com/en",
     "perf:monitor": "node scripts/performance-audit.js && echo 'Performance audit completed for T-031'",
@@ -184,7 +185,13 @@
     ],
     "*.{json,md,css,scss}": [
       "prettier --write"
-    ]
+    ],
+    "src/middleware.ts": [
+      "npm run test:i18n"
+    ],
+    "src/auth.ts": [
+      "npm run test:i18n"
+    ],
   },
   "browserslist": {
     "production": [
