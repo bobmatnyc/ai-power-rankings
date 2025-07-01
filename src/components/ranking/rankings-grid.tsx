@@ -67,6 +67,7 @@ function RankingsGridContent({
   const [rankings, setRankings] = useState<RankingData[]>(initialRankings);
   const [loading, setLoading] = useState(initialRankings.length === 0);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [lastUpdateDate, setLastUpdateDate] = useState<string>("");
 
   // Get filters from URL
   const categoryParam = searchParams.get("category") || "all";
@@ -79,8 +80,31 @@ function RankingsGridContent({
       fetchRankings();
     } else {
       setLoading(false);
+      // For SSR, we need to fetch the algorithm date separately
+      fetchAlgorithmDate();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialRankings.length]);
+
+  const fetchAlgorithmDate = async (): Promise<void> => {
+    try {
+      const response = await fetch("/api/rankings?metadata=true");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.algorithm?.date) {
+          const date = new Date(data.algorithm.date);
+          const formattedDate = date.toLocaleDateString(lang, {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+          setLastUpdateDate(formattedDate);
+        }
+      }
+    } catch {
+      // Silently fail, will use fallback
+    }
+  };
 
   const fetchRankings = async (): Promise<void> => {
     try {
@@ -102,6 +126,17 @@ function RankingsGridContent({
         setRankings([]);
       } else {
         setRankings(data.rankings);
+
+        // Set last update date from algorithm date
+        if (data.algorithm?.date) {
+          const date = new Date(data.algorithm.date);
+          const formattedDate = date.toLocaleDateString(lang, {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+          setLastUpdateDate(formattedDate);
+        }
       }
 
       setLoading(false);
@@ -197,7 +232,9 @@ function RankingsGridContent({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{dict.rankings.stats.thisWeek}</div>
+            <div className="text-2xl font-bold">
+              {lastUpdateDate || dict.rankings.stats.thisWeek}
+            </div>
           </CardContent>
         </Card>
       </div>

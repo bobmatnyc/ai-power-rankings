@@ -164,6 +164,165 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
         </CardContent>
       </Card>
 
+      {/* Innovation Scoring Framework */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Innovation Scoring Framework</CardTitle>
+          <CardDescription>
+            Our innovation scoring (15% of total) evaluates breakthrough capabilities and paradigm
+            shifts in AI coding tools
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-semibold mb-3">Key Innovation Dimensions</h3>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-medium">🤖 Autonomy Architecture</h4>
+                    <Badge>25%</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Planning sophistication, execution independence, and learning capabilities
+                  </p>
+                  <div className="text-xs text-muted-foreground pl-4">
+                    • Basic (1-3): Single-step execution with manual guidance
+                    <br />
+                    • Advanced (4-6): Multi-step planning with checkpoints
+                    <br />• Revolutionary (7-10): Self-improving autonomous systems
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-medium">🧠 Context Understanding</h4>
+                    <Badge>20%</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Codebase comprehension, context scale, and multi-modal integration
+                  </p>
+                  <div className="text-xs text-muted-foreground pl-4">
+                    • File-level (1-3): Single file understanding
+                    <br />
+                    • Project-level (4-6): Full architecture comprehension
+                    <br />• Business-level (7-10): Intent and logic understanding
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-medium">⚡ Technical Capabilities</h4>
+                    <Badge>20%</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    AI model innovation, unique features, and performance breakthroughs
+                  </p>
+                  <div className="text-xs text-muted-foreground pl-4">
+                    • Standard (1-3): Off-the-shelf implementations
+                    <br />
+                    • Enhanced (4-6): Custom models and orchestration
+                    <br />• Breakthrough (7-10): Novel architectures and paradigms
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-medium">🔄 Workflow Transformation</h4>
+                    <Badge>15%</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Development process innovation and human-AI collaboration models
+                  </p>
+                  <div className="text-xs text-muted-foreground pl-4">
+                    • Enhancement (1-3): Improves existing workflows
+                    <br />
+                    • Innovation (4-6): Enables new methodologies
+                    <br />• Revolution (7-10): Fundamentally changes development
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-medium">🌐 Ecosystem Integration</h4>
+                    <Badge>10%</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Protocol innovation and platform strategy
+                  </p>
+                  <div className="text-xs text-muted-foreground pl-4">
+                    • Standard (1-3): Traditional integrations
+                    <br />
+                    • Protocol Creation (4-6): Open standards (MCP, A2A)
+                    <br />• Industry Leadership (7-10): Wide protocol adoption
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-medium">📊 Market Impact</h4>
+                    <Badge>10%</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Category innovation and industry influence
+                  </p>
+                  <div className="text-xs text-muted-foreground pl-4">
+                    • Participant (1-3): Competes in existing categories
+                    <br />
+                    • Category Leader (4-6): Defines category standards
+                    <br />• Category Creator (7-10): Creates new paradigms
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div>
+              <h3 className="font-semibold mb-3">Scoring Scale</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">9-10</span>
+                    <span className="text-muted-foreground">Revolutionary breakthrough</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">7-8</span>
+                    <span className="text-muted-foreground">Major innovation</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">5-6</span>
+                    <span className="text-muted-foreground">Significant advancement</span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">3-4</span>
+                    <span className="text-muted-foreground">Incremental improvement</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">1-2</span>
+                    <span className="text-muted-foreground">Minimal innovation</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">0</span>
+                    <span className="text-muted-foreground">No innovation</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-muted/50 p-4 rounded-lg">
+              <p className="text-xs text-muted-foreground">
+                <strong>Note:</strong> Innovation scores are evaluated monthly and consider both
+                absolute innovation and relative progress within the competitive landscape. Scores
+                may decrease over time as innovations become standard features.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Modifiers */}
       <Card className="mb-8">
         <CardHeader>
