@@ -30,10 +30,7 @@ export class CacheStrategy<T> {
       checkInterval: options.checkInterval || 5 * 60 * 1000, // 5 minutes default
     };
 
-    // Don't start cleanup automatically in serverless environments
-    if (!process.env["VERCEL"] && !process.env["AWS_LAMBDA_FUNCTION_NAME"]) {
-      this.startCleanup();
-    }
+    this.startCleanup();
   }
 
   /**
@@ -213,69 +210,23 @@ export class CacheStrategy<T> {
 
 /**
  * Global cache instances for different data types
- * Lazy-loaded to prevent initialization in serverless environments
  */
-let _toolsCache: CacheStrategy<any> | null = null;
-let _companiesCache: CacheStrategy<any> | null = null;
-let _rankingsCache: CacheStrategy<any> | null = null;
-let _newsCache: CacheStrategy<any> | null = null;
+export const toolsCache = new CacheStrategy<any>({
+  maxSize: 500,
+  ttl: 60 * 60 * 1000, // 1 hour
+});
 
-export const toolsCache = {
-  get(): CacheStrategy<any> {
-    if (!_toolsCache) {
-      _toolsCache = new CacheStrategy<any>({
-        maxSize: 500,
-        ttl: 60 * 60 * 1000, // 1 hour
-      });
-    }
-    return _toolsCache;
-  },
-  getStats() {
-    return this.get().getStats();
-  },
-};
+export const companiesCache = new CacheStrategy<any>({
+  maxSize: 200,
+  ttl: 60 * 60 * 1000, // 1 hour
+});
 
-export const companiesCache = {
-  get(): CacheStrategy<any> {
-    if (!_companiesCache) {
-      _companiesCache = new CacheStrategy<any>({
-        maxSize: 200,
-        ttl: 60 * 60 * 1000, // 1 hour
-      });
-    }
-    return _companiesCache;
-  },
-  getStats() {
-    return this.get().getStats();
-  },
-};
+export const rankingsCache = new CacheStrategy<any>({
+  maxSize: 50,
+  ttl: 30 * 60 * 1000, // 30 minutes
+});
 
-export const rankingsCache = {
-  get(): CacheStrategy<any> {
-    if (!_rankingsCache) {
-      _rankingsCache = new CacheStrategy<any>({
-        maxSize: 50,
-        ttl: 30 * 60 * 1000, // 30 minutes
-      });
-    }
-    return _rankingsCache;
-  },
-  getStats() {
-    return this.get().getStats();
-  },
-};
-
-export const newsCache = {
-  get(): CacheStrategy<any> {
-    if (!_newsCache) {
-      _newsCache = new CacheStrategy<any>({
-        maxSize: 1000,
-        ttl: 15 * 60 * 1000, // 15 minutes
-      });
-    }
-    return _newsCache;
-  },
-  getStats() {
-    return this.get().getStats();
-  },
-};
+export const newsCache = new CacheStrategy<any>({
+  maxSize: 1000,
+  ttl: 15 * 60 * 1000, // 15 minutes
+});
