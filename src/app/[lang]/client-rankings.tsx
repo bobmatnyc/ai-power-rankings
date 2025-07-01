@@ -49,18 +49,56 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
     async function fetchRankings() {
       try {
         console.log("Fetching rankings from static data");
-        const response = await fetch("/data/rankings.json");
 
-        console.log("Response status:", response.status);
+        // Try multiple approaches to fetch the data
+        let response;
+        let data;
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Static data fetch error:", errorText);
-          throw new Error(`Failed to fetch static rankings: ${response.status}`);
+        // First try the static file with timeout
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+          response = await fetch("/data/rankings.json", {
+            signal: controller.signal,
+            cache: "no-store",
+          });
+          clearTimeout(timeoutId);
+
+          if (response.ok) {
+            data = await response.json();
+            console.log("Loaded from static file");
+          }
+        } catch (e) {
+          console.warn("Static file fetch failed:", e);
         }
 
-        const data = await response.json();
-        console.log("Received static data:", data);
+        // If static file fails, try the API endpoint
+        if (!data) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+            response = await fetch("/api/rankings/json", {
+              signal: controller.signal,
+              cache: "no-store",
+            });
+            clearTimeout(timeoutId);
+
+            if (response.ok) {
+              data = await response.json();
+              console.log("Loaded from API endpoint");
+            }
+          } catch (e) {
+            console.warn("API endpoint fetch failed:", e);
+          }
+        }
+
+        if (!data) {
+          throw new Error("Failed to fetch rankings from both static file and API");
+        }
+
+        console.log("Received data:", data);
 
         const rankings = data.rankings || [];
         console.log("Rankings count:", rankings.length);
