@@ -1,13 +1,13 @@
 /**
  * Enhanced News Integration for Ranking Algorithm
- * 
+ *
  * Combines quantitative metric extraction with AI-powered qualitative analysis
  * to provide comprehensive news impact on rankings.
  */
 
-import type { NewsArticle } from '@/lib/json-db/schemas';
-import { processNewsQualitativeImpact } from './news-qualitative-analyzer';
-import { logger } from './logger';
+import type { NewsArticle } from "@/lib/json-db/schemas";
+import { processNewsQualitativeImpact } from "./news-qualitative-analyzer";
+import { logger } from "./logger";
 
 export interface EnhancedNewsMetrics {
   // Quantitative metrics (from regex extraction)
@@ -16,14 +16,14 @@ export interface EnhancedNewsMetrics {
   valuation?: number;
   monthly_arr?: number;
   estimated_users?: number;
-  
+
   // Qualitative adjustments (from AI analysis)
   innovationBoost: number;
   businessSentimentAdjust: number;
   developmentVelocityBoost: number;
   marketTractionBoost: number;
   technicalPerformanceBoost: number;
-  
+
   // Metadata
   articlesProcessed: number;
   significantEvents: Array<{
@@ -134,9 +134,9 @@ export async function extractEnhancedNewsMetrics(
 ): Promise<EnhancedNewsMetrics> {
   logger.info(`Extracting enhanced news metrics for ${toolName}`, {
     tool_id: toolId,
-    articles_count: newsArticles.filter(a => a.tool_mentions?.includes(toolId)).length,
+    articles_count: newsArticles.filter((a) => a.tool_mentions?.includes(toolId)).length,
     enable_ai: enableAI,
-    preview_date: previewDate
+    preview_date: previewDate,
   });
 
   // Extract quantitative metrics using regex
@@ -150,12 +150,12 @@ export async function extractEnhancedNewsMetrics(
     marketTractionBoost: 0,
     technicalPerformanceBoost: 0,
   };
-  
+
   let articlesProcessed = 0;
   let significantEvents: Array<{ event: string; date: string; impact: string }> = [];
 
   // Extract qualitative metrics using AI if enabled
-  if (enableAI && process.env["OPENAI_API_KEY"]) {
+  if (enableAI && (process.env["OPENROUTER_API_KEY"] || process.env["OPENAI_API_KEY"])) {
     try {
       const cutoffDate = previewDate ? new Date(previewDate) : new Date();
       const qualitativeResult = await processNewsQualitativeImpact(
@@ -164,31 +164,31 @@ export async function extractEnhancedNewsMetrics(
         newsArticles,
         cutoffDate
       );
-      
+
       qualitativeAdjustments = qualitativeResult.aggregatedAdjustments;
       articlesProcessed = qualitativeResult.processedArticles;
       significantEvents = qualitativeResult.significantEvents;
-      
+
       logger.info(`AI qualitative analysis completed for ${toolName}`, {
         tool_id: toolId,
         articles_processed: articlesProcessed,
         adjustments: qualitativeAdjustments,
-        significant_events: significantEvents.length
+        significant_events: significantEvents.length,
       });
     } catch (error) {
       logger.error(`Failed to extract qualitative metrics for ${toolName}`, {
         tool_id: toolId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
 
   // Get the most recent news date
   const toolArticles = newsArticles
-    .filter(a => a.tool_mentions?.includes(toolId))
-    .filter(a => !previewDate || new Date(a.published_date) <= new Date(previewDate))
+    .filter((a) => a.tool_mentions?.includes(toolId))
+    .filter((a) => !previewDate || new Date(a.published_date) <= new Date(previewDate))
     .sort((a, b) => new Date(b.published_date).getTime() - new Date(a.published_date).getTime());
-  
+
   const lastNewsDate = toolArticles[0]?.published_date;
 
   return {
@@ -196,7 +196,7 @@ export async function extractEnhancedNewsMetrics(
     ...qualitativeAdjustments,
     articlesProcessed,
     significantEvents,
-    lastNewsDate
+    lastNewsDate,
   };
 }
 
@@ -215,22 +215,22 @@ export function applyEnhancedNewsMetrics(
     updatedMetrics.swe_bench_score = enhancedNewsMetrics.swe_bench_score;
     logger.info(`Updated SWE-bench score from news: ${enhancedNewsMetrics.swe_bench_score}`);
   }
-  
+
   if (enhancedNewsMetrics.funding !== undefined) {
     updatedMetrics.funding = enhancedNewsMetrics.funding;
     logger.info(`Updated funding from news: ${enhancedNewsMetrics.funding}`);
   }
-  
+
   if (enhancedNewsMetrics.valuation !== undefined) {
     updatedMetrics.valuation = enhancedNewsMetrics.valuation;
     logger.info(`Updated valuation from news: ${enhancedNewsMetrics.valuation}`);
   }
-  
+
   if (enhancedNewsMetrics.monthly_arr !== undefined) {
     updatedMetrics.monthly_arr = enhancedNewsMetrics.monthly_arr;
     logger.info(`Updated monthly ARR from news: ${enhancedNewsMetrics.monthly_arr}`);
   }
-  
+
   if (enhancedNewsMetrics.estimated_users !== undefined) {
     updatedMetrics.estimated_users = enhancedNewsMetrics.estimated_users;
     logger.info(`Updated estimated users from news: ${enhancedNewsMetrics.estimated_users}`);
@@ -239,8 +239,11 @@ export function applyEnhancedNewsMetrics(
   // Apply qualitative adjustments to innovation score
   if (enhancedNewsMetrics.innovationBoost > 0) {
     const currentInnovation = updatedMetrics.innovation_score || 5;
-    updatedMetrics.innovation_score = Math.min(10, currentInnovation + enhancedNewsMetrics.innovationBoost);
-    
+    updatedMetrics.innovation_score = Math.min(
+      10,
+      currentInnovation + enhancedNewsMetrics.innovationBoost
+    );
+
     // Also update innovations array if boost is significant
     if (enhancedNewsMetrics.innovationBoost >= 1 && enhancedNewsMetrics.lastNewsDate) {
       if (!updatedMetrics.innovations) {
@@ -249,7 +252,7 @@ export function applyEnhancedNewsMetrics(
       updatedMetrics.innovations.push({
         score: enhancedNewsMetrics.innovationBoost,
         date: new Date(enhancedNewsMetrics.lastNewsDate),
-        description: `Innovation boost from recent developments`
+        description: `Innovation boost from recent developments`,
       });
     }
   }
@@ -257,15 +260,17 @@ export function applyEnhancedNewsMetrics(
   // Apply business sentiment adjustment
   if (enhancedNewsMetrics.businessSentimentAdjust !== 0) {
     const currentSentiment = updatedMetrics.business_sentiment || 0.5;
-    updatedMetrics.business_sentiment = Math.max(0, Math.min(1, 
-      currentSentiment + (enhancedNewsMetrics.businessSentimentAdjust / 2)
-    ));
+    updatedMetrics.business_sentiment = Math.max(
+      0,
+      Math.min(1, currentSentiment + enhancedNewsMetrics.businessSentimentAdjust / 2)
+    );
   }
 
   // Apply development velocity boost
   if (enhancedNewsMetrics.developmentVelocityBoost > 0) {
     const currentFrequency = updatedMetrics.release_frequency || 2;
-    updatedMetrics.release_frequency = Math.min(30, 
+    updatedMetrics.release_frequency = Math.min(
+      30,
       currentFrequency * (1 + enhancedNewsMetrics.developmentVelocityBoost / 2)
     );
   }
@@ -280,8 +285,8 @@ export function applyEnhancedNewsMetrics(
       sentiment: enhancedNewsMetrics.businessSentimentAdjust,
       velocity: enhancedNewsMetrics.developmentVelocityBoost,
       traction: enhancedNewsMetrics.marketTractionBoost,
-      technical: enhancedNewsMetrics.technicalPerformanceBoost
-    }
+      technical: enhancedNewsMetrics.technicalPerformanceBoost,
+    },
   };
 
   return updatedMetrics;
@@ -299,15 +304,17 @@ export function applyNewsImpactToScores(
 
   // Apply technical performance boost
   if (enhancedNewsMetrics.technicalPerformanceBoost > 0) {
-    adjustedScores['technicalPerformance'] = Math.min(10,
-      (adjustedScores['technicalPerformance'] || 5) + enhancedNewsMetrics.technicalPerformanceBoost
+    adjustedScores["technicalPerformance"] = Math.min(
+      10,
+      (adjustedScores["technicalPerformance"] || 5) + enhancedNewsMetrics.technicalPerformanceBoost
     );
   }
 
   // Apply market traction boost
   if (enhancedNewsMetrics.marketTractionBoost > 0) {
-    adjustedScores['marketTraction'] = Math.min(10,
-      (adjustedScores['marketTraction'] || 5) + enhancedNewsMetrics.marketTractionBoost
+    adjustedScores["marketTraction"] = Math.min(
+      10,
+      (adjustedScores["marketTraction"] || 5) + enhancedNewsMetrics.marketTractionBoost
     );
   }
 

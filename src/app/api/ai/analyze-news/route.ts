@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateObject } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import { loggers } from "@/lib/logger";
 
@@ -79,9 +76,9 @@ const QualitativeMetricsSchema = z.object({
       .describe("Release frequency trend"),
     featureVelocity: z.number().min(0).max(10).describe("Speed of feature development (0-10)"),
     communityEngagement: z
-      .enum(["increasing", "high", "medium", "low", "declining"])
+      .enum(["increasing", "high", "medium", "low", "declining", "unknown"])
       .describe("Community activity level"),
-    openSourceActivity: z.boolean().describe("Is there open source activity mentioned?"),
+    openSourceActivity: z.boolean().optional().describe("Is there open source activity mentioned?"),
   }),
 
   // Competitive positioning
@@ -116,7 +113,16 @@ export type QualitativeMetrics = z.infer<typeof QualitativeMetricsSchema>;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { article, toolName, toolContext, provider = "openai" } = body;
+    const { article, toolName, toolContext, debug = false } = body;
+
+    // Debug environment variables if requested
+    if (debug) {
+      console.log("ENV Check:", {
+        openrouter: !!process.env["OPENROUTER_API_KEY"],
+        openai: !!process.env["OPENAI_API_KEY"],
+        analysis_enabled: process.env["ENABLE_AI_NEWS_ANALYSIS"],
+      });
+    }
 
     if (!article || !toolName) {
       return NextResponse.json({ error: "Article and toolName are required" }, { status: 400 });
@@ -126,7 +132,18 @@ export async function POST(request: NextRequest) {
     const systemPrompt = `You are an expert AI analyst specializing in developer tools and AI coding assistants. 
 Your task is to extract qualitative metrics from news articles that traditional pattern matching cannot capture.
 Focus on understanding the strategic implications, market dynamics, and technical progress.
-Be objective and base your analysis only on what is explicitly stated or strongly implied in the article.`;
+Be objective and base your analysis only on what is explicitly stated or strongly implied in the article.
+
+You must respond with valid JSON matching this schema:
+{
+  "productLaunches": [{"feature": "string", "significance": "breakthrough|major|incremental", "impact": 0-10, "description": "string"}],
+  "partnerships": [{"partner": "string", "type": "strategic|integration|distribution|technology", "significance": 0-10, "description": "string"}],
+  "technicalMilestones": [{"achievement": "string", "category": "performance|capability|scale|reliability", "improvement": number, "impact": 0-10}],
+  "sentiment": {"overall": -1 to 1, "confidence": 0-1, "aspects": {"product": -1 to 1, "leadership": -1 to 1, "competition": -1 to 1, "future": -1 to 1}},
+  "developmentActivity": {"releaseCadence": "accelerating|steady|slowing|unknown", "featureVelocity": 0-10, "communityEngagement": "increasing|high|medium|low|declining|unknown", "openSourceActivity": boolean},
+  "competitivePosition": {"mentioned_competitors": ["string"], "positioning": "leader|challenger|follower|niche|unclear", "differentiators": ["string"], "threats": ["string"]},
+  "keyEvents": [{"event": "string", "type": "funding|acquisition|leadership|crisis|expansion|other", "impact": "positive|negative|neutral|mixed", "significance": 0-10}]
+}`;
 
     // User prompt
     const userPrompt = `Analyze this news article about ${toolName} and extract qualitative metrics.
@@ -155,39 +172,69 @@ For sentiment (-1 to 1):
 - 0.2 to 0.6: Positive
 - 0.6 to 1.0: Very Positive`;
 
-    // Select model based on provider preference
-    const modelName = provider === "anthropic" ? "claude-3-5-haiku-latest" : "gpt-4-turbo";
+    // Use OpenAI directly via fetch
+    if (!process.env["OPENAI_API_KEY"]) {
+      throw new Error("OPENAI_API_KEY not configured");
+    }
 
-    const model = provider === "anthropic" ? anthropic(modelName) : openai(modelName);
+    const modelName = "gpt-4o-mini";
+
+    if (debug) {
+      console.log("Using OpenAI directly:", { modelName, provider: "openai" });
+    }
 
     try {
-      // Generate analysis using AI SDK
-      const result = await generateObject({
-        model: model as any,
-        schema: QualitativeMetricsSchema,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.3,
+      // Call OpenAI API directly
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env["OPENAI_API_KEY"]}`,
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.3,
+          response_format: { type: "json_object" },
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices[0]?.message?.content;
+
+      if (!content) {
+        throw new Error("No content in OpenAI response");
+      }
+
+      // Parse the JSON response
+      const parsedResult = JSON.parse(content);
+
+      // Validate against our schema
+      const result = QualitativeMetricsSchema.parse(parsedResult);
 
       loggers.api.info(`AI news analysis completed for ${toolName}`, {
         tool: toolName,
         article_id: article.id,
-        provider,
+        provider: "openai",
         model: modelName,
         metrics_summary: {
-          product_launches: result.object.productLaunches.length,
-          partnerships: result.object.partnerships.length,
-          technical_milestones: result.object.technicalMilestones.length,
-          overall_sentiment: result.object.sentiment.overall,
+          product_launches: result.productLaunches.length,
+          partnerships: result.partnerships.length,
+          technical_milestones: result.technicalMilestones.length,
+          overall_sentiment: result.sentiment.overall,
         },
       });
 
       return NextResponse.json({
-        metrics: result.object,
-        provider: provider,
+        metrics: result,
+        provider: "openai",
         model: modelName,
       });
     } catch (error) {

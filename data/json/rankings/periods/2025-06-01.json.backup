@@ -2,13 +2,13 @@
   "period": "2025-06-01",
   "algorithm_version": "v6.0",
   "is_current": true,
-  "created_at": "2025-07-01T11:17:53.021Z",
+  "created_at": "2025-07-01T14:27:43.067Z",
   "rankings": [
     {
       "tool_id": "4",
       "tool_name": "Claude Code",
       "position": 1,
-      "score": 73.62,
+      "score": 73.97999999999999,
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 0,
@@ -30,7 +30,7 @@
       "tool_id": "11",
       "tool_name": "Google Jules",
       "position": 2,
-      "score": 70.13,
+      "score": 70.49000000000001,
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 0,
@@ -52,7 +52,7 @@
       "tool_id": "3",
       "tool_name": "Devin",
       "position": 3,
-      "score": 69.08,
+      "score": 69.71000000000001,
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 0,
@@ -74,7 +74,7 @@
       "tool_id": "1",
       "tool_name": "Cursor",
       "position": 4,
-      "score": 65.94,
+      "score": 66.77,
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 0,
@@ -96,7 +96,7 @@
       "tool_id": "12",
       "tool_name": "Lovable",
       "position": 5,
-      "score": 59.519999999999996,
+      "score": 60.06,
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 0,
@@ -404,7 +404,7 @@
       "tool_id": "2",
       "tool_name": "GitHub Copilot",
       "position": 19,
-      "score": 51.379999999999995,
+      "score": 51.42,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 0,
@@ -423,10 +423,10 @@
       }
     },
     {
-      "tool_id": "25",
-      "tool_name": "Augment Code",
+      "tool_id": "5",
+      "tool_name": "Bolt.new",
       "position": 20,
-      "score": 49.77,
+      "score": 49.86,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 0,
@@ -439,14 +439,14 @@
         "platform_resilience": 0
       },
       "movement": {
-        "change": 4,
+        "change": 3,
         "direction": "down",
-        "previous_position": 16
+        "previous_position": 17
       }
     },
     {
-      "tool_id": "20",
-      "tool_name": "Diffblue Cover",
+      "tool_id": "25",
+      "tool_name": "Augment Code",
       "position": 21,
       "score": 49.77,
       "tier": "B",
@@ -461,16 +461,16 @@
         "platform_resilience": 0
       },
       "movement": {
-        "change": 7,
-        "direction": "up",
-        "previous_position": 28
+        "change": 5,
+        "direction": "down",
+        "previous_position": 16
       }
     },
     {
-      "tool_id": "5",
-      "tool_name": "Bolt.new",
+      "tool_id": "20",
+      "tool_name": "Diffblue Cover",
       "position": 22,
-      "score": 49.36,
+      "score": 49.77,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 0,
@@ -483,9 +483,9 @@
         "platform_resilience": 0
       },
       "movement": {
-        "change": 5,
-        "direction": "down",
-        "previous_position": 17
+        "change": 6,
+        "direction": "up",
+        "previous_position": 28
       }
     },
     {

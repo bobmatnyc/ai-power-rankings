@@ -95,6 +95,7 @@ export function RankingBuilder() {
   const [isSaving, setIsSaving] = useState(false);
   const [preview, setPreview] = useState<PreviewResult | null>(null);
   const [error, setError] = useState<string>("");
+  const [progressTicker, setProgressTicker] = useState<string>("");
   const [availablePeriods, setAvailablePeriods] = useState<string[]>([]);
   const [expandedPreview, setExpandedPreview] = useState(false);
 
@@ -128,6 +129,20 @@ export function RankingBuilder() {
     setError("");
     setIsGeneratingPreview(true);
     setPreview(null);
+    setProgressTicker("Starting generation...");
+
+    // Start progress polling
+    const progressInterval = setInterval(async () => {
+      try {
+        const progressResponse = await fetch("/api/admin/ranking-progress");
+        if (progressResponse.ok) {
+          const progressData = await progressResponse.json();
+          setProgressTicker(progressData.message || "Processing...");
+        }
+      } catch (err) {
+        // Ignore progress errors, continue with main request
+      }
+    }, 1000);
 
     try {
       const response = await fetch("/api/admin/preview-rankings-json", {
@@ -157,7 +172,9 @@ export function RankingBuilder() {
       console.error("Preview generation error:", err);
       setError(err instanceof Error ? err.message : "Failed to generate preview");
     } finally {
+      clearInterval(progressInterval);
       setIsGeneratingPreview(false);
+      setProgressTicker("");
     }
   };
 
@@ -372,6 +389,15 @@ export function RankingBuilder() {
               )}
             </Button>
           </div>
+
+          {progressTicker && (
+            <div className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md border">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                {progressTicker}
+              </div>
+            </div>
+          )}
 
           {error && (
             <Alert variant="destructive">

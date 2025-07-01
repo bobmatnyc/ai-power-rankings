@@ -2,481 +2,424 @@
   "period": "2025-06-01",
   "algorithm_version": "v6.0",
   "is_current": false,
-  "created_at": "2025-07-01T03:23:00.683Z",
+  "created_at": "2025-07-01T11:17:53.021Z",
   "rankings": [
     {
       "tool_id": "4",
       "tool_name": "Claude Code",
       "position": 1,
-      "score": 68.91,
+      "score": 73.62,
       "tier": "S",
       "factor_scores": {
-        "agentic_capability": 6.950000000000001,
-        "innovation": 5,
-        "technical_performance": 7.250000000000001,
-        "developer_adoption": 5.79,
-        "market_traction": 7.2061376167232405,
-        "business_sentiment": 8,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Claude Code enters the rankings with strong scores in agentic capability, technical performance, market traction."
-      }
-    },
-    {
-      "tool_id": "3",
-      "tool_name": "Devin",
-      "position": 2,
-      "score": 68.91,
-      "tier": "S",
-      "factor_scores": {
-        "agentic_capability": 6.950000000000001,
-        "innovation": 5,
-        "technical_performance": 7.250000000000001,
-        "developer_adoption": 5.79,
-        "market_traction": 7.2061376167232405,
-        "business_sentiment": 8,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
-      },
-      "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Devin enters the rankings with strong scores in agentic capability, technical performance, market traction."
+        "change": 2,
+        "direction": "up",
+        "previous_position": 3
       }
     },
     {
       "tool_id": "11",
       "tool_name": "Google Jules",
-      "position": 3,
-      "score": 68.91,
+      "position": 2,
+      "score": 70.13,
       "tier": "S",
       "factor_scores": {
-        "agentic_capability": 6.950000000000001,
-        "innovation": 5,
-        "technical_performance": 7.250000000000001,
-        "developer_adoption": 5.79,
-        "market_traction": 7.2061376167232405,
-        "business_sentiment": 8,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "change": 3,
+        "direction": "up",
+        "previous_position": 5
+      }
+    },
+    {
+      "tool_id": "3",
+      "tool_name": "Devin",
+      "position": 3,
+      "score": 69.08,
+      "tier": "S",
+      "factor_scores": {
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Google Jules enters the rankings with strong scores in agentic capability, technical performance, market traction."
+      "movement": {
+        "change": 2,
+        "direction": "down",
+        "previous_position": 1
       }
     },
     {
       "tool_id": "1",
       "tool_name": "Cursor",
       "position": 4,
-      "score": 66.22,
+      "score": 65.94,
       "tier": "S",
       "factor_scores": {
-        "agentic_capability": 5.949999999999999,
-        "innovation": 5,
-        "technical_performance": 6.65,
-        "developer_adoption": 5.79,
-        "market_traction": 8.056309213847861,
-        "business_sentiment": 8,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Cursor enters the rankings with strong scores in agentic capability, market traction, technical performance."
-      }
-    },
-    {
-      "tool_id": "18",
-      "tool_name": "ChatGPT Canvas",
-      "position": 5,
-      "score": 58.98,
-      "tier": "S",
-      "factor_scores": {
-        "agentic_capability": 6.325000000000001,
-        "innovation": 5,
-        "technical_performance": 6.13,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
-      },
-      "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "ChatGPT Canvas enters the rankings with strong scores in agentic capability, market traction, technical performance."
-      }
-    },
-    {
-      "tool_id": "24",
-      "tool_name": "OpenAI Codex CLI",
-      "position": 6,
-      "score": 58.63,
-      "tier": "A",
-      "factor_scores": {
-        "agentic_capability": 6.325000000000001,
-        "innovation": 5,
-        "technical_performance": 5.85,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
-      },
-      "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "OpenAI Codex CLI enters the rankings with strong scores in agentic capability, market traction, innovation."
-      }
-    },
-    {
-      "tool_id": "7",
-      "tool_name": "Aider",
-      "position": 7,
-      "score": 58.31,
-      "tier": "A",
-      "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 5.65,
-        "developer_adoption": 5.7,
-        "market_traction": 6.361841300931664,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
-      },
-      "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Aider enters the rankings with strong scores in agentic capability, market traction, innovation."
-      }
-    },
-    {
-      "tool_id": "6",
-      "tool_name": "Cline",
-      "position": 8,
-      "score": 58.31,
-      "tier": "A",
-      "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 5.65,
-        "developer_adoption": 5.7,
-        "market_traction": 6.361841300931664,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
-      },
-      "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Cline enters the rankings with strong scores in agentic capability, market traction, innovation."
-      }
-    },
-    {
-      "tool_id": "8",
-      "tool_name": "Continue",
-      "position": 9,
-      "score": 58.31,
-      "tier": "A",
-      "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 5.65,
-        "developer_adoption": 5.7,
-        "market_traction": 6.361841300931664,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
-      },
-      "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Continue enters the rankings with strong scores in agentic capability, market traction, innovation."
-      }
-    },
-    {
-      "tool_id": "13",
-      "tool_name": "OpenHands",
-      "position": 10,
-      "score": 58.31,
-      "tier": "A",
-      "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 5.65,
-        "developer_adoption": 5.7,
-        "market_traction": 6.361841300931664,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
-      },
-      "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "OpenHands enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 4,
+        "direction": "up",
+        "previous_position": 8
       }
     },
     {
       "tool_id": "12",
       "tool_name": "Lovable",
-      "position": 11,
-      "score": 54.14,
-      "tier": "A",
+      "position": 5,
+      "score": 59.519999999999996,
+      "tier": "S",
       "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 5.65,
-        "developer_adoption": 2.04,
-        "market_traction": 6.684963492579978,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Lovable enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 3,
+        "direction": "down",
+        "previous_position": 2
       }
     },
     {
-      "tool_id": "2",
-      "tool_name": "GitHub Copilot",
-      "position": 12,
-      "score": 53.63,
+      "tool_id": "18",
+      "tool_name": "ChatGPT Canvas",
+      "position": 6,
+      "score": 58.98,
       "tier": "A",
       "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 4.65,
-        "developer_adoption": 2.04,
-        "market_traction": 7.273653956845782,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "change": 1,
+        "direction": "up",
+        "previous_position": 7
+      }
+    },
+    {
+      "tool_id": "24",
+      "tool_name": "OpenAI Codex CLI",
+      "position": 7,
+      "score": 58.63,
+      "tier": "A",
+      "factor_scores": {
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "GitHub Copilot enters the rankings with strong scores in agentic capability, market traction, innovation."
+      "movement": {
+        "change": 1,
+        "direction": "down",
+        "previous_position": 6
+      }
+    },
+    {
+      "tool_id": "7",
+      "tool_name": "Aider",
+      "position": 8,
+      "score": 58.31,
+      "tier": "A",
+      "factor_scores": {
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
+      },
+      "movement": {
+        "change": 13,
+        "direction": "up",
+        "previous_position": 21
+      }
+    },
+    {
+      "tool_id": "6",
+      "tool_name": "Cline",
+      "position": 9,
+      "score": 58.31,
+      "tier": "A",
+      "factor_scores": {
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
+      },
+      "movement": {
+        "change": 11,
+        "direction": "up",
+        "previous_position": 20
+      }
+    },
+    {
+      "tool_id": "8",
+      "tool_name": "Continue",
+      "position": 10,
+      "score": 58.31,
+      "tier": "A",
+      "factor_scores": {
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
+      },
+      "movement": {
+        "change": 9,
+        "direction": "up",
+        "previous_position": 19
+      }
+    },
+    {
+      "tool_id": "13",
+      "tool_name": "OpenHands",
+      "position": 11,
+      "score": 58.31,
+      "tier": "A",
+      "factor_scores": {
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
+      },
+      "movement": {
+        "change": 11,
+        "direction": "up",
+        "previous_position": 22
       }
     },
     {
       "tool_id": "27",
       "tool_name": "Google Gemini Code Assist",
-      "position": 13,
+      "position": 12,
       "score": 53.58,
       "tier": "A",
       "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 5.65,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Google Gemini Code Assist enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 2,
+        "direction": "down",
+        "previous_position": 10
       }
     },
     {
       "tool_id": "16",
       "tool_name": "Qodo Gen",
-      "position": 14,
+      "position": 13,
       "score": 52.95,
       "tier": "A",
       "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 5.150000000000001,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Qodo Gen enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 13,
+        "direction": "up",
+        "previous_position": 26
       }
     },
     {
       "tool_id": "14",
       "tool_name": "Windsurf",
-      "position": 15,
+      "position": 14,
       "score": 52.95,
       "tier": "A",
       "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 5.150000000000001,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Windsurf enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 3,
+        "direction": "down",
+        "previous_position": 11
       }
     },
     {
       "tool_id": "9",
       "tool_name": "Replit Agent",
-      "position": 16,
+      "position": 15,
       "score": 52.68,
-      "tier": "B",
+      "tier": "A",
       "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 4.930000000000001,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Replit Agent enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 1,
+        "direction": "down",
+        "previous_position": 14
       }
     },
     {
       "tool_id": "22",
       "tool_name": "JetBrains AI Assistant",
-      "position": 17,
+      "position": 16,
       "score": 52.58,
       "tier": "B",
       "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 4.8500000000000005,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "JetBrains AI Assistant enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 3,
+        "direction": "down",
+        "previous_position": 13
       }
     },
     {
       "tool_id": "21",
       "tool_name": "Tabnine",
-      "position": 18,
+      "position": 17,
       "score": 52.33,
       "tier": "B",
       "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 4.65,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Tabnine enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 8,
+        "direction": "down",
+        "previous_position": 9
       }
     },
     {
       "tool_id": "10",
       "tool_name": "v0",
-      "position": 19,
+      "position": 18,
       "score": 52.33,
       "tier": "B",
       "factor_scores": {
-        "agentic_capability": 4.7250000000000005,
-        "innovation": 5,
-        "technical_performance": 4.65,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "change": 5,
+        "direction": "up",
+        "previous_position": 23
+      }
+    },
+    {
+      "tool_id": "2",
+      "tool_name": "GitHub Copilot",
+      "position": 19,
+      "score": 51.379999999999995,
+      "tier": "B",
+      "factor_scores": {
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "v0 enters the rankings with strong scores in agentic capability, market traction, innovation."
+      "movement": {
+        "change": 15,
+        "direction": "down",
+        "previous_position": 4
       }
     },
     {
@@ -486,22 +429,19 @@
       "score": 49.77,
       "tier": "B",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 4,
-        "developer_adoption": 2.04,
-        "market_traction": 6.632829994189563,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Augment Code enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 4,
+        "direction": "down",
+        "previous_position": 16
       }
     },
     {
@@ -511,47 +451,41 @@
       "score": 49.77,
       "tier": "B",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 4,
-        "developer_adoption": 2.04,
-        "market_traction": 6.632829994189563,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Diffblue Cover enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 7,
+        "direction": "up",
+        "previous_position": 28
       }
     },
     {
       "tool_id": "5",
       "tool_name": "Bolt.new",
       "position": 22,
-      "score": 49.75,
+      "score": 49.36,
       "tier": "B",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 3.7500000000000004,
-        "developer_adoption": 2.04,
-        "market_traction": 6.869736975458613,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Bolt.new enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 5,
+        "direction": "down",
+        "previous_position": 17
       }
     },
     {
@@ -561,22 +495,19 @@
       "score": 48.949999999999996,
       "tier": "B",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 3.7500000000000004,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Amazon Q Developer enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 2,
+        "direction": "up",
+        "previous_position": 25
       }
     },
     {
@@ -586,22 +517,19 @@
       "score": 48.949999999999996,
       "tier": "B",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 3.7500000000000004,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
         "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Claude Artifacts enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "direction": "same",
+        "previous_position": 24
       }
     },
     {
@@ -611,22 +539,19 @@
       "score": 48.949999999999996,
       "tier": "B",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 3.7500000000000004,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "CodeRabbit enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 4,
+        "direction": "up",
+        "previous_position": 29
       }
     },
     {
@@ -636,22 +561,19 @@
       "score": 48.949999999999996,
       "tier": "C",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 3.7500000000000004,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Microsoft IntelliCode enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 14,
+        "direction": "down",
+        "previous_position": 12
       }
     },
     {
@@ -661,22 +583,19 @@
       "score": 48.949999999999996,
       "tier": "C",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 3.7500000000000004,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
         "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Snyk Code enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "direction": "same",
+        "previous_position": 27
       }
     },
     {
@@ -686,22 +605,19 @@
       "score": 48.949999999999996,
       "tier": "C",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 3.7500000000000004,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Sourcegraph Cody enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 13,
+        "direction": "down",
+        "previous_position": 15
       }
     },
     {
@@ -711,22 +627,19 @@
       "score": 48.949999999999996,
       "tier": "C",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 3.7500000000000004,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Sourcery enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 1,
+        "direction": "up",
+        "previous_position": 30
       }
     },
     {
@@ -736,22 +649,19 @@
       "score": 48.949999999999996,
       "tier": "C",
       "factor_scores": {
-        "agentic_capability": 3.9750000000000005,
-        "innovation": 5,
-        "technical_performance": 3.7500000000000004,
-        "developer_adoption": 2.04,
-        "market_traction": 6.232830306881246,
-        "business_sentiment": 7,
-        "development_velocity": 10,
-        "platform_resilience": 8.5
+        "agentic_capability": 0,
+        "innovation": 0,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Zed enters the rankings with strong scores in agentic capability, market traction, innovation."
+        "change": 12,
+        "direction": "down",
+        "previous_position": 18
       }
     }
   ]

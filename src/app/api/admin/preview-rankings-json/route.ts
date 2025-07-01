@@ -2,9 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { getToolsRepo, getRankingsRepo, getNewsRepo } from "@/lib/json-db";
 import { RankingEngineV6, ToolMetricsV6 } from "@/lib/ranking-algorithm-v6";
-import { extractEnhancedNewsMetrics, applyEnhancedNewsMetrics, applyNewsImpactToScores } from "@/lib/ranking-news-enhancer";
+import {
+  extractEnhancedNewsMetrics,
+  applyEnhancedNewsMetrics,
+  applyNewsImpactToScores,
+} from "@/lib/ranking-news-enhancer";
 import fs from "fs-extra";
 import path from "path";
+
+// Helper function to update progress
+async function updateProgress(message: string, tool?: string, step?: string) {
+  try {
+    await fetch(
+      `${process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000"}/api/admin/ranking-progress`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, tool, step }),
+      }
+    );
+  } catch (error) {
+    // Ignore progress update errors
+  }
+}
 
 interface RankingComparison {
   tool_id: string;
@@ -18,14 +38,15 @@ interface RankingComparison {
   movement: "up" | "down" | "same" | "new" | "dropped";
 }
 
-
-
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
     const { period, algorithm_version = "v6.0", compare_with, preview_date } = body;
 
     loggers.api.info("Preview rankings JSON request received", { body });
+
+    // Initialize progress
+    await updateProgress("Initializing ranking generation...", "", "setup");
 
     if (!period) {
       return NextResponse.json({ error: "Period parameter is required" }, { status: 400 });
@@ -138,7 +159,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
     const innovationMap = new Map(innovationScores.map((s: any) => [s.tool_id, s]));
 
-    for (const tool of tools) {
+    for (let i = 0; i < tools.length; i++) {
+      const tool = tools[i];
+
+      if (!tool) {
+        console.warn(`Tool at index ${i} is undefined, skipping`);
+        continue;
+      }
+
+      // Update progress
+      await updateProgress(
+        `Processing ${tool.name} (${i + 1}/${tools.length})`,
+        tool.name,
+        "extracting metrics"
+      );
+
       // Get innovation score for this tool
       const innovationData = innovationMap.get(tool.id);
       const innovationScore = innovationData?.score || 0;
@@ -154,21 +189,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
 
       // Log extracted metrics for debugging
-      if (["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name) && 
-          (Object.keys(enhancedMetrics).length > 0 || enhancedMetrics.articlesProcessed > 0)) {
+      if (
+        ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name) &&
+        (Object.keys(enhancedMetrics).length > 0 || enhancedMetrics.articlesProcessed > 0)
+      ) {
         loggers.api.info(`Enhanced metrics for ${tool.name}:`, {
           quantitative: {
             swe_bench: enhancedMetrics.swe_bench_score,
             funding: enhancedMetrics.funding,
-            users: enhancedMetrics.estimated_users
+            users: enhancedMetrics.estimated_users,
           },
           qualitative: {
             innovation_boost: enhancedMetrics.innovationBoost,
             sentiment_adjust: enhancedMetrics.businessSentimentAdjust,
-            velocity_boost: enhancedMetrics.developmentVelocityBoost
+            velocity_boost: enhancedMetrics.developmentVelocityBoost,
           },
           articles_processed: enhancedMetrics.articlesProcessed,
-          significant_events: enhancedMetrics.significantEvents
+          significant_events: enhancedMetrics.significantEvents,
         });
       }
 
@@ -184,8 +221,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // Agentic metrics
         agentic_capability: isAutonomous ? 8.5 : tool.category === "ide-assistant" ? 6 : 5,
         swe_bench_score:
-          tool.info.metrics?.swe_bench_score ||
-          (isPremium ? 45 : isAutonomous ? 35 : 20),
+          tool.info.metrics?.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
         multi_file_capability: isAutonomous ? 9 : tool.info.technical?.multi_file_support ? 7 : 4,
         planning_depth: isAutonomous ? 8.5 : 6,
         context_utilization: isPremium ? 8 : 6.5,
@@ -203,12 +239,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         monthly_arr:
           tool.info.metrics?.monthly_arr ||
           (isEnterprise ? 10000000 : isPremium ? 5000000 : 1000000),
-        valuation:
-          tool.info.metrics?.valuation ||
-          (isPremium ? 1000000000 : 100000000),
-        funding:
-          tool.info.metrics?.funding_total ||
-          (isPremium ? 100000000 : 10000000),
+        valuation: tool.info.metrics?.valuation || (isPremium ? 1000000000 : 100000000),
+        funding: tool.info.metrics?.funding_total || (isPremium ? 100000000 : 10000000),
         business_model: tool.info.business?.business_model || "saas",
         // Risk and sentiment
         business_sentiment: isPremium ? 0.8 : 0.7,
@@ -225,26 +257,40 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Apply enhanced news metrics (both quantitative and qualitative)
       metrics = applyEnhancedNewsMetrics(metrics, enhancedMetrics);
 
+      // Update progress
+      await updateProgress(
+        `Calculating scores for ${tool.name} (${i + 1}/${tools.length})`,
+        tool.name,
+        "calculating score"
+      );
+
       // Calculate score using the actual algorithm
       const scoreResult = rankingEngine.calculateToolScore(metrics);
-      
+
       // Apply additional news impact to factor scores
-      const adjustedFactorScores = applyNewsImpactToScores(scoreResult.factorScores, enhancedMetrics);
-      
+      const adjustedFactorScores = applyNewsImpactToScores(
+        scoreResult.factorScores,
+        enhancedMetrics
+      );
+
       // Update factorScores with adjusted values
-      Object.keys(adjustedFactorScores).forEach(key => {
+      Object.keys(adjustedFactorScores).forEach((key) => {
         if (key in scoreResult.factorScores) {
           (scoreResult.factorScores as any)[key] = adjustedFactorScores[key];
         }
       });
-      
+
       // Recalculate overall score after news adjustments
       const weights = RankingEngineV6.getAlgorithmInfo().weights;
       scoreResult.overallScore = Object.entries(weights).reduce((total, [factor, weight]) => {
-        const factorScore = scoreResult.factorScores[factor as keyof typeof scoreResult.factorScores] || 0;
+        const factorScore =
+          scoreResult.factorScores[factor as keyof typeof scoreResult.factorScores] || 0;
         return total + factorScore * weight;
       }, 0);
-      scoreResult.overallScore = Math.max(0, Math.min(10, Math.round(scoreResult.overallScore * 1000) / 1000));
+      scoreResult.overallScore = Math.max(
+        0,
+        Math.min(10, Math.round(scoreResult.overallScore * 1000) / 1000)
+      );
 
       scoredTools.push({
         tool,
@@ -254,6 +300,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Sort by score descending
     scoredTools.sort((a, b) => b.score - a.score);
+
+    // Update progress
+    await updateProgress("Generating ranking comparisons...", "", "final calculations");
 
     // Generate comparisons with real rankings
     const comparisons: RankingComparison[] = [];

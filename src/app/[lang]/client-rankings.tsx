@@ -69,16 +69,12 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           setTopRankings(rankings.slice(0, 3));
 
           // Calculate actual trending tools (those with positive rank changes)
-          const actualTrendingTools = rankings.filter(
-            (r: any) => r.rank_change && r.rank_change > 0
-          );
+          const actualTrendingTools = rankings.filter((r: any) => r.rankChange && r.rankChange > 0);
           setTrendingTools(actualTrendingTools.slice(0, 3));
           setTrendingUpCount(actualTrendingTools.length);
 
           // Calculate tools trending down (those with negative rank changes)
-          const trendingDownTools = rankings.filter(
-            (r: any) => r.rank_change && r.rank_change < 0
-          );
+          const trendingDownTools = rankings.filter((r: any) => r.rankChange && r.rankChange < 0);
           setTrendingDownCount(trendingDownTools.length);
 
           setRecentlyUpdated(rankings.slice(6, 10));
@@ -90,8 +86,12 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           if (data.algorithm?.date) {
             const updateDate = new Date(data.algorithm.date);
             // Format as "Jan 1, 2025" or similar
-            const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' };
-            setLastUpdateDate(updateDate.toLocaleDateString('en-US', options));
+            const options: Intl.DateTimeFormatOptions = {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            };
+            setLastUpdateDate(updateDate.toLocaleDateString("en-US", options));
           } else {
             setLastUpdateDate("Daily");
           }

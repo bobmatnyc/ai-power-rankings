@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -182,178 +181,146 @@ export function ToolsManager() {
       </div>
 
       {/* Main Content */}
-      <Tabs defaultValue="all-tools" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all-tools">All Tools</TabsTrigger>
-          <TabsTrigger value="rankings">Rankings</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all-tools" className="space-y-4">
-          {/* Filters */}
-          <div className="flex gap-4 items-end">
-            <div className="flex-1">
-              <Label htmlFor="search">Search</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="search"
-                  placeholder="Search tools..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+      <div className="space-y-4">
+        {/* Filters */}
+        <div className="flex gap-4 items-end">
+          <div className="flex-1">
+            <Label htmlFor="search">Search</Label>
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="search"
+                placeholder="Search tools..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
             </div>
-            <div>
-              <Label>Category</Label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                value={selectedCategory || ""}
-                onChange={(e) => setSelectedCategory(e.target.value || null)}
-              >
-                <option value="">All Categories</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <Button variant="outline" size="icon">
-              <Filter className="h-4 w-4" />
-            </Button>
           </div>
+          <div>
+            <Label>Category</Label>
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={selectedCategory || ""}
+              onChange={(e) => setSelectedCategory(e.target.value || null)}
+            >
+              <option value="">All Categories</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Button variant="outline" size="icon">
+            <Filter className="h-4 w-4" />
+          </Button>
+        </div>
 
-          {/* Tools Table */}
-          <Card>
-            <Table>
-              <TableHeader>
+        {/* Tools Table */}
+        <Card>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Tool</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Latest Ranking</TableHead>
+                <TableHead>Score</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
                 <TableRow>
-                  <TableHead>Tool</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Latest Ranking</TableHead>
-                  <TableHead>Score</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableCell colSpan={6} className="text-center">
+                    Loading tools...
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center">
-                      Loading tools...
-                    </TableCell>
-                  </TableRow>
-                ) : filteredTools.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center">
-                      No tools found
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredTools.map((tool) => {
-                    const ranking = getLatestRanking(tool.id);
-                    return (
-                      <TableRow key={tool.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{tool.name}</div>
-                            {tool.info?.product?.description && (
-                              <div className="text-sm text-muted-foreground">
-                                {tool.info.product.description.substring(0, 50)}...
+              ) : filteredTools.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center">
+                    No tools found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredTools.map((tool) => {
+                  const ranking = getLatestRanking(tool.id);
+                  return (
+                    <TableRow key={tool.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{tool.name}</div>
+                          {tool.info?.product?.description && (
+                            <div className="text-sm text-muted-foreground">
+                              {tool.info.product.description.substring(0, 50)}...
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{tool.category}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {ranking ? (
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">#{ranking.position}</span>
+                            {ranking.position_change !== 0 && (
+                              <div
+                                className={`flex items-center gap-1 text-sm ${
+                                  ranking.position_change > 0 ? "text-green-600" : "text-red-600"
+                                }`}
+                              >
+                                {ranking.position_change > 0 ? (
+                                  <TrendingUp className="h-3 w-3" />
+                                ) : (
+                                  <TrendingDown className="h-3 w-3" />
+                                )}
+                                <span>{Math.abs(ranking.position_change)}</span>
                               </div>
                             )}
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{tool.category}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          {ranking ? (
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">#{ranking.position}</span>
-                              {ranking.position_change !== 0 && (
-                                <div
-                                  className={`flex items-center gap-1 text-sm ${
-                                    ranking.position_change > 0 ? "text-green-600" : "text-red-600"
-                                  }`}
-                                >
-                                  {ranking.position_change > 0 ? (
-                                    <TrendingUp className="h-3 w-3" />
-                                  ) : (
-                                    <TrendingDown className="h-3 w-3" />
-                                  )}
-                                  <span>{Math.abs(ranking.position_change)}</span>
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {ranking ? (
-                            <div className="font-medium">{ranking.score.toFixed(1)}</div>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={tool.status === "active" ? "default" : "secondary"}>
-                            {tool.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button size="sm" variant="ghost" onClick={() => handleEditTool(tool)}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleDeleteTool(tool.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="ghost">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="rankings">
-          <Card>
-            <CardHeader>
-              <CardTitle>Rankings Management</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">Rankings management interface coming soon...</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="categories">
-          <Card>
-            <CardHeader>
-              <CardTitle>Categories Management</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Categories management interface coming soon...
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {ranking ? (
+                          <div className="font-medium">{ranking.score.toFixed(1)}</div>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={tool.status === "active" ? "default" : "secondary"}>
+                          {tool.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button size="sm" variant="ghost" onClick={() => handleEditTool(tool)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleDeleteTool(tool.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="ghost">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+        </Card>
+      </div>
     </div>
   );
 }

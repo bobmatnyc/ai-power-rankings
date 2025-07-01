@@ -130,7 +130,7 @@ export async function extractQualitativeMetrics(
         article,
         toolName,
         toolContext,
-        provider: "openai", // Default to OpenAI, can be made configurable
+        provider: "openai", // Use OpenAI directly (fixed compatibility)
       }),
     });
 
