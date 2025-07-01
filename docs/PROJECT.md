@@ -38,6 +38,20 @@ The platform implements a source-oriented metrics architecture where each articl
 - **Internationalization**: Custom i18n implementation with 9 languages
 - **Client Processing**: Filter, sort, and paginate data on client-side
 
+#### Internationalization (i18n)
+
+Translation files are located at `/src/i18n/dictionaries/[locale].json` where locale is one of:
+
+- en (English)
+- de (German)
+- fr (French)
+- hr (Croatian)
+- it (Italian)
+- ja (Japanese)
+- ko (Korean)
+- uk (Ukrainian)
+- zh (Chinese)
+
 ### Core Components
 
 #### 1. Data Storage Layer (JSON Files)
@@ -71,19 +85,67 @@ Responsible for:
 
 // Created: 2025-06-08
 // Updated: 2025-06-09 - Algorithm v4.0 with agentic focus
+// Updated: 2025-07-01 - Migrated to Algorithm v6.0
 Responsible for:
 
-- **Algorithm v4.0**: Agentic & Business-Aware scoring
-  - Agentic Capability (25%): Autonomous planning, execution, self-correction (0-10 scale)
-  - Technical Capability (20%): SWE-bench scores, features, performance
-  - Developer Adoption (20%): Users, GitHub metrics, community size
-  - Market Traction (15%): ARR, valuation, growth rate
-  - Business Sentiment (10%): Market perception, conflicts, partnerships (-1 to +1 scale)
-  - Development Velocity (5%): Release frequency, feature development
-  - Platform Resilience (5%): LLM diversity, dependency risk
-- **Innovation Scoring**: Technical breakthroughs and paradigm shifts (0-10 scale)
+- **Algorithm v6.0**: Code-Ready Modifiers (Current)
+
+  - Agentic Capability (30%): Multi-file editing, task planning, autonomous operation
+  - Innovation (15%): Time-decayed innovation score, breakthrough features
+  - Technical Performance (12.5%): SWE-bench scores, multi-file support, context window
+  - Developer Adoption (12.5%): GitHub stars, active users, community engagement
+  - Market Traction (12.5%): Revenue, user growth, funding, valuation
+  - Business Sentiment (7.5%): Market perception, platform risks, competitive position
+  - Development Velocity (5%): Release frequency, contributor count, update cadence
+  - Platform Resilience (5%): Multi-model support, independence, self-hosting options
+
+- **Scoring System**:
+
+  - All factors scored on 0-10 scale
+  - Overall score calculated as weighted sum (0-10 scale)
+  - Scores converted to 0-100 scale for display/storage (multiply by 10)
+
+- **Innovation Decay**: Innovation scores decrease over time (6-month half-life)
 - **Movement Detection**: Comparing positions across ranking periods
 - **Normalization**: Converting diverse metrics to comparable scales
+
+##### Ranking Generation Process
+
+The ranking generation follows these steps:
+
+1. **Data Collection**:
+
+   - Active tools loaded from `/data/json/tools.json`
+   - Innovation scores from `/data/json/innovation-scores.json`
+   - Agentic capability derived from tool categories (not stored in tools.json)
+
+2. **Metric Transformation**:
+
+   - Tool data transformed to ToolMetricsV6 format
+   - Category-based defaults for agentic capability:
+     - autonomous-agent: 8/10
+     - ide-assistant: 6/10
+     - code-assistant: 5/10
+     - app-builder: 4/10
+     - research-tool: 3/10
+     - general-assistant: 2/10
+   - Reasonable defaults for missing metrics
+
+3. **Score Calculation**:
+
+   - RankingEngineV6 calculates scores (0-10 scale)
+   - Each factor weighted according to algorithm v6.0
+   - Final scores multiplied by 10 for 0-100 scale
+
+4. **Movement Tracking**:
+
+   - Compare with previous period rankings
+   - Track position changes and direction
+   - Generate change analysis for significant movements
+
+5. **Storage**:
+   - Rankings saved to `/data/json/rankings/periods/YYYY-MM-DD.json`
+   - Algorithm version recorded as "v6.0"
 
 #### 4. Frontend Application (Next.js)
 

@@ -1,8 +1,8 @@
 {
-  "period": "2025-06-01",
+  "period": "2025-07-02",
   "algorithm_version": "v6.0",
-  "is_current": true,
-  "created_at": "2025-07-01T02:39:20.728Z",
+  "is_current": false,
+  "created_at": "2025-07-01T02:38:19.235Z",
   "rankings": [
     {
       "tool_id": "1",
@@ -21,8 +21,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 8,
+        "change": 7,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -46,8 +47,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 4,
+        "change": 2,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -71,8 +73,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 2,
+        "change": 1,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -96,8 +99,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 21,
+        "change": 17,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -121,8 +125,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 20,
+        "change": 15,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -146,8 +151,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 19,
+        "change": 13,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -171,8 +177,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 10,
+        "change": 3,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -196,8 +203,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 22,
+        "change": 14,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -221,8 +229,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 26,
+        "change": 17,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -246,8 +255,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 11,
+        "change": 1,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -271,8 +281,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 7,
+        "change": 4,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -296,8 +307,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 14,
+        "change": 2,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -321,8 +333,9 @@
         "platform_resilience": 6
       },
       "movement": {
+        "previous_position": 13,
         "change": 0,
-        "direction": "new"
+        "direction": "same"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -346,8 +359,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 9,
+        "change": 5,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -371,8 +385,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 23,
+        "change": 8,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -396,8 +411,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 17,
+        "change": 1,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -421,8 +437,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 25,
+        "change": 8,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -446,8 +463,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 16,
+        "change": 2,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -471,8 +489,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 24,
+        "change": 5,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -496,8 +515,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 3,
+        "change": 17,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -521,8 +541,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 29,
+        "change": 8,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -546,8 +567,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 1,
+        "change": 21,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -571,8 +593,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 28,
+        "change": 5,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -596,8 +619,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 5,
+        "change": 19,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -621,8 +645,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 12,
+        "change": 13,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -646,8 +671,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 6,
+        "change": 20,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -671,8 +697,9 @@
         "platform_resilience": 6
       },
       "movement": {
+        "previous_position": 27,
         "change": 0,
-        "direction": "new"
+        "direction": "same"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -696,8 +723,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 15,
+        "change": 13,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -721,8 +749,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 30,
+        "change": 1,
+        "direction": "up"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",
@@ -746,8 +775,9 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 18,
+        "change": 12,
+        "direction": "down"
       },
       "change_analysis": {
         "primary_reason": "New entry to rankings",

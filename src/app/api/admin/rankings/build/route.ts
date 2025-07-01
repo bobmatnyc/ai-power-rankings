@@ -1,3 +1,37 @@
+/**
+ * Rankings Build API Endpoint
+ *
+ * This endpoint generates new rankings for a specified period using the RankingEngineV6 algorithm.
+ *
+ * ## Overview
+ * The ranking generation process:
+ * 1. Loads all active tools from the JSON database
+ * 2. Loads innovation scores from innovation-scores.json
+ * 3. Transforms tool data into metrics format for the algorithm
+ * 4. Calculates scores using RankingEngineV6 (returns 0-10 scale)
+ * 5. Converts scores to 0-100 scale for consistency
+ * 6. Compares with previous period for movement tracking
+ * 7. Saves rankings to JSON file
+ *
+ * ## Important Notes
+ * - The algorithm returns scores on a 0-10 scale, which are multiplied by 10 for storage
+ * - Agentic capability scores are derived from tool categories (not stored in tools.json)
+ * - Innovation scores come from a separate innovation-scores.json file
+ * - Other metrics use reasonable defaults when not available
+ *
+ * ## Request Body
+ * - period: string (YYYY-MM-DD format) - The ranking period to generate
+ * - preview_date?: string - Optional date for filtering tools by launch date
+ *
+ * ## Response
+ * - success: boolean
+ * - period: string
+ * - rankings_count: number
+ * - algorithm_version: "v6.0"
+ * - stats: object with scoring statistics
+ * - change_summary: object with movement analysis
+ */
+
 import { NextRequest, NextResponse } from "next/server";
 import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
@@ -29,6 +63,39 @@ function calculateTier(position: number): "S" | "A" | "B" | "C" | "D" {
   return "D";
 }
 
+/**
+ * Get default agentic capability score based on tool category
+ *
+ * Since agentic_capability is not stored in tools.json but is critical for rankings,
+ * we use category-based defaults. These scores reflect the typical autonomy level
+ * of tools in each category.
+ *
+ * @param category - The tool category (e.g., "autonomous-agent", "ide-assistant")
+ * @returns Agentic capability score (0-10 scale)
+ */
+function getCategoryBasedAgenticScore(category: string): number {
+  const categoryScores: Record<string, number> = {
+    "autonomous-agent": 8, // Devin, Claude Code, etc. - High autonomy
+    "ide-assistant": 6, // Cursor, GitHub Copilot, etc. - Medium autonomy
+    "code-assistant": 5, // Cline, Continue, etc. - Moderate autonomy
+    "app-builder": 4, // Bolt, Lovable, etc. - Lower autonomy
+    "research-tool": 3, // Perplexity, etc. - Minimal coding autonomy
+    "general-assistant": 2, // ChatGPT, Claude.ai, etc. - Basic assistance
+  };
+
+  return categoryScores[category] || 5; // Default to 5 if category not found
+}
+
+/**
+ * Transform tool data from JSON storage format to metrics format for ranking algorithm
+ *
+ * This function maps data from tools.json structure to the ToolMetricsV6 interface
+ * expected by RankingEngineV6. It provides reasonable defaults for missing data.
+ *
+ * @param tool - Tool object from tools.json
+ * @param innovationScore - Innovation score from innovation-scores.json (optional)
+ * @returns ToolMetricsV6 object ready for scoring
+ */
 function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetricsV6 {
   // Extract metrics from tool.info structure (JSON format)
   const info = tool.info;
@@ -40,8 +107,8 @@ function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetric
     tool_id: tool.id,
     status: tool.status,
 
-    // Agentic capabilities
-    agentic_capability: tool.agentic_capability || 0,
+    // Agentic capabilities - using category-based defaults
+    agentic_capability: getCategoryBasedAgenticScore(tool.category),
     swe_bench_score: businessMetrics.swe_bench_score || 0,
     multi_file_capability: technical.multi_file_support ? 7 : 3,
     planning_depth: 5, // Default value
@@ -56,11 +123,11 @@ function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetric
     innovation_score: innovationScore || 0,
     innovations: [],
 
-    // Market metrics
-    estimated_users: businessMetrics.estimated_users || 0,
-    monthly_arr: businessMetrics.monthly_arr || 0,
-    valuation: businessMetrics.valuation || 0,
-    funding: businessMetrics.funding_total || 0,
+    // Market metrics - with reasonable defaults
+    estimated_users: businessMetrics.estimated_users || 10000,
+    monthly_arr: businessMetrics.monthly_arr || 1000000,
+    valuation: businessMetrics.valuation || 10000000,
+    funding: businessMetrics.funding_total || 5000000,
     business_model: business.business_model || "freemium",
 
     // Risk and sentiment (default values)
@@ -252,7 +319,7 @@ export async function POST(request: NextRequest) {
         tool_id: tool.id,
         tool_name: tool.name,
         position,
-        score: toolScore.overallScore,
+        score: toolScore.overallScore * 10, // Convert from 0-10 to 0-100 scale
         tier: calculateTier(position),
         factor_scores: {
           agentic_capability: toolScore.factorScores.agenticCapability || 0,

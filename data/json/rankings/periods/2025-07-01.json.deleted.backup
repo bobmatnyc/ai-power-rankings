@@ -1,8 +1,8 @@
 {
-  "period": "2025-06-01",
+  "period": "2025-07-01",
   "algorithm_version": "v6.0",
-  "is_current": true,
-  "created_at": "2025-07-01T02:39:20.728Z",
+  "is_current": false,
+  "created_at": "2025-07-01T02:37:45.564Z",
   "rankings": [
     {
       "tool_id": "1",
@@ -21,12 +21,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 8,
+        "change": 7,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Cursor enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (60.0 → 3.5)",
+        "narrative_explanation": "Cursor surged 7 positions due to significantly weaker agentic performance (60.0 → 3.5). Multiple factors contributed to this rise, including improvements in business sentiment and technical performance."
       }
     },
     {
@@ -46,12 +47,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 4,
+        "change": 2,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "GitHub Copilot enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (65.0 → 3.5)",
+        "narrative_explanation": "GitHub Copilot climbed 3 positions primarily due to significantly weaker agentic performance (65.0 → 3.5)."
       }
     },
     {
@@ -71,12 +73,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 2,
+        "change": 1,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Lovable enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (50.0 → 3.5)",
+        "narrative_explanation": "Lovable surged 14 positions due to significantly weaker agentic performance (50.0 → 3.5). Multiple factors contributed to this rise, including improvements in business sentiment and technical performance."
       }
     },
     {
@@ -96,12 +99,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 21,
+        "change": 17,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Aider enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (55.0 → 3.5)",
+        "narrative_explanation": "Aider surged 17 positions due to significantly weaker agentic performance (55.0 → 3.5). Multiple factors contributed to this rise, including improvements in business sentiment and technical performance."
       }
     },
     {
@@ -121,12 +125,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 20,
+        "change": 15,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Cline enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (55.0 → 3.5)",
+        "narrative_explanation": "Cline surged 14 positions due to significantly weaker agentic performance (55.0 → 3.5). Multiple factors contributed to this rise, including improvements in business sentiment and technical performance."
       }
     },
     {
@@ -146,12 +151,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 19,
+        "change": 13,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Continue enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (55.0 → 3.5)",
+        "narrative_explanation": "Continue surged 14 positions due to significantly weaker agentic performance (55.0 → 3.5). Multiple factors contributed to this rise, including improvements in business sentiment and technical performance."
       }
     },
     {
@@ -171,12 +177,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 10,
+        "change": 3,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Google Gemini Code Assist enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (65.0 → 3.5)",
+        "narrative_explanation": "Google Gemini Code Assist climbed 3 positions primarily due to significantly weaker agentic performance (65.0 → 3.5)."
       }
     },
     {
@@ -196,12 +203,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 22,
+        "change": 14,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "OpenHands enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (55.0 → 3.5)",
+        "narrative_explanation": "OpenHands surged 14 positions due to significantly weaker agentic performance (55.0 → 3.5). Multiple factors contributed to this rise, including improvements in business sentiment and technical performance."
       }
     },
     {
@@ -221,12 +229,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 26,
+        "change": 17,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Qodo Gen enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (45.0 → 3.5)",
+        "narrative_explanation": "Qodo Gen surged 19 positions due to significantly weaker agentic performance (45.0 → 3.5). Multiple factors contributed to this rise, including improvements in business sentiment and technical performance."
       }
     },
     {
@@ -246,12 +255,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 11,
+        "change": 1,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Windsurf enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (60.0 → 3.5)",
+        "narrative_explanation": "Windsurf dropped 6 positions. significantly weaker agentic performance (60.0 → 3.5). Additional factors include declining innovation."
       }
     },
     {
@@ -271,12 +281,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 7,
+        "change": 4,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "ChatGPT Canvas enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (75.0 → 3.5)",
+        "narrative_explanation": "ChatGPT Canvas fell 4 positions due to significantly weaker agentic performance (75.0 → 3.5)."
       }
     },
     {
@@ -296,12 +307,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 14,
+        "change": 2,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Replit Agent enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (65.0 → 3.5)",
+        "narrative_explanation": "Replit Agent maintained its position despite declines in significantly weaker agentic performance (65.0 → 3.5)."
       }
     },
     {
@@ -321,12 +333,13 @@
         "platform_resilience": 6
       },
       "movement": {
+        "previous_position": 13,
         "change": 0,
-        "direction": "new"
+        "direction": "same"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "JetBrains AI Assistant enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (65.0 → 3.5)",
+        "narrative_explanation": "JetBrains AI Assistant climbed 1 position primarily due to significantly weaker agentic performance (65.0 → 3.5)."
       }
     },
     {
@@ -346,12 +359,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 9,
+        "change": 5,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Tabnine enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (65.0 → 3.5)",
+        "narrative_explanation": "Tabnine dropped 5 positions. significantly weaker agentic performance (65.0 → 3.5). "
       }
     },
     {
@@ -371,12 +385,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 23,
+        "change": 8,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "v0 enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (50.0 → 3.5)",
+        "narrative_explanation": "v0 surged 8 positions due to significantly weaker agentic performance (50.0 → 3.5). Multiple factors contributed to this rise, including improvements in business sentiment and technical performance."
       }
     },
     {
@@ -396,12 +411,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 17,
+        "change": 1,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Bolt.new enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (50.0 → 2.5)",
+        "narrative_explanation": "Bolt.new maintained its position despite declines in significantly weaker agentic performance (50.0 → 2.5)."
       }
     },
     {
@@ -421,12 +437,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 25,
+        "change": 8,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Amazon Q Developer enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (50.0 → 2.5)",
+        "narrative_explanation": "Amazon Q Developer surged 8 positions due to significantly weaker agentic performance (50.0 → 2.5). Multiple factors contributed to this rise, including improvements in business sentiment and platform resilience."
       }
     },
     {
@@ -446,12 +463,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 16,
+        "change": 2,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Augment Code enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (65.0 → 2.5)",
+        "narrative_explanation": "Augment Code dropped 5 positions. significantly weaker agentic performance (65.0 → 2.5). "
       }
     },
     {
@@ -471,12 +489,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 24,
+        "change": 5,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Claude Artifacts enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (50.0 → 2.5)",
+        "narrative_explanation": "Claude Artifacts surged 5 positions due to significantly weaker agentic performance (50.0 → 2.5). Multiple factors contributed to this rise, including improvements in business sentiment and platform resilience."
       }
     },
     {
@@ -496,12 +515,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 3,
+        "change": 17,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Claude Code enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (75.0 → 2.5)",
+        "narrative_explanation": "Claude Code dropped 18 positions. significantly weaker agentic performance (75.0 → 2.5). Additional factors include declining innovation."
       }
     },
     {
@@ -521,12 +541,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 29,
+        "change": 8,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "CodeRabbit enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (45.0 → 2.5)",
+        "narrative_explanation": "CodeRabbit surged 8 positions due to significantly weaker agentic performance (45.0 → 2.5). Multiple factors contributed to this rise, including improvements in business sentiment and platform resilience."
       }
     },
     {
@@ -546,12 +567,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 1,
+        "change": 21,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Devin enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (75.0 → 2.5)",
+        "narrative_explanation": "Devin dropped 21 positions. significantly weaker agentic performance (75.0 → 2.5). Additional factors include declining innovation."
       }
     },
     {
@@ -571,12 +593,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 28,
+        "change": 5,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Diffblue Cover enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (45.0 → 2.5)",
+        "narrative_explanation": "Diffblue Cover surged 7 positions due to significantly weaker agentic performance (45.0 → 2.5). Multiple factors contributed to this rise, including improvements in business sentiment and platform resilience."
       }
     },
     {
@@ -596,12 +619,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 5,
+        "change": 19,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Google Jules enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (75.0 → 2.5)",
+        "narrative_explanation": "Google Jules dropped 21 positions. significantly weaker agentic performance (75.0 → 2.5). Additional factors include declining innovation."
       }
     },
     {
@@ -621,12 +645,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 12,
+        "change": 13,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Microsoft IntelliCode enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (65.0 → 2.5)",
+        "narrative_explanation": "Microsoft IntelliCode dropped 14 positions. significantly weaker agentic performance (65.0 → 2.5). "
       }
     },
     {
@@ -646,12 +671,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 6,
+        "change": 20,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "OpenAI Codex CLI enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (75.0 → 2.5)",
+        "narrative_explanation": "OpenAI Codex CLI dropped 20 positions. significantly weaker agentic performance (75.0 → 2.5). "
       }
     },
     {
@@ -671,12 +697,13 @@
         "platform_resilience": 6
       },
       "movement": {
+        "previous_position": 27,
         "change": 0,
-        "direction": "new"
+        "direction": "same"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Snyk Code enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (45.0 → 2.5)",
+        "narrative_explanation": "Snyk Code fell 1 position due to significantly weaker agentic performance (45.0 → 2.5)."
       }
     },
     {
@@ -696,12 +723,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 15,
+        "change": 13,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Sourcegraph Cody enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (65.0 → 2.5)",
+        "narrative_explanation": "Sourcegraph Cody dropped 13 positions. significantly weaker agentic performance (65.0 → 2.5). "
       }
     },
     {
@@ -721,12 +749,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 30,
+        "change": 1,
+        "direction": "up"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Sourcery enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (45.0 → 2.5)",
+        "narrative_explanation": "Sourcery fell 2 positions due to significantly weaker agentic performance (45.0 → 2.5)."
       }
     },
     {
@@ -746,12 +775,13 @@
         "platform_resilience": 6
       },
       "movement": {
-        "change": 0,
-        "direction": "new"
+        "previous_position": 18,
+        "change": 12,
+        "direction": "down"
       },
       "change_analysis": {
-        "primary_reason": "New entry to rankings",
-        "narrative_explanation": "Zed enters the rankings with strong scores in agentic capability, innovation, business sentiment."
+        "primary_reason": "significantly weaker agentic performance (60.0 → 2.5)",
+        "narrative_explanation": "Zed dropped 12 positions. significantly weaker agentic performance (60.0 → 2.5). Additional factors include declining innovation."
       }
     }
   ]

@@ -1,8 +1,8 @@
 {
-  "period": "2025-06-01",
+  "period": "2025-07-02",
   "algorithm_version": "v6.0",
-  "is_current": true,
-  "created_at": "2025-07-01T02:39:20.728Z",
+  "is_current": false,
+  "created_at": "2025-07-01T02:38:19.235Z",
   "rankings": [
     {
       "tool_id": "1",

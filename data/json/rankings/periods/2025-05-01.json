@@ -1,7 +1,7 @@
 {
   "period": "2025-05-01",
   "algorithm_version": "v6-news",
-  "is_current": false,
+  "is_current": true,
   "created_at": "2025-06-30T15:39:04.008Z",
   "rankings": [
     {
