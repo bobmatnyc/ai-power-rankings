@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
 
-// Initialize Resend
-const resend = new Resend(process.env["RESEND_API_KEY"]);
+// Initialize Resend lazily to avoid build-time errors
+const getResendClient = () => {
+  const apiKey = process.env["RESEND_API_KEY"];
+  if (!apiKey || apiKey === "re_test_key_for_build") {
+    throw new Error("RESEND_API_KEY not configured for production use");
+  }
+  return new Resend(apiKey);
+};
 
 // Log to verify API key is loaded (remove in production)
 if (!process.env["RESEND_API_KEY"]) {
@@ -110,6 +116,7 @@ This email was sent via the AI Power Rankings contact form.
     // 1. Verify your domain at resend.com/domains
     // 2. Update 'from' to use your verified domain (e.g., 'noreply@aipowerranking.com')
     // 3. Update 'to' to your desired recipient email
+    const resend = getResendClient();
     const { data, error } = await resend.emails.send({
       from: "AI Power Rankings <onboarding@resend.dev>", // Uses Resend's test domain
       to: ["bob@matsuoka.com"], // Must be your verified email in sandbox mode
