@@ -5,7 +5,6 @@
  */
 
 import { getToolsRepo } from "../lib/json-db";
-import { loggers } from "../lib/logger";
 
 // Launch dates from comprehensive report
 const launchDates: Record<string, string> = {
@@ -54,7 +53,7 @@ async function updateLaunchDates() {
     const tools = await toolsRepo.getAll();
 
     let updatedCount = 0;
-    let notFoundTools: string[] = [];
+    const notFoundTools: string[] = [];
 
     for (const [toolName, launchDate] of Object.entries(launchDates)) {
       // Find tool by name (case-insensitive)

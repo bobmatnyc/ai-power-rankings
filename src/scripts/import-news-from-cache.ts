@@ -21,7 +21,7 @@ interface CachedNewsItem {
     previous_value?: number;
     new_value?: number;
     change_percentage?: number;
-    additional_metrics?: Record<string, any>;
+    additional_metrics?: Record<string, string | number | boolean>;
   };
   source?: string;
   source_url?: string;
@@ -147,7 +147,7 @@ async function importNewsFromCache() {
       const article = convertCachedToArticle(cached);
 
       // Ensure unique slug
-      let baseSlug = article.slug;
+      const baseSlug = article.slug;
       let counter = 1;
       while (
         existingSlugs.has(article.slug) ||

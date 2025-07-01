@@ -30,7 +30,7 @@ export async function GET(_request: NextRequest) {
     };
 
     let totalFeatures = 0;
-    let totalPlatforms = 0;
+    const totalPlatforms = 0;
 
     tools.forEach((tool) => {
       // Category distribution
@@ -58,12 +58,18 @@ export async function GET(_request: NextRequest) {
       }
 
       // Count tools with various properties
-      if (tool.company_id) stats.toolsWithCompanies++;
+      if (tool.company_id) {
+        stats.toolsWithCompanies++;
+      }
       // GitHub info not in current schema
-      if (tool.info?.website) stats.toolsWithDocumentation++;
+      if (tool.info?.website) {
+        stats.toolsWithDocumentation++;
+      }
 
       // Count features and platforms
-      if (tool.info?.features) totalFeatures += tool.info.features.length;
+      if (tool.info?.features) {
+        totalFeatures += tool.info.features.length;
+      }
       // Platforms not in current schema
     });
 

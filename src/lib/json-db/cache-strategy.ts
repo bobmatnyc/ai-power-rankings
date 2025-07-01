@@ -78,7 +78,9 @@ export class CacheStrategy<T> {
    */
   has(key: string): boolean {
     const entry = this.cache.get(key);
-    if (!entry) return false;
+    if (!entry) {
+      return false;
+    }
 
     if (this.isExpired(entry)) {
       this.cache.delete(key);

@@ -2,7 +2,24 @@
 
 import { getPayload } from "payload";
 import config from "@payload-config";
-import { loggers } from "@/lib/logger";
+
+interface RankingDoc {
+  period: string;
+  algorithm_version?: string;
+  is_current?: boolean;
+  score: number;
+  position: number;
+  tool?: {
+    name: string;
+  };
+  tool_name?: string;
+  agentic_capability?: number;
+  innovation?: number;
+  technical_performance?: number;
+  developer_adoption?: number;
+  market_traction?: number;
+  [key: string]: unknown;
+}
 
 async function debugRankings() {
   const payload = await getPayload({ config });
@@ -16,7 +33,7 @@ async function debugRankings() {
     });
 
     // Group by period
-    const periodGroups = new Map<string, any[]>();
+    const periodGroups = new Map<string, RankingDoc[]>();
     rankings.forEach((ranking) => {
       const period = ranking["period"];
       if (!periodGroups.has(period)) {

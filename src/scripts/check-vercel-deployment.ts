@@ -26,13 +26,18 @@ interface Deployment {
   };
 }
 
-interface _Build {
+interface VercelProject {
   id: string;
-  deploymentId: string;
-  status: string;
-  error?: {
-    message: string;
-    code: string;
+  name: string;
+  git?: {
+    repo: string;
+  };
+}
+
+interface VercelEvent {
+  type: string;
+  payload: {
+    text: string;
   };
 }
 
@@ -55,7 +60,7 @@ async function getProjectId(): Promise<string | null> {
     });
 
     const project = response.data.projects.find(
-      (p: any) => p.name === "ai-power-rankings" || p.git?.repo === "ai-power-rankings"
+      (p: VercelProject) => p.name === "ai-power-rankings" || p.git?.repo === "ai-power-rankings"
     );
 
     return project?.id || null;
@@ -117,8 +122,8 @@ async function getBuildLogs(deploymentId: string): Promise<string[]> {
     );
 
     return response.data
-      .filter((event: any) => event.type === "stdout" || event.type === "stderr")
-      .map((event: any) => event.payload.text);
+      .filter((event: VercelEvent) => event.type === "stdout" || event.type === "stderr")
+      .map((event: VercelEvent) => event.payload.text);
   } catch (error) {
     console.error("Error fetching build logs:", error);
     return [];

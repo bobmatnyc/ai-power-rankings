@@ -348,9 +348,13 @@ export class NewsRepository extends BaseRepository<NewsData> {
     };
 
     for (const report of reports) {
-      if (report.status === "completed") stats.completed++;
-      else if (report.status === "partial") stats.partial++;
-      else if (report.status === "failed") stats.failed++;
+      if (report.status === "completed") {
+        stats.completed++;
+      } else if (report.status === "partial") {
+        stats.partial++;
+      } else if (report.status === "failed") {
+        stats.failed++;
+      }
 
       stats.total_items_processed += report.processed_items;
       stats.total_tools_created += report.new_tools_created;

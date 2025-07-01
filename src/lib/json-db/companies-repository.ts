@@ -105,7 +105,9 @@ export class CompaniesRepository extends BaseRepository<CompaniesData> {
 
     return data.companies.filter((company) => {
       // Check name
-      if (company.name.toLowerCase().includes(searchTerm)) return true;
+      if (company.name.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
 
       // Check description (handle both string and rich text array)
       if (company.description) {
@@ -118,7 +120,9 @@ export class CompaniesRepository extends BaseRepository<CompaniesData> {
             .map((block: any) => block.children?.map((child: any) => child.text).join(""))
             .join(" ");
         }
-        if (descriptionText.toLowerCase().includes(searchTerm)) return true;
+        if (descriptionText.toLowerCase().includes(searchTerm)) {
+          return true;
+        }
       }
 
       // Check headquarters
@@ -137,7 +141,9 @@ export class CompaniesRepository extends BaseRepository<CompaniesData> {
     const data = await this.getData();
 
     return data.companies.filter((company) => {
-      if (!company.funding_total) return minFunding === undefined;
+      if (!company.funding_total) {
+        return minFunding === undefined;
+      }
 
       const funding = company.funding_total;
       const meetsMin = minFunding === undefined || funding >= minFunding;
@@ -232,10 +238,14 @@ export class CompaniesRepository extends BaseRepository<CompaniesData> {
     const data = await this.getData();
 
     return data.companies.filter((company) => {
-      if (!company.founded) return false;
+      if (!company.founded) {
+        return false;
+      }
 
       const foundedYear = parseInt(company.founded);
-      if (isNaN(foundedYear)) return false;
+      if (isNaN(foundedYear)) {
+        return false;
+      }
 
       const meetsStart = startYear === undefined || foundedYear >= startYear;
       const meetsEnd = endYear === undefined || foundedYear <= endYear;

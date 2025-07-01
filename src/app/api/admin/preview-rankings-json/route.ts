@@ -89,8 +89,12 @@ function extractMetricsFromNews(
     if (usersMatch && usersMatch[1] && !metrics.estimated_users) {
       const amount = parseFloat(usersMatch[1]);
       let multiplier = 1;
-      if (combined.match(/\d+\.?\d*\s*k\s*users/i)) multiplier = 1_000;
-      if (combined.match(/\d+\.?\d*\s*m\s*users/i)) multiplier = 1_000_000;
+      if (combined.match(/\d+\.?\d*\s*k\s*users/i)) {
+        multiplier = 1_000;
+      }
+      if (combined.match(/\d+\.?\d*\s*m\s*users/i)) {
+        multiplier = 1_000_000;
+      }
       metrics.estimated_users = amount * multiplier;
     }
   }

@@ -24,10 +24,18 @@ const CATEGORY_SCORES: Record<string, number> = {
 };
 
 function calculateTier(position: number): "S" | "A" | "B" | "C" | "D" {
-  if (position <= 5) return "S";
-  if (position <= 15) return "A";
-  if (position <= 25) return "B";
-  if (position <= 35) return "C";
+  if (position <= 5) {
+    return "S";
+  }
+  if (position <= 15) {
+    return "A";
+  }
+  if (position <= 25) {
+    return "B";
+  }
+  if (position <= 35) {
+    return "C";
+  }
   return "D";
 }
 

@@ -294,7 +294,9 @@ export function EnhancedRankingsManager() {
   };
 
   const handleRenameRanking = async () => {
-    if (!selectedRanking || !editingName) return;
+    if (!selectedRanking || !editingName) {
+      return;
+    }
 
     setIsRenamingRanking(true);
     setError(null);
