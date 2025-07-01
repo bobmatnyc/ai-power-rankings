@@ -27,7 +27,6 @@ export async function initializeJsonDb() {
   }
 }
 
-// Auto-initialize on import in production
-if (process.env.NODE_ENV === "production") {
-  initializeJsonDb();
-}
+// Do not auto-initialize in production - let it be called explicitly
+// This prevents issues with serverless environments where setInterval
+// can keep the process alive indefinitely
