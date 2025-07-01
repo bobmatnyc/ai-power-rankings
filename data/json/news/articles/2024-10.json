@@ -7,14 +7,8 @@
     "summary": "OpenDevin rebrands to OpenHands, continuing its mission to provide open-source autonomous AI software engineering capabilities to developers worldwide....",
     "published_date": "2024-11-01T00:00:00.000Z",
     "source": "GitHub Repository",
-    "tags": [
-      "rebrand",
-      "open-source",
-      "autonomous"
-    ],
-    "tool_mentions": [
-      "OpenHands"
-    ],
+    "tags": ["rebrand", "open-source", "autonomous"],
+    "tool_mentions": ["OpenHands"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -27,12 +21,8 @@
     "published_date": "2024-10-31T04:00:00.000Z",
     "source": "Openai",
     "source_url": "https://openai.com/index/introducing-chatgpt-search/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt"],
     "created_at": "2025-06-17T23:25:02.635Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -45,12 +35,8 @@
     "published_date": "2024-10-30T04:00:00.000Z",
     "source": "Business Insider",
     "source_url": "https://www.businessinsider.com/stackblitz-bolt-silicon-valley-hottest-ai-coding-startup-nearly-died-2025-5",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "bolt-new"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["bolt-new"],
     "created_at": "2025-06-18T00:04:17.741Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -64,9 +50,7 @@
     "source": "GitHub",
     "source_url": "https://github.blog/news-insights/product-news/github-copilot-meet-the-new-coding-agent/",
     "tags": [],
-    "tool_mentions": [
-      "2"
-    ],
+    "tool_mentions": ["2"],
     "created_at": "2025-06-09T04:58:08.085264",
     "updated_at": "2025-06-28T02:35:55.790Z"
   },
@@ -79,14 +63,8 @@
     "published_date": "2024-10-29T04:00:00.000Z",
     "source": "Github.Blog",
     "source_url": "https://github.blog/news-insights/product-news/bringing-developer-choice-to-copilot/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude-code",
-      "gemini-code-assist",
-      "github-copilot"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude-code", "gemini-code-assist", "github-copilot"],
     "created_at": "2025-06-17T23:25:01.676Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -99,13 +77,8 @@
     "published_date": "2024-10-29T04:00:00.000Z",
     "source": "Anthropic",
     "source_url": "https://www.anthropic.com/news/github-copilot",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude-code",
-      "github-copilot"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude-code", "github-copilot"],
     "created_at": "2025-06-17T23:25:02.109Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -118,12 +91,8 @@
     "published_date": "2024-10-29T04:00:00.000Z",
     "source": "Github.Blog",
     "source_url": "https://github.blog/news-insights/product-news/universe-2024-previews-releases/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "github-copilot"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-17T23:25:01.843Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -136,15 +105,8 @@
     "published_date": "2024-10-29T04:00:00.000Z",
     "source": "GitHub",
     "source_url": "https://github.com/newsroom/press-releases/github-universe-2024",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude-code",
-      "gpt-4",
-      "gemini-code-assist",
-      "github-copilot"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude-code", "gpt-4", "gemini-code-assist", "github-copilot"],
     "created_at": "2025-06-17T23:25:01.526Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -157,9 +119,7 @@
     "published_date": "2024-10-28T04:00:00.000Z",
     "source": "Ai.Wharton.Upenn.Edu",
     "source_url": "https://ai.wharton.upenn.edu/wp-content/uploads/2024/11/AI-Report_Full-Report.pdf",
-    "tags": [
-      "general"
-    ],
+    "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-17T23:25:03.820Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
@@ -173,14 +133,8 @@
     "published_date": "2024-10-20T04:00:00.000Z",
     "source": "CNET",
     "source_url": "https://www.cnet.com/news/replit-codesandbox-glitch-unveil-enhanced-ai-coding-capabilities/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "replit-agent",
-      "glitch",
-      "codesandbox"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["replit-agent", "glitch", "codesandbox"],
     "created_at": "2025-06-17T23:25:03.559Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -193,12 +147,8 @@
     "published_date": "2024-10-17T04:00:00.000Z",
     "source": "Almtoolbox",
     "source_url": "https://www.almtoolbox.com/blog/codeium-ai-webinar-oct-2024/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "codeium-extension"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["codeium-extension"],
     "created_at": "2025-06-17T23:25:03.011Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -211,14 +161,8 @@
     "published_date": "2024-10-17T04:00:00.000Z",
     "source": "VentureBeat",
     "source_url": "https://venturebeat.com/2024/10/17/glitch-joins-replit-codesandbox-ai-coding-platform-consolidation/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "replit-agent",
-      "glitch",
-      "codesandbox"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["replit-agent", "glitch", "codesandbox"],
     "created_at": "2025-06-17T23:25:03.357Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -231,13 +175,8 @@
     "published_date": "2024-10-15T04:00:00.000Z",
     "source": "TechCrunch",
     "source_url": "https://www.techcrunch.com/2024/10/15/replit-codesandbox-merge-ai-coding-platform/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "replit-agent",
-      "codesandbox"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["replit-agent", "codesandbox"],
     "created_at": "2025-06-17T23:25:03.148Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -250,13 +189,8 @@
     "published_date": "2024-10-04T04:00:00.000Z",
     "source": "Community.Openai",
     "source_url": "https://community.openai.com/t/chatgpt-4o-with-canvas-your-thoughts-and-experience/966926",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt",
-      "gpt-4"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt", "gpt-4"],
     "created_at": "2025-06-17T23:25:02.804Z",
     "updated_at": "2025-06-30T05:07:05.211Z"
   },
@@ -269,12 +203,8 @@
     "published_date": "2024-10-03T04:00:00.000Z",
     "source": "Openai",
     "source_url": "https://openai.com/index/introducing-canvas/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt"],
     "created_at": "2025-06-17T23:25:02.342Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -286,14 +216,8 @@
     "summary": "OpenAI introduces ChatGPT Canvas, a new interface for working with ChatGPT on writing and coding projects, featuring side-by-side editing and real-time collaboration....",
     "published_date": "2024-10-03T00:00:00.000Z",
     "source": "OpenAI Blog",
-    "tags": [
-      "launch",
-      "openai",
-      "beta"
-    ],
-    "tool_mentions": [
-      "ChatGPT Canvas"
-    ],
+    "tags": ["launch", "openai", "beta"],
+    "tool_mentions": ["ChatGPT Canvas"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   }

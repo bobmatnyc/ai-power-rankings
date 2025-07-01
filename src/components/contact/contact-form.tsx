@@ -81,7 +81,7 @@ export function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.email || !formData.category || !formData.message) {
       setSubmitStatus("error");
       setErrorMessage("Please fill in all required fields.");
@@ -107,10 +107,10 @@ export function ContactForm() {
       if (!response.ok) {
         throw new Error(data.error || "Failed to send message");
       }
-      
+
       // Show success message
       setSubmitStatus("success");
-      
+
       // Reset form after a delay
       setTimeout(() => {
         setFormData({
@@ -122,17 +122,18 @@ export function ContactForm() {
         });
         setSubmitStatus("idle");
       }, 5000);
-      
     } catch (error) {
       setSubmitStatus("error");
-      setErrorMessage(error instanceof Error ? error.message : "Failed to send message. Please try again.");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to send message. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (submitStatus === "error") {
       setSubmitStatus("idle");
       setErrorMessage("");
@@ -149,7 +150,8 @@ export function ContactForm() {
             Send us a Message
           </CardTitle>
           <CardDescription>
-            Fill out the form below and we&apos;ll get back to you within 48 hours during business days.
+            Fill out the form below and we&apos;ll get back to you within 48 hours during business
+            days.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -183,7 +185,10 @@ export function ContactForm() {
             {/* Category */}
             <div className="space-y-2">
               <Label htmlFor="category">Category *</Label>
-              <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
+              <Select
+                value={formData.category}
+                onValueChange={(value) => handleInputChange("category", value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select inquiry type" />
                 </SelectTrigger>
@@ -192,7 +197,9 @@ export function ContactForm() {
                     <SelectItem key={category.value} value={category.value}>
                       <div className="flex flex-col">
                         <span>{category.label}</span>
-                        <span className="text-xs text-muted-foreground">{category.description}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {category.description}
+                        </span>
                       </div>
                     </SelectItem>
                   ))}
@@ -247,7 +254,8 @@ export function ContactForm() {
               <Alert className="border-green-200 bg-green-50">
                 <CheckCircle className="h-4 w-4 text-green-600" />
                 <AlertDescription className="text-green-800">
-                  Your message has been sent successfully! We&apos;ll get back to you within 48 hours during business days.
+                  Your message has been sent successfully! We&apos;ll get back to you within 48
+                  hours during business days.
                 </AlertDescription>
               </Alert>
             )}
@@ -255,18 +263,12 @@ export function ContactForm() {
             {submitStatus === "error" && (
               <Alert className="border-red-200 bg-red-50">
                 <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-800">
-                  {errorMessage}
-                </AlertDescription>
+                <AlertDescription className="text-red-800">{errorMessage}</AlertDescription>
               </Alert>
             )}
 
             {/* Submit Button */}
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitting}
-            >
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -296,8 +298,8 @@ export function ContactForm() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              We strive to respond to all inquiries within <strong>48 hours</strong> during business days. 
-              For urgent matters, please indicate so in your subject line.
+              We strive to respond to all inquiries within <strong>48 hours</strong> during business
+              days. For urgent matters, please indicate so in your subject line.
             </p>
           </CardContent>
         </Card>
@@ -310,9 +312,9 @@ export function ContactForm() {
           <CardContent className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <a 
-                href="https://twitter.com/aipowerrankings" 
-                target="_blank" 
+              <a
+                href="https://twitter.com/aipowerrankings"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm hover:text-primary transition-colors"
               >
@@ -321,9 +323,9 @@ export function ContactForm() {
             </div>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-              <a 
-                href="https://linkedin.com/company/aipowerrankings" 
-                target="_blank" 
+              <a
+                href="https://linkedin.com/company/aipowerrankings"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm hover:text-primary transition-colors"
               >
@@ -332,9 +334,9 @@ export function ContactForm() {
             </div>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-gray-800 rounded-full"></div>
-              <a 
-                href="https://github.com/aipowerrankings" 
-                target="_blank" 
+              <a
+                href="https://github.com/aipowerrankings"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm hover:text-primary transition-colors"
               >

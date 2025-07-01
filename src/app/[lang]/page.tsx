@@ -3,9 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Newspaper, Star, ArrowUp } from "lucide-react";
-import { ClientRankings } from "./client-rankings";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
+import { RankingsTableSkeleton } from "@/components/ui/skeleton";
 import type { Locale } from "@/i18n/config";
+import dynamicImport from "next/dynamic";
+
+// Dynamic import for T-031 performance optimization
+const ClientRankings = dynamicImport(
+  () => import("./client-rankings").then((mod) => ({ default: mod.ClientRankings })),
+  {
+    loading: () => <RankingsTableSkeleton />,
+  }
+);
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -34,11 +44,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
               {dict.home.hero.badge}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4 flex items-center justify-center gap-3">
-              <img
-                src="/crown-of-technology.png"
-                alt="AI Power Ranking Icon"
-                className="w-12 h-12 md:w-16 md:h-16 object-contain"
-              />
+              <ResponsiveCrownIcon priority={true} />
               <span>
                 {dict.common.appName.split(" ")[0]}{" "}
                 <span className="text-gradient">

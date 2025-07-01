@@ -9,9 +9,6 @@
     "src/app/api/test-endpoint/route.ts": {
       "maxDuration": 30
     },
-    "src/app/api/cron/ingest-articles/route.ts": {
-      "maxDuration": 60
-    },
     "src/app/api/admin/ingest-news/route.ts": {
       "maxDuration": 300
     },
@@ -37,12 +34,6 @@
       "maxDuration": 30
     }
   },
-  "crons": [
-    {
-      "path": "/api/cron/ingest-articles-api-key",
-      "schedule": "0 */6 * * *"
-    }
-  ],
   "headers": [
     {
       "source": "/data/cache/(.*)",

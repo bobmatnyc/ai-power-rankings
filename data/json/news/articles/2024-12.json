@@ -7,14 +7,8 @@
     "summary": "Lovable (formerly GPT Engineer) ends 2024 with £5.56M ARR, 140,000 total users, and 30,000 paying customers, demonstrating strong market traction....",
     "published_date": "2024-12-31T00:00:00.000Z",
     "source": "EU-Startups",
-    "tags": [
-      "milestone",
-      "revenue",
-      "user-growth"
-    ],
-    "tool_mentions": [
-      "Lovable"
-    ],
+    "tags": ["milestone", "revenue", "user-growth"],
+    "tool_mentions": ["Lovable"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -27,12 +21,8 @@
     "published_date": "2024-12-19T05:00:00.000Z",
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2024/12/19/in-just-4-months-ai-coding-assistant-cursor-raised-another-100m-at-a-2-5b-valuation-led-by-thrive-sources-say/",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "cursor"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["cursor"],
     "created_at": "2025-06-17T23:25:09.540Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -45,14 +35,8 @@
     "published_date": "2024-12-18T05:00:00.000Z",
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2024/12/18/github-launches-a-free-version-of-its-copilot/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "github-copilot",
-      "claude-code",
-      "gpt-4"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["github-copilot", "claude-code", "gpt-4"],
     "created_at": "2025-06-17T23:25:11.397Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -65,13 +49,8 @@
     "published_date": "2024-12-17T05:00:00.000Z",
     "source": "Builder.io",
     "source_url": "https://www.builder.io/blog/windsurf-vs-cursor",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "cursor",
-      "windsurf"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["cursor", "windsurf"],
     "created_at": "2025-06-17T23:25:11.891Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -84,12 +63,8 @@
     "published_date": "2024-12-17T05:00:00.000Z",
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2024/12/17/code-assist-googles-enterprise-focused-code-assistant-gets-third-party-tools/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "gemini-code-assist"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["gemini-code-assist"],
     "created_at": "2025-06-17T23:25:11.746Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -102,9 +77,7 @@
     "published_date": "2024-12-13T05:00:00.000Z",
     "source": "DevClass",
     "source_url": "https://devclass.com/2024/12/13/huge-developer-survey-shows-which-ai-assistants-are-most-adopted-and-trend-towards-coding-with-vr-headsets/",
-    "tags": [
-      "general"
-    ],
+    "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-17T23:25:12.026Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
@@ -118,12 +91,8 @@
     "published_date": "2024-12-11T05:00:00.000Z",
     "source": "Google",
     "source_url": "https://jules.google/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "jules"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["jules"],
     "created_at": "2025-06-18T00:04:18.303Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -136,12 +105,8 @@
     "published_date": "2024-12-05T05:00:00.000Z",
     "source": "Reuters",
     "source_url": "https://www.reuters.com/technology/artificial-intelligence/openai-launches-200-chatgpt-subscription-research-use-2024-12-05/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "chatgpt-canvas"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["chatgpt-canvas"],
     "created_at": "2025-06-18T00:04:18.048Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -154,12 +119,8 @@
     "published_date": "2024-12-05T05:00:00.000Z",
     "source": "Masters of AI & Automation",
     "source_url": "https://www.youtube.com/watch?v=bUahn-wZMfE",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "chatgpt"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["chatgpt"],
     "created_at": "2025-06-17T23:25:11.601Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -172,12 +133,8 @@
     "published_date": "2024-12-05T05:00:00.000Z",
     "source": "OpenAI",
     "source_url": "https://openai.com/index/introducing-chatgpt-pro/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "chatgpt-canvas"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["chatgpt-canvas"],
     "created_at": "2025-06-18T00:59:19.150Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -191,9 +148,7 @@
     "source": "VentureBeat",
     "source_url": "https://venturebeat.com/programming-development/devin-2-0-is-here-cognition-slashes-price-of-ai-software-engineer-to-20-per-month-from-500/",
     "tags": [],
-    "tool_mentions": [
-      "3"
-    ],
+    "tool_mentions": ["3"],
     "created_at": "2025-06-09T04:58:08.085264",
     "updated_at": "2025-06-28T02:35:55.791Z"
   }

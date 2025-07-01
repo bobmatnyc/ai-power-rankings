@@ -103,12 +103,12 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
    */
   private async loadArticlesForMonths(months: string[]): Promise<NewsArticle[]> {
     const allArticles: NewsArticle[] = [];
-    
+
     for (const month of months) {
       const articles = await this.loadMonthlyArticles(month);
       allArticles.push(...articles);
     }
-    
+
     return allArticles;
   }
 
@@ -125,16 +125,16 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
    */
   async getById(id: string): Promise<NewsArticle | null> {
     const index = await this.getMonthlyIndex();
-    
+
     // Load months until we find the article
     for (const month of index.months) {
       const articles = await this.loadMonthlyArticles(month);
-      const article = articles.find(a => a.id === id);
+      const article = articles.find((a) => a.id === id);
       if (article) {
         return article;
       }
     }
-    
+
     return null;
   }
 
@@ -143,16 +143,16 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
    */
   async getBySlug(slug: string): Promise<NewsArticle | null> {
     const index = await this.getMonthlyIndex();
-    
+
     // Load months until we find the article
     for (const month of index.months) {
       const articles = await this.loadMonthlyArticles(month);
-      const article = articles.find(a => a.slug === slug);
+      const article = articles.find((a) => a.slug === slug);
       if (article) {
         return article;
       }
     }
-    
+
     return null;
   }
 
@@ -169,17 +169,17 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
   async getRecent(limit: number = 10): Promise<NewsArticle[]> {
     const index = await this.getMonthlyIndex();
     const articles: NewsArticle[] = [];
-    
+
     // Load months until we have enough articles
     for (const month of index.months) {
       const monthArticles = await this.loadMonthlyArticles(month);
       articles.push(...monthArticles);
-      
+
       if (articles.length >= limit) {
         break;
       }
     }
-    
+
     // Sort by date and limit
     return articles
       .sort((a, b) => new Date(b.published_date).getTime() - new Date(a.published_date).getTime())
@@ -192,14 +192,14 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
   async getByToolMention(toolId: string): Promise<NewsArticle[]> {
     const index = await this.getMonthlyIndex();
     const matchingArticles: NewsArticle[] = [];
-    
+
     // Search through all months
     for (const month of index.months) {
       const articles = await this.loadMonthlyArticles(month);
-      const matches = articles.filter(article => article.tool_mentions?.includes(toolId));
+      const matches = articles.filter((article) => article.tool_mentions?.includes(toolId));
       matchingArticles.push(...matches);
     }
-    
+
     return matchingArticles;
   }
 
@@ -209,14 +209,14 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
   async getByTag(tag: string): Promise<NewsArticle[]> {
     const index = await this.getMonthlyIndex();
     const matchingArticles: NewsArticle[] = [];
-    
+
     // Search through all months
     for (const month of index.months) {
       const articles = await this.loadMonthlyArticles(month);
-      const matches = articles.filter(article => article.tags?.includes(tag));
+      const matches = articles.filter((article) => article.tags?.includes(tag));
       matchingArticles.push(...matches);
     }
-    
+
     return matchingArticles;
   }
 
@@ -227,20 +227,20 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
     const index = await this.getMonthlyIndex();
     const searchTerm = query.toLowerCase();
     const matchingArticles: NewsArticle[] = [];
-    
+
     // Search through all months
     for (const month of index.months) {
       const articles = await this.loadMonthlyArticles(month);
       const matches = articles.filter(
-        article =>
+        (article) =>
           article.title.toLowerCase().includes(searchTerm) ||
           article.content.toLowerCase().includes(searchTerm) ||
           (article.summary && article.summary.toLowerCase().includes(searchTerm)) ||
-          (article.tags && article.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
+          (article.tags && article.tags.some((tag) => tag.toLowerCase().includes(searchTerm)))
       );
       matchingArticles.push(...matches);
     }
-    
+
     return matchingArticles;
   }
 
@@ -251,30 +251,30 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
     // Determine which month file to update
     const date = new Date(article.published_date);
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-    
+
     // Load the month's articles
-    let monthArticles = await this.loadMonthlyArticles(monthKey);
-    
+    const monthArticles = await this.loadMonthlyArticles(monthKey);
+
     // Remove existing article if updating
-    const existingIndex = monthArticles.findIndex(a => a.id === article.id);
+    const existingIndex = monthArticles.findIndex((a) => a.id === article.id);
     if (existingIndex !== -1) {
       monthArticles[existingIndex] = article;
     } else {
       monthArticles.push(article);
     }
-    
+
     // Sort by date (newest first)
-    monthArticles.sort((a, b) => 
-      new Date(b.published_date).getTime() - new Date(a.published_date).getTime()
+    monthArticles.sort(
+      (a, b) => new Date(b.published_date).getTime() - new Date(a.published_date).getTime()
     );
-    
+
     // Save the updated month file
     const monthFilePath = path.join(this.articlesDir, `${monthKey}.json`);
     await fs.writeJson(monthFilePath, monthArticles, { spaces: 2 });
-    
+
     // Update cache
     this.monthlyCache.set(monthKey, monthArticles);
-    
+
     // Update index
     await this.updateMonthlyIndex();
   }
@@ -284,30 +284,30 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
    */
   async delete(id: string): Promise<boolean> {
     const index = await this.getMonthlyIndex();
-    
+
     // Find which month contains the article
     for (const month of index.months) {
       const articles = await this.loadMonthlyArticles(month);
-      const articleIndex = articles.findIndex(a => a.id === id);
-      
+      const articleIndex = articles.findIndex((a) => a.id === id);
+
       if (articleIndex !== -1) {
         // Remove the article
         articles.splice(articleIndex, 1);
-        
+
         // Save the updated month file
         const monthFilePath = path.join(this.articlesDir, `${month}.json`);
         await fs.writeJson(monthFilePath, articles, { spaces: 2 });
-        
+
         // Update cache
         this.monthlyCache.set(month, articles);
-        
+
         // Update index
         await this.updateMonthlyIndex();
-        
+
         return true;
       }
     }
-    
+
     return false;
   }
 
@@ -326,30 +326,30 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
     const index = await this.getMonthlyIndex();
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-    
+
     // Load articles page by page
     const articles: NewsArticle[] = [];
     let totalLoaded = 0;
-    
+
     for (const month of index.months) {
       const monthArticles = await this.loadMonthlyArticles(month);
-      
+
       for (const article of monthArticles) {
         if (totalLoaded >= startIndex && totalLoaded < endIndex) {
           articles.push(article);
         }
         totalLoaded++;
-        
+
         if (totalLoaded >= endIndex) {
           break;
         }
       }
-      
+
       if (totalLoaded >= endIndex) {
         break;
       }
     }
-    
+
     return {
       articles,
       total: index.totalArticles,
@@ -364,31 +364,31 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
   private async updateMonthlyIndex(): Promise<void> {
     const months = await fs.readdir(this.articlesDir);
     const jsonMonths = months
-      .filter(f => f.endsWith(".json") && f !== "index.json")
-      .map(f => f.replace(".json", ""))
+      .filter((f) => f.endsWith(".json") && f !== "index.json")
+      .map((f) => f.replace(".json", ""))
       .sort()
       .reverse();
-    
+
     const articleCounts: Record<string, number> = {};
     let totalArticles = 0;
-    
+
     for (const month of jsonMonths) {
       const articles = await this.loadMonthlyArticles(month);
       articleCounts[month] = articles.length;
       totalArticles += articles.length;
     }
-    
+
     const index: MonthlyIndex = {
       months: jsonMonths,
       articleCounts,
       totalArticles,
       lastUpdated: new Date().toISOString(),
     };
-    
+
     // Save index
     const indexPath = path.join(this.articlesDir, "index.json");
     await fs.writeJson(indexPath, index, { spaces: 2 });
-    
+
     // Update cache
     this.indexCache = index;
   }
@@ -407,11 +407,11 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
   async getTagsWithCounts(): Promise<Record<string, number>> {
     const index = await this.getMonthlyIndex();
     const counts: Record<string, number> = {};
-    
+
     // Load all articles to count tags
     for (const month of index.months) {
       const articles = await this.loadMonthlyArticles(month);
-      
+
       for (const article of articles) {
         if (article.tags) {
           for (const tag of article.tags) {
@@ -420,7 +420,7 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
         }
       }
     }
-    
+
     return counts;
   }
 

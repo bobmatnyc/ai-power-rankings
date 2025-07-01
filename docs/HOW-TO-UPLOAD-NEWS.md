@@ -17,12 +17,6 @@ curl -X POST http://localhost:3000/api/admin/ingest-news \
   -F "file=@your-news-items.json"
 ```
 
-### Method 3: Google Drive (Automated)
-
-1. Place JSON file in the Google Drive incoming folder
-2. System automatically processes every 6 hours
-3. Files are moved to processed folder after ingestion
-
 ## News Item Format
 
 ### Required Fields

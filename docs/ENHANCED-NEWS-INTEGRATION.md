@@ -7,6 +7,7 @@ The AI Power Rankings now features an enhanced news integration system that comb
 ## Problem Statement
 
 Previously, the ranking algorithm only extracted specific quantitative metrics from news:
+
 - SWE-bench scores
 - Funding amounts
 - Valuation
@@ -22,6 +23,7 @@ This meant that important qualitative news like product launches, feature announ
 The new system employs two complementary approaches:
 
 #### Quantitative Extraction (Regex-based)
+
 - Extracts specific metrics using pattern matching
 - Fast and reliable for structured data
 - Examples:
@@ -30,6 +32,7 @@ The new system employs two complementary approaches:
   - "10 million users" → Users: 10M
 
 #### Qualitative Analysis (AI-powered)
+
 - Uses Vercel AI SDK with OpenAI/Claude
 - Extracts nuanced information:
   - Product launches and their significance
@@ -56,16 +59,19 @@ Enhanced News Enhancer
 ### 3. **Key Components**
 
 #### `/src/lib/news-qualitative-analyzer.ts`
+
 - AI-powered extraction using Vercel AI SDK
 - Structured schema for qualitative metrics
 - Converts qualitative insights to ranking adjustments
 
 #### `/src/lib/ranking-news-enhancer.ts`
+
 - Combines quantitative and qualitative extraction
 - Applies time decay to news impact
 - Integrates with ranking algorithm
 
 #### `/src/app/api/admin/rankings/build/route.ts`
+
 - Updated to use enhanced news metrics
 - Applies adjustments to factor scores
 - Recalculates overall scores with news impact
@@ -77,24 +83,24 @@ interface QualitativeMetrics {
   // Innovation signals
   productLaunches: Array<{
     feature: string;
-    significance: 'breakthrough' | 'major' | 'incremental';
+    significance: "breakthrough" | "major" | "incremental";
     impact: number; // 0-10
   }>;
-  
+
   // Business momentum
   partnerships: Array<{
     partner: string;
-    type: 'strategic' | 'integration' | 'distribution';
+    type: "strategic" | "integration" | "distribution";
     significance: number; // 0-10
   }>;
-  
+
   // Technical achievements
   technicalMilestones: Array<{
     achievement: string;
-    category: 'performance' | 'capability' | 'scale';
+    category: "performance" | "capability" | "scale";
     impact: number; // 0-10
   }>;
-  
+
   // Market sentiment
   sentiment: {
     overall: number; // -1 to 1
@@ -105,12 +111,12 @@ interface QualitativeMetrics {
       future: number;
     };
   };
-  
+
   // Development signals
   developmentActivity: {
-    releaseCadence: 'accelerating' | 'steady' | 'slowing';
+    releaseCadence: "accelerating" | "steady" | "slowing";
     featureVelocity: number; // 0-10
-    communityEngagement: 'increasing' | 'high' | 'medium' | 'low';
+    communityEngagement: "increasing" | "high" | "medium" | "low";
   };
 }
 ```
@@ -122,19 +128,23 @@ The enhanced metrics affect rankings in the following ways:
 ### Direct Factor Adjustments
 
 1. **Innovation Score**
+
    - Product launches → +innovation points
    - Technical milestones → +innovation points
    - Applied with 90-day decay
 
 2. **Business Sentiment**
+
    - Sentiment analysis → direct adjustment (-2 to +2)
    - Weighted by article credibility
 
 3. **Development Velocity**
+
    - Release cadence → velocity boost
    - Feature velocity → direct impact
 
 4. **Market Traction**
+
    - Partnerships → traction boost
    - Competitive positioning → multiplier effect
 
@@ -144,6 +154,7 @@ The enhanced metrics affect rankings in the following ways:
 ### Time Decay
 
 All news impacts decay over time:
+
 - 90-day half-life for qualitative impacts
 - More recent news has stronger influence
 - Ensures rankings reflect current state
@@ -183,11 +194,13 @@ curl -X POST http://localhost:3000/api/admin/preview-rankings-json \
 ## Example Impact
 
 ### Before (Quantitative Only)
+
 - Claude Code announces major feature → No ranking change
 - Cursor launches enterprise plan → No ranking change
 - Devin improves performance 50% → No change (unless new benchmark)
 
 ### After (Enhanced Integration)
+
 - Claude Code announces major feature → Innovation +1.5, affects ranking
 - Cursor launches enterprise plan → Market traction +0.8, sentiment +0.5
 - Devin improves performance 50% → Technical +1.0, innovation +2.0

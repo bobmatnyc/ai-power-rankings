@@ -31,10 +31,10 @@ The platform implements a source-oriented metrics architecture where each articl
 - **Data Visualization**: Recharts
 - **Authentication**: NextAuth with Google OAuth
 - **Deployment**: Vercel
-- **Data Collection**: GitHub API, Perplexity AI API, Web Scraping, Google Drive API
+- **Data Collection**: GitHub API, Perplexity AI API, Web Scraping
 - **Email**: Resend (for newsletters)
 - **Analytics**: Vercel Analytics
-- **News Management**: Google Drive integration for article ingestion
+- **News Management**: Manual article ingestion via admin dashboard
 - **Internationalization**: Custom i18n implementation with 9 languages
 - **Client Processing**: Filter, sort, and paginate data on client-side
 
@@ -71,13 +71,13 @@ Responsible for:
 
 // Created: 2025-06-08
 // Updated: 2025-06-09 - AI-powered extraction
-// Updated: 2025-06-18 - Google Drive integration
+// Updated: 2025-06-18 - Manual news ingestion
 Responsible for:
 
 - **AI-Powered Extraction**: GPT-4 based metrics extraction from articles using structured prompts
 - **Multi-Tool Sources**: Single article can provide metrics for multiple tools (benchmarks, comparisons)
 - **GitHub API Integration**: Repository metrics (stars, forks, commits, contributors)
-- **Google Drive Integration**: Automated ingestion of news articles from shared folder
+- **Manual News Ingestion**: Admin dashboard for uploading and processing news articles
 - **Source Attribution**: Every metric linked to unique source URL with confidence levels
 - **Structured JSON Storage**: Consistent format for all metrics with evidence and analysis
 
@@ -166,7 +166,7 @@ Responsible for:
 Responsible for:
 
 - **Data Access**: RESTful endpoints serving JSON file data
-- **Collection Triggers**: Automated data collection via cron jobs
+- **Collection Triggers**: Manual data collection and ingestion
 - **Ranking Generation**: Daily ranking calculation and storage
 - **Subscription Management**: Email list and preference handling
 - **Cache-First Response**: Pre-generated JSON responses for performance
@@ -237,12 +237,11 @@ Responsible for:
 - `scripts/`: Utility scripts for data management
   - `extract-metrics-from-article.ts`: AI-powered metrics extraction
   - `migrate-to-source-oriented.ts`: Database migration utilities
-  - `run-ingestion-lenient.ts`: Google Drive news ingestion with lenient validation
-  - `check-drive-folder.ts`: Verify Google Drive access and list files
+  - `import-news-from-csv.ts`: Manual news ingestion from CSV files
 - `docs/`: Comprehensive documentation
   - `METRICS-GUIDELINES.md`: Scoring criteria for all metrics
   - `METRICS-EXTRACTION-PROMPT.md`: AI prompt for article analysis
-  - `GOOGLE_DRIVE_INTEGRATION.md`: Google Drive setup and usage guide
+  - `ARTICLE-INGESTION.md`: Manual news ingestion guide
   - `DATABASE.md`: Complete database documentation with migration strategies
   - `WORKFLOW.md`: Development workflow and deployment troubleshooting
 
@@ -328,14 +327,13 @@ Strategic analysis including:
 
 // Created: 2025-06-08
 // Updated: 2025-06-09 - AI extraction system ready
-// Updated: 2025-06-18 - Google Drive integration complete
+// Updated: 2025-06-18 - Manual news ingestion complete
 
 1. **AI Extraction**: ✅ GPT-4 powered metrics extraction from articles
 2. **Frontend Foundation**: ✅ Landing page and rankings display with change indicators
 3. **Collection Pipeline**: ✅ Automated data collection scripts
-4. **Google Drive Integration**: ✅ News article ingestion from shared folder
-5. **Scheduling System**: ⏳ Vercel cron jobs for automation
-6. **API Development**: 🔄 RESTful endpoints for data access
+4. **Manual News Ingestion**: ✅ Admin dashboard for news article management
+5. **API Development**: 🔄 RESTful endpoints for data access
 
 ### Phase 2: Enhanced Features (Weeks 11-16)
 
@@ -418,7 +416,6 @@ Required environment variables:
 GITHUB_TOKEN=your_github_token
 PERPLEXITY_API_KEY=your_perplexity_key
 GOOGLE_API_KEY=your_google_api_key
-GOOGLE_DRIVE_FOLDER_ID=your_folder_id
 
 # Email & Analytics
 RESEND_API_KEY=your_resend_key
@@ -443,7 +440,7 @@ npm run dev              # Start development server
 npm run cache:generate   # Generate all cache files
 npm run collect:github   # Manual data collection
 npm run generate:rankings # Manual ranking generation
-npx tsx scripts/run-ingestion-lenient.ts # Ingest news from Google Drive
+npx tsx scripts/import-news-from-csv.ts # Manual news import from CSV
 
 # Testing & Quality
 npm run lint             # ESLint checking
@@ -575,40 +572,46 @@ The platform supports 9 languages with a custom i18n implementation:
 // Updated: 2025-07-01 - Added items from latest development session
 
 ### High Priority
+
 1. **Complete translation coverage** - Add missing translations for all languages
 2. **Language switcher component** - Add UI for users to change language
 3. **Convert remaining static content pages to markdown** - Complete migration to src/content/[locale]/[filename].md format
 4. **Copy hyperdev@matsuoka.com for site subscriptions** - Set up email forwarding/copying
 5. **Fix mobile Lighthouse scores** - Performance optimization (Current: 66, Target: 90+)
    - FCP: 2.4s → <1.5s
-   - LCP: 7.3s → <2.5s 
+   - LCP: 7.3s → <2.5s
    - TBT: 180ms → <100ms
    - SI: 5.8s → <3.0s
 
 ### Medium Priority
+
 6. **Update Technical Stack documentation** - Reflect current Next.js 15 + JSON storage architecture
 7. **RTL support** - Add support for right-to-left languages if needed
 8. **Translation management system** - Consider using a service like Crowdin
 9. **Locale-specific content** - Add region-specific tool recommendations
 
 ### Infrastructure & Performance
+
 10. **Optimize news loading performance** - Further improve monthly file loading
 11. **Add comprehensive error monitoring** - Implement structured error tracking
 12. **Improve ranking generation resilience** - Add retry logic and better validation
 13. **Create automated testing for ranking system** - Prevent regression issues
 
 ### User Experience
+
 14. **Enhanced contact form features** - Add file upload for tool submissions
 15. **Implement newsletter subscription system** - Connect with email service
 16. **Add advanced search and filtering** - Improve tool discovery
 17. **Create user feedback system** - Collect user input on rankings accuracy
 
 ### Content Management
+
 18. **Implement automated tool discovery** - Reduce manual tool addition overhead
 19. **Create tool update notification system** - Alert when tools have major updates
 20. **Add community contribution features** - Allow users to suggest corrections
 
 ### Technical Debt
+
 21. **Refactor ranking algorithm** - Improve maintainability and add unit tests
 22. **Standardize API response formats** - Ensure consistency across all endpoints
 23. **Improve TypeScript coverage** - Add stricter types for better type safety
@@ -619,27 +622,32 @@ The platform supports 9 languages with a custom i18n implementation:
 // Added: 2025-07-01
 
 ### Schema Validation Issues
+
 - **Always ensure all required JSON schema fields are populated** - Empty objects will fail validation
 - **Run `pnpm run type-check` before debugging runtime issues** - TypeScript errors can cause mysterious runtime failures
 - **Use detailed error logging with stack traces** - Generic error messages hide root causes
 
 ### Rankings System Architecture
+
 - **Preview and save operations must use identical data structures** - Mismatches cause "NEW" status for all tools
 - **Factor scores require all 8 fields**: agentic_capability, innovation, technical_performance, developer_adoption, market_traction, business_sentiment, development_velocity, platform_resilience
 - **Movement data preservation requires complete transformation** - Partial data transformation loses ranking history
 
 ### News System Migration
+
 - **Update repository imports after structural changes** - NewsRepositoryV2 needed after monthly file split
 - **Monthly file structure improves performance** - 228 articles split into 27 monthly files for better loading
 - **Maintain backwards compatibility during migrations** - Graceful fallbacks prevent system breakage
 
 ### Error Debugging Best Practices
+
 1. Check browser console for actual HTTP status codes
 2. Use PM2 logs to find server-side errors: `pnpm run dev:pm2 logs`
 3. Test API endpoints directly with curl to isolate issues
 4. Add console.error() logging for debugging in addition to structured logs
 
 ### Contact Form Implementation
+
 - **Use native HTML elements when UI components are missing** - Prevents TypeScript compilation errors
 - **Hide email addresses while maintaining functionality** - Use mailto: links generated client-side
 - **Categorize inquiries for better user experience** - Dropdown with specific inquiry types

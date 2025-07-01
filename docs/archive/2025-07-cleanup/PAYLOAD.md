@@ -144,7 +144,9 @@ curl -H "Authorization: users API-Key YOUR_KEY" \
 ### Core Collections
 
 #### Tools
+
 Primary collection for AI coding tools:
+
 - Slug-based URLs
 - Company relationships
 - Rich text descriptions
@@ -152,28 +154,36 @@ Primary collection for AI coding tools:
 - SEO metadata
 
 #### Companies
+
 Organizations behind the tools:
+
 - Funding information
 - Size categories
 - Contact details
 - Related tools
 
 #### Rankings
+
 Monthly ranking snapshots:
+
 - Position tracking
 - Score breakdowns
 - Movement indicators
 - Algorithm version
 
 #### Metrics
+
 Time-series data for tools:
+
 - Financial metrics (ARR, funding)
 - Usage metrics (users, downloads)
 - Performance metrics (benchmarks)
 - Source attribution
 
 #### News
+
 Articles and updates:
+
 - Tool relationships
 - Sentiment analysis
 - Category classification
@@ -276,10 +286,7 @@ When needed, access the database directly:
 import { supabaseAdmin } from "@/lib/database";
 
 // Query Payload tables
-const { data } = await supabaseAdmin
-  .from("payload_tools")
-  .select("*")
-  .eq("status", "active");
+const { data } = await supabaseAdmin.from("payload_tools").select("*").eq("status", "active");
 ```
 
 ### Migrations
@@ -309,6 +316,7 @@ http://localhost:3000/admin
 ```
 
 Features:
+
 - Visual content editor
 - Bulk operations
 - Live preview
@@ -342,7 +350,7 @@ fields: [
       condition: (data) => data.status === "active",
     },
   },
-]
+];
 ```
 
 ## Common Tasks
@@ -440,21 +448,25 @@ for (const tool of tools.docs) {
 ### Common Issues
 
 #### 1. "Cannot connect to database"
+
 - Check `SUPABASE_DATABASE_URL` is set
 - Verify database is accessible
 - Check connection pool settings
 
 #### 2. "Unauthorized" errors
+
 - Verify API key is correct
 - Check user has correct role
 - Ensure authentication headers are set
 
 #### 3. "Type errors after schema change"
+
 - Regenerate types: `pnpm dev`
 - Restart TypeScript server in VS Code
 - Check for circular dependencies
 
 #### 4. "Migration failed"
+
 - Check database permissions
 - Review migration files in `/src/migrations`
 - Manually run failed migrations if needed
@@ -482,7 +494,7 @@ WHERE query LIKE '%payload%'
 ORDER BY mean_exec_time DESC;
 
 -- Check table sizes
-SELECT 
+SELECT
   schemaname,
   tablename,
   pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
@@ -534,9 +546,8 @@ Always check relationship data:
 
 ```typescript
 // Safe relationship access
-const companyName = tool.company && typeof tool.company === "object"
-  ? tool.company.name
-  : "Unknown Company";
+const companyName =
+  tool.company && typeof tool.company === "object" ? tool.company.name : "Unknown Company";
 ```
 
 ### 4. Cache Expensive Operations
@@ -573,7 +584,7 @@ fields: [
       }
     },
   },
-]
+];
 ```
 
 ### 6. Monitor Performance

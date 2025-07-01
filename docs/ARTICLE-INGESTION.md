@@ -1,24 +1,23 @@
 # Article Ingestion System
 
-This document describes the automated article ingestion system that monitors Google Drive for new articles and processes them into the AI Power Rankings database.
+This document describes the manual article ingestion system for the AI Power Rankings platform.
 
 ## Overview
 
-The system automatically:
+The system provides manual ingestion of news articles through the admin dashboard:
 
-1. Monitors a Google Drive folder for new JSON files every 6 hours
+1. Upload JSON files via the admin interface
 2. Validates articles against the news-item schema
 3. Ingests valid articles into the database
 4. Removes duplicates based on URL
 5. Generates ingestion reports
-6. Moves processed files to an archive folder
 
-## Folder Structure
+## Admin Dashboard
 
-- **Incoming Folder**: `https://drive.google.com/drive/u/0/folders/1TVEXlX3PDHDtyRgjR1VenDUywrIEAVy8`
-  - Place new JSON files here for processing
-- **Processed Folder**: `https://drive.google.com/drive/u/0/folders/1VCEJc1USJ3iRs2aSVBCpaWW47e9jog12`
-  - Processed files and reports are moved here
+Access the news ingestion tool at:
+
+- Development: `http://localhost:3000/admin/news-ingestion`
+- Production: `https://aipowerrankings.com/admin/news-ingestion`
 
 ## File Format
 
@@ -49,138 +48,108 @@ Each article must conform to the schema defined in `/schemas/news-item.schema.js
       "sentiment": "positive"
     }
   ],
+  "summary": "Cursor, an AI-powered code editor, has achieved a $9.9 billion valuation in its latest funding round...",
+  "discovered_date": "2025-06-06T02:34:24.363779+00:00",
   "metrics_mentioned": [
     {
       "tool_id": "cursor",
-      "metric_key": "valuation",
-      "value": 9900000000,
-      "unit": "USD"
-    },
-    {
-      "tool_id": "cursor",
-      "metric_key": "revenue",
+      "metric_key": "arr",
       "value": 500000000,
-      "unit": "USD"
+      "unit": "usd",
+      "comparison": "Surpassed $500M ARR milestone"
     }
-  ]
+  ],
+  "tags": ["funding", "valuation", "arr"],
+  "impact_assessment": {
+    "importance": "high",
+    "market_impact": "significant",
+    "ranking_impact": ["popularity", "financial_health"]
+  },
+  "verification": {
+    "status": "verified",
+    "confidence_score": 0.95,
+    "fact_checked": true,
+    "corroborating_sources": ["https://anysphere.co/blog/funding-announcement"]
+  },
+  "metadata": {
+    "language": "en",
+    "region": "global",
+    "exclusive": false,
+    "embargo_until": null,
+    "related_news_ids": []
+  }
 }
 ```
 
-## Setup Instructions
+## Ingestion Process
 
-### 1. Google Cloud Service Account
+1. **Upload**: Use the admin dashboard to upload JSON files
+2. **Validation**: Articles are validated against the schema
+3. **Duplicate Check**: URLs are checked for existing articles
+4. **Processing**: Valid articles are added to the database
+5. **Reporting**: Detailed ingestion report is generated
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Enable the Google Drive API
-4. Create a service account:
-   - Go to "IAM & Admin" > "Service Accounts"
-   - Click "Create Service Account"
-   - Download the JSON key file
-5. Share both Google Drive folders with the service account email
+## Schema Requirements
 
-### 2. Environment Variables
+### Required Fields
 
-Add to your `.env.local`:
+- `id`: Unique identifier for the article
+- `title`: Article headline
+- `source.name`: Publication name
+- `source.url`: Article URL
+- `published_date`: When the article was published (ISO 8601)
+- `discovered_date`: When the article was discovered (ISO 8601)
+- `type`: Article type (funding, product_launch, partnership, etc.)
+- `summary`: Brief article summary
 
-```bash
-# Google Drive API
-GOOGLE_SERVICE_ACCOUNT_KEY='<paste entire service account JSON here>'
+### Optional Fields
 
-# Vercel Cron Secret (generate a secure random string)
-CRON_SECRET=your_secure_random_string
-```
+- `source.author`: Article author
+- `tools_mentioned`: Array of tools referenced
+- `metrics_mentioned`: Performance metrics mentioned
+- `tags`: Article tags
+- `impact_assessment`: Predicted impact on rankings
+- `content`: Full article text
+- `verification`: Fact-checking information
+- `metadata`: Additional metadata
 
-### 3. Vercel Configuration
+## Tool References
 
-The cron job is configured in `vercel.json`:
+When referencing tools in `tools_mentioned`, use the exact tool slugs from the database:
 
-```json
-{
-  "crons": [
-    {
-      "path": "/api/cron/ingest-articles",
-      "schedule": "0 */6 * * *"
-    }
-  ]
-}
-```
+- `cursor` for Cursor
+- `github-copilot` for GitHub Copilot
+- `claude-code` for Claude Code
+- etc.
 
-This runs every 6 hours at minute 0 (00:00, 06:00, 12:00, 18:00 UTC).
+## Error Handling
 
-## Processing Flow
+The system provides detailed error reporting for:
 
-1. **File Discovery**: The cron job lists all JSON files in the incoming folder
-2. **Validation**: Each article is validated against the schema
-3. **Duplicate Check**: Existing articles with the same URL are removed
-4. **Ingestion**: Valid articles are inserted into the `news_updates` table
-5. **Metrics Update**: If metrics are mentioned, they're added to `metrics_history`
-6. **Report Generation**: A `.report.json` file is created with ingestion details
-7. **File Movement**: Both the original file and report are moved to the processed folder
+- Invalid JSON format
+- Missing required fields
+- Invalid tool references
+- Duplicate URLs
+- Schema validation failures
 
-## Ingestion Report
+## Best Practices
 
-Each processed file generates a report with the same name but `.report.json` extension:
-
-```json
-{
-  "timestamp": "2025-06-17T06:00:00Z",
-  "file_name": "tech-news-june-2025.json",
-  "total_articles": 10,
-  "ingested": 8,
-  "duplicates_removed": 2,
-  "validation_errors": 2,
-  "errors": ["Article \"Invalid Article\": Missing required field: tools_mentioned"],
-  "ingested_articles": [
-    {
-      "id": "cursor-9b-valuation-2025",
-      "title": "Cursor Reaches $9.9B Valuation",
-      "url": "https://techcrunch.com/...",
-      "status": "new"
-    }
-  ]
-}
-```
-
-## Manual Testing
-
-To manually trigger the ingestion:
-
-```bash
-# Using curl (replace YOUR_DOMAIN and YOUR_CRON_SECRET)
-curl -X POST https://YOUR_DOMAIN/api/cron/ingest-articles \
-  -H "Authorization: Bearer YOUR_CRON_SECRET"
-```
-
-## Monitoring
-
-- Check Vercel Functions logs for execution details
-- Review `.report.json` files in the processed folder
-- Monitor the `news_updates` table for new entries
-
-## Security Notes
-
-1. The cron endpoint requires the `CRON_SECRET` for authentication
-2. Service account credentials should have minimal permissions (only Drive access)
-3. Share folders with the service account email only
-4. Never commit credentials to version control
+1. **Validate JSON** before uploading using a JSON validator
+2. **Check tool IDs** to ensure they exist in the database
+3. **Use ISO 8601 dates** for all date fields
+4. **Provide unique IDs** for each article
+5. **Include impact assessment** for better ranking integration
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Authentication Error**: Check that `GOOGLE_SERVICE_ACCOUNT_KEY` is properly formatted
-2. **Permission Denied**: Ensure folders are shared with the service account email
-3. **Validation Errors**: Review the schema and ensure all required fields are present
-4. **Duplicate Key Errors**: The system handles duplicates automatically by URL
+1. **Invalid JSON**: Use a JSON validator to check syntax
+2. **Missing required fields**: Ensure all required fields are present
+3. **Invalid dates**: Use ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ)
+4. **Tool not found**: Check that tool slugs match database entries
+5. **Duplicate URL**: Article with same URL already exists
 
-### Debug Mode
+### Getting Help
 
-For local testing, you can create a test endpoint without cron authentication:
-
-```typescript
-// src/app/api/test/ingest-articles/route.ts
-export { GET, POST } from "@/app/api/cron/ingest-articles/route";
-```
-
-Then test locally without authentication requirements.
+Check the ingestion reports in the admin dashboard for detailed error messages and processing results.

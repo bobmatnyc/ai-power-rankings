@@ -9,10 +9,10 @@ export async function GET(_request: NextRequest) {
 
     const rankingsRepo = getRankingsRepo();
     const periods = await rankingsRepo.getAvailablePeriods();
-    
+
     // Get all rankings from all periods
     const allRankings: any[] = [];
-    
+
     for (const period of periods) {
       const periodData = await rankingsRepo.getRankingsForPeriod(period);
       if (periodData && periodData.rankings) {
@@ -29,7 +29,7 @@ export async function GET(_request: NextRequest) {
             previous_position: ranking.movement?.previous_position,
             score_breakdown: ranking.factor_scores || {},
             algorithm_version: periodData.algorithm_version,
-            created_at: periodData.created_at
+            created_at: periodData.created_at,
           });
         });
       }

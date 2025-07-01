@@ -38,7 +38,11 @@ import { loggers } from "@/lib/logger";
 import type { RankingEntry } from "@/lib/json-db/schemas";
 import { RankingEngineV6, ToolMetricsV6, ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
-import { extractEnhancedNewsMetrics, applyEnhancedNewsMetrics, applyNewsImpactToScores } from "@/lib/ranking-news-enhancer";
+import {
+  extractEnhancedNewsMetrics,
+  applyEnhancedNewsMetrics,
+  applyNewsImpactToScores,
+} from "@/lib/ranking-news-enhancer";
 import fs from "fs-extra";
 import path from "path";
 
@@ -141,8 +145,10 @@ function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetric
     innovations: [],
 
     // Market metrics - with better defaults based on tool type
-    estimated_users: businessMetrics.estimated_users || (isPremium ? 500000 : isOpenSource ? 100000 : 50000),
-    monthly_arr: businessMetrics.monthly_arr || (isEnterprise ? 10000000 : isPremium ? 5000000 : 1000000),
+    estimated_users:
+      businessMetrics.estimated_users || (isPremium ? 500000 : isOpenSource ? 100000 : 50000),
+    monthly_arr:
+      businessMetrics.monthly_arr || (isEnterprise ? 10000000 : isPremium ? 5000000 : 1000000),
     valuation: businessMetrics.valuation || (isPremium ? 1000000000 : 100000000),
     funding: businessMetrics.funding_total || (isPremium ? 100000000 : 10000000),
     business_model: business.business_model || "saas",
@@ -181,49 +187,57 @@ export async function POST(request: NextRequest) {
     if (providedRankings && Array.isArray(providedRankings)) {
       loggers.api.info(`Using provided rankings data for period ${period}`, {
         rankingsCount: providedRankings.length,
-        sampleRanking: providedRankings[0] // Debug: log first ranking structure
+        sampleRanking: providedRankings[0], // Debug: log first ranking structure
       });
-      
+
       const rankingsRepo = getRankingsRepo();
-      
+
       // Transform provided rankings to the expected format
       let rankings: RankingEntry[];
       try {
         rankings = providedRankings.map((ranking, index) => ({
-        tool_id: ranking.tool_id,
-        tool_name: ranking.tool_name,
-        position: ranking.position || index + 1,
-        score: ranking.score,
-        tier: calculateTier(ranking.position || index + 1),
-        factor_scores: {
-          agentic_capability: ranking.factor_scores?.agentic_capability || 0,
-          innovation: ranking.factor_scores?.innovation || 0,
-          technical_performance: ranking.factor_scores?.technical_performance || 0,
-          developer_adoption: ranking.factor_scores?.developer_adoption || 0,
-          market_traction: ranking.factor_scores?.market_traction || 0,
-          business_sentiment: ranking.factor_scores?.business_sentiment || 0,
-          development_velocity: ranking.factor_scores?.development_velocity || 0,
-          platform_resilience: ranking.factor_scores?.platform_resilience || 0,
-        },
-        movement: ranking.movement ? {
-          change: Math.abs(ranking.movement.position_change || 0),
-          direction: ranking.movement.direction as "up" | "down" | "same" | "new",
-          ...(ranking.movement.direction !== "new" && ranking.movement.current_position ? { 
-            previous_position: ranking.movement.current_position 
-          } : {})
-        } : {
-          change: 0,
-          direction: "new" as const,
-        },
-        change_analysis: ranking.change_analysis,
-      }));
+          tool_id: ranking.tool_id,
+          tool_name: ranking.tool_name,
+          position: ranking.position || index + 1,
+          score: ranking.score,
+          tier: calculateTier(ranking.position || index + 1),
+          factor_scores: {
+            agentic_capability: ranking.factor_scores?.agentic_capability || 0,
+            innovation: ranking.factor_scores?.innovation || 0,
+            technical_performance: ranking.factor_scores?.technical_performance || 0,
+            developer_adoption: ranking.factor_scores?.developer_adoption || 0,
+            market_traction: ranking.factor_scores?.market_traction || 0,
+            business_sentiment: ranking.factor_scores?.business_sentiment || 0,
+            development_velocity: ranking.factor_scores?.development_velocity || 0,
+            platform_resilience: ranking.factor_scores?.platform_resilience || 0,
+          },
+          movement: ranking.movement
+            ? {
+                change: Math.abs(ranking.movement.position_change || 0),
+                direction: ranking.movement.direction as "up" | "down" | "same" | "new",
+                ...(ranking.movement.direction !== "new" && ranking.movement.current_position
+                  ? {
+                      previous_position: ranking.movement.current_position,
+                    }
+                  : {}),
+              }
+            : {
+                change: 0,
+                direction: "new" as const,
+              },
+          change_analysis: ranking.change_analysis,
+        }));
       } catch (transformError) {
         console.error("TRANSFORM ERROR:", transformError);
-        loggers.api.error("Error transforming rankings data - detailed", JSON.stringify({
-          message: transformError instanceof Error ? transformError.message : String(transformError),
-          stack: transformError instanceof Error ? transformError.stack : undefined,
-          sampleRanking: providedRankings[0]
-        }));
+        loggers.api.error(
+          "Error transforming rankings data - detailed",
+          JSON.stringify({
+            message:
+              transformError instanceof Error ? transformError.message : String(transformError),
+            stack: transformError instanceof Error ? transformError.stack : undefined,
+            sampleRanking: providedRankings[0],
+          })
+        );
         throw transformError;
       }
 
@@ -240,11 +254,14 @@ export async function POST(request: NextRequest) {
         loggers.api.info("Rankings saved successfully", { period, count: rankings.length });
       } catch (saveError) {
         console.error("SAVE ERROR:", saveError);
-        loggers.api.error("Error saving rankings - detailed error", JSON.stringify({
-          message: saveError instanceof Error ? saveError.message : String(saveError),
-          stack: saveError instanceof Error ? saveError.stack : undefined,
-          period
-        }));
+        loggers.api.error(
+          "Error saving rankings - detailed error",
+          JSON.stringify({
+            message: saveError instanceof Error ? saveError.message : String(saveError),
+            stack: saveError instanceof Error ? saveError.stack : undefined,
+            period,
+          })
+        );
         throw saveError;
       }
 
@@ -328,29 +345,31 @@ export async function POST(request: NextRequest) {
           preview_date,
           enableAI
         );
-        
+
         // Log extracted metrics for premium tools
-        if (["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name) && 
-            (Object.keys(enhancedMetrics).length > 0 || enhancedMetrics.articlesProcessed > 0)) {
+        if (
+          ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name) &&
+          (Object.keys(enhancedMetrics).length > 0 || enhancedMetrics.articlesProcessed > 0)
+        ) {
           loggers.api.info(`Enhanced metrics for ${tool.name}:`, {
             quantitative: {
               swe_bench: enhancedMetrics.swe_bench_score,
               funding: enhancedMetrics.funding,
-              users: enhancedMetrics.estimated_users
+              users: enhancedMetrics.estimated_users,
             },
             qualitative: {
               innovation_boost: enhancedMetrics.innovationBoost,
               sentiment_adjust: enhancedMetrics.businessSentimentAdjust,
-              velocity_boost: enhancedMetrics.developmentVelocityBoost
+              velocity_boost: enhancedMetrics.developmentVelocityBoost,
             },
             articles_processed: enhancedMetrics.articlesProcessed,
-            significant_events: enhancedMetrics.significantEvents
+            significant_events: enhancedMetrics.significantEvents,
           });
         }
 
         // Transform tool data to metrics format
         let toolMetrics = transformToToolMetrics(tool, innovationScore);
-        
+
         // Apply enhanced news metrics (both quantitative and qualitative)
         toolMetrics = applyEnhancedNewsMetrics(toolMetrics, enhancedMetrics);
 
@@ -359,24 +378,29 @@ export async function POST(request: NextRequest) {
           toolMetrics,
           preview_date ? new Date(preview_date) : new Date(period)
         );
-        
+
         // Apply additional news impact to factor scores
         const adjustedFactorScores = applyNewsImpactToScores(score.factorScores, enhancedMetrics);
-        
+
         // Update the score's factor scores with the adjustments
         score.factorScores = {
           ...score.factorScores,
-          technicalPerformance: adjustedFactorScores['technicalPerformance'] || score.factorScores.technicalPerformance,
-          marketTraction: adjustedFactorScores['marketTraction'] || score.factorScores.marketTraction
+          technicalPerformance:
+            adjustedFactorScores["technicalPerformance"] || score.factorScores.technicalPerformance,
+          marketTraction:
+            adjustedFactorScores["marketTraction"] || score.factorScores.marketTraction,
         };
-        
+
         // Recalculate overall score after news adjustments
         const weights = RankingEngineV6.getAlgorithmInfo().weights;
         score.overallScore = Object.entries(weights).reduce((total, [factor, weight]) => {
           const factorScore = score.factorScores[factor as keyof typeof score.factorScores] || 0;
           return total + factorScore * weight;
         }, 0);
-        score.overallScore = Math.max(0, Math.min(10, Math.round(score.overallScore * 1000) / 1000));
+        score.overallScore = Math.max(
+          0,
+          Math.min(10, Math.round(score.overallScore * 1000) / 1000)
+        );
 
         toolScores.push(score);
       } catch (error) {
@@ -533,9 +557,9 @@ export async function POST(request: NextRequest) {
       message: `Rankings built successfully for ${period} using algorithm v6.0`,
     });
   } catch (error) {
-    loggers.api.error("Build rankings error", { 
+    loggers.api.error("Build rankings error", {
       error: error instanceof Error ? error.message : error,
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
 
     return NextResponse.json(

@@ -8,13 +8,8 @@
     "published_date": "2025-05-30T18:02:56.000Z",
     "source": "HyperDev",
     "source_url": "https://hyperdev.matsuoka.com/p/ai-code-review-v329-is-out",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude-code",
-      "chatgpt-canvas"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude-code", "chatgpt-canvas"],
     "created_at": "2025-06-18T00:20:15.629Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -27,12 +22,8 @@
     "published_date": "2025-05-29T18:02:44.000Z",
     "source": "HyperDev",
     "source_url": "https://hyperdev.matsuoka.com/p/stupid-claude-tricks-vol-1-matrix",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude-code"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude-code"],
     "created_at": "2025-06-18T00:20:15.766Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -46,9 +37,7 @@
     "source": "Anthropic",
     "source_url": "https://www.anthropic.com/news/claude-4",
     "tags": [],
-    "tool_mentions": [
-      "4"
-    ],
+    "tool_mentions": ["4"],
     "created_at": "2025-06-09T04:58:08.085264",
     "updated_at": "2025-06-28T02:35:55.787Z"
   },
@@ -61,12 +50,8 @@
     "published_date": "2025-05-22T04:00:00.000Z",
     "source": "SWE-bench Leaderboard",
     "source_url": "https://www.swebench.com/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude-code"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude-code"],
     "created_at": "2025-06-17T23:25:16.037Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -80,9 +65,7 @@
     "source": "Google",
     "source_url": "https://blog.google/technology/google-labs/jules/",
     "tags": [],
-    "tool_mentions": [
-      "11"
-    ],
+    "tool_mentions": ["11"],
     "created_at": "2025-06-09T04:58:08.085264",
     "updated_at": "2025-06-28T02:35:55.787Z"
   },
@@ -95,12 +78,8 @@
     "published_date": "2025-05-20T04:00:00.000Z",
     "source": "Vercel Blog",
     "source_url": "https://vercel.com/blog/updated-v0-pricing",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "v0-vercel"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["v0-vercel"],
     "created_at": "2025-06-18T00:04:23.230Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -112,14 +91,8 @@
     "summary": "GitHub introduces Copilot Coding Agent capable of autonomously resolving GitHub issues, marking a major step toward AI-driven software development....",
     "published_date": "2025-05-19T00:00:00.000Z",
     "source": "GitHub Blog",
-    "tags": [
-      "feature-update",
-      "autonomous",
-      "agent"
-    ],
-    "tool_mentions": [
-      "GitHub Copilot"
-    ],
+    "tags": ["feature-update", "autonomous", "agent"],
+    "tool_mentions": ["GitHub Copilot"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -132,13 +105,8 @@
     "published_date": "2025-05-15T04:00:00.000Z",
     "source": "Neowin",
     "source_url": "https://www.neowin.net/news/vercel-releases-first-ai-model-for-v0-now-in-beta/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "v0-vercel",
-      "cursor"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["v0-vercel", "cursor"],
     "created_at": "2025-06-18T00:04:23.098Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -151,12 +119,8 @@
     "published_date": "2025-05-11T04:00:00.000Z",
     "source": "Nathanbenaich (Substack)",
     "source_url": "https://nathanbenaich.substack.com/p/your-guide-to-ai-may-2025",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "p-1-ai"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["p-1-ai"],
     "created_at": "2025-06-17T23:28:14.271Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -169,12 +133,8 @@
     "published_date": "2025-05-09T04:00:00.000Z",
     "source": "Educationnext.In",
     "source_url": "https://www.educationnext.in/posts/anyspheres-900m-funding-boosts-cursor-top-ai-coding-tool-2025",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "cursor"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["cursor"],
     "created_at": "2025-06-17T23:28:14.415Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -188,9 +148,7 @@
     "source": "Bloomberg",
     "source_url": "https://www.bloomberg.com/news/articles/2025-05-06/openai-reaches-agreement-to-buy-startup-windsurf-for-3-billion",
     "tags": [],
-    "tool_mentions": [
-      "14"
-    ],
+    "tool_mentions": ["14"],
     "created_at": "2025-06-09T04:58:08.085264",
     "updated_at": "2025-06-28T02:35:55.786Z"
   },
@@ -203,12 +161,8 @@
     "published_date": "2025-05-01T04:00:00.000Z",
     "source": "Augment Code",
     "source_url": "https://www.augmentcode.com/blog/augment-code-is-the-first-ai-coding-assistant-to-be-iso-iec-42001-certified",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "augment-code"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["augment-code"],
     "created_at": "2025-06-18T00:59:19.725Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   }

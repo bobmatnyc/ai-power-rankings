@@ -7,14 +7,8 @@
     "summary": "Sourcery debuts on Product Hunt, offering automated Python code refactoring powered by AI to help developers write cleaner, more maintainable code....",
     "published_date": "2019-12-11T00:00:00.000Z",
     "source": "Product Hunt",
-    "tags": [
-      "launch",
-      "python",
-      "refactoring"
-    ],
-    "tool_mentions": [
-      "Sourcery"
-    ],
+    "tags": ["launch", "python", "refactoring"],
+    "tool_mentions": ["Sourcery"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   }

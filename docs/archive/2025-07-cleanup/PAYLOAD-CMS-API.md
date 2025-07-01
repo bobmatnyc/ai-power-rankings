@@ -26,23 +26,28 @@ Authorization: users API-Key YOUR_API_KEY_HERE
 **Example: Update Cursor's description and tagline**
 
 1. **Find the tool by slug:**
+
 ```bash
 GET http://localhost:3000/api/tools?where[slug][equals]=cursor
 Authorization: users API-Key YOUR_API_KEY_HERE
 ```
 
 2. **Extract the tool ID from response:**
+
 ```json
 {
-  "docs": [{
-    "id": "66788f5e8c4a3b001e8b4567",  // <-- Copy this ID
-    "name": "Cursor",
-    "slug": "cursor"
-  }]
+  "docs": [
+    {
+      "id": "66788f5e8c4a3b001e8b4567", // <-- Copy this ID
+      "name": "Cursor",
+      "slug": "cursor"
+    }
+  ]
 }
 ```
 
 3. **Update the tool:**
+
 ```bash
 PATCH http://localhost:3000/api/tools/66788f5e8c4a3b001e8b4567
 Content-Type: application/json
@@ -59,11 +64,13 @@ Authorization: users API-Key YOUR_API_KEY_HERE
 **Example: Update GitHub Copilot pricing model**
 
 1. **Find the tool:**
+
 ```bash
 GET http://localhost:3000/api/tools?where[slug][equals]=github-copilot
 ```
 
 2. **Update pricing information:**
+
 ```bash
 PATCH http://localhost:3000/api/tools/{tool-id}
 Content-Type: application/json
@@ -95,11 +102,13 @@ Authorization: users API-Key YOUR_API_KEY_HERE
 **Example: Update Anthropic's company information**
 
 1. **Find the company:**
+
 ```bash
 GET http://localhost:3000/api/companies?where[slug][equals]=anthropic
 ```
 
 2. **Update company details:**
+
 ```bash
 PATCH http://localhost:3000/api/companies/{company-id}
 Content-Type: application/json
@@ -162,7 +171,7 @@ Authorization: users API-Key YOUR_API_KEY_HERE
     "Real-time collaboration"
   ],
   "supported_languages": [
-    "JavaScript", "TypeScript", "Python", "Java", "C++", 
+    "JavaScript", "TypeScript", "Python", "Java", "C++",
     "Go", "Rust", "Ruby", "PHP", "Swift"
   ],
   "llm_providers": ["anthropic", "openai", "google"],
@@ -183,7 +192,7 @@ const rankings = [
   { slug: "windsurf", position: 2 },
   { slug: "github-copilot", position: 3 },
   { slug: "cody", position: 4 },
-  { slug: "continue-dev", position: 5 }
+  { slug: "continue-dev", position: 5 },
 ];
 
 for (const ranking of rankings) {
@@ -192,7 +201,7 @@ for (const ranking of rankings) {
     `http://localhost:3000/api/tools?where[slug][equals]=${ranking.slug}`,
     { headers: { Authorization: `users API-Key ${API_KEY}` } }
   );
-  
+
   const { docs } = await response.json();
   if (docs.length > 0) {
     // Update ranking
@@ -200,12 +209,12 @@ for (const ranking of rankings) {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `users API-Key ${API_KEY}`
+        Authorization: `users API-Key ${API_KEY}`,
       },
       body: JSON.stringify({
         current_ranking: ranking.position,
-        is_trending: ranking.position <= 3
-      })
+        is_trending: ranking.position <= 3,
+      }),
     });
   }
 }
@@ -255,6 +264,7 @@ Authorization: users API-Key YOUR_API_KEY_HERE
 ## Complete Field References
 
 ### Tool Fields Reference
+
 ```typescript
 {
   // Basic Information
@@ -262,14 +272,14 @@ Authorization: users API-Key YOUR_API_KEY_HERE
   slug: string;              // URL-friendly ID (auto-generated from name)
   tagline?: string;          // Short description (50-100 chars)
   description?: string;      // Full description (plain text or rich text)
-  
+
   // URLs
   website_url?: string;      // Main website
   github_url?: string;       // GitHub repository
   documentation_url?: string; // Docs site
   demo_url?: string;         // Live demo
   discord_url?: string;      // Discord server
-  
+
   // Classification
   category: string;          // Required, one of:
     // "autonomous-agent" - Fully autonomous coding agents
@@ -280,9 +290,9 @@ Authorization: users API-Key YOUR_API_KEY_HERE
     // "code-review" - Code review tools
     // "testing-tool" - AI testing tools
     // "open-source-framework" - OSS frameworks
-  
+
   subcategory?: string;      // Optional subcategory
-  
+
   // Features & Capabilities
   key_features?: string[];   // Main features (5-10 items)
   supported_languages?: string[]; // Programming languages
@@ -290,13 +300,13 @@ Authorization: users API-Key YOUR_API_KEY_HERE
   llm_providers?: string[];  // "openai", "anthropic", "google", etc.
   deployment_options?: string[]; // "cloud", "self-hosted", "desktop"
   integrations?: string[];   // Third-party integrations
-  
+
   // Technical Capabilities
   context_window_size?: number; // Max tokens
   supports_images?: boolean;
   supports_web_browsing?: boolean;
   supports_function_calling?: boolean;
-  
+
   // Pricing (deprecated - use pricing_tiers)
   pricing_model?: string;    // "free", "freemium", "subscription", "usage-based"
   pricing_tiers?: Array<{
@@ -307,7 +317,7 @@ Authorization: users API-Key YOUR_API_KEY_HERE
   }>;
   free_tier_available?: boolean;
   free_tier_limitations?: string;
-  
+
   // Status & Lifecycle
   status: string;            // Required, one of:
     // "active" - Actively developed
@@ -315,23 +325,23 @@ Authorization: users API-Key YOUR_API_KEY_HERE
     // "deprecated" - No longer recommended
     // "discontinued" - No longer available
     // "acquired" - Acquired by another company
-  
+
   launch_date?: string;      // ISO date when launched
   beta_date?: string;        // ISO date when beta started
   discontinuation_date?: string; // ISO date when discontinued
   acquisition_date?: string; // ISO date when acquired
-  
+
   // Relationships
   company: string;           // Company ID (required)
   acquired_by_company?: string; // Company ID if acquired
-  
+
   // Rankings & Features
   current_ranking?: number;  // Current position (1-100)
   previous_ranking?: number; // Previous position
   is_featured?: boolean;     // Featured on homepage
   is_trending?: boolean;     // Trending this week
   trend_direction?: "up" | "down" | "stable";
-  
+
   // Metadata
   logo_url?: string;         // Tool logo
   banner_url?: string;       // Banner image
@@ -340,14 +350,15 @@ Authorization: users API-Key YOUR_API_KEY_HERE
 ```
 
 ### Company Fields Reference
-```typescript
+
+````typescript
 {
   // Basic Information
   name: string;              // Company name (required)
   slug: string;              // URL-friendly ID (auto-generated)
   description?: string;      // Company description
   mission?: string;          // Company mission statement
-  
+
   // URLs
   website_url?: string;      // Main website
   blog_url?: string;         // Company blog
@@ -355,7 +366,7 @@ Authorization: users API-Key YOUR_API_KEY_HERE
   linkedin_url?: string;     // LinkedIn profile
   twitter_url?: string;      // Twitter/X profile
   github_url?: string;       // GitHub organization
-  
+
   // Company Details
   founded_year?: number;     // Year founded (e.g., 2021)
   headquarters?: string;     // HQ location (e.g., "San Francisco, CA")
@@ -365,7 +376,7 @@ Authorization: users API-Key YOUR_API_KEY_HERE
     // "medium" - 51-200 employees
     // "large" - 201-1000 employees
     // "enterprise" - 1000+ employees
-  
+
   // Funding Information
   funding_stage?: string;    // One of:
     // "bootstrapped" - No external funding
@@ -377,13 +388,13 @@ Authorization: users API-Key YOUR_API_KEY_HERE
     // "series_d_plus" - Series D or later
     // "ipo" - Public company
     // "acquired" - Acquired by another company
-  
+
   total_funding?: number;    // Total funding in USD
   last_funding_date?: string; // ISO date of last funding
   last_funding_amount?: number; // Last round amount in USD
   valuation?: number;        // Company valuation in USD
   investors?: string[];      // List of major investors
-  
+
   // Leadership
   leadership?: {
     ceo?: string;           // CEO name
@@ -391,17 +402,17 @@ Authorization: users API-Key YOUR_API_KEY_HERE
     founders?: string[];    // List of founders
     board_members?: string[]; // Board members
   };
-  
+
   // Business Metrics
   employee_count?: number;   // Current employee count
   annual_revenue?: number;   // Annual revenue in USD
   revenue_growth_rate?: number; // YoY growth rate (0.25 = 25%)
   primary_market?: string;   // Primary market focus
-  
+
   // Relationships
   parent_company?: string;   // Parent company ID if subsidiary
   subsidiaries?: string[];   // List of subsidiary company IDs
-  
+
   // Status
   is_active?: boolean;       // Still operating
   acquisition_date?: string; // ISO date if acquired
@@ -421,7 +432,7 @@ Authorization: users API-Key YOUR_API_KEY_HERE
     // "performance" - Benchmarks, speed, accuracy
     // "growth" - Growth rates, trends
     // "technical" - Technical specs
-  
+
   // Display & Source
   value_display?: string;    // Human-readable value (e.g., "500K", "$2M")
   recorded_at: string;       // ISO date when metric was recorded
@@ -433,10 +444,10 @@ Authorization: users API-Key YOUR_API_KEY_HERE
     // "research_report" - Third-party research
     // "github_api" - GitHub API data
     // "benchmark" - Official benchmark
-  
+
   source_url?: string;       // URL to source
   confidence_score?: number; // 0-1 confidence in accuracy
-  
+
   // Additional Context
   notes?: string;            // Additional context
   comparison_period?: string; // For growth metrics (e.g., "month", "year")
@@ -454,7 +465,7 @@ Authorization: users API-Key YOUR_API_KEY_HERE
 "burn_rate"                // Monthly burn rate ($)
 "runway_months"            // Months of runway
 
-// Usage Metrics  
+// Usage Metrics
 "monthly_active_users"     // MAU count
 "weekly_active_users"      // WAU count
 "daily_active_users"       // DAU count
@@ -480,10 +491,11 @@ Authorization: users API-Key YOUR_API_KEY_HERE
 "churn_rate"               // Monthly churn percentage
 "retention_rate"           // User retention rate
 "nps_score"                // Net Promoter Score
-```
+````
 
 ### News Fields Reference
-```typescript
+
+````typescript
 {
   // Required Fields
   title: string;             // Article title
@@ -497,46 +509,46 @@ Authorization: users API-Key YOUR_API_KEY_HERE
     // "research" - Papers/benchmarks
     // "analysis" - Market analysis
     // "announcement" - General announcements
-  
+
   // Content
   summary?: string;          // Brief summary (150-300 chars)
   content?: string;          // Full article content (rich text)
   key_points?: string[];     // Bullet points of key info
-  
+
   // Metadata
   published_at: string;      // ISO date of publication
   source?: string;           // Source name (e.g., "TechCrunch")
   source_url?: string;       // Original article URL
   author?: string;           // Author name
-  
+
   // Relationships
   tools?: string[];          // Related tool IDs
   companies?: string[];      // Related company IDs
-  
+
   // Analysis
   sentiment?: string;        // One of:
     // "positive" - Good news
     // "negative" - Bad news
     // "neutral" - Neutral/factual
     // "mixed" - Both positive and negative
-  
+
   impact_level?: string;     // One of:
     // "high" - Major industry impact
     // "medium" - Significant news
     // "low" - Minor update
-  
+
   // Metrics Mentioned
   metrics_mentioned?: {      // Metrics mentioned in article
     [toolSlug: string]: {
       [metricKey: string]: number
     }
   };
-  
+
   // Display Options
   is_featured?: boolean;     // Feature on homepage
   is_breaking?: boolean;     // Breaking news flag
   tags?: string[];          // Additional tags
-  
+
   // Media
   featured_image?: string;   // Hero image URL
   images?: Array<{
@@ -563,7 +575,7 @@ for (const update of updates) {
     `${API_URL}/tools?where[slug][equals]=${update.slug}`,
     { headers: { Authorization: `users API-Key ${API_KEY}` } }
   );
-  
+
   const { docs } = await response.json();
   if (docs.length > 0) {
     // Then update it
@@ -579,7 +591,7 @@ for (const update of updates) {
     });
   }
 }
-```
+````
 
 ## Working with Rich Text
 
@@ -592,6 +604,7 @@ Payload uses Lexical for rich text. Simple text can be provided as:
 ```
 
 For formatted content:
+
 ```json
 {
   "description": [
@@ -603,23 +616,17 @@ For formatted content:
       ]
     },
     {
-      "children": [
-        { "text": "Features include:" }
-      ]
+      "children": [{ "text": "Features include:" }]
     },
     {
       "type": "list",
       "listType": "bullet",
       "children": [
         {
-          "children": [
-            { "text": "Intelligent code completion" }
-          ]
+          "children": [{ "text": "Intelligent code completion" }]
         },
         {
-          "children": [
-            { "text": "Natural language to code" }
-          ]
+          "children": [{ "text": "Natural language to code" }]
         }
       ]
     }
@@ -630,6 +637,7 @@ For formatted content:
 ## Query Parameters
 
 ### Filtering
+
 ```bash
 # Single condition
 ?where[status][equals]=active
@@ -648,6 +656,7 @@ For formatted content:
 ```
 
 ### Sorting
+
 ```bash
 # Ascending
 ?sort=name
@@ -660,11 +669,13 @@ For formatted content:
 ```
 
 ### Pagination
+
 ```bash
 ?limit=20&page=2
 ```
 
 ### Relationships
+
 ```bash
 # Include related data
 ?depth=1  # Include direct relationships
@@ -676,6 +687,7 @@ For formatted content:
 ### Common Errors
 
 #### 400 Bad Request
+
 ```json
 {
   "errors": [
@@ -686,27 +698,33 @@ For formatted content:
   ]
 }
 ```
+
 **Fix**: Check field names and data types match schema
 
 #### 401 Unauthorized
+
 ```json
 {
   "error": "You are not allowed to perform this action"
 }
 ```
+
 **Fix**: Verify API key is correct and user has required permissions
 
 #### 404 Not Found
+
 ```json
 {
   "error": "The requested resource was not found"
 }
 ```
+
 **Fix**: Check ID exists and collection name is correct
 
 ## Best Practices
 
 ### 1. Always Use Slugs
+
 ```typescript
 // Good - use slug for lookups
 const tool = await getToolBySlug("cursor");
@@ -716,6 +734,7 @@ const tool = await getToolById("60f7b3d3c3e4a0001f8e4b1a");
 ```
 
 ### 2. Batch Related Updates
+
 ```typescript
 // When updating a tool, also update metrics
 const tool = await updateTool(id, toolData);
@@ -725,6 +744,7 @@ if (newMetrics) {
 ```
 
 ### 3. Check Before Creating
+
 ```typescript
 // Avoid duplicates
 const existing = await findToolBySlug(slug);
@@ -734,6 +754,7 @@ if (!existing) {
 ```
 
 ### 4. Use Meaningful Sources
+
 ```typescript
 // Good - specific source
 {
@@ -748,6 +769,7 @@ if (!existing) {
 ```
 
 ### 5. Validate URLs
+
 ```typescript
 // Ensure URLs are valid
 function isValidUrl(url: string): boolean {
@@ -765,74 +787,60 @@ function isValidUrl(url: string): boolean {
 Here's a complete example of updating a tool with new information:
 
 ```typescript
-async function updateToolWithMetrics(
-  slug: string,
-  updates: any,
-  metrics: any[]
-) {
+async function updateToolWithMetrics(slug: string, updates: any, metrics: any[]) {
   const API_URL = "http://localhost:3000/api";
   const API_KEY = "your-api-key";
-  
+
   try {
     // 1. Find the tool
-    const findResponse = await fetch(
-      `${API_URL}/tools?where[slug][equals]=${slug}`,
-      {
-        headers: {
-          Authorization: `users API-Key ${API_KEY}`
-        }
-      }
-    );
-    
+    const findResponse = await fetch(`${API_URL}/tools?where[slug][equals]=${slug}`, {
+      headers: {
+        Authorization: `users API-Key ${API_KEY}`,
+      },
+    });
+
     const { docs } = await findResponse.json();
     if (docs.length === 0) {
       throw new Error(`Tool not found: ${slug}`);
     }
-    
+
     const tool = docs[0];
-    
+
     // 2. Update the tool
-    const updateResponse = await fetch(
-      `${API_URL}/tools/${tool.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `users API-Key ${API_KEY}`
-        },
-        body: JSON.stringify(updates)
-      }
-    );
-    
+    const updateResponse = await fetch(`${API_URL}/tools/${tool.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `users API-Key ${API_KEY}`,
+      },
+      body: JSON.stringify(updates),
+    });
+
     if (!updateResponse.ok) {
       throw new Error(`Failed to update tool: ${updateResponse.statusText}`);
     }
-    
+
     // 3. Add metrics
     for (const metric of metrics) {
-      const metricResponse = await fetch(
-        `${API_URL}/metrics`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `users API-Key ${API_KEY}`
-          },
-          body: JSON.stringify({
-            tool: tool.id,
-            ...metric,
-            recorded_at: metric.recorded_at || new Date().toISOString()
-          })
-        }
-      );
-      
+      const metricResponse = await fetch(`${API_URL}/metrics`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `users API-Key ${API_KEY}`,
+        },
+        body: JSON.stringify({
+          tool: tool.id,
+          ...metric,
+          recorded_at: metric.recorded_at || new Date().toISOString(),
+        }),
+      });
+
       if (!metricResponse.ok) {
         console.error(`Failed to add metric: ${metric.metric_key}`);
       }
     }
-    
+
     return { success: true, tool };
-    
   } catch (error) {
     console.error("Update failed:", error);
     return { success: false, error: error.message };
@@ -844,11 +852,7 @@ await updateToolWithMetrics(
   "cursor",
   {
     tagline: "The AI-first code editor",
-    key_features: [
-      "GPT-4 powered",
-      "Multi-file editing",
-      "Natural language commands"
-    ]
+    key_features: ["GPT-4 powered", "Multi-file editing", "Natural language commands"],
   },
   [
     {
@@ -857,8 +861,8 @@ await updateToolWithMetrics(
       value_display: "500K",
       metric_type: "usage",
       source: "official_announcement",
-      confidence_score: 1.0
-    }
+      confidence_score: 1.0,
+    },
   ]
 );
 ```
@@ -875,48 +879,50 @@ await updateToolWithMetrics(
 
 ```typescript
 // 1. Get Cursor's current data
-const toolResponse = await fetch(
-  "http://localhost:3000/api/tools?where[slug][equals]=cursor",
-  { headers: { Authorization: `users API-Key ${API_KEY}` } }
-);
-const { docs: [cursor] } = await toolResponse.json();
+const toolResponse = await fetch("http://localhost:3000/api/tools?where[slug][equals]=cursor", {
+  headers: { Authorization: `users API-Key ${API_KEY}` },
+});
+const {
+  docs: [cursor],
+} = await toolResponse.json();
 
 // 2. Update all relevant information
 await fetch(`http://localhost:3000/api/tools/${cursor.id}`, {
   method: "PATCH",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `users API-Key ${API_KEY}`
+    Authorization: `users API-Key ${API_KEY}`,
   },
   body: JSON.stringify({
     tagline: "The AI-first code editor",
-    description: "Cursor is an AI-powered code editor built for pair programming with AI. Features GPT-4 integration, multi-file editing, and natural language commands.",
+    description:
+      "Cursor is an AI-powered code editor built for pair programming with AI. Features GPT-4 integration, multi-file editing, and natural language commands.",
     key_features: [
       "GPT-4 powered code completion",
-      "Multi-file context awareness", 
+      "Multi-file context awareness",
       "Natural language to code",
       "AI chat in editor",
-      "Codebase-wide understanding"
+      "Codebase-wide understanding",
     ],
     pricing_tiers: [
       {
         name: "Hobby",
         price: 0,
         price_period: "monthly",
-        features: ["2000 requests/month", "GPT-3.5"]
+        features: ["2000 requests/month", "GPT-3.5"],
       },
       {
         name: "Pro",
         price: 20,
         price_period: "monthly",
-        features: ["Unlimited requests", "GPT-4", "Priority support"]
-      }
+        features: ["Unlimited requests", "GPT-4", "Priority support"],
+      },
     ],
     supported_languages: ["JavaScript", "TypeScript", "Python", "Go", "Rust", "Java"],
     llm_providers: ["openai"],
     website_url: "https://cursor.com",
-    github_url: "https://github.com/getcursor/cursor"
-  })
+    github_url: "https://github.com/getcursor/cursor",
+  }),
 });
 
 // 3. Add latest metrics
@@ -924,7 +930,7 @@ await fetch("http://localhost:3000/api/metrics", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `users API-Key ${API_KEY}`
+    Authorization: `users API-Key ${API_KEY}`,
   },
   body: JSON.stringify({
     tool: cursor.id,
@@ -935,8 +941,8 @@ await fetch("http://localhost:3000/api/metrics", {
     recorded_at: new Date().toISOString(),
     source: "official_announcement",
     source_url: "https://cursor.com/blog/500k-users",
-    confidence_score: 1.0
-  })
+    confidence_score: 1.0,
+  }),
 });
 ```
 
@@ -948,14 +954,16 @@ const companyResponse = await fetch(
   "http://localhost:3000/api/companies?where[slug][equals]=anysphere",
   { headers: { Authorization: `users API-Key ${API_KEY}` } }
 );
-const { docs: [company] } = await companyResponse.json();
+const {
+  docs: [company],
+} = await companyResponse.json();
 
 // 2. Update company funding info
 await fetch(`http://localhost:3000/api/companies/${company.id}`, {
   method: "PATCH",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `users API-Key ${API_KEY}`
+    Authorization: `users API-Key ${API_KEY}`,
   },
   body: JSON.stringify({
     funding_stage: "series_a",
@@ -963,22 +971,23 @@ await fetch(`http://localhost:3000/api/companies/${company.id}`, {
     last_funding_date: "2025-06-26",
     last_funding_amount: 60000000,
     valuation: 400000000,
-    investors: ["Andreessen Horowitz", "Spark Capital", "Angel investors"]
-  })
+    investors: ["Andreessen Horowitz", "Spark Capital", "Angel investors"],
+  }),
 });
 
 // 3. Create news article
-const toolResponse = await fetch(
-  "http://localhost:3000/api/tools?where[slug][equals]=cursor",
-  { headers: { Authorization: `users API-Key ${API_KEY}` } }
-);
-const { docs: [tool] } = await toolResponse.json();
+const toolResponse = await fetch("http://localhost:3000/api/tools?where[slug][equals]=cursor", {
+  headers: { Authorization: `users API-Key ${API_KEY}` },
+});
+const {
+  docs: [tool],
+} = await toolResponse.json();
 
 await fetch("http://localhost:3000/api/news", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `users API-Key ${API_KEY}`
+    Authorization: `users API-Key ${API_KEY}`,
   },
   body: JSON.stringify({
     title: "Cursor Raises $60M Series A to Build the Future of AI-Powered Coding",
@@ -994,12 +1003,12 @@ await fetch("http://localhost:3000/api/news", {
     companies: [company.id],
     is_featured: true,
     metrics_mentioned: {
-      "cursor": {
-        "total_funding": 60000000,
-        "valuation": 400000000
-      }
-    }
-  })
+      cursor: {
+        total_funding: 60000000,
+        valuation: 400000000,
+      },
+    },
+  }),
 });
 ```
 
@@ -1011,7 +1020,7 @@ const rankingsUpdate = [
   { slug: "windsurf", rank: 2, trending: "up", movement: 5 },
   { slug: "github-copilot", rank: 3, trending: "stable", movement: 0 },
   { slug: "cody", rank: 4, trending: "down", movement: -1 },
-  { slug: "continue-dev", rank: 5, trending: "up", movement: 3 }
+  { slug: "continue-dev", rank: 5, trending: "up", movement: 3 },
 ];
 
 for (const update of rankingsUpdate) {
@@ -1020,24 +1029,24 @@ for (const update of rankingsUpdate) {
     `http://localhost:3000/api/tools?where[slug][equals]=${update.slug}`,
     { headers: { Authorization: `users API-Key ${API_KEY}` } }
   );
-  
+
   const { docs } = await response.json();
   if (docs.length > 0) {
     const tool = docs[0];
-    
+
     // Update ranking and trending status
     await fetch(`http://localhost:3000/api/tools/${tool.id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `users API-Key ${API_KEY}`
+        Authorization: `users API-Key ${API_KEY}`,
       },
       body: JSON.stringify({
         current_ranking: update.rank,
         previous_ranking: update.rank - update.movement,
         is_trending: update.movement > 0,
-        trend_direction: update.trending
-      })
+        trend_direction: update.trending,
+      }),
     });
   }
 }
@@ -1056,6 +1065,7 @@ for (const update of rankingsUpdate) {
 ## Support
 
 For API issues or questions:
+
 1. Check the [Payload documentation](https://payloadcms.com/docs)
 2. Review error messages for specific field issues
 3. Verify your API key has appropriate permissions

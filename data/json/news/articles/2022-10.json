@@ -7,14 +7,8 @@
     "summary": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities....",
     "published_date": "2022-10-17T00:00:00.000Z",
     "source": "Product Hunt",
-    "tags": [
-      "major-update",
-      "expansion",
-      "multi-language"
-    ],
-    "tool_mentions": [
-      "Sourcery"
-    ],
+    "tags": ["major-update", "expansion", "multi-language"],
+    "tool_mentions": ["Sourcery"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   }

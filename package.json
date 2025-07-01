@@ -77,7 +77,13 @@
     "test:api:companies": "tsx scripts/test-companies-api.ts",
     "test:api:tools": "tsx scripts/test-tools-api.ts",
     "test:api:rankings": "tsx scripts/test-rankings-api.ts",
-    "test:api:all": "npm run test:api:news && npm run test:api:companies && npm run test:api:tools && npm run test:api:rankings"
+    "test:api:all": "npm run test:api:news && npm run test:api:companies && npm run test:api:tools && npm run test:api:rankings",
+    "perf:audit": "node scripts/performance-audit.js",
+    "perf:audit:prod": "node scripts/performance-audit.js https://aipowerranking.com/en",
+    "perf:monitor": "node scripts/performance-audit.js && echo 'Performance audit completed for T-031'",
+    "analyze": "ANALYZE=true npm run build",
+    "analyze:server": "ANALYZE=true npm run build && echo 'Bundle analysis complete - check .next/analyze/'",
+    "bundle:analyze": "npm run analyze"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",
@@ -140,6 +146,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.3.4",
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -162,6 +169,7 @@
     "node-fetch": "^3.3.2",
     "postcss": "^8.5.4",
     "prettier": "^3.5.3",
+    "sharp": "^0.34.2",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.19.4",
@@ -175,6 +183,20 @@
     ],
     "*.{json,md,css,scss}": [
       "prettier --write"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      "> 1%",
+      "last 2 versions",
+      "not dead",
+      "not ie 11",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
     ]
   },
   "packageManager": "pnpm@8.15.4+sha512.0bd3a9be9eb0e9a692676deec00a303ba218ba279d99241475616b398dbaeedd11146f92c2843458f557b1d127e09d4c171e105bdcd6b61002b39685a8016b9e"

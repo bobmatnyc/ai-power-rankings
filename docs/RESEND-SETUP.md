@@ -9,6 +9,7 @@ The contact form now uses Resend to send emails directly from the server instead
 ### 1. Environment Variable
 
 Ensure `RESEND_API_KEY` is set in your environment variables:
+
 - Local: `.env.local`
 - Production: Vercel environment variables
 
@@ -25,11 +26,13 @@ To send emails from `noreply@aipowerrankings.com`, you need to:
 ### 3. Email Configuration
 
 The contact form sends emails:
+
 - **From**: `AI Power Rankings <onboarding@resend.dev>` (for testing)
 - **To**: `bob@matsuoka.com` (must be your verified email in sandbox mode)
 - **Reply-To**: User's email address (from the form)
 
 **Important**: Resend accounts start in sandbox mode and can only send to your verified email address. To send to other recipients:
+
 1. Verify your domain at resend.com/domains
 2. Update the 'from' address to use your verified domain
 3. Update the 'to' address to your desired recipient
@@ -56,7 +59,7 @@ If Resend is not configured or fails, the API will return an error and the user 
 
 1. **Check API Key**: Ensure `RESEND_API_KEY` is set in your `.env.local` file
 2. **Test the API**: Visit `/api/contact/test` to run a diagnostic test
-3. **Domain Verification**: 
+3. **Domain Verification**:
    - For testing, the API uses `onboarding@resend.dev` which works without verification
    - For production, you need to verify your domain in Resend dashboard
    - Update the 'from' email in `/src/app/api/contact/route.ts` after verification
@@ -71,11 +74,13 @@ If Resend is not configured or fails, the API will return an error and the user 
 ### Testing Locally
 
 1. Set your Resend API key in `.env.local`:
+
    ```
    RESEND_API_KEY=re_xxxxxxxxxxxxx
    ```
 
 2. Test the endpoint:
+
    ```bash
    curl http://localhost:3000/api/contact/test
    ```

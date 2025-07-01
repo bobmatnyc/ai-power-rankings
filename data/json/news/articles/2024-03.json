@@ -7,14 +7,8 @@
     "summary": "CodeRabbit relaunches with improved AI models and expanded language support, strengthening its position in the automated code review market....",
     "published_date": "2024-04-01T00:00:00.000Z",
     "source": "Product Hunt",
-    "tags": [
-      "relaunch",
-      "code-review",
-      "enhancement"
-    ],
-    "tool_mentions": [
-      "CodeRabbit"
-    ],
+    "tags": ["relaunch", "code-review", "enhancement"],
+    "tool_mentions": ["CodeRabbit"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -27,12 +21,8 @@
     "published_date": "2024-03-12T04:00:00.000Z",
     "source": "Unknown",
     "source_url": "https://cognition.ai/blog/introducing-devin",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "devin"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["devin"],
     "created_at": "2025-06-17T23:15:07.217Z",
     "updated_at": "2025-06-30T05:06:55.720Z"
   },
@@ -45,12 +35,8 @@
     "published_date": "2024-03-12T04:00:00.000Z",
     "source": "Various Tech Media",
     "source_url": "https://www.pymnts.com/artificial-intelligence-2/2024/cognition-seeks-2-billion-valuation-for-ai-code-writing-tool/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "devin"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["devin"],
     "created_at": "2025-06-18T00:04:17.870Z",
     "updated_at": "2025-06-30T05:06:55.721Z"
   }

@@ -4,8 +4,16 @@ import { Analytics } from "@vercel/analytics/react";
 import Script from "next/script";
 import { generateOrganizationSchema, createJsonLdScript } from "@/lib/schema";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+
+// Font optimization for T-031
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com"),
@@ -90,8 +98,35 @@ export default function RootLayout({
   });
 
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className={inter.variable}>
+      <head>
+        {/* Critical resource preloading for T-031 */}
+        <link rel="preload" href="/crown-of-technology.webp" as="image" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+
+        {/* Critical CSS for T-031 - Above the fold styles */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+            .hero-section { min-height: 400px; }
+            .stats-grid { min-height: 120px; }
+            .grid { display: grid; }
+            .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            @media (min-width: 768px) {
+              .md\\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            }
+            .gap-3 { gap: 0.75rem; }
+            .gap-6 { gap: 1.5rem; }
+            @media (min-width: 768px) {
+              .md\\:gap-6 { gap: 1.5rem; }
+            }
+          `,
+          }}
+        />
+      </head>
+      <body className={inter.className}>
         <Script
           id="organization-schema"
           type="application/ld+json"
@@ -100,11 +135,28 @@ export default function RootLayout({
           }}
         />
         <AuthSessionProvider>{children}</AuthSessionProvider>
-        {process.env["NEXT_PUBLIC_GA_ID"] && (
-          <GoogleAnalytics gaId={process.env["NEXT_PUBLIC_GA_ID"]} />
-        )}
+
+        {/* Defer analytics loading for T-031 performance optimization */}
         <SpeedInsights />
         <Analytics />
+
+        {/* Load Google Analytics after page interaction for T-031 */}
+        {process.env["NEXT_PUBLIC_GA_ID"] && (
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${process.env["NEXT_PUBLIC_GA_ID"]}`}
+            strategy="afterInteractive"
+          />
+        )}
+        {process.env["NEXT_PUBLIC_GA_ID"] && (
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${process.env["NEXT_PUBLIC_GA_ID"]}');
+            `}
+          </Script>
+        )}
       </body>
     </html>
   );

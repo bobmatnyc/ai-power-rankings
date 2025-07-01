@@ -3,7 +3,14 @@ import { Resend } from "resend";
 import { loggers } from "@/lib/logger";
 import { getSubscribersRepo } from "@/lib/json-db";
 
-const resend = new Resend(process.env["RESEND_API_KEY"]);
+// Initialize Resend only when API key is available
+const getResendClient = () => {
+  const apiKey = process.env["RESEND_API_KEY"];
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY not configured");
+  }
+  return new Resend(apiKey);
+};
 const TURNSTILE_SECRET_KEY = process.env["TURNSTILE_SECRET_KEY"] || "YOUR_TURNSTILE_SECRET_KEY";
 
 interface SubscribeRequest {
@@ -174,6 +181,7 @@ async function sendVerificationEmail(
   verificationUrl: string,
   baseUrl: string
 ): Promise<void> {
+  const resend = getResendClient();
   const { error: emailError } = await resend.emails.send({
     from: "AI Power Ranking <newsletter@aipowerranking.com>",
     to: email,

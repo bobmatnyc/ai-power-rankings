@@ -9,13 +9,15 @@ The migration involves replacing Supabase client calls with Payload API calls. A
 ## Import Changes
 
 ### Before (Supabase)
+
 ```typescript
-import { supabase } from '@/lib/database'
+import { supabase } from "@/lib/database";
 ```
 
 ### After (Payload)
+
 ```typescript
-import { payloadAPI } from '@/lib/payload-api'
+import { payloadAPI } from "@/lib/payload-api";
 ```
 
 ## Common Query Patterns
@@ -23,150 +25,152 @@ import { payloadAPI } from '@/lib/payload-api'
 ### 1. Fetching All Records
 
 **Before:**
+
 ```typescript
-const { data: tools, error } = await supabase
-  .from('tools')
-  .select('*')
-  .order('name')
+const { data: tools, error } = await supabase.from("tools").select("*").order("name");
 ```
 
 **After:**
+
 ```typescript
-const response = await payloadAPI.getTools({ sort: 'name' })
-const tools = response.docs
+const response = await payloadAPI.getTools({ sort: "name" });
+const tools = response.docs;
 ```
 
 ### 2. Fetching Single Record by ID/Slug
 
 **Before:**
+
 ```typescript
-const { data: tool, error } = await supabase
-  .from('tools')
-  .select('*')
-  .eq('slug', slug)
-  .single()
+const { data: tool, error } = await supabase.from("tools").select("*").eq("slug", slug).single();
 ```
 
 **After:**
+
 ```typescript
-const tool = await payloadAPI.getTool(slug)
+const tool = await payloadAPI.getTool(slug);
 ```
 
 ### 3. Fetching with Filters
 
 **Before:**
+
 ```typescript
 const { data: rankings, error } = await supabase
-  .from('ranking_cache')
-  .select('*')
-  .eq('period', 'june-2025')
-  .order('position')
+  .from("ranking_cache")
+  .select("*")
+  .eq("period", "june-2025")
+  .order("position");
 ```
 
 **After:**
+
 ```typescript
-const response = await payloadAPI.getRankings({ 
-  period: 'june-2025',
-  sort: 'position' 
-})
-const rankings = response.docs
+const response = await payloadAPI.getRankings({
+  period: "june-2025",
+  sort: "position",
+});
+const rankings = response.docs;
 ```
 
 ### 4. Fetching with Relationships
 
 **Before:**
+
 ```typescript
-const { data: tools, error } = await supabase
-  .from('tools')
-  .select(`
+const { data: tools, error } = await supabase.from("tools").select(`
     *,
     company:companies(*)
-  `)
+  `);
 ```
 
 **After:**
+
 ```typescript
 // Payload automatically includes relationships based on schema
-const response = await payloadAPI.getTools()
-const tools = response.docs // company data included in tool.company
+const response = await payloadAPI.getTools();
+const tools = response.docs; // company data included in tool.company
 ```
 
 ### 5. Complex Queries
 
 **Before:**
+
 ```typescript
 const { data: metrics, error } = await supabase
-  .from('metrics_history')
-  .select('*')
-  .eq('tool_id', toolId)
-  .eq('metric_key', 'github_stars')
-  .order('recorded_at', { ascending: false })
-  .limit(30)
+  .from("metrics_history")
+  .select("*")
+  .eq("tool_id", toolId)
+  .eq("metric_key", "github_stars")
+  .order("recorded_at", { ascending: false })
+  .limit(30);
 ```
 
 **After:**
+
 ```typescript
 const response = await payloadAPI.getMetrics({
   tool: toolId,
-  metric_key: 'github_stars',
-  sort: '-recorded_at',
-  limit: 30
-})
-const metrics = response.docs
+  metric_key: "github_stars",
+  sort: "-recorded_at",
+  limit: 30,
+});
+const metrics = response.docs;
 ```
 
 ## Error Handling
 
 **Before:**
+
 ```typescript
-const { data, error } = await supabase.from('tools').select()
+const { data, error } = await supabase.from("tools").select();
 if (error) {
-  console.error('Error:', error)
-  return null
+  console.error("Error:", error);
+  return null;
 }
 ```
 
 **After:**
+
 ```typescript
 try {
-  const response = await payloadAPI.getTools()
-  return response.docs
+  const response = await payloadAPI.getTools();
+  return response.docs;
 } catch (error) {
-  console.error('Error:', error)
-  return null
+  console.error("Error:", error);
+  return null;
 }
 ```
 
 ## API Route Updates
 
 ### Before (API Route with Supabase)
+
 ```typescript
-import { supabase } from '@/lib/database'
+import { supabase } from "@/lib/database";
 
 export async function GET() {
-  const { data: tools, error } = await supabase
-    .from('tools')
-    .select('*')
-    .order('current_ranking')
-  
+  const { data: tools, error } = await supabase.from("tools").select("*").order("current_ranking");
+
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  
-  return NextResponse.json({ tools })
+
+  return NextResponse.json({ tools });
 }
 ```
 
 ### After (API Route with Payload)
+
 ```typescript
-import { payloadAPI } from '@/lib/payload-api'
+import { payloadAPI } from "@/lib/payload-api";
 
 export async function GET() {
   try {
-    const response = await payloadAPI.getTools({ sort: 'current_ranking' })
-    return NextResponse.json({ tools: response.docs })
+    const response = await payloadAPI.getTools({ sort: "current_ranking" });
+    return NextResponse.json({ tools: response.docs });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 ```
@@ -174,6 +178,7 @@ export async function GET() {
 ## Component Updates
 
 ### Before (Component with Supabase)
+
 ```typescript
 'use client'
 import { useState, useEffect } from 'react'
@@ -181,7 +186,7 @@ import { supabase } from '@/lib/database'
 
 export function ToolsList() {
   const [tools, setTools] = useState([])
-  
+
   useEffect(() => {
     async function fetchTools() {
       const { data } = await supabase
@@ -191,12 +196,13 @@ export function ToolsList() {
     }
     fetchTools()
   }, [])
-  
+
   return <div>{/* render tools */}</div>
 }
 ```
 
 ### After (Component with Payload)
+
 ```typescript
 'use client'
 import { useState, useEffect } from 'react'
@@ -204,7 +210,7 @@ import { payloadAPI } from '@/lib/payload-api'
 
 export function ToolsList() {
   const [tools, setTools] = useState([])
-  
+
   useEffect(() => {
     async function fetchTools() {
       try {
@@ -216,7 +222,7 @@ export function ToolsList() {
     }
     fetchTools()
   }, [])
-  
+
   return <div>{/* render tools */}</div>
 }
 ```
@@ -229,11 +235,11 @@ For server components, you can directly use the Payload API:
 import { payloadAPI } from '@/lib/payload-api'
 
 export default async function ToolsPage() {
-  const response = await payloadAPI.getTools({ 
+  const response = await payloadAPI.getTools({
     limit: 20,
-    sort: '-current_ranking' 
+    sort: '-current_ranking'
   })
-  
+
   return (
     <div>
       {response.docs.map(tool => (
@@ -267,6 +273,7 @@ During the migration from Supabase to Payload CMS, some companies were created w
 ### Problem Description
 
 After migration, approximately 70% of companies in the database were "Unknown Company" entries with:
+
 - UUID as identifier (e.g., "Unknown Company (3f8e4b2a-...)")
 - Missing essential data (name, website_url, founded_year)
 - Some entries had tools associated with them, others were orphaned
@@ -274,14 +281,17 @@ After migration, approximately 70% of companies in the database were "Unknown Co
 ### API Endpoints Created
 
 #### 1. Diagnose Companies - `/api/diagnose-companies`
+
 Lightweight diagnostic endpoint to check Unknown Company statistics without heavy database operations.
 
 **Usage:**
+
 ```bash
 curl http://localhost:3000/api/diagnose-companies
 ```
 
 **Response:**
+
 ```json
 {
   "summary": {
@@ -295,11 +305,14 @@ curl http://localhost:3000/api/diagnose-companies
 ```
 
 #### 2. Fix Unknown Companies - `/api/fix-unknown-companies`
+
 Main analysis and fix endpoint with two methods:
+
 - **GET**: Analyzes Unknown Companies and attempts automatic fixes
 - **DELETE**: Removes orphaned Unknown Company entries
 
 **Usage:**
+
 ```bash
 # Analyze and auto-fix
 curl http://localhost:3000/api/fix-unknown-companies
@@ -309,17 +322,21 @@ curl -X DELETE http://localhost:3000/api/fix-unknown-companies
 ```
 
 #### 3. Check Company Slug - `/api/check-company-slug`
+
 Verifies if a company slug already exists to prevent conflicts.
 
 **Usage:**
+
 ```bash
 curl "http://localhost:3000/api/check-company-slug?slug=anthropic"
 ```
 
 #### 4. Final Company Cleanup - `/api/final-company-cleanup`
+
 Handles edge cases by reassigning tools to existing companies and deleting Unknown Company entries.
 
 **Usage:**
+
 ```bash
 curl -X POST http://localhost:3000/api/final-company-cleanup
 ```
@@ -330,17 +347,17 @@ The cleanup process uses these mappings to associate tools with their correct co
 
 ```typescript
 const COMPANY_MAPPINGS = {
-  'Windsurf': 'Codeium Inc.',
-  'Google Gemini Code Assist': 'Google',
-  'Google Jules': 'Google',
-  'v0': 'Vercel',
-  'Replit Agent': 'Replit Inc.',
-  'Bolt.new': 'StackBlitz',
-  'Claude Artifacts': 'Anthropic',
-  'Claude Code': 'Anthropic',
-  'GitHub Copilot': 'GitHub (Microsoft)',
+  Windsurf: "Codeium Inc.",
+  "Google Gemini Code Assist": "Google",
+  "Google Jules": "Google",
+  v0: "Vercel",
+  "Replit Agent": "Replit Inc.",
+  "Bolt.new": "StackBlitz",
+  "Claude Artifacts": "Anthropic",
+  "Claude Code": "Anthropic",
+  "GitHub Copilot": "GitHub (Microsoft)",
   // ... additional mappings
-}
+};
 ```
 
 ### TypeScript Considerations
@@ -349,15 +366,16 @@ When working with Payload CMS in strict TypeScript mode, use bracket notation fo
 
 ```typescript
 // ❌ Will cause TypeScript error
-const name = company.name
+const name = company.name;
 
 // ✅ Correct approach
-const name = company['name']
+const name = company["name"];
 ```
 
 ### Database Connection Issues
 
 If you encounter database termination errors (`{:shutdown, :db_termination}`):
+
 1. Restart the development server
 2. Check database connection settings
 3. Ensure the database is accessible
@@ -365,6 +383,7 @@ If you encounter database termination errors (`{:shutdown, :db_termination}`):
 ### Results
 
 The cleanup process successfully:
+
 - Reduced Unknown Companies from 33 to 3 (90% reduction)
 - Properly mapped tools to their correct companies
 - Cleaned up database inconsistencies

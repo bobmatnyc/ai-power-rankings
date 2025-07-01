@@ -7,14 +7,8 @@
     "summary": "StackBlitz's Bolt.new reaches $40M annual recurring revenue with developers building 25,000 applications daily on the platform....",
     "published_date": "2025-03-01T00:00:00.000Z",
     "source": "StackBlitz Announcement",
-    "tags": [
-      "milestone",
-      "usage",
-      "growth"
-    ],
-    "tool_mentions": [
-      "Bolt.new"
-    ],
+    "tags": ["milestone", "usage", "growth"],
+    "tool_mentions": ["Bolt.new"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -27,12 +21,8 @@
     "published_date": "2025-02-27T05:00:00.000Z",
     "source": "Flowhunt",
     "source_url": "https://www.flowhunt.io/ai-companies/codeium-ai/",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "codeium-extension"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["codeium-extension"],
     "created_at": "2025-06-17T23:28:06.378Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -45,12 +35,8 @@
     "published_date": "2025-02-27T05:00:00.000Z",
     "source": "Sacra",
     "source_url": "https://sacra.com/c/codeium/",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "codeium-extension"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["codeium-extension"],
     "created_at": "2025-06-17T23:28:06.676Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -64,9 +50,7 @@
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2025/02/25/swedens-lovable-an-app-building-ai-platform-rakes-in-16m-after-spectacular-growth/",
     "tags": [],
-    "tool_mentions": [
-      "12"
-    ],
+    "tool_mentions": ["12"],
     "created_at": "2025-06-09T04:58:08.085264",
     "updated_at": "2025-06-28T02:35:55.789Z"
   },
@@ -79,12 +63,8 @@
     "published_date": "2025-02-24T05:00:00.000Z",
     "source": "Unknown",
     "source_url": "https://techcrunch.com/2025/02/24/anthropic-launches-a-new-ai-model-that-thinks-as-long-as-you-want/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "claude-code"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["claude-code"],
     "created_at": "2025-06-17T23:28:07.022Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -97,12 +77,8 @@
     "published_date": "2025-02-12T05:00:00.000Z",
     "source": "Fintech.Global",
     "source_url": "https://fintech.global/2025/02/12/moderne-raises-30m-series-b-to-accelerate-ai-powered-code-transformation/",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "moderne"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["moderne"],
     "created_at": "2025-06-17T23:28:07.301Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -114,14 +90,8 @@
     "summary": "StackBlitz's Bolt.new adds mobile app development capabilities, allowing users to create iOS and Android applications entirely through natural language....",
     "published_date": "2025-02-12T00:00:00.000Z",
     "source": "StackBlitz Announcement",
-    "tags": [
-      "feature-update",
-      "mobile",
-      "no-code"
-    ],
-    "tool_mentions": [
-      "Bolt.new"
-    ],
+    "tags": ["feature-update", "mobile", "no-code"],
+    "tool_mentions": ["Bolt.new"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -134,12 +104,8 @@
     "published_date": "2025-02-11T05:00:00.000Z",
     "source": "Intelcapital",
     "source_url": "https://www.intelcapital.com/moderne-secures-30m-to-drive-billions-in-enterprise-code-modernization-savings-based-on-its-innovative-tech-used-by-aws-microsoft-and-broadcom-ai-assistants/",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "moderne"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["moderne"],
     "created_at": "2025-06-17T23:28:07.580Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -152,12 +118,8 @@
     "published_date": "2025-02-01T05:00:00.000Z",
     "source": "DataCamp",
     "source_url": "https://www.datacamp.com/tutorial/firebase-studio",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "firebase-studio"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["firebase-studio"],
     "created_at": "2025-06-18T08:23:45.284Z",
     "updated_at": "2025-06-30T05:07:05.211Z"
   }

@@ -8,12 +8,8 @@
     "published_date": "2024-08-29T04:00:00.000Z",
     "source": "Siliconangle",
     "source_url": "https://siliconangle.com/2024/08/29/ai-coding-assistant-startup-magic-closes-320m-round-rival-codeium-nabs-150m/",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "codeium-extension"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["codeium-extension"],
     "created_at": "2025-06-17T23:15:09.019Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -26,13 +22,8 @@
     "published_date": "2024-08-29T04:00:00.000Z",
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2024/08/29/github-copilot-competitor-codeium-raises-150m-at-a-1-25b-valuation/",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "github-copilot",
-      "codeium-extension"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["github-copilot", "codeium-extension"],
     "created_at": "2025-06-17T23:15:08.889Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -45,12 +36,8 @@
     "published_date": "2024-08-27T04:00:00.000Z",
     "source": "Anthropic Blog",
     "source_url": "https://www.anthropic.com/news/artifacts",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "claude-artifacts"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["claude-artifacts"],
     "created_at": "2025-06-18T00:04:18.186Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -63,13 +50,8 @@
     "published_date": "2024-08-20T04:00:00.000Z",
     "source": "GitHub",
     "source_url": "https://github.com/zed-industries/zed/issues/16562",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "cursor",
-      "zed"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["cursor", "zed"],
     "created_at": "2025-06-17T23:15:09.403Z",
     "updated_at": "2025-06-30T05:06:55.720Z"
   },
@@ -82,12 +64,8 @@
     "published_date": "2024-08-20T04:00:00.000Z",
     "source": "Zed.Dev",
     "source_url": "https://zed.dev/blog/zed-ai",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "zed"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["zed"],
     "created_at": "2025-06-17T23:15:09.259Z",
     "updated_at": "2025-06-30T05:06:55.721Z"
   },
@@ -100,12 +78,8 @@
     "published_date": "2024-08-08T04:00:00.000Z",
     "source": "Symflower",
     "source_url": "https://symflower.com/en/company/blog/2024/ai-tools-software-testing/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "amazon-q-developer"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["amazon-q-developer"],
     "created_at": "2025-06-17T23:15:09.133Z",
     "updated_at": "2025-06-30T05:06:55.720Z"
   }

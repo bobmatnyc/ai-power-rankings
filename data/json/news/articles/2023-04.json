@@ -7,14 +7,8 @@
     "summary": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4....",
     "published_date": "2023-05-01T00:00:00.000Z",
     "source": "GitHub Repository",
-    "tags": [
-      "launch",
-      "open-source",
-      "cli"
-    ],
-    "tool_mentions": [
-      "Aider"
-    ],
+    "tags": ["launch", "open-source", "cli"],
+    "tool_mentions": ["Aider"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   }

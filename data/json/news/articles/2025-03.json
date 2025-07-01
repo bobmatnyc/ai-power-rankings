@@ -9,9 +9,7 @@
     "source": "Bloomberg",
     "source_url": "https://www.bloomberg.com/news/articles/2025-03-18/cognition-ai-hits-4-billion-valuation-in-deal-led-by-lonsdale-s-firm",
     "tags": [],
-    "tool_mentions": [
-      "3"
-    ],
+    "tool_mentions": ["3"],
     "created_at": "2025-06-09T04:58:08.085264",
     "updated_at": "2025-06-28T02:35:55.788Z"
   },
@@ -24,12 +22,8 @@
     "published_date": "2025-03-17T04:00:00.000Z",
     "source": "Businesswire",
     "source_url": "https://www.businesswire.com/news/home/20250317975276/en/Codeium-Extensions-Achieve-FedRAMP-High-Certification-Bringing-AI-Powered-Coding-to-Federal-Agencies",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "codeium-extension"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["codeium-extension"],
     "created_at": "2025-06-17T23:28:09.704Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -42,12 +36,8 @@
     "published_date": "2025-03-17T04:00:00.000Z",
     "source": "Verdict",
     "source_url": "https://www.verdict.co.uk/cognition-ais-4bn-funding/",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "devin"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["devin"],
     "created_at": "2025-06-18T00:04:20.714Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -60,15 +50,8 @@
     "published_date": "2025-03-15T04:00:00.000Z",
     "source": "The Register",
     "source_url": "https://www.theregister.com/2025/04/11/firebase_studio_promises_app_prototypes/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "jules",
-      "firebase-studio",
-      "cursor",
-      "claude-code"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["jules", "firebase-studio", "cursor", "claude-code"],
     "created_at": "2025-06-18T08:23:45.421Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -80,14 +63,8 @@
     "summary": "Bolt.new launches Figma integration, enabling designers to convert their designs directly into production-ready code with a single click....",
     "published_date": "2025-03-13T00:00:00.000Z",
     "source": "StackBlitz Blog",
-    "tags": [
-      "feature-update",
-      "design-integration",
-      "figma"
-    ],
-    "tool_mentions": [
-      "Bolt.new"
-    ],
+    "tags": ["feature-update", "design-integration", "figma"],
+    "tool_mentions": ["Bolt.new"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -100,12 +77,8 @@
     "published_date": "2025-03-02T05:00:00.000Z",
     "source": "Nathanbenaich (Substack)",
     "source_url": "https://nathanbenaich.substack.com/p/your-guide-to-ai-march-2025",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "mercor"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["mercor"],
     "created_at": "2025-06-17T23:28:09.905Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   }

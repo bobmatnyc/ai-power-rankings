@@ -52,17 +52,14 @@ export async function POST(request: NextRequest) {
     // Check if Resend API key is configured
     if (!process.env["RESEND_API_KEY"]) {
       console.error("RESEND_API_KEY is not configured");
-      return NextResponse.json(
-        { error: "Email service is not configured" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Email service is not configured" }, { status: 500 });
     }
 
     // Get category label
     const categoryLabel = categoryLabels[category] || category;
 
     // Create email subject
-    const emailSubject = subject 
+    const emailSubject = subject
       ? `[${categoryLabel}] ${subject}`
       : `[${categoryLabel}] Contact Form Submission`;
 
@@ -75,7 +72,7 @@ export async function POST(request: NextRequest) {
           <p style="margin: 0 0 10px 0;"><strong>Name:</strong> ${name}</p>
           <p style="margin: 0 0 10px 0;"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
           <p style="margin: 0 0 10px 0;"><strong>Category:</strong> ${categoryLabel}</p>
-          ${subject ? `<p style="margin: 0 0 10px 0;"><strong>Subject:</strong> ${subject}</p>` : ''}
+          ${subject ? `<p style="margin: 0 0 10px 0;"><strong>Subject:</strong> ${subject}</p>` : ""}
         </div>
         
         <div style="background-color: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
@@ -98,7 +95,7 @@ New Contact Form Submission
 Name: ${name}
 Email: ${email}
 Category: ${categoryLabel}
-${subject ? `Subject: ${subject}` : ''}
+${subject ? `Subject: ${subject}` : ""}
 
 Message:
 ${message}
@@ -114,8 +111,8 @@ This email was sent via the AI Power Rankings contact form.
     // 2. Update 'from' to use your verified domain (e.g., 'noreply@aipowerrankings.com')
     // 3. Update 'to' to your desired recipient email
     const { data, error } = await resend.emails.send({
-      from: 'AI Power Rankings <onboarding@resend.dev>', // Uses Resend's test domain
-      to: ['bob@matsuoka.com'], // Must be your verified email in sandbox mode
+      from: "AI Power Rankings <onboarding@resend.dev>", // Uses Resend's test domain
+      to: ["bob@matsuoka.com"], // Must be your verified email in sandbox mode
       subject: emailSubject,
       replyTo: email,
       html: htmlContent,
@@ -125,34 +122,27 @@ This email was sent via the AI Power Rankings contact form.
     if (error) {
       console.error("Resend API error:", error);
       console.error("Error details:", JSON.stringify(error, null, 2));
-      
+
       // Provide more specific error messages
       let errorMessage = "Failed to send email";
       if (error.message) {
         errorMessage = error.message;
       }
-      
-      return NextResponse.json(
-        { error: errorMessage, details: error },
-        { status: 500 }
-      );
+
+      return NextResponse.json({ error: errorMessage, details: error }, { status: 500 });
     }
 
     // Return success response
     return NextResponse.json(
-      { 
-        success: true, 
+      {
+        success: true,
         message: "Your message has been sent successfully. We'll get back to you within 48 hours.",
-        id: data?.id 
+        id: data?.id,
       },
       { status: 200 }
     );
-
   } catch (error) {
     console.error("Contact form error:", error);
-    return NextResponse.json(
-      { error: "An unexpected error occurred" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
   }
 }

@@ -22,12 +22,8 @@
     "source": "AOL",
     "source_url": "https://www.aol.com/windsurfs-head-product-engineering-says-093301128.html",
     "published_date": "2025-06-30T00:00:00.000Z",
-    "tags": [
-      "ai-agents"
-    ],
-    "tool_mentions": [
-      "14"
-    ],
+    "tags": ["ai-agents"],
+    "tool_mentions": ["14"],
     "created_at": "2025-06-30T15:06:35.949Z",
     "updated_at": "2025-06-30T15:06:35.949Z"
   },
@@ -68,9 +64,7 @@
     "source": "PYMNTS",
     "source_url": "https://www.pymnts.com/news/artificial-intelligence/2025/ai-startups-mistral-plans-ipo-harvey-eyes-3-billion-dollar-valuation/",
     "published_date": "2025-06-29T00:00:00.000Z",
-    "tags": [
-      "open-source"
-    ],
+    "tags": ["open-source"],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:36.308Z",
     "updated_at": "2025-06-30T15:06:36.308Z"
@@ -84,9 +78,7 @@
     "source": "BeamStart",
     "source_url": "https://beamstart.com/news/for-replits-ceo-the-future-17511901626662",
     "published_date": "2025-06-29T00:00:00.000Z",
-    "tags": [
-      "ai-agents"
-    ],
+    "tags": ["ai-agents"],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:36.426Z",
     "updated_at": "2025-06-30T15:06:36.426Z"
@@ -114,13 +106,8 @@
     "source": "Colitco",
     "source_url": "https://colitco.com/ai-agents-boost-productivity-2025/",
     "published_date": "2025-06-28T00:00:00.000Z",
-    "tags": [
-      "ai-agents"
-    ],
-    "tool_mentions": [
-      "2",
-      "21"
-    ],
+    "tags": ["ai-agents"],
+    "tool_mentions": ["2", "21"],
     "created_at": "2025-06-30T15:06:36.664Z",
     "updated_at": "2025-06-30T15:06:36.664Z"
   },
@@ -161,9 +148,7 @@
     "source": "Lowendbox",
     "source_url": "https://lowendbox.com/blog/is-meta-discontinuing-the-free-llama-model-series-news-reports-suggest-llama-drama/",
     "published_date": "2025-06-27T00:00:00.000Z",
-    "tags": [
-      "open-source"
-    ],
+    "tags": ["open-source"],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:37.039Z",
     "updated_at": "2025-06-30T15:06:37.039Z"
@@ -206,9 +191,7 @@
     "source_url": "https://vercel.com/blog/vercel-ship-2025-recap",
     "published_date": "2025-06-26T00:00:00.000Z",
     "tags": [],
-    "tool_mentions": [
-      "10"
-    ],
+    "tool_mentions": ["10"],
     "created_at": "2025-06-30T15:06:37.423Z",
     "updated_at": "2025-06-30T15:06:37.423Z"
   },
@@ -247,9 +230,7 @@
     "content": "Disney Enterprises and Universal City Studios have sued Midjourney over claims of copyright infringement related to its AI models. This lawsuit follows the recent launch of Midjourney's AI video generation model, V1, and highlights the legal challenges faced by AI companies in the creative industry.",
     "summary": "Disney Enterprises and Universal City Studios have sued Midjourney over claims of copyright infringement related to its AI models. This lawsuit follows the recent launch of Midjourney's AI video generation model, V1, and highlights the legal challenges faced by AI companies in the creative industry.",
     "published_date": "2025-06-25T00:00:00.000Z",
-    "tags": [
-      "feature"
-    ],
+    "tags": ["feature"],
     "tool_mentions": [],
     "created_at": "2025-06-30T04:57:04.825Z",
     "updated_at": "2025-06-30T04:57:04.825Z"
@@ -262,14 +243,8 @@
     "summary": "Anthropic enhances Claude Artifacts with AI-powered interactivity, allowing users to embed AI directly within their created artifacts for dynamic experiences....",
     "published_date": "2025-06-25T00:00:00.000Z",
     "source": "Anthropic Blog",
-    "tags": [
-      "feature-update",
-      "interactive",
-      "ai-integration"
-    ],
-    "tool_mentions": [
-      "Claude Artifacts"
-    ],
+    "tags": ["feature-update", "interactive", "ai-integration"],
+    "tool_mentions": ["Claude Artifacts"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -282,9 +257,7 @@
     "source": "Britannica",
     "source_url": "https://www.britannica.com/technology/Stable-Diffusion",
     "published_date": "2025-06-25T00:00:00.000Z",
-    "tags": [
-      "open-source"
-    ],
+    "tags": ["open-source"],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:37.786Z",
     "updated_at": "2025-06-30T15:06:37.786Z"
@@ -326,12 +299,8 @@
     "source": "YouTube",
     "source_url": "https://www.youtube.com/watch?v=3Ms51P96TKo",
     "published_date": "2025-06-24T00:00:00.000Z",
-    "tags": [
-      "ai-agents"
-    ],
-    "tool_mentions": [
-      "21"
-    ],
+    "tags": ["ai-agents"],
+    "tool_mentions": ["21"],
     "created_at": "2025-06-30T15:06:38.165Z",
     "updated_at": "2025-06-30T15:06:38.165Z"
   },
@@ -415,9 +384,7 @@
     "source": "Blockchain News",
     "source_url": "https://blockchain.news/news/github-copilot-plans-deprecate-ai-models-2025",
     "tags": [],
-    "tool_mentions": [
-      "2"
-    ],
+    "tool_mentions": ["2"],
     "created_at": "2025-06-28T02:35:55.797Z",
     "updated_at": "2025-06-28T02:35:55.797Z"
   },
@@ -459,9 +426,7 @@
     "source": "All About AI",
     "source_url": "https://www.allaboutai.com/ai-agents/open-ai-codex-vs-github-copilot-vs-claude/",
     "tags": [],
-    "tool_mentions": [
-      "2"
-    ],
+    "tool_mentions": ["2"],
     "created_at": "2025-06-28T02:35:55.799Z",
     "updated_at": "2025-06-28T02:35:55.799Z"
   },
@@ -474,12 +439,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Microsoft Azure DevBlog",
     "source_url": "https://devblogs.microsoft.com/all-things-azure/announcing-general-availability-of-github-copilot-for-azure-now-with-agent-mode/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "github-copilot"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-20T07:36:39.202Z",
     "updated_at": "2025-06-30T05:07:05.211Z"
   },
@@ -492,12 +453,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Business Insider",
     "source_url": "https://www.businessinsider.com/vibe-coding-website-daughter-ai-bolt-2025-6",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "bolt"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["bolt"],
     "created_at": "2025-06-20T07:36:40.840Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -510,12 +467,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Teslarati",
     "source_url": "https://www.teslarati.com/xai-grok-3-oracle-cloud-partnership/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "grok"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["grok"],
     "created_at": "2025-06-20T07:36:38.543Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -528,12 +481,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Economic Times",
     "source_url": "https://economictimes.com/ai/ai-insights/google-has-supercharged-productivity-alongside-gemini-the-entry-of-gemini-2-5-marks-the-beginning-of-a-new-era-of-efficiency-/articleshow/121945323.cms",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "gemini"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["gemini"],
     "created_at": "2025-06-20T07:36:37.864Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -546,13 +495,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "PCMag",
     "source_url": "https://getcoai.com/news/survey-claude-outranks-chatgpt-among-tech-savvy-ai-users-and-other-findings/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt",
-      "claude"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt", "claude"],
     "created_at": "2025-06-20T07:36:37.177Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -565,12 +509,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "TS2 Space",
     "source_url": "https://ts2.tech/en/unbelievable-ai-image-generators-you-must-try-in-2025-top-10-ranked/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "stable-diffusion"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["stable-diffusion"],
     "created_at": "2025-06-20T07:36:42.138Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -583,12 +523,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "PR Newswire",
     "source_url": "https://www.prnewswire.com/news-releases/s4-capitals-monks-technology-services-launches-dev-an-enterprise-grade-ai-development-hub-in-strategic-partnership-with-windsurf-302486396.html",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "windsurf"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["windsurf"],
     "created_at": "2025-06-20T07:36:40.634Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -601,13 +537,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Gigazine",
     "source_url": "https://gigazine.net/gsc_news/en/20250619-apple-speech-analyzer/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt",
-      "whisper"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt", "whisper"],
     "created_at": "2025-06-20T07:36:43.177Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -620,13 +551,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Twipe",
     "source_url": "https://www.twipemobile.com/what-the-2025-digital-news-report-tells-us-about-ai-in-news/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt",
-      "gemini"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt", "gemini"],
     "created_at": "2025-06-20T07:36:36.642Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -639,16 +565,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "ApiX-Drive",
     "source_url": "https://apix-drive.com/en/blog/news/cursor-ai-rolls-out-ultra-plan",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "cursor",
-      "chatgpt",
-      "claude",
-      "grok",
-      "adobe-firefly"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["cursor", "chatgpt", "claude", "grok", "adobe-firefly"],
     "created_at": "2025-06-20T07:36:39.752Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -661,12 +579,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "KServe blog",
     "source_url": "https://www.cncf.io/blog/2025/06/18/announcing-kserve-v0-15-advancing-generative-ai-model-serving/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "v0"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["v0"],
     "created_at": "2025-06-20T07:36:39.958Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -679,12 +593,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Tom's Guide",
     "source_url": "https://www.tomsguide.com/ai/midjourney-video-generation-is-here-but-theres-a-problem-holding-it-back",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "midjourney"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["midjourney"],
     "created_at": "2025-06-20T07:36:42.492Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -697,13 +607,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "OpenTools AI",
     "source_url": "https://opentools.ai/news/deepseeks-r1-ai-model-rivals-googles-and-anthropics-in-coding-prowess",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude",
-      "gemini"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude", "gemini"],
     "created_at": "2025-06-20T07:36:37.647Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -716,9 +621,7 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Jones Walker",
     "source_url": "https://www.joneswalker.com/en/insights/blogs/ai-law-blog/two-major-lawsuits-aim-to-answer-a-multi-billion-dollar-question-can-ai-train-on.html?id=102kgkx",
-    "tags": [
-      "funding"
-    ],
+    "tags": ["funding"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:41.762Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
@@ -732,12 +635,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Lassonde School of Engineering, University of Utah",
     "source_url": "https://lassonde.utah.edu/how-to-develop-durable-ai-centered-products/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "bolt"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["bolt"],
     "created_at": "2025-06-20T07:36:41.126Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -750,13 +649,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "CodesByUmar",
     "source_url": "https://javascript.plainenglish.io/tabnines-suggestions-were-smarter-than-copilots-4d174e3f14b6",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "github-copilot",
-      "tabnine"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["github-copilot", "tabnine"],
     "created_at": "2025-06-20T07:36:43.619Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -769,13 +663,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "iDownloadBlog",
     "source_url": "https://www.idownloadblog.com/2025/06/18/apple-intelligence-transcription-faster-openai-whisper/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt",
-      "whisper"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt", "whisper"],
     "created_at": "2025-06-20T07:36:43.022Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -788,9 +677,7 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Wealth Tech Today",
     "source_url": "https://wealthtechtoday.com/2025/06/18/the-rapid-shift-from-notetakers-to-intelligent-agents-how-ai-will-rewire-wealthtech-workflows/",
-    "tags": [
-      "general"
-    ],
+    "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:40.979Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
@@ -804,12 +691,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "YourConroeNews",
     "source_url": "https://www.yourconroenews.com/news/article/grok-s-white-genocide-responses-show-how-20382915.php",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "grok"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["grok"],
     "created_at": "2025-06-20T07:36:38.800Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -822,12 +705,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Visual Studio Magazine",
     "source_url": "https://visualstudiomagazine.com/articles/2025/06/18/copilot-compared-advanced-ai-features-in-visual-studio-2022-vs-vs-code.aspx",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "github-copilot"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-20T07:36:39.611Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -840,12 +719,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Convergence Now",
     "source_url": "https://www.convergence-now.com/technology/mozilla-integrates-perplexity-ai-in-default-search-options-eyes-lead-in-ai-powered-browsing-119472/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "perplexity"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["perplexity"],
     "created_at": "2025-06-20T07:36:38.332Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -858,9 +733,7 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "DevOps.com",
     "source_url": "https://devops.com/why-ai-based-code-generation-falls-short/",
-    "tags": [
-      "general"
-    ],
+    "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:43.468Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
@@ -874,12 +747,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "CodesByUmar",
     "source_url": "https://javascript.plainenglish.io/7-reasons-tabnine-works-great-for-react-devs-7855196b371b",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "tabnine"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["tabnine"],
     "created_at": "2025-06-20T07:36:43.322Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -892,12 +761,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Research in Germany",
     "source_url": "https://www.research-in-germany.org/idw-news/en_US/2025/6/2025-06-18_Light_in_the_darkness__Researchers_show_AI_art_protection_tools_still_leave_creators_at_risk",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "stable-diffusion"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["stable-diffusion"],
     "created_at": "2025-06-20T07:36:41.986Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -910,12 +775,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "GitHub Blog",
     "source_url": "https://github.blog/changelog/2025-06-18-getting-started-with-github-copilot-coding-agent-is-now-easier/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "github-copilot"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-20T07:36:38.995Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -928,12 +789,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "YouTube",
     "source_url": "https://www.youtube.com/watch?v=TFAcWPrDRxc",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "midjourney"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["midjourney"],
     "created_at": "2025-06-20T07:36:42.672Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -946,12 +803,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "AI, Data & Analytics Network",
     "source_url": "https://www.aidataanalytics.network/data-science-ai/articles/advancements-in-generative-ai",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "dall-e"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["dall-e"],
     "created_at": "2025-06-20T07:36:42.871Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -964,12 +817,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "JPT",
     "source_url": "https://jpt.spe.org/totalenergies-plans-to-work-with-mistral-ai-to-increase-use-of-artificial-intelligence",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "mistral"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["mistral"],
     "created_at": "2025-06-20T07:36:41.343Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -982,12 +831,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Blockchain News",
     "source_url": "https://blockchain.news/flashnews/anthropic-launches-new-claude-code-features-impact-on-ai-and-crypto-market-trends",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude"],
     "created_at": "2025-06-20T07:36:37.438Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1000,12 +845,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "New Orleans City Business",
     "source_url": "https://neworleanscitybusiness.com/blog/2025/06/18/ai-dependency-risks-privacy-chatgpt/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt"],
     "created_at": "2025-06-20T07:36:36.907Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1018,12 +859,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Meta AI",
     "source_url": "https://ai.meta.com/blog/llama-helps-efficiency-anz-bank/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "llama"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["llama"],
     "created_at": "2025-06-20T07:36:41.628Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1036,12 +873,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "GitHub Blog",
     "source_url": "https://github.blog/changelog/2025-06-18-update-to-github-copilot-consumptive-billing-experience/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "github-copilot"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-20T07:36:39.413Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1054,9 +887,7 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Lenny's Newsletter",
     "source_url": "https://www.lennysnewsletter.com/p/ai-prompt-engineering-in-2025-sander-schulhoff",
-    "tags": [
-      "general"
-    ],
+    "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:40.216Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
@@ -1070,12 +901,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Chrome Unboxed",
     "source_url": "https://chromeunboxed.com/googles-gemini-2-5-ai-models-are-now-ready-for-prime-time-alongside-new-flash-lite-model/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "gemini"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["gemini"],
     "created_at": "2025-06-20T07:36:38.128Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -1088,12 +915,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "GlobeNewswire",
     "source_url": "https://www.globenewswire.com/news-release/2025/06/19/3102495/0/en/AI-Prophet-Zacharias-Midjourney-Launches-Satirical-Literary-Cult-Simulator-Exploring-AI-Religion-Digital-Ritual-and-Blockchain-Sacrament.html",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "midjourney"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["midjourney"],
     "created_at": "2025-06-20T07:36:42.344Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -1106,9 +929,7 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "UBOS.tech",
     "source_url": "https://ubos.tech/news/ai-startup-funding-in-2025-key-trends-and-investments/",
-    "tags": [
-      "funding"
-    ],
+    "tags": ["funding"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:40.351Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
@@ -1122,12 +943,8 @@
     "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Railway PRO",
     "source_url": "https://www.railwaypro.com/wp/sncf-group-and-mistral-ai-form-strategic-partnership/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "mistral"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["mistral"],
     "created_at": "2025-06-20T07:36:41.491Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -1140,13 +957,8 @@
     "published_date": "2025-06-18T14:00:00.000Z",
     "source": "AI Power Rankings Research",
     "source_url": "https://support.bolt.new/integrations/figma",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "bolt-new",
-      "claude-artifacts"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["bolt-new", "claude-artifacts"],
     "created_at": "2025-06-18T08:23:43.424Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1159,12 +971,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "ITPro Today",
     "source_url": "https://www.itprotoday.com/it-operations/meta-s-llama-llms-spark-debate-over-open-source-ai",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "llama"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["llama"],
     "created_at": "2025-06-20T07:36:44.984Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1177,12 +985,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "HUMAIN",
     "source_url": "https://www.humain.ai/en/news/humain-and-replit/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "replit"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["replit"],
     "created_at": "2025-06-20T07:36:45.277Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1195,12 +999,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Northeastern University",
     "source_url": "https://claude.northeastern.edu",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude"],
     "created_at": "2025-06-20T07:36:43.784Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1213,12 +1013,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "GitHub Resources",
     "source_url": "https://resources.github.com/github-summerfest-2025/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "github-copilot"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-20T07:36:44.537Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1231,12 +1027,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "YouTube",
     "source_url": "https://www.youtube.com/watch?v=dfmnaCYaa_I",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "gemini"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["gemini"],
     "created_at": "2025-06-20T07:36:43.958Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1249,12 +1041,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Meta AI",
     "source_url": "https://ai.meta.com/blog/llama-startup-program-first-cohort/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "llama"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["llama"],
     "created_at": "2025-06-20T07:36:44.846Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1267,12 +1055,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "CyberScoop",
     "source_url": "https://cyberscoop.com/uncensored-ai-tool-traced-to-mistral-xai-grok/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "grok"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["grok"],
     "created_at": "2025-06-20T07:36:44.402Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1285,13 +1069,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Apple Insider",
     "source_url": "https://appleinsider.com/articles/25/06/18/apple-intelligence-transcription-is-twice-as-fast-as-openais-whisper",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "chatgpt",
-      "whisper"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["chatgpt", "whisper"],
     "created_at": "2025-06-20T07:36:45.125Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1304,12 +1083,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Geeky Gadgets",
     "source_url": "https://www.geeky-gadgets.com/building-your-first-app-with-windsurf/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "windsurf"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["windsurf"],
     "created_at": "2025-06-20T07:36:44.706Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1322,12 +1097,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Open Tools AI",
     "source_url": "https://opentools.ai/news/perplexity-ai-teams-up-with-laver-cup-to-revolutionize-fan-experience-with-real-time-insights",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "perplexity"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["perplexity"],
     "created_at": "2025-06-20T07:36:44.264Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1340,12 +1111,8 @@
     "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Laver Cup",
     "source_url": "https://lavercup.com/news/2025/06/18/perplexity-joins-laver-cup-to-elevate-fan-experience-with-real-time-insights",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "perplexity"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["perplexity"],
     "created_at": "2025-06-20T07:36:44.096Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1358,12 +1125,8 @@
     "published_date": "2025-06-17T07:42:18.000Z",
     "source": "HyperDev",
     "source_url": "https://hyperdev.matsuoka.com/p/claude-code-just-delivered-enterprise",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude-code"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude-code"],
     "created_at": "2025-06-18T00:20:15.900Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1376,13 +1139,8 @@
     "published_date": "2025-06-17T04:00:00.000Z",
     "source": "Geeky Gadgets",
     "source_url": "https://www.geeky-gadgets.com/cursor-building-a-future-with-claude-ai-code/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude",
-      "cursor"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude", "cursor"],
     "created_at": "2025-06-20T07:36:45.564Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1395,9 +1153,7 @@
     "published_date": "2025-06-17T04:00:00.000Z",
     "source": "Robotics and Automation News",
     "source_url": "https://roboticsandautomationnews.com/2025/06/16/mit-research-using-generative-ai-to-help-robots-jump-higher-and-land-better/92166/",
-    "tags": [
-      "general"
-    ],
+    "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:45.723Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
@@ -1411,13 +1167,8 @@
     "published_date": "2025-06-17T04:00:00.000Z",
     "source": "Geeky Gadgets",
     "source_url": "https://www.geeky-gadgets.com/how-to-use-openai-codex-for-beginners-2025/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt",
-      "codex"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt", "codex"],
     "created_at": "2025-06-20T07:36:45.993Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1430,12 +1181,8 @@
     "published_date": "2025-06-17T04:00:00.000Z",
     "source": "9to5mac",
     "source_url": "https://9to5mac.com/2025/06/17/firefox-quietly-starts-testing-perplexity-ai-as-a-built-in-search-engine/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "perplexity"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["perplexity"],
     "created_at": "2025-06-20T07:36:45.416Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -1448,12 +1195,8 @@
     "published_date": "2025-06-17T04:00:00.000Z",
     "source": "Analytics Insight",
     "source_url": "https://www.analyticsinsight.net/artificial-intelligence/top-artificial-intelligence-image-generators-in-2025",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "dall-e"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["dall-e"],
     "created_at": "2025-06-20T07:36:45.854Z",
     "updated_at": "2025-06-30T05:07:05.213Z"
   },
@@ -1466,12 +1209,8 @@
     "published_date": "2025-06-16T04:00:00.000Z",
     "source": "The Paypers",
     "source_url": "https://thepaypers.com/interviews/money2020-europe-2025-silverflow-and-bolt-direct-card-network-connectivity--1274092",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "bolt"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["bolt"],
     "created_at": "2025-06-20T07:36:46.312Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1484,13 +1223,8 @@
     "published_date": "2025-06-16T04:00:00.000Z",
     "source": "Blockchain News",
     "source_url": "https://blockchain.news/flashnews/openai-codex-launches-best-of-n-feature-key-impacts-for-crypto-trading-ai-tools",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt",
-      "codex"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt", "codex"],
     "created_at": "2025-06-20T07:36:47.102Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1503,13 +1237,8 @@
     "published_date": "2025-06-16T04:00:00.000Z",
     "source": "BleepingComputer",
     "source_url": "https://www.bleepingcomputer.com/news/artificial-intelligence/chatgpts-ai-coder-codex-now-lets-you-choose-the-best-solution/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt",
-      "codex"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt", "codex"],
     "created_at": "2025-06-20T07:36:46.904Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1522,13 +1251,8 @@
     "published_date": "2025-06-16T04:00:00.000Z",
     "source": "AI News",
     "source_url": "https://opentools.ai/news/openais-codex-update-choose-your-coding-adventure",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "chatgpt",
-      "codex"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["chatgpt", "codex"],
     "created_at": "2025-06-20T07:36:46.753Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1541,14 +1265,8 @@
     "published_date": "2025-06-16T04:00:00.000Z",
     "source": "YouTube",
     "source_url": "https://www.youtube.com/watch?v=nQp6UG9ugkM",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude",
-      "chatgpt",
-      "gemini"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude", "chatgpt", "gemini"],
     "created_at": "2025-06-20T07:36:46.141Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1561,12 +1279,8 @@
     "published_date": "2025-06-16T04:00:00.000Z",
     "source": "SNS Insider",
     "source_url": "https://www.globenewswire.com/news-release/2025/06/16/3099960/0/en/Generative-AI-Coding-Assistants-Market-to-reach-USD139-55-Million-by-2032-owing-to-enhanced-developer-productivity-and-reduced-code-errors-SNS-Insider.html",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "tabnine"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["tabnine"],
     "created_at": "2025-06-20T07:36:47.248Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1579,14 +1293,8 @@
     "published_date": "2025-06-16T04:00:00.000Z",
     "source": "French Tech Journal",
     "source_url": "https://frenchtechjournal.com/vivatech-2025-mistral-ai-gets-cozy-with-nvidia/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "mistral",
-      "chatgpt",
-      "claude"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["mistral", "chatgpt", "claude"],
     "created_at": "2025-06-20T07:36:46.605Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1599,12 +1307,8 @@
     "published_date": "2025-06-16T04:00:00.000Z",
     "source": "InfoQ",
     "source_url": "https://www.infoq.com/news/2025/06/mistral-ai-magistral/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "mistral"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["mistral"],
     "created_at": "2025-06-20T07:36:46.467Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1617,13 +1321,8 @@
     "published_date": "2025-06-14T04:00:00.000Z",
     "source": "Zencoder",
     "source_url": "https://zencoder.ai/blog/cursor-alternatives",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "cursor",
-      "tabnine"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["cursor", "tabnine"],
     "created_at": "2025-06-20T07:36:47.552Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1636,12 +1335,8 @@
     "published_date": "2025-06-14T04:00:00.000Z",
     "source": "Actuia",
     "source_url": "https://www.actuia.com/en/news/mistral-ai-challenges-deepseek-with-magistral-its-first-advanced-reasoning-model/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "mistral"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["mistral"],
     "created_at": "2025-06-20T07:36:47.402Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1654,12 +1349,8 @@
     "published_date": "2025-06-13T04:00:00.000Z",
     "source": "InfoQ",
     "source_url": "https://www.infoq.com/news/2025/06/microsoft-dev-proxy-v28/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "v0"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["v0"],
     "created_at": "2025-06-20T07:36:47.702Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1672,12 +1363,8 @@
     "published_date": "2025-06-13T04:00:00.000Z",
     "source": "Gigazine",
     "source_url": "https://gigazine.net/gsc_news/en/20250613-nvidia-tensorrt/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "stable-diffusion"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["stable-diffusion"],
     "created_at": "2025-06-20T07:36:47.961Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1690,14 +1377,8 @@
     "published_date": "2025-06-13T04:00:00.000Z",
     "source": "Topmostads",
     "source_url": "https://topmostads.com/windsurf-ai-coding-tool-access-restrictions/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "windsurf",
-      "chatgpt",
-      "claude"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["windsurf", "chatgpt", "claude"],
     "created_at": "2025-06-20T07:36:47.836Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1710,13 +1391,8 @@
     "published_date": "2025-06-13T04:00:00.000Z",
     "source": "AutoGPT",
     "source_url": "https://autogpt.net/openai-unveils-codex-a-powerful-ai-agent-for-coding-tasks/",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "codex",
-      "chatgpt"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["codex", "chatgpt"],
     "created_at": "2025-06-20T07:36:48.099Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1729,12 +1405,8 @@
     "published_date": "2025-06-13T04:00:00.000Z",
     "source": "Geeky Gadgets",
     "source_url": "https://www.geeky-gadgets.com/replit-agent-v2/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "replit"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["replit"],
     "created_at": "2025-06-20T07:36:48.238Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1747,14 +1419,8 @@
     "published_date": "2025-06-09T04:00:00.000Z",
     "source": "Tech Funding News",
     "source_url": "https://techfundingnews.com/swedens-lovable-takes-on-cursor-and-copilot-eyes-100m-at-1-5b-valuation-with-ai-that-lets-anyone-build-apps/",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "lovable",
-      "cursor",
-      "github-copilot"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["lovable", "cursor", "github-copilot"],
     "created_at": "2025-06-18T00:04:22.847Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1767,12 +1433,8 @@
     "published_date": "2025-06-06T18:02:56.000Z",
     "source": "HyperDev",
     "source_url": "https://hyperdev.matsuoka.com/p/i-hate-powerpoint",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude-code"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude-code"],
     "created_at": "2025-06-18T00:20:16.037Z",
     "updated_at": "2025-06-30T05:07:05.211Z"
   },
@@ -1785,14 +1447,8 @@
     "published_date": "2025-06-05T09:43:00.000Z",
     "source": "Forbes",
     "source_url": "https://www.forbes.com/sites/johanmoreno/2025/06/05/anthropic-cuts-windsurfs-claude-access-before-openai-acquisition/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "windsurf",
-      "claude-code",
-      "openai"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["windsurf", "claude-code", "openai"],
     "created_at": "2025-06-18T00:04:15.639Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1806,9 +1462,7 @@
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2025/06/05/cursors-anysphere-nabs-9-9b-valuation-soars-past-500m-arr/",
     "tags": [],
-    "tool_mentions": [
-      "1"
-    ],
+    "tool_mentions": ["1"],
     "created_at": "2025-06-09T04:58:08.085264",
     "updated_at": "2025-06-28T02:35:55.785Z"
   },
@@ -1821,12 +1475,8 @@
     "published_date": "2025-06-05T04:00:00.000Z",
     "source": "Bloomberg",
     "source_url": "https://www.bloomberg.com/news/articles/2025-06-05/anysphere-hailed-as-fastest-growing-startup-ever-raises-900-million",
-    "tags": [
-      "funding"
-    ],
-    "tool_mentions": [
-      "cursor"
-    ],
+    "tags": ["funding"],
+    "tool_mentions": ["cursor"],
     "created_at": "2025-06-17T23:28:26.073Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1838,14 +1488,8 @@
     "summary": "GitHub launches Copilot Pro+ tier offering 1500 premium requests per month and exclusive access to advanced AI models, targeting power users and professional developers....",
     "published_date": "2025-06-05T00:00:00.000Z",
     "source": "GitHub Blog",
-    "tags": [
-      "feature-update",
-      "pricing",
-      "premium"
-    ],
-    "tool_mentions": [
-      "GitHub Copilot"
-    ],
+    "tags": ["feature-update", "pricing", "premium"],
+    "tool_mentions": ["GitHub Copilot"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -1858,12 +1502,8 @@
     "published_date": "2025-06-04T23:10:23.000Z",
     "source": "HyperDev",
     "source_url": "https://hyperdev.matsuoka.com/p/zed-gets-the-ai-editor-right",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "claude-code"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["claude-code"],
     "created_at": "2025-06-18T00:20:16.165Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1877,12 +1517,7 @@
     "source": "Reuters",
     "source_url": "https://www.reuters.com/business/ai-vibe-coding-startups-burst-onto-scene-with-sky-high-valuations-2025-06-03/",
     "tags": [],
-    "tool_mentions": [
-      "1",
-      "3",
-      "5",
-      "12"
-    ],
+    "tool_mentions": ["1", "3", "5", "12"],
     "created_at": "2025-06-09T04:58:08.085264",
     "updated_at": "2025-06-28T02:35:55.792Z"
   },
@@ -1895,12 +1530,8 @@
     "published_date": "2025-06-01T04:00:00.000Z",
     "source": "CIO Dive",
     "source_url": "https://www.ciodive.com/news/github-copilot-subscriber-count-revenue-growth/706201/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "github-copilot"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-18T00:04:18.422Z",
     "updated_at": "2025-06-30T05:07:05.211Z"
   },
@@ -1913,13 +1544,8 @@
     "published_date": "2025-06-01T04:00:00.000Z",
     "source": "Aider AI Blog",
     "source_url": "https://aider.chat/HISTORY.html",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "aider",
-      "claude-code"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["aider", "claude-code"],
     "created_at": "2025-06-18T00:04:20.471Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1932,12 +1558,8 @@
     "published_date": "2025-06-01T04:00:00.000Z",
     "source": "AI Rockstars",
     "source_url": "https://ai-rockstars.com/cursor-ai-update-2025-new-tab-model-and-background-agent-change-development-work/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "cursor"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["cursor"],
     "created_at": "2025-06-18T00:04:20.594Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1950,13 +1572,8 @@
     "published_date": "2025-06-01T04:00:00.000Z",
     "source": "Lovable Documentation",
     "source_url": "https://docs.lovable.dev/changelog",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "lovable",
-      "claude-code"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["lovable", "claude-code"],
     "created_at": "2025-06-18T00:04:22.972Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -1969,12 +1586,8 @@
     "published_date": "2025-06-01T04:00:00.000Z",
     "source": "InfoQ",
     "source_url": "https://www.infoq.com/news/2025/06/codex-cli-rust-native-rewrite/",
-    "tags": [
-      "general"
-    ],
-    "tool_mentions": [
-      "openai-codex-cli"
-    ],
+    "tags": ["general"],
+    "tool_mentions": ["openai-codex-cli"],
     "created_at": "2025-06-18T00:59:19.541Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   }

@@ -117,25 +117,78 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         lang={lang}
       />
 
-      {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-        <div className="text-center">
-          <div className="text-3xl font-bold text-primary mb-1">{loading ? 0 : totalTools}</div>
+      {/* Stats Row - Optimized for T-031 CLS fix */}
+      <div
+        className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 stats-grid"
+        style={{ minHeight: "120px" }} // Reserve space to prevent layout shift
+      >
+        <div
+          className="text-center"
+          style={{
+            width: "100%",
+            minHeight: "80px", // Consistent height
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
+          <div className="text-3xl font-bold text-primary mb-1">
+            {loading ? (
+              <div className="animate-pulse bg-gray-200 h-9 w-12 mx-auto rounded" />
+            ) : (
+              totalTools
+            )}
+          </div>
           <div className="text-sm text-muted-foreground">Tools Ranked</div>
         </div>
-        <div className="text-center">
+        <div
+          className="text-center"
+          style={{
+            width: "100%",
+            minHeight: "80px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
           <div className="text-3xl font-bold text-secondary mb-1">
-            {loading ? "0/0" : `${trendingUpCount}/${trendingDownCount}`}
+            {loading ? (
+              <div className="animate-pulse bg-gray-200 h-9 w-20 mx-auto rounded" />
+            ) : (
+              `${trendingUpCount}/${trendingDownCount}`
+            )}
           </div>
           <div className="text-sm text-muted-foreground">Trending ↑/↓</div>
         </div>
-        <div className="text-center">
+        <div
+          className="text-center"
+          style={{
+            width: "100%",
+            minHeight: "80px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
           <div className="text-3xl font-bold text-accent mb-1">
-            {loading ? "..." : lastUpdateDate || "Daily"}
+            {loading ? (
+              <div className="animate-pulse bg-gray-200 h-9 w-16 mx-auto rounded" />
+            ) : (
+              lastUpdateDate || "Daily"
+            )}
           </div>
           <div className="text-sm text-muted-foreground">Last Update</div>
         </div>
-        <div className="text-center">
+        <div
+          className="text-center"
+          style={{
+            width: "100%",
+            minHeight: "80px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+        >
           <div className="text-3xl font-bold text-foreground mb-1">100%</div>
           <div className="text-sm text-muted-foreground">Free Access</div>
         </div>

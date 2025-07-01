@@ -7,14 +7,8 @@
     "summary": "Sourcegraph introduces Cody, an AI coding assistant that leverages the company's code intelligence platform to provide context-aware code suggestions and answers....",
     "published_date": "2023-06-01T00:00:00.000Z",
     "source": "Sourcegraph Blog",
-    "tags": [
-      "launch",
-      "code-search",
-      "ai-assistant"
-    ],
-    "tool_mentions": [
-      "Sourcegraph Cody"
-    ],
+    "tags": ["launch", "code-search", "ai-assistant"],
+    "tool_mentions": ["Sourcegraph Cody"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   }

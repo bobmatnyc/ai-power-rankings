@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, ExternalLink } from "lucide-react";
+import { memo } from "react";
 
 interface ComparisonTool {
   name: string;
@@ -22,7 +23,7 @@ interface ComparisonTableProps {
   className?: string;
 }
 
-export function ComparisonTable({
+export const ComparisonTable = memo(function ComparisonTable({
   title = "Tool Comparison",
   tools,
   focusedTool,
@@ -211,4 +212,4 @@ export function ComparisonTable({
       </CardContent>
     </Card>
   );
-}
+});

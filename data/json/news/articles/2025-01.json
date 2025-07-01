@@ -7,14 +7,8 @@
     "summary": "Windsurf implements Model Context Protocol (MCP) support, enabling developers to connect custom tools and extend the IDE's AI capabilities....",
     "published_date": "2025-02-01T00:00:00.000Z",
     "source": "Codeium Blog",
-    "tags": [
-      "feature-update",
-      "mcp",
-      "extensibility"
-    ],
-    "tool_mentions": [
-      "Windsurf"
-    ],
+    "tags": ["feature-update", "mcp", "extensibility"],
+    "tool_mentions": ["Windsurf"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -28,9 +22,7 @@
     "source": "Bloomberg",
     "source_url": "https://www.bloomberg.com/news/articles/2025-01-21/ai-speech-to-code-startup-stackblitz-is-in-talks-for-a-700-million-valuation",
     "tags": [],
-    "tool_mentions": [
-      "5"
-    ],
+    "tool_mentions": ["5"],
     "created_at": "2025-06-09T04:58:08.085264",
     "updated_at": "2025-06-28T02:35:55.790Z"
   },
@@ -42,14 +34,8 @@
     "summary": "Anthropic's Claude Opus 4 achieves 72.5% on SWE-bench, setting a new state-of-the-art record for autonomous software engineering capabilities....",
     "published_date": "2025-01-20T00:00:00.000Z",
     "source": "Anthropic Announcements",
-    "tags": [
-      "benchmark",
-      "performance",
-      "sota"
-    ],
-    "tool_mentions": [
-      "Claude Code"
-    ],
+    "tags": ["benchmark", "performance", "sota"],
+    "tool_mentions": ["Claude Code"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -62,12 +48,8 @@
     "published_date": "2025-01-15T05:00:00.000Z",
     "source": "Latenode Blog",
     "source_url": "https://latenode.com/blog/jules-google-ai-coder-truth",
-    "tags": [
-      "product-update"
-    ],
-    "tool_mentions": [
-      "jules"
-    ],
+    "tags": ["product-update"],
+    "tool_mentions": ["jules"],
     "created_at": "2025-06-18T08:23:45.156Z",
     "updated_at": "2025-06-30T05:07:05.212Z"
   },
@@ -79,14 +61,8 @@
     "summary": "Cursor releases Fusion Tab Model with advanced multi-file editing capabilities and syntax highlighting, improving code understanding across entire projects....",
     "published_date": "2025-01-15T00:00:00.000Z",
     "source": "Cursor Changelog",
-    "tags": [
-      "feature-update",
-      "multi-file",
-      "model"
-    ],
-    "tool_mentions": [
-      "Cursor"
-    ],
+    "tags": ["feature-update", "multi-file", "model"],
+    "tool_mentions": ["Cursor"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -98,14 +74,8 @@
     "summary": "Cursor achieves $100M annual recurring revenue, becoming the fastest SaaS company to reach this milestone from $1M ARR, with 360,000 paying customers....",
     "published_date": "2025-01-15T00:00:00.000Z",
     "source": "Bloomberg",
-    "tags": [
-      "milestone",
-      "revenue",
-      "growth"
-    ],
-    "tool_mentions": [
-      "Cursor"
-    ],
+    "tags": ["milestone", "revenue", "growth"],
+    "tool_mentions": ["Cursor"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   },
@@ -117,14 +87,8 @@
     "summary": "Google releases Jules AI agent in public beta, powered by Gemini 2.0 Flash achieving 52.2% on SWE-bench, offering 5 tasks per day during beta period....",
     "published_date": "2025-01-15T00:00:00.000Z",
     "source": "Google Official Announcements",
-    "tags": [
-      "launch",
-      "beta",
-      "benchmark"
-    ],
-    "tool_mentions": [
-      "Google Jules"
-    ],
+    "tags": ["launch", "beta", "benchmark"],
+    "tool_mentions": ["Google Jules"],
     "created_at": "2025-06-30T05:11:28.927Z",
     "updated_at": "2025-06-30T05:11:28.927Z"
   }
