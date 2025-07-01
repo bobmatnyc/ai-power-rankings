@@ -2,38 +2,23 @@ We'd love to hear from you! Whether you have questions about our rankings, sugge
 
 ## Get in Touch
 
-### General Inquiries
-
-For general questions about AI Power Rankings:  
+For all inquiries, please contact us at:  
 **Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
 
-### Press & Media
+We handle all types of inquiries including:
 
-For press inquiries, interviews, or media kit requests:  
-**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
-
-### Business Development
-
-For partnership opportunities, advertising, or sponsorships:  
-**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
-
-### Technical Support
-
-For website issues or technical problems:  
-**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
-
-### Data & Rankings
-
-For questions about our ranking methodology or to submit tool information:  
-**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
+- General questions about AI Power Rankings
+- Press inquiries, interviews, and media kit requests
+- Partnership opportunities, advertising, and sponsorships
+- Website issues and technical support
+- Questions about our ranking methodology
+- Tool submission requests
 
 ## Submit a Tool
 
 Have an AI coding tool that should be included in our rankings? We're always looking to expand our coverage.
 
-**Submit your tool**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
-
-Please include:
+When submitting a tool, please include:
 
 - Tool name and website
 - Brief description (100-200 words)
@@ -43,16 +28,11 @@ Please include:
 
 ## Report an Issue
 
-Found an error or inaccuracy in our rankings or content?  
-**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
+Found an error or inaccuracy in our rankings or content? Let us know and we'll investigate promptly.
 
 ## Legal Matters
 
-For legal inquiries or DMCA requests:  
-**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
-
-For privacy-related concerns:  
-**Email**: [hyperdev@matsuoka.com](mailto:hyperdev@matsuoka.com)
+We also handle legal inquiries, DMCA requests, and privacy-related concerns through the same email address.
 
 ## Response Time
 
