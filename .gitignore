@@ -48,12 +48,7 @@ next-env.d.ts
 *-export.json
 *-dump-*.sql
 
-# development scripts (keep essential ones)
-/scripts/
-!scripts/export-tools.js
-!scripts/import-data.js
-!scripts/switch-env.sh
-!scripts/payload-migration/
+# development scripts are tracked but not linted
 
 # temporary and generated files
 CHANGELOG.md
