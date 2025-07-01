@@ -542,23 +542,24 @@ The tools management page at /dashboard/tools still references Payload CMS and h
 
 ### **[T-033]** Add Rate Limiting to Contact Form
 
-**Type:** Task  
-**Epic:** TBD  
-**Priority:** Medium  
-**Story Points:** 5  
-**Assignee:** Unassigned  
-**Status:** Backlog  
-**Sprint:** Future  
+**Type:** Task
+**Epic:** TBD
+**Priority:** Medium
+**Story Points:** 5
+**Assignee:** bobmatnyc
+**Status:** Completed
+**Sprint:** Current
+**Completed:** 2025-07-01
 
 **Description:**
 Implement rate limiting for the `/api/contact` endpoint to prevent spam submissions.
 
 **Acceptance Criteria:**
-- [ ] Rate limiting implemented on contact form endpoint
-- [ ] Configurable rate limits (e.g., 5 submissions per hour per IP)
-- [ ] Appropriate error messages for rate-limited users
-- [ ] Admin bypass capability
-- [ ] Monitoring for rate limit violations
+- [x] Rate limiting implemented on contact form endpoint
+- [x] Configurable rate limits (e.g., 5 submissions per hour per IP)
+- [x] Appropriate error messages for rate-limited users
+- [x] Admin bypass capability
+- [x] Monitoring for rate limit violations
 
 **Technical Notes:**
 - Consider using Vercel KV for rate limit storage
