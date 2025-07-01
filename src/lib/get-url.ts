@@ -17,7 +17,8 @@ export function getUrl(): string {
     if (process.env["NEXTAUTH_URL"]) {
       return process.env["NEXTAUTH_URL"];
     }
-    return "https://aipowerrankings.com";
+    // This should never happen in production - throw error instead of hardcoding
+    throw new Error("No base URL configured. Please set NEXT_PUBLIC_BASE_URL or VERCEL_URL");
   }
 
   // Development - browser

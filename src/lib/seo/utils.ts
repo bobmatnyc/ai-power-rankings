@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { type Tool } from "@/types/database";
 import { type RankedTool } from "@/types/rankings";
+import { getBaseUrl } from "@/lib/get-base-url";
 
 interface GenerateMetadataProps {
   title: string;
@@ -21,7 +22,7 @@ export function generateMetadata({
   noIndex = false,
   lastModified,
 }: GenerateMetadataProps): Metadata {
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+  const baseUrl = getBaseUrl();
   const url = `${baseUrl}${path}`;
 
   const images = ogImage
@@ -160,7 +161,7 @@ export function generateComparisonMetadata(tool1: Tool, tool2: Tool): Metadata {
 
 // Helper to generate breadcrumb structured data
 export function generateBreadcrumbSchema(items: { name: string; url: string }[]) {
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+  const baseUrl = getBaseUrl();
 
   return {
     "@context": "https://schema.org",

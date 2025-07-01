@@ -26,7 +26,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   const dict = await getDictionary(lang);
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+  const baseUrl =
+    process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
+      ? `https://${process.env["VERCEL_URL"]}`
+      : "";
 
   return {
     title: dict.seo?.title || `${dict.common.appName} - ${dict.common.appDescription}`,

@@ -5,6 +5,7 @@ import Script from "next/script";
 import { generateOrganizationSchema, createJsonLdScript } from "@/lib/schema";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { Inter } from "next/font/google";
+import { getBaseUrl } from "@/lib/get-base-url";
 import "./globals.css";
 
 // Font optimization for T-031
@@ -16,7 +17,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com"),
+  metadataBase: new URL(
+    process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
+      ? `https://${process.env["VERCEL_URL"]}`
+      : "http://localhost:3000"
+  ),
   title: {
     default: "AI Power Rankings - The Definitive Monthly Rankings of AI Coding Tools",
     template: "%s | AI Power Rankings",
@@ -49,7 +54,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://aipowerranking.com",
+    url: process.env["NEXT_PUBLIC_BASE_URL"] || "/",
     siteName: "AI Power Rankings",
     title: "AI Power Rankings - Developer Tool Intelligence",
     description:
@@ -89,7 +94,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>): React.JSX.Element {
   // Generate organization schema
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+  const baseUrl = getBaseUrl();
   const organizationSchema = generateOrganizationSchema({
     name: "AI Power Rankings",
     url: baseUrl,

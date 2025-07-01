@@ -11,7 +11,10 @@ import {
 import { Tool, Ranking } from "@/types/database";
 import { RankedTool } from "@/types/rankings";
 
-const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerrankings.com";
+const baseUrl =
+  process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
+    ? `https://${process.env["VERCEL_URL"]}`
+    : "";
 
 export function createOrganizationSchema(): WithContext<Organization> {
   return {

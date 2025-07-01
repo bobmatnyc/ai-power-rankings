@@ -108,7 +108,7 @@ This email was sent via the AI Power Rankings contact form.
     // IMPORTANT: Resend accounts start in sandbox mode and can only send to your verified email
     // To send to other recipients:
     // 1. Verify your domain at resend.com/domains
-    // 2. Update 'from' to use your verified domain (e.g., 'noreply@aipowerrankings.com')
+    // 2. Update 'from' to use your verified domain (e.g., 'noreply@aipowerranking.com')
     // 3. Update 'to' to your desired recipient email
     const { data, error } = await resend.emails.send({
       from: "AI Power Rankings <onboarding@resend.dev>", // Uses Resend's test domain

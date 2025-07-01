@@ -7,7 +7,13 @@
 function getCurrentUrl(): string {
   // In production, use the configured URLs
   if (process.env.NODE_ENV === "production") {
-    return process.env["NEXTAUTH_URL"] || "https://aipowerrankings.com";
+    if (process.env["NEXTAUTH_URL"]) {
+      return process.env["NEXTAUTH_URL"];
+    }
+    if (process.env["VERCEL_URL"]) {
+      return `https://${process.env["VERCEL_URL"]}`;
+    }
+    throw new Error("No base URL configured for production");
   }
 
   // In development, detect the port dynamically
