@@ -1,18 +1,18 @@
 {
-  "period": "2025-06-30",
+  "period": "2025-07-01",
   "algorithm_version": "v6-news",
   "is_current": true,
-  "created_at": "2025-06-30T15:39:06.078Z",
+  "created_at": "2025-07-01T02:21:12.853Z",
   "rankings": [
     {
       "tool_id": "2",
       "tool_name": "GitHub Copilot",
       "position": 1,
-      "score": 98.46387624951493,
+      "score": 98.34119161429109,
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 6,
+        "innovation": 6.1,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -33,11 +33,11 @@
       "tool_id": "3",
       "tool_name": "Devin",
       "position": 2,
-      "score": 93.87359697911145,
+      "score": 93.14494008312714,
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 75,
-        "innovation": 9,
+        "innovation": 8.9,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -58,11 +58,11 @@
       "tool_id": "1",
       "tool_name": "Cursor",
       "position": 3,
-      "score": 76.2174627796539,
+      "score": 75.93754456947237,
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 60,
-        "innovation": 8,
+        "innovation": 8.1,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -83,7 +83,7 @@
       "tool_id": "21",
       "tool_name": "Tabnine",
       "position": 4,
-      "score": 70.62566098322523,
+      "score": 70.39916648061727,
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 65,
@@ -99,17 +99,20 @@
         "previous_position": 9,
         "change": 5,
         "direction": "up"
+      },
+      "change_analysis": {
+        "primary_reason": "Performance improvements"
       }
     },
     {
       "tool_id": "14",
       "tool_name": "Windsurf",
       "position": 5,
-      "score": 62.655277038984444,
+      "score": 62.675862283216944,
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 60,
-        "innovation": 7.5,
+        "innovation": 7.2,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -127,11 +130,11 @@
       "tool_id": "4",
       "tool_name": "Claude Code",
       "position": 6,
-      "score": 61.095021091501096,
+      "score": 60.93936163511429,
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 75,
-        "innovation": 7.5,
+        "innovation": 7.6,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -149,39 +152,14 @@
       }
     },
     {
-      "tool_id": "12",
-      "tool_name": "Lovable",
-      "position": 7,
-      "score": 57.919854039529284,
-      "tier": "A",
-      "factor_scores": {
-        "agentic_capability": 50,
-        "innovation": 5.5,
-        "technical_performance": 0,
-        "developer_adoption": 0,
-        "market_traction": 0,
-        "business_sentiment": 0,
-        "development_velocity": 0,
-        "platform_resilience": 0
-      },
-      "movement": {
-        "previous_position": 17,
-        "change": 10,
-        "direction": "up"
-      },
-      "change_analysis": {
-        "primary_reason": "Recent funding announcement"
-      }
-    },
-    {
       "tool_id": "5",
       "tool_name": "Bolt.new",
-      "position": 8,
-      "score": 57.91375666339761,
+      "position": 7,
+      "score": 57.82741117603975,
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 50,
-        "innovation": 6.5,
+        "innovation": 6.6,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -191,7 +169,32 @@
       },
       "movement": {
         "previous_position": 16,
-        "change": 8,
+        "change": 9,
+        "direction": "up"
+      },
+      "change_analysis": {
+        "primary_reason": "Recent funding announcement"
+      }
+    },
+    {
+      "tool_id": "12",
+      "tool_name": "Lovable",
+      "position": 8,
+      "score": 57.48845130510075,
+      "tier": "A",
+      "factor_scores": {
+        "agentic_capability": 50,
+        "innovation": 5.6,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
+      },
+      "movement": {
+        "previous_position": 17,
+        "change": 9,
         "direction": "up"
       },
       "change_analysis": {
@@ -202,11 +205,11 @@
       "tool_id": "11",
       "tool_name": "Google Jules",
       "position": 9,
-      "score": 52.94710921422613,
+      "score": 52.78151346932617,
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 75,
-        "innovation": 7,
+        "innovation": 7.1,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -218,13 +221,16 @@
         "previous_position": 3,
         "change": 6,
         "direction": "down"
+      },
+      "change_analysis": {
+        "primary_reason": "Competitive pressure"
       }
     },
     {
       "tool_id": "10",
       "tool_name": "v0",
       "position": 10,
-      "score": 44.94261502811866,
+      "score": 44.82672293431733,
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 50,
@@ -240,17 +246,20 @@
         "previous_position": 23,
         "change": 13,
         "direction": "up"
+      },
+      "change_analysis": {
+        "primary_reason": "Performance improvements"
       }
     },
     {
       "tool_id": "18",
       "tool_name": "ChatGPT Canvas",
       "position": 11,
-      "score": 37.65437548923565,
+      "score": 37.49102420338193,
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 75,
-        "innovation": 4,
+        "innovation": 4.1,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -268,7 +277,7 @@
       "tool_id": "24",
       "tool_name": "OpenAI Codex CLI",
       "position": 12,
-      "score": 37.47319114810987,
+      "score": 37.49039201701148,
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 75,
@@ -284,17 +293,20 @@
         "previous_position": 6,
         "change": 6,
         "direction": "down"
+      },
+      "change_analysis": {
+        "primary_reason": "Competitive pressure"
       }
     },
     {
-      "tool_id": "30",
-      "tool_name": "Microsoft IntelliCode",
+      "tool_id": "9",
+      "tool_name": "Replit Agent",
       "position": 13,
-      "score": 32.73985205206889,
+      "score": 32.6595397782989,
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 3,
+        "innovation": 5.1,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -303,38 +315,16 @@
         "platform_resilience": 0
       },
       "movement": {
-        "previous_position": 11,
-        "change": 2,
-        "direction": "down"
-      }
-    },
-    {
-      "tool_id": "29",
-      "tool_name": "Sourcegraph Cody",
-      "position": 14,
-      "score": 32.69959004380326,
-      "tier": "A",
-      "factor_scores": {
-        "agentic_capability": 65,
-        "innovation": 3,
-        "technical_performance": 0,
-        "developer_adoption": 0,
-        "market_traction": 0,
-        "business_sentiment": 0,
-        "development_velocity": 0,
-        "platform_resilience": 0
-      },
-      "movement": {
-        "previous_position": 15,
+        "previous_position": 12,
         "change": 1,
-        "direction": "up"
+        "direction": "down"
       }
     },
     {
       "tool_id": "27",
       "tool_name": "Google Gemini Code Assist",
-      "position": 15,
-      "score": 32.682035503586896,
+      "position": 14,
+      "score": 32.613905521334175,
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 65,
@@ -348,16 +338,16 @@
       },
       "movement": {
         "previous_position": 10,
-        "change": 5,
+        "change": 4,
         "direction": "down"
       }
     },
     {
       "tool_id": "22",
       "tool_name": "JetBrains AI Assistant",
-      "position": 16,
-      "score": 32.63310874781817,
-      "tier": "B",
+      "position": 15,
+      "score": 32.60790974327829,
+      "tier": "A",
       "factor_scores": {
         "agentic_capability": 65,
         "innovation": 3,
@@ -370,15 +360,40 @@
       },
       "movement": {
         "previous_position": 14,
-        "change": 2,
+        "change": 1,
         "direction": "down"
+      }
+    },
+    {
+      "tool_id": "30",
+      "tool_name": "Microsoft IntelliCode",
+      "position": 16,
+      "score": 32.51586914234566,
+      "tier": "B",
+      "factor_scores": {
+        "agentic_capability": 65,
+        "innovation": 3,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
+      },
+      "movement": {
+        "previous_position": 11,
+        "change": 5,
+        "direction": "down"
+      },
+      "change_analysis": {
+        "primary_reason": "Competitive pressure"
       }
     },
     {
       "tool_id": "25",
       "tool_name": "Augment Code",
       "position": 17,
-      "score": 32.58753270818183,
+      "score": 32.50486883527654,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 65,
@@ -397,14 +412,14 @@
       }
     },
     {
-      "tool_id": "9",
-      "tool_name": "Replit Agent",
+      "tool_id": "29",
+      "tool_name": "Sourcegraph Cody",
       "position": 18,
-      "score": 32.51138971522371,
+      "score": 32.44679110405157,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 5,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -413,8 +428,8 @@
         "platform_resilience": 0
       },
       "movement": {
-        "previous_position": 12,
-        "change": 6,
+        "previous_position": 15,
+        "change": 3,
         "direction": "down"
       }
     },
@@ -422,11 +437,11 @@
       "tool_id": "23",
       "tool_name": "Zed",
       "position": 19,
-      "score": 29.913102864806753,
+      "score": 30.17199304578236,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 60,
-        "innovation": 7.5,
+        "innovation": 7.6,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -444,11 +459,11 @@
       "tool_id": "13",
       "tool_name": "OpenHands",
       "position": 20,
-      "score": 27.73469838142214,
+      "score": 27.72583788646974,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 55,
-        "innovation": 6,
+        "innovation": 6.1,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -466,11 +481,11 @@
       "tool_id": "7",
       "tool_name": "Aider",
       "position": 21,
-      "score": 27.66291760623465,
+      "score": 27.716736855298166,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 55,
-        "innovation": 4.5,
+        "innovation": 4.6,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -485,32 +500,10 @@
       }
     },
     {
-      "tool_id": "6",
-      "tool_name": "Cline",
-      "position": 22,
-      "score": 27.599708707813274,
-      "tier": "B",
-      "factor_scores": {
-        "agentic_capability": 55,
-        "innovation": 5.5,
-        "technical_performance": 0,
-        "developer_adoption": 0,
-        "market_traction": 0,
-        "business_sentiment": 0,
-        "development_velocity": 0,
-        "platform_resilience": 0
-      },
-      "movement": {
-        "previous_position": 19,
-        "change": 3,
-        "direction": "down"
-      }
-    },
-    {
       "tool_id": "8",
       "tool_name": "Continue",
-      "position": 23,
-      "score": 27.281964611533763,
+      "position": 22,
+      "score": 27.528373426686628,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 55,
@@ -524,7 +517,29 @@
       },
       "movement": {
         "previous_position": 20,
-        "change": 3,
+        "change": 2,
+        "direction": "down"
+      }
+    },
+    {
+      "tool_id": "6",
+      "tool_name": "Cline",
+      "position": 23,
+      "score": 27.37401923405419,
+      "tier": "B",
+      "factor_scores": {
+        "agentic_capability": 55,
+        "innovation": 5.6,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
+      },
+      "movement": {
+        "previous_position": 19,
+        "change": 4,
         "direction": "down"
       }
     },
@@ -532,11 +547,11 @@
       "tool_id": "19",
       "tool_name": "Claude Artifacts",
       "position": 24,
-      "score": 25.04171590974952,
+      "score": 25.24508216233959,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 50,
-        "innovation": 8.5,
+        "innovation": 8.6,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -554,7 +569,7 @@
       "tool_id": "26",
       "tool_name": "Amazon Q Developer",
       "position": 25,
-      "score": 24.92431719010479,
+      "score": 25.212511519169446,
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 50,
@@ -573,54 +588,10 @@
       }
     },
     {
-      "tool_id": "15",
-      "tool_name": "Sourcery",
-      "position": 26,
-      "score": 22.669742112399604,
-      "tier": "C",
-      "factor_scores": {
-        "agentic_capability": 45,
-        "innovation": 3,
-        "technical_performance": 0,
-        "developer_adoption": 0,
-        "market_traction": 0,
-        "business_sentiment": 0,
-        "development_velocity": 0,
-        "platform_resilience": 0
-      },
-      "movement": {
-        "previous_position": 27,
-        "change": 1,
-        "direction": "up"
-      }
-    },
-    {
-      "tool_id": "16",
-      "tool_name": "Qodo Gen",
-      "position": 27,
-      "score": 22.64766795979003,
-      "tier": "C",
-      "factor_scores": {
-        "agentic_capability": 45,
-        "innovation": 3,
-        "technical_performance": 0,
-        "developer_adoption": 0,
-        "market_traction": 0,
-        "business_sentiment": 0,
-        "development_velocity": 0,
-        "platform_resilience": 0
-      },
-      "movement": {
-        "previous_position": 28,
-        "change": 1,
-        "direction": "up"
-      }
-    },
-    {
       "tool_id": "28",
       "tool_name": "CodeRabbit",
-      "position": 28,
-      "score": 22.53608730436726,
+      "position": 26,
+      "score": 22.582580636580584,
       "tier": "C",
       "factor_scores": {
         "agentic_capability": 45,
@@ -634,15 +605,59 @@
       },
       "movement": {
         "previous_position": 29,
-        "change": 1,
+        "change": 3,
         "direction": "up"
+      }
+    },
+    {
+      "tool_id": "15",
+      "tool_name": "Sourcery",
+      "position": 27,
+      "score": 22.539266443285925,
+      "tier": "C",
+      "factor_scores": {
+        "agentic_capability": 45,
+        "innovation": 3,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
+      },
+      "movement": {
+        "previous_position": 27,
+        "change": 0,
+        "direction": "same"
+      }
+    },
+    {
+      "tool_id": "16",
+      "tool_name": "Qodo Gen",
+      "position": 28,
+      "score": 22.469192741569643,
+      "tier": "C",
+      "factor_scores": {
+        "agentic_capability": 45,
+        "innovation": 3,
+        "technical_performance": 0,
+        "developer_adoption": 0,
+        "market_traction": 0,
+        "business_sentiment": 0,
+        "development_velocity": 0,
+        "platform_resilience": 0
+      },
+      "movement": {
+        "previous_position": 28,
+        "change": 0,
+        "direction": "same"
       }
     },
     {
       "tool_id": "17",
       "tool_name": "Snyk Code",
       "position": 29,
-      "score": 22.3229533683243,
+      "score": 22.455850349957764,
       "tier": "C",
       "factor_scores": {
         "agentic_capability": 45,
@@ -664,11 +679,11 @@
       "tool_id": "20",
       "tool_name": "Diffblue Cover",
       "position": 30,
-      "score": 22.301200418773693,
+      "score": 22.40058783080426,
       "tier": "C",
       "factor_scores": {
         "agentic_capability": 45,
-        "innovation": 4,
+        "innovation": 4.1,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,

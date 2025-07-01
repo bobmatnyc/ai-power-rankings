@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import { cachedJsonResponse } from "@/lib/api-cache";
+import { findToolByText } from "@/lib/tool-matcher";
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,26 +33,37 @@ export async function GET(request: NextRequest) {
         let toolWebsite = "";
         let primaryToolId = "unknown";
 
-        // Check tool_mentions first (new format)
-        if (article.tool_mentions && article.tool_mentions.length > 0) {
+        // Try to extract tool from title using the term mapping
+        const tools = await toolsRepo.getAll();
+        let matchingTool = null;
+
+        // First, try to find tool using the term mapping
+        const matchedSlug = findToolByText(article.title);
+        if (matchedSlug) {
+          matchingTool = tools.find((t) => t.slug === matchedSlug) || null;
+        }
+
+        // If no match in title, check tool_mentions
+        if (!matchingTool && article.tool_mentions && article.tool_mentions.length > 0) {
           // Try to find tools by name
           const firstToolName = article.tool_mentions[0];
-          const tools = await toolsRepo.getAll();
-          const matchingTool = tools.find(
+          matchingTool = tools.find(
             (t) =>
               t.name.toLowerCase() === firstToolName.toLowerCase() ||
               t.slug === firstToolName.toLowerCase().replace(/\s+/g, "-")
           );
 
-          if (matchingTool) {
-            toolNames = matchingTool.name;
-            toolCategory = matchingTool.category || "ai-coding-tool";
-            toolWebsite = matchingTool.info?.website || "";
-            primaryToolId = matchingTool.slug || matchingTool.id;
-          } else {
+          if (!matchingTool) {
             // Use the tool mention as the name even if we don't find a match
             toolNames = article.tool_mentions.join(", ");
           }
+        }
+
+        if (matchingTool) {
+          toolNames = matchingTool.name;
+          toolCategory = matchingTool.category || "ai-coding-tool";
+          toolWebsite = matchingTool.info?.website || "";
+          primaryToolId = matchingTool.slug || matchingTool.id;
         } else if (article.tool_ids && article.tool_ids.length > 0) {
           // Fallback to old format with tool_ids
           const firstToolId = article.tool_ids[0];

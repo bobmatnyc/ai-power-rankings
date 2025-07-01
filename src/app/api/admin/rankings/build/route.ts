@@ -1,27 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRankingsRepo, getToolsRepo, getNewsRepo } from "@/lib/json-db";
+import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 import type { RankingEntry } from "@/lib/json-db/schemas";
+import { RankingEngineV6, ToolMetricsV6, ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
+import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
+import fs from "fs-extra";
+import path from "path";
 
-// Ranking weights for v6-news algorithm
-const WEIGHTS = {
-  newsImpact: 0.5, // Increased from 0.3 to give news more impact
-  baseScore: 0.5, // Decreased from 0.7 to reduce base score dominance
-};
-
-// Category base scores
-const CATEGORY_SCORES: Record<string, number> = {
-  "autonomous-agent": 75,
-  "ai-assistant": 70,
-  "ide-assistant": 65,
-  "code-editor": 60,
-  "open-source-framework": 55,
-  "app-builder": 50,
-  "code-generation": 50,
-  "code-review": 45,
-  "testing-tool": 45,
-  "ai-coding-tool": 50, // Default
-};
+interface InnovationScore {
+  tool_id: string;
+  score: number;
+  updated_at: string;
+}
 
 function calculateTier(position: number): "S" | "A" | "B" | "C" | "D" {
   if (position <= 5) {
@@ -37,6 +27,55 @@ function calculateTier(position: number): "S" | "A" | "B" | "C" | "D" {
     return "C";
   }
   return "D";
+}
+
+function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetricsV6 {
+  // Extract metrics from tool.info structure (JSON format)
+  const info = tool.info;
+  const technical = info?.technical || {};
+  const businessMetrics = info?.metrics || {};
+  const business = info?.business || {};
+
+  return {
+    tool_id: tool.id,
+    status: tool.status,
+
+    // Agentic capabilities
+    agentic_capability: tool.agentic_capability || 0,
+    swe_bench_score: businessMetrics.swe_bench_score || 0,
+    multi_file_capability: technical.multi_file_support ? 7 : 3,
+    planning_depth: 5, // Default value
+    context_utilization: 5, // Default value
+
+    // Technical metrics
+    context_window: technical.context_window || 100000,
+    language_support: technical.supported_languages?.length || 10,
+    github_stars: businessMetrics.github_stars || 0,
+
+    // Innovation metrics
+    innovation_score: innovationScore || 0,
+    innovations: [],
+
+    // Market metrics
+    estimated_users: businessMetrics.estimated_users || 0,
+    monthly_arr: businessMetrics.monthly_arr || 0,
+    valuation: businessMetrics.valuation || 0,
+    funding: businessMetrics.funding_total || 0,
+    business_model: business.business_model || "freemium",
+
+    // Risk and sentiment (default values)
+    business_sentiment: 5,
+    risk_factors: [],
+
+    // Development metrics
+    release_frequency: 2,
+    github_contributors: businessMetrics.github_contributors || 10,
+
+    // Platform metrics
+    llm_provider_count: 1,
+    multi_model_support: technical.multi_model_support || false,
+    community_size: businessMetrics.estimated_users || 0,
+  };
 }
 
 // POST - Build new rankings
@@ -55,7 +94,6 @@ export async function POST(request: NextRequest) {
     }
 
     const toolsRepo = getToolsRepo();
-    const newsRepo = getNewsRepo();
     const rankingsRepo = getRankingsRepo();
 
     // Get all active tools
@@ -80,145 +118,85 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Get all news articles
-    const allNews = await newsRepo.getAll();
-
-    // Calculate rankings for each tool
-    const toolRankings: Array<{
-      tool_id: string;
-      tool_name: string;
-      score: number;
-      base_score: number;
-      news_impact_score: number;
-      news_articles_count: number;
-      recent_funding_rounds: number;
-      recent_product_launches: number;
-    }> = [];
-
-    for (const tool of activeTools) {
-      // Get news for this tool
-      const toolNews = allNews.filter((article) => article.tool_mentions?.includes(tool.id));
-
-      // Filter recent news (last 12 months from preview date or now)
-      const cutoffDate = preview_date ? new Date(preview_date) : new Date();
-      const oneYearAgo = new Date(cutoffDate);
-      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
-      // For period-based rankings, also consider a 3-month window for more variation
-      const threeMonthsAgo = new Date(period);
-      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-
-      const recentNews = toolNews.filter((article) => {
-        const publishedDate = new Date(article.published_date);
-        return publishedDate >= oneYearAgo && publishedDate <= cutoffDate;
-      });
-
-      // Get news from the last 3 months for more time-sensitive scoring
-      const recentThreeMonthNews = toolNews.filter((article) => {
-        const publishedDate = new Date(article.published_date);
-        return publishedDate >= threeMonthsAgo && publishedDate <= new Date(period);
-      });
-
-      // Calculate news metrics
-      const fundingNews = recentNews.filter(
-        (n) =>
-          n.title.toLowerCase().includes("funding") ||
-          n.title.toLowerCase().includes("raised") ||
-          n.title.toLowerCase().includes("investment")
-      );
-
-      const productNews = recentNews.filter(
-        (n) =>
-          n.title.toLowerCase().includes("launch") ||
-          n.title.toLowerCase().includes("release") ||
-          n.title.toLowerCase().includes("announce") ||
-          n.title.toLowerCase().includes("introduces")
-      );
-
-      // Base score from category
-      const baseScore = CATEGORY_SCORES[tool.category] || 50;
-
-      // News impact calculation with time-based variation
-      let newsScore = 0;
-      if (recentNews.length > 0) {
-        // Base importance varies by recent activity
-        const recentActivityBonus = recentThreeMonthNews.length * 10;
-
-        // Calculate volume bonus with logarithmic scale
-        const volumeBonus = Math.log(recentNews.length + 1) * 15;
-
-        // Three-month momentum bonus
-        const momentumBonus = Math.min(recentThreeMonthNews.length * 20, 100);
-
-        newsScore =
-          recentActivityBonus + // Recent activity bonus
-          fundingNews.length * 30 + // Increased funding multiplier
-          productNews.length * 20 + // Increased product launch multiplier
-          volumeBonus + // Volume bonus
-          momentumBonus; // Three-month momentum
-
-        // Apply recency decay based on average age of THREE-MONTH news
-        if (recentThreeMonthNews.length > 0) {
-          const avgDaysOld =
-            recentThreeMonthNews.reduce((sum, n) => {
-              const days =
-                (new Date(period).getTime() - new Date(n.published_date).getTime()) /
-                (1000 * 60 * 60 * 24);
-              return sum + days;
-            }, 0) / recentThreeMonthNews.length;
-
-          // Stronger decay for more recent periods
-          const decayFactor = 1 / (1 + Math.pow(avgDaysOld / 90, 1.5));
-          newsScore = newsScore * decayFactor;
-        } else {
-          // No recent news = bigger penalty
-          newsScore = newsScore * 0.3;
-        }
+    // Get innovation scores
+    const innovationScoresPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
+    let innovationScores: InnovationScore[] = [];
+    try {
+      if (await fs.pathExists(innovationScoresPath)) {
+        innovationScores = await fs.readJson(innovationScoresPath);
       }
+    } catch (error) {
+      loggers.api.warn("Failed to load innovation scores", { error });
+    }
+    const innovationMap = new Map(innovationScores.map((s: InnovationScore) => [s.tool_id, s]));
 
-      // Combined score with small random variation to break ties
-      const randomVariation = (Math.random() - 0.5) * 0.5; // +/- 0.25 points
-      const totalScore =
-        baseScore * WEIGHTS.baseScore + newsScore * WEIGHTS.newsImpact + randomVariation;
+    // Initialize ranking engine and change analyzer
+    const rankingEngine = new RankingEngineV6();
+    const changeAnalyzer = new RankingChangeAnalyzer();
+    const toolScores: ToolScoreV6[] = [];
 
-      toolRankings.push({
-        tool_id: tool.id,
-        tool_name: tool.name,
-        score: totalScore,
-        base_score: baseScore,
-        news_impact_score: newsScore,
-        news_articles_count: recentNews.length,
-        recent_funding_rounds: fundingNews.length,
-        recent_product_launches: productNews.length,
-      });
+    // Calculate scores for each tool using the v6 algorithm
+    for (const tool of activeTools) {
+      try {
+        // Get innovation score for this tool
+        const innovationData = innovationMap.get(tool.id);
+        const innovationScore = innovationData?.score || 0;
+
+        // Transform tool data to metrics format
+        const toolMetrics = transformToToolMetrics(tool, innovationScore);
+
+        // Calculate score using v6 algorithm
+        const score = rankingEngine.calculateToolScore(
+          toolMetrics,
+          preview_date ? new Date(preview_date) : new Date(period)
+        );
+
+        toolScores.push(score);
+      } catch (error) {
+        loggers.api.error(`Error calculating score for tool ${tool.name}:`, error);
+      }
     }
 
-    // Sort by total score descending
-    toolRankings.sort((a, b) => b.score - a.score);
+    // Sort by overall score descending
+    toolScores.sort((a, b) => b.overallScore - a.overallScore);
 
     // Get previous rankings - find the period before this one
     const allPeriods = await rankingsRepo.getAvailablePeriods();
     const currentPeriodIndex = allPeriods.indexOf(period);
     let previousRankingsMap = new Map<string, number>();
+    let previousPeriod: any = null;
 
     if (currentPeriodIndex >= 0 && currentPeriodIndex < allPeriods.length - 1) {
       // Get the previous period (remember periods are sorted descending)
       const previousPeriodKey = allPeriods[currentPeriodIndex + 1];
       if (previousPeriodKey) {
-        const previousPeriod = await rankingsRepo.getRankingsForPeriod(previousPeriodKey);
+        previousPeriod = await rankingsRepo.getRankingsForPeriod(previousPeriodKey);
 
         if (previousPeriod) {
           previousRankingsMap = new Map(
-            previousPeriod.rankings.map((r) => [r.tool_id, r.position])
+            previousPeriod.rankings.map((r: any) => [r.tool_id, r.position])
           );
         }
       }
     }
 
     // Create ranking entries
-    const rankings: RankingEntry[] = toolRankings.map((ranking, index) => {
-      const position = index + 1;
-      const previousPosition = previousRankingsMap.get(ranking.tool_id);
+    const rankings: RankingEntry[] = [];
+    const changeAnalyses = [];
+
+    for (let i = 0; i < toolScores.length; i++) {
+      const toolScore = toolScores[i];
+      const tool = activeTools.find((t) => t.id === toolScore?.toolId);
+
+      if (!tool || !toolScore) {
+        continue;
+      }
+
+      const position = i + 1;
+      const previousPosition = previousRankingsMap.get(tool.id);
+      const previousRanking = previousPosition
+        ? previousPeriod?.rankings.find((r: any) => r.tool_id === tool.id)
+        : null;
 
       let movement = undefined;
       if (previousPosition) {
@@ -235,60 +213,97 @@ export async function POST(request: NextRequest) {
         };
       }
 
-      return {
-        tool_id: ranking.tool_id,
-        tool_name: ranking.tool_name,
+      // Generate change analysis
+      const changeAnalysis = changeAnalyzer.analyzeRankingChange(
+        {
+          tool_id: tool.id,
+          tool_name: tool.name,
+          position,
+          score: toolScore.overallScore,
+          new_position: position,
+          new_score: toolScore.overallScore,
+        },
+        previousRanking
+          ? {
+              position: previousPosition!,
+              score: previousRanking.score,
+              current_position: previousPosition!,
+              current_score: previousRanking.score,
+            }
+          : undefined,
+        toolScore.factorScores,
+        previousRanking?.factor_scores
+          ? {
+              agenticCapability: previousRanking.factor_scores.agentic_capability || 0,
+              innovation: previousRanking.factor_scores.innovation || 0,
+              technicalPerformance: previousRanking.factor_scores.technical_performance || 0,
+              developerAdoption: previousRanking.factor_scores.developer_adoption || 0,
+              marketTraction: previousRanking.factor_scores.market_traction || 0,
+              businessSentiment: previousRanking.factor_scores.business_sentiment || 0,
+              developmentVelocity: previousRanking.factor_scores.development_velocity || 0,
+              platformResilience: previousRanking.factor_scores.platform_resilience || 0,
+            }
+          : undefined
+      );
+
+      changeAnalyses.push(changeAnalysis);
+
+      rankings.push({
+        tool_id: tool.id,
+        tool_name: tool.name,
         position,
-        score: ranking.score,
+        score: toolScore.overallScore,
         tier: calculateTier(position),
         factor_scores: {
-          agentic_capability: ranking.base_score,
-          innovation: 0,
-          technical_performance: 0,
-          developer_adoption: 0,
-          market_traction: 0,
-          business_sentiment: 0,
-          development_velocity: 0,
-          platform_resilience: 0,
+          agentic_capability: toolScore.factorScores.agenticCapability || 0,
+          innovation: toolScore.factorScores.innovation || 0,
+          technical_performance: toolScore.factorScores.technicalPerformance || 0,
+          developer_adoption: toolScore.factorScores.developerAdoption || 0,
+          market_traction: toolScore.factorScores.marketTraction || 0,
+          business_sentiment: toolScore.factorScores.businessSentiment || 0,
+          development_velocity: toolScore.factorScores.developmentVelocity || 0,
+          platform_resilience: toolScore.factorScores.platformResilience || 0,
         },
         movement,
         change_analysis:
-          ranking.recent_funding_rounds > 0 ||
-          ranking.recent_product_launches > 0 ||
-          ranking.news_articles_count > 5
+          (changeAnalysis.rankChange && Math.abs(changeAnalysis.rankChange) >= 3) ||
+          (changeAnalysis.primaryReason && changeAnalysis.primaryReason !== "No significant change")
             ? {
-                primary_reason:
-                  ranking.recent_funding_rounds > 0
-                    ? "Recent funding announcement"
-                    : ranking.recent_product_launches > 0
-                      ? "Major product launch"
-                      : "High news coverage",
+                primary_reason: changeAnalysis.primaryReason,
+                narrative_explanation: changeAnalysis.narrativeExplanation,
               }
             : undefined,
-      };
-    });
+      });
+    }
 
     // Save the rankings
     await rankingsRepo.saveRankingsForPeriod({
       period,
-      algorithm_version: "v6-news",
+      algorithm_version: "v6.0",
       is_current: false, // Don't automatically make it current
       created_at: new Date().toISOString(),
       preview_date,
       rankings,
     });
 
+    // Generate change report
+    const changeReport = changeAnalyzer.generateChangeReport(changeAnalyses);
+
     return NextResponse.json({
       success: true,
       period,
       rankings_count: rankings.length,
+      algorithm_version: "v6.0",
       stats: {
-        tools_with_news: toolRankings.filter((r) => r.news_articles_count > 0).length,
-        avg_news_boost:
-          toolRankings.reduce((sum, r) => sum + r.news_impact_score, 0) / toolRankings.length,
-        max_news_impact: Math.max(...toolRankings.map((r) => r.news_impact_score)),
+        average_score: rankings.reduce((sum, r) => sum + r.score, 0) / rankings.length,
+        highest_score: Math.max(...rankings.map((r) => r.score)),
+        lowest_score: Math.min(...rankings.map((r) => r.score)),
+        new_entries: rankings.filter((r) => r.movement?.direction === "new").length,
+        tools_moved_up: rankings.filter((r) => r.movement?.direction === "up").length,
+        tools_moved_down: rankings.filter((r) => r.movement?.direction === "down").length,
       },
-      message: `Rankings built successfully for ${period}`,
+      change_summary: changeReport,
+      message: `Rankings built successfully for ${period} using algorithm v6.0`,
     });
   } catch (error) {
     loggers.api.error("Build rankings error", { error });

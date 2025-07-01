@@ -20,6 +20,7 @@ import {
   Newspaper,
   FileText,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -56,12 +57,71 @@ interface NewsDetailContentProps {
   lang: Locale;
 }
 
+interface ToolMention {
+  id: string;
+  slug: string;
+  name: string;
+  website?: string;
+}
+
 export default function NewsDetailContent({
   article,
   tool,
   dict,
   lang,
 }: NewsDetailContentProps): React.JSX.Element {
+  const [toolMentions, setToolMentions] = useState<ToolMention[]>([]);
+
+  useEffect(() => {
+    // Fetch tool information for mentions
+    const fetchToolMentions = async () => {
+      if (!article.tool_mentions || article.tool_mentions.length === 0) {
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/tools/json");
+        if (!response.ok) {
+          throw new Error("Failed to fetch tools");
+        }
+
+        const allTools = await response.json();
+        const mentions: ToolMention[] = [];
+
+        for (const mention of article.tool_mentions.slice(0, 5)) {
+          let foundTool = null;
+
+          // Check if it's an ID (numeric string) or a name
+          if (/^\d+$/.test(mention)) {
+            // It's an ID, find by ID
+            foundTool = allTools.find((t: Tool) => t.id === mention);
+          } else {
+            // It's a name, find by name or slug
+            foundTool = allTools.find(
+              (t: Tool) =>
+                t.name.toLowerCase() === mention.toLowerCase() ||
+                t.slug === mention.toLowerCase().replace(/\s+/g, "-")
+            );
+          }
+
+          if (foundTool) {
+            mentions.push({
+              id: foundTool.id,
+              slug: foundTool.slug,
+              name: foundTool.name,
+              website: foundTool.info?.website,
+            });
+          }
+        }
+
+        setToolMentions(mentions);
+      } catch (error) {
+        console.error("Failed to fetch tool mentions:", error);
+      }
+    };
+
+    fetchToolMentions();
+  }, [article.tool_mentions]);
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -225,6 +285,7 @@ export default function NewsDetailContent({
                 domain={tool.info?.website}
                 size={64}
                 className="flex-shrink-0"
+                context="news"
               />
             )}
             <div className="flex-1">
@@ -265,6 +326,7 @@ export default function NewsDetailContent({
                     domain={tool.info?.website}
                     size={16}
                     className="flex-shrink-0"
+                    context="news"
                   />
                   {tool.name}
                 </Badge>
@@ -272,18 +334,25 @@ export default function NewsDetailContent({
             )}
 
             {/* Additional tool mentions */}
-            {article.tool_mentions && article.tool_mentions.length > 0 && (
+            {toolMentions.length > 0 && (
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm text-muted-foreground">Tools Mentioned:</span>
-                {article.tool_mentions.slice(0, 5).map((toolName, index) => (
-                  <Badge
-                    key={index}
-                    variant="secondary"
-                    className="flex items-center gap-1 text-xs"
-                  >
-                    <ToolIcon name={toolName} domain="" size={12} className="flex-shrink-0" />
-                    {toolName}
-                  </Badge>
+                {toolMentions.map((mention) => (
+                  <Link key={mention.id} href={`/${lang}/tools/${mention.slug}`}>
+                    <Badge
+                      variant="secondary"
+                      className="flex items-center gap-1 text-xs hover:bg-secondary/80 cursor-pointer"
+                    >
+                      <ToolIcon
+                        name={mention.name}
+                        domain={mention.website}
+                        size={12}
+                        className="flex-shrink-0"
+                        context="news"
+                      />
+                      {mention.name}
+                    </Badge>
+                  </Link>
                 ))}
               </div>
             )}

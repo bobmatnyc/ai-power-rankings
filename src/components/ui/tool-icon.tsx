@@ -3,15 +3,23 @@
 import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Newspaper } from "lucide-react";
 
 interface ToolIconProps {
   name: string;
   domain?: string;
   size?: number;
   className?: string;
+  context?: "news" | "default";
 }
 
-export function ToolIcon({ name, domain, size = 48, className }: ToolIconProps) {
+export function ToolIcon({
+  name,
+  domain,
+  size = 48,
+  className,
+  context = "default",
+}: ToolIconProps) {
   const [imageError, setImageError] = useState(false);
 
   // Debug log to understand what's happening
@@ -42,6 +50,20 @@ export function ToolIcon({ name, domain, size = 48, className }: ToolIconProps) 
     return colors[Math.abs(hash) % colors.length];
   };
 
+  // News icon fallback for news context
+  const NewsIcon = () => (
+    <div
+      className={cn(
+        "flex items-center justify-center rounded-lg",
+        "bg-gradient-to-br from-gray-500 to-gray-600",
+        className
+      )}
+      style={{ width: size, height: size }}
+    >
+      <Newspaper size={size * 0.6} className="text-white" />
+    </div>
+  );
+
   // Generic tool icon fallback
   const GenericToolIcon = () => (
     <div
@@ -69,7 +91,7 @@ export function ToolIcon({ name, domain, size = 48, className }: ToolIconProps) 
   );
 
   if (!domain || imageError) {
-    return <GenericToolIcon />;
+    return context === "news" ? <NewsIcon /> : <GenericToolIcon />;
   }
 
   return (

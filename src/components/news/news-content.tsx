@@ -19,6 +19,7 @@ import {
   Globe,
   Newspaper,
   FileText,
+  Rss,
 } from "lucide-react";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
@@ -221,8 +222,22 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
     <div className="space-y-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">{dict.news.title}</h1>
-        <p className="text-muted-foreground text-lg">{dict.news.subtitle}</p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">{dict.news.title}</h1>
+            <p className="text-muted-foreground text-lg">{dict.news.subtitle}</p>
+          </div>
+          <Link
+            href={`/${lang}/news/rss.xml`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+            title="RSS Feed"
+          >
+            <Rss className="h-5 w-5" />
+            <span className="text-sm hidden sm:inline">RSS Feed</span>
+          </Link>
+        </div>
       </div>
 
       {/* Filter Tabs */}
@@ -262,6 +277,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                           domain={item.tool_website}
                           size={40}
                           className="flex-shrink-0"
+                          context="news"
                         />
                         {/* Source Icon */}
                         {item.source_name && (
@@ -300,6 +316,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                                 domain={item.tool_website}
                                 size={12}
                                 className="mr-1"
+                                context="news"
                               />
                               {item.tool_name}
                             </Badge>
