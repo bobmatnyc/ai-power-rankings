@@ -15,6 +15,7 @@ export interface UpdatesData {
     rank: number;
     toolId: string;
     toolName: string;
+    slug: string;
     score: number;
     change: string;
     tier: string;
@@ -144,6 +145,7 @@ export class UpdatesGenerator {
         rank: ranking.position,
         toolId: ranking.tool_id,
         toolName: tool?.name || ranking.tool_name,
+        slug: tool?.slug || ranking.tool_id,
         score: ranking.score,
         change,
         tier: ranking.tier || "A",

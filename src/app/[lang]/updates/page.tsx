@@ -159,9 +159,10 @@ export default async function UpdatesPage({ params }: PageProps) {
               <h3 className="text-lg font-semibold mb-3">🏆 Top 10 Current Rankings</h3>
               <div className="grid gap-2">
                 {updates.topRankings.map((tool) => (
-                  <div
+                  <Link
                     key={tool.rank}
-                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                    href={`/${lang}/tools/${tool.slug}`}
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted/70 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <Badge
@@ -170,7 +171,9 @@ export default async function UpdatesPage({ params }: PageProps) {
                       >
                         {tool.rank}
                       </Badge>
-                      <span className="font-medium">{tool.toolName}</span>
+                      <span className="font-medium hover:text-primary transition-colors">
+                        {tool.toolName}
+                      </span>
                       <Badge variant={tool.tier === "S" ? "default" : "secondary"}>
                         {tool.tier}
                       </Badge>
@@ -194,7 +197,7 @@ export default async function UpdatesPage({ params }: PageProps) {
                         </Badge>
                       )}
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
