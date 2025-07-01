@@ -82,7 +82,7 @@ export function NewsCard({ item }: NewsCardProps) {
               href={`/tools/${item.tool_id}`}
               className="flex-shrink-0 mt-1 hover:opacity-80 transition-opacity"
             >
-              <ToolIcon name={item.tool_name} domain={item.tool_website} size={40} />
+              <ToolIcon name={item.tool_name} domain={item.tool_website} size={40} context="news" />
             </Link>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">

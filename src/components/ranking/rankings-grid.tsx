@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Grid, List, ArrowUpDown, TrendingUp, Star } from "lucide-react";
 import { RankingCard } from "./ranking-card";
+import { TierLegend } from "./tier-legend";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -190,11 +191,11 @@ function RankingsGridContent({
       {/* Stats Cards - Optimized for T-031 CLS fix */}
       <div
         className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-8"
-        style={{ minHeight: '140px' }} // Reserve space to prevent layout shift
+        style={{ minHeight: "140px" }} // Reserve space to prevent layout shift
       >
         <Card
           className="border-border/50"
-          style={{ minHeight: '120px' }} // Consistent card height
+          style={{ minHeight: "120px" }} // Consistent card height
         >
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -211,10 +212,7 @@ function RankingsGridContent({
             </div>
           </CardContent>
         </Card>
-        <Card
-          className="border-border/50"
-          style={{ minHeight: '120px' }}
-        >
+        <Card className="border-border/50" style={{ minHeight: "120px" }}>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {dict.rankings.stats.categories}
@@ -230,10 +228,7 @@ function RankingsGridContent({
             </div>
           </CardContent>
         </Card>
-        <Card
-          className="border-border/50"
-          style={{ minHeight: '120px' }}
-        >
+        <Card className="border-border/50" style={{ minHeight: "120px" }}>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {dict.rankings.stats.avgScore}
@@ -244,15 +239,14 @@ function RankingsGridContent({
               {loading ? (
                 <div className="animate-pulse bg-gray-200 h-8 w-12 rounded" />
               ) : (
-                (rankings.reduce((acc, r) => acc + (r.scores?.overall || 0), 0) / rankings.length).toFixed(1)
+                (
+                  rankings.reduce((acc, r) => acc + (r.scores?.overall || 0), 0) / rankings.length
+                ).toFixed(1)
               )}
             </div>
           </CardContent>
         </Card>
-        <Card
-          className="border-border/50"
-          style={{ minHeight: '120px' }}
-        >
+        <Card className="border-border/50" style={{ minHeight: "120px" }}>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               {dict.rankings.stats.lastUpdate}
@@ -268,6 +262,11 @@ function RankingsGridContent({
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Tier Legend */}
+      <div className="mb-6">
+        <TierLegend dict={dict} />
       </div>
 
       {/* Controls */}

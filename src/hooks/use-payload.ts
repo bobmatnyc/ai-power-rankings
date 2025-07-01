@@ -34,7 +34,7 @@ export function usePayload() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/rankings");
+      const response = await fetch("/api/admin/rankings/all");
       if (!response.ok) {
         throw new Error("Failed to fetch rankings");
       }
@@ -49,61 +49,81 @@ export function usePayload() {
     }
   }, []);
 
-  const updateTool = useCallback(async (toolId: string, updates: Partial<Tool>) => {
-    try {
-      setLoading(true);
-      setError(null);
+  const updateTool = useCallback(
+    async (toolId: string, updates: Partial<Tool>) => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      const response = await fetch(`/api/admin/tools/${toolId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updates),
-      });
+        // Find the tool to get its slug
+        const tool = tools.find((t) => t.id === toolId);
+        if (!tool) {
+          throw new Error("Tool not found");
+        }
 
-      if (!response.ok) {
-        throw new Error("Failed to update tool");
+        const response = await fetch(`/api/tools/${tool.slug}/json`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...tool, ...updates }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update tool");
+        }
+
+        const data = await response.json();
+
+        // Update local state
+        setTools((prevTools) => prevTools.map((t) => (t.id === toolId ? data.tool : t)));
+
+        return data.tool;
+      } catch (err) {
+        setError(err as Error);
+        console.error("Error updating tool:", err);
+        throw err;
+      } finally {
+        setLoading(false);
       }
+    },
+    [tools]
+  );
 
-      const data = await response.json();
+  const deleteTool = useCallback(
+    async (toolId: string) => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      // Update local state
-      setTools((prevTools) => prevTools.map((tool) => (tool.id === toolId ? data : tool)));
+        // Find the tool to get its slug
+        const tool = tools.find((t) => t.id === toolId);
+        if (!tool) {
+          throw new Error("Tool not found");
+        }
 
-      return data;
-    } catch (err) {
-      setError(err as Error);
-      console.error("Error updating tool:", err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        const response = await fetch(`/api/tools/${tool.slug}/json`, {
+          method: "DELETE",
+        });
 
-  const deleteTool = useCallback(async (toolId: string) => {
-    try {
-      setLoading(true);
-      setError(null);
+        if (!response.ok) {
+          throw new Error("Failed to delete tool");
+        }
 
-      const response = await fetch(`/api/admin/tools/${toolId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete tool");
+        // Update local state - the API soft deletes by setting status to "discontinued"
+        setTools((prevTools) =>
+          prevTools.map((t) => (t.id === toolId ? { ...t, status: "discontinued" as const } : t))
+        );
+      } catch (err) {
+        setError(err as Error);
+        console.error("Error deleting tool:", err);
+        throw err;
+      } finally {
+        setLoading(false);
       }
-
-      // Update local state
-      setTools((prevTools) => prevTools.filter((tool) => tool.id !== toolId));
-    } catch (err) {
-      setError(err as Error);
-      console.error("Error deleting tool:", err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [tools]
+  );
 
   return {
     tools,

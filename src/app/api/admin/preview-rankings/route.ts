@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, ToolMetricsV6, ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 import { RankingChangeAnalyzer, RankingChangeAnalysis } from "@/lib/ranking-change-analyzer";
-import { getToolsRepo, getRankingsRepo } from "@/lib/json-db";
+import { getToolsRepo, getRankingsRepo, getNewsRepo } from "@/lib/json-db";
+import { extractEnhancedNewsMetrics, applyEnhancedNewsMetrics } from "@/lib/ranking-news-enhancer";
 
 interface RankingComparison {
   tool_id: string;
@@ -58,33 +59,51 @@ interface PreviewResult {
   };
 }
 
-function transformToToolMetrics(tool: any): ToolMetricsV6 {
+// This function is identical to the one in build/route.ts
+function getCategoryBasedAgenticScore(category: string, toolName: string): number {
+  // Special handling for premium autonomous agents
+  const premiumAgents = ["Devin", "Claude Code", "Google Jules"];
+  if (premiumAgents.includes(toolName)) {
+    return 8.5;
+  }
+
+  const categoryScores: Record<string, number> = {
+    "autonomous-agent": 8, // Default for other autonomous agents
+    "ide-assistant": 6, // Cursor, GitHub Copilot, etc. - Medium autonomy
+    "code-assistant": 5, // Cline, Continue, etc. - Moderate autonomy
+    "app-builder": 4, // Bolt, Lovable, etc. - Lower autonomy
+    "research-tool": 3, // Perplexity, etc. - Minimal coding autonomy
+    "general-assistant": 2, // ChatGPT, Claude.ai, etc. - Basic assistance
+  };
+
+  return categoryScores[category] || 5; // Default to 5 if category not found
+}
+
+function transformToToolMetrics(tool: any, innovationScore: number = 0): ToolMetricsV6 {
   // Extract metrics from tool.info structure (JSON format)
   const info = tool.info;
   const technical = info?.technical || {};
   const businessMetrics = info?.metrics || {};
   const business = info?.business || {};
 
-  // For preview, we'll use default values for most metrics
-  // In a real implementation, these would come from news analysis or other sources
   return {
     tool_id: tool.id,
     status: tool.status,
 
-    // Agentic capabilities (default values for preview)
-    agentic_capability: 50,
+    // Agentic capabilities based on category and tool specifics
+    agentic_capability: getCategoryBasedAgenticScore(tool.category, tool.name),
     swe_bench_score: businessMetrics.swe_bench_score || 0,
     multi_file_capability: technical.multi_file_support ? 75 : 25,
-    planning_depth: 50,
-    context_utilization: 50,
+    planning_depth: technical.planning_capability || 5,
+    context_utilization: technical.context_utilization || 5,
 
     // Technical metrics
     context_window: technical.context_window || 100000,
     language_support: technical.supported_languages || 10,
     github_stars: businessMetrics.github_stars || 0,
 
-    // Innovation metrics (default values)
-    innovation_score: 50,
+    // Innovation metrics
+    innovation_score: innovationScore,
     innovations: [],
 
     // Market metrics
@@ -94,18 +113,18 @@ function transformToToolMetrics(tool: any): ToolMetricsV6 {
     funding: businessMetrics.funding_total || 0,
     business_model: business.business_model || "freemium",
 
-    // Risk and sentiment (default values)
-    business_sentiment: 50,
+    // Risk and sentiment (default neutral)
+    business_sentiment: 5, // Neutral 0-10 scale
     risk_factors: [],
 
     // Development metrics
-    release_frequency: 50,
+    release_frequency: 5, // Neutral default
     github_contributors: businessMetrics.github_contributors || 0,
 
     // Platform metrics
     llm_provider_count: 1,
-    multi_model_support: technical.multi_file_support || false,
-    community_size: 0,
+    multi_model_support: technical.multi_model_support || false,
+    community_size: businessMetrics.community_size || 0,
   };
 }
 
@@ -188,20 +207,106 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       throw new Error("Failed to fetch tools");
     }
 
-    // For now, we'll use simplified metrics since we don't have a metrics collection in JSON
-    // In the future, this could be extended to fetch from news analysis or other sources
+    // Load innovation scores (same as build endpoint)
+    const innovationScores: any[] = [];
+    try {
+      const fs = await import("fs-extra");
+      const path = await import("path");
+      const innovationPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
+      if (await fs.pathExists(innovationPath)) {
+        const innovationData = await fs.readJSON(innovationPath);
+        innovationScores.push(...innovationData);
+      }
+    } catch (error) {
+      loggers.api.warn("Failed to load innovation scores", { error });
+    }
+    const innovationMap = new Map(innovationScores.map((s: any) => [s.tool_id, s]));
 
-    loggers.api.info(`Processing ${tools.length} tools for preview`);
+    // Get news articles for metrics extraction (same as build endpoint)
+    const newsRepo = getNewsRepo();
+    const newsArticles = await newsRepo.getAll();
+    loggers.api.info(`Found ${newsArticles.length} news articles for metrics extraction`);
+
+    loggers.api.info(`Processing ${tools.length} tools for preview with enhanced news analysis`);
 
     const rankingEngine = new RankingEngineV6();
     const changeAnalyzer = new RankingChangeAnalyzer();
     const newScores: ToolScoreV6[] = [];
 
-    // Calculate new scores for each tool
+    // Calculate new scores for each tool (IDENTICAL to build endpoint)
     for (const tool of tools) {
       try {
-        const toolMetrics = transformToToolMetrics(tool);
-        const score = rankingEngine.calculateToolScore(toolMetrics);
+        // Get innovation score for this tool
+        const innovationData = innovationMap.get(tool.id);
+        const innovationScore = innovationData?.score || 0;
+
+        // Extract enhanced metrics from news (quantitative + qualitative with AI)
+        const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"; // Default to true
+        const enhancedMetrics = await extractEnhancedNewsMetrics(
+          tool.id,
+          tool.name,
+          newsArticles,
+          preview_date,
+          enableAI
+        );
+
+        // Log extracted metrics for premium tools
+        if (
+          ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name) &&
+          (Object.keys(enhancedMetrics).length > 0 || enhancedMetrics.articlesProcessed > 0)
+        ) {
+          loggers.api.info(`Enhanced metrics for ${tool.name}:`, {
+            quantitative: {
+              swe_bench: enhancedMetrics.swe_bench_score,
+              funding: enhancedMetrics.funding,
+              users: enhancedMetrics.estimated_users,
+            },
+            qualitative: {
+              innovation_boost: enhancedMetrics.innovationBoost,
+              sentiment_adjust: enhancedMetrics.businessSentimentAdjust,
+              velocity_boost: enhancedMetrics.developmentVelocityBoost,
+            },
+            articles_processed: enhancedMetrics.articlesProcessed,
+            significant_events: enhancedMetrics.significantEvents,
+          });
+        }
+
+        // Transform tool data to metrics format
+        let toolMetrics = transformToToolMetrics(tool, innovationScore);
+
+        // Apply enhanced news metrics (both quantitative and qualitative)
+        toolMetrics = applyEnhancedNewsMetrics(toolMetrics, enhancedMetrics);
+
+        // Calculate score using v6 algorithm
+        const score = rankingEngine.calculateToolScore(
+          toolMetrics,
+          preview_date ? new Date(preview_date) : new Date(period)
+        );
+
+        // Apply additional news impact to factor scores
+        const { applyNewsImpactToScores } = await import("@/lib/ranking-news-enhancer");
+        const adjustedFactorScores = applyNewsImpactToScores(score.factorScores, enhancedMetrics);
+
+        // Update the score's factor scores with the adjustments
+        score.factorScores = {
+          ...score.factorScores,
+          technicalPerformance:
+            adjustedFactorScores["technicalPerformance"] || score.factorScores.technicalPerformance,
+          marketTraction:
+            adjustedFactorScores["marketTraction"] || score.factorScores.marketTraction,
+        };
+
+        // Recalculate overall score after news adjustments
+        const weights = RankingEngineV6.getAlgorithmInfo().weights;
+        score.overallScore = Object.entries(weights).reduce((total, [factor, weight]) => {
+          const factorScore = score.factorScores[factor as keyof typeof score.factorScores] || 0;
+          return total + factorScore * weight;
+        }, 0);
+        score.overallScore = Math.max(
+          0,
+          Math.min(10, Math.round(score.overallScore * 1000) / 1000)
+        );
+
         newScores.push(score);
       } catch (error) {
         loggers.api.error(`Error calculating score for tool ${tool.name}:`, error);
@@ -340,7 +445,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const validScoreChanges = comparisons.filter((c) => c.current_score !== undefined);
     const validScores = comparisons
       .map((c) => c.new_score)
-      .filter((score) => score != null && !isNaN(score));
+      .filter((score) => score !== null && !isNaN(score));
 
     const summary = {
       tools_moved_up: comparisons.filter((c) => c.movement === "up").length,

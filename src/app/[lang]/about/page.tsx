@@ -1,6 +1,8 @@
 import { Suspense } from "react";
-import { AboutContent } from "./about-content";
+import { MarkdownAboutContent } from "./markdown-about-content";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { contentLoader } from "@/lib/content-loader";
+import { notFound } from "next/navigation";
 import type { Locale } from "@/i18n/config";
 
 interface PageProps {
@@ -11,9 +13,22 @@ export default async function AboutPage({ params }: PageProps): Promise<React.JS
   const { lang } = await params;
   const dict = await getDictionary(lang);
 
+  // Load about content
+  const content = await contentLoader.loadContent(lang, "about");
+
+  if (!content) {
+    notFound();
+  }
+
   return (
     <Suspense fallback={<div className="text-muted-foreground">{dict.common.loading}</div>}>
-      <AboutContent lang={lang} dict={dict} />
+      <MarkdownAboutContent lang={lang} content={content} />
     </Suspense>
   );
+}
+
+// Generate static params for all locales
+export async function generateStaticParams() {
+  const locales: Locale[] = ["en", "de", "fr", "hr", "it", "ja", "ko", "uk", "zh"];
+  return locales.map((lang) => ({ lang }));
 }

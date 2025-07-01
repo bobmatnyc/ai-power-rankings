@@ -38,6 +38,13 @@ export class BackupManager {
    * Start automated daily backups
    */
   startAutomatedBackups(): void {
+    // Skip automated backups in serverless environments
+    // These should be handled by external cron jobs or scheduled functions
+    if (process.env["VERCEL"] || process.env["AWS_LAMBDA_FUNCTION_NAME"]) {
+      loggers.backup.info("Automated backups disabled in serverless environment");
+      return;
+    }
+
     if (this.backupInterval) {
       return; // Already running
     }

@@ -12,7 +12,7 @@
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 75,
-        "innovation": 0,
+        "innovation": 8.5,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -36,7 +36,7 @@
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 75,
-        "innovation": 0,
+        "innovation": 6.5,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -60,7 +60,7 @@
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 75,
-        "innovation": 0,
+        "innovation": 6,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -81,7 +81,7 @@
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 60,
-        "innovation": 0,
+        "innovation": 7.2,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -105,7 +105,7 @@
       "tier": "S",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 0,
+        "innovation": 5.5,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -129,7 +129,7 @@
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 50,
-        "innovation": 0,
+        "innovation": 5,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -153,7 +153,7 @@
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 60,
-        "innovation": 0,
+        "innovation": 7,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -174,7 +174,7 @@
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 50,
-        "innovation": 0,
+        "innovation": 5.8,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -198,7 +198,7 @@
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 75,
-        "innovation": 0,
+        "innovation": 3.5,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -219,7 +219,7 @@
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 75,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -240,7 +240,7 @@
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -261,7 +261,7 @@
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -282,7 +282,7 @@
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -303,7 +303,7 @@
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -324,7 +324,7 @@
       "tier": "A",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -345,7 +345,7 @@
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 0,
+        "innovation": 4.8,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -366,7 +366,7 @@
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -387,7 +387,7 @@
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 65,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -408,7 +408,7 @@
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 60,
-        "innovation": 0,
+        "innovation": 6.5,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -429,7 +429,7 @@
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 55,
-        "innovation": 0,
+        "innovation": 4.2,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -450,7 +450,7 @@
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 55,
-        "innovation": 0,
+        "innovation": 5,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -471,7 +471,7 @@
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 55,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -492,7 +492,7 @@
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 55,
-        "innovation": 0,
+        "innovation": 5.5,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -513,7 +513,7 @@
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 50,
-        "innovation": 0,
+        "innovation": 7.5,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -534,7 +534,7 @@
       "tier": "B",
       "factor_scores": {
         "agentic_capability": 50,
-        "innovation": 0,
+        "innovation": 7,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -555,7 +555,7 @@
       "tier": "C",
       "factor_scores": {
         "agentic_capability": 45,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -576,7 +576,7 @@
       "tier": "C",
       "factor_scores": {
         "agentic_capability": 45,
-        "innovation": 0,
+        "innovation": 3.8,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -597,7 +597,7 @@
       "tier": "C",
       "factor_scores": {
         "agentic_capability": 45,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -618,7 +618,7 @@
       "tier": "C",
       "factor_scores": {
         "agentic_capability": 45,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,
@@ -639,7 +639,7 @@
       "tier": "C",
       "factor_scores": {
         "agentic_capability": 45,
-        "innovation": 0,
+        "innovation": 3,
         "technical_performance": 0,
         "developer_adoption": 0,
         "market_traction": 0,

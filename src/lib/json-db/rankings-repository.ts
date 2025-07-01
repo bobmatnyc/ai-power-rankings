@@ -294,8 +294,95 @@ export class RankingsRepository extends BaseRepository<RankingsData> {
       data.metadata.last_updated = new Date().toISOString();
     });
 
+    // Fix movement data for the next period
+    await this.fixMovementDataAfterDeletion(period);
+
     this.logger.info("Ranking period deleted", { period });
     return true;
+  }
+
+  /**
+   * Fix movement data after a period is deleted
+   * This ensures the next period compares against the previous available period
+   */
+  private async fixMovementDataAfterDeletion(deletedPeriod: string): Promise<void> {
+    const periods = await this.getAvailablePeriods();
+    const sortedPeriods = periods.sort();
+
+    // Find the period that comes after the deleted one
+    const deletedDate = new Date(deletedPeriod);
+    let nextPeriod: string | null = null;
+
+    for (const period of sortedPeriods) {
+      const periodDate = new Date(period);
+      if (periodDate > deletedDate) {
+        nextPeriod = period;
+        break;
+      }
+    }
+
+    if (!nextPeriod) {
+      return; // No period after the deleted one
+    }
+
+    // Find the period before the deleted one (which is now the previous for the next)
+    const nextIndex = sortedPeriods.indexOf(nextPeriod);
+    if (nextIndex <= 0) {
+      return; // Next period is the first one, movement should all be 'new'
+    }
+
+    const previousPeriod = sortedPeriods[nextIndex - 1];
+
+    // Load both periods
+    const nextData = await this.getRankingsForPeriod(nextPeriod);
+    const previousData = await this.getRankingsForPeriod(previousPeriod!);
+
+    if (!nextData || !previousData) {
+      return;
+    }
+
+    // Create a map of previous positions
+    const previousPositions = new Map<string, number>();
+    previousData.rankings.forEach((r) => {
+      previousPositions.set(r.tool_id, r.position);
+    });
+
+    // Update movement data for the next period
+    nextData.rankings.forEach((ranking) => {
+      const previousPosition = previousPositions.get(ranking.tool_id);
+
+      if (previousPosition === undefined) {
+        // Tool is new
+        ranking.movement = {
+          change: 0,
+          direction: "new",
+        };
+      } else {
+        // Tool existed before
+        const change = previousPosition - ranking.position;
+        ranking.movement = {
+          previous_position: previousPosition,
+          change: Math.abs(change),
+          direction: change > 0 ? "up" : change < 0 ? "down" : "same",
+        };
+
+        // Update change analysis if significant movement and not already set
+        if (Math.abs(change) >= 5 && !ranking.change_analysis) {
+          ranking.change_analysis = {
+            primary_reason: change > 0 ? "Performance improvements" : "Competitive pressure",
+          };
+        }
+      }
+    });
+
+    // Save the updated period data
+    await this.saveRankingsForPeriod(nextData);
+
+    this.logger.info("Fixed movement data after deletion", {
+      deletedPeriod,
+      nextPeriod,
+      previousPeriod,
+    });
   }
 
   /**

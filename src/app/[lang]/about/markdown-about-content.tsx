@@ -1,0 +1,147 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { NewsletterModal } from "@/components/ui/newsletter-modal";
+import type { Locale } from "@/i18n/config";
+import type { ContentData } from "@/lib/content-loader";
+
+interface MarkdownAboutContentProps {
+  lang: Locale;
+  content: ContentData;
+}
+
+// Function to replace component placeholders in HTML
+function processMarkdownWithComponents(htmlContent: string, lang: Locale): string {
+  let processedContent = htmlContent;
+
+  // Replace NewsletterButton
+  processedContent = processedContent.replace(
+    /<NewsletterButton\s*\/>/g,
+    `<div class="mt-6">
+      <button class="newsletter-button inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+        Subscribe to Updates
+      </button>
+    </div>`
+  );
+
+  // Replace TechStackButton
+  processedContent = processedContent.replace(
+    /<TechStackButton\s*\/>/g,
+    `<div class="flex flex-wrap gap-4">
+      <button class="tech-stack-button inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 gap-2">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+          <path d="m9 9 6 6"></path>
+          <path d="m15 9-6 6"></path>
+        </svg>
+        View Tech Stack
+      </button>
+    </div>`
+  );
+
+  // Replace ButtonGroup and buttons
+  processedContent = processedContent.replace(
+    /<ButtonGroup>(.*?)<\/ButtonGroup>/g,
+    '<div class="flex flex-col sm:flex-row gap-4">$1</div>'
+  );
+
+  // Replace PrimaryButton
+  processedContent = processedContent.replace(
+    /<PrimaryButton href="([^"]*)">(.*?)<\/PrimaryButton>/g,
+    `<a href="${lang}$1" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">$2</a>`
+  );
+
+  // Replace SecondaryButton
+  processedContent = processedContent.replace(
+    /<SecondaryButton href="([^"]*)">(.*?)<\/SecondaryButton>/g,
+    `<a href="${lang}$1" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">$2</a>`
+  );
+
+  // Replace ExternalLink
+  processedContent = processedContent.replace(
+    /<ExternalLink href="([^"]*)">(.*?)<\/ExternalLink>/g,
+    '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">$2</a>'
+  );
+
+  // Remove NewsletterModal placeholder
+  processedContent = processedContent.replace(/<NewsletterModal\s*\/>/g, "");
+
+  return processedContent;
+}
+
+export function MarkdownAboutContent({
+  lang,
+  content,
+}: MarkdownAboutContentProps): React.JSX.Element {
+  const searchParams = useSearchParams();
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
+
+  useEffect(() => {
+    // Check if we should open the newsletter modal
+    if (searchParams.get("subscribe") === "true") {
+      setNewsletterOpen(true);
+      // Clean up the URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("subscribe");
+      window.history.replaceState({}, "", url.pathname);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    // Add event listeners for custom buttons after content loads
+    const newsletterButtons = document.querySelectorAll(".newsletter-button");
+    const techStackButtons = document.querySelectorAll(".tech-stack-button");
+
+    newsletterButtons.forEach((button) => {
+      button.addEventListener("click", () => setNewsletterOpen(true));
+    });
+
+    // For tech stack buttons, we'll need to handle them separately
+    // This is a simplified version - you might want to implement a proper modal
+    techStackButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        console.log("Tech Stack modal would open here. Implement TechStackModal component.");
+      });
+    });
+
+    return () => {
+      newsletterButtons.forEach((button) => {
+        button.removeEventListener("click", () => setNewsletterOpen(true));
+      });
+      techStackButtons.forEach((button) => {
+        button.removeEventListener("click", () => {});
+      });
+    };
+  }, [content.htmlContent]);
+
+  const processedContent = processMarkdownWithComponents(content.htmlContent, lang);
+
+  return (
+    <div className="container mx-auto p-4 md:p-8 max-w-4xl">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">{content.title}</h1>
+        {content.subtitle && <p className="text-muted-foreground text-lg">{content.subtitle}</p>}
+      </div>
+
+      <div
+        className="prose prose-lg dark:prose-invert max-w-none
+          prose-headings:font-bold prose-headings:tracking-tight
+          prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-4
+          prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-3
+          prose-h4:text-xl prose-h4:mt-4 prose-h4:mb-2
+          prose-p:text-muted-foreground prose-p:leading-relaxed
+          prose-ul:my-4 prose-li:text-muted-foreground
+          prose-strong:font-semibold prose-strong:text-foreground
+          prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+          prose-pre:bg-muted prose-pre:border prose-pre:border-border
+          prose-blockquote:border-l-primary prose-blockquote:bg-muted/50
+          prose-table:w-full prose-th:text-left prose-th:font-semibold
+          prose-td:p-2 prose-th:p-2 prose-tr:border-b prose-tr:border-muted"
+        dangerouslySetInnerHTML={{ __html: processedContent }}
+      />
+
+      <NewsletterModal open={newsletterOpen} onOpenChange={setNewsletterOpen} />
+    </div>
+  );
+}

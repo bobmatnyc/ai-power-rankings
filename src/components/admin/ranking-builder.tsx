@@ -95,6 +95,7 @@ export function RankingBuilder() {
   const [isSaving, setIsSaving] = useState(false);
   const [preview, setPreview] = useState<PreviewResult | null>(null);
   const [error, setError] = useState<string>("");
+  const [progressTicker, setProgressTicker] = useState<string>("");
   const [availablePeriods, setAvailablePeriods] = useState<string[]>([]);
   const [expandedPreview, setExpandedPreview] = useState(false);
 
@@ -128,6 +129,20 @@ export function RankingBuilder() {
     setError("");
     setIsGeneratingPreview(true);
     setPreview(null);
+    setProgressTicker("Starting generation...");
+
+    // Start progress polling
+    const progressInterval = setInterval(async () => {
+      try {
+        const progressResponse = await fetch("/api/admin/ranking-progress");
+        if (progressResponse.ok) {
+          const progressData = await progressResponse.json();
+          setProgressTicker(progressData.message || "Processing...");
+        }
+      } catch (err) {
+        // Ignore progress errors, continue with main request
+      }
+    }, 1000);
 
     try {
       const response = await fetch("/api/admin/preview-rankings-json", {
@@ -157,7 +172,9 @@ export function RankingBuilder() {
       console.error("Preview generation error:", err);
       setError(err instanceof Error ? err.message : "Failed to generate preview");
     } finally {
+      clearInterval(progressInterval);
       setIsGeneratingPreview(false);
+      setProgressTicker("");
     }
   };
 
@@ -184,7 +201,13 @@ export function RankingBuilder() {
             tool_name: comparison.tool_name,
             position: comparison.new_position,
             score: comparison.new_score,
-            movement: comparison.movement,
+            movement: {
+              direction: comparison.movement,
+              position_change: comparison.position_change,
+              current_position: comparison.current_position,
+              score_change: comparison.score_change,
+            },
+            change_analysis: comparison.change_analysis,
             factor_scores: {}, // Will be filled by the algorithm
           })),
         }),
@@ -293,22 +316,6 @@ export function RankingBuilder() {
 
   return (
     <div className="space-y-6">
-      {/* Navigation */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Build New Rankings</h1>
-          <p className="text-muted-foreground">
-            Select date and build new AI tool rankings with live preview
-          </p>
-        </div>
-        <Link href="/dashboard/rankings">
-          <Button variant="outline">
-            <Trophy className="h-4 w-4 mr-2" />
-            View Existing Rankings
-          </Button>
-        </Link>
-      </div>
-
       {/* Configuration Form */}
       <Card>
         <CardHeader>
@@ -382,6 +389,15 @@ export function RankingBuilder() {
               )}
             </Button>
           </div>
+
+          {progressTicker && (
+            <div className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md border">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                {progressTicker}
+              </div>
+            </div>
+          )}
 
           {error && (
             <Alert variant="destructive">

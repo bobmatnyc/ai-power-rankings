@@ -202,6 +202,37 @@
       "score": "Score",
       "name": "Name"
     },
+    "tierLegend": {
+      "title": "Ranking Tiers",
+      "description": "Tools are assigned tiers based on their ranking position",
+      "tiers": {
+        "S": {
+          "label": "Elite",
+          "range": "Top 5",
+          "description": "The absolute best AI coding tools"
+        },
+        "A": {
+          "label": "Excellent",
+          "range": "6-15",
+          "description": "Exceptional tools with strong performance"
+        },
+        "B": {
+          "label": "Good",
+          "range": "16-25",
+          "description": "Solid, reliable tools"
+        },
+        "C": {
+          "label": "Average",
+          "range": "26-35",
+          "description": "Decent tools with specific use cases"
+        },
+        "D": {
+          "label": "Below Average",
+          "range": "36+",
+          "description": "Tools with limited features or adoption"
+        }
+      }
+    },
     "algorithm": {
       "title": "About Algorithm v6.0",
       "subtitle": "Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",

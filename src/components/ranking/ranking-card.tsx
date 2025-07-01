@@ -4,6 +4,7 @@ import { ToolIcon } from "@/components/ui/tool-icon";
 import { RankingChange } from "@/components/ui/ranking-change";
 import { getCategoryColor } from "@/lib/category-colors";
 import { extractTextFromRichText } from "@/lib/richtext-utils";
+import { calculateTier, getTierColor } from "@/lib/ranking-utils";
 import Link from "next/link";
 
 interface RankingData {
@@ -84,6 +85,11 @@ export function RankingCard({
             <div className="flex items-center space-x-2 flex-shrink-0">
               <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                 <span className="text-xs mr-1">{getMedal(ranking.rank)}</span>#{ranking.rank}
+              </Badge>
+              <Badge
+                className={`${getTierColor(calculateTier(ranking.rank))} font-bold px-2 py-0.5`}
+              >
+                {calculateTier(ranking.rank)}
               </Badge>
               <RankingChange
                 previousRank={ranking.previousRank}

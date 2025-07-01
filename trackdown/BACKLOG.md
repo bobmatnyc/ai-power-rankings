@@ -127,6 +127,44 @@ Successfully fixed all 62 TypeScript errors. The codebase now compiles cleanly w
 
 ---
 
+### **[T-032]** Fix Dashboard Tools Page ✅
+
+**Type:** Bug  
+**Epic:** TBD  
+**Priority:** High  
+**Story Points:** 5  
+**Assignee:** Claude  
+**Status:** Completed  
+**Sprint:** 3  
+**Completed:** 2025-01-31  
+
+**Description:**
+The tools management page at /dashboard/tools still references Payload CMS and has duplicate headers. Need to complete the migration to JSON storage system.
+
+**Acceptance Criteria:**
+- [x] Remove all Payload CMS references
+- [x] Update to use JSON storage system
+- [x] Fix duplicate "Tools Management" headers
+- [x] Tool management UI works with JSON files
+- [x] All Payload-specific API calls removed
+
+**Technical Notes:**
+- Primary file: `/src/app/[lang]/dashboard/tools/page.tsx`
+- Check any related tool management components
+- Remove Payload-specific API calls
+- Ensure consistent with other dashboard pages
+
+**Resolution:**
+Successfully completed the following:
+1. Removed "Open Payload CMS" button from ToolsManager component
+2. Fixed duplicate headers by removing redundant title from ToolsManager (kept only in DashboardLayout)
+3. Updated usePayload hook to use correct API endpoints (/api/tools/[slug]/json)
+4. Fixed DELETE endpoint to use "discontinued" status instead of invalid "deprecated"
+5. Implemented proper delete functionality with local state updates
+6. Fixed all TypeScript errors related to the changes
+
+---
+
 ### **[T-022]** Update documentation for JSON architecture ✅
 
 **Type:** Task  
@@ -430,6 +468,204 @@ Fix missing translations for German (118 keys), French (118 keys), Croatian (112
 
 ---
 
+### **[T-031]** Fix Ranking Algorithm News Integration
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** Critical  
+**Story Points:** 13  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Fix the ranking algorithm to properly integrate news data. Currently, rankings don't change unless news contains specific metrics (SWE-bench, ARR, users), making news about features, launches, and partnerships have no impact.
+
+**Acceptance Criteria:**
+- [ ] News sentiment affects business sentiment scores
+- [ ] Product launches update innovation scores
+- [ ] Release announcements impact development velocity
+- [ ] Qualitative improvements are considered
+- [ ] Rankings reflect recent news developments
+
+**Technical Notes:**
+- Add sentiment analysis for business sentiment scores
+- Auto-update innovation scores from product launches
+- Track development velocity from release news
+- Consider qualitative improvements, not just metrics
+- See `/docs/TROUBLESHOOTING-RANKINGS.md` for full analysis
+
+---
+
+### **[T-032]** Fix Dashboard Tools Page ✅
+
+**Type:** Bug  
+**Epic:** TBD  
+**Priority:** High  
+**Story Points:** 5  
+**Assignee:** Claude  
+**Status:** Completed  
+**Sprint:** 3  
+**Completed:** 2025-01-31  
+
+**Description:**
+The tools management page at /dashboard/tools still references Payload CMS and has duplicate headers. Need to complete the migration to JSON storage system.
+
+**Acceptance Criteria:**
+- [ ] Remove all Payload CMS references
+- [ ] Update to use JSON storage system
+- [ ] Fix duplicate "Tools Management" headers
+- [ ] Tool management UI works with JSON files
+- [ ] All Payload-specific API calls removed
+
+**Technical Notes:**
+- Primary file: `/src/app/[lang]/dashboard/tools/page.tsx`
+- Check any related tool management components
+- Remove Payload-specific API calls
+- Ensure consistent with other dashboard pages
+
+---
+
+### **[T-033]** Add Rate Limiting to Contact Form
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** Medium  
+**Story Points:** 5  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Implement rate limiting for the `/api/contact` endpoint to prevent spam submissions.
+
+**Acceptance Criteria:**
+- [ ] Rate limiting implemented on contact form endpoint
+- [ ] Configurable rate limits (e.g., 5 submissions per hour per IP)
+- [ ] Appropriate error messages for rate-limited users
+- [ ] Admin bypass capability
+- [ ] Monitoring for rate limit violations
+
+**Technical Notes:**
+- Consider using Vercel KV for rate limit storage
+- Implement IP-based and session-based limits
+- Add rate limit headers to responses
+- Consider implementing CAPTCHA for repeat offenders
+
+---
+
+### **[T-034]** Domain Verification for Resend
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** Medium  
+**Story Points:** 3  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Verify aipowerrankings.com domain in Resend to remove sandbox limitations and enable production email sending.
+
+**Acceptance Criteria:**
+- [ ] Domain verified in Resend dashboard
+- [ ] DNS records configured correctly
+- [ ] Email configuration updated to use proper domain
+- [ ] Sandbox limitations removed
+- [ ] Test emails sent successfully from production domain
+
+**Technical Notes:**
+- Add required DNS records (SPF, DKIM, etc.)
+- Update email configuration in environment variables
+- Test with actual email addresses
+- Document the setup process
+
+---
+
+### **[T-035]** Add Admin Authentication
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** Low  
+**Story Points:** 8  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Implement proper authentication for dashboard access using NextAuth with Google OAuth.
+
+**Acceptance Criteria:**
+- [ ] NextAuth configured with Google OAuth
+- [ ] All dashboard routes protected
+- [ ] Admin user management interface
+- [ ] Session management implemented
+- [ ] Logout functionality working
+
+**Technical Notes:**
+- Use existing NextAuth setup
+- Configure Google OAuth credentials
+- Implement middleware for route protection
+- Add user roles/permissions system
+
+---
+
+### **[T-036]** Analytics Dashboard
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** Low  
+**Story Points:** 13  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Create an analytics dashboard to track tool views, user engagement, and site metrics.
+
+**Acceptance Criteria:**
+- [ ] Tool view tracking implemented
+- [ ] User engagement metrics collected
+- [ ] Admin analytics page created
+- [ ] Real-time data visualization
+- [ ] Export functionality for reports
+
+**Technical Notes:**
+- Consider using Vercel Analytics or custom solution
+- Track page views, session duration, bounce rate
+- Tool-specific metrics (views, clicks, time on page)
+- Geographic and device analytics
+
+---
+
+### **[T-037]** API Documentation
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** Low  
+**Story Points:** 8  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Create comprehensive API documentation for all endpoints.
+
+**Acceptance Criteria:**
+- [ ] All API endpoints documented
+- [ ] OpenAPI/Swagger specification created
+- [ ] Interactive API documentation available
+- [ ] Developer guide written
+- [ ] Example requests/responses provided
+
+**Technical Notes:**
+- Use OpenAPI 3.0 specification
+- Include authentication details
+- Document rate limits and error codes
+- Provide code examples in multiple languages
+
+---
+
 ## Sprint History
 
 ### Sprint 1 (2025-06-27 to 2025-01-15)
@@ -443,13 +679,19 @@ Fix missing translations for German (118 keys), French (118 keys), Croatian (112
 - **Velocity:** 13 tasks
 - **Remaining:** T-024, T-025
 
+### Sprint 3 (2025-01-29 to present)
+- **Goal:** Clean up and bug fixes
+- **Completed:** T-032
+- **Velocity:** 1 task
+- **In Progress:** Active development
+
 ## Metrics Summary
 
-- **Total Tasks:** 26
-- **Completed:** 23 (88.5%)
+- **Total Tasks:** 37
+- **Completed:** 24 (64.9%)
 - **In Progress:** 0 (0%)
-- **Remaining:** 3 (11.5%)
-- **Epic Progress:** 95% complete
+- **Remaining:** 13 (35.1%)
+- **Epic Progress:** 100% complete (EP-001 JSON Migration)
 
 ## Risk Register
 

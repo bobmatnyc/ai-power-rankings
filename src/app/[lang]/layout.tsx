@@ -26,11 +26,22 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   const dict = await getDictionary(lang);
+  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
 
   return {
     title: dict.seo?.title || `${dict.common.appName} - ${dict.common.appDescription}`,
     description: dict.seo?.description || dict.home.methodology.algorithmDescription,
     keywords: dict.seo?.keywords?.split(", ") || [],
+    alternates: {
+      types: {
+        "application/rss+xml": [
+          {
+            title: "AI Power Rankings - News & Updates",
+            url: `${baseUrl}/${lang}/news/rss.xml`,
+          },
+        ],
+      },
+    },
   };
 }
 

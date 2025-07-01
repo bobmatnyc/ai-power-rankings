@@ -1,6 +1,7 @@
 "use client";
 
 import { signIn, useSession } from "next-auth/react";
+import Link from "next/link";
 import { useEffect } from "react";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 
@@ -37,9 +38,9 @@ const OAuthLoginContent = () => {
         <div className="text-center">
           <p className="mb-4">
             Authenticated. Please navigate to{" "}
-            <a href="/admin" className="text-blue-600 underline">
+            <Link href="/admin" className="text-blue-600 underline">
               /admin
-            </a>
+            </Link>
           </p>
         </div>
       </div>

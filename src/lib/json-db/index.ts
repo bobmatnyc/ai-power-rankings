@@ -13,14 +13,14 @@ export { initializeJsonDb } from "./init";
 // Utility functions for common operations
 import { ToolsRepository } from "./tools-repository";
 import { RankingsRepository } from "./rankings-repository";
-import { NewsRepository } from "./news-repository";
+import { NewsRepositoryV2 } from "./news-repository-v2";
 import { CompaniesRepository } from "./companies-repository";
 import { SubscribersRepository } from "./subscribers-repository";
 import { SiteSettingsRepository } from "./site-settings-repository";
 
 export const getToolsRepo = () => ToolsRepository.getInstance();
 export const getRankingsRepo = () => RankingsRepository.getInstance();
-export const getNewsRepo = () => NewsRepository.getInstance();
+export const getNewsRepo = () => NewsRepositoryV2.getInstance();
 export const getCompaniesRepo = () => CompaniesRepository.getInstance();
 export const getSubscribersRepo = () => SubscribersRepository.getInstance();
 export const getSiteSettingsRepo = () => SiteSettingsRepository.getInstance();

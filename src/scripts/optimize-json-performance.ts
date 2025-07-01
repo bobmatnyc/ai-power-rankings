@@ -36,15 +36,18 @@ interface OptimizationSummary {
 /**
  * Minify JSON by removing whitespace
  */
-async function minifyJSON(data: any): Promise<string> {
+async function minifyJSON(data: unknown): Promise<string> {
   return JSON.stringify(data);
 }
 
 /**
  * Create indexed version of arrays for faster lookups
  */
-function createIndexedData(data: any[], indexField: string = "id"): any {
-  const indexed: any = {
+function createIndexedData(
+  data: Record<string, unknown>[],
+  indexField: string = "id"
+): Record<string, unknown> {
+  const indexed: Record<string, unknown> = {
     _indexed: true,
     _indexField: indexField,
     data: data,

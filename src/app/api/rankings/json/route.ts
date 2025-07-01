@@ -90,14 +90,14 @@ export async function GET(request: NextRequest) {
           total_score: ranking.score,
           scores: {
             overall: ranking.score,
-            agentic_capability: ranking.factor_scores.agentic_capability || 5,
-            innovation: ranking.factor_scores.innovation || 5,
-            technical_performance: ranking.factor_scores.technical_performance || 5,
-            developer_adoption: ranking.factor_scores.developer_adoption || 5,
-            market_traction: ranking.factor_scores.market_traction || 5,
-            business_sentiment: ranking.factor_scores.business_sentiment || 5,
-            development_velocity: ranking.factor_scores.development_velocity || 5,
-            platform_resilience: ranking.factor_scores.platform_resilience || 5,
+            agentic_capability: ranking.factor_scores.agentic_capability || 0,
+            innovation: ranking.factor_scores.innovation || 0,
+            technical_performance: ranking.factor_scores.technical_performance || 0,
+            developer_adoption: ranking.factor_scores.developer_adoption || 0,
+            market_traction: ranking.factor_scores.market_traction || 0,
+            business_sentiment: ranking.factor_scores.business_sentiment || 0,
+            development_velocity: ranking.factor_scores.development_velocity || 0,
+            platform_resilience: ranking.factor_scores.platform_resilience || 0,
           },
           metrics: {
             // These would come from a metrics collection if we had one

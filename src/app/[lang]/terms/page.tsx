@@ -1,26 +1,63 @@
-import { Metadata } from "next";
-import { MarkdownLayout } from "@/components/layout/markdown-layout";
-import { MarkdownContent } from "@/lib/markdown-renderer";
-import {
-  generateMarkdownPageMetadata,
-  getMarkdownPageContent,
-  getMarkdownPageConfig,
-} from "@/lib/markdown-page-utils";
+import type { Locale } from "@/i18n/config";
+import { contentLoader } from "@/lib/content-loader";
 import { notFound } from "next/navigation";
 
-export const metadata: Metadata = generateMarkdownPageMetadata("terms");
+interface PageProps {
+  params: Promise<{ lang: Locale }>;
+}
 
-export default function TermsPage() {
-  const config = getMarkdownPageConfig("terms");
-  const content = getMarkdownPageContent("terms");
+export default async function TermsPage({ params }: PageProps): Promise<React.JSX.Element> {
+  const { lang } = await params;
+  // const dict = await getDictionary(lang); // Temporarily removed due to TypeScript issues
 
-  if (!config || !content) {
+  // Load terms content
+  const content = await contentLoader.loadContent(lang, "terms");
+
+  if (!content) {
     notFound();
   }
 
   return (
-    <MarkdownLayout title={config.title}>
-      <MarkdownContent content={content} />
-    </MarkdownLayout>
+    <div className="container mx-auto p-4 md:p-8 max-w-4xl">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">{content.title}</h1>
+        {content.subtitle && <p className="text-muted-foreground text-lg">{content.subtitle}</p>}
+        {/* Temporarily removed lastUpdated due to TypeScript issues */}
+      </div>
+
+      <div
+        className="prose prose-lg dark:prose-invert max-w-none
+          prose-headings:font-bold prose-headings:tracking-tight
+          prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-4
+          prose-h3:text-2xl prose-h3:mt-6 prose-h3:mb-3
+          prose-h4:text-xl prose-h4:mt-4 prose-h4:mb-2
+          prose-p:text-muted-foreground prose-p:leading-relaxed
+          prose-ul:my-4 prose-li:text-muted-foreground
+          prose-strong:font-semibold prose-strong:text-foreground
+          prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+          prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+          prose-pre:bg-muted prose-pre:border prose-pre:border-border
+          prose-blockquote:border-l-primary prose-blockquote:bg-muted/50
+          prose-hr:border-muted"
+        dangerouslySetInnerHTML={{ __html: content.htmlContent }}
+      />
+    </div>
   );
+}
+
+// Generate static params for all locales
+export async function generateStaticParams() {
+  const locales: Locale[] = ["en", "de", "fr", "hr", "it", "ja", "ko", "uk", "zh"];
+  return locales.map((lang) => ({ lang }));
+}
+
+// Generate metadata
+export async function generateMetadata({ params }: PageProps) {
+  const { lang } = await params;
+  const content = await contentLoader.loadContent(lang, "terms");
+
+  return {
+    title: content?.title || "Terms of Use",
+    description: content?.subtitle || "Terms and conditions for using AI Power Rankings",
+  };
 }

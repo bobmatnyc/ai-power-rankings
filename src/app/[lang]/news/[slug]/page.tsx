@@ -56,12 +56,19 @@ export default async function NewsDetailPage({
     const tools = await toolsRepo.getAll();
     const firstMention = article.tool_mentions[0];
     if (firstMention) {
-      tool =
-        tools.find(
-          (t) =>
-            t.name.toLowerCase() === firstMention.toLowerCase() ||
-            t.slug === firstMention.toLowerCase().replace(/\s+/g, "-")
-        ) || null;
+      // Check if it's an ID (numeric string) or a name
+      if (/^\d+$/.test(firstMention)) {
+        // It's an ID, find by ID
+        tool = tools.find((t) => t.id === firstMention) || null;
+      } else {
+        // It's a name, find by name or slug
+        tool =
+          tools.find(
+            (t) =>
+              t.name.toLowerCase() === firstMention.toLowerCase() ||
+              t.slug === firstMention.toLowerCase().replace(/\s+/g, "-")
+          ) || null;
+      }
     }
   }
 

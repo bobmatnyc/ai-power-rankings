@@ -1,0 +1,167 @@
+{
+  "mappings": [
+    {
+      "tool_slug": "aider",
+      "tool_name": "Aider",
+      "search_terms": ["aider", "aider chat", "aider.chat"]
+    },
+    {
+      "tool_slug": "amazon-q-developer",
+      "tool_name": "Amazon Q Developer",
+      "search_terms": [
+        "amazon q",
+        "amazon q developer",
+        "aws q",
+        "codewhisperer",
+        "amazon codewhisperer"
+      ]
+    },
+    {
+      "tool_slug": "augment-code",
+      "tool_name": "Augment Code",
+      "search_terms": ["augment", "augment code", "augmentcode"]
+    },
+    {
+      "tool_slug": "bolt-new",
+      "tool_name": "Bolt.new",
+      "search_terms": ["bolt.new", "bolt new", "stackblitz bolt", "bolt"]
+    },
+    {
+      "tool_slug": "chatgpt-canvas",
+      "tool_name": "ChatGPT Canvas",
+      "search_terms": ["chatgpt canvas", "canvas", "openai canvas"]
+    },
+    {
+      "tool_slug": "claude-artifacts",
+      "tool_name": "Claude Artifacts",
+      "search_terms": ["claude", "claude.ai", "anthropic", "claude ai", "claude artifacts"]
+    },
+    {
+      "tool_slug": "claude-code",
+      "tool_name": "Claude Code",
+      "search_terms": ["claude code"]
+    },
+    {
+      "tool_slug": "cline",
+      "tool_name": "Cline",
+      "search_terms": ["cline", "cline vscode", "cline extension"]
+    },
+    {
+      "tool_slug": "coderabbit",
+      "tool_name": "CodeRabbit",
+      "search_terms": ["coderabbit", "code rabbit"]
+    },
+    {
+      "tool_slug": "continue-dev",
+      "tool_name": "Continue",
+      "search_terms": ["continue", "continue.dev", "continue dev"]
+    },
+    {
+      "tool_slug": "cursor",
+      "tool_name": "Cursor",
+      "search_terms": ["cursor", "cursor.sh", "cursor ai", "cursor editor"]
+    },
+    {
+      "tool_slug": "devin",
+      "tool_name": "Devin",
+      "search_terms": ["devin", "cognition devin", "devin ai", "cognition ai"]
+    },
+    {
+      "tool_slug": "diffblue-cover",
+      "tool_name": "Diffblue Cover",
+      "search_terms": ["diffblue", "diffblue cover"]
+    },
+    {
+      "tool_slug": "github-copilot",
+      "tool_name": "GitHub Copilot",
+      "search_terms": ["github copilot", "copilot", "gh copilot", "microsoft copilot"]
+    },
+    {
+      "tool_slug": "gemini-code-assist",
+      "tool_name": "Google Gemini Code Assist",
+      "search_terms": [
+        "gemini code assist",
+        "gemini code",
+        "google gemini",
+        "gemini",
+        "duet ai",
+        "google duet"
+      ]
+    },
+    {
+      "tool_slug": "jules",
+      "tool_name": "Google Jules",
+      "search_terms": ["google jules", "jules", "jules ai"]
+    },
+    {
+      "tool_slug": "jetbrains-ai",
+      "tool_name": "JetBrains AI Assistant",
+      "search_terms": ["jetbrains ai", "jetbrains ai assistant", "intellij ai", "jetbrains"]
+    },
+    {
+      "tool_slug": "lovable",
+      "tool_name": "Lovable",
+      "search_terms": ["lovable", "lovable.dev", "gpt engineer", "gptengineer"]
+    },
+    {
+      "tool_slug": "microsoft-intellicode",
+      "tool_name": "Microsoft IntelliCode",
+      "search_terms": ["intellicode", "microsoft intellicode", "visual studio intellicode"]
+    },
+    {
+      "tool_slug": "openai-codex-cli",
+      "tool_name": "OpenAI Codex CLI",
+      "search_terms": ["openai codex", "codex cli", "openai cli"]
+    },
+    {
+      "tool_slug": "openhands",
+      "tool_name": "OpenHands",
+      "search_terms": ["openhands", "open hands", "opendevin", "all hands ai"]
+    },
+    {
+      "tool_slug": "qodo-gen",
+      "tool_name": "Qodo Gen",
+      "search_terms": ["qodo", "qodo gen", "qodogen", "codiumai", "codium"]
+    },
+    {
+      "tool_slug": "replit-agent",
+      "tool_name": "Replit Agent",
+      "search_terms": ["replit", "replit agent", "replit ai", "replit.com"]
+    },
+    {
+      "tool_slug": "snyk-code",
+      "tool_name": "Snyk Code",
+      "search_terms": ["snyk", "snyk code", "deepcode"]
+    },
+    {
+      "tool_slug": "sourcegraph-cody",
+      "tool_name": "Sourcegraph Cody",
+      "search_terms": ["sourcegraph cody", "cody", "sourcegraph", "cody ai"]
+    },
+    {
+      "tool_slug": "sourcery",
+      "tool_name": "Sourcery",
+      "search_terms": ["sourcery", "sourcery ai"]
+    },
+    {
+      "tool_slug": "tabnine",
+      "tool_name": "Tabnine",
+      "search_terms": ["tabnine", "tab nine"]
+    },
+    {
+      "tool_slug": "v0-vercel",
+      "tool_name": "v0",
+      "search_terms": ["v0", "v0.dev", "vercel v0", "v0 by vercel"]
+    },
+    {
+      "tool_slug": "windsurf",
+      "tool_name": "Windsurf",
+      "search_terms": ["windsurf", "windsurf editor", "codeium windsurf"]
+    },
+    {
+      "tool_slug": "zed",
+      "tool_name": "Zed",
+      "search_terms": ["zed", "zed editor", "zed ai"]
+    }
+  ]
+}
