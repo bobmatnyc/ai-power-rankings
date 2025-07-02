@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 import Script from "next/script";
-import { generateOrganizationSchema, createJsonLdScript } from "@/lib/schema";
+import { generateOrganizationSchema, generateWebsiteSchema, createJsonLdScript } from "@/lib/schema";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { Inter } from "next/font/google";
 import { getBaseUrl } from "@/lib/get-base-url";
@@ -22,11 +22,11 @@ export const metadata: Metadata = {
       (process.env["VERCEL_URL"] ? `https://${process.env["VERCEL_URL"]}` : "http://localhost:3000")
   ),
   title: {
-    default: "AI Power Rankings - The Definitive Monthly Rankings of AI Coding Tools",
+    default: "AI Power Rankings - Top AI Coding Tools Monthly",
     template: "%s | AI Power Rankings",
   },
   description:
-    "The definitive monthly rankings and analysis of agentic AI coding tools. Compare Cursor, GitHub Copilot, Claude, and 50+ AI assistants trusted by developers worldwide.",
+    "Monthly rankings of 50+ AI coding tools. Compare Cursor, GitHub Copilot, Claude & top AI assistants trusted by developers. Updated weekly.",
   keywords: [
     "AI coding tools",
     "developer tools rankings",
@@ -92,14 +92,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>): React.JSX.Element {
-  // Generate organization schema
+  // Generate schemas for T-042 SEO optimization
   const baseUrl = getBaseUrl();
   const organizationSchema = generateOrganizationSchema({
     name: "AI Power Rankings",
     url: baseUrl,
     description:
       "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by developers worldwide.",
+    logo: `${baseUrl}/crown-of-technology.webp`,
   });
+  
+  const websiteSchema = generateWebsiteSchema(baseUrl);
 
   return (
     <html lang="en" className={inter.variable}>
@@ -136,6 +139,13 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: createJsonLdScript(organizationSchema),
+          }}
+        />
+        <Script
+          id="website-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: createJsonLdScript(websiteSchema),
           }}
         />
         <AuthSessionProvider>{children}</AuthSessionProvider>

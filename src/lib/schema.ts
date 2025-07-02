@@ -94,7 +94,12 @@ export function generateOrganizationSchema(org: OrganizationSchemaData) {
     name: org.name,
     url: org.url,
     ...(org.logo && {
-      logo: org.logo,
+      logo: {
+        "@type": "ImageObject",
+        url: org.logo,
+        width: 512,
+        height: 512,
+      },
     }),
     ...(org.description && {
       description: org.description,
@@ -103,6 +108,51 @@ export function generateOrganizationSchema(org: OrganizationSchemaData) {
       "https://twitter.com/aipowerrankings",
       "https://github.com/bobmatnyc/ai-power-rankings",
     ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      availableLanguage: ["English", "Japanese", "Chinese", "Spanish", "French", "German", "Korean", "Portuguese"],
+    },
+    foundingDate: "2024",
+    expertise: "AI tool evaluation and ranking",
+    knowsAbout: [
+      "Artificial Intelligence",
+      "Developer Tools",
+      "Coding Assistants",
+      "Software Development",
+      "AI Benchmarking"
+    ],
+  };
+}
+
+/**
+ * Generate Schema.org Website markup
+ */
+export function generateWebsiteSchema(baseUrl: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "AI Power Rankings",
+    url: baseUrl,
+    description: "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by developers worldwide.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${baseUrl}/tools?search={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+    audience: {
+      "@type": "Audience",
+      audienceType: "Developers and Software Engineers",
+    },
+    mainEntity: {
+      "@type": "ItemList",
+      name: "AI Coding Tools Rankings",
+      description: "Monthly rankings of AI-powered coding tools and developer assistants",
+    },
+    inLanguage: ["en", "ja", "zh", "es", "fr", "de", "ko", "pt"],
   };
 }
 
