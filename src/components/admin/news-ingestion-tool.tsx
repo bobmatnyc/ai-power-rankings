@@ -17,7 +17,7 @@ import {
   Trash2,
   Eye,
   Download,
-  Link,
+  Link as LinkIcon,
   CheckCircle,
   AlertCircle,
 } from "lucide-react";
@@ -643,7 +643,7 @@ export function NewsIngestionTool() {
                       </>
                     ) : (
                       <>
-                        <Link className="mr-2 h-4 w-4" />
+                        <LinkIcon className="mr-2 h-4 w-4" />
                         Fetch Article
                       </>
                     )}
