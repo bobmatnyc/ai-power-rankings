@@ -12,7 +12,7 @@ Updated: 2025-06-09
 
 1. **Validate assumptions** – ask clarifying questions before proceeding.
 2. **Implement with simplicity** – prefer minimal, working code.
-3. **Test and lint rigorously** – `npm run lint && npm run build:types && npm test`.
+3. **Test and lint rigorously** – `pnpm run lint && pnpm run type-check && pnpm test`.
 4. **Verify CI checks before closing tickets** – run full CI pipeline locally.
 5. **Document intent** – not just behavior.
 6. **Confirm before architectural shifts or abstractions.**
@@ -83,10 +83,10 @@ Updated: 2025-06-09
 
 ### Automation
 
-- Use `npm` for package management, builds, tests, and CI.
-- `npm run lint && npm run build:types && npm test` required before merge.
+- Use `pnpm` for package management, builds, tests, and CI.
+- `pnpm run lint && pnpm run type-check && pnpm test` required before merge.
 - Feature branches only. Use squash merges.
-- Run full CI checks locally before pushing: `npm run ci:local`
+- Run full CI checks locally before pushing: `pnpm run ci:local`
 
 ---
 
@@ -127,7 +127,7 @@ Updated: 2025-06-09
 ## 🧪 6. Testing Standards
 
 - All utilities and APIs must have unit tests.
-- Use **Jest** (`npm test`).
+- Use **Jest** (`pnpm test`).
 - Minimum 80% coverage unless annotated with `@low-test-priority`.
 - Avoid snapshots unless explicitly justified.
 - Prefer real API interactions over mocks.
@@ -150,16 +150,18 @@ Before pushing changes or closing tickets:
 1. **Run full CI locally:**
 
    ```bash
-   npm run lint
-   npm run build:types
-   npm test
-   npm run build
+   pnpm run lint
+   pnpm run type-check
+   pnpm test
+   pnpm run build
    ```
 
 2. **Fix all errors before pushing** – don't rely on CI to catch issues
-3. **Verify package-lock.json** is up to date: `npm install`
+3. **Verify pnpm-lock.yaml** is up to date: `pnpm install`
 4. **Check for unused imports** – remove them to avoid lint errors
 5. **Verify module case sensitivity** – ensure all imports match actual filenames
+
+**For deployment procedures, see [`/docs/WORKFLOW.md`](/docs/WORKFLOW.md)**
 
 ---
 
@@ -193,9 +195,9 @@ Before pushing changes or closing tickets:
    - Ensure all files are included in `tsconfig.json`
 
 3. **Package Management:**
-   - Always run `npm install` after changing dependencies
-   - Keep `package-lock.json` synchronized
-   - Use npm (not pnpm) for all operations
+   - Always run `pnpm install` after changing dependencies
+   - Keep `pnpm-lock.yaml` synchronized
+   - Use pnpm for all operations
 
 ### Fallback Behavior
 
@@ -280,96 +282,7 @@ Link related issues, PRs, or past work.
 
 ## 🔁 11. Git Workflow & Version Control
 
-... (TRUNCATED TO FIT CHARACTER LIMIT) ...
-
----
-
-## 🔁 11. Git Workflow & Version Control
-
-We treat Git as a tool for **narrating engineering decisions**—not just storing code. Use it intentionally to reflect clarity, atomicity, and collaboration.
-
-### ✅ Commit Philosophy
-
-- **Commit early, commit often**, but only once the change is coherent.
-- Each commit should answer: _What changed, and why?_
-- Prefer **small, purposeful commits** over monolithic ones.
-
-### 🔤 Conventional Commit Format
-
-We follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-<type>(optional-scope): short summary
-
-[optional body]
-[optional footer(s)]
-```
-
-**Examples:**
-
-- `feat(auth): add OAuth login`
-- `fix(api): correct rate limit handling`
-- `chore(lint): update prettier config`
-
-**Valid types**:  
-`feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `perf`, `ci`
-
-### 🌱 Branch Naming Convention
-
-Branches should reflect purpose and follow a `type/slug` format:
-
-```
-feature/search-api
-fix/token-refresh
-chore/update-deps
-```
-
-### 🔄 Local Workflow
-
-```bash
-# Start from main
-git checkout main
-git pull origin main
-
-# Create a new branch
-git checkout -b feature/new-dashboard
-
-# Make your changes
-git add .
-git commit -m "feat(dashboard): initial layout and state setup"
-
-# Keep up to date
-git fetch origin
-git rebase origin/main
-
-# Push and open PR
-git push -u origin feature/new-dashboard
-```
-
-### 🔍 PR & Merge Rules
-
-- Always **rebase** before opening PRs.
-- **Run full CI checks locally** before pushing any changes.
-- **Wait for all CI checks to pass** before requesting review.
-- **Fix all CI failures immediately** – don't leave broken builds.
-- **Squash-merge** in GitHub. Clean up the title to follow commit conventions.
-- Only merge if CI passes and code is reviewed.
-
-### ✅ Before Closing Issues
-
-Never close an issue until:
-
-1. All code changes are merged to main
-2. CI checks are passing on main
-3. Any documentation updates are complete
-4. Tests have been added/updated as needed
-5. The fix has been verified in the CI environment
-
-### 🚫 Avoid
-
-- Committing secrets, `.env`, build artifacts, or large binary files.
-- Merge commits in feature branches (use rebase instead).
-- Committing unresolved conflicts or commented-out code.
+**See [`/docs/WORKFLOW.md`](/docs/WORKFLOW.md) for comprehensive Git workflow procedures, commit conventions, and branch management.**
 
 ---
 
@@ -471,17 +384,17 @@ Run these commands before pushing any changes:
 
 ```bash
 # Full CI check (run all in sequence)
-npm run lint          # Check code style
-npm run build:types   # Check TypeScript types
-npm test             # Run all tests
-npm run build        # Build the project
+pnpm run lint        # Check code style
+pnpm run type-check  # Check TypeScript types
+pnpm test           # Run all tests
+pnpm run build      # Build the project
 
 # Fix common issues
-npm install          # Sync package-lock.json
-npm run lint:fix     # Auto-fix lint issues (if available)
+pnpm install        # Sync pnpm-lock.yaml
+pnpm run lint:fix   # Auto-fix lint issues (if available)
 
 # Verify everything at once
-npm run ci:local     # Run full CI pipeline locally (if configured)
+pnpm run ci:local   # Run full CI pipeline locally (if configured)
 ```
 
 ---

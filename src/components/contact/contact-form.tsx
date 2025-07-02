@@ -76,7 +76,9 @@ export function ContactForm() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error" | "rate-limited">("idle");
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error" | "rate-limited">(
+    "idle"
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [rateLimitInfo, setRateLimitInfo] = useState<{
     retryAfter?: number;
@@ -120,7 +122,7 @@ export function ContactForm() {
           });
           setErrorMessage(
             data.message ||
-            `Too many requests. Please try again in ${Math.ceil((data.retryAfter || 3600) / 60)} minutes.`
+              `Too many requests. Please try again in ${Math.ceil((data.retryAfter || 3600) / 60)} minutes.`
           );
           return;
         }

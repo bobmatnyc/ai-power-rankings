@@ -9,15 +9,11 @@ import {
   Minus,
   DollarSign,
   Users,
-  GitBranch,
   Zap,
   Shield,
   Heart,
   Sparkles,
-  Award,
   Code,
-  Globe,
-  Activity,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 

@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
-import { 
-  getClientIP, 
-  isAdminUser, 
+import {
+  getClientIP,
+  isAdminUser,
   checkContactFormRateLimit,
   getRateLimitStatus,
   resetRateLimit,
-  RATE_LIMITS 
+  RATE_LIMITS,
 } from "@/lib/rate-limit";
 
 // Mock Vercel KV
@@ -36,7 +36,9 @@ describe("Rate Limiting", () => {
       const request = {
         headers: {
           get: vi.fn((header) => {
-            if (header === "x-forwarded-for") {return "192.168.1.1, 10.0.0.1";}
+            if (header === "x-forwarded-for") {
+              return "192.168.1.1, 10.0.0.1";
+            }
             return null;
           }),
         },
@@ -51,7 +53,9 @@ describe("Rate Limiting", () => {
       const request = {
         headers: {
           get: vi.fn((header) => {
-            if (header === "x-real-ip") {return "192.168.1.2";}
+            if (header === "x-real-ip") {
+              return "192.168.1.2";
+            }
             return null;
           }),
         },
@@ -66,7 +70,9 @@ describe("Rate Limiting", () => {
       const request = {
         headers: {
           get: vi.fn((header) => {
-            if (header === "cf-connecting-ip") {return "192.168.1.3";}
+            if (header === "cf-connecting-ip") {
+              return "192.168.1.3";
+            }
             return null;
           }),
         },
@@ -143,7 +149,7 @@ describe("Rate Limiting", () => {
       } as unknown as NextRequest;
 
       const result = await checkContactFormRateLimit(request, "bob@matsuoka.com");
-      
+
       expect(result.success).toBe(true);
       expect(result.limit).toBe(999);
       expect(result.remaining).toBe(999);
@@ -162,7 +168,7 @@ describe("Rate Limiting", () => {
       vi.mocked(kv.get).mockRejectedValue(new Error("Redis connection failed"));
 
       const result = await checkContactFormRateLimit(request, "user@example.com");
-      
+
       // Should allow request on error but log the issue
       expect(result.success).toBe(true);
       expect(result.limit).toBe(RATE_LIMITS.CONTACT_FORM.requests);
@@ -179,7 +185,7 @@ describe("Rate Limiting", () => {
       } as unknown as NextRequest;
 
       const result = await getRateLimitStatus(request, "bob@matsuoka.com");
-      
+
       expect(result.success).toBe(true);
       expect(result.limit).toBe(999);
       expect(result.remaining).toBe(999);
@@ -192,7 +198,7 @@ describe("Rate Limiting", () => {
       vi.mocked(kv.del).mockResolvedValue(1);
 
       await resetRateLimit("192.168.1.1");
-      
+
       expect(kv.del).toHaveBeenCalledTimes(3); // Should delete 3 keys
     });
 

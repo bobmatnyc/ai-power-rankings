@@ -1,16 +1,16 @@
 /**
  * Safe structure synchronization script for i18n dictionary files
- * 
+ *
  * This script:
  * - Creates backups before making any changes
  * - Preserves existing translations (never overwrites with English)
  * - Marks new untranslated keys with [TRANSLATE] prefix
  * - Validates files to prevent corruption
- * 
+ *
  * Usage: node sync_structure.js
  */
 
-const fs = require("fs");
+const fs = require("fs"); // eslint-disable-line @typescript-eslint/no-require-imports
 
 const en = JSON.parse(fs.readFileSync("en.json", "utf8"));
 const languageFiles = fs
@@ -39,9 +39,17 @@ function deepMerge(enStructure, existingTranslations) {
 
   // First, add all keys from English structure
   for (const key in enStructure) {
-    if (enStructure[key] && typeof enStructure[key] === "object" && !Array.isArray(enStructure[key])) {
+    if (
+      enStructure[key] &&
+      typeof enStructure[key] === "object" &&
+      !Array.isArray(enStructure[key])
+    ) {
       // If it's an object, recursively merge
-      if (existingTranslations && existingTranslations[key] && typeof existingTranslations[key] === "object") {
+      if (
+        existingTranslations &&
+        existingTranslations[key] &&
+        typeof existingTranslations[key] === "object"
+      ) {
         result[key] = deepMerge(enStructure[key], existingTranslations[key]);
       } else {
         // No existing translations for this object, use placeholder
@@ -73,7 +81,7 @@ function validateTranslations(langCode, translations, english) {
         if (obj[key] === enObj[key]) {
           // Some keys are acceptable in English
           const acceptableKeys = ["appName", "url", "email", "github", "API", "SDK"];
-          if (!acceptableKeys.some(ak => key.includes(ak))) {
+          if (!acceptableKeys.some((ak) => key.includes(ak))) {
             englishCount++;
           }
         }
@@ -86,9 +94,11 @@ function validateTranslations(langCode, translations, english) {
   countEnglishValues(translations, english);
 
   const englishPercentage = (englishCount / totalStrings) * 100;
-  
+
   if (englishPercentage > 50) {
-    console.error(`⚠️  WARNING: ${langCode} has ${englishCount}/${totalStrings} (${englishPercentage.toFixed(1)}%) English values!`);
+    console.error(
+      `⚠️  WARNING: ${langCode} has ${englishCount}/${totalStrings} (${englishPercentage.toFixed(1)}%) English values!`
+    );
     console.error("This might indicate a translation corruption. Please review carefully.");
     return false;
   }
@@ -109,7 +119,7 @@ languageFiles.forEach((langFile) => {
 
   // Load existing translations
   const existing = JSON.parse(fs.readFileSync(langFile, "utf8"));
-  
+
   // Merge with English structure, preserving translations
   const synced = deepMerge(en, existing);
 

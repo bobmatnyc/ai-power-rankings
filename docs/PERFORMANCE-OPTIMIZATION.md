@@ -2,13 +2,38 @@
 
 ## Overview
 
-This guide covers performance optimization strategies for the JSON-based AI Power Rankings system, focusing on production deployment scenarios.
+This guide covers comprehensive performance optimization strategies for the AI Power Rankings system, including Core Web Vitals optimization, JSON-based data optimization, and production deployment scenarios.
+
+## Core Web Vitals Optimization (T-031)
+
+### Current Performance Issues
+
+- **Largest Contentful Paint: 4.6s** (Target: <2.5s)
+- **Cumulative Layout Shift: 0.242** (Target: <0.1)
+- **JavaScript Execution Time: 1.9s** (Target: <1s)
+- **Lighthouse Performance Score: ~60** (Target: >90)
+
+### Image Optimization Quick Wins
+
+```bash
+# Convert images to WebP format
+npm install sharp
+# Implement next/image optimization
+# Add proper sizing and lazy loading
+```
+
+### JavaScript Bundle Optimization
+
+- Remove unused JavaScript (54 KiB savings identified)
+- Implement code splitting with Next.js App Router
+- Use dynamic imports for non-critical components
 
 ## Optimization Strategies
 
 ### 1. JSON File Optimization
 
 #### Minification
+
 Remove all unnecessary whitespace from JSON files:
 
 ```bash
@@ -22,9 +47,10 @@ npm run optimize:json
 ```
 
 #### File Size Targets
+
 - **tools.json**: < 500KB
 - **companies.json**: < 200KB
-- **rankings/*.json**: < 100KB each
+- **rankings/\*.json**: < 100KB each
 - **news/articles.json**: Split if > 500KB
 
 ### 2. In-Memory Caching
@@ -39,18 +65,18 @@ const toolsRepo = getToolsRepo();
 const tools = await toolsRepo.getAll(); // Cached in memory
 
 // Application-level cache
-import { toolsCache } from '@/lib/json-db/cache-strategy';
-const cachedTool = toolsCache.get('tool-id');
+import { toolsCache } from "@/lib/json-db/cache-strategy";
+const cachedTool = toolsCache.get("tool-id");
 ```
 
 #### Cache Configuration
 
-| Data Type | TTL | Max Size | Priority |
-|-----------|-----|----------|----------|
-| Tools | 1 hour | 500 items | High |
-| Companies | 1 hour | 200 items | Medium |
-| Rankings | 30 min | 50 items | High |
-| News | 15 min | 1000 items | Low |
+| Data Type | TTL    | Max Size   | Priority |
+| --------- | ------ | ---------- | -------- |
+| Tools     | 1 hour | 500 items  | High     |
+| Companies | 1 hour | 200 items  | Medium   |
+| Rankings  | 30 min | 50 items   | High     |
+| News      | 15 min | 1000 items | Low      |
 
 ### 3. CDN Configuration
 
@@ -62,13 +88,10 @@ Configure caching headers in API routes:
 // API route example
 export async function GET() {
   const response = NextResponse.json(data);
-  
+
   // Production caching
-  response.headers.set(
-    'Cache-Control',
-    'public, s-maxage=3600, stale-while-revalidate=1800'
-  );
-  
+  response.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=1800");
+
   return response;
 }
 ```
@@ -110,16 +133,16 @@ module.exports = {
   async headers() {
     return [
       {
-        source: '/data/:path*.json',
+        source: "/data/:path*.json",
         headers: [
           {
-            key: 'Content-Encoding',
-            value: 'gzip'
-          }
-        ]
-      }
+            key: "Content-Encoding",
+            value: "gzip",
+          },
+        ],
+      },
     ];
-  }
+  },
 };
 ```
 
@@ -141,12 +164,12 @@ news/
 ```typescript
 // Load chunks progressively
 async function loadNewsArticles() {
-  const manifest = await fetch('/data/news/articles-manifest.json');
+  const manifest = await fetch("/data/news/articles-manifest.json");
   const { chunks, files } = await manifest.json();
-  
+
   // Load first chunk immediately
   const firstChunk = await fetch(`/data/news/${files[0]}`);
-  
+
   // Load remaining chunks in background
   for (let i = 1; i < chunks; i++) {
     requestIdleCallback(() => {
@@ -185,7 +208,7 @@ function getToolById(toolsData, id) {
     return toolsData.data[index];
   }
   // Fallback to linear search
-  return toolsData.find(t => t.id === id);
+  return toolsData.find((t) => t.id === id);
 }
 ```
 
@@ -235,10 +258,12 @@ Add to build process:
 #### Key Metrics to Track
 
 1. **API Response Times**
+
    - Target: < 100ms for cached responses
    - Monitor: p50, p95, p99 latencies
 
 2. **Cache Hit Rates**
+
    - Target: > 90% for tools and rankings
    - Monitor: Cache statistics endpoint
 
@@ -254,9 +279,9 @@ export async function GET() {
   const stats = {
     tools: toolsCache.getStats(),
     rankings: rankingsCache.getStats(),
-    news: newsCache.getStats()
+    news: newsCache.getStats(),
   };
-  
+
   return NextResponse.json(stats);
 }
 ```
@@ -268,14 +293,14 @@ export async function GET() {
 ```typescript
 // Load critical data first
 const criticalData = await Promise.all([
-  fetch('/api/rankings').then(r => r.json()),
-  fetch('/api/tools?limit=10').then(r => r.json())
+  fetch("/api/rankings").then((r) => r.json()),
+  fetch("/api/tools?limit=10").then((r) => r.json()),
 ]);
 
 // Load remaining data
 requestIdleCallback(() => {
-  fetch('/api/tools?offset=10').then(r => r.json());
-  fetch('/api/news').then(r => r.json());
+  fetch("/api/tools?offset=10").then((r) => r.json());
+  fetch("/api/news").then((r) => r.json());
 });
 ```
 
@@ -284,22 +309,25 @@ requestIdleCallback(() => {
 ```typescript
 // Cache in localStorage with TTL
 function cacheData(key: string, data: any, ttl: number = 3600000) {
-  localStorage.setItem(key, JSON.stringify({
-    data,
-    expires: Date.now() + ttl
-  }));
+  localStorage.setItem(
+    key,
+    JSON.stringify({
+      data,
+      expires: Date.now() + ttl,
+    })
+  );
 }
 
 function getCachedData(key: string) {
   const cached = localStorage.getItem(key);
   if (!cached) return null;
-  
+
   const { data, expires } = JSON.parse(cached);
   if (Date.now() > expires) {
     localStorage.removeItem(key);
     return null;
   }
-  
+
   return data;
 }
 ```
@@ -320,12 +348,14 @@ Before deploying to production:
 ## Performance Targets
 
 ### Load Time Goals
+
 - **Initial page load**: < 2s
 - **Subsequent navigation**: < 500ms
 - **API responses**: < 100ms (cached)
 - **JSON file loads**: < 50ms
 
 ### Resource Budgets
+
 - **JavaScript bundle**: < 200KB gzipped
 - **JSON data per request**: < 500KB
 - **Total memory usage**: < 512MB
@@ -334,17 +364,20 @@ Before deploying to production:
 ## Troubleshooting
 
 ### High Memory Usage
+
 1. Check cache sizes: `GET /api/cache/stats`
 2. Reduce cache TTL or max size
 3. Enable more aggressive LRU eviction
 
 ### Slow API Responses
+
 1. Verify caching is enabled
 2. Check file sizes are optimized
 3. Monitor disk I/O performance
 4. Consider increasing cache TTL
 
 ### Cache Misses
+
 1. Check cache warming is working
 2. Verify TTL settings are appropriate
 3. Monitor eviction patterns
@@ -352,12 +385,12 @@ Before deploying to production:
 
 ## Scripts Reference
 
-| Command | Description |
-|---------|-------------|
-| `npm run optimize:json` | Optimize all JSON files |
-| `npm run cache:generate` | Generate cache files |
-| `npm run cache:stats` | Show cache statistics |
-| `npm run perf:test` | Run performance tests |
+| Command                  | Description             |
+| ------------------------ | ----------------------- |
+| `npm run optimize:json`  | Optimize all JSON files |
+| `npm run cache:generate` | Generate cache files    |
+| `npm run cache:stats`    | Show cache statistics   |
+| `npm run perf:test`      | Run performance tests   |
 
 ## Next Steps
 

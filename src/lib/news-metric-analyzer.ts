@@ -15,7 +15,7 @@ export class NewsMetricAnalyzer {
   /**
    * Analyze news content to determine impact on ranking factors
    */
-  analyzeArticle(content: string, title: string, toolName?: string): AnalysisResult {
+  analyzeArticle(content: string, title: string, _toolName?: string): AnalysisResult {
     const extractedMetrics = this.extractMetrics(content);
     const impacts = this.calculateImpacts(content, title, extractedMetrics);
 
@@ -24,7 +24,7 @@ export class NewsMetricAnalyzer {
 
   private extractMetrics(content: string): ExtractedMetric[] {
     const metrics: ExtractedMetric[] = [];
-    const text = content.toLowerCase();
+    // Text variable removed as it was unused
 
     // Funding/Investment metrics
     const fundingMatches = content.matchAll(
@@ -66,6 +66,9 @@ export class NewsMetricAnalyzer {
     const contextMatches = content.matchAll(/(\d+[,.]?\d*[KM]?)\s*(tokens?|context)/gi);
     for (const match of contextMatches) {
       const value = match[1];
+      if (!value) {
+        continue;
+      }
       const numValue = this.parseTokenValue(value);
       if (numValue > 1000) {
         metrics.push({
@@ -103,12 +106,12 @@ export class NewsMetricAnalyzer {
 
   private calculateImpacts(
     content: string,
-    title: string,
+    _title: string,
     metrics: ExtractedMetric[]
   ): MetricImpact[] {
     const impacts: MetricImpact[] = [];
     const lowerContent = content.toLowerCase();
-    const lowerTitle = title.toLowerCase();
+    // Title analysis removed as variable was unused
 
     // Market Traction Analysis
     const fundingMetrics = metrics.filter((m) => m.type === "funding");
@@ -122,7 +125,7 @@ export class NewsMetricAnalyzer {
         factor: "marketTraction",
         impact: "positive",
         magnitude: isSignificant ? "high" : "medium",
-        value: fundingMetrics[0].value,
+        value: fundingMetrics[0]?.value,
         description: "New funding or valuation milestone demonstrates strong investor confidence",
         evidence: fundingMetrics.map((m) => m.context),
       });
@@ -152,7 +155,7 @@ export class NewsMetricAnalyzer {
         factor: "technicalCapability",
         impact: "positive",
         magnitude: "medium",
-        value: contextMetrics[0].value,
+        value: contextMetrics[0]?.value,
         description: "Expanded context window enhances capability for complex tasks",
         evidence: contextMetrics.map((m) => m.context),
       });
@@ -168,7 +171,7 @@ export class NewsMetricAnalyzer {
         factor: "developerAdoption",
         impact: "positive",
         magnitude: hasMillions ? "high" : "medium",
-        value: userMetrics[0].value,
+        value: userMetrics[0]?.value,
         description: "Growing user base indicates strong developer adoption",
         evidence: userMetrics.map((m) => m.context),
       });
@@ -179,7 +182,7 @@ export class NewsMetricAnalyzer {
         factor: "developerAdoption",
         impact: "positive",
         magnitude: "medium",
-        value: githubMetrics[0].value,
+        value: githubMetrics[0]?.value,
         description: "GitHub activity shows developer engagement",
         evidence: githubMetrics.map((m) => m.context),
       });
@@ -223,7 +226,12 @@ export class NewsMetricAnalyzer {
         description: hasMultiProvider
           ? "Multi-provider support increases platform resilience"
           : "Open source nature enhances platform flexibility",
-        evidence: [this.getContext(content, content.indexOf(hasMultiProvider ? "multi" : "open"))],
+        evidence: [
+          this.getContext(
+            content,
+            Math.max(0, content.indexOf(hasMultiProvider ? "multi" : "open"))
+          ),
+        ],
       });
     }
 
