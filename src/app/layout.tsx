@@ -18,9 +18,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
-      ? `https://${process.env["VERCEL_URL"]}`
-      : "http://localhost:3000"
+    process.env["NEXT_PUBLIC_BASE_URL"] ||
+      (process.env["VERCEL_URL"] ? `https://${process.env["VERCEL_URL"]}` : "http://localhost:3000")
   ),
   title: {
     default: "AI Power Rankings - The Definitive Monthly Rankings of AI Coding Tools",
