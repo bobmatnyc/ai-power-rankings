@@ -1,4 +1,4 @@
-const fs = require("fs");
+import fs from "fs";
 
 const en = JSON.parse(fs.readFileSync("en.json", "utf8"));
 const languageFiles = fs
@@ -35,7 +35,7 @@ console.log(`📊 Reference keys: ${allEnglishKeys.length}`);
 languageFiles.forEach((langFile) => {
   const langCode = langFile.replace(".json", "");
   const langData = JSON.parse(fs.readFileSync(langFile, "utf8"));
-  const langKeys = getAllKeys(langData);
+  // const _langKeys = getAllKeys(langData); // Not used
   const missingKeys = allEnglishKeys.filter((key) => !getNestedValue(langData, key));
   const completeness = (
     ((allEnglishKeys.length - missingKeys.length) / allEnglishKeys.length) *

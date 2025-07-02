@@ -26,8 +26,8 @@ export function createOrganizationSchema(): WithContext<Organization> {
     logo: {
       "@type": "ImageObject",
       url: `${baseUrl}/logo-1200x630.png`,
-      width: "1200" as any,
-      height: "630" as any,
+      width: "1200",
+      height: "630",
     },
     description:
       "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by 500K+ developers worldwide",
@@ -97,8 +97,10 @@ export function createSoftwareApplicationSchema(
     ? {
         "@type": "AggregateRating" as const,
         ratingValue:
-          reviews.reduce((sum, r) => sum + ((r.reviewRating as any)?.ratingValue || 0), 0) /
-          reviews.length,
+          reviews.reduce((sum, r) => {
+            const rating = r.reviewRating as { ratingValue?: number } | undefined;
+            return sum + (rating?.ratingValue || 0);
+          }, 0) / reviews.length,
         bestRating: 10,
         worstRating: 1,
         ratingCount: reviews.length,
@@ -195,7 +197,43 @@ export function createBreadcrumbSchema(
   };
 }
 
-export function createComparisonSchema(tool1: Tool, tool2: Tool): WithContext<any> {
+export function createComparisonSchema(tool1: Tool, tool2: Tool): WithContext<{
+  "@type": "Article";
+  "@id": string;
+  headline: string;
+  description: string;
+  url: string;
+  datePublished: string;
+  dateModified: string;
+  author: {
+    "@type": "Organization";
+    name: string;
+    url: string;
+  };
+  publisher: {
+    "@type": "Organization";
+    name: string;
+    logo: {
+      "@type": "ImageObject";
+      url: string;
+    };
+  };
+  mainEntity: {
+    "@type": "ItemList";
+    name: string;
+    numberOfItems: number;
+    itemListElement: Array<{
+      "@type": "ListItem";
+      position: number;
+      item: {
+        "@type": "SoftwareApplication";
+        name: string;
+        url: string;
+        applicationCategory: string;
+      };
+    }>;
+  };
+}> {
   return {
     "@context": "https://schema.org",
     "@type": "Article",

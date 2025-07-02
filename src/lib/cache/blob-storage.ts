@@ -32,7 +32,7 @@ async function getBlobAPI() {
         list: blob.list,
       };
       return blobAPI;
-    } catch (error) {
+    } catch (_error) {
       loggers.api.warn("@vercel/blob not available - blob storage disabled");
       return null;
     }

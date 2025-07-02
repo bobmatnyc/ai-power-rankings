@@ -11,6 +11,61 @@ import { StatusIndicator } from "@/components/ui/status-indicator";
 import { ArrowLeft, ExternalLink, Github, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
+interface ToolDetailData {
+  tool: {
+    id: string;
+    name: string;
+    category: string;
+    status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";
+    website_url?: string;
+    tagline?: string;
+    info?: {
+      technical?: any;
+      business?: any;
+      company?: any;
+      product?: {
+        tagline?: string;
+      };
+      links?: any;
+      website?: string;
+      summary?: string;
+    };
+  };
+  ranking?: {
+    rank: number;
+    scores: {
+      overall: number;
+      agentic_capability: number;
+      innovation: number;
+      technical_performance: number;
+      developer_adoption: number;
+      market_traction: number;
+      business_sentiment: number;
+      development_velocity: number;
+      platform_resilience: number;
+    };
+  };
+  rankingsHistory?: RankingHistoryEntry[];
+  newsItems?: NewsItem[];
+  metrics?: any;
+}
+
+interface RankingHistoryEntry {
+  period: string;
+  position: number;
+  score: number;
+}
+
+interface NewsItem {
+  id: string;
+  title: string;
+  summary: string;
+  source: string;
+  published_at: string;
+  url?: string;
+  category?: string;
+}
+
 interface DashboardToolDetailProps {
   slug: string;
   lang: string;
@@ -18,7 +73,7 @@ interface DashboardToolDetailProps {
 }
 
 export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailProps) {
-  const [tool, setTool] = useState<any>(null);
+  const [tool, setTool] = useState<ToolDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -483,7 +538,7 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
             <CardContent>
               {rankingsHistory.length > 0 ? (
                 <div className="space-y-2">
-                  {rankingsHistory.map((entry: any, index: number) => {
+                  {rankingsHistory.map((entry: RankingHistoryEntry, index: number) => {
                     const prevEntry = rankingsHistory[index + 1];
                     const positionChange = prevEntry ? prevEntry.position - entry.position : 0;
 
@@ -557,7 +612,7 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
             <CardContent>
               {newsItems.length > 0 ? (
                 <div className="space-y-3">
-                  {newsItems.map((item: any) => (
+                  {newsItems.map((item: NewsItem) => (
                     <div key={item.id} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">

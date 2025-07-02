@@ -29,6 +29,11 @@ sprint_current: 3
 - [ ] **[T-029]** Develop business metrics ingestion pipeline
 - [ ] **[T-030]** Fix missing translations for DE, FR, HR, IT, UK languages
 - [🚧] **[T-031]** Optimize Lighthouse performance scores and Core Web Vitals (IN PROGRESS - 4/4 phases complete)
+- [ ] **[T-038]** Create Manual Article Ingestion Tool
+- [ ] **[T-039]** Translate Markdown Content Pages to All Supported Languages
+- [ ] **[T-040]** Fix Mobile Performance Issues - Layout Shifts and Image Optimization
+- [ ] **[T-041]** Fix Accessibility Issues - ARIA, Contrast, and Navigation
+- [ ] **[T-042]** Add Spanish (ES) Language Support
 
 ## ✅ Completed Tasks
 
@@ -702,10 +707,10 @@ Create comprehensive API documentation for all endpoints.
 
 ## Metrics Summary
 
-- **Total Tasks:** 37
-- **Completed:** 24 (64.9%)
+- **Total Tasks:** 39
+- **Completed:** 24 (61.5%)
 - **In Progress:** 0 (0%)
-- **Remaining:** 13 (35.1%)
+- **Remaining:** 15 (38.5%)
 - **Epic Progress:** 100% complete (EP-001 JSON Migration)
 
 ## Risk Register
@@ -876,3 +881,438 @@ Address critical Lighthouse performance issues affecting user experience and SEO
 - [ ] Documentation updated with performance guidelines
 - [ ] Real user monitoring configured
 - [ ] Performance budget established
+
+---
+
+### **[T-038]** Create Manual Article Ingestion Tool
+
+**Type:** Story  
+**Epic:** TBD  
+**Priority:** High  
+**Story Points:** 8  
+**Assignee:** @claude  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Create an admin tool that allows manual ingestion of individual news articles by providing a URL. The tool should fetch the article, extract content, provide a preview with editable fields, and integrate with the existing news repository system.
+
+**User Story:**
+As an admin, I want to manually add relevant articles to the news collection by providing a URL, so that I can curate content beyond what the automated feeds provide.
+
+**Acceptance Criteria:**
+- [ ] Admin dashboard page with URL input field
+- [ ] Article fetching from arbitrary URLs
+- [ ] Content extraction (title, body, author, date, etc.)
+- [ ] Preview interface showing parsed content
+- [ ] Editable fields for all article metadata
+- [ ] Tool mention detection and tagging
+- [ ] Integration with existing NewsRepository
+- [ ] Validation and error handling
+- [ ] Success/failure feedback to user
+
+**Technical Notes:**
+- Use existing `/src/lib/json-db/news-repository.ts`
+- Implement URL fetching with proper error handling
+- Parse HTML content to extract article data
+- Auto-detect mentioned AI tools for tagging
+- Store in same format as feed-ingested articles
+- Consider using existing news article schema
+- Add appropriate admin authentication
+
+**Definition of Done:**
+- [ ] Feature implemented and tested
+- [ ] Admin authentication verified
+- [ ] Integration with news repository confirmed
+- [ ] Error handling for invalid URLs
+- [ ] Preview functionality working
+- [ ] Documentation updated
+
+---
+
+### **[T-040]** Fix Mobile Performance Issues - Layout Shifts and Image Optimization
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** Critical  
+**Story Points:** 8  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Fix critical mobile performance issues identified in Lighthouse audit, particularly focusing on Cumulative Layout Shift (CLS: 0.221) and image optimization. Mobile performance is critical for user experience and SEO rankings.
+
+**Current Performance Issues:**
+
+1. **Large Layout Shift (CLS: 0.221)**
+   - Stats grid causing layout shift
+   - Element: `<div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 stats-grid">`
+   - Need to set explicit dimensions or use skeleton loading
+
+2. **Crown Image Performance (1MB PNG)**
+   - Current: 1,066.9 KiB PNG file
+   - Needs: WebP conversion (saves ~1,037 KiB)
+   - Not properly sized (saves ~1,063 KiB)
+   - Should be lazy-loaded (below fold)
+   - File: `/crown-of-technology.png`
+
+3. **Server Response Time**
+   - Root document: 640ms
+   - Target: <200ms for mobile
+
+4. **Cache Policy Issues**
+   - Favicon API: Only 1 day cache
+   - Static assets need longer cache lifetimes
+
+5. **JavaScript Performance**
+   - Legacy polyfills for modern browsers (11 KiB)
+   - Unused CSS (12 KiB)
+   - Unused JavaScript from GTM (54 KiB)
+   - Long main-thread tasks (156ms, 96ms, 60ms, 64ms)
+
+**Acceptance Criteria:**
+- [ ] CLS reduced to <0.1 (currently 0.221)
+- [ ] Crown image converted to WebP format
+- [ ] Crown image properly sized (36x36 actual display size)
+- [ ] Stats grid layout shift eliminated
+- [ ] Implement lazy loading for below-fold images
+- [ ] Cache headers optimized (1 year for static assets)
+- [ ] Remove unnecessary polyfills
+- [ ] Reduce server response time to <200ms
+- [ ] Mobile Lighthouse performance score >90
+
+**Technical Implementation:**
+
+1. **Fix Layout Shift in Stats Grid:**
+   ```tsx
+   // Add skeleton loading or explicit height
+   <div className="stats-grid" style={{ minHeight: '120px' }}>
+   ```
+
+2. **Optimize Crown Image:**
+   ```bash
+   # Convert to WebP and create responsive sizes
+   # 36x36 for desktop, 32x32 for mobile
+   ```
+
+3. **Implement Image Component:**
+   ```tsx
+   import Image from 'next/image'
+   <Image 
+     src="/crown-of-technology.webp"
+     width={36}
+     height={36}
+     alt="AI Power Ranking"
+     loading="lazy"
+   />
+   ```
+
+4. **Optimize Cache Headers:**
+   ```ts
+   // In middleware or next.config.js
+   'Cache-Control': 'public, max-age=31536000, immutable'
+   ```
+
+5. **Remove Legacy Polyfills:**
+   - Configure build to target modern browsers
+   - Remove polyfills for: Array.at, flat, flatMap, Object.fromEntries, etc.
+
+**Files to Modify:**
+- `/src/components/layout/stats-grid.tsx` - Fix layout shift
+- `/public/crown-of-technology.png` - Convert to WebP, resize
+- `/src/components/layout/header.tsx` - Use next/image
+- `/next.config.ts` - Modern browser targets, cache headers
+- `/src/middleware.ts` - Optimize cache policies
+
+**Testing Requirements:**
+- [ ] Test on real mobile devices
+- [ ] Lighthouse mobile audit >90
+- [ ] No visible layout shifts
+- [ ] Images load quickly on 3G
+- [ ] Verify WebP fallback for older browsers
+
+**Definition of Done:**
+- [ ] All acceptance criteria met
+- [ ] Mobile performance score >90
+- [ ] CLS <0.1 on all pages
+- [ ] No regression in desktop performance
+- [ ] Code reviewed and approved
+
+---
+
+### **[T-041]** Fix Accessibility Issues - ARIA, Contrast, and Navigation
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** High  
+**Story Points:** 8  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Fix accessibility issues identified in audit to ensure the site is usable by all users, including those with disabilities. This is important for inclusivity, legal compliance (WCAG 2.1), and SEO benefits.
+
+**Current Accessibility Issues:**
+
+1. **ARIA Issues**
+   - [aria-*] attributes do not match their roles
+   - Custom controls missing ARIA roles
+   - Need to audit all ARIA usage
+
+2. **Names and Labels**
+   - Buttons do not have accessible names
+   - Custom controls have no associated labels
+   - Missing semantic labels for interactive elements
+
+3. **Color Contrast**
+   - Background and foreground colors insufficient contrast ratio
+   - Need minimum 4.5:1 for normal text, 3:1 for large text
+   - Check all color combinations
+
+4. **Navigation Issues**
+   - Heading elements not in sequential order (h1→h2→h3)
+   - May have skipped heading levels
+   - Affects screen reader navigation
+
+5. **Manual Check Items**
+   - Interactive controls keyboard focusable
+   - Focus indicators visible
+   - Logical tab order matching visual order
+   - No keyboard traps
+   - Focus management for dynamic content
+   - Proper use of HTML5 landmarks
+   - Offscreen content hidden from AT
+
+**Acceptance Criteria:**
+- [ ] All ARIA attributes match their roles
+- [ ] All buttons have accessible names
+- [ ] All custom controls have labels and ARIA roles
+- [ ] Color contrast ratios meet WCAG AA standards (4.5:1)
+- [ ] Heading hierarchy is sequential (no skipped levels)
+- [ ] All interactive elements keyboard accessible
+- [ ] Focus indicators visible on all focusable elements
+- [ ] Tab order follows visual flow
+- [ ] No keyboard traps
+- [ ] Dynamic content announces to screen readers
+- [ ] Lighthouse accessibility score >95
+
+**Technical Implementation:**
+
+1. **Fix Button Accessibility:**
+   ```tsx
+   // Add aria-label or visible text
+   <button aria-label="Close dialog">
+     <XIcon />
+   </button>
+   ```
+
+2. **Fix Color Contrast:**
+   ```css
+   /* Ensure 4.5:1 contrast ratio */
+   .text-gray-500 { color: #6B7280; } /* Check against background */
+   ```
+
+3. **Fix Heading Hierarchy:**
+   ```tsx
+   // Ensure sequential order
+   <h1>Main Title</h1>
+   <h2>Section Title</h2>
+   <h3>Subsection Title</h3>
+   ```
+
+4. **Add ARIA Roles:**
+   ```tsx
+   <div role="navigation" aria-label="Main navigation">
+   <div role="search" aria-label="Search tools">
+   ```
+
+5. **Keyboard Navigation:**
+   ```tsx
+   // Ensure all interactive elements are focusable
+   tabIndex={0}
+   onKeyDown={handleKeyboard}
+   ```
+
+**Files to Audit and Fix:**
+- All component files for ARIA attributes
+- `/src/components/ui/button.tsx` - Add accessible names
+- `/src/styles/globals.css` - Fix color contrast
+- All page files - Fix heading hierarchy
+- Navigation components - Add landmarks
+- Modal/dropdown components - Focus management
+
+**Testing Requirements:**
+- [ ] Test with screen readers (NVDA, JAWS, VoiceOver)
+- [ ] Keyboard-only navigation test
+- [ ] Color contrast analyzer checks
+- [ ] Lighthouse accessibility audit
+- [ ] Manual accessibility checklist
+- [ ] Test with browser extensions (axe, WAVE)
+
+**WCAG 2.1 Compliance:**
+- Level A: Minimum compliance
+- Level AA: Target compliance (includes contrast)
+- Focus on Perceivable, Operable, Understandable, Robust
+
+**Definition of Done:**
+- [ ] All automated accessibility tests pass
+- [ ] Manual accessibility audit complete
+- [ ] WCAG 2.1 AA compliant
+- [ ] Lighthouse score >95
+- [ ] No critical accessibility errors
+- [ ] Documentation updated with a11y guidelines
+
+---
+
+### **[T-039]** Translate Markdown Content Pages to All Supported Languages
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** Medium  
+**Story Points:** 13  
+**Assignee:** @claude  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Translate all markdown content pages from English into all supported languages (DE, FR, HR, IT, JA, KO, UK, ZH). Currently only the about.md page has been translated, while contact.md, methodology.md, privacy.md, and terms.md remain in English only. Also audit existing translations for character encoding issues.
+
+**Current State:**
+- English (en): All 5 pages (about, contact, methodology, privacy, terms)
+- Other languages: Only about.md translated
+- Missing translations: 4 pages × 8 languages = 32 translations needed
+- Some existing translations may have encoding issues
+
+**Acceptance Criteria:**
+- [ ] Audit all existing about.md translations for bad characters
+- [ ] Fix any character encoding issues in existing translations
+- [ ] contact.md translated to all 8 languages
+- [ ] methodology.md translated to all 8 languages
+- [ ] privacy.md translated to all 8 languages
+- [ ] terms.md translated to all 8 languages
+- [ ] All translations maintain markdown formatting
+- [ ] Technical terms and product names remain consistent
+- [ ] Legal content (privacy, terms) accurately translated
+- [ ] All React component placeholders preserved
+- [ ] No character encoding issues (proper UTF-8)
+
+**Technical Notes:**
+- Source files: `/src/content/en/*.md`
+- Target directories: `/src/content/{de,fr,hr,it,ja,ko,uk,zh}/`
+- Check for common encoding issues: â€™, â€œ, â€, etc.
+- Ensure all files are UTF-8 encoded
+- Preserve markdown structure and formatting
+- Keep React component syntax unchanged (e.g., `<ContactForm />`)
+- Maintain consistent terminology across languages
+- Consider using translation memory for consistency
+- Review legal translations for accuracy
+
+**Languages:**
+- DE (German)
+- FR (French)
+- HR (Croatian)
+- IT (Italian)
+- JA (Japanese)
+- KO (Korean)
+- UK (Ukrainian)
+- ZH (Chinese Simplified)
+
+**Definition of Done:**
+- [ ] All existing translations audited and fixed
+- [ ] All 32 new translations completed
+- [ ] No character encoding issues
+- [ ] Native speaker review for each language (if possible)
+- [ ] Markdown formatting validated
+- [ ] React components render correctly
+- [ ] No broken links or references
+- [ ] Consistent terminology across all translations
+
+---
+
+### **[T-042]** Add Spanish (ES) Language Support
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** High  
+**Story Points:** 13  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Add Spanish language support to the AI Power Rankings application, including all UI translations, content translations, and i18n configuration updates. Spanish is a critical language for reaching Latin American and Spanish markets.
+
+**Acceptance Criteria:**
+- [ ] Add Spanish (es) to i18n configuration
+- [ ] Create Spanish dictionary file (es.json) with all UI translations
+- [ ] Translate all markdown content pages to Spanish
+- [ ] Update language selector to include Spanish option
+- [ ] Configure Spanish locale routing
+- [ ] Test all Spanish pages and functionality
+- [ ] Verify proper formatting for Spanish text
+- [ ] Ensure date/number formatting follows Spanish conventions
+- [ ] Add Spanish to sitemap generation
+- [ ] Update SEO metadata for Spanish pages
+
+**Technical Implementation:**
+1. **Update i18n Configuration:**
+   - Add 'es' to locales in `/src/i18n/config.ts`
+   - Update middleware to support Spanish routing
+   - Add Spanish language detection
+
+2. **Create Translation Files:**
+   - Create `/src/i18n/dictionaries/es.json` based on en.json
+   - Translate all 494 keys to Spanish
+   - Validate structure matches other language files
+
+3. **Translate Content Pages:**
+   - Create `/src/content/es/` directory
+   - Translate: about.md, contact.md, methodology.md, privacy.md, terms.md
+   - Preserve markdown formatting and React components
+
+4. **Update UI Components:**
+   - Add Spanish flag/icon to language selector
+   - Update language names to include "Español"
+   - Test language switching functionality
+
+5. **SEO and Metadata:**
+   - Add Spanish hreflang tags
+   - Update sitemap to include /es/ URLs
+   - Configure Spanish-specific meta descriptions
+
+**Files to Modify:**
+- `/src/i18n/config.ts` - Add 'es' locale
+- `/src/middleware.ts` - Add Spanish language detection
+- `/src/i18n/dictionaries/es.json` - New translation file
+- `/src/components/layout/language-selector.tsx` - Add Spanish option
+- `/src/content/es/*.md` - New content translations
+- `/src/app/sitemap.ts` - Include Spanish URLs
+- `/src/lib/seo/metadata.ts` - Spanish meta tags
+
+**Translation Guidelines:**
+- Use formal Spanish (usted) for professional tone
+- Maintain consistency with existing Spanish tech terminology
+- Keep brand names and technical terms in English where appropriate
+- Consider regional variations (use neutral Spanish)
+- Preserve all formatting codes and placeholders
+
+**Testing Requirements:**
+- [ ] All Spanish routes accessible
+- [ ] Language switching works correctly
+- [ ] No missing translation warnings
+- [ ] Proper text rendering and formatting
+- [ ] Date/time displays correctly for Spanish locale
+- [ ] Currency formatting appropriate for Spanish markets
+- [ ] Mobile responsive design works with Spanish text
+
+**Definition of Done:**
+- [ ] Spanish added to i18n configuration
+- [ ] All UI elements translated (494 keys)
+- [ ] All content pages translated (5 pages)
+- [ ] Language selector includes Spanish
+- [ ] No console errors or warnings
+- [ ] SEO metadata configured for Spanish
+- [ ] Native Spanish speaker review completed
+- [ ] Documentation updated

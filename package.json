@@ -1,6 +1,6 @@
 {
   "name": "ai-power-rankings",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "private": true,
   "scripts": {
     "dev": "node scripts/clear-next-cache.js && next dev",
@@ -79,10 +79,13 @@
     "test:api:tools": "tsx scripts/test-tools-api.ts",
     "test:api:rankings": "tsx scripts/test-rankings-api.ts",
     "test:api:all": "npm run test:api:news && npm run test:api:companies && npm run test:api:tools && npm run test:api:rankings",
+    "test:i18n": "tsx scripts/test-i18n-imports.ts",
     "test:rate-limit": "tsx scripts/test-rate-limiting.ts",
     "perf:audit": "node scripts/performance-audit.js",
     "perf:audit:prod": "node scripts/performance-audit.js https://aipowerranking.com/en",
     "perf:monitor": "node scripts/performance-audit.js && echo 'Performance audit completed for T-031'",
+    "t040:check": "node scripts/check-t040-compliance.js",
+    "t040:verify": "npm run t040:check && echo 'T-040 mobile performance compliance verified'",
     "analyze": "ANALYZE=true npm run build",
     "analyze:server": "ANALYZE=true npm run build && echo 'Bundle analysis complete - check .next/analyze/'",
     "bundle:analyze": "npm run analyze"
@@ -101,8 +104,6 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-tooltip": "^1.2.7",
-    "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.50.0",
     "@types/nodemailer": "^6.4.17",
     "@upstash/ratelimit": "^2.0.5",
     "@vercel/analytics": "^1.5.0",
@@ -143,7 +144,6 @@
     "resend": "^4.5.2",
     "schema-dts": "^1.1.5",
     "server-only": "^0.0.1",
-    "supabase": "^2.24.3",
     "tailwind-merge": "^3.3.0",
     "zod": "^3.25.56",
     "zustand": "^5.0.5"
@@ -169,6 +169,7 @@
     "eslint-config-prettier": "^10.1.5",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
+    "lighthouse": "^12.7.0",
     "lint-staged": "^16.1.0",
     "node-fetch": "^3.3.2",
     "postcss": "^8.5.4",
@@ -187,6 +188,12 @@
     ],
     "*.{json,md,css,scss}": [
       "prettier --write"
+    ],
+    "src/middleware.ts": [
+      "npm run test:i18n"
+    ],
+    "src/auth.ts": [
+      "npm run test:i18n"
     ]
   },
   "browserslist": {

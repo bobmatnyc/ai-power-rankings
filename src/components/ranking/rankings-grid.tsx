@@ -188,9 +188,9 @@ function RankingsGridContent({
         <p className="text-muted-foreground text-lg">{dict.rankings.subtitle}</p>
       </div>
 
-      {/* Stats Cards - Optimized for T-031 CLS fix */}
+      {/* Stats Cards - Optimized for T-031 & T-040 CLS fix */}
       <div
-        className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-8"
+        className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-8 stats-grid"
         style={{ minHeight: "140px" }} // Reserve space to prevent layout shift
       >
         <Card

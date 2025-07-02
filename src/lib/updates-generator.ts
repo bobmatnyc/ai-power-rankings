@@ -54,7 +54,10 @@ export class UpdatesGenerator {
       throw new Error("No ranking periods found");
     }
 
-    const currentPeriod = sortedPeriods[0]!; // We already checked length > 0
+    const currentPeriod = sortedPeriods[0]; // We already checked length > 0
+    if (!currentPeriod) {
+      throw new Error("No current period found");
+    }
     const previousPeriod = sortedPeriods.length > 1 ? sortedPeriods[1] : null;
 
     const currentRanking = await this.rankingsRepo.getByPeriod(currentPeriod);

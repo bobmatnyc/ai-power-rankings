@@ -376,12 +376,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         },
         currentRanking
           ? {
+              tool_id: tool.id,
+              tool_name: tool.name,
               position: currentPosition,
               score: currentRanking.score,
               current_position: currentPosition,
               current_score: currentRanking.score,
             }
-          : undefined,
+          : null,
         newScore!.factorScores || {},
         previousFactorScores
       );

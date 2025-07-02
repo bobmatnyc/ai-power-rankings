@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import { cachedJsonResponse } from "@/lib/api-cache";
+import type { RankingEntry } from "@/lib/json-db/schemas";
 
 export async function GET(): Promise<NextResponse> {
   try {
@@ -19,7 +20,7 @@ export async function GET(): Promise<NextResponse> {
 
     // Transform to expected format with tool details
     const formattedRankings = await Promise.all(
-      currentRankings.rankings.map(async (ranking: any) => {
+      currentRankings.rankings.map(async (ranking: RankingEntry) => {
         const tool = await toolsRepo.getById(ranking.tool_id);
 
         if (!tool) {
@@ -53,7 +54,10 @@ export async function GET(): Promise<NextResponse> {
             recent_funding_rounds: 0,
             recent_product_launches: 0,
             users: ranking.factor_scores?.developer_adoption * 1000 || 10000,
-            swe_bench_score: ranking.factor_scores?.technical_performance || 50,
+            swe_bench_score:
+              tool.info?.metrics?.swe_bench_score ||
+              ranking.factor_scores?.technical_performance ||
+              null,
           },
           tier: ranking.tier,
         };

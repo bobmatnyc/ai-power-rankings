@@ -31,6 +31,19 @@ export interface RankingChangeAnalysis {
     | "dropped";
 }
 
+export interface RankingData {
+  position?: number;
+  new_position?: number;
+  current_position?: number;
+  score?: number;
+  new_score?: number;
+  current_score?: number;
+  tool_id: string;
+  toolId?: string;
+  tool_name: string;
+  toolName?: string;
+}
+
 export class RankingChangeAnalyzer {
   private readonly FACTOR_NAMES: Record<string, string> = {
     agenticCapability: "Agentic Capability",
@@ -55,14 +68,14 @@ export class RankingChangeAnalyzer {
   };
 
   analyzeRankingChange(
-    currentRanking: any,
-    previousRanking: any,
+    currentRanking: RankingData,
+    previousRanking: RankingData | null,
     currentFactorScores: Record<string, number>,
     previousFactorScores?: Record<string, number>
   ): RankingChangeAnalysis {
-    const currentRank = currentRanking.position || currentRanking.new_position;
+    const currentRank = currentRanking.position || currentRanking.new_position || 0;
     const previousRank = previousRanking?.position || previousRanking?.current_position || 999;
-    const currentScore = currentRanking.score || currentRanking.new_score;
+    const currentScore = currentRanking.score || currentRanking.new_score || 0;
     const previousScore = previousRanking?.score || previousRanking?.current_score || 0;
 
     const rankChange = previousRank - currentRank;
@@ -86,7 +99,7 @@ export class RankingChangeAnalyzer {
 
     // Generate narrative explanation
     const narrativeExplanation = this.generateNarrativeExplanation(
-      currentRanking.tool_name || currentRanking.toolName,
+      currentRanking.tool_name || currentRanking.toolName || "",
       changeCategory,
       rankChange,
       scoreChange,
@@ -95,8 +108,8 @@ export class RankingChangeAnalyzer {
     );
 
     return {
-      toolId: currentRanking.tool_id || currentRanking.toolId,
-      toolName: currentRanking.tool_name || currentRanking.toolName,
+      toolId: currentRanking.tool_id || currentRanking.toolId || "",
+      toolName: currentRanking.tool_name || currentRanking.toolName || "",
       previousRank,
       currentRank,
       rankChange,
