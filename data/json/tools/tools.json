@@ -27,13 +27,7 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": [
-            "OpenAI",
-            "Anthropic",
-            "Google",
-            "Local models",
-            "Custom APIs"
-          ]
+          "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
         },
         "business": {
           "pricing_model": "free",
@@ -187,11 +181,7 @@
             "Ruby",
             "Go"
           ],
-          "llm_providers": [
-            "OpenAI GPT-4o",
-            "GPT-4.1",
-            "O1 Pro"
-          ]
+          "llm_providers": ["OpenAI GPT-4o", "GPT-4.1", "O1 Pro"]
         },
         "business": {
           "pricing_model": "freemium",
@@ -297,13 +287,7 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": [
-            "OpenAI",
-            "Anthropic",
-            "Google",
-            "Local models",
-            "Custom APIs"
-          ]
+          "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
         },
         "business": {
           "pricing_model": "free",
@@ -375,13 +359,7 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": [
-            "OpenAI",
-            "Anthropic",
-            "Google",
-            "Local models",
-            "Custom APIs"
-          ]
+          "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
         },
         "business": {
           "pricing_model": "free",
@@ -425,11 +403,7 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": [
-            "Anthropic Claude",
-            "OpenAI GPT-4",
-            "Others"
-          ]
+          "llm_providers": ["Anthropic Claude", "OpenAI GPT-4", "Others"]
         },
         "business": {
           "pricing_model": "freemium",
@@ -546,10 +520,7 @@
             "Swift",
             "Kotlin"
           ],
-          "llm_providers": [
-            "OpenAI Codex",
-            "GPT-4"
-          ],
+          "llm_providers": ["OpenAI Codex", "GPT-4"],
           "swe_bench_score": 45.2
         },
         "business": {
@@ -607,9 +578,7 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": [
-            "Google Gemini"
-          ]
+          "llm_providers": ["Google Gemini"]
         },
         "business": {
           "pricing_model": "freemium",
@@ -692,10 +661,7 @@
             "Rust",
             "C++"
           ],
-          "llm_providers": [
-            "Multiple models",
-            "Local models supported"
-          ]
+          "llm_providers": ["Multiple models", "Local models supported"]
         },
         "business": {
           "pricing_model": "freemium",
@@ -728,17 +694,8 @@
         "technical": {
           "context_window": 200000,
           "multi_file_support": true,
-          "language_support": [
-            "JavaScript",
-            "TypeScript",
-            "React",
-            "Node.js",
-            "Python"
-          ],
-          "llm_providers": [
-            "OpenAI GPT-4",
-            "Claude"
-          ]
+          "language_support": ["JavaScript", "TypeScript", "React", "Node.js", "Python"],
+          "llm_providers": ["OpenAI GPT-4", "Claude"]
         },
         "business": {
           "pricing_model": "freemium",
@@ -830,13 +787,7 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": [
-            "OpenAI",
-            "Anthropic",
-            "Google",
-            "Local models",
-            "Custom APIs"
-          ]
+          "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
         },
         "business": {
           "pricing_model": "free",
@@ -867,19 +818,8 @@
         "technical": {
           "context_window": 150000,
           "multi_file_support": true,
-          "language_support": [
-            "Python",
-            "JavaScript",
-            "TypeScript",
-            "Java",
-            "C++",
-            "C#"
-          ],
-          "llm_providers": [
-            "OpenAI GPT-4",
-            "Claude",
-            "Others"
-          ]
+          "language_support": ["Python", "JavaScript", "TypeScript", "Java", "C++", "C#"],
+          "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
         },
         "business": {
           "pricing_model": "freemium",
@@ -924,9 +864,7 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": [
-            "Custom AI models"
-          ]
+          "llm_providers": ["Custom AI models"]
         },
         "business": {
           "pricing_model": "subscription",
@@ -1059,11 +997,7 @@
             "Swift",
             "Kotlin"
           ],
-          "llm_providers": [
-            "Custom models",
-            "Local processing",
-            "Cloud models"
-          ]
+          "llm_providers": ["Custom models", "Local processing", "Cloud models"]
         },
         "business": {
           "pricing_model": "freemium",
@@ -1096,16 +1030,8 @@
         "technical": {
           "context_window": 100000,
           "multi_file_support": true,
-          "language_support": [
-            "JavaScript",
-            "TypeScript",
-            "React",
-            "Tailwind CSS"
-          ],
-          "llm_providers": [
-            "OpenAI GPT-4",
-            "Custom models"
-          ]
+          "language_support": ["JavaScript", "TypeScript", "React", "Tailwind CSS"],
+          "llm_providers": ["OpenAI GPT-4", "Custom models"]
         },
         "business": {
           "pricing_model": "freemium",
@@ -1150,11 +1076,7 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": [
-            "OpenAI GPT-4",
-            "Claude",
-            "Others"
-          ]
+          "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
         },
         "business": {
           "pricing_model": "freemium",
@@ -1232,11 +1154,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "Anthropic Claude",
-              "OpenAI GPT-4",
-              "Others"
-            ]
+            "llm_providers": ["Anthropic Claude", "OpenAI GPT-4", "Others"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -1290,10 +1208,7 @@
               "Swift",
               "Kotlin"
             ],
-            "llm_providers": [
-              "OpenAI Codex",
-              "GPT-4"
-            ],
+            "llm_providers": ["OpenAI Codex", "GPT-4"],
             "swe_bench_score": 45.2
           },
           "business": {
@@ -1461,13 +1376,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "OpenAI",
-              "Anthropic",
-              "Google",
-              "Local models",
-              "Custom APIs"
-            ]
+            "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
           },
           "business": {
             "pricing_model": "free",
@@ -1511,13 +1420,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "OpenAI",
-              "Anthropic",
-              "Google",
-              "Local models",
-              "Custom APIs"
-            ]
+            "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
           },
           "business": {
             "pricing_model": "free",
@@ -1567,13 +1470,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "OpenAI",
-              "Anthropic",
-              "Google",
-              "Local models",
-              "Custom APIs"
-            ]
+            "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
           },
           "business": {
             "pricing_model": "free",
@@ -1617,9 +1514,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "Custom AI models"
-            ]
+            "llm_providers": ["Custom AI models"]
           },
           "business": {
             "pricing_model": "subscription",
@@ -1652,16 +1547,8 @@
           "technical": {
             "context_window": 100000,
             "multi_file_support": true,
-            "language_support": [
-              "JavaScript",
-              "TypeScript",
-              "React",
-              "Tailwind CSS"
-            ],
-            "llm_providers": [
-              "OpenAI GPT-4",
-              "Custom models"
-            ]
+            "language_support": ["JavaScript", "TypeScript", "React", "Tailwind CSS"],
+            "llm_providers": ["OpenAI GPT-4", "Custom models"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -1731,17 +1618,8 @@
           "technical": {
             "context_window": 200000,
             "multi_file_support": true,
-            "language_support": [
-              "JavaScript",
-              "TypeScript",
-              "React",
-              "Node.js",
-              "Python"
-            ],
-            "llm_providers": [
-              "OpenAI GPT-4",
-              "Claude"
-            ]
+            "language_support": ["JavaScript", "TypeScript", "React", "Node.js", "Python"],
+            "llm_providers": ["OpenAI GPT-4", "Claude"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -1791,13 +1669,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "OpenAI",
-              "Anthropic",
-              "Google",
-              "Local models",
-              "Custom APIs"
-            ]
+            "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
           },
           "business": {
             "pricing_model": "free",
@@ -1840,11 +1712,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "OpenAI GPT-4",
-              "Claude",
-              "Others"
-            ]
+            "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -1907,19 +1775,8 @@
           "technical": {
             "context_window": 150000,
             "multi_file_support": true,
-            "language_support": [
-              "Python",
-              "JavaScript",
-              "TypeScript",
-              "Java",
-              "C++",
-              "C#"
-            ],
-            "llm_providers": [
-              "OpenAI GPT-4",
-              "Claude",
-              "Others"
-            ]
+            "language_support": ["Python", "JavaScript", "TypeScript", "Java", "C++", "C#"],
+            "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -1991,11 +1848,7 @@
               "Ruby",
               "Go"
             ],
-            "llm_providers": [
-              "OpenAI GPT-4o",
-              "GPT-4.1",
-              "O1 Pro"
-            ]
+            "llm_providers": ["OpenAI GPT-4o", "GPT-4.1", "O1 Pro"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -2090,11 +1943,7 @@
               "Swift",
               "Kotlin"
             ],
-            "llm_providers": [
-              "Custom models",
-              "Local processing",
-              "Cloud models"
-            ]
+            "llm_providers": ["Custom models", "Local processing", "Cloud models"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -2139,10 +1988,7 @@
               "Rust",
               "C++"
             ],
-            "llm_providers": [
-              "Multiple models",
-              "Local models supported"
-            ]
+            "llm_providers": ["Multiple models", "Local models supported"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -2308,9 +2154,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "Google Gemini"
-            ]
+            "llm_providers": ["Google Gemini"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -2436,13 +2280,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "OpenAI",
-              "Anthropic",
-              "Google",
-              "Local models",
-              "Custom APIs"
-            ]
+            "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
           },
           "business": {
             "pricing_model": "free",
@@ -2596,11 +2434,7 @@
               "Ruby",
               "Go"
             ],
-            "llm_providers": [
-              "OpenAI GPT-4o",
-              "GPT-4.1",
-              "O1 Pro"
-            ]
+            "llm_providers": ["OpenAI GPT-4o", "GPT-4.1", "O1 Pro"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -2706,13 +2540,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "OpenAI",
-              "Anthropic",
-              "Google",
-              "Local models",
-              "Custom APIs"
-            ]
+            "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
           },
           "business": {
             "pricing_model": "free",
@@ -2784,13 +2612,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "OpenAI",
-              "Anthropic",
-              "Google",
-              "Local models",
-              "Custom APIs"
-            ]
+            "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
           },
           "business": {
             "pricing_model": "free",
@@ -2834,11 +2656,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "Anthropic Claude",
-              "OpenAI GPT-4",
-              "Others"
-            ]
+            "llm_providers": ["Anthropic Claude", "OpenAI GPT-4", "Others"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -2955,10 +2773,7 @@
               "Swift",
               "Kotlin"
             ],
-            "llm_providers": [
-              "OpenAI Codex",
-              "GPT-4"
-            ],
+            "llm_providers": ["OpenAI Codex", "GPT-4"],
             "swe_bench_score": 45.2
           },
           "business": {
@@ -3016,9 +2831,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "Google Gemini"
-            ]
+            "llm_providers": ["Google Gemini"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -3101,10 +2914,7 @@
               "Rust",
               "C++"
             ],
-            "llm_providers": [
-              "Multiple models",
-              "Local models supported"
-            ]
+            "llm_providers": ["Multiple models", "Local models supported"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -3137,17 +2947,8 @@
           "technical": {
             "context_window": 200000,
             "multi_file_support": true,
-            "language_support": [
-              "JavaScript",
-              "TypeScript",
-              "React",
-              "Node.js",
-              "Python"
-            ],
-            "llm_providers": [
-              "OpenAI GPT-4",
-              "Claude"
-            ]
+            "language_support": ["JavaScript", "TypeScript", "React", "Node.js", "Python"],
+            "llm_providers": ["OpenAI GPT-4", "Claude"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -3239,13 +3040,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "OpenAI",
-              "Anthropic",
-              "Google",
-              "Local models",
-              "Custom APIs"
-            ]
+            "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
           },
           "business": {
             "pricing_model": "free",
@@ -3276,19 +3071,8 @@
           "technical": {
             "context_window": 150000,
             "multi_file_support": true,
-            "language_support": [
-              "Python",
-              "JavaScript",
-              "TypeScript",
-              "Java",
-              "C++",
-              "C#"
-            ],
-            "llm_providers": [
-              "OpenAI GPT-4",
-              "Claude",
-              "Others"
-            ]
+            "language_support": ["Python", "JavaScript", "TypeScript", "Java", "C++", "C#"],
+            "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -3333,9 +3117,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "Custom AI models"
-            ]
+            "llm_providers": ["Custom AI models"]
           },
           "business": {
             "pricing_model": "subscription",
@@ -3468,11 +3250,7 @@
               "Swift",
               "Kotlin"
             ],
-            "llm_providers": [
-              "Custom models",
-              "Local processing",
-              "Cloud models"
-            ]
+            "llm_providers": ["Custom models", "Local processing", "Cloud models"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -3505,16 +3283,8 @@
           "technical": {
             "context_window": 100000,
             "multi_file_support": true,
-            "language_support": [
-              "JavaScript",
-              "TypeScript",
-              "React",
-              "Tailwind CSS"
-            ],
-            "llm_providers": [
-              "OpenAI GPT-4",
-              "Custom models"
-            ]
+            "language_support": ["JavaScript", "TypeScript", "React", "Tailwind CSS"],
+            "llm_providers": ["OpenAI GPT-4", "Custom models"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -3559,11 +3329,7 @@
               "Go",
               "Rust"
             ],
-            "llm_providers": [
-              "OpenAI GPT-4",
-              "Claude",
-              "Others"
-            ]
+            "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
           },
           "business": {
             "pricing_model": "freemium",
@@ -3613,57 +3379,19 @@
       }
     },
     "byCategory": {
-      "open-source-framework": [
-        "7",
-        "6",
-        "8",
-        "13"
-      ],
-      "devops-assistant": [
-        "26"
-      ],
-      "ide-assistant": [
-        "25",
-        "2",
-        "27",
-        "22",
-        "30",
-        "9",
-        "29",
-        "21"
-      ],
-      "app-builder": [
-        "5",
-        "19",
-        "12",
-        "10"
-      ],
-      "autonomous-agent": [
-        "18",
-        "4",
-        "3",
-        "11",
-        "24"
-      ],
-      "code-review": [
-        "28",
-        "17",
-        "15"
-      ],
-      "code-editor": [
-        "1",
-        "14",
-        "23"
-      ],
-      "testing-tool": [
-        "20",
-        "16"
-      ]
+      "open-source-framework": ["7", "6", "8", "13"],
+      "devops-assistant": ["26"],
+      "ide-assistant": ["25", "2", "27", "22", "30", "9", "29", "21"],
+      "app-builder": ["5", "19", "12", "10"],
+      "autonomous-agent": ["18", "4", "3", "11", "24"],
+      "code-review": ["28", "17", "15"],
+      "code-editor": ["1", "14", "23"],
+      "testing-tool": ["20", "16"]
     }
   },
   "metadata": {
     "total": 30,
-    "last_updated": "2025-07-02T17:28:23.240Z",
+    "last_updated": "2025-07-02T18:27:49.592Z",
     "version": "1.0.0"
   }
 }
