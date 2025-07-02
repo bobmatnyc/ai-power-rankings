@@ -305,6 +305,14 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <p className="mb-4 text-muted-foreground">
                   {dict.home.methodology.algorithmDescription}
                 </p>
+                <div className="mb-4">
+                  <Link 
+                    href={`/${lang}/methodology`} 
+                    className="text-primary hover:underline text-sm font-medium"
+                  >
+                    {dict.common.learnMore} →
+                  </Link>
+                </div>
                 <ul className="space-y-2 text-sm">
                   <li>
                     • <strong>{dict.home.methodology.factors.agentic.name}</strong> -{" "}
