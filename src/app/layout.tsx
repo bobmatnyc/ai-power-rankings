@@ -145,20 +145,30 @@ export default function RootLayout({
         <SpeedInsights />
         <Analytics />
 
-        {/* Load Google Analytics after page interaction for T-031 */}
+        {/* Load Google Analytics only after user interaction for T-041 performance */}
         {process.env["NEXT_PUBLIC_GA_ID"] && (
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${process.env["NEXT_PUBLIC_GA_ID"]}`}
-            strategy="afterInteractive"
+            strategy="lazyOnload"
           />
         )}
         {process.env["NEXT_PUBLIC_GA_ID"] && (
-          <Script id="google-analytics" strategy="afterInteractive">
+          <Script id="google-analytics" strategy="lazyOnload">
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${process.env["NEXT_PUBLIC_GA_ID"]}');
+              gtag('config', '${process.env["NEXT_PUBLIC_GA_ID"]}', {
+                'send_page_view': false
+              });
+              
+              // Send page view after a delay to not block initial render
+              setTimeout(() => {
+                gtag('event', 'page_view', {
+                  page_location: window.location.href,
+                  page_title: document.title
+                });
+              }, 3000);
             `}
           </Script>
         )}

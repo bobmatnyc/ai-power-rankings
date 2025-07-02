@@ -1231,6 +1231,74 @@ Translate all markdown content pages from English into all supported languages (
 
 ---
 
+### **[T-041]** Fix Critical Lighthouse Performance Issues - 7.58s LCP
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** High  
+**Story Points:** 13  
+**Assignee:** @claude  
+**Status:** Pending  
+**Sprint:** Current  
+
+**Description:**
+Fix critical performance issues identified in latest Lighthouse audit including 7.58 second Largest Contentful Paint, massive crown image optimization needs, and JavaScript performance bottlenecks.
+
+**Current Performance Issues:**
+
+1. **Largest Contentful Paint: 7.58s** - Critical
+   - 92% render delay (6,980ms) 
+   - TTFB: 600ms (8%)
+   - Target: <2.5s
+
+2. **Crown Image Issues:**
+   - 1,067 KiB PNG file needs WebP conversion (saves 1,037 KiB)
+   - Improperly sized for 36x36 display (saves 1,063 KiB)
+   - Should be lazy loaded (saves 1,067 KiB)
+
+3. **JavaScript Performance:**
+   - Google Tag Manager: 54 KiB unused
+   - Legacy polyfills: 11 KiB for modern browsers
+   - Long main thread tasks causing 30ms blocking
+
+4. **CSS Optimization:**
+   - 12 KiB unused CSS needs removal
+   - Critical CSS not inlined
+
+5. **Cache Policy Issues:**
+   - Static assets need longer cache lifetimes
+   - Favicon API only cached 1 day
+
+**Acceptance Criteria:**
+- [ ] LCP improved to <2.5s (currently 7.58s)
+- [ ] Crown image converted to WebP format and properly sized
+- [ ] Remove unused JavaScript (65 KiB total savings)
+- [ ] Remove legacy polyfills for modern browsers
+- [ ] Defer/optimize Google Tag Manager loading
+- [ ] Reduce unused CSS by 12 KiB
+- [ ] Implement efficient cache policies for static assets
+- [ ] Fix critical request chains (490ms max latency)
+- [ ] Lighthouse Performance score >90
+- [ ] All Core Web Vitals in "Good" range
+
+**Technical Notes:**
+- Focus on LCP optimization first (highest impact)
+- Convert `/crown-of-technology.png` to WebP and resize to actual display size
+- Implement next/image with proper lazy loading
+- Remove polyfills: Array.at, flat, flatMap, Object.fromEntries, Object.hasOwn, String.trim*
+- Defer GTM loading or implement consent-based loading
+- Inline critical CSS for above-the-fold content
+- Optimize bundle splitting for large chunks
+
+**Definition of Done:**
+- [ ] Lighthouse Performance score >90
+- [ ] LCP <2.5s across all pages
+- [ ] No regression in functionality
+- [ ] Mobile performance also optimized
+- [ ] Performance monitoring configured
+
+---
+
 ### **[T-042]** Add Spanish (ES) Language Support
 
 **Type:** Task  

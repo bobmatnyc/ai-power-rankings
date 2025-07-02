@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, Suspense } from "react";
 import { loggers } from "@/lib/logger";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -177,10 +178,14 @@ function SidebarContent(): React.JSX.Element {
           onClick={handleNavClick}
           className="flex items-center space-x-3 mb-6"
         >
-          <img
-            src="/crown-of-technology.png"
+          <Image
+            src="/crown-of-technology.webp"
             alt="AI Power Ranking"
+            width={36}
+            height={36}
             className="w-9 h-9 object-contain"
+            loading="eager"
+            priority
           />
           <div>
             <h1 className="text-2xl font-bold text-gradient">APR</h1>
