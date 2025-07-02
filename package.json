@@ -88,7 +88,8 @@
     "t040:verify": "npm run t040:check && echo 'T-040 mobile performance compliance verified'",
     "analyze": "ANALYZE=true npm run build",
     "analyze:server": "ANALYZE=true npm run build && echo 'Bundle analysis complete - check .next/analyze/'",
-    "bundle:analyze": "npm run analyze"
+    "bundle:analyze": "npm run analyze",
+    "pre-push": "npm run pre-deploy && npm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.0",

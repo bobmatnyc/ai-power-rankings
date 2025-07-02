@@ -557,6 +557,39 @@ pnpm run ci:local
 pnpm run lint
 pnpm run type-check
 pnpm run test
+```
+
+### 🚀 Automated Pre-Push Verification
+
+The project now includes a pre-push hook that automatically runs build verification before allowing pushes:
+
+```bash
+# The pre-push hook runs automatically, but you can test it manually:
+pnpm run pre-push
+
+# This command runs:
+# 1. pre-deploy (lint, type-check, format-check, tests)
+# 2. build (Next.js production build)
+```
+
+**What the pre-push hook prevents:**
+
+- TypeScript compilation errors
+- Import conflicts (like duplicate variable names)
+- Missing dependencies
+- Build configuration issues
+- ESLint errors that block builds
+
+**If pre-push fails:**
+
+1. Fix the reported errors
+2. Stage and commit your fixes
+3. Try pushing again
+
+**To bypass in emergencies (NOT RECOMMENDED):**
+
+```bash
+git push --no-verify  # Skip all hooks - use with extreme caution!
 
 # Test algorithm calculations
 npm test src/lib/ranking-algorithm.test.ts
