@@ -12,6 +12,14 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // TurboPack is enabled automatically in Next.js 15+
+  // Use --turbo flag for dev mode: next dev --turbo
+  experimental: {
+    // Keep existing optimizations
+    optimizePackageImports: ["lucide-react", "@radix-ui/react-icons", "@next/font"],
+    webVitalsAttribution: ["CLS", "LCP"],
+    optimizeCss: true,
+  },
   eslint: {
     // During production builds, do not fail on warnings
     ignoreDuringBuilds: true,
@@ -32,13 +40,16 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  // Performance optimizations for T-031 & T-040
-  experimental: {
-    optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
-  },
-  // Compiler optimizations for T-040
+  // Enhanced compiler optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
+    // Remove React dev warnings in production
+    reactRemoveProperties:
+      process.env.NODE_ENV === "production"
+        ? {
+            properties: ["^data-testid$"],
+          }
+        : false,
   },
   // Modern browser targeting for T-040 - remove legacy polyfills
   // Note: swcMinify is now enabled by default in Next.js 15
@@ -141,6 +152,11 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // TurboPack handles bundling, no webpack config needed
+  // Disable x-powered-by header
+  poweredByHeader: false,
+  // Enable compression
+  compress: true,
 };
 
 export default withBundleAnalyzer(nextConfig);

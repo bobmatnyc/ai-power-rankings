@@ -3,9 +3,9 @@
   "version": "3.1.1",
   "private": true,
   "scripts": {
-    "dev": "node scripts/clear-next-cache.js && next dev",
-    "dev:default": "next dev",
-    "dev:no-cache-clear": "next dev",
+    "dev": "node scripts/clear-next-cache.js && next dev --turbo",
+    "dev:default": "next dev --turbo",
+    "dev:no-cache-clear": "next dev --turbo",
     "dev:server": "node scripts/dev-server.js",
     "dev:pm2": "node scripts/dev-pm2.js",
     "dev:clean": "rm -rf .next && pnpm dev",
