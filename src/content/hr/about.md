@@ -1,62 +1,62 @@
 ---
 title: "O AI Power Rankings"
-subtitle: "Razumijevanje nas�e misije demokratizacije evaluacije AI alata"
+subtitle: "Razumijevanje naše misije demokratizacije evaluacije AI alata"
 ---
 
-## Nas�a misija
+## Naša misija
 
-Vjerujemo da programeri i timovi zasluz�uju transparentne, podatkovne uvide kako bi navigirali brzo razvijajuc�im krajolikom AI alata za kodiranje. Nas�a misija je pruz�iti sveobuhvatne, nepristrane rang liste koje vam pomaz�u donijeti informirane odluke o tome koji AI alati c�e najbolje sluz�iti vas�em razvojnom tijeku rada.
+Vjerujemo da programeri i timovi zaslužuju transparentne, podatkovne uvide kako bi navigirali brzo razvijajućim krajolikom AI alata za kodiranje. Naša misija je pružiti sveobuhvatne, nepristrane rang liste koje vam pomažu donijeti informirane odluke o tome koji AI alati će najbolje služiti vašem razvojnom tijeku rada.
 
 <NewsletterButton />
 
-## S�to radimo
+## Što radimo
 
 ### ? Sveobuhvatna analiza
 
-Procjenjujemo AI alate za kodiranje kroz vis�e dimenzija ukljuc�ujuc�i tehnic�ke performanse, inovaciju, usvajanje od strane programera, trz�is�nu privlac�nost i poslovnu odrz�ivost.
+Procjenjujemo AI alate za kodiranje kroz više dimenzija uključujući tehničke performanse, inovaciju, usvajanje od strane programera, tržišnu privlačnost i poslovnu održivost.
 
 ### ? Metodologija utemeljena na podacima
 
-Nas�e rang liste temelje se na kvantitativnim metrikama iz vis�e izvora ukljuc�ujuc�i SWE-bench rezultate, GitHub metrike, podatke o financiranju, stope usvajanja korisnika i kvalitativnu analizu vijesti i razvoja proizvoda.
+Naše rang liste temelje se na kvantitativnim metrikama iz više izvora uključujući SWE-bench rezultate, GitHub metrike, podatke o financiranju, stope usvajanja korisnika i kvalitativnu analizu vijesti i razvoja proizvoda.
 
 ### ? Redovita az�uriranja
 
-Rang liste se az�uriraju mjesec�no s najnovijim podacima, osiguravajuc�i vam pristup aktualnim informacijama o performansama alata i trz�is�nim promjenama.
+Rang liste se ažuriraju mjesečno s najnovijim podacima, osiguravajući vam pristup aktualnim informacijama o performansama alata i tržišnim promjenama.
 
-### ? Vo?eno zajednicom
+### 🌟 Vođeno zajednicom
 
-Pozdravljamo povratne informacije iz zajednice programera i kontinuirano usavrs�avamo nas�u metodologiju na temelju stvarnih obrazaca koris�tenja i potreba programera.
+Pozdravljamo povratne informacije iz zajednice programera i kontinuirano usavršavamo našu metodologiju na temelju stvarnih obrazaca korištenja i potreba programera.
 
-## Zas�to su rang liste vaz�ne
+## Zašto su rang liste važne
 
-U danas�njem brzom krajoliku AI razvoja, odabir pravih alata za kodiranje moz�e znac�ajno utjecati na vas�u produktivnost i uspjeh projekta. Me?utim, programeri se suoc�avaju s nekoliko izazova:
+U današnjem brzom krajoliku AI razvoja, odabir pravih alata za kodiranje može značajno utjecati na vašu produktivnost i uspjeh projekta. Međutim, programeri se suočavaju s nekoliko izazova:
 
 ### Kljuc�ni izazovi
 
-- **Paraliza izbora**: S desecima dostupnih AI alata za kodiranje, tes�ko je temeljito procijeniti svaki
-- **Marketins�ka buka**: Marketing dobavljac�a c�esto zamagljuje stvarne razlike u performansama i ogranic�enja
-- **Brze promjene**: Novi alati se c�esto lansiraju, a postojec�i alati se brzo razvijaju, s�to otez�ava prac�enje aktualnih informacija
-- **Skriveni rizici**: Neki alati mogu imati ovisnosti o platformi, promjene cijena ili probleme odrz�ivosti
+- **Paraliza izbora**: S desecima dostupnih AI alata za kodiranje, teško je temeljito procijeniti svaki
+- **Marketinška buka**: Marketing dobavljača često zamagljuje stvarne razlike u performansama i ograničenja
+- **Brze promjene**: Novi alati se često lansiraju, a postojeći alati se brzo razvijaju, što otežava praćenje aktualnih informacija
+- **Skriveni rizici**: Neki alati mogu imati ovisnosti o platformi, promjene cijena ili probleme održivosti
 
-Nas�e sveobuhvatne rang liste prodiru kroz buku kako bi vam pruz�ile korisne uvide temeljene na stvarnim podacima i povratnim informacijama zajednice.
+Naše sveobuhvatne rang liste prodiru kroz buku kako bi vam pružile korisne uvide temeljene na stvarnim podacima i povratnim informacijama zajednice.
 
 ## Tim
 
-Ovaj projekt gradi <ExternalLink href="https://matsuoka.com">Bob Matsuoka</ExternalLink>, iskusni softverski inz�enjer i poduzetnik s opsez�nim iskustvom u AI, alatima za programere i analizi podataka.
+Ovaj projekt gradi <ExternalLink href="https://matsuoka.com">Bob Matsuoka</ExternalLink>, iskusni softverski inženjer i poduzetnik s opsežnim iskustvom u AI, alatima za programere i analizi podataka.
 
-Sustav rangiranja dio je s�ire inicijative <ExternalLink href="https://hyperdev.matsuoka.com">HyperDev</ExternalLink>, koja se fokusira na ubrzavanje razvoja softvera kroz bolje alate i metodologije.
+Sustav rangiranja dio je šire inicijative <ExternalLink href="https://hyperdev.matsuoka.com">HyperDev</ExternalLink>, koja se fokusira na ubrzavanje razvoja softvera kroz bolje alate i metodologije.
 
-Ako vas zanima tehnic�ka implementacija, ovaj projekt je izgra?en s modernim web tehnologijama i slijedi najbolje prakse za performanse, pristupac�nost i odrz�ivost.
+Ako vas zanima tehnička implementacija, ovaj projekt je izgrađen s modernim web tehnologijama i slijedi najbolje prakse za performanse, pristupačnost i održivost.
 
 <TechStackButton />
 
 ## Ukljuc�ite se
 
-Spremni donijeti informiranije odluke o AI alatima za kodiranje? Istraz�ite nas�e trenutne rang liste i otkrijte koji alati predvode.
+Spremni donijeti informiranije odluke o AI alatima za kodiranje? Istražite naše trenutne rang liste i otkrijte koji alati predvode.
 
 <ButtonGroup>
-  <PrimaryButton href="/rankings">Istraz�ite rang liste</PrimaryButton>
-  <SecondaryButton href="/methodology">Nauc�ite metodologiju</SecondaryButton>
+  <PrimaryButton href="/rankings">Istražite rang liste</PrimaryButton>
+  <SecondaryButton href="/methodology">Naučite metodologiju</SecondaryButton>
 </ButtonGroup>
 
 <NewsletterModal />

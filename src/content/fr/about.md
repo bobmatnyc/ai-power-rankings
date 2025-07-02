@@ -1,62 +1,62 @@
 ---
-title: "� propos d'AI Power Rankings"
-subtitle: "Comprendre notre mission de d�mocratiser l'�valuation des outils IA"
+title: "À propos d'AI Power Rankings"
+subtitle: "Comprendre notre mission de démocratiser l'évaluation des outils IA"
 ---
 
 ## Notre Mission
 
-Nous croyons que les d�veloppeurs et les �quipes m�ritent des informations transparentes et bas�es sur des donn�es pour naviguer dans le paysage en �volution rapide des outils de codage IA. Notre mission est de fournir des classements complets et impartiaux qui vous aident � prendre des d�cisions �clair�es sur les outils IA qui serviront le mieux votre flux de d�veloppement.
+Nous croyons que les développeurs et les équipes méritent des informations transparentes et basées sur des données pour naviguer dans le paysage en évolution rapide des outils de codage IA. Notre mission est de fournir des classements complets et impartiaux qui vous aident à prendre des décisions éclairées sur les outils IA qui serviront le mieux votre flux de développement.
 
 <NewsletterButton />
 
 ## Ce que nous faisons
 
-### ? Analyse compl�te
+### 📊 Analyse complète
 
-Nous �valuons les outils de codage IA selon plusieurs dimensions, notamment les performances techniques, l'innovation, l'adoption par les d�veloppeurs, la traction du march� et la durabilit� commerciale.
+Nous évaluons les outils de codage IA selon plusieurs dimensions, notamment les performances techniques, l'innovation, l'adoption par les développeurs, la traction du marché et la durabilité commerciale.
 
-### ? M�thodologie bas�e sur les donn�es
+### 📈 Méthodologie basée sur les données
 
-Nos classements sont bas�s sur des m�triques quantitatives provenant de plusieurs sources, notamment les scores SWE-bench, les m�triques GitHub, les donn�es de financement, les taux d'adoption des utilisateurs et l'analyse qualitative des actualit�s et des d�veloppements produits.
+Nos classements sont basés sur des métriques quantitatives provenant de plusieurs sources, notamment les scores SWE-bench, les métriques GitHub, les données de financement, les taux d'adoption des utilisateurs et l'analyse qualitative des actualités et des développements produits.
 
-### ? Mises � jour r�guli�res
+### 🔄 Mises à jour régulières
 
-Les classements sont mis � jour mensuellement avec les derni�res donn�es, garantissant que vous avez acc�s aux informations actuelles sur les performances des outils et les changements du march�.
+Les classements sont mis à jour mensuellement avec les dernières données, garantissant que vous avez accès aux informations actuelles sur les performances des outils et les changements du marché.
 
-### ? Pilot� par la communaut�
+### 🌟 Piloté par la communauté
 
-Nous accueillons les commentaires de la communaut� des d�veloppeurs et affinons continuellement notre m�thodologie en fonction des mod�les d'utilisation r�els et des besoins des d�veloppeurs.
+Nous accueillons les commentaires de la communauté des développeurs et affinons continuellement notre méthodologie en fonction des modèles d'utilisation réels et des besoins des développeurs.
 
 ## Pourquoi les classements sont importants
 
-Dans le paysage actuel du d�veloppement IA en �volution rapide, choisir les bons outils de codage peut avoir un impact significatif sur votre productivit� et le succ�s de votre projet. Cependant, les d�veloppeurs font face � plusieurs d�fis :
+Dans le paysage de développement IA d'aujourd'hui qui évolue rapidement, le choix des bons outils de codage peut avoir un impact significatif sur votre productivité et le succès de votre projet. Cependant, les développeurs font face à plusieurs défis :
 
-### D�fis cl�s
+### Défis principaux
 
-- **Paralysie du choix** : Avec des dizaines d'outils de codage IA disponibles, il est �crasant d'�valuer chacun d'eux en profondeur
-- **Bruit marketing** : Le marketing des fournisseurs obscurcit souvent les vraies diff�rences de performance et les limitations
-- **Changement rapide** : De nouveaux outils sont lanc�s fr�quemment et les outils existants �voluent rapidement, rendant difficile de rester � jour
-- **Risques cach�s** : Certains outils peuvent avoir des d�pendances de plateforme, des changements de prix ou des pr�occupations de durabilit�
+- **Paralysie du choix** : Avec des dizaines d'outils de codage IA disponibles, il est écrasant d'évaluer chacun d'eux en profondeur
+- **Bruit marketing** : Le marketing des fournisseurs obscurcit souvent les vraies différences de performance et les limitations
+- **Changement rapide** : De nouveaux outils sont fréquemment lancés et les outils existants évoluent rapidement, ce qui rend difficile de rester à jour
+- **Risques cachés** : Certains outils peuvent avoir des dépendances de plateforme, des changements de prix ou des préoccupations de durabilité
 
-Nos classements complets percent le bruit pour vous fournir des informations exploitables bas�es sur des donn�es r�elles et les retours de la communaut�.
+Nos classements complets percent le bruit pour vous fournir des insights exploitables basés sur des données réelles et des commentaires de la communauté.
 
-## L'�quipe
+## L'équipe
 
-Ce projet est construit par <ExternalLink href="https://matsuoka.com">Bob Matsuoka</ExternalLink>, un ing�nieur logiciel chevronn� et entrepreneur avec une vaste exp�rience en IA, outils de d�veloppement et analyse de donn�es.
+Ce projet est construit par <ExternalLink href="https://matsuoka.com">Bob Matsuoka</ExternalLink>, un ingénieur logiciel expérimenté et entrepreneur avec une vaste expérience en IA, outils de développement et analyse de données.
 
-Le syst�me de classement fait partie de l'initiative plus large <ExternalLink href="https://hyperdev.matsuoka.com">HyperDev</ExternalLink>, qui se concentre sur l'acc�l�ration du d�veloppement logiciel gr�ce � de meilleurs outils et m�thodologies.
+Le système de classement fait partie de la plus large initiative <ExternalLink href="https://hyperdev.matsuoka.com">HyperDev</ExternalLink>, qui se concentre sur l'accélération du développement logiciel grâce à de meilleurs outils et méthodologies.
 
-Si vous �tes int�ress� par l'impl�mentation technique, ce projet est construit avec des technologies web modernes et suit les meilleures pratiques pour la performance, l'accessibilit� et la maintenabilit�.
+Si vous êtes intéressé par l'implémentation technique, ce projet est construit avec des technologies web modernes et suit les meilleures pratiques pour les performances, l'accessibilité et la maintenabilité.
 
 <TechStackButton />
 
 ## Participez
 
-Pr�t � prendre des d�cisions plus �clair�es sur les outils de codage IA ? Explorez nos classements actuels et d�couvrez quels outils m�nent le peloton.
+Prêt à prendre des décisions plus éclairées sur les outils de codage IA ? Explorez nos classements actuels et découvrez quels outils mènent le peloton.
 
 <ButtonGroup>
   <PrimaryButton href="/rankings">Explorer les classements</PrimaryButton>
-  <SecondaryButton href="/methodology">Apprendre la m�thodologie</SecondaryButton>
+  <SecondaryButton href="/methodology">Apprendre la méthodologie</SecondaryButton>
 </ButtonGroup>
 
 <NewsletterModal />
