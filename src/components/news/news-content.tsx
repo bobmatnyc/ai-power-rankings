@@ -22,6 +22,7 @@ import {
   Rss,
 } from "lucide-react";
 import ScoringMetrics from "./scoring-metrics";
+import ArticleScoringImpact from "./article-scoring-impact";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -45,6 +46,16 @@ interface MetricsHistory {
     score_change?: number;
     rank_change?: number;
     importance_score?: number;
+  };
+  scoring_factors?: {
+    agentic_capability?: number;
+    innovation?: number;
+    technical_performance?: number;
+    developer_adoption?: number;
+    market_traction?: number;
+    business_sentiment?: number;
+    development_velocity?: number;
+    platform_resilience?: number;
   };
   tags?: string[];
 }
@@ -457,6 +468,16 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                         </Button>
                       </div>
                     )}
+                  </div>
+
+                  {/* Article Scoring Impact */}
+                  <div className="mt-4">
+                    <ArticleScoringImpact
+                      scoring_factors={item.scoring_factors}
+                      importance_score={item.metrics?.importance_score}
+                      event_type={item.event_type}
+                      compact={true}
+                    />
                   </div>
                 </CardContent>
               </Card>

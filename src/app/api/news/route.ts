@@ -149,6 +149,65 @@ export async function GET(request: NextRequest) {
           }
         }
 
+        // Generate scoring factor impacts based on content and event type
+        const generateScoringFactors = (eventType: string, title: string, importance: number) => {
+          const factors: any = {};
+          const titleLower = title.toLowerCase();
+
+          // Base impact magnitude on importance score
+          const baseMagnitude = Math.max(0.1, (importance - 5) / 10); // -0.5 to +0.5 range
+
+          switch (eventType) {
+            case "milestone":
+              if (titleLower.includes("funding") || titleLower.includes("raised")) {
+                factors.market_traction = baseMagnitude * 2;
+                factors.business_sentiment = baseMagnitude * 1.5;
+                factors.development_velocity = baseMagnitude * 0.5;
+              }
+              break;
+            case "feature":
+              if (titleLower.includes("ai") || titleLower.includes("autonomous")) {
+                factors.agentic_capability = baseMagnitude * 2;
+                factors.innovation = baseMagnitude * 1.5;
+              }
+              if (titleLower.includes("performance") || titleLower.includes("faster")) {
+                factors.technical_performance = baseMagnitude * 1.8;
+              }
+              if (titleLower.includes("integration") || titleLower.includes("multi")) {
+                factors.platform_resilience = baseMagnitude * 1.2;
+              }
+              break;
+            case "partnership":
+              factors.business_sentiment = baseMagnitude * 1.3;
+              factors.market_traction = baseMagnitude * 1.0;
+              factors.platform_resilience = baseMagnitude * 0.8;
+              break;
+            case "update":
+              factors.development_velocity = baseMagnitude * 1.5;
+              if (titleLower.includes("users") || titleLower.includes("community")) {
+                factors.developer_adoption = baseMagnitude * 1.2;
+              }
+              break;
+            case "announcement":
+              factors.business_sentiment = baseMagnitude * 1.0;
+              break;
+          }
+
+          // Round factors to 1 decimal place and filter out zeros
+          const filteredFactors: any = {};
+          Object.entries(factors).forEach(([key, value]) => {
+            const rounded = Math.round((value as number) * 10) / 10;
+            if (Math.abs(rounded) >= 0.1) {
+              filteredFactors[key] = rounded;
+            }
+          });
+
+          return Object.keys(filteredFactors).length > 0 ? filteredFactors : undefined;
+        };
+
+        const importance = article.importance_score || 5;
+        const scoring_factors = generateScoringFactors(eventType, article.title, importance);
+
         return {
           id: article.id,
           slug: article.slug,
@@ -164,8 +223,9 @@ export async function GET(request: NextRequest) {
           source_url: article.source_url,
           source_name: article.source || article.source_name || "AI News",
           metrics: {
-            importance_score: article.importance_score || 5,
+            importance_score: importance,
           },
+          scoring_factors,
           tags: article.tags || [],
         };
       })
