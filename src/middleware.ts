@@ -54,7 +54,7 @@ function getLocale(request: NextRequest): string {
       });
 
     for (const locale of preferredLocales) {
-      if (locales.includes(locale as (typeof locales)[number])) {
+      if (locales.includes(locale)) {
         return locale;
       }
     }
@@ -130,18 +130,8 @@ export default auth((req) => {
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-XSS-Protection", "1; mode=block");
 
-  // Add performance headers for static assets - T-040 optimization
+  // Add performance headers for static assets
   if (pathname.includes("/_next/static")) {
-    response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
-  }
-
-  // Optimize cache headers for images and assets - T-040
-  if (pathname.match(/\.(webp|avif|jpg|jpeg|png|gif|ico|svg)$/)) {
-    response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
-  }
-
-  // Optimize cache headers for fonts - T-040
-  if (pathname.match(/\.(woff|woff2|eot|ttf|otf)$/)) {
     response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
   }
 

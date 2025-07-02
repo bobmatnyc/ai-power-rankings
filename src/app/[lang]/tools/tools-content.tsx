@@ -18,13 +18,19 @@ import { extractTextFromRichText } from "@/lib/richtext-utils";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
+interface RichTextElement {
+  type: string;
+  children?: any[];
+  [key: string]: any;
+}
+
 interface Tool {
   id: string;
   slug?: string;
   name: string;
   category: string;
   status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";
-  description?: string | any[]; // Can be string or RichText array
+  description?: string | RichTextElement[]; // Can be string or RichText array
   website?: string;
   website_url?: string;
   github_url?: string;
@@ -148,7 +154,7 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
                 </div>
                 <CardDescription>
                   <div
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                       e.preventDefault();
                       window.location.href = `/${lang}/rankings?category=${tool.category}`;
                     }}

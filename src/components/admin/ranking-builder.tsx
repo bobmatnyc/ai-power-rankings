@@ -139,7 +139,7 @@ export function RankingBuilder() {
           const progressData = await progressResponse.json();
           setProgressTicker(progressData.message || "Processing...");
         }
-      } catch (err) {
+      } catch (_err) {
         // Ignore progress errors, continue with main request
       }
     }, 1000);

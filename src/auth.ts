@@ -6,8 +6,8 @@ import { isAuthorizedEmail } from "@/lib/auth-config";
 export const config: NextAuthConfig = {
   providers: [
     Google({
-      clientId: process.env["GOOGLE_OAUTH_CLIENT_ID"]!,
-      clientSecret: process.env["GOOGLE_OAUTH_CLIENT_SECRET"]!,
+      clientId: process.env["GOOGLE_OAUTH_CLIENT_ID"] || "",
+      clientSecret: process.env["GOOGLE_OAUTH_CLIENT_SECRET"] || "",
       authorization: {
         params: {
           prompt: "consent",

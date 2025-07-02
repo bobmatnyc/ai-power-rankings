@@ -10,13 +10,41 @@ import { StatusIndicator } from "@/components/ui/status-indicator";
 import { ToolDetailTabs } from "@/components/tools/tool-detail-tabs";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
+interface ToolInfo {
+  links?: {
+    website?: string;
+    github?: string;
+  };
+  product?: {
+    description?: string;
+    tagline?: string;
+  };
+  business?: {
+    pricing_details?: Record<string, any>;
+  };
+  metrics?: any;
+  company?: {
+    name?: string;
+  };
+  website?: string;
+}
+
+interface ToolDetailData {
+  tool: Tool;
+  ranking?: any;
+  metrics?: any;
+  metricHistory?: any;
+  rankingsHistory?: any;
+  newsItems?: any;
+}
+
 interface Tool {
   id: string;
   slug?: string;
   name: string;
   category: string;
   status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";
-  info?: any;
+  info?: ToolInfo;
   website_url?: string;
   github_repo?: string;
   description?: string;
@@ -34,7 +62,7 @@ interface ToolDetailClientProps {
 
 export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
   const [tool, setTool] = useState<Tool | null>(null);
-  const [toolData, setToolData] = useState<any>(null);
+  const [toolData, setToolData] = useState<ToolDetailData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

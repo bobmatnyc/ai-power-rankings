@@ -9,6 +9,42 @@ import type { NewsArticle } from "@/lib/json-db/schemas";
 import { processNewsQualitativeImpact } from "./news-qualitative-analyzer";
 import { logger } from "./logger";
 
+export interface Innovation {
+  score: number;
+  date: Date;
+  description?: string;
+}
+
+export interface BaseMetrics {
+  tool_id: string;
+  swe_bench_score?: number;
+  funding?: number;
+  valuation?: number;
+  monthly_arr?: number;
+  estimated_users?: number;
+  innovation_score?: number;
+  business_sentiment?: number;
+  release_frequency?: number;
+  innovations?: Innovation[];
+  news_impact?: {
+    articles_analyzed: number;
+    last_news_date?: string;
+    significant_events: Array<{
+      event: string;
+      date: string;
+      impact: string;
+    }>;
+    qualitative_boosts: {
+      innovation: number;
+      sentiment: number;
+      velocity: number;
+      traction: number;
+      technical: number;
+    };
+  };
+  [key: string]: unknown;
+}
+
 export interface EnhancedNewsMetrics {
   // Quantitative metrics (from regex extraction)
   swe_bench_score?: number;
@@ -205,9 +241,9 @@ export async function extractEnhancedNewsMetrics(
  * Updates the tool metrics with both quantitative and qualitative impacts
  */
 export function applyEnhancedNewsMetrics(
-  baseMetrics: any,
+  baseMetrics: BaseMetrics | any,
   enhancedNewsMetrics: EnhancedNewsMetrics
-): any {
+): BaseMetrics | any {
   const updatedMetrics = { ...baseMetrics };
 
   // Apply quantitative updates (overwrite if found in news)

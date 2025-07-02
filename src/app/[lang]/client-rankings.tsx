@@ -122,12 +122,12 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           setTopRankings(rankings.slice(0, 3));
 
           // Calculate actual trending tools (those with positive rank changes)
-          const actualTrendingTools = rankings.filter((r: any) => r.rankChange && r.rankChange > 0);
+          const actualTrendingTools = rankings.filter((r: RankingData) => r.rankChange && r.rankChange > 0);
           setTrendingTools(actualTrendingTools.slice(0, 3));
           setTrendingUpCount(actualTrendingTools.length);
 
           // Calculate tools trending down (those with negative rank changes)
-          const trendingDownTools = rankings.filter((r: any) => r.rankChange && r.rankChange < 0);
+          const trendingDownTools = rankings.filter((r: RankingData) => r.rankChange && r.rankChange < 0);
           setTrendingDownCount(trendingDownTools.length);
 
           setRecentlyUpdated(rankings.slice(6, 10));
@@ -263,7 +263,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           <div className="grid md:grid-cols-3 gap-3 md:gap-6">
             {trendingTools.length > 0
               ? // Show actual trending tools
-                trendingTools.map((tool: any) => (
+                trendingTools.map((tool: RankingData) => (
                   <Link
                     key={tool.tool.id}
                     href={`/${lang}/tools/${tool.tool.slug || tool.tool.id}`}
@@ -287,7 +287,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
                   </Link>
                 ))
               : // Fall back to top performers if no rank changes
-                topRankings.map((tool: any) => (
+                topRankings.map((tool: RankingData) => (
                   <Link
                     key={tool.tool.id}
                     href={`/${lang}/tools/${tool.tool.slug || tool.tool.id}`}
@@ -325,7 +325,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           </div>
 
           <div className="grid md:grid-cols-2 gap-3 md:gap-6">
-            {recentlyUpdated.map((tool: any) => (
+            {recentlyUpdated.map((tool: RankingData) => (
               <Link
                 key={tool.tool.id}
                 href={`/${lang}/tools/${tool.tool.slug || tool.tool.id}`}

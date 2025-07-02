@@ -242,7 +242,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             },
           });
         }
-      } catch (error) {
+      } catch (_error) {
         // Continue with other tools if one fails
       }
     }
@@ -263,7 +263,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             },
           });
         }
-      } catch (error) {
+      } catch (_error) {
         // Continue with other companies if one fails
       }
     }

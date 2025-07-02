@@ -33,6 +33,7 @@ sprint_current: 3
 - [ ] **[T-039]** Translate Markdown Content Pages to All Supported Languages
 - [ ] **[T-040]** Fix Mobile Performance Issues - Layout Shifts and Image Optimization
 - [ ] **[T-041]** Fix Accessibility Issues - ARIA, Contrast, and Navigation
+- [ ] **[T-042]** Add Spanish (ES) Language Support
 
 ## ✅ Completed Tasks
 
@@ -1226,3 +1227,91 @@ Translate all markdown content pages from English into all supported languages (
 - [ ] React components render correctly
 - [ ] No broken links or references
 - [ ] Consistent terminology across all translations
+
+---
+
+### **[T-042]** Add Spanish (ES) Language Support
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** High  
+**Story Points:** 13  
+**Assignee:** Unassigned  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Add Spanish language support to the AI Power Rankings application, including all UI translations, content translations, and i18n configuration updates. Spanish is a critical language for reaching Latin American and Spanish markets.
+
+**Acceptance Criteria:**
+- [ ] Add Spanish (es) to i18n configuration
+- [ ] Create Spanish dictionary file (es.json) with all UI translations
+- [ ] Translate all markdown content pages to Spanish
+- [ ] Update language selector to include Spanish option
+- [ ] Configure Spanish locale routing
+- [ ] Test all Spanish pages and functionality
+- [ ] Verify proper formatting for Spanish text
+- [ ] Ensure date/number formatting follows Spanish conventions
+- [ ] Add Spanish to sitemap generation
+- [ ] Update SEO metadata for Spanish pages
+
+**Technical Implementation:**
+1. **Update i18n Configuration:**
+   - Add 'es' to locales in `/src/i18n/config.ts`
+   - Update middleware to support Spanish routing
+   - Add Spanish language detection
+
+2. **Create Translation Files:**
+   - Create `/src/i18n/dictionaries/es.json` based on en.json
+   - Translate all 494 keys to Spanish
+   - Validate structure matches other language files
+
+3. **Translate Content Pages:**
+   - Create `/src/content/es/` directory
+   - Translate: about.md, contact.md, methodology.md, privacy.md, terms.md
+   - Preserve markdown formatting and React components
+
+4. **Update UI Components:**
+   - Add Spanish flag/icon to language selector
+   - Update language names to include "Español"
+   - Test language switching functionality
+
+5. **SEO and Metadata:**
+   - Add Spanish hreflang tags
+   - Update sitemap to include /es/ URLs
+   - Configure Spanish-specific meta descriptions
+
+**Files to Modify:**
+- `/src/i18n/config.ts` - Add 'es' locale
+- `/src/middleware.ts` - Add Spanish language detection
+- `/src/i18n/dictionaries/es.json` - New translation file
+- `/src/components/layout/language-selector.tsx` - Add Spanish option
+- `/src/content/es/*.md` - New content translations
+- `/src/app/sitemap.ts` - Include Spanish URLs
+- `/src/lib/seo/metadata.ts` - Spanish meta tags
+
+**Translation Guidelines:**
+- Use formal Spanish (usted) for professional tone
+- Maintain consistency with existing Spanish tech terminology
+- Keep brand names and technical terms in English where appropriate
+- Consider regional variations (use neutral Spanish)
+- Preserve all formatting codes and placeholders
+
+**Testing Requirements:**
+- [ ] All Spanish routes accessible
+- [ ] Language switching works correctly
+- [ ] No missing translation warnings
+- [ ] Proper text rendering and formatting
+- [ ] Date/time displays correctly for Spanish locale
+- [ ] Currency formatting appropriate for Spanish markets
+- [ ] Mobile responsive design works with Spanish text
+
+**Definition of Done:**
+- [ ] Spanish added to i18n configuration
+- [ ] All UI elements translated (494 keys)
+- [ ] All content pages translated (5 pages)
+- [ ] Language selector includes Spanish
+- [ ] No console errors or warnings
+- [ ] SEO metadata configured for Spanish
+- [ ] Native Spanish speaker review completed
+- [ ] Documentation updated
