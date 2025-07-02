@@ -34,6 +34,7 @@ sprint_current: 3
 - [ ] **[T-040]** Fix Mobile Performance Issues - Layout Shifts and Image Optimization
 - [ ] **[T-041]** Fix Accessibility Issues - ARIA, Contrast, and Navigation
 - [ ] **[T-042]** Add Spanish (ES) Language Support
+- [ ] **[T-044]** Reorganize Documentation for Claude Code Best Practices
 
 ## ✅ Completed Tasks
 
@@ -1457,3 +1458,56 @@ Add visual indicators showing how news articles affect tool quality metrics and 
 - [ ] Mobile responsive design
 - [ ] Unit tests for analyzer logic
 - [ ] Documentation updated
+
+---
+
+### **[T-044]** Reorganize Documentation for Claude Code Best Practices
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** Medium  
+**Story Points:** 5  
+**Assignee:** @claude  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Review docs/design/claude-code-best-practices.md and reorganize project documentation to incorporate Claude Code best practices. Restructure CLAUDE.md, docs/INSTRUCTIONS.md, docs/WORKFLOW.md for optimal efficiency. Update docs/PROJECT.md to reflect current project state. Organize root level docs/ files to consolidate/split docs as needed for optimal context usage.
+
+**Acceptance Criteria:**
+- [ ] Claude Code best practices incorporated into relevant docs
+- [ ] CLAUDE.md optimized for AI assistant context
+- [ ] INSTRUCTIONS.md reorganized for clarity and efficiency
+- [ ] WORKFLOW.md updated with current procedures
+- [ ] PROJECT.md reflects current architecture and state
+- [ ] Long docs broken into chapters/ subdirectory if needed
+- [ ] Documentation structure optimized for AI context windows
+- [ ] Clear navigation between related documents
+- [ ] Redundancy eliminated across documents
+
+**Technical Notes:**
+- Review and incorporate docs/design/claude-code-best-practices.md
+- Keep doc sizes efficient for AI context (consider breaking >2000 lines)
+- Create docs/chapters/ for subsections if needed
+- Maintain clear cross-references between documents
+- Preserve critical information while reducing redundancy
+- Optimize for both human and AI readability
+- Consider parallel processing where possible
+
+**Files to Update:**
+- `/CLAUDE.md` - AI assistant instructions
+- `/docs/INSTRUCTIONS.md` - Development instructions
+- `/docs/WORKFLOW.md` - Development workflow
+- `/docs/PROJECT.md` - Project overview
+- `/docs/` - Reorganize structure as needed
+- `/docs/chapters/` - Create if needed for long sections
+
+**Definition of Done:**
+- [ ] All documentation reviewed and updated
+- [ ] Claude Code best practices integrated
+- [ ] Documentation structure optimized
+- [ ] No redundant information across docs
+- [ ] Clear navigation and cross-references
+- [ ] All docs under 2000 lines (or split appropriately)
+- [ ] PROJECT.md reflects current state
+- [ ] Documentation tested with AI assistant
