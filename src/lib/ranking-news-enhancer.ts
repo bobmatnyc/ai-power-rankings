@@ -288,7 +288,7 @@ export function applyEnhancedNewsMetrics(
       updatedMetrics.innovations.push({
         score: enhancedNewsMetrics.innovationBoost,
         date: new Date(enhancedNewsMetrics.lastNewsDate),
-        description: `Innovation boost from recent developments`,
+        description: "Innovation boost from recent developments",
       });
     }
   }

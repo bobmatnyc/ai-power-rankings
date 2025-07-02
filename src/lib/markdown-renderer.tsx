@@ -54,7 +54,7 @@ export function loadMarkdownContent(filename: string): string {
     return content;
   } catch (error) {
     console.error(`Error loading markdown file ${filename}:`, error);
-    return `# Error\n\nCould not load content for this page.`;
+    return "# Error\n\nCould not load content for this page.";
   }
 }
 

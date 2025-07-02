@@ -1,4 +1,4 @@
-import { Tool, ToolCapabilities, ToolMetrics, Ranking } from "./database";
+import type { Tool, ToolCapabilities, ToolMetrics, Ranking } from "./database";
 
 export interface RankingWeights {
   marketTraction: number; // 25%

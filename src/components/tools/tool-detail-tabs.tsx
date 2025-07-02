@@ -91,13 +91,14 @@ const formatMetric = (value: number | undefined, type: string, dict: any): strin
       return value >= 1000000
         ? `${(value / 1000000).toFixed(1)}M`
         : `${(value / 1000).toFixed(0)}k`;
-    case "currency":
+    case "currency": {
       const millions = value / 1000000;
       if (millions >= 1000) {
         const billions = millions / 1000;
         return `$${billions % 1 === 0 ? billions.toFixed(0) : billions.toFixed(1)}B`;
       }
       return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
+    }
     case "percentage":
       return `${value.toFixed(1)}%`;
     case "number":
@@ -152,36 +153,36 @@ export function ToolDetailTabs({
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-      <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-1">
-        <TabsTrigger value="performance" className="text-xs md:text-sm">
-          {dict.tools.detail.tabs.performance}
-        </TabsTrigger>
-        <TabsTrigger value="pricing" className="text-xs md:text-sm">
-          Pricing
-        </TabsTrigger>
-        <TabsTrigger value="metrics" className="text-xs md:text-sm">
-          {dict.tools.detail.tabs.businessMetrics}
-        </TabsTrigger>
-        <TabsTrigger value="scores" className="text-xs md:text-sm">
-          {dict.tools.detail.tabs.scores}
-        </TabsTrigger>
-        <TabsTrigger value="history" className="text-xs md:text-sm">
-          {dict.tools.detail.tabs.history}
-        </TabsTrigger>
-      </TabsList>
+    <div className="space-y-6">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-1 h-auto p-1">
+          <TabsTrigger value="performance" className="text-xs md:text-sm py-2 px-3">
+            {dict.tools.detail.tabs.performance}
+          </TabsTrigger>
+          <TabsTrigger value="pricing" className="text-xs md:text-sm py-2 px-3">
+            Pricing
+          </TabsTrigger>
+          <TabsTrigger value="metrics" className="text-xs md:text-sm py-2 px-3">
+            {dict.tools.detail.tabs.businessMetrics}
+          </TabsTrigger>
+          <TabsTrigger value="scores" className="text-xs md:text-sm py-2 px-3">
+            {dict.tools.detail.tabs.scores}
+          </TabsTrigger>
+          <TabsTrigger value="history" className="text-xs md:text-sm py-2 px-3">
+            {dict.tools.detail.tabs.history}
+          </TabsTrigger>
+        </TabsList>
 
-      <TabsContent value="performance" className="space-y-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>{dict.tools.detail.performance.title}</CardTitle>
-            <CardDescription>{dict.tools.detail.performance.description}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+        <TabsContent value="performance" className="mt-6 space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>{dict.tools.detail.performance.title}</CardTitle>
+              <CardDescription>{dict.tools.detail.performance.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
               {metrics?.swe_bench_score !== undefined && metrics.swe_bench_score > 0 && (
-                <div>
-                  <div className="flex justify-between mb-1">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">
                       {dict.tools.detail.performance.sweScore}
                     </span>
@@ -189,64 +190,63 @@ export function ToolDetailTabs({
                       {formatMetric(metrics.swe_bench_score, "percentage", dict)}
                     </span>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
+                  <div className="w-full bg-muted rounded-full h-3">
                     <div
-                      className="bg-primary h-2 rounded-full transition-all"
+                      className="bg-primary h-3 rounded-full transition-all"
                       style={{ width: `${Math.min(metrics.swe_bench_score, 100)}%` }}
                     />
                   </div>
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">
                     {dict.tools.detail.performance.contextWindow}
                   </p>
                   <p className="font-medium">200k {dict.tools.detail.performance.tokens}</p>
                 </div>
-                <div>
+                <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">
                     {dict.tools.detail.performance.languageSupport}
                   </p>
                   <p className="font-medium">20+ {dict.tools.detail.performance.languages}</p>
                 </div>
-                <div>
+                <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">
                     {dict.tools.detail.performance.multiFileSupport}
                   </p>
                   <p className="font-medium">{dict.tools.detail.performance.yes}</p>
                 </div>
-                <div>
+                <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">
                     {dict.tools.detail.performance.llmProviders}
                   </p>
                   <p className="font-medium">{dict.tools.detail.performance.multiple}</p>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      <TabsContent value="pricing" className="space-y-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Pricing Plans</CardTitle>
-            <CardDescription>
-              Available pricing tiers and features
-              {tool.info?.links?.pricing && (
-                <a
-                  href={tool.info.links.pricing}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-2 text-primary hover:underline"
-                >
-                  View official pricing →
-                </a>
-              )}
-            </CardDescription>
-          </CardHeader>
+        <TabsContent value="pricing" className="mt-6 space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Pricing Plans</CardTitle>
+              <CardDescription>
+                Available pricing tiers and features
+                {tool.info?.links?.pricing && (
+                  <a
+                    href={tool.info.links.pricing}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 text-primary hover:underline"
+                  >
+                    View official pricing →
+                  </a>
+                )}
+              </CardDescription>
+            </CardHeader>
           <CardContent>
             {pricingPlans && pricingPlans.length > 0 ? (
               <div className="space-y-6">
@@ -330,11 +330,11 @@ export function ToolDetailTabs({
               </p>
             )}
           </CardContent>
-        </Card>
-      </TabsContent>
+          </Card>
+        </TabsContent>
 
-      <TabsContent value="metrics" className="space-y-4">
-        <Card>
+        <TabsContent value="metrics" className="mt-6 space-y-4">
+          <Card>
           <CardHeader>
             <CardTitle>Business Metrics</CardTitle>
             <CardDescription>Financial and growth metrics</CardDescription>
@@ -381,12 +381,12 @@ export function ToolDetailTabs({
               )}
             </div>
           </CardContent>
-        </Card>
-      </TabsContent>
+          </Card>
+        </TabsContent>
 
-      <TabsContent value="scores" className="space-y-4">
-        {ranking ? (
-          <Card>
+        <TabsContent value="scores" className="mt-6 space-y-4">
+          {ranking ? (
+            <Card>
             <CardHeader>
               <CardTitle>Algorithm v6.0 Scores</CardTitle>
               <CardDescription>Detailed scoring breakdown across all factors</CardDescription>
@@ -422,20 +422,20 @@ export function ToolDetailTabs({
                 </div>
               </div>
             </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardContent className="py-8">
-              <p className="text-center text-muted-foreground">
-                This tool has not been ranked yet.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-      </TabsContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="py-8">
+                <p className="text-center text-muted-foreground">
+                  This tool has not been ranked yet.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
 
-      <TabsContent value="history" className="space-y-4">
-        <div className="space-y-6">
+        <TabsContent value="history" className="mt-6 space-y-4">
+          <div className="space-y-6">
           {/* News Updates Section */}
           {newsItems && newsItems.length > 0 && (
             <div>
@@ -555,8 +555,9 @@ export function ToolDetailTabs({
                 </CardContent>
               </Card>
             )}
-        </div>
-      </TabsContent>
-    </Tabs>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

@@ -72,7 +72,7 @@ async function debugRankings() {
           typeof tool === "object" ? tool["name"] : ranking["tool_name"] || "Unknown";
         console.log(`    #${ranking["position"]} ${toolName}`);
         console.log(`       Score: ${ranking["score"]}`);
-        console.log(`       Factor Scores:`);
+        console.log("       Factor Scores:");
         console.log(`         - Agentic: ${ranking["agentic_capability"] || "null"}`);
         console.log(`         - Innovation: ${ranking["innovation"] || "null"}`);
         console.log(`         - Technical: ${ranking["technical_performance"] || "null"}`);
@@ -97,7 +97,7 @@ async function debugRankings() {
         console.log(`Position: ${ranking["position"]}`);
         console.log(`Score: ${ranking["score"]}`);
         console.log(
-          `All fields:`,
+          "All fields:",
           Object.keys(ranking).filter((k) => k !== "tool")
         );
       });

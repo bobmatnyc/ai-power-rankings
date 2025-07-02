@@ -1,4 +1,4 @@
-import { WithContext } from "schema-dts";
+import type { WithContext } from "schema-dts";
 
 interface SchemaMarkupProps {
   schema: WithContext<any> | WithContext<any>[];

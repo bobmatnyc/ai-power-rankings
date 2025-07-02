@@ -1,4 +1,4 @@
-import {
+import type {
   WithContext,
   Organization,
   SoftwareApplication,
@@ -8,8 +8,8 @@ import {
   WebSite,
   SearchAction,
 } from "schema-dts";
-import { Tool, Ranking } from "@/types/database";
-import { RankedTool } from "@/types/rankings";
+import type { Tool, Ranking } from "@/types/database";
+import type { RankedTool } from "@/types/rankings";
 
 const baseUrl =
   process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]

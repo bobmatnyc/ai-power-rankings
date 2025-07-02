@@ -28,7 +28,7 @@ import {
   Upload,
 } from "lucide-react";
 import { usePayload } from "@/hooks/use-payload";
-import { Tool } from "@/types/database";
+import type { Tool } from "@/types/database";
 
 interface ToolWithRanking extends Tool {
   latest_ranking?: {

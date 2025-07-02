@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-xl font-bold text-white mb-4">AI Power Rankings</h3>
@@ -83,6 +83,38 @@ export function Footer() {
               <li>
                 <Link href="/about" className="hover:text-white transition-colors">
                   About Us
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Categories */}
+          <div>
+            <h4 className="text-lg font-semibold text-white mb-4">Categories</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/best-ide-assistants" className="hover:text-white transition-colors">
+                  IDE Assistants
+                </Link>
+              </li>
+              <li>
+                <Link href="/best-autonomous-agents" className="hover:text-white transition-colors">
+                  Autonomous Agents
+                </Link>
+              </li>
+              <li>
+                <Link href="/best-ai-code-editors" className="hover:text-white transition-colors">
+                  AI Code Editors
+                </Link>
+              </li>
+              <li>
+                <Link href="/best-ai-app-builders" className="hover:text-white transition-colors">
+                  AI App Builders
+                </Link>
+              </li>
+              <li>
+                <Link href="/best-ai-coding-tools" className="hover:text-white transition-colors">
+                  All AI Tools
                 </Link>
               </li>
             </ul>

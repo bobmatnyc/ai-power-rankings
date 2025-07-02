@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { SEODashboard } from "@/components/seo/seo-dashboard";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {

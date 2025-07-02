@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base-repository";
-import { NewsArticle, NewsData, IngestionReport } from "./schemas";
+import type { NewsArticle, NewsData, IngestionReport } from "./schemas";
 import path from "path";
 import Ajv from "ajv";
 import ajvFormats from "ajv-formats";

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { getToolsRepo, getRankingsRepo, getNewsRepo, getCompaniesRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 

@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base-repository";
-import { RankingPeriod, RankingsData } from "./schemas";
+import type { RankingPeriod, RankingsData } from "./schemas";
 import path from "path";
 import fs from "fs-extra";
 import Ajv from "ajv";

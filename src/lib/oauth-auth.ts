@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 // In production, use a shared store (Redis, database, etc.)
 // For now, we'll use in-memory storage

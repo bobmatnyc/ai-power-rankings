@@ -118,7 +118,7 @@ function syncTranslations() {
     const langPath = join(DICTIONARIES_PATH, `${lang}.json`);
 
     if (!existsSync(langPath)) {
-      console.log(`  ⚠️  File not found, creating new file`);
+      console.log("  ⚠️  File not found, creating new file");
       // Create new file with all English keys as placeholders
       const newTranslations = deepMerge({}, enTranslations);
       writeFileSync(langPath, JSON.stringify(newTranslations, null, 2) + "\n");
@@ -145,7 +145,7 @@ function syncTranslations() {
           `  ✅ Updated: ${keysAdded} keys added, ${needsTranslation} keys need translation\n`
         );
       } else {
-        console.log(`  ✅ Already in sync, no updates needed\n`);
+        console.log("  ✅ Already in sync, no updates needed\n");
       }
     } catch (error) {
       console.error(`  ❌ Failed to process ${lang}:`, error);

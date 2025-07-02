@@ -1,10 +1,9 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Star, Zap, Shield, TrendingUp } from "lucide-react";
-import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 import { getUrl } from "@/lib/get-url";
 import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
@@ -47,7 +46,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BestAICodingToolsPage({ params }: PageProps) {
   const { lang } = await params;
-  const dict = await getDictionary(lang);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">

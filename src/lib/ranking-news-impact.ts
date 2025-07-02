@@ -214,7 +214,7 @@ export function applyNewsImpactToRanking(
     );
   }
 
-  logger.info(`Applied news impact for tool:`, {
+  logger.info("Applied news impact for tool:", {
     newsImpact,
     impactModifier,
     adjustments: Object.entries(impactDistribution).map(([factor, weight]) => ({

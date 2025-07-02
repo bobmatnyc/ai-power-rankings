@@ -165,8 +165,13 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
         </div>
 
         {/* Category Badge - Centered on mobile */}
-        <div className="mb-4 md:hidden flex justify-center">
+        <div className="mb-4 md:hidden flex justify-center gap-2">
           <Badge className="capitalize px-4 py-1 text-xs">{tool.category.replace(/-/g, " ")}</Badge>
+          {toolData?.ranking && (
+            <Badge variant="outline" className="text-primary border-primary px-4 py-1 text-xs">
+              Rank #{toolData.ranking.rank}
+            </Badge>
+          )}
         </div>
 
         <div className="flex flex-col md:flex-row md:items-start md:justify-between">
@@ -184,6 +189,12 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
                   {tool.category.replace(/-/g, " ")}
                 </Badge>
                 <StatusIndicator status={tool.status} showLabel />
+                {/* Current Ranking Display */}
+                {toolData?.ranking && (
+                  <Badge variant="outline" className="text-primary border-primary">
+                    Rank #{toolData.ranking.rank}
+                  </Badge>
+                )}
               </div>
             </div>
           </div>
@@ -221,11 +232,19 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">{dict.tools.detail.company}</p>
               <p className="font-medium">{tool.info?.company?.name || dict.common.notAvailable}</p>
             </div>
+            {toolData?.ranking && (
+              <div>
+                <p className="text-sm text-muted-foreground">Current Ranking</p>
+                <p className="font-medium text-primary">
+                  #{toolData.ranking.rank} ({toolData.ranking.scores.overall.toFixed(1)} score)
+                </p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

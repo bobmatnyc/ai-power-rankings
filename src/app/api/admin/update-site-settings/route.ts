@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { getSiteSettingsRepo } from "@/lib/json-db";
 
 export async function POST(_request: NextRequest) {

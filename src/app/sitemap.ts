@@ -1,4 +1,4 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 import { getToolsRepo, getRankingsRepo } from "@/lib/json-db";
 import { i18n } from "@/i18n/config";
 
@@ -119,6 +119,52 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
       alternates: {
         languages: generateAlternates("/updates", baseUrl),
+      },
+    },
+    // SEO Landing Pages for T-042
+    {
+      url: `${baseUrl}/en/best-ai-coding-tools`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+      alternates: {
+        languages: generateAlternates("/best-ai-coding-tools", baseUrl),
+      },
+    },
+    {
+      url: `${baseUrl}/en/best-ide-assistants`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+      alternates: {
+        languages: generateAlternates("/best-ide-assistants", baseUrl),
+      },
+    },
+    {
+      url: `${baseUrl}/en/best-autonomous-agents`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+      alternates: {
+        languages: generateAlternates("/best-autonomous-agents", baseUrl),
+      },
+    },
+    {
+      url: `${baseUrl}/en/best-ai-code-editors`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+      alternates: {
+        languages: generateAlternates("/best-ai-code-editors", baseUrl),
+      },
+    },
+    {
+      url: `${baseUrl}/en/best-ai-app-builders`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+      alternates: {
+        languages: generateAlternates("/best-ai-app-builders", baseUrl),
       },
     },
   ];

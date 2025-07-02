@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { type AxiosError } from "axios";
 
 interface PageSpeedResult {
   lighthouseResult: {

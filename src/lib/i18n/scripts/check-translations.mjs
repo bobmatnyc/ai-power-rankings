@@ -138,12 +138,12 @@ function compareTranslations() {
 
   // Generate human-readable report
   const readableReportPath = path.join(__dirname, '../translation-report.md');
-  let readableReport = `# Translation Report\n\n`;
+  let readableReport = "# Translation Report\n\n";
   readableReport += `Generated on: ${new Date().toLocaleString()}\n\n`;
-  readableReport += `## Summary\n\n`;
+  readableReport += "## Summary\n\n";
   readableReport += `Reference language: **${REFERENCE_LANG}** (${referenceKeys.length} keys)\n\n`;
-  readableReport += `| Language | Completeness | Missing Keys | Empty Keys |\n`;
-  readableReport += `|----------|-------------|-------------|------------|\n`;
+  readableReport += "| Language | Completeness | Missing Keys | Empty Keys |\n";
+  readableReport += "|----------|-------------|-------------|------------|\n";
   
   for (const lang of LANGUAGES) {
     const result = report.results[lang];
@@ -152,7 +152,7 @@ function compareTranslations() {
     }
   }
 
-  readableReport += `\n## Detailed Missing Keys\n\n`;
+  readableReport += "\n## Detailed Missing Keys\n\n";
   
   for (const lang of LANGUAGES) {
     const result = report.results[lang];
@@ -164,7 +164,7 @@ function compareTranslations() {
         result.missingKeys.forEach(key => {
           readableReport += `- ${key}\n`;
         });
-        readableReport += `\n`;
+        readableReport += "\n";
       }
       
       if (result.emptyCount > 0) {
@@ -172,7 +172,7 @@ function compareTranslations() {
         result.emptyKeys.forEach(key => {
           readableReport += `- ${key}\n`;
         });
-        readableReport += `\n`;
+        readableReport += "\n";
       }
     }
   }

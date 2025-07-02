@@ -32,11 +32,11 @@
  * - change_summary: object with movement analysis
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { getRankingsRepo, getToolsRepo, getNewsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 import type { RankingEntry, Tool, RankingPeriod } from "@/lib/json-db/schemas";
-import { RankingEngineV6, ToolMetricsV6, ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
+import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
 import {
   extractEnhancedNewsMetrics,
@@ -449,7 +449,7 @@ export async function POST(request: NextRequest) {
         ? previousPeriod?.rankings.find((r: RankingEntry) => r.tool_id === tool.id)
         : null;
 
-      let movement = undefined;
+      let movement ;
       if (previousPosition) {
         const change = previousPosition - position;
         movement = {

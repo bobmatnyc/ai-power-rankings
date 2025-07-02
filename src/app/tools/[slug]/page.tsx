@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { generateToolMetadata } from "./metadata";
 import ToolDetailClientPage from "./client-page";
 

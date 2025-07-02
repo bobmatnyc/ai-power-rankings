@@ -30,7 +30,7 @@ export function calculateNewsDecay(
 
   // Asymptotic decay curve with power of 1.5 for increasing decay rate
   // This gives us approximately 50% decay at 365 days
-  const decayFactor = 1 / (1 + Math.pow(daysOld / HALF_LIFE_DAYS, 1.5));
+  const decayFactor = 1 / (1 + (daysOld / HALF_LIFE_DAYS) ** 1.5);
 
   return decayFactor;
 }

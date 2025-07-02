@@ -69,7 +69,7 @@ export async function withConnectionRetry<T>(
       }
 
       // Exponential backoff with jitter
-      const delay = retryDelay * Math.pow(2, attempt - 1) + Math.random() * 1000;
+      const delay = retryDelay * 2 ** (attempt - 1) + Math.random() * 1000;
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }

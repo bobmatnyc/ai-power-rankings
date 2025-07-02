@@ -1,6 +1,6 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 // Rate limit configurations
 export const RATE_LIMITS = {

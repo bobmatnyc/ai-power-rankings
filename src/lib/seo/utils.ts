@@ -1,6 +1,6 @@
-import { Metadata } from "next";
-import { type Tool } from "@/types/database";
-import { type RankedTool } from "@/types/rankings";
+import type { Metadata } from "next";
+import type { Tool } from "@/types/database";
+import type { RankedTool } from "@/types/rankings";
 import { getBaseUrl } from "@/lib/get-base-url";
 
 interface GenerateMetadataProps {

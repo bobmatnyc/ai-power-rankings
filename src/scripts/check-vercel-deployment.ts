@@ -144,7 +144,7 @@ async function waitForDeployment(deploymentId: string): Promise<boolean> {
     console.log(`Deployment state: ${deployment.state}`);
 
     if (deployment.state === "READY") {
-      console.log(`✅ Deployment successful!`);
+      console.log("✅ Deployment successful!");
       console.log(`🌐 URL: https://${deployment.url}`);
       return true;
     }
@@ -224,10 +224,10 @@ async function checkVercelDeployment() {
     } else {
       console.error("\n❌ Deployment failed!");
       console.log("\n💡 To debug:");
-      console.log(`   1. Visit: https://vercel.com/ai-power-rankings/deployments`);
-      console.log(`   2. Check the failed deployment logs`);
-      console.log(`   3. Fix any TypeScript or build errors`);
-      console.log(`   4. Push fixes to trigger a new deployment`);
+      console.log("   1. Visit: https://vercel.com/ai-power-rankings/deployments");
+      console.log("   2. Check the failed deployment logs");
+      console.log("   3. Fix any TypeScript or build errors");
+      console.log("   4. Push fixes to trigger a new deployment");
       process.exit(1);
     }
   } catch (error) {

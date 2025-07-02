@@ -1,4 +1,4 @@
-import { ToolScore } from "@/types/rankings";
+import type { ToolScore } from "@/types/rankings";
 
 export interface RankingWeightsV5 {
   agenticCapability: number;

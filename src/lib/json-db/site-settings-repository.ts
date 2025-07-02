@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base-repository";
-import { SiteSettings, SiteSettingsData } from "./schemas";
+import type { SiteSettings, SiteSettingsData } from "./schemas";
 import path from "path";
 import Ajv from "ajv";
 import ajvFormats from "ajv-formats";

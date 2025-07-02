@@ -23,7 +23,7 @@ async function checkUrl(url: string): Promise<void> {
       .get(url, { timeout: 10000 }, (res) => {
         const endTime = Date.now();
         console.log(`  ✓ Status: ${res.statusCode} (${endTime - startTime}ms)`);
-        console.log(`  ✓ Headers:`, {
+        console.log("  ✓ Headers:", {
           location: res.headers.location,
           "content-type": res.headers["content-type"],
           server: res.headers.server,

@@ -218,7 +218,7 @@ async function generateToolsReport() {
             `- **Missing Data (${tool.missing_fields.length}):** ${tool.missing_fields.join(", ")}`
           );
         } else {
-          console.log(`- **Data Status:** ✅ Complete`);
+          console.log("- **Data Status:** ✅ Complete");
         }
 
         // Info summary
@@ -409,7 +409,7 @@ async function generateReportContent() {
           `- **Missing Data (${tool.missing_fields.length}):** ${tool.missing_fields.join(", ")}`
         );
       } else {
-        console.log(`- **Data Status:** ✅ Complete`);
+        console.log("- **Data Status:** ✅ Complete");
       }
 
       console.log("");

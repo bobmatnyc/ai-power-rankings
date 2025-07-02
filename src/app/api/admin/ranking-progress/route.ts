@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 // In-memory progress storage (for development)
 // In production, you might want to use Redis or a database

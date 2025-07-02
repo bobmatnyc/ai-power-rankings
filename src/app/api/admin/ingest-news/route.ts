@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import crypto from "crypto";
-import { ToolsRepository } from "@/lib/json-db/tools-repository";
+import type { ToolsRepository } from "@/lib/json-db/tools-repository";
 
 interface NewsItem {
   title: string;
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         if (existingNews) {
           report.duplicate_items++;
-          report.processing_log += `  - Skipped: duplicate URL\n`;
+          report.processing_log += "  - Skipped: duplicate URL\n";
           continue;
         }
 
@@ -257,7 +257,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           loggers.api.error(`Database connection error on item ${i}:`, error);
 
           // Stop processing remaining items if database is having issues
-          report.processing_log += `  - Stopping processing due to database connectivity issues\n`;
+          report.processing_log += "  - Stopping processing due to database connectivity issues\n";
           break;
         } else {
           report.errors.push({

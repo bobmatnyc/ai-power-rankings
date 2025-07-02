@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { getNewsRepo, getToolsRepo, getCompaniesRepo } from "@/lib/json-db";
 
@@ -160,7 +160,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         `\n--- ROLLBACK PERFORMED ---\n${report.rollback_log}`,
     });
 
-    report.rollback_log += `Rollback completed. Summary:\n`;
+    report.rollback_log += "Rollback completed. Summary:\n";
     report.rollback_log += `- News items deleted: ${report.deleted_news_items}\n`;
     report.rollback_log += `- Tools removed: ${report.removed_tools}\n`;
     report.rollback_log += `- Companies removed: ${report.removed_companies}\n`;

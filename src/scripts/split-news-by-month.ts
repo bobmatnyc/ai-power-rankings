@@ -2,7 +2,7 @@
 
 import fs from "fs-extra";
 import path from "path";
-import { NewsData, NewsArticle } from "@/lib/json-db/schemas";
+import type { NewsData, NewsArticle } from "@/lib/json-db/schemas";
 
 async function splitNewsByMonth() {
   const newsFilePath = path.join(process.cwd(), "data", "json", "news", "news.json");

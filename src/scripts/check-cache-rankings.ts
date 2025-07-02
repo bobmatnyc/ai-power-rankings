@@ -59,7 +59,7 @@ if (fs.existsSync(cacheFile)) {
   data.rankings.slice(0, 10).forEach((r) => {
     console.log(`\n#${r.rank} ${r.tool.name}`);
     console.log(`  Total Score: ${r.total_score.toFixed(2)}`);
-    console.log(`  Scores:`);
+    console.log("  Scores:");
     console.log(`    - Overall: ${r.scores.overall.toFixed(2)}`);
     console.log(`    - Base: ${r.scores.base_score}`);
     console.log(`    - News Impact: ${r.scores.news_impact.toFixed(2)}`);

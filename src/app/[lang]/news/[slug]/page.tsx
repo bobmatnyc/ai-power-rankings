@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { type Locale } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Metadata } from "next";

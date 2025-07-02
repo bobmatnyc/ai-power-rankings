@@ -1,5 +1,5 @@
-import { Metadata } from "next";
-import { markdownPages, MarkdownPageConfig } from "@/config/markdown-pages";
+import type { Metadata } from "next";
+import { markdownPages, type MarkdownPageConfig } from "@/config/markdown-pages";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 import { loadMarkdownContent } from "@/lib/markdown-renderer";
 

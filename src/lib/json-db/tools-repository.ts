@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base-repository";
-import { Tool, ToolsData } from "./schemas";
+import type { Tool, ToolsData } from "./schemas";
 import path from "path";
 import Ajv from "ajv";
 import ajvFormats from "ajv-formats";

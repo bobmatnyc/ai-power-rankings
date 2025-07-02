@@ -430,7 +430,7 @@ async function importNewsFromResearch() {
       existingSlugs.add(article.slug);
     }
 
-    console.log(`\n📊 Import Summary:`);
+    console.log("\n📊 Import Summary:");
     console.log(`   - Articles to import: ${articlesToImport.length}`);
     console.log(`   - Duplicates skipped: ${duplicates}`);
 

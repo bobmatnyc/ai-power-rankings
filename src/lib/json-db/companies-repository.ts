@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base-repository";
-import { Company, CompaniesData } from "./schemas";
+import type { Company, CompaniesData } from "./schemas";
 import path from "path";
 import Ajv from "ajv";
 import ajvFormats from "ajv-formats";

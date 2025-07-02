@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";

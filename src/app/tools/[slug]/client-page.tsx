@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import { NewsCard, type NewsItem } from "@/components/news/news-card";
-import { MetricHistory } from "@/types/database";
+import type { MetricHistory } from "@/types/database";
 import Script from "next/script";
 import {
   generateToolSchema,
@@ -124,13 +124,14 @@ export default function ToolDetailClientPage({
         return value >= 1000000
           ? `${(value / 1000000).toFixed(1)}M`
           : `${(value / 1000).toFixed(0)}k`;
-      case "currency":
+      case "currency": {
         const millions = value / 1000000;
         if (millions >= 1000) {
           const billions = millions / 1000;
           return `$${billions % 1 === 0 ? billions.toFixed(0) : billions.toFixed(1)}B`;
         }
         return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
+      }
       case "percentage":
         return `${value.toFixed(1)}%`;
       case "number":

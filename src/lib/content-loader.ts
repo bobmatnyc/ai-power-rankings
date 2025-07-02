@@ -3,7 +3,7 @@ import path from "path";
 import matter from "gray-matter";
 import { remark } from "remark";
 import html from "remark-html";
-import { Locale } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 
 export interface ContentData {
   title: string;

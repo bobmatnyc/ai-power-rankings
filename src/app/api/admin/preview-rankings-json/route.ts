@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import { getToolsRepo, getRankingsRepo, getNewsRepo } from "@/lib/json-db";
-import { RankingEngineV6, ToolMetricsV6 } from "@/lib/ranking-algorithm-v6";
+import { RankingEngineV6, type ToolMetricsV6 } from "@/lib/ranking-algorithm-v6";
 import {
   extractEnhancedNewsMetrics,
   applyEnhancedNewsMetrics,

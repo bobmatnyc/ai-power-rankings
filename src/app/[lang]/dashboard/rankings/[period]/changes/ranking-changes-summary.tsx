@@ -125,7 +125,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
     }
 
     // Executive Summary
-    narrative += `## Executive Summary\n\n`;
+    narrative += "## Executive Summary\n\n";
     narrative += `This period saw ${changes.length} significant position changes among the ${rankingsData?.rankings.length || 0} ranked AI coding tools. `;
 
     if (newEntries.length > 0) {
@@ -135,12 +135,12 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
     if (bigMoversUp.length > 0 || bigMoversDown.length > 0) {
       narrative += `Major shifts indicate ${bigMoversUp.length > bigMoversDown.length ? "increasing momentum in newer tools" : "market consolidation around established players"}.\n\n`;
     } else {
-      narrative += `The rankings remained relatively stable with minor adjustments.\n\n`;
+      narrative += "The rankings remained relatively stable with minor adjustments.\n\n";
     }
 
     // Top Rankings Changes
     if (topThreeChanges.length > 0) {
-      narrative += `## Changes in Top 3\n\n`;
+      narrative += "## Changes in Top 3\n\n";
       topThreeChanges.forEach((entry) => {
         if (entry.movement?.direction === "up") {
           narrative += `- **${entry.tool_name}** climbed to #${entry.position} (up ${entry.movement.change} position${entry.movement.change > 1 ? "s" : ""})\n`;
@@ -155,7 +155,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
 
     // New Entries
     if (newEntries.length > 0) {
-      narrative += `## New Entries\n\n`;
+      narrative += "## New Entries\n\n";
       newEntries.slice(0, 5).forEach((entry) => {
         narrative += `- **${entry.tool_name}** debuts at #${entry.position} with a score of ${entry.score.toFixed(1)}`;
         if (entry.primary_reason) {
@@ -171,7 +171,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
 
     // Biggest Movers Up
     if (bigMoversUp.length > 0) {
-      narrative += `## Biggest Gainers\n\n`;
+      narrative += "## Biggest Gainers\n\n";
       bigMoversUp.slice(0, 5).forEach((entry) => {
         narrative += `- **${entry.tool_name}** jumped ${entry.movement_change} position${entry.movement_change > 1 ? "s" : ""} to #${entry.position}`;
         if (entry.primary_reason) {
@@ -184,7 +184,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
 
     // Biggest Movers Down
     if (bigMoversDown.length > 0) {
-      narrative += `## Notable Declines\n\n`;
+      narrative += "## Notable Declines\n\n";
       bigMoversDown.slice(0, 5).forEach((entry) => {
         narrative += `- **${entry.tool_name}** fell ${Math.abs(entry.movement_change)} position${Math.abs(entry.movement_change) > 1 ? "s" : ""} to #${entry.position}`;
         if (entry.primary_reason) {
@@ -196,7 +196,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
     }
 
     // Key Insights
-    narrative += `## Key Insights\n\n`;
+    narrative += "## Key Insights\n\n";
 
     // Analyze patterns
     const autonomousAgents = changes.filter(
@@ -218,7 +218,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
     }
 
     // Footer
-    narrative += `---\n\n`;
+    narrative += "---\n\n";
     narrative += `*Generated from AI Power Rankings data for ${formatPeriodDisplay(period)}*\n`;
     narrative += `*Total tools ranked: ${rankingsData?.rankings.length || 0}*\n`;
     narrative += `*Algorithm version: ${rankingsData?.algorithm_version || "v6-news"}*`;

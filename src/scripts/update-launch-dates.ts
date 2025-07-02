@@ -83,14 +83,14 @@ async function updateLaunchDates() {
     console.log(`\n✅ Updated ${updatedCount} tools with launch dates`);
 
     if (notFoundTools.length > 0) {
-      console.log(`\n⚠️  Tools not found in database:`);
+      console.log("\n⚠️  Tools not found in database:");
       notFoundTools.forEach((name) => console.log(`   - ${name}`));
     }
 
     // List tools without launch dates
     const toolsWithoutLaunchDate = tools.filter((t) => !t.launch_date && !launchDates[t.name]);
     if (toolsWithoutLaunchDate.length > 0) {
-      console.log(`\n📋 Tools still needing launch dates:`);
+      console.log("\n📋 Tools still needing launch dates:");
       toolsWithoutLaunchDate.forEach((t) => console.log(`   - ${t.name} (ID: ${t.id})`));
     }
   } catch (error) {

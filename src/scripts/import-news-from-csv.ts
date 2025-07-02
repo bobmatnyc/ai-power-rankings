@@ -53,7 +53,7 @@ function parseRelatedTools(relatedToolsStr: string): string[] {
 
   try {
     // Remove brackets and quotes, then split
-    const cleaned = relatedToolsStr.replace(/[\[\]"]/g, "");
+    const cleaned = relatedToolsStr.replace(/[[\]"]/g, "");
     if (!cleaned) return [];
 
     return cleaned
@@ -180,7 +180,7 @@ async function importNewsFromCSV() {
       existingSlugs.add(article.slug);
     }
 
-    console.log(`\n📊 Import Summary:`);
+    console.log("\n📊 Import Summary:");
     console.log(`   - Articles to import: ${articlesToImport.length}`);
     console.log(`   - Duplicates skipped: ${duplicates}`);
     console.log(`   - Invalid entries skipped: ${skipped}`);

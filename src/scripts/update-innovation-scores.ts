@@ -295,7 +295,7 @@ async function updateInnovationScores() {
         await fs.writeFile(filePath, JSON.stringify(data, null, 2) + "\n");
         console.log(`   ✅ Updated ${updatedCount} innovation scores`);
       } else {
-        console.log(`   ⏭️  No updates needed`);
+        console.log("   ⏭️  No updates needed");
       }
     }
 

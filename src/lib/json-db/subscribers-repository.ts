@@ -1,5 +1,5 @@
 import { BaseRepository } from "./base-repository";
-import { Subscriber, SubscribersData } from "./schemas";
+import type { Subscriber, SubscribersData } from "./schemas";
 import path from "path";
 import Ajv from "ajv";
 import ajvFormats from "ajv-formats";

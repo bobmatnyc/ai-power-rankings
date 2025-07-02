@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
-import { RankingEngineV6, ToolMetricsV6, ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
-import { RankingChangeAnalyzer, RankingChangeAnalysis } from "@/lib/ranking-change-analyzer";
+import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
+import { RankingChangeAnalyzer, type RankingChangeAnalysis } from "@/lib/ranking-change-analyzer";
 import { getToolsRepo, getRankingsRepo, getNewsRepo } from "@/lib/json-db";
 import { extractEnhancedNewsMetrics, applyEnhancedNewsMetrics } from "@/lib/ranking-news-enhancer";
 

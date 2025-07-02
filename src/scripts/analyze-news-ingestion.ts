@@ -99,7 +99,7 @@ async function analyzeNewsIngestion() {
 
     // 5. Analysis summary
     console.log("\n=== ANALYSIS SUMMARY ===");
-    console.log(`\nProbable reasons for only 1/10 news items being processed:`);
+    console.log("\nProbable reasons for only 1/10 news items being processed:");
 
     if (existingTools.size === 0) {
       console.log("1. ❗ No tools exist in the database - all tools will create pending tools");
