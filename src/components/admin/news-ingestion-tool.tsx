@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +10,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Upload, FileText, Trash2, Eye, Download } from "lucide-react";
+import {
+  Loader2,
+  Upload,
+  FileText,
+  Trash2,
+  Eye,
+  Download,
+  Link,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 interface IngestionReport {
   id: string;
@@ -29,18 +41,43 @@ interface RollbackPreview {
   news_items_to_delete: number;
   tools_to_review: number;
   companies_to_review: number;
-  warnings: any[];
+  warnings: string[];
+}
+
+interface ArticlePreview {
+  title: string;
+  content: string;
+  summary: string;
+  author: string;
+  published_date: string;
+  source: string;
+  source_url: string;
+  tags: string[];
+  tool_mentions: string[];
 }
 
 export function NewsIngestionTool() {
   const [isUploading, setIsUploading] = useState(false);
   const [generatePreview, setGeneratePreview] = useState(true);
-  const [uploadResult, setUploadResult] = useState<any>(null);
+  const [uploadResult, setUploadResult] = useState<{
+    message: string;
+    report_id: string;
+    warnings?: string[];
+  } | null>(null);
   const [reports, setReports] = useState<IngestionReport[]>([]);
   const [rollbackPreview, setRollbackPreview] = useState<RollbackPreview | null>(null);
   const [selectedReportId, setSelectedReportId] = useState<string>("");
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
   const [isRollingBack, setIsRollingBack] = useState(false);
+
+  // Manual ingestion state
+  const [manualUrl, setManualUrl] = useState("");
+  const [isLoadingArticle, setIsLoadingArticle] = useState(false);
+  const [isSavingArticle, setIsSavingArticle] = useState(false);
+  const [articlePreview, setArticlePreview] = useState<ArticlePreview | null>(null);
+  const [manualError, setManualError] = useState<string | null>(null);
+  const [manualSuccess, setManualSuccess] = useState(false);
+  const [manualSuccessMessage, setManualSuccessMessage] = useState("");
 
   const handleFileUpload = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -176,6 +213,94 @@ export function NewsIngestionTool() {
     URL.revokeObjectURL(url);
   };
 
+  // Manual ingestion functions
+  const handleFetchArticle = async () => {
+    if (!manualUrl.trim()) {
+      setManualError("Please enter a URL");
+      return;
+    }
+
+    setIsLoadingArticle(true);
+    setManualError(null);
+    setArticlePreview(null);
+    setManualSuccess(false);
+
+    try {
+      const response = await fetch("/api/admin/fetch-article", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: manualUrl }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch article");
+      }
+
+      setArticlePreview(data);
+    } catch (err) {
+      setManualError(err instanceof Error ? err.message : "Failed to fetch article");
+    } finally {
+      setIsLoadingArticle(false);
+    }
+  };
+
+  const handleSaveArticle = async () => {
+    if (!articlePreview) {
+      return;
+    }
+
+    setIsSavingArticle(true);
+    setManualError(null);
+
+    try {
+      const response = await fetch("/api/admin/manual-ingest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(articlePreview),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to save article");
+      }
+
+      setManualSuccess(true);
+      setManualSuccessMessage(`Successfully ingested: ${articlePreview.title}`);
+      setArticlePreview(null);
+      setManualUrl("");
+    } catch (err) {
+      setManualError(err instanceof Error ? err.message : "Failed to save article");
+    } finally {
+      setIsSavingArticle(false);
+    }
+  };
+
+  const handleInputChange = (field: keyof ArticlePreview, value: string | string[]) => {
+    if (!articlePreview) {
+      return;
+    }
+    setArticlePreview({ ...articlePreview, [field]: value });
+  };
+
+  const handleTagsChange = (value: string) => {
+    const tags = value
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+    handleInputChange("tags", tags);
+  };
+
+  const handleToolMentionsChange = (value: string) => {
+    const mentions = value
+      .split(",")
+      .map((mention) => mention.trim())
+      .filter(Boolean);
+    handleInputChange("tool_mentions", mentions);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -193,8 +318,9 @@ export function NewsIngestionTool() {
       </div>
 
       <Tabs defaultValue="upload" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="upload">Upload News</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="upload">Bulk Upload</TabsTrigger>
+          <TabsTrigger value="manual">Manual Add</TabsTrigger>
           <TabsTrigger value="reports">View Reports</TabsTrigger>
           <TabsTrigger value="rollback">Rollback/Remove</TabsTrigger>
         </TabsList>
@@ -485,6 +611,202 @@ export function NewsIngestionTool() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        <TabsContent value="manual">
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Add Article from URL</CardTitle>
+                <CardDescription>
+                  Enter a URL to fetch and parse the article content
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-4">
+                  <Input
+                    type="url"
+                    placeholder="https://example.com/article"
+                    value={manualUrl}
+                    onChange={(e) => setManualUrl(e.target.value)}
+                    disabled={isLoadingArticle}
+                    className="flex-1"
+                  />
+                  <Button
+                    onClick={handleFetchArticle}
+                    disabled={isLoadingArticle || !manualUrl.trim()}
+                  >
+                    {isLoadingArticle ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Fetching...
+                      </>
+                    ) : (
+                      <>
+                        <Link className="mr-2 h-4 w-4" />
+                        Fetch Article
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {manualError && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{manualError}</AlertDescription>
+              </Alert>
+            )}
+
+            {manualSuccess && (
+              <Alert>
+                <CheckCircle className="h-4 w-4" />
+                <AlertDescription>
+                  {manualSuccessMessage} You can add another article or view all articles in the{" "}
+                  <Link href="/dashboard/news-ingestion" className="underline">
+                    reports tab
+                  </Link>
+                  .
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {articlePreview && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Article Preview</CardTitle>
+                  <CardDescription>
+                    Review and edit the article details before saving
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      value={articlePreview.title}
+                      onChange={(e) => handleInputChange("title", e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="summary">Summary</Label>
+                    <Textarea
+                      id="summary"
+                      value={articlePreview.summary}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        handleInputChange("summary", e.target.value)
+                      }
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="content">Content</Label>
+                    <Textarea
+                      id="content"
+                      value={articlePreview.content}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        handleInputChange("content", e.target.value)
+                      }
+                      rows={10}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="author">Author</Label>
+                      <Input
+                        id="author"
+                        value={articlePreview.author}
+                        onChange={(e) => handleInputChange("author", e.target.value)}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="published_date">Published Date</Label>
+                      <Input
+                        id="published_date"
+                        type="datetime-local"
+                        value={articlePreview.published_date}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          handleInputChange("published_date", e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="source">Source</Label>
+                      <Input
+                        id="source"
+                        value={articlePreview.source}
+                        onChange={(e) => handleInputChange("source", e.target.value)}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="source_url">Source URL</Label>
+                      <Input
+                        id="source_url"
+                        value={articlePreview.source_url}
+                        onChange={(e) => handleInputChange("source_url", e.target.value)}
+                        disabled
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="tags">Tags (comma-separated)</Label>
+                    <Input
+                      id="tags"
+                      value={articlePreview.tags.join(", ")}
+                      onChange={(e) => handleTagsChange(e.target.value)}
+                      placeholder="ai, technology, innovation"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="tool_mentions">Tool Mentions (comma-separated tool IDs)</Label>
+                    <Input
+                      id="tool_mentions"
+                      value={articlePreview.tool_mentions.join(", ")}
+                      onChange={(e) => handleToolMentionsChange(e.target.value)}
+                      placeholder="claude, chatgpt, gemini"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Enter tool IDs that are mentioned in this article
+                    </p>
+                  </div>
+
+                  <div className="flex justify-end gap-4 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setArticlePreview(null);
+                        setManualUrl("");
+                        setManualSuccess(false);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSaveArticle} disabled={isSavingArticle}>
+                      {isSavingArticle ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        "Save Article"
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </div>

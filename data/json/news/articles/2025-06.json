@@ -1,5 +1,20 @@
 [
   {
+    "id": "27c91355-9392-48f3-9b05-3e98eef9a5be",
+    "slug": "introducing-agent-mode-beta-enabling-lovable-to-think-plan-and-take-actions-autonomously",
+    "title": "Introducing Agent Mode (Beta): enabling Lovable to think, plan, and take actions autonomously",
+    "content": "In the next couple of days we’re rolling out Lovable’s Agent Mode to beta, enabling Lovable to think, plan, and take actions autonomously. Once the mode is available to you, you’ll be able to opt in through settings. While still in beta, this upgrade already: Reduces build error rates by 90% Cuts down on unwanted changes Makes Lovable better at helping you reach your goals How to enable Agent Mode (Beta) Once you have received access, you can enable Agent Mode by going to your project’s dropdown settings and turning on the toggle, as shown below. Note: Access to Agent Mode (Beta) is being rolled out gradually starting June 30, so you may not have it yet. New capabilities through actions Agent Mode has access to a new series of capabilities: Search your codebase to locate the exact files, functions, or components it needs to locate. Read files on demand to understand your app’s structure and apply edits with full context. Inspect logs and network activity to identify and debug errors without you needing to feed in the errors yourself. Search the web in real-time to fetch documentation, content, images, or even screenshots needed to complete a task. Generate and edit images for your apps on demand. But this is just the beginning. We’ll be adding many more tools in the coming weeks, making Lovable smarter and more capable. What does Agent mean? The default version of Lovable tries to do everything in one single step , regardless of the complexity of the task. With this upgrade, Lovable will start to act more like a real developer . For every user request, it will: First interpret what you are asking for Explore the codebase as needed Uncover missing context Make the right changes Auto-fix issues as they come up Wrap up with a clear summary All without you needing to hand-hold it. This enables Lovable to more consistently succeed at ambitious tasks — whether it’s adding major features, fixing bugs, making precise changes without breaking other parts, or integrating with third-party systems. Pricing Agent Mode is priced differently from other modes. In our current Default and Chat Mode , each message costs 1 credit regardless of the complexity of the edit. Agent Mode (beta) uses usage-based pricing — requests can cost less than 1 credit or several credits, depending on their complexity. This ensures you only pay for what you actually use. For example, a simple message that reads 1 file and edits 1 file will cost 0.8 credits. On the other hand, a message that leads to 5 file reads, 4 file edits and 1 image generation will cost 2.2 credits. Note: Agent Mode pricing is in beta and subject to change as we learn about usage patterns. Mode Cost Default 1 credit per message Chat Mode 1 credit per message Agent Mode Usage-based",
+    "summary": "Read this article on the Lovable blog",
+    "author": "@Lovable_dev",
+    "published_date": "2025-06-30T12:00:00.000Z",
+    "source": "Lovable",
+    "source_url": "https://lovable.dev/blog/agent-mode-beta",
+    "tags": ["computer-vision", "developer-tools"],
+    "tool_mentions": [],
+    "created_at": "2025-07-02T03:01:16.229Z",
+    "updated_at": "2025-07-02T03:01:16.229Z"
+  },
+  {
     "id": "369faa4a-192d-44df-9287-44294de5ab5c",
     "slug": "new-gemini-tools-for-students-and-educators-google-blog",
     "title": "New Gemini tools for students and educators - Google Blog",

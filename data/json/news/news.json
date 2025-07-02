@@ -6613,7 +6613,11 @@
       "2024-06": ["197bf3f57a0-379f54b4-455c3809"]
     },
     "reportsByStatus": {
-      "completed": ["2244c57a-baea-45b9-b47f-808510019445", "d703a9ce-be8d-458c-ad84-bfcdd11829a6"]
+      "completed": [
+        "2244c57a-baea-45b9-b47f-808510019445",
+        "d703a9ce-be8d-458c-ad84-bfcdd11829a6",
+        "0b43c593-debd-4706-81e5-a03cce76c477"
+      ]
     }
   },
   "ingestion_reports": [
@@ -6708,13 +6712,31 @@
       "id": "d703a9ce-be8d-458c-ad84-bfcdd11829a6",
       "created_at": "2025-06-30T15:06:38.304Z",
       "updated_at": "2025-06-30T15:06:38.304Z"
+    },
+    {
+      "filename": "manual-ingestion",
+      "status": "completed",
+      "total_items": 1,
+      "processed_items": 1,
+      "failed_items": 0,
+      "duplicate_items": 0,
+      "new_tools_created": 0,
+      "new_companies_created": 0,
+      "processing_log": "Manually ingested article: Introducing Agent Mode (Beta): enabling Lovable to think, plan, and take actions autonomously",
+      "errors": [],
+      "ingested_news_ids": ["27c91355-9392-48f3-9b05-3e98eef9a5be"],
+      "created_tools": [],
+      "created_companies": [],
+      "id": "0b43c593-debd-4706-81e5-a03cce76c477",
+      "created_at": "2025-07-02T03:01:16.230Z",
+      "updated_at": "2025-07-02T03:01:16.230Z"
     }
   ],
   "metadata": {
     "total": 0,
-    "last_updated": "2025-07-01T03:14:27.976Z",
+    "last_updated": "2025-07-02T03:01:16.232Z",
     "version": "1.0.0",
-    "ingestion_reports_count": 2,
+    "ingestion_reports_count": 3,
     "note": "Articles have been moved to monthly files in the articles/ directory"
   }
 }
