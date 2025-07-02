@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Newspaper, Star, ArrowUp } from "lucide-react";
+import { ArrowRight, Star, ArrowUp } from "lucide-react";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
 import { RankingsTableSkeleton } from "@/components/ui/skeleton";
