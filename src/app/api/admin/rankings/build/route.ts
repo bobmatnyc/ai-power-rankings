@@ -130,7 +130,12 @@ function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetric
 
     // Agentic capabilities - using category and name-based defaults
     agentic_capability: getCategoryBasedAgenticScore(tool.category, tool.name),
-    swe_bench_score: businessMetrics.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
+    swe_bench_score: 
+      businessMetrics.swe_bench?.verified || 
+      businessMetrics.swe_bench?.full || 
+      businessMetrics.swe_bench?.lite || 
+      businessMetrics.swe_bench_score || 
+      (isPremium ? 45 : isAutonomous ? 35 : 20),
     multi_file_capability: isAutonomous ? 9 : technical.multi_file_support ? 7 : 4,
     planning_depth: isAutonomous ? 8.5 : 6,
     context_utilization: isPremium ? 8 : 6.5,

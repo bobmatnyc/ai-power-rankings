@@ -135,9 +135,9 @@ export class RankingEngineV6 {
   /**
    * Apply temporal decay to innovation scores
    */
-  calculateInnovationWithDecay(innovations: Innovation[] | undefined, currentDate: Date): number {
+  calculateInnovationWithDecay(innovations: Innovation[] | undefined, currentDate: Date, baseScore?: number): number {
     if (!innovations || innovations.length === 0) {
-      return 5.0; // Default innovation score
+      return baseScore || 5.0; // Use base score or default innovation score
     }
 
     return innovations.reduce((total, innovation) => {
@@ -349,7 +349,7 @@ export class RankingEngineV6 {
     // Calculate factor scores
     const factorScores = {
       agenticCapability: this.calculateAgenticCapability(metrics),
-      innovation: this.calculateInnovationWithDecay(metrics.innovations, currentDate),
+      innovation: this.calculateInnovationWithDecay(metrics.innovations, currentDate, metrics.innovation_score),
       technicalPerformance: this.calculateTechnicalPerformance(metrics),
       developerAdoption: this.calculateDeveloperAdoption(metrics),
       marketTraction: this.calculateMarketTraction(metrics),

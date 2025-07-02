@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import type { NextAuthConfig } from "next-auth";
-import { isAuthorizedEmail } from "@/lib/auth-config.js";
+import { isAuthorizedEmail } from "@/lib/auth-config";
 
 export const config: NextAuthConfig = {
   providers: [

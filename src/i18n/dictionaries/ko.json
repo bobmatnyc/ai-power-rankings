@@ -124,16 +124,15 @@
       "keyModifiersDescription": "세 가지 정교한 수정자가 공정하고 정확한 랭킹을 보장합니다:",
       "factors": {
         "agenticCapability": "에이전틱 능력 (30%) - 자율 코딩 능력",
-        "innovation": "혁신 (15%) - 6개월 감쇠 반감기 포함",
+        "innovation": {
+          "name": "혁신",
+          "description": "기술적 돌파구와 기능 혁신"
+        },
         "technicalPerformance": "기술 성능 (12.5%) - SWE-bench 중심",
         "marketTraction": "시장 견인력 (12.5%) - 수익 품질 조정",
         "agentic": {
           "name": "에이전틱 능력",
           "description": "자율 코딩 능력과 다단계 작업 완료"
-        },
-        "innovation": {
-          "name": "혁신",
-          "description": "기술적 돌파구와 기능 혁신"
         },
         "performance": {
           "name": "기술 성능",
@@ -231,6 +230,37 @@
       },
       "methodologyText": "우리의 포괄적인 방법론은 여러 차원에서 AI 코딩 툴을 평가하여 실제 성능과 채택을 반영하는 공정하고 정확한 랭킹을 보장합니다.",
       "viewMethodology": "전체 방법론 보기"
+    },
+    "tierLegend": {
+      "title": "랭킹 등급",
+      "description": "도구는 순위에 따라 등급이 지정됩니다",
+      "tiers": {
+        "S": {
+          "label": "엘리트",
+          "range": "상위 5개",
+          "description": "최고의 AI 코딩 도구"
+        },
+        "A": {
+          "label": "우수",
+          "range": "6-15",
+          "description": "뛰어난 성능을 가진 탁월한 도구"
+        },
+        "B": {
+          "label": "양호",
+          "range": "16-25",
+          "description": "견고하고 신뢰할 수 있는 도구"
+        },
+        "C": {
+          "label": "평균",
+          "range": "26-35",
+          "description": "특정 사용 사례에 적합한 도구"
+        },
+        "D": {
+          "label": "평균 이하",
+          "range": "36+",
+          "description": "기능이나 채택이 제한적인 도구"
+        }
+      }
     }
   },
   "news": {
@@ -305,7 +335,8 @@
         "performance": "성능",
         "businessMetrics": "비즈니스",
         "scores": "점수",
-        "history": "히스토리"
+        "history": "히스토리",
+        "pricing": "가격"
       },
       "performance": {
         "title": "기술 성능",
@@ -361,7 +392,9 @@
       "testing-tool": "테스팅 툴",
       "code-review": "코드 리뷰",
       "code-generation": "코드 생성"
-    }
+    },
+    "notFound": "도구를 찾을 수 없습니다",
+    "backToTools": "도구 목록으로 돌아가기"
   },
   "newsletter": {
     "form": {
@@ -430,7 +463,8 @@
       "processing": "요청을 처리중...",
       "success": {
         "title": "성공적으로 구독 해지됨",
-        "message": "AI Power Rankings 뉴스레터 구독이 해지되었습니다. 떠나시는 것이 아쉽습니다!"
+        "message": "AI Power Rankings 뉴스레터 구독이 해지되었습니다. 떠나시는 것이 아쉽습니다!",
+        "description": "AI Power Ranking 뉴스레터 구독이 취소되었습니다. 떠나시게 되어 아쉽습니다!"
       },
       "errors": {
         "missingToken": {
@@ -448,10 +482,36 @@
         "unexpected": {
           "title": "오류",
           "message": "예상치 못한 오류가 발생했습니다. 다시 시도해주세요."
-        }
+        },
+        "unsubscribeFailed": "구독 취소 요청을 처리할 수 없습니다. 나중에 다시 시도해주세요.",
+        "default": "예기치 않은 오류가 발생했습니다. 나중에 다시 시도해주세요."
       },
       "resubscribe": "마음이 바뀌셨나요? 언제든지 다시 구독할 수 있습니다.",
-      "subscribeAgain": "다시 구독"
+      "subscribeAgain": "다시 구독",
+      "error": {
+        "title": "구독 취소 오류"
+      }
+    },
+    "verify": {
+      "goToHomepage": "[TRANSLATE] Go to Homepage",
+      "tryAgain": "[TRANSLATE] Try Again",
+      "success": {
+        "title": "[TRANSLATE] Email Verified!",
+        "description": "[TRANSLATE] Your email has been successfully verified. You'll start receiving our weekly newsletter."
+      },
+      "alreadyVerified": {
+        "title": "[TRANSLATE] Already Verified",
+        "description": "[TRANSLATE] This email address has already been verified. You're all set!"
+      },
+      "error": {
+        "title": "[TRANSLATE] Verification Error"
+      },
+      "errors": {
+        "default": "[TRANSLATE] An unexpected error occurred. Please try again.",
+        "missingToken": "[TRANSLATE] The verification link appears to be incomplete.",
+        "invalidToken": "[TRANSLATE] This verification link is invalid or has expired.",
+        "verificationFailed": "[TRANSLATE] We couldn't verify your email at this time. Please try again later."
+      }
     }
   },
   "methodology": {
@@ -613,7 +673,12 @@
     },
     "team": {
       "title": "팀",
-      "description": "AI Power Rankings는 AI와 소프트웨어 개발의 교차점에 열정을 가진 개발자와 데이터 사이언티스트 팀에 의해 관리됩니다."
+      "description": "AI Power Rankings는 AI와 소프트웨어 개발의 교차점에 열정을 가진 개발자와 데이터 사이언티스트 팀에 의해 관리됩니다.",
+      "description1": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
+      "description2": "[TRANSLATE] I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
+      "description3": "[TRANSLATE] Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
+      "hyperdevLink": "[TRANSLATE] HyperDev",
+      "reportIssue": "[TRANSLATE] Report an Issue"
     },
     "contact": {
       "title": "연락하기",
@@ -688,6 +753,12 @@
         }
       },
       "conclusion": "그래서 우리는 AI Power Ranking을 만들었습니다 - 노이즈를 뚫고 명확하고 데이터 드리븐한 인사이트를 제공하기 위해."
+    },
+    "cta": {
+      "title": "[TRANSLATE] Ready to Explore?",
+      "description": "[TRANSLATE] Dive into our rankings to discover the best AI coding tools for your needs.",
+      "exploreButton": "[TRANSLATE] Explore Rankings",
+      "methodologyButton": "[TRANSLATE] Learn Our Methodology"
     }
   },
   "sidebar": {

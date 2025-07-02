@@ -566,6 +566,37 @@
       "factors": "评分因子",
       "weights": "权重分配",
       "calculation": "计算过程"
+    },
+    "tierLegend": {
+      "title": "排名等级",
+      "description": "工具根据其排名位置分配等级",
+      "tiers": {
+        "S": {
+          "label": "精英",
+          "range": "前5名",
+          "description": "最顶尖的AI编码工具"
+        },
+        "A": {
+          "label": "优秀",
+          "range": "6-15",
+          "description": "性能卓越的杰出工具"
+        },
+        "B": {
+          "label": "良好",
+          "range": "16-25",
+          "description": "稳定可靠的工具"
+        },
+        "C": {
+          "label": "平均",
+          "range": "26-35",
+          "description": "适合特定用例的工具"
+        },
+        "D": {
+          "label": "低于平均",
+          "range": "36+",
+          "description": "功能或采用度有限的工具"
+        }
+      }
     }
   },
   "news": {

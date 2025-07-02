@@ -68,10 +68,10 @@ describe("i18n imports", () => {
     const configContent = await fs.readFile(configPath, "utf-8");
     
     // Extract locales array from config
-    const localesMatch = configContent.match(/locales:\s*\[(.*?)\]/s);
+    const localesMatch = configContent.match(/locales:\s*\[(.*?)\]/);
     expect(localesMatch).not.toBeNull();
     
-    if (localesMatch) {
+    if (localesMatch && localesMatch[1]) {
       const localesStr = localesMatch[1];
       const configLocales = localesStr
         .split(",")

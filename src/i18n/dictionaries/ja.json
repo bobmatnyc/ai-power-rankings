@@ -443,7 +443,38 @@
       "all": "すべて"
     },
     "noResults": "結果が見つかりません",
-    "showingResults": "{total}個中{count}個のツールを表示"
+    "showingResults": "{total}個中{count}個のツールを表示",
+    "tierLegend": {
+      "title": "ランキング階層",
+      "description": "ツールはランキング順位に基づいて階層に割り当てられます",
+      "tiers": {
+        "S": {
+          "label": "エリート",
+          "range": "トップ5",
+          "description": "最高峰のAIコーディングツール"
+        },
+        "A": {
+          "label": "優秀",
+          "range": "6-15",
+          "description": "高いパフォーマンスを持つ優れたツール"
+        },
+        "B": {
+          "label": "良好",
+          "range": "16-25",
+          "description": "堅実で信頼性の高いツール"
+        },
+        "C": {
+          "label": "平均的",
+          "range": "26-35",
+          "description": "特定の用途に適したツール"
+        },
+        "D": {
+          "label": "平均以下",
+          "range": "36+",
+          "description": "機能や採用が限定的なツール"
+        }
+      }
+    }
   },
   "news": {
     "title": "AI Tools News",

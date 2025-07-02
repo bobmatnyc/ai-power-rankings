@@ -15,12 +15,12 @@ const __dirname = dirname(__filename);
 const REQUIRED_IMPORTS = [
   // Server-side imports that need .js extension
   { file: "src/middleware.ts", imports: [
-    { from: "./i18n/config.js", expected: true },
-    { from: "@/auth.js", expected: true },
-    { from: "@/lib/auth-config.js", expected: true }
+    { from: "./i18n/config", expected: true, noExtension: true },
+    { from: "@/auth", expected: true, noExtension: true },
+    { from: "@/lib/auth-config", expected: true, noExtension: true }
   ]},
   { file: "src/auth.ts", imports: [
-    { from: "@/lib/auth-config.js", expected: true }
+    { from: "@/lib/auth-config", expected: true, noExtension: true }
   ]},
   // Client-side imports that should NOT have .js extension
   { file: "src/app/[lang]/page.tsx", imports: [

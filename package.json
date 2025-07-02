@@ -191,7 +191,7 @@
     ],
     "src/auth.ts": [
       "npm run test:i18n"
-    ],
+    ]
   },
   "browserslist": {
     "production": [
