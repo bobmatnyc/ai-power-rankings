@@ -13,11 +13,13 @@
     "build": "tsx scripts/generate-static-rankings.ts && next build",
     "build:with-types": "npm run type-check && next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:errors-only": "next lint --max-warnings 0",
-    "lint:fix": "next lint --fix",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "lint": "biome lint src",
+    "lint:errors-only": "biome lint src --max-diagnostics=0",
+    "lint:fix": "biome lint src --write",
+    "format": "biome format src --write",
+    "format:check": "biome format src",
+    "biome:check": "biome check src",
+    "biome:fix": "biome check src --write",
     "type-check": "tsc --noEmit",
     "build:types": "tsc --noEmit",
     "ci:local": "npm run lint && npm run type-check && npm run format:check && npm run test",
@@ -153,6 +155,7 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.0.6",
     "@eslint/eslintrc": "^3",
     "@next/bundle-analyzer": "^15.3.4",
     "@tailwindcss/typography": "^0.5.16",
@@ -187,11 +190,10 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
+      "biome check --write"
     ],
-    "*.{json,md,css,scss}": [
-      "prettier --write"
+    "*.{json,css,scss}": [
+      "biome format --write"
     ],
     "src/middleware.ts": [
       "npm run test:i18n"
