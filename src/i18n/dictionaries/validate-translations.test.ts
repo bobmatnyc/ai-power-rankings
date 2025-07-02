@@ -4,26 +4,18 @@ import path from "path";
 
 describe("Translation Files Validation", () => {
   const dictionariesPath = path.join(__dirname, ".");
-  const enDict = JSON.parse(
-    fs.readFileSync(path.join(dictionariesPath, "en.json"), "utf8")
-  );
+  const enDict = JSON.parse(fs.readFileSync(path.join(dictionariesPath, "en.json"), "utf8"));
 
   const languageFiles = fs
     .readdirSync(dictionariesPath)
     .filter(
-      (f) =>
-        f.endsWith(".json") &&
-        f !== "en.json" &&
-        !f.includes("backup") &&
-        !f.includes("test")
+      (f) => f.endsWith(".json") && f !== "en.json" && !f.includes("backup") && !f.includes("test")
     );
 
   describe("English values in non-English files", () => {
     languageFiles.forEach((langFile) => {
       it(`${langFile} should not contain English values`, () => {
-        const langDict = JSON.parse(
-          fs.readFileSync(path.join(dictionariesPath, langFile), "utf8")
-        );
+        const langDict = JSON.parse(fs.readFileSync(path.join(dictionariesPath, langFile), "utf8"));
 
         // Check common sections that should definitely be translated
         const criticalPaths = [
@@ -37,19 +29,12 @@ describe("Translation Files Validation", () => {
 
         const englishValueCount: Record<string, number> = {};
 
-        function checkForEnglishValues(
-          obj: any,
-          enObj: any,
-          path: string[] = []
-        ) {
+        function checkForEnglishValues(obj: any, enObj: any, path: string[] = []) {
           for (const key in obj) {
             const currentPath = [...path, key];
             const pathStr = currentPath.join(".");
 
-            if (
-              typeof obj[key] === "string" &&
-              typeof enObj?.[key] === "string"
-            ) {
+            if (typeof obj[key] === "string" && typeof enObj?.[key] === "string") {
               // Check if the value is identical to English
               if (obj[key] === enObj[key]) {
                 // For certain keys, English values might be acceptable
@@ -72,8 +57,7 @@ describe("Translation Files Validation", () => {
                 );
 
                 if (!isAcceptable) {
-                  englishValueCount[pathStr] =
-                    (englishValueCount[pathStr] || 0) + 1;
+                  englishValueCount[pathStr] = (englishValueCount[pathStr] || 0) + 1;
                 }
               }
             } else if (
@@ -93,9 +77,7 @@ describe("Translation Files Validation", () => {
         const suspiciousThreshold = 50; // If more than 50 keys have English values, it's suspicious
 
         if (totalEnglishValues > suspiciousThreshold) {
-          console.error(
-            `\n⚠️  ${langFile} has ${totalEnglishValues} English values!`
-          );
+          console.error(`\n⚠️  ${langFile} has ${totalEnglishValues} English values!`);
           console.error("Sample of English values found:");
           Object.entries(englishValueCount)
             .slice(0, 10)
@@ -106,19 +88,11 @@ describe("Translation Files Validation", () => {
 
         // Check critical paths specifically
         criticalPaths.forEach((pathArray) => {
-          const value = pathArray.reduce(
-            (obj, key) => obj?.[key],
-            langDict as any
-          );
-          const enValue = pathArray.reduce(
-            (obj, key) => obj?.[key],
-            enDict as any
-          );
+          const value = pathArray.reduce((obj, key) => obj?.[key], langDict as any);
+          const enValue = pathArray.reduce((obj, key) => obj?.[key], enDict as any);
 
           if (value && enValue && value === enValue) {
-            console.error(
-              `\n❌ Critical translation missing in ${langFile}:`
-            );
+            console.error(`\n❌ Critical translation missing in ${langFile}:`);
             console.error(`   Path: ${pathArray.join(".")}`);
             console.error(`   Value: "${value}" (same as English)`);
           }
@@ -132,15 +106,9 @@ describe("Translation Files Validation", () => {
   describe("Translation completeness", () => {
     languageFiles.forEach((langFile) => {
       it(`${langFile} should have all required keys`, () => {
-        const langDict = JSON.parse(
-          fs.readFileSync(path.join(dictionariesPath, langFile), "utf8")
-        );
+        const langDict = JSON.parse(fs.readFileSync(path.join(dictionariesPath, langFile), "utf8"));
 
-        function getMissingKeys(
-          enObj: any,
-          langObj: any,
-          path: string[] = []
-        ): string[] {
+        function getMissingKeys(enObj: any, langObj: any, path: string[] = []): string[] {
           const missing: string[] = [];
 
           for (const key in enObj) {
@@ -154,9 +122,7 @@ describe("Translation Files Validation", () => {
               typeof langObj[key] === "object" &&
               langObj[key] !== null
             ) {
-              missing.push(
-                ...getMissingKeys(enObj[key], langObj[key], currentPath)
-              );
+              missing.push(...getMissingKeys(enObj[key], langObj[key], currentPath));
             }
           }
 

@@ -21,14 +21,16 @@ node sync_structure.js
 ```
 
 ### Translation Validation Tests
-   ```bash
-   npm run test:i18n
-   vitest run src/i18n/dictionaries/validate-translations.test.ts
-   ```
+
+```bash
+npm run test:i18n
+vitest run src/i18n/dictionaries/validate-translations.test.ts
+```
 
 ### Pre-commit Protection
 
 The project now has pre-commit hooks that:
+
 1. Test i18n imports when middleware.ts or auth.ts change
 2. Validate translation files when any dictionary JSON is modified
 
@@ -37,6 +39,7 @@ The project now has pre-commit hooks that:
 If translation files get corrupted again:
 
 1. Check git history for the last good commit:
+
    ```bash
    git log --oneline -- src/i18n/dictionaries/*.json
    ```
@@ -49,6 +52,7 @@ If translation files get corrupted again:
 ### Adding New Translations
 
 When adding new keys:
+
 1. Add them to `en.json` first
 2. Run `node sync_structure_safe.js` to sync structure
 3. Look for `[TRANSLATE]` markers in other language files

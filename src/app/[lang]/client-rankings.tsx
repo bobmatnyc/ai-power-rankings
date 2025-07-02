@@ -122,12 +122,16 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           setTopRankings(rankings.slice(0, 3));
 
           // Calculate actual trending tools (those with positive rank changes)
-          const actualTrendingTools = rankings.filter((r: RankingData) => r.rankChange && r.rankChange > 0);
+          const actualTrendingTools = rankings.filter(
+            (r: RankingData) => r.rankChange && r.rankChange > 0
+          );
           setTrendingTools(actualTrendingTools.slice(0, 3));
           setTrendingUpCount(actualTrendingTools.length);
 
           // Calculate tools trending down (those with negative rank changes)
-          const trendingDownTools = rankings.filter((r: RankingData) => r.rankChange && r.rankChange < 0);
+          const trendingDownTools = rankings.filter(
+            (r: RankingData) => r.rankChange && r.rankChange < 0
+          );
           setTrendingDownCount(trendingDownTools.length);
 
           setRecentlyUpdated(rankings.slice(6, 10));

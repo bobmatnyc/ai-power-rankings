@@ -197,7 +197,10 @@ export function createBreadcrumbSchema(
   };
 }
 
-export function createComparisonSchema(tool1: Tool, tool2: Tool): WithContext<{
+export function createComparisonSchema(
+  tool1: Tool,
+  tool2: Tool
+): WithContext<{
   "@type": "Article";
   "@id": string;
   headline: string;

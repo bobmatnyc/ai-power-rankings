@@ -2,48 +2,81 @@
 
 ## CRITICAL: Review Required Documentation
 
-**IMPORTANT**: Before starting any work, you MUST review these files:
+**IMPORTANT**: Before starting any work, you MUST review these core files:
 
-1. `/docs/INSTRUCTIONS.md` - Core development instructions
-2. `/docs/WORKFLOW.md` - Required workflow processes
-3. `/docs/PROJECT.md` - Project specifications and requirements
-4. `/docs/JSON-STORAGE.md` - JSON file storage architecture and data management
-5. `/docs/MEMORY.md` - Memory system access
+1. **📋 `/docs/INSTRUCTIONS.md`** - Core development instructions
+2. **🔄 `/docs/WORKFLOW.md`** - Required workflow processes
+3. **📊 `/docs/PROJECT.md`** - Project specifications and requirements
+4. **🔧 `/docs/TOOLCHAIN.md`** - Technical implementation and toolchain guide
+5. **💾 `/docs/JSON-STORAGE.md`** - JSON file storage architecture and data management
 
 **Following these instructions is MANDATORY. Ask for clarification before considering ANY variance from the documented procedures.**
 
-## Additional Documentation
+## ⚠️ YOLO Mode Requirements
 
-### Data Management
-- `/docs/JSON-STORAGE.md` - JSON file storage system documentation
+**CRITICAL**: When working in YOLO mode, you MUST:
 
-### Features & Systems
-- `/docs/CACHE.md` - Cache generation and static JSON management
-- `/docs/NEWS-INGESTION.md` - News article ingestion from Google Drive
-- `/docs/TRANSLATIONS.md` - Internationalization (i18n) guide
+1. **Always work from a TrackDown task** in a properly named branch tied to that task
+2. **Follow proper epic/subticket workflow** for complex work (documentation epics, feature development)
+3. **Link all to-dos and action items** back to TrackDown ticket tasks
+4. **Validate against code as source of truth** - assume source code is correct when documentation conflicts arise
 
-### Operations
-- `/docs/DEPLOYMENT.md` - Vercel deployment procedures
-- `/docs/JSON-DEPLOYMENT-GUIDE.md` - JSON system deployment guide
-- `/docs/SITEMAP-SUBMISSION.md` - SEO and sitemap management
-- `/docs/RANKINGS-JUNE-2025.md` - Current rankings data
-- `/docs/TESTING.md` - Testing strategy and procedures
-- `/docs/BACKUP-RECOVERY.md` - Data backup and recovery procedures
-- `/docs/PERFORMANCE-OPTIMIZATION.md` - Performance optimization strategies
+## 📚 Documentation Navigation
+
+### 🔧 Core Development
+
+- [`/docs/INSTRUCTIONS.md`](/docs/INSTRUCTIONS.md) - Development instructions
+- [`/docs/WORKFLOW.md`](/docs/WORKFLOW.md) - Required workflow processes
+- [`/docs/PROJECT.md`](/docs/PROJECT.md) - Project specifications
+- [`/docs/TOOLCHAIN.md`](/docs/TOOLCHAIN.md) - Technical implementation and toolchain guide
+- [`/docs/TESTING.md`](/docs/TESTING.md) - Testing strategy and procedures
+- [`/docs/LINTING-STANDARDS.md`](/docs/LINTING-STANDARDS.md) - Code quality standards
+
+### 💾 Data & Storage
+
+- [`/docs/JSON-STORAGE.md`](/docs/JSON-STORAGE.md) - JSON file storage system
+- [`/docs/CACHE.md`](/docs/CACHE.md) - Cache generation and static JSON management
+- [`/docs/BACKUP-RECOVERY.md`](/docs/BACKUP-RECOVERY.md) - Data backup and recovery procedures
+
+### 🌐 Features & Systems
+
+- [`/docs/NEWS-INGESTION.md`](/docs/NEWS-INGESTION.md) - News article ingestion from Google Drive
+- [`/docs/TRANSLATIONS.md`](/docs/TRANSLATIONS.md) - Internationalization (i18n) guide
+- [`/docs/RANKINGS-JUNE-2025.md`](/docs/RANKINGS-JUNE-2025.md) - Current rankings data
+
+### 🚀 Operations & Deployment
+
+- [`/docs/DEPLOYMENT-GUIDE.md`](/docs/DEPLOYMENT-GUIDE.md) - Comprehensive deployment procedures
+- [`/docs/SITEMAP-SUBMISSION.md`](/docs/SITEMAP-SUBMISSION.md) - SEO and sitemap management
+- [`/docs/PERFORMANCE-OPTIMIZATION.md`](/docs/PERFORMANCE-OPTIMIZATION.md) - Performance optimization strategies
+
+### 🔍 Troubleshooting & Maintenance
+
+- [`/docs/TROUBLESHOOTING-RANKINGS.md`](/docs/TROUBLESHOOTING-RANKINGS.md) - Rankings troubleshooting
+- [`/docs/I18N-DEBUGGING.md`](/docs/I18N-DEBUGGING.md) - Translation debugging
+- [`/docs/RATE-LIMITING.md`](/docs/RATE-LIMITING.md) - API rate limiting strategies
+
+### 📖 Reference & Guides
+
+- [`/docs/design/claude-code-best-practices.md`](/docs/design/claude-code-best-practices.md) - Claude Code best practices
+- [`/docs/TOOL-MAPPING.md`](/docs/TOOL-MAPPING.md) - Tool mapping documentation
+- [`/docs/METRICS-GUIDELINES.md`](/docs/METRICS-GUIDELINES.md) - Metrics extraction guidelines
 
 ## Development Guidelines
 
-- **CRITICAL**: Always run `npm run ci:local` before committing to catch TypeScript errors
-- Use `npm run pre-deploy` before any deployment to ensure code quality
+- **CRITICAL**: Always run `pnpm run ci:local` before committing to catch TypeScript errors
+- Use `pnpm run pre-deploy` before any deployment to ensure code quality
 - Follow existing code patterns and conventions
 - **NEVER deviate from documented instructions without explicit approval**
+- **Code as Source of Truth**: Documentation must reflect current source code state
+- **Task Linkage**: All development work must be linked to TrackDown tickets
 
 ## Pre-Deployment Checklist
 
 Before pushing to production, ALWAYS run:
 
 ```bash
-npm run pre-deploy  # Runs lint, type-check, format-check, and tests
+pnpm run pre-deploy  # Runs lint, type-check, format-check, and tests
 ```
 
 This prevents deployment failures due to TypeScript errors or code quality issues.
@@ -51,6 +84,7 @@ This prevents deployment failures due to TypeScript errors or code quality issue
 ## Quick Reference
 
 ### Common Commands
+
 ```bash
 # Development (with PM2 process management)
 pnpm run dev:pm2 start   # Start dev server with PM2
@@ -82,13 +116,16 @@ pnpm run backup:create    # Create data backup
 ```
 
 ### AI Assistant Development Workflow
+
 After completing any task:
+
 1. Restart dev server: `pnpm run dev:pm2 restart`
 2. Monitor logs: `pnpm run dev:pm2 logs`
 3. Check types: `pnpm run type-check`
 4. Run lint: `pnpm run lint`
 
 ### Key Directories
+
 - `/src/app` - Next.js App Router pages
 - `/src/components` - React components
 - `/src/lib` - Core utilities and services
@@ -97,11 +134,13 @@ After completing any task:
 - `/docs` - Project documentation
 
 ### Environment Variables
+
 Always use bracket notation for environment variables:
+
 ```typescript
 // ✅ CORRECT
-process.env["GITHUB_TOKEN"]
+process.env["GITHUB_TOKEN"];
 
 // ❌ WRONG
-process.env.GITHUB_TOKEN
+process.env.GITHUB_TOKEN;
 ```

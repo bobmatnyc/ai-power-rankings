@@ -1,97 +1,151 @@
-# AI Power Rankings Documentation
+# 📚 AI Power Rankings - Documentation Index
 
-Welcome to the AI Power Rankings documentation. This directory contains all the essential documentation for developing and maintaining the AI Power Rankings platform.
+Welcome to the AI Power Rankings documentation! This guide helps you navigate the comprehensive documentation for this project.
 
-## 📚 Core Documentation
+## 🚀 Quick Start - Hub Architecture
 
-### Essential Files (Start Here)
+**New to the project?** Use these four main hubs for navigation:
 
-1. **[CLAUDE.md](../CLAUDE.md)** - Entry point for AI agents and development instructions
-2. **[INSTRUCTIONS.md](INSTRUCTIONS.md)** - Core development principles and standards
-3. **[WORKFLOW.md](WORKFLOW.md)** - Required workflow processes and deployment procedures
-4. **[PROJECT.md](PROJECT.md)** - Project architecture and technical specifications
-5. **[DATABASE.md](DATABASE.md)** - Complete database documentation and operations guide
+1. **📋 [INSTRUCTIONS.md](INSTRUCTIONS.md)** - Core development instructions and technical guidance
+2. **🔄 [WORKFLOW.md](WORKFLOW.md)** - Build/refactor/deploy processes and YOLO mode requirements
+3. **📊 [PROJECT.md](PROJECT.md)** - Business goals, functionality, and strategic direction
+4. **🔧 [TOOLCHAIN.md](TOOLCHAIN.md)** - Comprehensive toolchain mastery and technical configuration
 
-## 📖 Feature Documentation
+## 🔗 AI Assistant Entry Point
 
-### Data Collection & Processing
+- **[../CLAUDE.md](../CLAUDE.md)** - Project context and task linkage requirements for AI assistants
 
+## ⚡ 2-Click Accessibility
+
+All daily-use information is accessible within 2 clicks from these main hub files. Each hub serves as a navigation center with quick reference sections and detailed linking.
+
+## 📁 Documentation Categories
+
+### 🔧 Core Development
+
+Essential files for developers working on the project:
+
+- **[INSTRUCTIONS.md](INSTRUCTIONS.md)** - Development setup and core instructions
+- **[WORKFLOW.md](WORKFLOW.md)** - Required development workflow processes
+- **[PROJECT.md](PROJECT.md)** - Project specifications and requirements
+- **[TESTING.md](TESTING.md)** - Testing strategy and procedures
+- **[LINTING-STANDARDS.md](LINTING-STANDARDS.md)** - Code quality and linting standards
+
+### 💾 Data & Storage
+
+Data management, storage, and caching systems:
+
+- **[JSON-STORAGE.md](JSON-STORAGE.md)** - JSON file storage architecture
+- **[CACHE.md](CACHE.md)** - Cache generation and static JSON management
+- **[BACKUP-RECOVERY.md](BACKUP-RECOVERY.md)** - Data backup and recovery procedures
+
+### 🌐 Features & Systems
+
+Application features and system integrations:
+
+- **[NEWS-INGESTION.md](NEWS-INGESTION.md)** - News article ingestion from Google Drive
+- **[TRANSLATIONS.md](TRANSLATIONS.md)** - Internationalization (i18n) implementation
+- **[RANKINGS-JUNE-2025.md](RANKINGS-JUNE-2025.md)** - Current rankings data and methodology
 - **[METRICS-GUIDELINES.md](METRICS-GUIDELINES.md)** - Scoring criteria and metrics definitions
-- **[METRICS-EXTRACTION-PROMPT.md](METRICS-EXTRACTION-PROMPT.md)** - AI prompt for article analysis
 - **[ARTICLE-INGESTION.md](ARTICLE-INGESTION.md)** - Article processing and data extraction
-- **[NEWS-INGESTION.md](NEWS-INGESTION.md)** - News collection and processing system
-- **[GOOGLE_DRIVE_INTEGRATION.md](GOOGLE_DRIVE_INTEGRATION.md)** - Google Drive setup for news ingestion
 
-### Technical Guides
+### 🚀 Operations & Deployment
 
-- **[DEV-SERVER.md](DEV-SERVER.md)** - Development server with automatic port detection
-- **[LINTING-STANDARDS.md](LINTING-STANDARDS.md)** - Code quality and linting configuration
-- **[I18N-DEBUGGING.md](I18N-DEBUGGING.md)** - Internationalization debugging guide
-- **[TRANSLATIONS.md](TRANSLATIONS.md)** - Translation management system
-- **[FAVICON-FETCHING-GUIDE.md](FAVICON-FETCHING-GUIDE.md)** - Favicon fetching implementation
+Deployment, hosting, and operational procedures:
 
-### SEO & Analytics
+- **[DEPLOYMENT-GUIDE.md](DEPLOYMENT-GUIDE.md)** - Comprehensive deployment procedures
+- **[SITEMAP-SUBMISSION.md](SITEMAP-SUBMISSION.md)** - SEO and sitemap management
+- **[PERFORMANCE-OPTIMIZATION.md](PERFORMANCE-OPTIMIZATION.md)** - Performance optimization strategies
 
-- **[GOOGLE_SEARCH_CONSOLE.md](GOOGLE_SEARCH_CONSOLE.md)** - Search Console integration
-- **[SITEMAP-SUBMISSION.md](SITEMAP-SUBMISSION.md)** - Sitemap generation and submission
-- **[google-search-console-setup.md](google-search-console-setup.md)** - Setup guide
+### 🔍 Troubleshooting & Maintenance
 
-### Rankings & Analysis
+Debugging, troubleshooting, and maintenance guides:
 
-- **[LONGITUDINAL-RANKINGS.md](LONGITUDINAL-RANKINGS.md)** - Historical ranking analysis
-- **[RANKINGS-JUNE-2025.md](RANKINGS-JUNE-2025.md)** - June 2025 ranking results
+- **[TROUBLESHOOTING-RANKINGS.md](TROUBLESHOOTING-RANKINGS.md)** - Rankings system troubleshooting
+- **[I18N-DEBUGGING.md](I18N-DEBUGGING.md)** - Translation and i18n debugging
+- **[RATE-LIMITING.md](RATE-LIMITING.md)** - API rate limiting strategies
 
-## 📁 Subdirectories
+### 📖 Reference & Guides
 
-### `/data`
+Additional references and specialized guides:
 
-Contains data files and SQL scripts:
+- **[design/claude-code-best-practices.md](design/claude-code-best-practices.md)** - Claude Code best practices
+- **[TOOL-MAPPING.md](TOOL-MAPPING.md)** - Tool mapping documentation
+- **[METRICS-EXTRACTION-PROMPT.md](METRICS-EXTRACTION-PROMPT.md)** - AI prompts for analysis
 
-- **ALGORITHM6.md** - Algorithm version 6 documentation
-- **POPULATE.sql** - Database population scripts
-- **UPDATE-\*.sql/json** - Data update files
+## 📂 Directory Structure
 
-### `/design`
+```
+docs/
+├── README.md                          # This documentation index
+├── INSTRUCTIONS.md                    # Core development instructions
+├── WORKFLOW.md                        # Development workflow
+├── PROJECT.md                         # Project specifications
+├── archive/                           # Historical documentation
+├── design/                            # Design documents and architecture
+├── data/                             # Data-related documentation
+├── api/                              # API documentation
+├── incoming/                         # New documentation to be organized
+├── tickets/                          # Ticket-specific documentation
+└── translations/                     # Translation-related files
+```
 
-Design documents and specifications:
+### 📁 Key Subdirectories
+
+#### `/design`
+
+Architecture and design documents:
 
 - **[ALGORITHM.md](design/ALGORITHM.md)** - Ranking algorithm design
 - **[DB_DESIGN.md](design/DB_DESIGN.md)** - Database design documentation
 - **[PRD.md](design/PRD.md)** - Product Requirements Document
-- **[seo-implementation-guide.md](design/seo-implementation-guide.md)** - SEO implementation strategy
-- **[ai-power-rankings-cms-migration-plan.md](design/ai-power-rankings-cms-migration-plan.md)** - CMS migration planning
+- **[claude-code-best-practices.md](design/claude-code-best-practices.md)** - Claude Code best practices
 
-### `/translations`
+#### `/archive`
 
-Translation reports and management:
+Historical documentation preserved for reference. Contains outdated documentation from previous phases.
+
+#### `/translations`
+
+Translation management files:
 
 - **translation-report.json** - Translation coverage data
 - **translation-report.md** - Human-readable translation report
 
-### `/archive`
+## 🏃‍♂️ Quick Commands
 
-Historical documentation preserved for reference. Contains outdated documentation from previous phases of the project.
+```bash
+# Start development server
+pnpm run dev:pm2 start
 
-## 🚀 Quick Start
+# Run quality checks
+pnpm run ci:local
 
-For new developers:
+# Generate cache files
+pnpm run cache:generate
 
-1. Start with **[CLAUDE.md](../CLAUDE.md)** for overview
-2. Read **[INSTRUCTIONS.md](INSTRUCTIONS.md)** for development principles
-3. Review **[WORKFLOW.md](WORKFLOW.md)** for processes
-4. Consult **[DATABASE.md](DATABASE.md)** for database operations
+# Deploy preparation
+pnpm run pre-deploy
+```
 
-## 📋 Documentation Standards
+## 🤝 Contributing to Documentation
 
-- Use clear, descriptive filenames
-- Include creation and update dates in documents
-- Follow Markdown best practices
-- Keep documentation up-to-date with code changes
-- Archive outdated documentation rather than deleting
+When adding new documentation:
 
-## 🔧 Maintenance
+1. Place files in the appropriate category directory
+2. Update this README.md index
+3. Add references in CLAUDE.md if relevant for AI assistants
+4. Follow existing naming conventions
+5. Include clear headings and navigation
 
-- Documentation should be reviewed monthly
-- Update dates when making significant changes
-- Move outdated docs to `/archive` with dated subdirectories
-- Ensure all new features have corresponding documentation
+## 📞 Need Help?
+
+- Check the troubleshooting section above
+- Review the workflow documentation
+- Look for relevant guides in the reference section
+- Check the archive for historical context
+
+---
+
+**Last updated:** July 2025  
+**Maintained by:** AI Power Rankings Development Team

@@ -3,7 +3,7 @@ import {
   getRateLimitAnalytics,
   resetRateLimit,
   getRateLimitStatus,
-  getClientIP
+  getClientIP,
 } from "@/lib/rate-limit";
 import { z } from "zod";
 
@@ -13,12 +13,12 @@ function isAuthenticated(request: NextRequest): boolean {
   // For now, we'll use a simple API key approach
   const authHeader = request.headers.get("authorization");
   const apiKey = process.env["ADMIN_API_KEY"];
-  
+
   if (!apiKey) {
     console.warn("ADMIN_API_KEY not configured");
     return false;
   }
-  
+
   return authHeader === `Bearer ${apiKey}`;
 }
 
@@ -38,10 +38,7 @@ export async function GET(request: NextRequest) {
   try {
     // Check authentication
     if (!isAuthenticated(request)) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -58,7 +55,7 @@ export async function GET(request: NextRequest) {
       // Get rate limit status for specific IP or current request
       const ip = searchParams.get("ip");
       const email = searchParams.get("email");
-      
+
       let targetRequest = request;
       if (ip) {
         // Create a mock request with the specified IP
@@ -70,7 +67,7 @@ export async function GET(request: NextRequest) {
           }),
         } as NextRequest;
       }
-      
+
       const status = await getRateLimitStatus(targetRequest, email || undefined);
       return NextResponse.json({
         success: true,
@@ -88,10 +85,7 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error("Admin rate limit GET error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -100,10 +94,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check authentication
     if (!isAuthenticated(request)) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
@@ -115,9 +106,9 @@ export async function POST(request: NextRequest) {
       const validationResult = resetRateLimitSchema.safeParse(body);
       if (!validationResult.success) {
         return NextResponse.json(
-          { 
-            error: "Invalid request data", 
-            details: validationResult.error.flatten() 
+          {
+            error: "Invalid request data",
+            details: validationResult.error.flatten(),
           },
           { status: 400 }
         );
@@ -132,17 +123,11 @@ export async function POST(request: NextRequest) {
         data: { ip },
       });
     } else {
-      return NextResponse.json(
-        { error: "Invalid action. Use 'reset'" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid action. Use 'reset'" }, { status: 400 });
     }
   } catch (error) {
     console.error("Admin rate limit POST error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -151,10 +136,7 @@ export async function PUT(request: NextRequest) {
   try {
     // Check authentication
     if (!isAuthenticated(request)) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // This could be used to dynamically update rate limit configurations
@@ -165,9 +147,6 @@ export async function PUT(request: NextRequest) {
     );
   } catch (error) {
     console.error("Admin rate limit PUT error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

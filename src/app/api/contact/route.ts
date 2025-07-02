@@ -46,7 +46,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Too many requests",
-          message: "You have exceeded the rate limit for contact form submissions. Please try again later.",
+          message:
+            "You have exceeded the rate limit for contact form submissions. Please try again later.",
           retryAfter: rateLimitResult.retryAfter,
           limit: rateLimitResult.limit,
           reset: rateLimitResult.reset.toISOString(),

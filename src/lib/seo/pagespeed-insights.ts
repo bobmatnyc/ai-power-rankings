@@ -63,7 +63,10 @@ export class PageSpeedInsights {
       };
     } catch (error) {
       const axiosError = error as AxiosError;
-      console.error("PageSpeed Insights API error:", axiosError.response?.data || axiosError.message);
+      console.error(
+        "PageSpeed Insights API error:",
+        axiosError.response?.data || axiosError.message
+      );
       throw error;
     }
   }

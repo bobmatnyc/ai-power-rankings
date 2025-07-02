@@ -22,14 +22,20 @@ const ADMIN_EMAILS = ["bob@matsuoka.com"];
 // Create rate limiter instances
 export const contactFormRateLimit = new Ratelimit({
   redis: kv,
-  limiter: Ratelimit.slidingWindow(RATE_LIMITS.CONTACT_FORM.requests, RATE_LIMITS.CONTACT_FORM.window),
+  limiter: Ratelimit.slidingWindow(
+    RATE_LIMITS.CONTACT_FORM.requests,
+    RATE_LIMITS.CONTACT_FORM.window
+  ),
   analytics: true,
   prefix: "contact_form",
 });
 
 export const contactFormStrictRateLimit = new Ratelimit({
   redis: kv,
-  limiter: Ratelimit.slidingWindow(RATE_LIMITS.CONTACT_FORM_STRICT.requests, RATE_LIMITS.CONTACT_FORM_STRICT.window),
+  limiter: Ratelimit.slidingWindow(
+    RATE_LIMITS.CONTACT_FORM_STRICT.requests,
+    RATE_LIMITS.CONTACT_FORM_STRICT.window
+  ),
   analytics: true,
   prefix: "contact_form_strict",
 });
@@ -40,27 +46,29 @@ export function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
   const realIP = request.headers.get("x-real-ip");
   const cfConnectingIP = request.headers.get("cf-connecting-ip");
-  
+
   if (forwarded) {
     // x-forwarded-for can contain multiple IPs, take the first one
     return forwarded.split(",")[0]?.trim() || "unknown";
   }
-  
+
   if (realIP) {
     return realIP;
   }
-  
+
   if (cfConnectingIP) {
     return cfConnectingIP;
   }
-  
+
   // Fallback to connection remote address (if available)
   return "unknown";
 }
 
 // Check if user is admin and can bypass rate limits
 export function isAdminUser(email?: string): boolean {
-  if (!email) {return false;}
+  if (!email) {
+    return false;
+  }
   return ADMIN_EMAILS.includes(email.toLowerCase());
 }
 
@@ -115,7 +123,9 @@ export async function checkContactFormRateLimit(
       limit: result.limit,
       remaining: result.remaining,
       reset: new Date(result.reset),
-      retryAfter: result.success ? undefined : Math.ceil((new Date(result.reset).getTime() - Date.now()) / 1000),
+      retryAfter: result.success
+        ? undefined
+        : Math.ceil((new Date(result.reset).getTime() - Date.now()) / 1000),
     };
   } catch (error) {
     console.error("Rate limit check failed:", error);
@@ -151,12 +161,14 @@ export async function getRateLimitStatus(
     // Check current rate limit status without consuming
     const strictModeKey = `strict_mode:${clientIP}`;
     const isStrictMode = await kv.get(strictModeKey);
-    
+
     // Get current status (this doesn't consume a request)
     const prefix = isStrictMode ? "contact_form_strict" : "contact_form";
     const key = `${prefix}:${identifier}`;
-    const currentCount = await kv.get(key) || 0;
-    const limit = isStrictMode ? RATE_LIMITS.CONTACT_FORM_STRICT.requests : RATE_LIMITS.CONTACT_FORM.requests;
+    const currentCount = (await kv.get(key)) || 0;
+    const limit = isStrictMode
+      ? RATE_LIMITS.CONTACT_FORM_STRICT.requests
+      : RATE_LIMITS.CONTACT_FORM.requests;
 
     return {
       success: Number(currentCount) < limit,
@@ -184,7 +196,7 @@ export async function resetRateLimit(clientIP: string): Promise<void> {
       `strict_mode:${clientIP}`,
     ];
 
-    await Promise.all(keys.map(key => kv.del(key)));
+    await Promise.all(keys.map((key) => kv.del(key)));
   } catch (error) {
     console.error("Failed to reset rate limit:", error);
     throw error;
@@ -200,12 +212,12 @@ export async function getRateLimitAnalytics(): Promise<{
   try {
     // This is a simplified analytics implementation
     // In a production environment, you might want more sophisticated analytics
-    const analytics = await kv.get("rate_limit_analytics") || {
+    const analytics = (await kv.get("rate_limit_analytics")) || {
       totalRequests: 0,
       blockedRequests: 0,
       uniqueIPs: 0,
     };
-    
+
     return analytics as { totalRequests: number; blockedRequests: number; uniqueIPs: number };
   } catch (error) {
     console.error("Failed to get rate limit analytics:", error);

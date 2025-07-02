@@ -34,6 +34,7 @@ sprint_current: 3
 - [ ] **[T-040]** Fix Mobile Performance Issues - Layout Shifts and Image Optimization
 - [ ] **[T-041]** Fix Accessibility Issues - ARIA, Contrast, and Navigation
 - [ ] **[T-042]** Add Spanish (ES) Language Support
+- [ ] **[T-044]** Reorganize Documentation for Claude Code Best Practices
 
 ## ✅ Completed Tasks
 
@@ -1396,3 +1397,117 @@ Add Spanish language support to the AI Power Rankings application, including all
 - [ ] SEO metadata configured for Spanish
 - [ ] Native Spanish speaker review completed
 - [ ] Documentation updated
+---
+
+### **[T-043]** Display News Article Metric Impacts on Tool Rankings
+
+**Type:** Feature  
+**Epic:** EP-003 (Content & Analytics)  
+**Priority:** Medium  
+**Story Points:** 8  
+**Assignee:** @bobmatnyc  
+**Status:** In Progress  
+**Sprint:** 3
+
+**Description:**
+Add visual indicators showing how news articles affect tool quality metrics and ranking factors. When viewing a news article about a tool, users should see which ranking factors are positively or negatively impacted based on the article content.
+
+**Acceptance Criteria:**
+- [ ] Metric impact analyzer extracts quantitative data from articles
+- [ ] Visual component displays impacts on 6 ranking factors
+- [ ] Each impact shows direction (positive/negative), magnitude, and evidence
+- [ ] Overall impact score calculated and displayed
+- [ ] Integration with existing news article pages
+- [ ] Real-time analysis for manually ingested articles
+
+**Technical Design:**
+
+1. **Metric Extraction Engine:**
+   - Parse article content for quantitative metrics (funding, users, benchmarks)
+   - Identify qualitative signals (feature launches, partnerships, issues)
+   - Map extracted data to ranking factors
+
+2. **Impact Calculation:**
+   - Market Traction: funding rounds, valuations, revenue metrics
+   - Technical Capability: benchmarks, context windows, new features
+   - Developer Adoption: user counts, GitHub metrics, downloads
+   - Development Velocity: release frequency, update announcements
+   - Platform Resilience: multi-provider support, open source status
+   - Community Sentiment: positive/negative language analysis
+
+3. **UI Components:**
+   - MetricImpactDisplay component with progress bars and icons
+   - Color-coded impact indicators (green/red/gray)
+   - Expandable evidence sections with extracted quotes
+   - Overall impact summary score
+
+**Implementation Plan:**
+1. Create NewsMetricAnalyzer utility class
+2. Build MetricImpactDisplay React component
+3. Add API endpoint for impact calculation
+4. Integrate into news detail pages
+5. Update news ingestion to pre-calculate impacts
+6. Add impact data to news JSON schema
+
+**Definition of Done:**
+- [ ] Metric analyzer accurately extracts relevant data
+- [ ] Impact display component renders correctly
+- [ ] Integration with news pages functional
+- [ ] Manual article ingestion includes impact calculation
+- [ ] Performance acceptable (<100ms analysis time)
+- [ ] Mobile responsive design
+- [ ] Unit tests for analyzer logic
+- [ ] Documentation updated
+
+---
+
+### **[T-044]** Reorganize Documentation for Claude Code Best Practices
+
+**Type:** Task  
+**Epic:** TBD  
+**Priority:** Medium  
+**Story Points:** 5  
+**Assignee:** @claude  
+**Status:** Backlog  
+**Sprint:** Future  
+
+**Description:**
+Review docs/design/claude-code-best-practices.md and reorganize project documentation to incorporate Claude Code best practices. Restructure CLAUDE.md, docs/INSTRUCTIONS.md, docs/WORKFLOW.md for optimal efficiency. Update docs/PROJECT.md to reflect current project state. Organize root level docs/ files to consolidate/split docs as needed for optimal context usage.
+
+**Acceptance Criteria:**
+- [ ] Claude Code best practices incorporated into relevant docs
+- [ ] CLAUDE.md optimized for AI assistant context
+- [ ] INSTRUCTIONS.md reorganized for clarity and efficiency
+- [ ] WORKFLOW.md updated with current procedures
+- [ ] PROJECT.md reflects current architecture and state
+- [ ] Long docs broken into chapters/ subdirectory if needed
+- [ ] Documentation structure optimized for AI context windows
+- [ ] Clear navigation between related documents
+- [ ] Redundancy eliminated across documents
+
+**Technical Notes:**
+- Review and incorporate docs/design/claude-code-best-practices.md
+- Keep doc sizes efficient for AI context (consider breaking >2000 lines)
+- Create docs/chapters/ for subsections if needed
+- Maintain clear cross-references between documents
+- Preserve critical information while reducing redundancy
+- Optimize for both human and AI readability
+- Consider parallel processing where possible
+
+**Files to Update:**
+- `/CLAUDE.md` - AI assistant instructions
+- `/docs/INSTRUCTIONS.md` - Development instructions
+- `/docs/WORKFLOW.md` - Development workflow
+- `/docs/PROJECT.md` - Project overview
+- `/docs/` - Reorganize structure as needed
+- `/docs/chapters/` - Create if needed for long sections
+
+**Definition of Done:**
+- [ ] All documentation reviewed and updated
+- [ ] Claude Code best practices integrated
+- [ ] Documentation structure optimized
+- [ ] No redundant information across docs
+- [ ] Clear navigation and cross-references
+- [ ] All docs under 2000 lines (or split appropriately)
+- [ ] PROJECT.md reflects current state
+- [ ] Documentation tested with AI assistant
