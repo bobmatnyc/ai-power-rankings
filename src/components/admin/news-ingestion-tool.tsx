@@ -41,7 +41,10 @@ interface RollbackPreview {
   news_items_to_delete: number;
   tools_to_review: number;
   companies_to_review: number;
-  warnings: string[];
+  warnings: Array<{
+    name: string;
+    reason: string;
+  }>;
 }
 
 interface ArticlePreview {
@@ -60,9 +63,12 @@ export function NewsIngestionTool() {
   const [isUploading, setIsUploading] = useState(false);
   const [generatePreview, setGeneratePreview] = useState(true);
   const [uploadResult, setUploadResult] = useState<{
-    message: string;
-    report_id: string;
+    success: boolean;
+    message?: string;
+    report_id?: string;
     warnings?: string[];
+    error?: string;
+    report?: IngestionReport;
   } | null>(null);
   const [reports, setReports] = useState<IngestionReport[]>([]);
   const [rollbackPreview, setRollbackPreview] = useState<RollbackPreview | null>(null);
