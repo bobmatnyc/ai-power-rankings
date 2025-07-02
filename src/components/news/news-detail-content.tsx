@@ -21,6 +21,7 @@ import {
   FileText,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import ArticleScoringImpact from "./article-scoring-impact";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -265,6 +266,181 @@ export default function NewsDetailContent({
 
   const metrics = extractMetrics(article.content);
 
+  // Generate scoring factors for detail view (similar to API logic)
+  const generateDetailScoringFactors = (article: NewsArticle) => {
+    const factors: any = {};
+    const titleLower = article.title.toLowerCase();
+    const eventType = getEventType(article);
+    const importance = calculateImportanceScore(article);
+
+    // Enhanced impact magnitude calculation
+    const baseMagnitude = Math.max(0.1, (importance - 4) / 5);
+
+    // Add bonus multipliers for high-impact keywords
+    let multiplier = 1;
+    if (titleLower.includes("breakthrough") || titleLower.includes("revolutionary")) {
+      multiplier = 1.5;
+    }
+    if (titleLower.includes("million") || titleLower.includes("billion")) {
+      multiplier = 1.3;
+    }
+    if (titleLower.includes("launches") || titleLower.includes("announces")) {
+      multiplier = 1.2;
+    }
+
+    switch (eventType) {
+      case "milestone":
+        if (titleLower.includes("funding") || titleLower.includes("raised")) {
+          factors.market_traction = baseMagnitude * 2 * multiplier;
+          factors.business_sentiment = baseMagnitude * 1.5 * multiplier;
+          factors.development_velocity = baseMagnitude * 0.5 * multiplier;
+        }
+        break;
+      case "feature":
+        if (titleLower.includes("ai") || titleLower.includes("autonomous")) {
+          factors.agentic_capability = baseMagnitude * 2 * multiplier;
+          factors.innovation = baseMagnitude * 1.5 * multiplier;
+        }
+        if (titleLower.includes("performance") || titleLower.includes("faster")) {
+          factors.technical_performance = baseMagnitude * 1.8 * multiplier;
+        }
+        if (titleLower.includes("integration") || titleLower.includes("multi")) {
+          factors.platform_resilience = baseMagnitude * 1.2 * multiplier;
+        }
+        break;
+      case "partnership":
+        factors.business_sentiment = baseMagnitude * 1.3 * multiplier;
+        factors.market_traction = baseMagnitude * 1.0 * multiplier;
+        factors.platform_resilience = baseMagnitude * 0.8 * multiplier;
+        break;
+      case "update":
+        factors.development_velocity = baseMagnitude * 1.5 * multiplier;
+        if (titleLower.includes("users") || titleLower.includes("community")) {
+          factors.developer_adoption = baseMagnitude * 1.2 * multiplier;
+        }
+        break;
+      case "announcement":
+        factors.business_sentiment = baseMagnitude * 1.0 * multiplier;
+        break;
+    }
+
+    // Round factors to 1 decimal place and filter out zeros
+    const filteredFactors: any = {};
+    Object.entries(factors).forEach(([key, value]) => {
+      const rounded = Math.round((value as number) * 10) / 10;
+      if (Math.abs(rounded) >= 0.1) {
+        filteredFactors[key] = rounded;
+      }
+    });
+
+    // If no factors generated, add some default ones for testing/display purposes
+    if (Object.keys(filteredFactors).length === 0) {
+      // Based on event type, add minimal default factors
+      if (titleLower.includes("launch") || titleLower.includes("release")) {
+        filteredFactors.innovation = 0.3;
+        filteredFactors.development_velocity = 0.2;
+      } else if (titleLower.includes("update") || titleLower.includes("improvement")) {
+        filteredFactors.development_velocity = 0.2;
+      } else {
+        // General news article - minimal business sentiment impact
+        filteredFactors.business_sentiment = 0.1;
+      }
+    }
+
+    return filteredFactors;
+  };
+
+  // Calculate importance score for the article
+  const calculateImportanceScore = (article: NewsArticle): number => {
+    let importance = 5; // default
+    const titleLower = article.title.toLowerCase();
+
+    // Boost importance for high-impact keywords
+    if (
+      titleLower.includes("funding") ||
+      titleLower.includes("raised") ||
+      titleLower.includes("million")
+    ) {
+      importance = Math.min(10, importance + 2);
+    }
+    if (titleLower.includes("breakthrough") || titleLower.includes("revolutionary")) {
+      importance = Math.min(10, importance + 3);
+    }
+    if (titleLower.includes("launches") || titleLower.includes("announces")) {
+      importance = Math.min(10, importance + 1);
+    }
+    if (titleLower.includes("ai") && titleLower.includes("autonomous")) {
+      importance = Math.min(10, importance + 2);
+    }
+
+    return importance;
+  };
+
+  // Determine event type from article data
+  const getEventType = (article: NewsArticle): string => {
+    let eventType = "update";
+
+    // Check tags first for better categorization
+    if (article.tags && article.tags.length > 0) {
+      const tagStr = article.tags.join(" ").toLowerCase();
+      if (
+        tagStr.includes("launch") ||
+        tagStr.includes("beta") ||
+        tagStr.includes("general-availability")
+      ) {
+        eventType = "feature";
+      } else if (
+        tagStr.includes("milestone") ||
+        tagStr.includes("revenue") ||
+        tagStr.includes("funding") ||
+        tagStr.includes("growth")
+      ) {
+        eventType = "milestone";
+      } else if (tagStr.includes("benchmark") || tagStr.includes("performance")) {
+        eventType = "feature";
+      } else if (tagStr.includes("rebrand") || tagStr.includes("acquisition")) {
+        eventType = "announcement";
+      }
+    }
+
+    // Fallback to content analysis
+    if (eventType === "update") {
+      const text = `${article.title} ${article.summary || article.content || ""}`.toLowerCase();
+
+      if (
+        text.includes("funding") ||
+        text.includes("raised") ||
+        text.includes("investment") ||
+        text.includes("valuation") ||
+        text.includes("arr")
+      ) {
+        eventType = "milestone";
+      } else if (
+        text.includes("launch") ||
+        text.includes("released") ||
+        text.includes("feature") ||
+        text.includes("introduces")
+      ) {
+        eventType = "feature";
+      } else if (
+        text.includes("partnership") ||
+        text.includes("acquired") ||
+        text.includes("acquisition")
+      ) {
+        eventType = "partnership";
+      } else if (
+        text.includes("hiring") ||
+        text.includes("ceo") ||
+        text.includes("leadership") ||
+        text.includes("rebrand")
+      ) {
+        eventType = "announcement";
+      }
+    }
+
+    return eventType;
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Back Button */}
@@ -399,12 +575,24 @@ export default function NewsDetailContent({
             </div>
           )}
 
+          {/* Ranking Impact Scoring */}
+          <Separator className="my-6" />
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">AI Power Rankings Impact</h3>
+            <ArticleScoringImpact
+              scoring_factors={generateDetailScoringFactors(article)}
+              importance_score={calculateImportanceScore(article)}
+              event_type={getEventType(article)}
+              compact={false}
+            />
+          </div>
+
           {/* Ranking-Relevant Metrics */}
           {metrics.length > 0 && (
             <>
               <Separator className="my-6" />
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Ranking Data</h3>
+                <h3 className="text-lg font-semibold">Quantitative Data</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {metrics.map((metric, index) => (
                     <div

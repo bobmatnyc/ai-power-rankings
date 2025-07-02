@@ -1,7 +1,6 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Bot,
@@ -12,8 +11,6 @@ import {
   MessageCircle,
   Rocket,
   Shield,
-  Plus,
-  Minus,
 } from "lucide-react";
 
 interface ScoringFactorsData {
@@ -130,22 +127,13 @@ export default function ArticleScoringImpact({
     return "text-muted-foreground bg-muted border-muted";
   };
 
-  const getImpactIcon = (impact: number): React.JSX.Element => {
-    if (impact > 0) {
-      return <Plus className="h-3 w-3" />;
-    }
-    if (impact < 0) {
-      return <Minus className="h-3 w-3" />;
-    }
-    return <></>;
-  };
-
   const formatImpact = (impact: number): string => {
     const abs = Math.abs(impact);
+    const sign = impact > 0 ? "+" : "";
     if (abs >= 1) {
-      return `${impact > 0 ? "+" : ""}${impact.toFixed(1)}`;
+      return `${sign}${impact.toFixed(1)}`;
     }
-    return `${impact > 0 ? "+" : ""}${(impact * 100).toFixed(0)}%`;
+    return `${sign}${(impact * 100).toFixed(0)}%`;
   };
 
   if (compact) {
@@ -176,10 +164,7 @@ export default function ArticleScoringImpact({
                         >
                           <factor.icon className="h-3 w-3 mr-1" />
                           <span className="font-medium">{factor.name}</span>
-                          <span className="ml-1 text-xs">
-                            {getImpactIcon(impact)}
-                            {formatImpact(impact)}
-                          </span>
+                          <span className="ml-1 text-xs">{formatImpact(impact)}</span>
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs">
@@ -226,63 +211,63 @@ export default function ArticleScoringImpact({
     );
   }
 
-  // Detailed view for article pages
+  // Detailed view for article pages - bullet point format with badges
   return (
     <TooltipProvider>
-      <Card className="border-l-4 border-l-primary/20">
-        <CardContent className="pt-4">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="font-medium text-sm">Ranking Impact</h4>
-              {importance_score && (
-                <Badge variant="secondary" className="text-xs">
-                  Importance: {importance_score}/10
-                </Badge>
-              )}
-            </div>
+      <div className="space-y-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          <h4 className="font-medium text-sm text-muted-foreground">Ranking Impact:</h4>
+          {importance_score && importance_score >= 7 && (
+            <Badge variant="destructive" className="text-xs px-2 py-0.5">
+              🔥 High Impact ({importance_score}/10)
+            </Badge>
+          )}
+          {!hasFactorImpacts && importance_score && importance_score > 5 && (
+            <Badge variant="secondary" className="text-xs px-2 py-0.5">
+              📊 Impact Score: {importance_score}/10
+            </Badge>
+          )}
+        </div>
 
-            {hasFactorImpacts && affectedFactors.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {affectedFactors.map((factor) => {
-                  const impact = scoring_factors![factor.key]!;
-                  return (
-                    <Tooltip key={factor.key}>
+        {hasFactorImpacts && affectedFactors.length > 0 ? (
+          <div className="space-y-2">
+            <ul className="space-y-1">
+              {affectedFactors.map((factor) => {
+                const impact = scoring_factors![factor.key]!;
+                return (
+                  <li key={factor.key} className="flex items-center gap-2">
+                    <span className="text-muted-foreground">•</span>
+                    <Tooltip>
                       <TooltipTrigger asChild>
-                        <div
-                          className={`flex items-center gap-2 p-2 rounded-lg border ${getImpactColor(
-                            impact
-                          )} transition-colors hover:opacity-80 cursor-help`}
+                        <Badge
+                          variant="outline"
+                          className={`text-sm px-3 py-1 cursor-help transition-all hover:scale-105 ${getImpactColor(impact)}`}
                         >
-                          <factor.icon className="h-4 w-4 flex-shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <div className="font-medium text-xs truncate">{factor.name}</div>
-                            <div className="flex items-center gap-1 text-xs">
-                              {getImpactIcon(impact)}
-                              <span>{formatImpact(impact)}</span>
-                            </div>
-                          </div>
-                        </div>
+                          <factor.icon className="h-4 w-4 mr-2" />
+                          <span className="font-medium">{factor.name}</span>
+                          <span className="ml-2 text-sm">{formatImpact(impact)}</span>
+                        </Badge>
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent side="top" className="max-w-xs">
                         <div className="space-y-1">
-                          <p className="font-medium">
-                            {factor.name}: {formatImpact(impact)}
+                          <p className="font-medium text-sm">
+                            {factor.name} Impact: {formatImpact(impact)}
                           </p>
                           <p className="text-xs text-muted-foreground">{factor.description}</p>
                         </div>
                       </TooltipContent>
                     </Tooltip>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                No specific factor impacts identified for this {event_type}.
-              </p>
-            )}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-        </CardContent>
-      </Card>
+        ) : (
+          <p className="text-sm text-muted-foreground ml-4">
+            No specific factor impacts identified for this {event_type}.
+          </p>
+        )}
+      </div>
     </TooltipProvider>
   );
 }
