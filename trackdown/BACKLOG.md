@@ -1396,3 +1396,64 @@ Add Spanish language support to the AI Power Rankings application, including all
 - [ ] SEO metadata configured for Spanish
 - [ ] Native Spanish speaker review completed
 - [ ] Documentation updated
+---
+
+### **[T-043]** Display News Article Metric Impacts on Tool Rankings
+
+**Type:** Feature  
+**Epic:** EP-003 (Content & Analytics)  
+**Priority:** Medium  
+**Story Points:** 8  
+**Assignee:** @bobmatnyc  
+**Status:** In Progress  
+**Sprint:** 3
+
+**Description:**
+Add visual indicators showing how news articles affect tool quality metrics and ranking factors. When viewing a news article about a tool, users should see which ranking factors are positively or negatively impacted based on the article content.
+
+**Acceptance Criteria:**
+- [ ] Metric impact analyzer extracts quantitative data from articles
+- [ ] Visual component displays impacts on 6 ranking factors
+- [ ] Each impact shows direction (positive/negative), magnitude, and evidence
+- [ ] Overall impact score calculated and displayed
+- [ ] Integration with existing news article pages
+- [ ] Real-time analysis for manually ingested articles
+
+**Technical Design:**
+
+1. **Metric Extraction Engine:**
+   - Parse article content for quantitative metrics (funding, users, benchmarks)
+   - Identify qualitative signals (feature launches, partnerships, issues)
+   - Map extracted data to ranking factors
+
+2. **Impact Calculation:**
+   - Market Traction: funding rounds, valuations, revenue metrics
+   - Technical Capability: benchmarks, context windows, new features
+   - Developer Adoption: user counts, GitHub metrics, downloads
+   - Development Velocity: release frequency, update announcements
+   - Platform Resilience: multi-provider support, open source status
+   - Community Sentiment: positive/negative language analysis
+
+3. **UI Components:**
+   - MetricImpactDisplay component with progress bars and icons
+   - Color-coded impact indicators (green/red/gray)
+   - Expandable evidence sections with extracted quotes
+   - Overall impact summary score
+
+**Implementation Plan:**
+1. Create NewsMetricAnalyzer utility class
+2. Build MetricImpactDisplay React component
+3. Add API endpoint for impact calculation
+4. Integrate into news detail pages
+5. Update news ingestion to pre-calculate impacts
+6. Add impact data to news JSON schema
+
+**Definition of Done:**
+- [ ] Metric analyzer accurately extracts relevant data
+- [ ] Impact display component renders correctly
+- [ ] Integration with news pages functional
+- [ ] Manual article ingestion includes impact calculation
+- [ ] Performance acceptable (<100ms analysis time)
+- [ ] Mobile responsive design
+- [ ] Unit tests for analyzer logic
+- [ ] Documentation updated

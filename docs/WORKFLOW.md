@@ -126,6 +126,30 @@ Implementation details, considerations, or constraints.
 - [ ] Documentation updated
 ```
 
+### 🚨 CRITICAL: Feature Branch Policy
+
+**When working in YOLO mode or any development:**
+
+- **ALWAYS create a feature branch** for any work
+- **NEVER commit directly to main**
+- Branch naming conventions:
+  - `feature/T-XXX-description` for features
+  - `bugfix/T-XXX-description` for bug fixes
+  - `task/T-XXX-description` for tasks
+  - `hotfix/description` for emergency fixes
+
+```bash
+# Create and checkout a new feature branch
+git checkout -b feature/T-043-news-metric-impacts
+
+# After work is complete
+git add -A
+git commit -m "feat: implement news metric impact display"
+git push origin feature/T-043-news-metric-impacts
+
+# Create PR or merge to main when ready
+```
+
 ### 🏃 Daily Workflow
 
 1. **Morning Sync**
