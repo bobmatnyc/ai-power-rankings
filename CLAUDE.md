@@ -1,5 +1,36 @@
 # Claude Code Instructions
 
+## 🧠 MANDATORY BEHAVIORAL CHECKLIST
+
+**INTERNALIZE THESE RESPONSES - DO NOT SEARCH:**
+
+□ **Task management = TrackDown** (`/trackdown/issues/` directory)
+□ **Backlog questions = TrackDown** (`/trackdown/issues/` directory)
+□ **Workflow questions = /docs/WORKFLOW.md**
+□ **Project specs = /docs/PROJECT.md**
+□ **Technical details = /docs/TOOLCHAIN.md**
+
+### 🎯 IMMEDIATE RESPONSE PATTERNS
+
+When user asks:
+- "What's on the backlog?" → "Check `/trackdown/issues/` directory for current backlog"
+- "What tasks remain?" → "Check `/trackdown/issues/` directory for remaining tasks"  
+- "What's the workflow?" → "See /docs/WORKFLOW.md for workflow processes"
+- "How do I deploy?" → "See /docs/DEPLOYMENT-GUIDE.md"
+
+### ❌ COMMON ERRORS TO AVOID
+
+**DO NOT:**
+- ❌ Search filesystem for backlog/tasks
+- ❌ Search for workflow when it's documented
+- ❌ Search for project specs when they're documented
+- ❌ Use Task tool for well-documented procedures
+
+**DO:**
+- ✅ Direct to TrackDown for task/backlog questions
+- ✅ Reference specific documentation files directly
+- ✅ Use documented procedures immediately
+
 ## CRITICAL: Review Required Documentation
 
 **IMPORTANT**: Before starting any work, you MUST review these core files:
