@@ -21,6 +21,7 @@ import {
   FileText,
   Rss,
 } from "lucide-react";
+import ScoringMetrics from "./scoring-metrics";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 
@@ -239,6 +240,9 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
           </Link>
         </div>
       </div>
+
+      {/* Scoring Metrics */}
+      <ScoringMetrics />
 
       {/* Filter Tabs */}
       <div className="flex flex-wrap gap-2 mb-6">
