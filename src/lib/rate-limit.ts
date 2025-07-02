@@ -60,7 +60,11 @@ export function getClientIP(request: NextRequest): string {
     return cfConnectingIP;
   }
 
-  // Fallback to connection remote address (if available)
+  // Fallback to request IP from URL or connection
+  if ((request as any).ip) {
+    return (request as any).ip;
+  }
+
   return "unknown";
 }
 

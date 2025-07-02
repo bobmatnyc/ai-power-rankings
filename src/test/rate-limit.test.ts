@@ -20,10 +20,53 @@ vi.mock("@vercel/kv", () => ({
 
 // Mock Upstash Ratelimit
 vi.mock("@upstash/ratelimit", () => ({
-  Ratelimit: vi.fn().mockImplementation(() => ({
-    limit: vi.fn(),
-    prefix: "test_prefix",
-  })),
+  Ratelimit: Object.assign(
+    vi.fn().mockImplementation(() => ({
+      limit: vi.fn().mockResolvedValue({
+        success: true,
+        limit: 5,
+        remaining: 4,
+        reset: Date.now() + 3600000,
+        pending: Promise.resolve(),
+      }),
+      prefix: "test_prefix",
+    })),
+    {
+      slidingWindow: vi.fn().mockReturnValue({
+        limit: vi.fn().mockResolvedValue({
+          success: true,
+          limit: 5,
+          remaining: 4,
+          reset: Date.now() + 3600000,
+          pending: Promise.resolve(),
+        }),
+        getRemaining: vi.fn(),
+        resetTokens: vi.fn(),
+      }),
+      fixedWindow: vi.fn().mockReturnValue({
+        limit: vi.fn().mockResolvedValue({
+          success: true,
+          limit: 5,
+          remaining: 4,
+          reset: Date.now() + 3600000,
+          pending: Promise.resolve(),
+        }),
+        getRemaining: vi.fn(),
+        resetTokens: vi.fn(),
+      }),
+      tokenBucket: vi.fn().mockReturnValue({
+        limit: vi.fn().mockResolvedValue({
+          success: true,
+          limit: 5,
+          remaining: 4,
+          reset: Date.now() + 3600000,
+          pending: Promise.resolve(),
+        }),
+        getRemaining: vi.fn(),
+        resetTokens: vi.fn(),
+      }),
+    }
+  ),
 }));
 
 describe("Rate Limiting", () => {

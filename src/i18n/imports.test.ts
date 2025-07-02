@@ -7,26 +7,26 @@ describe("i18n imports", () => {
     const middlewarePath = path.join(process.cwd(), "src/middleware.ts");
     const content = await fs.readFile(middlewarePath, "utf-8");
 
-    // Server-side imports should have .js extension
-    expect(content).toContain('from "./i18n/config.js"');
-    expect(content).toContain('from "@/auth.js"');
-    expect(content).toContain('from "@/lib/auth-config.js"');
+    // Server-side imports should NOT have .js extension (project convention)
+    expect(content).toContain('from "./i18n/config"');
+    expect(content).toContain('from "@/auth"');
+    expect(content).toContain('from "@/lib/auth-config"');
 
-    // Should not have imports without .js extension
-    expect(content).not.toContain('from "./i18n/config"');
-    expect(content).not.toContain('from "@/auth"');
-    expect(content).not.toContain('from "@/lib/auth-config"');
+    // Should not have imports with .js extension
+    expect(content).not.toContain('from "./i18n/config.js"');
+    expect(content).not.toContain('from "@/auth.js"');
+    expect(content).not.toContain('from "@/lib/auth-config.js"');
   });
 
   it("should have correct import extensions in auth.ts", async () => {
     const authPath = path.join(process.cwd(), "src/auth.ts");
     const content = await fs.readFile(authPath, "utf-8");
 
-    // Server-side imports should have .js extension
-    expect(content).toContain('from "@/lib/auth-config.js"');
+    // Server-side imports should NOT have .js extension (project convention)
+    expect(content).toContain('from "@/lib/auth-config"');
 
-    // Should not have imports without .js extension
-    expect(content).not.toContain('from "@/lib/auth-config"');
+    // Should not have imports with .js extension
+    expect(content).not.toContain('from "@/lib/auth-config.js"');
   });
 
   it("should NOT have .js extensions in client components", async () => {
