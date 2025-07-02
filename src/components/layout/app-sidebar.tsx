@@ -170,16 +170,17 @@ function SidebarContent(): React.JSX.Element {
   ];
 
   return (
-    <Sidebar>
+    <Sidebar role="navigation" aria-label="Main navigation">
       <div className="p-6 h-full overflow-y-auto">
         <Link
           href={`/${lang}`}
           onClick={handleNavClick}
-          className="flex items-center space-x-3 mb-6"
+          className="flex items-center space-x-3 mb-6 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded"
+          aria-label="Go to homepage"
         >
           <img
             src="/crown-of-technology.png"
-            alt="AI Power Ranking"
+            alt="AI Power Rankings logo"
             className="w-9 h-9 object-contain"
           />
           <div>
@@ -189,11 +190,11 @@ function SidebarContent(): React.JSX.Element {
 
         <div className="space-y-6">
           {/* Navigation */}
-          <div>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+          <section>
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               {dict.sidebar.navigation}
-            </h3>
-            <nav className="space-y-1">
+            </h2>
+            <nav className="space-y-1" aria-label="Primary navigation">
               {navigationItems.map((item) => {
                 // Calculate badge count based on navigation item
                 let badgeCount = 0;
@@ -223,18 +224,23 @@ function SidebarContent(): React.JSX.Element {
                     href={item.href}
                     onClick={handleNavClick}
                     className={cn(
-                      "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors",
+                      "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                       pathname === item.href
                         ? "bg-primary/10 text-primary font-medium"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     )}
+                    aria-current={pathname === item.href ? "page" : undefined}
                   >
                     <div className="flex items-center gap-3">
-                      <item.icon className="h-4 w-4" />
+                      <item.icon className="h-4 w-4" aria-hidden="true" />
                       <span>{item.title}</span>
                     </div>
                     {badgeCount > 0 && (
-                      <Badge variant={badgeVariant} className="ml-auto">
+                      <Badge
+                        variant={badgeVariant}
+                        className="ml-auto"
+                        aria-label={`${badgeCount} updates`}
+                      >
                         {badgeCount}
                       </Badge>
                     )}
@@ -242,69 +248,79 @@ function SidebarContent(): React.JSX.Element {
                 );
               })}
             </nav>
-          </div>
+          </section>
 
           <Separator className="bg-border/50" />
 
           {/* Quick Links */}
-          <div>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+          <section>
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               {dict.sidebar.quickLinks}
-            </h3>
-            <nav className="space-y-1">
+            </h2>
+            <nav className="space-y-1" aria-label="Quick links">
               <Link
                 href={`/${lang}/rankings?sort=trending`}
                 onClick={handleNavClick}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors",
+                  "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                   pathname === `/${lang}/rankings` && searchParams.get("sort") === "trending"
                     ? "bg-primary/10 text-primary font-medium"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
+                aria-current={
+                  pathname === `/${lang}/rankings` && searchParams.get("sort") === "trending"
+                    ? "page"
+                    : undefined
+                }
               >
-                <TrendingUp className="h-4 w-4" />
+                <TrendingUp className="h-4 w-4" aria-hidden="true" />
                 <span>{dict.sidebar.trending}</span>
               </Link>
             </nav>
-          </div>
+          </section>
 
           <Separator className="bg-border/50" />
 
           {/* Categories */}
-          <div>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+          <section>
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               {dict.sidebar.categories}
-            </h3>
-            <div className="space-y-1">
+            </h2>
+            <nav className="space-y-1" aria-label="Filter by category">
               {categories.map((category) => (
                 <Link
                   key={category.id}
                   href={createFilterUrl("category", category.id)}
                   onClick={handleNavClick}
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors",
+                    "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                     currentCategory === category.id
                       ? "bg-primary/10 text-primary font-medium"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
+                  aria-current={currentCategory === category.id ? "page" : undefined}
                 >
                   <span>{category.name}</span>
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge
+                    variant="secondary"
+                    className="text-xs"
+                    aria-label={`${category.count} tools`}
+                  >
                     {category.count}
                   </Badge>
                 </Link>
               ))}
-            </div>
-          </div>
+            </nav>
+          </section>
 
           <Separator className="bg-border/50" />
 
           {/* Tags */}
-          <div>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+          <section>
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               {dict.sidebar.features}
-            </h3>
-            <div className="space-y-1">
+            </h2>
+            <div className="space-y-1" role="group" aria-label="Filter by features">
               {tagFilters.map((tag) => (
                 <button
                   key={tag.id}
@@ -313,28 +329,35 @@ function SidebarContent(): React.JSX.Element {
                     handleNavClick();
                   }}
                   className={cn(
-                    "w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors text-left",
+                    "w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors text-left focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                     currentTags.includes(tag.id)
                       ? "bg-primary/10 text-primary font-medium"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
+                  aria-pressed={currentTags.includes(tag.id)}
+                  aria-label={`Filter by ${tag.name} (${tag.count} tools)`}
                 >
                   <span>{tag.name}</span>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs" aria-hidden="true">
                     {tag.count}
                   </Badge>
                 </button>
               ))}
             </div>
-          </div>
+          </section>
 
           <Separator className="bg-border/50" />
 
           {/* Clear Filters */}
           {(currentCategory !== "all" || currentTags.length > 0) && (
-            <Button variant="outline" size="sm" className="w-full" asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              asChild
+            >
               <Link href={`/${lang}/rankings`} onClick={handleNavClick}>
-                <Filter className="h-4 w-4 mr-2" />
+                <Filter className="h-4 w-4 mr-2" aria-hidden="true" />
                 {dict.sidebar.clearFilters}
               </Link>
             </Button>

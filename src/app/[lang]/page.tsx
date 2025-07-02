@@ -87,26 +87,35 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       </section>
 
       {/* Categories Overview */}
-      <section className="px-3 md:px-6 py-12 bg-muted/30">
+      <section className="px-3 md:px-6 py-12 bg-muted/30" aria-labelledby="categories-heading">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
+          <h2
+            id="categories-heading"
+            className="text-3xl font-bold text-foreground mb-8 text-center"
+          >
             {dict.home.categories.title}
           </h2>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-            <Link href={`/${lang}/rankings?category=ide-assistant`} className="block h-full">
+            <Link
+              href={`/${lang}/rankings?category=ide-assistant`}
+              className="block h-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 rounded-lg"
+              aria-label={`Explore ${dict.categories.ideAssistant} tools`}
+            >
               <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-primary/20 h-full">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center justify-between">
                     {dict.categories.ideAssistant}
-                    <Badge className="bg-primary/10 text-primary">7</Badge>
+                    <Badge className="bg-primary/10 text-primary" aria-label="7 tools available">
+                      7
+                    </Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
                     {dict.home.categories.ideDescription}
                   </p>
-                  <p className="text-sm text-primary mt-3 group-hover:underline">
+                  <p className="text-sm text-primary mt-3 group-hover:underline" aria-hidden="true">
                     {dict.common.explore} →
                   </p>
                 </CardContent>
@@ -174,15 +183,21 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       </section>
 
       {/* Methodology Brief */}
-      <section id="methodology" className="container mx-auto px-2 md:px-4 py-16">
+      <section
+        id="methodology"
+        className="container mx-auto px-2 md:px-4 py-16"
+        aria-labelledby="methodology-heading"
+      >
         <div className="mx-auto max-w-4xl">
-          <h2 className="mb-8 text-center text-3xl font-bold">{dict.home.methodology.title}</h2>
+          <h2 id="methodology-heading" className="mb-8 text-center text-3xl font-bold">
+            {dict.home.methodology.title}
+          </h2>
 
           <div className="grid gap-6 md:grid-cols-2">
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <span className="text-primary">{dict.home.methodology.algorithmTitle}</span>
+                  <h3 className="text-primary">{dict.home.methodology.algorithmTitle}</h3>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -213,7 +228,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <span className="text-secondary">{dict.home.methodology.modifiersTitle}</span>
+                  <h3 className="text-secondary">{dict.home.methodology.modifiersTitle}</h3>
                 </CardTitle>
               </CardHeader>
               <CardContent>
