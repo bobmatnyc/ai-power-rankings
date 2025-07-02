@@ -2,8 +2,15 @@
 
 import { useEffect, useState } from "react";
 
+interface DebugApiResponse {
+  environment: any;
+  rankings: any;
+  rankingsStatus: number;
+  timestamp: string;
+}
+
 export default function DebugApiPage() {
-  const [apiResponse, setApiResponse] = useState<any>(null);
+  const [apiResponse, setApiResponse] = useState<DebugApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 

@@ -109,7 +109,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
       const parsedData = JSON.parse(fileContent);
       newsItems = Array.isArray(parsedData) ? parsedData : [parsedData];
-    } catch (error) {
+    } catch (_error) {
       return NextResponse.json({ error: "Invalid JSON format" }, { status: 400 });
     }
 

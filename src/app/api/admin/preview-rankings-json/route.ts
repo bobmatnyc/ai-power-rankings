@@ -21,7 +21,7 @@ async function updateProgress(message: string, tool?: string, step?: string) {
         body: JSON.stringify({ message, tool, step }),
       }
     );
-  } catch (error) {
+  } catch (_error) {
     // Ignore progress update errors
   }
 }

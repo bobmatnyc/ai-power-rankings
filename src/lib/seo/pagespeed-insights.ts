@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 interface PageSpeedResult {
   lighthouseResult: {
@@ -61,8 +61,9 @@ export class PageSpeedInsights {
           seo: Math.round(categories.seo.score * 100),
         },
       };
-    } catch (error: any) {
-      console.error("PageSpeed Insights API error:", error.response?.data || error.message);
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.error("PageSpeed Insights API error:", axiosError.response?.data || axiosError.message);
       throw error;
     }
   }

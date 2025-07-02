@@ -1,6 +1,6 @@
 {
   "name": "ai-power-rankings",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "private": true,
   "scripts": {
     "dev": "node scripts/clear-next-cache.js && next dev",
@@ -101,8 +101,6 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-tooltip": "^1.2.7",
-    "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.50.0",
     "@types/nodemailer": "^6.4.17",
     "@vercel/analytics": "^1.5.0",
     "@vercel/blob": "^0.27.1",
@@ -141,7 +139,6 @@
     "resend": "^4.5.2",
     "schema-dts": "^1.1.5",
     "server-only": "^0.0.1",
-    "supabase": "^2.24.3",
     "tailwind-merge": "^3.3.0",
     "zod": "^3.25.56",
     "zustand": "^5.0.5"

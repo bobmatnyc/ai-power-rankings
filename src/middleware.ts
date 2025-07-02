@@ -54,7 +54,7 @@ function getLocale(request: NextRequest): string {
       });
 
     for (const locale of preferredLocales) {
-      if (locales.includes(locale as any)) {
+      if (locales.includes(locale)) {
         return locale;
       }
     }

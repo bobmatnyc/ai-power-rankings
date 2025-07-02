@@ -11,6 +11,12 @@ import type { Locale } from "@/i18n/config";
 import dynamicImport from "next/dynamic";
 import { getUrl } from "@/lib/get-url";
 
+interface ToolData {
+  id: string;
+  name: string;
+  status: string;
+}
+
 // Dynamic import for T-031 performance optimization
 const ClientRankings = dynamicImport(
   () => import("./client-rankings").then((mod) => ({ default: mod.ClientRankings })),
@@ -45,8 +51,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       const tools = await response.json();
       // Get all active tool names
       toolNames = tools
-        .filter((tool: any) => tool.status === "active")
-        .map((tool: any) => tool.name);
+        .filter((tool: ToolData) => tool.status === "active")
+        .map((tool: ToolData) => tool.name);
     }
   } catch (error) {
     console.error("Error fetching tools for SEO:", error);

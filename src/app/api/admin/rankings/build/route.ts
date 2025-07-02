@@ -476,12 +476,14 @@ export async function POST(request: NextRequest) {
         },
         previousRanking
           ? {
+              tool_id: tool.id,
+              tool_name: tool.name,
               position: previousPosition!,
               score: previousRanking.score,
               current_position: previousPosition!,
               current_score: previousRanking.score,
             }
-          : undefined,
+          : null,
         toolScore.factorScores,
         previousRanking?.factor_scores
           ? {

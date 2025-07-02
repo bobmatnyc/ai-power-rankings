@@ -4,6 +4,11 @@ import RankingsGrid from "@/components/ranking/rankings-grid";
 import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
 import { loggers } from "@/lib/logger";
+
+interface RankingTool {
+  name: string;
+  updated_at?: string;
+}
 import Script from "next/script";
 import {
   generateRankingFAQSchema,
@@ -39,7 +44,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (response.ok) {
       const data = await response.json();
       if (data.rankings?.length > 0) {
-        topTools = data.rankings.slice(0, 3).map((tool: any) => tool.name);
+        topTools = data.rankings.slice(0, 3).map((tool: RankingTool) => tool.name);
         totalTools = data.rankings.length;
         // Extract period from first ranking if available
         const firstRanking = data.rankings[0];

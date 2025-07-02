@@ -17,15 +17,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const stats = await newsRepo.getIngestionReportStats();
 
     // Calculate totals from returned reports
-    let totalItemsProcessed = 0;
-    let totalToolsCreated = 0;
-    let totalCompaniesCreated = 0;
+    let _totalItemsProcessed = 0;
+    let _totalToolsCreated = 0;
+    let _totalCompaniesCreated = 0;
     let totalNewsItems = 0;
 
     for (const report of reports) {
-      totalItemsProcessed += report.processed_items || 0;
-      totalToolsCreated += report.new_tools_created || 0;
-      totalCompaniesCreated += report.new_companies_created || 0;
+      _totalItemsProcessed += report.processed_items || 0;
+      _totalToolsCreated += report.new_tools_created || 0;
+      _totalCompaniesCreated += report.new_companies_created || 0;
       totalNewsItems += report.total_items || 0;
     }
 

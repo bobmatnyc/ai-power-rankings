@@ -241,7 +241,10 @@ export class ToolsRepository extends BaseRepository<ToolsData> {
       if (!data.index.byCategory[tool.category]) {
         data.index.byCategory[tool.category] = [];
       }
-      data.index.byCategory[tool.category]!.push(tool.id);
+      const categoryArray = data.index.byCategory[tool.category];
+      if (categoryArray) {
+        categoryArray.push(tool.id);
+      }
     }
 
     // Update metadata
