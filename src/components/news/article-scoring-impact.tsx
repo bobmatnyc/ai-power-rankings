@@ -152,47 +152,74 @@ export default function ArticleScoringImpact({
     // Compact view for news feed cards
     return (
       <TooltipProvider>
-        <div className="flex items-center gap-2 text-xs">
-          {importance_score && importance_score > 5 && (
-            <Badge variant="secondary" className="text-xs px-2 py-0.5">
-              Impact: {importance_score}/10
+        <div className="flex items-center gap-2 text-xs flex-wrap">
+          {/* High importance indicator */}
+          {importance_score && importance_score >= 7 && (
+            <Badge variant="destructive" className="text-xs px-2 py-0.5">
+              🔥 High Impact ({importance_score}/10)
             </Badge>
           )}
+
+          {/* Factor impacts */}
           {hasFactorImpacts && affectedFactors.length > 0 && (
-            <div className="flex items-center gap-1">
-              <span className="text-muted-foreground">Affects:</span>
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground text-xs">Ranking Impact:</span>
               <div className="flex gap-1">
-                {affectedFactors.slice(0, 3).map((factor) => {
+                {affectedFactors.slice(0, 4).map((factor) => {
                   const impact = scoring_factors![factor.key]!;
                   return (
                     <Tooltip key={factor.key}>
                       <TooltipTrigger asChild>
                         <Badge
                           variant="outline"
-                          className={`text-xs px-1.5 py-0.5 ${getImpactColor(impact)}`}
+                          className={`text-xs px-2 py-1 cursor-help transition-all hover:scale-105 ${getImpactColor(impact)}`}
                         >
                           <factor.icon className="h-3 w-3 mr-1" />
-                          {getImpactIcon(impact)}
+                          <span className="font-medium">{factor.name}</span>
+                          <span className="ml-1 text-xs">
+                            {getImpactIcon(impact)}
+                            {formatImpact(impact)}
+                          </span>
                         </Badge>
                       </TooltipTrigger>
-                      <TooltipContent>
-                        <div className="text-xs">
-                          <p className="font-medium">
-                            {factor.name}: {formatImpact(impact)}
+                      <TooltipContent side="top" className="max-w-xs">
+                        <div className="space-y-1">
+                          <p className="font-medium text-sm">
+                            {factor.name} Impact: {formatImpact(impact)}
                           </p>
-                          <p className="text-muted-foreground">{factor.description}</p>
+                          <p className="text-xs text-muted-foreground">{factor.description}</p>
                         </div>
                       </TooltipContent>
                     </Tooltip>
                   );
                 })}
-                {affectedFactors.length > 3 && (
-                  <Badge variant="outline" className="text-xs px-1.5 py-0.5">
-                    +{affectedFactors.length - 3}
-                  </Badge>
+                {affectedFactors.length > 4 && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge variant="outline" className="text-xs px-2 py-1 cursor-help">
+                        +{affectedFactors.length - 4} more
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <div className="space-y-1">
+                        {affectedFactors.slice(4).map((factor) => (
+                          <div key={factor.key} className="text-xs">
+                            {factor.name}: {formatImpact(scoring_factors![factor.key]!)}
+                          </div>
+                        ))}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
                 )}
               </div>
             </div>
+          )}
+
+          {/* Show importance score for articles without factor impacts */}
+          {!hasFactorImpacts && importance_score && importance_score > 5 && (
+            <Badge variant="secondary" className="text-xs px-2 py-0.5">
+              📊 Impact Score: {importance_score}/10
+            </Badge>
           )}
         </div>
       </TooltipProvider>

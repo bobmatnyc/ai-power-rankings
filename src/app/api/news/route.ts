@@ -154,42 +154,54 @@ export async function GET(request: NextRequest) {
           const factors: any = {};
           const titleLower = title.toLowerCase();
 
-          // Base impact magnitude on importance score
-          const baseMagnitude = Math.max(0.1, (importance - 5) / 10); // -0.5 to +0.5 range
+          // Enhanced impact magnitude calculation for more varied scores
+          const baseMagnitude = Math.max(0.1, (importance - 4) / 5); // Better range: 0.1 to 1.2
+
+          // Add bonus multipliers for high-impact keywords
+          let multiplier = 1;
+          if (titleLower.includes("breakthrough") || titleLower.includes("revolutionary")) {
+            multiplier = 1.5;
+          }
+          if (titleLower.includes("million") || titleLower.includes("billion")) {
+            multiplier = 1.3;
+          }
+          if (titleLower.includes("launches") || titleLower.includes("announces")) {
+            multiplier = 1.2;
+          }
 
           switch (eventType) {
             case "milestone":
               if (titleLower.includes("funding") || titleLower.includes("raised")) {
-                factors.market_traction = baseMagnitude * 2;
-                factors.business_sentiment = baseMagnitude * 1.5;
-                factors.development_velocity = baseMagnitude * 0.5;
+                factors.market_traction = baseMagnitude * 2 * multiplier;
+                factors.business_sentiment = baseMagnitude * 1.5 * multiplier;
+                factors.development_velocity = baseMagnitude * 0.5 * multiplier;
               }
               break;
             case "feature":
               if (titleLower.includes("ai") || titleLower.includes("autonomous")) {
-                factors.agentic_capability = baseMagnitude * 2;
-                factors.innovation = baseMagnitude * 1.5;
+                factors.agentic_capability = baseMagnitude * 2 * multiplier;
+                factors.innovation = baseMagnitude * 1.5 * multiplier;
               }
               if (titleLower.includes("performance") || titleLower.includes("faster")) {
-                factors.technical_performance = baseMagnitude * 1.8;
+                factors.technical_performance = baseMagnitude * 1.8 * multiplier;
               }
               if (titleLower.includes("integration") || titleLower.includes("multi")) {
-                factors.platform_resilience = baseMagnitude * 1.2;
+                factors.platform_resilience = baseMagnitude * 1.2 * multiplier;
               }
               break;
             case "partnership":
-              factors.business_sentiment = baseMagnitude * 1.3;
-              factors.market_traction = baseMagnitude * 1.0;
-              factors.platform_resilience = baseMagnitude * 0.8;
+              factors.business_sentiment = baseMagnitude * 1.3 * multiplier;
+              factors.market_traction = baseMagnitude * 1.0 * multiplier;
+              factors.platform_resilience = baseMagnitude * 0.8 * multiplier;
               break;
             case "update":
-              factors.development_velocity = baseMagnitude * 1.5;
+              factors.development_velocity = baseMagnitude * 1.5 * multiplier;
               if (titleLower.includes("users") || titleLower.includes("community")) {
-                factors.developer_adoption = baseMagnitude * 1.2;
+                factors.developer_adoption = baseMagnitude * 1.2 * multiplier;
               }
               break;
             case "announcement":
-              factors.business_sentiment = baseMagnitude * 1.0;
+              factors.business_sentiment = baseMagnitude * 1.0 * multiplier;
               break;
           }
 
@@ -205,7 +217,28 @@ export async function GET(request: NextRequest) {
           return Object.keys(filteredFactors).length > 0 ? filteredFactors : undefined;
         };
 
-        const importance = article.importance_score || 5;
+        // Enhanced importance scoring based on content
+        let importance = article.importance_score || 5;
+        const titleLower = article.title.toLowerCase();
+
+        // Boost importance for high-impact keywords
+        if (
+          titleLower.includes("funding") ||
+          titleLower.includes("raised") ||
+          titleLower.includes("million")
+        ) {
+          importance = Math.min(10, importance + 2);
+        }
+        if (titleLower.includes("breakthrough") || titleLower.includes("revolutionary")) {
+          importance = Math.min(10, importance + 3);
+        }
+        if (titleLower.includes("launches") || titleLower.includes("announces")) {
+          importance = Math.min(10, importance + 1);
+        }
+        if (titleLower.includes("ai") && titleLower.includes("autonomous")) {
+          importance = Math.min(10, importance + 2);
+        }
+
         const scoring_factors = generateScoringFactors(eventType, article.title, importance);
 
         return {
