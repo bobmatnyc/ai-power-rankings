@@ -546,6 +546,10 @@ If the automated script isn't available or you need to check manually:
 # IMPORTANT: Always run a local build first!
 pnpm run build  # This catches TypeScript errors that will fail on Vercel
 
+# CRITICAL: After adding/updating dependencies, regenerate lockfile
+# If you added/updated any dependencies in package.json:
+pnpm install  # Updates pnpm-lock.yaml - MUST be committed
+
 # Then run comprehensive checks (prevents other deployment failures)
 pnpm run ci:local
 
