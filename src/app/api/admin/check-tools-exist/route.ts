@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
 import { getToolsRepo } from "@/lib/json-db";
+import type { Tool } from "@/lib/json-db/schemas";
+
+interface ToolCheckResult {
+  foundBySlug: boolean;
+  foundByName: boolean;
+  tool: Tool | null;
+}
 
 export async function GET() {
   try {
@@ -7,7 +14,7 @@ export async function GET() {
 
     // Check for specific tools
     const toolsToCheck = ["gemini", "chatgpt"];
-    const results: any = {};
+    const results: Record<string, ToolCheckResult> = {};
 
     for (const toolName of toolsToCheck) {
       // Check by slug
@@ -25,7 +32,8 @@ export async function GET() {
     }
 
     return NextResponse.json(results);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

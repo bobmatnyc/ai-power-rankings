@@ -3,6 +3,30 @@ import { loggers } from "@/lib/logger";
 import { getRankingsRepo } from "@/lib/json-db";
 import { RankingPeriod } from "@/lib/json-db/schemas";
 
+interface ProvidedRanking {
+  tool_id: string;
+  tool_name: string;
+  score?: number;
+  new_score?: number;
+  factor_changes?: {
+    agentic_capability?: number;
+    innovation?: number;
+    technical_performance?: number;
+    developer_adoption?: number;
+    market_traction?: number;
+    business_sentiment?: number;
+    development_velocity?: number;
+    platform_resilience?: number;
+  };
+  movement?: "up" | "down" | "same";
+  current_position?: number;
+  position_change?: number;
+  change_analysis?: {
+    primary_reason?: string;
+    narrative_explanation?: string;
+  };
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
@@ -26,7 +50,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       is_current: false,
       created_at: new Date().toISOString(),
       preview_date,
-      rankings: rankings.map((r: any, index: number) => ({
+      rankings: rankings.map((r: ProvidedRanking, index: number) => ({
         tool_id: r.tool_id,
         tool_name: r.tool_name,
         position: index + 1,

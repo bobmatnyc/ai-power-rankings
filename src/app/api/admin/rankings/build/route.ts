@@ -35,7 +35,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRankingsRepo, getToolsRepo, getNewsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
-import type { RankingEntry } from "@/lib/json-db/schemas";
+import type { RankingEntry, Tool, RankingPeriod } from "@/lib/json-db/schemas";
 import { RankingEngineV6, ToolMetricsV6, ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
 import {
@@ -111,7 +111,7 @@ function getCategoryBasedAgenticScore(category: string, toolName: string): numbe
  * @param innovationScore - Innovation score from innovation-scores.json (optional)
  * @returns ToolMetricsV6 object ready for scoring
  */
-function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetricsV6 {
+function transformToToolMetrics(tool: Tool, innovationScore?: number): ToolMetricsV6 {
   // Extract metrics from tool.info structure (JSON format)
   const info = tool.info;
   const technical = info?.technical || {};
@@ -130,19 +130,14 @@ function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetric
 
     // Agentic capabilities - using category and name-based defaults
     agentic_capability: getCategoryBasedAgenticScore(tool.category, tool.name),
-    swe_bench_score: 
-      businessMetrics.swe_bench?.verified || 
-      businessMetrics.swe_bench?.full || 
-      businessMetrics.swe_bench?.lite || 
-      businessMetrics.swe_bench_score || 
-      (isPremium ? 45 : isAutonomous ? 35 : 20),
+    swe_bench_score: businessMetrics.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
     multi_file_capability: isAutonomous ? 9 : technical.multi_file_support ? 7 : 4,
     planning_depth: isAutonomous ? 8.5 : 6,
     context_utilization: isPremium ? 8 : 6.5,
 
     // Technical metrics
     context_window: technical.context_window || (isPremium ? 200000 : 100000),
-    language_support: technical.supported_languages?.length || (isEnterprise ? 20 : 15),
+    language_support: technical.languages?.length || (isEnterprise ? 20 : 15),
     github_stars: businessMetrics.github_stars || (isOpenSource ? 25000 : 5000),
 
     // Innovation metrics
@@ -168,7 +163,7 @@ function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetric
 
     // Platform metrics
     llm_provider_count: isPremium ? 5 : 3,
-    multi_model_support: technical.multi_model_support || isPremium || isOpenSource,
+    multi_model_support: isPremium || isOpenSource,
     community_size: businessMetrics.estimated_users || (isOpenSource ? 50000 : 10000),
   };
 }
@@ -420,7 +415,7 @@ export async function POST(request: NextRequest) {
     const allPeriods = await rankingsRepo.getAvailablePeriods();
     const currentPeriodIndex = allPeriods.indexOf(period);
     let previousRankingsMap = new Map<string, number>();
-    let previousPeriod: any = null;
+    let previousPeriod: RankingPeriod | null = null;
 
     if (currentPeriodIndex >= 0 && currentPeriodIndex < allPeriods.length - 1) {
       // Get the previous period (remember periods are sorted descending)
@@ -430,7 +425,7 @@ export async function POST(request: NextRequest) {
 
         if (previousPeriod) {
           previousRankingsMap = new Map(
-            previousPeriod.rankings.map((r: any) => [r.tool_id, r.position])
+            previousPeriod.rankings.map((r: RankingEntry) => [r.tool_id, r.position])
           );
         }
       }
@@ -451,7 +446,7 @@ export async function POST(request: NextRequest) {
       const position = i + 1;
       const previousPosition = previousRankingsMap.get(tool.id);
       const previousRanking = previousPosition
-        ? previousPeriod?.rankings.find((r: any) => r.tool_id === tool.id)
+        ? previousPeriod?.rankings.find((r: RankingEntry) => r.tool_id === tool.id)
         : null;
 
       let movement = undefined;
