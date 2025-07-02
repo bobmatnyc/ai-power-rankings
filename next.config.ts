@@ -32,13 +32,42 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  // Performance optimizations for T-031
+  // Performance optimizations for T-031 & T-040
   experimental: {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
   },
-  // Compiler optimizations
+  // Compiler optimizations for T-040
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
+  },
+  // Modern browser targeting for T-040 - remove legacy polyfills
+  swcMinify: true,
+  // Headers for T-040 cache optimization
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+        ],
+      },
+      {
+        source: "/favicon.ico",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
   },
 };
 

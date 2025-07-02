@@ -83,6 +83,8 @@
     "perf:audit": "node scripts/performance-audit.js",
     "perf:audit:prod": "node scripts/performance-audit.js https://aipowerranking.com/en",
     "perf:monitor": "node scripts/performance-audit.js && echo 'Performance audit completed for T-031'",
+    "t040:check": "node scripts/check-t040-compliance.js",
+    "t040:verify": "npm run t040:check && echo 'T-040 mobile performance compliance verified'",
     "analyze": "ANALYZE=true npm run build",
     "analyze:server": "ANALYZE=true npm run build && echo 'Bundle analysis complete - check .next/analyze/'",
     "bundle:analyze": "npm run analyze"
@@ -164,6 +166,7 @@
     "eslint-config-prettier": "^10.1.5",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
+    "lighthouse": "^12.7.0",
     "lint-staged": "^16.1.0",
     "node-fetch": "^3.3.2",
     "postcss": "^8.5.4",
