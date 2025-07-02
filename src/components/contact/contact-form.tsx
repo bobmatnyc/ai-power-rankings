@@ -76,8 +76,13 @@ export function ContactForm() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error" | "rate-limited">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [rateLimitInfo, setRateLimitInfo] = useState<{
+    retryAfter?: number;
+    limit?: number;
+    reset?: string;
+  }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,6 +110,20 @@ export function ContactForm() {
       const data = await response.json();
 
       if (!response.ok) {
+        // Handle rate limiting specifically
+        if (response.status === 429) {
+          setSubmitStatus("rate-limited");
+          setRateLimitInfo({
+            retryAfter: data.retryAfter,
+            limit: data.limit,
+            reset: data.reset,
+          });
+          setErrorMessage(
+            data.message ||
+            `Too many requests. Please try again in ${Math.ceil((data.retryAfter || 3600) / 60)} minutes.`
+          );
+          return;
+        }
         throw new Error(data.error || "Failed to send message");
       }
 
@@ -134,9 +153,10 @@ export function ContactForm() {
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (submitStatus === "error") {
+    if (submitStatus === "error" || submitStatus === "rate-limited") {
       setSubmitStatus("idle");
       setErrorMessage("");
+      setRateLimitInfo({});
     }
   };
 
@@ -267,8 +287,36 @@ export function ContactForm() {
               </Alert>
             )}
 
+            {submitStatus === "rate-limited" && (
+              <Alert className="border-orange-200 bg-orange-50">
+                <AlertCircle className="h-4 w-4 text-orange-600" />
+                <AlertDescription className="text-orange-800">
+                  <div className="space-y-2">
+                    <p className="font-medium">Rate limit exceeded</p>
+                    <p>{errorMessage}</p>
+                    {rateLimitInfo.retryAfter && (
+                      <p className="text-sm">
+                        You can submit another message in{" "}
+                        <span className="font-medium">
+                          {Math.ceil(rateLimitInfo.retryAfter / 60)} minutes
+                        </span>
+                        .
+                      </p>
+                    )}
+                    <p className="text-xs text-orange-600">
+                      This helps us prevent spam and ensure all messages receive proper attention.
+                    </p>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
             {/* Submit Button */}
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isSubmitting || submitStatus === "rate-limited"}
+            >
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />

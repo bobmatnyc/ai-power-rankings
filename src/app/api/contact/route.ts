@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
+import { checkContactFormRateLimit } from "@/lib/rate-limit";
 
 // Initialize Resend
 const resend = new Resend(process.env["RESEND_API_KEY"]);
@@ -37,6 +38,30 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body = await request.json();
+
+    // Check rate limit before processing
+    const rateLimitResult = await checkContactFormRateLimit(request, body.email);
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          error: "Too many requests",
+          message: "You have exceeded the rate limit for contact form submissions. Please try again later.",
+          retryAfter: rateLimitResult.retryAfter,
+          limit: rateLimitResult.limit,
+          reset: rateLimitResult.reset.toISOString(),
+        },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": rateLimitResult.limit.toString(),
+            "X-RateLimit-Remaining": rateLimitResult.remaining.toString(),
+            "X-RateLimit-Reset": rateLimitResult.reset.getTime().toString(),
+            "Retry-After": rateLimitResult.retryAfter?.toString() || "3600",
+          },
+        }
+      );
+    }
 
     // Validate input
     const validationResult = contactSchema.safeParse(body);
@@ -132,14 +157,21 @@ This email was sent via the AI Power Rankings contact form.
       return NextResponse.json({ error: errorMessage, details: error }, { status: 500 });
     }
 
-    // Return success response
+    // Return success response with rate limit headers
     return NextResponse.json(
       {
         success: true,
         message: "Your message has been sent successfully. We'll get back to you within 48 hours.",
         id: data?.id,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          "X-RateLimit-Limit": rateLimitResult.limit.toString(),
+          "X-RateLimit-Remaining": (rateLimitResult.remaining - 1).toString(),
+          "X-RateLimit-Reset": rateLimitResult.reset.getTime().toString(),
+        },
+      }
     );
   } catch (error) {
     console.error("Contact form error:", error);
