@@ -174,7 +174,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
                 size="lg"
-                className="gradient-primary text-white hover:opacity-90 transition-opacity"
+                className="gradient-primary text-white hover:opacity-90 transition-opacity px-8 py-3 w-full sm:w-auto min-w-[200px]"
                 asChild
               >
                 <Link href={`/${lang}/rankings`}>
@@ -182,16 +182,22 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild>
+              <Button variant="outline" size="lg" className="border-2 w-full sm:w-auto min-w-[200px]" asChild>
                 <Link href={`/${lang}/rankings?sort=trending`}>
                   {dict.home.hero.trendingButton}
                   <ArrowUp className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link href={`/${lang}/updates`}>
-                  {dict.home.hero.whatsNewButton}
-                  <Newspaper className="ml-2 h-4 w-4" />
+            </div>
+            
+            {/* Secondary CTA for newsletter signup */}
+            <div className="mt-6">
+              <p className="text-sm text-muted-foreground mb-3">
+                Get weekly updates on the latest AI tool rankings
+              </p>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href={`/${lang}/about?subscribe=true`} className="text-primary hover:text-primary/80">
+                  Subscribe to Updates →
                 </Link>
               </Button>
             </div>
@@ -285,6 +291,63 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 </CardContent>
               </Card>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Signals for T-042 SEO */}
+      <section className="px-3 md:px-6 py-12 bg-background">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-foreground mb-4">
+              Trusted by Developers Worldwide
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Our data-driven methodology and transparent ranking process has earned the trust of the developer community
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
+            <Card className="text-center p-4 md:p-6">
+              <CardContent className="pt-0">
+                <div className="text-2xl md:text-3xl font-bold text-primary mb-2">50+</div>
+                <div className="text-sm text-muted-foreground">AI Tools Analyzed</div>
+                <div className="text-xs text-muted-foreground mt-1">Updated Weekly</div>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-4 md:p-6">
+              <CardContent className="pt-0">
+                <div className="text-2xl md:text-3xl font-bold text-secondary mb-2">8</div>
+                <div className="text-sm text-muted-foreground">Ranking Factors</div>
+                <div className="text-xs text-muted-foreground mt-1">Algorithm v6.0</div>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center p-4 md:p-6">
+              <CardContent className="pt-0">
+                <div className="text-2xl md:text-3xl font-bold text-accent mb-2">2024</div>
+                <div className="text-sm text-muted-foreground">Est. Founded</div>
+                <div className="text-xs text-muted-foreground mt-1">Independent Analysis</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span>100% Independent</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span>Data-Driven</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                <span>Transparent Methodology</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
