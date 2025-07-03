@@ -71,3 +71,8 @@ const storage = isDev ? 'local' : 'blob';
 - Preserve verification token logic
 - Keep CSV export format unchanged
 - Use Vercel Blob for production as temporary measure
+
+## Status: CLOSED
+
+**Closed Date:** 2025-07-03  
+**Resolution:** Successfully converted all newsletter/subscriber endpoints to JSON repository with hybrid storage strategy (local files for development, Vercel Blob for production). All email verification, subscription, and admin management functionality preserved while removing Payload CMS dependencies.

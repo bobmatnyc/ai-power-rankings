@@ -458,7 +458,7 @@
       "success": {
         "title": "Successfully Unsubscribed",
         "message": "Ви були unsubscribed від AI Power Rankings newsletter. Шкода що ви йдете!",
-        "description": "[TRANSLATE] You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
+        "description": "Ви були відписані від AI Power Rankings newsletter. Шкода, що ви йдете!"
       },
       "errors": {
         "missingToken": {
@@ -477,34 +477,34 @@
           "title": "Error",
           "message": "Unexpected error occurred. Будь ласка try again."
         },
-        "unsubscribeFailed": "[TRANSLATE] We couldn't process your unsubscribe request. Please try again later.",
-        "default": "[TRANSLATE] An unexpected error occurred. Please try again."
+        "unsubscribeFailed": "Ми не змогли обробити ваш запит на відписку. Будь ласка спробуйте пізніше.",
+        "default": "Сталася неочікувана помилка. Будь ласка спробуйте знову."
       },
       "resubscribe": "Changed your mind? Ви можете subscribe again anytime.",
       "subscribeAgain": "Subscribe Again",
       "error": {
-        "title": "[TRANSLATE] Unsubscribe Error"
+        "title": "Помилка відписки"
       }
     },
     "verify": {
-      "goToHomepage": "[TRANSLATE] Go to Homepage",
-      "tryAgain": "[TRANSLATE] Try Again",
+      "goToHomepage": "Перейти на головну",
+      "tryAgain": "Спробувати знову",
       "success": {
-        "title": "[TRANSLATE] Email Verified!",
-        "description": "[TRANSLATE] Your email has been successfully verified. You'll start receiving our weekly newsletter."
+        "title": "Email підтверджено!",
+        "description": "Ваш email було успішно підтверджено. Ви почнете отримувати наш щотижневий newsletter."
       },
       "alreadyVerified": {
-        "title": "[TRANSLATE] Already Verified",
-        "description": "[TRANSLATE] This email address has already been verified. You're all set!"
+        "title": "Вже підтверджено",
+        "description": "Цей email адрес вже підтверджено. Все готово!"
       },
       "error": {
-        "title": "[TRANSLATE] Verification Error"
+        "title": "Помилка підтвердження"
       },
       "errors": {
-        "default": "[TRANSLATE] An unexpected error occurred. Please try again.",
-        "missingToken": "[TRANSLATE] The verification link appears to be incomplete.",
-        "invalidToken": "[TRANSLATE] This verification link is invalid or has expired.",
-        "verificationFailed": "[TRANSLATE] We couldn't verify your email at this time. Please try again later."
+        "default": "Сталася неочікувана помилка. Будь ласка спробуйте знову.",
+        "missingToken": "Посилання для підтвердження здається неповним.",
+        "invalidToken": "Це посилання для підтвердження невалідне або прострочене.",
+        "verificationFailed": "Ми не змогли підтвердити ваш email зараз. Будь ласка спробуйте пізніше."
       }
     }
   },
@@ -539,108 +539,108 @@
       }
     },
     "algorithm": {
-      "title": "[TRANSLATE] Algorithm v6.0",
-      "description": "[TRANSLATE] Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
-      "keyFeatures": "[TRANSLATE] Key Features",
+      "title": "Алгоритм v6.0",
+      "description": "Наш найновіший ranking алгоритм включає реальні паттерни використання та ринкову динаміку",
+      "keyFeatures": "Ключові функції",
       "features": {
-        "innovationDecay": "[TRANSLATE] Innovation decay modeling to reflect tool freshness",
-        "platformRisk": "[TRANSLATE] Platform risk assessment for vendor dependencies",
-        "revenueQuality": "[TRANSLATE] Revenue quality adjustments based on business model",
-        "technicalWeighting": "[TRANSLATE] Technical capability weighting for different use cases",
-        "dataValidation": "[TRANSLATE] Multi-source data validation and normalization",
-        "logarithmicScaling": "[TRANSLATE] Logarithmic scaling for balanced comparisons"
+        "innovationDecay": "Моделювання спаду інновацій для відображення свіжості інструментів",
+        "platformRisk": "Оцінка ризиків платформи для залежностей від постачальників",
+        "revenueQuality": "Коригування якості доходу на основі бізнес-моделі",
+        "technicalWeighting": "Вагування технічних можливостей для різних випадків використання",
+        "dataValidation": "Багатоджерельна валідація та нормалізація даних",
+        "logarithmicScaling": "Логарифмічне масштабування для збалансованих порівнянь"
       }
     },
     "factors": {
-      "title": "[TRANSLATE] Scoring Factors",
-      "description": "[TRANSLATE] Tools are evaluated across 8 key dimensions with specific weightings",
-      "primary": "[TRANSLATE] Primary Factors (82.5%)",
-      "secondary": "[TRANSLATE] Secondary Factors (17.5%)",
+      "title": "Фактори оцінювання",
+      "description": "Інструменти оцінюються за 8 ключовими параметрами зі специфічними вагами",
+      "primary": "Основні фактори (82.5%)",
+      "secondary": "Другорядні фактори (17.5%)",
       "agentic": {
-        "details": "[TRANSLATE] Measures autonomous capabilities, multi-step reasoning, and complex task completion"
+        "details": "Вимірює автономні здібності, багатоетапне міркування та виконання складних завдань"
       },
       "innovation": {
-        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation"
+        "details": "Оцінює проривні функції, технічні досягнення та ринкову диференціацію"
       },
       "performance": {
-        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
+        "details": "Бенчмарки на SWE-bench, HumanEval та реальних завданнях кодування"
       },
       "adoption": {
-        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics"
+        "details": "Активні користувачі, темпи зростання та метрики проникнення на ринок"
       },
       "traction": {
-        "details": "[TRANSLATE] Revenue growth, funding rounds, and business momentum indicators"
+        "details": "Зростання доходів, раунди фінансування та індикатори бізнес-моментуму"
       },
       "sentiment": {
-        "details": "[TRANSLATE] Developer satisfaction, community feedback, and recommendation scores"
+        "details": "Задоволеність розробників, відгуки спільноти та рейтинги рекомендацій"
       },
       "velocity": {
-        "details": "[TRANSLATE] Feature release cadence, update frequency, and innovation speed"
+        "details": "Темп випуску функцій, частота оновлень та швидкість інновацій"
       },
       "resilience": {
-        "details": "[TRANSLATE] Platform stability, backup options, and vendor independence"
+        "details": "Стабільність платформи, варіанти резервного копіювання та незалежність від постачальника"
       }
     },
     "modifiers": {
-      "title": "[TRANSLATE] Dynamic Modifiers",
-      "description": "[TRANSLATE] Real-time adjustments that reflect market conditions and tool maturity",
+      "title": "Динамічні модифікатори",
+      "description": "Корекції в реальному часі, що відображають ринкові умови та зрілість інструментів",
       "innovationDecay": {
-        "description": "[TRANSLATE] Innovation scores decay over time to reward continuous improvement and penalize stagnation"
+        "description": "Оцінки інновацій зменшуються з часом, щоб винагороджувати постійне вдосконалення та карати застій"
       },
       "platformRisk": {
-        "description": "[TRANSLATE] Adjustments based on vendor lock-in, platform dependencies, and business risks",
-        "penalties": "[TRANSLATE] Risk Penalties",
+        "description": "Корекції на основі vendor lock-in, платформних залежностей та бізнес-ризиків",
+        "penalties": "Штрафи за ризики",
         "penaltyList": {
-          "acquired": "[TRANSLATE] Recently acquired by competitor",
-          "exclusive": "[TRANSLATE] Platform exclusive (single LLM)",
-          "competitor": "[TRANSLATE] Owned by competing platform",
-          "regulatory": "[TRANSLATE] Regulatory compliance issues",
-          "funding": "[TRANSLATE] Funding or sustainability concerns"
+          "acquired": "Нещодавно придбано конкурентом",
+          "exclusive": "Ексклюзивність платформи (один LLM)",
+          "competitor": "Належить конкуруючій платформі",
+          "regulatory": "Проблеми з регуляторною відповідністю",
+          "funding": "Проблеми з фінансуванням або сталістю"
         },
-        "bonuses": "[TRANSLATE] Risk Mitigation Bonuses",
+        "bonuses": "Бонуси за зниження ризиків",
         "bonusList": {
-          "multiLLM": "[TRANSLATE] Supports multiple LLM providers",
-          "openSource": "[TRANSLATE] Open source availability",
-          "selfHosted": "[TRANSLATE] Self-hosting options"
+          "multiLLM": "Підтримує декілька LLM провайдерів",
+          "openSource": "Доступність відкритого коду",
+          "selfHosted": "Варіанти самостійного хостингу"
         }
       },
       "revenueQuality": {
-        "description": "[TRANSLATE] Revenue weighting based on business model sustainability and growth potential",
+        "description": "Вагування доходів на основі сталості бізнес-моделі та потенціалу зростання",
         "models": {
-          "enterpriseHigh": "[TRANSLATE] Enterprise (High-touch)",
-          "enterpriseStandard": "[TRANSLATE] Enterprise (Standard)",
-          "smbSaas": "[TRANSLATE] SMB SaaS",
-          "consumerPremium": "[TRANSLATE] Consumer Premium",
-          "freemium": "[TRANSLATE] Freemium",
-          "openSource": "[TRANSLATE] Open Source"
+          "enterpriseHigh": "Корпоративний (High-touch)",
+          "enterpriseStandard": "Корпоративний (Стандартний)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "Споживач Premium",
+          "freemium": "Freemium",
+          "openSource": "Відкритий код"
         }
       }
     },
     "dataSources": {
-      "title": "[TRANSLATE] Data Sources & Validation",
-      "description": "[TRANSLATE] We maintain rigorous standards for data collection and validation",
+      "title": "Джерела даних та валідація",
+      "description": "Ми дотримуємося суворих стандартів збору та валідації даних",
       "collection": {
-        "title": "[TRANSLATE] Data Collection Methods",
+        "title": "Методи збору даних",
         "sources": {
-          "api": "[TRANSLATE] Direct API integrations with tool providers",
-          "research": "[TRANSLATE] Industry research reports and analyst data",
-          "announcements": "[TRANSLATE] Official company announcements and press releases",
-          "community": "[TRANSLATE] Developer surveys and community feedback",
-          "benchmarks": "[TRANSLATE] Standardized performance benchmarks"
+          "api": "Прямі API інтеграції з постачальниками інструментів",
+          "research": "Галузеві дослідження та аналітичні дані",
+          "announcements": "Офіційні корпоративні оголошення та прес-релізи",
+          "community": "Опитування розробників та відгуки спільноти",
+          "benchmarks": "Стандартизовані бенчмарки продуктивності"
         }
       },
       "validation": {
-        "title": "[TRANSLATE] Validation Requirements",
+        "title": "Вимоги до валідації",
         "requirements": {
-          "completeness": "[TRANSLATE] All required metrics must be present",
-          "reliability": "[TRANSLATE] Multiple source verification for key metrics",
-          "outlier": "[TRANSLATE] Outlier detection and manual review",
-          "crossValidation": "[TRANSLATE] Cross-validation with industry benchmarks"
+          "completeness": "Всі необхідні метрики повинні бути присутні",
+          "reliability": "Перевірка з декількох джерел для ключових метрик",
+          "outlier": "Виявлення викидів та ручний розгляд",
+          "crossValidation": "Перехресна валідація з галузевими бенчмарками"
         }
       },
       "updateFrequency": {
-        "title": "[TRANSLATE] Update Schedule",
-        "description": "[TRANSLATE] Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
+        "title": "Графік оновлень",
+        "description": "Рейтинги перераховуються щотижня з постійним збором даних. Основні оновлення алгоритму версіонуються та документуються."
       }
     }
   },
@@ -666,13 +666,13 @@
       ]
     },
     "team": {
-      "title": "The Team",
-      "description": "AI Power Rankings maintained командою developers та data scientists passionate про intersection AI та software development.",
-      "description1": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
-      "description2": "[TRANSLATE] I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
-      "description3": "[TRANSLATE] Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
-      "hyperdevLink": "[TRANSLATE] HyperDev",
-      "reportIssue": "[TRANSLATE] Report an Issue"
+      "title": "Команда",
+      "description": "AI Power Rankings підтримується командою розробників та data scientists, які захоплені перетином AI та розробки програмного забезпечення.",
+      "description1": "AI Power Rankings підтримується Бобом Матсуокою, технологічним керівником та fractional CTO, який відстежує agentic coding інструменти з березня 2025 року.",
+      "description2": "Я поєдную практичний досвід створення продакшн додатків із систематичною оцінкою AI інструментів розробки. Цей сайт надає кількісну основу для мого стратегічного аналізу в HyperDev, де я пишу про практичні реалії кодування з AI агентами.",
+      "description3": "Повна прозорість: це операція однієї людини, створена за два дні. Я випускаю та ітерую на основі реального використання, оскільки ландшафт інструментів розробника рухається занадто швидко для традиційних циклів аналізу.",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "Повідомити про проблему"
     },
     "contact": {
       "title": "Get in Touch",
@@ -730,29 +730,29 @@
       ],
       "challenges": {
         "paralysis": {
-          "title": "[TRANSLATE] Decision Paralysis",
-          "description": "[TRANSLATE] With dozens of AI tools launching every week, developers face overwhelming choices"
+          "title": "Параліч рішень",
+          "description": "З десятками AI інструментів, що запускаються кожного тижня, розробники стикаються з переважаючими варіантами вибору"
         },
         "marketing": {
-          "title": "[TRANSLATE] Marketing vs Reality",
-          "description": "[TRANSLATE] Bold claims often don't match real-world performance and capabilities"
+          "title": "Маркетинг проти реальності",
+          "description": "Сміливі заяви часто не відповідають реальній продуктивності та можливостям"
         },
         "change": {
-          "title": "[TRANSLATE] Rapid Change",
-          "description": "[TRANSLATE] Tools evolve quickly - what's best today might be obsolete tomorrow"
+          "title": "Швидкі зміни",
+          "description": "Інструменти швидко розвиваються - те, що найкраще сьогодні, може бути застарілим завтра"
         },
         "risks": {
-          "title": "[TRANSLATE] Hidden Risks",
-          "description": "[TRANSLATE] Security, privacy, and vendor lock-in concerns are often overlooked"
+          "title": "Приховані ризики",
+          "description": "Питання безпеки, конфіденційності та vendor lock-in часто ігноруються"
         }
       },
-      "conclusion": "[TRANSLATE] That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
+      "conclusion": "Ось чому ми створили AI Power Rankings - щоб прорватися крізь шум та надати чіткі, засновані на даних insights."
     },
     "cta": {
-      "title": "[TRANSLATE] Ready to Explore?",
-      "description": "[TRANSLATE] Dive into our rankings to discover the best AI coding tools for your needs.",
-      "exploreButton": "[TRANSLATE] Explore Rankings",
-      "methodologyButton": "[TRANSLATE] Learn Our Methodology"
+      "title": "Готові досліджувати?",
+      "description": "Зануртеся в наші рейтинги, щоб відкрити найкращі AI інструменти кодування для ваших потреб.",
+      "exploreButton": "Дослідити рейтинги",
+      "methodologyButton": "Вивчити нашу методологію"
     }
   },
   "sidebar": {
@@ -801,9 +801,9 @@
     "keywords": "інструменти кодування AI, агентська AI, автономне кодування, рейтинги інструментів розробників, порівняння AI-асистентів, бенчмарки AI кодування, результати SWE-bench, Claude проти Cursor проти GitHub Copilot"
   },
   "footer": {
-    "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
-    "quickLinks": "[TRANSLATE] Quick Links",
-    "categories": "[TRANSLATE] Categories",
-    "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved."
+    "description": "Комплексні рейтинги AI coding інструментів з використанням Algorithm v6.0 з innovation decay, platform risk модифікаторами та revenue quality коригуваннями.",
+    "quickLinks": "Швидкі посилання",
+    "categories": "Категорії",
+    "copyright": "© 2025 AI Power Rankings. Всі права захищені."
   }
 }

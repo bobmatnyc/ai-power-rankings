@@ -74,3 +74,8 @@ interface IngestionReport {
 - Maintain Google Sheets integration
 - Preserve article deduplication logic
 - Keep error tracking functionality
+
+## Status: CLOSED
+
+**Closed Date:** 2025-07-03  
+**Resolution:** Successfully converted all news ingestion endpoints to JSON repository. Extended NewsRepository with ingestion report management, implemented rollback functionality, and maintained Google Sheets integration while removing all Payload CMS dependencies.

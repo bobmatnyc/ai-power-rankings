@@ -63,3 +63,8 @@ This feature will help users understand the "why" behind rankings, making the pl
 **Assignee**: Unassigned  
 **Created**: 2025-07-02  
 **Updated**: 2025-07-02
+
+## Status: CLOSED
+
+**Closed Date:** 2025-07-03  
+**Resolution:** Successfully implemented qualitative scoring metrics display in the news feed with comprehensive breakdown of all 8 ranking factors. Added visual indicators for primary factors (87.5% weight) including Agentic Capability, Innovation, Technical Performance, Developer Adoption, Market Traction, and Business Sentiment, plus secondary factors (12.5% weight) for Development Velocity and Platform Resilience. Implemented responsive design with interactive tooltips and progressive disclosure for detailed explanations.

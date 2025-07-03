@@ -458,7 +458,7 @@
       "success": {
         "title": "Uspješno odjavljen",
         "message": "Odjavili ste se od AI Power Rankings newslettera. Žao nam je što idete!",
-        "description": "[TRANSLATE] You have been unsubscribed from the AI Power Ranking newsletter. We're sorry to see you go!"
+        "description": "Odjavili ste se od AI Power Rankings newslettera. Žao nam je što idete!"
       },
       "errors": {
         "missingToken": {
@@ -477,34 +477,34 @@
           "title": "Greška",
           "message": "Dogodila se neočekivana greška. Molimo pokušaj ponovno."
         },
-        "unsubscribeFailed": "[TRANSLATE] We couldn't process your unsubscribe request. Please try again later.",
-        "default": "[TRANSLATE] An unexpected error occurred. Please try again."
+        "unsubscribeFailed": "Nismo mogli obraditi vaš zahtjev za odjavom. Molimo pokušajte kasnije.",
+        "default": "Dogodila se neočekivana greška. Molimo pokušajte ponovno."
       },
       "resubscribe": "Predomislili ste se? Možete se pretplatiti ponovno kad god.",
       "subscribeAgain": "Pretplati se ponovno",
       "error": {
-        "title": "[TRANSLATE] Unsubscribe Error"
+        "title": "Greška odjave"
       }
     },
     "verify": {
-      "goToHomepage": "[TRANSLATE] Go to Homepage",
-      "tryAgain": "[TRANSLATE] Try Again",
+      "goToHomepage": "Idi na početnu stranicu",
+      "tryAgain": "Pokušaj ponovno",
       "success": {
-        "title": "[TRANSLATE] Email Verified!",
-        "description": "[TRANSLATE] Your email has been successfully verified. You'll start receiving our weekly newsletter."
+        "title": "Email potvrđen!",
+        "description": "Vaš email je uspješno potvrđen. Počet ćete primati naš tjedno newsletter."
       },
       "alreadyVerified": {
-        "title": "[TRANSLATE] Already Verified",
-        "description": "[TRANSLATE] This email address has already been verified. You're all set!"
+        "title": "Već potvrđeno",
+        "description": "Ova email adresa je već potvrđena. Sve je spremno!"
       },
       "error": {
-        "title": "[TRANSLATE] Verification Error"
+        "title": "Greška verifikacije"
       },
       "errors": {
-        "default": "[TRANSLATE] An unexpected error occurred. Please try again.",
-        "missingToken": "[TRANSLATE] The verification link appears to be incomplete.",
-        "invalidToken": "[TRANSLATE] This verification link is invalid or has expired.",
-        "verificationFailed": "[TRANSLATE] We couldn't verify your email at this time. Please try again later."
+        "default": "Dogodila se neočekivana greška. Molimo pokušajte ponovno.",
+        "missingToken": "Verifikacijski link izgleda nepotpun.",
+        "invalidToken": "Ovaj verifikacijski link je neispravan ili je istekao.",
+        "verificationFailed": "Trenutno ne možemo potvrditi vaš email. Molimo pokušajte kasnije."
       }
     }
   },
@@ -539,108 +539,108 @@
       }
     },
     "algorithm": {
-      "title": "[TRANSLATE] Algorithm v6.0",
-      "description": "[TRANSLATE] Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
-      "keyFeatures": "[TRANSLATE] Key Features",
+      "title": "Algoritam v6.0",
+      "description": "Naš najnoviji algoritam za rangiranje uključuje obrasce korištenja u stvarnom svijetu i tržišnu dinamiku",
+      "keyFeatures": "Ključne funkcionalnosti",
       "features": {
-        "innovationDecay": "[TRANSLATE] Innovation decay modeling to reflect tool freshness",
-        "platformRisk": "[TRANSLATE] Platform risk assessment for vendor dependencies",
-        "revenueQuality": "[TRANSLATE] Revenue quality adjustments based on business model",
-        "technicalWeighting": "[TRANSLATE] Technical capability weighting for different use cases",
-        "dataValidation": "[TRANSLATE] Multi-source data validation and normalization",
-        "logarithmicScaling": "[TRANSLATE] Logarithmic scaling for balanced comparisons"
+        "innovationDecay": "Modeliranje propadanja inovacije za odražavanje frešnosti alata",
+        "platformRisk": "Procjena rizika platforme za ovisnosti o dobavljaču",
+        "revenueQuality": "Prilagodbe kvalitete prihoda na osnovu poslovnog modela",
+        "technicalWeighting": "Ponderiranje tehničkih sposobnosti za različite slučajeve upotrebe",
+        "dataValidation": "Višeizvorska validacija i normalizacija podataka",
+        "logarithmicScaling": "Logaritamsko skaliranje za uravnotežene usporedbe"
       }
     },
     "factors": {
-      "title": "[TRANSLATE] Scoring Factors",
-      "description": "[TRANSLATE] Tools are evaluated across 8 key dimensions with specific weightings",
-      "primary": "[TRANSLATE] Primary Factors (82.5%)",
-      "secondary": "[TRANSLATE] Secondary Factors (17.5%)",
+      "title": "Faktori bodovanja",
+      "description": "Alati se evaluiraju kroz 8 ključnih dimenzija s specifičnim ponderiranjem",
+      "primary": "Primarni faktori (82.5%)",
+      "secondary": "Sekundarni faktori (17.5%)",
       "agentic": {
-        "details": "[TRANSLATE] Measures autonomous capabilities, multi-step reasoning, and complex task completion"
+        "details": "Mjeri autonomne sposobnosti, višekoračno razmišljanje i završavanje složenih zadataka"
       },
       "innovation": {
-        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation"
+        "details": "Evaluira probojne funkcionalnosti, tehničke napretke i tržišnu diferencijaciju"
       },
       "performance": {
-        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
+        "details": "Benchmarkovi na SWE-bench, HumanEval i stvarnim zadacima kodiranja"
       },
       "adoption": {
-        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics"
+        "details": "Aktivni korisnici, stopa rasta i metrike prodora na tržište"
       },
       "traction": {
-        "details": "[TRANSLATE] Revenue growth, funding rounds, and business momentum indicators"
+        "details": "Rast prihoda, runde financiranja i indikatori poslovnog zamaha"
       },
       "sentiment": {
-        "details": "[TRANSLATE] Developer satisfaction, community feedback, and recommendation scores"
+        "details": "Zadovoljstvo developera, povratne informacije zajednice i ocjene preporuka"
       },
       "velocity": {
-        "details": "[TRANSLATE] Feature release cadence, update frequency, and innovation speed"
+        "details": "Ritam izdavanja funkcionalnosti, učestalost ažuriranja i brzina inovacije"
       },
       "resilience": {
-        "details": "[TRANSLATE] Platform stability, backup options, and vendor independence"
+        "details": "Stabilnost platforme, opcije sigurnosnih kopija i neovisnost o dobavljaču"
       }
     },
     "modifiers": {
-      "title": "[TRANSLATE] Dynamic Modifiers",
-      "description": "[TRANSLATE] Real-time adjustments that reflect market conditions and tool maturity",
+      "title": "Dinamički modifikatori",
+      "description": "Prilagodbe u stvarnom vremenu koje odražavaju tržišne uvjete i zrelost alata",
       "innovationDecay": {
-        "description": "[TRANSLATE] Innovation scores decay over time to reward continuous improvement and penalize stagnation"
+        "description": "Ocjene inovacije opada tijekom vremena kako bi se nagradilo kontinuirano poboljšanje i kaznila stagnacija"
       },
       "platformRisk": {
-        "description": "[TRANSLATE] Adjustments based on vendor lock-in, platform dependencies, and business risks",
-        "penalties": "[TRANSLATE] Risk Penalties",
+        "description": "Prilagodbe na osnovu vezivanja za dobavljača, ovisnosti o platformi i poslovnih rizika",
+        "penalties": "Rizik penali",
         "penaltyList": {
-          "acquired": "[TRANSLATE] Recently acquired by competitor",
-          "exclusive": "[TRANSLATE] Platform exclusive (single LLM)",
-          "competitor": "[TRANSLATE] Owned by competing platform",
-          "regulatory": "[TRANSLATE] Regulatory compliance issues",
-          "funding": "[TRANSLATE] Funding or sustainability concerns"
+          "acquired": "Nedavno stekao konkurent",
+          "exclusive": "Ekskluzivnost platforme (jedan LLM)",
+          "competitor": "U vlasništvu konkurentske platforme",
+          "regulatory": "Problemi regulatorne sukladnosti",
+          "funding": "Brige oko financiranja ili održivosti"
         },
-        "bonuses": "[TRANSLATE] Risk Mitigation Bonuses",
+        "bonuses": "Bonusi za umanjenje rizika",
         "bonusList": {
-          "multiLLM": "[TRANSLATE] Supports multiple LLM providers",
-          "openSource": "[TRANSLATE] Open source availability",
-          "selfHosted": "[TRANSLATE] Self-hosting options"
+          "multiLLM": "Podržava više LLM pružatelja",
+          "openSource": "Dostupnost otvorenog koda",
+          "selfHosted": "Opcije samo-hostiranja"
         }
       },
       "revenueQuality": {
-        "description": "[TRANSLATE] Revenue weighting based on business model sustainability and growth potential",
+        "description": "Ponderiranje prihoda na osnovu održivosti poslovnog modela i potencijala rasta",
         "models": {
-          "enterpriseHigh": "[TRANSLATE] Enterprise (High-touch)",
-          "enterpriseStandard": "[TRANSLATE] Enterprise (Standard)",
-          "smbSaas": "[TRANSLATE] SMB SaaS",
-          "consumerPremium": "[TRANSLATE] Consumer Premium",
-          "freemium": "[TRANSLATE] Freemium",
-          "openSource": "[TRANSLATE] Open Source"
+          "enterpriseHigh": "Enterprise (Visoki dodir)",
+          "enterpriseStandard": "Enterprise (Standardno)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "Potrošački Premium",
+          "freemium": "Freemium",
+          "openSource": "Otvoreni kod"
         }
       }
     },
     "dataSources": {
-      "title": "[TRANSLATE] Data Sources & Validation",
-      "description": "[TRANSLATE] We maintain rigorous standards for data collection and validation",
+      "title": "Izvori podataka i validacija",
+      "description": "Održavamo stroge standarde za prikupljanje i validaciju podataka",
       "collection": {
-        "title": "[TRANSLATE] Data Collection Methods",
+        "title": "Metode prikupljanja podataka",
         "sources": {
-          "api": "[TRANSLATE] Direct API integrations with tool providers",
-          "research": "[TRANSLATE] Industry research reports and analyst data",
-          "announcements": "[TRANSLATE] Official company announcements and press releases",
-          "community": "[TRANSLATE] Developer surveys and community feedback",
-          "benchmarks": "[TRANSLATE] Standardized performance benchmarks"
+          "api": "Direktne API integracije s pružateljima alata",
+          "research": "Industrijsko istraživanje i analitički podaci",
+          "announcements": "Službene tvrtke objave i priopćenja za tisak",
+          "community": "Ankete developera i povratne informacije zajednice",
+          "benchmarks": "Standardizirani performance benchmarkovi"
         }
       },
       "validation": {
-        "title": "[TRANSLATE] Validation Requirements",
+        "title": "Zahtjevi za validaciju",
         "requirements": {
-          "completeness": "[TRANSLATE] All required metrics must be present",
-          "reliability": "[TRANSLATE] Multiple source verification for key metrics",
-          "outlier": "[TRANSLATE] Outlier detection and manual review",
-          "crossValidation": "[TRANSLATE] Cross-validation with industry benchmarks"
+          "completeness": "Sve potrebne metrike moraju biti prisutne",
+          "reliability": "Višeizvorska verifikacija za ključne metrike",
+          "outlier": "Otkrivanje odstupanja i ručni pregled",
+          "crossValidation": "Unakrsna validacija s industrijskim benchmarkovima"
         }
       },
       "updateFrequency": {
-        "title": "[TRANSLATE] Update Schedule",
-        "description": "[TRANSLATE] Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
+        "title": "Raspored ažuriranja",
+        "description": "Rangiranja se prepočunavaju tjedno s kontinuiranim prikupljanjem podataka. Velika ažuriranja algoritma su verzionirana i dokumentirana."
       }
     }
   },
@@ -668,11 +668,11 @@
     "team": {
       "title": "Tim",
       "description": "AI Power Rankings održava tim developera i data scientista strastvenih o presjeku AI i software developmenta.",
-      "description1": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
-      "description2": "[TRANSLATE] I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
-      "description3": "[TRANSLATE] Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
-      "hyperdevLink": "[TRANSLATE] HyperDev",
-      "reportIssue": "[TRANSLATE] Report an Issue"
+      "description1": "AI Power Rankings održava Bob Matsuoka, tehnološki direktor i fractional CTO koji prati agentske alate za kodiranje od ožujka 2025.",
+      "description2": "Kombiniran praktično iskustvo izgradnje produkcijskih aplikacija sa sustavnim evaluiranjem AI alata za razvoj. Ova stranica pruža kvantitativnu osnovu za moju stratešku analizu na HyperDev-u, gdje pišem o praktičnim realnostima kodiranja s AI agentima.",
+      "description3": "Potpuna transparentnost: ovo je operacija jedne osobe izrađena u dva dana. Šaljem i iteriram na osnovu stvarne upotrebe jer se krajolik alata za developere kreće prebrzo za tradicionalne cikluse analize.",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "Prijavi problem"
     },
     "contact": {
       "title": "Kontakt",
@@ -730,29 +730,29 @@
       ],
       "challenges": {
         "paralysis": {
-          "title": "[TRANSLATE] Decision Paralysis",
-          "description": "[TRANSLATE] With dozens of AI tools launching every week, developers face overwhelming choices"
+          "title": "Paraliza odluke",
+          "description": "S desetcima AI alata koji se lansiraju svaki tjedan, developeri se suočavaju s nevjerojatnim izborima"
         },
         "marketing": {
-          "title": "[TRANSLATE] Marketing vs Reality",
-          "description": "[TRANSLATE] Bold claims often don't match real-world performance and capabilities"
+          "title": "Marketing vs realnost",
+          "description": "Smjele tvrdnje često se ne poklapaju s performansama i sposobnostima u stvarnom svijetu"
         },
         "change": {
-          "title": "[TRANSLATE] Rapid Change",
-          "description": "[TRANSLATE] Tools evolve quickly - what's best today might be obsolete tomorrow"
+          "title": "Brza promjena",
+          "description": "Alati se brzo razvijaju - ono što je najbolje danas može biti zastarjelo sutra"
         },
         "risks": {
-          "title": "[TRANSLATE] Hidden Risks",
-          "description": "[TRANSLATE] Security, privacy, and vendor lock-in concerns are often overlooked"
+          "title": "Skriveni rizici",
+          "description": "Sigurnost, privatnost i brige o vezivanju za dobavljača se često zanemaruju"
         }
       },
-      "conclusion": "[TRANSLATE] That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
+      "conclusion": "Zato smo izgradili AI Power Rankings - da probijemo buku i pružimo jasne, podacima vođene uvide."
     },
     "cta": {
-      "title": "[TRANSLATE] Ready to Explore?",
-      "description": "[TRANSLATE] Dive into our rankings to discover the best AI coding tools for your needs.",
-      "exploreButton": "[TRANSLATE] Explore Rankings",
-      "methodologyButton": "[TRANSLATE] Learn Our Methodology"
+      "title": "Spreman za istraživanje?",
+      "description": "Zaro nite u naša rangiranja da otkrijete najbolje AI alate za kodiranje za vaše potrebe.",
+      "exploreButton": "Istraži rangiranja",
+      "methodologyButton": "Nauči našu metodologiju"
     }
   },
   "sidebar": {
@@ -801,9 +801,9 @@
     "keywords": "AI alati za kodiranje, agentska AI, autonomno kodiranje, rangiranje alata za developere, usporedba AI asistenata, benchmarkovi AI kodiranja, SWE-bench rezultati, Claude vs Cursor vs GitHub Copilot"
   },
   "footer": {
-    "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
-    "quickLinks": "[TRANSLATE] Quick Links",
-    "categories": "[TRANSLATE] Categories",
-    "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved."
+    "description": "Sveobuhvatna rangiranja AI alata za kodiranje koristeći Algorithm v6.0 s propadanjem inovacije, modifikatorima rizika platforme i prilagodbama kvalitete prihoda.",
+    "quickLinks": "Brzi linkovi",
+    "categories": "Kategorije",
+    "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."
   }
 }

@@ -218,9 +218,9 @@
         "resilience": "Plattform-Resilienz"
       },
       "modifiers": {
-        "decay": "Innovationsverfall",
-        "risk": "Plattformrisiko",
-        "revenue": "Umsatzqualität"
+        "decay": "Innovationsverfall (6-Monate-Halbwertszeit) - Stellt sicher, dass aktuelle Innovationen stärker gewichtet werden",
+        "risk": "Plattformrisiko-Modifikator - Passt Scores basierend auf Plattformabhängigkeiten und Lock-in an",
+        "revenue": "Umsatzqualitäts-Anpassung - Unterscheidet zwischen nachhaltigem und einmaligem Umsatz"
       },
       "methodologyText": "Basierend auf unserer transparenten",
       "viewMethodology": "Methodik anzeigen"
@@ -539,108 +539,108 @@
       }
     },
     "algorithm": {
-      "title": "[TRANSLATE] Algorithm v6.0",
-      "description": "[TRANSLATE] Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
-      "keyFeatures": "[TRANSLATE] Key Features",
+      "title": "Algorithmus v6.0",
+      "description": "Unser neuester Ranking-Algorithmus berücksichtigt reale Nutzungsmuster und Marktdynamiken",
+      "keyFeatures": "Hauptmerkmale",
       "features": {
-        "innovationDecay": "[TRANSLATE] Innovation decay modeling to reflect tool freshness",
-        "platformRisk": "[TRANSLATE] Platform risk assessment for vendor dependencies",
-        "revenueQuality": "[TRANSLATE] Revenue quality adjustments based on business model",
-        "technicalWeighting": "[TRANSLATE] Technical capability weighting for different use cases",
-        "dataValidation": "[TRANSLATE] Multi-source data validation and normalization",
-        "logarithmicScaling": "[TRANSLATE] Logarithmic scaling for balanced comparisons"
+        "innovationDecay": "Innovationsverfall-Modellierung für Tool-Aktualität",
+        "platformRisk": "Plattformrisiko-Bewertung für Anbieterabhängigkeiten",
+        "revenueQuality": "Umsatzqualitäts-Anpassungen basierend auf Geschäftsmodell",
+        "technicalWeighting": "Technische Fähigkeiten-Gewichtung für verschiedene Anwendungsfälle",
+        "dataValidation": "Multi-Source Datenvalidierung und Normalisierung",
+        "logarithmicScaling": "Logarithmische Skalierung für ausgewogene Vergleiche"
       }
     },
     "factors": {
-      "title": "[TRANSLATE] Scoring Factors",
-      "description": "[TRANSLATE] Tools are evaluated across 8 key dimensions with specific weightings",
-      "primary": "[TRANSLATE] Primary Factors (82.5%)",
-      "secondary": "[TRANSLATE] Secondary Factors (17.5%)",
+      "title": "Bewertungsfaktoren",
+      "description": "Tools werden anhand von 8 Schlüsseldimensionen mit spezifischen Gewichtungen bewertet",
+      "primary": "Primäre Faktoren (82,5%)",
+      "secondary": "Sekundäre Faktoren (17,5%)",
       "agentic": {
-        "details": "[TRANSLATE] Measures autonomous capabilities, multi-step reasoning, and complex task completion"
+        "details": "Misst autonome Fähigkeiten, mehrstufiges Reasoning und komplexe Aufgabenerledigung"
       },
       "innovation": {
-        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation"
+        "details": "Bewertet bahnbrechende Features, technische Fortschritte und Marktdifferenzierung"
       },
       "performance": {
-        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
+        "details": "Benchmarks auf SWE-bench, HumanEval und realen Coding-Aufgaben"
       },
       "adoption": {
-        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics"
+        "details": "Aktive Nutzer, Wachstumsrate und Marktdurchdringungsmetriken"
       },
       "traction": {
-        "details": "[TRANSLATE] Revenue growth, funding rounds, and business momentum indicators"
+        "details": "Umsatzwachstum, Finanzierungsrunden und Geschäftsmomentum-Indikatoren"
       },
       "sentiment": {
-        "details": "[TRANSLATE] Developer satisfaction, community feedback, and recommendation scores"
+        "details": "Entwicklerzufriedenheit, Community-Feedback und Empfehlungsscores"
       },
       "velocity": {
-        "details": "[TRANSLATE] Feature release cadence, update frequency, and innovation speed"
+        "details": "Feature-Release-Kadenz, Update-Häufigkeit und Innovationsgeschwindigkeit"
       },
       "resilience": {
-        "details": "[TRANSLATE] Platform stability, backup options, and vendor independence"
+        "details": "Plattformstabilität, Backup-Optionen und Anbieterunabhängigkeit"
       }
     },
     "modifiers": {
-      "title": "[TRANSLATE] Dynamic Modifiers",
-      "description": "[TRANSLATE] Real-time adjustments that reflect market conditions and tool maturity",
+      "title": "Dynamische Modifikatoren",
+      "description": "Echtzeitanpassungen, die Marktbedingungen und Tool-Reife widerspiegeln",
       "innovationDecay": {
-        "description": "[TRANSLATE] Innovation scores decay over time to reward continuous improvement and penalize stagnation"
+        "description": "Innovations-Scores verfallen über Zeit, um kontinuierliche Verbesserung zu belohnen und Stagnation zu bestrafen"
       },
       "platformRisk": {
-        "description": "[TRANSLATE] Adjustments based on vendor lock-in, platform dependencies, and business risks",
-        "penalties": "[TRANSLATE] Risk Penalties",
+        "description": "Anpassungen basierend auf Vendor Lock-in, Plattformabhängigkeiten und Geschäftsrisiken",
+        "penalties": "Risiko-Strafen",
         "penaltyList": {
-          "acquired": "[TRANSLATE] Recently acquired by competitor",
-          "exclusive": "[TRANSLATE] Platform exclusive (single LLM)",
-          "competitor": "[TRANSLATE] Owned by competing platform",
-          "regulatory": "[TRANSLATE] Regulatory compliance issues",
-          "funding": "[TRANSLATE] Funding or sustainability concerns"
+          "acquired": "Kürzlich von Konkurrent übernommen",
+          "exclusive": "Plattform-exklusiv (einzelner LLM)",
+          "competitor": "Im Besitz einer konkurrierenden Plattform",
+          "regulatory": "Compliance-Probleme",
+          "funding": "Finanzierungs- oder Nachhaltigkeitsbedenken"
         },
-        "bonuses": "[TRANSLATE] Risk Mitigation Bonuses",
+        "bonuses": "Risikominderungs-Boni",
         "bonusList": {
-          "multiLLM": "[TRANSLATE] Supports multiple LLM providers",
-          "openSource": "[TRANSLATE] Open source availability",
-          "selfHosted": "[TRANSLATE] Self-hosting options"
+          "multiLLM": "Unterstützt mehrere LLM-Anbieter",
+          "openSource": "Open-Source-Verfügbarkeit",
+          "selfHosted": "Self-Hosting-Optionen"
         }
       },
       "revenueQuality": {
-        "description": "[TRANSLATE] Revenue weighting based on business model sustainability and growth potential",
+        "description": "Umsatzgewichtung basierend auf Geschäftsmodell-Nachhaltigkeit und Wachstumspotenzial",
         "models": {
-          "enterpriseHigh": "[TRANSLATE] Enterprise (High-touch)",
-          "enterpriseStandard": "[TRANSLATE] Enterprise (Standard)",
-          "smbSaas": "[TRANSLATE] SMB SaaS",
-          "consumerPremium": "[TRANSLATE] Consumer Premium",
-          "freemium": "[TRANSLATE] Freemium",
-          "openSource": "[TRANSLATE] Open Source"
+          "enterpriseHigh": "Enterprise (High-touch)",
+          "enterpriseStandard": "Enterprise (Standard)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "Consumer Premium",
+          "freemium": "Freemium",
+          "openSource": "Open Source"
         }
       }
     },
     "dataSources": {
-      "title": "[TRANSLATE] Data Sources & Validation",
-      "description": "[TRANSLATE] We maintain rigorous standards for data collection and validation",
+      "title": "Datenquellen & Validierung",
+      "description": "Wir halten strenge Standards für Datensammlung und Validierung ein",
       "collection": {
-        "title": "[TRANSLATE] Data Collection Methods",
+        "title": "Datensammlungsmethoden",
         "sources": {
-          "api": "[TRANSLATE] Direct API integrations with tool providers",
-          "research": "[TRANSLATE] Industry research reports and analyst data",
-          "announcements": "[TRANSLATE] Official company announcements and press releases",
-          "community": "[TRANSLATE] Developer surveys and community feedback",
-          "benchmarks": "[TRANSLATE] Standardized performance benchmarks"
+          "api": "Direkte API-Integrationen mit Tool-Anbietern",
+          "research": "Branchenforschungsberichte und Analystendaten",
+          "announcements": "Offizielle Unternehmensankündigungen und Pressemitteilungen",
+          "community": "Entwicklerumfragen und Community-Feedback",
+          "benchmarks": "Standardisierte Performance-Benchmarks"
         }
       },
       "validation": {
-        "title": "[TRANSLATE] Validation Requirements",
+        "title": "Validierungsanforderungen",
         "requirements": {
-          "completeness": "[TRANSLATE] All required metrics must be present",
-          "reliability": "[TRANSLATE] Multiple source verification for key metrics",
-          "outlier": "[TRANSLATE] Outlier detection and manual review",
-          "crossValidation": "[TRANSLATE] Cross-validation with industry benchmarks"
+          "completeness": "Alle erforderlichen Metriken müssen vorhanden sein",
+          "reliability": "Mehrfach-Quellen-Verifizierung für Schlüsselmetriken",
+          "outlier": "Ausreißer-Erkennung und manuelle Überprüfung",
+          "crossValidation": "Kreuzvalidierung mit Branchen-Benchmarks"
         }
       },
       "updateFrequency": {
-        "title": "[TRANSLATE] Update Schedule",
-        "description": "[TRANSLATE] Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
+        "title": "Update-Zeitplan",
+        "description": "Rankings werden wöchentlich mit kontinuierlicher Datensammlung neu berechnet. Große Algorithmus-Updates werden versioniert und dokumentiert."
       }
     }
   },
@@ -668,11 +668,11 @@
     "team": {
       "title": "The Team",
       "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development.",
-      "description1": "[TRANSLATE] AI Power Ranking is maintained by Bob Matsuoka, a technology executive and fractional CTO who's been tracking agentic coding tools since March 2025.",
-      "description2": "[TRANSLATE] I combine hands-on experience building production applications with systematic evaluation of AI development tools. This site provides the quantitative backbone for my strategic analysis at HyperDev, where I write about the practical realities of coding with AI agents.",
-      "description3": "[TRANSLATE] Full transparency: this is a one-person operation built in two days. I'm shipping and iterating based on real usage because the developer tools landscape moves too fast for traditional analysis cycles.",
-      "hyperdevLink": "[TRANSLATE] HyperDev",
-      "reportIssue": "[TRANSLATE] Report an Issue"
+      "description1": "AI Power Rankings wird von Bob Matsuoka betreut, einem Technologie-Executive und Fractional CTO, der agentische Coding-Tools seit März 2025 verfolgt.",
+      "description2": "Ich kombiniere praktische Erfahrung beim Aufbau von Produktionsanwendungen mit systematischer Bewertung von KI-Entwicklungstools. Diese Seite bietet das quantitative Rückgrat für meine strategische Analyse bei HyperDev, wo ich über die praktischen Realitäten des Codens mit KI-Agenten schreibe.",
+      "description3": "Vollständige Transparenz: Das ist ein Ein-Personen-Betrieb, der in zwei Tagen aufgebaut wurde. Ich liefere und iteriere basierend auf realer Nutzung, weil sich die Entwickler-Tools-Landschaft zu schnell für traditionelle Analysezyklen bewegt.",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "Problem melden"
     },
     "contact": {
       "title": "Get in Touch",
@@ -730,29 +730,29 @@
       },
       "challenges": {
         "paralysis": {
-          "title": "[TRANSLATE] Decision Paralysis",
-          "description": "[TRANSLATE] With dozens of AI tools launching every week, developers face overwhelming choices"
+          "title": "Entscheidungslähmung",
+          "description": "Mit Dutzenden von KI-Tools, die jede Woche starten, stehen Entwickler vor überwältigenden Auswahlmöglichkeiten"
         },
         "marketing": {
-          "title": "[TRANSLATE] Marketing vs Reality",
-          "description": "[TRANSLATE] Bold claims often don't match real-world performance and capabilities"
+          "title": "Marketing vs. Realität",
+          "description": "Kühne Behauptungen entsprechen oft nicht der realen Performance und den Fähigkeiten"
         },
         "change": {
-          "title": "[TRANSLATE] Rapid Change",
-          "description": "[TRANSLATE] Tools evolve quickly - what's best today might be obsolete tomorrow"
+          "title": "Rascher Wandel",
+          "description": "Tools entwickeln sich schnell - was heute das Beste ist, könnte morgen veraltet sein"
         },
         "risks": {
-          "title": "[TRANSLATE] Hidden Risks",
-          "description": "[TRANSLATE] Security, privacy, and vendor lock-in concerns are often overlooked"
+          "title": "Versteckte Risiken",
+          "description": "Sicherheits-, Datenschutz- und Vendor-Lock-in-Bedenken werden oft übersehen"
         }
       },
-      "conclusion": "[TRANSLATE] That's why we built AI Power Ranking - to cut through the noise and provide clear, data-driven insights."
+      "conclusion": "Deshalb haben wir AI Power Rankings entwickelt - um durch das Rauschen zu schneiden und klare, datengetriebene Einblicke zu bieten."
     },
     "cta": {
-      "title": "[TRANSLATE] Ready to Explore?",
-      "description": "[TRANSLATE] Dive into our rankings to discover the best AI coding tools for your needs.",
-      "exploreButton": "[TRANSLATE] Explore Rankings",
-      "methodologyButton": "[TRANSLATE] Learn Our Methodology"
+      "title": "Bereit zum Erkunden?",
+      "description": "Tauche in unsere Rankings ein, um die besten KI-Coding-Tools für deine Bedürfnisse zu entdecken.",
+      "exploreButton": "Rankings erkunden",
+      "methodologyButton": "Unsere Methodik lernen"
     }
   },
   "sidebar": {
@@ -801,7 +801,7 @@
     "keywords": "AI-Coding-Tools, agentische AI, autonomes Coding, Entwickler-Tools-Rankings, AI-Assistenten-Vergleich, Coding-AI-Benchmarks, SWE-Bench-Ergebnisse, Claude vs Cursor vs GitHub Copilot"
   },
   "footer": {
-    "description": "Die autoritäre Quelle für KI-Coding-Tool-Rankings und -Analysen",
+    "description": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v6.0 einschließlich Innovationsverfall, Plattformrisiko-Modifikatoren und Umsatzqualitäts-Anpassungen.",
     "quickLinks": "Schnelllinks",
     "categories": "Kategorien",
     "copyright": "© 2025 AI Power Rankings. Alle Rechte vorbehalten."

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-07-01T23:47:29.560Z",
+  "timestamp": "2025-07-03T17:35:18.036Z",
   "reference": "en",
   "results": {
     "de": {
@@ -11,7 +11,7 @@
       "completeness": "100.00%"
     },
     "fr": {
-      "totalKeys": 513,
+      "totalKeys": 501,
       "missingKeys": [],
       "emptyKeys": [],
       "missingCount": 0,
