@@ -113,6 +113,26 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/best-code-review-tools" className="hover:text-white transition-colors">
+                  Code Review Tools
+                </Link>
+              </li>
+              <li>
+                <Link href="/best-devops-assistants" className="hover:text-white transition-colors">
+                  DevOps Assistants
+                </Link>
+              </li>
+              <li>
+                <Link href="/best-testing-tools" className="hover:text-white transition-colors">
+                  Testing Tools
+                </Link>
+              </li>
+              <li>
+                <Link href="/best-open-source-frameworks" className="hover:text-white transition-colors">
+                  Open Source Frameworks
+                </Link>
+              </li>
+              <li>
                 <Link href="/best-ai-coding-tools" className="hover:text-white transition-colors">
                   All AI Tools
                 </Link>
