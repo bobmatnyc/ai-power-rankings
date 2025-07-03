@@ -100,18 +100,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           },
         });
 
-        // Resend verification email with existing token
-        const baseUrl =
-          process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
-            ? `https://${process.env["VERCEL_URL"]}`
-            : new URL(request.url).origin;
-        const verificationUrl = `${baseUrl}/api/newsletter/verify/${existing.verification_token}`;
-
-        await sendVerificationEmail(email, firstName, verificationUrl, baseUrl);
+        // Send notification to admin about existing subscription
+        await sendSubscriptionNotification(email, firstName, lastName, true);
 
         return NextResponse.json({
           success: true,
-          message: "We've resent the verification email. Please check your inbox.",
+          message: "Thank you for your interest! We already have your subscription.",
           resent: true,
         });
       }
@@ -154,19 +148,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // Generate verification URL
-    const baseUrl =
-      process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
-        ? `https://${process.env["VERCEL_URL"]}`
-        : new URL(request.url).origin;
-    const verificationUrl = `${baseUrl}/api/newsletter/verify/${verificationToken}`;
-
-    // Send verification email
-    await sendVerificationEmail(email, firstName, verificationUrl, baseUrl);
+    // Send notification email to admin instead of verification email
+    await sendSubscriptionNotification(email, firstName, lastName);
 
     return NextResponse.json({
       success: true,
-      message: "Please check your email to verify your subscription",
+      message: "Thank you for subscribing! We'll be in touch soon.",
       resent: false,
     });
   } catch (error) {
@@ -175,17 +162,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 }
 
-async function sendVerificationEmail(
+async function sendSubscriptionNotification(
   email: string,
   firstName: string,
-  verificationUrl: string,
-  baseUrl: string
+  lastName: string,
+  isExisting = false
 ): Promise<void> {
   const resend = getResendClient();
+  const subject = isExisting 
+    ? "AI Power Ranking - Existing Subscription Attempt" 
+    : "AI Power Ranking - New Subscription";
+  
   const { error: emailError } = await resend.emails.send({
     from: "AI Power Ranking <newsletter@aipowerranking.com>",
-    to: email,
-    subject: "Verify your subscription to AI Power Ranking",
+    to: "bob@matsuoka.com", // Send to admin email
+    subject: subject,
     html: `
       <!DOCTYPE html>
       <html>
@@ -201,158 +192,92 @@ async function sendVerificationEmail(
               padding: 0;
               background-color: #f5f5f5;
             }
-            .wrapper {
-              background-color: #f5f5f5;
-              padding: 40px 20px;
-            }
             .container { 
               max-width: 600px; 
-              margin: 0 auto; 
+              margin: 40px auto; 
               background-color: #ffffff;
               border-radius: 12px;
-              overflow: hidden;
+              padding: 40px;
               box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             }
             .header { 
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-              padding: 40px 20px;
               text-align: center;
+              margin-bottom: 30px;
             }
             .header h1 {
               margin: 0;
-              color: #ffffff;
-              font-size: 28px;
-              font-weight: 700;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 12px;
-            }
-            .crown-icon {
-              width: 48px;
-              height: 48px;
-              display: inline-block;
-            }
-            .gradient-text {
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-              -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;
-              background-clip: text;
+              color: #333;
+              font-size: 24px;
               font-weight: 700;
             }
             .content {
-              padding: 40px 30px;
-            }
-            .button { 
-              display: inline-block; 
-              padding: 14px 32px; 
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-              color: white; 
-              text-decoration: none; 
-              border-radius: 8px; 
-              margin: 24px 0;
-              font-weight: 600;
-              font-size: 16px;
-              box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-            }
-            .button:hover {
-              box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
-            }
-            .footer { 
               background-color: #f8f9fa;
-              padding: 30px;
-              text-align: center;
-              font-size: 14px; 
-              color: #6b7280; 
-            }
-            .divider {
-              height: 1px;
-              background-color: #e5e7eb;
-              margin: 30px 0;
-            }
-            .feature-list {
+              padding: 20px;
+              border-radius: 8px;
               margin: 20px 0;
             }
-            .feature-item {
-              display: flex;
-              align-items: center;
-              margin: 12px 0;
-              gap: 10px;
+            .field {
+              margin: 10px 0;
             }
-            .check-icon {
-              color: #10b981;
-              font-size: 20px;
+            .label {
+              font-weight: 600;
+              color: #555;
             }
-            a.link {
-              color: #667eea;
-              text-decoration: none;
+            .value {
+              color: #333;
             }
-            a.link:hover {
-              text-decoration: underline;
+            .status {
+              display: inline-block;
+              padding: 4px 12px;
+              border-radius: 4px;
+              font-size: 14px;
+              font-weight: 600;
+            }
+            .new {
+              background-color: #d1fae5;
+              color: #065f46;
+            }
+            .existing {
+              background-color: #fef3c7;
+              color: #92400e;
             }
           </style>
         </head>
         <body>
-          <div class="wrapper">
-            <div class="container">
-              <div class="header">
-                <h1>
-                  <img src="${baseUrl}/favicon.ico" alt="AI Power Ranking" class="crown-icon" />
-                  AI Power Ranking
-                </h1>
+          <div class="container">
+            <div class="header">
+              <h1>Newsletter Subscription ${isExisting ? 'Attempt' : 'Received'}</h1>
+            </div>
+            
+            <p>A ${isExisting ? 'repeat' : 'new'} subscription request was received:</p>
+            
+            <div class="content">
+              <div class="field">
+                <span class="label">Status:</span> 
+                <span class="status ${isExisting ? 'existing' : 'new'}">${isExisting ? 'Existing Subscriber' : 'New Subscription'}</span>
               </div>
-              
-              <div class="content">
-                <p style="font-size: 18px; margin-bottom: 8px;">Hi ${firstName},</p>
-                
-                <p style="font-size: 16px; color: #4b5563;">Welcome to the <span class="gradient-text">AI Power Ranking</span> community! 🎉</p>
-                
-                <p>Thank you for subscribing to our weekly newsletter. You're now part of an exclusive group staying ahead of the AI coding revolution.</p>
-                
-                <div class="feature-list">
-                  <p style="font-weight: 600; margin-bottom: 12px;">Here's what you'll receive:</p>
-                  <div class="feature-item">
-                    <span class="check-icon">✓</span>
-                    <span>Weekly rankings of the top AI coding tools</span>
-                  </div>
-                  <div class="feature-item">
-                    <span class="check-icon">✓</span>
-                    <span>Breaking news about AI tool updates and launches</span>
-                  </div>
-                  <div class="feature-item">
-                    <span class="check-icon">✓</span>
-                    <span>In-depth analysis of emerging trends</span>
-                  </div>
-                  <div class="feature-item">
-                    <span class="check-icon">✓</span>
-                    <span>Exclusive insights not available on our website</span>
-                  </div>
-                </div>
-                
-                <div class="divider"></div>
-                
-                <p style="font-weight: 600; font-size: 18px; text-align: center;">Please verify your email address to start receiving updates:</p>
-                
-                <div style="text-align: center;">
-                  <a href="${verificationUrl}" class="button">Verify Email Address</a>
-                </div>
-                
-                <p style="font-size: 14px; color: #6b7280; text-align: center;">Or copy and paste this link into your browser:</p>
-                <p style="word-break: break-all; font-size: 14px; text-align: center;">
-                  <a href="${verificationUrl}" class="link">${verificationUrl}</a>
-                </p>
+              <div class="field">
+                <span class="label">Name:</span> 
+                <span class="value">${firstName} ${lastName}</span>
               </div>
-              
-              <div class="footer">
-                <p style="margin: 0 0 8px 0;">If you didn't subscribe to AI Power Ranking, you can safely ignore this email.</p>
-                <p style="margin: 0 0 16px 0;">© 2025 AI Power Ranking. All rights reserved.</p>
-                <p style="margin: 0;">
-                  <a href="${baseUrl}" class="link">Visit our website</a> | 
-                  <a href="${baseUrl}/about" class="link">About us</a> | 
-                  <a href="${baseUrl}/methodology" class="link">Our methodology</a>
-                </p>
+              <div class="field">
+                <span class="label">Email:</span> 
+                <span class="value">${email}</span>
+              </div>
+              <div class="field">
+                <span class="label">Timestamp:</span> 
+                <span class="value">${new Date().toLocaleString()}</span>
               </div>
             </div>
+            
+            ${isExisting 
+              ? '<p><strong>Note:</strong> This email address has already subscribed and attempted to subscribe again.</p>'
+              : '<p><strong>Action Required:</strong> Please follow up with this new subscriber manually until the verification system is implemented.</p>'
+            }
+            
+            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+              This notification was sent from the AI Power Ranking subscription system.
+            </p>
           </div>
         </body>
       </html>
@@ -360,7 +285,7 @@ async function sendVerificationEmail(
   });
 
   if (emailError) {
-    loggers.api.error("Resend email error during subscription", {
+    loggers.api.error("Resend email error during subscription notification", {
       error: emailError,
       message: emailError.message,
       name: emailError.name,
@@ -369,14 +294,15 @@ async function sendVerificationEmail(
       resendApiKey: process.env["RESEND_API_KEY"]
         ? "Set (length: " + process.env["RESEND_API_KEY"].length + ")"
         : "Not set",
-      toEmail: email,
+      toEmail: "bob@matsuoka.com",
       fromEmail: "AI Power Ranking <newsletter@aipowerranking.com>",
+      subscriberEmail: email,
     });
 
     throw new Error(
       process.env["NODE_ENV"] === "development"
-        ? `Failed to send verification email: ${emailError.message}`
-        : "Failed to send verification email"
+        ? `Failed to send subscription notification: ${emailError.message}`
+        : "Failed to send subscription notification"
     );
   }
 }
