@@ -101,7 +101,7 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
         <h2 className="text-3xl font-bold text-center mb-8">Top AI Coding Tool Categories</h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Link href={`/${lang}/rankings?category=ide-assistant`} className="block">
+          <Link href={`/${lang}/best-ide-assistants`} className="block">
             <Card className="h-full hover:shadow-lg transition-all duration-200 group">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -120,7 +120,7 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
             </Card>
           </Link>
 
-          <Link href={`/${lang}/rankings?category=autonomous-agent`} className="block">
+          <Link href={`/${lang}/best-autonomous-agents`} className="block">
             <Card className="h-full hover:shadow-lg transition-all duration-200 group">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -137,7 +137,7 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
             </Card>
           </Link>
 
-          <Link href={`/${lang}/rankings?category=code-editor`} className="block">
+          <Link href={`/${lang}/best-ai-code-editors`} className="block">
             <Card className="h-full hover:shadow-lg transition-all duration-200 group">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -154,7 +154,7 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
             </Card>
           </Link>
 
-          <Link href={`/${lang}/rankings?category=app-builder`} className="block">
+          <Link href={`/${lang}/best-ai-app-builders`} className="block">
             <Card className="h-full hover:shadow-lg transition-all duration-200 group">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -167,6 +167,74 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
                   AI-powered platforms for rapid application development and prototyping.
                 </p>
                 <div className="text-sm text-primary group-hover:underline">Explore Builders →</div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href={`/${lang}/best-code-review-tools`} className="block">
+            <Card className="h-full hover:shadow-lg transition-all duration-200 group">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Code Review</span>
+                  <Badge variant="secondary">15 Tools</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Automated code analysis and security scanning for better code quality.
+                </p>
+                <div className="text-sm text-primary group-hover:underline">Explore Review Tools →</div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href={`/${lang}/best-devops-assistants`} className="block">
+            <Card className="h-full hover:shadow-lg transition-all duration-200 group">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>DevOps Assistants</span>
+                  <Badge variant="secondary">12 Tools</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Infrastructure automation and intelligent deployment pipeline management.
+                </p>
+                <div className="text-sm text-primary group-hover:underline">Explore DevOps Tools →</div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href={`/${lang}/best-testing-tools`} className="block">
+            <Card className="h-full hover:shadow-lg transition-all duration-200 group">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Testing Tools</span>
+                  <Badge variant="secondary">10 Tools</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  AI-powered test generation and automated quality assurance platforms.
+                </p>
+                <div className="text-sm text-primary group-hover:underline">Explore Testing Tools →</div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href={`/${lang}/best-open-source-frameworks`} className="block">
+            <Card className="h-full hover:shadow-lg transition-all duration-200 group">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Open Source</span>
+                  <Badge variant="secondary">20 Tools</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Free and open source AI frameworks and machine learning libraries.
+                </p>
+                <div className="text-sm text-primary group-hover:underline">Explore Frameworks →</div>
               </CardContent>
             </Card>
           </Link>
