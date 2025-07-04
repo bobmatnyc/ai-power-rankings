@@ -21,7 +21,7 @@ interface NewsletterModalProps {
 }
 
 const TURNSTILE_SITE_KEY =
-  process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABglXFXbgAmdRz-H";
+  process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABjmlf52zjynI4u4";
 
 // Debug: Log environment variable value (will be removed after verification)
 if (typeof window !== "undefined") {
