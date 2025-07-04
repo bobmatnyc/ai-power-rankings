@@ -182,7 +182,6 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                   theme: "light",
                   size: "normal",
                   retry: "auto",
-                  "retry-interval": 8000,
                 }}
               />
             </div>
