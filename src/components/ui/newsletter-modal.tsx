@@ -20,8 +20,11 @@ interface NewsletterModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const TURNSTILE_SITE_KEY =
-  process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABjmlf52zjynI4u4";
+// Temporarily use test key until production key issue is resolved
+const USE_TEST_KEY = true;
+const TURNSTILE_SITE_KEY = USE_TEST_KEY
+  ? "1x00000000000000000000AA" // Cloudflare's always-passes test key
+  : process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABjmlf52zjynI4u4";
 
 export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): React.JSX.Element {
   const [firstName, setFirstName] = useState("");
@@ -104,14 +107,25 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
     console.log("Current hostname:", window.location.hostname);
     console.log("Site key being used:", TURNSTILE_SITE_KEY);
     console.log("User agent:", navigator.userAgent);
-    setError(`${dict.newsletter.modal.errors.failed} (Error: ${errorCode || "unknown"})`);
+
+    // Prevent retry loops for persistent errors
+    if (errorCode === "400020") {
+      setError(
+        "CAPTCHA verification unavailable. Please try refreshing the page or contact support."
+      );
+    } else {
+      setError(`${dict.newsletter.modal.errors.failed} (Error: ${errorCode || "unknown"})`);
+    }
+
     setTurnstileToken("");
-    // Reset the Turnstile widget after error
-    setTimeout(() => {
-      if (turnstileRef.current) {
-        turnstileRef.current.reset();
-      }
-    }, 1000);
+    // Don't auto-reset on 400020 errors to prevent loops
+    if (errorCode !== "400020") {
+      setTimeout(() => {
+        if (turnstileRef.current) {
+          turnstileRef.current.reset();
+        }
+      }, 1000);
+    }
   };
 
   const handleTurnstileExpire = (): void => {
@@ -184,7 +198,7 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                 options={{
                   theme: "light",
                   size: "normal",
-                  retry: "auto",
+                  retry: "never",
                   action: "submit",
                   cData: "newsletter_subscription",
                 }}
