@@ -100,8 +100,15 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
   };
 
   const handleTurnstileError = (): void => {
+    console.log("Turnstile error occurred, resetting widget");
     setError(dict.newsletter.modal.errors.failed);
     setTurnstileToken("");
+    // Reset the Turnstile widget after error
+    setTimeout(() => {
+      if (turnstileRef.current) {
+        turnstileRef.current.reset();
+      }
+    }, 1000);
   };
 
   const handleTurnstileExpire = (): void => {
@@ -174,14 +181,34 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
                 options={{
                   theme: "light",
                   size: "normal",
+                  retry: "auto",
+                  "retry-interval": 8000,
                 }}
               />
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 text-sm text-destructive">
-                <AlertCircle className="h-4 w-4" />
-                <span>{error}</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>{error}</span>
+                </div>
+                {error.includes("failed") && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setError("");
+                      setTurnstileToken("");
+                      if (turnstileRef.current) {
+                        turnstileRef.current.reset();
+                      }
+                    }}
+                  >
+                    Retry Verification
+                  </Button>
+                )}
               </div>
             )}
 
