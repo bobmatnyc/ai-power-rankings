@@ -20,11 +20,8 @@ interface NewsletterModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-// Temporarily use test key until production key issue is resolved
-const USE_TEST_KEY = true;
-const TURNSTILE_SITE_KEY = USE_TEST_KEY
-  ? "1x00000000000000000000AA" // Cloudflare's always-passes test key
-  : process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABjmlf52zjynI4u4";
+const TURNSTILE_SITE_KEY =
+  process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABjmlf52zjynI4u4";
 
 export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): React.JSX.Element {
   const [firstName, setFirstName] = useState("");
