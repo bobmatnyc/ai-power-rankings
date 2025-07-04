@@ -20,8 +20,11 @@ interface NewsletterModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const TURNSTILE_SITE_KEY =
-  process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABjmlf52zjynI4u4";
+// Use test key temporarily to diagnose if issue is with production key
+const USE_TEST_KEY = false; // Set to true to test with Cloudflare's test key
+const TURNSTILE_SITE_KEY = USE_TEST_KEY
+  ? "1x00000000000000000000AA" // Cloudflare's always-passes test key
+  : process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABjmlf52zjynI4u4";
 
 export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): React.JSX.Element {
   const [firstName, setFirstName] = useState("");
@@ -99,9 +102,12 @@ export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): R
     setError("");
   };
 
-  const handleTurnstileError = (): void => {
-    console.log("Turnstile error occurred, resetting widget");
-    setError(dict.newsletter.modal.errors.failed);
+  const handleTurnstileError = (errorCode?: string): void => {
+    console.log("Turnstile error occurred:", errorCode || "unknown");
+    console.log("Current hostname:", window.location.hostname);
+    console.log("Site key being used:", TURNSTILE_SITE_KEY);
+    console.log("User agent:", navigator.userAgent);
+    setError(`${dict.newsletter.modal.errors.failed} (Error: ${errorCode || "unknown"})`);
     setTurnstileToken("");
     // Reset the Turnstile widget after error
     setTimeout(() => {
