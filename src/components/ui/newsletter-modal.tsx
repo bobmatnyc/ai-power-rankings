@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+import { AlertCircle } from "lucide-react";
+import { useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,11 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
-import { AlertCircle } from "lucide-react";
 import { useI18n } from "@/i18n/client";
 
 interface NewsletterModalProps {
@@ -22,6 +22,12 @@ interface NewsletterModalProps {
 
 const TURNSTILE_SITE_KEY =
   process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABglXFXbgAmdRz-H";
+
+// Debug: Log environment variable value (will be removed after verification)
+if (typeof window !== "undefined") {
+  console.log("TURNSTILE_SITE_KEY:", TURNSTILE_SITE_KEY);
+  console.log("Raw env var:", process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"]);
+}
 
 export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): React.JSX.Element {
   const [firstName, setFirstName] = useState("");
