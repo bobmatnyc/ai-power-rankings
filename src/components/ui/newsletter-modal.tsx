@@ -23,12 +23,6 @@ interface NewsletterModalProps {
 const TURNSTILE_SITE_KEY =
   process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABjmlf52zjynI4u4";
 
-// Debug: Log environment variable value (will be removed after verification)
-if (typeof window !== "undefined") {
-  console.log("TURNSTILE_SITE_KEY:", TURNSTILE_SITE_KEY);
-  console.log("Raw env var:", process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"]);
-}
-
 export function NewsletterModal({ open, onOpenChange }: NewsletterModalProps): React.JSX.Element {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
