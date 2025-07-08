@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import type { NextRequest } from "next/server";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./route";
-import { NextRequest } from "next/server";
 
 // Mock the logger
 vi.mock("@/lib/logger", () => ({
@@ -227,11 +227,7 @@ describe("/api/newsletter/subscribe", () => {
     });
 
     it("should validate email format correctly", async () => {
-      const validEmails = [
-        "test@example.com",
-        "user.name@domain.co.uk",
-        "name+tag@example.org",
-      ];
+      const validEmails = ["test@example.com", "user.name@domain.co.uk", "name+tag@example.org"];
 
       for (const email of validEmails) {
         mockSubscribersRepo.getByEmail.mockResolvedValue(null);

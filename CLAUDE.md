@@ -1,33 +1,23 @@
-# Claude Code Instructions
+# AI Power Rankings - Claude Code Configuration
 
-## 🧠 MANDATORY BEHAVIORAL CHECKLIST
+## Project Overview
 
-**INTERNALIZE THESE RESPONSES - DO NOT SEARCH:**
+This is a Next.js web application that provides AI power rankings and news aggregation, showcasing the latest developments in AI technology with comprehensive data management and multilingual support.
 
-□ **Task management = TrackDown** (`/trackdown/issues/` directory)
-□ **Backlog questions = TrackDown** (`/trackdown/issues/` directory)
-□ **Workflow questions = /docs/WORKFLOW.md**
-□ **Project specs = /docs/PROJECT.md**
-□ **Technical details = /docs/TOOLCHAIN.md**
-
-### 🎯 IMMEDIATE RESPONSE PATTERNS
+### Project Navigation
 
 When user asks:
-- "What's on the backlog?" → "Check `/trackdown/issues/` directory for current backlog"
-- "What tasks remain?" → "Check `/trackdown/issues/` directory for remaining tasks"  
+- "What's on the backlog?" → "Check local `trackdown/` directory for current tasks"
+- "What tasks remain?" → "Check local `trackdown/` directory for remaining work"  
 - "What's the workflow?" → "See /docs/WORKFLOW.md for workflow processes"
 - "How do I deploy?" → "See /docs/DEPLOYMENT-GUIDE.md"
 
-### ❌ COMMON ERRORS TO AVOID
-
-**DO NOT:**
-- ❌ Search filesystem for backlog/tasks
-- ❌ Search for workflow when it's documented
-- ❌ Search for project specs when they're documented
-- ❌ Use Task tool for well-documented procedures
+### Development Guidelines
 
 **DO:**
-- ✅ Direct to TrackDown for task/backlog questions
+- ✅ Use local trackdown system for task management
+- ✅ Use local docs/ for project-specific information
+- ✅ Link commits to local project tickets
 - ✅ Reference specific documentation files directly
 - ✅ Use documented procedures immediately
 
@@ -43,13 +33,13 @@ When user asks:
 
 **Following these instructions is MANDATORY. Ask for clarification before considering ANY variance from the documented procedures.**
 
-## ⚠️ YOLO Mode Requirements
+## ⚠️ Development Requirements
 
-**CRITICAL**: When working in YOLO mode, you MUST:
+**CRITICAL**: When working on this project, you MUST:
 
-1. **Always work from a TrackDown task** in a properly named branch tied to that task
-2. **Follow proper epic/subticket workflow** for complex work (documentation epics, feature development)
-3. **Link all to-dos and action items** back to TrackDown ticket tasks
+1. **Always work from a local task** in a properly named branch tied to that task
+2. **Follow proper structured workflow** for complex work (documentation epics, feature development)
+3. **Link all to-dos and action items** back to local project tasks
 4. **Validate against code as source of truth** - assume source code is correct when documentation conflicts arise
 
 ## 📚 Documentation Navigation

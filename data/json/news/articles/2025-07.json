@@ -1,0 +1,72 @@
+[
+  {
+    "id": "c206698b-ec04-4236-ad8a-432091c9b319",
+    "slug": "microsoft-acquires-ai-code-review-platform-deepcode",
+    "title": "Microsoft Acquires AI Code Review Platform DeepCode",
+    "summary": "Microsoft expands developer tools portfolio with $500M acquisition of DeepCode, an AI-powered code review and bug detection platform",
+    "content": "",
+    "source": "Microsoft News",
+    "source_url": "https://microsoft.com/news/2025/deepcode-acquisition",
+    "published_date": "2025-07-07T00:00:00.000Z",
+    "tags": ["acquisition", "code review", "AI development tools", "Microsoft strategy"],
+    "tool_mentions": ["2"],
+    "created_at": "2025-07-08T06:35:48.166Z",
+    "updated_at": "2025-07-08T06:35:48.166Z"
+  },
+  {
+    "id": "d752c851-38dc-4099-a0ee-cd5fdd924389",
+    "slug": "ai-code-assistant-startup-codewhisperer-raises-150m-series-c",
+    "title": "AI Code Assistant Startup CodeWhisperer Raises $150M Series C",
+    "summary": "Amazon-backed CodeWhisperer secures major funding round led by Sequoia Capital to expand its enterprise AI coding assistant capabilities and market presence",
+    "content": "",
+    "source": "TechCrunch",
+    "source_url": "https://techcrunch.com/2025/07/05/codewhisperer-funding-round",
+    "published_date": "2025-07-05T00:00:00.000Z",
+    "tags": ["funding", "series C", "enterprise AI", "coding assistant"],
+    "tool_mentions": [],
+    "created_at": "2025-07-08T06:35:48.271Z",
+    "updated_at": "2025-07-08T06:35:48.271Z"
+  },
+  {
+    "id": "754202dd-8bee-447b-9bc5-08c5c8ae7ed5",
+    "slug": "ai-coding-assistant-market-expected-to-reach-8-2b-by-2026",
+    "title": "AI Coding Assistant Market Expected to Reach $8.2B by 2026",
+    "summary": "New market research report shows AI programming assistant sector growing at 42% CAGR, driven by enterprise adoption and improved accuracy of code generation tools.",
+    "content": "",
+    "source": "VentureBeat",
+    "source_url": "https://venturebeat.com/2025/07/04/ai-coding-assistant-market-report",
+    "published_date": "2025-07-04T00:00:00.000Z",
+    "tags": ["market growth", "enterprise adoption", "revenue projections", "industry analysis"],
+    "tool_mentions": ["2", "21"],
+    "created_at": "2025-07-08T06:35:48.489Z",
+    "updated_at": "2025-07-08T06:35:48.489Z"
+  },
+  {
+    "id": "202787d1-b7e3-4934-903e-3efdbe9ced6b",
+    "slug": "github-copilot-enterprise-launches-advanced-code-security-features",
+    "title": "GitHub Copilot Enterprise Launches Advanced Code Security Features",
+    "summary": "GitHub announced major security enhancements to Copilot Enterprise, including real-time vulnerability scanning and automated code review capabilities powered by next-gen AI models",
+    "content": "",
+    "source": "GitHub Blog",
+    "source_url": "https://github.blog/2025-07-03-copilot-enterprise-security",
+    "published_date": "2025-07-03T00:00:00.000Z",
+    "tags": ["security", "enterprise features", "AI coding", "vulnerability scanning"],
+    "tool_mentions": ["2"],
+    "created_at": "2025-07-08T06:35:48.062Z",
+    "updated_at": "2025-07-08T06:35:48.062Z"
+  },
+  {
+    "id": "79c6a20e-20ba-4f45-a497-5097a3b6539f",
+    "slug": "deepmind-launches-alphacoder-pro-for-enterprise-customers",
+    "title": "DeepMind Launches AlphaCoder Pro for Enterprise Customers",
+    "summary": "Google's DeepMind unveils enterprise-grade AI coding assistant with advanced security features and custom model training capabilities.",
+    "content": "",
+    "source": "AI News",
+    "source_url": "https://artificialintelligence-news.com/2025/07/03/deepmind-alphacoder-pro-launch",
+    "published_date": "2025-07-03T00:00:00.000Z",
+    "tags": ["enterprise AI", "Google DeepMind", "custom training", "security"],
+    "tool_mentions": [],
+    "created_at": "2025-07-08T06:35:48.378Z",
+    "updated_at": "2025-07-08T06:35:48.378Z"
+  }
+]

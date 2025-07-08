@@ -6616,7 +6616,8 @@
       "completed": [
         "2244c57a-baea-45b9-b47f-808510019445",
         "d703a9ce-be8d-458c-ad84-bfcdd11829a6",
-        "0b43c593-debd-4706-81e5-a03cce76c477"
+        "0b43c593-debd-4706-81e5-a03cce76c477",
+        "561964af-6df0-488a-b142-aded83ec271b"
       ]
     }
   },
@@ -6730,13 +6731,53 @@
       "id": "0b43c593-debd-4706-81e5-a03cce76c477",
       "created_at": "2025-07-02T03:01:16.230Z",
       "updated_at": "2025-07-02T03:01:16.230Z"
+    },
+    {
+      "filename": "newsworthy-submission-july-3-8-2025.json",
+      "status": "completed",
+      "total_items": 5,
+      "processed_items": 5,
+      "failed_items": 0,
+      "duplicate_items": 0,
+      "new_tools_created": 0,
+      "new_companies_created": 0,
+      "pending_tools_created": 7,
+      "ranking_preview_generated": false,
+      "processing_log": "Started processing 5 news items\nProcessing item 1: GitHub Copilot Enterprise Launches Advanced Code Security Features\n  - Created news item ID: 202787d1-b7e3-4934-903e-3efdbe9ced6b\nProcessing item 2: Microsoft Acquires AI Code Review Platform DeepCode\n  - Created news item ID: c206698b-ec04-4236-ad8a-432091c9b319\nProcessing item 3: AI Code Assistant Startup CodeWhisperer Raises $150M Series C\n  - Created news item ID: d752c851-38dc-4099-a0ee-cd5fdd924389\nProcessing item 4: DeepMind Launches AlphaCoder Pro for Enterprise Customers\n  - Created news item ID: 79c6a20e-20ba-4f45-a497-5097a3b6539f\nProcessing item 5: AI Coding Assistant Market Expected to Reach $8.2B by 2026\n  - Created news item ID: 754202dd-8bee-447b-9bc5-08c5c8ae7ed5\n",
+      "errors": [],
+      "ingested_news_ids": [
+        "202787d1-b7e3-4934-903e-3efdbe9ced6b",
+        "c206698b-ec04-4236-ad8a-432091c9b319",
+        "d752c851-38dc-4099-a0ee-cd5fdd924389",
+        "79c6a20e-20ba-4f45-a497-5097a3b6539f",
+        "754202dd-8bee-447b-9bc5-08c5c8ae7ed5"
+      ],
+      "created_tools": [
+        {
+          "id": "2",
+          "name": "GitHub Copilot",
+          "slug": "github-copilot"
+        },
+        {
+          "id": "21",
+          "name": "Tabnine",
+          "slug": "tabnine"
+        }
+      ],
+      "created_companies": [],
+      "ranking_changes_preview": null,
+      "file_size": 4018,
+      "processing_duration": 431,
+      "id": "561964af-6df0-488a-b142-aded83ec271b",
+      "created_at": "2025-07-08T06:35:48.490Z",
+      "updated_at": "2025-07-08T06:35:48.490Z"
     }
   ],
   "metadata": {
     "total": 0,
-    "last_updated": "2025-07-02T03:01:16.232Z",
+    "last_updated": "2025-07-08T06:35:48.495Z",
     "version": "1.0.0",
-    "ingestion_reports_count": 3,
+    "ingestion_reports_count": 4,
     "note": "Articles have been moved to monthly files in the articles/ directory"
   }
 }
