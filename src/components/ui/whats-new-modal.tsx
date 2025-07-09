@@ -80,20 +80,23 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
         threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
         
         // Fetch recent news/updates
-        const response = await fetch(`/api/news/recent?days=3`);
+        const response = await fetch("/api/news/recent?days=3");
         const newsDataResponse = response.ok ? await response.json() : { articles: [] };
         const newsData = newsDataResponse.articles || [];
         
         // Transform news data to update format
-        const newsUpdates: UpdateItem[] = newsData.slice(0, 5).map((item: any, index: number) => ({
-          id: `news-${item.id || index}`,
-          type: "news" as const,
-          title: item.title || "New Update",
-          description: item.summary || item.content?.substring(0, 150) + "..." || "Recent update to the platform",
-          date: item.created_at || item.published_date || new Date().toISOString(),
-          category: item.category || "General",
-          isNew: true
-        }));
+        const newsUpdates: UpdateItem[] = newsData.slice(0, 5).map((item: unknown, index: number) => {
+          const newsItem = item as { id?: string; title?: string; summary?: string; content?: string; created_at?: string; published_date?: string; category?: string; };
+          return {
+            id: `news-${newsItem.id || index}`,
+            type: "news" as const,
+            title: newsItem.title || "New Update",
+            description: newsItem.summary || `${newsItem.content?.substring(0, 150)}...` || "Recent update to the platform",
+            date: newsItem.created_at || newsItem.published_date || new Date().toISOString(),
+            category: newsItem.category || "General",
+            isNew: true
+          };
+        });
 
         // Fetch real platform updates from changelog
         let platformUpdates: UpdateItem[] = [];
@@ -101,15 +104,18 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
           const changelogResponse = await fetch('/api/changelog');
           if (changelogResponse.ok) {
             const changelogData = await changelogResponse.json();
-            platformUpdates = changelogData.slice(0, 5).map((item: any, index: number) => ({
-              id: `changelog-${item.id || index}`,
-              type: "feature" as const,
-              title: item.title || "Platform Update",
-              description: item.description || "Recent platform improvement",
-              date: item.date || new Date().toISOString(),
-              category: item.category || "Platform",
-              isNew: true
-            }));
+            platformUpdates = changelogData.slice(0, 5).map((item: unknown, index: number) => {
+              const changelogItem = item as { id?: string; title?: string; description?: string; date?: string; category?: string; };
+              return {
+                id: `changelog-${changelogItem.id || index}`,
+                type: "feature" as const,
+                title: changelogItem.title || "Platform Update",
+                description: changelogItem.description || "Recent platform improvement",
+                date: changelogItem.date || new Date().toISOString(),
+                category: changelogItem.category || "Platform",
+                isNew: true
+              };
+            });
           }
         } catch (error) {
           console.error('Error fetching changelog:', error);

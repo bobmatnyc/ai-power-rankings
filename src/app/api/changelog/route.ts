@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { readFile } from 'fs/promises';
-import path from 'path';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 
 export async function GET() {
   try {
@@ -60,8 +60,8 @@ function parseChangelog(content: string): Release[] {
         releases.push(currentRelease);
       }
       currentRelease = {
-        version: releaseMatch[1],
-        date: releaseMatch[2],
+        version: releaseMatch[1] || 'Unknown',
+        date: (releaseMatch[2] || new Date().toISOString().split('T')[0])!,
         items: []
       };
       currentCategory = '';
@@ -71,7 +71,7 @@ function parseChangelog(content: string): Release[] {
     // Match category headers like "### Added"
     const categoryMatch = line.match(/^### (.+)/);
     if (categoryMatch) {
-      currentCategory = categoryMatch[1];
+      currentCategory = categoryMatch[1] || 'General';
       continue;
     }
     
@@ -80,8 +80,8 @@ function parseChangelog(content: string): Release[] {
     if (itemMatch && currentRelease && currentCategory) {
       currentRelease.items.push({
         category: currentCategory,
-        title: itemMatch[1],
-        description: itemMatch[2]
+        title: itemMatch[1] || 'Update',
+        description: itemMatch[2] || 'Platform update'
       });
       continue;
     }
@@ -93,8 +93,8 @@ function parseChangelog(content: string): Release[] {
       if (!line.startsWith('  ')) {
         currentRelease.items.push({
           category: currentCategory,
-          title: simpleItemMatch[1].split(':')[0] || simpleItemMatch[1].substring(0, 50),
-          description: simpleItemMatch[1]
+          title: simpleItemMatch[1]?.split(':')[0] || simpleItemMatch[1]?.substring(0, 50) || 'Update',
+          description: simpleItemMatch[1] || 'Platform update'
         });
       }
     }
