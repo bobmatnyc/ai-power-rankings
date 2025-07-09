@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Clock } from "lucide-react";
 import { getFormattedBuildTime } from "@/lib/build-info";
-import { ChangelogModal } from "@/components/ui/changelog-modal";
+import { WhatsNewModal } from "@/components/ui/whats-new-modal";
 
 export function BuildTimeBadge() {
   const [buildTime, setBuildTime] = useState<string>("");
   const [mounted, setMounted] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -26,27 +27,31 @@ export function BuildTimeBadge() {
   // Don't render until mounted to avoid hydration mismatch
   if (!mounted) {
     return (
-      <ChangelogModal>
+      <>
         <Badge
           variant="outline"
           className="hidden sm:flex cursor-pointer hover:bg-muted transition-colors"
+          onClick={() => setModalOpen(true)}
         >
           <Clock className="h-3 w-3 mr-1" />
           Last updated: Loading...
         </Badge>
-      </ChangelogModal>
+        <WhatsNewModal open={modalOpen} onOpenChange={setModalOpen} />
+      </>
     );
   }
 
   return (
-    <ChangelogModal>
+    <>
       <Badge
         variant="outline"
         className="hidden sm:flex cursor-pointer hover:bg-muted transition-colors"
+        onClick={() => setModalOpen(true)}
       >
         <Clock className="h-3 w-3 mr-1" />
         Last updated: {buildTime}
       </Badge>
-    </ChangelogModal>
+      <WhatsNewModal open={modalOpen} onOpenChange={setModalOpen} />
+    </>
   );
 }

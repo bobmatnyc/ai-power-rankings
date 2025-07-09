@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.2] - 2025-07-09
+
+### Added
+- **What's New Modal**: Interactive modal showing recent platform updates and news from past 3 days
+- **Changelog Integration**: Real-time display of platform changes from changelog API
+- **Auto-show Functionality**: Modal automatically shows for new visitors with 24-hour reset
+- **User Preferences**: "Don't show again" option with localStorage persistence
+
+### Changed
+- **Update Display Order**: Rankings/news updates now appear before platform updates in modal
+- **Modal Prioritization**: Changelog entries show top 10 recent items regardless of date
+- **News Filtering**: News items filtered to past 3 days for relevance
+
+### Fixed
+- **Build Integration**: Modal properly integrated with "Last updated" button in build badge
+- **Scroll Functionality**: Added proper scroll support for longer content in modal
+- **Real Data Integration**: Removed hardcoded fake data, using actual APIs
+
 ## [3.1.0] - 2025-07-01
 
 ### Added

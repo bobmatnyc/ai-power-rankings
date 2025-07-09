@@ -1,0 +1,85 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-07-08T21:52:53.755Z",
+  "projectPath": "/Users/masa/Projects/managed/ai-power-rankings/ai-power-rankings",
+  "epics": {
+    "undefined": {
+      "id": "EP-0003",
+      "title": "UI Enhancement and Modal Implementation",
+      "filePath": "/Users/masa/Projects/managed/ai-power-rankings/ai-power-rankings/tasks/epics/EP-0003-ui-enhancement-and-modal-implementation.md",
+      "status": "planning",
+      "priority": "medium",
+      "lastModified": "2025-07-08T21:52:53.738Z",
+      "fileSize": 770,
+      "assignee": "masa",
+      "issueIds": [],
+      "completion_percentage": 0
+    },
+    "EP-0003": {
+      "id": "EP-0003",
+      "title": "UI Enhancement and Modal Implementation",
+      "filePath": "/Users/masa/Projects/managed/ai-power-rankings/ai-power-rankings/tasks/epics/EP-0003-ui-enhancement-and-modal-implementation.md",
+      "status": "planning",
+      "priority": "medium",
+      "lastModified": "2025-07-08T21:52:53.738Z",
+      "fileSize": 770,
+      "assignee": "masa",
+      "issueIds": [],
+      "completion_percentage": 0
+    }
+  },
+  "issues": {
+    "undefined": {
+      "id": "ISS-0002",
+      "title": "Development Environment Setup",
+      "filePath": "/Users/masa/Projects/managed/ai-power-rankings/ai-power-rankings/tasks/issues/ISS-0002-development-environment-setup.md",
+      "status": "active",
+      "priority": "high",
+      "lastModified": "2025-07-08T21:52:22.459Z",
+      "fileSize": 1252,
+      "assignee": "masa",
+      "tags": [
+        "setup",
+        "environment"
+      ],
+      "epicId": "EP-0002",
+      "taskIds": [
+        "TSK-0004"
+      ],
+      "prIds": []
+    }
+  },
+  "tasks": {
+    "undefined": {
+      "id": "TSK-0004",
+      "title": "Create development setup documentation",
+      "filePath": "/Users/masa/Projects/managed/ai-power-rankings/ai-power-rankings/tasks/tasks/TSK-0004-create-development-setup-documentation.md",
+      "status": "planning",
+      "priority": "medium",
+      "lastModified": "2025-07-08T21:52:22.460Z",
+      "fileSize": 1485,
+      "assignee": "masa",
+      "tags": [
+        "documentation",
+        "setup"
+      ],
+      "issueId": "ISS-0002",
+      "epicId": "EP-0002",
+      "time_estimate": "2 hours"
+    }
+  },
+  "prs": {},
+  "stats": {
+    "totalEpics": 2,
+    "totalIssues": 1,
+    "totalTasks": 1,
+    "totalPRs": 0,
+    "lastFullScan": "2025-07-08T21:52:53.741Z",
+    "indexSize": 2081,
+    "performanceMetrics": {
+      "lastLoadTime": 0,
+      "lastUpdateTime": 1,
+      "lastRebuildTime": 14
+    }
+  }
+}

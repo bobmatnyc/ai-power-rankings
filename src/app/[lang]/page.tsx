@@ -25,6 +25,14 @@ const ClientRankings = dynamicImport(
   }
 );
 
+// Dynamic import for T-033 What's New modal
+const WhatsNewModalClient = dynamicImport(
+  () => import("@/components/ui/whats-new-modal-client").then((mod) => ({ default: mod.WhatsNewModalClient })),
+  {
+    loading: () => <div></div>,
+  }
+);
+
 interface PageProps {
   params: Promise<{ lang: Locale }>;
 }
@@ -148,6 +156,8 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
+      {/* T-033 What's New Modal */}
+      <WhatsNewModalClient />
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background gradient */}
