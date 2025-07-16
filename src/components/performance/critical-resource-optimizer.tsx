@@ -111,7 +111,7 @@ export function usePerformanceMonitoring() {
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
         // Log performance entries for debugging
-        if (process.env["NODE_ENV"] === "development") {
+        if (process.env.NODE_ENV === "development") {
           console.log("Performance:", entry.name, entry.duration);
         }
 

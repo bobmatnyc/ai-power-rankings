@@ -5,8 +5,8 @@
 // In production, this should be set via an environment variable or build-time constant
 export function getBuildTime(): string {
   // If we have a BUILD_TIME environment variable, use it
-  if (process.env["NEXT_PUBLIC_BUILD_TIME"]) {
-    return process.env["NEXT_PUBLIC_BUILD_TIME"];
+  if (process.env.NEXT_PUBLIC_BUILD_TIME) {
+    return process.env.NEXT_PUBLIC_BUILD_TIME;
   }
 
   // Otherwise, use the current time (for development)

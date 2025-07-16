@@ -346,8 +346,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
 
       const scoreChange = currentRanking
-        ? newScore?.overallScore - currentRanking.score
-        : newScore?.overallScore;
+        ? (newScore?.overallScore || 0) - currentRanking.score
+        : newScore?.overallScore || 0;
 
       // Get previous factor scores if available
       const previousFactorScores = currentRanking?.factor_scores
@@ -395,9 +395,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         current_position: currentPosition,
         new_position: newPosition,
         current_score: currentRanking?.score,
-        new_score: newScore?.overallScore,
+        new_score: newScore?.overallScore || 0,
         position_change: positionChange,
-        score_change: scoreChange,
+        score_change: scoreChange || 0,
         movement,
         factor_changes: {
           agentic_capability: newScore?.factorScores?.agenticCapability || 0,

@@ -201,7 +201,7 @@ export function preloadCriticalComponentCSS(): void {
  * Remove unused CSS classes from the DOM (for development)
  */
 export function auditUnusedCSS(): string[] {
-  if (process.env["NODE_ENV"] !== "development") {
+  if (process.env.NODE_ENV !== "development") {
     return [];
   }
 

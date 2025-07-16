@@ -52,7 +52,7 @@ export class CacheBlobStorage {
    * Check if we should use blob storage (only in production)
    */
   static shouldUseBlob(): boolean {
-    return process.env["NODE_ENV"] === "production" && !!process.env.BLOB_READ_WRITE_TOKEN;
+    return process.env.NODE_ENV === "production" && !!process.env.BLOB_READ_WRITE_TOKEN;
   }
 
   /**

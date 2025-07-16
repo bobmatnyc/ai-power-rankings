@@ -25,7 +25,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Debug environment variables
     loggers.api.info("Environment check", {
       hasResendKey: !!process.env.RESEND_API_KEY,
-      nodeEnv: process.env["NODE_ENV"],
+      nodeEnv: process.env.NODE_ENV,
     });
 
     // Validate environment variables
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Verify Turnstile token (skip in development)
-    if (process.env["NODE_ENV"] !== "development") {
+    if (process.env.NODE_ENV !== "development") {
       const turnstileResponse = await fetch(
         "https://challenges.cloudflare.com/turnstile/v0/siteverify",
         {
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(
         {
           error: "Failed to save subscription",
-          debug: process.env["NODE_ENV"] === "development" ? dbError.message : undefined,
+          debug: process.env.NODE_ENV === "development" ? dbError.message : undefined,
         },
         { status: 500 }
       );
@@ -301,7 +301,7 @@ async function sendSubscriptionNotification(
     });
 
     throw new Error(
-      process.env["NODE_ENV"] === "development"
+      process.env.NODE_ENV === "development"
         ? `Failed to send subscription notification: ${emailError.message}`
         : "Failed to send subscription notification"
     );

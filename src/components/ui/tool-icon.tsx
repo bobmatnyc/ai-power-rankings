@@ -23,7 +23,7 @@ export function ToolIcon({
   const [imageError, setImageError] = useState(false);
 
   // Debug log to understand what's happening
-  if (process.env["NODE_ENV"] === "development") {
+  if (process.env.NODE_ENV === "development") {
     console.log("ToolIcon:", { name, domain, imageError });
   }
 

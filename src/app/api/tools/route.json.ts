@@ -72,7 +72,7 @@ export async function GET(): Promise<NextResponse> {
     // Set cache headers for production
     apiResponse.headers.set(
       "Cache-Control",
-      process.env["NODE_ENV"] === "production"
+      process.env.NODE_ENV === "production"
         ? "public, s-maxage=3600, stale-while-revalidate=1800"
         : "no-cache"
     );

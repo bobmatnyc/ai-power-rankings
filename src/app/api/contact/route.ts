@@ -10,7 +10,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 if (!process.env.RESEND_API_KEY) {
   console.error("RESEND_API_KEY is not set in environment variables");
 } else {
-  console.log("RESEND_API_KEY is configured (length:", process.env.RESEND_API_KEY.length, ")");
+  console.log("RESEND_API_KEY is configured (length:", process.env.RESEND_API_KEY?.length, ")");
 }
 
 // Validation schema

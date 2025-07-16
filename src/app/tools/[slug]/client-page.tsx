@@ -96,12 +96,6 @@ export default function ToolDetailClientPage({
   const [toolData, setToolData] = useState<ToolDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (slug) {
-      fetchToolDetail(slug);
-    }
-  }, [slug, fetchToolDetail]);
-
   const fetchToolDetail = async (slug: string): Promise<void> => {
     try {
       const response = await fetch(`/api/tools/${slug}`);
@@ -113,6 +107,12 @@ export default function ToolDetailClientPage({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (slug) {
+      fetchToolDetail(slug);
+    }
+  }, [slug, fetchToolDetail]);
 
   const formatMetric = (value: number | undefined, type: string): string => {
     if (value === undefined || value === 0) {
@@ -167,7 +167,7 @@ export default function ToolDetailClientPage({
   const { tool, ranking, metrics, metricHistory } = toolData;
 
   // Generate structured data
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
 
   const toolSchemaData = {
     name: tool.name,

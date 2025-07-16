@@ -11,7 +11,7 @@ export async function POST() {
     }
 
     const siteUrl = process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL;
-    const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
 
     if (!siteUrl) {
       return NextResponse.json(

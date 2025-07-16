@@ -28,8 +28,8 @@ function AuthErrorContent() {
   const error = searchParams?.get("error");
 
   const errorMessage = error
-    ? errorMessages[error] || errorMessages["default"]
-    : errorMessages["default"];
+    ? errorMessages[error] || errorMessages.default
+    : errorMessages.default;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">

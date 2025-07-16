@@ -34,7 +34,7 @@ export async function withApiErrorHandler<T>(
       timestamp: new Date().toISOString(),
     };
 
-    if (process.env["NODE_ENV"] === "development") {
+    if (process.env.NODE_ENV === "development") {
       errorResponse.details = error;
     }
 

@@ -4,7 +4,7 @@ import type React from "react";
 
 const BackToWebsiteNav: React.FC = () => {
   const websiteUrl =
-    process.env["NODE_ENV"] === "development" ? "http://localhost:3000" : "https://aipowerranking.com";
+    process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://aipowerranking.com";
 
   return (
     <div

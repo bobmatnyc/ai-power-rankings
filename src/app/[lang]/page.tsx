@@ -66,7 +66,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       // Handle both direct array and object with tools property
       // API returns { tools: [...], _source: "json-db", _timestamp: "..." }
       const tools = Array.isArray(data) ? data : data.tools || [];
-      
+
       // Ensure tools is an array and get all active tool names
       if (Array.isArray(tools)) {
         toolNames = tools
@@ -88,8 +88,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     baseKeywords,
     ...toolNames,
     // Add tool comparison keywords (only for tools with valid names)
-    ...toolNames.slice(0, 5).filter(Boolean).map((tool) => `${tool} AI`),
-    ...toolNames.slice(0, 5).filter(Boolean).map((tool) => `${tool} ranking`),
+    ...toolNames
+      .slice(0, 5)
+      .filter(Boolean)
+      .map((tool) => `${tool} AI`),
+    ...toolNames
+      .slice(0, 5)
+      .filter(Boolean)
+      .map((tool) => `${tool} ranking`),
     // Add category keywords
     "AI coding assistant",
     "AI code editor",
@@ -102,11 +108,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: dict.seo?.title || "AI Power Rankings",
-    description: dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
+    description:
+      dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
     keywords: allKeywords,
     openGraph: {
       title: dict.seo?.title || "AI Power Rankings",
-      description: dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
+      description:
+        dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
       type: "website",
       locale: lang,
       url: `${baseUrl}/${lang}`,
@@ -123,7 +131,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     twitter: {
       card: "summary_large_image",
       title: dict.seo?.title || "AI Power Rankings",
-      description: dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
+      description:
+        dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
       images: [`${baseUrl}/og-image.png`],
     },
     alternates: {

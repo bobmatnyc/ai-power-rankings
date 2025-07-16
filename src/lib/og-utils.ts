@@ -31,7 +31,7 @@ export interface GeneralOGParams {
  * Generate OG image URL for tool pages
  */
 export function generateToolOGImageUrl(params: ToolOGParams, baseUrl?: string): string {
-  const base = baseUrl || process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+  const base = baseUrl || process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
   const searchParams = new URLSearchParams();
 
   searchParams.set("name", params.name);
@@ -57,7 +57,7 @@ export function generateToolOGImageUrl(params: ToolOGParams, baseUrl?: string): 
  * Generate OG image URL for ranking pages
  */
 export function generateRankingOGImageUrl(params: RankingOGParams, baseUrl?: string): string {
-  const base = baseUrl || process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+  const base = baseUrl || process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
   const searchParams = new URLSearchParams();
 
   if (params.title) {
@@ -80,7 +80,7 @@ export function generateRankingOGImageUrl(params: RankingOGParams, baseUrl?: str
  * Generate OG image URL for general pages
  */
 export function generateGeneralOGImageUrl(params: GeneralOGParams, baseUrl?: string): string {
-  const base = baseUrl || process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+  const base = baseUrl || process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
   const searchParams = new URLSearchParams();
 
   searchParams.set("title", params.title);
@@ -118,6 +118,6 @@ export function sanitizeForUrl(text: string): string {
  * Get fallback OG image URL
  */
 export function getFallbackOGImageUrl(baseUrl?: string): string {
-  const base = baseUrl || process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+  const base = baseUrl || process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
   return `${base}/api/og?title=AI%20Power%20Rankings&subtitle=Developer%20Tool%20Intelligence`;
 }

@@ -20,11 +20,11 @@ interface NewsletterModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const TURNSTILE_SITE_KEY = process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"] || "0x4AAAAAABjmlf52zjynI4u4";
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAABjmlf52zjynI4u4";
 
 // Debug logging for production
 console.log("🔑 Turnstile Debug Info:");
-console.log("Environment var:", process.env["NEXT_PUBLIC_TURNSTILE_SITE_KEY"]);
+console.log("Environment var:", process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 console.log("Final site key:", TURNSTILE_SITE_KEY);
 console.log("Is production key:", TURNSTILE_SITE_KEY === "0x4AAAAAABjmlf52zjynI4u4");
 

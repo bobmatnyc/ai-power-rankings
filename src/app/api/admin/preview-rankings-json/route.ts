@@ -14,7 +14,7 @@ import {
 async function updateProgress(message: string, tool?: string, step?: string) {
   try {
     await fetch(
-      `${process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000"}/api/admin/ranking-progress`,
+      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/admin/ranking-progress`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

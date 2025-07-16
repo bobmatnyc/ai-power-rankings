@@ -9,12 +9,12 @@ export async function GET() {
 
   return NextResponse.json({
     environment: {
-      NODE_ENV: process.env["NODE_ENV"],
-      VERCEL: process.env["VERCEL"],
-      VERCEL_ENV: process.env["VERCEL_ENV"],
-      VERCEL_URL: process.env["VERCEL_URL"],
-      NEXT_PUBLIC_BASE_URL: process.env["NEXT_PUBLIC_BASE_URL"],
-      NEXTAUTH_URL: process.env["NEXTAUTH_URL"],
+      NODE_ENV: process.env.NODE_ENV,
+      VERCEL: process.env.VERCEL,
+      VERCEL_ENV: process.env.VERCEL_ENV,
+      VERCEL_URL: process.env.VERCEL_URL,
+      NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+      NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     },
     computed: {
       baseUrl: getBaseUrl(),
@@ -23,10 +23,10 @@ export async function GET() {
       fullUrl: `${proto}://${host}`,
     },
     checks: {
-      isProduction: process.env["NODE_ENV"] === "production",
+      isProduction: process.env.NODE_ENV === "production",
       isVercel: !!process.env.VERCEL,
       isPreview: process.env.VERCEL_ENV === "preview",
-      hasCustomUrl: !!process.env["NEXT_PUBLIC_BASE_URL,"]
+      hasCustomUrl: !!process.env["NEXT_PUBLIC_BASE_URL,"],
     },
   });
 }

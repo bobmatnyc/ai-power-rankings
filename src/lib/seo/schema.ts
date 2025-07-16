@@ -12,8 +12,8 @@ import type { Ranking, Tool } from "@/types/database";
 import type { RankedTool } from "@/types/rankings";
 
 const baseUrl =
-  process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
-    ? `https://${process.env["VERCEL_URL"]}`
+  process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
     : "";
 
 export function createOrganizationSchema(): WithContext<Organization> {

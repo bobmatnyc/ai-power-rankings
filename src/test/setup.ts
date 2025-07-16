@@ -3,9 +3,9 @@ import { vi } from "vitest";
 
 // Mock environment variables for tests
 // @ts-expect-error - NODE_ENV is read-only in TypeScript but we need to set it for tests
-process.env["NODE_ENV"] = "test";
-process.env["NEXT_PUBLIC_SUPABASE_URL"] = "http://localhost:54321";
-process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"] = "test-anon-key";
+process.env.NODE_ENV = "test";
+process.env.NEXT_PUBLIC_SUPABASE_URL = "http://localhost:54321";
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-key";
 process.env.LOG_LEVEL = "silent";
 

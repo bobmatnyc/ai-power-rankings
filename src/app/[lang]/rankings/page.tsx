@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   let period = "";
 
   try {
-    const isDev = process.env["NODE_ENV"] === "development";
+    const isDev = process.env.NODE_ENV === "development";
     const rankingsUrl = `${baseUrl}/api/rankings`;
 
     const response = await fetch(rankingsUrl, {
@@ -125,7 +125,7 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
   // Fetch rankings on the server (same as home page)
   let initialRankings = [];
   try {
-    const isDev = process.env["NODE_ENV"] === "development";
+    const isDev = process.env.NODE_ENV === "development";
     const baseUrl = getUrl();
     const timestamp = Date.now();
     const url = `${baseUrl}/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;

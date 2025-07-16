@@ -120,7 +120,7 @@ export async function extractQualitativeMetrics(
 ): Promise<QualitativeMetrics | null> {
   try {
     // Use the AI API route
-    const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/ai/analyze-news`, {
       method: "POST",
       headers: {

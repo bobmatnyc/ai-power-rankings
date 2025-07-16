@@ -113,7 +113,7 @@ function RankingsGridContent({
 
   const fetchRankings = async (): Promise<void> => {
     try {
-      const isDev = process.env["NODE_ENV"] === "development";
+      const isDev = process.env.NODE_ENV === "development";
       const timestamp = Date.now();
       const url = `/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
       const response = await fetch(url, {
