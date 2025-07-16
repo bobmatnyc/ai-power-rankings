@@ -1,30 +1,27 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  FileText,
-  Users,
-  FileUp,
-  Trophy,
   Database,
-  TrendingUp,
-  Settings,
+  FileText,
+  FileUp,
   Globe,
+  Settings,
+  TrendingUp,
+  Trophy,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useCallback, useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function AdminDashboard() {
   const { data: session } = useSession();
   const [currentLiveRanking, setCurrentLiveRanking] = useState<string | null>(null);
   const [isLoadingRanking, setIsLoadingRanking] = useState(true);
 
-  useEffect(() => {
-    loadCurrentRanking();
-  }, []);
-
-  const loadCurrentRanking = async () => {
+  // Use useCallback to define loadCurrentRanking before useEffect
+  const loadCurrentRanking = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/ranking-periods");
       if (response.ok) {
@@ -39,7 +36,11 @@ export function AdminDashboard() {
     } finally {
       setIsLoadingRanking(false);
     }
-  };
+  }, []); // Empty dependency array since this function doesn't depend on any props or state
+
+  useEffect(() => {
+    loadCurrentRanking();
+  }, [loadCurrentRanking]);
 
   const adminSections = [
     {
