@@ -15,12 +15,13 @@ export async function POST(_request: NextRequest) {
       note: "Current RankingsRepository handles individual rankings, not period metadata",
       suggested_implementation: "Create RankingPeriodsRepository for period management",
     });
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     loggers.api.error("Error in create-ranking-period endpoint:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
+        error: errorMessage,
       },
       { status: 500 }
     );

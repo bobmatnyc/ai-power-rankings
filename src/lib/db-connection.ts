@@ -107,13 +107,13 @@ export function getConnectionStats() {
     failed: failedConnections,
     successRate:
       totalConnections > 0
-        ? (((totalConnections - failedConnections) / totalConnections) * 100).toFixed(2) + "%"
+        ? `${(((totalConnections - failedConnections) / totalConnections) * 100).toFixed(2)}%`
         : "0%",
   };
 }
 
 // Log connection stats periodically in development (disabled)
-// if (process.env.NODE_ENV === "development") {
+// if (process.env["NODE_ENV"] === "development") {
 //   setInterval(() => {
 //     const stats = getConnectionStats();
 //     if (stats.active > 0 || stats.failed > 0) {

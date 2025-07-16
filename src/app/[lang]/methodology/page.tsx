@@ -1,6 +1,6 @@
+import { notFound } from "next/navigation";
 import type { Locale } from "@/i18n/config";
 import { contentLoader } from "@/lib/content-loader";
-import { notFound } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -37,6 +37,7 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
           prose-blockquote:border-l-primary prose-blockquote:bg-muted/50
           prose-table:w-full prose-th:text-left prose-th:font-semibold
           prose-td:p-2 prose-th:p-2 prose-tr:border-b prose-tr:border-muted"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe pre-processed markdown content
         dangerouslySetInnerHTML={{ __html: content.htmlContent }}
       />
     </div>

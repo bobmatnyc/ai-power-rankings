@@ -32,19 +32,19 @@
  * - change_summary: object with movement analysis
  */
 
+import path from "node:path";
+import fs from "fs-extra";
 import { type NextRequest, NextResponse } from "next/server";
-import { getRankingsRepo, getToolsRepo, getNewsRepo } from "@/lib/json-db";
+import { getNewsRepo, getRankingsRepo, getToolsRepo } from "@/lib/json-db";
+import type { RankingEntry, RankingPeriod, Tool } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
-import type { RankingEntry, Tool, RankingPeriod } from "@/lib/json-db/schemas";
 import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
 import {
-  extractEnhancedNewsMetrics,
   applyEnhancedNewsMetrics,
   applyNewsImpactToScores,
+  extractEnhancedNewsMetrics,
 } from "@/lib/ranking-news-enhancer";
-import fs from "fs-extra";
-import path from "path";
 
 interface InnovationScore {
   tool_id: string;
@@ -337,7 +337,7 @@ export async function POST(request: NextRequest) {
         const innovationScore = innovationData?.score || 0;
 
         // Extract enhanced metrics from news (quantitative + qualitative with AI)
-        const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"; // Default to true
+        const enableAI = process.env.ENABLE_AI_NEWS_ANALYSIS !== "false"; // Default to true
         const enhancedMetrics = await extractEnhancedNewsMetrics(
           tool.id,
           tool.name,
@@ -386,9 +386,8 @@ export async function POST(request: NextRequest) {
         score.factorScores = {
           ...score.factorScores,
           technicalPerformance:
-            adjustedFactorScores["technicalPerformance"] || score.factorScores.technicalPerformance,
-          marketTraction:
-            adjustedFactorScores["marketTraction"] || score.factorScores.marketTraction,
+            adjustedFactorScores.technicalPerformance || score.factorScores.technicalPerformance,
+          marketTraction: adjustedFactorScores.marketTraction || score.factorScores.marketTraction,
         };
 
         // Recalculate overall score after news adjustments
@@ -449,7 +448,7 @@ export async function POST(request: NextRequest) {
         ? previousPeriod?.rankings.find((r: RankingEntry) => r.tool_id === tool.id)
         : null;
 
-      let movement ;
+      let movement;
       if (previousPosition) {
         const change = previousPosition - position;
         movement = {

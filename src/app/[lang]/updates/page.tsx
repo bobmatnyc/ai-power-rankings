@@ -1,13 +1,13 @@
+import { format } from "date-fns";
+import { AlertCircle, ArrowLeft, Calendar, Star, TrendingUp } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Calendar, TrendingUp, Star, AlertCircle } from "lucide-react";
-import Link from "next/link";
-import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
 import { UpdatesGenerator } from "@/lib/updates-generator";
-import { format } from "date-fns";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -26,7 +26,12 @@ export default async function UpdatesPage({ params }: PageProps) {
 
   // Generate dynamic updates
   const generator = new UpdatesGenerator();
-  let updates;
+  let updates: {
+    lastUpdate: string;
+    newArticles: Array<Record<string, unknown>>;
+    topRankings: Array<Record<string, unknown>>;
+    majorChanges: Array<{ toolName: string; change: string; impact: string }>;
+  };
 
   try {
     updates = await generator.generateUpdates();
@@ -127,7 +132,7 @@ export default async function UpdatesPage({ params }: PageProps) {
                 </h3>
                 <div className="space-y-2">
                   {updates.majorChanges.map((change, index) => (
-                    <div key={index} className="p-3 bg-muted/50 rounded-lg">
+                    <div key={`major-change-${change.toolName}-${index}`} className="p-3 bg-muted/50 rounded-lg">
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-medium">{change.toolName}</span>
                         <Badge

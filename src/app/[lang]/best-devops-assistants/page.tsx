@@ -107,8 +107,8 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
               <Rocket className="h-12 w-12 mx-auto mb-4 text-primary" />
               <h3 className="text-xl font-semibold mb-3">Intelligent Automation</h3>
               <p className="text-muted-foreground">
-                AI-driven automation that optimizes deployment pipelines, scales infrastructure,
-                and manages resources based on intelligent predictions.
+                AI-driven automation that optimizes deployment pipelines, scales infrastructure, and
+                manages resources based on intelligent predictions.
               </p>
             </CardContent>
           </Card>
@@ -129,8 +129,8 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
               <Cog className="h-12 w-12 mx-auto mb-4 text-accent" />
               <h3 className="text-xl font-semibold mb-3">Seamless Integration</h3>
               <p className="text-muted-foreground">
-                Native integration with existing DevOps toolchains, cloud platforms, and
-                workflow automation without disrupting established processes.
+                Native integration with existing DevOps toolchains, cloud platforms, and workflow
+                automation without disrupting established processes.
               </p>
             </CardContent>
           </Card>
@@ -139,7 +139,9 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
 
       {/* Top Features to Look For */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8">Key Features of Top DevOps Assistants</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Key Features of Top DevOps Assistants
+        </h2>
 
         <div className="grid md:grid-cols-2 gap-8">
           <Card className="p-6">
@@ -222,7 +224,9 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
 
       {/* Popular DevOps Assistants Preview */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8">Popular DevOps Assistants to Consider</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Popular DevOps Assistants to Consider
+        </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="hover:shadow-lg transition-all duration-200">
@@ -234,8 +238,8 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                AI-powered monitoring and analytics platform with intelligent alerting and
-                automated incident response capabilities.
+                AI-powered monitoring and analytics platform with intelligent alerting and automated
+                incident response capabilities.
               </p>
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -272,8 +276,8 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Integrated DevOps platform with AI-powered pipeline optimization, security
-                scanning, and intelligent project insights.
+                Integrated DevOps platform with AI-powered pipeline optimization, security scanning,
+                and intelligent project insights.
               </p>
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>

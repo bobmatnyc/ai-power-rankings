@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
-import { promises as fs } from "fs";
-import path from "path";
+import { promises as fs } from "node:fs";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
 
 describe("i18n imports", () => {
   it("should have correct import extensions in middleware.ts", async () => {
@@ -74,7 +74,7 @@ describe("i18n imports", () => {
     const localesMatch = configContent.match(/locales:\s*\[(.*?)\]/);
     expect(localesMatch).not.toBeNull();
 
-    if (localesMatch && localesMatch[1]) {
+    if (localesMatch?.[1]) {
       const localesStr = localesMatch[1];
       const configLocales = localesStr
         .split(",")

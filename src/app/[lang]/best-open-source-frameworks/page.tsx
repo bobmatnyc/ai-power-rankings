@@ -74,7 +74,9 @@ export default async function BestOpenSourceFrameworksPage({ params }: PageProps
             </Link>
           </Button>
           <Button variant="outline" size="lg" asChild>
-            <Link href={`/${lang}/tools?category=open-source-framework`}>Browse All Frameworks</Link>
+            <Link href={`/${lang}/tools?category=open-source-framework`}>
+              Browse All Frameworks
+            </Link>
           </Button>
         </div>
 
@@ -107,8 +109,8 @@ export default async function BestOpenSourceFrameworksPage({ params }: PageProps
               <Code2 className="h-12 w-12 mx-auto mb-4 text-primary" />
               <h3 className="text-xl font-semibold mb-3">Developer Experience</h3>
               <p className="text-muted-foreground">
-                Intuitive APIs, comprehensive documentation, and active community support
-                that accelerates development and learning.
+                Intuitive APIs, comprehensive documentation, and active community support that
+                accelerates development and learning.
               </p>
             </CardContent>
           </Card>
@@ -129,8 +131,8 @@ export default async function BestOpenSourceFrameworksPage({ params }: PageProps
               <Heart className="h-12 w-12 mx-auto mb-4 text-accent" />
               <h3 className="text-xl font-semibold mb-3">Community & Ecosystem</h3>
               <p className="text-muted-foreground">
-                Vibrant open source community, rich ecosystem of extensions, and strong
-                industry adoption for long-term sustainability.
+                Vibrant open source community, rich ecosystem of extensions, and strong industry
+                adoption for long-term sustainability.
               </p>
             </CardContent>
           </Card>
@@ -222,7 +224,9 @@ export default async function BestOpenSourceFrameworksPage({ params }: PageProps
 
       {/* Popular Open Source Frameworks Preview */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8">Popular Open Source Frameworks to Consider</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Popular Open Source Frameworks to Consider
+        </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="hover:shadow-lg transition-all duration-200">
@@ -253,8 +257,8 @@ export default async function BestOpenSourceFrameworksPage({ params }: PageProps
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Comprehensive ML platform with strong production deployment tools, mobile
-                support, and extensive ecosystem of tools and libraries.
+                Comprehensive ML platform with strong production deployment tools, mobile support,
+                and extensive ecosystem of tools and libraries.
               </p>
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -272,8 +276,8 @@ export default async function BestOpenSourceFrameworksPage({ params }: PageProps
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Leading platform for natural language processing with pre-trained models,
-                datasets, and easy-to-use transformers library.
+                Leading platform for natural language processing with pre-trained models, datasets,
+                and easy-to-use transformers library.
               </p>
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>

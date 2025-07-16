@@ -22,7 +22,7 @@ async function getBlobAPI() {
     return blobAPI;
   }
 
-  if (process.env["BLOB_READ_WRITE_TOKEN"]) {
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
     try {
       const blob = await import("@vercel/blob");
       blobAPI = {
@@ -52,7 +52,7 @@ export class CacheBlobStorage {
    * Check if we should use blob storage (only in production)
    */
   static shouldUseBlob(): boolean {
-    return process.env["NODE_ENV"] === "production" && !!process.env["BLOB_READ_WRITE_TOKEN"];
+    return process.env["NODE_ENV"] === "production" && !!process.env.BLOB_READ_WRITE_TOKEN;
   }
 
   /**

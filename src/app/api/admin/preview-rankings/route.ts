@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { getNewsRepo, getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
-import { RankingChangeAnalyzer, type RankingChangeAnalysis } from "@/lib/ranking-change-analyzer";
-import { getToolsRepo, getRankingsRepo, getNewsRepo } from "@/lib/json-db";
-import { extractEnhancedNewsMetrics, applyEnhancedNewsMetrics } from "@/lib/ranking-news-enhancer";
+import { type RankingChangeAnalysis, RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
+import { applyEnhancedNewsMetrics, extractEnhancedNewsMetrics } from "@/lib/ranking-news-enhancer";
 
 interface RankingComparison {
   tool_id: string;
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const innovationScores: any[] = [];
     try {
       const fs = await import("fs-extra");
-      const path = await import("path");
+      const path = await import("node:path");
       const innovationPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
       if (await fs.pathExists(innovationPath)) {
         const innovationData = await fs.readJSON(innovationPath);
@@ -241,7 +241,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const innovationScore = innovationData?.score || 0;
 
         // Extract enhanced metrics from news (quantitative + qualitative with AI)
-        const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"; // Default to true
+        const enableAI = process.env.ENABLE_AI_NEWS_ANALYSIS !== "false"; // Default to true
         const enhancedMetrics = await extractEnhancedNewsMetrics(
           tool.id,
           tool.name,
@@ -291,9 +291,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         score.factorScores = {
           ...score.factorScores,
           technicalPerformance:
-            adjustedFactorScores["technicalPerformance"] || score.factorScores.technicalPerformance,
-          marketTraction:
-            adjustedFactorScores["marketTraction"] || score.factorScores.marketTraction,
+            adjustedFactorScores.technicalPerformance || score.factorScores.technicalPerformance,
+          marketTraction: adjustedFactorScores.marketTraction || score.factorScores.marketTraction,
         };
 
         // Recalculate overall score after news adjustments
@@ -347,8 +346,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
 
       const scoreChange = currentRanking
-        ? newScore!.overallScore - currentRanking.score
-        : newScore!.overallScore;
+        ? newScore?.overallScore - currentRanking.score
+        : newScore?.overallScore;
 
       // Get previous factor scores if available
       const previousFactorScores = currentRanking?.factor_scores
@@ -370,9 +369,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           tool_id: tool.id,
           tool_name: tool.name,
           position: newPosition,
-          score: newScore!.overallScore,
+          score: newScore?.overallScore,
           new_position: newPosition,
-          new_score: newScore!.overallScore,
+          new_score: newScore?.overallScore,
         },
         currentRanking
           ? {
@@ -384,7 +383,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               current_score: currentRanking.score,
             }
           : null,
-        newScore!.factorScores || {},
+        newScore?.factorScores || {},
         previousFactorScores
       );
 
@@ -396,19 +395,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         current_position: currentPosition,
         new_position: newPosition,
         current_score: currentRanking?.score,
-        new_score: newScore!.overallScore,
+        new_score: newScore?.overallScore,
         position_change: positionChange,
         score_change: scoreChange,
         movement,
         factor_changes: {
-          agentic_capability: newScore!.factorScores?.agenticCapability || 0,
-          innovation: newScore!.factorScores?.innovation || 0,
-          technical_performance: newScore!.factorScores?.technicalPerformance || 0,
-          developer_adoption: newScore!.factorScores?.developerAdoption || 0,
-          market_traction: newScore!.factorScores?.marketTraction || 0,
-          business_sentiment: newScore!.factorScores?.businessSentiment || 0,
-          development_velocity: newScore!.factorScores?.developmentVelocity || 0,
-          platform_resilience: newScore!.factorScores?.platformResilience || 0,
+          agentic_capability: newScore?.factorScores?.agenticCapability || 0,
+          innovation: newScore?.factorScores?.innovation || 0,
+          technical_performance: newScore?.factorScores?.technicalPerformance || 0,
+          developer_adoption: newScore?.factorScores?.developerAdoption || 0,
+          market_traction: newScore?.factorScores?.marketTraction || 0,
+          business_sentiment: newScore?.factorScores?.businessSentiment || 0,
+          development_velocity: newScore?.factorScores?.developmentVelocity || 0,
+          platform_resilience: newScore?.factorScores?.platformResilience || 0,
         },
         change_analysis: changeAnalysis,
       });
@@ -447,7 +446,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const validScoreChanges = comparisons.filter((c) => c.current_score !== undefined);
     const validScores = comparisons
       .map((c) => c.new_score)
-      .filter((score) => score !== null && !isNaN(score));
+      .filter((score) => score !== null && !Number.isNaN(score));
 
     const summary = {
       tools_moved_up: comparisons.filter((c) => c.movement === "up").length,

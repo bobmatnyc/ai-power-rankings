@@ -15,7 +15,7 @@ export async function GET(_request: NextRequest) {
 
     for (const period of periods) {
       const periodData = await rankingsRepo.getRankingsForPeriod(period);
-      if (periodData && periodData.rankings) {
+      if (periodData?.rankings) {
         // Transform rankings to match the expected format
         periodData.rankings.forEach((ranking: any) => {
           allRankings.push({

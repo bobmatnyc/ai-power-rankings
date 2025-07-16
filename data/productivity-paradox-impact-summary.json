@@ -1,0 +1,42 @@
+{
+  "update_date": "2025-07-14T07:15:28.757Z",
+  "research_source": "METR organization productivity paradox study",
+  "key_findings": {
+    "actual_productivity_impact": "-19% (tools make developers slower)",
+    "perceived_productivity_impact": "+24% (developers think they are faster)",
+    "cognitive_bias_factor": "43% of user satisfaction is bias",
+    "market_coverage": "70%+ of AI coding tool market affected"
+  },
+  "tools_updated": [
+    {
+      "tool": "Cursor",
+      "business_sentiment_decrease": 0.13,
+      "market_impact": 0.15,
+      "reasoning": "Third-place tool moderately impacted by productivity research, but lower market exposure."
+    },
+    {
+      "tool": "GitHub Copilot",
+      "business_sentiment_decrease": 0.36,
+      "market_impact": 0.42,
+      "reasoning": "Market leader heavily impacted by productivity paradox research. High cognitive bias in user satisfaction."
+    },
+    {
+      "tool": "Amazon Q Developer",
+      "business_sentiment_decrease": 0.13,
+      "market_impact": 0.15,
+      "reasoning": "Third-place tool moderately impacted by productivity research, but lower market exposure."
+    },
+    {
+      "tool": "Google Gemini Code Assist",
+      "business_sentiment_decrease": 0.24,
+      "market_impact": 0.28,
+      "reasoning": "Second-place tool significantly affected by research findings on actual vs perceived productivity."
+    }
+  ],
+  "next_steps": [
+    "Rankings will reflect decreased business sentiment for affected tools",
+    "Risk factors added for productivity paradox research impact",
+    "News impact assessment updated for July 2025 articles",
+    "Monitor for additional research validation or contradiction"
+  ]
+}

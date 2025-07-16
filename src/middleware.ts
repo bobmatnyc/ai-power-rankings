@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { i18n } from "./i18n/config";
 import { isAuthorizedEmail } from "@/lib/auth-config";
+import { i18n } from "./i18n/config";
 
 const locales = i18n.locales;
 

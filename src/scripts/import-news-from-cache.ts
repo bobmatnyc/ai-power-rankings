@@ -1,12 +1,13 @@
 #!/usr/bin/env tsx
+
 /**
  * Import News from Cache to JSON Database
  * Imports missing news articles from the cache file into the JSON database
  */
 
+import fs from "node:fs/promises";
+import path from "node:path";
 import { getNewsRepo } from "../lib/json-db";
-import fs from "fs/promises";
-import path from "path";
 
 interface CachedNewsItem {
   id: number;

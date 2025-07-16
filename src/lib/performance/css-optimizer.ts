@@ -6,109 +6,109 @@
 // Critical CSS classes that should always be included
 export const CRITICAL_CSS_CLASSES = [
   // Layout
-  'container',
-  'grid',
-  'flex',
-  'block',
-  'inline',
-  'hidden',
+  "container",
+  "grid",
+  "flex",
+  "block",
+  "inline",
+  "hidden",
 
   // Spacing
-  'p-0',
-  'p-1',
-  'p-2',
-  'p-3',
-  'p-4',
-  'p-6',
-  'p-8',
-  'p-12',
-  'm-0',
-  'm-1',
-  'm-2',
-  'm-3',
-  'm-4',
-  'm-6',
-  'm-8',
-  'm-12',
-  'mb-4',
-  'mb-6',
-  'mb-8',
-  'mb-12',
-  'mb-16',
-  'mt-4',
-  'mt-6',
-  'mt-8',
-  'mt-12',
-  'mt-16',
+  "p-0",
+  "p-1",
+  "p-2",
+  "p-3",
+  "p-4",
+  "p-6",
+  "p-8",
+  "p-12",
+  "m-0",
+  "m-1",
+  "m-2",
+  "m-3",
+  "m-4",
+  "m-6",
+  "m-8",
+  "m-12",
+  "mb-4",
+  "mb-6",
+  "mb-8",
+  "mb-12",
+  "mb-16",
+  "mt-4",
+  "mt-6",
+  "mt-8",
+  "mt-12",
+  "mt-16",
 
   // Typography
-  'text-4xl',
-  'text-5xl',
-  'text-6xl',
-  'text-xl',
-  'text-lg',
-  'text-base',
-  'text-sm',
-  'font-bold',
-  'font-semibold',
-  'font-medium',
-  'text-foreground',
-  'text-muted-foreground',
-  'text-primary',
-  'text-secondary',
+  "text-4xl",
+  "text-5xl",
+  "text-6xl",
+  "text-xl",
+  "text-lg",
+  "text-base",
+  "text-sm",
+  "font-bold",
+  "font-semibold",
+  "font-medium",
+  "text-foreground",
+  "text-muted-foreground",
+  "text-primary",
+  "text-secondary",
 
   // Colors
-  'bg-primary',
-  'bg-secondary',
-  'bg-accent',
-  'bg-muted',
-  'text-white',
-  'text-primary',
-  'text-secondary',
+  "bg-primary",
+  "bg-secondary",
+  "bg-accent",
+  "bg-muted",
+  "text-white",
+  "text-primary",
+  "text-secondary",
 
   // Interactive
-  'hover:opacity-90',
-  'transition-opacity',
-  'transition-all',
-  'cursor-pointer',
-  'pointer-events-none',
+  "hover:opacity-90",
+  "transition-opacity",
+  "transition-all",
+  "cursor-pointer",
+  "pointer-events-none",
 
   // Responsive
-  'md:text-6xl',
-  'md:px-6',
-  'md:grid-cols-4',
-  'md:gap-6',
-  'sm:flex-row',
-  'sm:w-auto',
+  "md:text-6xl",
+  "md:px-6",
+  "md:grid-cols-4",
+  "md:gap-6",
+  "sm:flex-row",
+  "sm:w-auto",
 
   // Custom
-  'gradient-primary',
-  'text-gradient',
+  "gradient-primary",
+  "text-gradient",
 ];
 
 // Component-specific CSS that can be lazy loaded
 export const COMPONENT_CSS_MAP = {
-  'rankings-table': [
-    'table',
-    'thead',
-    'tbody',
-    'tr',
-    'td',
-    'th',
-    'border',
-    'border-collapse',
-    'border-spacing-0',
+  "rankings-table": [
+    "table",
+    "thead",
+    "tbody",
+    "tr",
+    "td",
+    "th",
+    "border",
+    "border-collapse",
+    "border-spacing-0",
   ],
-  'tool-detail': [
-    'tabs',
-    'tab-content',
-    'tab-trigger',
-    'card',
-    'card-header',
-    'card-content',
-    'card-title',
+  "tool-detail": [
+    "tabs",
+    "tab-content",
+    "tab-trigger",
+    "card",
+    "card-header",
+    "card-content",
+    "card-title",
   ],
-  news: ['prose', 'prose-lg', 'prose-sm', 'article', 'time', 'blockquote'],
+  news: ["prose", "prose-lg", "prose-sm", "article", "time", "blockquote"],
 };
 
 /**
@@ -169,10 +169,10 @@ export function loadComponentCSS(component: keyof typeof COMPONENT_CSS_MAP): Pro
     }
 
     // Create and inject CSS link
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
     link.href = `/styles/components/${component}.css`;
-    link.setAttribute('data-component', component);
+    link.setAttribute("data-component", component);
     link.onload = () => resolve();
     link.onerror = () => resolve(); // Fail gracefully
 
@@ -185,13 +185,13 @@ export function loadComponentCSS(component: keyof typeof COMPONENT_CSS_MAP): Pro
  */
 export function preloadCriticalComponentCSS(): void {
   const criticalComponents: (keyof typeof COMPONENT_CSS_MAP)[] = [
-    'rankings-table', // Usually above fold on home page
+    "rankings-table", // Usually above fold on home page
   ];
 
   criticalComponents.forEach((component) => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'style';
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "style";
     link.href = `/styles/components/${component}.css`;
     document.head.appendChild(link);
   });
@@ -201,16 +201,16 @@ export function preloadCriticalComponentCSS(): void {
  * Remove unused CSS classes from the DOM (for development)
  */
 export function auditUnusedCSS(): string[] {
-  if (process.env.NODE_ENV !== 'development') {
+  if (process.env["NODE_ENV"] !== "development") {
     return [];
   }
 
-  const allElements = document.querySelectorAll('*');
+  const allElements = document.querySelectorAll("*");
   const usedClasses = new Set<string>();
 
   allElements.forEach((element) => {
-    if (element.className && typeof element.className === 'string') {
-      element.className.split(' ').forEach((cls) => {
+    if (element.className && typeof element.className === "string") {
+      element.className.split(" ").forEach((cls) => {
         if (cls.trim()) {
           usedClasses.add(cls.trim());
         }

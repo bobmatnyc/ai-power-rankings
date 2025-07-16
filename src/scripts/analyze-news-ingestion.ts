@@ -1,5 +1,5 @@
-import { payloadDirect } from "../lib/payload-direct";
 import { loggers } from "../lib/logger";
+import { payloadDirect } from "../lib/payload-direct";
 
 async function analyzeNewsIngestion() {
   try {

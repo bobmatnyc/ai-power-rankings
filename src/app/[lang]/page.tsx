@@ -1,20 +1,23 @@
-import Link from "next/link";
+import { ArrowRight, ArrowUp, Star } from "lucide-react";
 import type { Metadata } from "next";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import dynamicImport from "next/dynamic";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Star, ArrowUp } from "lucide-react";
-import { getDictionary } from "@/i18n/get-dictionary";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
 import { RankingsTableSkeleton } from "@/components/ui/skeleton";
 import type { Locale } from "@/i18n/config";
-import dynamicImport from "next/dynamic";
+import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
 
 interface ToolData {
   id: string;
   name: string;
   status: string;
+  slug?: string;
+  description?: string;
+  category?: string;
 }
 
 // Dynamic import for T-031 performance optimization
@@ -27,7 +30,10 @@ const ClientRankings = dynamicImport(
 
 // Dynamic import for T-033 What's New modal
 const WhatsNewModalClient = dynamicImport(
-  () => import("@/components/ui/whats-new-modal-client").then((mod) => ({ default: mod.WhatsNewModalClient })),
+  () =>
+    import("@/components/ui/whats-new-modal-client").then((mod) => ({
+      default: mod.WhatsNewModalClient,
+    })),
   {
     loading: () => <div></div>,
   }
@@ -56,59 +62,68 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     });
 
     if (response.ok) {
-      const tools = await response.json();
-      // Get all active tool names
-      toolNames = tools
-        .filter((tool: ToolData) => tool.status === "active")
-        .map((tool: ToolData) => tool.name);
+      const data = await response.json();
+      // Handle both direct array and object with tools property
+      // API returns { tools: [...], _source: "json-db", _timestamp: "..." }
+      const tools = Array.isArray(data) ? data : data.tools || [];
+      
+      // Ensure tools is an array and get all active tool names
+      if (Array.isArray(tools)) {
+        toolNames = tools
+          .filter((tool: ToolData) => tool.status === "active")
+          .map((tool: ToolData) => tool.name)
+          .filter(Boolean); // Remove any null/undefined names
+      }
     }
   } catch (error) {
     console.error("Error fetching tools for SEO:", error);
+    // Continue with empty toolNames array for graceful degradation
   }
 
   // Get existing keywords from dictionary
-  const baseKeywords = dict.seo.keywords || "";
+  const baseKeywords = dict.seo?.keywords || "";
 
   // Add all tool names to keywords
   const allKeywords = [
     baseKeywords,
     ...toolNames,
-    // Add tool comparison keywords
-    ...toolNames.slice(0, 5).map((tool) => `${tool} AI`),
-    ...toolNames.slice(0, 5).map((tool) => `${tool} ranking`),
+    // Add tool comparison keywords (only for tools with valid names)
+    ...toolNames.slice(0, 5).filter(Boolean).map((tool) => `${tool} AI`),
+    ...toolNames.slice(0, 5).filter(Boolean).map((tool) => `${tool} ranking`),
     // Add category keywords
     "AI coding assistant",
     "AI code editor",
     "autonomous coding agent",
     "AI app builder",
   ]
-    .filter(Boolean)
+    .filter(Boolean) // Remove any null/undefined/empty values
+    .filter((keyword) => typeof keyword === "string" && keyword.trim().length > 0) // Ensure valid strings
     .join(", ");
 
   return {
-    title: dict.seo.title,
-    description: dict.seo.description,
+    title: dict.seo?.title || "AI Power Rankings",
+    description: dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
     keywords: allKeywords,
     openGraph: {
-      title: dict.seo.title,
-      description: dict.seo.description,
+      title: dict.seo?.title || "AI Power Rankings",
+      description: dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
       type: "website",
       locale: lang,
       url: `${baseUrl}/${lang}`,
-      siteName: dict.common.appName,
+      siteName: dict.common?.appName || "AI Power Rankings",
       images: [
         {
           url: `${baseUrl}/og-image.png`,
           width: 1200,
           height: 630,
-          alt: dict.common.appName,
+          alt: dict.common?.appName || "AI Power Rankings",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: dict.seo.title,
-      description: dict.seo.description,
+      title: dict.seo?.title || "AI Power Rankings",
+      description: dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
       images: [`${baseUrl}/og-image.png`],
     },
     alternates: {
@@ -154,6 +169,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     <div className="min-h-screen">
       <script
         type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe JSON-LD structured data
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       {/* T-033 What's New Modal */}
@@ -192,21 +208,29 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="border-2 w-full sm:w-auto min-w-[200px]" asChild>
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-2 w-full sm:w-auto min-w-[200px]"
+                asChild
+              >
                 <Link href={`/${lang}/rankings?sort=trending`}>
                   {dict.home.hero.trendingButton}
                   <ArrowUp className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
-            
+
             {/* Secondary CTA for newsletter signup */}
             <div className="mt-6">
               <p className="text-sm text-muted-foreground mb-3">
                 Get weekly updates on the latest AI tool rankings
               </p>
               <Button variant="ghost" size="sm" asChild>
-                <Link href={`/${lang}/about?subscribe=true`} className="text-primary hover:text-primary/80">
+                <Link
+                  href={`/${lang}/about?subscribe=true`}
+                  className="text-primary hover:text-primary/80"
+                >
                   Subscribe to Updates →
                 </Link>
               </Button>
@@ -313,7 +337,8 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
               Trusted by Developers Worldwide
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our data-driven methodology and transparent ranking process has earned the trust of the developer community
+              Our data-driven methodology and transparent ranking process has earned the trust of
+              the developer community
             </p>
           </div>
 
@@ -379,8 +404,8 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                   {dict.home.methodology.algorithmDescription}
                 </p>
                 <div className="mb-4">
-                  <Link 
-                    href={`/${lang}/methodology`} 
+                  <Link
+                    href={`/${lang}/methodology`}
                     className="text-primary hover:underline text-sm font-medium"
                   >
                     {dict.common.learnMore} →

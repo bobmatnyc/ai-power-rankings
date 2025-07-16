@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 // Simple markdown parser for basic formatting
 function parseMarkdown(markdown: string): string {
@@ -28,7 +28,7 @@ function parseMarkdown(markdown: string): string {
 
   // Paragraphs
   html = html.replace(/\n\n/g, '</p><p class="mb-4">');
-  html = '<p class="mb-4">' + html + "</p>";
+  html = `<p class="mb-4">${html}</p>`;
 
   // Clean up empty paragraphs
   html = html.replace(/<p class="mb-4"><\/p>/g, "");

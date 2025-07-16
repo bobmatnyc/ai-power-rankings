@@ -1,12 +1,11 @@
+import { Loader2, Plus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 import { RankingsViewer } from "@/components/admin/rankings-viewer";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { Loader2 } from "lucide-react";
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 
 export const metadata: Metadata = generateSEOMetadata({
   title: "Rankings Management - Admin",

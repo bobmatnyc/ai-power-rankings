@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { loggers } from "@/lib/logger";
 import { getCompaniesRepo } from "@/lib/json-db";
+import { loggers } from "@/lib/logger";
 
 const companyUpdates = [
   { name: "Microsoft", founded: "1975", website: "https://microsoft.com" },

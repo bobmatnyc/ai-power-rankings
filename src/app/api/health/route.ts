@@ -1,7 +1,7 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import { NextResponse } from "next/server";
-import { getToolsRepo, getCompaniesRepo, getRankingsRepo, getNewsRepo } from "@/lib/json-db";
-import fs from "fs/promises";
-import path from "path";
+import { getCompaniesRepo, getNewsRepo, getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 
 interface HealthCheck {
   status: "healthy" | "degraded" | "unhealthy";
@@ -119,7 +119,7 @@ function checkMemory(): HealthCheck {
   const details = {
     heapUsedMB: heapUsedMB.toFixed(2),
     heapTotalMB: heapTotalMB.toFixed(2),
-    usagePercent: usagePercent.toFixed(2) + "%",
+    usagePercent: `${usagePercent.toFixed(2)}%`,
   };
 
   if (usagePercent > 90) {
@@ -155,7 +155,7 @@ async function checkCache(): Promise<HealthCheck> {
         const stats = await fs.stat(path.join(cacheDir, file));
         const ageHours = (Date.now() - stats.mtime.getTime()) / (1000 * 60 * 60);
         cacheStats[file] = {
-          size: (stats.size / 1024).toFixed(2) + "KB",
+          size: `${(stats.size / 1024).toFixed(2)}KB`,
           ageHours: ageHours.toFixed(2),
         };
       } catch {
@@ -215,7 +215,7 @@ export async function GET(): Promise<NextResponse> {
       system: {
         uptime: process.uptime(),
         memory: process.memoryUsage(),
-        version: process.env["npm_package_version"] || "unknown",
+        version: process.env.npm_package_version || "unknown",
       },
     };
 

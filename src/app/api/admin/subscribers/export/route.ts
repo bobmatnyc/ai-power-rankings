@@ -1,7 +1,7 @@
+import { format } from "date-fns";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { getSubscribersRepo } from "@/lib/json-db";
-import { format } from "date-fns";
 
 export async function GET() {
   try {

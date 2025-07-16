@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { VerifyContent } from "./verify-content";
-import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
+import { VerifyContent } from "./verify-content";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;

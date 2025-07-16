@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { loggers } from "@/lib/logger";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -12,9 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ToolIcon } from "@/components/ui/tool-icon";
 import { StatusIndicator } from "@/components/ui/status-indicator";
+import { ToolIcon } from "@/components/ui/tool-icon";
 import { getCategoryColor } from "@/lib/category-colors";
+import { loggers } from "@/lib/logger";
 
 interface Tool {
   id: string;
@@ -40,7 +40,7 @@ export default function ToolsPage(): React.JSX.Element {
 
   useEffect(() => {
     fetchTools();
-  }, []);
+  }, [fetchTools]);
 
   const fetchTools = async (): Promise<void> => {
     try {

@@ -1,5 +1,6 @@
 "use client";
 
+import { Globe } from "lucide-react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import {
   Select,
@@ -9,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { i18n, type Locale } from "@/i18n/config";
-import { Globe } from "lucide-react";
 
 const languageNames: Record<Locale, string> = {
   en: "EN",
@@ -29,7 +29,7 @@ export function LanguageSelector() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const currentLocale = (params["lang"] as Locale) || i18n.defaultLocale;
+  const currentLocale = (params.lang as Locale) || i18n.defaultLocale;
 
   const handleLanguageChange = (newLocale: Locale) => {
     // Remove current locale from pathname and add new one

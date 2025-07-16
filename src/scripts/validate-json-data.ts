@@ -4,16 +4,16 @@
  * Validates all JSON data files against their schemas
  */
 
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { z } from "zod";
-import { loggers } from "../lib/logger";
 import {
-  ToolSchema,
   CompanySchema,
   NewsArticleSchema,
   RankingPeriodSchema,
+  ToolSchema,
 } from "../lib/json-db/schemas";
+import { loggers } from "../lib/logger";
 
 const JSON_DATA_DIR = path.join(process.cwd(), "data", "json");
 

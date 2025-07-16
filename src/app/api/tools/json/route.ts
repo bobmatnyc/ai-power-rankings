@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getToolsRepo, getCompaniesRepo } from "@/lib/json-db";
-import { loggers } from "@/lib/logger";
+import { getCompaniesRepo, getToolsRepo } from "@/lib/json-db";
 import type { Tool } from "@/lib/json-db/schemas";
+import { loggers } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {

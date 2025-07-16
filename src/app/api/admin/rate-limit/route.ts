@@ -1,18 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server";
-import {
-  getRateLimitAnalytics,
-  resetRateLimit,
-  getRateLimitStatus,
-  getClientIP,
-} from "@/lib/rate-limit";
 import { z } from "zod";
+import {
+  getClientIP,
+  getRateLimitAnalytics,
+  getRateLimitStatus,
+  resetRateLimit,
+} from "@/lib/rate-limit";
 
 // Admin authentication check
 function isAuthenticated(request: NextRequest): boolean {
   // In a real implementation, you'd check JWT tokens or session
   // For now, we'll use a simple API key approach
   const authHeader = request.headers.get("authorization");
-  const apiKey = process.env["ADMIN_API_KEY"];
+  const apiKey = process.env.ADMIN_API_KEY;
 
   if (!apiKey) {
     console.warn("ADMIN_API_KEY not configured");

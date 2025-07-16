@@ -1,0 +1,259 @@
+[
+  {
+    "id": "45057c79-70e9-4d39-8d83-8283b81a6303",
+    "slug": "ai-coding-tools-may-not-speed-up-every-developer-study-shows",
+    "title": "AI coding tools may not speed up every developer, study shows",
+    "summary": "A new study by the non-profit METR found that AI coding tools like Cursor Pro and GitHub Copilot do not necessarily improve productivity for experienced developers. In a controlled trial with 16 developers completing 246 tasks, using AI tools actually increased task completion time by 19%, contrary to the developers' expectation of a 24% speedup. The study highlights that AI coding tools may not universally accelerate workflows as widely believed.",
+    "content": "",
+    "source": "TechCrunch",
+    "source_url": "https://techcrunch.com/2025/07/11/ai-coding-tools-may-not-speed-up-every-developer-study-shows/",
+    "published_date": "2025-07-12T00:00:00.000Z",
+    "tags": [
+      "productivity",
+      "developer tools",
+      "METR study",
+      "AI efficiency"
+    ],
+    "tool_mentions": [
+      "1",
+      "2"
+    ],
+    "created_at": "2025-07-14T07:10:20.363Z",
+    "updated_at": "2025-07-14T07:10:20.363Z",
+    "impact_assessment": {
+      "importance": "critical",
+      "market_impact": "major",
+      "ranking_impact": [
+        {
+          "tool_id": "1",
+          "impact_type": "negative",
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
+        },
+        {
+          "tool_id": "2",
+          "impact_type": "negative",
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
+        },
+        {
+          "tool_id": "26",
+          "impact_type": "negative",
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
+        },
+        {
+          "tool_id": "27",
+          "impact_type": "negative",
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
+        }
+      ]
+    },
+    "metadata": {
+      "productivity_paradox_research": true,
+      "cognitive_bias_factor": 0.43,
+      "actual_productivity_impact": -0.19,
+      "perceived_productivity_impact": 0.24
+    }
+  },
+  {
+    "id": "6bcbca01-6e7c-4a4e-a569-3aebd7146228",
+    "slug": "ai-coding-tools-make-developers-slower-but-they-think-they-re-faster-study-finds",
+    "title": "AI coding tools make developers slower but they think they're faster, study finds",
+    "summary": "Researchers from METR conducted a randomized controlled trial showing that despite expectations of a productivity boost from AI coding assistants such as Cursor and GitHub Copilot, developers were actually slowed down by about 19%. Developers mistakenly believed they were completing tasks faster by around 20%. The study involved experienced open source contributors working on real issues and challenges assumptions about immediate efficiency gains from these 'vibe coder' tools.",
+    "content": "",
+    "source": "The Register",
+    "source_url": "https://www.theregister.com/2025/07/11/ai_code_tools_slow_down/",
+    "published_date": "2025-07-12T00:00:00.000Z",
+    "tags": [
+      "productivity research",
+      "developer perception",
+      "METR study",
+      "performance gap"
+    ],
+    "tool_mentions": [
+      "1",
+      "2"
+    ],
+    "created_at": "2025-07-14T07:10:20.574Z",
+    "updated_at": "2025-07-14T07:10:20.574Z",
+    "impact_assessment": {
+      "importance": "critical",
+      "market_impact": "major",
+      "ranking_impact": [
+        {
+          "tool_id": "1",
+          "impact_type": "negative",
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
+        },
+        {
+          "tool_id": "2",
+          "impact_type": "negative",
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
+        },
+        {
+          "tool_id": "26",
+          "impact_type": "negative",
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
+        },
+        {
+          "tool_id": "27",
+          "impact_type": "negative",
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
+        }
+      ]
+    },
+    "metadata": {
+      "productivity_paradox_research": true,
+      "cognitive_bias_factor": 0.43,
+      "actual_productivity_impact": -0.19,
+      "perceived_productivity_impact": 0.24
+    }
+  },
+  {
+    "id": "9997bdf9-ad35-4948-b3b1-80b281d1f4d2",
+    "slug": "these-are-the-most-popular-ai-coding-tools-among-engineers",
+    "title": "These Are the Most Popular AI Coding Tools Among Engineers",
+    "summary": "GitHub Copilot remains the leading AI coding tool among engineers, with 42% naming it their preferred choice according to a Jellyfish survey of 645 engineering professionals. Google Gemini Code Assist ranked second, while Amazon Q and Cursor tied for third place. The survey also revealed that 90% of engineering teams use AI in their workflows, with nearly half using multiple AI coding tools simultaneously rather than standardizing on one.",
+    "content": "",
+    "source": "Business Insider",
+    "source_url": "https://www.businessinsider.com/ai-coding-tools-popular-github-gemini-code-assist-cursor-q-2025-7",
+    "published_date": "2025-07-09T00:00:00.000Z",
+    "tags": [
+      "market research",
+      "tool adoption",
+      "engineering teams",
+      "AI workflows"
+    ],
+    "tool_mentions": [
+      "2",
+      "27",
+      "1"
+    ],
+    "created_at": "2025-07-14T07:10:20.469Z",
+    "updated_at": "2025-07-14T07:10:20.469Z"
+  },
+  {
+    "id": "c206698b-ec04-4236-ad8a-432091c9b319",
+    "slug": "microsoft-acquires-ai-code-review-platform-deepcode",
+    "title": "Microsoft Acquires AI Code Review Platform DeepCode",
+    "summary": "Microsoft expands developer tools portfolio with $500M acquisition of DeepCode, an AI-powered code review and bug detection platform",
+    "content": "",
+    "source": "Microsoft News",
+    "source_url": "https://microsoft.com/news/2025/deepcode-acquisition",
+    "published_date": "2025-07-07T00:00:00.000Z",
+    "tags": [
+      "acquisition",
+      "code review",
+      "AI development tools",
+      "Microsoft strategy"
+    ],
+    "tool_mentions": [
+      "2"
+    ],
+    "created_at": "2025-07-08T06:35:48.166Z",
+    "updated_at": "2025-07-08T06:35:48.166Z"
+  },
+  {
+    "id": "d752c851-38dc-4099-a0ee-cd5fdd924389",
+    "slug": "ai-code-assistant-startup-codewhisperer-raises-150m-series-c",
+    "title": "AI Code Assistant Startup CodeWhisperer Raises $150M Series C",
+    "summary": "Amazon-backed CodeWhisperer secures major funding round led by Sequoia Capital to expand its enterprise AI coding assistant capabilities and market presence",
+    "content": "",
+    "source": "TechCrunch",
+    "source_url": "https://techcrunch.com/2025/07/05/codewhisperer-funding-round",
+    "published_date": "2025-07-05T00:00:00.000Z",
+    "tags": [
+      "funding",
+      "series C",
+      "enterprise AI",
+      "coding assistant"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-08T06:35:48.271Z",
+    "updated_at": "2025-07-08T06:35:48.271Z"
+  },
+  {
+    "id": "754202dd-8bee-447b-9bc5-08c5c8ae7ed5",
+    "slug": "ai-coding-assistant-market-expected-to-reach-8-2b-by-2026",
+    "title": "AI Coding Assistant Market Expected to Reach $8.2B by 2026",
+    "summary": "New market research report shows AI programming assistant sector growing at 42% CAGR, driven by enterprise adoption and improved accuracy of code generation tools.",
+    "content": "",
+    "source": "VentureBeat",
+    "source_url": "https://venturebeat.com/2025/07/04/ai-coding-assistant-market-report",
+    "published_date": "2025-07-04T00:00:00.000Z",
+    "tags": [
+      "market growth",
+      "enterprise adoption",
+      "revenue projections",
+      "industry analysis"
+    ],
+    "tool_mentions": [
+      "2",
+      "21"
+    ],
+    "created_at": "2025-07-08T06:35:48.489Z",
+    "updated_at": "2025-07-08T06:35:48.489Z"
+  },
+  {
+    "id": "202787d1-b7e3-4934-903e-3efdbe9ced6b",
+    "slug": "github-copilot-enterprise-launches-advanced-code-security-features",
+    "title": "GitHub Copilot Enterprise Launches Advanced Code Security Features",
+    "summary": "GitHub announced major security enhancements to Copilot Enterprise, including real-time vulnerability scanning and automated code review capabilities powered by next-gen AI models",
+    "content": "",
+    "source": "GitHub Blog",
+    "source_url": "https://github.blog/2025-07-03-copilot-enterprise-security",
+    "published_date": "2025-07-03T00:00:00.000Z",
+    "tags": [
+      "security",
+      "enterprise features",
+      "AI coding",
+      "vulnerability scanning"
+    ],
+    "tool_mentions": [
+      "2"
+    ],
+    "created_at": "2025-07-08T06:35:48.062Z",
+    "updated_at": "2025-07-08T06:35:48.062Z"
+  },
+  {
+    "id": "79c6a20e-20ba-4f45-a497-5097a3b6539f",
+    "slug": "deepmind-launches-alphacoder-pro-for-enterprise-customers",
+    "title": "DeepMind Launches AlphaCoder Pro for Enterprise Customers",
+    "summary": "Google's DeepMind unveils enterprise-grade AI coding assistant with advanced security features and custom model training capabilities.",
+    "content": "",
+    "source": "AI News",
+    "source_url": "https://artificialintelligence-news.com/2025/07/03/deepmind-alphacoder-pro-launch",
+    "published_date": "2025-07-03T00:00:00.000Z",
+    "tags": [
+      "enterprise AI",
+      "Google DeepMind",
+      "custom training",
+      "security"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-08T06:35:48.378Z",
+    "updated_at": "2025-07-08T06:35:48.378Z"
+  }
+]

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-import { exec } from "child_process";
-import { promisify } from "util";
+import { exec } from "node:child_process";
+import { promisify } from "node:util";
+
 // Removed unused imports - fs and path not currently used
 
 const execAsync = promisify(exec);

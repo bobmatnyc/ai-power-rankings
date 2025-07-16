@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import { getBaseUrl } from "@/lib/get-base-url";
 import type { Tool } from "@/types/database";
 import type { RankedTool } from "@/types/rankings";
-import { getBaseUrl } from "@/lib/get-base-url";
 
 interface GenerateMetadataProps {
   title: string;

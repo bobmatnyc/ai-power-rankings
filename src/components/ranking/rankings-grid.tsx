@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { loggers } from "@/lib/logger";
+import { ArrowUpDown, Grid, List, Star, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Suspense, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -15,11 +14,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Grid, List, ArrowUpDown, TrendingUp, Star } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
+import { loggers } from "@/lib/logger";
 import { RankingCard } from "./ranking-card";
 import { TierLegend } from "./tier-legend";
-import type { Dictionary } from "@/i18n/get-dictionary";
-import type { Locale } from "@/i18n/config";
 
 interface RankingData {
   rank: number;
@@ -85,7 +85,11 @@ function RankingsGridContent({
       fetchAlgorithmDate();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialRankings.length]);
+  }, [
+    initialRankings.length, // For SSR, we need to fetch the algorithm date separately
+    fetchAlgorithmDate,
+    fetchRankings,
+  ]);
 
   const fetchAlgorithmDate = async (): Promise<void> => {
     try {

@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Building, CheckCircle, Code, ExternalLink, Star, Users, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Star, Users, Code, Building, CheckCircle, XCircle } from "lucide-react";
-import { QuickAnswerBox } from "./quick-answer-box";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { extractTextFromRichText } from "@/lib/richtext-utils";
+import { QuickAnswerBox } from "./quick-answer-box";
 
 interface ToolOverviewProps {
   tool: {

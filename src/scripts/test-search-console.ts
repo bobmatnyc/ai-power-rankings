@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import { GoogleSearchConsole } from "../lib/google-search-console";
 import { config } from "dotenv";
+import { GoogleSearchConsole } from "../lib/google-search-console";
 
 // Load environment variables
 config({ path: ".env.local" });
 
 async function testSearchConsole() {
-  const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
+  const siteUrl = process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL;
 
   if (!siteUrl) {
     console.error("❌ GOOGLE_SEARCH_CONSOLE_SITE_URL not configured");
@@ -25,7 +25,7 @@ async function testSearchConsole() {
     const metrics = await gsc.getSiteMetrics();
     console.log("Current period clicks:", metrics.current.clicks);
     console.log("Current period impressions:", metrics.current.impressions);
-    console.log("Current period CTR:", metrics.current.ctr.toFixed(2) + "%");
+    console.log("Current period CTR:", `${metrics.current.ctr.toFixed(2)}%`);
     console.log("Current period avg position:", metrics.current.position.toFixed(1));
 
     // Test 2: Get current sitemaps

@@ -2,8 +2,8 @@
  * Initialize JSON database and start automated processes
  */
 
-import { backupManager } from "./backup-manager";
 import { loggers } from "../logger";
+import { backupManager } from "./backup-manager";
 
 let initialized = false;
 
@@ -14,7 +14,7 @@ export async function initializeJsonDb() {
 
   try {
     // Start automated backups
-    if (process.env.NODE_ENV === "production") {
+    if (process.env["NODE_ENV"] === "production") {
       backupManager.startAutomatedBackups();
       loggers.db.info("JSON database initialized with automated backups");
     } else {
@@ -28,6 +28,6 @@ export async function initializeJsonDb() {
 }
 
 // Auto-initialize on import in production
-if (process.env.NODE_ENV === "production") {
+if (process.env["NODE_ENV"] === "production") {
   initializeJsonDb();
 }

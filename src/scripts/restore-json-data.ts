@@ -1,14 +1,15 @@
 #!/usr/bin/env tsx
+
 /**
  * Restore JSON Data Script
  * Restores JSON data from a backup
  */
 
-import fs from "fs/promises";
-import path from "path";
-import { parseISO, format } from "date-fns";
+import fs from "node:fs/promises";
+import path from "node:path";
+import readline from "node:readline";
+import { format, parseISO } from "date-fns";
 import { loggers } from "../lib/logger";
-import readline from "readline";
 
 const JSON_DATA_DIR = path.join(process.cwd(), "data", "json");
 const BACKUP_DIR = path.join(process.cwd(), "data", "backups");
@@ -171,7 +172,7 @@ async function interactiveRestore() {
     const choice = parseInt(answer);
     rl.close();
 
-    if (choice === 0 || choice > backups.length || isNaN(choice)) {
+    if (choice === 0 || choice > backups.length || Number.isNaN(choice)) {
       console.log("❌ Restore cancelled");
       return;
     }

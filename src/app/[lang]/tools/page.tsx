@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import ToolsClient from "./tools-client";
-import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
+import ToolsClient from "./tools-client";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;

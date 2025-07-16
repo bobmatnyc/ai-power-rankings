@@ -4,7 +4,7 @@
       "rank": 1,
       "previousRank": 1,
       "rankChange": 0,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 8.1)",
+      "changeReason": "",
       "tool": {
         "id": "4",
         "slug": "claude-code",
@@ -15,15 +15,15 @@
         "description": "Terminal-based coding agent with deep codebase understanding and multi-file editing"
       },
       "scores": {
-        "overall": 81.58,
-        "agentic_capability": 0.8058,
-        "innovation": 0.9071623102345411
+        "overall": 81.4,
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 5790,
+        "users": 10000,
         "swe_bench_score": 70.3
       },
       "tier": "S"
@@ -32,7 +32,7 @@
       "rank": 2,
       "previousRank": 2,
       "rankChange": 0,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 7.2)",
+      "changeReason": "",
       "tool": {
         "id": "11",
         "slug": "jules",
@@ -43,15 +43,15 @@
         "description": "Asynchronous AI coding agent that works in background cloud VMs for GitHub workflows"
       },
       "scores": {
-        "overall": 77.71,
-        "agentic_capability": 0.7238,
-        "innovation": 0.8870587217209651
+        "overall": 77.61,
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 5790,
+        "users": 10000,
         "swe_bench_score": 52.2
       },
       "tier": "S"
@@ -60,35 +60,7 @@
       "rank": 3,
       "previousRank": 4,
       "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 5.9)",
-      "tool": {
-        "id": "1",
-        "slug": "cursor",
-        "name": "Cursor",
-        "category": "code-editor",
-        "status": "active",
-        "website_url": "https://cursor.com",
-        "description": "AI-powered code editor with $500M ARR and 360K+ paying developers"
-      },
-      "scores": {
-        "overall": 72.69,
-        "agentic_capability": 0.595,
-        "innovation": 0.85
-      },
-      "metrics": {
-        "news_articles_count": 0,
-        "recent_funding_rounds": 0,
-        "recent_product_launches": 0,
-        "users": 5790,
-        "swe_bench_score": null
-      },
-      "tier": "S"
-    },
-    {
-      "rank": 4,
-      "previousRank": 3,
-      "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 5.7)",
+      "changeReason": "",
       "tool": {
         "id": "3",
         "slug": "devin",
@@ -99,16 +71,44 @@
         "description": "Autonomous AI software engineer capable of planning, coding, debugging, and deploying applications"
       },
       "scores": {
-        "overall": 70.57000000000001,
-        "agentic_capability": 0.5704400000000001,
-        "innovation": 0.8522557608477902
+        "overall": 75.85,
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 5790,
+        "users": 10000,
         "swe_bench_score": 13.86
+      },
+      "tier": "S"
+    },
+    {
+      "rank": 4,
+      "previousRank": 3,
+      "rankChange": 1,
+      "changeReason": "",
+      "tool": {
+        "id": "1",
+        "slug": "cursor",
+        "name": "Cursor",
+        "category": "code-editor",
+        "status": "active",
+        "website_url": "https://cursor.com",
+        "description": "AI-powered code editor with $500M ARR and 360K+ paying developers"
+      },
+      "scores": {
+        "overall": 74.5,
+        "agentic_capability": 5,
+        "innovation": 5
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
       },
       "tier": "S"
     },
@@ -116,7 +116,7 @@
       "rank": 5,
       "previousRank": 5,
       "rankChange": 0,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
+      "changeReason": "",
       "tool": {
         "id": "12",
         "slug": "lovable",
@@ -127,80 +127,24 @@
         "description": "AI full-stack engineer that builds entire web applications from natural language descriptions"
       },
       "scores": {
-        "overall": 64.45,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.6707726119309556
+        "overall": 64.3,
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 5790,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "S"
     },
     {
       "rank": 6,
-      "previousRank": 19,
-      "rankChange": 13,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 6.2)",
-      "tool": {
-        "id": "2",
-        "slug": "github-copilot",
-        "name": "GitHub Copilot",
-        "category": "ide-assistant",
-        "status": "active",
-        "website_url": "https://github.com/features/copilot",
-        "description": "AI pair programmer providing code suggestions, chat, and autonomous agents"
-      },
-      "scores": {
-        "overall": 61.74,
-        "agentic_capability": 0.6165,
-        "innovation": 0.6544924978331498
-      },
-      "metrics": {
-        "news_articles_count": 0,
-        "recent_funding_rounds": 0,
-        "recent_product_launches": 0,
-        "users": 840.6250000000001,
-        "swe_bench_score": 56
-      },
-      "tier": "A"
-    },
-    {
-      "rank": 7,
       "previousRank": 8,
-      "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 5.0)",
-      "tool": {
-        "id": "7",
-        "slug": "aider",
-        "name": "Aider",
-        "category": "open-source-framework",
-        "status": "active",
-        "website_url": "https://aider.chat",
-        "description": "AI pair programming in your terminal with git integration"
-      },
-      "scores": {
-        "overall": 61.64,
-        "agentic_capability": 0.49770000000000003,
-        "innovation": 0.65
-      },
-      "metrics": {
-        "news_articles_count": 0,
-        "recent_funding_rounds": 0,
-        "recent_product_launches": 0,
-        "users": 5700,
-        "swe_bench_score": 26.3
-      },
-      "tier": "A"
-    },
-    {
-      "rank": 8,
-      "previousRank": 6,
       "rankChange": 2,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 6.3)",
+      "changeReason": "",
       "tool": {
         "id": "18",
         "slug": "chatgpt-canvas",
@@ -212,23 +156,23 @@
       },
       "scores": {
         "overall": 61.230000000000004,
-        "agentic_capability": 0.6325000000000001,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "A"
     },
     {
-      "rank": 9,
-      "previousRank": 7,
+      "rank": 7,
+      "previousRank": 9,
       "rankChange": 2,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 6.3)",
+      "changeReason": "",
       "tool": {
         "id": "24",
         "slug": "openai-codex-cli",
@@ -240,23 +184,51 @@
       },
       "scores": {
         "overall": 60.88,
-        "agentic_capability": 0.6325000000000001,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "A"
     },
     {
-      "rank": 10,
-      "previousRank": 9,
+      "rank": 8,
+      "previousRank": 7,
       "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
+      "changeReason": "",
+      "tool": {
+        "id": "7",
+        "slug": "aider",
+        "name": "Aider",
+        "category": "open-source-framework",
+        "status": "active",
+        "website_url": "https://aider.chat",
+        "description": "AI pair programming in your terminal with git integration"
+      },
+      "scores": {
+        "overall": 60.56,
+        "agentic_capability": 5,
+        "innovation": 5
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 26.3
+      },
+      "tier": "A"
+    },
+    {
+      "rank": 9,
+      "previousRank": 10,
+      "rankChange": 1,
+      "changeReason": "",
       "tool": {
         "id": "6",
         "slug": "cline",
@@ -268,23 +240,23 @@
       },
       "scores": {
         "overall": 60.56,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 5700,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "A"
     },
     {
-      "rank": 11,
-      "previousRank": 10,
+      "rank": 10,
+      "previousRank": 11,
       "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
+      "changeReason": "",
       "tool": {
         "id": "8",
         "slug": "continue-dev",
@@ -296,23 +268,23 @@
       },
       "scores": {
         "overall": 60.56,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 5700,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "A"
     },
     {
-      "rank": 12,
-      "previousRank": 11,
+      "rank": 11,
+      "previousRank": 12,
       "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
+      "changeReason": "",
       "tool": {
         "id": "13",
         "slug": "openhands",
@@ -324,43 +296,71 @@
       },
       "scores": {
         "overall": 60.56,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 5700,
+        "users": 10000,
+        "swe_bench_score": null
+      },
+      "tier": "A"
+    },
+    {
+      "rank": 12,
+      "previousRank": 17,
+      "rankChange": 5,
+      "changeReason": "",
+      "tool": {
+        "id": "27",
+        "slug": "gemini-code-assist",
+        "name": "Google Gemini Code Assist",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://cloud.google.com/code-assist",
+        "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models."
+      },
+      "scores": {
+        "overall": 59.84,
+        "agentic_capability": 5,
+        "innovation": 5
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "A"
     },
     {
       "rank": 13,
-      "previousRank": 21,
-      "rankChange": 8,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 5.8)",
+      "previousRank": 6,
+      "rankChange": 7,
+      "changeReason": "",
       "tool": {
-        "id": "25",
-        "slug": "augment-code",
-        "name": "Augment Code",
+        "id": "2",
+        "slug": "github-copilot",
+        "name": "GitHub Copilot",
         "category": "ide-assistant",
         "status": "active",
-        "website_url": "https://augmentcode.com",
-        "description": "Enterprise-grade AI coding assistant with 200K token context and deep codebase understanding"
+        "website_url": "https://github.com/features/copilot",
+        "description": "AI pair programmer providing code suggestions, chat, and autonomous agents"
       },
       "scores": {
-        "overall": 59.73,
-        "agentic_capability": 0.5791000000000001,
-        "innovation": 0.65
+        "overall": 59.61,
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
-        "swe_bench_score": 65.4
+        "users": 10000,
+        "swe_bench_score": 56
       },
       "tier": "A"
     },
@@ -368,7 +368,7 @@
       "rank": 14,
       "previousRank": 14,
       "rankChange": 0,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
+      "changeReason": "",
       "tool": {
         "id": "14",
         "slug": "windsurf",
@@ -380,51 +380,23 @@
       },
       "scores": {
         "overall": 57.45,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "A"
     },
     {
       "rank": 15,
-      "previousRank": 23,
-      "rankChange": 8,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 5.4)",
-      "tool": {
-        "id": "26",
-        "slug": "amazon-q-developer",
-        "name": "Amazon Q Developer",
-        "category": "devops-assistant",
-        "status": "active",
-        "website_url": "https://aws.amazon.com/q/developer/",
-        "description": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration with the entire AWS ecosystem. Features agent architecture for autonomous cloud development tasks, from code generation to infrastructure deployment. Particularly valuable for teams building on AWS, offering specialized knowledge of AWS services and best practices."
-      },
-      "scores": {
-        "overall": 57.15,
-        "agentic_capability": 0.5375000000000001,
-        "innovation": 0.65
-      },
-      "metrics": {
-        "news_articles_count": 0,
-        "recent_funding_rounds": 0,
-        "recent_product_launches": 0,
-        "users": 2040,
-        "swe_bench_score": 55
-      },
-      "tier": "A"
-    },
-    {
-      "rank": 16,
-      "previousRank": 17,
+      "previousRank": 16,
       "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
+      "changeReason": "",
       "tool": {
         "id": "21",
         "slug": "tabnine",
@@ -436,51 +408,23 @@
       },
       "scores": {
         "overall": 56.83,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
-      "tier": "B"
+      "tier": "A"
     },
     {
-      "rank": 17,
-      "previousRank": 12,
-      "rankChange": 5,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
-      "tool": {
-        "id": "27",
-        "slug": "gemini-code-assist",
-        "name": "Google Gemini Code Assist",
-        "category": "ide-assistant",
-        "status": "active",
-        "website_url": "https://cloud.google.com/code-assist",
-        "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models."
-      },
-      "scores": {
-        "overall": 55.83,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.65
-      },
-      "metrics": {
-        "news_articles_count": 0,
-        "recent_funding_rounds": 0,
-        "recent_product_launches": 0,
-        "users": 2040,
-        "swe_bench_score": null
-      },
-      "tier": "B"
-    },
-    {
-      "rank": 18,
-      "previousRank": 13,
-      "rankChange": 5,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
+      "rank": 16,
+      "previousRank": 18,
+      "rankChange": 2,
+      "changeReason": "",
       "tool": {
         "id": "16",
         "slug": "qodo-gen",
@@ -492,23 +436,23 @@
       },
       "scores": {
         "overall": 55.199999999999996,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "B"
     },
     {
-      "rank": 19,
-      "previousRank": 15,
-      "rankChange": 4,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
+      "rank": 17,
+      "previousRank": 19,
+      "rankChange": 2,
+      "changeReason": "",
       "tool": {
         "id": "9",
         "slug": "replit-agent",
@@ -520,23 +464,23 @@
       },
       "scores": {
         "overall": 54.93000000000001,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "B"
     },
     {
-      "rank": 20,
-      "previousRank": 16,
-      "rankChange": 4,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
+      "rank": 18,
+      "previousRank": 20,
+      "rankChange": 2,
+      "changeReason": "",
       "tool": {
         "id": "22",
         "slug": "jetbrains-ai",
@@ -548,23 +492,23 @@
       },
       "scores": {
         "overall": 54.83,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "B"
     },
     {
-      "rank": 21,
-      "previousRank": 20,
-      "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.0)",
+      "rank": 19,
+      "previousRank": 21,
+      "rankChange": 2,
+      "changeReason": "",
       "tool": {
         "id": "5",
         "slug": "bolt-new",
@@ -575,24 +519,52 @@
         "description": "AI-powered full-stack web application builder with in-browser development environment"
       },
       "scores": {
-        "overall": 54.04,
-        "agentic_capability": 0.3975000000000001,
-        "innovation": 0.6566258872304931
+        "overall": 53.58,
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "B"
     },
     {
-      "rank": 22,
+      "rank": 20,
+      "previousRank": 13,
+      "rankChange": 7,
+      "changeReason": "",
+      "tool": {
+        "id": "25",
+        "slug": "augment-code",
+        "name": "Augment Code",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://augmentcode.com",
+        "description": "Enterprise-grade AI coding assistant with 200K token context and deep codebase understanding"
+      },
+      "scores": {
+        "overall": 52.019999999999996,
+        "agentic_capability": 5,
+        "innovation": 5
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 65.4
+      },
+      "tier": "B"
+    },
+    {
+      "rank": 21,
       "previousRank": 22,
-      "rankChange": 0,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.0)",
+      "rankChange": 1,
+      "changeReason": "",
       "tool": {
         "id": "20",
         "slug": "diffblue-cover",
@@ -604,23 +576,51 @@
       },
       "scores": {
         "overall": 52.019999999999996,
-        "agentic_capability": 0.3975000000000001,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "B"
     },
     {
+      "rank": 22,
+      "previousRank": 15,
+      "rankChange": 7,
+      "changeReason": "",
+      "tool": {
+        "id": "26",
+        "slug": "amazon-q-developer",
+        "name": "Amazon Q Developer",
+        "category": "devops-assistant",
+        "status": "active",
+        "website_url": "https://aws.amazon.com/q/developer/",
+        "description": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration with the entire AWS ecosystem. Features agent architecture for autonomous cloud development tasks, from code generation to infrastructure deployment. Particularly valuable for teams building on AWS, offering specialized knowledge of AWS services and best practices."
+      },
+      "scores": {
+        "overall": 51.2,
+        "agentic_capability": 5,
+        "innovation": 5
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 55
+      },
+      "tier": "B"
+    },
+    {
       "rank": 23,
-      "previousRank": 24,
-      "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.0)",
+      "previousRank": 23,
+      "rankChange": 0,
+      "changeReason": "",
       "tool": {
         "id": "19",
         "slug": "claude-artifacts",
@@ -632,23 +632,23 @@
       },
       "scores": {
         "overall": 51.2,
-        "agentic_capability": 0.3975000000000001,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "B"
     },
     {
       "rank": 24,
-      "previousRank": 25,
-      "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.0)",
+      "previousRank": 24,
+      "rankChange": 0,
+      "changeReason": "",
       "tool": {
         "id": "28",
         "slug": "coderabbit",
@@ -660,23 +660,23 @@
       },
       "scores": {
         "overall": 51.2,
-        "agentic_capability": 0.3975000000000001,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "B"
     },
     {
       "rank": 25,
-      "previousRank": 26,
-      "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.0)",
+      "previousRank": 25,
+      "rankChange": 0,
+      "changeReason": "",
       "tool": {
         "id": "30",
         "slug": "microsoft-intellicode",
@@ -688,23 +688,23 @@
       },
       "scores": {
         "overall": 51.2,
-        "agentic_capability": 0.3975000000000001,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "B"
     },
     {
       "rank": 26,
-      "previousRank": 27,
-      "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.0)",
+      "previousRank": 26,
+      "rankChange": 0,
+      "changeReason": "",
       "tool": {
         "id": "17",
         "slug": "snyk-code",
@@ -716,23 +716,23 @@
       },
       "scores": {
         "overall": 51.2,
-        "agentic_capability": 0.3975000000000001,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "C"
     },
     {
       "rank": 27,
-      "previousRank": 28,
-      "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.0)",
+      "previousRank": 27,
+      "rankChange": 0,
+      "changeReason": "",
       "tool": {
         "id": "29",
         "slug": "sourcegraph-cody",
@@ -744,23 +744,23 @@
       },
       "scores": {
         "overall": 51.2,
-        "agentic_capability": 0.3975000000000001,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "C"
     },
     {
       "rank": 28,
-      "previousRank": 29,
-      "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.0)",
+      "previousRank": 28,
+      "rankChange": 0,
+      "changeReason": "",
       "tool": {
         "id": "15",
         "slug": "sourcery",
@@ -772,23 +772,23 @@
       },
       "scores": {
         "overall": 51.2,
-        "agentic_capability": 0.3975000000000001,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "C"
     },
     {
       "rank": 29,
-      "previousRank": 30,
-      "rankChange": 1,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.0)",
+      "previousRank": 29,
+      "rankChange": 0,
+      "changeReason": "",
       "tool": {
         "id": "23",
         "slug": "zed",
@@ -800,23 +800,23 @@
       },
       "scores": {
         "overall": 51.2,
-        "agentic_capability": 0.3975000000000001,
-        "innovation": 0.65
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "C"
     },
     {
       "rank": 30,
-      "previousRank": 18,
-      "rankChange": 12,
-      "changeReason": "significantly improved agentic capabilities (0.0 → 4.7)",
+      "previousRank": 30,
+      "rankChange": 0,
+      "changeReason": "",
       "tool": {
         "id": "10",
         "slug": "v0-vercel",
@@ -827,15 +827,15 @@
         "description": "AI-powered UI generator creating React components from text prompts and images"
       },
       "scores": {
-        "overall": 50.45,
-        "agentic_capability": 0.47250000000000003,
-        "innovation": 0.13212628675489432
+        "overall": 50.010000000000005,
+        "agentic_capability": 5,
+        "innovation": 5
       },
       "metrics": {
         "news_articles_count": 0,
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
-        "users": 2040,
+        "users": 10000,
         "swe_bench_score": null
       },
       "tier": "C"
@@ -844,7 +844,7 @@
   "algorithm": {
     "version": "v6.0",
     "name": "JSON-Based Rankings",
-    "date": "2025-07-02T00:29:02.155Z",
+    "date": "2025-07-16T05:36:12.274Z",
     "weights": {
       "newsImpact": 0.3,
       "baseScore": 0.7
@@ -857,5 +857,5 @@
     "max_news_impact": 0
   },
   "_source": "static-generation",
-  "_timestamp": "2025-07-09T00:06:20.203Z"
+  "_timestamp": "2025-07-16T05:39:12.988Z"
 }

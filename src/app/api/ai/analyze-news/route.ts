@@ -118,9 +118,9 @@ export async function POST(request: NextRequest) {
     // Debug environment variables if requested
     if (debug) {
       console.log("ENV Check:", {
-        openrouter: !!process.env["OPENROUTER_API_KEY"],
-        openai: !!process.env["OPENAI_API_KEY"],
-        analysis_enabled: process.env["ENABLE_AI_NEWS_ANALYSIS"],
+        openrouter: !!process.env.OPENROUTER_API_KEY,
+        openai: !!process.env.OPENAI_API_KEY,
+        analysis_enabled: process.env.ENABLE_AI_NEWS_ANALYSIS,
       });
     }
 
@@ -173,7 +173,7 @@ For sentiment (-1 to 1):
 - 0.6 to 1.0: Very Positive`;
 
     // Use OpenAI directly via fetch
-    if (!process.env["OPENAI_API_KEY"]) {
+    if (!process.env.OPENAI_API_KEY) {
       throw new Error("OPENAI_API_KEY not configured");
     }
 
@@ -189,7 +189,7 @@ For sentiment (-1 to 1):
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env["OPENAI_API_KEY"]}`,
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
           model: modelName,

@@ -1,9 +1,9 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ToolIcon } from "@/components/ui/tool-icon";
 import { RankingChange } from "@/components/ui/ranking-change";
+import { ToolIcon } from "@/components/ui/tool-icon";
 import { extractTextFromRichText } from "@/lib/richtext-utils";
-import Link from "next/link";
 
 interface RankingData {
   rank: number;

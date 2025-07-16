@@ -1,0 +1,283 @@
+{
+  "recalculation_date": "2025-07-14T07:17:14.066Z",
+  "algorithm_version": "v6.0-productivity-adjusted",
+  "research_integration": "METR productivity paradox study July 2025",
+  "tools_calculated": 30,
+  "tools_with_adjustments": 4,
+  "ranking_changes": {
+    "comparison_date": "2025-07-14T07:17:14.066Z",
+    "significant_changes": [
+      {
+        "tool": "GitHub Copilot",
+        "old_position": 6,
+        "new_position": 1,
+        "change": -5,
+        "productivity_adjusted": true,
+        "reasoning": "Market leader heavily impacted by productivity paradox research"
+      },
+      {
+        "tool": "Amazon Q Developer",
+        "old_position": 15,
+        "new_position": 3,
+        "change": -12,
+        "productivity_adjusted": true,
+        "reasoning": "Third-place tool moderately impacted by productivity research"
+      },
+      {
+        "tool": "Google Jules",
+        "old_position": 2,
+        "new_position": 4,
+        "change": 2,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Cursor",
+        "old_position": 3,
+        "new_position": 5,
+        "change": 2,
+        "productivity_adjusted": true,
+        "reasoning": "Third-place tool moderately impacted by productivity research"
+      },
+      {
+        "tool": "Google Gemini Code Assist",
+        "old_position": 17,
+        "new_position": 6,
+        "change": -11,
+        "productivity_adjusted": true,
+        "reasoning": "Second-place tool significantly affected by research findings"
+      },
+      {
+        "tool": "Augment Code",
+        "old_position": 13,
+        "new_position": 7,
+        "change": -6,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Continue",
+        "old_position": 11,
+        "new_position": 9,
+        "change": -2,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "OpenHands",
+        "old_position": 12,
+        "new_position": 10,
+        "change": -2,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Devin",
+        "old_position": 4,
+        "new_position": 11,
+        "change": 7,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Bolt.new",
+        "old_position": 21,
+        "new_position": 12,
+        "change": -9,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "ChatGPT Canvas",
+        "old_position": 8,
+        "new_position": 13,
+        "change": 5,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Claude Artifacts",
+        "old_position": 23,
+        "new_position": 14,
+        "change": -9,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Cline",
+        "old_position": 10,
+        "new_position": 15,
+        "change": 5,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "CodeRabbit",
+        "old_position": 24,
+        "new_position": 16,
+        "change": -8,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Diffblue Cover",
+        "old_position": 22,
+        "new_position": 17,
+        "change": -5,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "JetBrains AI Assistant",
+        "old_position": 20,
+        "new_position": 18,
+        "change": -2,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Lovable",
+        "old_position": 5,
+        "new_position": 19,
+        "change": 14,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Microsoft IntelliCode",
+        "old_position": 25,
+        "new_position": 20,
+        "change": -5,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "OpenAI Codex CLI",
+        "old_position": 9,
+        "new_position": 21,
+        "change": 12,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Qodo Gen",
+        "old_position": 18,
+        "new_position": 22,
+        "change": 4,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Replit Agent",
+        "old_position": 19,
+        "new_position": 23,
+        "change": 4,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Snyk Code",
+        "old_position": 26,
+        "new_position": 24,
+        "change": -2,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Sourcegraph Cody",
+        "old_position": 27,
+        "new_position": 25,
+        "change": -2,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Sourcery",
+        "old_position": 28,
+        "new_position": 26,
+        "change": -2,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Tabnine",
+        "old_position": 16,
+        "new_position": 27,
+        "change": 11,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "v0",
+        "old_position": 30,
+        "new_position": 28,
+        "change": -2,
+        "productivity_adjusted": false
+      },
+      {
+        "tool": "Windsurf",
+        "old_position": 14,
+        "new_position": 29,
+        "change": 15,
+        "productivity_adjusted": false
+      }
+    ]
+  },
+  "top_10_tools": [
+    {
+      "position": 1,
+      "tool": "GitHub Copilot",
+      "score": 6.11,
+      "tier": "D",
+      "productivity_adjusted": true
+    },
+    {
+      "position": 2,
+      "tool": "Claude Code",
+      "score": 6.04,
+      "tier": "D",
+      "productivity_adjusted": false
+    },
+    {
+      "position": 3,
+      "tool": "Amazon Q Developer",
+      "score": 5.64,
+      "tier": "D",
+      "productivity_adjusted": true
+    },
+    {
+      "position": 4,
+      "tool": "Google Jules",
+      "score": 5.36,
+      "tier": "D",
+      "productivity_adjusted": false
+    },
+    {
+      "position": 5,
+      "tool": "Cursor",
+      "score": 5.01,
+      "tier": "D",
+      "productivity_adjusted": true
+    },
+    {
+      "position": 6,
+      "tool": "Google Gemini Code Assist",
+      "score": 4.98,
+      "tier": "D",
+      "productivity_adjusted": true
+    },
+    {
+      "position": 7,
+      "tool": "Augment Code",
+      "score": 4.74,
+      "tier": "D",
+      "productivity_adjusted": false
+    },
+    {
+      "position": 8,
+      "tool": "Aider",
+      "score": 4.43,
+      "tier": "D",
+      "productivity_adjusted": false
+    },
+    {
+      "position": 9,
+      "tool": "Continue",
+      "score": 3.99,
+      "tier": "D",
+      "productivity_adjusted": false
+    },
+    {
+      "position": 10,
+      "tool": "OpenHands",
+      "score": 3.99,
+      "tier": "D",
+      "productivity_adjusted": false
+    }
+  ],
+  "productivity_impact_summary": {
+    "github_copilot_impact": "Business sentiment decreased by 0.36 due to market leadership position",
+    "gemini_code_assist_impact": "Business sentiment decreased by 0.24 as second-place tool",
+    "cursor_amazon_q_impact": "Business sentiment decreased by 0.13 as third-place tools",
+    "cognitive_bias_factor": "43% of user satisfaction identified as psychological bias"
+  }
+}

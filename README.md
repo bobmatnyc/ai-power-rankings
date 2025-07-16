@@ -13,14 +13,15 @@ AI Power Rankings tracks, analyzes, and ranks autonomous AI development tools th
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 15 with App Router
+- **Framework**: Next.js 15 with App Router & Turbopack
 - **Language**: TypeScript (strict mode)
-- **Database**: Supabase (PostgreSQL)
+- **Data Storage**: JSON File Architecture (no database required)
 - **Styling**: Tailwind CSS
 - **UI Components**: shadcn/ui + Radix UI
 - **Data Visualization**: Recharts
+- **Code Quality**: Biome (unified linting & formatting)
 - **Deployment**: Vercel
-- **Analytics**: Vercel Analytics
+- **Analytics**: Vercel Analytics & Speed Insights
 
 ## 📦 Installation
 
@@ -34,7 +35,7 @@ cd ai-power-rankings
 2. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. Set up environment variables:
@@ -43,15 +44,20 @@ npm install
 cp .env.example .env.local
 ```
 
-4. Configure your `.env.local` with:
+4. Configure your `.env.local` with required keys (no database setup needed):
 
 ```bash
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=https://iupygejzjkwyxtitescy.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+# Analytics & Monitoring
+NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your_analytics_id
 
-# Other required keys...
+# Newsletter & Contact Form  
+RESEND_API_KEY=your_resend_key
+CONTACT_EMAIL=your_contact_email
+
+# Authentication (optional)
+AUTHORIZED_EMAILS=admin@yoursite.com
+
+# Other optional integrations...
 ```
 
 ## 🚦 Development
@@ -59,24 +65,24 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ### Start the development server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ### Run quality checks:
 
 ```bash
-npm run ci:local    # Runs lint, type-check, format-check, and tests
-npm run pre-deploy  # Run before any deployment
+pnpm ci:local    # Runs lint, type-check, format-check, and tests
+pnpm pre-deploy  # Run before any deployment
 ```
 
 ### Key Scripts:
 
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run type-check` - Check TypeScript types
-- `npm run test` - Run tests
-- `npm run extract-metrics` - Extract metrics from articles using AI
+- `pnpm dev` - Start development server with Turbopack (auto-clears cache)
+- `pnpm build` - Build for production with static rankings generation
+- `pnpm biome:check` - Run Biome linting and formatting
+- `pnpm type-check` - Check TypeScript types
+- `pnpm test` - Run tests with Vitest
+- `pnpm validate:all` - Validate JSON data integrity
 
 ## 📚 Documentation
 
@@ -90,13 +96,22 @@ Comprehensive documentation is available in the `/docs` directory:
 
 ## 🏗️ Architecture
 
-### Source-Oriented Metrics System
+### JSON File-Based Architecture
 
-- Each article/benchmark can contain metrics for multiple tools
-- Metrics stored as pure JSON with unique source URLs
-- AI-powered extraction using GPT-4 for consistent data collection
+- **100% Static Operation**: No database required, runs entirely from JSON files
+- **Performance Optimized**: ~10x faster data access compared to database queries
+- **Reliability**: Works offline, no database connection issues
+- **Data Storage**: All data in `/data/json/` with automatic backup rotation
 
-### Algorithm v4.0 Weights
+### Enhanced Ranking Algorithm v6.0-productivity-adjusted
+
+#### Core Components
+- **Research Integration**: Incorporates academic research findings (METR productivity study)
+- **Cognitive Bias Correction**: 43% bias factor applied to user satisfaction metrics
+- **Market Impact Analysis**: Business sentiment adjustments based on market share
+- **News Impact Scoring**: Real-time integration of industry news and funding data
+
+#### Algorithm Weights
 
 - **Agentic Capability** (25%) - Autonomous planning and execution
 - **Technical Capability** (20%) - Performance and features

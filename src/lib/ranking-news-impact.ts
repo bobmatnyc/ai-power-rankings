@@ -5,8 +5,8 @@
  * considering age decay and PR discounts
  */
 
-import { calculateEffectiveNewsImpact } from "./news-aging";
 import { logger } from "./logger";
+import { calculateEffectiveNewsImpact } from "./news-aging";
 
 export interface NewsArticle {
   id: string;
@@ -208,9 +208,9 @@ export function applyNewsImpactToRanking(
 
   // Boost development velocity if there's high recent news activity
   if (newsImpact.recentArticleCount > 5) {
-    adjustedScores["developmentVelocity"] = Math.min(
+    adjustedScores.developmentVelocity = Math.min(
       10,
-      (adjustedScores["developmentVelocity"] || 5) + 0.5
+      (adjustedScores.developmentVelocity || 5) + 0.5
     );
   }
 

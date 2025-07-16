@@ -4,13 +4,13 @@ import { z } from "zod";
 import { checkContactFormRateLimit } from "@/lib/rate-limit";
 
 // Initialize Resend
-const resend = new Resend(process.env["RESEND_API_KEY"]);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Log to verify API key is loaded (remove in production)
-if (!process.env["RESEND_API_KEY"]) {
+if (!process.env.RESEND_API_KEY) {
   console.error("RESEND_API_KEY is not set in environment variables");
 } else {
-  console.log("RESEND_API_KEY is configured (length:", process.env["RESEND_API_KEY"].length, ")");
+  console.log("RESEND_API_KEY is configured (length:", process.env.RESEND_API_KEY.length, ")");
 }
 
 // Validation schema
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     const { name, email, subject, category, message } = validationResult.data;
 
     // Check if Resend API key is configured
-    if (!process.env["RESEND_API_KEY"]) {
+    if (!process.env.RESEND_API_KEY) {
       console.error("RESEND_API_KEY is not configured");
       return NextResponse.json({ error: "Email service is not configured" }, { status: 500 });
     }

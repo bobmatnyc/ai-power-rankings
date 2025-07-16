@@ -1,6 +1,6 @@
+import { notFound } from "next/navigation";
 import type { Locale } from "@/i18n/config";
 import { contentLoader } from "@/lib/content-loader";
-import { notFound } from "next/navigation";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -39,6 +39,7 @@ export default async function PrivacyPage({ params }: PageProps): Promise<React.
           prose-pre:bg-muted prose-pre:border prose-pre:border-border
           prose-blockquote:border-l-primary prose-blockquote:bg-muted/50
           prose-hr:border-muted"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe pre-processed markdown content
         dangerouslySetInnerHTML={{ __html: content.htmlContent }}
       />
     </div>

@@ -1,11 +1,15 @@
-import type { Metadata } from "next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-import Script from "next/script";
-import { generateOrganizationSchema, generateWebsiteSchema, createJsonLdScript } from "@/lib/schema";
-import { AuthSessionProvider } from "@/components/providers/session-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
+import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { getBaseUrl } from "@/lib/get-base-url";
+import {
+  createJsonLdScript,
+  generateOrganizationSchema,
+  generateWebsiteSchema,
+} from "@/lib/schema";
 import "./globals.css";
 
 // Font optimization for T-031
@@ -29,7 +33,7 @@ export const metadata: Metadata = {
     "Monthly rankings of 50+ AI coding tools. Compare Cursor, GitHub Copilot, Claude & top AI assistants trusted by developers. Updated weekly.",
   keywords: [
     "AI coding tools",
-    "developer tools rankings", 
+    "developer tools rankings",
     "AI assistants comparison",
     "Cursor",
     "GitHub Copilot",
@@ -110,7 +114,7 @@ export default function RootLayout({
       "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by developers worldwide.",
     logo: `${baseUrl}/crown-of-technology.webp`,
   });
-  
+
   const websiteSchema = generateWebsiteSchema(baseUrl);
 
   return (
@@ -123,6 +127,7 @@ export default function RootLayout({
 
         {/* Critical CSS for T-031 - Above the fold styles */}
         <style
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Critical CSS for performance optimization
           dangerouslySetInnerHTML={{
             __html: `
             .hero-section { min-height: 400px; }
@@ -146,6 +151,7 @@ export default function RootLayout({
         <Script
           id="organization-schema"
           type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe JSON-LD structured data
           dangerouslySetInnerHTML={{
             __html: createJsonLdScript(organizationSchema),
           }}
@@ -153,6 +159,7 @@ export default function RootLayout({
         <Script
           id="website-schema"
           type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe JSON-LD structured data
           dangerouslySetInnerHTML={{
             __html: createJsonLdScript(websiteSchema),
           }}

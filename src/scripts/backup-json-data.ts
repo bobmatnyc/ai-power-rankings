@@ -1,11 +1,12 @@
 #!/usr/bin/env tsx
+
 /**
  * Backup JSON Data Script
  * Creates timestamped backups of all JSON data files
  */
 
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { format } from "date-fns";
 import { loggers } from "../lib/logger";
 

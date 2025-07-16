@@ -1,6 +1,6 @@
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { getBaseUrl } from "@/lib/get-base-url";
-import { headers } from "next/headers";
 
 export async function GET() {
   const headersList = await headers();
@@ -24,9 +24,9 @@ export async function GET() {
     },
     checks: {
       isProduction: process.env["NODE_ENV"] === "production",
-      isVercel: !!process.env["VERCEL"],
-      isPreview: process.env["VERCEL_ENV"] === "preview",
-      hasCustomUrl: !!process.env["NEXT_PUBLIC_BASE_URL"],
+      isVercel: !!process.env.VERCEL,
+      isPreview: process.env.VERCEL_ENV === "preview",
+      hasCustomUrl: !!process.env["NEXT_PUBLIC_BASE_URL,"]
     },
   });
 }

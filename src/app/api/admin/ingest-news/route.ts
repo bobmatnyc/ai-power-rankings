@@ -1,8 +1,8 @@
+import crypto from "node:crypto";
 import { type NextRequest, NextResponse } from "next/server";
-import { loggers } from "@/lib/logger";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
-import crypto from "crypto";
 import type { ToolsRepository } from "@/lib/json-db/tools-repository";
+import { loggers } from "@/lib/logger";
 
 interface NewsItem {
   title: string;
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               toolIdentifier,
               item.source,
               item.url,
-              `Related tool mentioned in: ${item.title || (item as any)["headline"]}`
+              `Related tool mentioned in: ${item.title || (item as any).headline}`
             );
 
             // Only add to related tools if tool exists
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             item.primary_tool,
             item.source,
             item.url,
-            `Primary tool mentioned in: ${item.title || (item as any)["headline"]}`
+            `Primary tool mentioned in: ${item.title || (item as any).headline}`
           );
 
           // Only add to related tools if tool exists

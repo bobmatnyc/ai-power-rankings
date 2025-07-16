@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 
 const en = JSON.parse(fs.readFileSync("en.json", "utf8"));
 const languageFiles = fs
@@ -26,7 +26,7 @@ function getAllKeys(obj, prefix = "") {
 }
 
 function getNestedValue(obj, path) {
-  return path.split(".").reduce((current, key) => current && current[key], obj);
+  return path.split(".").reduce((current, key) => current?.[key], obj);
 }
 
 const allEnglishKeys = getAllKeys(en);

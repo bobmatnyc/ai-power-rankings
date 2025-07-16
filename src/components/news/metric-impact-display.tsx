@@ -1,21 +1,21 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import type { LucideIcon } from "lucide-react";
 import {
-  TrendingUp,
-  TrendingDown,
-  Minus,
+  Code,
   DollarSign,
+  Heart,
+  Minus,
+  Shield,
+  Sparkles,
+  TrendingDown,
+  TrendingUp,
   Users,
   Zap,
-  Shield,
-  Heart,
-  Sparkles,
-  Code,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 
 export interface MetricImpact {
   factor: keyof RankingFactors;

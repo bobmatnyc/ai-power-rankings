@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { loggers } from "@/lib/logger";
 import { getSubscribersRepo } from "@/lib/json-db";
+import { loggers } from "@/lib/logger";
 
 type RouteParams = Promise<{ token: string }>;
 

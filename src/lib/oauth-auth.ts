@@ -7,7 +7,7 @@ const accessTokens = new Map();
 export function checkOAuthToken(request: NextRequest): { isValid: boolean; scope?: string } {
   // Development mode - bypass auth
   const isDevelopment =
-    process.env["NODE_ENV"] === "development" || process.env["ENABLE_DEV_MODE"] === "true";
+    process.env["NODE_ENV"] === "development" || process.env.ENABLE_DEV_MODE === "true";
   if (isDevelopment) {
     return { isValid: true, scope: "read write" };
   }

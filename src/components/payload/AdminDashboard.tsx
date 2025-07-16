@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface DashboardStats {
   totalTools: number;
@@ -24,7 +24,7 @@ export const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [fetchStats]);
 
   const fetchStats = async () => {
     try {

@@ -1,5 +1,5 @@
-import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
 import { ToolDetailClient } from "./tool-detail-client";
 
 interface PageProps {

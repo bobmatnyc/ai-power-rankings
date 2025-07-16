@@ -1,28 +1,28 @@
 "use client";
 
-import { useEffect, useState, useCallback, Suspense } from "react";
-import { loggers } from "@/lib/logger";
-import Link from "next/link";
+import {
+  Filter,
+  FlaskConical,
+  Home,
+  Info,
+  List,
+  Newspaper,
+  TrendingUp,
+  Wrench,
+} from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sidebar, useSidebar } from "@/components/ui/sidebar";
-import {
-  Home,
-  List,
-  TrendingUp,
-  Filter,
-  Newspaper,
-  FlaskConical,
-  Info,
-  Wrench,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useI18n } from "@/i18n/client";
 import { useRankingChanges } from "@/contexts/ranking-changes-context";
+import { useI18n } from "@/i18n/client";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { loggers } from "@/lib/logger";
+import { cn } from "@/lib/utils";
 
 // Navigation items will be built dynamically with i18n
 

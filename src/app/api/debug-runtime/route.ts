@@ -1,6 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 
 export async function GET() {
   try {
@@ -15,9 +15,9 @@ export async function GET() {
       rankingsExists: fs.existsSync(rankingsPath),
       env: {
         NODE_ENV: process.env["NODE_ENV"],
-        VERCEL: process.env["VERCEL"],
-        VERCEL_ENV: process.env["VERCEL_ENV"],
-        NEXT_PUBLIC_BASE_URL: process.env["NEXT_PUBLIC_BASE_URL"],
+        VERCEL: process.env.VERCEL,
+        VERCEL_ENV: process.env.VERCEL_ENV,
+        NEXT_PUBLIC_BASE_URL: process.env["NEXT_PUBLIC_BASE_URL,"]
       },
       files: {
         publicContents: fs.existsSync(publicPath) ? fs.readdirSync(publicPath).slice(0, 10) : [],

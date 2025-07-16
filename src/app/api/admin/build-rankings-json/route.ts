@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { loggers } from "@/lib/logger";
 import { getRankingsRepo } from "@/lib/json-db";
 import type { RankingPeriod } from "@/lib/json-db/schemas";
+import { loggers } from "@/lib/logger";
 
 interface ProvidedRanking {
   tool_id: string;

@@ -111,7 +111,16 @@ export function generateOrganizationSchema(org: OrganizationSchemaData) {
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
-      availableLanguage: ["English", "Japanese", "Chinese", "Spanish", "French", "German", "Korean", "Portuguese"],
+      availableLanguage: [
+        "English",
+        "Japanese",
+        "Chinese",
+        "Spanish",
+        "French",
+        "German",
+        "Korean",
+        "Portuguese",
+      ],
     },
     foundingDate: "2024",
     expertise: "AI tool evaluation and ranking",
@@ -120,7 +129,7 @@ export function generateOrganizationSchema(org: OrganizationSchemaData) {
       "Developer Tools",
       "Coding Assistants",
       "Software Development",
-      "AI Benchmarking"
+      "AI Benchmarking",
     ],
   };
 }
@@ -134,7 +143,8 @@ export function generateWebsiteSchema(baseUrl: string) {
     "@type": "WebSite",
     name: "AI Power Rankings",
     url: baseUrl,
-    description: "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by developers worldwide.",
+    description:
+      "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by developers worldwide.",
     potentialAction: {
       "@type": "SearchAction",
       target: {

@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
-import { cn } from "@/lib/utils";
+import { Minus, Sparkles, TrendingDown, TrendingUp } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { TrendingUp, TrendingDown, Minus, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface RankingChangeProps {
   previousRank?: number;

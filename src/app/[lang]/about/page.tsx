@@ -1,9 +1,9 @@
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { MarkdownAboutContent } from "./markdown-about-content";
+import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { contentLoader } from "@/lib/content-loader";
-import { notFound } from "next/navigation";
-import type { Locale } from "@/i18n/config";
+import { MarkdownAboutContent } from "./markdown-about-content";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;

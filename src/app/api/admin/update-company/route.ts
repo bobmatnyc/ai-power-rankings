@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { loggers } from "@/lib/logger";
 import { getCompaniesRepo } from "@/lib/json-db";
+import { loggers } from "@/lib/logger";
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {

@@ -1,9 +1,9 @@
-import { BaseRepository } from "./base-repository";
-import type { NewsArticle, NewsData, IngestionReport } from "./schemas";
-import path from "path";
+import crypto from "node:crypto";
+import path from "node:path";
 import Ajv from "ajv";
 import ajvFormats from "ajv-formats";
-import crypto from "crypto";
+import { BaseRepository } from "./base-repository";
+import type { IngestionReport, NewsArticle, NewsData } from "./schemas";
 
 const ajv = new Ajv({ allErrors: true });
 ajvFormats(ajv);
@@ -149,8 +149,8 @@ export class NewsRepository extends BaseRepository<NewsData> {
       (article) =>
         article.title.toLowerCase().includes(searchTerm) ||
         article.content.toLowerCase().includes(searchTerm) ||
-        (article.summary && article.summary.toLowerCase().includes(searchTerm)) ||
-        (article.tags && article.tags.some((tag) => tag.toLowerCase().includes(searchTerm)))
+        article.summary?.toLowerCase().includes(searchTerm) ||
+        article.tags?.some((tag) => tag.toLowerCase().includes(searchTerm))
     );
   }
 
@@ -291,8 +291,8 @@ export class NewsRepository extends BaseRepository<NewsData> {
         updatedReport = {
           ...report,
           ...updates,
-          id: report!.id, // Never allow ID to be changed
-          filename: report!.filename, // Keep required fields
+          id: report?.id, // Never allow ID to be changed
+          filename: report?.filename, // Keep required fields
           updated_at: new Date().toISOString(),
         } as IngestionReport;
 
@@ -395,7 +395,7 @@ export class NewsRepository extends BaseRepository<NewsData> {
         if (!data.index.reportsByStatus[report.status]) {
           data.index.reportsByStatus[report.status] = [];
         }
-        data.index.reportsByStatus[report.status]!.push(report.id);
+        data.index.reportsByStatus[report.status]?.push(report.id);
       }
     }
 

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
 import { Newspaper } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface ToolIconProps {
   name: string;
@@ -23,7 +23,7 @@ export function ToolIcon({
   const [imageError, setImageError] = useState(false);
 
   // Debug log to understand what's happening
-  if (process.env.NODE_ENV === "development") {
+  if (process.env["NODE_ENV"] === "development") {
     console.log("ToolIcon:", { name, domain, imageError });
   }
 

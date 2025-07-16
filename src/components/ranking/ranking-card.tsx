@@ -1,11 +1,11 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ToolIcon } from "@/components/ui/tool-icon";
 import { RankingChange } from "@/components/ui/ranking-change";
+import { ToolIcon } from "@/components/ui/tool-icon";
 import { getCategoryColor } from "@/lib/category-colors";
-import { extractTextFromRichText } from "@/lib/richtext-utils";
 import { calculateTier, getTierColor } from "@/lib/ranking-utils";
-import Link from "next/link";
+import { extractTextFromRichText } from "@/lib/richtext-utils";
 
 interface RankingData {
   rank: number;

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getMissingTranslations, clearMissingTranslations } from "@/i18n/dictionary-utils";
+import { clearMissingTranslations, getMissingTranslations } from "@/i18n/dictionary-utils";
 
 export async function GET() {
   const missing = getMissingTranslations();

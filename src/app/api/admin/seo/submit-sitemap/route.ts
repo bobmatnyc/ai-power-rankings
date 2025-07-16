@@ -10,7 +10,7 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
+    const siteUrl = process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL;
     const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
 
     if (!siteUrl) {

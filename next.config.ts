@@ -19,6 +19,8 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons", "@next/font"],
     webVitalsAttribution: ["CLS", "LCP"],
     optimizeCss: true,
+    // Reduce memory usage during builds
+    workerThreads: false,
   },
   eslint: {
     // During production builds, do not fail on warnings

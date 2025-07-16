@@ -1,5 +1,7 @@
 "use client";
 
+import { ArrowRight, Bug, Calendar, GitCommit, Plus, Tag, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -7,9 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, GitCommit, Tag, Users, Bug, Plus, ArrowRight } from "lucide-react";
 
 interface ChangelogModalProps {
   children: React.ReactNode;

@@ -6,7 +6,7 @@ interface EndpointTest {
   name: string;
   url: string;
   status: number | null;
-  data: any;
+  data: Record<string, unknown> | null;
   error: string | null;
 }
 

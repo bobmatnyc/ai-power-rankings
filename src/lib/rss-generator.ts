@@ -54,7 +54,7 @@ export class RSSGenerator {
 
     return {
       title: article.title,
-      description: article.summary || article.content.substring(0, 200) + "...",
+      description: article.summary || `${article.content.substring(0, 200)}...`,
       link: `${baseUrl}/${lang}/news/${article.slug}`,
       guid: `${baseUrl}/${lang}/news/${article.slug}`,
       pubDate: new Date(article.published_date).toUTCString(),

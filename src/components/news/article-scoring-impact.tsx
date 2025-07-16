@@ -1,17 +1,17 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Bot,
   Lightbulb,
-  Zap,
-  Users,
-  TrendingUp,
   MessageCircle,
   Rocket,
   Shield,
+  TrendingUp,
+  Users,
+  Zap,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ScoringFactorsData {
   agentic_capability?: number;
@@ -112,7 +112,7 @@ export default function ArticleScoringImpact({
   const hasFactorImpacts = scoring_factors && Object.keys(scoring_factors).length > 0;
   const affectedFactors = hasFactorImpacts
     ? SCORING_FACTORS.filter((factor) => {
-        const impact = scoring_factors![factor.key];
+        const impact = scoring_factors?.[factor.key];
         return impact !== undefined && impact !== 0;
       })
     : [];
@@ -154,7 +154,7 @@ export default function ArticleScoringImpact({
               <span className="text-muted-foreground text-xs">Ranking Impact:</span>
               <div className="flex gap-1">
                 {affectedFactors.slice(0, 4).map((factor) => {
-                  const impact = scoring_factors![factor.key]!;
+                  const impact = scoring_factors?.[factor.key]!;
                   return (
                     <Tooltip key={factor.key}>
                       <TooltipTrigger asChild>
@@ -189,7 +189,7 @@ export default function ArticleScoringImpact({
                       <div className="space-y-1">
                         {affectedFactors.slice(4).map((factor) => (
                           <div key={factor.key} className="text-xs">
-                            {factor.name}: {formatImpact(scoring_factors![factor.key]!)}
+                            {factor.name}: {formatImpact(scoring_factors?.[factor.key]!)}
                           </div>
                         ))}
                       </div>
@@ -233,7 +233,7 @@ export default function ArticleScoringImpact({
           <div className="space-y-2">
             <ul className="space-y-1">
               {affectedFactors.map((factor) => {
-                const impact = scoring_factors![factor.key]!;
+                const impact = scoring_factors?.[factor.key]!;
                 return (
                   <li key={factor.key} className="flex items-center gap-2">
                     <span className="text-muted-foreground">•</span>

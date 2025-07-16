@@ -1,12 +1,24 @@
 /* eslint-disable no-alert */
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Download,
+  Edit,
+  Filter,
+  MoreVertical,
+  Plus,
+  Search,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -15,18 +27,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Search,
-  Plus,
-  Edit,
-  Trash2,
-  TrendingUp,
-  TrendingDown,
-  MoreVertical,
-  Filter,
-  Download,
-  Upload,
-} from "lucide-react";
 import { usePayload } from "@/hooks/use-payload";
 import type { Tool } from "@/types/database";
 
@@ -164,7 +164,7 @@ export function ToolsManager() {
                 const latestScores = tools
                   .map((tool) => getLatestRanking(tool.id))
                   .filter((ranking) => ranking && ranking.score > 0)
-                  .map((ranking) => ranking!.score);
+                  .map((ranking) => ranking?.score);
 
                 if (latestScores.length === 0) {
                   return "0";

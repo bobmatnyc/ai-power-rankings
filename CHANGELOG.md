@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2025-07-14
+
+### Added
+- **🧠 Productivity Paradox Research Integration**: Integrated METR organization research findings into ranking algorithm
+  - Cognitive bias correction factor (43%) applied to user satisfaction metrics
+  - Actual productivity impact (-19%) vs perceived improvement (+24%) factored into business sentiment
+  - Research-based risk factors added to affected tools
+- **🏆 Enhanced Ranking Algorithm v6.0-productivity-adjusted**: Major algorithm enhancement incorporating research findings
+  - Business sentiment adjustments for market-leading tools (GitHub Copilot, Gemini Code Assist, Cursor, Amazon Q)
+  - Market share-proportional impact calculation for cognitive bias effects
+  - New ranking period: `2025-07-14-productivity-adjusted.json`
+- **📊 Comprehensive Impact Analysis**: Detailed reporting and validation system
+  - Impact summary reports with ranking movement analysis
+  - Validation framework ensuring data integrity (5-point validation system)
+  - Backup system for all modified data with rollback capability
+- **🔬 Research-Based Methodology**: Academic research integration framework
+  - Source attribution to METR productivity study
+  - Transparent methodology documentation for research incorporation
+  - Risk factor categorization system for market impact assessment
+
+### Changed
+- **Ranking Calculations**: Updated to include productivity paradox adjustments for 4 major tools (70%+ market coverage)
+- **News Data Enhancement**: July 2025 articles enhanced with productivity research impact metadata
+- **Business Sentiment Scoring**: Market-share proportional adjustments based on cognitive bias research
+- **Algorithm Documentation**: Enhanced with productivity research methodology and validation processes
+
+### Fixed
+- **Cognitive Bias Correction**: Addressed systematic bias in user satisfaction metrics for AI coding tools
+- **Market Reality Alignment**: Rankings now better reflect actual productivity impact vs user perception
+- **Data Integrity**: Comprehensive validation system prevents ranking calculation errors
+
 ## [3.1.2] - 2025-07-09
 
 ### Added

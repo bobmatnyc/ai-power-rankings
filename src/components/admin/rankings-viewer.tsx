@@ -1,11 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { format, parseISO } from "date-fns";
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle2,
+  Globe,
+  Loader2,
+  Plus,
+  Star,
+  Trash2,
+  TrendingUp,
+  Trophy,
+} from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -14,22 +28,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import {
-  AlertCircle,
-  CheckCircle2,
-  Loader2,
-  Globe,
-  Plus,
-  Trophy,
-  Calendar,
-  Star,
-  Trash2,
-  TrendingUp,
-} from "lucide-react";
-import { format, parseISO } from "date-fns";
-import { useSearchParams } from "next/navigation";
 import type { RankingPeriod } from "@/lib/json-db/schemas";
+import { cn } from "@/lib/utils";
 
 interface RankingPeriodSummary {
   period: string;
@@ -48,7 +48,7 @@ function formatPeriodDisplay(period: string): string {
     return format(parseISO(period), "MMM d, yyyy");
   } else if (period.length === 7) {
     // Monthly period - format as "January 2025"
-    return format(parseISO(period + "-01"), "MMMM yyyy");
+    return format(parseISO(`${period}-01`), "MMMM yyyy");
   }
   return period;
 }
@@ -68,28 +68,8 @@ export function RankingsViewer() {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
 
-  useEffect(() => {
-    loadPeriods();
-
-    // Check for success message from URL params
-    if (searchParams.get("saved") === "true") {
-      const period = searchParams.get("period");
-      setSuccess(
-        period ? `Rankings for ${period} saved successfully!` : "Rankings saved successfully!"
-      );
-
-      // Clear URL params
-      window.history.replaceState({}, "", "/dashboard/rankings");
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (selectedPeriod) {
-      loadRankingsForPeriod(selectedPeriod);
-    }
-  }, [selectedPeriod]);
-
-  const loadPeriods = async () => {
+  // Define loadPeriods with useCallback to ensure it's available for useEffect dependencies
+  const loadPeriods = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/ranking-periods");
       if (response.ok) {
@@ -113,9 +93,10 @@ export function RankingsViewer() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const loadRankingsForPeriod = async (period: string) => {
+  // Define loadRankingsForPeriod with useCallback to ensure it's available for useEffect dependencies
+  const loadRankingsForPeriod = useCallback(async (period: string) => {
     setIsLoadingRankings(true);
     setError("");
 
@@ -134,7 +115,28 @@ export function RankingsViewer() {
     } finally {
       setIsLoadingRankings(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadPeriods();
+
+    // Check for success message from URL params
+    if (searchParams.get("saved") === "true") {
+      const period = searchParams.get("period");
+      setSuccess(
+        period ? `Rankings for ${period} saved successfully!` : "Rankings saved successfully!"
+      );
+
+      // Clear URL params
+      window.history.replaceState({}, "", "/dashboard/rankings");
+    }
+  }, [searchParams, loadPeriods]);
+
+  useEffect(() => {
+    if (selectedPeriod) {
+      loadRankingsForPeriod(selectedPeriod);
+    }
+  }, [selectedPeriod, loadRankingsForPeriod]);
 
   const setAsLive = async (period: string) => {
     setIsSettingLive(true);

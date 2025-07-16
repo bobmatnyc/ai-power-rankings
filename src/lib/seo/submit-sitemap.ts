@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import { GoogleSearchConsole } from "../google-search-console";
 import { config } from "dotenv";
+import { GoogleSearchConsole } from "../google-search-console";
 
 // Load environment variables
 config({ path: ".env.local" });
 
 async function submitSitemap() {
-  const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
+  const siteUrl = process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL;
   const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
 
   if (!siteUrl) {

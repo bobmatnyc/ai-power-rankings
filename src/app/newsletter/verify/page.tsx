@@ -1,11 +1,11 @@
 "use client";
 
-import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
-import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 function VerifyContent(): React.JSX.Element {
   const searchParams = useSearchParams();

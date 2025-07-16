@@ -1,5 +1,5 @@
+import type { ToolCapabilities, ToolMetrics } from "@/types/database";
 import type { RankingWeights, ToolScore } from "@/types/rankings";
-import type { ToolMetrics, ToolCapabilities } from "@/types/database";
 
 export const DEFAULT_WEIGHTS: RankingWeights = {
   marketTraction: 0.25,

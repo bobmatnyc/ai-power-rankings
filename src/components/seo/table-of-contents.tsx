@@ -1,8 +1,8 @@
 "use client";
 
+import { List } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { List } from "lucide-react";
 
 interface TOCItem {
   id: string;

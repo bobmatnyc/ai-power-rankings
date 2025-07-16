@@ -1,8 +1,8 @@
 #!/usr/bin/env node
+import * as fs from "node:fs";
+import https from "node:https";
+import * as path from "node:path";
 import { google } from "googleapis";
-import https from "https";
-import * as fs from "fs";
-import * as path from "path";
 
 const SITE_URL = "https://aipowerranking.com";
 const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;

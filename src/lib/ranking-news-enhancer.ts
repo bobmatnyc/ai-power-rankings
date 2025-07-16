@@ -6,8 +6,8 @@
  */
 
 import type { NewsArticle } from "@/lib/json-db/schemas";
-import { processNewsQualitativeImpact } from "./news-qualitative-analyzer";
 import { logger } from "./logger";
+import { processNewsQualitativeImpact } from "./news-qualitative-analyzer";
 
 export interface Innovation {
   score: number;
@@ -112,19 +112,19 @@ function extractQuantitativeMetrics(
 
     // Extract SWE-bench scores
     const sweBenchMatch = combined.match(/(\d+\.?\d*)\s*%?\s*(?:on\s+)?swe[- ]bench/i);
-    if (sweBenchMatch && sweBenchMatch[1] && !metrics.swe_bench_score) {
+    if (sweBenchMatch?.[1] && !metrics.swe_bench_score) {
       metrics.swe_bench_score = parseFloat(sweBenchMatch[1]);
     }
 
     // Extract valuation
     const valuationMatch = combined.match(/(\d+\.?\d*)\s*billion\s*(?:dollar\s*)?valuation/i);
-    if (valuationMatch && valuationMatch[1] && !metrics.valuation) {
+    if (valuationMatch?.[1] && !metrics.valuation) {
       metrics.valuation = parseFloat(valuationMatch[1]) * 1_000_000_000;
     }
 
     // Extract funding
     const fundingMatch = combined.match(/raised?\s*\$?(\d+\.?\d*)\s*(million|billion)/i);
-    if (fundingMatch && fundingMatch[1] && fundingMatch[2] && !metrics.funding) {
+    if (fundingMatch?.[1] && fundingMatch[2] && !metrics.funding) {
       const amount = parseFloat(fundingMatch[1]);
       const multiplier = fundingMatch[2].toLowerCase() === "billion" ? 1_000_000_000 : 1_000_000;
       metrics.funding = amount * multiplier;
@@ -132,7 +132,7 @@ function extractQuantitativeMetrics(
 
     // Extract ARR
     const arrMatch = combined.match(/\$?(\d+\.?\d*)\s*[mb]\s*arr/i);
-    if (arrMatch && arrMatch[1] && !metrics.monthly_arr) {
+    if (arrMatch?.[1] && !metrics.monthly_arr) {
       const amount = parseFloat(arrMatch[1]);
       const multiplier = combined.match(/b\s*arr/i) ? 1_000_000_000 : 1_000_000;
       // Convert annual to monthly
@@ -141,7 +141,7 @@ function extractQuantitativeMetrics(
 
     // Extract users
     const usersMatch = combined.match(/(\d+\.?\d*)\s*[km]?\s*users/i);
-    if (usersMatch && usersMatch[1] && !metrics.estimated_users) {
+    if (usersMatch?.[1] && !metrics.estimated_users) {
       const amount = parseFloat(usersMatch[1]);
       let multiplier = 1;
       if (combined.match(/\d+\.?\d*\s*k\s*users/i)) {
@@ -191,7 +191,7 @@ export async function extractEnhancedNewsMetrics(
   let significantEvents: Array<{ event: string; date: string; impact: string }> = [];
 
   // Extract qualitative metrics using AI if enabled
-  if (enableAI && (process.env["OPENROUTER_API_KEY"] || process.env["OPENAI_API_KEY"])) {
+  if (enableAI && (process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY)) {
     try {
       const cutoffDate = previewDate ? new Date(previewDate) : new Date();
       const qualitativeResult = await processNewsQualitativeImpact(
@@ -340,17 +340,17 @@ export function applyNewsImpactToScores(
 
   // Apply technical performance boost
   if (enhancedNewsMetrics.technicalPerformanceBoost > 0) {
-    adjustedScores["technicalPerformance"] = Math.min(
+    adjustedScores.technicalPerformance = Math.min(
       10,
-      (adjustedScores["technicalPerformance"] || 5) + enhancedNewsMetrics.technicalPerformanceBoost
+      (adjustedScores.technicalPerformance || 5) + enhancedNewsMetrics.technicalPerformanceBoost
     );
   }
 
   // Apply market traction boost
   if (enhancedNewsMetrics.marketTractionBoost > 0) {
-    adjustedScores["marketTraction"] = Math.min(
+    adjustedScores.marketTraction = Math.min(
       10,
-      (adjustedScores["marketTraction"] || 5) + enhancedNewsMetrics.marketTractionBoost
+      (adjustedScores.marketTraction || 5) + enhancedNewsMetrics.marketTractionBoost
     );
   }
 

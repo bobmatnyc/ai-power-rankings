@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import { join } from "path";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 // Define the base path for dictionaries
 const DICTIONARIES_PATH = join(__dirname, "../../../i18n/dictionaries");
@@ -121,7 +121,7 @@ function syncTranslations() {
       console.log("  ⚠️  File not found, creating new file");
       // Create new file with all English keys as placeholders
       const newTranslations = deepMerge({}, enTranslations);
-      writeFileSync(langPath, JSON.stringify(newTranslations, null, 2) + "\n");
+      writeFileSync(langPath, `${JSON.stringify(newTranslations, null, 2)}\n`);
       console.log(`  ✅ Created new file with ${countKeys(newTranslations)} keys\n`);
       continue;
     }
@@ -139,7 +139,7 @@ function syncTranslations() {
 
       if (keysAdded > 0) {
         // Write updated translations
-        writeFileSync(langPath, JSON.stringify(updatedTranslations, null, 2) + "\n");
+        writeFileSync(langPath, `${JSON.stringify(updatedTranslations, null, 2)}\n`);
         const needsTranslation = countKeysNeedingTranslation(updatedTranslations);
         console.log(
           `  ✅ Updated: ${keysAdded} keys added, ${needsTranslation} keys need translation\n`

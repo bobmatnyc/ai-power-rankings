@@ -1,10 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DollarSign, ExternalLink, TrendingDown, TrendingUp, Users } from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
-import { TrendingUp, TrendingDown, Users, DollarSign, ExternalLink } from "lucide-react";
-import Link from "next/link";
 
 export interface NewsItem {
   id: string;

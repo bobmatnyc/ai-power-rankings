@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getToolsRepo, getCompaniesRepo } from "@/lib/json-db";
+import { getCompaniesRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 
 export async function GET(_request: NextRequest) {

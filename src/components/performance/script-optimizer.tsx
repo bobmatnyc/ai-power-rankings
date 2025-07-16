@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import Script from 'next/script';
-import { useEffect } from 'react';
+import Script from "next/script";
+import { useEffect } from "react";
 
 interface OptimizedScriptProps {
   src: string;
-  strategy?: 'beforeInteractive' | 'afterInteractive' | 'lazyOnload' | 'worker';
-  priority?: 'high' | 'low';
+  strategy?: "beforeInteractive" | "afterInteractive" | "lazyOnload" | "worker";
+  priority?: "high" | "low";
   defer?: boolean;
   async?: boolean;
   onLoad?: () => void;
@@ -19,8 +19,8 @@ interface OptimizedScriptProps {
  */
 export function OptimizedScript({
   src,
-  strategy = 'lazyOnload',
-  priority: _priority = 'low',
+  strategy = "lazyOnload",
+  priority: _priority = "low",
   defer = true,
   async = false,
   onLoad,
@@ -29,7 +29,7 @@ export function OptimizedScript({
 }: OptimizedScriptProps) {
   return (
     <Script
-      id={`optimized-script-${src.replace(/[^a-zA-Z0-9]/g, '-')}`}
+      id={`optimized-script-${src.replace(/[^a-zA-Z0-9]/g, "-")}`}
       src={src}
       strategy={strategy}
       defer={defer}
@@ -56,7 +56,7 @@ export function ThirdPartyScriptOptimizer() {
           script.defer = true;
           // Add error handling
           script.onerror = () => {
-            console.warn('Failed to load Google Tag Manager');
+            console.warn("Failed to load Google Tag Manager");
           };
         }
       });
@@ -73,11 +73,11 @@ export function ThirdPartyScriptOptimizer() {
         userInteracted = true;
 
         // Load analytics scripts after interaction
-        const deferredScripts = document.querySelectorAll('script[data-defer]');
+        const deferredScripts = document.querySelectorAll("script[data-defer]");
         deferredScripts.forEach((script) => {
-          if (script instanceof HTMLScriptElement && script.dataset['defer']) {
-            const newScript = document.createElement('script');
-            newScript.src = script.dataset['defer'];
+          if (script instanceof HTMLScriptElement && script.dataset.defer) {
+            const newScript = document.createElement("script");
+            newScript.src = script.dataset.defer;
             newScript.async = true;
             document.head.appendChild(newScript);
             script.remove();
@@ -86,7 +86,7 @@ export function ThirdPartyScriptOptimizer() {
       };
 
       // Listen for user interactions
-      const events = ['click', 'scroll', 'keydown', 'touchstart'];
+      const events = ["click", "scroll", "keydown", "touchstart"];
       events.forEach((event) => {
         document.addEventListener(event, loadDeferredScripts, {
           once: true,
@@ -107,15 +107,15 @@ export function ThirdPartyScriptOptimizer() {
       // Ensure high priority scripts have fetchpriority="high"
       highPriorityScripts.forEach((script) => {
         if (script instanceof HTMLScriptElement) {
-          script.setAttribute('fetchpriority', 'high');
+          script.setAttribute("fetchpriority", "high");
         }
       });
 
       // Defer low priority scripts
       lowPriorityScripts.forEach((script) => {
         if (script instanceof HTMLScriptElement) {
-          script['defer'] = true;
-          script.setAttribute('fetchpriority', 'low');
+          script.defer = true;
+          script.setAttribute("fetchpriority", "low");
         }
       });
     };
@@ -138,18 +138,18 @@ export function ThirdPartyScriptOptimizer() {
  */
 export function useScriptPerformanceMonitoring() {
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
 
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
-        if (entry.entryType === 'resource' && entry.name.includes('.js')) {
+        if (entry.entryType === "resource" && entry.name.includes(".js")) {
           const resourceEntry = entry as PerformanceResourceTiming;
 
           // Log slow loading scripts
           if (resourceEntry.duration > 1000) {
-            console.warn('Slow script detected:', {
+            console.warn("Slow script detected:", {
               name: entry.name,
               duration: resourceEntry.duration,
               transferSize: resourceEntry.transferSize,
@@ -157,8 +157,8 @@ export function useScriptPerformanceMonitoring() {
           }
 
           // Track third-party scripts
-          if (entry.name.includes('google') || entry.name.includes('vercel')) {
-            console.log('Third-party script loaded:', {
+          if (entry.name.includes("google") || entry.name.includes("vercel")) {
+            console.log("Third-party script loaded:", {
               name: entry.name,
               duration: resourceEntry.duration,
               // renderBlockingStatus may not be available in all browsers
@@ -172,9 +172,9 @@ export function useScriptPerformanceMonitoring() {
     });
 
     try {
-      observer.observe({ entryTypes: ['resource'] });
+      observer.observe({ entryTypes: ["resource"] });
     } catch {
-      console.warn('Performance Observer not supported for resource monitoring');
+      console.warn("Performance Observer not supported for resource monitoring");
     }
 
     return () => observer.disconnect();
@@ -187,16 +187,16 @@ export function useScriptPerformanceMonitoring() {
 export function usePreloadCriticalScripts() {
   useEffect(() => {
     const criticalScripts = [
-      '/api/rankings/latest',
+      "/api/rankings/latest",
       // Add other critical resources here
     ];
 
     criticalScripts.forEach((src) => {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'fetch';
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "fetch";
       link.href = src;
-      link.crossOrigin = 'anonymous';
+      link.crossOrigin = "anonymous";
       document.head.appendChild(link);
     });
   }, []);

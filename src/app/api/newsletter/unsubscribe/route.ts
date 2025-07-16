@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { loggers } from "@/lib/logger";
 import { getSubscribersRepo } from "@/lib/json-db";
+import { loggers } from "@/lib/logger";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const searchParams = request.nextUrl.searchParams;

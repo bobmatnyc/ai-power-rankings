@@ -183,7 +183,9 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
                 <p className="text-sm text-muted-foreground mb-4">
                   Automated code analysis and security scanning for better code quality.
                 </p>
-                <div className="text-sm text-primary group-hover:underline">Explore Review Tools →</div>
+                <div className="text-sm text-primary group-hover:underline">
+                  Explore Review Tools →
+                </div>
               </CardContent>
             </Card>
           </Link>
@@ -200,7 +202,9 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
                 <p className="text-sm text-muted-foreground mb-4">
                   Infrastructure automation and intelligent deployment pipeline management.
                 </p>
-                <div className="text-sm text-primary group-hover:underline">Explore DevOps Tools →</div>
+                <div className="text-sm text-primary group-hover:underline">
+                  Explore DevOps Tools →
+                </div>
               </CardContent>
             </Card>
           </Link>
@@ -217,7 +221,9 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
                 <p className="text-sm text-muted-foreground mb-4">
                   AI-powered test generation and automated quality assurance platforms.
                 </p>
-                <div className="text-sm text-primary group-hover:underline">Explore Testing Tools →</div>
+                <div className="text-sm text-primary group-hover:underline">
+                  Explore Testing Tools →
+                </div>
               </CardContent>
             </Card>
           </Link>
@@ -234,7 +240,9 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
                 <p className="text-sm text-muted-foreground mb-4">
                   Free and open source AI frameworks and machine learning libraries.
                 </p>
-                <div className="text-sm text-primary group-hover:underline">Explore Frameworks →</div>
+                <div className="text-sm text-primary group-hover:underline">
+                  Explore Frameworks →
+                </div>
               </CardContent>
             </Card>
           </Link>

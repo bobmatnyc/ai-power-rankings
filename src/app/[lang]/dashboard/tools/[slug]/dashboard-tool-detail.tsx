@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ArrowLeft, ExternalLink, Github, Minus, TrendingDown, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatusIndicator } from "@/components/ui/status-indicator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToolIcon } from "@/components/ui/tool-icon";
-import { StatusIndicator } from "@/components/ui/status-indicator";
-import { ArrowLeft, ExternalLink, Github, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
 interface ToolDetailData {
@@ -20,13 +20,13 @@ interface ToolDetailData {
     website_url?: string;
     tagline?: string;
     info?: {
-      technical?: any;
-      business?: any;
-      company?: any;
+      technical?: Record<string, unknown>;
+      business?: Record<string, unknown>;
+      company?: Record<string, unknown>;
       product?: {
         tagline?: string;
       };
-      links?: any;
+      links?: Record<string, string>;
       website?: string;
       summary?: string;
     };
@@ -47,7 +47,7 @@ interface ToolDetailData {
   };
   rankingsHistory?: RankingHistoryEntry[];
   newsItems?: NewsItem[];
-  metrics?: any;
+  metrics?: Record<string, number | string>;
 }
 
 interface RankingHistoryEntry {
@@ -155,7 +155,7 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
           <div className="flex items-start gap-4">
             <ToolIcon
               name={toolData.name}
-              domain={links.website || toolData.website_url || info.website}
+              domain={links["website"] || toolData.website_url || info["website"]}
               size={80}
               className="flex-shrink-0"
             />
@@ -177,17 +177,17 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
                   </CardDescription>
                 </div>
                 <div className="flex gap-2">
-                  {links.website && (
+                  {links["website"] && (
                     <Button asChild variant="outline" size="sm">
-                      <a href={links.website} target="_blank" rel="noopener noreferrer">
+                      <a href={links["website"]} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         Website
                       </a>
                     </Button>
                   )}
-                  {links.github && (
+                  {links["github"] && (
                     <Button asChild variant="outline" size="sm">
-                      <a href={links.github} target="_blank" rel="noopener noreferrer">
+                      <a href={links["github"]} target="_blank" rel="noopener noreferrer">
                         <Github className="h-4 w-4 mr-2" />
                         GitHub
                       </a>
@@ -343,48 +343,52 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Context Window</div>
                     <div className="font-medium">
-                      {technical.context_window
-                        ? `${technical.context_window.toLocaleString()} tokens`
+                      {technical["context_window"]
+                        ? `${technical["context_window"].toLocaleString()} tokens`
                         : "Not specified"}
                     </div>
                   </div>
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Multi-file Support</div>
-                    <div className="font-medium">{technical.multi_file_support ? "Yes" : "No"}</div>
+                    <div className="font-medium">
+                      {technical["multi_file_support"] ? "Yes" : "No"}
+                    </div>
                   </div>
                 </div>
-                {technical.supported_languages && technical.supported_languages.length > 0 && (
-                  <div className="mt-4">
-                    <div className="text-sm text-muted-foreground mb-2">Supported Languages</div>
+                {Array.isArray(technical["supported_languages"]) &&
+                  technical["supported_languages"].length > 0 && (
+                    <div className="mt-4">
+                      <div className="text-sm text-muted-foreground mb-2">Supported Languages</div>
+                      <div className="flex flex-wrap gap-2">
+                        {(technical["supported_languages"] as string[]).map((lang: string) => (
+                          <Badge key={lang} variant="secondary">
+                            {lang}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+              </div>
+
+              {Array.isArray(technical["llm_providers"]) &&
+                technical["llm_providers"].length > 0 && (
+                  <div>
+                    <h4 className="font-medium mb-3">LLM Providers</h4>
                     <div className="flex flex-wrap gap-2">
-                      {technical.supported_languages.map((lang: string) => (
-                        <Badge key={lang} variant="secondary">
-                          {lang}
+                      {(technical["llm_providers"] as string[]).map((provider: string) => (
+                        <Badge key={provider} variant="outline">
+                          {provider}
                         </Badge>
                       ))}
                     </div>
                   </div>
                 )}
-              </div>
 
-              {technical.llm_providers && technical.llm_providers.length > 0 && (
-                <div>
-                  <h4 className="font-medium mb-3">LLM Providers</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {technical.llm_providers.map((provider: string) => (
-                      <Badge key={provider} variant="outline">
-                        {provider}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {technical.integrations && technical.integrations.length > 0 && (
+              {Array.isArray(technical["integrations"]) && technical["integrations"].length > 0 && (
                 <div>
                   <h4 className="font-medium mb-3">Integrations</h4>
                   <div className="flex flex-wrap gap-2">
-                    {technical.integrations.map((integration: string) => (
+                    {(technical["integrations"] as string[]).map((integration: string) => (
                       <Badge key={integration} variant="outline">
                         {integration}
                       </Badge>
@@ -396,24 +400,24 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
               <div>
                 <h4 className="font-medium mb-3">Performance Metrics</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {metrics.swe_bench_score && (
+                  {metrics["swe_bench_score"] && (
                     <div>
                       <div className="text-sm text-muted-foreground mb-1">SWE-bench Score</div>
-                      <div className="font-medium text-lg">{metrics.swe_bench_score}%</div>
+                      <div className="font-medium text-lg">{metrics["swe_bench_score"]}%</div>
                     </div>
                   )}
-                  {metrics.github_stars && (
+                  {metrics["github_stars"] && (
                     <div>
                       <div className="text-sm text-muted-foreground mb-1">GitHub Stars</div>
                       <div className="font-medium text-lg">
-                        {metrics.github_stars.toLocaleString()}
+                        {Number(metrics["github_stars"]).toLocaleString()}
                       </div>
                     </div>
                   )}
-                  {technical.response_time && (
+                  {technical["response_time"] && (
                     <div>
                       <div className="text-sm text-muted-foreground mb-1">Avg Response Time</div>
-                      <div className="font-medium text-lg">{technical.response_time}ms</div>
+                      <div className="font-medium text-lg">{technical["response_time"]}ms</div>
                     </div>
                   )}
                 </div>

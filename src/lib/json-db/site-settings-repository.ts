@@ -1,8 +1,8 @@
-import { BaseRepository } from "./base-repository";
-import type { SiteSettings, SiteSettingsData } from "./schemas";
-import path from "path";
+import path from "node:path";
 import Ajv from "ajv";
 import ajvFormats from "ajv-formats";
+import { BaseRepository } from "./base-repository";
+import type { SiteSettings, SiteSettingsData } from "./schemas";
 
 const ajv = new Ajv({ allErrors: true });
 ajvFormats(ajv);

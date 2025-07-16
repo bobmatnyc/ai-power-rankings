@@ -1,24 +1,25 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import RankingsGrid from "@/components/ranking/rankings-grid";
-import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
 import { loggers } from "@/lib/logger";
 
 interface RankingTool {
   name: string;
   updated_at?: string;
 }
+
 import Script from "next/script";
-import {
-  generateRankingFAQSchema,
-  generateBreadcrumbSchema,
-  createJsonLdScript,
-} from "@/lib/schema";
-import { generateRankingOGImageUrl } from "@/lib/og-utils";
-import { QuickAnswerBox, FAQSection } from "@/components/seo";
+import { FAQSection, QuickAnswerBox } from "@/components/seo";
 import { generalFAQs } from "@/data/seo-content";
 import { getUrl } from "@/lib/get-url";
+import { generateRankingOGImageUrl } from "@/lib/og-utils";
+import {
+  createJsonLdScript,
+  generateBreadcrumbSchema,
+  generateRankingFAQSchema,
+} from "@/lib/schema";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -158,6 +159,7 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
       <Script
         id="faq-schema"
         type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe JSON-LD structured data
         dangerouslySetInnerHTML={{
           __html: createJsonLdScript(faqSchema),
         }}
@@ -165,6 +167,7 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
       <Script
         id="breadcrumb-schema"
         type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe JSON-LD structured data
         dangerouslySetInnerHTML={{
           __html: createJsonLdScript(breadcrumbSchema),
         }}

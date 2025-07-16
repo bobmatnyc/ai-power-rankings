@@ -1,8 +1,8 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import { NextResponse } from "next/server";
-import { toolsCache, companiesCache, rankingsCache, newsCache } from "@/lib/json-db/cache-strategy";
 import { CacheManager } from "@/lib/cache/cache-manager";
-import fs from "fs/promises";
-import path from "path";
+import { companiesCache, newsCache, rankingsCache, toolsCache } from "@/lib/json-db/cache-strategy";
 
 export async function GET() {
   try {
@@ -28,17 +28,17 @@ export async function GET() {
 
     try {
       const toolsStats = await fs.stat(path.join(jsonDataDir, "tools.json"));
-      fileSizes["tools"] = toolsStats.size;
+      fileSizes.tools = toolsStats.size;
     } catch {}
 
     try {
       const companiesStats = await fs.stat(path.join(jsonDataDir, "companies.json"));
-      fileSizes["companies"] = companiesStats.size;
+      fileSizes.companies = companiesStats.size;
     } catch {}
 
     try {
       const newsStats = await fs.stat(path.join(jsonDataDir, "news", "articles.json"));
-      fileSizes["news"] = newsStats.size;
+      fileSizes.news = newsStats.size;
     } catch {}
 
     // Calculate total memory usage
@@ -60,7 +60,7 @@ export async function GET() {
       memory: {
         caches: memoryStats,
         totalItems: totalMemoryUsage,
-        overallHitRate: (overallHitRate * 100).toFixed(2) + "%",
+        overallHitRate: `${(overallHitRate * 100).toFixed(2)}%`,
       },
       fileCache: fileCacheInfo,
       fileSizes: {
@@ -79,7 +79,7 @@ export async function GET() {
       );
     }
 
-    if (fileSizes["news"] && fileSizes["news"] > 500 * 1024) {
+    if (fileSizes.news && fileSizes.news > 500 * 1024) {
       response.performance.recommendedActions.push(
         "News file is large (>500KB) - consider chunking"
       );

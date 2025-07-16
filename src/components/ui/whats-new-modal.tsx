@@ -1,23 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Calendar, Clock, Newspaper, Sparkles, TrendingUp, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { 
-  Calendar, 
-  Newspaper, 
-  TrendingUp, 
-  Clock, 
-  X,
-  Sparkles 
-} from "lucide-react";
 
 interface WhatsNewModalProps {
   open: boolean;
@@ -35,7 +23,11 @@ interface UpdateItem {
   isNew?: boolean;
 }
 
-export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNewModalProps): React.JSX.Element {
+export function WhatsNewModal({
+  open,
+  onOpenChange,
+  autoShow = false,
+}: WhatsNewModalProps): React.JSX.Element {
   const [updates, setUpdates] = useState<UpdateItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,11 +36,11 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
     if (!autoShow) return;
 
     const checkAutoShow = () => {
-      const lastDismissed = localStorage.getItem('whatsNewDismissed');
-      const autoShowDisabled = localStorage.getItem('autoShowDisabled');
-      
-      if (autoShowDisabled === 'true') return;
-      
+      const lastDismissed = localStorage.getItem("whatsNewDismissed");
+      const autoShowDisabled = localStorage.getItem("autoShowDisabled");
+
+      if (autoShowDisabled === "true") return;
+
       if (!lastDismissed) {
         // First visit - show modal
         setTimeout(() => onOpenChange(true), 1000);
@@ -57,10 +49,10 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
         const lastDismissTime = parseInt(lastDismissed);
         const now = Date.now();
         const hoursSinceLastDismiss = (now - lastDismissTime) / (1000 * 60 * 60);
-        
+
         if (hoursSinceLastDismiss >= 24) {
           // Reset and show again
-          localStorage.removeItem('whatsNewDismissed');
+          localStorage.removeItem("whatsNewDismissed");
           setTimeout(() => onOpenChange(true), 1000);
         }
       }
@@ -74,38 +66,57 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
     const fetchRecentUpdates = async () => {
       try {
         setLoading(true);
-        
+
         // Calculate 3 days ago
         const threeDaysAgo = new Date();
         threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-        
+
         // Fetch recent news/updates
         const response = await fetch("/api/news/recent?days=3");
         const newsDataResponse = response.ok ? await response.json() : { articles: [] };
         const newsData = newsDataResponse.articles || [];
-        
+
         // Transform news data to update format
-        const newsUpdates: UpdateItem[] = newsData.slice(0, 5).map((item: unknown, index: number) => {
-          const newsItem = item as { id?: string; title?: string; summary?: string; content?: string; created_at?: string; published_date?: string; category?: string; };
-          return {
-            id: `news-${newsItem.id || index}`,
-            type: "news" as const,
-            title: newsItem.title || "New Update",
-            description: newsItem.summary || `${newsItem.content?.substring(0, 150)}...` || "Recent update to the platform",
-            date: newsItem.created_at || newsItem.published_date || new Date().toISOString(),
-            category: newsItem.category || "General",
-            isNew: true
-          };
-        });
+        const newsUpdates: UpdateItem[] = newsData
+          .slice(0, 5)
+          .map((item: unknown, index: number) => {
+            const newsItem = item as {
+              id?: string;
+              title?: string;
+              summary?: string;
+              content?: string;
+              created_at?: string;
+              published_date?: string;
+              category?: string;
+            };
+            return {
+              id: `news-${newsItem.id || index}`,
+              type: "news" as const,
+              title: newsItem.title || "New Update",
+              description:
+                newsItem.summary ||
+                `${newsItem.content?.substring(0, 150)}...` ||
+                "Recent update to the platform",
+              date: newsItem.created_at || newsItem.published_date || new Date().toISOString(),
+              category: newsItem.category || "General",
+              isNew: true,
+            };
+          });
 
         // Fetch real platform updates from changelog
         let platformUpdates: UpdateItem[] = [];
         try {
-          const changelogResponse = await fetch('/api/changelog');
+          const changelogResponse = await fetch("/api/changelog");
           if (changelogResponse.ok) {
             const changelogData = await changelogResponse.json();
             platformUpdates = changelogData.slice(0, 5).map((item: unknown, index: number) => {
-              const changelogItem = item as { id?: string; title?: string; description?: string; date?: string; category?: string; };
+              const changelogItem = item as {
+                id?: string;
+                title?: string;
+                description?: string;
+                date?: string;
+                category?: string;
+              };
               return {
                 id: `changelog-${changelogItem.id || index}`,
                 type: "feature" as const,
@@ -113,30 +124,30 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
                 description: changelogItem.description || "Recent platform improvement",
                 date: changelogItem.date || new Date().toISOString(),
                 category: changelogItem.category || "Platform",
-                isNew: true
+                isNew: true,
               };
             });
           }
         } catch (error) {
-          console.error('Error fetching changelog:', error);
+          console.error("Error fetching changelog:", error);
           // No fallback fake data - just use empty array
         }
 
-        // Combine and sort updates - changelog first, then news  
+        // Combine and sort updates - changelog first, then news
         // Show recent changelog entries regardless of date, but filter news to past 3 days
-        const filteredNewsUpdates = newsUpdates.filter(update => {
+        const filteredNewsUpdates = newsUpdates.filter((update) => {
           const updateDate = new Date(update.date);
           return updateDate >= threeDaysAgo;
         });
-        
+
         // Show top 10 most recent changelog entries regardless of date
         const recentChangelogUpdates = platformUpdates.slice(0, 10);
-        
+
         const allUpdates = [...filteredNewsUpdates, ...recentChangelogUpdates];
 
         setUpdates(allUpdates);
       } catch (error) {
-        console.error('Error fetching recent updates:', error);
+        console.error("Error fetching recent updates:", error);
         // No fallback fake data - just show empty state
         setUpdates([]);
       } finally {
@@ -183,7 +194,7 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 24) {
       return `${diffInHours}h ago`;
     } else if (diffInHours < 48) {
@@ -195,14 +206,14 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
 
   const handleDismiss = () => {
     // Store dismissal preference in localStorage
-    localStorage.setItem('whatsNewDismissed', Date.now().toString());
+    localStorage.setItem("whatsNewDismissed", Date.now().toString());
     onOpenChange(false);
   };
 
   const handleDontShowAgain = () => {
     // Disable auto-show functionality
-    localStorage.setItem('autoShowDisabled', 'true');
-    localStorage.setItem('whatsNewDismissed', Date.now().toString());
+    localStorage.setItem("autoShowDisabled", "true");
+    localStorage.setItem("whatsNewDismissed", Date.now().toString());
     onOpenChange(false);
   };
 
@@ -243,71 +254,28 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
 
         <div className="flex-1 overflow-y-auto scroll-smooth px-1">
           <div className="space-y-6 py-4">
-          {updates.length === 0 ? (
-            <div className="text-center py-8">
-              <Newspaper className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-              <p className="text-muted-foreground">No recent updates to show</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Check back soon for the latest news and improvements
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* Section 1: Rankings/Platform Updates */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <TrendingUp className="h-4 w-4 text-primary" />
-                  <h3 className="font-semibold text-sm">Platform & Rankings Updates</h3>
-                </div>
-                {updates.filter(update => update.category === "Rankings" || update.category === "Performance").map((update) => (
-                  <div key={update.id} className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <div className="flex items-center gap-2 mt-0.5">
-                        {getTypeIcon(update.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-medium text-sm">{update.title}</h4>
-                          <Badge 
-                            variant="secondary" 
-                            className={`text-xs ${getTypeColor(update.type)}`}
-                          >
-                            {update.type}
-                          </Badge>
-                          {update.isNew && (
-                            <Badge variant="default" className="bg-red-100 text-red-800 text-xs">
-                              NEW
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-2">
-                          {update.description}
-                        </p>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span>{formatDate(update.date)}</span>
-                          {update.category && (
-                            <>
-                              <span>•</span>
-                              <span>{update.category}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+            {updates.length === 0 ? (
+              <div className="text-center py-8">
+                <Newspaper className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                <p className="text-muted-foreground">No recent updates to show</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Check back soon for the latest news and improvements
+                </p>
               </div>
-
-              {/* Section 2: News & Other Updates */}
-              {updates.filter(update => update.category !== "Rankings" && update.category !== "Performance").length > 0 && (
-                <>
-                  <Separator />
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Newspaper className="h-4 w-4 text-primary" />
-                      <h3 className="font-semibold text-sm">Latest News & Updates</h3>
-                    </div>
-                    {updates.filter(update => update.category !== "Rankings" && update.category !== "Performance").map((update) => (
+            ) : (
+              <>
+                {/* Section 1: Rankings/Platform Updates */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    <h3 className="font-semibold text-sm">Platform & Rankings Updates</h3>
+                  </div>
+                  {updates
+                    .filter(
+                      (update) =>
+                        update.category === "Rankings" || update.category === "Performance"
+                    )
+                    .map((update) => (
                       <div key={update.id} className="space-y-3">
                         <div className="flex items-start gap-3">
                           <div className="flex items-center gap-2 mt-0.5">
@@ -316,14 +284,17 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <h4 className="font-medium text-sm">{update.title}</h4>
-                              <Badge 
-                                variant="secondary" 
+                              <Badge
+                                variant="secondary"
                                 className={`text-xs ${getTypeColor(update.type)}`}
                               >
                                 {update.type}
                               </Badge>
                               {update.isNew && (
-                                <Badge variant="default" className="bg-red-100 text-red-800 text-xs">
+                                <Badge
+                                  variant="default"
+                                  className="bg-red-100 text-red-800 text-xs"
+                                >
                                   NEW
                                 </Badge>
                               )}
@@ -344,11 +315,69 @@ export function WhatsNewModal({ open, onOpenChange, autoShow = false }: WhatsNew
                         </div>
                       </div>
                     ))}
-                  </div>
-                </>
-              )}
-            </>
-          )}
+                </div>
+
+                {/* Section 2: News & Other Updates */}
+                {updates.filter(
+                  (update) => update.category !== "Rankings" && update.category !== "Performance"
+                ).length > 0 && (
+                  <>
+                    <Separator />
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Newspaper className="h-4 w-4 text-primary" />
+                        <h3 className="font-semibold text-sm">Latest News & Updates</h3>
+                      </div>
+                      {updates
+                        .filter(
+                          (update) =>
+                            update.category !== "Rankings" && update.category !== "Performance"
+                        )
+                        .map((update) => (
+                          <div key={update.id} className="space-y-3">
+                            <div className="flex items-start gap-3">
+                              <div className="flex items-center gap-2 mt-0.5">
+                                {getTypeIcon(update.type)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h4 className="font-medium text-sm">{update.title}</h4>
+                                  <Badge
+                                    variant="secondary"
+                                    className={`text-xs ${getTypeColor(update.type)}`}
+                                  >
+                                    {update.type}
+                                  </Badge>
+                                  {update.isNew && (
+                                    <Badge
+                                      variant="default"
+                                      className="bg-red-100 text-red-800 text-xs"
+                                    >
+                                      NEW
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-muted-foreground mb-2">
+                                  {update.description}
+                                </p>
+                                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                                  <span>{formatDate(update.date)}</span>
+                                  {update.category && (
+                                    <>
+                                      <span>•</span>
+                                      <span>{update.category}</span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </>
+                )}
+              </>
+            )}
           </div>
         </div>
 

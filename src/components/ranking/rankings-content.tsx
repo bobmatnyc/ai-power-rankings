@@ -1,20 +1,10 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { loggers } from "@/lib/logger";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Suspense, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -23,7 +13,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCategoryColor } from "@/lib/category-colors";
+import { loggers } from "@/lib/logger";
 
 interface RankingData {
   rank: number;
@@ -70,7 +70,7 @@ function RankingsContentInner(): React.JSX.Element {
 
   useEffect(() => {
     fetchRankings();
-  }, []);
+  }, [fetchRankings]);
 
   useEffect(() => {
     // Update URL when category changes
@@ -270,11 +270,7 @@ function RankingsContentInner(): React.JSX.Element {
                     </TableCell>
                     <TableCell className="text-center">
                       {ranking.scores?.overall ? (
-                        <>
-                          <div className="font-bold text-lg">
-                            {ranking.scores.overall.toFixed(1)}
-                          </div>
-                        </>
+                        <div className="font-bold text-lg">{ranking.scores.overall.toFixed(1)}</div>
                       ) : (
                         <div className="text-muted-foreground">-</div>
                       )}

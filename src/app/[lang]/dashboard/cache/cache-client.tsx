@@ -1,22 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatDistanceToNow } from "date-fns";
 import {
-  Download,
-  RefreshCw,
   AlertCircle,
   CheckCircle,
-  FileJson,
-  Info,
   Cloud,
+  Download,
+  FileJson,
   HardDrive,
+  Info,
+  RefreshCw,
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CacheFileStatus {
   type: string;
@@ -61,12 +61,7 @@ export function CacheManagementClient() {
   const [lastGeneration, setLastGeneration] = useState<Record<string, GenerationResult>>({});
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch cache status on mount
-  useEffect(() => {
-    fetchCacheStatus();
-  }, []);
-
-  const fetchCacheStatus = async () => {
+  const fetchCacheStatus = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/cache/status");
       if (!response.ok) {
@@ -80,7 +75,12 @@ export function CacheManagementClient() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  // Fetch cache status on mount
+  useEffect(() => {
+    fetchCacheStatus();
+  }, [fetchCacheStatus]);
 
   const generateCache = async (type: string) => {
     setGenerating({ ...generating, [type]: true });
@@ -146,7 +146,7 @@ export function CacheManagementClient() {
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
+    return `${parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
   };
 
   if (loading) {

@@ -1,8 +1,8 @@
-import type { Locale } from "@/i18n/config";
-import { contentLoader } from "@/lib/content-loader";
 import { notFound } from "next/navigation";
 // import { getDictionary } from "@/i18n/get-dictionary"; // Not used in contact form version
 import { ContactForm } from "@/components/contact/contact-form";
+import type { Locale } from "@/i18n/config";
+import { contentLoader } from "@/lib/content-loader";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;

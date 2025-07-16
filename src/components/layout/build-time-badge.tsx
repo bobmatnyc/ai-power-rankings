@@ -1,10 +1,10 @@
 "use client";
 
+import { Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Clock } from "lucide-react";
-import { getFormattedBuildTime } from "@/lib/build-info";
 import { WhatsNewModal } from "@/components/ui/whats-new-modal";
+import { getFormattedBuildTime } from "@/lib/build-info";
 
 export function BuildTimeBadge() {
   const [buildTime, setBuildTime] = useState<string>("");

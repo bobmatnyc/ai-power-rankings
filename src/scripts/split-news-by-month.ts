@@ -1,8 +1,8 @@
 #!/usr/bin/env tsx
 
+import path from "node:path";
 import fs from "fs-extra";
-import path from "path";
-import type { NewsData, NewsArticle } from "@/lib/json-db/schemas";
+import type { NewsArticle, NewsData } from "@/lib/json-db/schemas";
 
 async function splitNewsByMonth() {
   const newsFilePath = path.join(process.cwd(), "data", "json", "news", "news.json");

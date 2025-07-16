@@ -122,7 +122,7 @@ function extractMetaContent(html: string, property: string): string {
   let match = html.match(
     new RegExp(`<meta\\s+property=["']${property}["']\\s+content=["']([^"']+)["']`, "i")
   );
-  if (match && match[1]) {
+  if (match?.[1]) {
     return match[1];
   }
 
@@ -130,7 +130,7 @@ function extractMetaContent(html: string, property: string): string {
   match = html.match(
     new RegExp(`<meta\\s+name=["']${property}["']\\s+content=["']([^"']+)["']`, "i")
   );
-  if (match && match[1]) {
+  if (match?.[1]) {
     return match[1];
   }
 
@@ -138,7 +138,7 @@ function extractMetaContent(html: string, property: string): string {
   match = html.match(
     new RegExp(`<meta\\s+content=["']([^"']+)["']\\s+(?:property|name)=["']${property}["']`, "i")
   );
-  if (match && match[1]) {
+  if (match?.[1]) {
     return match[1];
   }
 
@@ -152,7 +152,7 @@ function parseArticleFromHTML(html: string, url: string): ArticleData {
 
   if (!title) {
     const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
-    title = titleMatch && titleMatch[1] ? titleMatch[1].trim() : "Untitled Article";
+    title = titleMatch?.[1] ? titleMatch[1].trim() : "Untitled Article";
   }
 
   // Extract description/summary
@@ -177,7 +177,7 @@ function parseArticleFromHTML(html: string, url: string): ArticleData {
 
   if (!publishedDate) {
     const dateMatch = html.match(/<time[^>]+datetime=["']([^"']+)["']/i);
-    publishedDate = dateMatch && dateMatch[1] ? dateMatch[1] : new Date().toISOString();
+    publishedDate = dateMatch?.[1] ? dateMatch[1] : new Date().toISOString();
   }
 
   // Extract source from URL
@@ -198,7 +198,7 @@ function parseArticleFromHTML(html: string, url: string): ArticleData {
 
   for (const pattern of contentPatterns) {
     const match = html.match(pattern);
-    if (match && match[1]) {
+    if (match?.[1]) {
       content = extractTextFromHTML(match[1]);
       break;
     }
@@ -215,11 +215,11 @@ function parseArticleFromHTML(html: string, url: string): ArticleData {
 
   // Limit content length
   if (content.length > 10000) {
-    content = content.substring(0, 10000) + "...";
+    content = `${content.substring(0, 10000)}...`;
   }
 
   // Auto-detect tool mentions
-  const toolMentions = detectToolMentions(content + " " + title + " " + summary);
+  const toolMentions = detectToolMentions(`${content} ${title} ${summary}`);
 
   // Generate tags based on content
   const tags = generateTags(title, content, summary);

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import type { Tool, Ranking } from "@/types/database";
+import { useCallback, useState } from "react";
+import type { Ranking, Tool } from "@/types/database";
 
 export function usePayload() {
   const [tools, setTools] = useState<Tool[]>([]);

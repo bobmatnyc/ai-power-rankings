@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     for (const otherPeriod of allPeriods) {
       if (otherPeriod !== period) {
         const otherData = await rankingsRepo.getRankingsForPeriod(otherPeriod);
-        if (otherData && otherData.is_current) {
+        if (otherData?.is_current) {
           otherData.is_current = false;
           await rankingsRepo.saveRankingsForPeriod(otherData);
         }

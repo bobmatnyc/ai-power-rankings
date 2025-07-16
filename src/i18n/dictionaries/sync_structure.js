@@ -10,7 +10,7 @@
  * Usage: node sync_structure.js
  */
 
-const fs = require("fs"); // eslint-disable-line @typescript-eslint/no-require-imports
+const fs = require("node:fs"); // eslint-disable-line @typescript-eslint/no-require-imports
 
 const en = JSON.parse(fs.readFileSync("en.json", "utf8"));
 const languageFiles = fs
@@ -45,11 +45,7 @@ function deepMerge(enStructure, existingTranslations) {
       !Array.isArray(enStructure[key])
     ) {
       // If it's an object, recursively merge
-      if (
-        existingTranslations &&
-        existingTranslations[key] &&
-        typeof existingTranslations[key] === "object"
-      ) {
+      if (existingTranslations?.[key] && typeof existingTranslations[key] === "object") {
         result[key] = deepMerge(enStructure[key], existingTranslations[key]);
       } else {
         // No existing translations for this object, use placeholder

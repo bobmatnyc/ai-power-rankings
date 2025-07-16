@@ -1,14 +1,14 @@
 import type {
-  WithContext,
-  Organization,
-  SoftwareApplication,
-  ItemList,
-  Review,
   BreadcrumbList,
-  WebSite,
+  ItemList,
+  Organization,
+  Review,
   SearchAction,
+  SoftwareApplication,
+  WebSite,
+  WithContext,
 } from "schema-dts";
-import type { Tool, Ranking } from "@/types/database";
+import type { Ranking, Tool } from "@/types/database";
 import type { RankedTool } from "@/types/rankings";
 
 const baseUrl =

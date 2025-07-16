@@ -1,10 +1,10 @@
 "use client";
 
+import { ArrowLeft, Database, FileText, FileUp, Home, Settings, Trophy, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Home, FileText, Users, FileUp, Trophy, Database, ArrowLeft, Settings } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const dashboardNavItems = [
   {

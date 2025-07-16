@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
-import { getToolsRepo, getNewsRepo } from "@/lib/json-db";
 
 export async function POST(request: NextRequest) {
   try {

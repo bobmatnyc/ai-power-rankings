@@ -4,10 +4,10 @@
  * Optimizes JSON files for production use
  */
 
-import fs from "fs/promises";
-import path from "path";
-import zlib from "zlib";
-import { promisify } from "util";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { promisify } from "node:util";
+import zlib from "node:zlib";
 import { loggers } from "../lib/logger";
 
 const gzip = promisify(zlib.gzip);

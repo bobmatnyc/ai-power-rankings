@@ -5,8 +5,8 @@
  * based on the time-bound scores defined in the detailed innovation ontology.
  */
 
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 // Innovation scores from detailed_innovation_ontology.md
 // Scores are mapped by tool slug and month (YYYY-MM-DD format)
@@ -292,7 +292,7 @@ async function updateInnovationScores() {
 
       if (updatedCount > 0) {
         // Write updated data back to file
-        await fs.writeFile(filePath, JSON.stringify(data, null, 2) + "\n");
+        await fs.writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`);
         console.log(`   ✅ Updated ${updatedCount} innovation scores`);
       } else {
         console.log("   ⏭️  No updates needed");

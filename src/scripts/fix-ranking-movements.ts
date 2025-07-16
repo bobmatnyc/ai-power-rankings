@@ -4,8 +4,8 @@
  * This script fixes the movement data for rankings by comparing with the previous available period
  */
 
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 interface Ranking {
   tool_id: string;
@@ -109,7 +109,7 @@ async function fixRankingMovements() {
       });
 
       // Write updated data back
-      await fs.writeFile(filePath, JSON.stringify(data, null, 2) + "\n");
+      await fs.writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`);
       console.log(`   ✅ Updated ${updatedCount} movement records`);
     }
 

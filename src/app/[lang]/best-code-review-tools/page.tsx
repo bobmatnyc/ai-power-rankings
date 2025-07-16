@@ -63,8 +63,8 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
         </h1>
 
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-          Discover the top AI-powered code review tools that automate code analysis,
-          enhance security scanning, and improve code quality through intelligent reviews.
+          Discover the top AI-powered code review tools that automate code analysis, enhance
+          security scanning, and improve code quality through intelligent reviews.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
@@ -107,8 +107,8 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
               <Search className="h-12 w-12 mx-auto mb-4 text-primary" />
               <h3 className="text-xl font-semibold mb-3">Intelligent Analysis</h3>
               <p className="text-muted-foreground">
-                AI-powered static analysis that understands code patterns, identifies potential bugs,
-                and suggests improvements automatically.
+                AI-powered static analysis that understands code patterns, identifies potential
+                bugs, and suggests improvements automatically.
               </p>
             </CardContent>
           </Card>
@@ -129,8 +129,8 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
               <GitBranch className="h-12 w-12 mx-auto mb-4 text-accent" />
               <h3 className="text-xl font-semibold mb-3">Workflow Integration</h3>
               <p className="text-muted-foreground">
-                Seamless integration with Git workflows, pull requests, and CI/CD pipelines
-                without disrupting team productivity.
+                Seamless integration with Git workflows, pull requests, and CI/CD pipelines without
+                disrupting team productivity.
               </p>
             </CardContent>
           </Card>
@@ -139,7 +139,9 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
 
       {/* Top Features to Look For */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8">Key Features of Top Code Review Tools</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Key Features of Top Code Review Tools
+        </h2>
 
         <div className="grid md:grid-cols-2 gap-8">
           <Card className="p-6">
@@ -221,7 +223,9 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
 
       {/* Popular Code Review Tools Preview */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8">Popular Code Review Tools to Consider</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Popular Code Review Tools to Consider
+        </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="hover:shadow-lg transition-all duration-200">
@@ -233,8 +237,8 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Comprehensive code quality platform with advanced security scanning and
-                technical debt management for teams.
+                Comprehensive code quality platform with advanced security scanning and technical
+                debt management for teams.
               </p>
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -252,8 +256,8 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Automated code review and quality analytics with maintainability insights
-                and engineering intelligence.
+                Automated code review and quality analytics with maintainability insights and
+                engineering intelligence.
               </p>
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>

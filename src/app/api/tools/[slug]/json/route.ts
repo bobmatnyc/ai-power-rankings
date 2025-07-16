@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getToolsRepo, getRankingsRepo, getNewsRepo, getCompaniesRepo } from "@/lib/json-db";
+import { getCompaniesRepo, getNewsRepo, getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 
 export async function GET(
@@ -104,7 +104,7 @@ export async function GET(
       id: article.id,
       title: article.title,
       summary:
-        article.summary || (article.content ? article.content.substring(0, 200) + "..." : ""),
+        article.summary || (article.content ? `${article.content.substring(0, 200)}...` : ""),
       url: article.source_url,
       source: article.source,
       published_at: article.published_date,

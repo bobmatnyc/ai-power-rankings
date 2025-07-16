@@ -1,17 +1,17 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { loggers } from "@/lib/logger";
 import { getSubscribersRepo } from "@/lib/json-db";
+import { loggers } from "@/lib/logger";
 
 // Initialize Resend only when API key is available
 const getResendClient = () => {
-  const apiKey = process.env["RESEND_API_KEY"];
+  const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     throw new Error("RESEND_API_KEY not configured");
   }
   return new Resend(apiKey);
 };
-const TURNSTILE_SECRET_KEY = process.env["TURNSTILE_SECRET_KEY"] || "YOUR_TURNSTILE_SECRET_KEY";
+const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || "YOUR_TURNSTILE_SECRET_KEY";
 
 interface SubscribeRequest {
   firstName: string;
@@ -24,12 +24,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // Debug environment variables
     loggers.api.info("Environment check", {
-      hasResendKey: !!process.env["RESEND_API_KEY"],
+      hasResendKey: !!process.env.RESEND_API_KEY,
       nodeEnv: process.env["NODE_ENV"],
     });
 
     // Validate environment variables
-    if (!process.env["RESEND_API_KEY"]) {
+    if (!process.env.RESEND_API_KEY) {
       loggers.api.error("Missing Resend API key");
       return NextResponse.json({ error: "Email service configuration error" }, { status: 500 });
     }
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       if (!turnstileData.success) {
         loggers.api.warn("Turnstile verification failed", {
-          email: email.substring(0, 3) + "***",
+          email: `${email.substring(0, 3)}***`,
           errors: turnstileData["error-codes"],
         });
         return NextResponse.json({ error: "Invalid captcha verification" }, { status: 400 });
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       loggers.database.error("Database error during subscription", {
         error: dbError,
         message: dbError.message,
-        email: email.substring(0, 3) + "***", // Log partial email for privacy
+        email: `${email.substring(0, 3)}***`, // Log partial email for privacy
       });
 
       // Return more specific error based on the error
@@ -169,10 +169,10 @@ async function sendSubscriptionNotification(
   isExisting = false
 ): Promise<void> {
   const resend = getResendClient();
-  const subject = isExisting 
-    ? "AI Power Ranking - Existing Subscription Attempt" 
+  const subject = isExisting
+    ? "AI Power Ranking - Existing Subscription Attempt"
     : "AI Power Ranking - New Subscription";
-  
+
   const { error: emailError } = await resend.emails.send({
     from: "AI Power Ranking <newsletter@aipowerranking.com>",
     to: "bob@matsuoka.com", // Send to admin email
@@ -246,15 +246,15 @@ async function sendSubscriptionNotification(
         <body>
           <div class="container">
             <div class="header">
-              <h1>Newsletter Subscription ${isExisting ? 'Attempt' : 'Received'}</h1>
+              <h1>Newsletter Subscription ${isExisting ? "Attempt" : "Received"}</h1>
             </div>
             
-            <p>A ${isExisting ? 'repeat' : 'new'} subscription request was received:</p>
+            <p>A ${isExisting ? "repeat" : "new"} subscription request was received:</p>
             
             <div class="content">
               <div class="field">
                 <span class="label">Status:</span> 
-                <span class="status ${isExisting ? 'existing' : 'new'}">${isExisting ? 'Existing Subscriber' : 'New Subscription'}</span>
+                <span class="status ${isExisting ? "existing" : "new"}">${isExisting ? "Existing Subscriber" : "New Subscription"}</span>
               </div>
               <div class="field">
                 <span class="label">Name:</span> 
@@ -270,9 +270,10 @@ async function sendSubscriptionNotification(
               </div>
             </div>
             
-            ${isExisting 
-              ? '<p><strong>Note:</strong> This email address has already subscribed and attempted to subscribe again.</p>'
-              : '<p><strong>Action Required:</strong> Please follow up with this new subscriber manually until the verification system is implemented.</p>'
+            ${
+              isExisting
+                ? "<p><strong>Note:</strong> This email address has already subscribed and attempted to subscribe again.</p>"
+                : "<p><strong>Action Required:</strong> Please follow up with this new subscriber manually until the verification system is implemented.</p>"
             }
             
             <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
@@ -291,8 +292,8 @@ async function sendSubscriptionNotification(
       name: emailError.name,
       statusCode: (emailError as { statusCode?: number }).statusCode,
       response: (emailError as { response?: unknown }).response,
-      resendApiKey: process.env["RESEND_API_KEY"]
-        ? "Set (length: " + process.env["RESEND_API_KEY"].length + ")"
+      resendApiKey: process.env.RESEND_API_KEY
+        ? `Set (length: ${process.env.RESEND_API_KEY.length})`
         : "Not set",
       toEmail: "bob@matsuoka.com",
       fromEmail: "AI Power Ranking <newsletter@aipowerranking.com>",

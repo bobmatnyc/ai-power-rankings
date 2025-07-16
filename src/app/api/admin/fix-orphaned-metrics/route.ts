@@ -16,13 +16,15 @@ export async function POST(_request: NextRequest) {
         details: [],
       },
     });
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorStack = error instanceof Error ? error.stack : undefined;
     console.error("Error fixing orphaned metrics:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
-        details: error.stack,
+        error: errorMessage,
+        details: errorStack,
       },
       { status: 500 }
     );

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { UnsubscribeContent } from "./unsubscribe-content";
-import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
+import { UnsubscribeContent } from "./unsubscribe-content";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;

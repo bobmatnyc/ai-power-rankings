@@ -1,23 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
-  TrendingUp,
-  TrendingDown,
-  Search,
-  Eye,
   AlertTriangle,
-  Clock,
-  BarChart3,
-  LogOut,
   ArrowLeft,
+  BarChart3,
+  Clock,
+  Eye,
+  LogOut,
+  Search,
+  TrendingDown,
+  TrendingUp,
   Upload,
 } from "lucide-react";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SEOMetrics {
   organicTraffic: number;
@@ -51,7 +51,7 @@ export function SEODashboard() {
     if (status === "authenticated") {
       fetchSEOMetrics();
     }
-  }, [status]);
+  }, [status, fetchSEOMetrics]);
 
   const fetchSEOMetrics = async () => {
     try {

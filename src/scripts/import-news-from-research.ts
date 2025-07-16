@@ -366,7 +366,7 @@ function createNewsArticles(): NewsArticle[] {
       slug: generateSlug(entry.title),
       title: entry.title,
       content: entry.content,
-      summary: entry.content.substring(0, 200) + "...",
+      summary: `${entry.content.substring(0, 200)}...`,
       published_date: new Date(entry.date).toISOString(),
       source: entry.source,
       source_url: undefined, // Could be enhanced with actual URLs

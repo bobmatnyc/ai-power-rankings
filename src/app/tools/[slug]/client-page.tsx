@@ -1,26 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { loggers } from "@/lib/logger";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Script from "next/script";
+import { useEffect, useState } from "react";
+import { NewsCard, type NewsItem } from "@/components/news/news-card";
+import { ComparisonTable, FAQSection, QuickAnswerBox } from "@/components/seo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ToolIcon } from "@/components/ui/tool-icon";
 import { StatusIndicator } from "@/components/ui/status-indicator";
-import { NewsCard, type NewsItem } from "@/components/news/news-card";
-import type { MetricHistory } from "@/types/database";
-import Script from "next/script";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ToolIcon } from "@/components/ui/tool-icon";
+import { codeAssistantFAQs, generalFAQs, toolComparisonData } from "@/data/seo-content";
+import { loggers } from "@/lib/logger";
 import {
-  generateToolSchema,
+  createJsonLdScript,
   generateBreadcrumbSchema,
   generateToolReviewSchema,
-  createJsonLdScript,
+  generateToolSchema,
 } from "@/lib/schema";
-import { QuickAnswerBox, FAQSection, ComparisonTable } from "@/components/seo";
-import { generalFAQs, codeAssistantFAQs, toolComparisonData } from "@/data/seo-content";
+import type { MetricHistory } from "@/types/database";
 
 interface ToolDetailClientPageProps {
   slug: string;
@@ -100,7 +100,7 @@ export default function ToolDetailClientPage({
     if (slug) {
       fetchToolDetail(slug);
     }
-  }, [slug]);
+  }, [slug, fetchToolDetail]);
 
   const fetchToolDetail = async (slug: string): Promise<void> => {
     try {
@@ -541,8 +541,8 @@ export default function ToolDetailClientPage({
                     source_url: history.source_url || undefined,
                     source_name: history.source_name || undefined,
                     metrics: {
-                      users: history.scoring_metrics?.["users"] as number | undefined,
-                      revenue: history.scoring_metrics?.["monthly_arr"] as number | undefined,
+                      users: history.scoring_metrics?.users as number | undefined,
+                      revenue: history.scoring_metrics?.monthly_arr as number | undefined,
                       // Add other metrics as needed
                     },
                   };

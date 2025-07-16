@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -11,17 +11,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ToolIcon } from "@/components/ui/tool-icon";
 import { StatusIndicator } from "@/components/ui/status-indicator";
+import { ToolIcon } from "@/components/ui/tool-icon";
+import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
 import { getCategoryColor } from "@/lib/category-colors";
 import { extractTextFromRichText } from "@/lib/richtext-utils";
-import type { Dictionary } from "@/i18n/get-dictionary";
-import type { Locale } from "@/i18n/config";
 
 interface RichTextElement {
   type: string;
-  children?: any[];
-  [key: string]: any;
+  children?: Array<{ text: string; type?: string; [key: string]: unknown }>;
+  [key: string]: unknown;
 }
 
 interface Tool {
@@ -153,18 +153,27 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
                   <StatusIndicator status={tool.status} showLabel />
                 </div>
                 <CardDescription>
-                  <div
-                    onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                  <button
+                    type="button"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.preventDefault();
                       window.location.href = `/${lang}/rankings?category=${tool.category}`;
                     }}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        window.location.href = `/${lang}/rankings?category=${tool.category}`;
+                      }
+                    }}
+                    className="bg-transparent border-none p-0 cursor-pointer"
+                    aria-label={`Filter by ${getCategoryName(tool.category)} category`}
                   >
                     <Badge
                       className={`${getCategoryColor(tool.category)} cursor-pointer hover:opacity-80`}
                     >
                       {getCategoryName(tool.category)}
                     </Badge>
-                  </div>
+                  </button>
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 space-y-3">

@@ -1,6 +1,6 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { NextResponse } from "next/server";
-import { readFileSync } from "fs";
-import path from "path";
 
 export async function GET() {
   try {

@@ -6,7 +6,7 @@ import { config } from "dotenv";
 // Load environment variables
 config({ path: ".env.local" });
 
-const VERCEL_TOKEN = process.env["VERCEL_TOKEN"];
+const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
 
 if (!VERCEL_TOKEN) {
   console.error("❌ VERCEL_TOKEN not found in environment variables");
@@ -114,7 +114,7 @@ async function verifyVercelEnvironment() {
     }
   }
 
-  console.log("\n📊 Total environment variables: " + envVars.length);
+  console.log(`\n📊 Total environment variables: ${envVars.length}`);
 }
 
 // Run the verification

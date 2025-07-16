@@ -1,12 +1,13 @@
 #!/usr/bin/env tsx
+
 /**
  * Generate Tools Data Report
  * Creates a comprehensive report of all tools and missing data
  */
 
-import { getToolsRepo, getCompaniesRepo } from "../lib/json-db";
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { getCompaniesRepo, getToolsRepo } from "../lib/json-db";
 
 interface ToolReport {
   id: string;
@@ -189,7 +190,7 @@ async function generateToolsReport() {
       if (!byCategory.has(category)) {
         byCategory.set(category, []);
       }
-      byCategory.get(category)!.push(r);
+      byCategory.get(category)?.push(r);
     });
 
     // Sort categories by name
@@ -246,7 +247,7 @@ async function generateToolsReport() {
     let reportContent = "";
     const originalLog = console.log;
     console.log = (msg: string) => {
-      reportContent += msg + "\n";
+      reportContent += `${msg}\n`;
     };
 
     // Re-run the report generation to capture output
@@ -385,7 +386,7 @@ async function generateReportContent() {
     if (!byCategory.has(category)) {
       byCategory.set(category, []);
     }
-    byCategory.get(category)!.push(r);
+    byCategory.get(category)?.push(r);
   });
 
   const sortedCategories = Array.from(byCategory.keys()).sort();

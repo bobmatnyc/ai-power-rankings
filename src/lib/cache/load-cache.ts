@@ -1,11 +1,10 @@
-import { CacheManager } from "./cache-manager";
-import type { CacheType } from "./cache-manager";
-import { loggers } from "@/lib/logger";
-
+import fallbackNewsData from "@/data/cache/news.json";
 // Import fallback data from filesystem
 import fallbackRankingsData from "@/data/cache/rankings.json";
 import fallbackToolsData from "@/data/cache/tools.json";
-import fallbackNewsData from "@/data/cache/news.json";
+import { loggers } from "@/lib/logger";
+import type { CacheType } from "./cache-manager";
+import { CacheManager } from "./cache-manager";
 
 const fallbackData: Record<CacheType, any> = {
   rankings: fallbackRankingsData,

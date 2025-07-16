@@ -1,6 +1,6 @@
+import type { NextAuthConfig } from "next-auth";
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import type { NextAuthConfig } from "next-auth";
 import { isAuthorizedEmail } from "@/lib/auth-config";
 
 export const config: NextAuthConfig = {
@@ -32,17 +32,17 @@ export const config: NextAuthConfig = {
         session.user.isAdmin = true;
       }
       // Pass the access token to the session
-      session.accessToken = token["accessToken"] as string;
+      session.accessToken = token.accessToken as string;
       return session;
     },
     async jwt({ token, user, account }) {
       if (isAuthorizedEmail(user?.email)) {
-        token["isAdmin"] = true;
+        token.isAdmin = true;
       }
       // Persist the OAuth access_token to the token right after signin
       if (account) {
-        token["accessToken"] = account.access_token;
-        token["refreshToken"] = account.refresh_token;
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
       }
       return token;
     },

@@ -1,7 +1,7 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
+import { signIn, useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 

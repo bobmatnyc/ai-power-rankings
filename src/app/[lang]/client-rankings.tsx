@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { HomeContent } from "./home-content";
 
 interface RankingData {
@@ -51,8 +51,12 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         console.log("Fetching rankings from static data");
 
         // Try multiple approaches to fetch the data
-        let response;
-        let data;
+        let response: Response | undefined;
+        let data: {
+          rankings: RankingData[];
+          stats?: { total_tools: number };
+          algorithm?: { date: string };
+        } | null = null;
 
         // First try the static file with timeout
         try {

@@ -3,8 +3,8 @@
  * Reduces bundle size by lazy loading and optimizing icon imports
  */
 
-import type { LucideProps } from 'lucide-react';
-import React, { type ComponentType, lazy, Suspense } from 'react';
+import type { LucideProps } from "lucide-react";
+import { type ComponentType, lazy, Suspense } from "react";
 
 // Type for dynamic icon loading
 type IconComponent = ComponentType<LucideProps>;
@@ -25,7 +25,7 @@ export function loadIcon(iconName: string): Promise<IconComponent> {
   }
 
   // Create lazy loading promise
-  const iconPromise = import('lucide-react')
+  const iconPromise = import("lucide-react")
     .then((module) => {
       const Icon = module[iconName as keyof typeof module] as IconComponent;
       if (!Icon) {
@@ -38,7 +38,7 @@ export function loadIcon(iconName: string): Promise<IconComponent> {
     .catch((error) => {
       console.error(`Failed to load icon "${iconName}":`, error);
       // Return a fallback icon
-      return import('lucide-react').then((m) => m.HelpCircle as IconComponent);
+      return import("lucide-react").then((m) => m.HelpCircle as IconComponent);
     });
 
   // Cache the promise
@@ -62,15 +62,15 @@ export function createLazyIcon(iconName: string): ComponentType<LucideProps> {
  */
 export function preloadCriticalIcons(): void {
   const criticalIcons = [
-    'ArrowRight',
-    'Star',
-    'ArrowUp',
-    'ArrowDown',
-    'ExternalLink',
-    'Menu',
-    'X',
-    'Search',
-    'Crown', // Our custom crown icon is critical
+    "ArrowRight",
+    "Star",
+    "ArrowUp",
+    "ArrowDown",
+    "ExternalLink",
+    "Menu",
+    "X",
+    "Search",
+    "Crown", // Our custom crown icon is critical
   ];
 
   // Preload these icons in the background
@@ -101,40 +101,40 @@ export function LazyIcon({ name, ...props }: LazyIconProps) {
  */
 export const STATIC_ICONS = {
   // Core navigation icons
-  ArrowRight: lazy(() => import('lucide-react').then((m) => ({ default: m.ArrowRight }))),
-  ArrowLeft: lazy(() => import('lucide-react').then((m) => ({ default: m.ArrowLeft }))),
-  ArrowUp: lazy(() => import('lucide-react').then((m) => ({ default: m.ArrowUp }))),
-  ArrowDown: lazy(() => import('lucide-react').then((m) => ({ default: m.ArrowDown }))),
+  ArrowRight: lazy(() => import("lucide-react").then((m) => ({ default: m.ArrowRight }))),
+  ArrowLeft: lazy(() => import("lucide-react").then((m) => ({ default: m.ArrowLeft }))),
+  ArrowUp: lazy(() => import("lucide-react").then((m) => ({ default: m.ArrowUp }))),
+  ArrowDown: lazy(() => import("lucide-react").then((m) => ({ default: m.ArrowDown }))),
 
   // UI icons
-  Star: lazy(() => import('lucide-react').then((m) => ({ default: m.Star }))),
-  Heart: lazy(() => import('lucide-react').then((m) => ({ default: m.Heart }))),
-  Eye: lazy(() => import('lucide-react').then((m) => ({ default: m.Eye }))),
+  Star: lazy(() => import("lucide-react").then((m) => ({ default: m.Star }))),
+  Heart: lazy(() => import("lucide-react").then((m) => ({ default: m.Heart }))),
+  Eye: lazy(() => import("lucide-react").then((m) => ({ default: m.Eye }))),
 
   // Menu icons
-  Menu: lazy(() => import('lucide-react').then((m) => ({ default: m.Menu }))),
-  X: lazy(() => import('lucide-react').then((m) => ({ default: m.X }))),
-  Search: lazy(() => import('lucide-react').then((m) => ({ default: m.Search }))),
+  Menu: lazy(() => import("lucide-react").then((m) => ({ default: m.Menu }))),
+  X: lazy(() => import("lucide-react").then((m) => ({ default: m.X }))),
+  Search: lazy(() => import("lucide-react").then((m) => ({ default: m.Search }))),
 
   // Status icons
-  CheckCircle: lazy(() => import('lucide-react').then((m) => ({ default: m.CheckCircle }))),
-  AlertCircle: lazy(() => import('lucide-react').then((m) => ({ default: m.AlertCircle }))),
-  Info: lazy(() => import('lucide-react').then((m) => ({ default: m.Info }))),
+  CheckCircle: lazy(() => import("lucide-react").then((m) => ({ default: m.CheckCircle }))),
+  AlertCircle: lazy(() => import("lucide-react").then((m) => ({ default: m.AlertCircle }))),
+  Info: lazy(() => import("lucide-react").then((m) => ({ default: m.Info }))),
 
   // External links
-  ExternalLink: lazy(() => import('lucide-react').then((m) => ({ default: m.ExternalLink }))),
-  Link: lazy(() => import('lucide-react').then((m) => ({ default: m.Link }))),
+  ExternalLink: lazy(() => import("lucide-react").then((m) => ({ default: m.ExternalLink }))),
+  Link: lazy(() => import("lucide-react").then((m) => ({ default: m.Link }))),
 
   // Media icons
-  Play: lazy(() => import('lucide-react').then((m) => ({ default: m.Play }))),
-  Pause: lazy(() => import('lucide-react').then((m) => ({ default: m.Pause }))),
+  Play: lazy(() => import("lucide-react").then((m) => ({ default: m.Play }))),
+  Pause: lazy(() => import("lucide-react").then((m) => ({ default: m.Pause }))),
 
   // Tool category icons
-  Code: lazy(() => import('lucide-react').then((m) => ({ default: m.Code }))),
-  Bot: lazy(() => import('lucide-react').then((m) => ({ default: m.Bot }))),
-  Cpu: lazy(() => import('lucide-react').then((m) => ({ default: m.Cpu }))),
-  Brain: lazy(() => import('lucide-react').then((m) => ({ default: m.Brain }))),
-  Zap: lazy(() => import('lucide-react').then((m) => ({ default: m.Zap }))),
+  Code: lazy(() => import("lucide-react").then((m) => ({ default: m.Code }))),
+  Bot: lazy(() => import("lucide-react").then((m) => ({ default: m.Bot }))),
+  Cpu: lazy(() => import("lucide-react").then((m) => ({ default: m.Cpu }))),
+  Brain: lazy(() => import("lucide-react").then((m) => ({ default: m.Brain }))),
+  Zap: lazy(() => import("lucide-react").then((m) => ({ default: m.Zap }))),
 } as const;
 
 /**

@@ -1,6 +1,6 @@
+import { Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Info } from "lucide-react";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
 interface TierLegendProps {

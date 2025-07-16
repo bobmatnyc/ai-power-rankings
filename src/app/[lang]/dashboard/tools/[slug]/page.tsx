@@ -1,6 +1,6 @@
-import { DashboardToolDetail } from "./dashboard-tool-detail";
-import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
+import { DashboardToolDetail } from "./dashboard-tool-detail";
 
 interface PageProps {
   params: Promise<{

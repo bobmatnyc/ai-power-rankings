@@ -31,7 +31,7 @@ export class GoogleSearchConsole {
       return;
     }
 
-    const projectId = process.env["GOOGLE_CLOUD_PROJECT_ID"] || "ai-power-ranking";
+    const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID || "ai-power-ranking";
     let auth;
     let authClient;
 
@@ -44,8 +44,8 @@ export class GoogleSearchConsole {
       authClient = oauth2Client;
     }
     // Option 2: Use service account JSON (if provided)
-    else if (process.env["GOOGLE_APPLICATION_CREDENTIALS_JSON"]) {
-      const serviceAccountJson = process.env["GOOGLE_APPLICATION_CREDENTIALS_JSON"];
+    else if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+      const serviceAccountJson = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
       try {
         const credentials = JSON.parse(serviceAccountJson);
         auth = new google.auth.GoogleAuth({
@@ -61,7 +61,7 @@ export class GoogleSearchConsole {
     }
     // Option 3: Use Application Default Credentials (for local development)
     else {
-      const serviceAccountEmail = process.env["GOOGLE_SERVICE_ACCOUNT_EMAIL"];
+      const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
 
       if (serviceAccountEmail) {
         // Use service account impersonation

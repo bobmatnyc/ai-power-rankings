@@ -1,11 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { format } from "date-fns";
+import {
+  ArrowLeft,
+  Download,
+  Mail,
+  RefreshCw,
+  Search,
+  UserCheck,
+  Users,
+  UserX,
+} from "lucide-react";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -14,18 +26,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Users,
-  UserCheck,
-  UserX,
-  Search,
-  Download,
-  RefreshCw,
-  ArrowLeft,
-  Mail,
-} from "lucide-react";
-import Link from "next/link";
-import { format } from "date-fns";
 
 interface Subscriber {
   id: string;
@@ -60,7 +60,7 @@ export function SubscribersPage() {
 
   useEffect(() => {
     fetchSubscribers();
-  }, []);
+  }, [fetchSubscribers]);
 
   const fetchSubscribers = async () => {
     try {
@@ -310,12 +310,14 @@ export function SubscribersPage() {
                     </TableCell>
                     <TableCell>{getStatusBadge(subscriber.status)}</TableCell>
                     <TableCell>
-                      {subscriber.created_at && !isNaN(new Date(subscriber.created_at).getTime())
+                      {subscriber.created_at &&
+                      !Number.isNaN(new Date(subscriber.created_at).getTime())
                         ? format(new Date(subscriber.created_at), "MMM d, yyyy")
                         : "-"}
                     </TableCell>
                     <TableCell>
-                      {subscriber.verified_at && !isNaN(new Date(subscriber.verified_at).getTime())
+                      {subscriber.verified_at &&
+                      !Number.isNaN(new Date(subscriber.verified_at).getTime())
                         ? format(new Date(subscriber.verified_at), "MMM d, yyyy")
                         : "-"}
                     </TableCell>

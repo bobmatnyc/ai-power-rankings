@@ -1,6 +1,6 @@
-import type { Dictionary } from "./get-dictionary";
-import { EXPECTED_DICTIONARY_STRUCTURE } from "./expected-structure";
 import { loggers } from "@/lib/logger";
+import { EXPECTED_DICTIONARY_STRUCTURE } from "./expected-structure";
+import type { Dictionary } from "./get-dictionary";
 
 // Global set to track missing translations (avoid duplicates)
 const missingTranslations = new Set<string>();

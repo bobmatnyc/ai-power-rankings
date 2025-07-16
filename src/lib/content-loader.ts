@@ -1,5 +1,5 @@
+import path from "node:path";
 import fs from "fs-extra";
-import path from "path";
 import matter from "gray-matter";
 import { remark } from "remark";
 import html from "remark-html";
@@ -55,8 +55,8 @@ export class ContentLoader {
       const htmlContent = processedContent.toString();
 
       const contentData: ContentData = {
-        title: frontmatter["title"] || slug,
-        subtitle: frontmatter["subtitle"],
+        title: frontmatter.title || slug,
+        subtitle: frontmatter.subtitle,
         content,
         htmlContent,
         metadata: frontmatter,

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { RSSGenerator } from "@/lib/rss-generator";
 import type { Locale } from "@/i18n/config";
+import { RSSGenerator } from "@/lib/rss-generator";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ lang: Locale }> }) {
   try {

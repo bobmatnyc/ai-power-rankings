@@ -5,7 +5,7 @@
 
 export function getUrl(): string {
   // Production URLs
-  if (process.env.NODE_ENV === "production") {
+  if (process.env["NODE_ENV"] === "production") {
     // Always prefer VERCEL_URL for preview deployments
     if (process.env["VERCEL_URL"]) {
       return `https://${process.env["VERCEL_URL"]}`;

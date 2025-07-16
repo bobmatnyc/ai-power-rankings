@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { CrownIcon } from "@/components/ui/optimized-image";
+import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/rankings", label: "Rankings" },

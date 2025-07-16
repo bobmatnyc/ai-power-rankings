@@ -128,7 +128,10 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/best-open-source-frameworks" className="hover:text-white transition-colors">
+                <Link
+                  href="/best-open-source-frameworks"
+                  className="hover:text-white transition-colors"
+                >
                   Open Source Frameworks
                 </Link>
               </li>

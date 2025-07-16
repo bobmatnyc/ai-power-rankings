@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { getSubscribersRepo } from "@/lib/json-db";
 import { sendTestEmail } from "@/lib/email/email-service";
+import { getSubscribersRepo } from "@/lib/json-db";
 
 export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {

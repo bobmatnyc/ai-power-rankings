@@ -3,8 +3,12 @@
 import { useEffect, useState } from "react";
 
 interface DebugApiResponse {
-  environment: any;
-  rankings: any;
+  environment: Record<string, unknown>;
+  rankings: {
+    rankings?: Array<Record<string, unknown>>;
+    message?: string;
+    [key: string]: unknown;
+  };
   rankingsStatus: number;
   timestamp: string;
 }

@@ -1,12 +1,12 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { NextRequest } from "next/server";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  getClientIP,
-  isAdminUser,
   checkContactFormRateLimit,
+  getClientIP,
   getRateLimitStatus,
-  resetRateLimit,
+  isAdminUser,
   RATE_LIMITS,
+  resetRateLimit,
 } from "@/lib/rate-limit";
 
 // Mock Vercel KV

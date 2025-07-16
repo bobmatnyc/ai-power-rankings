@@ -1,30 +1,30 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { loggers } from "@/lib/logger";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ToolIcon } from "@/components/ui/tool-icon";
-import Link from "next/link";
 import {
-  GitBranch,
-  Users,
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
   ArrowRight,
+  DollarSign,
   ExternalLink,
+  FileText,
+  GitBranch,
   Globe,
   Newspaper,
-  FileText,
   Rss,
+  TrendingDown,
+  TrendingUp,
+  Users,
 } from "lucide-react";
-import ScoringMetrics from "./scoring-metrics";
-import ArticleScoringImpact from "./article-scoring-impact";
-import type { Dictionary } from "@/i18n/get-dictionary";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { ToolIcon } from "@/components/ui/tool-icon";
 import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
+import { loggers } from "@/lib/logger";
+import ArticleScoringImpact from "./article-scoring-impact";
+import ScoringMetrics from "./scoring-metrics";
 
 interface MetricsHistory {
   id: string;
@@ -76,7 +76,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
   // Initial data fetch
   useEffect(() => {
     fetchNews(1, true);
-  }, []);
+  }, [fetchNews]);
 
   // Calculate totalPages early for use in effects
   const filteredItemsCount =
@@ -210,7 +210,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
     setNewsItems([]);
     setPage(1);
     fetchNews(1, true);
-  }, [filter]);
+  }, [fetchNews]);
 
   // Client-side filtering
   const filteredNews =

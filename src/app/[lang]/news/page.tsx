@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import NewsContent from "@/components/news/news-content";
-import { getDictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;

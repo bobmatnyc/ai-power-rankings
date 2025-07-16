@@ -1,8 +1,8 @@
-import fs from "fs/promises";
-import path from "path";
-import { CacheBlobStorage } from "./blob-storage";
-import type { CacheType } from "./blob-storage";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { loggers } from "@/lib/logger";
+import type { CacheType } from "./blob-storage";
+import { CacheBlobStorage } from "./blob-storage";
 
 // Re-export CacheType
 export type { CacheType } from "./blob-storage";

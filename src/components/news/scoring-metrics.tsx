@@ -1,24 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Bot,
-  Lightbulb,
-  Zap,
-  Users,
-  TrendingUp,
-  MessageCircle,
-  Rocket,
-  Shield,
   ChevronDown,
   ChevronUp,
   Info,
+  Lightbulb,
+  MessageCircle,
+  Rocket,
+  Shield,
+  TrendingUp,
+  Users,
+  Zap,
 } from "lucide-react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 interface MetricFactor {
   id: string;
   icon: React.ComponentType<{ className?: string }>;

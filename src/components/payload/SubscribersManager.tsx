@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface Subscriber {
   id: string;
@@ -34,7 +34,7 @@ export const SubscribersManager: React.FC = () => {
 
   useEffect(() => {
     fetchSubscribers();
-  }, []);
+  }, [fetchSubscribers]);
 
   const fetchSubscribers = async () => {
     try {

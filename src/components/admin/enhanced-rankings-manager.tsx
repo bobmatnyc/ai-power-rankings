@@ -1,12 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
-// import { useRankingChanges } from "@/contexts/ranking-changes-context";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { format, parseISO } from "date-fns";
+import {
+  AlertCircle,
+  ArrowUpDown,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Database,
+  Edit,
+  Eye,
+  Globe,
+  Loader2,
+  Minus,
+  RefreshCw,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+// import { useRankingChanges } from "@/contexts/ranking-changes-context";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -16,28 +34,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { Calendar } from "@/components/ui/calendar";
 // import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import {
-  AlertCircle,
-  CheckCircle2,
-  RefreshCw,
-  Eye,
-  Loader2,
-  Save,
-  Database,
-  Globe,
-  Minus,
-  ArrowUpDown,
-  ChevronUp,
-  ChevronDown,
-  Trash2,
-  Edit,
-  X,
-  Check,
-} from "lucide-react";
-import { format, parseISO } from "date-fns";
 
 interface RankingComparison {
   tool_id: string;
@@ -129,7 +129,7 @@ export function EnhancedRankingsManager() {
   // Load available ranking periods on mount
   useEffect(() => {
     loadAvailablePeriods();
-  }, []);
+  }, [loadAvailablePeriods]);
 
   const loadAvailablePeriods = async () => {
     setIsLoadingPeriods(true);
@@ -396,7 +396,7 @@ export function EnhancedRankingsManager() {
   const parsePeriodToDate = (period: string): Date => {
     // Handle YYYY-MM format
     if (/^\d{4}-\d{2}$/.test(period)) {
-      return new Date(period + "-01");
+      return new Date(`${period}-01`);
     }
 
     // Handle month-year format (e.g., "january-2024", "march-2025")
@@ -449,7 +449,7 @@ export function EnhancedRankingsManager() {
 
     // Fallback: try to parse as-is
     const date = new Date(period);
-    if (!isNaN(date.getTime())) {
+    if (!Number.isNaN(date.getTime())) {
       return date;
     }
 

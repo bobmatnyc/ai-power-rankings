@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { CacheManager } from "@/lib/cache/cache-manager";
+import { loadCacheWithFallback } from "@/lib/cache/load-cache";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
-import { loadCacheWithFallback } from "@/lib/cache/load-cache";
-import { CacheManager } from "@/lib/cache/cache-manager";
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,9 +13,7 @@ export async function GET(request: NextRequest) {
 
     // Check if we should use cache-first approach
     const useCacheFirst =
-      process.env["USE_CACHE_FALLBACK"] === "true" ||
-      process.env["VERCEL_ENV"] === "preview" ||
-      true; // Enable for all environments temporarily
+      process.env.USE_CACHE_FALLBACK === "true" || process.env.VERCEL_ENV === "preview" || true; // Enable for all environments temporarily
 
     // For all environments, return cached data immediately
     if (useCacheFirst) {
@@ -136,12 +134,12 @@ export async function GET(request: NextRequest) {
 
           if (validTools.length > 0) {
             const firstTool = validTools[0];
-            primaryToolId = firstTool!.id;
-            toolSlug = firstTool!.slug;
-            toolCategory = firstTool!.category || "ai-coding-tool";
-            toolWebsite = firstTool!.info?.website || "";
+            primaryToolId = firstTool?.id;
+            toolSlug = firstTool?.slug;
+            toolCategory = firstTool?.category || "ai-coding-tool";
+            toolWebsite = firstTool?.info?.website || "";
 
-            toolNames = validTools.map((tool) => tool!.name).join(", ");
+            toolNames = validTools.map((tool) => tool?.name).join(", ");
           } else {
             // Fallback to tool name mapping if tools not found
             const toolNameMap: Record<string, string> = {
@@ -184,7 +182,7 @@ export async function GET(request: NextRequest) {
           event_date: article.published_date,
           event_type: eventType,
           title: article.title,
-          description: article.summary || article.content.substring(0, 200) + "...",
+          description: article.summary || `${article.content.substring(0, 200)}...`,
           source_url: article.source_url,
           source_name: article.source || "AI News",
           metrics: {
@@ -216,7 +214,7 @@ export async function GET(request: NextRequest) {
     // Set cache headers for production
     apiResponse.headers.set(
       "Cache-Control",
-      process.env.NODE_ENV === "production"
+      process.env["NODE_ENV"] === "production"
         ? "public, s-maxage=1800, stale-while-revalidate=900"
         : "no-cache"
     );

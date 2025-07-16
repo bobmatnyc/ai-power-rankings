@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { generateToolMetadata } from "./metadata";
 import ToolDetailClientPage from "./client-page";
+import { generateToolMetadata } from "./metadata";
 
 interface ToolPageProps {
   params: Promise<{ slug: string }>;

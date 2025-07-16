@@ -1,12 +1,12 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
-import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
-import type { Dictionary } from "@/i18n/get-dictionary";
+import { useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
 
 interface VerifyContentProps {
   lang: Locale;

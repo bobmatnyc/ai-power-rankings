@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
-import { getToolsRepo, getCompaniesRepo } from "@/lib/json-db";
-import { loggers } from "@/lib/logger";
-import { loadCacheWithFallback } from "@/lib/cache/load-cache";
 import { CacheManager } from "@/lib/cache/cache-manager";
+import { loadCacheWithFallback } from "@/lib/cache/load-cache";
+import { getCompaniesRepo, getToolsRepo } from "@/lib/json-db";
+import { loggers } from "@/lib/logger";
 
 export async function GET(): Promise<NextResponse> {
   try {
     // Check if we should use cache-first approach
     const useCacheFirst =
-      process.env["USE_CACHE_FALLBACK"] === "true" ||
-      process.env["VERCEL_ENV"] === "preview" ||
-      true; // Enable for all environments temporarily
+      process.env.USE_CACHE_FALLBACK === "true" || process.env.VERCEL_ENV === "preview" || true; // Enable for all environments temporarily
 
     // For preview environments, return cached data immediately
     if (useCacheFirst) {
@@ -74,7 +72,7 @@ export async function GET(): Promise<NextResponse> {
     // Set cache headers for production
     apiResponse.headers.set(
       "Cache-Control",
-      process.env.NODE_ENV === "production"
+      process.env["NODE_ENV"] === "production"
         ? "public, s-maxage=3600, stale-while-revalidate=1800"
         : "no-cache"
     );

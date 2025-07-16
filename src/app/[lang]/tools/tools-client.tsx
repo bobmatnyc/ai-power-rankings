@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ToolsContent } from "./tools-content";
-import { loggers } from "@/lib/logger";
-import type { Dictionary } from "@/i18n/get-dictionary";
+import { useEffect, useState } from "react";
 import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
+import { loggers } from "@/lib/logger";
+import { ToolsContent } from "./tools-content";
 
 interface Tool {
   id: string;
   name: string;
   category: string;
   status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";
-  description?: string | any[];
+  description?: string | Array<{ type: string; children?: Array<{ text: string }> }>;
   website?: string;
   website_url?: string;
   github_url?: string;

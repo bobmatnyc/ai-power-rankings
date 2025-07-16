@@ -1,29 +1,29 @@
 "use client";
 
+import {
+  ArrowLeft,
+  Award,
+  Calendar,
+  DollarSign,
+  ExternalLink,
+  FileText,
+  GitBranch,
+  Globe,
+  Newspaper,
+  Sparkles,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
-import Link from "next/link";
-import {
-  ArrowLeft,
-  Calendar,
-  ExternalLink,
-  Award,
-  Sparkles,
-  GitBranch,
-  TrendingUp,
-  DollarSign,
-  Users,
-  Globe,
-  Newspaper,
-  FileText,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import ArticleScoringImpact from "./article-scoring-impact";
-import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
+import ArticleScoringImpact from "./article-scoring-impact";
 
 interface NewsArticle {
   id: string;
@@ -252,7 +252,7 @@ export default function NewsDetailContent({
         if (tokens && parseInt(tokens.replace(/[,KM]/g, "")) > 1000) {
           metrics.push({
             type: "technical",
-            value: tokens + " tokens",
+            value: `${tokens} tokens`,
             label: "Context Window",
             icon: "code",
             color: "text-indigo-600",

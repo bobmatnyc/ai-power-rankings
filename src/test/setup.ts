@@ -6,8 +6,8 @@ import { vi } from "vitest";
 process.env["NODE_ENV"] = "test";
 process.env["NEXT_PUBLIC_SUPABASE_URL"] = "http://localhost:54321";
 process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"] = "test-anon-key";
-process.env["SUPABASE_SERVICE_ROLE_KEY"] = "test-service-key";
-process.env["LOG_LEVEL"] = "silent";
+process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-key";
+process.env.LOG_LEVEL = "silent";
 
 // Mock Next.js router
 vi.mock("next/navigation", () => ({
@@ -46,7 +46,7 @@ vi.mock("@supabase/supabase-js", () => ({
 
 // Suppress console logs during tests unless LOG_LEVEL is set
 const originalConsole = { ...console };
-if (process.env["LOG_LEVEL"] === "silent") {
+if (process.env.LOG_LEVEL === "silent") {
   global.console = {
     ...console,
     log: vi.fn(),
@@ -59,7 +59,7 @@ if (process.env["LOG_LEVEL"] === "silent") {
 
 // Restore console after tests if needed
 afterAll(() => {
-  if (process.env["LOG_LEVEL"] === "silent") {
+  if (process.env.LOG_LEVEL === "silent") {
     global.console = originalConsole;
   }
 });

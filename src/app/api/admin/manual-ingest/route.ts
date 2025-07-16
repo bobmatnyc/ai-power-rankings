@@ -1,8 +1,8 @@
+import crypto from "node:crypto";
 import { type NextRequest, NextResponse } from "next/server";
 import { NewsRepositoryV2 } from "@/lib/json-db/news-repository-v2";
-import { ToolsRepository } from "@/lib/json-db/tools-repository";
 import type { NewsArticle } from "@/lib/json-db/schemas";
-import crypto from "crypto";
+import { ToolsRepository } from "@/lib/json-db/tools-repository";
 
 export async function POST(request: NextRequest) {
   try {

@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { cn } from "@/lib/utils";
 
 interface StatusIndicatorProps {
   status: "active" | "beta" | "deprecated" | "discontinued" | "acquired";

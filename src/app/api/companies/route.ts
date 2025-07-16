@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { cachedJsonResponse } from "@/lib/api-cache";
 import { getCompaniesRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
-import { cachedJsonResponse } from "@/lib/api-cache";
 
 export async function GET(request: NextRequest) {
   try {

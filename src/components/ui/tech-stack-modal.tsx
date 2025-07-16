@@ -1,5 +1,7 @@
 "use client";
 
+import { Code2, Database, Gauge, Globe, Shield, Zap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -7,9 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Code2, Database, Globe, Zap, Shield, Gauge } from "lucide-react";
 
 interface TechStackModalProps {
   children: React.ReactNode;

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 
 export const metadata: Metadata = generateSEOMetadata({
   title: "Admin Panel",

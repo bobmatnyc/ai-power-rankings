@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { NewsletterModal } from "@/components/ui/newsletter-modal";
 import type { Locale } from "@/i18n/config";
 import type { ContentData } from "@/lib/content-loader";
@@ -113,7 +113,7 @@ export function MarkdownAboutContent({
         button.removeEventListener("click", () => {});
       });
     };
-  }, [content.htmlContent]);
+  }, []);
 
   const processedContent = processMarkdownWithComponents(content.htmlContent, lang);
 
@@ -138,6 +138,7 @@ export function MarkdownAboutContent({
           prose-blockquote:border-l-primary prose-blockquote:bg-muted/50
           prose-table:w-full prose-th:text-left prose-th:font-semibold
           prose-td:p-2 prose-th:p-2 prose-tr:border-b prose-tr:border-muted"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe pre-processed markdown with component placeholders
         dangerouslySetInnerHTML={{ __html: processedContent }}
       />
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { markdownPages, type MarkdownPageConfig } from "@/config/markdown-pages";
-import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
+import { type MarkdownPageConfig, markdownPages } from "@/config/markdown-pages";
 import { loadMarkdownContent } from "@/lib/markdown-renderer";
+import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 
 export function getMarkdownPageConfig(slug: string): MarkdownPageConfig | null {
   return markdownPages[slug] || null;

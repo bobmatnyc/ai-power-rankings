@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { readFileSync, existsSync } from "fs";
-import { join } from "path";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
 const DICTIONARIES_PATH = join(__dirname, "../../../i18n/dictionaries");
 const LANGUAGES = ["de", "fr", "hr", "it", "ja", "ko", "uk", "zh"];

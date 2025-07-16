@@ -1,8 +1,8 @@
-import { BaseRepository } from "./base-repository";
-import type { Tool, ToolsData } from "./schemas";
-import path from "path";
+import path from "node:path";
 import Ajv from "ajv";
 import ajvFormats from "ajv-formats";
+import { BaseRepository } from "./base-repository";
+import type { Tool, ToolsData } from "./schemas";
 
 const ajv = new Ajv({ allErrors: true });
 ajvFormats(ajv);
@@ -220,7 +220,7 @@ export class ToolsRepository extends BaseRepository<ToolsData> {
         tool.name.toLowerCase().includes(searchTerm) ||
         tool.info.summary.toLowerCase().includes(searchTerm) ||
         tool.info.description.toLowerCase().includes(searchTerm) ||
-        (tool.tags && tool.tags.some((tag) => tag.toLowerCase().includes(searchTerm)))
+        tool.tags?.some((tag) => tag.toLowerCase().includes(searchTerm))
     );
   }
 

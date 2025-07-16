@@ -37,7 +37,7 @@ export function findToolByText(text: string): string | null {
       }
 
       // Check for possessive forms
-      if (textLower.includes(termLower + "'s") || textLower.includes(termLower + "'s")) {
+      if (textLower.includes(`${termLower}'s`) || textLower.includes(`${termLower}'s`)) {
         return mapping.tool_slug;
       }
     }

@@ -1,13 +1,14 @@
 #!/usr/bin/env tsx
+
 /**
  * Import News from CSV to JSON Database
  * Imports news articles from the exported CSV file into the JSON database
  */
 
-import { getNewsRepo } from "../lib/json-db";
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { parse } from "csv-parse/sync";
+import { getNewsRepo } from "../lib/json-db";
 
 interface CSVNewsRow {
   id: string;

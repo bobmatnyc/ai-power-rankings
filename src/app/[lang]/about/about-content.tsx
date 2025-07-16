@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Code2 } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NewsletterModal } from "@/components/ui/newsletter-modal";
 import { TechStackModal } from "@/components/ui/tech-stack-modal";
-import { Code2 } from "lucide-react";
-import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
 
 interface AboutContentProps {
   lang: Locale;
@@ -131,7 +131,7 @@ export function AboutContent({ lang, dict }: AboutContentProps): React.JSX.Eleme
                 return part;
               }
               return (
-                <span key={index}>
+                <span key={`bob-matsuoka-link-${part.slice(0, 10)}`}>
                   <a
                     href="https://matsuoka.com"
                     target="_blank"
@@ -151,7 +151,7 @@ export function AboutContent({ lang, dict }: AboutContentProps): React.JSX.Eleme
                 return part;
               }
               return (
-                <span key={index}>
+                <span key={`hyperdev-link-${part.slice(0, 10)}`}>
                   <a
                     href="https://hyperdev.matsuoka.com"
                     target="_blank"

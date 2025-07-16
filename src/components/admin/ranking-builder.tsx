@@ -1,11 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { format, parseISO } from "date-fns";
+import {
+  AlertCircle,
+  ArrowUpDown,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  Loader2,
+  Save,
+  TrendingUp,
+  Trophy,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -17,20 +31,6 @@ import {
 } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import {
-  AlertCircle,
-  Eye,
-  Loader2,
-  Save,
-  Calendar,
-  TrendingUp,
-  ArrowUpDown,
-  ChevronUp,
-  ChevronDown,
-  Trophy,
-  Zap,
-} from "lucide-react";
-import { format, parseISO } from "date-fns";
 
 interface RankingComparison {
   tool_id: string;
@@ -82,7 +82,7 @@ function formatPeriodDisplay(period: string): string {
     return format(parseISO(period), "MMM d, yyyy");
   } else if (period.length === 7) {
     // Monthly period - format as "January 2025"
-    return format(parseISO(period + "-01"), "MMMM yyyy");
+    return format(parseISO(`${period}-01`), "MMMM yyyy");
   }
   return period;
 }
@@ -99,16 +99,7 @@ export function RankingBuilder() {
   const [availablePeriods, setAvailablePeriods] = useState<string[]>([]);
   const [expandedPreview, setExpandedPreview] = useState(false);
 
-  useEffect(() => {
-    loadAvailablePeriods();
-
-    // Set default period to current date
-    const now = new Date();
-    const defaultPeriod = format(now, "yyyy-MM-dd");
-    setSelectedPeriod(defaultPeriod);
-  }, []);
-
-  const loadAvailablePeriods = async () => {
+  const loadAvailablePeriods = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/ranking-periods");
       if (response.ok) {
@@ -118,7 +109,16 @@ export function RankingBuilder() {
     } catch (err) {
       console.error("Failed to load periods:", err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadAvailablePeriods();
+
+    // Set default period to current date
+    const now = new Date();
+    const defaultPeriod = format(now, "yyyy-MM-dd");
+    setSelectedPeriod(defaultPeriod);
+  }, [loadAvailablePeriods]);
 
   const generatePreview = async () => {
     if (!selectedPeriod) {
@@ -221,7 +221,7 @@ export function RankingBuilder() {
 
       if (data.success) {
         // Navigate back to rankings management with success message
-        window.location.href = "/dashboard/rankings?saved=true&period=" + selectedPeriod;
+        window.location.href = `/dashboard/rankings?saved=true&period=${selectedPeriod}`;
       } else {
         throw new Error(data.error || "Failed to save rankings");
       }

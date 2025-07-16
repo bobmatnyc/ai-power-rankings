@@ -1,8 +1,8 @@
-import { BaseRepository } from "./base-repository";
-import type { Company, CompaniesData } from "./schemas";
-import path from "path";
+import path from "node:path";
 import Ajv from "ajv";
 import ajvFormats from "ajv-formats";
+import { BaseRepository } from "./base-repository";
+import type { CompaniesData, Company } from "./schemas";
 
 const ajv = new Ajv({ allErrors: true });
 ajvFormats(ajv);
@@ -126,7 +126,7 @@ export class CompaniesRepository extends BaseRepository<CompaniesData> {
       }
 
       // Check headquarters
-      if (company.headquarters && company.headquarters.toLowerCase().includes(searchTerm)) {
+      if (company.headquarters?.toLowerCase().includes(searchTerm)) {
         return true;
       }
 
@@ -243,7 +243,7 @@ export class CompaniesRepository extends BaseRepository<CompaniesData> {
       }
 
       const foundedYear = parseInt(company.founded);
-      if (isNaN(foundedYear)) {
+      if (Number.isNaN(foundedYear)) {
         return false;
       }
 

@@ -6,7 +6,7 @@ const buildTime = new Date().toISOString();
 export function getBuildInfo() {
   return {
     buildTime,
-    version: process.env["npm_package_version"] || "1.0.0",
+    version: process.env.npm_package_version || "1.0.0",
   };
 }
 

@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require("node:fs");
 
 // Get all available keys from English file
 const en = JSON.parse(fs.readFileSync("en.json", "utf8"));

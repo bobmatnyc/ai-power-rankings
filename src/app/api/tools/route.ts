@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { loggers } from "@/lib/logger";
-import { getToolsRepo, getCompaniesRepo } from "@/lib/json-db";
 import { cachedJsonResponse } from "@/lib/api-cache";
+import { getCompaniesRepo, getToolsRepo } from "@/lib/json-db";
+import { loggers } from "@/lib/logger";
 
 export async function GET(): Promise<NextResponse> {
   try {

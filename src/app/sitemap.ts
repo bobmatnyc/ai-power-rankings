@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
-import { getToolsRepo, getRankingsRepo } from "@/lib/json-db";
 import { i18n } from "@/i18n/config";
+import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600; // Revalidate every hour
@@ -186,7 +186,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const toolPages: MetadataRoute.Sitemap = tools.flatMap((tool) => {
     // Ensure we have a valid date
     const toolDate =
-      tool.updated_at && !isNaN(Date.parse(tool.updated_at))
+      tool.updated_at && !Number.isNaN(Date.parse(tool.updated_at))
         ? new Date(tool.updated_at).toISOString()
         : currentDate;
 

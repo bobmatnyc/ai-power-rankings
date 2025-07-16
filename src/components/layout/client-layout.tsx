@@ -1,19 +1,19 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { Bell } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { BuildTimeBadge } from "@/components/layout/build-time-badge";
-import { Button } from "@/components/ui/button";
-import { Bell } from "lucide-react";
-import { I18nProvider, useI18n } from "@/i18n/client";
-import { LanguageSelector } from "@/components/layout/language-selector";
 import { Footer } from "@/components/layout/footer";
-import { RankingChangesProvider } from "@/contexts/ranking-changes-context";
+import { LanguageSelector } from "@/components/layout/language-selector";
+import { Button } from "@/components/ui/button";
 import { CrownIcon } from "@/components/ui/optimized-image";
-import type { Dictionary } from "@/i18n/get-dictionary";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { RankingChangesProvider } from "@/contexts/ranking-changes-context";
+import { I18nProvider, useI18n } from "@/i18n/client";
 import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
 
 function ClientLayoutContent({ children }: { children: React.ReactNode }): React.JSX.Element {
   const router = useRouter();

@@ -1,5 +1,5 @@
-import { create } from "zustand";
 import type { Session } from "next-auth";
+import { create } from "zustand";
 
 interface AuthState {
   session: Session | null;

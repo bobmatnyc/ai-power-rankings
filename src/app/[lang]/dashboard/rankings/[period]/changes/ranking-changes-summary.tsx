@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, ArrowLeft, Copy, TrendingUp, TrendingDown, Zap, AlertCircle } from "lucide-react";
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { format, parseISO } from "date-fns";
+import { AlertCircle, ArrowLeft, Copy, Loader2, TrendingDown, TrendingUp, Zap } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { RankingPeriod } from "@/lib/json-db/schemas";
 
@@ -34,7 +34,7 @@ function formatPeriodDisplay(period: string): string {
   if (period.length === 10) {
     return format(parseISO(period), "MMMM d, yyyy");
   } else if (period.length === 7) {
-    return format(parseISO(period + "-01"), "MMMM yyyy");
+    return format(parseISO(`${period}-01`), "MMMM yyyy");
   }
   return period;
 }

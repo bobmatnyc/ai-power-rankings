@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { loggers } from "@/lib/logger";
-import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import { cachedJsonResponse } from "@/lib/api-cache";
+import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import type { RankingEntry } from "@/lib/json-db/schemas";
+import { loggers } from "@/lib/logger";
 
 export async function GET(): Promise<NextResponse> {
   try {

@@ -6,7 +6,7 @@
 // Get the current URL dynamically
 function getCurrentUrl(): string {
   // In production, use the configured URLs
-  if (process.env.NODE_ENV === "production") {
+  if (process.env["NODE_ENV"] === "production") {
     if (process.env["NEXTAUTH_URL"]) {
       return process.env["NEXTAUTH_URL"];
     }
@@ -47,9 +47,9 @@ export const env = {
   PAYLOAD_SECRET: process.env["PAYLOAD_SECRET"]!,
 
   // Feature flags
-  NODE_ENV: process.env.NODE_ENV || "development",
-  isDevelopment: process.env.NODE_ENV === "development",
-  isProduction: process.env.NODE_ENV === "production",
+  NODE_ENV: process.env["NODE_ENV"] || "development",
+  isDevelopment: process.env["NODE_ENV"] === "development",
+  isProduction: process.env["NODE_ENV"] === "production",
 };
 
 // Helper to get the base URL for API calls

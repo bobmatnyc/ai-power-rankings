@@ -63,8 +63,8 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
         </h1>
 
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-          Discover the top AI-powered testing tools that automate test generation,
-          enhance quality assurance, and provide intelligent testing insights for better software quality.
+          Discover the top AI-powered testing tools that automate test generation, enhance quality
+          assurance, and provide intelligent testing insights for better software quality.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
@@ -97,9 +97,7 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
 
       {/* What Makes a Great Testing Tool */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8">
-          What Makes a Testing Tool the Best?
-        </h2>
+        <h2 className="text-3xl font-bold text-center mb-8">What Makes a Testing Tool the Best?</h2>
 
         <div className="grid md:grid-cols-3 gap-8">
           <Card className="text-center p-6">
@@ -107,8 +105,8 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
               <Target className="h-12 w-12 mx-auto mb-4 text-primary" />
               <h3 className="text-xl font-semibold mb-3">Intelligent Test Generation</h3>
               <p className="text-muted-foreground">
-                AI-powered automatic test case generation that understands application behavior
-                and creates comprehensive test coverage.
+                AI-powered automatic test case generation that understands application behavior and
+                creates comprehensive test coverage.
               </p>
             </CardContent>
           </Card>
@@ -118,8 +116,8 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
               <Bug className="h-12 w-12 mx-auto mb-4 text-secondary" />
               <h3 className="text-xl font-semibold mb-3">Smart Bug Detection</h3>
               <p className="text-muted-foreground">
-                Advanced defect detection that identifies edge cases, performance issues,
-                and potential failures before they reach production.
+                Advanced defect detection that identifies edge cases, performance issues, and
+                potential failures before they reach production.
               </p>
             </CardContent>
           </Card>
@@ -129,8 +127,8 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
               <Play className="h-12 w-12 mx-auto mb-4 text-accent" />
               <h3 className="text-xl font-semibold mb-3">Automated Execution</h3>
               <p className="text-muted-foreground">
-                Seamless integration with CI/CD pipelines for continuous testing with
-                intelligent test selection and parallel execution.
+                Seamless integration with CI/CD pipelines for continuous testing with intelligent
+                test selection and parallel execution.
               </p>
             </CardContent>
           </Card>
@@ -233,8 +231,8 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                AI-driven test automation platform with self-healing tests, smart locators,
-                and intelligent test creation and maintenance.
+                AI-driven test automation platform with self-healing tests, smart locators, and
+                intelligent test creation and maintenance.
               </p>
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -271,8 +269,8 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                AI-powered visual testing platform that validates UI appearance and user
-                experience across all devices and browsers automatically.
+                AI-powered visual testing platform that validates UI appearance and user experience
+                across all devices and browsers automatically.
               </p>
               <div className="flex items-center gap-2 text-sm">
                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
@@ -287,8 +285,8 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
       <section className="text-center bg-muted/30 rounded-lg p-12">
         <h2 className="text-3xl font-bold mb-4">Ready to Automate Your Testing?</h2>
         <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Explore our comprehensive rankings to find the perfect AI testing tool that will
-          enhance your quality assurance, reduce testing time, and improve software reliability.
+          Explore our comprehensive rankings to find the perfect AI testing tool that will enhance
+          your quality assurance, reduce testing time, and improve software reliability.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

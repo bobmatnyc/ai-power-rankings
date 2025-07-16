@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { ToolDetailTabs } from "@/components/tools/tool-detail-tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ToolIcon } from "@/components/ui/tool-icon";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusIndicator } from "@/components/ui/status-indicator";
-import { ToolDetailTabs } from "@/components/tools/tool-detail-tabs";
+import { ToolIcon } from "@/components/ui/tool-icon";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
 interface ToolInfo {
@@ -20,9 +20,9 @@ interface ToolInfo {
     tagline?: string;
   };
   business?: {
-    pricing_details?: Record<string, any>;
+    pricing_details?: Record<string, unknown>;
   };
-  metrics?: any;
+  metrics?: Record<string, number | string>;
   company?: {
     name?: string;
   };
@@ -31,11 +31,16 @@ interface ToolInfo {
 
 interface ToolDetailData {
   tool: Tool;
-  ranking?: any;
-  metrics?: any;
-  metricHistory?: any;
-  rankingsHistory?: any;
-  newsItems?: any;
+  ranking?: {
+    rank: number;
+    previousRank?: number;
+    rankChange?: number;
+    scores: Record<string, number>;
+  };
+  metrics?: Record<string, number | string>;
+  metricHistory?: Array<Record<string, unknown>>;
+  rankingsHistory?: Array<Record<string, unknown>>;
+  newsItems?: Array<Record<string, unknown>>;
 }
 
 interface Tool {
@@ -128,12 +133,11 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
         // Extract price from the details string (basic parsing)
         const detailsStr = details ? String(details) : "";
         const priceMatch = detailsStr.match(/\$(\d+)\/month/);
-        const price =
-          priceMatch && priceMatch[1]
-            ? parseInt(priceMatch[1], 10)
-            : planName.toLowerCase().includes("free")
-              ? 0
-              : undefined;
+        const price = priceMatch?.[1]
+          ? parseInt(priceMatch[1], 10)
+          : planName.toLowerCase().includes("free")
+            ? 0
+            : undefined;
 
         return {
           id: `${tool.id}-${index}`,

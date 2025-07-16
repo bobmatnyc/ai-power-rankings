@@ -1,4 +1,4 @@
-import { getRankingsRepo, getNewsRepo, getToolsRepo } from "@/lib/json-db";
+import { getNewsRepo, getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import type { NewsArticle, RankingPeriod, Tool } from "@/lib/json-db/schemas";
 
 export interface UpdatesData {
