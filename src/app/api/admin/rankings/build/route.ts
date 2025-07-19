@@ -113,32 +113,32 @@ function getCategoryBasedAgenticScore(category: string, toolName: string): numbe
  */
 function transformToToolMetrics(tool: Tool, innovationScore?: number): ToolMetricsV6 {
   // Extract metrics from tool.info structure (JSON format)
-  const info = tool.info;
+  const info = tool["info"];
   const technical = info?.technical || {};
   const businessMetrics = info?.metrics || {};
   const business = info?.business || {};
 
   // Determine tool characteristics for better defaults
-  const isAutonomous = tool.category === "autonomous-agent";
-  const isOpenSource = tool.category === "open-source-framework";
-  const isEnterprise = business.pricing_model === "enterprise";
-  const isPremium = ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name);
+  const isAutonomous = tool["category"] === "autonomous-agent";
+  const isOpenSource = tool["category"] === "open-source-framework";
+  const isEnterprise = business["pricing_model"] === "enterprise";
+  const isPremium = ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool["name"]);
 
   return {
-    tool_id: tool.id,
-    status: tool.status,
+    tool_id: tool["id"],
+    status: tool["status"],
 
     // Agentic capabilities - using category and name-based defaults
-    agentic_capability: getCategoryBasedAgenticScore(tool.category, tool.name),
-    swe_bench_score: businessMetrics.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
-    multi_file_capability: isAutonomous ? 9 : technical.multi_file_support ? 7 : 4,
+    agentic_capability: getCategoryBasedAgenticScore(tool["category"], tool["name"]),
+    swe_bench_score: businessMetrics["swe_bench_score"] || (isPremium ? 45 : isAutonomous ? 35 : 20),
+    multi_file_capability: isAutonomous ? 9 : technical["multi_file_support"] ? 7 : 4,
     planning_depth: isAutonomous ? 8.5 : 6,
     context_utilization: isPremium ? 8 : 6.5,
 
     // Technical metrics
-    context_window: technical.context_window || (isPremium ? 200000 : 100000),
-    language_support: technical.languages?.length || (isEnterprise ? 20 : 15),
-    github_stars: businessMetrics.github_stars || (isOpenSource ? 25000 : 5000),
+    context_window: technical["context_window"] || (isPremium ? 200000 : 100000),
+    language_support: technical["languages"]?.length || (isEnterprise ? 20 : 15),
+    github_stars: businessMetrics["github_stars"] || (isOpenSource ? 25000 : 5000),
 
     // Innovation metrics
     innovation_score: innovationScore || (isPremium ? 8.5 : 6.5),
@@ -146,12 +146,12 @@ function transformToToolMetrics(tool: Tool, innovationScore?: number): ToolMetri
 
     // Market metrics - with better defaults based on tool type
     estimated_users:
-      businessMetrics.estimated_users || (isPremium ? 500000 : isOpenSource ? 100000 : 50000),
+      businessMetrics["estimated_users"] || (isPremium ? 500000 : isOpenSource ? 100000 : 50000),
     monthly_arr:
-      businessMetrics.monthly_arr || (isEnterprise ? 10000000 : isPremium ? 5000000 : 1000000),
-    valuation: businessMetrics.valuation || (isPremium ? 1000000000 : 100000000),
-    funding: businessMetrics.funding_total || (isPremium ? 100000000 : 10000000),
-    business_model: business.business_model || "saas",
+      businessMetrics["monthly_arr"] || (isEnterprise ? 10000000 : isPremium ? 5000000 : 1000000),
+    valuation: businessMetrics["valuation"] || (isPremium ? 1000000000 : 100000000),
+    funding: businessMetrics["funding_total"] || (isPremium ? 100000000 : 10000000),
+    business_model: business["business_model"] || "saas",
 
     // Risk and sentiment (default values)
     business_sentiment: isPremium ? 0.8 : 0.7,
@@ -159,12 +159,12 @@ function transformToToolMetrics(tool: Tool, innovationScore?: number): ToolMetri
 
     // Development metrics
     release_frequency: isOpenSource ? 7 : 14,
-    github_contributors: businessMetrics.github_contributors || (isOpenSource ? 200 : 50),
+    github_contributors: businessMetrics["github_contributors"] || (isOpenSource ? 200 : 50),
 
     // Platform metrics
     llm_provider_count: isPremium ? 5 : 3,
     multi_model_support: isPremium || isOpenSource,
-    community_size: businessMetrics.estimated_users || (isOpenSource ? 50000 : 10000),
+    community_size: businessMetrics["estimated_users"] || (isOpenSource ? 50000 : 10000),
   };
 }
 
@@ -287,7 +287,7 @@ export async function POST(request: NextRequest) {
 
     // Get all active tools
     const allTools = await toolsRepo.getAll();
-    let activeTools = allTools.filter((tool) => tool.status === "active");
+    let activeTools = allTools.filter((tool) => tool["status"] === "active");
 
     // If preview_date is provided, filter tools that didn't exist yet
     if (preview_date) {
@@ -295,7 +295,7 @@ export async function POST(request: NextRequest) {
       const beforeFilter = activeTools.length;
       activeTools = activeTools.filter((tool) => {
         // Use launch_date if available, otherwise fall back to created_at
-        const toolDate = tool.launch_date ? new Date(tool.launch_date) : new Date(tool.created_at);
+        const toolDate = tool["launch_date"] ? new Date(tool["launch_date"]) : new Date(tool["created_at"]);
         return toolDate <= cutoffDate;
       });
       const afterFilter = activeTools.length;
@@ -333,14 +333,14 @@ export async function POST(request: NextRequest) {
     for (const tool of activeTools) {
       try {
         // Get innovation score for this tool
-        const innovationData = innovationMap.get(tool.id);
-        const innovationScore = innovationData?.score || 0;
+        const innovationData = innovationMap.get(tool["id"]);
+        const innovationScore = innovationData?.["score"] || 0;
 
         // Extract enhanced metrics from news (quantitative + qualitative with AI)
-        const enableAI = process.env.ENABLE_AI_NEWS_ANALYSIS !== "false"; // Default to true
+        const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"; // Default to true
         const enhancedMetrics = await extractEnhancedNewsMetrics(
-          tool.id,
-          tool.name,
+          tool["id"],
+          tool["name"],
           newsArticles,
           preview_date,
           enableAI
@@ -348,22 +348,22 @@ export async function POST(request: NextRequest) {
 
         // Log extracted metrics for premium tools
         if (
-          ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name) &&
-          (Object.keys(enhancedMetrics).length > 0 || enhancedMetrics.articlesProcessed > 0)
+          ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool["name"]) &&
+          (Object.keys(enhancedMetrics).length > 0 || enhancedMetrics["articlesProcessed"] > 0)
         ) {
-          loggers.api.info(`Enhanced metrics for ${tool.name}:`, {
+          loggers.api.info(`Enhanced metrics for ${tool["name"]}:`, {
             quantitative: {
-              swe_bench: enhancedMetrics.swe_bench_score,
-              funding: enhancedMetrics.funding,
-              users: enhancedMetrics.estimated_users,
+              swe_bench: enhancedMetrics["swe_bench_score"],
+              funding: enhancedMetrics["funding"],
+              users: enhancedMetrics["estimated_users"],
             },
             qualitative: {
-              innovation_boost: enhancedMetrics.innovationBoost,
-              sentiment_adjust: enhancedMetrics.businessSentimentAdjust,
-              velocity_boost: enhancedMetrics.developmentVelocityBoost,
+              innovation_boost: enhancedMetrics["innovationBoost"],
+              sentiment_adjust: enhancedMetrics["businessSentimentAdjust"],
+              velocity_boost: enhancedMetrics["developmentVelocityBoost"],
             },
-            articles_processed: enhancedMetrics.articlesProcessed,
-            significant_events: enhancedMetrics.significantEvents,
+            articles_processed: enhancedMetrics["articlesProcessed"],
+            significant_events: enhancedMetrics["significantEvents"],
           });
         }
 
@@ -380,30 +380,30 @@ export async function POST(request: NextRequest) {
         );
 
         // Apply additional news impact to factor scores
-        const adjustedFactorScores = applyNewsImpactToScores(score.factorScores, enhancedMetrics);
+        const adjustedFactorScores = applyNewsImpactToScores(score["factorScores"], enhancedMetrics);
 
         // Update the score's factor scores with the adjustments
-        score.factorScores = {
-          ...score.factorScores,
+        score["factorScores"] = {
+          ...score["factorScores"],
           technicalPerformance:
-            adjustedFactorScores.technicalPerformance || score.factorScores.technicalPerformance,
-          marketTraction: adjustedFactorScores.marketTraction || score.factorScores.marketTraction,
+            adjustedFactorScores["technicalPerformance"] || score["factorScores"]["technicalPerformance"],
+          marketTraction: adjustedFactorScores["marketTraction"] || score["factorScores"]["marketTraction"],
         };
 
         // Recalculate overall score after news adjustments
         const weights = RankingEngineV6.getAlgorithmInfo().weights;
-        score.overallScore = Object.entries(weights).reduce((total, [factor, weight]) => {
-          const factorScore = score.factorScores[factor as keyof typeof score.factorScores] || 0;
+        score["overallScore"] = Object.entries(weights).reduce((total, [factor, weight]) => {
+          const factorScore = score["factorScores"][factor as keyof typeof score["factorScores"]] || 0;
           return total + factorScore * weight;
         }, 0);
-        score.overallScore = Math.max(
+        score["overallScore"] = Math.max(
           0,
-          Math.min(10, Math.round(score.overallScore * 1000) / 1000)
+          Math.min(10, Math.round(score["overallScore"] * 1000) / 1000)
         );
 
         toolScores.push(score);
       } catch (error) {
-        loggers.api.error(`Error calculating score for tool ${tool.name}:`, error);
+        loggers.api.error(`Error calculating score for tool ${tool["name"]}:`, error);
       }
     }
 
@@ -443,9 +443,9 @@ export async function POST(request: NextRequest) {
       }
 
       const position = i + 1;
-      const previousPosition = previousRankingsMap.get(tool.id);
+      const previousPosition = previousRankingsMap.get(tool["id"]);
       const previousRanking = previousPosition
-        ? previousPeriod?.rankings.find((r: RankingEntry) => r.tool_id === tool.id)
+        ? previousPeriod?.rankings.find((r: RankingEntry) => r.tool_id === tool["id"])
         : null;
 
       let movement;
@@ -466,8 +466,8 @@ export async function POST(request: NextRequest) {
       // Generate change analysis
       const changeAnalysis = changeAnalyzer.analyzeRankingChange(
         {
-          tool_id: tool.id,
-          tool_name: tool.name,
+          tool_id: tool["id"],
+          tool_name: tool["name"],
           position,
           score: toolScore.overallScore,
           new_position: position,
@@ -475,8 +475,8 @@ export async function POST(request: NextRequest) {
         },
         previousRanking
           ? {
-              tool_id: tool.id,
-              tool_name: tool.name,
+              tool_id: tool["id"],
+              tool_name: tool["name"],
               position: previousPosition!,
               score: previousRanking.score,
               current_position: previousPosition!,
@@ -486,14 +486,14 @@ export async function POST(request: NextRequest) {
         toolScore.factorScores,
         previousRanking?.factor_scores
           ? {
-              agenticCapability: previousRanking.factor_scores.agentic_capability || 0,
-              innovation: previousRanking.factor_scores.innovation || 0,
-              technicalPerformance: previousRanking.factor_scores.technical_performance || 0,
-              developerAdoption: previousRanking.factor_scores.developer_adoption || 0,
-              marketTraction: previousRanking.factor_scores.market_traction || 0,
-              businessSentiment: previousRanking.factor_scores.business_sentiment || 0,
-              developmentVelocity: previousRanking.factor_scores.development_velocity || 0,
-              platformResilience: previousRanking.factor_scores.platform_resilience || 0,
+              agenticCapability: previousRanking.factor_scores["agentic_capability"] || 0,
+              innovation: previousRanking.factor_scores["innovation"] || 0,
+              technicalPerformance: previousRanking.factor_scores["technical_performance"] || 0,
+              developerAdoption: previousRanking.factor_scores["developer_adoption"] || 0,
+              marketTraction: previousRanking.factor_scores["market_traction"] || 0,
+              businessSentiment: previousRanking.factor_scores["business_sentiment"] || 0,
+              developmentVelocity: previousRanking.factor_scores["development_velocity"] || 0,
+              platformResilience: previousRanking.factor_scores["platform_resilience"] || 0,
             }
           : undefined
       );
@@ -501,28 +501,28 @@ export async function POST(request: NextRequest) {
       changeAnalyses.push(changeAnalysis);
 
       rankings.push({
-        tool_id: tool.id,
-        tool_name: tool.name,
+        tool_id: tool["id"],
+        tool_name: tool["name"],
         position,
         score: toolScore.overallScore * 10, // Convert from 0-10 to 0-100 scale
         tier: calculateTier(position),
         factor_scores: {
-          agentic_capability: toolScore.factorScores.agenticCapability || 0,
-          innovation: toolScore.factorScores.innovation || 0,
-          technical_performance: toolScore.factorScores.technicalPerformance || 0,
-          developer_adoption: toolScore.factorScores.developerAdoption || 0,
-          market_traction: toolScore.factorScores.marketTraction || 0,
-          business_sentiment: toolScore.factorScores.businessSentiment || 0,
-          development_velocity: toolScore.factorScores.developmentVelocity || 0,
-          platform_resilience: toolScore.factorScores.platformResilience || 0,
+          agentic_capability: toolScore["factorScores"]["agenticCapability"] || 0,
+          innovation: toolScore["factorScores"]["innovation"] || 0,
+          technical_performance: toolScore["factorScores"]["technicalPerformance"] || 0,
+          developer_adoption: toolScore["factorScores"]["developerAdoption"] || 0,
+          market_traction: toolScore["factorScores"]["marketTraction"] || 0,
+          business_sentiment: toolScore["factorScores"]["businessSentiment"] || 0,
+          development_velocity: toolScore["factorScores"]["developmentVelocity"] || 0,
+          platform_resilience: toolScore["factorScores"]["platformResilience"] || 0,
         },
         movement,
         change_analysis:
-          (changeAnalysis.rankChange && Math.abs(changeAnalysis.rankChange) >= 3) ||
-          (changeAnalysis.primaryReason && changeAnalysis.primaryReason !== "No significant change")
+          (changeAnalysis["rankChange"] && Math.abs(changeAnalysis["rankChange"]) >= 3) ||
+          (changeAnalysis["primaryReason"] && changeAnalysis["primaryReason"] !== "No significant change")
             ? {
-                primary_reason: changeAnalysis.primaryReason,
-                narrative_explanation: changeAnalysis.narrativeExplanation,
+                primary_reason: changeAnalysis["primaryReason"],
+                narrative_explanation: changeAnalysis["narrativeExplanation"],
               }
             : undefined,
       });

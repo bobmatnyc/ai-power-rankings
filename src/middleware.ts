@@ -76,6 +76,22 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
+  // Skip authentication in development mode
+  if (process.env["NODE_ENV"] === "development") {
+    // Only handle locale redirection in development
+    const pathnameHasLocale = locales.some(
+      (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    );
+
+    if (!pathnameHasLocale) {
+      const locale = getLocale(req);
+      req.nextUrl.pathname = `/${locale}${pathname}`;
+      return NextResponse.redirect(req.nextUrl);
+    }
+
+    return NextResponse.next();
+  }
+
   // Handle OAuth routes with CORS
   if (pathname === "/.well-known/oauth-authorization-server" || pathname === "/register") {
     const response = NextResponse.next();

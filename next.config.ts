@@ -44,10 +44,10 @@ const nextConfig: NextConfig = {
   },
   // Enhanced compiler optimizations
   compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
+    removeConsole: process.env["NODE_ENV"] === "production",
     // Remove React dev warnings in production
     reactRemoveProperties:
-      process.env.NODE_ENV === "production"
+      process.env["NODE_ENV"] === "production"
         ? {
             properties: ["^data-testid$"],
           }

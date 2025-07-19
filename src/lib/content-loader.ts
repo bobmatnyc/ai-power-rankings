@@ -55,8 +55,8 @@ export class ContentLoader {
       const htmlContent = processedContent.toString();
 
       const contentData: ContentData = {
-        title: frontmatter.title || slug,
-        subtitle: frontmatter.subtitle,
+        title: frontmatter["title"] || slug,
+        subtitle: frontmatter["subtitle"],
         content,
         htmlContent,
         metadata: frontmatter,

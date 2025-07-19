@@ -6,7 +6,7 @@ import { getCompaniesRepo, getNewsRepo, getRankingsRepo, getToolsRepo } from "@/
 interface HealthCheck {
   status: "healthy" | "degraded" | "unhealthy";
   message: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 interface HealthReport {
@@ -29,10 +29,10 @@ async function checkDataFiles(): Promise<HealthCheck> {
   try {
     const jsonDataDir = path.join(process.cwd(), "data", "json");
     const requiredFiles = [
-      "tools.json",
-      "companies.json",
-      "rankings/current.json",
-      "news/articles.json",
+      "tools/tools.json",
+      "companies/companies.json",
+      "rankings/index.json",
+      "news/news.json",
     ];
 
     const missingFiles: string[] = [];
@@ -148,7 +148,7 @@ async function checkCache(): Promise<HealthCheck> {
     const cacheDir = path.join(process.cwd(), "src", "data", "cache");
     const cacheFiles = ["rankings-cache.json", "tools-cache.json", "news-cache.json"];
 
-    const cacheStats: any = {};
+    const cacheStats: Record<string, { size?: string; ageHours?: string; status?: string }> = {};
 
     for (const file of cacheFiles) {
       try {
@@ -163,7 +163,7 @@ async function checkCache(): Promise<HealthCheck> {
       }
     }
 
-    const allPresent = Object.values(cacheStats).every((stat: any) => stat.status !== "missing");
+    const allPresent = Object.values(cacheStats).every((stat) => stat.status !== "missing");
 
     if (!allPresent) {
       return {
@@ -215,7 +215,7 @@ export async function GET(): Promise<NextResponse> {
       system: {
         uptime: process.uptime(),
         memory: process.memoryUsage(),
-        version: process.env.npm_package_version || "unknown",
+        version: process.env["npm_package_version"] || "unknown",
       },
     };
 

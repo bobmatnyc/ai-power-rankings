@@ -1,5 +1,257 @@
 [
   {
+    "id": "37b9860a-347f-4c08-9344-2c04a3f6d385",
+    "slug": "claude-s-growing-pains",
+    "title": " Claude's Growing Pains ",
+    "content": "Claude dominates agentic coding despite infrastructure struggles\nClaude leads in agentic coding performance benchmarks, particularly for teams building orchestration-first workflows. The platform's integration with VS Code and JetBrains IDEs enables autonomous coding agents to decompose complex problems and execute multi-step workflows independently. Claude Opus 4's 72.5% SWE-Bench performance (79.4% with parallel processing) significantly outperforms GPT-4.1's 30.3% on Terminal-bench.\n\nThe orchestration ecosystem has grown increasingly sophisticated around Claude, despite underlying infrastructure volatility. The Orchestrator-Worker architecture uses lead agents to coordinate parallel subagents for scalable task execution. Claude-Flow implements \"hive-mind intelligence\" with 87 MCP tools, while Claude Squad manages multiple instances across workspaces. GitHub has integrated Claude Sonnet 4 into Copilot, and teams report 4x productivity gains.\n\nI've contributed to this ecosystem myself with claude-multiagent-pm, an open-source package for managing prompt memory across multiple Claude agents—downloaded over 2,000 times in its first few days. The demand highlights just how central Claude has become to orchestration workflows—and how much infrastructure stability matters.\n\nBut these orchestration systems create multiple failure points. Anthropic's own research acknowledges that \"minor system failures can be catastrophic for agents.\" When you're running a lead Claude Opus 4 agent coordinating multiple Claude Sonnet 4 subagents, a single 529 error can disrupt dependent agents. Here's a concrete example: during a recent documentation update workflow, one user reported their lead agent failed during context compaction, which left three subagents in inconsistent states with corrupted shared memory—requiring a complete restart that lost 45 minutes of work.\n\nThe 529 epidemic hits production workflows\nClaude Code's repository shows multiple critical issues with 529 errors occurring during context compaction, initialization, and standard operations. The error patterns follow predictable exponential backoff sequences: 1s, 2s, 4s, 9s, 19s, 35s, continuing through 10 failed attempts before complete failure.\n\nZapier Community users report Claude integrations \"usually fail\" even for simple tasks like summarizing 167-word pages. One developer noted: \"Until Anthropic has a more stable API, your Zap runs will likely continue to experience these errors.\"\n\nThe platform has shifted from reliable tool to currently impractical for many production use cases. Development teams lose productivity during critical coding sessions, with some organizations switching to ChatGPT or Gemini despite inferior coding performance.\n\n\nMulti-agent systems collapse under reliability pressure\nMulti-agent orchestration frameworks like AutoGen, LangChain, and Claude-Flow all exhibit vulnerability to these reliability issues. The cascade failure pattern follows a predictable sequence: initial 529 error triggers dependent agent failures, shared memory systems become inconsistent, and expensive restart cycles consume resources without guaranteeing success.\n\nSpecific framework impacts include AutoGen's transform_history errors, LangChain's Bedrock integration failures, and persistent 529 errors during context compaction. While Anthropic's research shows 90.2% performance improvements from multi-agent systems, it also reveals 15x higher token consumption and multiple failure points.\n\nThe community has developed sophisticated mitigation strategies. LangGraph introduced durable execution with built-in checkpointing, enabling workflows to resume from failure points rather than restarting entirely. CrewAI adopted role-based isolation with specialized agents having limited scope to minimize cascade failures.\n\nAdvanced implementations now include token bucket algorithms for proactive rate limiting, real-time health monitoring with alerting systems, and graceful degradation patterns. The most sophisticated approaches use circuit breaker patterns to prevent cascade failures, distribute requests across multiple API keys and regions, and maintain hybrid systems that seamlessly switch between Claude and alternative providers.\n\nPerformance versus reliability drives team tool choices\n\nDeepSeek trails at 95.68% uptime, while Claude sits at 99.56% and OpenAI leads at 99.96%. This reliability gap stems from OpenAI's mature systems developed over years versus Anthropic's newer, rapidly scaling infrastructure.\n\nDeveloper feedback consistently highlights this tension: \"Claude gives better results but ChatGPT is more reliable.\" This drives adoption of hybrid strategies where developers maintain accounts with multiple providers, using Claude for complex coding tasks during stable periods while falling back to OpenAI during outages.\n\nOne developer captured the situation: \"We love Claude's output quality but can't trust it for customer-facing applications without extensive reliability engineering around it.\" Teams face a stark choice: accept reliability risks for superior performance or sacrifice capability for operational stability.\n\nAnthropic's $3.5B bet on infrastructure scaling\nAnthropic's response involves massive infrastructure investments, though implementation lags behind user needs. The company raised $3.5 billion in Series E funding (March 2025) specifically for compute capacity expansion, supplemented by a $2.5 billion credit line. Partnerships with Amazon AWS/Bedrock and Google Cloud aim to leverage mature cloud infrastructure.\n\nTechnical improvements include the Message Batches API for better request handling, prompt caching (beta) reducing latency by up to 80%, and new Workspaces features. The company's rate limiting uses a token bucket algorithm with tiered usage systems ranging from $100/month to $5,000/month.\n\nBut the gap between infrastructure improvements and user experience remains significant. Status.anthropic.com shows multiple daily incidents throughout recent months while developers cope with immediate reliability challenges through extensive workarounds.\n\n\nSo where does that leave teams betting on multi-agent systems?\nClaude shows what's possible with AI-assisted development, but not yet what's stable. The platform's superior coding performance proves AI can transform software development, but persistent infrastructure failures force developers to implement extensive reliability engineering around Claude.\n\nThe community's response demonstrates both the value developers place on Claude's capabilities and their determination to work around its limitations. Sophisticated retry mechanisms, multi-provider fallback strategies, and circuit breaker patterns show how much teams want Claude to succeed—but these workarounds also reveal the operational overhead required to use Claude in production.\n\nFor development environments where occasional failures are manageable, Claude offers superior coding performance. For production systems where reliability matters more than marginal performance gains, OpenAI's consistency often outweighs Claude's technical advantages.\n\nThe next months will determine whether Anthropic can transform its technical leadership into operational excellence. Until then, Claude remains a powerful but unreliable tool that excels in controlled environments while struggling to meet production deployment standards.",
+    "summary": "I've been tracking Claude's reliability issues for a few weeks, and the data tells a frustrating story. Here's the paradox facing every developer using AI coding tools: Claude consistently outperforms GPT-4 and Gemini on coding benchmarks, achieving 72.5% on SWE-Bench, yet delivers only 99.56% uptime. That 0.4% gap compared to OpenAI's 99.96%? Roughly 35 extra hours of annual downtime—enough to break customer trust during a critical deploy.\n\nThe 529 \"overloaded\" error has become a common failure mode. Over the past month, developers report persistent failures even on paid Max plans. Here's why this matters: these failures cascade through multi-agent orchestration systems, where a single Claude instance failure can disrupt entire development workflows.",
+    "author": "Robert Matsuoka",
+    "published_date": "2025-07-19T00:26:00.000Z",
+    "source": "hyperdev.substack.com",
+    "source_url": "https://hyperdev.substack.com/p/claudes-growing-pains",
+    "tags": [
+      "llm",
+      "code-generation",
+      "research",
+      "business",
+      "open-source",
+      "developer-tools"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:26:48.224Z",
+    "updated_at": "2025-07-19T00:26:48.224Z"
+  },
+  {
+    "id": "bce724a2-5b9a-4cd1-9e78-6d0785e5ba94",
+    "slug": "bolt-rolls-out-family-ride-feature-in-nigeria",
+    "title": "Bolt rolls out Family ride feature in Nigeria",
+    "summary": "Bolt introduced a new 'Family Profile' feature in Nigeria allowing users to book and pay for rides on behalf of up to nine people, including family and friends. This shared ride feature enhances control over spending and visibility from one account, making it easier to manage rides for others such as elderly parents or siblings without data access. Bolt's internal data shows 2% to 6% of rides are already booked for others, and this feature aims to make that process safer and more seamless.",
+    "content": "",
+    "source": "Techpoint Africa",
+    "source_url": "https://techpoint.africa/insight/techpoint-digest-1139/",
+    "published_date": "2025-07-18T00:00:00.000Z",
+    "tags": [],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:00.385Z",
+    "updated_at": "2025-07-19T00:25:00.385Z"
+  },
+  {
+    "id": "c4ea9f2d-a936-4cab-b17b-d378bffaf006",
+    "slug": "how-bolttech-boosted-sales-efficiency-and-revenue-with-ai",
+    "title": "How bolttech boosted sales efficiency and revenue with AI",
+    "summary": "bolttech optimized retail sales efforts by partnering with AmDocs Studios and Databricks using advanced AI models. The initiative reduced AI model computing costs by 80%, saved sales ambassadors 3.5% of their field time, and increased revenue by 2.3% through optimized store visits without expanding the workforce. The collaboration leveraged clean data sources like store locations, protection plan sales, and product warranties for targeted real-time decision-making.",
+    "content": "",
+    "source": "bolttech",
+    "source_url": "https://bolttech.io/news/how-bolttech-boosted-sales-efficiency-and-revenue-with-ai/",
+    "published_date": "2025-07-18T00:00:00.000Z",
+    "tags": [],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:00.489Z",
+    "updated_at": "2025-07-19T00:25:00.489Z"
+  },
+  {
+    "id": "b1ea7f62-22cd-433c-99c0-608a237345e2",
+    "slug": "mistral-ai-s-le-chat-amasses-1-million-downloads-in-two-weeks",
+    "title": "Mistral AI's Le Chat Amasses 1 Million Downloads in Two Weeks",
+    "summary": "Mistral AI's chat assistant, Le Chat, has achieved significant success with 1 million downloads in just two weeks. Le Chat serves as a direct alternative to ChatGPT and has received updates enhancing its capabilities, including a new 'deep research' mode and advanced image editing.",
+    "content": "",
+    "source": "Ainvest",
+    "source_url": "https://www.ainvest.com/news/mistral-ai-le-chat-amasses-1-million-downloads-weeks-2507/",
+    "published_date": "2025-07-18T00:00:00.000Z",
+    "tags": [],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:00.595Z",
+    "updated_at": "2025-07-19T00:25:00.595Z"
+  },
+  {
+    "id": "eeef670c-5a54-46bc-a40d-30f05bf0d348",
+    "slug": "what-is-mistral-ai-everything-to-know-about-the-openai-competitor",
+    "title": "What is Mistral AI? Everything to know about the OpenAI competitor",
+    "summary": "Mistral AI is a French tech startup that has rapidly emerged as a competitor to OpenAI. The company introduced Devstral Medium and upgraded Devstral Small in collaboration with All Hands AI. Mistral AI also released Mistral OCR and Mistral Agents API to empower enterprises.",
+    "content": "",
+    "source": "TechCrunch",
+    "source_url": "https://techcrunch.com/2025/07/18/what-is-mistral-ai-everything-to-know-about-the-openai-competitor/",
+    "published_date": "2025-07-18T00:00:00.000Z",
+    "tags": [
+      "ai-agents",
+      "api"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:00.705Z",
+    "updated_at": "2025-07-19T00:25:00.705Z"
+  },
+  {
+    "id": "02b0e1fe-ac61-4a88-8f68-f624eb1fe764",
+    "slug": "midjourney-to-open-enterprise-api",
+    "title": "MidJourney to Open Enterprise API",
+    "summary": "MidJourney is exploring the possibility of opening an enterprise-level API, allowing businesses to integrate its image generation capabilities into their applications.",
+    "content": "",
+    "source": "Aibase News",
+    "source_url": "https://news.aibase.com/news/19742",
+    "published_date": "2025-07-18T00:00:00.000Z",
+    "tags": [
+      "api"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:00.812Z",
+    "updated_at": "2025-07-19T00:25:00.812Z"
+  },
+  {
+    "id": "881678ff-2546-4ab5-bd4d-b176c0a0ac45",
+    "slug": "generative-ai-models-streamline-fashion-design-with-new-text-and-image-capabilities",
+    "title": "Generative AI models streamline fashion design with new text and image capabilities",
+    "summary": "DALL-E 3 demonstrated a 67.6% accuracy rate in perfectly implementing detailed fashion design prompts, especially those with adjectives. The AI generated images closely resembled actual 2024 Fall/Winter men's fashion collections but struggled with incorporating trend elements like gender fluidity. The study highlights the need for expertly worded prompts and suggests that generative AI can significantly aid both professional designers and the general public in exploring and predicting fashion tr",
+    "content": "",
+    "source": "Tech Xplore",
+    "source_url": "https://techxplore.com/news/2025-07-generative-ai-fashion-text-image.html",
+    "published_date": "2025-07-18T00:00:00.000Z",
+    "tags": [],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:00.916Z",
+    "updated_at": "2025-07-19T00:25:00.916Z"
+  },
+  {
+    "id": "bd6a60bf-0c0d-4734-bea3-c519f03a9ff1",
+    "slug": "how-generative-ai-is-streamlining-fashion-design-and-predicting-trends-at-pusan-national-university",
+    "title": "How Generative AI Is Streamlining Fashion Design and Predicting Trends at Pusan National University",
+    "summary": "Researchers at Pusan National University used ChatGPT and DALL-E 3 to generate visualizations of the 2024 Fall/Winter men’s fashion trends. Using expert-crafted prompts, DALL-E 3 produced realistic designs with a success rate of about two-thirds. While effective overall, the model had difficulty accurately representing some trend elements such as gender fluidity, emphasizing that expert input remains crucial for precise generative AI outputs in fashion.",
+    "content": "",
+    "source": "Complete AI Training",
+    "source_url": "https://completeaitraining.com/news/how-generative-ai-is-streamlining-fashion-design-and-predicting-trends/",
+    "published_date": "2025-07-18T00:00:00.000Z",
+    "tags": [],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:01.021Z",
+    "updated_at": "2025-07-19T00:25:01.021Z"
+  },
+  {
+    "id": "3a3a93f3-b2a6-4efd-9507-2eb998b40773",
+    "slug": "webex-contact-center-introduces-agent-whisper-announcements",
+    "title": "Webex Contact Center Introduces Agent Whisper Announcements",
+    "summary": "Webex Contact Center has introduced Agent Whisper Announcements, allowing agents to hear brief, prerecorded messages before connecting with callers. This feature enhances agent preparedness and customer interaction.",
+    "content": "",
+    "source": "Webex",
+    "source_url": "https://help.webex.com/en-us/article/a1gx3h/what's-new-in-webex-contact-center",
+    "published_date": "2025-07-18T00:00:00.000Z",
+    "tags": [
+      "ai-agents"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:01.128Z",
+    "updated_at": "2025-07-19T00:25:01.128Z"
+  },
+  {
+    "id": "c10560c0-048f-45eb-ba38-95e071e4fe93",
+    "slug": "vibe-scraping-on-an-iphone-with-openai-codex",
+    "title": "Vibe Scraping on an iPhone with OpenAI Codex",
+    "summary": "Simon Willison discusses using OpenAI Codex for 'vibe scraping' and coding a schedule app entirely on his iPhone. He highlights the efficiency of AI-assisted programming and shares a cautionary tale about optimizing web app performance.",
+    "content": "",
+    "source": "Simon Willison's Newsletter",
+    "source_url": "https://simonw.substack.com/p/vibe-scraping-on-an-iphone-with-openai",
+    "published_date": "2025-07-18T00:00:00.000Z",
+    "tags": [
+      "benchmarks",
+      "api"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:01.237Z",
+    "updated_at": "2025-07-19T00:25:01.237Z"
+  },
+  {
+    "id": "5338588b-ed3f-493d-a805-66d0177c7d07",
+    "slug": "the-intriguing-reason-why-windsurf-s-remains",
+    "title": "The Intriguing Reason Why Windsurf's Remains ...",
+    "summary": "\"Cognition swiftly snapped up the remnants of Windsurf,\" highlighting the importance of data from IDEs in advancing AI coding models. The acquisition aims to combine Cognition’s autonomous coding agents with Windsurf’s IDE for breakthrough developer experiences. Experts note that unique data from how developers write and update code is crucial for fine-tuning AI models beyond general pretraining on internet data.",
+    "content": "",
+    "source": "Business Insider",
+    "source_url": "https://www.businessinsider.com/windsurf-google-cognition-acquisition-ai-coding-developer-data-ide-2025-7",
+    "published_date": "2025-07-17T00:00:00.000Z",
+    "tags": [
+      "ai-agents"
+    ],
+    "tool_mentions": [
+      "14"
+    ],
+    "created_at": "2025-07-19T00:25:01.345Z",
+    "updated_at": "2025-07-19T00:25:01.345Z"
+  },
+  {
+    "id": "44e61dbe-73e6-4d3e-b194-66bcd8e743e9",
+    "slug": "meta-and-aws-support-ai-developers-with-llama-tools",
+    "title": "Meta and AWS Support AI Developers With Llama Tools",
+    "summary": "Meta partnered with AWS to launch a program offering $200K in cloud credits and support for developers using Meta's open-source Llama model. This collaboration fosters startup innovation by providing accessibility, mentorship, and cloud resources without locking developers into closed platforms. It positions Llama as a potential new standard for AI development.",
+    "content": "",
+    "source": "Impaakt",
+    "source_url": "https://impaakt.co/meta-and-aws-partner-to-empower-ai-developers/",
+    "published_date": "2025-07-17T00:00:00.000Z",
+    "tags": [
+      "open-source"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:01.451Z",
+    "updated_at": "2025-07-19T00:25:01.451Z"
+  },
+  {
+    "id": "f1091c8d-db0c-4278-9ac3-28245a384539",
+    "slug": "65b-investment-by-meta-in-global-ai-data-center-expansion-to-power-llama-models",
+    "title": "$65B Investment by Meta in Global AI Data Center Expansion to Power LLaMA Models",
+    "summary": "Meta is investing $65 billion in building new global data centers across North America, Europe, and Asia specifically designed to power its LLaMA models along with edge inference and next-generation internet technologies. This massive expansion supports Meta’s vision of universal AI agents and immersive VR/AR environments as part of its transformation into an AI infrastructure leader.",
+    "content": "",
+    "source": "DataCenters.com",
+    "source_url": "https://www.datacenters.com/news/meta-s-65b-ai-data-center-expansion-engineering-the-physical-internet-for-the-ai-age",
+    "published_date": "2025-07-17T00:00:00.000Z",
+    "tags": [
+      "ai-agents"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:01.555Z",
+    "updated_at": "2025-07-19T00:25:01.555Z"
+  },
+  {
+    "id": "8c33d533-3845-442d-819a-c4c9d0f96a5c",
+    "slug": "whisper-raises-1-6m-for-next-gen-cybersecurity-platform",
+    "title": "Whisper Raises €1.6M for Next-Gen Cybersecurity Platform",
+    "summary": "Whisper, an Amsterdam-based cybersecurity firm, has secured €1.6 million in funding to develop a platform that predicts cyber attacks using 'God Mode' internet vision. The platform utilizes knowledge graph technology to provide real-time visibility into attacker infrastructure.",
+    "content": "",
+    "source": "Tech.eu",
+    "source_url": "https://tech.eu/2025/07/15/whisper-raises-eur16m-to-build-next-gen-cybersecurity-platform/",
+    "published_date": "2025-07-16T00:00:00.000Z",
+    "tags": [],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:01.659Z",
+    "updated_at": "2025-07-19T00:25:01.659Z"
+  },
+  {
+    "id": "bb411500-5b06-4214-8353-c07c09e7044e",
+    "slug": "whisper-exits-stealth-with-1-6m-funding",
+    "title": "Whisper Exits Stealth with €1.6M Funding",
+    "summary": "Whisper, a cybersecurity startup from Amsterdam, has emerged from stealth with a €1.6 million pre-seed funding round. The company aims to predict cyber attacks using its 'God Mode' internet monitoring system.",
+    "content": "",
+    "source": "Silicon Canals",
+    "source_url": "https://siliconcanals.com/whisper-exits-stealth-with-e1-6m-funding/",
+    "published_date": "2025-07-16T00:00:00.000Z",
+    "tags": [],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:01.766Z",
+    "updated_at": "2025-07-19T00:25:01.766Z"
+  },
+  {
+    "id": "5536fdae-c553-45ce-ab65-7e6716c2c948",
+    "slug": "whisper-emerges-from-stealth-to-tackle-cybercrime",
+    "title": "Whisper Emerges from Stealth to Tackle Cybercrime",
+    "summary": "Whisper, a Dutch startup, has emerged from stealth with a cybersecurity platform that promises to predict cyber attacks rapidly. The platform is designed to counter sophisticated threats like multi-vector attacks.",
+    "content": "",
+    "source": "The Next Web",
+    "source_url": "https://thenextweb.com/news/startup-whisper-emerges-from-stealth-with-god-mode-to-tackle-cybercrime",
+    "published_date": "2025-07-16T00:00:00.000Z",
+    "tags": [
+      "api"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:01.870Z",
+    "updated_at": "2025-07-19T00:25:01.870Z"
+  },
+  {
     "id": "7ca5828c-e22f-467c-ab4d-419d6ebbd3b8",
     "slug": "when-platform-partners-become-platform-problems",
     "title": "When Platform Partners Become Platform Problems",
@@ -22,6 +274,108 @@
     ],
     "created_at": "2025-07-16T04:59:49.644Z",
     "updated_at": "2025-07-16T04:59:49.644Z"
+  },
+  {
+    "id": "e3e9ee0e-0ac1-4564-a413-ddf07b69f3ad",
+    "slug": "cognition-maker-of-the-ai-coding-agent-devin-acquires-windsurf",
+    "title": "Cognition, maker of the AI coding agent Devin, acquires Windsurf",
+    "summary": "Cognition announced it is acquiring Windsurf's intellectual property and product, including its AI-powered IDE, along with employees not hired by Google. Windsurf had reached $82 million in ARR with a user base of at least 350 enterprise customers and hundreds of thousands of daily active users. Cognition plans to integrate Windsurf’s IP into its own products while continuing development on the AI-powered IDE.",
+    "content": "",
+    "source": "TechCrunch",
+    "source_url": "https://techcrunch.com/2025/07/14/cognition-maker-of-the-ai-coding-agent-devin-acquires-windsurf/",
+    "published_date": "2025-07-15T00:00:00.000Z",
+    "tags": [
+      "ai-agents"
+    ],
+    "tool_mentions": [
+      "14"
+    ],
+    "created_at": "2025-07-19T00:25:01.973Z",
+    "updated_at": "2025-07-19T00:25:01.973Z"
+  },
+  {
+    "id": "541f690f-a6e9-41fa-b1a6-d929aefd2b0a",
+    "slug": "12-best-chatgpt-alternatives-in-2025-free-and-paid-picks",
+    "title": "12 Best ChatGPT Alternatives in 2025 (Free and Paid Picks)",
+    "summary": "Tabnine is highlighted as one of the best AI coding assistants for developers in 2025, offering deep IDE integration with over 10 Git-integrated development environments like VSCode and IntelliJ. It features a custom-trained model providing inline code completions and smart autocompletions in real-time, supporting more than 20 programming languages. Tabnine emphasizes privacy with local AI model deployment options and learns from team codebases to offer contextual suggestions. Pricing includes a",
+    "content": "",
+    "source": "DevDiggers",
+    "source_url": "https://devdiggers.com/best-chatgpt-alternatives/",
+    "published_date": "2025-07-15T00:00:00.000Z",
+    "tags": [],
+    "tool_mentions": [
+      "21"
+    ],
+    "created_at": "2025-07-19T00:25:02.080Z",
+    "updated_at": "2025-07-19T00:25:02.080Z"
+  },
+  {
+    "id": "0847f6b9-3cd6-460a-b82c-df12f5a83c7a",
+    "slug": "tabnine-vs-cursor-2025-which-ai-code-assistant-is-best-for-developers",
+    "title": "Tabnine vs Cursor (2025) – Which AI Code Assistant Is Best for Developers?",
+    "summary": "This video compares Tabnine with Cursor, focusing on their performance, features, editor integration, team collaboration capabilities, and impact on coding productivity. It highlights Tabnine's lightweight inline code suggestion strengths versus Cursor's all-in-one AI-first IDE approach to help developers choose the best tool for daily workflows including multi-file refactoring and automation.",
+    "content": "",
+    "source": "Mindly Nova YouTube Channel",
+    "source_url": "https://www.youtube.com/watch?v=Fi7NlaMhqrk",
+    "published_date": "2025-07-15T00:00:00.000Z",
+    "tags": [
+      "productivity"
+    ],
+    "tool_mentions": [
+      "1",
+      "21"
+    ],
+    "created_at": "2025-07-19T00:25:02.186Z",
+    "updated_at": "2025-07-19T00:25:02.186Z"
+  },
+  {
+    "id": "27422657-4688-46c5-8bdd-8589eb7e4b41",
+    "slug": "meta-shifts-llama-ai-to-monetized-model-invests-200m-in-talent",
+    "title": "Meta Shifts Llama AI to Monetized Model, Invests $200M in Talent",
+    "summary": "Meta announced a strategic shift for its Llama AI models from open-source to a monetized access model, introducing paid tiers for enterprise users while retaining some free access. This move aligns with Meta's broader AI strategy and massive investments in AI infrastructure projected at $64-72 billion by 2025. The change aims to balance sustainable AI infrastructure development with commercial partnerships, despite some concerns from the open AI community.",
+    "content": "",
+    "source": "AINvest",
+    "source_url": "https://www.ainvest.com/news/meta-shifts-llama-ai-monetized-model-invests-200m-talent-2507/",
+    "published_date": "2025-07-14T00:00:00.000Z",
+    "tags": [
+      "open-source"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:02.295Z",
+    "updated_at": "2025-07-19T00:25:02.295Z"
+  },
+  {
+    "id": "64c5cf4d-592d-4e80-9fb8-ed3e470c73fc",
+    "slug": "stability-ai-s-policy-revision-new-terms-for-stable-diffusion",
+    "title": "Stability AI's Policy Revision: New Terms for Stable Diffusion",
+    "summary": "Stability AI will implement new terms of use for Stable Diffusion on July 31, 2025. The policy explicitly prohibits generating sexual content, including non-consensual intimate images and child sexual abuse material. Violations may result in account suspension or reporting to authorities.",
+    "content": "",
+    "source": "IT Explore",
+    "source_url": "https://itexplore.org/columns/stability-ai-rules-end-of-wild-west/",
+    "published_date": "2025-07-14T00:00:00.000Z",
+    "tags": [],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:02.401Z",
+    "updated_at": "2025-07-19T00:25:02.401Z"
+  },
+  {
+    "id": "facbc64e-72a3-4b66-b602-b5937ba782c7",
+    "slug": "which-ai-tool-is-best-for-you-in-2025-comparison-of-supermaven-tabnine-github-copilot",
+    "title": "\"Which AI Tool is Best for You in 2025?\" - Comparison of Supermaven, Tabnine & GitHub Copilot",
+    "summary": "This extensive review compares three leading AI coding assistants: Supermaven, Tabnine, and GitHub Copilot. The video discusses how each tool boosts developer productivity through intelligent code completions, bug detection, automation of repetitive tasks while supporting multiple programming languages across popular IDEs like VS Code and JetBrains. It particularly notes Tabnine’s privacy-first approach using local AI processing to keep proprietary code secure along with its support for over twe",
+    "content": "",
+    "source": "HowToHarbor YouTube Channel",
+    "source_url": "https://www.youtube.com/watch?v=ZlTb-c-vaUY",
+    "published_date": "2025-07-14T00:00:00.000Z",
+    "tags": [
+      "productivity"
+    ],
+    "tool_mentions": [
+      "2",
+      "21"
+    ],
+    "created_at": "2025-07-19T00:25:02.505Z",
+    "updated_at": "2025-07-19T00:25:02.505Z"
   },
   {
     "id": "45057c79-70e9-4d39-8d83-8283b81a6303",
@@ -154,6 +508,22 @@
       "actual_productivity_impact": -0.19,
       "perceived_productivity_impact": 0.24
     }
+  },
+  {
+    "id": "f642b549-c3df-48ad-b2bf-31dd3a086359",
+    "slug": "openai-codex-updates-and-github-integration",
+    "title": "OpenAI Codex Updates and GitHub Integration",
+    "summary": "Simon Willison mentions OpenAI Codex in the context of his projects, including scraping APIs and integrating with GitHub. He notes the confusion around multiple OpenAI products named Codex.",
+    "content": "",
+    "source": "Simon Willison's Blog",
+    "source_url": "https://simonwillison.net/tags/github/",
+    "published_date": "2025-07-12T00:00:00.000Z",
+    "tags": [
+      "api"
+    ],
+    "tool_mentions": [],
+    "created_at": "2025-07-19T00:25:02.609Z",
+    "updated_at": "2025-07-19T00:25:02.609Z"
   },
   {
     "id": "9997bdf9-ad35-4948-b3b1-80b281d1f4d2",

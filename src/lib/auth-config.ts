@@ -8,7 +8,7 @@
  * Example: "user1@example.com,user2@example.com"
  */
 export function getAuthorizedEmails(): string[] {
-  const emails = process.env.AUTHORIZED_EMAILS || "";
+  const emails = process.env["AUTHORIZED_EMAILS"] || "";
   return emails
     .split(",")
     .map((email) => email.trim())

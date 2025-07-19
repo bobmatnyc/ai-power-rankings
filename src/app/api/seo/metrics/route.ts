@@ -55,7 +55,7 @@ const getMockSEOMetrics = () => {
 // Fetch real Google Search Console data
 async function fetchGoogleSearchConsoleData(accessToken?: string) {
   // Check if we have the required environment variables
-  const siteUrl = process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL;
+  const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
 
   if (!siteUrl) {
     console.log("Google Search Console site URL not configured, using mock data");

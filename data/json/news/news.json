@@ -8460,7 +8460,9 @@
         "0b43c593-debd-4706-81e5-a03cce76c477",
         "561964af-6df0-488a-b142-aded83ec271b",
         "e98aa680-3f88-4fae-bfad-fc3f08cb35e7",
-        "3295f971-b783-445a-8f53-d7fb851eebd0"
+        "3295f971-b783-445a-8f53-d7fb851eebd0",
+        "100d9b88-cf1b-4c7d-8161-0eae129e87c9",
+        "9eaf0f7f-a2e0-45df-b1aa-0d002de6c3c0"
       ]
     }
   },
@@ -8682,13 +8684,103 @@
       "id": "3295f971-b783-445a-8f53-d7fb851eebd0",
       "created_at": "2025-07-16T04:59:49.645Z",
       "updated_at": "2025-07-16T04:59:49.645Z"
+    },
+    {
+      "filename": "news-items-2025-07-ingestion.json",
+      "status": "completed",
+      "total_items": 22,
+      "processed_items": 22,
+      "failed_items": 0,
+      "duplicate_items": 0,
+      "new_tools_created": 0,
+      "new_companies_created": 0,
+      "pending_tools_created": 41,
+      "ranking_preview_generated": true,
+      "processing_log": "Started processing 22 news items\nProcessing item 1: Bolt rolls out Family ride feature in Nigeria\n  - Created news item ID: bce724a2-5b9a-4cd1-9e78-6d0785e5ba94\nProcessing item 2: How bolttech boosted sales efficiency and revenue with AI\n  - Created news item ID: c4ea9f2d-a936-4cab-b17b-d378bffaf006\nProcessing item 3: Mistral AI's Le Chat Amasses 1 Million Downloads in Two Weeks\n  - Created news item ID: b1ea7f62-22cd-433c-99c0-608a237345e2\nProcessing item 4: What is Mistral AI? Everything to know about the OpenAI competitor\n  - Created news item ID: eeef670c-5a54-46bc-a40d-30f05bf0d348\nProcessing item 5: MidJourney to Open Enterprise API\n  - Created news item ID: 02b0e1fe-ac61-4a88-8f68-f624eb1fe764\nProcessing item 6: Generative AI models streamline fashion design with new text and image capabilities\n  - Created news item ID: 881678ff-2546-4ab5-bd4d-b176c0a0ac45\nProcessing item 7: How Generative AI Is Streamlining Fashion Design and Predicting Trends at Pusan National University\n  - Created news item ID: bd6a60bf-0c0d-4734-bea3-c519f03a9ff1\nProcessing item 8: Webex Contact Center Introduces Agent Whisper Announcements\n  - Created news item ID: 3a3a93f3-b2a6-4efd-9507-2eb998b40773\nProcessing item 9: Vibe Scraping on an iPhone with OpenAI Codex\n  - Created news item ID: c10560c0-048f-45eb-ba38-95e071e4fe93\nProcessing item 10: The Intriguing Reason Why Windsurf's Remains ...\n  - Created news item ID: 5338588b-ed3f-493d-a805-66d0177c7d07\nProcessing item 11: Meta and AWS Support AI Developers With Llama Tools\n  - Created news item ID: 44e61dbe-73e6-4d3e-b194-66bcd8e743e9\nProcessing item 12: $65B Investment by Meta in Global AI Data Center Expansion to Power LLaMA Models\n  - Created news item ID: f1091c8d-db0c-4278-9ac3-28245a384539\nProcessing item 13: Whisper Raises €1.6M for Next-Gen Cybersecurity Platform\n  - Created news item ID: 8c33d533-3845-442d-819a-c4c9d0f96a5c\nProcessing item 14: Whisper Exits Stealth with €1.6M Funding\n  - Created news item ID: bb411500-5b06-4214-8353-c07c09e7044e\nProcessing item 15: Whisper Emerges from Stealth to Tackle Cybercrime\n  - Created news item ID: 5536fdae-c553-45ce-ab65-7e6716c2c948\nProcessing item 16: Cognition, maker of the AI coding agent Devin, acquires Windsurf\n  - Created news item ID: e3e9ee0e-0ac1-4564-a413-ddf07b69f3ad\nProcessing item 17: 12 Best ChatGPT Alternatives in 2025 (Free and Paid Picks)\n  - Created news item ID: 541f690f-a6e9-41fa-b1a6-d929aefd2b0a\nProcessing item 18: Tabnine vs Cursor (2025) – Which AI Code Assistant Is Best for Developers?\n  - Created news item ID: 0847f6b9-3cd6-460a-b82c-df12f5a83c7a\nProcessing item 19: Meta Shifts Llama AI to Monetized Model, Invests $200M in Talent\n  - Created news item ID: 27422657-4688-46c5-8bdd-8589eb7e4b41\nProcessing item 20: Stability AI's Policy Revision: New Terms for Stable Diffusion\n  - Created news item ID: 64c5cf4d-592d-4e80-9fb8-ed3e470c73fc\nProcessing item 21: \"Which AI Tool is Best for You in 2025?\" - Comparison of Supermaven, Tabnine & GitHub Copilot\n  - Created news item ID: facbc64e-72a3-4b66-b602-b5937ba782c7\nProcessing item 22: OpenAI Codex Updates and GitHub Integration\n  - Created news item ID: f642b549-c3df-48ad-b2bf-31dd3a086359\nGenerating ranking preview...\nRanking preview generated\n",
+      "errors": [],
+      "ingested_news_ids": [
+        "bce724a2-5b9a-4cd1-9e78-6d0785e5ba94",
+        "c4ea9f2d-a936-4cab-b17b-d378bffaf006",
+        "b1ea7f62-22cd-433c-99c0-608a237345e2",
+        "eeef670c-5a54-46bc-a40d-30f05bf0d348",
+        "02b0e1fe-ac61-4a88-8f68-f624eb1fe764",
+        "881678ff-2546-4ab5-bd4d-b176c0a0ac45",
+        "bd6a60bf-0c0d-4734-bea3-c519f03a9ff1",
+        "3a3a93f3-b2a6-4efd-9507-2eb998b40773",
+        "c10560c0-048f-45eb-ba38-95e071e4fe93",
+        "5338588b-ed3f-493d-a805-66d0177c7d07",
+        "44e61dbe-73e6-4d3e-b194-66bcd8e743e9",
+        "f1091c8d-db0c-4278-9ac3-28245a384539",
+        "8c33d533-3845-442d-819a-c4c9d0f96a5c",
+        "bb411500-5b06-4214-8353-c07c09e7044e",
+        "5536fdae-c553-45ce-ab65-7e6716c2c948",
+        "e3e9ee0e-0ac1-4564-a413-ddf07b69f3ad",
+        "541f690f-a6e9-41fa-b1a6-d929aefd2b0a",
+        "0847f6b9-3cd6-460a-b82c-df12f5a83c7a",
+        "27422657-4688-46c5-8bdd-8589eb7e4b41",
+        "64c5cf4d-592d-4e80-9fb8-ed3e470c73fc",
+        "facbc64e-72a3-4b66-b602-b5937ba782c7",
+        "f642b549-c3df-48ad-b2bf-31dd3a086359"
+      ],
+      "created_tools": [
+        {
+          "id": "14",
+          "name": "Windsurf",
+          "slug": "windsurf"
+        },
+        {
+          "id": "21",
+          "name": "Tabnine",
+          "slug": "tabnine"
+        },
+        {
+          "id": "1",
+          "name": "Cursor",
+          "slug": "cursor"
+        },
+        {
+          "id": "2",
+          "name": "GitHub Copilot",
+          "slug": "github-copilot"
+        }
+      ],
+      "created_companies": [],
+      "ranking_changes_preview": {
+        "message": "Ranking preview calculation not yet implemented for JSON repositories",
+        "potentially_affected_tools": 4
+      },
+      "file_size": 21591,
+      "processing_duration": 2228,
+      "id": "100d9b88-cf1b-4c7d-8161-0eae129e87c9",
+      "created_at": "2025-07-19T00:25:02.611Z",
+      "updated_at": "2025-07-19T00:25:02.611Z"
+    },
+    {
+      "filename": "manual-ingestion",
+      "status": "completed",
+      "total_items": 1,
+      "processed_items": 1,
+      "failed_items": 0,
+      "duplicate_items": 0,
+      "new_tools_created": 0,
+      "new_companies_created": 0,
+      "processing_log": "Manually ingested article:  Claude's Growing Pains ",
+      "errors": [],
+      "ingested_news_ids": [
+        "37b9860a-347f-4c08-9344-2c04a3f6d385"
+      ],
+      "created_tools": [],
+      "created_companies": [],
+      "id": "9eaf0f7f-a2e0-45df-b1aa-0d002de6c3c0",
+      "created_at": "2025-07-19T00:26:48.227Z",
+      "updated_at": "2025-07-19T00:26:48.227Z"
     }
   ],
   "metadata": {
     "total": 0,
-    "last_updated": "2025-07-16T04:59:49.647Z",
+    "last_updated": "2025-07-19T00:26:48.230Z",
     "version": "1.0.0",
-    "ingestion_reports_count": 6,
+    "ingestion_reports_count": 8,
     "note": "Articles have been moved to monthly files in the articles/ directory"
   }
 }

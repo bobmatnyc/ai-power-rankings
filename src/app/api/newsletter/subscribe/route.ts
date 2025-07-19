@@ -5,13 +5,13 @@ import { loggers } from "@/lib/logger";
 
 // Initialize Resend only when API key is available
 const getResendClient = () => {
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env["RESEND_API_KEY"];
   if (!apiKey) {
     throw new Error("RESEND_API_KEY not configured");
   }
   return new Resend(apiKey);
 };
-const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || "YOUR_TURNSTILE_SECRET_KEY";
+const TURNSTILE_SECRET_KEY = process.env["TURNSTILE_SECRET_KEY"] || "YOUR_TURNSTILE_SECRET_KEY";
 
 interface SubscribeRequest {
   firstName: string;
@@ -24,12 +24,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // Debug environment variables
     loggers.api.info("Environment check", {
-      hasResendKey: !!process.env.RESEND_API_KEY,
-      nodeEnv: process.env.NODE_ENV,
+      hasResendKey: !!process.env["RESEND_API_KEY"],
+      nodeEnv: process.env["NODE_ENV"],
     });
 
     // Validate environment variables
-    if (!process.env.RESEND_API_KEY) {
+    if (!process.env["RESEND_API_KEY"]) {
       loggers.api.error("Missing Resend API key");
       return NextResponse.json({ error: "Email service configuration error" }, { status: 500 });
     }
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Verify Turnstile token (skip in development)
-    if (process.env.NODE_ENV !== "development") {
+    if (process.env["NODE_ENV"] !== "development") {
       const turnstileResponse = await fetch(
         "https://challenges.cloudflare.com/turnstile/v0/siteverify",
         {
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(
         {
           error: "Failed to save subscription",
-          debug: process.env.NODE_ENV === "development" ? dbError.message : undefined,
+          debug: process.env["NODE_ENV"] === "development" ? dbError.message : undefined,
         },
         { status: 500 }
       );
@@ -292,8 +292,8 @@ async function sendSubscriptionNotification(
       name: emailError.name,
       statusCode: (emailError as { statusCode?: number }).statusCode,
       response: (emailError as { response?: unknown }).response,
-      resendApiKey: process.env.RESEND_API_KEY
-        ? `Set (length: ${process.env.RESEND_API_KEY.length})`
+      resendApiKey: process.env["RESEND_API_KEY"]
+        ? `Set (length: ${process.env["RESEND_API_KEY"].length})`
         : "Not set",
       toEmail: "bob@matsuoka.com",
       fromEmail: "AI Power Ranking <newsletter@aipowerranking.com>",
@@ -301,7 +301,7 @@ async function sendSubscriptionNotification(
     });
 
     throw new Error(
-      process.env.NODE_ENV === "development"
+      process.env["NODE_ENV"] === "development"
         ? `Failed to send subscription notification: ${emailError.message}`
         : "Failed to send subscription notification"
     );

@@ -71,7 +71,7 @@ export class SubscribersRepository extends BaseRepository<SubscribersData> {
     super(filePath, defaultData);
 
     // Use blob storage in production, local files in development
-    this.useBlob = process.env.NODE_ENV === "production" && !!process.env.BLOB_READ_WRITE_TOKEN;
+    this.useBlob = process.env["NODE_ENV"] === "production" && !!process.env["BLOB_READ_WRITE_TOKEN"];
   }
 
   static getInstance(): SubscribersRepository {
@@ -445,9 +445,9 @@ export class SubscribersRepository extends BaseRepository<SubscribersData> {
 
     // Update metadata counts
     data.metadata.total = data.subscribers.length;
-    data.metadata.verified = (data.index.byStatus.verified || []).length;
-    data.metadata.pending = (data.index.byStatus.pending || []).length;
-    data.metadata.unsubscribed = (data.index.byStatus.unsubscribed || []).length;
+    data.metadata.verified = (data.index.byStatus["verified"] || []).length;
+    data.metadata.pending = (data.index.byStatus["pending"] || []).length;
+    data.metadata.unsubscribed = (data.index.byStatus["unsubscribed"] || []).length;
     data.metadata.last_updated = new Date().toISOString();
   }
 }

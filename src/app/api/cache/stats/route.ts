@@ -28,29 +28,29 @@ export async function GET() {
 
     try {
       const toolsStats = await fs.stat(path.join(jsonDataDir, "tools.json"));
-      fileSizes.tools = toolsStats.size;
+      fileSizes["tools"] = toolsStats["size"];
     } catch {}
 
     try {
       const companiesStats = await fs.stat(path.join(jsonDataDir, "companies.json"));
-      fileSizes.companies = companiesStats.size;
+      fileSizes["companies"] = companiesStats["size"];
     } catch {}
 
     try {
       const newsStats = await fs.stat(path.join(jsonDataDir, "news", "articles.json"));
-      fileSizes.news = newsStats.size;
+      fileSizes["news"] = newsStats["size"];
     } catch {}
 
     // Calculate total memory usage
     const totalMemoryUsage = Object.values(memoryStats).reduce(
-      (total, stat) => total + stat.size,
+      (total, stat) => total + stat["size"],
       0
     );
 
     // Calculate overall hit rate
-    const totalHits = Object.values(memoryStats).reduce((total, stat) => total + stat.totalHits, 0);
+    const totalHits = Object.values(memoryStats).reduce((total, stat) => total + stat["totalHits"], 0);
     const totalAccess = Object.values(memoryStats).reduce(
-      (total, stat) => total + stat.totalHits + stat.totalMisses,
+      (total, stat) => total + stat["totalHits"] + stat["totalMisses"],
       0
     );
     const overallHitRate = totalAccess > 0 ? totalHits / totalAccess : 0;
@@ -74,13 +74,13 @@ export async function GET() {
 
     // Add recommendations based on stats
     if (overallHitRate < 0.8) {
-      response.performance.recommendedActions.push(
+      response["performance"]["recommendedActions"].push(
         "Consider increasing cache TTL - hit rate is below 80%"
       );
     }
 
-    if (fileSizes.news && fileSizes.news > 500 * 1024) {
-      response.performance.recommendedActions.push(
+    if (fileSizes["news"] && fileSizes["news"] > 500 * 1024) {
+      response["performance"]["recommendedActions"].push(
         "News file is large (>500KB) - consider chunking"
       );
     }

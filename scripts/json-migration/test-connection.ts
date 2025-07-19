@@ -16,7 +16,7 @@ configDotenv({ path: path.join(process.cwd(), '.env.local') });
 async function testConnection() {
   try {
     console.log('Testing Payload CMS connection...');
-    console.log('Database URL:', process.env.SUPABASE_DATABASE_URL ? 'Found' : 'Missing');
+    console.log('Database URL:', process.env["SUPABASE_DATABASE_URL"] ? 'Found' : 'Missing');
     
     // Get Payload instance
     const payload = await getPayload({ config });

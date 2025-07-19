@@ -16,7 +16,7 @@ async function testEnhancedNewsIntegration() {
   console.log('🧪 Testing Enhanced News Integration\n');
 
   // Check if OpenAI API key is configured
-  const hasOpenAI = !!process.env.OPENAI_API_KEY;
+  const hasOpenAI = !!process.env["OPENAI_API_KEY"];
   console.log(`📝 OpenAI API Key: ${hasOpenAI ? '✅ Configured' : '❌ Not configured'}`);
   
   if (!hasOpenAI) {

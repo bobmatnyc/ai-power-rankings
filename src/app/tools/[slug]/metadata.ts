@@ -24,10 +24,10 @@ interface ToolData {
 export async function generateToolMetadata(slug: string): Promise<Metadata> {
   try {
     // Fetch tool data from API
-    const isDev = process.env.NODE_ENV === "development";
+    const isDev = process.env["NODE_ENV"] === "development";
     const baseUrl = isDev
       ? "http://localhost:3000"
-      : process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
+      : process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
 
     const response = await fetch(`${baseUrl}/api/tools/${slug}`, {
       next: { revalidate: isDev ? 0 : 3600 }, // Revalidate every hour in production
@@ -128,7 +128,7 @@ export async function generateToolMetadata(slug: string): Promise<Metadata> {
 }
 
 function getDefaultToolMetadata(slug: string): Metadata {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
+  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
   const fallbackOGUrl = `${baseUrl}/api/og?title=${encodeURIComponent("AI Tool")}&subtitle=Developer%20Tool%20Intelligence`;
 
   return {

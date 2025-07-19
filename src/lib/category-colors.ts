@@ -19,7 +19,7 @@ export function getCategoryColor(category: string): string {
 
   return (
     colors[category] ||
-    colors.default ||
+    colors["default"] ||
     "bg-gray-100 text-gray-900 dark:bg-gray-900/20 dark:text-gray-400"
   );
 }
@@ -42,7 +42,7 @@ export function getCategoryBgColor(category: string): string {
     default: "bg-gray-100 dark:bg-gray-900/20",
   };
 
-  return colors[category] || colors.default || "bg-gray-100 dark:bg-gray-900/20";
+  return colors[category] || colors["default"] || "bg-gray-100 dark:bg-gray-900/20";
 }
 
 // Get just the text color class
@@ -63,5 +63,5 @@ export function getCategoryTextColor(category: string): string {
     default: "text-gray-900 dark:text-gray-400",
   };
 
-  return colors[category] || colors.default || "text-gray-900 dark:text-gray-400";
+  return colors[category] || colors["default"] || "text-gray-900 dark:text-gray-400";
 }

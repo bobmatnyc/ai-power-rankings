@@ -14,7 +14,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -73,6 +73,34 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
+  const fetchNews = useCallback(async (_pageNum: number, isInitial: boolean): Promise<void> => {
+    try {
+      // Only fetch on initial load
+      if (!isInitial) {
+        return;
+      }
+
+      setLoading(true);
+
+      // Fetch ALL news from API at once
+      const response = await fetch("/api/news?limit=100");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch news");
+      }
+
+      const data = await response.json();
+      const allNews: MetricsHistory[] = data.news || [];
+
+      // Store all news for client-side filtering
+      setNewsItems(allNews);
+      setLoading(false);
+    } catch (error) {
+      loggers.news.error("Failed to fetch news", { error });
+      setLoading(false);
+    }
+  }, []);
+
   // Initial data fetch
   useEffect(() => {
     fetchNews(1, true);
@@ -110,34 +138,6 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
       }
     };
   }, [page, totalPages, loading]);
-
-  const fetchNews = async (_pageNum: number, isInitial: boolean): Promise<void> => {
-    try {
-      // Only fetch on initial load
-      if (!isInitial) {
-        return;
-      }
-
-      setLoading(true);
-
-      // Fetch ALL news from API at once
-      const response = await fetch("/api/news?limit=100");
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch news");
-      }
-
-      const data = await response.json();
-      const allNews: MetricsHistory[] = data.news || [];
-
-      // Store all news for client-side filtering
-      setNewsItems(allNews);
-      setLoading(false);
-    } catch (error) {
-      loggers.news.error("Failed to fetch news", { error });
-      setLoading(false);
-    }
-  };
 
   const getEventColor = (eventType: string): string => {
     switch (eventType) {
@@ -206,11 +206,10 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
   };
 
   // Reset pagination when filter changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: filter is intentionally used to reset pagination
   useEffect(() => {
-    setNewsItems([]);
     setPage(1);
-    fetchNews(1, true);
-  }, [fetchNews]);
+  }, [filter]);
 
   // Client-side filtering
   const filteredNews =

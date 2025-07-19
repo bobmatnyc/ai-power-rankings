@@ -31,8 +31,8 @@ export function CriticalResourceOptimizer() {
             // Defer non-critical image loading
             const images = document.querySelectorAll("img[data-defer]");
             images.forEach((img) => {
-              if (img instanceof HTMLImageElement && img.dataset.defer) {
-                img.src = img.dataset.defer;
+              if (img instanceof HTMLImageElement && img.dataset["defer"]) {
+                img.src = img.dataset["defer"];
                 img.removeAttribute("data-defer");
               }
             });
@@ -77,8 +77,8 @@ export function CriticalResourceOptimizer() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const img = entry.target as HTMLImageElement;
-            if (img.dataset.src) {
-              img.src = img.dataset.src;
+            if (img.dataset["src"]) {
+              img.src = img.dataset["src"];
               img.removeAttribute("data-src");
               imageObserver.unobserve(img);
             }
@@ -111,7 +111,7 @@ export function usePerformanceMonitoring() {
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
         // Log performance entries for debugging
-        if (process.env.NODE_ENV === "development") {
+        if (process.env["NODE_ENV"] === "development") {
           console.log("Performance:", entry.name, entry.duration);
         }
 

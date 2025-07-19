@@ -46,7 +46,7 @@ export function calculateBaseNewsImpact(article: NewsArticle): number {
     medium: 4,
     low: 2,
   };
-  baseImpact += importanceScores[article.impact_assessment?.importance || "medium"];
+  baseImpact += importanceScores[article["impact_assessment"]?.["importance"] || "medium"];
 
   // Market impact factor
   const marketImpactScores = {
@@ -55,7 +55,7 @@ export function calculateBaseNewsImpact(article: NewsArticle): number {
     minor: 2,
     none: 0,
   };
-  baseImpact += marketImpactScores[article.impact_assessment?.market_impact || "minor"];
+  baseImpact += marketImpactScores[article["impact_assessment"]?.["market_impact"] || "minor"];
 
   // News type factor
   const typeImpactScores: Record<string, number> = {
@@ -74,7 +74,7 @@ export function calculateBaseNewsImpact(article: NewsArticle): number {
     research_paper: 6,
     community_news: 3,
   };
-  baseImpact += typeImpactScores[article.type] || 3;
+  baseImpact += typeImpactScores[article["type"]] || 3;
 
   // Normalize to 0-10 scale
   return Math.min(10, Math.max(0, baseImpact / 2.5));
@@ -97,8 +97,8 @@ export function calculateSentimentImpact(toolMention: NewsArticle["tools_mention
     mentioned: 0.2,
   };
 
-  const sentimentScore = sentimentScores[toolMention.sentiment || "neutral"];
-  const relevanceMultiplier = relevanceMultipliers[toolMention.relevance];
+  const sentimentScore = sentimentScores[toolMention["sentiment"] || "neutral"];
+  const relevanceMultiplier = relevanceMultipliers[toolMention["relevance"]];
 
   return sentimentScore * relevanceMultiplier;
 }
@@ -128,14 +128,14 @@ export function calculateToolNewsImpact(
 
   for (const article of newsArticles) {
     // Find mentions of this tool
-    const toolMentions = article.tools_mentioned.filter((t) => t.tool_id === toolId);
+    const toolMentions = article["tools_mentioned"].filter((t) => t["tool_id"] === toolId);
     if (toolMentions.length === 0) {
       continue;
     }
 
     articleCount++;
 
-    const articleDate = new Date(article.published_date);
+    const articleDate = new Date(article["published_date"]);
     if (articleDate >= thirtyDaysAgo) {
       recentArticleCount++;
     }
@@ -193,7 +193,7 @@ export function applyNewsImpactToRanking(
   };
 
   // Calculate impact modifier (capped between -2 and +2)
-  const impactModifier = Math.max(-2, Math.min(2, newsImpact.totalImpact / 10));
+  const impactModifier = Math.max(-2, Math.min(2, newsImpact["totalImpact"] / 10));
 
   // Apply impact to relevant factors
   for (const [factor, weight] of Object.entries(impactDistribution)) {
@@ -207,10 +207,10 @@ export function applyNewsImpactToRanking(
   }
 
   // Boost development velocity if there's high recent news activity
-  if (newsImpact.recentArticleCount > 5) {
-    adjustedScores.developmentVelocity = Math.min(
+  if (newsImpact["recentArticleCount"] > 5) {
+    adjustedScores["developmentVelocity"] = Math.min(
       10,
-      (adjustedScores.developmentVelocity || 5) + 0.5
+      (adjustedScores["developmentVelocity"] || 5) + 0.5
     );
   }
 

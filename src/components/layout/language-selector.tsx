@@ -29,7 +29,7 @@ export function LanguageSelector() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const currentLocale = (params.lang as Locale) || i18n.defaultLocale;
+  const currentLocale = (params["lang"] as Locale) || i18n.defaultLocale;
 
   const handleLanguageChange = (newLocale: Locale) => {
     // Remove current locale from pathname and add new one

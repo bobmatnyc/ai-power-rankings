@@ -97,8 +97,8 @@ export default async function UpdatesPage({ params }: PageProps) {
                 <div className="space-y-3">
                   {updates.newArticles.map((article) => (
                     <Link
-                      key={String(article.id)}
-                      href={String(article.url)}
+                      key={String(article["id"])}
+                      href={String(article["url"])}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block border border-border rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer"
@@ -106,16 +106,16 @@ export default async function UpdatesPage({ params }: PageProps) {
                       <div className="flex items-start justify-between">
                         <div>
                           <h4 className="font-medium hover:text-primary transition-colors">
-                            {String(article.title)}
+                            {String(article["title"])}
                           </h4>
                           <p className="text-sm text-muted-foreground mt-1">
                             <Badge variant="secondary" className="mr-2 capitalize">
-                              {String(article.category).replace(/_/g, " ")}
+                              {String(article["category"]).replace(/_/g, " ")}
                             </Badge>
-                            {Array.isArray(article.toolMentions) &&
-                              article.toolMentions.length > 0 && (
+                            {Array.isArray(article["toolMentions"]) &&
+                              article["toolMentions"].length > 0 && (
                                 <span>
-                                  Affects: {(article.toolMentions as string[]).join(", ")}
+                                  Affects: {(article["toolMentions"] as string[]).join(", ")}
                                 </span>
                               )}
                           </p>
@@ -137,31 +137,31 @@ export default async function UpdatesPage({ params }: PageProps) {
                 <div className="space-y-2">
                   {updates.majorChanges.map((change, index) => (
                     <div
-                      key={`major-change-${String(change.toolName)}-${index}`}
+                      key={`major-change-${String(change["toolName"])}-${index}`}
                       className="p-3 bg-muted/50 rounded-lg"
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium">{String(change.toolName)}</span>
+                        <span className="font-medium">{String(change["toolName"])}</span>
                         <Badge
                           variant={
-                            String(change.changeCategory).includes("rise") ? "default" : "secondary"
+                            String(change["changeCategory"]).includes("rise") ? "default" : "secondary"
                           }
                           className={
-                            change.changeCategory === "new_entry"
+                            change["changeCategory"] === "new_entry"
                               ? "bg-green-100 text-green-800"
-                              : String(change.changeCategory).includes("rise")
+                              : String(change["changeCategory"]).includes("rise")
                                 ? "bg-green-100 text-green-800"
                                 : "bg-red-100 text-red-800"
                           }
                         >
-                          {change.changeCategory === "new_entry"
+                          {change["changeCategory"] === "new_entry"
                             ? "NEW"
-                            : Number(change.currentRank) < Number(change.previousRank)
-                              ? `↑${Number(change.previousRank) - Number(change.currentRank)}`
-                              : `↓${Number(change.currentRank) - Number(change.previousRank)}`}
+                            : Number(change["currentRank"]) < Number(change["previousRank"])
+                              ? `↑${Number(change["previousRank"]) - Number(change["currentRank"])}`
+                              : `↓${Number(change["currentRank"]) - Number(change["previousRank"])}`}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">{String(change.explanation)}</p>
+                      <p className="text-sm text-muted-foreground">{String(change["explanation"])}</p>
                     </div>
                   ))}
                 </div>
@@ -174,8 +174,8 @@ export default async function UpdatesPage({ params }: PageProps) {
               <div className="grid gap-2">
                 {updates.topRankings.map((tool) => (
                   <Link
-                    key={String(tool.rank)}
-                    href={`/${lang}/tools/${String(tool.slug)}`}
+                    key={String(tool["rank"])}
+                    href={`/${lang}/tools/${String(tool["slug"])}`}
                     className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted/70 transition-colors"
                   >
                     <div className="flex items-center gap-3">
@@ -183,31 +183,31 @@ export default async function UpdatesPage({ params }: PageProps) {
                         variant="outline"
                         className="w-8 h-8 rounded-full flex items-center justify-center"
                       >
-                        {String(tool.rank)}
+                        {String(tool["rank"])}
                       </Badge>
                       <span className="font-medium hover:text-primary transition-colors">
-                        {String(tool.toolName)}
+                        {String(tool["toolName"])}
                       </span>
-                      <Badge variant={tool.tier === "S" ? "default" : "secondary"}>
-                        {String(tool.tier)}
+                      <Badge variant={tool["tier"] === "S" ? "default" : "secondary"}>
+                        {String(tool["tier"])}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-mono">{Number(tool.score).toFixed(1)}</span>
-                      {tool.change !== "—" && (
+                      <span className="text-sm font-mono">{Number(tool["score"]).toFixed(1)}</span>
+                      {tool["change"] !== "—" && (
                         <Badge
-                          variant={tool.change === "NEW" ? "default" : "secondary"}
+                          variant={tool["change"] === "NEW" ? "default" : "secondary"}
                           className={
-                            tool.change === "NEW"
+                            tool["change"] === "NEW"
                               ? "bg-green-100 text-green-800"
-                              : tool.changeType === "up"
+                              : tool["changeType"] === "up"
                                 ? "bg-green-100 text-green-800"
-                                : tool.changeType === "down"
+                                : tool["changeType"] === "down"
                                   ? "bg-red-100 text-red-800"
                                   : ""
                           }
                         >
-                          {String(tool.change)}
+                          {String(tool["change"])}
                         </Badge>
                       )}
                     </div>
@@ -222,29 +222,29 @@ export default async function UpdatesPage({ params }: PageProps) {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl font-bold">
-                    {String(updates.statistics?.newArticlesCount)}
+                    {String(updates.statistics?.["newArticlesCount"])}
                   </div>
                   <div className="text-sm text-muted-foreground">New Articles</div>
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl font-bold">
-                    {String(updates.statistics?.totalArticles)}
+                    {String(updates.statistics?.["totalArticles"])}
                   </div>
                   <div className="text-sm text-muted-foreground">Total Articles</div>
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl font-bold">
-                    {String(updates.statistics?.toolsWithNews)}/
-                    {String(updates.statistics?.totalTools)}
+                    {String(updates.statistics?.["toolsWithNews"])}/
+                    {String(updates.statistics?.["totalTools"])}
                   </div>
                   <div className="text-sm text-muted-foreground">Tools with News</div>
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl font-bold">
-                    {Number((updates.statistics?.maxImpact as any)?.impact || 0).toFixed(1)}
+                    {Number((updates.statistics?.["maxImpact"] as any)?.["impact"] || 0).toFixed(1)}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Max Impact ({String((updates.statistics?.maxImpact as any)?.toolName || "N/A")})
+                    Max Impact ({String((updates.statistics?.["maxImpact"] as any)?.["toolName"] || "N/A")})
                   </div>
                 </div>
               </div>

@@ -13,7 +13,7 @@ const API_ENDPOINTS = [
   { path: "/api/companies", maxTime: 100 },
 ];
 
-const BASE_URL = process.env.BASE_URL || "http://localhost:3001";
+const BASE_URL = process.env["BASE_URL"] || "http://localhost:3001";
 
 interface PerformanceResult {
   endpoint: string;
