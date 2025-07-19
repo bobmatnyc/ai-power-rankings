@@ -75,21 +75,6 @@ function RankingsGridContent({
   const tagsParam = searchParams.get("tags")?.split(",") || [];
   const sortParam = searchParams.get("sort") || "rank";
 
-  useEffect(() => {
-    // Only fetch if no initial rankings provided
-    if (initialRankings.length === 0) {
-      fetchRankings();
-    } else {
-      setLoading(false);
-      // For SSR, we need to fetch the algorithm date separately
-      fetchAlgorithmDate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    initialRankings.length, // For SSR, we need to fetch the algorithm date separately
-    fetchAlgorithmDate,
-    fetchRankings,
-  ]);
 
   const fetchAlgorithmDate = async (): Promise<void> => {
     try {
@@ -151,6 +136,18 @@ function RankingsGridContent({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Only fetch if no initial rankings provided
+    if (initialRankings.length === 0) {
+      fetchRankings();
+    } else {
+      setLoading(false);
+      // For SSR, we need to fetch the algorithm date separately
+      fetchAlgorithmDate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialRankings.length]);
 
   // Apply filters
   const filteredRankings = rankings.filter((r) => {

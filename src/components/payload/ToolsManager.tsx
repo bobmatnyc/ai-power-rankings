@@ -30,10 +30,6 @@ export const ToolsManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const fetchData = async () => {
     try {
       const [toolsRes, rankingsRes] = await Promise.all([
@@ -52,6 +48,10 @@ export const ToolsManager: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const getLatestRanking = (toolId: string) => {
     return rankings

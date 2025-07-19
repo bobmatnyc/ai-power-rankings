@@ -126,11 +126,6 @@ export function EnhancedRankingsManager() {
   const [selectedRankingData, setSelectedRankingData] = useState<any[]>([]);
   const [isLoadingRankingData, setIsLoadingRankingData] = useState(false);
 
-  // Load available ranking periods on mount
-  useEffect(() => {
-    loadAvailablePeriods();
-  }, [loadAvailablePeriods]);
-
   const loadAvailablePeriods = async () => {
     setIsLoadingPeriods(true);
     try {
@@ -153,6 +148,11 @@ export function EnhancedRankingsManager() {
       setIsLoadingPeriods(false);
     }
   };
+
+  // Load available ranking periods on mount
+  useEffect(() => {
+    loadAvailablePeriods();
+  }, []);
 
   const handlePreviewRankings = async () => {
     setIsPreviewLoading(true);
