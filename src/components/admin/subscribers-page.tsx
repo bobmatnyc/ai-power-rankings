@@ -58,10 +58,6 @@ export function SubscribersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
 
-  useEffect(() => {
-    fetchSubscribers();
-  }, [fetchSubscribers]);
-
   const fetchSubscribers = async () => {
     try {
       setLoading(true);
@@ -80,6 +76,10 @@ export function SubscribersPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchSubscribers();
+  }, []);
 
   const exportSubscribers = async () => {
     try {

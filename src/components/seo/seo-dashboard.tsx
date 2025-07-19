@@ -47,12 +47,6 @@ export function SEODashboard() {
   const [error, setError] = useState<string | null>(null);
   const [submittingSitemap, setSubmittingSitemap] = useState(false);
 
-  useEffect(() => {
-    if (status === "authenticated") {
-      fetchSEOMetrics();
-    }
-  }, [status, fetchSEOMetrics]);
-
   const fetchSEOMetrics = async () => {
     try {
       setLoading(true);
@@ -70,6 +64,12 @@ export function SEODashboard() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchSEOMetrics();
+    }
+  }, [status]);
 
   const submitSitemap = async () => {
     try {

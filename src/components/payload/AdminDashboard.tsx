@@ -22,10 +22,6 @@ export const AdminDashboard: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
-
   const fetchStats = async () => {
     try {
       // Fetch stats from various APIs
@@ -55,6 +51,10 @@ export const AdminDashboard: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   if (loading) {
     return <div style={{ padding: "20px" }}>Loading dashboard...</div>;

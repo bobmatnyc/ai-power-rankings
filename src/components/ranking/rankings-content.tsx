@@ -68,9 +68,21 @@ function RankingsContentInner(): React.JSX.Element {
   const categoryParam = searchParams.get("category") || "all";
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryParam);
 
+  const fetchRankings = async (): Promise<void> => {
+    try {
+      const response = await fetch("/api/rankings");
+      const data = await response.json();
+      setRankings(data.rankings);
+      setLoading(false);
+    } catch (error) {
+      loggers.ranking.error("Failed to fetch rankings", { error });
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchRankings();
-  }, [fetchRankings]);
+  }, []);
 
   useEffect(() => {
     // Update URL when category changes
@@ -83,18 +95,6 @@ function RankingsContentInner(): React.JSX.Element {
     const query = params.toString();
     router.push(query ? `?${query}` : "/rankings", { scroll: false });
   }, [selectedCategory, router, searchParams]);
-
-  const fetchRankings = async (): Promise<void> => {
-    try {
-      const response = await fetch("/api/rankings");
-      const data = await response.json();
-      setRankings(data.rankings);
-      setLoading(false);
-    } catch (error) {
-      loggers.ranking.error("Failed to fetch rankings", { error });
-      setLoading(false);
-    }
-  };
 
   const categories = ["all", ...new Set(rankings.map((r) => r.tool.category))];
   const filteredRankings =

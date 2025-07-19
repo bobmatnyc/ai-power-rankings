@@ -38,10 +38,6 @@ export default function ToolsPage(): React.JSX.Element {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("name");
 
-  useEffect(() => {
-    fetchTools();
-  }, [fetchTools]);
-
   const fetchTools = async (): Promise<void> => {
     try {
       const response = await fetch("/api/tools");
@@ -53,6 +49,10 @@ export default function ToolsPage(): React.JSX.Element {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchTools();
+  }, []);
 
   const categories = ["all", ...new Set(tools.map((t) => t.category))];
 

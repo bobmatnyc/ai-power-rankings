@@ -32,10 +32,6 @@ export const SubscribersManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  useEffect(() => {
-    fetchSubscribers();
-  }, [fetchSubscribers]);
-
   const fetchSubscribers = async () => {
     try {
       const response = await fetch("/api/admin/subscribers");
@@ -49,6 +45,10 @@ export const SubscribersManager: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchSubscribers();
+  }, []);
 
   const sendTestEmail = async (subscriberId: string) => {
     try {
