@@ -534,8 +534,8 @@ export function ToolDetailTabs({
                       source_url: history.source_url || undefined,
                       source_name: history.source_name || undefined,
                       metrics: {
-                        users: history.scoring_metrics?.users as number | undefined,
-                        revenue: history.scoring_metrics?.monthly_arr as number | undefined,
+                        users: history.scoring_metrics?.["users"] as number | undefined,
+                        revenue: history.scoring_metrics?.["monthly_arr"] as number | undefined,
                       },
                     };
 

@@ -445,9 +445,9 @@ export class SubscribersRepository extends BaseRepository<SubscribersData> {
 
     // Update metadata counts
     data.metadata.total = data.subscribers.length;
-    data.metadata.verified = (data.index.byStatus.verified || []).length;
-    data.metadata.pending = (data.index.byStatus.pending || []).length;
-    data.metadata.unsubscribed = (data.index.byStatus.unsubscribed || []).length;
+    data.metadata.verified = (data.index.byStatus["verified"] || []).length;
+    data.metadata.pending = (data.index.byStatus["pending"] || []).length;
+    data.metadata.unsubscribed = (data.index.byStatus["unsubscribed"] || []).length;
     data.metadata.last_updated = new Date().toISOString();
   }
 }

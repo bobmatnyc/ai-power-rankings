@@ -155,7 +155,7 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
           <div className="flex items-start gap-4">
             <ToolIcon
               name={toolData.name}
-              domain={links.website || toolData.website_url || info.website}
+              domain={links["website"] || toolData.website_url || info["website"]}
               size={80}
               className="flex-shrink-0"
             />
@@ -173,21 +173,21 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
                     )}
                   </div>
                   <CardDescription className="text-base">
-                    {product.tagline || toolData.tagline || info.summary}
+                    {product["tagline"] || toolData.tagline || info["summary"]}
                   </CardDescription>
                 </div>
                 <div className="flex gap-2">
-                  {links.website && (
+                  {links["website"] && (
                     <Button asChild variant="outline" size="sm">
-                      <a href={links.website} target="_blank" rel="noopener noreferrer">
+                      <a href={links["website"]} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         Website
                       </a>
                     </Button>
                   )}
-                  {links.github && (
+                  {links["github"] && (
                     <Button asChild variant="outline" size="sm">
-                      <a href={links.github} target="_blank" rel="noopener noreferrer">
+                      <a href={links["github"]} target="_blank" rel="noopener noreferrer">
                         <Github className="h-4 w-4 mr-2" />
                         GitHub
                       </a>
@@ -343,22 +343,22 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Context Window</div>
                     <div className="font-medium">
-                      {technical.context_window
-                        ? `${technical.context_window.toLocaleString()} tokens`
+                      {technical["context_window"]
+                        ? `${technical["context_window"].toLocaleString()} tokens`
                         : "Not specified"}
                     </div>
                   </div>
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Multi-file Support</div>
-                    <div className="font-medium">{technical.multi_file_support ? "Yes" : "No"}</div>
+                    <div className="font-medium">{technical["multi_file_support"] ? "Yes" : "No"}</div>
                   </div>
                 </div>
-                {Array.isArray(technical.supported_languages) &&
-                  technical.supported_languages.length > 0 && (
+                {Array.isArray(technical["supported_languages"]) &&
+                  technical["supported_languages"].length > 0 && (
                     <div className="mt-4">
                       <div className="text-sm text-muted-foreground mb-2">Supported Languages</div>
                       <div className="flex flex-wrap gap-2">
-                        {(technical.supported_languages as string[]).map((lang: string) => (
+                        {(technical["supported_languages"] as string[]).map((lang: string) => (
                           <Badge key={lang} variant="secondary">
                             {lang}
                           </Badge>
@@ -368,11 +368,11 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
                   )}
               </div>
 
-              {Array.isArray(technical.llm_providers) && technical.llm_providers.length > 0 && (
+              {Array.isArray(technical["llm_providers"]) && technical["llm_providers"].length > 0 && (
                 <div>
                   <h4 className="font-medium mb-3">LLM Providers</h4>
                   <div className="flex flex-wrap gap-2">
-                    {(technical.llm_providers as string[]).map((provider: string) => (
+                    {(technical["llm_providers"] as string[]).map((provider: string) => (
                       <Badge key={provider} variant="outline">
                         {provider}
                       </Badge>
@@ -381,11 +381,11 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
                 </div>
               )}
 
-              {Array.isArray(technical.integrations) && technical.integrations.length > 0 && (
+              {Array.isArray(technical["integrations"]) && technical["integrations"].length > 0 && (
                 <div>
                   <h4 className="font-medium mb-3">Integrations</h4>
                   <div className="flex flex-wrap gap-2">
-                    {(technical.integrations as string[]).map((integration: string) => (
+                    {(technical["integrations"] as string[]).map((integration: string) => (
                       <Badge key={integration} variant="outline">
                         {integration}
                       </Badge>
@@ -397,24 +397,24 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
               <div>
                 <h4 className="font-medium mb-3">Performance Metrics</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {metrics.swe_bench_score && (
+                  {metrics["swe_bench_score"] && (
                     <div>
                       <div className="text-sm text-muted-foreground mb-1">SWE-bench Score</div>
-                      <div className="font-medium text-lg">{metrics.swe_bench_score}%</div>
+                      <div className="font-medium text-lg">{metrics["swe_bench_score"]}%</div>
                     </div>
                   )}
-                  {metrics.github_stars && (
+                  {metrics["github_stars"] && (
                     <div>
                       <div className="text-sm text-muted-foreground mb-1">GitHub Stars</div>
                       <div className="font-medium text-lg">
-                        {Number(metrics.github_stars).toLocaleString()}
+                        {Number(metrics["github_stars"]).toLocaleString()}
                       </div>
                     </div>
                   )}
-                  {Boolean(technical.response_time) && (
+                  {Boolean(technical["response_time"]) && (
                     <div>
                       <div className="text-sm text-muted-foreground mb-1">Avg Response Time</div>
-                      <div className="font-medium text-lg">{String(technical.response_time)}ms</div>
+                      <div className="font-medium text-lg">{String(technical["response_time"])}ms</div>
                     </div>
                   )}
                 </div>
@@ -431,28 +431,28 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Boolean(company.name) && (
+                {Boolean(company["name"]) && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Company</div>
-                    <div className="font-medium">{String(company.name)}</div>
+                    <div className="font-medium">{String(company["name"])}</div>
                   </div>
                 )}
-                {Boolean(company.founded) && (
+                {Boolean(company["founded"]) && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Founded</div>
-                    <div className="font-medium">{String(company.founded)}</div>
+                    <div className="font-medium">{String(company["founded"])}</div>
                   </div>
                 )}
-                {Boolean(company.headquarters) && (
+                {Boolean(company["headquarters"]) && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Headquarters</div>
-                    <div className="font-medium">{String(company.headquarters)}</div>
+                    <div className="font-medium">{String(company["headquarters"])}</div>
                   </div>
                 )}
-                {metrics.employees && (
+                {metrics["employees"] && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Employees</div>
-                    <div className="font-medium">{Number(metrics.employees).toLocaleString()}</div>
+                    <div className="font-medium">{Number(metrics["employees"]).toLocaleString()}</div>
                   </div>
                 )}
               </div>
@@ -465,57 +465,57 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {metrics.valuation && (
+                {metrics["valuation"] && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Valuation</div>
                     <div className="font-medium text-lg">
-                      ${(Number(metrics.valuation) / 1000000000).toFixed(1)}B
+                      ${(Number(metrics["valuation"]) / 1000000000).toFixed(1)}B
                     </div>
                   </div>
                 )}
-                {metrics.funding && (
+                {metrics["funding"] && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Total Funding</div>
                     <div className="font-medium text-lg">
-                      ${(Number(metrics.funding) / 1000000).toFixed(0)}M
+                      ${(Number(metrics["funding"]) / 1000000).toFixed(0)}M
                     </div>
                   </div>
                 )}
-                {metrics.monthly_arr && (
+                {metrics["monthly_arr"] && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Monthly ARR</div>
                     <div className="font-medium text-lg">
-                      ${(Number(metrics.monthly_arr) / 1000000).toFixed(1)}M
+                      ${(Number(metrics["monthly_arr"]) / 1000000).toFixed(1)}M
                     </div>
                   </div>
                 )}
-                {metrics.users && (
+                {metrics["users"] && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Estimated Users</div>
                     <div className="font-medium text-lg">
-                      {Number(metrics.users).toLocaleString()}
+                      {Number(metrics["users"]).toLocaleString()}
                     </div>
                   </div>
                 )}
-                {Boolean(business.pricing_model) && (
+                {Boolean(business["pricing_model"]) && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Pricing Model</div>
-                    <div className="font-medium">{String(business.pricing_model)}</div>
+                    <div className="font-medium">{String(business["pricing_model"])}</div>
                   </div>
                 )}
-                {Boolean(business.license_type) && (
+                {Boolean(business["license_type"]) && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">License</div>
-                    <div className="font-medium">{String(business.license_type)}</div>
+                    <div className="font-medium">{String(business["license_type"])}</div>
                   </div>
                 )}
               </div>
 
-              {Boolean(business.pricing_details) && (
+              {Boolean(business["pricing_details"]) && (
                 <div>
                   <h4 className="font-medium mb-3">Pricing Plans</h4>
                   <div className="space-y-2">
-                    {Object.entries(business.pricing_details as Record<string, unknown>).map(
+                    {Object.entries(business["pricing_details"] as Record<string, unknown>).map(
                       ([plan, details]) => (
                         <div
                           key={plan}

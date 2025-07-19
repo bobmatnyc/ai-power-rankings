@@ -9,7 +9,7 @@ import { loggers } from '../src/lib/logger';
 
 const logger = loggers.test;
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+const BASE_URL = process.env["BASE_URL"] || 'http://localhost:3000';
 
 async function testNewsAPI() {
   logger.info('Testing news API endpoints...');

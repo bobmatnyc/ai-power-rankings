@@ -94,54 +94,54 @@ function extractQuantitativeMetrics(
   } = {};
 
   // Filter articles that mention this tool
-  let toolArticles = newsArticles.filter((article) => article.tool_mentions?.includes(toolId));
+  let toolArticles = newsArticles.filter((article) => article["tool_mentions"]?.includes(toolId));
 
   // If previewDate is provided, only include articles published before that date
   if (previewDate) {
     const cutoffDate = new Date(previewDate);
     toolArticles = toolArticles.filter((article) => {
-      const articleDate = new Date(article.published_date);
+      const articleDate = new Date(article["published_date"]);
       return articleDate <= cutoffDate;
     });
   }
 
   for (const article of toolArticles) {
-    const content = article.content?.toLowerCase() || "";
-    const title = article.title?.toLowerCase() || "";
+    const content = article["content"]?.toLowerCase() || "";
+    const title = article["title"]?.toLowerCase() || "";
     const combined = `${title} ${content}`;
 
     // Extract SWE-bench scores
     const sweBenchMatch = combined.match(/(\d+\.?\d*)\s*%?\s*(?:on\s+)?swe[- ]bench/i);
-    if (sweBenchMatch?.[1] && !metrics.swe_bench_score) {
-      metrics.swe_bench_score = parseFloat(sweBenchMatch[1]);
+    if (sweBenchMatch?.[1] && !metrics["swe_bench_score"]) {
+      metrics["swe_bench_score"] = parseFloat(sweBenchMatch[1]);
     }
 
     // Extract valuation
     const valuationMatch = combined.match(/(\d+\.?\d*)\s*billion\s*(?:dollar\s*)?valuation/i);
-    if (valuationMatch?.[1] && !metrics.valuation) {
-      metrics.valuation = parseFloat(valuationMatch[1]) * 1_000_000_000;
+    if (valuationMatch?.[1] && !metrics["valuation"]) {
+      metrics["valuation"] = parseFloat(valuationMatch[1]) * 1_000_000_000;
     }
 
     // Extract funding
     const fundingMatch = combined.match(/raised?\s*\$?(\d+\.?\d*)\s*(million|billion)/i);
-    if (fundingMatch?.[1] && fundingMatch[2] && !metrics.funding) {
+    if (fundingMatch?.[1] && fundingMatch[2] && !metrics["funding"]) {
       const amount = parseFloat(fundingMatch[1]);
       const multiplier = fundingMatch[2].toLowerCase() === "billion" ? 1_000_000_000 : 1_000_000;
-      metrics.funding = amount * multiplier;
+      metrics["funding"] = amount * multiplier;
     }
 
     // Extract ARR
     const arrMatch = combined.match(/\$?(\d+\.?\d*)\s*[mb]\s*arr/i);
-    if (arrMatch?.[1] && !metrics.monthly_arr) {
+    if (arrMatch?.[1] && !metrics["monthly_arr"]) {
       const amount = parseFloat(arrMatch[1]);
       const multiplier = combined.match(/b\s*arr/i) ? 1_000_000_000 : 1_000_000;
       // Convert annual to monthly
-      metrics.monthly_arr = (amount * multiplier) / 12;
+      metrics["monthly_arr"] = (amount * multiplier) / 12;
     }
 
     // Extract users
     const usersMatch = combined.match(/(\d+\.?\d*)\s*[km]?\s*users/i);
-    if (usersMatch?.[1] && !metrics.estimated_users) {
+    if (usersMatch?.[1] && !metrics["estimated_users"]) {
       const amount = parseFloat(usersMatch[1]);
       let multiplier = 1;
       if (combined.match(/\d+\.?\d*\s*k\s*users/i)) {
@@ -150,7 +150,7 @@ function extractQuantitativeMetrics(
       if (combined.match(/\d+\.?\d*\s*m\s*users/i)) {
         multiplier = 1_000_000;
       }
-      metrics.estimated_users = amount * multiplier;
+      metrics["estimated_users"] = amount * multiplier;
     }
   }
 
@@ -170,7 +170,7 @@ export async function extractEnhancedNewsMetrics(
 ): Promise<EnhancedNewsMetrics> {
   logger.info(`Extracting enhanced news metrics for ${toolName}`, {
     tool_id: toolId,
-    articles_count: newsArticles.filter((a) => a.tool_mentions?.includes(toolId)).length,
+    articles_count: newsArticles.filter((a) => a["tool_mentions"]?.includes(toolId)).length,
     enable_ai: enableAI,
     preview_date: previewDate,
   });
@@ -201,9 +201,9 @@ export async function extractEnhancedNewsMetrics(
         cutoffDate
       );
 
-      qualitativeAdjustments = qualitativeResult.aggregatedAdjustments;
-      articlesProcessed = qualitativeResult.processedArticles;
-      significantEvents = qualitativeResult.significantEvents;
+      qualitativeAdjustments = qualitativeResult["aggregatedAdjustments"];
+      articlesProcessed = qualitativeResult["processedArticles"];
+      significantEvents = qualitativeResult["significantEvents"];
 
       logger.info(`AI qualitative analysis completed for ${toolName}`, {
         tool_id: toolId,
@@ -221,11 +221,11 @@ export async function extractEnhancedNewsMetrics(
 
   // Get the most recent news date
   const toolArticles = newsArticles
-    .filter((a) => a.tool_mentions?.includes(toolId))
-    .filter((a) => !previewDate || new Date(a.published_date) <= new Date(previewDate))
-    .sort((a, b) => new Date(b.published_date).getTime() - new Date(a.published_date).getTime());
+    .filter((a) => a["tool_mentions"]?.includes(toolId))
+    .filter((a) => !previewDate || new Date(a["published_date"]) <= new Date(previewDate))
+    .sort((a, b) => new Date(b["published_date"]).getTime() - new Date(a["published_date"]).getTime());
 
-  const lastNewsDate = toolArticles[0]?.published_date;
+  const lastNewsDate = toolArticles[0]?.["published_date"];
 
   return {
     ...quantitativeMetrics,
@@ -247,81 +247,81 @@ export function applyEnhancedNewsMetrics(
   const updatedMetrics = { ...baseMetrics };
 
   // Apply quantitative updates (overwrite if found in news)
-  if (enhancedNewsMetrics.swe_bench_score !== undefined) {
-    updatedMetrics.swe_bench_score = enhancedNewsMetrics.swe_bench_score;
-    logger.info(`Updated SWE-bench score from news: ${enhancedNewsMetrics.swe_bench_score}`);
+  if (enhancedNewsMetrics["swe_bench_score"] !== undefined) {
+    updatedMetrics["swe_bench_score"] = enhancedNewsMetrics["swe_bench_score"];
+    logger.info(`Updated SWE-bench score from news: ${enhancedNewsMetrics["swe_bench_score"]}`);
   }
 
-  if (enhancedNewsMetrics.funding !== undefined) {
-    updatedMetrics.funding = enhancedNewsMetrics.funding;
-    logger.info(`Updated funding from news: ${enhancedNewsMetrics.funding}`);
+  if (enhancedNewsMetrics["funding"] !== undefined) {
+    updatedMetrics["funding"] = enhancedNewsMetrics["funding"];
+    logger.info(`Updated funding from news: ${enhancedNewsMetrics["funding"]}`);
   }
 
-  if (enhancedNewsMetrics.valuation !== undefined) {
-    updatedMetrics.valuation = enhancedNewsMetrics.valuation;
-    logger.info(`Updated valuation from news: ${enhancedNewsMetrics.valuation}`);
+  if (enhancedNewsMetrics["valuation"] !== undefined) {
+    updatedMetrics["valuation"] = enhancedNewsMetrics["valuation"];
+    logger.info(`Updated valuation from news: ${enhancedNewsMetrics["valuation"]}`);
   }
 
-  if (enhancedNewsMetrics.monthly_arr !== undefined) {
-    updatedMetrics.monthly_arr = enhancedNewsMetrics.monthly_arr;
-    logger.info(`Updated monthly ARR from news: ${enhancedNewsMetrics.monthly_arr}`);
+  if (enhancedNewsMetrics["monthly_arr"] !== undefined) {
+    updatedMetrics["monthly_arr"] = enhancedNewsMetrics["monthly_arr"];
+    logger.info(`Updated monthly ARR from news: ${enhancedNewsMetrics["monthly_arr"]}`);
   }
 
-  if (enhancedNewsMetrics.estimated_users !== undefined) {
-    updatedMetrics.estimated_users = enhancedNewsMetrics.estimated_users;
-    logger.info(`Updated estimated users from news: ${enhancedNewsMetrics.estimated_users}`);
+  if (enhancedNewsMetrics["estimated_users"] !== undefined) {
+    updatedMetrics["estimated_users"] = enhancedNewsMetrics["estimated_users"];
+    logger.info(`Updated estimated users from news: ${enhancedNewsMetrics["estimated_users"]}`);
   }
 
   // Apply qualitative adjustments to innovation score
-  if (enhancedNewsMetrics.innovationBoost > 0) {
-    const currentInnovation = updatedMetrics.innovation_score || 5;
-    updatedMetrics.innovation_score = Math.min(
+  if (enhancedNewsMetrics["innovationBoost"] > 0) {
+    const currentInnovation = updatedMetrics["innovation_score"] || 5;
+    updatedMetrics["innovation_score"] = Math.min(
       10,
-      currentInnovation + enhancedNewsMetrics.innovationBoost
+      currentInnovation + enhancedNewsMetrics["innovationBoost"]
     );
 
     // Also update innovations array if boost is significant
-    if (enhancedNewsMetrics.innovationBoost >= 1 && enhancedNewsMetrics.lastNewsDate) {
-      if (!updatedMetrics.innovations) {
-        updatedMetrics.innovations = [];
+    if (enhancedNewsMetrics["innovationBoost"] >= 1 && enhancedNewsMetrics["lastNewsDate"]) {
+      if (!updatedMetrics["innovations"]) {
+        updatedMetrics["innovations"] = [];
       }
-      updatedMetrics.innovations.push({
-        score: enhancedNewsMetrics.innovationBoost,
-        date: new Date(enhancedNewsMetrics.lastNewsDate),
+      updatedMetrics["innovations"].push({
+        score: enhancedNewsMetrics["innovationBoost"],
+        date: new Date(enhancedNewsMetrics["lastNewsDate"]),
         description: "Innovation boost from recent developments",
       });
     }
   }
 
   // Apply business sentiment adjustment
-  if (enhancedNewsMetrics.businessSentimentAdjust !== 0) {
-    const currentSentiment = updatedMetrics.business_sentiment || 0.5;
-    updatedMetrics.business_sentiment = Math.max(
+  if (enhancedNewsMetrics["businessSentimentAdjust"] !== 0) {
+    const currentSentiment = updatedMetrics["business_sentiment"] || 0.5;
+    updatedMetrics["business_sentiment"] = Math.max(
       0,
-      Math.min(1, currentSentiment + enhancedNewsMetrics.businessSentimentAdjust / 2)
+      Math.min(1, currentSentiment + enhancedNewsMetrics["businessSentimentAdjust"] / 2)
     );
   }
 
   // Apply development velocity boost
-  if (enhancedNewsMetrics.developmentVelocityBoost > 0) {
-    const currentFrequency = updatedMetrics.release_frequency || 2;
-    updatedMetrics.release_frequency = Math.min(
+  if (enhancedNewsMetrics["developmentVelocityBoost"] > 0) {
+    const currentFrequency = updatedMetrics["release_frequency"] || 2;
+    updatedMetrics["release_frequency"] = Math.min(
       30,
-      currentFrequency * (1 + enhancedNewsMetrics.developmentVelocityBoost / 2)
+      currentFrequency * (1 + enhancedNewsMetrics["developmentVelocityBoost"] / 2)
     );
   }
 
   // Store news impact metadata
-  updatedMetrics.news_impact = {
-    articles_analyzed: enhancedNewsMetrics.articlesProcessed,
-    last_news_date: enhancedNewsMetrics.lastNewsDate,
-    significant_events: enhancedNewsMetrics.significantEvents,
+  updatedMetrics["news_impact"] = {
+    articles_analyzed: enhancedNewsMetrics["articlesProcessed"],
+    last_news_date: enhancedNewsMetrics["lastNewsDate"],
+    significant_events: enhancedNewsMetrics["significantEvents"],
     qualitative_boosts: {
-      innovation: enhancedNewsMetrics.innovationBoost,
-      sentiment: enhancedNewsMetrics.businessSentimentAdjust,
-      velocity: enhancedNewsMetrics.developmentVelocityBoost,
-      traction: enhancedNewsMetrics.marketTractionBoost,
-      technical: enhancedNewsMetrics.technicalPerformanceBoost,
+      innovation: enhancedNewsMetrics["innovationBoost"],
+      sentiment: enhancedNewsMetrics["businessSentimentAdjust"],
+      velocity: enhancedNewsMetrics["developmentVelocityBoost"],
+      traction: enhancedNewsMetrics["marketTractionBoost"],
+      technical: enhancedNewsMetrics["technicalPerformanceBoost"],
     },
   };
 
@@ -339,18 +339,18 @@ export function applyNewsImpactToScores(
   const adjustedScores = { ...factorScores };
 
   // Apply technical performance boost
-  if (enhancedNewsMetrics.technicalPerformanceBoost > 0) {
-    adjustedScores.technicalPerformance = Math.min(
+  if (enhancedNewsMetrics["technicalPerformanceBoost"] > 0) {
+    adjustedScores["technicalPerformance"] = Math.min(
       10,
-      (adjustedScores.technicalPerformance || 5) + enhancedNewsMetrics.technicalPerformanceBoost
+      (adjustedScores["technicalPerformance"] || 5) + enhancedNewsMetrics["technicalPerformanceBoost"]
     );
   }
 
   // Apply market traction boost
-  if (enhancedNewsMetrics.marketTractionBoost > 0) {
-    adjustedScores.marketTraction = Math.min(
+  if (enhancedNewsMetrics["marketTractionBoost"] > 0) {
+    adjustedScores["marketTraction"] = Math.min(
       10,
-      (adjustedScores.marketTraction || 5) + enhancedNewsMetrics.marketTractionBoost
+      (adjustedScores["marketTraction"] || 5) + enhancedNewsMetrics["marketTractionBoost"]
     );
   }
 

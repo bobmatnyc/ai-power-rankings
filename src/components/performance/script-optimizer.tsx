@@ -75,9 +75,9 @@ export function ThirdPartyScriptOptimizer() {
         // Load analytics scripts after interaction
         const deferredScripts = document.querySelectorAll("script[data-defer]");
         deferredScripts.forEach((script) => {
-          if (script instanceof HTMLScriptElement && script.dataset.defer) {
+          if (script instanceof HTMLScriptElement && script.dataset["defer"]) {
             const newScript = document.createElement("script");
-            newScript.src = script.dataset.defer;
+            newScript.src = script.dataset["defer"];
             newScript.async = true;
             document.head.appendChild(newScript);
             script.remove();

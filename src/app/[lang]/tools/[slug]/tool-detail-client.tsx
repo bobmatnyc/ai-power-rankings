@@ -117,19 +117,19 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
 
   // Extract data from tool
   const info = tool.info || {};
-  const links = info.links || {};
-  const product = info.product || {};
-  const business = info.business || {};
-  const metrics = info.metrics || {};
+  const links = info["links"] || {};
+  const product = info["product"] || {};
+  const business = info["business"] || {};
+  const metrics = info["metrics"] || {};
 
-  const websiteUrl = links.website || tool.website_url || info.website;
-  const githubUrl = links.github || tool.github_repo;
-  const description = product.description || tool.description;
-  const tagline = product.tagline || tool.tagline;
+  const websiteUrl = links["website"] || tool.website_url || info["website"];
+  const githubUrl = links["github"] || tool.github_repo;
+  const description = product["description"] || tool.description;
+  const tagline = product["tagline"] || tool.tagline;
 
   // Transform pricing data to expected format
-  const pricingPlans = business.pricing_details
-    ? Object.entries(business.pricing_details).map(([planName, details], index) => {
+  const pricingPlans = business["pricing_details"]
+    ? Object.entries(business["pricing_details"]).map(([planName, details], index) => {
         // Extract price from the details string (basic parsing)
         const detailsStr = details ? String(details) : "";
         const priceMatch = detailsStr.match(/\$(\d+)\/month/);
@@ -245,7 +245,7 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
               <div>
                 <p className="text-sm text-muted-foreground">Current Ranking</p>
                 <p className="font-medium text-primary">
-                  #{toolData.ranking.rank} ({toolData.ranking.scores.overall?.toFixed(1)} score)
+                  #{toolData.ranking.rank} ({toolData.ranking.scores["overall"]?.toFixed(1)} score)
                 </p>
               </div>
             )}
