@@ -14,9 +14,9 @@ export async function GET() {
       dataExists: fs.existsSync(dataPath),
       rankingsExists: fs.existsSync(rankingsPath),
       env: {
-        NODE_ENV: process.env.NODE_ENV,
-        VERCEL: process.env.VERCEL,
-        VERCEL_ENV: process.env.VERCEL_ENV,
+        NODE_ENV: process.env["NODE_ENV"],
+        VERCEL: process.env["VERCEL"],
+        VERCEL_ENV: process.env["VERCEL_ENV"],
         NEXT_PUBLIC_BASE_URL: process.env["NEXT_PUBLIC_BASE_URL,"],
       },
       files: {

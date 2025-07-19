@@ -14,7 +14,7 @@ import {
 async function updateProgress(message: string, tool?: string, step?: string) {
   try {
     await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/admin/ranking-progress`,
+      `${process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000"}/api/admin/ranking-progress`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -179,7 +179,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const innovationScore = innovationData?.score || 0;
 
       // Extract enhanced metrics from news (quantitative + qualitative with AI)
-      const enableAI = process.env.ENABLE_AI_NEWS_ANALYSIS !== "false"; // Default to true
+      const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"; // Default to true
       const enhancedMetrics = await extractEnhancedNewsMetrics(
         tool.id,
         tool.name,

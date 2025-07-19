@@ -22,8 +22,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+    process.env["NEXT_PUBLIC_BASE_URL"] ||
+      (process.env["VERCEL_URL"] ? `https://${process.env["VERCEL_URL"]}` : "http://localhost:3000")
   ),
   title: {
     default: "AI Power Rankings - Top AI Coding Tools Monthly",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: process.env.NEXT_PUBLIC_BASE_URL || "/",
+    url: process.env["NEXT_PUBLIC_BASE_URL"] || "/",
     siteName: "AI Power Rankings",
     title: "AI Power Rankings - Developer Tool Intelligence",
     description:
@@ -171,19 +171,19 @@ export default function RootLayout({
         <Analytics />
 
         {/* Load Google Analytics only after user interaction for T-041 performance */}
-        {process.env.NEXT_PUBLIC_GA_ID && (
+        {process.env["NEXT_PUBLIC_GA_ID"] && (
           <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+            src={`https://www.googletagmanager.com/gtag/js?id=${process.env["NEXT_PUBLIC_GA_ID"]}`}
             strategy="lazyOnload"
           />
         )}
-        {process.env.NEXT_PUBLIC_GA_ID && (
+        {process.env["NEXT_PUBLIC_GA_ID"] && (
           <Script id="google-analytics" strategy="lazyOnload">
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+              gtag('config', '${process.env["NEXT_PUBLIC_GA_ID"]}', {
                 'send_page_view': false
               });
               

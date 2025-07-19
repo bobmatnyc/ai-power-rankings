@@ -24,7 +24,7 @@ export class PageSpeedInsights {
   private baseUrl: string = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed";
 
   constructor(apiKey?: string) {
-    this.apiKey = apiKey || process.env.GOOGLE_API_KEY || "";
+    this.apiKey = apiKey || process.env["GOOGLE_API_KEY"] || "";
   }
 
   async getCoreWebVitals(url: string, strategy: "mobile" | "desktop" = "mobile") {

@@ -2,7 +2,7 @@
 import { Client } from "pg";
 
 async function testConnection() {
-  const connectionString = process.env.SUPABASE_DATABASE_URL;
+  const connectionString = process.env["SUPABASE_DATABASE_URL"];
 
   if (!connectionString) {
     console.error("❌ SUPABASE_DATABASE_URL is not set");

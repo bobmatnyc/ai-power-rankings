@@ -12,7 +12,7 @@ function isAuthenticated(request: NextRequest): boolean {
   // In a real implementation, you'd check JWT tokens or session
   // For now, we'll use a simple API key approach
   const authHeader = request.headers.get("authorization");
-  const apiKey = process.env.ADMIN_API_KEY;
+  const apiKey = process.env["ADMIN_API_KEY"];
 
   if (!apiKey) {
     console.warn("ADMIN_API_KEY not configured");

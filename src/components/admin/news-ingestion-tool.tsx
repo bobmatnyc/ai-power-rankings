@@ -33,7 +33,7 @@ interface IngestionReport {
   duplicate_items: number;
   new_tools_created: number;
   new_companies_created: number;
-  createdAt: string;
+  created_at?: string;
 }
 
 interface RollbackPreview {
@@ -456,7 +456,7 @@ export function NewsIngestionTool() {
                       <div>Companies Created: {report.new_companies_created}</div>
                     </div>
                     <div className="text-xs text-gray-500 mt-2">
-                      {new Date(report.createdAt).toLocaleString()}
+                      {report.created_at ? new Date(report.created_at).toLocaleString() : "Date not available"}
                     </div>
                   </div>
                 ))}
@@ -489,7 +489,7 @@ export function NewsIngestionTool() {
                         .filter((r) => r.status === "completed" || r.status === "partial")
                         .map((report) => (
                           <option key={report.id} value={report.id}>
-                            {report.filename} - {new Date(report.createdAt).toLocaleDateString()}
+                            {report.filename} - {report.created_at ? new Date(report.created_at).toLocaleDateString() : "Date not available"}
                           </option>
                         ))}
                     </select>

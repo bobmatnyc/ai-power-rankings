@@ -241,7 +241,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const innovationScore = innovationData?.score || 0;
 
         // Extract enhanced metrics from news (quantitative + qualitative with AI)
-        const enableAI = process.env.ENABLE_AI_NEWS_ANALYSIS !== "false"; // Default to true
+        const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"; // Default to true
         const enhancedMetrics = await extractEnhancedNewsMetrics(
           tool.id,
           tool.name,

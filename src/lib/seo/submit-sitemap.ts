@@ -7,8 +7,8 @@ import { GoogleSearchConsole } from "../google-search-console";
 config({ path: ".env.local" });
 
 async function submitSitemap() {
-  const siteUrl = process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
+  const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
+  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
 
   if (!siteUrl) {
     console.error("❌ GOOGLE_SEARCH_CONSOLE_SITE_URL not configured");

@@ -191,7 +191,7 @@ export async function extractEnhancedNewsMetrics(
   let significantEvents: Array<{ event: string; date: string; impact: string }> = [];
 
   // Extract qualitative metrics using AI if enabled
-  if (enableAI && (process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY)) {
+  if (enableAI && (process.env["OPENROUTER_API_KEY"] || process.env["OPENAI_API_KEY"])) {
     try {
       const cutoffDate = previewDate ? new Date(previewDate) : new Date();
       const qualitativeResult = await processNewsQualitativeImpact(

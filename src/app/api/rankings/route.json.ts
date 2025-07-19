@@ -8,7 +8,7 @@ export async function GET(): Promise<NextResponse> {
   try {
     // Check if we should use cache-first approach
     const useCacheFirst =
-      process.env.USE_CACHE_FALLBACK === "true" || process.env.VERCEL_ENV === "preview" || true; // Enable for all environments temporarily
+      process.env["USE_CACHE_FALLBACK"] === "true" || process.env["VERCEL_ENV"] === "preview" || true; // Enable for all environments temporarily
 
     // For preview environments or when cache is enabled, return cached data immediately
     if (useCacheFirst) {
@@ -170,7 +170,7 @@ export async function GET(): Promise<NextResponse> {
     // Set cache headers for production
     apiResponse.headers.set(
       "Cache-Control",
-      process.env.NODE_ENV === "production"
+      process.env["NODE_ENV"] === "production"
         ? "public, s-maxage=3600, stale-while-revalidate=1800"
         : "no-cache"
     );

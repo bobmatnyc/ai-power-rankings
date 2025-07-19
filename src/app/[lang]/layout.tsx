@@ -27,8 +27,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const dict = await getDictionary(lang);
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
+    process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
+      ? `https://${process.env["VERCEL_URL"]}`
       : "";
 
   return {

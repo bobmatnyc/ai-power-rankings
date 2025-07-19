@@ -34,7 +34,7 @@ export class RSSGenerator {
     // Take latest 50 articles
     const recentArticles = sortedArticles.slice(0, 50);
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
+    const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
 
     const channel: RSSChannel = {
       title: "AI Power Rankings - News & Updates",

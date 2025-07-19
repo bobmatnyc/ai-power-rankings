@@ -31,7 +31,7 @@ export class CacheStrategy<T> {
     };
 
     // Don't start cleanup automatically in serverless environments
-    if (!process.env.VERCEL && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    if (!process.env["VERCEL"] && !process.env["AWS_LAMBDA_FUNCTION_NAME"]) {
       this.startCleanup();
     }
   }
