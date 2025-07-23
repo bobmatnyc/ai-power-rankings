@@ -12,7 +12,7 @@ export interface UpdatesData {
     toolMentions: string[];
   }>;
   topRankings: Array<{
-    rank: number;
+    rank: number | undefined;
     toolId: string;
     toolName: string;
     slug: string;
@@ -73,7 +73,7 @@ export class UpdatesGenerator {
     const allNews = await this.newsRepo.getAll();
 
     // Filter news articles published since the previous ranking
-    const cutoffDate = previousRanking
+    const cutoffDate = previousRanking?.created_at
       ? new Date(previousRanking.created_at)
       : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const newArticles = allNews
@@ -99,7 +99,7 @@ export class UpdatesGenerator {
     const majorChanges = await this.analyzeMajorChanges(currentRanking, previousRanking, toolsMap);
 
     return {
-      lastUpdate: currentRanking.created_at,
+      lastUpdate: currentRanking.created_at || new Date().toISOString(),
       newArticles: newArticles.slice(0, 5).map((article) => ({
         id: article.id,
         title: article.title,
@@ -130,22 +130,23 @@ export class UpdatesGenerator {
       const tool = toolsMap.get(ranking.tool_id);
       const previousPosition = previousPositions.get(ranking.tool_id);
 
+      const currentPosition = ranking.position ?? ranking.rank ?? 0;
       let change = "—";
       let changeType: "up" | "down" | "stable" | "new" = "stable";
 
       if (previousPosition === undefined) {
         change = "NEW";
         changeType = "new";
-      } else if (previousPosition > ranking.position) {
-        change = `↑${previousPosition - ranking.position}`;
+      } else if (previousPosition > currentPosition) {
+        change = `↑${previousPosition - currentPosition}`;
         changeType = "up";
-      } else if (previousPosition < ranking.position) {
-        change = `↓${ranking.position - previousPosition}`;
+      } else if (previousPosition < currentPosition) {
+        change = `↓${currentPosition - previousPosition}`;
         changeType = "down";
       }
 
       return {
-        rank: ranking.position,
+        rank: currentPosition,
         toolId: ranking.tool_id,
         toolName: tool?.name || ranking.tool_name,
         slug: tool?.slug || ranking.tool_id,
@@ -202,7 +203,7 @@ export class UpdatesGenerator {
     }
 
     const previousPositions = new Map(
-      previousRanking.rankings.map((r) => [r.tool_id, { position: r.position, score: r.score }])
+      previousRanking.rankings.map((r) => [r.tool_id, { position: r.position ?? r.rank, score: r.score }])
     );
 
     const majorChanges: UpdatesData["majorChanges"] = [];
@@ -217,17 +218,19 @@ export class UpdatesGenerator {
       }
 
       // New entries in top 20
-      if (!previous && ranking.position <= 20) {
+      const rankPosition = ranking.position ?? ranking.rank ?? 0;
+      if (!previous && rankPosition <= 20) {
         majorChanges.push({
           toolName: tool.name,
           previousRank: 999,
-          currentRank: ranking.position,
+          currentRank: rankPosition,
           changeCategory: "new_entry",
-          explanation: `${tool.name} enters the rankings at position ${ranking.position} with a score of ${ranking.score.toFixed(1)}.`,
+          explanation: `${tool.name} enters the rankings at position ${rankPosition} with a score of ${ranking.score.toFixed(1)}.`,
         });
       } else if (previous) {
         // Major movements (5+ positions)
-        const rankChange = previous.position - ranking.position;
+        const prevPosition = previous.position ?? 0;
+        const rankChange = prevPosition - rankPosition;
 
         if (Math.abs(rankChange) >= 5) {
           const changeCategory = rankChange > 0 ? "major_rise" : "major_decline";
@@ -236,10 +239,10 @@ export class UpdatesGenerator {
 
           majorChanges.push({
             toolName: tool.name,
-            previousRank: previous.position,
-            currentRank: ranking.position,
+            previousRank: prevPosition,
+            currentRank: rankPosition,
             changeCategory,
-            explanation: `${tool.name} ${direction} ${positions} positions from #${previous.position} to #${ranking.position}${
+            explanation: `${tool.name} ${direction} ${positions} positions from #${prevPosition} to #${rankPosition}${
               ranking.change_analysis?.primary_reason
                 ? ` due to ${ranking.change_analysis.primary_reason.toLowerCase()}`
                 : ""

@@ -1,0 +1,129 @@
+{
+  "id": "1",
+  "slug": "cursor",
+  "name": "Cursor",
+  "category": "code-editor",
+  "status": "active",
+  "company_id": "2",
+  "info": {
+    "summary": "The AI-first code editor",
+    "description": "AI-powered code editor with $500M ARR and 360K+ paying developers",
+    "website": "https://cursor.com",
+    "features": [
+      "AI-powered code completion with Tab",
+      "Context-aware chat with codebase understanding",
+      "Multi-file editing and refactoring",
+      "Terminal command automation",
+      "Background Agent for autonomous coding",
+      "BugBot automated PR reviews",
+      "Model Context Protocol (MCP) support",
+      "Jupyter notebook integration",
+      "Project-specific memory retention",
+      "26+ LLM model support",
+      "Max Mode with 1M token context",
+      "Speculative edits for faster completions",
+      "GPU-optimized performance",
+      "Remote VM execution for heavy tasks",
+      "Slack integration for updates"
+    ],
+    "technical": {
+      "context_window": 128000,
+      "max_context_window": 1000000,
+      "multi_file_support": true,
+      "language_support": [
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "Java",
+        "C++",
+        "C#",
+        "PHP",
+        "Ruby",
+        "Go",
+        "Rust",
+        "Swift",
+        "Kotlin",
+        "Scala",
+        "HTML",
+        "CSS",
+        "SQL",
+        "Shell",
+        "YAML",
+        "JSON",
+        "Markdown"
+      ],
+      "llm_providers": [
+        "Claude 4 Opus",
+        "Claude 4 Sonnet",
+        "Claude 3.7 Sonnet",
+        "Claude 3.5 Sonnet",
+        "OpenAI GPT-4.1",
+        "OpenAI o3-pro",
+        "OpenAI GPT-4o",
+        "Gemini 2.5 Pro",
+        "Gemini 1.5 Pro",
+        "xAI grok-3-beta",
+        "xAI grok-3-mini"
+      ],
+      "ide_integration": "VS Code Fork (Proprietary)",
+      "subprocess_support": {
+        "terminal_commands": true,
+        "background_agent": true,
+        "isolated_vms": true,
+        "automated_workflows": true,
+        "slack_integration": true
+      },
+      "tool_support": {
+        "mcp_protocol": true,
+        "one_click_mcp": true,
+        "oauth_integration": true,
+        "bugbot_reviews": true,
+        "jupyter_notebooks": true,
+        "memories_beta": true
+      },
+      "ai_features": [
+        "Tab completion with custom models",
+        "Smart rewrites and refactoring",
+        "Codebase-wide queries and search",
+        "Background Agent for heavy tasks",
+        "Speculative edits for faster completions",
+        "Context-aware caching",
+        "Multi-file orchestration",
+        "Automated terminal commands",
+        "BugBot PR reviews with fixes",
+        "Project memories and context retention"
+      ],
+      "performance": {
+        "indexing_speed": "20x faster for team repos",
+        "caching_strategy": "GPU-optimized with low latency",
+        "speculative_decoding": true,
+        "mixture_of_experts": true
+      }
+    },
+    "business": {
+      "pricing_model": "freemium",
+      "base_price": 0,
+      "enterprise_pricing": false,
+      "free_tier": true,
+      "pricing_details": {
+        "Free": "$0/month - Limited completions and chat messages",
+        "Pro": "$20/month - Unlimited completions and chat, Claude 4 access, GPT-4 access, privacy mode",
+        "Ultra": "$200/month - Everything in Pro, Max Mode with token-based billing, model provider API costs + 20% margin, Claude 4 requests ~$0.30 each"
+      }
+    },
+    "metrics": {
+      "users": 360000,
+      "monthly_arr": 500000000,
+      "valuation": 4000000000,
+      "employees": 45,
+      "funding": 100000000,
+      "news_mentions": 16,
+      "model_count": 26,
+      "max_models": "26+ LLMs supported",
+      "performance_improvement": "20x faster indexing"
+    }
+  },
+  "created_at": "2025-06-23T15:40:36.303Z",
+  "updated_at": "2025-07-22T22:00:00.000Z",
+  "launch_date": "2023-05-01"
+}

@@ -1,14 +1,14 @@
 /**
  * Recalculate Rankings with Productivity Paradox Adjustments
- * 
+ *
  * This script applies the METR productivity research findings to recalculate
  * tool rankings, incorporating the cognitive bias and actual productivity impacts.
  */
 
-import fs from 'fs';
-import path from 'path';
-import { RankingEngineV6, type ToolMetricsV6 } from '../src/lib/ranking-algorithm-v6';
-import { logger } from '../src/lib/logger';
+import fs from "node:fs";
+import path from "node:path";
+import { logger } from "../src/lib/logger";
+import { RankingEngineV6, type ToolMetricsV6 } from "../src/lib/ranking-algorithm-v6";
 
 interface ToolData {
   id: string;
@@ -31,30 +31,34 @@ interface ProductivityAdjustment {
 
 // Load productivity paradox adjustments
 const PRODUCTIVITY_ADJUSTMENTS: Record<string, ProductivityAdjustment> = {
-  "1": { // Cursor
+  "1": {
+    // Cursor
     toolId: "1",
     businessSentimentDecrease: 0.13,
     marketImpact: 0.15,
-    reasoning: "Third-place tool moderately impacted by productivity research"
+    reasoning: "Third-place tool moderately impacted by productivity research",
   },
-  "2": { // GitHub Copilot
-    toolId: "2", 
+  "2": {
+    // GitHub Copilot
+    toolId: "2",
     businessSentimentDecrease: 0.36,
     marketImpact: 0.42,
-    reasoning: "Market leader heavily impacted by productivity paradox research"
+    reasoning: "Market leader heavily impacted by productivity paradox research",
   },
-  "26": { // Amazon Q
+  "26": {
+    // Amazon Q
     toolId: "26",
     businessSentimentDecrease: 0.13,
     marketImpact: 0.15,
-    reasoning: "Third-place tool moderately impacted by productivity research"
+    reasoning: "Third-place tool moderately impacted by productivity research",
   },
-  "27": { // Gemini Code Assist
+  "27": {
+    // Gemini Code Assist
     toolId: "27",
     businessSentimentDecrease: 0.24,
     marketImpact: 0.28,
-    reasoning: "Second-place tool significantly affected by research findings"
-  }
+    reasoning: "Second-place tool significantly affected by research findings",
+  },
 };
 
 /**
@@ -69,10 +73,11 @@ function convertToToolMetrics(tool: ToolData): ToolMetricsV6 {
   // Extract metrics from tool info
   if (tool.info?.metrics) {
     const toolMetrics = tool.info.metrics;
-    
+
     // SWE-bench scores
     if (toolMetrics.swe_bench) {
-      metrics.swe_bench_score = toolMetrics.swe_bench.verified || toolMetrics.swe_bench.full || toolMetrics.swe_bench.lite;
+      metrics.swe_bench_score =
+        toolMetrics.swe_bench.verified || toolMetrics.swe_bench.full || toolMetrics.swe_bench.lite;
     }
   }
 
@@ -97,12 +102,18 @@ function convertToToolMetrics(tool: ToolData): ToolMetricsV6 {
  */
 function getDefaultAgenticCapability(category: string): number {
   switch (category) {
-    case 'autonomous-agent': return 8.5;
-    case 'code-editor': return 7.0;
-    case 'ide-assistant': return 6.0;
-    case 'devops-assistant': return 5.5;
-    case 'open-source-framework': return 5.0;
-    default: return 5.0;
+    case "autonomous-agent":
+      return 8.5;
+    case "code-editor":
+      return 7.0;
+    case "ide-assistant":
+      return 6.0;
+    case "devops-assistant":
+      return 5.5;
+    case "open-source-framework":
+      return 5.0;
+    default:
+      return 5.0;
   }
 }
 
@@ -112,13 +123,13 @@ function getDefaultAgenticCapability(category: string): number {
 function getDefaultInnovationScore(toolId: string): number {
   const innovationScores: Record<string, number> = {
     "4": 9.0, // Claude Code
-    "11": 8.5, // Google Jules  
+    "11": 8.5, // Google Jules
     "1": 8.0, // Cursor
     "2": 7.0, // GitHub Copilot
     "27": 7.5, // Gemini Code Assist
     "26": 6.5, // Amazon Q
   };
-  
+
   return innovationScores[toolId] || 6.0;
 }
 
@@ -130,11 +141,11 @@ function getDefaultBusinessSentiment(toolId: string): number {
     "4": 1.0, // Claude Code - very positive
     "11": 0.9, // Google Jules
     "1": 0.85, // Cursor
-    "2": 0.8, // GitHub Copilot  
+    "2": 0.8, // GitHub Copilot
     "27": 0.75, // Gemini Code Assist
     "26": 0.7, // Amazon Q
   };
-  
+
   return sentimentScores[toolId] || 0.6;
 }
 
@@ -150,12 +161,12 @@ function getDefaultUserEstimate(toolId: string): number {
     "4": 100000, // Claude Code estimate
     "11": 50000, // Google Jules beta
   };
-  
+
   return userEstimates[toolId] || 10000;
 }
 
 /**
- * Get default ARR estimates  
+ * Get default ARR estimates
  */
 function getDefaultARR(toolId: string): number {
   const arrEstimates: Record<string, number> = {
@@ -166,7 +177,7 @@ function getDefaultARR(toolId: string): number {
     "4": 50000000, // Claude Code estimate
     "11": 20000000, // Google Jules estimate
   };
-  
+
   return arrEstimates[toolId] || 1000000;
 }
 
@@ -179,7 +190,7 @@ function getDefaultGitHubStars(toolId: string): number {
     "13": 40000, // OpenHands
     "8": 47000, // Zed
   };
-  
+
   return starCounts[toolId] || 1000;
 }
 
@@ -193,29 +204,30 @@ function applyProductivityAdjustments(metrics: ToolMetricsV6): ToolMetricsV6 {
   }
 
   const adjusted = { ...metrics };
-  
+
   // Apply business sentiment decrease
   if (adjusted.business_sentiment !== undefined) {
-    adjusted.business_sentiment = Math.max(0.1, 
+    adjusted.business_sentiment = Math.max(
+      0.1,
       adjusted.business_sentiment - adjustment.businessSentimentDecrease
     );
   }
-  
+
   // Add productivity paradox risk factor
   if (!adjusted.risk_factors) {
     adjusted.risk_factors = [];
   }
-  if (!adjusted.risk_factors.includes('productivity_paradox_research')) {
-    adjusted.risk_factors.push('productivity_paradox_research');
+  if (!adjusted.risk_factors.includes("productivity_paradox_research")) {
+    adjusted.risk_factors.push("productivity_paradox_research");
   }
-  
+
   logger.info(`Applied productivity adjustments to ${metrics.tool_id}`, {
     originalSentiment: metrics.business_sentiment,
     adjustedSentiment: adjusted.business_sentiment,
     adjustment: adjustment.businessSentimentDecrease,
-    reasoning: adjustment.reasoning
+    reasoning: adjustment.reasoning,
   });
-  
+
   return adjusted;
 }
 
@@ -223,21 +235,21 @@ function applyProductivityAdjustments(metrics: ToolMetricsV6): ToolMetricsV6 {
  * Main function to recalculate rankings
  */
 async function recalculateRankingsWithProductivityAdjustments(): Promise<void> {
-  logger.info('Starting ranking recalculation with productivity paradox adjustments');
+  logger.info("Starting ranking recalculation with productivity paradox adjustments");
 
-  const dataDir = path.join(process.cwd(), 'data');
-  const toolsPath = path.join(dataDir, 'json', 'tools', 'tools.json');
-  const rankingsDir = path.join(dataDir, 'json', 'rankings', 'periods');
+  const dataDir = path.join(process.cwd(), "data");
+  const toolsPath = path.join(dataDir, "json", "tools", "tools.json");
+  const rankingsDir = path.join(dataDir, "json", "rankings", "periods");
 
   // Load tools data
-  const toolsData = JSON.parse(fs.readFileSync(toolsPath, 'utf-8'));
+  const toolsData = JSON.parse(fs.readFileSync(toolsPath, "utf-8"));
   const tools: ToolData[] = toolsData.tools;
 
   logger.info(`Loaded ${tools.length} tools for ranking calculation`);
 
   // Initialize ranking engine
   const rankingEngine = new RankingEngineV6();
-  const currentDate = new Date('2025-07-14'); // Use the research date
+  const currentDate = new Date("2025-07-14"); // Use the research date
 
   // Calculate scores for all tools
   const toolScores: Array<{
@@ -250,33 +262,33 @@ async function recalculateRankingsWithProductivityAdjustments(): Promise<void> {
   }> = [];
 
   for (const tool of tools) {
-    if (tool.status !== 'active') {
+    if (tool.status !== "active") {
       continue; // Skip inactive tools
     }
 
     // Convert to metrics format
     let metrics = convertToToolMetrics(tool);
-    
+
     // Apply productivity paradox adjustments if applicable
     metrics = applyProductivityAdjustments(metrics);
-    
+
     // Calculate score
     const score = rankingEngine.calculateToolScore(metrics, currentDate);
-    
+
     toolScores.push({
       toolId: tool.id,
       toolName: tool.name,
       score: score.overallScore,
       factorScores: score.factorScores,
       modifiers: score.modifiers,
-      validation: score.validationStatus
+      validation: score.validationStatus,
     });
 
     logger.info(`Calculated score for ${tool.name}`, {
       toolId: tool.id,
       score: score.overallScore,
       validation: score.validationStatus.isValid,
-      productivityAdjusted: !!PRODUCTIVITY_ADJUSTMENTS[tool.id]
+      productivityAdjusted: !!PRODUCTIVITY_ADJUSTMENTS[tool.id],
     });
   }
 
@@ -286,7 +298,7 @@ async function recalculateRankingsWithProductivityAdjustments(): Promise<void> {
   // Generate tier assignments
   function getTier(score: number): "S" | "A" | "B" | "C" | "D" {
     if (score >= 75) return "S";
-    if (score >= 65) return "A"; 
+    if (score >= 65) return "A";
     if (score >= 55) return "B";
     if (score >= 45) return "C";
     return "D";
@@ -301,7 +313,7 @@ async function recalculateRankingsWithProductivityAdjustments(): Promise<void> {
     metadata: {
       research_applied: "METR productivity paradox study",
       adjustments_applied: Object.keys(PRODUCTIVITY_ADJUSTMENTS).length,
-      calculation_date: currentDate.toISOString()
+      calculation_date: currentDate.toISOString(),
     },
     rankings: toolScores.map((score, index) => ({
       tool_id: score.toolId,
@@ -317,45 +329,45 @@ async function recalculateRankingsWithProductivityAdjustments(): Promise<void> {
         market_traction: score.factorScores.marketTraction,
         business_sentiment: score.factorScores.businessSentiment,
         development_velocity: score.factorScores.developmentVelocity,
-        platform_resilience: score.factorScores.platformResilience
+        platform_resilience: score.factorScores.platformResilience,
       },
       modifiers: score.modifiers,
       validation_status: score.validation,
-      productivity_adjusted: !!PRODUCTIVITY_ADJUSTMENTS[score.toolId]
-    }))
+      productivity_adjusted: !!PRODUCTIVITY_ADJUSTMENTS[score.toolId],
+    })),
   };
 
   // Save new ranking period
-  const newRankingPath = path.join(rankingsDir, '2025-07-14-productivity-adjusted.json');
+  const newRankingPath = path.join(rankingsDir, "2025-07-14-productivity-adjusted.json");
   fs.writeFileSync(newRankingPath, JSON.stringify(newRankingPeriod, null, 2));
 
   // Generate comparison with previous rankings
-  const previousRankingPath = path.join(rankingsDir, '2025-07-01.json');
+  const previousRankingPath = path.join(rankingsDir, "2025-07-01.json");
   let comparison: any = null;
-  
+
   if (fs.existsSync(previousRankingPath)) {
-    const previousRankings = JSON.parse(fs.readFileSync(previousRankingPath, 'utf-8'));
+    const previousRankings = JSON.parse(fs.readFileSync(previousRankingPath, "utf-8"));
     const previousPositions: Record<string, number> = {};
-    
+
     previousRankings.rankings.forEach((r: any) => {
       previousPositions[r.tool_id] = r.position;
     });
-    
+
     comparison = {
       comparison_date: new Date().toISOString(),
       significant_changes: newRankingPeriod.rankings
-        .filter(r => {
+        .filter((r) => {
           const prevPos = previousPositions[r.tool_id];
           return prevPos && Math.abs(r.position - prevPos) >= 2;
         })
-        .map(r => ({
+        .map((r) => ({
           tool: r.tool_name,
           old_position: previousPositions[r.tool_id],
           new_position: r.position,
           change: r.position - previousPositions[r.tool_id],
           productivity_adjusted: r.productivity_adjusted,
-          reasoning: PRODUCTIVITY_ADJUSTMENTS[r.tool_id]?.reasoning
-        }))
+          reasoning: PRODUCTIVITY_ADJUSTMENTS[r.tool_id]?.reasoning,
+        })),
     };
   }
 
@@ -367,48 +379,51 @@ async function recalculateRankingsWithProductivityAdjustments(): Promise<void> {
     tools_calculated: toolScores.length,
     tools_with_adjustments: Object.keys(PRODUCTIVITY_ADJUSTMENTS).length,
     ranking_changes: comparison,
-    top_10_tools: newRankingPeriod.rankings.slice(0, 10).map(r => ({
+    top_10_tools: newRankingPeriod.rankings.slice(0, 10).map((r) => ({
       position: r.position,
       tool: r.tool_name,
       score: r.score,
       tier: r.tier,
-      productivity_adjusted: r.productivity_adjusted
+      productivity_adjusted: r.productivity_adjusted,
     })),
     productivity_impact_summary: {
-      github_copilot_impact: "Business sentiment decreased by 0.36 due to market leadership position",
-      gemini_code_assist_impact: "Business sentiment decreased by 0.24 as second-place tool", 
+      github_copilot_impact:
+        "Business sentiment decreased by 0.36 due to market leadership position",
+      gemini_code_assist_impact: "Business sentiment decreased by 0.24 as second-place tool",
       cursor_amazon_q_impact: "Business sentiment decreased by 0.13 as third-place tools",
-      cognitive_bias_factor: "43% of user satisfaction identified as psychological bias"
-    }
+      cognitive_bias_factor: "43% of user satisfaction identified as psychological bias",
+    },
   };
 
-  const summaryPath = path.join(dataDir, 'productivity-adjusted-rankings-summary.json');
+  const summaryPath = path.join(dataDir, "productivity-adjusted-rankings-summary.json");
   fs.writeFileSync(summaryPath, JSON.stringify(summaryReport, null, 2));
 
-  logger.info('Ranking recalculation completed', {
+  logger.info("Ranking recalculation completed", {
     toolsCalculated: toolScores.length,
     adjustmentsApplied: Object.keys(PRODUCTIVITY_ADJUSTMENTS).length,
     outputPath: newRankingPath,
-    summaryPath
+    summaryPath,
   });
 
   // Display results
-  console.log('\n=== UPDATED RANKINGS WITH PRODUCTIVITY ADJUSTMENTS ===');
-  console.log(`Research Integration: METR productivity paradox study`);
+  console.log("\n=== UPDATED RANKINGS WITH PRODUCTIVITY ADJUSTMENTS ===");
+  console.log("Research Integration: METR productivity paradox study");
   console.log(`Tools Calculated: ${toolScores.length}`);
   console.log(`Productivity Adjustments Applied: ${Object.keys(PRODUCTIVITY_ADJUSTMENTS).length}`);
-  console.log('\nTop 10 Rankings:');
-  
-  newRankingPeriod.rankings.slice(0, 10).forEach(r => {
-    const adjustment = r.productivity_adjusted ? ' [ADJUSTED]' : '';
+  console.log("\nTop 10 Rankings:");
+
+  newRankingPeriod.rankings.slice(0, 10).forEach((r) => {
+    const adjustment = r.productivity_adjusted ? " [ADJUSTED]" : "";
     console.log(`${r.position}. ${r.tool_name} - ${r.score} (${r.tier})${adjustment}`);
   });
 
   if (comparison?.significant_changes?.length > 0) {
-    console.log('\nSignificant Position Changes:');
+    console.log("\nSignificant Position Changes:");
     comparison.significant_changes.forEach((change: any) => {
-      const direction = change.change > 0 ? 'down' : 'up';
-      console.log(`${change.tool}: ${change.old_position} → ${change.new_position} (${Math.abs(change.change)} ${direction})`);
+      const direction = change.change > 0 ? "down" : "up";
+      console.log(
+        `${change.tool}: ${change.old_position} → ${change.new_position} (${Math.abs(change.change)} ${direction})`
+      );
       if (change.productivity_adjusted) {
         console.log(`  Reason: ${change.reasoning}`);
       }
@@ -422,11 +437,11 @@ async function recalculateRankingsWithProductivityAdjustments(): Promise<void> {
 if (require.main === module) {
   recalculateRankingsWithProductivityAdjustments()
     .then(() => {
-      console.log('✓ Ranking recalculation with productivity adjustments completed successfully');
+      console.log("✓ Ranking recalculation with productivity adjustments completed successfully");
       process.exit(0);
     })
     .catch((error) => {
-      console.error('✗ Failed to recalculate rankings:', error);
+      console.error("✗ Failed to recalculate rankings:", error);
       process.exit(1);
     });
 }

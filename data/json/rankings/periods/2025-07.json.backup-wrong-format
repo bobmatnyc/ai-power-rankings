@@ -1,0 +1,656 @@
+{
+  "month": "2025-07",
+  "generated_at": "2025-07-23T00:39:07.867Z",
+  "algorithm_version": "v7.0-fixed-velocity",
+  "algorithm_info": {
+    "version": "v7.0-fixed",
+    "name": "Smart Defaults & Accurate Capability Scoring with Dynamic Velocity",
+    "description": "Algorithm with fixed agentic, innovation, and technical scoring including subprocess/tool support and news-based velocity scores",
+    "weights": {
+      "agenticCapability": 0.25,
+      "innovation": 0.125,
+      "technicalPerformance": 0.125,
+      "developerAdoption": 0.125,
+      "marketTraction": 0.125,
+      "businessSentiment": 0.15,
+      "developmentVelocity": 0.05,
+      "platformResilience": 0.05
+    },
+    "features": [
+      "Accurate agentic capability scoring (autonomous vs autocomplete)",
+      "Enhanced innovation detection for breakthrough features",
+      "Subprocess and tool support scoring for true autonomy",
+      "Proper SWE-bench score interpretation",
+      "Category-based differentiation",
+      "Smart defaults and proxy metrics",
+      "News mentions as adoption proxy",
+      "Dynamic development velocity based on news analysis (0-100 scale)",
+      "Recognizes tools with advanced autonomous capabilities",
+      "Ensures accurate tool rankings"
+    ],
+    "updatedAt": "2025-07-23",
+    "velocity_integration": "Dynamic velocity scores from news-based calculation (0-100 scale)"
+  },
+  "rankings": [
+    {
+      "tool_id": "1",
+      "rank": 1,
+      "score": 93,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 91,
+        "innovation": 90,
+        "technicalPerformance": 100,
+        "developerAdoption": 100,
+        "marketTraction": 100,
+        "businessSentiment": 85,
+        "developmentVelocity": 85,
+        "platformResilience": 90,
+        "technicalCapability": 100,
+        "communitySentiment": 85
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "2",
+      "rank": 2,
+      "score": 81,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 50,
+        "innovation": 90,
+        "technicalPerformance": 100,
+        "developerAdoption": 100,
+        "marketTraction": 100,
+        "businessSentiment": 75,
+        "developmentVelocity": 90,
+        "platformResilience": 80,
+        "technicalCapability": 100,
+        "communitySentiment": 75
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "31",
+      "rank": 3,
+      "score": 76.9,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 78,
+        "innovation": 90,
+        "technicalPerformance": 100,
+        "developerAdoption": 70,
+        "marketTraction": 50,
+        "businessSentiment": 70,
+        "developmentVelocity": 83,
+        "platformResilience": 80,
+        "technicalCapability": 100,
+        "communitySentiment": 70
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "4",
+      "rank": 4,
+      "score": 76.7,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 90,
+        "innovation": 80,
+        "technicalPerformance": 100,
+        "developerAdoption": 60,
+        "marketTraction": 70,
+        "businessSentiment": 75,
+        "developmentVelocity": 14,
+        "platformResilience": 70,
+        "technicalCapability": 100,
+        "communitySentiment": 75
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "11",
+      "rank": 5,
+      "score": 71.6,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 95,
+        "innovation": 67,
+        "technicalPerformance": 100,
+        "developerAdoption": 50,
+        "marketTraction": 40,
+        "businessSentiment": 75,
+        "developmentVelocity": 10,
+        "platformResilience": 80,
+        "technicalCapability": 100,
+        "communitySentiment": 75
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "14",
+      "rank": 6,
+      "score": 70.9,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 65,
+        "innovation": 38,
+        "technicalPerformance": 85,
+        "developerAdoption": 80,
+        "marketTraction": 60,
+        "businessSentiment": 85,
+        "developmentVelocity": 90,
+        "platformResilience": 90,
+        "technicalCapability": 85,
+        "communitySentiment": 85
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "26",
+      "rank": 7,
+      "score": 67.1,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 86,
+        "innovation": 69,
+        "technicalPerformance": 100,
+        "developerAdoption": 30,
+        "marketTraction": 60,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 80,
+        "technicalCapability": 100,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "3",
+      "rank": 8,
+      "score": 67.1,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 95,
+        "innovation": 66,
+        "technicalPerformance": 65,
+        "developerAdoption": 60,
+        "marketTraction": 30,
+        "businessSentiment": 75,
+        "developmentVelocity": 10,
+        "platformResilience": 80,
+        "technicalCapability": 65,
+        "communitySentiment": 75
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "24",
+      "rank": 9,
+      "score": 66.4,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 95,
+        "innovation": 77,
+        "technicalPerformance": 90,
+        "developerAdoption": 30,
+        "marketTraction": 30,
+        "businessSentiment": 70,
+        "developmentVelocity": 5,
+        "platformResilience": 70,
+        "technicalCapability": 90,
+        "communitySentiment": 70
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "18",
+      "rank": 10,
+      "score": 60.4,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 80,
+        "innovation": 40,
+        "technicalPerformance": 75,
+        "developerAdoption": 30,
+        "marketTraction": 60,
+        "businessSentiment": 70,
+        "developmentVelocity": 5,
+        "platformResilience": 80,
+        "technicalCapability": 75,
+        "communitySentiment": 70
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "21",
+      "rank": 11,
+      "score": 60.3,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 45,
+        "innovation": 30,
+        "technicalPerformance": 85,
+        "developerAdoption": 70,
+        "marketTraction": 60,
+        "businessSentiment": 70,
+        "developmentVelocity": 69,
+        "platformResilience": 90,
+        "technicalCapability": 85,
+        "communitySentiment": 70
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "7",
+      "rank": 12,
+      "score": 58.9,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 57.26,
+        "innovation": 42,
+        "technicalPerformance": 100,
+        "developerAdoption": 50,
+        "marketTraction": 40,
+        "businessSentiment": 65,
+        "developmentVelocity": 16,
+        "platformResilience": 100,
+        "technicalCapability": 100,
+        "communitySentiment": 65
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "25",
+      "rank": 13,
+      "score": 58.6,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 75,
+        "innovation": 57,
+        "technicalPerformance": 100,
+        "developerAdoption": 30,
+        "marketTraction": 30,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 70,
+        "technicalCapability": 100,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "23",
+      "rank": 14,
+      "score": 58.1,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 65,
+        "innovation": 38,
+        "technicalPerformance": 85,
+        "developerAdoption": 30,
+        "marketTraction": 60,
+        "businessSentiment": 70,
+        "developmentVelocity": 5,
+        "platformResilience": 90,
+        "technicalCapability": 85,
+        "communitySentiment": 70
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "6",
+      "rank": 15,
+      "score": 56.4,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 58,
+        "innovation": 56,
+        "technicalPerformance": 95,
+        "developerAdoption": 30,
+        "marketTraction": 40,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 100,
+        "technicalCapability": 95,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "12",
+      "rank": 16,
+      "score": 54.9,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 30,
+        "innovation": 30,
+        "technicalPerformance": 85,
+        "developerAdoption": 70,
+        "marketTraction": 80,
+        "businessSentiment": 65,
+        "developmentVelocity": 10,
+        "platformResilience": 80,
+        "technicalCapability": 85,
+        "communitySentiment": 65
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "27",
+      "rank": 17,
+      "score": 54.6,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 45,
+        "innovation": 38,
+        "technicalPerformance": 90,
+        "developerAdoption": 50,
+        "marketTraction": 60,
+        "businessSentiment": 65,
+        "developmentVelocity": 6,
+        "platformResilience": 70,
+        "technicalCapability": 90,
+        "communitySentiment": 65
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "5",
+      "rank": 18,
+      "score": 54.4,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 30,
+        "innovation": 30,
+        "technicalPerformance": 75,
+        "developerAdoption": 70,
+        "marketTraction": 90,
+        "businessSentiment": 65,
+        "developmentVelocity": 10,
+        "platformResilience": 70,
+        "technicalCapability": 75,
+        "communitySentiment": 65
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "9",
+      "rank": 19,
+      "score": 52.8,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 51,
+        "innovation": 42,
+        "technicalPerformance": 80,
+        "developerAdoption": 30,
+        "marketTraction": 70,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 60,
+        "technicalCapability": 80,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "29",
+      "rank": 20,
+      "score": 52.4,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 45,
+        "innovation": 34,
+        "technicalPerformance": 95,
+        "developerAdoption": 30,
+        "marketTraction": 60,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 90,
+        "technicalCapability": 95,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "13",
+      "rank": 21,
+      "score": 51.6,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 46,
+        "innovation": 42,
+        "technicalPerformance": 95,
+        "developerAdoption": 30,
+        "marketTraction": 40,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 100,
+        "technicalCapability": 95,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "22",
+      "rank": 22,
+      "score": 51.5,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 48,
+        "innovation": 40,
+        "technicalPerformance": 80,
+        "developerAdoption": 30,
+        "marketTraction": 60,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 80,
+        "technicalCapability": 80,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "16",
+      "rank": 23,
+      "score": 49.8,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 38,
+        "innovation": 42,
+        "technicalPerformance": 80,
+        "developerAdoption": 30,
+        "marketTraction": 60,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 90,
+        "technicalCapability": 80,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "10",
+      "rank": 24,
+      "score": 48.8,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 30,
+        "innovation": 30,
+        "technicalPerformance": 75,
+        "developerAdoption": 50,
+        "marketTraction": 60,
+        "businessSentiment": 65,
+        "developmentVelocity": 14,
+        "platformResilience": 80,
+        "technicalCapability": 75,
+        "communitySentiment": 65
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "8",
+      "rank": 25,
+      "score": 48.6,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 40,
+        "innovation": 30,
+        "technicalPerformance": 95,
+        "developerAdoption": 30,
+        "marketTraction": 40,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 100,
+        "technicalCapability": 95,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "28",
+      "rank": 26,
+      "score": 45.3,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 35,
+        "innovation": 30,
+        "technicalPerformance": 80,
+        "developerAdoption": 30,
+        "marketTraction": 50,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 70,
+        "technicalCapability": 80,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "19",
+      "rank": 27,
+      "score": 44,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 25,
+        "innovation": 30,
+        "technicalPerformance": 80,
+        "developerAdoption": 30,
+        "marketTraction": 60,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 70,
+        "technicalCapability": 80,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "17",
+      "rank": 28,
+      "score": 43.3,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 35,
+        "innovation": 34,
+        "technicalPerformance": 50,
+        "developerAdoption": 30,
+        "marketTraction": 60,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 70,
+        "technicalCapability": 50,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "30",
+      "rank": 29,
+      "score": 43.1,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 45,
+        "innovation": 38,
+        "technicalPerformance": 45,
+        "developerAdoption": 30,
+        "marketTraction": 40,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 70,
+        "technicalCapability": 45,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "15",
+      "rank": 30,
+      "score": 42.6,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 35,
+        "innovation": 34,
+        "technicalPerformance": 45,
+        "developerAdoption": 30,
+        "marketTraction": 60,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 70,
+        "technicalCapability": 45,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    },
+    {
+      "tool_id": "20",
+      "rank": 31,
+      "score": 40.4,
+      "previous_rank": null,
+      "trend": "stable",
+      "factor_scores": {
+        "agenticCapability": 38,
+        "innovation": 40,
+        "technicalPerformance": 45,
+        "developerAdoption": 30,
+        "marketTraction": 30,
+        "businessSentiment": 60,
+        "developmentVelocity": 5,
+        "platformResilience": 70,
+        "technicalCapability": 45,
+        "communitySentiment": 60
+      },
+      "algorithm_version": "v7.0-fixed-velocity"
+    }
+  ]
+}

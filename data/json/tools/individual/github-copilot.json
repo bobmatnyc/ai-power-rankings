@@ -1,0 +1,93 @@
+{
+  "id": "2",
+  "slug": "github-copilot",
+  "name": "GitHub Copilot",
+  "category": "ide-assistant",
+  "status": "active",
+  "company_id": "1",
+  "info": {
+    "summary": "Your AI pair programmer",
+    "description": "AI pair programmer with autocomplete, chat, and autonomous coding agent capabilities. Can execute multi-step tasks, run terminal commands, and self-heal errors",
+    "website": "https://github.com/features/copilot",
+    "features": [
+      "AI-powered code completion",
+      "Multi-file context understanding",
+      "Copilot Chat for code questions",
+      "Autonomous coding agent (2025)",
+      "Terminal command execution",
+      "GitHub Actions integration",
+      "Self-healing error correction",
+      "Multi-step task execution",
+      "Draft PR generation",
+      "All language support for code review",
+      "Multiple LLM model choice",
+      "Copilot Spaces for context management"
+    ],
+    "technical": {
+      "context_window": null,
+      "multi_file_support": true,
+      "language_support": [
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "Java",
+        "C++",
+        "C#",
+        "PHP",
+        "Ruby",
+        "Go",
+        "Rust",
+        "Swift",
+        "Kotlin",
+        "C",
+        "Scala",
+        "All languages (Code Review)"
+      ],
+      "llm_providers": [
+        "GPT-4.1 (default)",
+        "GPT-4o Copilot",
+        "GPT-4o mini",
+        "Claude 3.7 Sonnet",
+        "Google Gemini 2.0 Flash",
+        "OpenAI o1-preview",
+        "OpenAI o1-mini"
+      ],
+      "subprocess_support": true,
+      "tool_support": true,
+      "autonomous_agent": true,
+      "terminal_execution": true,
+      "github_actions_integration": true,
+      "secure_cloud_environment": true,
+      "multi_step_tasks": true,
+      "error_self_healing": true,
+      "swe_bench_score": 45.2
+    },
+    "business": {
+      "pricing_model": "subscription",
+      "base_price": 10,
+      "enterprise_pricing": false,
+      "free_tier": false,
+      "pricing_details": {
+        "Pro": "$10/month - 300 premium requests, code completions and chat, additional requests at $0.04 each",
+        "Pro+": "$39/month - 1,500 premium requests, everything in Pro, priority access, advanced features",
+        "pricing_note": "Premium requests vary by model complexity"
+      }
+    },
+    "metrics": {
+      "users": 1500000,
+      "github_stars": 5000,
+      "monthly_arr": 400000000,
+      "swe_bench": {
+        "verified": 56,
+        "date": "2025-04-23",
+        "source": "GitHub Blog - In celebration of MSFT's 50th anniversary",
+        "model": "Claude 3.7 Sonnet",
+        "context": "Part of GitHub Copilot's new agentic capabilities in VS Code"
+      },
+      "news_mentions": 20
+    }
+  },
+  "created_at": "2025-06-23T15:40:36.825Z",
+  "updated_at": "2025-07-22T00:00:00.000Z",
+  "launch_date": "2021-06-01"
+}

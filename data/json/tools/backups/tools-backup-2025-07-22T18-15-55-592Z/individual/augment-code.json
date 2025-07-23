@@ -1,0 +1,35 @@
+{
+  "id": "25",
+  "slug": "augment-code",
+  "name": "Augment Code",
+  "category": "ide-assistant",
+  "status": "active",
+  "company_id": "47",
+  "info": {
+    "summary": "AI Coding Assistant for Enterprises",
+    "description": "Enterprise-grade AI coding assistant with 200K token context and deep codebase understanding",
+    "website": "https://augmentcode.com",
+    "features": [],
+    "technical": {},
+    "business": {
+      "pricing_model": "enterprise",
+      "enterprise_pricing": true,
+      "free_tier": false,
+      "pricing_details": {
+        "Enterprise": "Custom pricing - AI Coding Assistant for Enterprises with 200K token context and deep codebase understanding"
+      }
+    },
+    "metrics": {
+      "swe_bench": {
+        "verified": 65.4,
+        "date": "2025-03-16",
+        "source": "Official SWE-bench leaderboard & Augment Blog",
+        "model": "Claude Sonnet 3.7 (core driver) + OpenAI o1 (ensembler)",
+        "achievement": "#1 open-source agent on SWE-bench Verified at time of announcement"
+      }
+    }
+  },
+  "created_at": "2025-06-23T15:40:48.425Z",
+  "updated_at": "2025-06-30T03:49:42.695Z",
+  "launch_date": "2024-01-01"
+}

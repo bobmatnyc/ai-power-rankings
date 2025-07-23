@@ -197,8 +197,10 @@ To enable Vercel Blob storage:
       "info": { ... }
     }
   ],
-  "total": 50,
-  "generated_at": "2025-06-25T13:36:00.000Z"
+  "total": 30,
+  "generated_at": "2025-06-25T13:36:00.000Z",
+  "_source": "individual_files",
+  "_note": "Generated from /data/json/tools/individual/*.json files"
 }
 ```
 

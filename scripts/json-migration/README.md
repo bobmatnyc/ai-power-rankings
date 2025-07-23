@@ -118,7 +118,11 @@ data/json/
 ├── companies/
 │   └── companies.json
 ├── tools/
-│   └── tools.json
+│   ├── individual/        # Individual tool files
+│   │   ├── aider.json
+│   │   └── ...
+│   ├── tools-index.json   # Lookup indices
+│   └── tools.json         # Legacy (deprecated)
 ├── rankings/
 │   ├── index.json
 │   └── periods/

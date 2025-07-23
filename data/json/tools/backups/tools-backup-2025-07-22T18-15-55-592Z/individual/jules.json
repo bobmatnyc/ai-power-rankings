@@ -1,0 +1,38 @@
+{
+  "id": "11",
+  "slug": "jules",
+  "name": "Google Jules",
+  "category": "autonomous-agent",
+  "status": "active",
+  "company_id": "5",
+  "info": {
+    "summary": "Google's autonomous AI coding agent",
+    "description": "Asynchronous AI coding agent that works in background cloud VMs for GitHub workflows",
+    "website": "https://jules.google.com",
+    "features": [],
+    "technical": {},
+    "business": {
+      "pricing_model": "free",
+      "base_price": 0,
+      "enterprise_pricing": false,
+      "free_tier": true,
+      "pricing_details": {
+        "Public Beta": "Free - 5 free tasks per calendar day, Gemini 2.5 Pro powered, secure Google Cloud VMs, code execution capabilities",
+        "pricing_note": "Future pricing expected as platform matures"
+      }
+    },
+    "metrics": {
+      "swe_bench": {
+        "verified": 52.2,
+        "date": "2024-12-12",
+        "source": "SWE-bench leaderboard (historical data)",
+        "model": "Gemini 2.0 Flash",
+        "updates": "Entered public beta in May 2025 but no new scores published"
+      }
+    }
+  },
+  "tags": null,
+  "created_at": "2025-06-23T15:40:41.438Z",
+  "updated_at": "2025-06-30T03:49:42.686Z",
+  "launch_date": "2024-12-11"
+}

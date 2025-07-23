@@ -1,0 +1,29 @@
+{
+  "id": "23",
+  "slug": "zed",
+  "name": "Zed",
+  "category": "code-editor",
+  "status": "active",
+  "company_id": "46",
+  "info": {
+    "summary": "Code at the speed of thought",
+    "description": "High-performance, multiplayer code editor built in Rust with integrated AI assistant powered by multiple LLMs",
+    "website": "https://zed.dev",
+    "features": [],
+    "technical": {},
+    "business": {
+      "pricing_model": "freemium",
+      "base_price": 0,
+      "enterprise_pricing": false,
+      "free_tier": true,
+      "pricing_details": {
+        "Free": "$0/month - Open source editor, Basic features",
+        "Pro": "Coming soon - Advanced collaboration features"
+      }
+    },
+    "metrics": {}
+  },
+  "created_at": "2025-06-23T15:40:47.312Z",
+  "updated_at": "2025-06-30T03:49:42.682Z",
+  "launch_date": "2024-08-01"
+}

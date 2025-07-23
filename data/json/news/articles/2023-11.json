@@ -5,12 +5,12 @@
     "title": "JetBrains AI Assistant Reaches General Availability",
     "content": "JetBrains AI Assistant becomes generally available with the 2023.3 release, supporting over 20 programming languages across all JetBrains IDEs.",
     "summary": "JetBrains AI Assistant becomes generally available with the 2023.3 release, supporting over 20 programming languages across all JetBrains IDEs....",
-    "published_date": "2023-12-01T00:00:00.000Z",
     "source": "JetBrains Blog, InfoQ",
     "tags": ["launch", "ide", "general-availability"],
     "tool_mentions": ["JetBrains AI Assistant"],
     "created_at": "2025-06-30T05:11:28.927Z",
-    "updated_at": "2025-06-30T05:11:28.927Z"
+    "updated_at": "2025-06-30T05:11:28.927Z",
+    "date": "2023-12-01T00:00:00.000Z"
   },
   {
     "id": "197bf3f579f-1844625c-2d8e4769",
@@ -18,11 +18,11 @@
     "title": "Amazon Q Developer Launches in Preview at AWS re:Invent",
     "content": "Amazon Web Services unveiled Amazon Q Developer at re:Invent 2023, introducing an AI-powered coding assistant designed to help developers with code generation, debugging, and AWS-specific tasks.",
     "summary": "Amazon Web Services unveiled Amazon Q Developer at re:Invent 2023, introducing an AI-powered coding assistant designed to help developers with code generation, debugging, and AWS-specific tasks....",
-    "published_date": "2023-11-28T00:00:00.000Z",
     "source": "AWS Official Announcements",
     "tags": ["launch", "enterprise", "ai-assistant"],
     "tool_mentions": ["Amazon Q Developer"],
     "created_at": "2025-06-30T05:11:28.927Z",
-    "updated_at": "2025-06-30T05:11:28.927Z"
+    "updated_at": "2025-06-30T05:11:28.927Z",
+    "date": "2023-11-28T00:00:00.000Z"
   }
 ]

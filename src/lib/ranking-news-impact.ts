@@ -46,7 +46,8 @@ export function calculateBaseNewsImpact(article: NewsArticle): number {
     medium: 4,
     low: 2,
   };
-  baseImpact += importanceScores[article["impact_assessment"]?.["importance"] || "medium"];
+  const importance = article["impact_assessment"]?.["importance"] || "medium";
+  baseImpact += importanceScores[importance] || importanceScores["medium"];
 
   // Market impact factor
   const marketImpactScores = {
@@ -55,7 +56,8 @@ export function calculateBaseNewsImpact(article: NewsArticle): number {
     minor: 2,
     none: 0,
   };
-  baseImpact += marketImpactScores[article["impact_assessment"]?.["market_impact"] || "minor"];
+  const marketImpact = article["impact_assessment"]?.["market_impact"] || "minor";
+  baseImpact += marketImpactScores[marketImpact] || marketImpactScores["minor"];
 
   // News type factor
   const typeImpactScores: Record<string, number> = {
@@ -128,14 +130,14 @@ export function calculateToolNewsImpact(
 
   for (const article of newsArticles) {
     // Find mentions of this tool
-    const toolMentions = article["tools_mentioned"].filter((t) => t["tool_id"] === toolId);
+    const toolMentions = (article.tools_mentioned || []).filter((t: any) => t === toolId);
     if (toolMentions.length === 0) {
       continue;
     }
 
     articleCount++;
 
-    const articleDate = new Date(article["published_date"]);
+    const articleDate = new Date(article.published_date);
     if (articleDate >= thirtyDaysAgo) {
       recentArticleCount++;
     }
@@ -144,26 +146,27 @@ export function calculateToolNewsImpact(
     const baseImpact = calculateBaseNewsImpact(article);
 
     // Process each mention
-    for (const mention of toolMentions) {
-      // Calculate sentiment-adjusted impact
-      const sentimentModifier = calculateSentimentImpact(mention);
-      const sentimentAdjustedImpact = baseImpact * (1 + sentimentModifier);
+    // for (const mention of toolMentions) {
+    // Calculate sentiment-adjusted impact
+    // Since we only have tool IDs, use neutral sentiment for now
+    const sentimentModifier = 0; // Neutral sentiment
+    const sentimentAdjustedImpact = baseImpact * (1 + sentimentModifier);
 
-      // Apply aging decay and PR discount
-      const effectiveImpact = calculateEffectiveNewsImpact(
-        article,
-        sentimentAdjustedImpact,
-        referenceDate
-      );
+    // Apply aging decay and PR discount
+    const effectiveImpact = calculateEffectiveNewsImpact(
+      article,
+      sentimentAdjustedImpact,
+      referenceDate
+    );
 
-      totalImpact += effectiveImpact;
+    totalImpact += effectiveImpact;
 
-      if (effectiveImpact > 0) {
-        positiveImpact += effectiveImpact;
-      } else {
-        negativeImpact += Math.abs(effectiveImpact);
-      }
+    if (effectiveImpact > 0) {
+      positiveImpact += effectiveImpact;
+    } else {
+      negativeImpact += Math.abs(effectiveImpact);
     }
+    // } // End of commented for loop
   }
 
   return {

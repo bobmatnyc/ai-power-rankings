@@ -7,7 +7,7 @@ import { GoogleSearchConsole } from "../lib/google-search-console";
 config({ path: ".env.local" });
 
 async function testSearchConsole() {
-  const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
+  const siteUrl = process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL;
 
   if (!siteUrl) {
     console.error("❌ GOOGLE_SEARCH_CONSOLE_SITE_URL not configured");

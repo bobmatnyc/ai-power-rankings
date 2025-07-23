@@ -5,13 +5,13 @@
     "title": "Qodo's $50M to Accelerate Quality of Software Development",
     "content": "Qodo, formerly CodiumAI, announced a $40 million Series A funding round, bringing their total funding to $50 million. This investment will be used to integrate advanced algorithms into every aspect of software development, from specification and intent establishment to deployment. Qodo has been recognized by Gartner as a Cool Vendor in AI-Augmented Development and Testing for Software Engineering and accepted into AWS’s Generative AI Accelerator.",
     "summary": "Qodo, formerly CodiumAI, announced a $40 million Series A funding round, bringing their total funding to $50 million. This investment will be used to integrate advanced algorithms into every aspect of software development, from specification and intent establishment to deployment. Qodo has been recognized by Gartner as a Cool Vendor in AI-Augmented Development and Testing for Software Engineering and accepted into AWS’s Generative AI Accelerator.",
-    "published_date": "2024-09-30T04:00:00.000Z",
     "source": "Qodo",
     "source_url": "https://www.qodo.ai/blog/qodo-50m-to-accelerate-quality-of-software-development-with-ai/",
     "tags": ["funding"],
     "tool_mentions": ["zed"],
     "created_at": "2025-06-17T23:24:57.688Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2024-09-30T04:00:00.000Z"
   },
   {
     "id": "93ef537c-dcf8-459c-8522-950ca9f3ad72",
@@ -19,13 +19,13 @@
     "title": "Qodo raises $40M Series A to bring quality-first code generation and testing to the enterprise.",
     "content": "Qodo has raised $40 million in a Series A funding round to bring quality-first code generation and testing to the enterprise. This development highlights the growing interest in AI-assisted coding solutions.",
     "summary": "Qodo has raised $40 million in a Series A funding round to bring quality-first code generation and testing to the enterprise. This development highlights the growing interest in AI-assisted coding solutions.",
-    "published_date": "2024-09-30T04:00:00.000Z",
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2024/09/30/qodo-raises-40m-series-a-to-bring-quality-first-code-generation-to-the-enterprise/",
     "tags": ["funding"],
     "tool_mentions": [],
     "created_at": "2025-06-17T23:24:58.357Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2024-09-30T04:00:00.000Z"
   },
   {
     "id": "a4e18abd-b1af-46dd-bfd7-31ec16f25190",
@@ -33,13 +33,13 @@
     "title": "Are AI Coding Assistants Really Saving Developers Time?",
     "content": "A study found no significant improvements for developers using Microsoft's AI-powered coding assistant tool Copilot. However, some developers reported productivity gains from tools like Claude Dev and GitHub Copilot, although they noted the need for thorough code review. The article highlights mixed opinions on the effectiveness of AI coding assistants.",
     "summary": "A study found no significant improvements for developers using Microsoft's AI-powered coding assistant tool Copilot. However, some developers reported productivity gains from tools like Claude Dev and GitHub Copilot, although they noted the need for thorough code review. The article highlights mixed opinions on the effectiveness of AI coding assistants.",
-    "published_date": "2024-09-29T04:00:00.000Z",
     "source": "Developers.Slashdot",
     "source_url": "https://developers.slashdot.org/story/24/09/28/2132232/are-ai-coding-assistants-really-saving-developers-time",
     "tags": ["general"],
     "tool_mentions": ["claude-code", "github-copilot"],
     "created_at": "2025-06-17T23:24:57.103Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2024-09-29T04:00:00.000Z"
   },
   {
     "id": "b92b90a0-76cf-4b75-855d-34209bc3b92c",
@@ -47,13 +47,13 @@
     "title": "Market for AI products and services could reach up to $990 billion by 2027, finds Bain & Company's 5th annual global technology report",
     "content": "The market for AI-related hardware and software is expected to grow between 40% and 55% annually, reaching between $780 billion and $990 billion by 2027.",
     "summary": "The market for AI-related hardware and software is expected to grow between 40% and 55% annually, reaching between $780 billion and $990 billion by 2027.",
-    "published_date": "2024-09-25T04:00:00.000Z",
     "source": "Bain",
     "source_url": "https://www.bain.com/about/media-center/press-releases/2024/market-for-ai-products-and-services-could-reach-up-to--$990-billion-by-2027-finds-bain--companys-5th-annual-global-technology-report/",
     "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-17T23:24:59.068Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2024-09-25T04:00:00.000Z"
   },
   {
     "id": "da1ea884-f1ed-465d-9d41-b283d65f9afd",
@@ -61,13 +61,13 @@
     "title": "Tabnine Introduces First AI Agents to Autonomously Generate and Validate Code for Atlassian Jira",
     "content": "Tabnine introduced AI agents that can autonomously generate and validate code for Atlassian Jira, simplifying software development and maintenance. This innovation aims to streamline the coding process by providing one-click implementation and validation of Jira issues.",
     "summary": "Tabnine introduced AI agents that can autonomously generate and validate code for Atlassian Jira, simplifying software development and maintenance. This innovation aims to streamline the coding process by providing one-click implementation and validation of Jira issues.",
-    "published_date": "2024-09-24T04:00:00.000Z",
     "source": "Globenewswire",
     "source_url": "https://www.globenewswire.com/news-release/2024/09/24/2952203/0/en/Tabnine-Introduces-First-AI-Agents-to-Autonomously-Generate-and-Validate-Code-for-Atlassian-Jira.html",
     "tags": ["product-update"],
     "tool_mentions": ["tabnine"],
     "created_at": "2025-06-17T23:24:57.400Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2024-09-24T04:00:00.000Z"
   },
   {
     "id": "01bf0338-7c04-4099-a5ed-f2b1a7e9cd4a",
@@ -75,13 +75,13 @@
     "title": "LTIMindtree Crystal AI Technology Trends Radar 2024",
     "content": "The report includes market size and share analysis, growth trends, and forecasts for AI technology. It also discusses specific trends like pair programming and the integration of no-code tools with development tools.",
     "summary": "The report includes market size and share analysis, growth trends, and forecasts for AI technology. It also discusses specific trends like pair programming and the integration of no-code tools with development tools.",
-    "published_date": "2024-09-15T04:00:00.000Z",
     "source": "Ltimindtree",
     "source_url": "https://www.ltimindtree.com/wp-content/uploads/2024/09/ltimindtree-crystal-ai-technology-trends-radar-2024.pdf",
     "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-17T23:24:59.327Z",
-    "updated_at": "2025-06-30T05:07:05.211Z"
+    "updated_at": "2025-06-30T05:07:05.211Z",
+    "date": "2024-09-15T04:00:00.000Z"
   },
   {
     "id": "50d09756-6dcc-486f-850b-a1400c9ecb15",
@@ -89,13 +89,13 @@
     "title": "Introducing OpenAI o1-preview",
     "content": "Update on September 17, 2024: Rate limits are now 50 queries per week for o1-preview and 50 queries per day for o1-mini. We've developed a new series of AI models.",
     "summary": "Update on September 17, 2024: Rate limits are now 50 queries per week for o1-preview and 50 queries per day for o1-mini. We've developed a new series of AI models.",
-    "published_date": "2024-09-12T04:00:00.000Z",
     "source": "Openai",
     "source_url": "https://openai.com/index/introducing-openai-o1-preview/",
     "tags": ["funding"],
     "tool_mentions": [],
     "created_at": "2025-06-17T23:24:58.151Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2024-09-12T04:00:00.000Z"
   },
   {
     "id": "deb1846b-e102-423e-acb0-a412345973f9",
@@ -103,13 +103,13 @@
     "title": "Introducing OpenAI o1",
     "content": "OpenAI o1-mini excels at STEM, especially math and coding—nearly matching the performance of OpenAI o1 on evaluation benchmarks such as AIME and Codeforces.",
     "summary": "OpenAI o1-mini excels at STEM, especially math and coding—nearly matching the performance of OpenAI o1 on evaluation benchmarks such as AIME and Codeforces.",
-    "published_date": "2024-09-12T04:00:00.000Z",
     "source": "Openai",
     "source_url": "https://openai.com/o1/",
     "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-17T23:24:57.941Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2024-09-12T04:00:00.000Z"
   },
   {
     "id": "7a01703b-5c59-4b79-a769-5891a3faf8c3",
@@ -117,13 +117,13 @@
     "title": "AI for Coding – AI Coding Assistants - AI Changes Everything",
     "content": "Cursor's Composer feature is highlighted as a powerful tool for generating or editing code across multiple files and functions. While not specifically about Zed AI, it discusses the broader landscape of AI coding assistants and their impact on coding workflows.",
     "summary": "Cursor's Composer feature is highlighted as a powerful tool for generating or editing code across multiple files and functions. While not specifically about Zed AI, it discusses the broader landscape of AI coding assistants and their impact on coding workflows.",
-    "published_date": "2024-09-11T04:00:00.000Z",
     "source": "Patmcguinness (Substack)",
     "source_url": "https://patmcguinness.substack.com/p/ai-for-coding-ai-coding-assistants",
     "tags": ["general"],
     "tool_mentions": ["cursor", "zed"],
     "created_at": "2025-06-17T23:24:58.824Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2024-09-11T04:00:00.000Z"
   },
   {
     "id": "7bc36d10-518b-4b7f-aa9e-d3a3295ae368",
@@ -131,12 +131,12 @@
     "title": "Zed AI open source AI code editor built for developers",
     "content": "Zed AI is an open-source code editor designed to enhance programming efficiency through integrated AI capabilities. It integrates language models directly into the editor for seamless code generation, transformation, and analysis. Key features include an Assistant Panel for managing AI interactions, various slash commands for workflow integration, and inline assistants for natural language code editing.",
     "summary": "Zed AI is an open-source code editor designed to enhance programming efficiency through integrated AI capabilities. It integrates language models directly into the editor for seamless code generation, transformation, and analysis. Key features include an Assistant Panel for managing AI interactions, various slash commands for workflow integration, and inline assistants for natural language code editing.",
-    "published_date": "2024-09-09T04:00:00.000Z",
     "source": "Geeky Gadgets",
     "source_url": "https://www.geeky-gadgets.com/ai-code-editor/",
     "tags": ["general"],
     "tool_mentions": ["zed"],
     "created_at": "2025-06-17T23:24:58.564Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2024-09-09T04:00:00.000Z"
   }
 ]

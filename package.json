@@ -58,6 +58,7 @@
     "sitemap:status": "node src/scripts/check-sitemap-status.js",
     "cache:generate": "npm run cache:rankings && npm run cache:tools && npm run cache:news",
     "generate:static-rankings": "tsx scripts/generate-static-rankings.ts",
+    "rankings:july-v7": "tsx src/scripts/execute-july-rankings-v7.ts",
     "cache:rankings": "tsx scripts/generate-rankings-cache.ts",
     "cache:tools": "tsx scripts/generate-tools-cache.ts",
     "cache:news": "tsx scripts/generate-news-cache.ts",

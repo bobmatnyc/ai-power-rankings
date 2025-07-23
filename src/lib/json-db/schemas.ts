@@ -53,28 +53,58 @@ export interface Tool {
 
 export interface RankingPeriod {
   period: string; // "2025-06"
+  date?: string; // "2025-06-01" - Used by v7 algorithm
   algorithm_version: string;
-  is_current: boolean;
-  created_at: string;
+  algorithm_name?: string; // e.g., "Enhanced Sentiment Impact"
+  is_current?: boolean; // Optional for v7 algorithm
+  created_at?: string; // Optional for v7 algorithm
   preview_date?: string;
   rankings: RankingEntry[];
+  metadata?: {
+    total_tools: number;
+    calculation_date: string;
+    notes?: string;
+  };
 }
 
 export interface RankingEntry {
   tool_id: string;
   tool_name: string;
-  position: number;
+  position?: number; // Legacy field for backward compatibility
+  rank?: number; // New field used by v7 algorithm
   score: number;
   tier?: "S" | "A" | "B" | "C" | "D";
   factor_scores: {
-    agentic_capability: number;
-    innovation: number;
-    technical_performance: number;
-    developer_adoption: number;
-    market_traction: number;
-    business_sentiment: number;
-    development_velocity: number;
-    platform_resilience: number;
+    // Snake case for backward compatibility
+    agentic_capability?: number;
+    innovation?: number;
+    technical_performance?: number;
+    developer_adoption?: number;
+    market_traction?: number;
+    business_sentiment?: number;
+    development_velocity?: number;
+    platform_resilience?: number;
+    // Camel case for v7 algorithm
+    agenticCapability?: number;
+    technicalPerformance?: number;
+    developerAdoption?: number;
+    marketTraction?: number;
+    businessSentiment?: number;
+    developmentVelocity?: number;
+    platformResilience?: number;
+    technicalCapability?: number;
+    communitySentiment?: number;
+  };
+  sentiment_analysis?: {
+    rawSentiment: number;
+    adjustedSentiment: number;
+    newsImpact: number;
+    crisisDetection?: {
+      isInCrisis: boolean;
+      severityScore: number;
+      negativePeriods: number;
+      impactMultiplier: number;
+    };
   };
   movement?: {
     previous_position?: number;
@@ -85,6 +115,7 @@ export interface RankingEntry {
     primary_reason?: string;
     narrative_explanation?: string;
   };
+  algorithm_version?: string;
 }
 
 export interface NewsArticle {

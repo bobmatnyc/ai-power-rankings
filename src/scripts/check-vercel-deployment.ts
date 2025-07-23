@@ -10,7 +10,7 @@ const execAsync = promisify(exec);
 // Load environment variables
 config({ path: ".env.local" });
 
-const VERCEL_TOKEN = process.env["VERCEL_TOKEN"];
+const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
 const MAX_WAIT_TIME = 300000; // 5 minutes
 const CHECK_INTERVAL = 10000; // 10 seconds
 

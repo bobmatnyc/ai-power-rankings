@@ -95,7 +95,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
       .map((entry) => ({
         tool_name: entry.tool_name,
         tool_id: entry.tool_id,
-        position: entry.position,
+        position: entry.position ?? entry.rank ?? 0,
         previous_position: entry.movement?.previous_position,
         movement_direction: entry.movement?.direction || "same",
         movement_change: entry.movement?.change || 0,

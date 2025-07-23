@@ -5,11 +5,11 @@
     "title": "Amazon Q Developer Reaches General Availability",
     "content": "Amazon Q Developer transitions from preview to general availability, offering enterprise-grade AI coding assistance with full AWS integration and security features.",
     "summary": "Amazon Q Developer transitions from preview to general availability, offering enterprise-grade AI coding assistance with full AWS integration and security features....",
-    "published_date": "2024-04-30T00:00:00.000Z",
     "source": "AWS Blog",
     "tags": ["launch", "enterprise", "general-availability"],
     "tool_mentions": ["Amazon Q Developer"],
     "created_at": "2025-06-30T05:11:28.927Z",
-    "updated_at": "2025-06-30T05:11:28.927Z"
+    "updated_at": "2025-06-30T05:11:28.927Z",
+    "date": "2024-04-30T00:00:00.000Z"
   }
 ]

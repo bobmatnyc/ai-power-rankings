@@ -5,11 +5,11 @@
     "title": "Snyk Launches Snyk Code for Security Analysis",
     "content": "Snyk introduces Snyk Code, bringing AI-powered security vulnerability detection directly into developer workflows with real-time analysis and automated fixes.",
     "summary": "Snyk introduces Snyk Code, bringing AI-powered security vulnerability detection directly into developer workflows with real-time analysis and automated fixes....",
-    "published_date": "2021-05-06T00:00:00.000Z",
     "source": "Snyk Official Blog",
     "tags": ["launch", "security", "code-analysis"],
     "tool_mentions": ["Snyk Code"],
     "created_at": "2025-06-30T05:11:28.927Z",
-    "updated_at": "2025-06-30T05:11:28.927Z"
+    "updated_at": "2025-06-30T05:11:28.927Z",
+    "date": "2021-05-06T00:00:00.000Z"
   }
 ]

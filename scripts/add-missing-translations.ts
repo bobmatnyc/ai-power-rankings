@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 // Load the English reference dictionary
 const enPath = path.join(process.cwd(), "src/i18n/dictionaries/en.json");
@@ -323,7 +323,7 @@ for (const lang of languages) {
   const langDict = JSON.parse(fs.readFileSync(langPath, "utf-8"));
 
   const langReport = report.results[lang];
-  if (langReport && langReport.missingKeys && langReport.missingKeys.length > 0) {
+  if (langReport?.missingKeys && langReport.missingKeys.length > 0) {
     const { dict: updatedDict, updatedCount } = addMissingKeys(
       lang,
       langDict,
@@ -332,7 +332,7 @@ for (const lang of languages) {
 
     if (updatedCount > 0) {
       // Write updated dictionary
-      fs.writeFileSync(langPath, JSON.stringify(updatedDict, null, 2) + "\n");
+      fs.writeFileSync(langPath, `${JSON.stringify(updatedDict, null, 2)}\n`);
       console.log(`  Updated ${updatedCount} keys for ${lang}`);
     } else {
       console.log(`  No updates needed for ${lang}`);

@@ -1,0 +1,111 @@
+{
+  "news_items": [
+    {
+      "title": "Kiro News: kiro developer tool updates funding",
+      "url": "https://perplexity.ai/search?q=kiro+developer+tool+updates+funding",
+      "source": "Perplexity AI",
+      "published_at": "2025-07-22 01:03:48.133306",
+      "category": "industry",
+      "importance_score": 5,
+      "sentiment": 0.0,
+      "is_featured": false,
+      "summary": "```json\n[\n  {\n    \"title\": \"AWS Kiro: 5 Key Features To Amazon's New AI Coding Tool - CRN\",\n    \"url\": \"https://www.crn.com/news/cloud/2025/aws-kiro-5-key-features-to-amazon-s-new-ai-coding-tool\",\n    \"date\": \"2025-07-15\",\n    \"summary\": \"Amazon Web Services launched Kiro, an AI-powered agentic IDE designed to help developers move from prototype to production with structured, production-ready code. AWS CEO Matt Garman highlighted that Kiro bridges the gap between quick code generation and shippi",
+      "related_tools": ["kiro"],
+      "key_topics": ["ai-agents", "ide"]
+    },
+    {
+      "title": "Kiro:\u00a0A new agentic IDE",
+      "url": "https://kiro.dev/blog/introducing-kiro/",
+      "source": "Hacker News",
+      "published_at": "2025-07-14 10:24:40",
+      "category": "industry",
+      "importance_score": 5,
+      "sentiment": 0.0,
+      "is_featured": false,
+      "summary": "Kiro:\u00a0A new agentic IDE",
+      "related_tools": ["kiro"],
+      "key_topics": ["ai-agents", "ide"]
+    },
+    {
+      "title": "Amazon Announces Kiro: A New AI Coding Assistant for Spec-Driven Development",
+      "url": "https://kiro.dev",
+      "source": "Amazon AWS",
+      "published_at": "2025-07-14 00:00:00",
+      "category": "product",
+      "importance_score": 5,
+      "sentiment": 0.0,
+      "is_featured": false,
+      "summary": "Amazon has launched Kiro, a new AI-powered coding assistant that focuses on specification-driven development. Unlike traditional code completion tools, Kiro allows developers to write detailed specifications that are then transformed into production-ready code.",
+      "related_tools": ["kiro"]
+    },
+    {
+      "title": "Amazon Kiro Information: Amazon Kiro AI coding assistant announcement July 2025",
+      "url": "https://kiro.dev",
+      "source": "Perplexity AI",
+      "published_at": "2025-07-22 00:58:51.089256",
+      "category": "product",
+      "importance_score": 5,
+      "sentiment": 0.0,
+      "is_featured": false,
+      "summary": "```json\n[\n  {\n    \"title\": \"AWS Kiro AI: Amazon's Bold New Agentic IDE Turning \u2018Vibe Coding\u2019 into Viable Software\",\n    \"url\": \"https://ts2.tech/en/aws-kiro-ai-amazons-bold-new-agentic-ide-turning-vibe-coding-into-viable-software/\",\n    \"date\": \"2025-07-17\",\n    \"summary\": \"Amazon Web Services (AWS) announced Kiro AI in mid-July 2025, a specification-driven agentic integrated development environment (IDE) designed to bridge the gap between freeform 'vibe coding' and production-grade software dev",
+      "related_tools": ["kiro"],
+      "key_topics": ["ai-agents", "ide"]
+    },
+    {
+      "title": "Kiro News: kiro features pricing launch announcement",
+      "url": "https://perplexity.ai/search?q=kiro+features+pricing+launch+announcement",
+      "source": "Perplexity AI",
+      "published_at": "2025-07-22 01:03:30.444510",
+      "category": "product",
+      "importance_score": 5,
+      "sentiment": 0.0,
+      "is_featured": false,
+      "summary": "```json\n[\n  {\n    \"title\": \"Amazon Enters AI Vibe Coding Race With Launch of Kiro Preview\",\n    \"url\": \"https://www.tradingview.com/news/gurufocus:9c81eaa32094b:0-amazon-enters-ai-vibe-coding-race-with-launch-of-kiro-preview/\",\n    \"date\": \"2025-07-16\",\n    \"summary\": \"Amazon launched a preview of Kiro, an AI-powered tool designed to help developers code, design systems, and manage tasks with minimal manual effort. Kiro supports a vibe coding approach where much of the software-building process ",
+      "related_tools": ["kiro"]
+    },
+    {
+      "title": "Kiro News: kiro vs Cursor Copilot Claude comparison",
+      "url": "https://perplexity.ai/search?q=kiro+vs+Cursor+Copilot+Claude+comparison",
+      "source": "Perplexity AI",
+      "published_at": "2025-07-22 01:03:36.598056",
+      "category": "industry",
+      "importance_score": 5,
+      "sentiment": 0.0,
+      "is_featured": false,
+      "summary": "```json\n[\n  {\n    \"title\": \"The Battle for AI-Powered Development: Amazon Kiro vs. Anthropic Claude Code\",\n    \"url\": \"https://rundatarun.io/p/the-battle-for-ai-powered-development\",\n    \"date\": \"2025-07-15\",\n    \"summary\": \"This article compares Amazon's Kiro and Anthropic's Claude Code in AI-powered development. Claude Code has a proven track record with a 70% success rate on real-world bug fixing benchmarks and is used extensively internally at Anthropic, producing high-quality, maintainable ",
+      "related_tools": ["kiro"],
+      "key_topics": ["benchmarks"]
+    },
+    {
+      "title": "Kiro News: kiro AI coding assistant news July 2025",
+      "url": "https://perplexity.ai/search?q=kiro+AI+coding+assistant+news+July+2025",
+      "source": "Perplexity AI",
+      "published_at": "2025-07-22 01:03:24.918871",
+      "category": "industry",
+      "importance_score": 5,
+      "sentiment": 0.0,
+      "is_featured": false,
+      "summary": "```json\n[\n  {\n    \"title\": \"AWS launches Kiro, an agentic AI IDE, to end the chaos of vibe coding\",\n    \"url\": \"https://www.techradar.com/pro/aws-launches-kiro-an-agentic-ai-ide-to-end-the-chaos-of-vibe-coding\",\n    \"date\": \"2025-07-16\",\n    \"summary\": \"Amazon Web Services (AWS) unveiled Kiro, an agentic AI integrated development environment (IDE) designed to streamline software development by reducing issues associated with 'vibe coding'\u2014where AI agents create software with minimal human input.",
+      "related_tools": ["kiro"],
+      "key_topics": ["ai-agents", "ide"]
+    },
+    {
+      "title": "AWS Kiro AI: Amazon's Bold New Agentic IDE Turning 'Vibe Coding' into Viable Software",
+      "url": "https://ts2.tech/en/aws-kiro-ai-amazons-bold-new-agentic-ide-turning-vibe-coding-into-viable-software/",
+      "source": "TS2 Tech",
+      "published_at": "2025-07-17 00:00:00",
+      "category": "product",
+      "importance_score": 5,
+      "sentiment": 0.0,
+      "is_featured": false,
+      "summary": "Amazon Web Services (AWS) announced Kiro AI in mid-July 2025, a specification-driven agentic integrated development environment (IDE) designed to bridge the gap between freeform 'vibe coding' and production-grade software development. Kiro transforms natural language specifications into working code.",
+      "related_tools": ["kiro"],
+      "key_topics": ["ai-agents", "ide"]
+    }
+  ],
+  "metadata": {
+    "source": "kiro-collection",
+    "conversion_date": "2025-07-22T18:45:23.785192+00:00",
+    "total_items": 8
+  }
+}
