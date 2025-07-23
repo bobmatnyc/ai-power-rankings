@@ -6,13 +6,13 @@
     "content": "In the next couple of days we’re rolling out Lovable’s Agent Mode to beta, enabling Lovable to think, plan, and take actions autonomously. Once the mode is available to you, you’ll be able to opt in through settings. While still in beta, this upgrade already: Reduces build error rates by 90% Cuts down on unwanted changes Makes Lovable better at helping you reach your goals How to enable Agent Mode (Beta) Once you have received access, you can enable Agent Mode by going to your project’s dropdown settings and turning on the toggle, as shown below. Note: Access to Agent Mode (Beta) is being rolled out gradually starting June 30, so you may not have it yet. New capabilities through actions Agent Mode has access to a new series of capabilities: Search your codebase to locate the exact files, functions, or components it needs to locate. Read files on demand to understand your app’s structure and apply edits with full context. Inspect logs and network activity to identify and debug errors without you needing to feed in the errors yourself. Search the web in real-time to fetch documentation, content, images, or even screenshots needed to complete a task. Generate and edit images for your apps on demand. But this is just the beginning. We’ll be adding many more tools in the coming weeks, making Lovable smarter and more capable. What does Agent mean? The default version of Lovable tries to do everything in one single step , regardless of the complexity of the task. With this upgrade, Lovable will start to act more like a real developer . For every user request, it will: First interpret what you are asking for Explore the codebase as needed Uncover missing context Make the right changes Auto-fix issues as they come up Wrap up with a clear summary All without you needing to hand-hold it. This enables Lovable to more consistently succeed at ambitious tasks — whether it’s adding major features, fixing bugs, making precise changes without breaking other parts, or integrating with third-party systems. Pricing Agent Mode is priced differently from other modes. In our current Default and Chat Mode , each message costs 1 credit regardless of the complexity of the edit. Agent Mode (beta) uses usage-based pricing — requests can cost less than 1 credit or several credits, depending on their complexity. This ensures you only pay for what you actually use. For example, a simple message that reads 1 file and edits 1 file will cost 0.8 credits. On the other hand, a message that leads to 5 file reads, 4 file edits and 1 image generation will cost 2.2 credits. Note: Agent Mode pricing is in beta and subject to change as we learn about usage patterns. Mode Cost Default 1 credit per message Chat Mode 1 credit per message Agent Mode Usage-based",
     "summary": "Read this article on the Lovable blog",
     "author": "@Lovable_dev",
-    "published_date": "2025-06-30T12:00:00.000Z",
     "source": "Lovable",
     "source_url": "https://lovable.dev/blog/agent-mode-beta",
     "tags": ["computer-vision", "developer-tools"],
     "tool_mentions": [],
     "created_at": "2025-07-02T03:01:16.229Z",
-    "updated_at": "2025-07-02T03:01:16.229Z"
+    "updated_at": "2025-07-02T03:01:16.229Z",
+    "date": "2025-06-30T12:00:00.000Z"
   },
   {
     "id": "369faa4a-192d-44df-9287-44294de5ab5c",
@@ -22,11 +22,11 @@
     "content": "",
     "source": "Google Blog",
     "source_url": "https://blog.google/outreach-initiatives/education/gemini-iste-2025/",
-    "published_date": "2025-06-30T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:35.831Z",
-    "updated_at": "2025-06-30T15:06:35.831Z"
+    "updated_at": "2025-06-30T15:06:35.831Z",
+    "date": "2025-06-30T00:00:00.000Z"
   },
   {
     "id": "826efe58-d4ed-4d93-a19e-767ba10d3033",
@@ -36,11 +36,11 @@
     "content": "",
     "source": "AOL",
     "source_url": "https://www.aol.com/windsurfs-head-product-engineering-says-093301128.html",
-    "published_date": "2025-06-30T00:00:00.000Z",
     "tags": ["ai-agents"],
     "tool_mentions": ["14"],
     "created_at": "2025-06-30T15:06:35.949Z",
-    "updated_at": "2025-06-30T15:06:35.949Z"
+    "updated_at": "2025-06-30T15:06:35.949Z",
+    "date": "2025-06-30T00:00:00.000Z"
   },
   {
     "id": "58125b84-5124-489c-b2a4-bf0c230a2d1c",
@@ -50,11 +50,11 @@
     "content": "",
     "source": "Quantamagazine",
     "source_url": "https://www.quantamagazine.org/researchers-uncover-hidden-ingredients-behind-ai-creativity-20250630/",
-    "published_date": "2025-06-30T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:36.065Z",
-    "updated_at": "2025-06-30T15:06:36.065Z"
+    "updated_at": "2025-06-30T15:06:36.065Z",
+    "date": "2025-06-30T00:00:00.000Z"
   },
   {
     "id": "4b76640c-a1c0-4c78-b4b9-73cbe257de41",
@@ -64,11 +64,11 @@
     "content": "",
     "source": "Adgully",
     "source_url": "https://www.adgully.com/post/3308/whisper-world-redefines-tv-commercials-with-game-changing-in-content-advertising",
-    "published_date": "2025-06-30T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:36.184Z",
-    "updated_at": "2025-06-30T15:06:36.184Z"
+    "updated_at": "2025-06-30T15:06:36.184Z",
+    "date": "2025-06-30T00:00:00.000Z"
   },
   {
     "id": "25fe964d-eb57-4c03-b11a-297ecc108312",
@@ -78,11 +78,11 @@
     "content": "",
     "source": "PYMNTS",
     "source_url": "https://www.pymnts.com/news/artificial-intelligence/2025/ai-startups-mistral-plans-ipo-harvey-eyes-3-billion-dollar-valuation/",
-    "published_date": "2025-06-29T00:00:00.000Z",
     "tags": ["open-source"],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:36.308Z",
-    "updated_at": "2025-06-30T15:06:36.308Z"
+    "updated_at": "2025-06-30T15:06:36.308Z",
+    "date": "2025-06-29T00:00:00.000Z"
   },
   {
     "id": "f4f90cd5-439d-48e2-a89d-5162066550a9",
@@ -92,11 +92,11 @@
     "content": "",
     "source": "BeamStart",
     "source_url": "https://beamstart.com/news/for-replits-ceo-the-future-17511901626662",
-    "published_date": "2025-06-29T00:00:00.000Z",
     "tags": ["ai-agents"],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:36.426Z",
-    "updated_at": "2025-06-30T15:06:36.426Z"
+    "updated_at": "2025-06-30T15:06:36.426Z",
+    "date": "2025-06-29T00:00:00.000Z"
   },
   {
     "id": "cf8d9948-799d-4f58-b392-ba6d107df0c7",
@@ -106,11 +106,11 @@
     "content": "",
     "source": "YouTube",
     "source_url": "https://www.youtube.com/watch?v=LDN595YmI_Q",
-    "published_date": "2025-06-28T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:36.541Z",
-    "updated_at": "2025-06-30T15:06:36.541Z"
+    "updated_at": "2025-06-30T15:06:36.541Z",
+    "date": "2025-06-28T00:00:00.000Z"
   },
   {
     "id": "73bab5d0-2466-4e72-bd84-5c07ce36d8df",
@@ -120,11 +120,11 @@
     "content": "",
     "source": "Colitco",
     "source_url": "https://colitco.com/ai-agents-boost-productivity-2025/",
-    "published_date": "2025-06-28T00:00:00.000Z",
     "tags": ["ai-agents"],
     "tool_mentions": ["2", "21"],
     "created_at": "2025-06-30T15:06:36.664Z",
-    "updated_at": "2025-06-30T15:06:36.664Z"
+    "updated_at": "2025-06-30T15:06:36.664Z",
+    "date": "2025-06-28T00:00:00.000Z"
   },
   {
     "id": "93769fad-20c8-4ce4-94ba-c559000a4de7",
@@ -134,11 +134,11 @@
     "content": "",
     "source": "Joshua Berkowitz's Blog",
     "source_url": "https://joshuaberkowitz.us/blog/news-1/unlocking-local-ai-mcp-power-one-click-desktop-extensions-for-claude-443",
-    "published_date": "2025-06-27T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:36.783Z",
-    "updated_at": "2025-06-30T15:06:36.783Z"
+    "updated_at": "2025-06-30T15:06:36.783Z",
+    "date": "2025-06-27T00:00:00.000Z"
   },
   {
     "id": "f000f4f0-5274-4ffc-ac66-647590fcf68c",
@@ -148,11 +148,11 @@
     "content": "",
     "source": "Digital Transactions",
     "source_url": "https://www.digitaltransactions.net/adobe-enhances-adobe-commerce-bolts-new-service-for-marketplaces/",
-    "published_date": "2025-06-27T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:36.914Z",
-    "updated_at": "2025-06-30T15:06:36.914Z"
+    "updated_at": "2025-06-30T15:06:36.914Z",
+    "date": "2025-06-27T00:00:00.000Z"
   },
   {
     "id": "9397392c-8964-409a-9d61-226a723f2c69",
@@ -162,11 +162,11 @@
     "content": "",
     "source": "Lowendbox",
     "source_url": "https://lowendbox.com/blog/is-meta-discontinuing-the-free-llama-model-series-news-reports-suggest-llama-drama/",
-    "published_date": "2025-06-27T00:00:00.000Z",
     "tags": ["open-source"],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:37.039Z",
-    "updated_at": "2025-06-30T15:06:37.039Z"
+    "updated_at": "2025-06-30T15:06:37.039Z",
+    "date": "2025-06-27T00:00:00.000Z"
   },
   {
     "id": "82369683-8fba-45eb-8198-b86b5c3ada63",
@@ -176,11 +176,11 @@
     "content": "",
     "source": "Open Tools AI",
     "source_url": "https://opentools.ai/news/disney-and-universal-take-legal-swing-at-midjourney-over-ai-created-mickey-and-vader",
-    "published_date": "2025-06-27T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:37.169Z",
-    "updated_at": "2025-06-30T15:06:37.169Z"
+    "updated_at": "2025-06-30T15:06:37.169Z",
+    "date": "2025-06-27T00:00:00.000Z"
   },
   {
     "id": "c0babb5d-52d6-4b06-9f25-ea75a41ffd81",
@@ -190,11 +190,11 @@
     "content": "",
     "source": "MIT News",
     "source_url": "https://news.mit.edu/2025/using-generative-ai-help-robots-jump-higher-land-0627",
-    "published_date": "2025-06-27T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:37.293Z",
-    "updated_at": "2025-06-30T15:06:37.293Z"
+    "updated_at": "2025-06-30T15:06:37.293Z",
+    "date": "2025-06-27T00:00:00.000Z"
   },
   {
     "id": "44348b9a-f422-4de1-92b3-2fa76fec2cd4",
@@ -204,11 +204,11 @@
     "content": "",
     "source": "Vercel Blog",
     "source_url": "https://vercel.com/blog/vercel-ship-2025-recap",
-    "published_date": "2025-06-26T00:00:00.000Z",
     "tags": [],
     "tool_mentions": ["10"],
     "created_at": "2025-06-30T15:06:37.423Z",
-    "updated_at": "2025-06-30T15:06:37.423Z"
+    "updated_at": "2025-06-30T15:06:37.423Z",
+    "date": "2025-06-26T00:00:00.000Z"
   },
   {
     "id": "0fa8efcc-a3a5-4f14-a2bd-d46862eccc26",
@@ -218,11 +218,11 @@
     "content": "",
     "source": "Appinventiv",
     "source_url": "https://appinventiv.com/blog/ai-trends/",
-    "published_date": "2025-06-26T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:37.543Z",
-    "updated_at": "2025-06-30T15:06:37.543Z"
+    "updated_at": "2025-06-30T15:06:37.543Z",
+    "date": "2025-06-26T00:00:00.000Z"
   },
   {
     "id": "94d91220-dd30-4f8a-be21-066d90ae3d1e",
@@ -232,11 +232,11 @@
     "content": "",
     "source": "Twipe Mobile",
     "source_url": "https://www.twipemobile.com/ai-for-bundle-products-the-influencer-effect-learning-from-past-mistakes/",
-    "published_date": "2025-06-26T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:37.662Z",
-    "updated_at": "2025-06-30T15:06:37.662Z"
+    "updated_at": "2025-06-30T15:06:37.662Z",
+    "date": "2025-06-26T00:00:00.000Z"
   },
   {
     "id": "197bf322839-c7463995-45c3458d",
@@ -244,11 +244,11 @@
     "title": "Disney Enterprises and Universal City Studios have sued Midjourney over claims of copyright infringe...",
     "content": "Disney Enterprises and Universal City Studios have sued Midjourney over claims of copyright infringement related to its AI models. This lawsuit follows the recent launch of Midjourney's AI video generation model, V1, and highlights the legal challenges faced by AI companies in the creative industry.",
     "summary": "Disney Enterprises and Universal City Studios have sued Midjourney over claims of copyright infringement related to its AI models. This lawsuit follows the recent launch of Midjourney's AI video generation model, V1, and highlights the legal challenges faced by AI companies in the creative industry.",
-    "published_date": "2025-06-25T00:00:00.000Z",
     "tags": ["feature"],
     "tool_mentions": [],
     "created_at": "2025-06-30T04:57:04.825Z",
-    "updated_at": "2025-06-30T04:57:04.825Z"
+    "updated_at": "2025-06-30T04:57:04.825Z",
+    "date": "2025-06-25T00:00:00.000Z"
   },
   {
     "id": "197bf3f57a0-1e24f892-0323ad69",
@@ -256,12 +256,12 @@
     "title": "Claude Artifacts Gains Interactive AI Capabilities",
     "content": "Anthropic enhances Claude Artifacts with AI-powered interactivity, allowing users to embed AI directly within their created artifacts for dynamic experiences.",
     "summary": "Anthropic enhances Claude Artifacts with AI-powered interactivity, allowing users to embed AI directly within their created artifacts for dynamic experiences....",
-    "published_date": "2025-06-25T00:00:00.000Z",
     "source": "Anthropic Blog",
     "tags": ["feature-update", "interactive", "ai-integration"],
     "tool_mentions": ["Claude Artifacts"],
     "created_at": "2025-06-30T05:11:28.927Z",
-    "updated_at": "2025-06-30T05:11:28.927Z"
+    "updated_at": "2025-06-30T05:11:28.927Z",
+    "date": "2025-06-25T00:00:00.000Z"
   },
   {
     "id": "c6fd19de-a5f2-4fed-bb6a-8b80edd35639",
@@ -271,11 +271,11 @@
     "content": "",
     "source": "Britannica",
     "source_url": "https://www.britannica.com/technology/Stable-Diffusion",
-    "published_date": "2025-06-25T00:00:00.000Z",
     "tags": ["open-source"],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:37.786Z",
-    "updated_at": "2025-06-30T15:06:37.786Z"
+    "updated_at": "2025-06-30T15:06:37.786Z",
+    "date": "2025-06-25T00:00:00.000Z"
   },
   {
     "id": "9cf0e184-d167-429c-914a-3e1033c5d80f",
@@ -285,11 +285,11 @@
     "content": "",
     "source": "OpenAI Help Center",
     "source_url": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes",
-    "published_date": "2025-06-24T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:37.908Z",
-    "updated_at": "2025-06-30T15:06:37.908Z"
+    "updated_at": "2025-06-30T15:06:37.908Z",
+    "date": "2025-06-24T00:00:00.000Z"
   },
   {
     "id": "93876f4a-cbb6-4f36-bd02-1e283f186b3b",
@@ -299,11 +299,11 @@
     "content": "",
     "source": "Ondas",
     "source_url": "https://www.ondas.com/post/ondas-and-mistral-sign-strategic-partnership-to-accelerate-u-s-defense-and-homeland-security-sales",
-    "published_date": "2025-06-24T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:38.037Z",
-    "updated_at": "2025-06-30T15:06:38.037Z"
+    "updated_at": "2025-06-30T15:06:38.037Z",
+    "date": "2025-06-24T00:00:00.000Z"
   },
   {
     "id": "310d1976-db22-4409-8db8-eea7247dfa04",
@@ -313,11 +313,11 @@
     "content": "",
     "source": "YouTube",
     "source_url": "https://www.youtube.com/watch?v=3Ms51P96TKo",
-    "published_date": "2025-06-24T00:00:00.000Z",
     "tags": ["ai-agents"],
     "tool_mentions": ["21"],
     "created_at": "2025-06-30T15:06:38.165Z",
-    "updated_at": "2025-06-30T15:06:38.165Z"
+    "updated_at": "2025-06-30T15:06:38.165Z",
+    "date": "2025-06-24T00:00:00.000Z"
   },
   {
     "id": "48bbf1b3-2983-4de0-b820-2b6081752e25",
@@ -327,11 +327,11 @@
     "content": "",
     "source": "Smol AI News",
     "source_url": "https://news.smol.ai/issues/25-06-24-fair-use/",
-    "published_date": "2025-06-24T00:00:00.000Z",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-30T15:06:38.292Z",
-    "updated_at": "2025-06-30T15:06:38.292Z"
+    "updated_at": "2025-06-30T15:06:38.292Z",
+    "date": "2025-06-24T00:00:00.000Z"
   },
   {
     "id": "sample-1751078155793-v0olo0emc",
@@ -339,13 +339,13 @@
     "title": "Google rolls out 'Scheduled Actions' on Gemini",
     "content": "Google has introduced 'Scheduled Actions' on Gemini, a feature that allows users to set tasks to be executed at specific times. This was announced at Google I/O 2025 as part of the new Gemini features.",
     "summary": "Google has introduced 'Scheduled Actions' on Gemini, a feature that allows users to set tasks to be executed at specific times. This was announced at Google I/O 2025 as part of the new Gemini features.",
-    "published_date": "2025-06-23T00:00:00Z",
     "source": "The Indian Express",
     "source_url": "https://indianexpress.com/article/technology/artificial-intelligence/google-scheduled-actions-gemini-tasks-automate-10083038/",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-28T02:35:55.793Z",
-    "updated_at": "2025-06-28T02:35:55.793Z"
+    "updated_at": "2025-06-28T02:35:55.793Z",
+    "date": "2025-06-23T00:00:00Z"
   },
   {
     "id": "sample-1751078155794-j0wj8ub4v",
@@ -353,13 +353,13 @@
     "title": "ChatGPT o3-pro: the latest model by OpenAI",
     "content": "This article discusses the differences between ChatGPT o3-pro and its predecessors, highlighting where o3-pro shows its advancements.",
     "summary": "This article discusses the differences between ChatGPT o3-pro and its predecessors, highlighting where o3-pro shows its advancements.",
-    "published_date": "2025-06-23T00:00:00Z",
     "source": "Delante",
     "source_url": "https://delante.co/ai-news-o3-pro/",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-28T02:35:55.794Z",
-    "updated_at": "2025-06-28T02:35:55.794Z"
+    "updated_at": "2025-06-28T02:35:55.794Z",
+    "date": "2025-06-23T00:00:00Z"
   },
   {
     "id": "sample-1751078155795-1eptecluh",
@@ -367,13 +367,13 @@
     "title": "Top 3 Updates for Android Developer Productivity from Google I/O 25",
     "content": "Google I/O 2025 showcased several updates to improve developer productivity, including Gemini in Android Studio, Jetpack Compose, and Kotlin Multiplatform. Gemini's Agent Mode was highlighted for its ability to handle complex development tasks.",
     "summary": "Google I/O 2025 showcased several updates to improve developer productivity, including Gemini in Android Studio, Jetpack Compose, and Kotlin Multiplatform. Gemini's Agent Mode was highlighted for its ability to handle complex development tasks.",
-    "published_date": "2025-06-23T00:00:00Z",
     "source": "Android Developers Blog",
     "source_url": "https://android-developers.googleblog.com/2025/06/top-3-updates-for-android-developer-productivity-google-io-25.html",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-28T02:35:55.795Z",
-    "updated_at": "2025-06-28T02:35:55.795Z"
+    "updated_at": "2025-06-28T02:35:55.795Z",
+    "date": "2025-06-23T00:00:00Z"
   },
   {
     "id": "sample-1751078155796-pit7wahaa",
@@ -381,13 +381,13 @@
     "title": "Apple Reportedly in Talks to Acquire Perplexity AI to Supercharge Its Artificial Intelligence Ambitions",
     "content": "Apple is reportedly negotiating to acquire Perplexity AI, a leading AI-powered search startup, to boost its artificial intelligence capabilities. The acquisition would mark Apple's boldest bet yet in the race to dominate next-generation AI and search technologies.",
     "summary": "Apple is reportedly negotiating to acquire Perplexity AI, a leading AI-powered search startup, to boost its artificial intelligence capabilities. The acquisition would mark Apple's boldest bet yet in the race to dominate next-generation AI and search technologies.",
-    "published_date": "2025-06-23T00:00:00Z",
     "source": "The Bridge Chronicle",
     "source_url": "https://www.thebridgechronicle.com/tech/apple-perplexity-ai-acquisition-artificial-intelligence",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-28T02:35:55.796Z",
-    "updated_at": "2025-06-28T02:35:55.796Z"
+    "updated_at": "2025-06-28T02:35:55.796Z",
+    "date": "2025-06-23T00:00:00Z"
   },
   {
     "id": "sample-1751078155797-1bk7nwuht",
@@ -395,13 +395,13 @@
     "title": "GitHub Copilot Plans to Deprecate Key AI Models by Summer 2025",
     "content": "GitHub Copilot is set to deprecate several AI models, including OpenAI GPT-4.5 and GPT-4o, starting July 7, 2025. Users are advised to transition to alternative models like OpenAI GPT-4.1 and o3. The deprecation process will continue through August 6, 2025, with guidance provided for users and administrators.",
     "summary": "GitHub Copilot is set to deprecate several AI models, including OpenAI GPT-4.5 and GPT-4o, starting July 7, 2025. Users are advised to transition to alternative models like OpenAI GPT-4.1 and o3. The deprecation process will continue through August 6, 2025, with guidance provided for users and administrators.",
-    "published_date": "2025-06-23T00:00:00Z",
     "source": "Blockchain News",
     "source_url": "https://blockchain.news/news/github-copilot-plans-deprecate-ai-models-2025",
     "tags": [],
     "tool_mentions": ["2"],
     "created_at": "2025-06-28T02:35:55.797Z",
-    "updated_at": "2025-06-28T02:35:55.797Z"
+    "updated_at": "2025-06-28T02:35:55.797Z",
+    "date": "2025-06-23T00:00:00Z"
   },
   {
     "id": "sample-1751078155798-qt3gpl1wq",
@@ -409,13 +409,13 @@
     "title": "Elon Musk aims to redefine the future of AI with the new Grok",
     "content": "Elon Musk's AI model, Grok, promises to revolutionize data use by aiming for a complete rewriting of human knowledge. The upcoming Grok 3.5 will feature advanced reasoning, aiming to eliminate errors and obsolete information.",
     "summary": "Elon Musk's AI model, Grok, promises to revolutionize data use by aiming for a complete rewriting of human knowledge. The upcoming Grok 3.5 will feature advanced reasoning, aiming to eliminate errors and obsolete information.",
-    "published_date": "2025-06-23T00:00:00Z",
     "source": "Cryptonomist",
     "source_url": "https://en.cryptonomist.ch/2025/06/23/grok-by-elon-musk-the-future-of-artificial-intelligence-with-advanced-reasoning/",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-28T02:35:55.798Z",
-    "updated_at": "2025-06-28T02:35:55.798Z"
+    "updated_at": "2025-06-28T02:35:55.798Z",
+    "date": "2025-06-23T00:00:00Z"
   },
   {
     "id": "sample-1751078155799-mgaaixqwj",
@@ -423,13 +423,13 @@
     "title": "Meta's Llama 3.1 model 'memorised' 42 per cent of Harry Potter book, new study finds",
     "content": "A recent study found that Meta's Llama 3.1 AI model has memorized over 42% of Harry Potter and the Philosopher's Stone, raising concerns about copyright infringement.",
     "summary": "A recent study found that Meta's Llama 3.1 AI model has memorized over 42% of Harry Potter and the Philosopher's Stone, raising concerns about copyright infringement.",
-    "published_date": "2025-06-23T00:00:00Z",
     "source": "Indian Express",
     "source_url": "https://indianexpress.com/article/technology/artificial-intelligence/meta-ai-model-memorised-harry-potter-book-new-study-10082868/",
     "tags": [],
     "tool_mentions": [],
     "created_at": "2025-06-28T02:35:55.799Z",
-    "updated_at": "2025-06-28T02:35:55.799Z"
+    "updated_at": "2025-06-28T02:35:55.799Z",
+    "date": "2025-06-23T00:00:00Z"
   },
   {
     "id": "sample-1751078155799-hiz26olo8",
@@ -437,13 +437,13 @@
     "title": "Open AI Codex vs GitHub Copilot vs Claude | Testing & Benchmarks",
     "content": "A comparison of OpenAI Codex, GitHub Copilot, and Claude highlights their capabilities, with Claude standing out for secure, long-context code reasoning and explanation.",
     "summary": "A comparison of OpenAI Codex, GitHub Copilot, and Claude highlights their capabilities, with Claude standing out for secure, long-context code reasoning and explanation.",
-    "published_date": "2025-06-23T00:00:00Z",
     "source": "All About AI",
     "source_url": "https://www.allaboutai.com/ai-agents/open-ai-codex-vs-github-copilot-vs-claude/",
     "tags": [],
     "tool_mentions": ["2"],
     "created_at": "2025-06-28T02:35:55.799Z",
-    "updated_at": "2025-06-28T02:35:55.799Z"
+    "updated_at": "2025-06-28T02:35:55.799Z",
+    "date": "2025-06-23T00:00:00Z"
   },
   {
     "id": "04a24276-87d1-452c-8965-b60d6ea5d680",
@@ -451,13 +451,13 @@
     "title": "Announcing General Availability of GitHub Copilot for Azure—Now with Agent Mode",
     "content": "GitHub Copilot for Azure has reached General Availability with Agent Mode. This new capability allows Copilot to orchestrate and execute multi-step infrastructure and DevOps workflows, making it a proactive, intelligent teammate for Azure developers.",
     "summary": "GitHub Copilot for Azure has reached General Availability with Agent Mode. This new capability allows Copilot to orchestrate and execute multi-step infrastructure and DevOps workflows, making it a proactive, intelligent teammate for Azure developers.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Microsoft Azure DevBlog",
     "source_url": "https://devblogs.microsoft.com/all-things-azure/announcing-general-availability-of-github-copilot-for-azure-now-with-agent-mode/",
     "tags": ["general"],
     "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-20T07:36:39.202Z",
-    "updated_at": "2025-06-30T05:07:05.211Z"
+    "updated_at": "2025-06-30T05:07:05.211Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "0cebb037-dc56-4dff-b9a7-cb9802c54ecd",
@@ -465,13 +465,13 @@
     "title": "I Vibe Coded a Website With My Daughter Using an AI Tool Called Bolt",
     "content": "A user successfully created a website for their daughter's soap business using Bolt AI, despite some errors. The tool simplified website creation for users without coding skills. The user had to be prescriptive to avoid changes to other parts of the site.",
     "summary": "A user successfully created a website for their daughter's soap business using Bolt AI, despite some errors. The tool simplified website creation for users without coding skills. The user had to be prescriptive to avoid changes to other parts of the site.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Business Insider",
     "source_url": "https://www.businessinsider.com/vibe-coding-website-daughter-ai-bolt-2025-6",
     "tags": ["general"],
     "tool_mentions": ["bolt"],
     "created_at": "2025-06-20T07:36:40.840Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "15e3b166-36c5-49cf-894c-4412ee1ab253",
@@ -479,13 +479,13 @@
     "title": "xAI's Grok 3 partners with Oracle Cloud for corporate AI innovation",
     "content": "Elon Musk's xAI partners with Oracle to deliver Grok 3 to enterprise users via OCI. The move boosts Grok's reach by leveraging Oracle’s robust infrastructure to offer xAI’s advanced AI model for business applications.",
     "summary": "Elon Musk's xAI partners with Oracle to deliver Grok 3 to enterprise users via OCI. The move boosts Grok's reach by leveraging Oracle’s robust infrastructure to offer xAI’s advanced AI model for business applications.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Teslarati",
     "source_url": "https://www.teslarati.com/xai-grok-3-oracle-cloud-partnership/",
     "tags": ["general"],
     "tool_mentions": ["grok"],
     "created_at": "2025-06-20T07:36:38.543Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "1744a13e-c0a0-4324-ab8a-61369645d53c",
@@ -493,13 +493,13 @@
     "title": "Google has Supercharged Productivity Alongside Gemini: The Entry of Gemini 2.5 Marks the Beginning of a New Era of Efficiency",
     "content": "Google has unveiled Gemini 2.5 Pro, boasting ten times the performance of its predecessor. The model now processes 480 trillion tokens per month, a significant increase from 9.7 trillion last year. This new version enhances performance across the board, with faster reasoning, deeper document understanding, and improved code generation. It is closely associated with Google Workspace, bringing AI-driven features like 'Help Me Write' and 'Help Me Organize' to Gmail, Docs, Sheets, and Slides.",
     "summary": "Google has unveiled Gemini 2.5 Pro, boasting ten times the performance of its predecessor. The model now processes 480 trillion tokens per month, a significant increase from 9.7 trillion last year. This new version enhances performance across the board, with faster reasoning, deeper document understanding, and improved code generation. It is closely associated with Google Workspace, bringing AI-driven features like 'Help Me Write' and 'Help Me Organize' to Gmail, Docs, Sheets, and Slides.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Economic Times",
     "source_url": "https://economictimes.com/ai/ai-insights/google-has-supercharged-productivity-alongside-gemini-the-entry-of-gemini-2-5-marks-the-beginning-of-a-new-era-of-efficiency-/articleshow/121945323.cms",
     "tags": ["general"],
     "tool_mentions": ["gemini"],
     "created_at": "2025-06-20T07:36:37.864Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "1a1f42e3-91cd-48e2-994b-ac0330bcc101",
@@ -507,13 +507,13 @@
     "title": "Survey: Claude outranks ChatGPT among tech-savvy AI users, and other findings.",
     "content": "PCMag's inaugural survey of generative AI tools reveals that Anthropic's Claude is the top choice among tech-savvy users, outranking ChatGPT.",
     "summary": "PCMag's inaugural survey of generative AI tools reveals that Anthropic's Claude is the top choice among tech-savvy users, outranking ChatGPT.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "PCMag",
     "source_url": "https://getcoai.com/news/survey-claude-outranks-chatgpt-among-tech-savvy-ai-users-and-other-findings/",
     "tags": ["general"],
     "tool_mentions": ["chatgpt", "claude"],
     "created_at": "2025-06-20T07:36:37.177Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "2297ab81-c461-4f88-a94c-a92eced60bd6",
@@ -521,13 +521,13 @@
     "title": "Unbelievable AI Image Generators You Must Try in 2025 - Top 10 Ranked",
     "content": "The article discusses the top AI image generators of 2025, with a focus on Stable Diffusion. It highlights its versatility, cost-effectiveness, and widespread adoption in various industries, including art, film, and marketing.",
     "summary": "The article discusses the top AI image generators of 2025, with a focus on Stable Diffusion. It highlights its versatility, cost-effectiveness, and widespread adoption in various industries, including art, film, and marketing.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "TS2 Space",
     "source_url": "https://ts2.tech/en/unbelievable-ai-image-generators-you-must-try-in-2025-top-10-ranked/",
     "tags": ["general"],
     "tool_mentions": ["stable-diffusion"],
     "created_at": "2025-06-20T07:36:42.138Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "23182e56-f686-4cb9-acc5-c68cfb5fac54",
@@ -535,13 +535,13 @@
     "title": "S4 Capital's Monks Technology Services Launches Dev², an Enterprise-Grade AI Development Hub, in Strategic Partnership with Windsurf",
     "content": "S4 Capital's Monks Technology Services has launched Dev², an enterprise-grade AI development hub, in a strategic partnership with Windsurf. Dev² combines Windsurf's cutting-edge coding toolkit with Monks' expertise in digital transformation to help organizations rapidly innovate and operationalize AI across the application development lifecycle.",
     "summary": "S4 Capital's Monks Technology Services has launched Dev², an enterprise-grade AI development hub, in a strategic partnership with Windsurf. Dev² combines Windsurf's cutting-edge coding toolkit with Monks' expertise in digital transformation to help organizations rapidly innovate and operationalize AI across the application development lifecycle.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "PR Newswire",
     "source_url": "https://www.prnewswire.com/news-releases/s4-capitals-monks-technology-services-launches-dev-an-enterprise-grade-ai-development-hub-in-strategic-partnership-with-windsurf-302486396.html",
     "tags": ["product-update"],
     "tool_mentions": ["windsurf"],
     "created_at": "2025-06-20T07:36:40.634Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "23927010-fe55-4d99-aac1-3fb67c45e9a4",
@@ -549,13 +549,13 @@
     "title": "Apple's new transcription API 'SpeechAnalyzer' beats OpenAI's Whisper in speed tests",
     "content": "Apple's new transcription API 'SpeechAnalyzer' outperforms OpenAI's Whisper in speed tests. This API is part of Apple's broader AI offerings, including live translation and transcription features in iOS 26, iPadOS 26, and macOS Tahoe 26.",
     "summary": "Apple's new transcription API 'SpeechAnalyzer' outperforms OpenAI's Whisper in speed tests. This API is part of Apple's broader AI offerings, including live translation and transcription features in iOS 26, iPadOS 26, and macOS Tahoe 26.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Gigazine",
     "source_url": "https://gigazine.net/gsc_news/en/20250619-apple-speech-analyzer/",
     "tags": ["general"],
     "tool_mentions": ["chatgpt", "whisper"],
     "created_at": "2025-06-20T07:36:43.177Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "2540fef6-6fee-4ed1-b992-7bbca678e099",
@@ -563,13 +563,13 @@
     "title": "What the 2025 Digital News Report Tells Us About AI in News",
     "content": "The 2025 Digital News Report notes that AI chatbots, including ChatGPT and Gemini, are starting to enter the news ecosystem but are still far from mainstream.",
     "summary": "The 2025 Digital News Report notes that AI chatbots, including ChatGPT and Gemini, are starting to enter the news ecosystem but are still far from mainstream.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Twipe",
     "source_url": "https://www.twipemobile.com/what-the-2025-digital-news-report-tells-us-about-ai-in-news/",
     "tags": ["general"],
     "tool_mentions": ["chatgpt", "gemini"],
     "created_at": "2025-06-20T07:36:36.642Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "2ad60756-079e-4895-b142-7b1fd94e8cd5",
@@ -577,13 +577,13 @@
     "title": "Cursor AI Rolls Out “Ultra” Plan at $200 Per Month",
     "content": "Cursor AI has introduced the Ultra plan, offering developers 20x usage on models from OpenAI, Anthropic, Google DeepMind, and xAI compared to the Pro plan. The Ultra plan also includes priority access to future features and enhanced support. This move follows significant growth for Cursor AI, with annualized recurring revenue surpassing half a billion dollars and major customers like Nvidia, Uber, and Adobe on board.",
     "summary": "Cursor AI has introduced the Ultra plan, offering developers 20x usage on models from OpenAI, Anthropic, Google DeepMind, and xAI compared to the Pro plan. The Ultra plan also includes priority access to future features and enhanced support. This move follows significant growth for Cursor AI, with annualized recurring revenue surpassing half a billion dollars and major customers like Nvidia, Uber, and Adobe on board.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "ApiX-Drive",
     "source_url": "https://apix-drive.com/en/blog/news/cursor-ai-rolls-out-ultra-plan",
     "tags": ["general"],
     "tool_mentions": ["cursor", "chatgpt", "claude", "grok", "adobe-firefly"],
     "created_at": "2025-06-20T07:36:39.752Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "2b008483-6723-47eb-b0a8-93e596af9cff",
@@ -591,13 +591,13 @@
     "title": "Announcing KServe v0.15: Advancing Generative AI Model Serving",
     "content": "KServe v0.15 introduces enhanced support for generative AI workloads, including advanced features for serving large language models (LLMs), improved model and KV caching mechanisms, and integration with Envoy AI Gateway.",
     "summary": "KServe v0.15 introduces enhanced support for generative AI workloads, including advanced features for serving large language models (LLMs), improved model and KV caching mechanisms, and integration with Envoy AI Gateway.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "KServe blog",
     "source_url": "https://www.cncf.io/blog/2025/06/18/announcing-kserve-v0-15-advancing-generative-ai-model-serving/",
     "tags": ["general"],
     "tool_mentions": ["v0"],
     "created_at": "2025-06-20T07:36:39.958Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "37131454-dd64-487c-8eb4-4d8577f11f76",
@@ -605,13 +605,13 @@
     "title": "Midjourney video generation is here — but there's a problem holding it back",
     "content": "Midjourney has introduced its V1 Video model, allowing users to create short videos from images or Midjourney-generated images. The model is available at $10/month but lacks the ability to generate videos from prompts alone, putting it behind competitors like Sora and Kling 2.",
     "summary": "Midjourney has introduced its V1 Video model, allowing users to create short videos from images or Midjourney-generated images. The model is available at $10/month but lacks the ability to generate videos from prompts alone, putting it behind competitors like Sora and Kling 2.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Tom's Guide",
     "source_url": "https://www.tomsguide.com/ai/midjourney-video-generation-is-here-but-theres-a-problem-holding-it-back",
     "tags": ["product-update"],
     "tool_mentions": ["midjourney"],
     "created_at": "2025-06-20T07:36:42.492Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "3c8575d3-69fc-43e1-af74-b74f258441a3",
@@ -619,13 +619,13 @@
     "title": "DeepSeek's R1 AI Model Rivals Google's and Anthropic's in Coding Prowess",
     "content": "DeepSeek's R1 AI model has achieved remarkable coding performance, rivaling Google's Gemini-2.5 and Anthropic's Claude.",
     "summary": "DeepSeek's R1 AI model has achieved remarkable coding performance, rivaling Google's Gemini-2.5 and Anthropic's Claude.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "OpenTools AI",
     "source_url": "https://opentools.ai/news/deepseeks-r1-ai-model-rivals-googles-and-anthropics-in-coding-prowess",
     "tags": ["general"],
     "tool_mentions": ["claude", "gemini"],
     "created_at": "2025-06-20T07:36:37.647Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "3f2ec7ee-b039-4184-bed2-4a6d9333e680",
@@ -633,13 +633,13 @@
     "title": "Two Major Lawsuits Aim to Answer a Multi-Billion-Dollar Question: Can AI Train on Copyrighted Images?",
     "content": "Two major lawsuits are underway regarding the use of copyrighted images to train AI models. Getty claims Stability AI unlawfully used 12 million of its copyrighted images, raising questions about the legality of training AI on copyrighted material.",
     "summary": "Two major lawsuits are underway regarding the use of copyrighted images to train AI models. Getty claims Stability AI unlawfully used 12 million of its copyrighted images, raising questions about the legality of training AI on copyrighted material.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Jones Walker",
     "source_url": "https://www.joneswalker.com/en/insights/blogs/ai-law-blog/two-major-lawsuits-aim-to-answer-a-multi-billion-dollar-question-can-ai-train-on.html?id=102kgkx",
     "tags": ["funding"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:41.762Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "58be5f26-0a39-4b88-9923-4b7aeb4cab6e",
@@ -647,13 +647,13 @@
     "title": "How to Develop Durable, AI-Centered Products",
     "content": "The article discusses the importance of integrating AI into products genuinely, rather than just adding it as a bolt-on feature. It highlights the difference between flimsy 'bolt-on' developments and transformative tech-centered products.",
     "summary": "The article discusses the importance of integrating AI into products genuinely, rather than just adding it as a bolt-on feature. It highlights the difference between flimsy 'bolt-on' developments and transformative tech-centered products.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Lassonde School of Engineering, University of Utah",
     "source_url": "https://lassonde.utah.edu/how-to-develop-durable-ai-centered-products/",
     "tags": ["general"],
     "tool_mentions": ["bolt"],
     "created_at": "2025-06-20T07:36:41.126Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "59acbcf5-ed32-40f5-adbb-bae60c0654be",
@@ -661,13 +661,13 @@
     "title": "Tabnine's Suggestions Were Smarter Than Copilot's",
     "content": "A comparison between Tabnine and Copilot highlights Tabnine's smarter inline suggestions, faster typing flow, and fewer irrelevant guesses. It provides a detailed analysis of the features and performance of Tabnine.",
     "summary": "A comparison between Tabnine and Copilot highlights Tabnine's smarter inline suggestions, faster typing flow, and fewer irrelevant guesses. It provides a detailed analysis of the features and performance of Tabnine.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "CodesByUmar",
     "source_url": "https://javascript.plainenglish.io/tabnines-suggestions-were-smarter-than-copilots-4d174e3f14b6",
     "tags": ["general"],
     "tool_mentions": ["github-copilot", "tabnine"],
     "created_at": "2025-06-20T07:36:43.619Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "5fa00216-4571-4e75-a756-188fc6e5fe1b",
@@ -675,13 +675,13 @@
     "title": "Apple Intelligence transcription is much faster than OpenAI Whisper",
     "content": "Apple Intelligence provides transcription of audio at double the speed of OpenAI's Whisper. The same seven-gigabyte 4K video file was transcribed by Apple Intelligence in 45 seconds, while MacWhisper using OpenAI's Whisper technology took 1 minute and 41 seconds with the Large V3 Turbo LLM.",
     "summary": "Apple Intelligence provides transcription of audio at double the speed of OpenAI's Whisper. The same seven-gigabyte 4K video file was transcribed by Apple Intelligence in 45 seconds, while MacWhisper using OpenAI's Whisper technology took 1 minute and 41 seconds with the Large V3 Turbo LLM.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "iDownloadBlog",
     "source_url": "https://www.idownloadblog.com/2025/06/18/apple-intelligence-transcription-faster-openai-whisper/",
     "tags": ["general"],
     "tool_mentions": ["chatgpt", "whisper"],
     "created_at": "2025-06-20T07:36:43.022Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "63e9131e-a672-4db8-8cc7-d17533d7b16d",
@@ -689,13 +689,13 @@
     "title": "The Rapid Shift From Notetakers to AI Agents for Financial Advisors",
     "content": "The article discusses the evolution of AI tools in financial advisory work, moving from simple notetakers to more sophisticated intelligent agents. By the end of 2025, these tools will be seen as outdated.",
     "summary": "The article discusses the evolution of AI tools in financial advisory work, moving from simple notetakers to more sophisticated intelligent agents. By the end of 2025, these tools will be seen as outdated.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Wealth Tech Today",
     "source_url": "https://wealthtechtoday.com/2025/06/18/the-rapid-shift-from-notetakers-to-intelligent-agents-how-ai-will-rewire-wealthtech-workflows/",
     "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:40.979Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "68598140-df92-4050-92fd-621eaab71cd6",
@@ -703,13 +703,13 @@
     "title": "Grok's 'white genocide' responses show how generative AI can be misused",
     "content": "The AI chatbot Grok spent one day in May 2025 spreading debunked conspiracy theories about “white genocide” in South Africa, highlighting the potential for generative AI to spread misinformation.",
     "summary": "The AI chatbot Grok spent one day in May 2025 spreading debunked conspiracy theories about “white genocide” in South Africa, highlighting the potential for generative AI to spread misinformation.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "YourConroeNews",
     "source_url": "https://www.yourconroenews.com/news/article/grok-s-white-genocide-responses-show-how-20382915.php",
     "tags": ["general"],
     "tool_mentions": ["grok"],
     "created_at": "2025-06-20T07:36:38.800Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "6adad319-f405-4b0d-afe1-40d770e3ef20",
@@ -717,13 +717,13 @@
     "title": "Copilot Compared: Advanced AI Features in Visual Studio 2022 vs VS Code",
     "content": "GitHub Copilot continues to evolve in both Visual Studio and Visual Studio Code, offering increasingly intelligent, context-aware tools for developers.",
     "summary": "GitHub Copilot continues to evolve in both Visual Studio and Visual Studio Code, offering increasingly intelligent, context-aware tools for developers.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Visual Studio Magazine",
     "source_url": "https://visualstudiomagazine.com/articles/2025/06/18/copilot-compared-advanced-ai-features-in-visual-studio-2022-vs-vs-code.aspx",
     "tags": ["general"],
     "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-20T07:36:39.611Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "78dfc7d3-7286-4082-9112-fad7d443b479",
@@ -731,13 +731,13 @@
     "title": "Mozilla Integrates Perplexity AI in Default Search Options, Eyes Lead in AI-Powered Browsing",
     "content": "Mozilla Firefox has started offering Perplexity AI as the built-in search engine in its browser's address bar, aiming to lead in AI-powered browsing.",
     "summary": "Mozilla Firefox has started offering Perplexity AI as the built-in search engine in its browser's address bar, aiming to lead in AI-powered browsing.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Convergence Now",
     "source_url": "https://www.convergence-now.com/technology/mozilla-integrates-perplexity-ai-in-default-search-options-eyes-lead-in-ai-powered-browsing-119472/",
     "tags": ["general"],
     "tool_mentions": ["perplexity"],
     "created_at": "2025-06-20T07:36:38.332Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "8964c690-82e6-467a-9ed5-d0e16bd3053a",
@@ -745,13 +745,13 @@
     "title": "Why AI-based Code Generation Falls Short",
     "content": "The article discusses the limitations of AI-based code generation, noting that while it can speed up development workflows, the generated code often requires human intervention to refine it and make it error-free. It emphasizes the importance of striking a balance between AI-generated and human-written code.",
     "summary": "The article discusses the limitations of AI-based code generation, noting that while it can speed up development workflows, the generated code often requires human intervention to refine it and make it error-free. It emphasizes the importance of striking a balance between AI-generated and human-written code.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "DevOps.com",
     "source_url": "https://devops.com/why-ai-based-code-generation-falls-short/",
     "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:43.468Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "a825a44b-d2fc-4a1f-99a1-08af7654072d",
@@ -759,13 +759,13 @@
     "title": "7 Reasons Tabnine Works Great for React Devs",
     "content": "Tabnine is highlighted for its fast, quiet autocomplete engine, respect for the codebase, offline functionality, and productivity boost without AI overhead. It is particularly beneficial for React developers.",
     "summary": "Tabnine is highlighted for its fast, quiet autocomplete engine, respect for the codebase, offline functionality, and productivity boost without AI overhead. It is particularly beneficial for React developers.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "CodesByUmar",
     "source_url": "https://javascript.plainenglish.io/7-reasons-tabnine-works-great-for-react-devs-7855196b371b",
     "tags": ["general"],
     "tool_mentions": ["tabnine"],
     "created_at": "2025-06-20T07:36:43.322Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "a966c235-3074-43ab-85e2-e9d5941f6c2e",
@@ -773,13 +773,13 @@
     "title": "Researchers show AI art protection tools still leave creators at risk",
     "content": "Researchers have highlighted that current AI art protection tools do not adequately safeguard creators' rights. This issue has been exacerbated by recent advancements in AI image generation, such as those provided by Stable Diffusion.",
     "summary": "Researchers have highlighted that current AI art protection tools do not adequately safeguard creators' rights. This issue has been exacerbated by recent advancements in AI image generation, such as those provided by Stable Diffusion.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Research in Germany",
     "source_url": "https://www.research-in-germany.org/idw-news/en_US/2025/6/2025-06-18_Light_in_the_darkness__Researchers_show_AI_art_protection_tools_still_leave_creators_at_risk",
     "tags": ["general"],
     "tool_mentions": ["stable-diffusion"],
     "created_at": "2025-06-20T07:36:41.986Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "ad659b51-1e9c-4613-886f-34b0cfde12ff",
@@ -787,13 +787,13 @@
     "title": "Getting started with GitHub Copilot coding agent is now easier",
     "content": "GitHub Copilot's coding agent is now easier to get started with. The agent works in the background, using a secure cloud-based development environment powered by GitHub Actions.",
     "summary": "GitHub Copilot's coding agent is now easier to get started with. The agent works in the background, using a secure cloud-based development environment powered by GitHub Actions.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "GitHub Blog",
     "source_url": "https://github.blog/changelog/2025-06-18-getting-started-with-github-copilot-coding-agent-is-now-easier/",
     "tags": ["general"],
     "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-20T07:36:38.995Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "b0dacccc-3061-4927-b250-30646cceb6aa",
@@ -801,13 +801,13 @@
     "title": "AI Daily News June 19 2025: Midjourney drops long-awaited video model V1",
     "content": "In the latest AI Daily News, Midjourney is highlighted for dropping its long-awaited video model V1. The update includes the 'Image-to-Video' workflow, where users can animate their images to create short videos.",
     "summary": "In the latest AI Daily News, Midjourney is highlighted for dropping its long-awaited video model V1. The update includes the 'Image-to-Video' workflow, where users can animate their images to create short videos.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "YouTube",
     "source_url": "https://www.youtube.com/watch?v=TFAcWPrDRxc",
     "tags": ["general"],
     "tool_mentions": ["midjourney"],
     "created_at": "2025-06-20T07:36:42.672Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "b369e558-a033-492c-9137-adf0d3c112ec",
@@ -815,13 +815,13 @@
     "title": "Advancements in Generative AI",
     "content": "Generative AI is advancing rapidly, impacting various fields. While the article does not specifically focus on DALL-E, it highlights the broader advancements in generative AI.",
     "summary": "Generative AI is advancing rapidly, impacting various fields. While the article does not specifically focus on DALL-E, it highlights the broader advancements in generative AI.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "AI, Data & Analytics Network",
     "source_url": "https://www.aidataanalytics.network/data-science-ai/articles/advancements-in-generative-ai",
     "tags": ["general"],
     "tool_mentions": ["dall-e"],
     "created_at": "2025-06-20T07:36:42.871Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "bbe252b2-8a50-4a79-8a9d-aa3c0499855f",
@@ -829,13 +829,13 @@
     "title": "TotalEnergies Plans To Work With Mistral AI To Increase Use Of Artificial Intelligence",
     "content": "TotalEnergies has announced plans to work with Mistral AI to set up a joint innovation lab focused on artificial intelligence. This collaboration aims to increase the use of AI in various sectors.",
     "summary": "TotalEnergies has announced plans to work with Mistral AI to set up a joint innovation lab focused on artificial intelligence. This collaboration aims to increase the use of AI in various sectors.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "JPT",
     "source_url": "https://jpt.spe.org/totalenergies-plans-to-work-with-mistral-ai-to-increase-use-of-artificial-intelligence",
     "tags": ["product-update"],
     "tool_mentions": ["mistral"],
     "created_at": "2025-06-20T07:36:41.343Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "cfd299d2-5473-4446-8db2-c383624ce15e",
@@ -843,13 +843,13 @@
     "title": "Anthropic Launches New Claude Code Features: Impact on AI and Crypto Market Trends",
     "content": "Anthropic has launched new features for Claude Code, enhancing code generation and AI programming capabilities. This update could accelerate blockchain and smart contract development workflows, potentially impacting the crypto ecosystem.",
     "summary": "Anthropic has launched new features for Claude Code, enhancing code generation and AI programming capabilities. This update could accelerate blockchain and smart contract development workflows, potentially impacting the crypto ecosystem.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Blockchain News",
     "source_url": "https://blockchain.news/flashnews/anthropic-launches-new-claude-code-features-impact-on-ai-and-crypto-market-trends",
     "tags": ["general"],
     "tool_mentions": ["claude"],
     "created_at": "2025-06-20T07:36:37.438Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "d83ca4f9-6f6f-4bf7-aebc-87218625e50f",
@@ -857,13 +857,13 @@
     "title": "Are we oversharing with ChatGPT? The hidden career, financial risks, and privacy concerns",
     "content": "Millions rely on ChatGPT for work, but experts warn about overdependence, privacy risks, and AI's inability to offer sound advice. A study found that over a third of U.S. adults consider themselves dependent on AI tools for work-related tasks, and large language models like ChatGPT fail 35% of finance-related questions.",
     "summary": "Millions rely on ChatGPT for work, but experts warn about overdependence, privacy risks, and AI's inability to offer sound advice. A study found that over a third of U.S. adults consider themselves dependent on AI tools for work-related tasks, and large language models like ChatGPT fail 35% of finance-related questions.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "New Orleans City Business",
     "source_url": "https://neworleanscitybusiness.com/blog/2025/06/18/ai-dependency-risks-privacy-chatgpt/",
     "tags": ["general"],
     "tool_mentions": ["chatgpt"],
     "created_at": "2025-06-20T07:36:36.907Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "d8b112ae-3e1b-44c4-85ee-00aa5919848f",
@@ -871,13 +871,13 @@
     "title": "How Llama helps drive engineering efficiency at a major Australian bank",
     "content": "Llama 3 has been integrated by ANZ Bank to enhance engineering efficiency, leveraging features like retrieval-augmented generation (RAG) and agent capabilities.",
     "summary": "Llama 3 has been integrated by ANZ Bank to enhance engineering efficiency, leveraging features like retrieval-augmented generation (RAG) and agent capabilities.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Meta AI",
     "source_url": "https://ai.meta.com/blog/llama-helps-efficiency-anz-bank/",
     "tags": ["general"],
     "tool_mentions": ["llama"],
     "created_at": "2025-06-20T07:36:41.628Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "e82ac4a3-b3d3-44e0-8069-f3a2e6904d3f",
@@ -885,13 +885,13 @@
     "title": "Update to GitHub Copilot consumptive billing experience",
     "content": "GitHub Copilot has introduced monthly premium request allowances for paid users. This change affects the consumptive billing experience for paid users.",
     "summary": "GitHub Copilot has introduced monthly premium request allowances for paid users. This change affects the consumptive billing experience for paid users.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "GitHub Blog",
     "source_url": "https://github.blog/changelog/2025-06-18-update-to-github-copilot-consumptive-billing-experience/",
     "tags": ["product-update"],
     "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-20T07:36:39.413Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "eafa6455-f454-45d9-a2aa-fb2ccc754cdb",
@@ -899,13 +899,13 @@
     "title": "AI prompt engineering in 2025: What works and what doesn't",
     "content": "The article discusses how to get better answers from AI, avoid common prompt-engineering myths, and keep AI tools safe from bad actors.",
     "summary": "The article discusses how to get better answers from AI, avoid common prompt-engineering myths, and keep AI tools safe from bad actors.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Lenny's Newsletter",
     "source_url": "https://www.lennysnewsletter.com/p/ai-prompt-engineering-in-2025-sander-schulhoff",
     "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:40.216Z",
-    "updated_at": "2025-06-30T05:07:05.213Z"
+    "updated_at": "2025-06-30T05:07:05.213Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "ef3aa1fa-5489-486e-b3ce-5ed8756a3d71",
@@ -913,13 +913,13 @@
     "title": "Google’s Gemini 2.5 AI models are now ready for prime time alongside new ‘Flash-Lite’ model",
     "content": "Google has announced that its Gemini 2.5 Pro and 2.5 Flash models are now stable and generally available. Additionally, a new, faster model called Gemini 2.5 Flash-Lite is in preview. This marks a significant step forward in Google's AI development, with these models ready for real-world use. Companies like Snap and Spline have already started using these latest versions in production.",
     "summary": "Google has announced that its Gemini 2.5 Pro and 2.5 Flash models are now stable and generally available. Additionally, a new, faster model called Gemini 2.5 Flash-Lite is in preview. This marks a significant step forward in Google's AI development, with these models ready for real-world use. Companies like Snap and Spline have already started using these latest versions in production.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Chrome Unboxed",
     "source_url": "https://chromeunboxed.com/googles-gemini-2-5-ai-models-are-now-ready-for-prime-time-alongside-new-flash-lite-model/",
     "tags": ["general"],
     "tool_mentions": ["gemini"],
     "created_at": "2025-06-20T07:36:38.128Z",
-    "updated_at": "2025-06-30T05:07:05.213Z"
+    "updated_at": "2025-06-30T05:07:05.213Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "f548814c-0e0f-495f-8802-842245528d11",
@@ -927,13 +927,13 @@
     "title": "AI Prophet Zacharias Midjourney Launches Satirical Literary Cult Simulator Exploring AI Religion, Digital Ritual, and Blockchain Sacrament",
     "content": "Midjourney has launched a satirical literary cult simulator that blends AI authorship, absurdist spirituality, performance theology, and interactive fiction via retro terminal and NFT-driven ritual.",
     "summary": "Midjourney has launched a satirical literary cult simulator that blends AI authorship, absurdist spirituality, performance theology, and interactive fiction via retro terminal and NFT-driven ritual.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "GlobeNewswire",
     "source_url": "https://www.globenewswire.com/news-release/2025/06/19/3102495/0/en/AI-Prophet-Zacharias-Midjourney-Launches-Satirical-Literary-Cult-Simulator-Exploring-AI-Religion-Digital-Ritual-and-Blockchain-Sacrament.html",
     "tags": ["product-update"],
     "tool_mentions": ["midjourney"],
     "created_at": "2025-06-20T07:36:42.344Z",
-    "updated_at": "2025-06-30T05:07:05.213Z"
+    "updated_at": "2025-06-30T05:07:05.213Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "face0e21-8905-4328-b8ba-421481b7d9dd",
@@ -941,13 +941,13 @@
     "title": "AI Startup Funding in 2025: Key Trends and Investments",
     "content": "The article highlights significant funding rounds in AI startups, including Quantum AI's $300 million raise and NeuralNet Inc.'s $200 million raise, emphasizing the growing importance of AI in various industries.",
     "summary": "The article highlights significant funding rounds in AI startups, including Quantum AI's $300 million raise and NeuralNet Inc.'s $200 million raise, emphasizing the growing importance of AI in various industries.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "UBOS.tech",
     "source_url": "https://ubos.tech/news/ai-startup-funding-in-2025-key-trends-and-investments/",
     "tags": ["funding"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:40.351Z",
-    "updated_at": "2025-06-30T05:07:05.213Z"
+    "updated_at": "2025-06-30T05:07:05.213Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "ff6503f2-cea4-4435-bdf5-003bfe711b9f",
@@ -955,13 +955,13 @@
     "title": "SNCF Group and Mistral AI form strategic partnership",
     "content": "The SNCF Group has formed a strategic partnership with Mistral AI to expand the deployment of generative artificial intelligence. This partnership aims to leverage AI for various business applications.",
     "summary": "The SNCF Group has formed a strategic partnership with Mistral AI to expand the deployment of generative artificial intelligence. This partnership aims to leverage AI for various business applications.",
-    "published_date": "2025-06-19T04:00:00.000Z",
     "source": "Railway PRO",
     "source_url": "https://www.railwaypro.com/wp/sncf-group-and-mistral-ai-form-strategic-partnership/",
     "tags": ["general"],
     "tool_mentions": ["mistral"],
     "created_at": "2025-06-20T07:36:41.491Z",
-    "updated_at": "2025-06-30T05:07:05.213Z"
+    "updated_at": "2025-06-30T05:07:05.213Z",
+    "date": "2025-06-19T04:00:00.000Z"
   },
   {
     "id": "b558e3a5-a32b-48bd-ae5c-ec5e542f7387",
@@ -969,13 +969,13 @@
     "title": "Bolt.new's Figma Integration Delivers 70% Faster Design-to-Code with Strong User Success Stories",
     "content": "Analysis of Bolt.new's Figma integration reveals exceptional performance with 70% reduction in design-to-deployment time and 85% improved collaboration efficiency, backed by multiple user success stories and clean code generation.",
     "summary": "Analysis of Bolt.new's Figma integration reveals exceptional performance with 70% reduction in design-to-deployment time and 85% improved collaboration efficiency, backed by multiple user success stories and clean code generation.",
-    "published_date": "2025-06-18T14:00:00.000Z",
     "source": "AI Power Rankings Research",
     "source_url": "https://support.bolt.new/integrations/figma",
     "tags": ["general"],
     "tool_mentions": ["bolt-new", "claude-artifacts"],
     "created_at": "2025-06-18T08:23:43.424Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T14:00:00.000Z"
   },
   {
     "id": "22aa25c7-ca05-4fb8-b97f-14ec8f4f692d",
@@ -983,13 +983,13 @@
     "title": "Meta's Llama LLMs Spark Debate Over Open Source AI",
     "content": "Critics are debating whether Meta's open-source Llama large language models truly live up to their open-source claims due to restrictive usage terms and undisclosed training data.",
     "summary": "Critics are debating whether Meta's open-source Llama large language models truly live up to their open-source claims due to restrictive usage terms and undisclosed training data.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "ITPro Today",
     "source_url": "https://www.itprotoday.com/it-operations/meta-s-llama-llms-spark-debate-over-open-source-ai",
     "tags": ["general"],
     "tool_mentions": ["llama"],
     "created_at": "2025-06-20T07:36:44.984Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "24939d7c-6b94-4a3e-b9c8-cd5827bcf09b",
@@ -997,13 +997,13 @@
     "title": "HUMAIN and Replit Partner to Enhance Human Capabilities with AI-Powered Coding",
     "content": "HUMAIN and Replit have partnered to make AI-powered coding universally accessible in Saudi Arabia. Replit is the world's leading AI software creation platform, allowing users to go from natural language prompts to deployed, production web applications.",
     "summary": "HUMAIN and Replit have partnered to make AI-powered coding universally accessible in Saudi Arabia. Replit is the world's leading AI software creation platform, allowing users to go from natural language prompts to deployed, production web applications.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "HUMAIN",
     "source_url": "https://www.humain.ai/en/news/humain-and-replit/",
     "tags": ["general"],
     "tool_mentions": ["replit"],
     "created_at": "2025-06-20T07:36:45.277Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "32f39d18-5256-479b-9099-b886a47658a6",
@@ -1011,13 +1011,13 @@
     "title": "Claude.ai – AI for the Northeastern community",
     "content": "Northeastern University provides access to Claude, a powerful generative AI tool for creative engagement, advanced reasoning, visual analysis, multilingual translation, and code generation. The university aims to explore the uses and impacts of generative AI models in higher education.",
     "summary": "Northeastern University provides access to Claude, a powerful generative AI tool for creative engagement, advanced reasoning, visual analysis, multilingual translation, and code generation. The university aims to explore the uses and impacts of generative AI models in higher education.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Northeastern University",
     "source_url": "https://claude.northeastern.edu",
     "tags": ["general"],
     "tool_mentions": ["claude"],
     "created_at": "2025-06-20T07:36:43.784Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "51a526da-6f89-4d3c-95b2-37c40563863b",
@@ -1025,13 +1025,13 @@
     "title": "GitHub Summerfest 2025",
     "content": "GitHub Summerfest 2025 features updates around AI, compliance, and productivity. The event includes demos on modernizing legacy systems with GitHub Copilot and showcasing agentic mode with MCP.",
     "summary": "GitHub Summerfest 2025 features updates around AI, compliance, and productivity. The event includes demos on modernizing legacy systems with GitHub Copilot and showcasing agentic mode with MCP.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "GitHub Resources",
     "source_url": "https://resources.github.com/github-summerfest-2025/",
     "tags": ["general"],
     "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-20T07:36:44.537Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "9d55e49e-c981-45ea-add3-89351e1bc5ef",
@@ -1039,13 +1039,13 @@
     "title": "AI News: Wed June 18, 2025 - Google Gemini's New 2.5 Flash-Lite Model & Tons of Open Source Models",
     "content": "This video discusses the new Gemini 2.5 Flash-Lite model and other open-source models. It highlights the significant performance improvements in the new model, noting that Gemini 2.5 takes a million inputs and produces 64 outputs, whereas the previous version took a million inputs and produced only eight outputs. The video also mentions the general availability of the Gemini 2.5 Pro and 2.5 Flash models.",
     "summary": "This video discusses the new Gemini 2.5 Flash-Lite model and other open-source models. It highlights the significant performance improvements in the new model, noting that Gemini 2.5 takes a million inputs and produces 64 outputs, whereas the previous version took a million inputs and produced only eight outputs. The video also mentions the general availability of the Gemini 2.5 Pro and 2.5 Flash models.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "YouTube",
     "source_url": "https://www.youtube.com/watch?v=dfmnaCYaa_I",
     "tags": ["general"],
     "tool_mentions": ["gemini"],
     "created_at": "2025-06-20T07:36:43.958Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "ab37ac98-0930-4ffd-8939-b4553f858a8f",
@@ -1053,13 +1053,13 @@
     "title": "Announcing the inaugural Llama Startup Program cohort - Meta AI",
     "content": "Meta AI has announced the first cohort of its Llama Startup Program, selecting an innovative group of early-stage startups.",
     "summary": "Meta AI has announced the first cohort of its Llama Startup Program, selecting an innovative group of early-stage startups.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Meta AI",
     "source_url": "https://ai.meta.com/blog/llama-startup-program-first-cohort/",
     "tags": ["product-update"],
     "tool_mentions": ["llama"],
     "created_at": "2025-06-20T07:36:44.846Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "cfa8ad5d-4b2d-4c63-bf7c-b53949c89ecc",
@@ -1067,13 +1067,13 @@
     "title": "Researchers say AI hacking tools sold online were powered by Grok, Mixtral",
     "content": "Researchers have identified that AI hacking tools sold online were developed using commercial AI tools from Grok and Mixtral. These tools were advertised on hacking forums.",
     "summary": "Researchers have identified that AI hacking tools sold online were developed using commercial AI tools from Grok and Mixtral. These tools were advertised on hacking forums.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "CyberScoop",
     "source_url": "https://cyberscoop.com/uncensored-ai-tool-traced-to-mistral-xai-grok/",
     "tags": ["general"],
     "tool_mentions": ["grok"],
     "created_at": "2025-06-20T07:36:44.402Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "d194479a-cfe1-47c2-806d-0ad4de724893",
@@ -1081,13 +1081,13 @@
     "title": "Apple Intelligence transcription is twice as fast as OpenAI's Whisper",
     "content": "Apple announced at WWDC 2025 that its Apple Intelligence tools, including transcription capabilities, are twice as fast as OpenAI's Whisper. The Apple Intelligence-based Yap transcribed a seven-gigabyte 4K video file into subtitles in 45 seconds, while MacWhisper using OpenAI's Whisper technology took 3 minutes and 55 seconds.",
     "summary": "Apple announced at WWDC 2025 that its Apple Intelligence tools, including transcription capabilities, are twice as fast as OpenAI's Whisper. The Apple Intelligence-based Yap transcribed a seven-gigabyte 4K video file into subtitles in 45 seconds, while MacWhisper using OpenAI's Whisper technology took 3 minutes and 55 seconds.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Apple Insider",
     "source_url": "https://appleinsider.com/articles/25/06/18/apple-intelligence-transcription-is-twice-as-fast-as-openais-whisper",
     "tags": ["product-update"],
     "tool_mentions": ["chatgpt", "whisper"],
     "created_at": "2025-06-20T07:36:45.125Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "d78c764d-4cf4-48fa-bbd5-cb43305c5974",
@@ -1095,13 +1095,13 @@
     "title": "How to Build Your First App with Windsurf AI IDE - Geeky Gadgets",
     "content": "This article provides a guide on how to build iOS apps using Windsurf AI in 2025, including how to clone apps using Windsurf AI and an overview of the Windsurf browser's potential to transform web development.",
     "summary": "This article provides a guide on how to build iOS apps using Windsurf AI in 2025, including how to clone apps using Windsurf AI and an overview of the Windsurf browser's potential to transform web development.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Geeky Gadgets",
     "source_url": "https://www.geeky-gadgets.com/building-your-first-app-with-windsurf/",
     "tags": ["general"],
     "tool_mentions": ["windsurf"],
     "created_at": "2025-06-20T07:36:44.706Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "e3a0e142-bbc2-4d06-8bac-f3fb755c7193",
@@ -1109,13 +1109,13 @@
     "title": "Perplexity AI Teams Up with Laver Cup to Revolutionize Fan Experience with Real-Time Insights!",
     "content": "Perplexity AI is collaborating with Laver Cup to bring real-time insights and statistics to tennis matches, promising a thrilling and interactive experience for fans at the venue and globally.",
     "summary": "Perplexity AI is collaborating with Laver Cup to bring real-time insights and statistics to tennis matches, promising a thrilling and interactive experience for fans at the venue and globally.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Open Tools AI",
     "source_url": "https://opentools.ai/news/perplexity-ai-teams-up-with-laver-cup-to-revolutionize-fan-experience-with-real-time-insights",
     "tags": ["general"],
     "tool_mentions": ["perplexity"],
     "created_at": "2025-06-20T07:36:44.264Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "eadcfadf-942d-433a-90db-347eaa246805",
@@ -1123,13 +1123,13 @@
     "title": "Perplexity Joins Laver Cup to Elevate Fan Experience with Real-Time Insights",
     "content": "Perplexity AI has partnered with Laver Cup to provide real-time insights and statistics during the tournament, enhancing the fan experience with dynamic live scoring and in-depth stats.",
     "summary": "Perplexity AI has partnered with Laver Cup to provide real-time insights and statistics during the tournament, enhancing the fan experience with dynamic live scoring and in-depth stats.",
-    "published_date": "2025-06-18T04:00:00.000Z",
     "source": "Laver Cup",
     "source_url": "https://lavercup.com/news/2025/06/18/perplexity-joins-laver-cup-to-elevate-fan-experience-with-real-time-insights",
     "tags": ["general"],
     "tool_mentions": ["perplexity"],
     "created_at": "2025-06-20T07:36:44.096Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-18T04:00:00.000Z"
   },
   {
     "id": "3d5c6238-51c9-4af5-ab1e-9664545e3443",
@@ -1137,13 +1137,13 @@
     "title": "Claude Code Just Delivered Enterprise-Level Strategic Analysis",
     "content": "And I Wasn't Even Trying",
     "summary": "And I Wasn't Even Trying",
-    "published_date": "2025-06-17T07:42:18.000Z",
     "source": "HyperDev",
     "source_url": "https://hyperdev.matsuoka.com/p/claude-code-just-delivered-enterprise",
     "tags": ["general"],
     "tool_mentions": ["claude-code"],
     "created_at": "2025-06-18T00:20:15.900Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-17T07:42:18.000Z"
   },
   {
     "id": "3c379eb9-4307-4fcc-b9d5-f91fb44631a5",
@@ -1151,13 +1151,13 @@
     "title": "How Cursor and Claude Are Developing AI Coding Tools Together",
     "content": "Cursor AI is partnering with Claude AI to create advanced AI coding tools. This collaboration aims to develop smarter, faster, and more intuitive coding tools for developers.",
     "summary": "Cursor AI is partnering with Claude AI to create advanced AI coding tools. This collaboration aims to develop smarter, faster, and more intuitive coding tools for developers.",
-    "published_date": "2025-06-17T04:00:00.000Z",
     "source": "Geeky Gadgets",
     "source_url": "https://www.geeky-gadgets.com/cursor-building-a-future-with-claude-ai-code/",
     "tags": ["general"],
     "tool_mentions": ["claude", "cursor"],
     "created_at": "2025-06-20T07:36:45.564Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-17T04:00:00.000Z"
   },
   {
     "id": "8c26f177-3897-47b5-887f-c24449e37137",
@@ -1165,13 +1165,13 @@
     "title": "MIT uses generative AI to design robots that jump higher and land better",
     "content": "MIT researchers are using diffusion models to enhance robotic jumping and landing capabilities. Their generative AI system optimizes robotic performance, allowing robots to jump 41% higher and land 84% better.",
     "summary": "MIT researchers are using diffusion models to enhance robotic jumping and landing capabilities. Their generative AI system optimizes robotic performance, allowing robots to jump 41% higher and land 84% better.",
-    "published_date": "2025-06-17T04:00:00.000Z",
     "source": "Robotics and Automation News",
     "source_url": "https://roboticsandautomationnews.com/2025/06/16/mit-research-using-generative-ai-to-help-robots-jump-higher-and-land-better/92166/",
     "tags": ["general"],
     "tool_mentions": [],
     "created_at": "2025-06-20T07:36:45.723Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-17T04:00:00.000Z"
   },
   {
     "id": "b74fd6f5-4e31-4ab6-b47a-1113d8fc2aa2",
@@ -1179,13 +1179,13 @@
     "title": "OpenAI Codex : Beginners Guide to New AI Coding Assistant",
     "content": "This article provides a beginner's guide to using OpenAI's Codex, highlighting how it simplifies coding, debugging, and automates repetitive tasks. It is a must-read for developers looking to leverage Codex's capabilities.",
     "summary": "This article provides a beginner's guide to using OpenAI's Codex, highlighting how it simplifies coding, debugging, and automates repetitive tasks. It is a must-read for developers looking to leverage Codex's capabilities.",
-    "published_date": "2025-06-17T04:00:00.000Z",
     "source": "Geeky Gadgets",
     "source_url": "https://www.geeky-gadgets.com/how-to-use-openai-codex-for-beginners-2025/",
     "tags": ["general"],
     "tool_mentions": ["chatgpt", "codex"],
     "created_at": "2025-06-20T07:36:45.993Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-17T04:00:00.000Z"
   },
   {
     "id": "f3b35701-499b-46ea-b5a6-593838e891db",
@@ -1193,13 +1193,13 @@
     "title": "Firefox Quietly Starts Testing Perplexity AI as a Built-In Search Engine",
     "content": "Perplexity AI is being tested as an optional search engine directly in the Firefox address bar as part of a new experiment.",
     "summary": "Perplexity AI is being tested as an optional search engine directly in the Firefox address bar as part of a new experiment.",
-    "published_date": "2025-06-17T04:00:00.000Z",
     "source": "9to5mac",
     "source_url": "https://9to5mac.com/2025/06/17/firefox-quietly-starts-testing-perplexity-ai-as-a-built-in-search-engine/",
     "tags": ["general"],
     "tool_mentions": ["perplexity"],
     "created_at": "2025-06-20T07:36:45.416Z",
-    "updated_at": "2025-06-30T05:07:05.213Z"
+    "updated_at": "2025-06-30T05:07:05.213Z",
+    "date": "2025-06-17T04:00:00.000Z"
   },
   {
     "id": "fb6d1b5d-abbb-4be7-9ac6-01b827ae1824",
@@ -1207,13 +1207,13 @@
     "title": "Top Artificial Intelligence Image Generators in 2025",
     "content": "DALL-E 4 is still one of the most reliable AI image generators available today, according to paid subscribers. The recent changes in structure and realism have improved its performance.",
     "summary": "DALL-E 4 is still one of the most reliable AI image generators available today, according to paid subscribers. The recent changes in structure and realism have improved its performance.",
-    "published_date": "2025-06-17T04:00:00.000Z",
     "source": "Analytics Insight",
     "source_url": "https://www.analyticsinsight.net/artificial-intelligence/top-artificial-intelligence-image-generators-in-2025",
     "tags": ["general"],
     "tool_mentions": ["dall-e"],
     "created_at": "2025-06-20T07:36:45.854Z",
-    "updated_at": "2025-06-30T05:07:05.213Z"
+    "updated_at": "2025-06-30T05:07:05.213Z",
+    "date": "2025-06-17T04:00:00.000Z"
   },
   {
     "id": "362e7ad9-0786-47b7-aa12-6c9cef9e5bcb",
@@ -1221,13 +1221,13 @@
     "title": "[Money20/20 Europe 2025] Silverflow and Bolt direct card network connectivity",
     "content": "Anne Willem de Vries from Silverflow and Kaspar Loog from Bolt shared insights into their collaboration and vision for the future of payments at Money20/20 Europe 2025.",
     "summary": "Anne Willem de Vries from Silverflow and Kaspar Loog from Bolt shared insights into their collaboration and vision for the future of payments at Money20/20 Europe 2025.",
-    "published_date": "2025-06-16T04:00:00.000Z",
     "source": "The Paypers",
     "source_url": "https://thepaypers.com/interviews/money2020-europe-2025-silverflow-and-bolt-direct-card-network-connectivity--1274092",
     "tags": ["general"],
     "tool_mentions": ["bolt"],
     "created_at": "2025-06-20T07:36:46.312Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-16T04:00:00.000Z"
   },
   {
     "id": "46f661c3-186a-418b-965c-cce431b37f18",
@@ -1235,13 +1235,13 @@
     "title": "OpenAI Codex Launches Best-of-N Feature: Key Impacts for Crypto Trading AI Tools",
     "content": "OpenAI's Codex has launched a new feature called 'Best-of-N,' which allows it to generate optimized code snippets by selecting the best output from multiple iterations. This update has significant implications for the tech and crypto markets, particularly AI-focused tokens like Render Token (RNDR), Fetch.ai (FET), and SingularityNET (AGIX).",
     "summary": "OpenAI's Codex has launched a new feature called 'Best-of-N,' which allows it to generate optimized code snippets by selecting the best output from multiple iterations. This update has significant implications for the tech and crypto markets, particularly AI-focused tokens like Render Token (RNDR), Fetch.ai (FET), and SingularityNET (AGIX).",
-    "published_date": "2025-06-16T04:00:00.000Z",
     "source": "Blockchain News",
     "source_url": "https://blockchain.news/flashnews/openai-codex-launches-best-of-n-feature-key-impacts-for-crypto-trading-ai-tools",
     "tags": ["general"],
     "tool_mentions": ["chatgpt", "codex"],
     "created_at": "2025-06-20T07:36:47.102Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-16T04:00:00.000Z"
   },
   {
     "id": "4a76f5a8-c588-4a3a-993f-e979ccccd0f2",
@@ -1249,13 +1249,13 @@
     "title": "ChatGPT's AI coder Codex now lets you choose the best solution",
     "content": "ChatGPT's Codex, an AI agent for coding tasks, has introduced a new feature that allows users to select the best solution for their programming needs. This update aims to improve the efficiency and effectiveness of Codex in assisting developers.",
     "summary": "ChatGPT's Codex, an AI agent for coding tasks, has introduced a new feature that allows users to select the best solution for their programming needs. This update aims to improve the efficiency and effectiveness of Codex in assisting developers.",
-    "published_date": "2025-06-16T04:00:00.000Z",
     "source": "BleepingComputer",
     "source_url": "https://www.bleepingcomputer.com/news/artificial-intelligence/chatgpts-ai-coder-codex-now-lets-you-choose-the-best-solution/",
     "tags": ["general"],
     "tool_mentions": ["chatgpt", "codex"],
     "created_at": "2025-06-20T07:36:46.904Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-16T04:00:00.000Z"
   },
   {
     "id": "50751e3b-84a7-4f2c-bc86-e3de30c443d6",
@@ -1263,13 +1263,13 @@
     "title": "OpenAI's Codex Update: Choose Your Coding Adventure!",
     "content": "OpenAI has announced an update to its Codex AI tool, which now allows users to choose the best solution for their coding tasks. This feature is part of Codex's ongoing development to enhance its capabilities as a coding assistant.",
     "summary": "OpenAI has announced an update to its Codex AI tool, which now allows users to choose the best solution for their coding tasks. This feature is part of Codex's ongoing development to enhance its capabilities as a coding assistant.",
-    "published_date": "2025-06-16T04:00:00.000Z",
     "source": "AI News",
     "source_url": "https://opentools.ai/news/openais-codex-update-choose-your-coding-adventure",
     "tags": ["general"],
     "tool_mentions": ["chatgpt", "codex"],
     "created_at": "2025-06-20T07:36:46.753Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-16T04:00:00.000Z"
   },
   {
     "id": "590064e2-b904-4470-a436-ed6172fc4cd0",
@@ -1277,13 +1277,13 @@
     "title": "Anthropic Claude 2025 – What's New & Why It Matters!",
     "content": "A video exploring the new features, updates, performance, and comparisons of Anthropic's Claude 2025 AI model. It discusses how Claude stands against ChatGPT and Gemini.",
     "summary": "A video exploring the new features, updates, performance, and comparisons of Anthropic's Claude 2025 AI model. It discusses how Claude stands against ChatGPT and Gemini.",
-    "published_date": "2025-06-16T04:00:00.000Z",
     "source": "YouTube",
     "source_url": "https://www.youtube.com/watch?v=nQp6UG9ugkM",
     "tags": ["general"],
     "tool_mentions": ["claude", "chatgpt", "gemini"],
     "created_at": "2025-06-20T07:36:46.141Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-16T04:00:00.000Z"
   },
   {
     "id": "8ddc093a-51d8-4b90-887b-9ff036976f1b",
@@ -1291,13 +1291,13 @@
     "title": "Generative AI Coding Assistants Market to reach USD139.55 Million by 2032",
     "content": "The U.S. Generative AI Coding Assistants Market is projected to grow significantly, with Tabnine being mentioned as a key player. The market is expected to reach USD 30.97 billion by 2032.",
     "summary": "The U.S. Generative AI Coding Assistants Market is projected to grow significantly, with Tabnine being mentioned as a key player. The market is expected to reach USD 30.97 billion by 2032.",
-    "published_date": "2025-06-16T04:00:00.000Z",
     "source": "SNS Insider",
     "source_url": "https://www.globenewswire.com/news-release/2025/06/16/3099960/0/en/Generative-AI-Coding-Assistants-Market-to-reach-USD139-55-Million-by-2032-owing-to-enhanced-developer-productivity-and-reduced-code-errors-SNS-Insider.html",
     "tags": ["funding"],
     "tool_mentions": ["tabnine"],
     "created_at": "2025-06-20T07:36:47.248Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-16T04:00:00.000Z"
   },
   {
     "id": "9f2e5011-e872-4ff9-972c-a20b91b76986",
@@ -1305,13 +1305,13 @@
     "title": "VivaTech 2025: Mistral AI Gets Cozy With NVIDIA",
     "content": "Mistral AI has partnered with NVIDIA, marking a significant collaboration in the AI industry. This partnership is part of Mistral's efforts to develop more advanced AI models, including the introduction of Mistral Next, a frontier language model that challenges OpenAI's GPT-4 and Anthropic's Claude 3 in reasoning capabilities.",
     "summary": "Mistral AI has partnered with NVIDIA, marking a significant collaboration in the AI industry. This partnership is part of Mistral's efforts to develop more advanced AI models, including the introduction of Mistral Next, a frontier language model that challenges OpenAI's GPT-4 and Anthropic's Claude 3 in reasoning capabilities.",
-    "published_date": "2025-06-16T04:00:00.000Z",
     "source": "French Tech Journal",
     "source_url": "https://frenchtechjournal.com/vivatech-2025-mistral-ai-gets-cozy-with-nvidia/",
     "tags": ["general"],
     "tool_mentions": ["mistral", "chatgpt", "claude"],
     "created_at": "2025-06-20T07:36:46.605Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-16T04:00:00.000Z"
   },
   {
     "id": "a49de874-eebd-4743-aba7-039bef9fe060",
@@ -1319,13 +1319,13 @@
     "title": "Mistral AI Releases Magistral, Its First Reasoning-Focused Language Model",
     "content": "Mistral AI has released Magistral, its first reasoning-focused language model. This model is designed to handle complex reasoning tasks and is available in two variants: an open-source 'Magistral Small' and an enterprise-oriented 'Magistral Medium'. The model supports multiple languages and implements an explicit, step-by-step reasoning chain.",
     "summary": "Mistral AI has released Magistral, its first reasoning-focused language model. This model is designed to handle complex reasoning tasks and is available in two variants: an open-source 'Magistral Small' and an enterprise-oriented 'Magistral Medium'. The model supports multiple languages and implements an explicit, step-by-step reasoning chain.",
-    "published_date": "2025-06-16T04:00:00.000Z",
     "source": "InfoQ",
     "source_url": "https://www.infoq.com/news/2025/06/mistral-ai-magistral/",
     "tags": ["product-update"],
     "tool_mentions": ["mistral"],
     "created_at": "2025-06-20T07:36:46.467Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-16T04:00:00.000Z"
   },
   {
     "id": "60b3fb34-1fa0-471f-8c95-9027edab9323",
@@ -1333,13 +1333,13 @@
     "title": "Top 8 Cursor Alternatives for Developers in 2025",
     "content": "Tabnine is listed as one of the top alternatives for developers, offering personalized, context-aware coding assistance to help developers ship software faster and with higher quality. It integrates seamlessly into development environments and provides features like AI-driven code reviews and complete code privacy.",
     "summary": "Tabnine is listed as one of the top alternatives for developers, offering personalized, context-aware coding assistance to help developers ship software faster and with higher quality. It integrates seamlessly into development environments and provides features like AI-driven code reviews and complete code privacy.",
-    "published_date": "2025-06-14T04:00:00.000Z",
     "source": "Zencoder",
     "source_url": "https://zencoder.ai/blog/cursor-alternatives",
     "tags": ["general"],
     "tool_mentions": ["cursor", "tabnine"],
     "created_at": "2025-06-20T07:36:47.552Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-14T04:00:00.000Z"
   },
   {
     "id": "b41d789b-aa19-432e-aa98-2dc9a58bbd94",
@@ -1347,13 +1347,13 @@
     "title": "Mistral AI Challenges DeepSeek with Magistral, Its First Advanced Reasoning Model",
     "content": "Mistral AI has unveiled Magistral, its first large-scale reasoning model available in two variants: an open-source 'Magistral Small' and an enterprise-oriented 'Magistral Medium'. The model supports multiple languages and implements an explicit, step-by-step reasoning chain.",
     "summary": "Mistral AI has unveiled Magistral, its first large-scale reasoning model available in two variants: an open-source 'Magistral Small' and an enterprise-oriented 'Magistral Medium'. The model supports multiple languages and implements an explicit, step-by-step reasoning chain.",
-    "published_date": "2025-06-14T04:00:00.000Z",
     "source": "Actuia",
     "source_url": "https://www.actuia.com/en/news/mistral-ai-challenges-deepseek-with-magistral-its-first-advanced-reasoning-model/",
     "tags": ["product-update"],
     "tool_mentions": ["mistral"],
     "created_at": "2025-06-20T07:36:47.402Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-14T04:00:00.000Z"
   },
   {
     "id": "1f319bc3-ea23-41bc-a757-2e729ff7fc98",
@@ -1361,13 +1361,13 @@
     "title": "Dev Proxy v0.28 Introduces Telemetry for LLM Usage and Cost Optimization",
     "content": "The .NET team released Dev Proxy version 0.28, introducing new capabilities to improve observability, plugin extensibility, and integration with AI models, including telemetry for LLM usage and cost optimization.",
     "summary": "The .NET team released Dev Proxy version 0.28, introducing new capabilities to improve observability, plugin extensibility, and integration with AI models, including telemetry for LLM usage and cost optimization.",
-    "published_date": "2025-06-13T04:00:00.000Z",
     "source": "InfoQ",
     "source_url": "https://www.infoq.com/news/2025/06/microsoft-dev-proxy-v28/",
     "tags": ["product-update"],
     "tool_mentions": ["v0"],
     "created_at": "2025-06-20T07:36:47.702Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-13T04:00:00.000Z"
   },
   {
     "id": "3b56706c-340c-44d4-9f4e-b3bc36614088",
@@ -1375,13 +1375,13 @@
     "title": "NVIDIA unveils new technology that reduces VRAM usage of the image generation AI 'Stable Diffusion 3.5 Large' by 40%",
     "content": "NVIDIA has successfully reduced the VRAM usage of Stable Diffusion 3.5 Large by 40% to 11GB using their TensorRT tool and RTX GPUs. This optimization allows for a significant cost reduction in running the AI model, making it more accessible to developers and creators.",
     "summary": "NVIDIA has successfully reduced the VRAM usage of Stable Diffusion 3.5 Large by 40% to 11GB using their TensorRT tool and RTX GPUs. This optimization allows for a significant cost reduction in running the AI model, making it more accessible to developers and creators.",
-    "published_date": "2025-06-13T04:00:00.000Z",
     "source": "Gigazine",
     "source_url": "https://gigazine.net/gsc_news/en/20250613-nvidia-tensorrt/",
     "tags": ["product-update"],
     "tool_mentions": ["stable-diffusion"],
     "created_at": "2025-06-20T07:36:47.961Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-13T04:00:00.000Z"
   },
   {
     "id": "559ad9a4-449f-4039-a192-7f6783109243",
@@ -1389,13 +1389,13 @@
     "title": "Windsurf AI Coding Tool Access Restrictions: Strategic Implications",
     "content": "Recent developments have impacted users of the Windsurf AI coding tool, particularly due to limitations with the Anthropic Claude model. Windsurf is actively pursuing mitigation strategies to minimize disruption and secure its future growth, potentially aligning with OpenAI's suite of AI models.",
     "summary": "Recent developments have impacted users of the Windsurf AI coding tool, particularly due to limitations with the Anthropic Claude model. Windsurf is actively pursuing mitigation strategies to minimize disruption and secure its future growth, potentially aligning with OpenAI's suite of AI models.",
-    "published_date": "2025-06-13T04:00:00.000Z",
     "source": "Topmostads",
     "source_url": "https://topmostads.com/windsurf-ai-coding-tool-access-restrictions/",
     "tags": ["general"],
     "tool_mentions": ["windsurf", "chatgpt", "claude"],
     "created_at": "2025-06-20T07:36:47.836Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-13T04:00:00.000Z"
   },
   {
     "id": "881c84da-bb50-4123-9614-4f60a91926b0",
@@ -1403,13 +1403,13 @@
     "title": "OpenAI Unveils Codex, a Powerful AI Agent for Coding Tasks",
     "content": "OpenAI has unveiled Codex, an AI-powered coding assistant integrated into ChatGPT. Codex can write new code, fix bugs, run tests, explain confusing parts of code, and work across multiple tasks simultaneously. It is currently available to ChatGPT Pro, Team, and Enterprise users.",
     "summary": "OpenAI has unveiled Codex, an AI-powered coding assistant integrated into ChatGPT. Codex can write new code, fix bugs, run tests, explain confusing parts of code, and work across multiple tasks simultaneously. It is currently available to ChatGPT Pro, Team, and Enterprise users.",
-    "published_date": "2025-06-13T04:00:00.000Z",
     "source": "AutoGPT",
     "source_url": "https://autogpt.net/openai-unveils-codex-a-powerful-ai-agent-for-coding-tasks/",
     "tags": ["product-update"],
     "tool_mentions": ["codex", "chatgpt"],
     "created_at": "2025-06-20T07:36:48.099Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-13T04:00:00.000Z"
   },
   {
     "id": "be05f974-eef3-46f5-8345-975173dd8807",
@@ -1417,13 +1417,13 @@
     "title": "Replit Agent V2 and LangChain: Transforming Software Development with AI-Powered Tools",
     "content": "Replit Agent V2 introduces enhanced AI algorithms, improved integration with external APIs, and advanced error detection mechanisms. It streamlines workflows for seamless deployment and is ideal for automating repetitive coding tasks, developing chatbots, and creating educational platforms.",
     "summary": "Replit Agent V2 introduces enhanced AI algorithms, improved integration with external APIs, and advanced error detection mechanisms. It streamlines workflows for seamless deployment and is ideal for automating repetitive coding tasks, developing chatbots, and creating educational platforms.",
-    "published_date": "2025-06-13T04:00:00.000Z",
     "source": "Geeky Gadgets",
     "source_url": "https://www.geeky-gadgets.com/replit-agent-v2/",
     "tags": ["general"],
     "tool_mentions": ["replit"],
     "created_at": "2025-06-20T07:36:48.238Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-13T04:00:00.000Z"
   },
   {
     "id": "1f03e46d-3b21-4964-bba7-b80e216c9734",
@@ -1431,13 +1431,13 @@
     "title": "Lovable in Talks for $100M Funding Round at $1.5B Valuation",
     "content": "Swedish AI-driven software development platform Lovable is in talks for a major funding round that could raise at least $100 million at a valuation of $1.5 billion, positioning it as one of Europe's biggest AI newcomers.",
     "summary": "Swedish AI-driven software development platform Lovable is in talks for a major funding round that could raise at least $100 million at a valuation of $1.5 billion, positioning it as one of Europe's biggest AI newcomers.",
-    "published_date": "2025-06-09T04:00:00.000Z",
     "source": "Tech Funding News",
     "source_url": "https://techfundingnews.com/swedens-lovable-takes-on-cursor-and-copilot-eyes-100m-at-1-5b-valuation-with-ai-that-lets-anyone-build-apps/",
     "tags": ["funding"],
     "tool_mentions": ["lovable", "cursor", "github-copilot"],
     "created_at": "2025-06-18T00:04:22.847Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-09T04:00:00.000Z"
   },
   {
     "id": "01ec8b93-8d34-435d-84ef-e7e52cb71dd2",
@@ -1445,13 +1445,13 @@
     "title": "I Hate PowerPoint",
     "content": "and this Claude AI hack means I never have to use it again (hopefully)",
     "summary": "and this Claude AI hack means I never have to use it again (hopefully)",
-    "published_date": "2025-06-06T18:02:56.000Z",
     "source": "HyperDev",
     "source_url": "https://hyperdev.matsuoka.com/p/i-hate-powerpoint",
     "tags": ["general"],
     "tool_mentions": ["claude-code"],
     "created_at": "2025-06-18T00:20:16.037Z",
-    "updated_at": "2025-06-30T05:07:05.211Z"
+    "updated_at": "2025-06-30T05:07:05.211Z",
+    "date": "2025-06-06T18:02:56.000Z"
   },
   {
     "id": "ac876d0c-6679-45d4-966b-ed863c4595c2",
@@ -1459,13 +1459,13 @@
     "title": "Anthropic Cuts Windsurf's Claude Access Before OpenAI Acquisition",
     "content": "Anthropic has abruptly terminated Windsurf's direct access to Claude 3.x models with less than five days' notice as OpenAI reportedly moves to acquire the AI coding platform for $3 billion, highlighting competitive tensions in the AI coding space.",
     "summary": "Anthropic has abruptly terminated Windsurf's direct access to Claude 3.x models with less than five days' notice as OpenAI reportedly moves to acquire the AI coding platform for $3 billion, highlighting competitive tensions in the AI coding space.",
-    "published_date": "2025-06-05T09:43:00.000Z",
     "source": "Forbes",
     "source_url": "https://www.forbes.com/sites/johanmoreno/2025/06/05/anthropic-cuts-windsurfs-claude-access-before-openai-acquisition/",
     "tags": ["general"],
     "tool_mentions": ["windsurf", "claude-code", "openai"],
     "created_at": "2025-06-18T00:04:15.639Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-05T09:43:00.000Z"
   },
   {
     "id": "b32aef1a-7454-4fed-a3bf-f67488ec2099",
@@ -1473,13 +1473,13 @@
     "title": "Cursor Raises $900M at $9.9B Valuation, Soars Past $500M ARR",
     "content": "Anysphere, maker of the AI-powered code editor Cursor, has raised $900 million in Series C funding at a $9.9 billion valuation, making it one of the fastest-growing startups in history.",
     "summary": "Anysphere, maker of the AI-powered code editor Cursor, has raised $900 million in Series C funding at a $9.9 billion valuation, making it one of the fastest-growing startups in history.",
-    "published_date": "2025-06-05T00:00:00",
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2025/06/05/cursors-anysphere-nabs-9-9b-valuation-soars-past-500m-arr/",
     "tags": [],
     "tool_mentions": ["1"],
     "created_at": "2025-06-09T04:58:08.085264",
-    "updated_at": "2025-06-28T02:35:55.785Z"
+    "updated_at": "2025-06-28T02:35:55.785Z",
+    "date": "2025-06-05T00:00:00"
   },
   {
     "id": "59d37146-4b32-4da0-b6f5-0efbd761d778",
@@ -1487,13 +1487,13 @@
     "title": "Anysphere Hailed as Fastest-Growing Startup Ever, Raises $900 Million",
     "content": "Anysphere, creator of AI coding assistant Cursor, raised $900 million at a valuation approaching $10 billion, potentially making it the fastest-growing software startup in history.",
     "summary": "Anysphere, creator of AI coding assistant Cursor, raised $900 million at a valuation approaching $10 billion, potentially making it the fastest-growing software startup in history.",
-    "published_date": "2025-06-05T04:00:00.000Z",
     "source": "Bloomberg",
     "source_url": "https://www.bloomberg.com/news/articles/2025-06-05/anysphere-hailed-as-fastest-growing-startup-ever-raises-900-million",
     "tags": ["funding"],
     "tool_mentions": ["cursor"],
     "created_at": "2025-06-17T23:28:26.073Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-05T04:00:00.000Z"
   },
   {
     "id": "197bf3f57a0-601785d2-81e31075",
@@ -1501,12 +1501,12 @@
     "title": "GitHub Copilot Introduces Pro+ Tier with Exclusive Model Access",
     "content": "GitHub launches Copilot Pro+ tier offering 1500 premium requests per month and exclusive access to advanced AI models, targeting power users and professional developers.",
     "summary": "GitHub launches Copilot Pro+ tier offering 1500 premium requests per month and exclusive access to advanced AI models, targeting power users and professional developers....",
-    "published_date": "2025-06-05T00:00:00.000Z",
     "source": "GitHub Blog",
     "tags": ["feature-update", "pricing", "premium"],
     "tool_mentions": ["GitHub Copilot"],
     "created_at": "2025-06-30T05:11:28.927Z",
-    "updated_at": "2025-06-30T05:11:28.927Z"
+    "updated_at": "2025-06-30T05:11:28.927Z",
+    "date": "2025-06-05T00:00:00.000Z"
   },
   {
     "id": "52564cec-6f62-46a2-9b64-cd75a6becdaa",
@@ -1514,13 +1514,13 @@
     "title": "Zed Gets the AI Editor Right",
     "content": "Could This Be The Tool That Weans Me Off Of Claude Code?",
     "summary": "Could This Be The Tool That Weans Me Off Of Claude Code?",
-    "published_date": "2025-06-04T23:10:23.000Z",
     "source": "HyperDev",
     "source_url": "https://hyperdev.matsuoka.com/p/zed-gets-the-ai-editor-right",
     "tags": ["general"],
     "tool_mentions": ["claude-code"],
     "created_at": "2025-06-18T00:20:16.165Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-04T23:10:23.000Z"
   },
   {
     "id": "b3d055dd-b72d-4dda-a0e6-9bc5ec3c6a41",
@@ -1528,13 +1528,13 @@
     "title": "AI Coding Tools Market Hits $2B+ in Funding as \"Vibe Coding\" Emerges",
     "content": "The AI coding tools market has attracted over $2 billion in funding as a new generation of \"vibe coding\" tools allows developers to build apps through natural language.",
     "summary": "The AI coding tools market has attracted over $2 billion in funding as a new generation of \"vibe coding\" tools allows developers to build apps through natural language.",
-    "published_date": "2025-06-03T00:00:00",
     "source": "Reuters",
     "source_url": "https://www.reuters.com/business/ai-vibe-coding-startups-burst-onto-scene-with-sky-high-valuations-2025-06-03/",
     "tags": [],
     "tool_mentions": ["1", "3", "5", "12"],
     "created_at": "2025-06-09T04:58:08.085264",
-    "updated_at": "2025-06-28T02:35:55.792Z"
+    "updated_at": "2025-06-28T02:35:55.792Z",
+    "date": "2025-06-03T00:00:00"
   },
   {
     "id": "02fcc6e8-6064-4341-859c-cdeb6f4a1054",
@@ -1542,13 +1542,13 @@
     "title": "GitHub Copilot Reaches $400M ARR with 281% Growth as AI Coding Market Explodes",
     "content": "GitHub Copilot has reached $400 million in annual recurring revenue with 281% year-over-year growth, demonstrating the massive scale of AI coding tool adoption with ~15 million users.",
     "summary": "GitHub Copilot has reached $400 million in annual recurring revenue with 281% year-over-year growth, demonstrating the massive scale of AI coding tool adoption with ~15 million users.",
-    "published_date": "2025-06-01T04:00:00.000Z",
     "source": "CIO Dive",
     "source_url": "https://www.ciodive.com/news/github-copilot-subscriber-count-revenue-growth/706201/",
     "tags": ["general"],
     "tool_mentions": ["github-copilot"],
     "created_at": "2025-06-18T00:04:18.422Z",
-    "updated_at": "2025-06-30T05:07:05.211Z"
+    "updated_at": "2025-06-30T05:07:05.211Z",
+    "date": "2025-06-01T04:00:00.000Z"
   },
   {
     "id": "1022d79e-8bf7-49ef-811a-97a70fd4455b",
@@ -1556,13 +1556,13 @@
     "title": "Aider AI Adds Claude Sonnet 4 Support, Maintains Open-Source Leadership",
     "content": "Aider AI updated to support Claude Sonnet 4 as the default model across various providers, with improved dependency mapping capabilities. The tool now has approximately 79% of its code written by AI.",
     "summary": "Aider AI updated to support Claude Sonnet 4 as the default model across various providers, with improved dependency mapping capabilities. The tool now has approximately 79% of its code written by AI.",
-    "published_date": "2025-06-01T04:00:00.000Z",
     "source": "Aider AI Blog",
     "source_url": "https://aider.chat/HISTORY.html",
     "tags": ["general"],
     "tool_mentions": ["aider", "claude-code"],
     "created_at": "2025-06-18T00:04:20.471Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-01T04:00:00.000Z"
   },
   {
     "id": "952f622c-c22f-4199-a429-36d8aabf854b",
@@ -1570,13 +1570,13 @@
     "title": "Cursor Introduces Fusion Tab Model and Background Agent Features",
     "content": "Cursor AI launched significant updates including the Fusion Tab model supporting multi-file editing with sub-200ms response times, background agents for parallel execution, and @folders function for directory integration.",
     "summary": "Cursor AI launched significant updates including the Fusion Tab model supporting multi-file editing with sub-200ms response times, background agents for parallel execution, and @folders function for directory integration.",
-    "published_date": "2025-06-01T04:00:00.000Z",
     "source": "AI Rockstars",
     "source_url": "https://ai-rockstars.com/cursor-ai-update-2025-new-tab-model-and-background-agent-change-development-work/",
     "tags": ["general"],
     "tool_mentions": ["cursor"],
     "created_at": "2025-06-18T00:04:20.594Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-01T04:00:00.000Z"
   },
   {
     "id": "a552be02-efe5-4556-afec-d452ba438d99",
@@ -1584,13 +1584,13 @@
     "title": "Lovable Launches 2.0 with Claude 4 Integration and Enhanced Collaboration",
     "content": "Lovable has released version 2.0 with significant updates including real-time collaboration features, security improvements, Claude 4 integration resulting in 25% fewer errors and 40% faster performance, and an improved chat interface.",
     "summary": "Lovable has released version 2.0 with significant updates including real-time collaboration features, security improvements, Claude 4 integration resulting in 25% fewer errors and 40% faster performance, and an improved chat interface.",
-    "published_date": "2025-06-01T04:00:00.000Z",
     "source": "Lovable Documentation",
     "source_url": "https://docs.lovable.dev/changelog",
     "tags": ["general"],
     "tool_mentions": ["lovable", "claude-code"],
     "created_at": "2025-06-18T00:04:22.972Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-01T04:00:00.000Z"
   },
   {
     "id": "e2772d30-89ef-44d4-9c3e-87cfb8328a2b",
@@ -1598,12 +1598,12 @@
     "title": "OpenAI Rewrites Codex CLI in Rust for Enhanced Performance and Security",
     "content": "OpenAI announces complete rewrite of Codex CLI in Rust, moving from Node.js/TypeScript to achieve zero-dependency installation, native security bindings, and optimized performance.",
     "summary": "OpenAI announces complete rewrite of Codex CLI in Rust, moving from Node.js/TypeScript to achieve zero-dependency installation, native security bindings, and optimized performance.",
-    "published_date": "2025-06-01T04:00:00.000Z",
     "source": "InfoQ",
     "source_url": "https://www.infoq.com/news/2025/06/codex-cli-rust-native-rewrite/",
     "tags": ["general"],
     "tool_mentions": ["openai-codex-cli"],
     "created_at": "2025-06-18T00:59:19.541Z",
-    "updated_at": "2025-06-30T05:07:05.212Z"
+    "updated_at": "2025-06-30T05:07:05.212Z",
+    "date": "2025-06-01T04:00:00.000Z"
   }
 ]
