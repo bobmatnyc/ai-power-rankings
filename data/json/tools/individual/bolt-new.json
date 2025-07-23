@@ -1,0 +1,53 @@
+{
+  "id": "5",
+  "slug": "bolt-new",
+  "name": "Bolt.new",
+  "category": "app-builder",
+  "status": "active",
+  "company_id": "7",
+  "info": {
+    "summary": "Prompt, run, edit, and deploy full-stack web applications",
+    "description": "AI-powered full-stack web application builder with in-browser development environment",
+    "website": "https://bolt.new",
+    "features": [],
+    "technical": {
+      "context_window": 128000,
+      "multi_file_support": true,
+      "language_support": [
+        "JavaScript",
+        "TypeScript",
+        "React",
+        "Vue",
+        "Svelte",
+        "HTML",
+        "CSS",
+        "Python",
+        "Node.js"
+      ],
+      "llm_providers": ["Anthropic Claude"],
+      "subprocess_support": false,
+      "tool_support": false,
+      "execution_environment": "In-browser WebContainer"
+    },
+    "business": {
+      "pricing_model": "freemium",
+      "base_price": 0,
+      "enterprise_pricing": false,
+      "free_tier": true,
+      "pricing_details": {
+        "Free": "$0/month - Limited tokens, basic app building",
+        "Pro": "$20/month - Higher token limits, advanced features, priority support, additional token reloads at $30",
+        "pricing_note": "Reached $20M ARR in 2 months - fastest startup growth ever"
+      }
+    },
+    "metrics": {
+      "monthly_arr": 20000000,
+      "users": 85000,
+      "valuation": 2500000000,
+      "news_mentions": 2
+    }
+  },
+  "created_at": "2025-06-23T15:40:38.390Z",
+  "updated_at": "2025-06-30T03:49:42.688Z",
+  "launch_date": "2024-10-01"
+}

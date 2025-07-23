@@ -1,0 +1,81 @@
+{
+  "id": "18",
+  "slug": "chatgpt-canvas",
+  "name": "ChatGPT Canvas",
+  "category": "autonomous-agent",
+  "status": "active",
+  "company_id": "42",
+  "info": {
+    "summary": "Collaborative AI workspace",
+    "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions",
+    "website": "https://openai.com/chatgpt",
+    "features": [],
+    "technical": {
+      "context_window": 128000,
+      "multi_file_support": false,
+      "language_support": [
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "Java",
+        "C++",
+        "C#",
+        "PHP",
+        "Ruby",
+        "Go",
+        "HTML",
+        "CSS",
+        "SQL",
+        "Shell",
+        "Markdown",
+        "YAML",
+        "JSON",
+        "XML"
+      ],
+      "llm_providers": ["OpenAI GPT-4o", "OpenAI o1"],
+      "subprocess_support": false,
+      "tool_capabilities": {
+        "file_operations": false,
+        "terminal_access": false,
+        "browser_automation": false,
+        "api_integration": false,
+        "database_access": false,
+        "external_tools": false,
+        "python_execution": true,
+        "network_requests": true
+      },
+      "canvas_features": {
+        "targeted_editing": "Highlight specific sections for AI assistance",
+        "inline_feedback": "AI provides inline suggestions like human collaborators",
+        "review_code": "Inline suggestions to improve code",
+        "add_logs": "Insert print statements for debugging",
+        "add_comments": "Add comments for code clarity",
+        "fix_bugs": "Detect and rewrite problematic code",
+        "port_languages": "Translate code to JavaScript, TypeScript, Python, Java, C++, or PHP"
+      },
+      "python_runtime": "Pyodide (Python compiled to WebAssembly) running in browser",
+      "auto_activation": "Opens automatically for content >10 lines or when beneficial",
+      "interface": "Separate workspace window beside chat for writing and coding projects",
+      "platform_support": {
+        "web": true,
+        "windows": true,
+        "mac": "Coming soon",
+        "mobile": "Coming soon (iOS, Android, mobile web)"
+      }
+    },
+    "business": {
+      "pricing_model": "freemium",
+      "base_price": 0,
+      "enterprise_pricing": false,
+      "free_tier": true,
+      "pricing_details": {
+        "Free": "$0/month - Limited access (gradual rollout), basic Canvas features",
+        "Plus": "$20/month - Full Canvas access, GPT-4o access, collaborative workspace",
+        "Pro": "$200/month - Unlimited o1 access, O1 Pro mode, GPT-4.1 access, advanced Canvas features"
+      }
+    },
+    "metrics": {}
+  },
+  "created_at": "2025-06-23T15:40:44.960Z",
+  "updated_at": "2025-06-25T02:48:33.954Z"
+}

@@ -1,0 +1,46 @@
+{
+  "id": "14",
+  "slug": "windsurf",
+  "name": "Windsurf",
+  "category": "code-editor",
+  "status": "active",
+  "company_id": "6",
+  "info": {
+    "summary": "The most powerful AI Code Editor",
+    "description": "AI-powered IDE assistant acquired by OpenAI for $3 billion in April 2025",
+    "website": "https://windsurf.com",
+    "features": [],
+    "technical": {
+      "context_window": 150000,
+      "multi_file_support": true,
+      "language_support": [
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "Java",
+        "C++",
+        "C#",
+        "PHP",
+        "Ruby",
+        "Go",
+        "Rust"
+      ],
+      "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
+    },
+    "business": {
+      "pricing_model": "freemium",
+      "base_price": 0,
+      "enterprise_pricing": false,
+      "free_tier": true,
+      "pricing_details": {
+        "Free": "$0/month - 25 prompt credits monthly (increased from 5), basic AI assistance, credit-based system",
+        "Pro": "$15/month - Unlimited prompt credits, advanced AI features, priority support, OpenAI integration",
+        "pricing_note": "Acquired by OpenAI"
+      }
+    },
+    "metrics": {}
+  },
+  "created_at": "2025-06-23T15:40:43.003Z",
+  "updated_at": "2025-06-30T03:49:42.697Z",
+  "launch_date": "2024-11-13"
+}

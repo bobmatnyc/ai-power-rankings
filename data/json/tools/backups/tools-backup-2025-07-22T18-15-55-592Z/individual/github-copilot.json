@@ -1,0 +1,60 @@
+{
+  "id": "2",
+  "slug": "github-copilot",
+  "name": "GitHub Copilot",
+  "category": "ide-assistant",
+  "status": "active",
+  "company_id": "1",
+  "info": {
+    "summary": "Your AI pair programmer",
+    "description": "AI pair programmer providing code suggestions, chat, and autonomous agents",
+    "website": "https://github.com/features/copilot",
+    "features": [],
+    "technical": {
+      "context_window": 100000,
+      "multi_file_support": true,
+      "language_support": [
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "Java",
+        "C++",
+        "C#",
+        "PHP",
+        "Ruby",
+        "Go",
+        "Rust",
+        "Swift",
+        "Kotlin"
+      ],
+      "llm_providers": ["OpenAI Codex", "GPT-4"],
+      "swe_bench_score": 45.2
+    },
+    "business": {
+      "pricing_model": "subscription",
+      "base_price": 10,
+      "enterprise_pricing": false,
+      "free_tier": false,
+      "pricing_details": {
+        "Pro": "$10/month - 300 premium requests, code completions and chat, additional requests at $0.04 each",
+        "Pro+": "$39/month - 1,500 premium requests, everything in Pro, priority access, advanced features",
+        "pricing_note": "Premium requests vary by model complexity"
+      }
+    },
+    "metrics": {
+      "users": 1500000,
+      "github_stars": 5000,
+      "monthly_arr": 400000000,
+      "swe_bench": {
+        "verified": 56,
+        "date": "2025-04-23",
+        "source": "GitHub Blog - In celebration of MSFT's 50th anniversary",
+        "model": "Claude 3.7 Sonnet",
+        "context": "Part of GitHub Copilot's new agentic capabilities in VS Code"
+      }
+    }
+  },
+  "created_at": "2025-06-23T15:40:36.825Z",
+  "updated_at": "2025-06-30T03:49:42.691Z",
+  "launch_date": "2021-06-01"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "19",
+  "slug": "claude-artifacts",
+  "name": "Claude Artifacts",
+  "category": "app-builder",
+  "status": "active",
+  "company_id": "4",
+  "info": {
+    "summary": "Interactive AI development companion",
+    "description": "Interactive component generation feature within Claude that creates and iterates on code, diagrams, and applications in a side panel",
+    "website": "https://claude.ai",
+    "features": [],
+    "technical": {},
+    "business": {
+      "pricing_model": "freemium"
+    },
+    "metrics": {}
+  },
+  "created_at": "2025-06-23T15:40:45.342Z",
+  "updated_at": "2025-06-25T02:48:33.684Z"
+}

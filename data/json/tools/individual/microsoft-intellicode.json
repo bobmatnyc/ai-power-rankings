@@ -1,0 +1,30 @@
+{
+  "id": "30",
+  "slug": "microsoft-intellicode",
+  "name": "Microsoft IntelliCode",
+  "category": "ide-assistant",
+  "status": "active",
+  "company_id": "53",
+  "info": {
+    "summary": "AI-assisted development",
+    "description": "AI-assisted development feature included in Visual Studio and VS Code that provides smarter IntelliSense by using ML to rank code suggestions by context and API usage patterns",
+    "website": "https://visualstudio.microsoft.com/services/intellicode/",
+    "features": [],
+    "technical": {
+      "context_window": 8192,
+      "multi_file_support": true,
+      "language_support": ["C#", "JavaScript", "TypeScript", "Python", "Java", "C++", "SQL"],
+      "llm_providers": ["Microsoft ML models"],
+      "subprocess_support": false,
+      "tool_support": false,
+      "ide_integration": "Visual Studio, VS Code",
+      "ml_based_ranking": true
+    },
+    "business": {
+      "pricing_model": "free"
+    },
+    "metrics": {}
+  },
+  "created_at": "2025-06-23T15:40:51.565Z",
+  "updated_at": "2025-06-25T02:48:30.656Z"
+}

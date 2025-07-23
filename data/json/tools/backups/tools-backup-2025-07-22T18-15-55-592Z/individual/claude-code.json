@@ -1,0 +1,40 @@
+{
+  "id": "4",
+  "slug": "claude-code",
+  "name": "Claude Code",
+  "category": "autonomous-agent",
+  "status": "active",
+  "company_id": "4",
+  "info": {
+    "summary": "Deep Coding at Terminal Velocity",
+    "description": "Terminal-based coding agent with deep codebase understanding and multi-file editing",
+    "website": "https://anthropic.com/claude-code",
+    "features": [],
+    "technical": {},
+    "business": {
+      "pricing_model": "subscription",
+      "base_price": 20,
+      "enterprise_pricing": false,
+      "free_tier": false,
+      "pricing_details": {
+        "Pro": "$20/month - 10-40 prompts per 5 hours, terminal-based coding agent, Claude web access included, secure Google Cloud VMs",
+        "5x Pro": "$100/month - 5x higher limits, priority access",
+        "20x Pro": "$200/month - 20x higher limits, maximum priority, enterprise features"
+      }
+    },
+    "metrics": {
+      "swe_bench": {
+        "verified": 70.3,
+        "verified_basic": 63.7,
+        "date": "2025-02-24",
+        "source": "Anthropic Blog - Claude 3.7 Sonnet",
+        "model": "Claude 3.7 Sonnet",
+        "methodology": "With scaffolding: 70.3%, Basic scaffold: 63.7%",
+        "achievement": "First release of Claude Code as limited research preview"
+      }
+    }
+  },
+  "created_at": "2025-06-23T15:40:37.842Z",
+  "updated_at": "2025-06-30T03:49:42.684Z",
+  "launch_date": "2024-12-15"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "24",
+  "slug": "openai-codex-cli",
+  "name": "OpenAI Codex CLI",
+  "category": "autonomous-agent",
+  "status": "active",
+  "company_id": "42",
+  "info": {
+    "summary": "Terminal-based AI coding agent",
+    "description": "Modern CLI tool powered by o3 reasoning model for autonomous software engineering",
+    "website": "https://openai.com/research/codex-cli",
+    "features": [],
+    "technical": {},
+    "business": {
+      "pricing_model": "open-source"
+    },
+    "metrics": {}
+  },
+  "created_at": "2025-06-23T15:40:47.647Z",
+  "updated_at": "2025-06-25T02:48:32.312Z"
+}
