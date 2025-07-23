@@ -28,7 +28,7 @@ Notre framework d'évaluation considère à la fois des facteurs primaires et se
 
 #### 🤖 Capacité Agentique (30%)
 
-Édition multi-fichiers, planification des tâches, opération autonome
+Édition multi-fichiers, planification des tâches, opération autonome, gestion des sous-processus, support de l'écosystème d'outils
 
 #### 💡 Innovation (15%)
 
@@ -36,7 +36,7 @@ Score d'innovation à décroissance temporelle, fonctionnalités révolutionnair
 
 #### ⚡ Performance Technique (12,5%)
 
-Scores SWE-bench, support multi-fichiers, fenêtre de contexte
+Scores SWE-bench avec pondération améliorée, support multi-fichiers, fenêtre de contexte, performance des sous-processus
 
 #### 👥 Adoption Développeur (12,5%)
 
@@ -54,7 +54,7 @@ Perception du marché, risques de plateforme, position concurrentielle
 
 #### 🚀 Vélocité de Développement (5%)
 
-Fréquence des releases, nombre de contributeurs, cadence de mise à jour
+Momentum dynamique issu du sentiment des actualités, des sorties de fonctionnalités, de la réponse communautaire (fenêtre de 30 jours)
 
 #### 🛡️ Résilience de Plateforme (5%)
 
@@ -202,3 +202,81 @@ Les scores de traction marché sont ajustés selon la qualité du modèle d'affa
 ### Fréquence de Mise à Jour
 
 Les classements sont mis à jour mensuellement, avec collecte de données continue et validation tout au long de chaque période.
+
+## Intelligence Dynamique des Actualités
+
+### Scoring de Vélocité Basé sur les Actualités
+
+La vélocité de développement est désormais calculée dynamiquement en utilisant une analyse sophistiquée des actualités qui suit le momentum à travers plusieurs dimensions.
+
+#### Indicateurs de Momentum
+- Sorties de produits et annonces de fonctionnalités
+- Nouvelles de partenariats et d'intégrations
+- Percées techniques et benchmarks
+- Adoption communautaire et histoires de réussite
+- Reconnaissance de l'industrie et récompenses
+
+#### Scoring de Sentiment
+- Momentum positif : boost de +3 à +5
+- Fort progrès : boost de +1 à +3
+- Neutre/stable : ajustement de 0
+- Défis/revers : pénalité de -1 à -3
+- Problèmes critiques : pénalité de -3 à -5
+
+### Fenêtre Glissante de 30 Jours
+
+Les scores de vélocité utilisent une fenêtre glissante de 30 jours avec décroissance exponentielle, donnant plus de poids aux développements récents tout en maintenant la conscience des tendances.
+
+```
+velocityScore = Σ(sentimentScore * e^(-λ * daysOld)) / 30
+```
+
+## Support de Sous-processus & d'Outils
+
+### Capacités Agentiques Améliorées
+
+Le scoring des capacités agentiques inclut maintenant une évaluation sophistiquée de l'orchestration des sous-processus et de l'utilisation des outils.
+
+#### Gestion des Sous-processus (40%)
+- Capacités d'orchestration multi-agents
+- Sophistication de la délégation des tâches
+- Support d'exécution parallèle
+- Passage et intégration du contexte
+- Gestion et récupération des erreurs
+
+#### Écosystème d'Outils (60%)
+- Profondeur du support d'outils natifs
+- Intégration d'outils tiers
+- APIs de création d'outils personnalisés
+- Découverte et sélection d'outils
+- Support de protocoles (MCP, etc.)
+
+### Rubrique de Scoring
+
+| Niveau de Capacité | Ajustement de Score |
+|------------------|---------------------|
+| Orchestration multi-outils avancée | +5,0 |
+| Gestion sophistiquée des sous-processus | +4,0 |
+| Riche écosystème d'outils natifs | +3,0 |
+| Support d'outils de base | +1,0 |
+| Capacités d'outils limitées/nulles | 0,0 |
+
+## Performance Technique Améliorée
+
+### Interprétation des Scores SWE-bench
+
+Le scoring de performance technique utilise une interprétation nuancée des résultats SWE-bench avec mise à l'échelle logarithmique :
+
+```
+technicalScore = log(1 + sweBenchScore) * performanceMultiplier
+```
+
+### Multiplicateurs de Performance
+
+| Niveau de Performance | Multiplicateur |
+|---------------------|----------------|
+| Exceptionnel (>90e percentile) | 1,5x |
+| Fort (75-90e percentile) | 1,3x |
+| Bon (50-75e percentile) | 1,1x |
+| Moyen (25-50e percentile) | 1,0x |
+| Sous la moyenne (<25e percentile) | 0,8x |

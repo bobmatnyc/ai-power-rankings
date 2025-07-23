@@ -118,7 +118,7 @@
     },
     "methodology": {
       "title": "Our Methodology",
-      "algorithmTitle": "Algorithm v6.0",
+      "algorithmTitle": "Algorithm v7.0",
       "algorithmDescription": "Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
@@ -172,7 +172,7 @@
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
-      "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.0 with dynamic news intelligence, enhanced tool capabilities, and velocity scoring.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
@@ -186,7 +186,7 @@
   },
   "rankings": {
     "title": "AI Power Ranking",
-    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v6.0",
+    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v7.0",
     "stats": {
       "totalTools": "Total Tools",
       "categories": "Categories",
@@ -234,8 +234,8 @@
       }
     },
     "algorithm": {
-      "title": "About Algorithm v6.0",
-      "subtitle": "Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
+      "title": "About Algorithm v7.0",
+      "subtitle": "Enhanced ranking system with dynamic news intelligence, subprocess management, and real-time velocity scoring",
       "tabs": {
         "factors": "Scoring Factors",
         "modifiers": "Modifiers",
@@ -512,10 +512,10 @@
     "title": "Our Methodology",
     "subtitle": "How we rank AI coding tools",
     "lastUpdated": "Last updated: January 2025",
-    "intro": "AI Power Ranking uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "intro": "AI Power Ranking uses a sophisticated algorithm (v7.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors, real-time news analysis, and comprehensive tool capabilities. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
     "algorithm": {
-      "title": "Algorithm v6.0",
-      "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
+      "title": "Algorithm v7.0",
+      "description": "Our latest ranking algorithm incorporates real-time news intelligence, enhanced tool capabilities, and dynamic velocity scoring",
       "keyFeatures": "Key Features",
       "features": {
         "innovationDecay": "Innovation decay modeling to reflect tool freshness",
@@ -523,7 +523,9 @@
         "revenueQuality": "Revenue quality adjustments based on business model",
         "technicalWeighting": "Technical capability weighting for different use cases",
         "dataValidation": "Multi-source data validation and normalization",
-        "logarithmicScaling": "Logarithmic scaling for balanced comparisons"
+        "logarithmicScaling": "Logarithmic scaling for balanced comparisons",
+        "newsIntelligence": "Dynamic velocity scoring from real-time news analysis",
+        "toolCapabilities": "Enhanced subprocess and tool ecosystem assessment"
       }
     },
     "factors": {
@@ -532,7 +534,7 @@
       "primary": "Primary Factors (82.5%)",
       "secondary": "Secondary Factors (17.5%)",
       "agentic": {
-        "details": "Measures autonomous capabilities, multi-step reasoning, and complex task completion"
+        "details": "Multi-file editing, task planning, autonomous operation, subprocess management, tool ecosystem support"
       },
       "innovation": {
         "details": "Evaluates breakthrough features, technical advances, and market differentiation"
@@ -550,7 +552,7 @@
         "details": "Developer satisfaction, community feedback, and recommendation scores"
       },
       "velocity": {
-        "details": "Feature release cadence, update frequency, and innovation speed"
+        "details": "Dynamic momentum from news sentiment, feature releases, community response (30-day window)"
       },
       "resilience": {
         "details": "Platform stability, backup options, and vendor independence"

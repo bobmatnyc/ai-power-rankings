@@ -118,7 +118,7 @@
     },
     "methodology": {
       "title": "우리의 방법론",
-      "algorithmTitle": "알고리즘 v6.0",
+      "algorithmTitle": "알고리즘 v7.0",
       "algorithmDescription": "우리의 고급 랭킹 알고리즘은 정교한 수정자와 함께 8가지 핵심 요소를 고려합니다:",
       "keyModifiersTitle": "핵심 수정자",
       "keyModifiersDescription": "세 가지 정교한 수정자가 공정하고 정확한 랭킹을 보장합니다:",
@@ -172,7 +172,7 @@
     },
     "footer": {
       "tagline": "AI 혁명을 위한 데이터 드리븐 인사이트",
-      "description": "혁신 감쇠, 플랫폼 리스크 수정자, 수익 품질 조정을 포함한 알고리즘 v6.0을 사용한 AI 코딩 툴의 종합적인 랭킹.",
+      "description": "동적 뉴스 인텔리전스, 향상된 도구 기능 및 속도 점수를 포함한 알고리즘 v7.0을 사용한 AI 코딩 도구의 종합적인 랭킹.",
       "quickLinks": "퀵 링크",
       "categories": "카테고리",
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
@@ -186,7 +186,7 @@
   },
   "rankings": {
     "title": "AI 파워 랭킹",
-    "subtitle": "알고리즘 v6.0을 사용한 AI 코딩 툴의 종합적인 랭킹",
+    "subtitle": "알고리즘 v7.0을 사용한 AI 코딩 도구의 종합적인 랭킹",
     "stats": {
       "totalTools": "총 툴",
       "categories": "카테고리",
@@ -203,7 +203,7 @@
       "name": "이름"
     },
     "algorithm": {
-      "title": "알고리즘 v6.0에 대하여",
+      "title": "알고리즘 v7.0에 대하여",
       "subtitle": "혁신 감쇠, 플랫폼 리스크 수정자, 수익 품질 조정을 포함한 향상된 랭킹 시스템",
       "tabs": {
         "factors": "점수 요인",

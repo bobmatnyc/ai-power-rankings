@@ -5,12 +5,14 @@ subtitle: "Razumijevanje kako evaluiramo i rangiramo AI alate za kodiranje"
 
 ## Pregled Algoritma
 
-### Algoritam v7.0: Code-Ready Modifikatori
+### Algoritam v7.0: Dinamička Inteligencija Vijesti i Mogućnosti Alata
 
-Naš algoritam rangiranja evaluira AI alate za kodiranje kroz sveobuhvatan okvir koji uzima u obzir multiple faktore i primjenjuje dinamičke modifikatore kako bi osigurao točna, vremenski osjetljiva rangiranja.
+Naš algoritam rangiranja evaluira AI alate za kodiranje kroz sveobuhvatan okvir koji uzima u obzir multiple faktore, primjenjuje dinamičke modifikatore, integrira analizu vijesti u stvarnom vremenu za bodovanje brzine te poboljšava procjenu mogućnosti upravljanja potprocesima i alatima.
 
 #### Ključne Značajke
 
+- Dinamičko bodovanje brzine iz analize vijesti u stvarnom vremenu
+- Poboljšana procjena mogućnosti potprocesa i alata
 - Opadanje inovacije tijekom vremena (poluživot od 6 mjeseci)
 - Kazne i bonusi za rizik platforme
 - Prilagodbe kvalitete prihoda prema poslovnom modelu
@@ -26,7 +28,7 @@ Naš okvir za evaluaciju uzima u obzir kako primarne tako i sekundarne faktore z
 
 #### 🤖 Agentska Sposobnost (30%)
 
-Uređivanje više datoteka, planiranje zadataka, autonomno djelovanje
+Uređivanje više datoteka, planiranje zadataka, autonomno djelovanje, upravljanje potprocesima, podrška ekosustava alata
 
 #### 💡 Inovacija (15%)
 
@@ -34,7 +36,7 @@ Vremenska ocjena inovacije s opadanjem, revolucionarne značajke
 
 #### ⚡ Tehnička Performansa (12,5%)
 
-SWE-bench rezultati, podrška za više datoteka, kontekstni prozor
+SWE-bench rezultati s pojačanim vaganjem, podrška za više datoteka, kontekstni prozor, performanse potprocesa
 
 #### 👥 Prihvaćanje Razvijatelja (12,5%)
 
@@ -52,7 +54,7 @@ Tržišna percepcija, rizici platforme, konkurentska pozicija
 
 #### 🚀 Brzina Razvoja (5%)
 
-Učestalost izdanja, broj suradnika, kadenca ažuriranja
+Dinamički zamah iz sentimenta vijesti, izdanja značajki, odgovora zajednice (30-dnevni prozor)
 
 #### 🛡️ Otpornost Platforme (5%)
 
@@ -200,3 +202,81 @@ Rezultati tržišne privlačnosti se prilagođavaju prema kvaliteti poslovnog mo
 ### Učestalost Ažuriranja
 
 Rangiranja se ažuriraju mjesečno, s kontinuiranim prikupljanjem podataka i validacijom tijekom svakog razdoblja.
+
+## Dinamička Inteligencija Vijesti
+
+### Bodovanje Brzine Temeljeno na Vijestima
+
+Brzina razvoja sada se dinamički izračunava korištenjem sofisticirane analize vijesti koja prati zamah kroz više dimenzija.
+
+#### Indikatori Zamaha
+- Izdanja proizvoda i najave značajki
+- Vijesti o partnerstvima i integracijama
+- Tehnički proboji i mjerila
+- Prihvaćanje zajednice i priče o uspjehu
+- Priznanja industrije i nagrade
+
+#### Bodovanje Sentimenta
+- Pozitivan zamah: pojačanje od +3 do +5
+- Snažan napredak: pojačanje od +1 do +3
+- Neutralno/stabilno: 0 prilagodba
+- Izazovi/neuspjesi: kazna od -1 do -3
+- Kritični problemi: kazna od -3 do -5
+
+### 30-dnevni Klizni Prozor
+
+Bodovi brzine koriste 30-dnevni klizni prozor s eksponencijalnim opadanjem, dajući veću težinu nedavnim razvojima dok zadržavaju svijest o trendovima.
+
+```
+velocityScore = Σ(sentimentScore * e^(-λ * daysOld)) / 30
+```
+
+## Podrška za Potprocese i Alate
+
+### Poboljšane Agentske Mogućnosti
+
+Bodovanje agentskih mogućnosti sada uključuje sofisticirano evaluiranje orkestracije potprocesa i korištenja alata.
+
+#### Upravljanje Potprocesima (40%)
+- Mogućnosti multi-agentske orkestracije
+- Sofisticiranost delegiranja zadataka
+- Podrška za paralelno izvršavanje
+- Prenos i integracija konteksta
+- Rukovanje greškama i oporavak
+
+#### Ekosustav Alata (60%)
+- Dubina podrške nativnih alata
+- Integracija alata trećih strana
+- API-ji za stvaranje prilagođenih alata
+- Otkrivanje i odabir alata
+- Podrška protokola (MCP, itd.)
+
+### Rubrika Bodovanja
+
+| Razina Mogućnosti | Prilagodba Bodova |
+|------------------|-------------------|
+| Napredna multi-alatna orkestracija | +5,0 |
+| Sofisticirano upravljanje potprocesima | +4,0 |
+| Bogat ekosustav nativnih alata | +3,0 |
+| Osnovna podrška alata | +1,0 |
+| Ograničene/bez mogućnosti alata | 0,0 |
+
+## Poboljšane Tehničke Performanse
+
+### Interpretacija SWE-bench Rezultata
+
+Bodovanje tehničkih performansi koristi nijansiranu interpretaciju SWE-bench rezultata s logaritamskim skaliranjem:
+
+```
+technicalScore = log(1 + sweBenchScore) * performanceMultiplier
+```
+
+### Multiplikatori Performansi
+
+| Razina Performansi | Multiplikator |
+|-------------------|---------------|
+| Izniman (>90. percentil) | 1,5x |
+| Snažan (75-90. percentil) | 1,3x |
+| Dobar (50-75. percentil) | 1,1x |
+| Prosječan (25-50. percentil) | 1,0x |
+| Ispod prosjeka (<25. percentil) | 0,8x |

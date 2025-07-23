@@ -164,7 +164,7 @@
     },
     "methodology": {
       "title": "私たちの手法",
-      "algorithmTitle": "アルゴリズム v6.0",
+      "algorithmTitle": "アルゴリズム v7.0",
       "algorithmDescription": "高度なランキングアルゴリズムが8つの主要因子と高度な修正器を考慮：",
       "keyModifiersTitle": "主要な修正器",
       "keyModifiersDescription": "三つの高度な修正器が公平で正確なランキングを保証：",
@@ -311,7 +311,7 @@
       "title": "データ主導のランキング",
       "subtitle": "私たちの方法論は透明で公正、継続的に改善されています",
       "methodology": "方法論を見る",
-      "algorithmVersion": "Algorithm v6.0",
+      "algorithmVersion": "Algorithm v7.0",
       "lastUpdated": "最終更新"
     },
     "faq": {
@@ -792,7 +792,7 @@
     "lastUpdated": "Last updated: January 2025",
     "intro": "AI Power Ranking uses a sophisticated algorithm (v6.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
     "algorithm": {
-      "title": "Algorithm v6.0",
+      "title": "アルゴリズム v7.0",
       "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
       "keyFeatures": "Key Features",
       "features": {

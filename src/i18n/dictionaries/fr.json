@@ -118,7 +118,7 @@
     },
     "methodology": {
       "title": "Notre méthodologie",
-      "algorithmTitle": "Algorithme v6.0",
+      "algorithmTitle": "Algorithme v7.0",
       "algorithmDescription": "Notre algorithme de classement avancé considère 8 facteurs clés avec des modificateurs sophistiqués :",
       "keyModifiersTitle": "Modificateurs clés",
       "keyModifiersDescription": "Trois modificateurs sophistiqués garantissent des classements équitables et précis :",
@@ -172,7 +172,7 @@
     },
     "footer": {
       "tagline": "Insights data-driven pour la révolution IA",
-      "description": "Classements complets des outils de codage IA utilisant l'Algorithme v6.0 avec déclin de l'innovation, modificateurs de risque de plateforme et ajustements de qualité des revenus.",
+      "description": "Classements complets des outils de codage IA utilisant l'Algorithme v7.0 avec intelligence d'actualités dynamique, capacités d'outils améliorées et scoring de vélocité.",
       "quickLinks": "Liens rapides",
       "categories": "Catégories",
       "copyright": "© 2025 Classement IA Power. Tous droits réservés."
@@ -186,7 +186,7 @@
   },
   "rankings": {
     "title": "Classement IA Power",
-    "subtitle": "Classements complets des outils de codage IA utilisant l'Algorithme v6.0",
+    "subtitle": "Classements complets des outils de codage IA utilisant l'Algorithme v7.0",
     "stats": {
       "totalTools": "Total outils",
       "categories": "Catégories",
@@ -234,7 +234,7 @@
       }
     },
     "algorithm": {
-      "title": "À propos de l'Algorithme v6.0",
+      "title": "À propos de l'Algorithme v7.0",
       "subtitle": "Système de classement amélioré avec déclin de l'innovation, modificateurs de risque de plateforme et ajustements de qualité des revenus",
       "tabs": {
         "factors": "Facteurs de score",
@@ -512,9 +512,9 @@
     "title": "Notre méthodologie",
     "subtitle": "Comment nous classons les outils de codage IA",
     "lastUpdated": "Dernière mise à jour : Janvier 2025",
-    "intro": "Classement IA Power utilise un algorithme sophistiqué (v6.0) pour évaluer et classer les outils de codage IA basé sur de multiples facteurs quantitatifs et qualitatifs. Notre méthodologie est conçue pour fournir aux développeurs une évaluation objective et data-driven du paysage des outils IA.",
+    "intro": "Classement IA Power utilise un algorithme sophistiqué (v7.0) pour évaluer et classer les outils de codage IA basé sur de multiples facteurs quantitatifs et qualitatifs, l'analyse d'actualités en temps réel et les capacités complètes des outils. Notre méthodologie est conçue pour fournir aux développeurs une évaluation objective et data-driven du paysage des outils IA.",
     "algorithm": {
-      "title": "Algorithme v6.0",
+      "title": "Algorithme v7.0",
       "description": "Notre dernier algorithme de classement intègre les patterns d'usage du monde réel et les dynamiques de marché",
       "keyFeatures": "Fonctionnalités clés",
       "features": {

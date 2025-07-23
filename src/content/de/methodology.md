@@ -28,7 +28,7 @@ Unser Bewertungsframework berücksichtigt sowohl primäre als auch sekundäre Fa
 
 #### 🤖 Agentische Fähigkeit (30%)
 
-Multi-Datei-Bearbeitung, Aufgabenplanung, autonomer Betrieb
+Multi-Datei-Bearbeitung, Aufgabenplanung, autonomer Betrieb, Unterprozess-Management, Tool-Ökosystem-Unterstützung
 
 #### 💡 Innovation (15%)
 
@@ -36,7 +36,7 @@ Zeitverfallender Innovations-Score, Durchbruchsfunktionen
 
 #### ⚡ Technische Leistung (12,5%)
 
-SWE-bench-Scores, Multi-Datei-Unterstützung, Kontextfenster
+SWE-bench-Scores mit erweiterter Gewichtung, Multi-Datei-Unterstützung, Kontextfenster, Unterprozess-Leistung
 
 #### 👥 Entwickler-Adoption (12,5%)
 
@@ -54,7 +54,7 @@ Marktwahrnehmung, Plattformrisiken, Wettbewerbsposition
 
 #### 🚀 Entwicklungsgeschwindigkeit (5%)
 
-Release-Häufigkeit, Mitwirkende-Anzahl, Update-Kadenz
+Dynamisches Momentum aus Nachrichtenstimmung, Feature-Releases, Community-Reaktion (30-Tage-Fenster)
 
 #### 🛡️ Plattform-Resilienz (5%)
 
@@ -202,3 +202,81 @@ Marktdurchdringungs-Scores werden basierend auf Geschäftsmodell-Qualität angep
 ### Update-Häufigkeit
 
 Rankings werden monatlich aktualisiert, mit kontinuierlicher Datensammlung und Validierung während jeder Periode.
+
+## Dynamische Nachrichten-Intelligenz
+
+### Nachrichtenbasiertes Velocity-Scoring
+
+Die Entwicklungsgeschwindigkeit wird nun dynamisch mittels ausgefeilter Nachrichtenanalyse berechnet, die Momentum über mehrere Dimensionen verfolgt.
+
+#### Momentum-Indikatoren
+- Produktveröffentlichungen und Feature-Ankündigungen
+- Partnerschafts- und Integrationsnachrichten
+- Technische Durchbrüche und Benchmarks
+- Community-Adoption und Erfolgsgeschichten
+- Branchenanerkennung und Auszeichnungen
+
+#### Sentiment-Scoring
+- Positives Momentum: +3 bis +5 Boost
+- Starker Fortschritt: +1 bis +3 Boost
+- Neutral/stabil: 0 Anpassung
+- Herausforderungen/Rückschläge: -1 bis -3 Strafe
+- Kritische Probleme: -3 bis -5 Strafe
+
+### 30-Tage-Rollfenster
+
+Velocity-Scores verwenden ein 30-Tage-Rollfenster mit exponentiellem Zerfall, wobei neueren Entwicklungen mehr Gewicht gegeben wird, während das Trendbewusstsein erhalten bleibt.
+
+```
+velocityScore = Σ(sentimentScore * e^(-λ * daysOld)) / 30
+```
+
+## Unterprozess- & Tool-Unterstützung
+
+### Erweiterte Agentische Fähigkeiten
+
+Die Bewertung agentischer Fähigkeiten umfasst nun eine ausgefeilte Evaluierung der Unterprozess-Orchestrierung und Tool-Nutzung.
+
+#### Unterprozess-Management (40%)
+- Multi-Agent-Orchestrierungsfähigkeiten
+- Aufgabendelegations-Sophistikation
+- Parallele Ausführungsunterstützung
+- Kontext-Übergabe und -Integration
+- Fehlerbehandlung und -Wiederherstellung
+
+#### Tool-Ökosystem (60%)
+- Native Tool-Unterstützungstiefe
+- Drittanbieter-Tool-Integration
+- Benutzerdefinierte Tool-Erstellungs-APIs
+- Tool-Entdeckung und -Auswahl
+- Protokoll-Unterstützung (MCP, etc.)
+
+### Bewertungsrubrik
+
+| Fähigkeitsstufe | Score-Anpassung |
+|-----------------|------------------|
+| Erweiterte Multi-Tool-Orchestrierung | +5,0 |
+| Ausgereifte Unterprozess-Verwaltung | +4,0 |
+| Reiches natives Tool-Ökosystem | +3,0 |
+| Grundlegende Tool-Unterstützung | +1,0 |
+| Begrenzte/keine Tool-Fähigkeiten | 0,0 |
+
+## Erweiterte technische Leistung
+
+### SWE-bench Score-Interpretation
+
+Technische Leistungsbewertung nutzt nuancierte Interpretation von SWE-bench-Ergebnissen mit logarithmischer Skalierung:
+
+```
+technicalScore = log(1 + sweBenchScore) * performanceMultiplier
+```
+
+### Leistungsmultiplikatoren
+
+| Leistungsstufe | Multiplikator |
+|------------------|------------|
+| Außergewöhnlich (>90. Perzentil) | 1,5x |
+| Stark (75-90. Perzentil) | 1,3x |
+| Gut (50-75. Perzentil) | 1,1x |
+| Durchschnitt (25-50. Perzentil) | 1,0x |
+| Unterdurchschnitt (<25. Perzentil) | 0,8x |

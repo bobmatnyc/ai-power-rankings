@@ -113,7 +113,7 @@
     },
     "methodology": {
       "title": "Our Methodology",
-      "algorithmTitle": "Algorithmus v6.0",
+      "algorithmTitle": "Algorithmus v7.0",
       "algorithmDescription": "Unser fortgeschrittener Ranking-Algorithmus berücksichtigt 8 Schlüsselfaktoren mit sophistizierten Modifikatoren:",
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Drei sophistizierte Modifikatoren gewährleisten faire und präzise Rankings:",
@@ -180,7 +180,7 @@
   },
   "rankings": {
     "title": "KI Power Rankings",
-    "subtitle": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v6.0",
+    "subtitle": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v7.0",
     "stats": {
       "totalTools": "Total Tools",
       "categories": "Kategorien",
@@ -197,7 +197,7 @@
       "name": "Name"
     },
     "algorithm": {
-      "title": "About Algorithm v6.0",
+      "title": "Über Algorithmus v7.0",
       "subtitle": "Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
       "tabs": {
         "factors": "Scoring Factors",
@@ -539,7 +539,7 @@
       }
     },
     "algorithm": {
-      "title": "Algorithmus v6.0",
+      "title": "Algorithmus v7.0",
       "description": "Unser neuester Ranking-Algorithmus berücksichtigt reale Nutzungsmuster und Marktdynamiken",
       "keyFeatures": "Hauptmerkmale",
       "features": {

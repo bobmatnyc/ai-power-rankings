@@ -5,12 +5,14 @@ subtitle: "Comprendere come valutiamo e classifichiamo gli strumenti di codifica
 
 ## Panoramica dell'Algoritmo
 
-### Algoritmo v7.0: Modificatori Code-Ready
+### Algoritmo v7.0: Intelligenza Dinamica delle Notizie e Capacità degli Strumenti
 
-Il nostro algoritmo di ranking valuta gli strumenti di codifica AI attraverso un framework completo che considera molteplici fattori e applica modificatori dinamici per garantire ranking accurati e sensibili al tempo.
+Il nostro algoritmo di ranking valuta gli strumenti di codifica AI attraverso un framework completo che considera molteplici fattori, applica modificatori dinamici, integra l'analisi delle notizie in tempo reale per il punteggio di velocità e migliora la valutazione delle capacità di gestione dei sottoprocessi e degli strumenti.
 
 #### Caratteristiche Chiave
 
+- Punteggio di velocità dinamico dall'analisi delle notizie in tempo reale
+- Valutazione migliorata delle capacità di sottoprocessi e strumenti
 - Decadimento dell'innovazione nel tempo (emivita di 6 mesi)
 - Penalità e bonus per rischio piattaforma
 - Aggiustamenti qualità ricavi per modello di business
@@ -26,7 +28,7 @@ Il nostro framework di valutazione considera sia fattori primari che secondari p
 
 #### 🤖 Capacità Agentiche (30%)
 
-Editing multi-file, pianificazione task, operazione autonoma
+Editing multi-file, pianificazione task, operazione autonoma, gestione sottoprocessi, supporto ecosistema strumenti
 
 #### 💡 Innovazione (15%)
 
@@ -34,7 +36,7 @@ Punteggio innovazione con decadimento temporale, funzionalità rivoluzionarie
 
 #### ⚡ Prestazioni Tecniche (12,5%)
 
-Punteggi SWE-bench, supporto multi-file, finestra di contesto
+Punteggi SWE-bench con ponderazione potenziata, supporto multi-file, finestra di contesto, prestazioni sottoprocessi
 
 #### 👥 Adozione Sviluppatori (12,5%)
 
@@ -52,7 +54,7 @@ Percezione mercato, rischi piattaforma, posizione competitiva
 
 #### 🚀 Velocità di Sviluppo (5%)
 
-Frequenza release, numero contributori, cadenza aggiornamenti
+Momentum dinamico dal sentiment delle notizie, rilasci di funzionalità, risposta della community (finestra di 30 giorni)
 
 #### 🛡️ Resilienza Piattaforma (5%)
 
@@ -200,3 +202,81 @@ I punteggi trazione mercato sono aggiustati in base alla qualità del modello di
 ### Frequenza Aggiornamento
 
 I ranking sono aggiornati mensilmente, con raccolta dati continua e validazione durante ogni periodo.
+
+## Intelligenza Dinamica delle Notizie
+
+### Punteggio di Velocità Basato sulle Notizie
+
+La velocità di sviluppo viene ora calcolata dinamicamente utilizzando un'analisi sofisticata delle notizie che traccia il momentum attraverso molteplici dimensioni.
+
+#### Indicatori di Momentum
+- Rilasci di prodotti e annunci di funzionalità
+- Notizie di partnership e integrazioni
+- Breakthrough tecnici e benchmark
+- Adozione della community e storie di successo
+- Riconoscimenti e premi del settore
+
+#### Scoring del Sentiment
+- Momentum positivo: boost da +3 a +5
+- Forte progresso: boost da +1 a +3
+- Neutro/stabile: 0 aggiustamento
+- Sfide/battute d'arresto: penalità da -1 a -3
+- Problemi critici: penalità da -3 a -5
+
+### Finestra Mobile di 30 Giorni
+
+I punteggi di velocità utilizzano una finestra mobile di 30 giorni con decadimento esponenziale, dando maggior peso agli sviluppi recenti mantenendo la consapevolezza del trend.
+
+```
+velocityScore = Σ(sentimentScore * e^(-λ * daysOld)) / 30
+```
+
+## Supporto Sottoprocessi e Strumenti
+
+### Capacità Agentiche Potenziate
+
+Il punteggio delle capacità agentiche ora include una valutazione sofisticata dell'orchestrazione dei sottoprocessi e dell'utilizzo degli strumenti.
+
+#### Gestione Sottoprocessi (40%)
+- Capacità di orchestrazione multi-agente
+- Sofisticazione della delega dei task
+- Supporto esecuzione parallela
+- Passaggio e integrazione del contesto
+- Gestione e recupero degli errori
+
+#### Ecosistema Strumenti (60%)
+- Profondità del supporto strumenti nativi
+- Integrazione strumenti di terze parti
+- API per creazione strumenti personalizzati
+- Scoperta e selezione strumenti
+- Supporto protocolli (MCP, ecc.)
+
+### Rubrica di Punteggio
+
+| Livello di Capacità | Aggiustamento Punteggio |
+|-------------------|------------------------|
+| Orchestrazione multi-strumento avanzata | +5,0 |
+| Gestione sottoprocessi sofisticata | +4,0 |
+| Ricco ecosistema strumenti nativi | +3,0 |
+| Supporto strumenti di base | +1,0 |
+| Capacità strumenti limitate/nulle | 0,0 |
+
+## Prestazioni Tecniche Potenziate
+
+### Interpretazione Punteggio SWE-bench
+
+Il punteggio delle prestazioni tecniche utilizza un'interpretazione sfumata dei risultati SWE-bench con scaling logaritmico:
+
+```
+technicalScore = log(1 + sweBenchScore) * performanceMultiplier
+```
+
+### Moltiplicatori di Prestazione
+
+| Livello di Prestazione | Moltiplicatore |
+|---------------------|----------------|
+| Eccezionale (>90° percentile) | 1,5x |
+| Forte (75-90° percentile) | 1,3x |
+| Buono (50-75° percentile) | 1,1x |
+| Medio (25-50° percentile) | 1,0x |
+| Sotto la media (<25° percentile) | 0,8x |

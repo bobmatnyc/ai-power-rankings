@@ -118,7 +118,7 @@
     },
     "methodology": {
       "title": "La Nostra Metodologia",
-      "algorithmTitle": "Algoritmo v6.0",
+      "algorithmTitle": "Algoritmo v7.0",
       "algorithmDescription": "Il nostro algoritmo di ranking avanzato considera 8 fattori chiave con modificatori sofisticati:",
       "keyModifiersTitle": "Modificatori Chiave",
       "keyModifiersDescription": "Tre modificatori sofisticati garantiscono classifiche eque e accurate:",
@@ -172,7 +172,7 @@
     },
     "footer": {
       "tagline": "Insights data-driven per la rivoluzione AI",
-      "description": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v6.0 con decadimento dell'innovazione, modificatori di rischio piattaforma e aggiustamenti della qualità dei ricavi.",
+      "description": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.0 con intelligenza delle notizie dinamica, capacità degli strumenti migliorate e punteggio di velocità.",
       "quickLinks": "Link Rapidi",
       "categories": "Categorie",
       "copyright": "© 2025 AI Power Ranking. Tutti i diritti riservati."
@@ -180,7 +180,7 @@
   },
   "rankings": {
     "title": "Classifiche AI Power",
-    "subtitle": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v6.0",
+    "subtitle": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.0",
     "stats": {
       "totalTools": "Strumenti Totali",
       "categories": "Categorie",
@@ -197,7 +197,7 @@
       "name": "Nome"
     },
     "algorithm": {
-      "title": "Informazioni sull'Algoritmo v6.0",
+      "title": "Informazioni sull'Algoritmo v7.0",
       "subtitle": "Sistema di ranking migliorato con decadimento dell'innovazione, modificatori di rischio piattaforma e aggiustamenti della qualità dei ricavi",
       "tabs": {
         "factors": "Fattori di Punteggio",
@@ -512,7 +512,7 @@
     "title": "La Nostra Metodologia",
     "subtitle": "Come classifichiamo gli strumenti di codifica AI",
     "lastUpdated": "Ultimo aggiornamento: Gennaio 2025",
-    "intro": "AI Power Ranking utilizza un algoritmo sofisticato (v6.0) per valutare e classificare gli strumenti di codifica AI basandosi su molteplici fattori quantitativi e qualitativi. La nostra metodologia è progettata per fornire agli sviluppatori una valutazione obiettiva e data-driven del panorama degli strumenti AI.",
+    "intro": "AI Power Ranking utilizza un algoritmo sofisticato (v7.0) per valutare e classificare gli strumenti di codifica AI basandosi su molteplici fattori quantitativi e qualitativi, analisi delle notizie in tempo reale e capacità complete degli strumenti. La nostra metodologia è progettata per fornire agli sviluppatori una valutazione obiettiva e data-driven del panorama degli strumenti AI.",
     "sections": {
       "scoringFactors": {
         "title": "Fattori di Punteggio",

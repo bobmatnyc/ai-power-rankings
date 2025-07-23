@@ -118,7 +118,7 @@
     },
     "methodology": {
       "title": "Naša metodologija",
-      "algorithmTitle": "Algoritam v6.0",
+      "algorithmTitle": "Algoritam v7.0",
       "algorithmDescription": "Naš napredni ranking algoritam uzima u obzir 8 ključnih faktora s sophisticated modifierima:",
       "keyModifiersTitle": "Ključni modifieri",
       "keyModifiersDescription": "Tri sophisticated modifiera osiguravaju fer i točna rangiranja:",
@@ -172,7 +172,7 @@
     },
     "footer": {
       "tagline": "Data-driven insights za AI revoluciju",
-      "description": "Sveobuhvatna rangiranja AI coding alata koristeći Algorithm v6.0 s innovation decay, platform risk modifierima i revenue quality adjustmentima.",
+      "description": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom v7.0, dinamičkom inteligencijom vijesti, poboljšanim mogućnostima alata i bodovanjem brzine.",
       "quickLinks": "Brzi linkovi",
       "categories": "Kategorije",
       "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."
@@ -180,7 +180,7 @@
   },
   "rankings": {
     "title": "AI Power Rankings",
-    "subtitle": "Sveobuhvatna rangiranja AI coding alata s Algorithm v6.0",
+    "subtitle": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom v7.0",
     "stats": {
       "totalTools": "Ukupno alata",
       "categories": "Kategorije",
@@ -197,7 +197,7 @@
       "name": "Ime"
     },
     "algorithm": {
-      "title": "O Algorithm v6.0",
+      "title": "O algoritmu v7.0",
       "subtitle": "Enhanced ranking sustav s innovation decay, platform risk modifierima i revenue quality adjustmentima",
       "tabs": {
         "factors": "Scoring faktori",
@@ -512,7 +512,7 @@
     "title": "Naša metodologija",
     "subtitle": "Kako rangiramo AI coding alate",
     "lastUpdated": "Zadnje ažuriranje: siječanj 2025",
-    "intro": "AI Power Rankings koristi sophisticated algoritam (v6.0) za evaluaciju i rangiranje AI coding alata na osnovu multiple quantitative i qualitative faktora. Naša metodologija je dizajnirana da pruži developerima objective, data-driven procjenu AI tools landscape.",
+    "intro": "AI Power Rankings koristi napredni algoritam (v7.0) za evaluaciju i rangiranje AI alata za kodiranje na temelju višestrukih kvantitativnih i kvalitativnih faktora, analize vijesti u stvarnom vremenu i sveobuhvatnih mogućnosti alata. Naša metodologija je dizajnirana da pruži programerima objektivnu procjenu pejzaža AI alata zasnovanu na podacima.",
     "sections": {
       "scoringFactors": {
         "title": "Scoring Faktori",
