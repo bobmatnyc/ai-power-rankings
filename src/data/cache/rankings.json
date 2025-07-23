@@ -1,850 +1,5700 @@
 {
-  "period": "2025-07",
-  "algorithm_version": "v7.0-fixed-velocity",
-  "algorithm_name": "Smart Defaults & Accurate Capability Scoring with Dynamic Velocity",
-  "created_at": "2025-07-23T00:39:07.867Z",
-  "rankings": [
-    {
-      "tool_id": "1",
-      "tool_name": "Cursor",
-      "rank": 1,
-      "score": 93,
-      "tier": "S",
-      "factor_scores": {
-        "agenticCapability": 91,
-        "innovation": 90,
-        "technicalPerformance": 100,
-        "developerAdoption": 100,
-        "marketTraction": 100,
-        "businessSentiment": 85,
-        "developmentVelocity": 85,
-        "platformResilience": 90,
-        "technicalCapability": 100,
-        "communitySentiment": 85
+  "2025-01-01": {
+    "period": "2025-01-01",
+    "algorithm_version": "v6-news",
+    "is_current": false,
+    "created_at": "2025-06-30T07:01:07.260Z",
+    "rankings": [
+      {
+        "tool_id": "3",
+        "tool_name": "Devin",
+        "position": 1,
+        "score": 82.74465871365433,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 8.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "4",
+        "tool_name": "Claude Code",
+        "position": 2,
+        "score": 70.86001326047227,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 6.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        },
+        "change_analysis": {
+          "primary_reason": "Major product launch"
+        }
       },
-      "change_analysis": null,
-      "position": 1
-    },
-    {
-      "tool_id": "2",
-      "tool_name": "GitHub Copilot",
-      "rank": 2,
-      "score": 81,
-      "tier": "A",
-      "factor_scores": {
-        "agenticCapability": 50,
-        "innovation": 90,
-        "technicalPerformance": 100,
-        "developerAdoption": 100,
-        "marketTraction": 100,
-        "businessSentiment": 75,
-        "developmentVelocity": 90,
-        "platformResilience": 80,
-        "technicalCapability": 100,
-        "communitySentiment": 75
+      {
+        "tool_id": "11",
+        "tool_name": "Google Jules",
+        "position": 3,
+        "score": 66.62095489288973,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 6,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "1",
+        "tool_name": "Cursor",
+        "position": 4,
+        "score": 65.45307956108856,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7.2,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "change_analysis": null,
-      "position": 2
-    },
-    {
-      "tool_id": "31",
-      "tool_name": "Kiro",
-      "rank": 3,
-      "score": 76.9,
-      "tier": "A",
-      "factor_scores": {
-        "agenticCapability": 78,
-        "innovation": 90,
-        "technicalPerformance": 100,
-        "developerAdoption": 70,
-        "marketTraction": 50,
-        "businessSentiment": 70,
-        "developmentVelocity": 83,
-        "platformResilience": 80,
-        "technicalCapability": 100,
-        "communitySentiment": 70
+      {
+        "tool_id": "2",
+        "tool_name": "GitHub Copilot",
+        "position": 5,
+        "score": 64.81816661565,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 5.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        },
+        "change_analysis": {
+          "primary_reason": "Major product launch"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "12",
+        "tool_name": "Lovable",
+        "position": 6,
+        "score": 56.211437091741146,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "change_analysis": null,
-      "position": 3
-    },
-    {
-      "tool_id": "4",
-      "tool_name": "Claude Code",
-      "rank": 4,
-      "score": 76.7,
-      "tier": "A",
-      "factor_scores": {
-        "agenticCapability": 90,
-        "innovation": 80,
-        "technicalPerformance": 100,
-        "developerAdoption": 60,
-        "marketTraction": 70,
-        "businessSentiment": 75,
-        "developmentVelocity": 14,
-        "platformResilience": 70,
-        "technicalCapability": 100,
-        "communitySentiment": 75
+      {
+        "tool_id": "14",
+        "tool_name": "Windsurf",
+        "position": 7,
+        "score": 55.70129419559052,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "5",
+        "tool_name": "Bolt.new",
+        "position": 8,
+        "score": 55.44908458583073,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 5.8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "change_analysis": null,
-      "position": 4
-    },
-    {
-      "tool_id": "11",
-      "tool_name": "Google Jules",
-      "rank": 5,
-      "score": 71.6,
-      "tier": "B",
-      "factor_scores": {
-        "agenticCapability": 95,
-        "innovation": 67,
-        "technicalPerformance": 100,
-        "developerAdoption": 50,
-        "marketTraction": 40,
-        "businessSentiment": 75,
-        "developmentVelocity": 10,
-        "platformResilience": 80,
-        "technicalCapability": 100,
-        "communitySentiment": 75
+      {
+        "tool_id": "18",
+        "tool_name": "ChatGPT Canvas",
+        "position": 9,
+        "score": 52.5,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 3.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "24",
+        "tool_name": "OpenAI Codex CLI",
+        "position": 10,
+        "score": 52.5,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "change_analysis": null,
-      "position": 5
-    },
-    {
-      "tool_id": "14",
-      "tool_name": "Windsurf",
-      "rank": 6,
-      "score": 70.9,
-      "tier": "B",
-      "factor_scores": {
-        "agenticCapability": 65,
-        "innovation": 38,
-        "technicalPerformance": 85,
-        "developerAdoption": 80,
-        "marketTraction": 60,
-        "businessSentiment": 85,
-        "developmentVelocity": 90,
-        "platformResilience": 90,
-        "technicalCapability": 85,
-        "communitySentiment": 85
+      {
+        "tool_id": "26",
+        "tool_name": "Amazon Q Developer",
+        "position": 11,
+        "score": 45.5,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "25",
+        "tool_name": "Augment Code",
+        "position": 12,
+        "score": 45.5,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "change_analysis": null,
-      "position": 6
-    },
-    {
-      "tool_id": "26",
-      "tool_name": "Amazon Q Developer",
-      "rank": 7,
-      "score": 67.1,
-      "tier": "B",
-      "factor_scores": {
-        "agenticCapability": 86,
-        "innovation": 69,
-        "technicalPerformance": 100,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 80,
-        "technicalCapability": 100,
-        "communitySentiment": 60
+      {
+        "tool_id": "27",
+        "tool_name": "Google Gemini Code Assist",
+        "position": 13,
+        "score": 45.5,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "22",
+        "tool_name": "JetBrains AI Assistant",
+        "position": 14,
+        "score": 45.5,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "change_analysis": null,
-      "position": 7
-    },
-    {
-      "tool_id": "3",
-      "tool_name": "Devin",
-      "rank": 8,
-      "score": 67.1,
-      "tier": "B",
-      "factor_scores": {
-        "agenticCapability": 95,
-        "innovation": 66,
-        "technicalPerformance": 65,
-        "developerAdoption": 60,
-        "marketTraction": 30,
-        "businessSentiment": 75,
-        "developmentVelocity": 10,
-        "platformResilience": 80,
-        "technicalCapability": 65,
-        "communitySentiment": 75
+      {
+        "tool_id": "30",
+        "tool_name": "Microsoft IntelliCode",
+        "position": 15,
+        "score": 45.5,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "9",
+        "tool_name": "Replit Agent",
+        "position": 16,
+        "score": 45.5,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 4.8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "change_analysis": null,
-      "position": 8
-    },
-    {
-      "tool_id": "24",
-      "tool_name": "OpenAI Codex CLI",
-      "rank": 9,
-      "score": 66.4,
-      "tier": "B",
-      "factor_scores": {
-        "agenticCapability": 95,
-        "innovation": 77,
-        "technicalPerformance": 90,
-        "developerAdoption": 30,
-        "marketTraction": 30,
-        "businessSentiment": 70,
-        "developmentVelocity": 5,
-        "platformResilience": 70,
-        "technicalCapability": 90,
-        "communitySentiment": 70
+      {
+        "tool_id": "29",
+        "tool_name": "Sourcegraph Cody",
+        "position": 17,
+        "score": 45.5,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "21",
+        "tool_name": "Tabnine",
+        "position": 18,
+        "score": 45.5,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "change_analysis": null,
-      "position": 9
-    },
-    {
-      "tool_id": "18",
-      "tool_name": "ChatGPT Canvas",
-      "rank": 10,
-      "score": 60.4,
-      "tier": "C",
-      "factor_scores": {
-        "agenticCapability": 80,
-        "innovation": 40,
-        "technicalPerformance": 75,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 70,
-        "developmentVelocity": 5,
-        "platformResilience": 80,
-        "technicalCapability": 75,
-        "communitySentiment": 70
+      {
+        "tool_id": "23",
+        "tool_name": "Zed",
+        "position": 19,
+        "score": 42,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 6.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "7",
+        "tool_name": "Aider",
+        "position": 20,
+        "score": 38.5,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 4.2,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "change_analysis": null,
-      "position": 10
-    },
-    {
-      "tool_id": "21",
-      "tool_name": "Tabnine",
-      "rank": 11,
-      "score": 60.3,
-      "tier": "C",
-      "factor_scores": {
-        "agenticCapability": 45,
-        "innovation": 30,
-        "technicalPerformance": 85,
-        "developerAdoption": 70,
-        "marketTraction": 60,
-        "businessSentiment": 70,
-        "developmentVelocity": 69,
-        "platformResilience": 90,
-        "technicalCapability": 85,
-        "communitySentiment": 70
+      {
+        "tool_id": "6",
+        "tool_name": "Cline",
+        "position": 21,
+        "score": 38.5,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "8",
+        "tool_name": "Continue",
+        "position": 22,
+        "score": 38.5,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "change_analysis": null,
-      "position": 11
-    },
-    {
-      "tool_id": "7",
-      "tool_name": "Aider",
-      "rank": 12,
-      "score": 58.9,
-      "tier": "C",
-      "factor_scores": {
-        "agenticCapability": 57.26,
-        "innovation": 42,
-        "technicalPerformance": 100,
-        "developerAdoption": 50,
-        "marketTraction": 40,
-        "businessSentiment": 65,
-        "developmentVelocity": 16,
-        "platformResilience": 100,
-        "technicalCapability": 100,
-        "communitySentiment": 65
+      {
+        "tool_id": "13",
+        "tool_name": "OpenHands",
+        "position": 23,
+        "score": 38.5,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 5.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "19",
+        "tool_name": "Claude Artifacts",
+        "position": 24,
+        "score": 35,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 7.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "change_analysis": null,
-      "position": 12
-    },
-    {
-      "tool_id": "25",
-      "tool_name": "Augment Code",
-      "rank": 13,
-      "score": 58.6,
-      "tier": "C",
-      "factor_scores": {
-        "agenticCapability": 75,
-        "innovation": 57,
-        "technicalPerformance": 100,
-        "developerAdoption": 30,
-        "marketTraction": 30,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 70,
-        "technicalCapability": 100,
-        "communitySentiment": 60
+      {
+        "tool_id": "10",
+        "tool_name": "v0",
+        "position": 25,
+        "score": 35,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 7,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "28",
+        "tool_name": "CodeRabbit",
+        "position": 26,
+        "score": 31.499999999999996,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "change_analysis": null,
-      "position": 13
-    },
-    {
-      "tool_id": "23",
-      "tool_name": "Zed",
-      "rank": 14,
-      "score": 58.1,
-      "tier": "C",
-      "factor_scores": {
-        "agenticCapability": 65,
-        "innovation": 38,
-        "technicalPerformance": 85,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 70,
-        "developmentVelocity": 5,
-        "platformResilience": 90,
-        "technicalCapability": 85,
-        "communitySentiment": 70
+      {
+        "tool_id": "20",
+        "tool_name": "Diffblue Cover",
+        "position": 27,
+        "score": 31.499999999999996,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3.8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "16",
+        "tool_name": "Qodo Gen",
+        "position": 28,
+        "score": 31.499999999999996,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "change_analysis": null,
-      "position": 14
-    },
-    {
-      "tool_id": "6",
-      "tool_name": "Cline",
-      "rank": 15,
-      "score": 56.4,
-      "tier": "C",
-      "factor_scores": {
-        "agenticCapability": 58,
-        "innovation": 56,
-        "technicalPerformance": 95,
-        "developerAdoption": 30,
-        "marketTraction": 40,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 100,
-        "technicalCapability": 95,
-        "communitySentiment": 60
+      {
+        "tool_id": "17",
+        "tool_name": "Snyk Code",
+        "position": 29,
+        "score": 31.499999999999996,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "15",
+        "tool_name": "Sourcery",
+        "position": 30,
+        "score": 31.499999999999996,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "new"
+        }
+      }
+    ]
+  },
+  "2025-02-01": {
+    "period": "2025-02-01",
+    "algorithm_version": "v6-news",
+    "is_current": false,
+    "created_at": "2025-06-30T15:38:36.445Z",
+    "rankings": [
+      {
+        "tool_id": "3",
+        "tool_name": "Devin",
+        "position": 1,
+        "score": 79.39708426684454,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 8.8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 1,
+          "change": 0,
+          "direction": "same"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "change_analysis": null,
-      "position": 15
-    },
-    {
-      "tool_id": "12",
-      "tool_name": "Lovable",
-      "rank": 16,
-      "score": 54.9,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 30,
-        "innovation": 30,
-        "technicalPerformance": 85,
-        "developerAdoption": 70,
-        "marketTraction": 80,
-        "businessSentiment": 65,
-        "developmentVelocity": 10,
-        "platformResilience": 80,
-        "technicalCapability": 85,
-        "communitySentiment": 65
+      {
+        "tool_id": "5",
+        "tool_name": "Bolt.new",
+        "position": 2,
+        "score": 61.48565342278282,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 6,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 8,
+          "change": 6,
+          "direction": "up"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "4",
+        "tool_name": "Claude Code",
+        "position": 3,
+        "score": 42.031193397462594,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 7,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 2,
+          "change": 1,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Major product launch"
+        }
       },
-      "change_analysis": null,
-      "position": 16
-    },
-    {
-      "tool_id": "27",
-      "tool_name": "Google Gemini Code Assist",
-      "rank": 17,
-      "score": 54.6,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 45,
-        "innovation": 38,
-        "technicalPerformance": 90,
-        "developerAdoption": 50,
-        "marketTraction": 60,
-        "businessSentiment": 65,
-        "developmentVelocity": 6,
-        "platformResilience": 70,
-        "technicalCapability": 90,
-        "communitySentiment": 65
+      {
+        "tool_id": "2",
+        "tool_name": "GitHub Copilot",
+        "position": 4,
+        "score": 39.28732490667933,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 5.8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 5,
+          "change": 1,
+          "direction": "up"
+        },
+        "change_analysis": {
+          "primary_reason": "Major product launch"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "11",
+        "tool_name": "Google Jules",
+        "position": 5,
+        "score": 38.890194725247696,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 6.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 3,
+          "change": 2,
+          "direction": "down"
+        }
       },
-      "change_analysis": null,
-      "position": 17
-    },
-    {
-      "tool_id": "5",
-      "tool_name": "Bolt.new",
-      "rank": 18,
-      "score": 54.4,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 30,
-        "innovation": 30,
-        "technicalPerformance": 75,
-        "developerAdoption": 70,
-        "marketTraction": 90,
-        "businessSentiment": 65,
-        "developmentVelocity": 10,
-        "platformResilience": 70,
-        "technicalCapability": 75,
-        "communitySentiment": 65
+      {
+        "tool_id": "18",
+        "tool_name": "ChatGPT Canvas",
+        "position": 6,
+        "score": 37.45869828599235,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 3.8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 9,
+          "change": 3,
+          "direction": "up"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "24",
+        "tool_name": "OpenAI Codex CLI",
+        "position": 7,
+        "score": 37.25711598055658,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 10,
+          "change": 3,
+          "direction": "up"
+        }
       },
-      "change_analysis": null,
-      "position": 18
-    },
-    {
-      "tool_id": "9",
-      "tool_name": "Replit Agent",
-      "rank": 19,
-      "score": 52.8,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 51,
-        "innovation": 42,
-        "technicalPerformance": 80,
-        "developerAdoption": 30,
-        "marketTraction": 70,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 60,
-        "technicalCapability": 80,
-        "communitySentiment": 60
+      {
+        "tool_id": "1",
+        "tool_name": "Cursor",
+        "position": 8,
+        "score": 37.0424586343425,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 4,
+          "change": 4,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "21",
+        "tool_name": "Tabnine",
+        "position": 9,
+        "score": 34.88269301232289,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 18,
+          "change": 9,
+          "direction": "up"
+        },
+        "change_analysis": {
+          "primary_reason": "Performance improvements"
+        }
       },
-      "change_analysis": null,
-      "position": 19
-    },
-    {
-      "tool_id": "29",
-      "tool_name": "Sourcegraph Cody",
-      "rank": 20,
-      "score": 52.4,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 45,
-        "innovation": 34,
-        "technicalPerformance": 95,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 90,
-        "technicalCapability": 95,
-        "communitySentiment": 60
+      {
+        "tool_id": "30",
+        "tool_name": "Microsoft IntelliCode",
+        "position": 10,
+        "score": 32.73140624112095,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 15,
+          "change": 5,
+          "direction": "up"
+        },
+        "change_analysis": {
+          "primary_reason": "Performance improvements"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "27",
+        "tool_name": "Google Gemini Code Assist",
+        "position": 11,
+        "score": 32.62137630476485,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 13,
+          "change": 2,
+          "direction": "up"
+        }
       },
-      "change_analysis": null,
-      "position": 20
-    },
-    {
-      "tool_id": "13",
-      "tool_name": "OpenHands",
-      "rank": 21,
-      "score": 51.6,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 46,
-        "innovation": 42,
-        "technicalPerformance": 95,
-        "developerAdoption": 30,
-        "marketTraction": 40,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 100,
-        "technicalCapability": 95,
-        "communitySentiment": 60
+      {
+        "tool_id": "9",
+        "tool_name": "Replit Agent",
+        "position": 12,
+        "score": 32.469752206793515,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 4.9,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 16,
+          "change": 4,
+          "direction": "up"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "29",
+        "tool_name": "Sourcegraph Cody",
+        "position": 13,
+        "score": 32.42814728419315,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 17,
+          "change": 4,
+          "direction": "up"
+        }
       },
-      "change_analysis": null,
-      "position": 21
-    },
-    {
-      "tool_id": "22",
-      "tool_name": "JetBrains AI Assistant",
-      "rank": 22,
-      "score": 51.5,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 48,
-        "innovation": 40,
-        "technicalPerformance": 80,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 80,
-        "technicalCapability": 80,
-        "communitySentiment": 60
+      {
+        "tool_id": "25",
+        "tool_name": "Augment Code",
+        "position": 14,
+        "score": 32.42440611734377,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 12,
+          "change": 2,
+          "direction": "down"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "22",
+        "tool_name": "JetBrains AI Assistant",
+        "position": 15,
+        "score": 32.33169780641688,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 14,
+          "change": 1,
+          "direction": "down"
+        }
       },
-      "change_analysis": null,
-      "position": 22
-    },
-    {
-      "tool_id": "16",
-      "tool_name": "Qodo Gen",
-      "rank": 23,
-      "score": 49.8,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 38,
-        "innovation": 42,
-        "technicalPerformance": 80,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 90,
-        "technicalCapability": 80,
-        "communitySentiment": 60
+      {
+        "tool_id": "14",
+        "tool_name": "Windsurf",
+        "position": 16,
+        "score": 32.2496715489487,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7.2,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 7,
+          "change": 9,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Competitive pressure"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "12",
+        "tool_name": "Lovable",
+        "position": 17,
+        "score": 32.03848623551067,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 5.2,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 6,
+          "change": 11,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "change_analysis": null,
-      "position": 23
-    },
-    {
-      "tool_id": "10",
-      "tool_name": "v0",
-      "rank": 24,
-      "score": 48.8,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 30,
-        "innovation": 30,
-        "technicalPerformance": 75,
-        "developerAdoption": 50,
-        "marketTraction": 60,
-        "businessSentiment": 65,
-        "developmentVelocity": 14,
-        "platformResilience": 80,
-        "technicalCapability": 75,
-        "communitySentiment": 65
+      {
+        "tool_id": "23",
+        "tool_name": "Zed",
+        "position": 18,
+        "score": 29.79485035071177,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 19,
+          "change": 1,
+          "direction": "up"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "8",
+        "tool_name": "Continue",
+        "position": 19,
+        "score": 27.552255383071504,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 22,
+          "change": 3,
+          "direction": "up"
+        }
       },
-      "change_analysis": null,
-      "position": 24
-    },
-    {
-      "tool_id": "8",
-      "tool_name": "Continue",
-      "rank": 25,
-      "score": 48.6,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 40,
-        "innovation": 30,
-        "technicalPerformance": 95,
-        "developerAdoption": 30,
-        "marketTraction": 40,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 100,
-        "technicalCapability": 95,
-        "communitySentiment": 60
+      {
+        "tool_id": "13",
+        "tool_name": "OpenHands",
+        "position": 20,
+        "score": 27.517683237052466,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 5.8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 23,
+          "change": 3,
+          "direction": "up"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "6",
+        "tool_name": "Cline",
+        "position": 21,
+        "score": 27.283056857629838,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 5.2,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 21,
+          "change": 0,
+          "direction": "same"
+        }
       },
-      "change_analysis": null,
-      "position": 25
-    },
-    {
-      "tool_id": "28",
-      "tool_name": "CodeRabbit",
-      "rank": 26,
-      "score": 45.3,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 35,
-        "innovation": 30,
-        "technicalPerformance": 80,
-        "developerAdoption": 30,
-        "marketTraction": 50,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 70,
-        "technicalCapability": 80,
-        "communitySentiment": 60
+      {
+        "tool_id": "7",
+        "tool_name": "Aider",
+        "position": 22,
+        "score": 27.27410432119062,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 4.3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 20,
+          "change": 2,
+          "direction": "down"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "10",
+        "tool_name": "v0",
+        "position": 23,
+        "score": 26.36677689852513,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 7.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 25,
+          "change": 2,
+          "direction": "up"
+        }
       },
-      "change_analysis": null,
-      "position": 26
-    },
-    {
-      "tool_id": "19",
-      "tool_name": "Claude Artifacts",
-      "rank": 27,
-      "score": 44,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 25,
-        "innovation": 30,
-        "technicalPerformance": 80,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 70,
-        "technicalCapability": 80,
-        "communitySentiment": 60
+      {
+        "tool_id": "19",
+        "tool_name": "Claude Artifacts",
+        "position": 24,
+        "score": 24.960863473748837,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 24,
+          "change": 0,
+          "direction": "same"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "26",
+        "tool_name": "Amazon Q Developer",
+        "position": 25,
+        "score": 24.9046190912367,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 11,
+          "change": 14,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Competitive pressure"
+        }
       },
-      "change_analysis": null,
-      "position": 27
-    },
-    {
-      "tool_id": "17",
-      "tool_name": "Snyk Code",
-      "rank": 28,
-      "score": 43.3,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 35,
-        "innovation": 34,
-        "technicalPerformance": 50,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 70,
-        "technicalCapability": 50,
-        "communitySentiment": 60
+      {
+        "tool_id": "16",
+        "tool_name": "Qodo Gen",
+        "position": 26,
+        "score": 22.634585041146593,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 28,
+          "change": 2,
+          "direction": "up"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "17",
+        "tool_name": "Snyk Code",
+        "position": 27,
+        "score": 22.431261116788914,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 29,
+          "change": 2,
+          "direction": "up"
+        }
       },
-      "change_analysis": null,
-      "position": 28
-    },
-    {
-      "tool_id": "30",
-      "tool_name": "Microsoft IntelliCode",
-      "rank": 29,
-      "score": 43.1,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 45,
-        "innovation": 38,
-        "technicalPerformance": 45,
-        "developerAdoption": 30,
-        "marketTraction": 40,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 70,
-        "technicalCapability": 45,
-        "communitySentiment": 60
+      {
+        "tool_id": "28",
+        "tool_name": "CodeRabbit",
+        "position": 28,
+        "score": 22.41303063623768,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 26,
+          "change": 2,
+          "direction": "down"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "15",
+        "tool_name": "Sourcery",
+        "position": 29,
+        "score": 22.307383901113273,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 30,
+          "change": 1,
+          "direction": "up"
+        }
       },
-      "change_analysis": null,
-      "position": 29
-    },
-    {
-      "tool_id": "15",
-      "tool_name": "Sourcery",
-      "rank": 30,
-      "score": 42.6,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 35,
-        "innovation": 34,
-        "technicalPerformance": 45,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 70,
-        "technicalCapability": 45,
-        "communitySentiment": 60
+      {
+        "tool_id": "20",
+        "tool_name": "Diffblue Cover",
+        "position": 30,
+        "score": 22.281903526092204,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3.9,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 27,
+          "change": 3,
+          "direction": "down"
+        }
+      }
+    ]
+  },
+  "2025-03-01": {
+    "period": "2025-03-01",
+    "algorithm_version": "v6-news",
+    "is_current": false,
+    "created_at": "2025-06-30T15:39:01.946Z",
+    "rankings": [
+      {
+        "tool_id": "3",
+        "tool_name": "Devin",
+        "position": 1,
+        "score": 70.29821236833433,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 9,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 1,
+          "change": 0,
+          "direction": "same"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "12",
+        "tool_name": "Lovable",
+        "position": 2,
+        "score": 62.70692816125717,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 5.3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 17,
+          "change": 15,
+          "direction": "up"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "change_analysis": null,
-      "position": 30
-    },
-    {
-      "tool_id": "20",
-      "tool_name": "Diffblue Cover",
-      "rank": 31,
-      "score": 40.4,
-      "tier": "D",
-      "factor_scores": {
-        "agenticCapability": 38,
-        "innovation": 40,
-        "technicalPerformance": 45,
-        "developerAdoption": 30,
-        "marketTraction": 30,
-        "businessSentiment": 60,
-        "developmentVelocity": 5,
-        "platformResilience": 70,
-        "technicalCapability": 45,
-        "communitySentiment": 60
+      {
+        "tool_id": "5",
+        "tool_name": "Bolt.new",
+        "position": 3,
+        "score": 54.85770616555081,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 6.2,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 2,
+          "change": 1,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
+      {
+        "tool_id": "4",
+        "tool_name": "Claude Code",
+        "position": 4,
+        "score": 42.110213749211546,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 7.2,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 3,
+          "change": 1,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Major product launch"
+        }
       },
-      "change_analysis": null,
-      "position": 31
+      {
+        "tool_id": "11",
+        "tool_name": "Google Jules",
+        "position": 5,
+        "score": 39.243287555772824,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 6.8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 5,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "2",
+        "tool_name": "GitHub Copilot",
+        "position": 6,
+        "score": 39.220018527685546,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 6,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 4,
+          "change": 2,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Major product launch"
+        }
+      },
+      {
+        "tool_id": "24",
+        "tool_name": "OpenAI Codex CLI",
+        "position": 7,
+        "score": 37.34240518362226,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 7,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "18",
+        "tool_name": "ChatGPT Canvas",
+        "position": 8,
+        "score": 37.31297376215674,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 4,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 6,
+          "change": 2,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "1",
+        "tool_name": "Cursor",
+        "position": 9,
+        "score": 36.73619095436059,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7.8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 8,
+          "change": 1,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
+      },
+      {
+        "tool_id": "21",
+        "tool_name": "Tabnine",
+        "position": 10,
+        "score": 35.141348524275465,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 9,
+          "change": 1,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "25",
+        "tool_name": "Augment Code",
+        "position": 11,
+        "score": 32.661077165695474,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 14,
+          "change": 3,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "27",
+        "tool_name": "Google Gemini Code Assist",
+        "position": 12,
+        "score": 32.557405261095596,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 11,
+          "change": 1,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "22",
+        "tool_name": "JetBrains AI Assistant",
+        "position": 13,
+        "score": 32.50776182128494,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 15,
+          "change": 2,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "30",
+        "tool_name": "Microsoft IntelliCode",
+        "position": 14,
+        "score": 32.503510837695636,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 10,
+          "change": 4,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "29",
+        "tool_name": "Sourcegraph Cody",
+        "position": 15,
+        "score": 32.41675657509957,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 13,
+          "change": 2,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "14",
+        "tool_name": "Windsurf",
+        "position": 16,
+        "score": 32.38035872794723,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 16,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "9",
+        "tool_name": "Replit Agent",
+        "position": 17,
+        "score": 32.254493105989475,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 12,
+          "change": 5,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Competitive pressure"
+        }
+      },
+      {
+        "tool_id": "23",
+        "tool_name": "Zed",
+        "position": 18,
+        "score": 30.017175024138993,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7.2,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 18,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "13",
+        "tool_name": "OpenHands",
+        "position": 19,
+        "score": 27.557470870188872,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 6,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 20,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "6",
+        "tool_name": "Cline",
+        "position": 20,
+        "score": 27.547386544446937,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 5.3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 21,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "7",
+        "tool_name": "Aider",
+        "position": 21,
+        "score": 27.3136112821194,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 4.4,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 22,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "8",
+        "tool_name": "Continue",
+        "position": 22,
+        "score": 27.27825689114056,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 19,
+          "change": 3,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "10",
+        "tool_name": "v0",
+        "position": 23,
+        "score": 26.714024055821152,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 23,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "26",
+        "tool_name": "Amazon Q Developer",
+        "position": 24,
+        "score": 25.039322652451155,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 25,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "19",
+        "tool_name": "Claude Artifacts",
+        "position": 25,
+        "score": 24.896517809833817,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 8.2,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 24,
+          "change": 1,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "15",
+        "tool_name": "Sourcery",
+        "position": 26,
+        "score": 22.740972753001255,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 29,
+          "change": 3,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "16",
+        "tool_name": "Qodo Gen",
+        "position": 27,
+        "score": 22.554475043414666,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 26,
+          "change": 1,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "28",
+        "tool_name": "CodeRabbit",
+        "position": 28,
+        "score": 22.44019337762305,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 28,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "20",
+        "tool_name": "Diffblue Cover",
+        "position": 29,
+        "score": 22.423720228081056,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 4,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 30,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "17",
+        "tool_name": "Snyk Code",
+        "position": 30,
+        "score": 22.381589940508327,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 27,
+          "change": 3,
+          "direction": "down"
+        }
+      }
+    ]
+  },
+  "2025-04-01": {
+    "period": "2025-04-01",
+    "algorithm_version": "v6-news",
+    "is_current": false,
+    "created_at": "2025-06-30T15:39:02.973Z",
+    "rankings": [
+      {
+        "tool_id": "3",
+        "tool_name": "Devin",
+        "position": 1,
+        "score": 99.42828656165318,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 9.1,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 1,
+          "change": 0,
+          "direction": "same"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
+      },
+      {
+        "tool_id": "12",
+        "tool_name": "Lovable",
+        "position": 2,
+        "score": 55.718187238582345,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 5.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 2,
+          "change": 0,
+          "direction": "same"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
+      },
+      {
+        "tool_id": "5",
+        "tool_name": "Bolt.new",
+        "position": 3,
+        "score": 47.7752006847433,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 6.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 3,
+          "change": 0,
+          "direction": "same"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
+      },
+      {
+        "tool_id": "4",
+        "tool_name": "Claude Code",
+        "position": 4,
+        "score": 42.071896426377464,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 7.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 4,
+          "change": 0,
+          "direction": "same"
+        },
+        "change_analysis": {
+          "primary_reason": "Major product launch"
+        }
+      },
+      {
+        "tool_id": "11",
+        "tool_name": "Google Jules",
+        "position": 5,
+        "score": 39.011692868357244,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 7,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 5,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "2",
+        "tool_name": "GitHub Copilot",
+        "position": 6,
+        "score": 38.96952379037131,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 6,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 6,
+          "change": 0,
+          "direction": "same"
+        },
+        "change_analysis": {
+          "primary_reason": "Major product launch"
+        }
+      },
+      {
+        "tool_id": "24",
+        "tool_name": "OpenAI Codex CLI",
+        "position": 7,
+        "score": 37.652077249982206,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 7,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "18",
+        "tool_name": "ChatGPT Canvas",
+        "position": 8,
+        "score": 37.56481135526987,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 4,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 8,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "1",
+        "tool_name": "Cursor",
+        "position": 9,
+        "score": 36.84545059763386,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 9,
+          "change": 0,
+          "direction": "same"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
+      },
+      {
+        "tool_id": "21",
+        "tool_name": "Tabnine",
+        "position": 10,
+        "score": 35.15983518098014,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 10,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "22",
+        "tool_name": "JetBrains AI Assistant",
+        "position": 11,
+        "score": 32.711738290180406,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 13,
+          "change": 2,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "14",
+        "tool_name": "Windsurf",
+        "position": 12,
+        "score": 32.674548936930165,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 16,
+          "change": 4,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "9",
+        "tool_name": "Replit Agent",
+        "position": 13,
+        "score": 32.62812979581696,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 17,
+          "change": 4,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "29",
+        "tool_name": "Sourcegraph Cody",
+        "position": 14,
+        "score": 32.59336505161628,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 15,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "27",
+        "tool_name": "Google Gemini Code Assist",
+        "position": 15,
+        "score": 32.52479102385505,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 12,
+          "change": 3,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "30",
+        "tool_name": "Microsoft IntelliCode",
+        "position": 16,
+        "score": 32.41416341033446,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 14,
+          "change": 2,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "25",
+        "tool_name": "Augment Code",
+        "position": 17,
+        "score": 32.31394863595845,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 11,
+          "change": 6,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Competitive pressure"
+        }
+      },
+      {
+        "tool_id": "23",
+        "tool_name": "Zed",
+        "position": 18,
+        "score": 30.201456841147415,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 18,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "7",
+        "tool_name": "Aider",
+        "position": 19,
+        "score": 27.74436272050862,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 4.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 21,
+          "change": 2,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "8",
+        "tool_name": "Continue",
+        "position": 20,
+        "score": 27.714565966319398,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 22,
+          "change": 2,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "6",
+        "tool_name": "Cline",
+        "position": 21,
+        "score": 27.573347625968637,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 5.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 20,
+          "change": 1,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "13",
+        "tool_name": "OpenHands",
+        "position": 22,
+        "score": 27.26628575137056,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 6,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 19,
+          "change": 3,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "10",
+        "tool_name": "v0",
+        "position": 23,
+        "score": 26.779622864784056,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 23,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "19",
+        "tool_name": "Claude Artifacts",
+        "position": 24,
+        "score": 25.166058536374397,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 8.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 25,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "26",
+        "tool_name": "Amazon Q Developer",
+        "position": 25,
+        "score": 25.143923743721032,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 24,
+          "change": 1,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "20",
+        "tool_name": "Diffblue Cover",
+        "position": 26,
+        "score": 22.69203770998192,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 4,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 29,
+          "change": 3,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "28",
+        "tool_name": "CodeRabbit",
+        "position": 27,
+        "score": 22.672815917926286,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 28,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "17",
+        "tool_name": "Snyk Code",
+        "position": 28,
+        "score": 22.650632532288093,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 30,
+          "change": 2,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "16",
+        "tool_name": "Qodo Gen",
+        "position": 29,
+        "score": 22.5222296898522,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 27,
+          "change": 2,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "15",
+        "tool_name": "Sourcery",
+        "position": 30,
+        "score": 22.4166022668641,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 26,
+          "change": 4,
+          "direction": "down"
+        }
+      }
+    ]
+  },
+  "2025-05-01": {
+    "period": "2025-05-01",
+    "algorithm_version": "v6-news",
+    "is_current": false,
+    "created_at": "2025-06-30T15:39:04.008Z",
+    "rankings": [
+      {
+        "tool_id": "3",
+        "tool_name": "Devin",
+        "position": 1,
+        "score": 86.3824933631682,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 9,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 1,
+          "change": 0,
+          "direction": "same"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
+      },
+      {
+        "tool_id": "12",
+        "tool_name": "Lovable",
+        "position": 2,
+        "score": 48.73762242424242,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 5.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 2,
+          "change": 0,
+          "direction": "same"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
+      },
+      {
+        "tool_id": "4",
+        "tool_name": "Claude Code",
+        "position": 3,
+        "score": 42.236994315422315,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 7.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 4,
+          "change": 1,
+          "direction": "up"
+        },
+        "change_analysis": {
+          "primary_reason": "Major product launch"
+        }
+      },
+      {
+        "tool_id": "2",
+        "tool_name": "GitHub Copilot",
+        "position": 4,
+        "score": 39.14791382162371,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 6,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 6,
+          "change": 2,
+          "direction": "up"
+        },
+        "change_analysis": {
+          "primary_reason": "Major product launch"
+        }
+      },
+      {
+        "tool_id": "11",
+        "tool_name": "Google Jules",
+        "position": 5,
+        "score": 38.85243900952859,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 7,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 5,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "24",
+        "tool_name": "OpenAI Codex CLI",
+        "position": 6,
+        "score": 37.704227340228435,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 7,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "18",
+        "tool_name": "ChatGPT Canvas",
+        "position": 7,
+        "score": 37.3784995150686,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 75,
+          "innovation": 4,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 8,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "1",
+        "tool_name": "Cursor",
+        "position": 8,
+        "score": 36.903096192921,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 8,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 9,
+          "change": 1,
+          "direction": "up"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
+      },
+      {
+        "tool_id": "21",
+        "tool_name": "Tabnine",
+        "position": 9,
+        "score": 35.09026297867304,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 10,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "27",
+        "tool_name": "Google Gemini Code Assist",
+        "position": 10,
+        "score": 32.71572870322498,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 15,
+          "change": 5,
+          "direction": "up"
+        },
+        "change_analysis": {
+          "primary_reason": "Performance improvements"
+        }
+      },
+      {
+        "tool_id": "14",
+        "tool_name": "Windsurf",
+        "position": 11,
+        "score": 32.70930640640985,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7.3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 12,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "30",
+        "tool_name": "Microsoft IntelliCode",
+        "position": 12,
+        "score": 32.57151993218489,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 16,
+          "change": 4,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "22",
+        "tool_name": "JetBrains AI Assistant",
+        "position": 13,
+        "score": 32.50407054871129,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 11,
+          "change": 2,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "9",
+        "tool_name": "Replit Agent",
+        "position": 14,
+        "score": 32.403075500462805,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 13,
+          "change": 1,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "29",
+        "tool_name": "Sourcegraph Cody",
+        "position": 15,
+        "score": 32.30928134624724,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 14,
+          "change": 1,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "25",
+        "tool_name": "Augment Code",
+        "position": 16,
+        "score": 32.28660285624841,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 65,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 17,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "5",
+        "tool_name": "Bolt.new",
+        "position": 17,
+        "score": 31.87363000290829,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 6.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 3,
+          "change": 14,
+          "direction": "down"
+        },
+        "change_analysis": {
+          "primary_reason": "Recent funding announcement"
+        }
+      },
+      {
+        "tool_id": "23",
+        "tool_name": "Zed",
+        "position": 18,
+        "score": 29.99893696836329,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 60,
+          "innovation": 7.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 18,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "8",
+        "tool_name": "Continue",
+        "position": 19,
+        "score": 27.70750693554637,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 20,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "6",
+        "tool_name": "Cline",
+        "position": 20,
+        "score": 27.41502302554413,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 5.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 21,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "7",
+        "tool_name": "Aider",
+        "position": 21,
+        "score": 27.39406986747267,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 4.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 19,
+          "change": 2,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "13",
+        "tool_name": "OpenHands",
+        "position": 22,
+        "score": 27.267841653240403,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 55,
+          "innovation": 6,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 22,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "10",
+        "tool_name": "v0",
+        "position": 23,
+        "score": 26.713926102162965,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 7.9,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 23,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "19",
+        "tool_name": "Claude Artifacts",
+        "position": 24,
+        "score": 24.99881645736976,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 8.5,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 24,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "26",
+        "tool_name": "Amazon Q Developer",
+        "position": 25,
+        "score": 24.933540341239194,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 50,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 25,
+          "change": 0,
+          "direction": "same"
+        }
+      },
+      {
+        "tool_id": "16",
+        "tool_name": "Qodo Gen",
+        "position": 26,
+        "score": 22.740626520129695,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 29,
+          "change": 3,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "17",
+        "tool_name": "Snyk Code",
+        "position": 27,
+        "score": 22.569096033938294,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 28,
+          "change": 1,
+          "direction": "up"
+        }
+      },
+      {
+        "tool_id": "20",
+        "tool_name": "Diffblue Cover",
+        "position": 28,
+        "score": 22.466702734229596,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 4,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 26,
+          "change": 2,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "28",
+        "tool_name": "CodeRabbit",
+        "position": 29,
+        "score": 22.28832224691609,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 27,
+          "change": 2,
+          "direction": "down"
+        }
+      },
+      {
+        "tool_id": "15",
+        "tool_name": "Sourcery",
+        "position": 30,
+        "score": 22.276244743461092,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 45,
+          "innovation": 3,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "previous_position": 30,
+          "change": 0,
+          "direction": "same"
+        }
+      }
+    ]
+  },
+  "2025-06-01": {
+    "period": "2025-06-01",
+    "algorithm_version": "v6.0",
+    "is_current": false,
+    "created_at": "2025-07-01T14:27:43.067Z",
+    "rankings": [
+      {
+        "tool_id": "4",
+        "tool_name": "Claude Code",
+        "position": 1,
+        "score": 73.97999999999999,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 2,
+          "direction": "up",
+          "previous_position": 3
+        }
+      },
+      {
+        "tool_id": "11",
+        "tool_name": "Google Jules",
+        "position": 2,
+        "score": 70.49000000000001,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 3,
+          "direction": "up",
+          "previous_position": 5
+        }
+      },
+      {
+        "tool_id": "3",
+        "tool_name": "Devin",
+        "position": 3,
+        "score": 69.71000000000001,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 2,
+          "direction": "down",
+          "previous_position": 1
+        }
+      },
+      {
+        "tool_id": "1",
+        "tool_name": "Cursor",
+        "position": 4,
+        "score": 66.77,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 4,
+          "direction": "up",
+          "previous_position": 8
+        }
+      },
+      {
+        "tool_id": "12",
+        "tool_name": "Lovable",
+        "position": 5,
+        "score": 60.06,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 3,
+          "direction": "down",
+          "previous_position": 2
+        }
+      },
+      {
+        "tool_id": "18",
+        "tool_name": "ChatGPT Canvas",
+        "position": 6,
+        "score": 58.98,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "up",
+          "previous_position": 7
+        }
+      },
+      {
+        "tool_id": "24",
+        "tool_name": "OpenAI Codex CLI",
+        "position": 7,
+        "score": 58.63,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "down",
+          "previous_position": 6
+        }
+      },
+      {
+        "tool_id": "7",
+        "tool_name": "Aider",
+        "position": 8,
+        "score": 58.31,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 13,
+          "direction": "up",
+          "previous_position": 21
+        }
+      },
+      {
+        "tool_id": "6",
+        "tool_name": "Cline",
+        "position": 9,
+        "score": 58.31,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 11,
+          "direction": "up",
+          "previous_position": 20
+        }
+      },
+      {
+        "tool_id": "8",
+        "tool_name": "Continue",
+        "position": 10,
+        "score": 58.31,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 9,
+          "direction": "up",
+          "previous_position": 19
+        }
+      },
+      {
+        "tool_id": "13",
+        "tool_name": "OpenHands",
+        "position": 11,
+        "score": 58.31,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 11,
+          "direction": "up",
+          "previous_position": 22
+        }
+      },
+      {
+        "tool_id": "27",
+        "tool_name": "Google Gemini Code Assist",
+        "position": 12,
+        "score": 53.58,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 2,
+          "direction": "down",
+          "previous_position": 10
+        }
+      },
+      {
+        "tool_id": "16",
+        "tool_name": "Qodo Gen",
+        "position": 13,
+        "score": 52.95,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 13,
+          "direction": "up",
+          "previous_position": 26
+        }
+      },
+      {
+        "tool_id": "14",
+        "tool_name": "Windsurf",
+        "position": 14,
+        "score": 52.95,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 3,
+          "direction": "down",
+          "previous_position": 11
+        }
+      },
+      {
+        "tool_id": "9",
+        "tool_name": "Replit Agent",
+        "position": 15,
+        "score": 52.68,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "down",
+          "previous_position": 14
+        }
+      },
+      {
+        "tool_id": "22",
+        "tool_name": "JetBrains AI Assistant",
+        "position": 16,
+        "score": 52.58,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 3,
+          "direction": "down",
+          "previous_position": 13
+        }
+      },
+      {
+        "tool_id": "21",
+        "tool_name": "Tabnine",
+        "position": 17,
+        "score": 52.33,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 8,
+          "direction": "down",
+          "previous_position": 9
+        }
+      },
+      {
+        "tool_id": "10",
+        "tool_name": "v0",
+        "position": 18,
+        "score": 52.33,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 5,
+          "direction": "up",
+          "previous_position": 23
+        }
+      },
+      {
+        "tool_id": "2",
+        "tool_name": "GitHub Copilot",
+        "position": 19,
+        "score": 51.42,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 15,
+          "direction": "down",
+          "previous_position": 4
+        }
+      },
+      {
+        "tool_id": "5",
+        "tool_name": "Bolt.new",
+        "position": 20,
+        "score": 49.86,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 3,
+          "direction": "down",
+          "previous_position": 17
+        }
+      },
+      {
+        "tool_id": "25",
+        "tool_name": "Augment Code",
+        "position": 21,
+        "score": 49.77,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 5,
+          "direction": "down",
+          "previous_position": 16
+        }
+      },
+      {
+        "tool_id": "20",
+        "tool_name": "Diffblue Cover",
+        "position": 22,
+        "score": 49.77,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 6,
+          "direction": "up",
+          "previous_position": 28
+        }
+      },
+      {
+        "tool_id": "26",
+        "tool_name": "Amazon Q Developer",
+        "position": 23,
+        "score": 48.949999999999996,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 2,
+          "direction": "up",
+          "previous_position": 25
+        }
+      },
+      {
+        "tool_id": "19",
+        "tool_name": "Claude Artifacts",
+        "position": 24,
+        "score": 48.949999999999996,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 24
+        }
+      },
+      {
+        "tool_id": "28",
+        "tool_name": "CodeRabbit",
+        "position": 25,
+        "score": 48.949999999999996,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 4,
+          "direction": "up",
+          "previous_position": 29
+        }
+      },
+      {
+        "tool_id": "30",
+        "tool_name": "Microsoft IntelliCode",
+        "position": 26,
+        "score": 48.949999999999996,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 14,
+          "direction": "down",
+          "previous_position": 12
+        }
+      },
+      {
+        "tool_id": "17",
+        "tool_name": "Snyk Code",
+        "position": 27,
+        "score": 48.949999999999996,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 27
+        }
+      },
+      {
+        "tool_id": "29",
+        "tool_name": "Sourcegraph Cody",
+        "position": 28,
+        "score": 48.949999999999996,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 13,
+          "direction": "down",
+          "previous_position": 15
+        }
+      },
+      {
+        "tool_id": "15",
+        "tool_name": "Sourcery",
+        "position": 29,
+        "score": 48.949999999999996,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "up",
+          "previous_position": 30
+        }
+      },
+      {
+        "tool_id": "23",
+        "tool_name": "Zed",
+        "position": 30,
+        "score": 48.949999999999996,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 12,
+          "direction": "down",
+          "previous_position": 18
+        }
+      }
+    ]
+  },
+  "2025-07-16": {
+    "period": "2025-07-16",
+    "algorithm_version": "v6.0",
+    "is_current": true,
+    "created_at": "2025-07-16T05:36:12.274Z",
+    "rankings": [
+      {
+        "tool_id": "4",
+        "tool_name": "Claude Code",
+        "position": 1,
+        "score": 81.4,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 1
+        }
+      },
+      {
+        "tool_id": "11",
+        "tool_name": "Google Jules",
+        "position": 2,
+        "score": 77.61,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 2
+        }
+      },
+      {
+        "tool_id": "3",
+        "tool_name": "Devin",
+        "position": 3,
+        "score": 75.85,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "up",
+          "previous_position": 4
+        }
+      },
+      {
+        "tool_id": "1",
+        "tool_name": "Cursor",
+        "position": 4,
+        "score": 74.5,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "down",
+          "previous_position": 3
+        }
+      },
+      {
+        "tool_id": "12",
+        "tool_name": "Lovable",
+        "position": 5,
+        "score": 64.3,
+        "tier": "S",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 5
+        }
+      },
+      {
+        "tool_id": "18",
+        "tool_name": "ChatGPT Canvas",
+        "position": 6,
+        "score": 61.230000000000004,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 2,
+          "direction": "up",
+          "previous_position": 8
+        }
+      },
+      {
+        "tool_id": "24",
+        "tool_name": "OpenAI Codex CLI",
+        "position": 7,
+        "score": 60.88,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 2,
+          "direction": "up",
+          "previous_position": 9
+        }
+      },
+      {
+        "tool_id": "7",
+        "tool_name": "Aider",
+        "position": 8,
+        "score": 60.56,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "down",
+          "previous_position": 7
+        }
+      },
+      {
+        "tool_id": "6",
+        "tool_name": "Cline",
+        "position": 9,
+        "score": 60.56,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "up",
+          "previous_position": 10
+        }
+      },
+      {
+        "tool_id": "8",
+        "tool_name": "Continue",
+        "position": 10,
+        "score": 60.56,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "up",
+          "previous_position": 11
+        }
+      },
+      {
+        "tool_id": "13",
+        "tool_name": "OpenHands",
+        "position": 11,
+        "score": 60.56,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "up",
+          "previous_position": 12
+        }
+      },
+      {
+        "tool_id": "27",
+        "tool_name": "Google Gemini Code Assist",
+        "position": 12,
+        "score": 59.84,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 5,
+          "direction": "up",
+          "previous_position": 17
+        }
+      },
+      {
+        "tool_id": "2",
+        "tool_name": "GitHub Copilot",
+        "position": 13,
+        "score": 59.61,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 7,
+          "direction": "down",
+          "previous_position": 6
+        }
+      },
+      {
+        "tool_id": "14",
+        "tool_name": "Windsurf",
+        "position": 14,
+        "score": 57.45,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 14
+        }
+      },
+      {
+        "tool_id": "21",
+        "tool_name": "Tabnine",
+        "position": 15,
+        "score": 56.83,
+        "tier": "A",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "up",
+          "previous_position": 16
+        }
+      },
+      {
+        "tool_id": "16",
+        "tool_name": "Qodo Gen",
+        "position": 16,
+        "score": 55.199999999999996,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 2,
+          "direction": "up",
+          "previous_position": 18
+        }
+      },
+      {
+        "tool_id": "9",
+        "tool_name": "Replit Agent",
+        "position": 17,
+        "score": 54.93000000000001,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 2,
+          "direction": "up",
+          "previous_position": 19
+        }
+      },
+      {
+        "tool_id": "22",
+        "tool_name": "JetBrains AI Assistant",
+        "position": 18,
+        "score": 54.83,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 2,
+          "direction": "up",
+          "previous_position": 20
+        }
+      },
+      {
+        "tool_id": "5",
+        "tool_name": "Bolt.new",
+        "position": 19,
+        "score": 53.58,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 2,
+          "direction": "up",
+          "previous_position": 21
+        }
+      },
+      {
+        "tool_id": "25",
+        "tool_name": "Augment Code",
+        "position": 20,
+        "score": 52.019999999999996,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 7,
+          "direction": "down",
+          "previous_position": 13
+        }
+      },
+      {
+        "tool_id": "20",
+        "tool_name": "Diffblue Cover",
+        "position": 21,
+        "score": 52.019999999999996,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 1,
+          "direction": "up",
+          "previous_position": 22
+        }
+      },
+      {
+        "tool_id": "26",
+        "tool_name": "Amazon Q Developer",
+        "position": 22,
+        "score": 51.2,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 7,
+          "direction": "down",
+          "previous_position": 15
+        }
+      },
+      {
+        "tool_id": "19",
+        "tool_name": "Claude Artifacts",
+        "position": 23,
+        "score": 51.2,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 23
+        }
+      },
+      {
+        "tool_id": "28",
+        "tool_name": "CodeRabbit",
+        "position": 24,
+        "score": 51.2,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 24
+        }
+      },
+      {
+        "tool_id": "30",
+        "tool_name": "Microsoft IntelliCode",
+        "position": 25,
+        "score": 51.2,
+        "tier": "B",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 25
+        }
+      },
+      {
+        "tool_id": "17",
+        "tool_name": "Snyk Code",
+        "position": 26,
+        "score": 51.2,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 26
+        }
+      },
+      {
+        "tool_id": "29",
+        "tool_name": "Sourcegraph Cody",
+        "position": 27,
+        "score": 51.2,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 27
+        }
+      },
+      {
+        "tool_id": "15",
+        "tool_name": "Sourcery",
+        "position": 28,
+        "score": 51.2,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 28
+        }
+      },
+      {
+        "tool_id": "23",
+        "tool_name": "Zed",
+        "position": 29,
+        "score": 51.2,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 29
+        }
+      },
+      {
+        "tool_id": "10",
+        "tool_name": "v0",
+        "position": 30,
+        "score": 50.010000000000005,
+        "tier": "C",
+        "factor_scores": {
+          "agentic_capability": 0,
+          "innovation": 0,
+          "technical_performance": 0,
+          "developer_adoption": 0,
+          "market_traction": 0,
+          "business_sentiment": 0,
+          "development_velocity": 0,
+          "platform_resilience": 0
+        },
+        "movement": {
+          "change": 0,
+          "direction": "same",
+          "previous_position": 30
+        }
+      }
+    ]
+  },
+  "2025-07": {
+    "period": "2025-07",
+    "date": "2025-07-01",
+    "algorithm_version": "v7.0",
+    "algorithm_name": "Smart Defaults & Proxy Metrics",
+    "rankings": [
+      {
+        "tool_id": "1",
+        "tool_name": "Cursor",
+        "rank": 1,
+        "score": 0,
+        "movement": {
+          "previous_position": 4,
+          "change": 3,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 75,
+          "innovation": 80,
+          "technicalPerformance": 90,
+          "developerAdoption": 100,
+          "marketTraction": 100,
+          "businessSentiment": 85,
+          "developmentVelocity": 80,
+          "platformResilience": 90,
+          "technicalCapability": 90,
+          "communitySentiment": 85
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "2",
+        "tool_name": "GitHub Copilot",
+        "rank": 2,
+        "score": 0,
+        "movement": {
+          "previous_position": 19,
+          "change": 17,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 100,
+          "innovation": 100,
+          "technicalPerformance": 60,
+          "developerAdoption": 100,
+          "marketTraction": 100,
+          "businessSentiment": 75,
+          "developmentVelocity": 80,
+          "platformResilience": 80,
+          "technicalCapability": 60,
+          "communitySentiment": 75
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "3",
+        "tool_name": "Devin",
+        "rank": 3,
+        "score": 0,
+        "movement": {
+          "previous_position": 3,
+          "change": 0,
+          "direction": "same"
+        },
+        "factor_scores": {
+          "agenticCapability": 66.96,
+          "innovation": 50,
+          "technicalPerformance": 60,
+          "developerAdoption": 60,
+          "marketTraction": 30,
+          "businessSentiment": 75,
+          "developmentVelocity": 60,
+          "platformResilience": 80,
+          "technicalCapability": 60,
+          "communitySentiment": 75
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "4",
+        "tool_name": "Claude Code",
+        "rank": 4,
+        "score": 0,
+        "movement": {
+          "previous_position": 1,
+          "change": 3,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 100,
+          "innovation": 90,
+          "technicalPerformance": 100,
+          "developerAdoption": 60,
+          "marketTraction": 70,
+          "businessSentiment": 75,
+          "developmentVelocity": 80,
+          "platformResilience": 70,
+          "technicalCapability": 100,
+          "communitySentiment": 75
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "5",
+        "tool_name": "Bolt.new",
+        "rank": 5,
+        "score": 0,
+        "movement": {
+          "previous_position": 20,
+          "change": 15,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 60,
+          "innovation": 30,
+          "technicalPerformance": 82,
+          "developerAdoption": 70,
+          "marketTraction": 90,
+          "businessSentiment": 65,
+          "developmentVelocity": 60,
+          "platformResilience": 70,
+          "technicalCapability": 82,
+          "communitySentiment": 65
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "6",
+        "tool_name": "Cline",
+        "rank": 6,
+        "score": 0,
+        "movement": {
+          "previous_position": 9,
+          "change": 3,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 65,
+          "innovation": 60,
+          "technicalPerformance": 90,
+          "developerAdoption": 30,
+          "marketTraction": 40,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 100,
+          "technicalCapability": 90,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "7",
+        "tool_name": "Aider",
+        "rank": 7,
+        "score": 0,
+        "movement": {
+          "previous_position": 8,
+          "change": 1,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 85.13333333333334,
+          "innovation": 30,
+          "technicalPerformance": 100,
+          "developerAdoption": 50,
+          "marketTraction": 40,
+          "businessSentiment": 65,
+          "developmentVelocity": 60,
+          "platformResilience": 100,
+          "technicalCapability": 100,
+          "communitySentiment": 65
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "8",
+        "tool_name": "Continue",
+        "rank": 8,
+        "score": 0,
+        "movement": {
+          "previous_position": 10,
+          "change": 2,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 65,
+          "innovation": 30,
+          "technicalPerformance": 100,
+          "developerAdoption": 30,
+          "marketTraction": 40,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 100,
+          "technicalCapability": 100,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "9",
+        "tool_name": "Replit Agent",
+        "rank": 9,
+        "score": 0,
+        "movement": {
+          "previous_position": 15,
+          "change": 6,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 70,
+          "innovation": 50,
+          "technicalPerformance": 83,
+          "developerAdoption": 30,
+          "marketTraction": 70,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 60,
+          "technicalCapability": 83,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "10",
+        "tool_name": "v0",
+        "rank": 10,
+        "score": 0,
+        "movement": {
+          "previous_position": 18,
+          "change": 8,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 60,
+          "innovation": 30,
+          "technicalPerformance": 80,
+          "developerAdoption": 50,
+          "marketTraction": 60,
+          "businessSentiment": 65,
+          "developmentVelocity": 60,
+          "platformResilience": 80,
+          "technicalCapability": 80,
+          "communitySentiment": 65
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "11",
+        "tool_name": "Google Jules",
+        "rank": 11,
+        "score": 0,
+        "movement": {
+          "previous_position": 2,
+          "change": 9,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 100,
+          "innovation": 50,
+          "technicalPerformance": 100,
+          "developerAdoption": 50,
+          "marketTraction": 40,
+          "businessSentiment": 75,
+          "developmentVelocity": 60,
+          "platformResilience": 80,
+          "technicalCapability": 100,
+          "communitySentiment": 75
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "12",
+        "tool_name": "Lovable",
+        "rank": 12,
+        "score": 0,
+        "movement": {
+          "previous_position": 5,
+          "change": 7,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 60,
+          "innovation": 30,
+          "technicalPerformance": 100,
+          "developerAdoption": 70,
+          "marketTraction": 80,
+          "businessSentiment": 65,
+          "developmentVelocity": 60,
+          "platformResilience": 80,
+          "technicalCapability": 100,
+          "communitySentiment": 65
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "13",
+        "tool_name": "OpenHands",
+        "rank": 13,
+        "score": 0,
+        "movement": {
+          "previous_position": 11,
+          "change": 2,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 65,
+          "innovation": 50,
+          "technicalPerformance": 100,
+          "developerAdoption": 30,
+          "marketTraction": 40,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 100,
+          "technicalCapability": 100,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "14",
+        "tool_name": "Windsurf",
+        "rank": 14,
+        "score": 0,
+        "movement": {
+          "previous_position": 14,
+          "change": 0,
+          "direction": "same"
+        },
+        "factor_scores": {
+          "agenticCapability": 75,
+          "innovation": 30,
+          "technicalPerformance": 90,
+          "developerAdoption": 80,
+          "marketTraction": 60,
+          "businessSentiment": 85,
+          "developmentVelocity": 60,
+          "platformResilience": 90,
+          "technicalCapability": 90,
+          "communitySentiment": 85
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "15",
+        "tool_name": "Sourcery",
+        "rank": 15,
+        "score": 0,
+        "movement": {
+          "previous_position": 29,
+          "change": 14,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 60,
+          "innovation": 30,
+          "technicalPerformance": 60.5536,
+          "developerAdoption": 30,
+          "marketTraction": 60,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 70,
+          "technicalCapability": 60.5536,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "16",
+        "tool_name": "Qodo Gen",
+        "rank": 16,
+        "score": 0,
+        "movement": {
+          "previous_position": 13,
+          "change": 3,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 60,
+          "innovation": 40,
+          "technicalPerformance": 86,
+          "developerAdoption": 30,
+          "marketTraction": 60,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 90,
+          "technicalCapability": 86,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "17",
+        "tool_name": "Snyk Code",
+        "rank": 17,
+        "score": 0,
+        "movement": {
+          "previous_position": 27,
+          "change": 10,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 60,
+          "innovation": 30,
+          "technicalPerformance": 66.27680000000001,
+          "developerAdoption": 30,
+          "marketTraction": 60,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 70,
+          "technicalCapability": 66.27680000000001,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "18",
+        "tool_name": "ChatGPT Canvas",
+        "rank": 18,
+        "score": 0,
+        "movement": {
+          "previous_position": 6,
+          "change": 12,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 70,
+          "innovation": 30,
+          "technicalPerformance": 86,
+          "developerAdoption": 30,
+          "marketTraction": 60,
+          "businessSentiment": 70,
+          "developmentVelocity": 60,
+          "platformResilience": 80,
+          "technicalCapability": 86,
+          "communitySentiment": 70
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "19",
+        "tool_name": "Claude Artifacts",
+        "rank": 19,
+        "score": 0,
+        "movement": {
+          "previous_position": 24,
+          "change": 5,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 50,
+          "innovation": 30,
+          "technicalPerformance": 100,
+          "developerAdoption": 30,
+          "marketTraction": 60,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 70,
+          "technicalCapability": 100,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "20",
+        "tool_name": "Diffblue Cover",
+        "rank": 20,
+        "score": 0,
+        "movement": {
+          "previous_position": 22,
+          "change": 2,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 60,
+          "innovation": 40,
+          "technicalPerformance": 68,
+          "developerAdoption": 30,
+          "marketTraction": 30,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 70,
+          "technicalCapability": 68,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "21",
+        "tool_name": "Tabnine",
+        "rank": 21,
+        "score": 0,
+        "movement": {
+          "previous_position": 17,
+          "change": 4,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 70,
+          "innovation": 30,
+          "technicalPerformance": 90,
+          "developerAdoption": 70,
+          "marketTraction": 60,
+          "businessSentiment": 70,
+          "developmentVelocity": 60,
+          "platformResilience": 90,
+          "technicalCapability": 90,
+          "communitySentiment": 70
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "22",
+        "tool_name": "JetBrains AI Assistant",
+        "rank": 22,
+        "score": 0,
+        "movement": {
+          "previous_position": 16,
+          "change": 6,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 70,
+          "innovation": 40,
+          "technicalPerformance": 86,
+          "developerAdoption": 30,
+          "marketTraction": 60,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 80,
+          "technicalCapability": 86,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "23",
+        "tool_name": "Zed",
+        "rank": 23,
+        "score": 0,
+        "movement": {
+          "previous_position": 30,
+          "change": 7,
+          "direction": "up"
+        },
+        "factor_scores": {
+          "agenticCapability": 75,
+          "innovation": 30,
+          "technicalPerformance": 90,
+          "developerAdoption": 30,
+          "marketTraction": 60,
+          "businessSentiment": 70,
+          "developmentVelocity": 60,
+          "platformResilience": 90,
+          "technicalCapability": 90,
+          "communitySentiment": 70
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "24",
+        "tool_name": "OpenAI Codex CLI",
+        "rank": 24,
+        "score": 0,
+        "movement": {
+          "previous_position": 7,
+          "change": 17,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 80,
+          "innovation": 60,
+          "technicalPerformance": 85,
+          "developerAdoption": 30,
+          "marketTraction": 30,
+          "businessSentiment": 70,
+          "developmentVelocity": 60,
+          "platformResilience": 70,
+          "technicalCapability": 85,
+          "communitySentiment": 70
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "25",
+        "tool_name": "Augment Code",
+        "rank": 25,
+        "score": 0,
+        "movement": {
+          "previous_position": 21,
+          "change": 4,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 100,
+          "innovation": 30,
+          "technicalPerformance": 100,
+          "developerAdoption": 30,
+          "marketTraction": 30,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 70,
+          "technicalCapability": 100,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "26",
+        "tool_name": "Amazon Q Developer",
+        "rank": 26,
+        "score": 0,
+        "movement": {
+          "previous_position": 23,
+          "change": 3,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 98.57142857142857,
+          "innovation": 50,
+          "technicalPerformance": 86,
+          "developerAdoption": 30,
+          "marketTraction": 60,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 80,
+          "technicalCapability": 86,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "27",
+        "tool_name": "Google Gemini Code Assist",
+        "rank": 27,
+        "score": 0,
+        "movement": {
+          "previous_position": 12,
+          "change": 15,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 70,
+          "innovation": 30,
+          "technicalPerformance": 100,
+          "developerAdoption": 50,
+          "marketTraction": 60,
+          "businessSentiment": 65,
+          "developmentVelocity": 60,
+          "platformResilience": 70,
+          "technicalCapability": 100,
+          "communitySentiment": 65
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "28",
+        "tool_name": "CodeRabbit",
+        "rank": 28,
+        "score": 0,
+        "movement": {
+          "previous_position": 25,
+          "change": 3,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 60,
+          "innovation": 30,
+          "technicalPerformance": 86,
+          "developerAdoption": 30,
+          "marketTraction": 50,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 70,
+          "technicalCapability": 86,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "29",
+        "tool_name": "Sourcegraph Cody",
+        "rank": 29,
+        "score": 0,
+        "movement": {
+          "previous_position": 28,
+          "change": 1,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 70,
+          "innovation": 30,
+          "technicalPerformance": 100,
+          "developerAdoption": 30,
+          "marketTraction": 60,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 90,
+          "technicalCapability": 100,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "30",
+        "tool_name": "Microsoft IntelliCode",
+        "rank": 30,
+        "score": 0,
+        "movement": {
+          "previous_position": 26,
+          "change": 4,
+          "direction": "down"
+        },
+        "factor_scores": {
+          "agenticCapability": 70,
+          "innovation": 30,
+          "technicalPerformance": 61.6384,
+          "developerAdoption": 30,
+          "marketTraction": 40,
+          "businessSentiment": 60,
+          "developmentVelocity": 60,
+          "platformResilience": 70,
+          "technicalCapability": 61.6384,
+          "communitySentiment": 60
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "31",
+        "tool_name": "Kiro",
+        "rank": 31,
+        "score": 0,
+        "movement": {
+          "previous_position": null,
+          "change": 0,
+          "direction": "new"
+        },
+        "factor_scores": {
+          "agenticCapability": 75,
+          "innovation": 90,
+          "technicalPerformance": 100,
+          "developerAdoption": 70,
+          "marketTraction": 50,
+          "businessSentiment": 70,
+          "developmentVelocity": 80,
+          "platformResilience": 80,
+          "technicalCapability": 100,
+          "communitySentiment": 70
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      },
+      {
+        "tool_id": "31",
+        "tool_name": "Kiro",
+        "rank": 32,
+        "score": 0,
+        "movement": {
+          "previous_position": null,
+          "change": 0,
+          "direction": "new"
+        },
+        "factor_scores": {
+          "agenticCapability": 75,
+          "innovation": 90,
+          "technicalPerformance": 100,
+          "developerAdoption": 70,
+          "marketTraction": 50,
+          "businessSentiment": 70,
+          "developmentVelocity": 80,
+          "platformResilience": 80,
+          "technicalCapability": 100,
+          "communitySentiment": 70
+        },
+        "sentiment_analysis": {
+          "rawSentiment": 0,
+          "adjustedSentiment": 0,
+          "newsImpact": 0
+        },
+        "algorithm_version": "v7.0"
+      }
+    ],
+    "metadata": {
+      "total_tools": 32,
+      "calculation_date": "2025-07-23T03:11:22.866Z",
+      "notes": "Smart defaults and proxy metrics for available data"
     }
-  ],
-  "metadata": {
-    "total_tools": 31,
-    "calculation_date": "2025-07-23T00:39:07.867Z",
-    "notes": "Fixed format from v7 algorithm output"
   }
 }

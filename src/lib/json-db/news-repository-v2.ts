@@ -20,11 +20,37 @@ interface MonthlyIndex {
   lastUpdated: string;
 }
 
+interface ByMonthIndex {
+  months: Array<{
+    month: string;
+    articleCount: number;
+    filename: string;
+  }>;
+  totalArticles: number;
+  lastUpdated: string;
+}
+
+interface MonthlyData {
+  articles: NewsArticle[];
+  newsById?: Record<string, NewsArticle>;
+  newsBySlug?: Record<string, NewsArticle>;
+  metadata?: {
+    month: string;
+    articleCount: number;
+    generatedAt: string;
+  };
+}
+
+export type DirectoryMode = "articles" | "by-month";
+
 export class NewsRepositoryV2 extends BaseRepository<NewsData> {
   private static instance: NewsRepositoryV2;
   private articlesDir: string;
+  private byMonthDir: string;
+  private directoryMode: DirectoryMode;
   private indexCache: MonthlyIndex | null = null;
   private monthlyCache: Map<string, NewsArticle[]> = new Map();
+  private monthlyDataCache: Map<string, MonthlyData> = new Map();
 
   constructor() {
     const filePath = path.join(process.cwd(), "data", "json", "news", "news.json");
@@ -47,6 +73,41 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
 
     super(filePath, defaultData);
     this.articlesDir = path.join(process.cwd(), "data", "json", "news", "articles");
+    this.byMonthDir = path.join(process.cwd(), "data", "json", "news", "by-month");
+
+    // Default to 'articles' mode, can be overridden via environment variable
+    this.directoryMode = (process.env["NEWS_DIRECTORY_MODE"] as DirectoryMode) || "articles";
+
+    // Auto-detect directory mode if not specified
+    this.autoDetectDirectoryMode();
+  }
+
+  /**
+   * Auto-detect which directory mode to use based on directory existence
+   */
+  private async autoDetectDirectoryMode(): Promise<void> {
+    // Only auto-detect if not explicitly set via environment variable
+    if (!process.env["NEWS_DIRECTORY_MODE"]) {
+      try {
+        const byMonthExists = await fs.pathExists(this.byMonthDir);
+        const articlesExists = await fs.pathExists(this.articlesDir);
+
+        // Prefer /by-month/ if it exists and has content
+        if (byMonthExists) {
+          const files = await fs.readdir(this.byMonthDir);
+          const hasJsonFiles = files.some((f) => f.endsWith(".json") && f !== "index.json");
+          if (hasJsonFiles) {
+            this.directoryMode = "by-month";
+          }
+        } else if (!articlesExists) {
+          // If neither exists, default to by-month for new installations
+          this.directoryMode = "by-month";
+        }
+      } catch (error) {
+        // If there's an error, stick with the default
+        console.warn("Error auto-detecting news directory mode:", error);
+      }
+    }
   }
 
   static getInstance(): NewsRepositoryV2 {
@@ -57,6 +118,26 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
   }
 
   /**
+   * Set the directory mode (for switching between /articles/ and /by-month/)
+   */
+  setDirectoryMode(mode: DirectoryMode): void {
+    if (this.directoryMode !== mode) {
+      this.directoryMode = mode;
+      // Clear caches when switching modes
+      this.indexCache = null;
+      this.monthlyCache.clear();
+      this.monthlyDataCache.clear();
+    }
+  }
+
+  /**
+   * Get the current directory mode
+   */
+  getDirectoryMode(): DirectoryMode {
+    return this.directoryMode;
+  }
+
+  /**
    * Get the monthly index
    */
   private async getMonthlyIndex(): Promise<MonthlyIndex> {
@@ -64,9 +145,31 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
       return this.indexCache;
     }
 
-    const indexPath = path.join(this.articlesDir, "index.json");
+    const targetDir = this.directoryMode === "by-month" ? this.byMonthDir : this.articlesDir;
+    const indexPath = path.join(targetDir, "index.json");
+
     if (await fs.pathExists(indexPath)) {
-      this.indexCache = await fs.readJson(indexPath);
+      if (this.directoryMode === "by-month") {
+        // Convert by-month index format to standard format
+        const byMonthIndex = (await fs.readJson(indexPath)) as ByMonthIndex;
+        const articleCounts: Record<string, number> = {};
+        const months: string[] = [];
+
+        for (const monthData of byMonthIndex.months) {
+          months.push(monthData.month);
+          articleCounts[monthData.month] = monthData.articleCount;
+        }
+
+        this.indexCache = {
+          months,
+          articleCounts,
+          totalArticles: byMonthIndex.totalArticles,
+          lastUpdated: byMonthIndex.lastUpdated,
+        };
+      } else {
+        // Standard index format for /articles/ directory
+        this.indexCache = await fs.readJson(indexPath);
+      }
       return this.indexCache!;
     }
 
@@ -88,14 +191,44 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
       return this.monthlyCache.get(month)!;
     }
 
-    const monthFilePath = path.join(this.articlesDir, `${month}.json`);
-    if (await fs.pathExists(monthFilePath)) {
-      const articles = await fs.readJson(monthFilePath);
-      this.monthlyCache.set(month, articles);
-      return articles;
+    if (this.directoryMode === "by-month") {
+      // Load from /by-month/ directory with the new structure
+      const monthData = await this.loadMonthlyData(month);
+      if (monthData) {
+        const articles = monthData.articles || [];
+        this.monthlyCache.set(month, articles);
+        return articles;
+      }
+      return [];
+    } else {
+      // Original /articles/ directory logic
+      const monthFilePath = path.join(this.articlesDir, `${month}.json`);
+      if (await fs.pathExists(monthFilePath)) {
+        const articles = await fs.readJson(monthFilePath);
+        this.monthlyCache.set(month, articles);
+        return articles;
+      }
+      return [];
+    }
+  }
+
+  /**
+   * Load monthly data from the /by-month/ directory
+   */
+  private async loadMonthlyData(month: string): Promise<MonthlyData | null> {
+    // Check cache first
+    if (this.monthlyDataCache.has(month)) {
+      return this.monthlyDataCache.get(month)!;
     }
 
-    return [];
+    const monthFilePath = path.join(this.byMonthDir, `${month}.json`);
+    if (await fs.pathExists(monthFilePath)) {
+      const data = (await fs.readJson(monthFilePath)) as MonthlyData;
+      this.monthlyDataCache.set(month, data);
+      return data;
+    }
+
+    return null;
   }
 
   /**
@@ -124,36 +257,64 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
    * Get article by ID
    */
   async getById(id: string): Promise<NewsArticle | null> {
-    const index = await this.getMonthlyIndex();
+    if (this.directoryMode === "by-month") {
+      // Use the newsById index for fast lookup
+      const index = await this.getMonthlyIndex();
 
-    // Load months until we find the article
-    for (const month of index.months) {
-      const articles = await this.loadMonthlyArticles(month);
-      const article = articles.find((a) => a.id === id);
-      if (article) {
-        return article;
+      for (const month of index.months) {
+        const monthData = await this.loadMonthlyData(month);
+        if (monthData?.newsById?.[id]) {
+          return monthData.newsById[id];
+        }
       }
-    }
+      return null;
+    } else {
+      // Original logic for /articles/ directory
+      const index = await this.getMonthlyIndex();
 
-    return null;
+      // Load months until we find the article
+      for (const month of index.months) {
+        const articles = await this.loadMonthlyArticles(month);
+        const article = articles.find((a) => a.id === id);
+        if (article) {
+          return article;
+        }
+      }
+
+      return null;
+    }
   }
 
   /**
    * Get article by slug
    */
   async getBySlug(slug: string): Promise<NewsArticle | null> {
-    const index = await this.getMonthlyIndex();
+    if (this.directoryMode === "by-month") {
+      // Use the newsBySlug index for fast lookup
+      const index = await this.getMonthlyIndex();
 
-    // Load months until we find the article
-    for (const month of index.months) {
-      const articles = await this.loadMonthlyArticles(month);
-      const article = articles.find((a) => a.slug === slug);
-      if (article) {
-        return article;
+      for (const month of index.months) {
+        const monthData = await this.loadMonthlyData(month);
+        if (monthData?.newsBySlug?.[slug]) {
+          return monthData.newsBySlug[slug];
+        }
       }
-    }
+      return null;
+    } else {
+      // Original logic for /articles/ directory
+      const index = await this.getMonthlyIndex();
 
-    return null;
+      // Load months until we find the article
+      for (const month of index.months) {
+        const articles = await this.loadMonthlyArticles(month);
+        const article = articles.find((a) => a.slug === slug);
+        if (article) {
+          return article;
+        }
+      }
+
+      return null;
+    }
   }
 
   /**
@@ -180,9 +341,13 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
       }
     }
 
-    // Sort by date and limit
+    // Sort by date and limit (handle both 'date' and 'published_date' fields)
     return articles
-      .sort((a, b) => new Date(b.published_date).getTime() - new Date(a.published_date).getTime())
+      .sort((a, b) => {
+        const dateA = new Date(a.date || a.published_date).getTime();
+        const dateB = new Date(b.date || b.published_date).getTime();
+        return dateB - dateA;
+      })
       .slice(0, limit);
   }
 
@@ -248,8 +413,9 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
    * Add or update an article
    */
   async upsert(article: NewsArticle): Promise<void> {
-    // Determine which month file to update
-    const date = new Date(article.published_date);
+    // Determine which month file to update (handle both 'date' and 'published_date' fields)
+    const articleDate = article.date || article.published_date;
+    const date = new Date(articleDate);
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
     // Load the month's articles
@@ -263,17 +429,59 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
       monthArticles.push(article);
     }
 
-    // Sort by date (newest first)
-    monthArticles.sort(
-      (a, b) => new Date(b.published_date).getTime() - new Date(a.published_date).getTime()
-    );
+    // Sort by date (newest first) - handle both 'date' and 'published_date' fields
+    monthArticles.sort((a, b) => {
+      const dateA = new Date(a.date || a.published_date).getTime();
+      const dateB = new Date(b.date || b.published_date).getTime();
+      return dateB - dateA;
+    });
 
     // Save the updated month file
-    const monthFilePath = path.join(this.articlesDir, `${monthKey}.json`);
-    await fs.writeJson(monthFilePath, monthArticles, { spaces: 2 });
+    if (this.directoryMode === "by-month") {
+      // For /by-month/ directory, we need to update the full data structure
+      const monthData = (await this.loadMonthlyData(monthKey)) || {
+        articles: [],
+        newsById: {},
+        newsBySlug: {},
+        metadata: {
+          month: monthKey,
+          articleCount: 0,
+          generatedAt: new Date().toISOString(),
+        },
+      };
 
-    // Update cache
-    this.monthlyCache.set(monthKey, monthArticles);
+      // Update the data structure
+      monthData.articles = monthArticles;
+      monthData.newsById = monthData.newsById || {};
+      monthData.newsBySlug = monthData.newsBySlug || {};
+
+      // Update the indices
+      for (const article of monthArticles) {
+        monthData.newsById[article.id] = article;
+        monthData.newsBySlug[article.slug] = article;
+      }
+
+      // Update metadata
+      monthData.metadata = {
+        month: monthKey,
+        articleCount: monthArticles.length,
+        generatedAt: new Date().toISOString(),
+      };
+
+      const monthFilePath = path.join(this.byMonthDir, `${monthKey}.json`);
+      await fs.writeJson(monthFilePath, monthData, { spaces: 2 });
+
+      // Update caches
+      this.monthlyCache.set(monthKey, monthArticles);
+      this.monthlyDataCache.set(monthKey, monthData);
+    } else {
+      // Original logic for /articles/ directory
+      const monthFilePath = path.join(this.articlesDir, `${monthKey}.json`);
+      await fs.writeJson(monthFilePath, monthArticles, { spaces: 2 });
+
+      // Update cache
+      this.monthlyCache.set(monthKey, monthArticles);
+    }
 
     // Update index
     await this.updateMonthlyIndex();
@@ -295,11 +503,45 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
         articles.splice(articleIndex, 1);
 
         // Save the updated month file
-        const monthFilePath = path.join(this.articlesDir, `${month}.json`);
-        await fs.writeJson(monthFilePath, articles, { spaces: 2 });
+        if (this.directoryMode === "by-month") {
+          // For /by-month/ directory, update the full data structure
+          const monthData = await this.loadMonthlyData(month);
+          if (monthData) {
+            monthData.articles = articles;
 
-        // Update cache
-        this.monthlyCache.set(month, articles);
+            // Remove from indices
+            if (monthData.newsById) {
+              delete monthData.newsById[id];
+            }
+            if (monthData.newsBySlug) {
+              const article = articles.find((a) => a.id === id);
+              if (article && monthData.newsBySlug[article.slug]) {
+                delete monthData.newsBySlug[article.slug];
+              }
+            }
+
+            // Update metadata
+            monthData.metadata = {
+              month: month,
+              articleCount: articles.length,
+              generatedAt: new Date().toISOString(),
+            };
+
+            const monthFilePath = path.join(this.byMonthDir, `${month}.json`);
+            await fs.writeJson(monthFilePath, monthData, { spaces: 2 });
+
+            // Update caches
+            this.monthlyCache.set(month, articles);
+            this.monthlyDataCache.set(month, monthData);
+          }
+        } else {
+          // Original logic for /articles/ directory
+          const monthFilePath = path.join(this.articlesDir, `${month}.json`);
+          await fs.writeJson(monthFilePath, articles, { spaces: 2 });
+
+          // Update cache
+          this.monthlyCache.set(month, articles);
+        }
 
         // Update index
         await this.updateMonthlyIndex();
@@ -362,7 +604,8 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
    * Update the monthly index
    */
   private async updateMonthlyIndex(): Promise<void> {
-    const months = await fs.readdir(this.articlesDir);
+    const targetDir = this.directoryMode === "by-month" ? this.byMonthDir : this.articlesDir;
+    const months = await fs.readdir(targetDir);
     const jsonMonths = months
       .filter((f) => f.endsWith(".json") && f !== "index.json")
       .map((f) => f.replace(".json", ""))
@@ -378,19 +621,43 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
       totalArticles += articles.length;
     }
 
-    const index: MonthlyIndex = {
-      months: jsonMonths,
-      articleCounts,
-      totalArticles,
-      lastUpdated: new Date().toISOString(),
-    };
+    if (this.directoryMode === "by-month") {
+      // Save in by-month format
+      const byMonthIndex: ByMonthIndex = {
+        months: jsonMonths.map((month) => ({
+          month,
+          articleCount: articleCounts[month] || 0,
+          filename: `${month}.json`,
+        })),
+        totalArticles,
+        lastUpdated: new Date().toISOString(),
+      };
 
-    // Save index
-    const indexPath = path.join(this.articlesDir, "index.json");
-    await fs.writeJson(indexPath, index, { spaces: 2 });
+      const indexPath = path.join(targetDir, "index.json");
+      await fs.writeJson(indexPath, byMonthIndex, { spaces: 2 });
 
-    // Update cache
-    this.indexCache = index;
+      // Update cache in standard format
+      this.indexCache = {
+        months: jsonMonths,
+        articleCounts,
+        totalArticles,
+        lastUpdated: byMonthIndex.lastUpdated,
+      };
+    } else {
+      // Save in standard format for /articles/
+      const index: MonthlyIndex = {
+        months: jsonMonths,
+        articleCounts,
+        totalArticles,
+        lastUpdated: new Date().toISOString(),
+      };
+
+      const indexPath = path.join(targetDir, "index.json");
+      await fs.writeJson(indexPath, index, { spaces: 2 });
+
+      // Update cache
+      this.indexCache = index;
+    }
   }
 
   /**

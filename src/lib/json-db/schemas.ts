@@ -126,6 +126,7 @@ export interface NewsArticle {
   summary?: string;
   author?: string;
   published_date: string;
+  date?: string; // Alternative date field used in /by-month/ directory
   source?: string;
   source_url?: string;
   tags?: string[];

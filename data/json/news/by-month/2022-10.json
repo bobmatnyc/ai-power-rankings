@@ -1,0 +1,52 @@
+{
+  "articles": [
+    {
+      "id": "197bf3f57a0-0eecc42f-20b1e749",
+      "slug": "sourcery-2-0-expands-language-support",
+      "title": "Sourcery 2.0 Expands Language Support",
+      "content": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities.",
+      "summary": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities....",
+      "source": "Product Hunt",
+      "tags": ["major-update", "expansion", "multi-language"],
+      "tool_mentions": ["Sourcery"],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2022-10-17T00:00:00.000Z"
+    }
+  ],
+  "newsById": {
+    "197bf3f57a0-0eecc42f-20b1e749": {
+      "id": "197bf3f57a0-0eecc42f-20b1e749",
+      "slug": "sourcery-2-0-expands-language-support",
+      "title": "Sourcery 2.0 Expands Language Support",
+      "content": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities.",
+      "summary": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities....",
+      "source": "Product Hunt",
+      "tags": ["major-update", "expansion", "multi-language"],
+      "tool_mentions": ["Sourcery"],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2022-10-17T00:00:00.000Z"
+    }
+  },
+  "newsBySlug": {
+    "sourcery-2-0-expands-language-support": {
+      "id": "197bf3f57a0-0eecc42f-20b1e749",
+      "slug": "sourcery-2-0-expands-language-support",
+      "title": "Sourcery 2.0 Expands Language Support",
+      "content": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities.",
+      "summary": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities....",
+      "source": "Product Hunt",
+      "tags": ["major-update", "expansion", "multi-language"],
+      "tool_mentions": ["Sourcery"],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2022-10-17T00:00:00.000Z"
+    }
+  },
+  "metadata": {
+    "month": "2022-10",
+    "articleCount": 1,
+    "generatedAt": "2025-07-23T17:09:45.856Z"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "articles": [
+    {
+      "id": "197bf3f57a0-b27d6538-f115d4c7",
+      "slug": "aider-open-source-ai-pair-programming-tool-launches",
+      "title": "Aider Open-Source AI Pair Programming Tool Launches",
+      "content": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4.",
+      "summary": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4....",
+      "source": "GitHub Repository",
+      "tags": ["launch", "open-source", "cli"],
+      "tool_mentions": ["Aider"],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2023-05-01T00:00:00.000Z"
+    }
+  ],
+  "newsById": {
+    "197bf3f57a0-b27d6538-f115d4c7": {
+      "id": "197bf3f57a0-b27d6538-f115d4c7",
+      "slug": "aider-open-source-ai-pair-programming-tool-launches",
+      "title": "Aider Open-Source AI Pair Programming Tool Launches",
+      "content": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4.",
+      "summary": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4....",
+      "source": "GitHub Repository",
+      "tags": ["launch", "open-source", "cli"],
+      "tool_mentions": ["Aider"],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2023-05-01T00:00:00.000Z"
+    }
+  },
+  "newsBySlug": {
+    "aider-open-source-ai-pair-programming-tool-launches": {
+      "id": "197bf3f57a0-b27d6538-f115d4c7",
+      "slug": "aider-open-source-ai-pair-programming-tool-launches",
+      "title": "Aider Open-Source AI Pair Programming Tool Launches",
+      "content": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4.",
+      "summary": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4....",
+      "source": "GitHub Repository",
+      "tags": ["launch", "open-source", "cli"],
+      "tool_mentions": ["Aider"],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2023-05-01T00:00:00.000Z"
+    }
+  },
+  "metadata": {
+    "month": "2023-04",
+    "articleCount": 1,
+    "generatedAt": "2025-07-23T17:09:45.856Z"
+  }
+}

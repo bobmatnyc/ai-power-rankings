@@ -1,919 +1,5 @@
 [
   {
-    "id": "31",
-    "slug": "kiro",
-    "name": "Kiro",
-    "category": "proprietary-ide",
-    "status": "active",
-    "company_id": "5",
-    "info": {
-      "summary": "Specification-driven AI IDE that creates production-ready applications from detailed requirements",
-      "description": "Kiro is a next-generation AI IDE that transforms software development by implementing a specification-first methodology. Unlike 'vibe coding' tools that generate code from casual prompts, Kiro requires developers to think through requirements, generating comprehensive specification documents (requirements.md, design.md, tasks.md) before writing a single line of code. This approach bridges the gap between AI-assisted development and enterprise-grade software engineering, ensuring production-ready outputs from the start.",
-      "website": "https://kiro.dev",
-      "features": [
-        "Specification-driven development methodology",
-        "Automated generation of requirements.md, design.md, and tasks.md",
-        "Production-ready code generation from detailed specifications",
-        "Claude Sonnet 4.0 and 3.7 integration",
-        "VS Code fork with enhanced AI capabilities",
-        "MCP (Model Context Protocol) support",
-        "Multi-file project orchestration",
-        "Intelligent context management",
-        "Automated test generation from specifications",
-        "Built-in code review and quality assurance",
-        "Enterprise-grade security and compliance features",
-        "AWS service integration"
-      ],
-      "technical": {
-        "context_window": 200000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C#",
-          "Go",
-          "Ruby",
-          "Rust",
-          "PHP",
-          "Swift",
-          "Kotlin",
-          "C++",
-          "Scala",
-          "HTML",
-          "CSS",
-          "SQL",
-          "Shell",
-          "YAML",
-          "JSON",
-          "Markdown"
-        ],
-        "llm_providers": [
-          "Claude Sonnet 4.0",
-          "Claude Sonnet 3.7",
-          "AWS Bedrock"
-        ],
-        "ide_integration": "Code OSS Fork (VS Code open-source foundation)",
-        "subprocess_support": {
-          "agent_hooks": true,
-          "file_event_triggers": true,
-          "autonomous_execution": true,
-          "local_code_execution": true,
-          "structured_loop_planning": true
-        },
-        "tool_support": {
-          "mcp_protocol": true,
-          "mcp_servers": true,
-          "external_api_integration": true,
-          "database_connections": true,
-          "lsp_integration": true,
-          "open_vsx_plugins": true
-        },
-        "mcp_features": {
-          "aws_docs_server": true,
-          "context7_server": true,
-          "json_configuration": true,
-          "workspace_isolation": true,
-          "auto_approve_controls": true,
-          "server_status_monitoring": true
-        },
-        "ai_features": [
-          "Specification-first development",
-          "Automated documentation generation (requirements.md, design.md, tasks.md)",
-          "Task decomposition and planning",
-          "Production-ready code generation",
-          "Context-aware code completion",
-          "Intelligent refactoring suggestions",
-          "Automated test generation from specs",
-          "Code review and optimization",
-          "MCP protocol integration",
-          "Multi-agent collaboration",
-          "Agent hooks for automated actions",
-          "UI design image interpretation",
-          "Architecture diagram understanding",
-          "Steering files for project configuration",
-          "Transparent local execution"
-        ],
-        "security_features": {
-          "local_execution": true,
-          "transparent_actions": true,
-          "no_cloud_data_sharing": "unless explicitly allowed",
-          "autopilot_mode": "default enabled",
-          "sensitive_data_protection": true
-        },
-        "authentication": {
-          "google_signin": true,
-          "github_auth": true,
-          "builder_id": true,
-          "aws_sso": true,
-          "no_aws_account_required": true
-        }
-      },
-      "business": {
-        "pricing_model": "subscription",
-        "base_price": 0,
-        "enterprise_pricing": true,
-        "free_tier": true,
-        "pricing_details": {
-          "Free": "50 interactions per month - Perfect for trying Kiro",
-          "Pro": "$19/month - Unlimited interactions for individual developers",
-          "Pro+": "$39/month - Enhanced features and priority support",
-          "Enterprise": "Custom pricing - Advanced security, compliance, and team features"
-        }
-      },
-      "metrics": {
-        "launch_date": "2025-07-14",
-        "preview_status": "Public Preview",
-        "competitive_positioning": "Premium alternative to Cursor and GitHub Copilot",
-        "target_audience": "Professional developers building production systems",
-        "news_mentions": 7,
-        "news_mention_rate": "2.43%",
-        "free_tier_interactions": 50,
-        "pro_tier_interactions": 1000,
-        "pro_plus_interactions": 3000,
-        "additional_interaction_cost": 0.04,
-        "mcp_servers_supported": true,
-        "authentication_methods": 4
-      },
-      "differentiators": [
-        "Specification-first approach eliminates 'vibe coding chaos'",
-        "Generates comprehensive documentation before code",
-        "Production-ready outputs from the start",
-        "Enterprise-grade quality assurance built-in",
-        "AWS infrastructure and security",
-        "Claude Sonnet 4.0 powered intelligence"
-      ]
-    },
-    "created_at": "2025-07-22T18:48:41.792Z",
-    "updated_at": "2025-07-22T22:00:00.000Z"
-  },
-  {
-    "id": "7",
-    "slug": "aider",
-    "name": "Aider",
-    "category": "open-source-framework",
-    "status": "active",
-    "company_id": "31",
-    "info": {
-      "summary": "AI pair programming in your terminal",
-      "description": "AI pair programming in your terminal with git integration",
-      "website": "https://aider.chat",
-      "features": [],
-      "technical": {
-        "context_window": 200000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "PHP",
-          "Ruby",
-          "Go",
-          "Rust",
-          "HTML",
-          "CSS",
-          "SQL",
-          "Shell",
-          "Markdown",
-          "YAML",
-          "JSON",
-          "XML",
-          "Swift",
-          "Kotlin",
-          "Objective-C",
-          "R",
-          "MATLAB",
-          "Scala",
-          "Perl",
-          "Lua",
-          "Dart",
-          "Julia",
-          "Elixir"
-        ],
-        "llm_providers": [
-          "OpenAI (GPT-4o, o1, o3-mini)",
-          "Anthropic (Claude 3.5 Sonnet, Claude 3.7 Sonnet)",
-          "Google (Gemini)",
-          "DeepSeek (R1, Chat V3)",
-          "Groq",
-          "LM Studio",
-          "xAI",
-          "Azure OpenAI",
-          "Cohere",
-          "Ollama",
-          "OpenRouter",
-          "GitHub Copilot",
-          "Vertex AI",
-          "Amazon Bedrock",
-          "Local models",
-          "Generic OpenAI-compatible endpoints"
-        ],
-        "subprocess_support": true,
-        "tool_capabilities": {
-          "file_operations": true,
-          "terminal_access": true,
-          "browser_automation": false,
-          "api_integration": true,
-          "database_access": true,
-          "external_tools": true,
-          "git_integration": true,
-          "command_execution": true
-        },
-        "operating_modes": {
-          "code": "Default mode for writing, editing, and refactoring files directly",
-          "architect": "Planning mode for discussing structures, design patterns, and system architecture",
-          "ask": "Consultant mode for answering questions about code without making changes"
-        },
-        "voice_support": true,
-        "image_support": true,
-        "web_page_context": true,
-        "auto_commit": true,
-        "token_optimization": "Token-efficient context handling and prompt caching for cost savings",
-        "session_context": "Maintains context throughout session, handles version control automatically"
-      },
-      "business": {
-        "pricing_model": "free",
-        "base_price": 0,
-        "enterprise_pricing": false,
-        "free_tier": true,
-        "pricing_details": {
-          "Open Source": "Free - ~$0.007 per file processed, users pay LLM API costs only, Git integration, multiple LLM support"
-        }
-      },
-      "metrics": {
-        "swe_bench": {
-          "lite": 26.3,
-          "date": "2024",
-          "source": "SWE-bench leaderboard (historical data)",
-          "note": "Last major score from 2024"
-        },
-        "news_mentions": 1
-      }
-    },
-    "created_at": "2025-06-23T15:40:39.415Z",
-    "updated_at": "2025-06-25T02:48:36.969Z"
-  },
-  {
-    "id": "26",
-    "slug": "amazon-q-developer",
-    "name": "Amazon Q Developer",
-    "category": "devops-assistant",
-    "status": "active",
-    "company_id": "48",
-    "info": {
-      "summary": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration...",
-      "description": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration with the entire AWS ecosystem. Features agent architecture for autonomous cloud development tasks, from code generation to infrastructure deployment. Particularly valuable for teams building on AWS, offering specialized knowledge of AWS services and best practices.",
-      "website": "https://aws.amazon.com/q/developer/",
-      "features": [],
-      "technical": {
-        "context_window": 100000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C#",
-          "Go",
-          "Rust",
-          "Ruby",
-          "PHP",
-          "Kotlin",
-          "Swift"
-        ],
-        "llm_providers": [
-          "Amazon Bedrock",
-          "Custom Amazon models"
-        ],
-        "subprocess_support": true,
-        "tool_support": true,
-        "aws_integration": true,
-        "agent_capabilities": true
-      },
-      "business": {
-        "pricing_model": "freemium",
-        "base_price": 0,
-        "enterprise_pricing": false,
-        "free_tier": true,
-        "pricing_details": {
-          "Free": "$0/month - 50 chat interactions monthly, 10 agent invocations monthly",
-          "Pro": "$19/month - Unlimited chat and agent invocations, 4,000 lines of code transformation monthly, additional transformation at $0.003/line"
-        }
-      },
-      "metrics": {
-        "swe_bench": {
-          "verified": 55,
-          "full": 29.99,
-          "date": "2025-01-31",
-          "source": "Official SWE-bench leaderboard",
-          "model": "Amazon Q Developer Agent (v20241202-dev)"
-        }
-      }
-    },
-    "created_at": "2025-06-23T15:40:48.929Z",
-    "updated_at": "2025-06-25T02:48:31.756Z"
-  },
-  {
-    "id": "25",
-    "slug": "augment-code",
-    "name": "Augment Code",
-    "category": "ide-assistant",
-    "status": "active",
-    "company_id": "47",
-    "info": {
-      "summary": "AI Coding Assistant for Enterprises",
-      "description": "Enterprise-grade AI coding assistant with 200K token context and deep codebase understanding",
-      "website": "https://augmentcode.com",
-      "features": [],
-      "technical": {
-        "context_window": 200000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "Go",
-          "Rust",
-          "Ruby",
-          "PHP"
-        ],
-        "llm_providers": [
-          "Anthropic Claude Sonnet 3.7",
-          "OpenAI o1"
-        ],
-        "subprocess_support": true,
-        "tool_support": true,
-        "codebase_understanding": true,
-        "agent_architecture": true
-      },
-      "business": {
-        "pricing_model": "enterprise",
-        "enterprise_pricing": true,
-        "free_tier": false,
-        "pricing_details": {
-          "Enterprise": "Custom pricing - AI Coding Assistant for Enterprises with 200K token context and deep codebase understanding"
-        }
-      },
-      "metrics": {
-        "swe_bench": {
-          "verified": 65.4,
-          "date": "2025-03-16",
-          "source": "Official SWE-bench leaderboard & Augment Blog",
-          "model": "Claude Sonnet 3.7 (core driver) + OpenAI o1 (ensembler)",
-          "achievement": "#1 open-source agent on SWE-bench Verified at time of announcement"
-        }
-      }
-    },
-    "created_at": "2025-06-23T15:40:48.425Z",
-    "updated_at": "2025-06-30T03:49:42.695Z",
-    "launch_date": "2024-01-01"
-  },
-  {
-    "id": "5",
-    "slug": "bolt-new",
-    "name": "Bolt.new",
-    "category": "app-builder",
-    "status": "active",
-    "company_id": "7",
-    "info": {
-      "summary": "Prompt, run, edit, and deploy full-stack web applications",
-      "description": "AI-powered full-stack web application builder with in-browser development environment",
-      "website": "https://bolt.new",
-      "features": [],
-      "technical": {
-        "context_window": 128000,
-        "multi_file_support": true,
-        "language_support": [
-          "JavaScript",
-          "TypeScript",
-          "React",
-          "Vue",
-          "Svelte",
-          "HTML",
-          "CSS",
-          "Python",
-          "Node.js"
-        ],
-        "llm_providers": [
-          "Anthropic Claude"
-        ],
-        "subprocess_support": false,
-        "tool_support": false,
-        "execution_environment": "In-browser WebContainer"
-      },
-      "business": {
-        "pricing_model": "freemium",
-        "base_price": 0,
-        "enterprise_pricing": false,
-        "free_tier": true,
-        "pricing_details": {
-          "Free": "$0/month - Limited tokens, basic app building",
-          "Pro": "$20/month - Higher token limits, advanced features, priority support, additional token reloads at $30",
-          "pricing_note": "Reached $20M ARR in 2 months - fastest startup growth ever"
-        }
-      },
-      "metrics": {
-        "monthly_arr": 20000000,
-        "users": 85000,
-        "valuation": 2500000000,
-        "news_mentions": 2
-      }
-    },
-    "created_at": "2025-06-23T15:40:38.390Z",
-    "updated_at": "2025-06-30T03:49:42.688Z",
-    "launch_date": "2024-10-01"
-  },
-  {
-    "id": "18",
-    "slug": "chatgpt-canvas",
-    "name": "ChatGPT Canvas",
-    "category": "autonomous-agent",
-    "status": "active",
-    "company_id": "42",
-    "info": {
-      "summary": "Collaborative AI workspace",
-      "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions",
-      "website": "https://openai.com/chatgpt",
-      "features": [],
-      "technical": {
-        "context_window": 128000,
-        "multi_file_support": false,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "PHP",
-          "Ruby",
-          "Go",
-          "HTML",
-          "CSS",
-          "SQL",
-          "Shell",
-          "Markdown",
-          "YAML",
-          "JSON",
-          "XML"
-        ],
-        "llm_providers": [
-          "OpenAI GPT-4o",
-          "OpenAI o1"
-        ],
-        "subprocess_support": false,
-        "tool_capabilities": {
-          "file_operations": false,
-          "terminal_access": false,
-          "browser_automation": false,
-          "api_integration": false,
-          "database_access": false,
-          "external_tools": false,
-          "python_execution": true,
-          "network_requests": true
-        },
-        "canvas_features": {
-          "targeted_editing": "Highlight specific sections for AI assistance",
-          "inline_feedback": "AI provides inline suggestions like human collaborators",
-          "review_code": "Inline suggestions to improve code",
-          "add_logs": "Insert print statements for debugging",
-          "add_comments": "Add comments for code clarity",
-          "fix_bugs": "Detect and rewrite problematic code",
-          "port_languages": "Translate code to JavaScript, TypeScript, Python, Java, C++, or PHP"
-        },
-        "python_runtime": "Pyodide (Python compiled to WebAssembly) running in browser",
-        "auto_activation": "Opens automatically for content >10 lines or when beneficial",
-        "interface": "Separate workspace window beside chat for writing and coding projects",
-        "platform_support": {
-          "web": true,
-          "windows": true,
-          "mac": "Coming soon",
-          "mobile": "Coming soon (iOS, Android, mobile web)"
-        }
-      },
-      "business": {
-        "pricing_model": "freemium",
-        "base_price": 0,
-        "enterprise_pricing": false,
-        "free_tier": true,
-        "pricing_details": {
-          "Free": "$0/month - Limited access (gradual rollout), basic Canvas features",
-          "Plus": "$20/month - Full Canvas access, GPT-4o access, collaborative workspace",
-          "Pro": "$200/month - Unlimited o1 access, O1 Pro mode, GPT-4.1 access, advanced Canvas features"
-        }
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:44.960Z",
-    "updated_at": "2025-06-25T02:48:33.954Z"
-  },
-  {
-    "id": "19",
-    "slug": "claude-artifacts",
-    "name": "Claude Artifacts",
-    "category": "app-builder",
-    "status": "active",
-    "company_id": "4",
-    "info": {
-      "summary": "Interactive AI development companion",
-      "description": "Interactive component generation feature within Claude that creates and iterates on code, diagrams, and applications in a side panel",
-      "website": "https://claude.ai",
-      "features": [],
-      "technical": {
-        "context_window": 200000,
-        "multi_file_support": false,
-        "language_support": [
-          "JavaScript",
-          "TypeScript",
-          "React",
-          "HTML",
-          "CSS",
-          "Python",
-          "SVG",
-          "Mermaid"
-        ],
-        "llm_providers": [
-          "Anthropic Claude"
-        ],
-        "subprocess_support": false,
-        "tool_support": false,
-        "execution_environment": "Browser sandbox",
-        "artifact_types": [
-          "code",
-          "diagrams",
-          "interactive-components"
-        ]
-      },
-      "business": {
-        "pricing_model": "freemium"
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:45.342Z",
-    "updated_at": "2025-06-25T02:48:33.684Z"
-  },
-  {
-    "id": "4",
-    "slug": "claude-code",
-    "name": "Claude Code",
-    "category": "autonomous-agent",
-    "status": "active",
-    "company_id": "4",
-    "info": {
-      "summary": "Deep Coding at Terminal Velocity",
-      "description": "Terminal-based coding agent with deep codebase understanding and multi-file editing",
-      "website": "https://anthropic.com/claude-code",
-      "features": [
-        "Terminal-based coding agent with deep codebase understanding",
-        "Multi-file editing with holistic project comprehension",
-        "Autonomous code execution for tasks up to 7 hours",
-        "Extended thinking mode with configurable computation budget",
-        "Agentic search for instant codebase mapping and navigation",
-        "Memory file support for persistent context across sessions",
-        "Model Context Protocol (MCP) integration for extensibility",
-        "GitHub/GitLab integration for complete workflow automation",
-        "Subprocess execution with full command-line tool support",
-        "Hybrid reasoning system with tool use capabilities",
-        "Context window management with automated handoff protocols",
-        "Scriptable and composable through Unix pipes"
-      ],
-      "technical": {
-        "context_window": 200000,
-        "multi_file_support": true,
-        "subprocess_support": true,
-        "tool_support": true,
-        "mcp_support": true,
-        "autonomous_execution": true,
-        "extended_thinking": true,
-        "memory_persistence": true,
-        "language_support": [
-          "JavaScript",
-          "TypeScript",
-          "Python",
-          "Java",
-          "C++",
-          "C#",
-          "Go",
-          "Rust",
-          "Ruby",
-          "PHP",
-          "Swift",
-          "Kotlin",
-          "Scala",
-          "R",
-          "Julia",
-          "Dart",
-          "Lua",
-          "Perl",
-          "Shell",
-          "PowerShell",
-          "SQL",
-          "HTML",
-          "CSS",
-          "YAML",
-          "JSON",
-          "XML",
-          "Markdown",
-          "LaTeX",
-          "MATLAB",
-          "Objective-C",
-          "Haskell",
-          "Clojure",
-          "Elixir",
-          "Erlang",
-          "F#",
-          "OCaml",
-          "Scheme",
-          "Common Lisp",
-          "Fortran",
-          "COBOL",
-          "Pascal",
-          "Ada",
-          "Assembly"
-        ],
-        "llm_providers": [
-          "Claude Opus 4",
-          "Claude Sonnet 4"
-        ],
-        "model_capabilities": {
-          "opus_4": {
-            "swe_bench_score": 72.5,
-            "terminal_bench_score": 43.2,
-            "thinking_modes": [
-              "think",
-              "think hard",
-              "think harder",
-              "ultrathink"
-            ],
-            "continuous_work_hours": 7
-          },
-          "sonnet_4": {
-            "swe_bench_score": 72.7,
-            "thinking_modes": [
-              "think",
-              "think hard",
-              "think harder",
-              "ultrathink"
-            ]
-          }
-        },
-        "integrations": {
-          "version_control": [
-            "Git",
-            "GitHub",
-            "GitLab"
-          ],
-          "external_tools": "MCP (Model Context Protocol)",
-          "file_systems": "Full filesystem access with permissions",
-          "command_line": "Complete subprocess execution support",
-          "apis": "Extensible through MCP servers"
-        },
-        "performance_features": {
-          "agentic_search": true,
-          "context_preservation": true,
-          "automated_handoffs": true,
-          "parallel_execution": false,
-          "streaming_support": true
-        }
-      },
-      "business": {
-        "pricing_model": "subscription",
-        "base_price": 20,
-        "enterprise_pricing": false,
-        "free_tier": false,
-        "pricing_details": {
-          "Pro": "$20/month - 10-40 prompts per 5 hours, terminal-based coding agent, Claude web access included, secure Google Cloud VMs",
-          "5x Pro": "$100/month - 5x higher limits, priority access",
-          "20x Pro": "$200/month - 20x higher limits, maximum priority, enterprise features"
-        }
-      },
-      "metrics": {
-        "swe_bench": {
-          "verified": 70.3,
-          "verified_basic": 63.7,
-          "date": "2025-02-24",
-          "source": "Anthropic Blog - Claude 3.7 Sonnet",
-          "model": "Claude 3.7 Sonnet",
-          "methodology": "With scaffolding: 70.3%, Basic scaffold: 63.7%",
-          "achievement": "First release of Claude Code as limited research preview"
-        },
-        "news_mentions": 2
-      }
-    },
-    "created_at": "2025-06-23T15:40:37.842Z",
-    "updated_at": "2025-07-22T12:00:00.000Z",
-    "launch_date": "2024-12-15"
-  },
-  {
-    "id": "6",
-    "slug": "cline",
-    "name": "Cline",
-    "category": "open-source-framework",
-    "status": "active",
-    "company_id": "77",
-    "info": {
-      "summary": "Meet Cline, an AI assistant that can use your CLI and editor",
-      "description": "Autonomous coding agent VS Code extension with multi-modal capabilities",
-      "website": "https://cline.bot",
-      "features": [],
-      "technical": {
-        "context_window": 128000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "PHP",
-          "Ruby",
-          "Go",
-          "Rust",
-          "HTML",
-          "CSS",
-          "SQL",
-          "Shell",
-          "Markdown",
-          "YAML",
-          "JSON",
-          "XML",
-          "Swift",
-          "Kotlin",
-          "Objective-C",
-          "R",
-          "MATLAB",
-          "Scala",
-          "Perl",
-          "Lua",
-          "Dart"
-        ],
-        "llm_providers": [
-          "OpenAI (GPT-4, GPT-4o)",
-          "Anthropic (Claude 3.5 Sonnet, Claude 3.7 Sonnet)",
-          "Google (Gemini, Gemini 2.0 Flash)",
-          "DeepSeek (Chat)",
-          "OpenRouter",
-          "AWS Bedrock",
-          "Azure OpenAI",
-          "GCP Vertex",
-          "Cerebras",
-          "Groq",
-          "Kimi K2",
-          "Local models",
-          "Custom APIs"
-        ],
-        "subprocess_support": true,
-        "tool_capabilities": {
-          "file_operations": true,
-          "terminal_access": true,
-          "browser_automation": true,
-          "api_integration": true,
-          "database_access": true,
-          "external_tools": true,
-          "command_execution": true,
-          "shell_integration": true
-        },
-        "model_context_protocol": true,
-        "plan_then_act_mode": true,
-        "workspace_snapshots": true,
-        "ast_analysis": true,
-        "regex_search": true,
-        "token_tracking": true,
-        "cost_tracking": true,
-        "autonomous_capabilities": "Creates/edits files, executes commands, uses browser with permission at each step",
-        "shell_integration": "VSCode v1.93 integration for direct terminal command execution",
-        "context_management": "Analyzes file structure & source code ASTs, manages context to avoid overwhelming window"
-      },
-      "business": {
-        "pricing_model": "free",
-        "base_price": 0,
-        "enterprise_pricing": false,
-        "free_tier": true,
-        "pricing_details": {
-          "Open Source": "Free - Costs vary: minimal to $50+ daily, depends on usage intensity and model choice, VS Code extension, multiple provider support"
-        }
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:38.891Z",
-    "updated_at": "2025-06-30T03:49:42.694Z",
-    "launch_date": "2024-01-01"
-  },
-  {
-    "id": "28",
-    "slug": "coderabbit",
-    "name": "CodeRabbit",
-    "category": "code-review",
-    "status": "active",
-    "company_id": "50",
-    "info": {
-      "summary": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code under...",
-      "description": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code understanding beyond surface-level pattern matching. With 10M+ pull requests processed, CodeRabbit demonstrates the scalability and effectiveness of AI-powered code review, helping teams maintain code quality and accelerate development cycles.",
-      "website": "https://coderabbit.ai",
-      "features": [],
-      "technical": {
-        "context_window": 100000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "Go",
-          "Rust",
-          "Ruby",
-          "PHP",
-          "Swift",
-          "Kotlin"
-        ],
-        "llm_providers": [
-          "OpenAI GPT-4",
-          "Anthropic Claude"
-        ],
-        "subprocess_support": false,
-        "tool_support": false,
-        "ast_analysis": true,
-        "pr_integration": true
-      },
-      "business": {
-        "pricing_model": "subscription",
-        "base_price": 12,
-        "enterprise_pricing": false,
-        "free_tier": false,
-        "pricing_details": {
-          "Lite": "$12/month per PR creator - Seat-based pricing (PR creators only), Basic code review",
-          "Pro": "$20/month per PR creator - Advanced features, Bitbucket and Azure DevOps support, Processes millions of PRs monthly"
-        }
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:50.194Z",
-    "updated_at": "2025-06-25T02:48:31.202Z"
-  },
-  {
-    "id": "8",
-    "slug": "continue-dev",
-    "name": "Continue",
-    "category": "open-source-framework",
-    "status": "active",
-    "company_id": "32",
-    "info": {
-      "summary": "The open-source autopilot for your IDE",
-      "description": "Open source autopilot for your IDE with customizable LLM backends",
-      "website": "https://continue.dev",
-      "features": [],
-      "technical": {
-        "context_window": 200000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "PHP",
-          "Ruby",
-          "Go",
-          "Rust"
-        ],
-        "llm_providers": [
-          "OpenAI",
-          "Anthropic",
-          "Google",
-          "Local models",
-          "Custom APIs"
-        ],
-        "subprocess_support": false,
-        "tool_support": false,
-        "ide_integration": "VS Code, JetBrains"
-      },
-      "business": {
-        "pricing_model": "free",
-        "base_price": 0,
-        "enterprise_pricing": false,
-        "free_tier": true,
-        "pricing_details": {
-          "Open Source": "Free - Users pay only LLM API costs, version 1.0 released February 2025, $3M seed funding, Continue Hub for sharing custom assistants"
-        }
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:39.907Z",
-    "updated_at": "2025-06-30T03:49:42.693Z",
-    "launch_date": "2023-01-01"
-  },
-  {
     "id": "1",
     "slug": "cursor",
     "name": "Cursor",
@@ -1043,187 +129,6 @@
     "launch_date": "2023-05-01"
   },
   {
-    "id": "3",
-    "slug": "devin",
-    "name": "Devin",
-    "category": "autonomous-agent",
-    "status": "active",
-    "company_id": "27",
-    "info": {
-      "summary": "The first AI software engineer",
-      "description": "Autonomous AI software engineer capable of planning, coding, debugging, and deploying applications",
-      "website": "https://cognition.ai",
-      "features": [],
-      "technical": {
-        "context_window": null,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "PHP",
-          "Ruby",
-          "Go",
-          "Rust",
-          "HTML",
-          "CSS",
-          "SQL",
-          "Shell",
-          "Markdown",
-          "YAML",
-          "JSON",
-          "XML"
-        ],
-        "llm_providers": [
-          "OpenAI GPT-4",
-          "OpenAI GPT-4o",
-          "Proprietary Cognition models"
-        ],
-        "subprocess_support": true,
-        "tool_capabilities": {
-          "file_operations": true,
-          "terminal_access": true,
-          "browser_automation": true,
-          "api_integration": true,
-          "database_access": true,
-          "external_tools": true,
-          "command_execution": true,
-          "docker_environment": true
-        },
-        "architecture": "Docker container hosting terminal, browser, code editor, and planner",
-        "interface": "Slack-based command interface",
-        "multi_agent": true,
-        "multi_devin": "Enterprise plan enables parallel task processing with multiple Devins",
-        "interactive_planning": "Devin 2.0 feature for collaborative task scoping",
-        "devin_search": "Codebase navigation and understanding tool",
-        "devin_wiki": "Machine-generated software documentation",
-        "confidence_evaluation": "Self-assessed confidence with clarification requests",
-        "autonomous_features": "Plans, writes, executes, and debugs code without human intervention",
-        "in_context_reasoning": "Enhanced in Devin 1.2 with pattern recognition and code reuse",
-        "voice_commands": "Integrated in Devin 1.2"
-      },
-      "business": {
-        "pricing_model": "usage-based",
-        "base_price": 20,
-        "enterprise_pricing": false,
-        "free_tier": false,
-        "pricing_details": {
-          "Core Plan": "$20/month - 9 ACUs included, additional ACUs at $2.25 each",
-          "pricing_note": "96% price reduction from original $500/month in April 2025"
-        }
-      },
-      "metrics": {
-        "swe_bench": {
-          "full": 13.86,
-          "date": "2024",
-          "source": "GitHub CognitionAI/devin-swebench-results",
-          "updates": "Launched Devin 2.0 and 2.1 in 2025 with price reduction ($20/month) but no new benchmark scores published"
-        },
-        "news_mentions": 3
-      }
-    },
-    "created_at": "2025-06-23T15:40:37.350Z",
-    "updated_at": "2025-06-30T03:49:42.685Z",
-    "launch_date": "2024-03-12"
-  },
-  {
-    "id": "20",
-    "slug": "diffblue-cover",
-    "name": "Diffblue Cover",
-    "category": "testing-tool",
-    "status": "active",
-    "company_id": "43",
-    "info": {
-      "summary": "Autonomous unit test generation for Java",
-      "description": "AI-powered unit test generation tool that autonomously writes entire suites of JUnit tests for Java code using reinforcement learning",
-      "website": "https://diffblue.com/products/cover",
-      "features": [],
-      "technical": {
-        "context_window": 50000,
-        "multi_file_support": true,
-        "language_support": [
-          "Java",
-          "Kotlin"
-        ],
-        "llm_providers": [
-          "Reinforcement Learning",
-          "No LLMs"
-        ],
-        "subprocess_support": false,
-        "tool_support": false,
-        "test_generation": true,
-        "junit_focused": true
-      },
-      "business": {
-        "pricing_model": "enterprise",
-        "base_price": 175,
-        "enterprise_pricing": true,
-        "free_tier": false,
-        "pricing_details": {
-          "Enterprise": "$2,100/developer/year ($175/month) - Java/Kotlin focus, Reinforcement learning (not LLMs), 250x faster than manual test writing, Custom pricing for scale"
-        }
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:45.833Z",
-    "updated_at": "2025-06-25T02:48:33.408Z"
-  },
-  {
-    "id": "27",
-    "slug": "gemini-code-assist",
-    "name": "Google Gemini Code Assist",
-    "category": "ide-assistant",
-    "status": "active",
-    "company_id": "5",
-    "info": {
-      "summary": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window...",
-      "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models.",
-      "website": "https://cloud.google.com/code-assist",
-      "features": [],
-      "technical": {
-        "context_window": 2000000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "PHP",
-          "Ruby",
-          "Go",
-          "Rust"
-        ],
-        "llm_providers": [
-          "Google Gemini"
-        ],
-        "subprocess_support": false,
-        "tool_support": false
-      },
-      "business": {
-        "pricing_model": "freemium",
-        "base_price": 0,
-        "enterprise_pricing": true,
-        "free_tier": true,
-        "pricing_details": {
-          "Free": "$0/month - 180,000 code completions monthly (most generous), basic AI assistance, Google Cloud integration",
-          "Standard": "$19/month (monthly) / $45/month (annual) - Unlimited completions, advanced features, priority support",
-          "Enterprise": "$75/month per user - Everything in Standard, private repository customization, enterprise support, advanced security"
-        }
-      },
-      "metrics": {
-        "news_mentions": 1
-      }
-    },
-    "created_at": "2025-06-23T15:40:49.277Z",
-    "updated_at": "2025-06-30T03:49:42.692Z",
-    "launch_date": "2024-02-01"
-  },
-  {
     "id": "2",
     "slug": "github-copilot",
     "name": "GitHub Copilot",
@@ -1317,52 +222,611 @@
     "launch_date": "2021-06-01"
   },
   {
-    "id": "22",
-    "slug": "jetbrains-ai",
-    "name": "JetBrains AI Assistant",
-    "category": "ide-assistant",
+    "id": "3",
+    "slug": "devin",
+    "name": "Devin",
+    "category": "autonomous-agent",
     "status": "active",
-    "company_id": "45",
+    "company_id": "27",
     "info": {
-      "summary": "AI assistant for JetBrains IDEs",
-      "description": "AI assistant integrated into JetBrains IDEs providing code completions, chat assistance, and multi-file editing with Junie agent",
-      "website": "https://jetbrains.com/ai/",
+      "summary": "The first AI software engineer",
+      "description": "Autonomous AI software engineer capable of planning, coding, debugging, and deploying applications",
+      "website": "https://cognition.ai",
       "features": [],
       "technical": {
-        "context_window": 120000,
+        "context_window": null,
         "multi_file_support": true,
         "language_support": [
-          "Java",
-          "Kotlin",
           "Python",
           "JavaScript",
           "TypeScript",
+          "Java",
+          "C++",
           "C#",
           "PHP",
+          "Ruby",
           "Go",
           "Rust",
-          "C++"
+          "HTML",
+          "CSS",
+          "SQL",
+          "Shell",
+          "Markdown",
+          "YAML",
+          "JSON",
+          "XML"
         ],
-        "llm_providers": [
-          "Multiple models",
-          "Local models supported"
-        ]
+        "llm_providers": ["OpenAI GPT-4", "OpenAI GPT-4o", "Proprietary Cognition models"],
+        "subprocess_support": true,
+        "tool_capabilities": {
+          "file_operations": true,
+          "terminal_access": true,
+          "browser_automation": true,
+          "api_integration": true,
+          "database_access": true,
+          "external_tools": true,
+          "command_execution": true,
+          "docker_environment": true
+        },
+        "architecture": "Docker container hosting terminal, browser, code editor, and planner",
+        "interface": "Slack-based command interface",
+        "multi_agent": true,
+        "multi_devin": "Enterprise plan enables parallel task processing with multiple Devins",
+        "interactive_planning": "Devin 2.0 feature for collaborative task scoping",
+        "devin_search": "Codebase navigation and understanding tool",
+        "devin_wiki": "Machine-generated software documentation",
+        "confidence_evaluation": "Self-assessed confidence with clarification requests",
+        "autonomous_features": "Plans, writes, executes, and debugs code without human intervention",
+        "in_context_reasoning": "Enhanced in Devin 1.2 with pattern recognition and code reuse",
+        "voice_commands": "Integrated in Devin 1.2"
+      },
+      "business": {
+        "pricing_model": "usage-based",
+        "base_price": 20,
+        "enterprise_pricing": false,
+        "free_tier": false,
+        "pricing_details": {
+          "Core Plan": "$20/month - 9 ACUs included, additional ACUs at $2.25 each",
+          "pricing_note": "96% price reduction from original $500/month in April 2025"
+        }
+      },
+      "metrics": {
+        "swe_bench": {
+          "full": 13.86,
+          "date": "2024",
+          "source": "GitHub CognitionAI/devin-swebench-results",
+          "updates": "Launched Devin 2.0 and 2.1 in 2025 with price reduction ($20/month) but no new benchmark scores published"
+        },
+        "news_mentions": 3
+      }
+    },
+    "created_at": "2025-06-23T15:40:37.350Z",
+    "updated_at": "2025-06-30T03:49:42.685Z",
+    "launch_date": "2024-03-12"
+  },
+  {
+    "id": "4",
+    "slug": "claude-code",
+    "name": "Claude Code",
+    "category": "autonomous-agent",
+    "status": "active",
+    "company_id": "4",
+    "info": {
+      "summary": "Deep Coding at Terminal Velocity",
+      "description": "Terminal-based coding agent with deep codebase understanding and multi-file editing",
+      "website": "https://anthropic.com/claude-code",
+      "features": [
+        "Terminal-based coding agent with deep codebase understanding",
+        "Multi-file editing with holistic project comprehension",
+        "Autonomous code execution for tasks up to 7 hours",
+        "Extended thinking mode with configurable computation budget",
+        "Agentic search for instant codebase mapping and navigation",
+        "Memory file support for persistent context across sessions",
+        "Model Context Protocol (MCP) integration for extensibility",
+        "GitHub/GitLab integration for complete workflow automation",
+        "Subprocess execution with full command-line tool support",
+        "Hybrid reasoning system with tool use capabilities",
+        "Context window management with automated handoff protocols",
+        "Scriptable and composable through Unix pipes"
+      ],
+      "technical": {
+        "context_window": 200000,
+        "multi_file_support": true,
+        "subprocess_support": true,
+        "tool_support": true,
+        "mcp_support": true,
+        "autonomous_execution": true,
+        "extended_thinking": true,
+        "memory_persistence": true,
+        "language_support": [
+          "JavaScript",
+          "TypeScript",
+          "Python",
+          "Java",
+          "C++",
+          "C#",
+          "Go",
+          "Rust",
+          "Ruby",
+          "PHP",
+          "Swift",
+          "Kotlin",
+          "Scala",
+          "R",
+          "Julia",
+          "Dart",
+          "Lua",
+          "Perl",
+          "Shell",
+          "PowerShell",
+          "SQL",
+          "HTML",
+          "CSS",
+          "YAML",
+          "JSON",
+          "XML",
+          "Markdown",
+          "LaTeX",
+          "MATLAB",
+          "Objective-C",
+          "Haskell",
+          "Clojure",
+          "Elixir",
+          "Erlang",
+          "F#",
+          "OCaml",
+          "Scheme",
+          "Common Lisp",
+          "Fortran",
+          "COBOL",
+          "Pascal",
+          "Ada",
+          "Assembly"
+        ],
+        "llm_providers": ["Claude Opus 4", "Claude Sonnet 4"],
+        "model_capabilities": {
+          "opus_4": {
+            "swe_bench_score": 72.5,
+            "terminal_bench_score": 43.2,
+            "thinking_modes": ["think", "think hard", "think harder", "ultrathink"],
+            "continuous_work_hours": 7
+          },
+          "sonnet_4": {
+            "swe_bench_score": 72.7,
+            "thinking_modes": ["think", "think hard", "think harder", "ultrathink"]
+          }
+        },
+        "integrations": {
+          "version_control": ["Git", "GitHub", "GitLab"],
+          "external_tools": "MCP (Model Context Protocol)",
+          "file_systems": "Full filesystem access with permissions",
+          "command_line": "Complete subprocess execution support",
+          "apis": "Extensible through MCP servers"
+        },
+        "performance_features": {
+          "agentic_search": true,
+          "context_preservation": true,
+          "automated_handoffs": true,
+          "parallel_execution": false,
+          "streaming_support": true
+        }
+      },
+      "business": {
+        "pricing_model": "subscription",
+        "base_price": 20,
+        "enterprise_pricing": false,
+        "free_tier": false,
+        "pricing_details": {
+          "Pro": "$20/month - 10-40 prompts per 5 hours, terminal-based coding agent, Claude web access included, secure Google Cloud VMs",
+          "5x Pro": "$100/month - 5x higher limits, priority access",
+          "20x Pro": "$200/month - 20x higher limits, maximum priority, enterprise features"
+        }
+      },
+      "metrics": {
+        "swe_bench": {
+          "verified": 70.3,
+          "verified_basic": 63.7,
+          "date": "2025-02-24",
+          "source": "Anthropic Blog - Claude 3.7 Sonnet",
+          "model": "Claude 3.7 Sonnet",
+          "methodology": "With scaffolding: 70.3%, Basic scaffold: 63.7%",
+          "achievement": "First release of Claude Code as limited research preview"
+        },
+        "news_mentions": 2
+      }
+    },
+    "created_at": "2025-06-23T15:40:37.842Z",
+    "updated_at": "2025-07-22T12:00:00.000Z",
+    "launch_date": "2024-12-15"
+  },
+  {
+    "id": "5",
+    "slug": "bolt-new",
+    "name": "Bolt.new",
+    "category": "app-builder",
+    "status": "active",
+    "company_id": "7",
+    "info": {
+      "summary": "Prompt, run, edit, and deploy full-stack web applications",
+      "description": "AI-powered full-stack web application builder with in-browser development environment",
+      "website": "https://bolt.new",
+      "features": [],
+      "technical": {
+        "context_window": 128000,
+        "multi_file_support": true,
+        "language_support": [
+          "JavaScript",
+          "TypeScript",
+          "React",
+          "Vue",
+          "Svelte",
+          "HTML",
+          "CSS",
+          "Python",
+          "Node.js"
+        ],
+        "llm_providers": ["Anthropic Claude"],
+        "subprocess_support": false,
+        "tool_support": false,
+        "execution_environment": "In-browser WebContainer"
       },
       "business": {
         "pricing_model": "freemium",
         "base_price": 0,
-        "enterprise_pricing": true,
+        "enterprise_pricing": false,
         "free_tier": true,
         "pricing_details": {
-          "AI Free": "$0/month - Unlimited local model support, limited cloud features, basic AI assistance",
-          "AI Pro": "$10/month - Enhanced cloud features, better quotas, priority support",
-          "AI Ultimate": "$20/month - Highest quota levels, priority access to latest models, premium features, advanced support"
+          "Free": "$0/month - Limited tokens, basic app building",
+          "Pro": "$20/month - Higher token limits, advanced features, priority support, additional token reloads at $30",
+          "pricing_note": "Reached $20M ARR in 2 months - fastest startup growth ever"
+        }
+      },
+      "metrics": {
+        "monthly_arr": 20000000,
+        "users": 85000,
+        "valuation": 2500000000,
+        "news_mentions": 2
+      }
+    },
+    "created_at": "2025-06-23T15:40:38.390Z",
+    "updated_at": "2025-06-30T03:49:42.688Z",
+    "launch_date": "2024-10-01"
+  },
+  {
+    "id": "6",
+    "slug": "cline",
+    "name": "Cline",
+    "category": "open-source-framework",
+    "status": "active",
+    "company_id": "77",
+    "info": {
+      "summary": "Meet Cline, an AI assistant that can use your CLI and editor",
+      "description": "Autonomous coding agent VS Code extension with multi-modal capabilities",
+      "website": "https://cline.bot",
+      "features": [],
+      "technical": {
+        "context_window": 128000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "PHP",
+          "Ruby",
+          "Go",
+          "Rust",
+          "HTML",
+          "CSS",
+          "SQL",
+          "Shell",
+          "Markdown",
+          "YAML",
+          "JSON",
+          "XML",
+          "Swift",
+          "Kotlin",
+          "Objective-C",
+          "R",
+          "MATLAB",
+          "Scala",
+          "Perl",
+          "Lua",
+          "Dart"
+        ],
+        "llm_providers": [
+          "OpenAI (GPT-4, GPT-4o)",
+          "Anthropic (Claude 3.5 Sonnet, Claude 3.7 Sonnet)",
+          "Google (Gemini, Gemini 2.0 Flash)",
+          "DeepSeek (Chat)",
+          "OpenRouter",
+          "AWS Bedrock",
+          "Azure OpenAI",
+          "GCP Vertex",
+          "Cerebras",
+          "Groq",
+          "Kimi K2",
+          "Local models",
+          "Custom APIs"
+        ],
+        "subprocess_support": true,
+        "tool_capabilities": {
+          "file_operations": true,
+          "terminal_access": true,
+          "browser_automation": true,
+          "api_integration": true,
+          "database_access": true,
+          "external_tools": true,
+          "command_execution": true,
+          "shell_integration": true
+        },
+        "model_context_protocol": true,
+        "plan_then_act_mode": true,
+        "workspace_snapshots": true,
+        "ast_analysis": true,
+        "regex_search": true,
+        "token_tracking": true,
+        "cost_tracking": true,
+        "autonomous_capabilities": "Creates/edits files, executes commands, uses browser with permission at each step",
+        "shell_integration": "VSCode v1.93 integration for direct terminal command execution",
+        "context_management": "Analyzes file structure & source code ASTs, manages context to avoid overwhelming window"
+      },
+      "business": {
+        "pricing_model": "free",
+        "base_price": 0,
+        "enterprise_pricing": false,
+        "free_tier": true,
+        "pricing_details": {
+          "Open Source": "Free - Costs vary: minimal to $50+ daily, depends on usage intensity and model choice, VS Code extension, multiple provider support"
         }
       },
       "metrics": {}
     },
-    "created_at": "2025-06-23T15:40:46.826Z",
-    "updated_at": "2025-06-25T02:48:32.867Z"
+    "created_at": "2025-06-23T15:40:38.891Z",
+    "updated_at": "2025-06-30T03:49:42.694Z",
+    "launch_date": "2024-01-01"
+  },
+  {
+    "id": "7",
+    "slug": "aider",
+    "name": "Aider",
+    "category": "open-source-framework",
+    "status": "active",
+    "company_id": "31",
+    "info": {
+      "summary": "AI pair programming in your terminal",
+      "description": "AI pair programming in your terminal with git integration",
+      "website": "https://aider.chat",
+      "features": [],
+      "technical": {
+        "context_window": 200000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "PHP",
+          "Ruby",
+          "Go",
+          "Rust",
+          "HTML",
+          "CSS",
+          "SQL",
+          "Shell",
+          "Markdown",
+          "YAML",
+          "JSON",
+          "XML",
+          "Swift",
+          "Kotlin",
+          "Objective-C",
+          "R",
+          "MATLAB",
+          "Scala",
+          "Perl",
+          "Lua",
+          "Dart",
+          "Julia",
+          "Elixir"
+        ],
+        "llm_providers": [
+          "OpenAI (GPT-4o, o1, o3-mini)",
+          "Anthropic (Claude 3.5 Sonnet, Claude 3.7 Sonnet)",
+          "Google (Gemini)",
+          "DeepSeek (R1, Chat V3)",
+          "Groq",
+          "LM Studio",
+          "xAI",
+          "Azure OpenAI",
+          "Cohere",
+          "Ollama",
+          "OpenRouter",
+          "GitHub Copilot",
+          "Vertex AI",
+          "Amazon Bedrock",
+          "Local models",
+          "Generic OpenAI-compatible endpoints"
+        ],
+        "subprocess_support": true,
+        "tool_capabilities": {
+          "file_operations": true,
+          "terminal_access": true,
+          "browser_automation": false,
+          "api_integration": true,
+          "database_access": true,
+          "external_tools": true,
+          "git_integration": true,
+          "command_execution": true
+        },
+        "operating_modes": {
+          "code": "Default mode for writing, editing, and refactoring files directly",
+          "architect": "Planning mode for discussing structures, design patterns, and system architecture",
+          "ask": "Consultant mode for answering questions about code without making changes"
+        },
+        "voice_support": true,
+        "image_support": true,
+        "web_page_context": true,
+        "auto_commit": true,
+        "token_optimization": "Token-efficient context handling and prompt caching for cost savings",
+        "session_context": "Maintains context throughout session, handles version control automatically"
+      },
+      "business": {
+        "pricing_model": "free",
+        "base_price": 0,
+        "enterprise_pricing": false,
+        "free_tier": true,
+        "pricing_details": {
+          "Open Source": "Free - ~$0.007 per file processed, users pay LLM API costs only, Git integration, multiple LLM support"
+        }
+      },
+      "metrics": {
+        "swe_bench": {
+          "lite": 26.3,
+          "date": "2024",
+          "source": "SWE-bench leaderboard (historical data)",
+          "note": "Last major score from 2024"
+        },
+        "news_mentions": 1
+      }
+    },
+    "created_at": "2025-06-23T15:40:39.415Z",
+    "updated_at": "2025-06-25T02:48:36.969Z"
+  },
+  {
+    "id": "8",
+    "slug": "continue-dev",
+    "name": "Continue",
+    "category": "open-source-framework",
+    "status": "active",
+    "company_id": "32",
+    "info": {
+      "summary": "The open-source autopilot for your IDE",
+      "description": "Open source autopilot for your IDE with customizable LLM backends",
+      "website": "https://continue.dev",
+      "features": [],
+      "technical": {
+        "context_window": 200000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "PHP",
+          "Ruby",
+          "Go",
+          "Rust"
+        ],
+        "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"],
+        "subprocess_support": false,
+        "tool_support": false,
+        "ide_integration": "VS Code, JetBrains"
+      },
+      "business": {
+        "pricing_model": "free",
+        "base_price": 0,
+        "enterprise_pricing": false,
+        "free_tier": true,
+        "pricing_details": {
+          "Open Source": "Free - Users pay only LLM API costs, version 1.0 released February 2025, $3M seed funding, Continue Hub for sharing custom assistants"
+        }
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:39.907Z",
+    "updated_at": "2025-06-30T03:49:42.693Z",
+    "launch_date": "2023-01-01"
+  },
+  {
+    "id": "9",
+    "slug": "replit-agent",
+    "name": "Replit Agent",
+    "category": "ide-assistant",
+    "status": "active",
+    "company_id": "10",
+    "info": {
+      "summary": "Build software collaboratively with the power of AI",
+      "description": "AI agent integrated into Replit online IDE for autonomous coding",
+      "website": "https://replit.com",
+      "features": [],
+      "technical": {
+        "context_window": 128000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "PHP",
+          "Ruby",
+          "Go",
+          "Rust"
+        ],
+        "llm_providers": ["Custom AI models"]
+      },
+      "business": {
+        "pricing_model": "subscription",
+        "base_price": 20,
+        "enterprise_pricing": true,
+        "free_tier": true,
+        "pricing_details": {
+          "Core": "$20/month - Full agent access, $25 in monthly credits (~100 agent checkpoints), integrated development environment",
+          "Teams": "$35/month per user - $40 in monthly credits, centralized billing, team collaboration features"
+        }
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:40.434Z",
+    "updated_at": "2025-06-30T03:49:42.687Z",
+    "launch_date": "2024-09-26"
+  },
+  {
+    "id": "10",
+    "slug": "v0-vercel",
+    "name": "v0",
+    "category": "app-builder",
+    "status": "active",
+    "company_id": "8",
+    "info": {
+      "summary": "Generate UI with simple text prompts",
+      "description": "AI-powered UI generator creating React components from text prompts and images",
+      "website": "https://v0.dev",
+      "features": [],
+      "technical": {
+        "context_window": 100000,
+        "multi_file_support": true,
+        "language_support": ["JavaScript", "TypeScript", "React", "Tailwind CSS"],
+        "llm_providers": ["OpenAI GPT-4", "Custom models"],
+        "subprocess_support": false,
+        "tool_support": false,
+        "execution_environment": "Browser-based preview"
+      },
+      "business": {
+        "pricing_model": "freemium",
+        "base_price": 0,
+        "enterprise_pricing": false,
+        "free_tier": true,
+        "pricing_details": {
+          "Free": "$0/month - $5 in monthly credits, React component generation, Tailwind CSS support",
+          "Premium": "$20/month - $20 in monthly credits, backend generation capabilities, advanced features, priority access"
+        }
+      },
+      "metrics": {
+        "news_mentions": 1
+      }
+    },
+    "created_at": "2025-06-23T15:40:40.935Z",
+    "updated_at": "2025-06-30T03:49:42.689Z",
+    "launch_date": "2023-10-01"
   },
   {
     "id": "11",
@@ -1389,10 +853,7 @@
           "Rust",
           "Ruby"
         ],
-        "llm_providers": [
-          "Google Gemini 2.5 Pro",
-          "Google Gemini 2.0 Flash"
-        ],
+        "llm_providers": ["Google Gemini 2.5 Pro", "Google Gemini 2.0 Flash"],
         "subprocess_support": true,
         "tool_support": true,
         "execution_environment": "Google Cloud VMs",
@@ -1439,17 +900,8 @@
       "technical": {
         "context_window": 200000,
         "multi_file_support": true,
-        "language_support": [
-          "JavaScript",
-          "TypeScript",
-          "React",
-          "Node.js",
-          "Python"
-        ],
-        "llm_providers": [
-          "OpenAI GPT-4",
-          "Claude"
-        ],
+        "language_support": ["JavaScript", "TypeScript", "React", "Node.js", "Python"],
+        "llm_providers": ["OpenAI GPT-4", "Claude"],
         "subprocess_support": false,
         "tool_support": false,
         "execution_environment": "Browser-based IDE"
@@ -1475,88 +927,6 @@
     "created_at": "2025-06-23T15:40:41.946Z",
     "updated_at": "2025-06-30T03:49:42.690Z",
     "launch_date": "2025-01-13"
-  },
-  {
-    "id": "30",
-    "slug": "microsoft-intellicode",
-    "name": "Microsoft IntelliCode",
-    "category": "ide-assistant",
-    "status": "active",
-    "company_id": "53",
-    "info": {
-      "summary": "AI-assisted development",
-      "description": "AI-assisted development feature included in Visual Studio and VS Code that provides smarter IntelliSense by using ML to rank code suggestions by context and API usage patterns",
-      "website": "https://visualstudio.microsoft.com/services/intellicode/",
-      "features": [],
-      "technical": {
-        "context_window": 8192,
-        "multi_file_support": true,
-        "language_support": [
-          "C#",
-          "JavaScript",
-          "TypeScript",
-          "Python",
-          "Java",
-          "C++",
-          "SQL"
-        ],
-        "llm_providers": [
-          "Microsoft ML models"
-        ],
-        "subprocess_support": false,
-        "tool_support": false,
-        "ide_integration": "Visual Studio, VS Code",
-        "ml_based_ranking": true
-      },
-      "business": {
-        "pricing_model": "free"
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:51.565Z",
-    "updated_at": "2025-06-25T02:48:30.656Z"
-  },
-  {
-    "id": "24",
-    "slug": "openai-codex-cli",
-    "name": "OpenAI Codex CLI",
-    "category": "autonomous-agent",
-    "status": "active",
-    "company_id": "42",
-    "info": {
-      "summary": "Terminal-based AI coding agent",
-      "description": "Modern CLI tool powered by o3 reasoning model for autonomous software engineering",
-      "website": "https://openai.com/research/codex-cli",
-      "features": [],
-      "technical": {
-        "context_window": 128000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "Go",
-          "Rust",
-          "Ruby"
-        ],
-        "llm_providers": [
-          "OpenAI o3",
-          "OpenAI GPT-4"
-        ],
-        "subprocess_support": true,
-        "tool_support": true,
-        "cli_based": true
-      },
-      "business": {
-        "pricing_model": "open-source"
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:47.647Z",
-    "updated_at": "2025-06-25T02:48:32.312Z"
   },
   {
     "id": "13",
@@ -1585,13 +955,7 @@
           "Go",
           "Rust"
         ],
-        "llm_providers": [
-          "OpenAI",
-          "Anthropic",
-          "Google",
-          "Local models",
-          "Custom APIs"
-        ]
+        "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
       },
       "business": {
         "pricing_model": "free",
@@ -1606,349 +970,6 @@
     },
     "created_at": "2025-06-23T15:40:42.497Z",
     "updated_at": "2025-06-25T02:48:35.331Z"
-  },
-  {
-    "id": "16",
-    "slug": "qodo-gen",
-    "name": "Qodo Gen",
-    "category": "testing-tool",
-    "status": "active",
-    "company_id": "40",
-    "info": {
-      "summary": "Quality-first AI coding platform",
-      "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents",
-      "website": "https://qodo.ai",
-      "features": [],
-      "technical": {
-        "context_window": 150000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#"
-        ],
-        "llm_providers": [
-          "OpenAI GPT-4",
-          "Claude",
-          "Others"
-        ]
-      },
-      "business": {
-        "pricing_model": "freemium",
-        "base_price": 0,
-        "enterprise_pricing": false,
-        "free_tier": true,
-        "pricing_details": {
-          "Developer": "Free - Generous free tier, basic testing capabilities",
-          "Teams": "$19/month per user - Seat-based pricing (active contributors only), advanced testing features, team collaboration"
-        }
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:43.986Z",
-    "updated_at": "2025-06-30T03:49:42.696Z",
-    "launch_date": "2022-01-01"
-  },
-  {
-    "id": "9",
-    "slug": "replit-agent",
-    "name": "Replit Agent",
-    "category": "ide-assistant",
-    "status": "active",
-    "company_id": "10",
-    "info": {
-      "summary": "Build software collaboratively with the power of AI",
-      "description": "AI agent integrated into Replit online IDE for autonomous coding",
-      "website": "https://replit.com",
-      "features": [],
-      "technical": {
-        "context_window": 128000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "PHP",
-          "Ruby",
-          "Go",
-          "Rust"
-        ],
-        "llm_providers": [
-          "Custom AI models"
-        ]
-      },
-      "business": {
-        "pricing_model": "subscription",
-        "base_price": 20,
-        "enterprise_pricing": true,
-        "free_tier": true,
-        "pricing_details": {
-          "Core": "$20/month - Full agent access, $25 in monthly credits (~100 agent checkpoints), integrated development environment",
-          "Teams": "$35/month per user - $40 in monthly credits, centralized billing, team collaboration features"
-        }
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:40.434Z",
-    "updated_at": "2025-06-30T03:49:42.687Z",
-    "launch_date": "2024-09-26"
-  },
-  {
-    "id": "17",
-    "slug": "snyk-code",
-    "name": "Snyk Code",
-    "category": "code-review",
-    "status": "active",
-    "company_id": "41",
-    "info": {
-      "summary": "Developer security platform",
-      "description": "AI-driven static code analysis tool that continuously scans code for security vulnerabilities, bugs, and quality issues in real-time",
-      "website": "https://snyk.io/product/snyk-code/",
-      "features": [],
-      "technical": {
-        "context_window": 16384,
-        "multi_file_support": true,
-        "language_support": [
-          "JavaScript",
-          "TypeScript",
-          "Python",
-          "Java",
-          "C#",
-          "Go",
-          "Ruby",
-          "PHP",
-          "Kotlin",
-          "Swift",
-          "C++",
-          "Rust"
-        ],
-        "llm_providers": [
-          "Snyk AI Engine"
-        ],
-        "subprocess_support": false,
-        "tool_support": false,
-        "security_focus": true,
-        "real_time_scanning": true
-      },
-      "business": {
-        "pricing_model": "freemium",
-        "base_price": 0,
-        "enterprise_pricing": true,
-        "free_tier": true,
-        "pricing_details": {
-          "Free": "$0/month - 100 security scans monthly, Basic vulnerability detection",
-          "Team": "$25/month per contributing developer - Full security features"
-        }
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:44.487Z",
-    "updated_at": "2025-06-25T02:48:34.239Z"
-  },
-  {
-    "id": "29",
-    "slug": "sourcegraph-cody",
-    "name": "Sourcegraph Cody",
-    "category": "ide-assistant",
-    "status": "active",
-    "company_id": "51",
-    "info": {
-      "summary": "AI that knows your entire codebase",
-      "description": "AI coding assistant that indexes entire repositories with embeddings to answer questions, generate code with full project context, and explain existing code",
-      "website": "https://sourcegraph.com/cody",
-      "features": [],
-      "technical": {
-        "context_window": 200000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "Go",
-          "Rust",
-          "Ruby",
-          "PHP",
-          "Swift",
-          "Kotlin"
-        ],
-        "llm_providers": [
-          "Anthropic Claude",
-          "OpenAI GPT-4",
-          "Google Gemini"
-        ],
-        "subprocess_support": false,
-        "tool_support": false,
-        "codebase_indexing": true,
-        "embeddings_support": true
-      },
-      "business": {
-        "pricing_model": "freemium",
-        "base_price": 0,
-        "enterprise_pricing": true,
-        "free_tier": true,
-        "pricing_details": {
-          "Free": "$0/month - Limited usage, Basic features",
-          "Pro": "$12/month - Enhanced features, Higher limits",
-          "Enterprise": "Custom pricing - Self-hosted option, Advanced security"
-        }
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:50.689Z",
-    "updated_at": "2025-06-25T02:48:30.930Z"
-  },
-  {
-    "id": "15",
-    "slug": "sourcery",
-    "name": "Sourcery",
-    "category": "code-review",
-    "status": "active",
-    "company_id": "39",
-    "info": {
-      "summary": "AI code review and refactoring",
-      "description": "AI code review and refactoring tool that automatically suggests improvements for code readability, efficiency, and maintainability",
-      "website": "https://sourcery.ai",
-      "features": [],
-      "technical": {
-        "context_window": 32768,
-        "multi_file_support": true,
-        "language_support": [
-          "Python"
-        ],
-        "llm_providers": [
-          "Custom AI models"
-        ],
-        "subprocess_support": false,
-        "tool_support": false,
-        "refactoring_focus": true,
-        "ide_integration": "VS Code, PyCharm, Sublime Text, Vim"
-      },
-      "business": {
-        "pricing_model": "freemium",
-        "base_price": 0,
-        "enterprise_pricing": false,
-        "free_tier": true,
-        "pricing_details": {
-          "Free": "Open source projects",
-          "Pro": "$10/month per user - Individual developers, Advanced refactoring",
-          "Team": "$19/month per user - Team features, 20% annual discount available"
-        }
-      },
-      "metrics": {}
-    },
-    "created_at": "2025-06-23T15:40:43.511Z",
-    "updated_at": "2025-06-25T02:48:34.802Z"
-  },
-  {
-    "id": "21",
-    "slug": "tabnine",
-    "name": "Tabnine",
-    "category": "ide-assistant",
-    "status": "active",
-    "company_id": "44",
-    "info": {
-      "summary": "AI assistant for software developers",
-      "description": "AI code completion assistant emphasizing privacy with option for local models, supporting 30+ languages and most IDEs",
-      "website": "https://tabnine.com",
-      "features": [],
-      "technical": {
-        "context_window": 100000,
-        "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#",
-          "PHP",
-          "Ruby",
-          "Go",
-          "Rust",
-          "Swift",
-          "Kotlin"
-        ],
-        "llm_providers": [
-          "Custom models",
-          "Local processing",
-          "Cloud models"
-        ],
-        "subprocess_support": false,
-        "tool_support": false
-      },
-      "business": {
-        "pricing_model": "freemium",
-        "base_price": 0,
-        "enterprise_pricing": true,
-        "free_tier": true,
-        "pricing_details": {
-          "Basic": "$0/month - Basic code completion (ends April 2, 2025)",
-          "Pro": "$12/month - Advanced AI completion, privacy-focused, local processing option, enhanced features",
-          "Enterprise": "$39/month per user - Private deployment, custom AI models, fine-tuning on organizational codebases, enterprise support"
-        }
-      },
-      "metrics": {
-        "news_mentions": 6
-      }
-    },
-    "created_at": "2025-06-23T15:40:46.335Z",
-    "updated_at": "2025-06-25T02:48:33.135Z"
-  },
-  {
-    "id": "10",
-    "slug": "v0-vercel",
-    "name": "v0",
-    "category": "app-builder",
-    "status": "active",
-    "company_id": "8",
-    "info": {
-      "summary": "Generate UI with simple text prompts",
-      "description": "AI-powered UI generator creating React components from text prompts and images",
-      "website": "https://v0.dev",
-      "features": [],
-      "technical": {
-        "context_window": 100000,
-        "multi_file_support": true,
-        "language_support": [
-          "JavaScript",
-          "TypeScript",
-          "React",
-          "Tailwind CSS"
-        ],
-        "llm_providers": [
-          "OpenAI GPT-4",
-          "Custom models"
-        ],
-        "subprocess_support": false,
-        "tool_support": false,
-        "execution_environment": "Browser-based preview"
-      },
-      "business": {
-        "pricing_model": "freemium",
-        "base_price": 0,
-        "enterprise_pricing": false,
-        "free_tier": true,
-        "pricing_details": {
-          "Free": "$0/month - $5 in monthly credits, React component generation, Tailwind CSS support",
-          "Premium": "$20/month - $20 in monthly credits, backend generation capabilities, advanced features, priority access"
-        }
-      },
-      "metrics": {
-        "news_mentions": 1
-      }
-    },
-    "created_at": "2025-06-23T15:40:40.935Z",
-    "updated_at": "2025-06-30T03:49:42.689Z",
-    "launch_date": "2023-10-01"
   },
   {
     "id": "14",
@@ -2084,6 +1105,380 @@
     "launch_date": "2024-11-13"
   },
   {
+    "id": "15",
+    "slug": "sourcery",
+    "name": "Sourcery",
+    "category": "code-review",
+    "status": "active",
+    "company_id": "39",
+    "info": {
+      "summary": "AI code review and refactoring",
+      "description": "AI code review and refactoring tool that automatically suggests improvements for code readability, efficiency, and maintainability",
+      "website": "https://sourcery.ai",
+      "features": [],
+      "technical": {
+        "context_window": 32768,
+        "multi_file_support": true,
+        "language_support": ["Python"],
+        "llm_providers": ["Custom AI models"],
+        "subprocess_support": false,
+        "tool_support": false,
+        "refactoring_focus": true,
+        "ide_integration": "VS Code, PyCharm, Sublime Text, Vim"
+      },
+      "business": {
+        "pricing_model": "freemium",
+        "base_price": 0,
+        "enterprise_pricing": false,
+        "free_tier": true,
+        "pricing_details": {
+          "Free": "Open source projects",
+          "Pro": "$10/month per user - Individual developers, Advanced refactoring",
+          "Team": "$19/month per user - Team features, 20% annual discount available"
+        }
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:43.511Z",
+    "updated_at": "2025-06-25T02:48:34.802Z"
+  },
+  {
+    "id": "16",
+    "slug": "qodo-gen",
+    "name": "Qodo Gen",
+    "category": "testing-tool",
+    "status": "active",
+    "company_id": "40",
+    "info": {
+      "summary": "Quality-first AI coding platform",
+      "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents",
+      "website": "https://qodo.ai",
+      "features": [],
+      "technical": {
+        "context_window": 150000,
+        "multi_file_support": true,
+        "language_support": ["Python", "JavaScript", "TypeScript", "Java", "C++", "C#"],
+        "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
+      },
+      "business": {
+        "pricing_model": "freemium",
+        "base_price": 0,
+        "enterprise_pricing": false,
+        "free_tier": true,
+        "pricing_details": {
+          "Developer": "Free - Generous free tier, basic testing capabilities",
+          "Teams": "$19/month per user - Seat-based pricing (active contributors only), advanced testing features, team collaboration"
+        }
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:43.986Z",
+    "updated_at": "2025-06-30T03:49:42.696Z",
+    "launch_date": "2022-01-01"
+  },
+  {
+    "id": "17",
+    "slug": "snyk-code",
+    "name": "Snyk Code",
+    "category": "code-review",
+    "status": "active",
+    "company_id": "41",
+    "info": {
+      "summary": "Developer security platform",
+      "description": "AI-driven static code analysis tool that continuously scans code for security vulnerabilities, bugs, and quality issues in real-time",
+      "website": "https://snyk.io/product/snyk-code/",
+      "features": [],
+      "technical": {
+        "context_window": 16384,
+        "multi_file_support": true,
+        "language_support": [
+          "JavaScript",
+          "TypeScript",
+          "Python",
+          "Java",
+          "C#",
+          "Go",
+          "Ruby",
+          "PHP",
+          "Kotlin",
+          "Swift",
+          "C++",
+          "Rust"
+        ],
+        "llm_providers": ["Snyk AI Engine"],
+        "subprocess_support": false,
+        "tool_support": false,
+        "security_focus": true,
+        "real_time_scanning": true
+      },
+      "business": {
+        "pricing_model": "freemium",
+        "base_price": 0,
+        "enterprise_pricing": true,
+        "free_tier": true,
+        "pricing_details": {
+          "Free": "$0/month - 100 security scans monthly, Basic vulnerability detection",
+          "Team": "$25/month per contributing developer - Full security features"
+        }
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:44.487Z",
+    "updated_at": "2025-06-25T02:48:34.239Z"
+  },
+  {
+    "id": "18",
+    "slug": "chatgpt-canvas",
+    "name": "ChatGPT Canvas",
+    "category": "autonomous-agent",
+    "status": "active",
+    "company_id": "42",
+    "info": {
+      "summary": "Collaborative AI workspace",
+      "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions",
+      "website": "https://openai.com/chatgpt",
+      "features": [],
+      "technical": {
+        "context_window": 128000,
+        "multi_file_support": false,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "PHP",
+          "Ruby",
+          "Go",
+          "HTML",
+          "CSS",
+          "SQL",
+          "Shell",
+          "Markdown",
+          "YAML",
+          "JSON",
+          "XML"
+        ],
+        "llm_providers": ["OpenAI GPT-4o", "OpenAI o1"],
+        "subprocess_support": false,
+        "tool_capabilities": {
+          "file_operations": false,
+          "terminal_access": false,
+          "browser_automation": false,
+          "api_integration": false,
+          "database_access": false,
+          "external_tools": false,
+          "python_execution": true,
+          "network_requests": true
+        },
+        "canvas_features": {
+          "targeted_editing": "Highlight specific sections for AI assistance",
+          "inline_feedback": "AI provides inline suggestions like human collaborators",
+          "review_code": "Inline suggestions to improve code",
+          "add_logs": "Insert print statements for debugging",
+          "add_comments": "Add comments for code clarity",
+          "fix_bugs": "Detect and rewrite problematic code",
+          "port_languages": "Translate code to JavaScript, TypeScript, Python, Java, C++, or PHP"
+        },
+        "python_runtime": "Pyodide (Python compiled to WebAssembly) running in browser",
+        "auto_activation": "Opens automatically for content >10 lines or when beneficial",
+        "interface": "Separate workspace window beside chat for writing and coding projects",
+        "platform_support": {
+          "web": true,
+          "windows": true,
+          "mac": "Coming soon",
+          "mobile": "Coming soon (iOS, Android, mobile web)"
+        }
+      },
+      "business": {
+        "pricing_model": "freemium",
+        "base_price": 0,
+        "enterprise_pricing": false,
+        "free_tier": true,
+        "pricing_details": {
+          "Free": "$0/month - Limited access (gradual rollout), basic Canvas features",
+          "Plus": "$20/month - Full Canvas access, GPT-4o access, collaborative workspace",
+          "Pro": "$200/month - Unlimited o1 access, O1 Pro mode, GPT-4.1 access, advanced Canvas features"
+        }
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:44.960Z",
+    "updated_at": "2025-06-25T02:48:33.954Z"
+  },
+  {
+    "id": "19",
+    "slug": "claude-artifacts",
+    "name": "Claude Artifacts",
+    "category": "app-builder",
+    "status": "active",
+    "company_id": "4",
+    "info": {
+      "summary": "Interactive AI development companion",
+      "description": "Interactive component generation feature within Claude that creates and iterates on code, diagrams, and applications in a side panel",
+      "website": "https://claude.ai",
+      "features": [],
+      "technical": {
+        "context_window": 200000,
+        "multi_file_support": false,
+        "language_support": [
+          "JavaScript",
+          "TypeScript",
+          "React",
+          "HTML",
+          "CSS",
+          "Python",
+          "SVG",
+          "Mermaid"
+        ],
+        "llm_providers": ["Anthropic Claude"],
+        "subprocess_support": false,
+        "tool_support": false,
+        "execution_environment": "Browser sandbox",
+        "artifact_types": ["code", "diagrams", "interactive-components"]
+      },
+      "business": {
+        "pricing_model": "freemium"
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:45.342Z",
+    "updated_at": "2025-06-25T02:48:33.684Z"
+  },
+  {
+    "id": "20",
+    "slug": "diffblue-cover",
+    "name": "Diffblue Cover",
+    "category": "testing-tool",
+    "status": "active",
+    "company_id": "43",
+    "info": {
+      "summary": "Autonomous unit test generation for Java",
+      "description": "AI-powered unit test generation tool that autonomously writes entire suites of JUnit tests for Java code using reinforcement learning",
+      "website": "https://diffblue.com/products/cover",
+      "features": [],
+      "technical": {
+        "context_window": 50000,
+        "multi_file_support": true,
+        "language_support": ["Java", "Kotlin"],
+        "llm_providers": ["Reinforcement Learning", "No LLMs"],
+        "subprocess_support": false,
+        "tool_support": false,
+        "test_generation": true,
+        "junit_focused": true
+      },
+      "business": {
+        "pricing_model": "enterprise",
+        "base_price": 175,
+        "enterprise_pricing": true,
+        "free_tier": false,
+        "pricing_details": {
+          "Enterprise": "$2,100/developer/year ($175/month) - Java/Kotlin focus, Reinforcement learning (not LLMs), 250x faster than manual test writing, Custom pricing for scale"
+        }
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:45.833Z",
+    "updated_at": "2025-06-25T02:48:33.408Z"
+  },
+  {
+    "id": "21",
+    "slug": "tabnine",
+    "name": "Tabnine",
+    "category": "ide-assistant",
+    "status": "active",
+    "company_id": "44",
+    "info": {
+      "summary": "AI assistant for software developers",
+      "description": "AI code completion assistant emphasizing privacy with option for local models, supporting 30+ languages and most IDEs",
+      "website": "https://tabnine.com",
+      "features": [],
+      "technical": {
+        "context_window": 100000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "PHP",
+          "Ruby",
+          "Go",
+          "Rust",
+          "Swift",
+          "Kotlin"
+        ],
+        "llm_providers": ["Custom models", "Local processing", "Cloud models"],
+        "subprocess_support": false,
+        "tool_support": false
+      },
+      "business": {
+        "pricing_model": "freemium",
+        "base_price": 0,
+        "enterprise_pricing": true,
+        "free_tier": true,
+        "pricing_details": {
+          "Basic": "$0/month - Basic code completion (ends April 2, 2025)",
+          "Pro": "$12/month - Advanced AI completion, privacy-focused, local processing option, enhanced features",
+          "Enterprise": "$39/month per user - Private deployment, custom AI models, fine-tuning on organizational codebases, enterprise support"
+        }
+      },
+      "metrics": {
+        "news_mentions": 6
+      }
+    },
+    "created_at": "2025-06-23T15:40:46.335Z",
+    "updated_at": "2025-06-25T02:48:33.135Z"
+  },
+  {
+    "id": "22",
+    "slug": "jetbrains-ai",
+    "name": "JetBrains AI Assistant",
+    "category": "ide-assistant",
+    "status": "active",
+    "company_id": "45",
+    "info": {
+      "summary": "AI assistant for JetBrains IDEs",
+      "description": "AI assistant integrated into JetBrains IDEs providing code completions, chat assistance, and multi-file editing with Junie agent",
+      "website": "https://jetbrains.com/ai/",
+      "features": [],
+      "technical": {
+        "context_window": 120000,
+        "multi_file_support": true,
+        "language_support": [
+          "Java",
+          "Kotlin",
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "C#",
+          "PHP",
+          "Go",
+          "Rust",
+          "C++"
+        ],
+        "llm_providers": ["Multiple models", "Local models supported"]
+      },
+      "business": {
+        "pricing_model": "freemium",
+        "base_price": 0,
+        "enterprise_pricing": true,
+        "free_tier": true,
+        "pricing_details": {
+          "AI Free": "$0/month - Unlimited local model support, limited cloud features, basic AI assistance",
+          "AI Pro": "$10/month - Enhanced cloud features, better quotas, priority support",
+          "AI Ultimate": "$20/month - Highest quota levels, priority access to latest models, premium features, advanced support"
+        }
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:46.826Z",
+    "updated_at": "2025-06-25T02:48:32.867Z"
+  },
+  {
     "id": "23",
     "slug": "zed",
     "name": "Zed",
@@ -2111,12 +1506,7 @@
           "Swift",
           "Kotlin"
         ],
-        "llm_providers": [
-          "OpenAI",
-          "Anthropic",
-          "Google",
-          "Custom APIs"
-        ],
+        "llm_providers": ["OpenAI", "Anthropic", "Google", "Custom APIs"],
         "subprocess_support": false,
         "tool_support": false,
         "multiplayer_editing": true,
@@ -2137,5 +1527,572 @@
     "created_at": "2025-06-23T15:40:47.312Z",
     "updated_at": "2025-06-30T03:49:42.682Z",
     "launch_date": "2024-08-01"
+  },
+  {
+    "id": "24",
+    "slug": "openai-codex-cli",
+    "name": "OpenAI Codex CLI",
+    "category": "autonomous-agent",
+    "status": "active",
+    "company_id": "42",
+    "info": {
+      "summary": "Terminal-based AI coding agent",
+      "description": "Modern CLI tool powered by o3 reasoning model for autonomous software engineering",
+      "website": "https://openai.com/research/codex-cli",
+      "features": [],
+      "technical": {
+        "context_window": 128000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "Go",
+          "Rust",
+          "Ruby"
+        ],
+        "llm_providers": ["OpenAI o3", "OpenAI GPT-4"],
+        "subprocess_support": true,
+        "tool_support": true,
+        "cli_based": true
+      },
+      "business": {
+        "pricing_model": "open-source"
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:47.647Z",
+    "updated_at": "2025-06-25T02:48:32.312Z"
+  },
+  {
+    "id": "25",
+    "slug": "augment-code",
+    "name": "Augment Code",
+    "category": "ide-assistant",
+    "status": "active",
+    "company_id": "47",
+    "info": {
+      "summary": "AI Coding Assistant for Enterprises",
+      "description": "Enterprise-grade AI coding assistant with 200K token context and deep codebase understanding",
+      "website": "https://augmentcode.com",
+      "features": [],
+      "technical": {
+        "context_window": 200000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "Go",
+          "Rust",
+          "Ruby",
+          "PHP"
+        ],
+        "llm_providers": ["Anthropic Claude Sonnet 3.7", "OpenAI o1"],
+        "subprocess_support": true,
+        "tool_support": true,
+        "codebase_understanding": true,
+        "agent_architecture": true
+      },
+      "business": {
+        "pricing_model": "enterprise",
+        "enterprise_pricing": true,
+        "free_tier": false,
+        "pricing_details": {
+          "Enterprise": "Custom pricing - AI Coding Assistant for Enterprises with 200K token context and deep codebase understanding"
+        }
+      },
+      "metrics": {
+        "swe_bench": {
+          "verified": 65.4,
+          "date": "2025-03-16",
+          "source": "Official SWE-bench leaderboard & Augment Blog",
+          "model": "Claude Sonnet 3.7 (core driver) + OpenAI o1 (ensembler)",
+          "achievement": "#1 open-source agent on SWE-bench Verified at time of announcement"
+        }
+      }
+    },
+    "created_at": "2025-06-23T15:40:48.425Z",
+    "updated_at": "2025-06-30T03:49:42.695Z",
+    "launch_date": "2024-01-01"
+  },
+  {
+    "id": "26",
+    "slug": "amazon-q-developer",
+    "name": "Amazon Q Developer",
+    "category": "devops-assistant",
+    "status": "active",
+    "company_id": "48",
+    "info": {
+      "summary": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration...",
+      "description": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration with the entire AWS ecosystem. Features agent architecture for autonomous cloud development tasks, from code generation to infrastructure deployment. Particularly valuable for teams building on AWS, offering specialized knowledge of AWS services and best practices.",
+      "website": "https://aws.amazon.com/q/developer/",
+      "features": [],
+      "technical": {
+        "context_window": 100000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C#",
+          "Go",
+          "Rust",
+          "Ruby",
+          "PHP",
+          "Kotlin",
+          "Swift"
+        ],
+        "llm_providers": ["Amazon Bedrock", "Custom Amazon models"],
+        "subprocess_support": true,
+        "tool_support": true,
+        "aws_integration": true,
+        "agent_capabilities": true
+      },
+      "business": {
+        "pricing_model": "freemium",
+        "base_price": 0,
+        "enterprise_pricing": false,
+        "free_tier": true,
+        "pricing_details": {
+          "Free": "$0/month - 50 chat interactions monthly, 10 agent invocations monthly",
+          "Pro": "$19/month - Unlimited chat and agent invocations, 4,000 lines of code transformation monthly, additional transformation at $0.003/line"
+        }
+      },
+      "metrics": {
+        "swe_bench": {
+          "verified": 55,
+          "full": 29.99,
+          "date": "2025-01-31",
+          "source": "Official SWE-bench leaderboard",
+          "model": "Amazon Q Developer Agent (v20241202-dev)"
+        }
+      }
+    },
+    "created_at": "2025-06-23T15:40:48.929Z",
+    "updated_at": "2025-06-25T02:48:31.756Z"
+  },
+  {
+    "id": "27",
+    "slug": "gemini-code-assist",
+    "name": "Google Gemini Code Assist",
+    "category": "ide-assistant",
+    "status": "active",
+    "company_id": "5",
+    "info": {
+      "summary": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window...",
+      "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models.",
+      "website": "https://cloud.google.com/code-assist",
+      "features": [],
+      "technical": {
+        "context_window": 2000000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "PHP",
+          "Ruby",
+          "Go",
+          "Rust"
+        ],
+        "llm_providers": ["Google Gemini"],
+        "subprocess_support": false,
+        "tool_support": false
+      },
+      "business": {
+        "pricing_model": "freemium",
+        "base_price": 0,
+        "enterprise_pricing": true,
+        "free_tier": true,
+        "pricing_details": {
+          "Free": "$0/month - 180,000 code completions monthly (most generous), basic AI assistance, Google Cloud integration",
+          "Standard": "$19/month (monthly) / $45/month (annual) - Unlimited completions, advanced features, priority support",
+          "Enterprise": "$75/month per user - Everything in Standard, private repository customization, enterprise support, advanced security"
+        }
+      },
+      "metrics": {
+        "news_mentions": 1
+      }
+    },
+    "created_at": "2025-06-23T15:40:49.277Z",
+    "updated_at": "2025-06-30T03:49:42.692Z",
+    "launch_date": "2024-02-01"
+  },
+  {
+    "id": "28",
+    "slug": "coderabbit",
+    "name": "CodeRabbit",
+    "category": "code-review",
+    "status": "active",
+    "company_id": "50",
+    "info": {
+      "summary": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code under...",
+      "description": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code understanding beyond surface-level pattern matching. With 10M+ pull requests processed, CodeRabbit demonstrates the scalability and effectiveness of AI-powered code review, helping teams maintain code quality and accelerate development cycles.",
+      "website": "https://coderabbit.ai",
+      "features": [],
+      "technical": {
+        "context_window": 100000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "Go",
+          "Rust",
+          "Ruby",
+          "PHP",
+          "Swift",
+          "Kotlin"
+        ],
+        "llm_providers": ["OpenAI GPT-4", "Anthropic Claude"],
+        "subprocess_support": false,
+        "tool_support": false,
+        "ast_analysis": true,
+        "pr_integration": true
+      },
+      "business": {
+        "pricing_model": "subscription",
+        "base_price": 12,
+        "enterprise_pricing": false,
+        "free_tier": false,
+        "pricing_details": {
+          "Lite": "$12/month per PR creator - Seat-based pricing (PR creators only), Basic code review",
+          "Pro": "$20/month per PR creator - Advanced features, Bitbucket and Azure DevOps support, Processes millions of PRs monthly"
+        }
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:50.194Z",
+    "updated_at": "2025-06-25T02:48:31.202Z"
+  },
+  {
+    "id": "29",
+    "slug": "sourcegraph-cody",
+    "name": "Sourcegraph Cody",
+    "category": "ide-assistant",
+    "status": "active",
+    "company_id": "51",
+    "info": {
+      "summary": "AI that knows your entire codebase",
+      "description": "AI coding assistant that indexes entire repositories with embeddings to answer questions, generate code with full project context, and explain existing code",
+      "website": "https://sourcegraph.com/cody",
+      "features": [],
+      "technical": {
+        "context_window": 200000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C++",
+          "C#",
+          "Go",
+          "Rust",
+          "Ruby",
+          "PHP",
+          "Swift",
+          "Kotlin"
+        ],
+        "llm_providers": ["Anthropic Claude", "OpenAI GPT-4", "Google Gemini"],
+        "subprocess_support": false,
+        "tool_support": false,
+        "codebase_indexing": true,
+        "embeddings_support": true
+      },
+      "business": {
+        "pricing_model": "freemium",
+        "base_price": 0,
+        "enterprise_pricing": true,
+        "free_tier": true,
+        "pricing_details": {
+          "Free": "$0/month - Limited usage, Basic features",
+          "Pro": "$12/month - Enhanced features, Higher limits",
+          "Enterprise": "Custom pricing - Self-hosted option, Advanced security"
+        }
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:50.689Z",
+    "updated_at": "2025-06-25T02:48:30.930Z"
+  },
+  {
+    "id": "30",
+    "slug": "microsoft-intellicode",
+    "name": "Microsoft IntelliCode",
+    "category": "ide-assistant",
+    "status": "active",
+    "company_id": "53",
+    "info": {
+      "summary": "AI-assisted development",
+      "description": "AI-assisted development feature included in Visual Studio and VS Code that provides smarter IntelliSense by using ML to rank code suggestions by context and API usage patterns",
+      "website": "https://visualstudio.microsoft.com/services/intellicode/",
+      "features": [],
+      "technical": {
+        "context_window": 8192,
+        "multi_file_support": true,
+        "language_support": ["C#", "JavaScript", "TypeScript", "Python", "Java", "C++", "SQL"],
+        "llm_providers": ["Microsoft ML models"],
+        "subprocess_support": false,
+        "tool_support": false,
+        "ide_integration": "Visual Studio, VS Code",
+        "ml_based_ranking": true
+      },
+      "business": {
+        "pricing_model": "free"
+      },
+      "metrics": {}
+    },
+    "created_at": "2025-06-23T15:40:51.565Z",
+    "updated_at": "2025-06-25T02:48:30.656Z"
+  },
+  {
+    "id": "31",
+    "slug": "kiro",
+    "name": "Kiro",
+    "category": "proprietary-ide",
+    "status": "active",
+    "company_id": "5",
+    "info": {
+      "summary": "Specification-driven AI IDE that creates production-ready applications from detailed requirements",
+      "description": "Kiro is a next-generation AI IDE that transforms software development by implementing a specification-first methodology. Unlike 'vibe coding' tools that generate code from casual prompts, Kiro requires developers to think through requirements, generating comprehensive specification documents (requirements.md, design.md, tasks.md) before writing a single line of code. This approach bridges the gap between AI-assisted development and enterprise-grade software engineering, ensuring production-ready outputs from the start.",
+      "website": "https://kiro.dev",
+      "features": [
+        "Specification-driven development methodology",
+        "Automated generation of requirements.md, design.md, and tasks.md",
+        "Production-ready code generation from detailed specifications",
+        "Claude Sonnet 4.0 and 3.7 integration",
+        "VS Code fork with enhanced AI capabilities",
+        "MCP (Model Context Protocol) support",
+        "Multi-file project orchestration",
+        "Intelligent context management",
+        "Automated test generation from specifications",
+        "Built-in code review and quality assurance",
+        "Enterprise-grade security and compliance features",
+        "AWS service integration"
+      ],
+      "technical": {
+        "context_window": 200000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C#",
+          "Go",
+          "Ruby",
+          "Rust",
+          "PHP",
+          "Swift",
+          "Kotlin",
+          "C++",
+          "Scala"
+        ],
+        "llm_providers": ["Claude Sonnet 4.0", "Claude Sonnet 3.7", "AWS Bedrock"],
+        "ide_integration": "VS Code Fork (Standalone IDE)",
+        "ai_features": [
+          "Specification-first development",
+          "Automated documentation generation",
+          "Task decomposition and planning",
+          "Production-ready code generation",
+          "Context-aware code completion",
+          "Intelligent refactoring suggestions",
+          "Automated test generation",
+          "Code review and optimization",
+          "MCP protocol integration",
+          "Multi-agent collaboration"
+        ]
+      },
+      "business": {
+        "pricing_model": "subscription",
+        "base_price": 0,
+        "enterprise_pricing": true,
+        "free_tier": true,
+        "pricing_details": {
+          "Free": "50 interactions per month - Perfect for trying Kiro",
+          "Pro": "$19/month - Unlimited interactions for individual developers",
+          "Pro+": "$39/month - Enhanced features and priority support",
+          "Enterprise": "Custom pricing - Advanced security, compliance, and team features"
+        }
+      },
+      "metrics": {
+        "launch_date": "2025-07-14",
+        "preview_status": "Public Preview",
+        "competitive_positioning": "Premium alternative to Cursor and GitHub Copilot",
+        "target_audience": "Professional developers building production systems",
+        "news_mentions": 7,
+        "news_mention_rate": "2.43%"
+      },
+      "differentiators": [
+        "Specification-first approach eliminates 'vibe coding chaos'",
+        "Generates comprehensive documentation before code",
+        "Production-ready outputs from the start",
+        "Enterprise-grade quality assurance built-in",
+        "AWS infrastructure and security",
+        "Claude Sonnet 4.0 powered intelligence"
+      ]
+    },
+    "created_at": "2025-07-22T18:48:41.792Z",
+    "updated_at": "2025-07-22T20:15:00.000Z"
+  },
+  {
+    "id": "31",
+    "slug": "kiro",
+    "name": "Kiro",
+    "category": "proprietary-ide",
+    "status": "active",
+    "company_id": "5",
+    "info": {
+      "summary": "Specification-driven AI IDE that creates production-ready applications from detailed requirements",
+      "description": "Kiro is a next-generation AI IDE that transforms software development by implementing a specification-first methodology. Unlike 'vibe coding' tools that generate code from casual prompts, Kiro requires developers to think through requirements, generating comprehensive specification documents (requirements.md, design.md, tasks.md) before writing a single line of code. This approach bridges the gap between AI-assisted development and enterprise-grade software engineering, ensuring production-ready outputs from the start.",
+      "website": "https://kiro.dev",
+      "features": [
+        "Specification-driven development methodology",
+        "Automated generation of requirements.md, design.md, and tasks.md",
+        "Production-ready code generation from detailed specifications",
+        "Claude Sonnet 4.0 and 3.7 integration",
+        "VS Code fork with enhanced AI capabilities",
+        "MCP (Model Context Protocol) support",
+        "Multi-file project orchestration",
+        "Intelligent context management",
+        "Automated test generation from specifications",
+        "Built-in code review and quality assurance",
+        "Enterprise-grade security and compliance features",
+        "AWS service integration"
+      ],
+      "technical": {
+        "context_window": 200000,
+        "multi_file_support": true,
+        "language_support": [
+          "Python",
+          "JavaScript",
+          "TypeScript",
+          "Java",
+          "C#",
+          "Go",
+          "Ruby",
+          "Rust",
+          "PHP",
+          "Swift",
+          "Kotlin",
+          "C++",
+          "Scala",
+          "HTML",
+          "CSS",
+          "SQL",
+          "Shell",
+          "YAML",
+          "JSON",
+          "Markdown"
+        ],
+        "llm_providers": ["Claude Sonnet 4.0", "Claude Sonnet 3.7", "AWS Bedrock"],
+        "ide_integration": "Code OSS Fork (VS Code open-source foundation)",
+        "subprocess_support": {
+          "agent_hooks": true,
+          "file_event_triggers": true,
+          "autonomous_execution": true,
+          "local_code_execution": true,
+          "structured_loop_planning": true
+        },
+        "tool_support": {
+          "mcp_protocol": true,
+          "mcp_servers": true,
+          "external_api_integration": true,
+          "database_connections": true,
+          "lsp_integration": true,
+          "open_vsx_plugins": true
+        },
+        "mcp_features": {
+          "aws_docs_server": true,
+          "context7_server": true,
+          "json_configuration": true,
+          "workspace_isolation": true,
+          "auto_approve_controls": true,
+          "server_status_monitoring": true
+        },
+        "ai_features": [
+          "Specification-first development",
+          "Automated documentation generation (requirements.md, design.md, tasks.md)",
+          "Task decomposition and planning",
+          "Production-ready code generation",
+          "Context-aware code completion",
+          "Intelligent refactoring suggestions",
+          "Automated test generation from specs",
+          "Code review and optimization",
+          "MCP protocol integration",
+          "Multi-agent collaboration",
+          "Agent hooks for automated actions",
+          "UI design image interpretation",
+          "Architecture diagram understanding",
+          "Steering files for project configuration",
+          "Transparent local execution"
+        ],
+        "security_features": {
+          "local_execution": true,
+          "transparent_actions": true,
+          "no_cloud_data_sharing": "unless explicitly allowed",
+          "autopilot_mode": "default enabled",
+          "sensitive_data_protection": true
+        },
+        "authentication": {
+          "google_signin": true,
+          "github_auth": true,
+          "builder_id": true,
+          "aws_sso": true,
+          "no_aws_account_required": true
+        }
+      },
+      "business": {
+        "pricing_model": "subscription",
+        "base_price": 0,
+        "enterprise_pricing": true,
+        "free_tier": true,
+        "pricing_details": {
+          "Free": "50 interactions per month - Perfect for trying Kiro",
+          "Pro": "$19/month - Unlimited interactions for individual developers",
+          "Pro+": "$39/month - Enhanced features and priority support",
+          "Enterprise": "Custom pricing - Advanced security, compliance, and team features"
+        }
+      },
+      "metrics": {
+        "launch_date": "2025-07-14",
+        "preview_status": "Public Preview",
+        "competitive_positioning": "Premium alternative to Cursor and GitHub Copilot",
+        "target_audience": "Professional developers building production systems",
+        "news_mentions": 7,
+        "news_mention_rate": "2.43%",
+        "free_tier_interactions": 50,
+        "pro_tier_interactions": 1000,
+        "pro_plus_interactions": 3000,
+        "additional_interaction_cost": 0.04,
+        "mcp_servers_supported": true,
+        "authentication_methods": 4
+      },
+      "differentiators": [
+        "Specification-first approach eliminates 'vibe coding chaos'",
+        "Generates comprehensive documentation before code",
+        "Production-ready outputs from the start",
+        "Enterprise-grade quality assurance built-in",
+        "AWS infrastructure and security",
+        "Claude Sonnet 4.0 powered intelligence"
+      ]
+    },
+    "created_at": "2025-07-22T18:48:41.792Z",
+    "updated_at": "2025-07-22T22:00:00.000Z"
   }
 ]
