@@ -5,7 +5,7 @@ subtitle: "Razumijevanje kako evaluiramo i rangiramo AI alate za kodiranje"
 
 ## Pregled Algoritma
 
-### Algoritam v6.0: Code-Ready Modifikatori
+### Algoritam v7.0: Code-Ready Modifikatori
 
 Naš algoritam rangiranja evaluira AI alate za kodiranje kroz sveobuhvatan okvir koji uzima u obzir multiple faktore i primjenjuje dinamičke modifikatore kako bi osigurao točna, vremenski osjetljiva rangiranja.
 

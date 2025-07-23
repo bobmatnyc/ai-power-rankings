@@ -5,12 +5,14 @@ subtitle: "Comprendre comment nous évaluons et classons les outils de codage IA
 
 ## Aperçu de l'Algorithme
 
-### Algorithme v6.0 : Modificateurs Code-Ready
+### Algorithme v7.0 : Intelligence Dynamique des Actualités & Capacités d'Outils
 
-Notre algorithme de classement évalue les outils de codage IA à travers un framework complet qui considère de multiples facteurs et applique des modificateurs dynamiques pour assurer des classements précis et sensibles au temps.
+Notre algorithme de classement évalue les outils de codage IA à travers un framework complet qui considère de multiples facteurs, applique des modificateurs dynamiques, intègre l'analyse d'actualités en temps réel pour le scoring de vélocité et améliore l'évaluation des capacités de gestion des sous-processus et des outils.
 
 #### Caractéristiques Clés
 
+- Scoring de vélocité dynamique à partir de l'analyse d'actualités en temps réel
+- Évaluation améliorée des capacités de sous-processus et d'outils
 - Décroissance de l'innovation dans le temps (demi-vie de 6 mois)
 - Pénalités et bonus de risque de plateforme
 - Ajustements de qualité des revenus par modèle d'affaires

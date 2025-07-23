@@ -5,12 +5,14 @@ subtitle: "Understanding how we evaluate and rank AI coding tools"
 
 ## Algorithm Overview
 
-### Algorithm v6.0: Code-Ready Modifiers
+### Algorithm v7.0: Dynamic News Intelligence & Tool Capabilities
 
-Our ranking algorithm evaluates AI coding tools through a comprehensive framework that considers multiple factors and applies dynamic modifiers to ensure accurate, time-sensitive rankings.
+Our ranking algorithm evaluates AI coding tools through a comprehensive framework that considers multiple factors, applies dynamic modifiers, incorporates real-time news analysis for velocity scoring, and enhances assessment of subprocess and tool management capabilities.
 
 #### Key Features
 
+- Dynamic velocity scoring from real-time news analysis
+- Enhanced subprocess and tool capability assessment
 - Innovation decay over time (6-month half-life)
 - Platform risk penalties and bonuses
 - Revenue quality adjustments by business model
@@ -26,7 +28,7 @@ Our evaluation framework considers both primary and secondary factors to provide
 
 #### 🤖 Agentic Capability (30%)
 
-Multi-file editing, task planning, autonomous operation
+Multi-file editing, task planning, autonomous operation, subprocess management, tool ecosystem support
 
 #### 💡 Innovation (15%)
 
@@ -34,7 +36,7 @@ Time-decayed innovation score, breakthrough features
 
 #### ⚡ Technical Performance (12.5%)
 
-SWE-bench scores, multi-file support, context window
+SWE-bench scores with enhanced weighting, multi-file support, context window, subprocess performance
 
 #### 👥 Developer Adoption (12.5%)
 
@@ -52,7 +54,7 @@ Market perception, platform risks, competitive position
 
 #### 🚀 Development Velocity (5%)
 
-Release frequency, contributor count, update cadence
+Dynamic momentum from news sentiment, feature releases, community response (30-day window)
 
 #### 🛡️ Platform Resilience (5%)
 
@@ -179,6 +181,84 @@ Market traction scores are adjusted based on business model quality.
 | Consumer Premium                | 50%        |
 | Freemium                        | 30%        |
 | Open Source/Donations           | 20%        |
+
+## Dynamic News Intelligence
+
+### News-Based Velocity Scoring
+
+Development velocity is now dynamically calculated using sophisticated news analysis that tracks momentum across multiple dimensions.
+
+#### Momentum Indicators
+- Product releases and feature announcements
+- Partnership and integration news  
+- Technical breakthroughs and benchmarks
+- Community adoption and success stories
+- Industry recognition and awards
+
+#### Sentiment Scoring
+- Positive momentum: +3 to +5 boost
+- Strong progress: +1 to +3 boost
+- Neutral/stable: 0 adjustment
+- Challenges/setbacks: -1 to -3 penalty
+- Critical issues: -3 to -5 penalty
+
+### 30-Day Rolling Window
+
+Velocity scores use a 30-day rolling window with exponential decay, giving more weight to recent developments while maintaining trend awareness.
+
+```
+velocityScore = Σ(sentimentScore * e^(-λ * daysOld)) / 30
+```
+
+## Subprocess & Tool Support
+
+### Enhanced Agentic Capabilities
+
+Agentic capability scoring now includes sophisticated evaluation of subprocess orchestration and tool utilization.
+
+#### Subprocess Management (40%)
+- Multi-agent orchestration capabilities
+- Task delegation sophistication
+- Parallel execution support
+- Context passing and integration
+- Error handling and recovery
+
+#### Tool Ecosystem (60%)
+- Native tool support depth
+- Third-party tool integration
+- Custom tool creation APIs
+- Tool discovery and selection
+- Protocol support (MCP, etc.)
+
+### Scoring Rubric
+
+| Capability Level | Score Adjustment |
+|-----------------|------------------|
+| Advanced multi-tool orchestration | +5.0 |
+| Sophisticated subprocess management | +4.0 |
+| Rich native tool ecosystem | +3.0 |
+| Basic tool support | +1.0 |
+| Limited/no tool capabilities | 0.0 |
+
+## Enhanced Technical Performance
+
+### SWE-bench Score Interpretation
+
+Technical performance scoring uses nuanced interpretation of SWE-bench results with logarithmic scaling:
+
+```
+technicalScore = log(1 + sweBenchScore) * performanceMultiplier
+```
+
+### Performance Multipliers
+
+| Performance Level | Multiplier |
+|------------------|------------|
+| Exceptional (>90th percentile) | 1.5x |
+| Strong (75-90th percentile) | 1.3x |
+| Good (50-75th percentile) | 1.1x |
+| Average (25-50th percentile) | 1.0x |
+| Below average (<25th percentile) | 0.8x |
 
 ## Data Sources & Validation
 

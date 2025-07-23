@@ -8,23 +8,26 @@ export default function MethodologyPage(): React.JSX.Element {
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Methodology</h1>
         <p className="text-muted-foreground text-lg">
-          How we calculate the AI Power Ranking using Algorithm v6.0
+          How we calculate the AI Power Ranking using Algorithm v7.0
         </p>
       </div>
 
       {/* Algorithm Overview */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Algorithm v6.0: Code-Ready Modifiers</CardTitle>
+          <CardTitle>Algorithm v7.0: Dynamic News Intelligence & Tool Capabilities</CardTitle>
           <CardDescription>
-            Our ranking system combines 8 key factors with sophisticated modifiers to provide the
-            most accurate and fair rankings of AI coding tools
+            Our ranking system combines 8 key factors with sophisticated modifiers, dynamic
+            news-based velocity scoring, and enhanced tool capability assessment to provide the most
+            accurate and fair rankings of AI coding tools
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
             <h3 className="font-semibold mb-2">Key Features</h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+              <li>Dynamic velocity scoring from real-time news analysis</li>
+              <li>Enhanced subprocess and tool capability assessment</li>
               <li>Innovation decay with 6-month half-life</li>
               <li>Platform risk penalties and bonuses</li>
               <li>Revenue quality adjustments by business model</li>
@@ -57,8 +60,8 @@ export default function MethodologyPage(): React.JSX.Element {
                       <Badge>30%</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Autonomous coding abilities, planning depth, multi-file handling, and context
-                      utilization
+                      Autonomous coding abilities, planning depth, multi-file handling, context
+                      utilization, subprocess management, and tool capability support
                     </p>
                   </div>
                 </div>
@@ -82,8 +85,8 @@ export default function MethodologyPage(): React.JSX.Element {
                       <Badge>12.5%</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      SWE-bench scores (40%), multi-file capability (30%), context window (20%),
-                      language support (10%)
+                      SWE-bench scores with enhanced weighting, multi-file capability (30%), context
+                      window (20%), language support (10%), and subprocess performance metrics
                     </p>
                   </div>
                 </div>
@@ -140,7 +143,8 @@ export default function MethodologyPage(): React.JSX.Element {
                       <Badge variant="secondary">5%</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Release frequency and contributor activity (minimum threshold)
+                      Dynamic momentum based on news sentiment analysis, feature releases, and
+                      community response with 30-day rolling window
                     </p>
                   </div>
                 </div>
@@ -238,6 +242,177 @@ export default function MethodologyPage(): React.JSX.Element {
               <div className="flex justify-between text-sm">
                 <span>Open Source/Donations</span>
                 <span className="font-mono">20%</span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Dynamic News Intelligence */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>🚀 Dynamic News Intelligence</CardTitle>
+          <CardDescription>
+            Real-time velocity and momentum scoring based on news analysis
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <h3 className="font-semibold mb-2">News-Based Velocity Scoring</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Development velocity is now dynamically calculated using a sophisticated news analysis
+              system that tracks momentum across multiple dimensions.
+            </p>
+            <div className="space-y-3">
+              <div>
+                <h4 className="text-sm font-medium mb-1">Momentum Indicators</h4>
+                <ul className="text-xs space-y-1 text-muted-foreground">
+                  <li>• Product releases and feature announcements</li>
+                  <li>• Partnership and integration news</li>
+                  <li>• Technical breakthroughs and benchmarks</li>
+                  <li>• Community adoption and success stories</li>
+                  <li>• Industry recognition and awards</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium mb-1">Sentiment Analysis</h4>
+                <ul className="text-xs space-y-1 text-muted-foreground">
+                  <li>• Positive momentum: +3 to +5 boost</li>
+                  <li>• Strong progress: +1 to +3 boost</li>
+                  <li>• Neutral/stable: 0 adjustment</li>
+                  <li>• Challenges/setbacks: -1 to -3 penalty</li>
+                  <li>• Critical issues: -3 to -5 penalty</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">30-Day Rolling Window</h3>
+            <p className="text-sm text-muted-foreground">
+              Velocity scores use a 30-day rolling window with exponential decay, giving more weight
+              to recent developments while maintaining trend awareness.
+            </p>
+            <div className="bg-muted p-4 rounded-md mt-2">
+              <code className="text-xs">
+                velocityScore = Σ(sentimentScore * e^(-λ * daysOld)) / 30
+              </code>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Subprocess & Tool Support */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>🔧 Subprocess & Tool Support Scoring</CardTitle>
+          <CardDescription>
+            Enhanced evaluation of agentic capabilities through subprocess and tool management
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <h3 className="font-semibold mb-2">Tool Capability Assessment</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Agentic capability scoring now includes sophisticated evaluation of subprocess
+              orchestration and tool utilization.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h4 className="text-sm font-medium mb-2">Subprocess Management (40%)</h4>
+                <ul className="text-xs space-y-1">
+                  <li>• Multi-agent orchestration</li>
+                  <li>• Task delegation sophistication</li>
+                  <li>• Parallel execution capabilities</li>
+                  <li>• Context passing and integration</li>
+                  <li>• Error handling and recovery</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium mb-2">Tool Ecosystem (60%)</h4>
+                <ul className="text-xs space-y-1">
+                  <li>• Native tool support depth</li>
+                  <li>• Third-party tool integration</li>
+                  <li>• Custom tool creation APIs</li>
+                  <li>• Tool discovery and selection</li>
+                  <li>• Protocol support (MCP, etc.)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">Scoring Rubric</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Advanced multi-tool orchestration</span>
+                <span className="font-mono">+5.0</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Sophisticated subprocess management</span>
+                <span className="font-mono">+4.0</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Rich native tool ecosystem</span>
+                <span className="font-mono">+3.0</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Basic tool support</span>
+                <span className="font-mono">+1.0</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Limited/no tool capabilities</span>
+                <span className="font-mono">0.0</span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Enhanced Technical Performance */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>⚡ Enhanced Technical Performance</CardTitle>
+          <CardDescription>
+            Updated SWE-bench interpretation and performance metrics
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <h3 className="font-semibold mb-2">SWE-bench Score Interpretation</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Technical performance scoring now uses a more nuanced interpretation of SWE-bench
+              results with logarithmic scaling.
+            </p>
+            <div className="bg-muted p-4 rounded-md">
+              <code className="text-xs">
+                technicalScore = log(1 + sweBenchScore) * performanceMultiplier
+              </code>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">Performance Multipliers</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Exceptional performance (&gt;90th percentile)</span>
+                <span className="font-mono">1.5x</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Strong performance (75-90th percentile)</span>
+                <span className="font-mono">1.3x</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Good performance (50-75th percentile)</span>
+                <span className="font-mono">1.1x</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Average performance (25-50th percentile)</span>
+                <span className="font-mono">1.0x</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Below average (&lt;25th percentile)</span>
+                <span className="font-mono">0.8x</span>
               </div>
             </div>
           </div>

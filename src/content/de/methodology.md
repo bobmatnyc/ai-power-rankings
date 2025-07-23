@@ -5,12 +5,14 @@ subtitle: "Verstehen Sie, wie wir KI-Coding-Tools bewerten und einstufen"
 
 ## Algorithmus-Übersicht
 
-### Algorithmus v6.0: Code-Ready-Modifikatoren
+### Algorithmus v7.0: Dynamische Nachrichten-Intelligenz & Tool-Fähigkeiten
 
-Unser Ranking-Algorithmus evaluiert KI-Coding-Tools durch ein umfassendes Framework, das mehrere Faktoren berücksichtigt und dynamische Modifikatoren anwendet, um genaue, zeitkritische Rankings zu gewährleisten.
+Unser Ranking-Algorithmus evaluiert KI-Coding-Tools durch ein umfassendes Framework, das mehrere Faktoren berücksichtigt, dynamische Modifikatoren anwendet, Echtzeit-Nachrichtenanalyse für Velocity-Scoring integriert und die Bewertung von Unterprozess- und Tool-Management-Fähigkeiten verbessert.
 
 #### Hauptmerkmale
 
+- Dynamisches Velocity-Scoring aus Echtzeit-Nachrichtenanalyse
+- Verbesserte Unterprozess- und Tool-Fähigkeitsbewertung
 - Innovation-Zerfall über Zeit (6-Monate-Halbwertszeit)
 - Plattform-Risiko-Strafen und Boni
 - Umsatzqualitäts-Anpassungen nach Geschäftsmodell

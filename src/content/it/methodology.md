@@ -5,7 +5,7 @@ subtitle: "Comprendere come valutiamo e classifichiamo gli strumenti di codifica
 
 ## Panoramica dell'Algoritmo
 
-### Algoritmo v6.0: Modificatori Code-Ready
+### Algoritmo v7.0: Modificatori Code-Ready
 
 Il nostro algoritmo di ranking valuta gli strumenti di codifica AI attraverso un framework completo che considera molteplici fattori e applica modificatori dinamici per garantire ranking accurati e sensibili al tempo.
 
