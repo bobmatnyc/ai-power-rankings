@@ -180,7 +180,7 @@ export class RankingEngineV7 {
     };
 
     if (metrics.category && categoryScores[metrics.category] !== undefined) {
-      score = categoryScores[metrics.category];
+      score = categoryScores[metrics.category] || 20;
     }
 
     // Agentic feature detection (look for true autonomous capabilities)
@@ -422,7 +422,7 @@ export class RankingEngineV7 {
     }
 
     // Ensure Claude Code's technical excellence is recognized
-    if (metrics.name?.toLowerCase().includes("claude code") && sweBench?.lite >= 47) {
+    if (metrics.name?.toLowerCase().includes("claude code") && sweBench?.lite && sweBench.lite >= 47) {
       score = Math.max(score, 92); // Top technical performance
       score = Math.min(score, 95); // But keep reasonable
     }
@@ -626,7 +626,7 @@ export class RankingEngineV7 {
     newsArticles?: NewsArticle[]
   ): ToolScoreV7 {
     // Calculate news impact if articles provided
-    let newsImpact = null;
+    let newsImpact: ReturnType<typeof calculateToolNewsImpact> | undefined;
     if (newsArticles && metrics.tool_id) {
       newsImpact = calculateToolNewsImpact(metrics.tool_id, newsArticles, currentDate);
     }
@@ -699,7 +699,7 @@ export class RankingEngineV7 {
 
   applyEnhancedNewsImpact(
     baseScores: Record<string, number>,
-    newsImpact: ReturnType<typeof calculateToolNewsImpact>
+    _newsImpact: ReturnType<typeof calculateToolNewsImpact>
   ): Record<string, number> {
     // Legacy compatibility - just return scores as-is since news impact is already applied
     return baseScores;

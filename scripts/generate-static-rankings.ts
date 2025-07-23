@@ -44,7 +44,7 @@ async function generateStaticRankings() {
     const toolsRepo = getToolsRepo();
 
     // Force rebuild indices to ensure complete data
-    await toolsRepo.forceRebuildIndices();
+    // await toolsRepo.forceRebuildIndices(); // Method doesn't exist
 
     // Get tools using the repository (now fixed to return complete data)
     const allTools = await toolsRepo.getAll();

@@ -444,7 +444,7 @@ export function RankingsViewer() {
                                       <p className="text-xs text-muted-foreground">
                                         Previous rank: #
                                         {entry.movement.previous_position ||
-                                          entry.position + entry.movement.change}
+                                          (entry.position ?? 0) + entry.movement.change}
                                       </p>
                                     </>
                                   )}
@@ -457,7 +457,7 @@ export function RankingsViewer() {
                                       <p className="text-xs text-muted-foreground">
                                         Previous rank: #
                                         {entry.movement.previous_position ||
-                                          entry.position - entry.movement.change}
+                                          (entry.position ?? 0) - entry.movement.change}
                                       </p>
                                     </>
                                   )}

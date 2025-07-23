@@ -257,7 +257,11 @@
             "JSON",
             "XML"
           ],
-          "llm_providers": ["OpenAI GPT-4", "OpenAI GPT-4o", "Proprietary Cognition models"],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "OpenAI GPT-4o",
+            "Proprietary Cognition models"
+          ],
           "subprocess_support": true,
           "tool_capabilities": {
             "file_operations": true,
@@ -384,21 +388,38 @@
             "Ada",
             "Assembly"
           ],
-          "llm_providers": ["Claude Opus 4", "Claude Sonnet 4"],
+          "llm_providers": [
+            "Claude Opus 4",
+            "Claude Sonnet 4"
+          ],
           "model_capabilities": {
             "opus_4": {
               "swe_bench_score": 72.5,
               "terminal_bench_score": 43.2,
-              "thinking_modes": ["think", "think hard", "think harder", "ultrathink"],
+              "thinking_modes": [
+                "think",
+                "think hard",
+                "think harder",
+                "ultrathink"
+              ],
               "continuous_work_hours": 7
             },
             "sonnet_4": {
               "swe_bench_score": 72.7,
-              "thinking_modes": ["think", "think hard", "think harder", "ultrathink"]
+              "thinking_modes": [
+                "think",
+                "think hard",
+                "think harder",
+                "ultrathink"
+              ]
             }
           },
           "integrations": {
-            "version_control": ["Git", "GitHub", "GitLab"],
+            "version_control": [
+              "Git",
+              "GitHub",
+              "GitLab"
+            ],
             "external_tools": "MCP (Model Context Protocol)",
             "file_systems": "Full filesystem access with permissions",
             "command_line": "Complete subprocess execution support",
@@ -466,7 +487,9 @@
             "Python",
             "Node.js"
           ],
-          "llm_providers": ["Anthropic Claude"],
+          "llm_providers": [
+            "Anthropic Claude"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "execution_environment": "In-browser WebContainer"
@@ -725,7 +748,13 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"],
+          "llm_providers": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Local models",
+            "Custom APIs"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "ide_integration": "VS Code, JetBrains"
@@ -772,7 +801,9 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": ["Custom AI models"]
+          "llm_providers": [
+            "Custom AI models"
+          ]
         },
         "business": {
           "pricing_model": "subscription",
@@ -805,8 +836,16 @@
         "technical": {
           "context_window": 100000,
           "multi_file_support": true,
-          "language_support": ["JavaScript", "TypeScript", "React", "Tailwind CSS"],
-          "llm_providers": ["OpenAI GPT-4", "Custom models"],
+          "language_support": [
+            "JavaScript",
+            "TypeScript",
+            "React",
+            "Tailwind CSS"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Custom models"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "execution_environment": "Browser-based preview"
@@ -854,7 +893,10 @@
             "Rust",
             "Ruby"
           ],
-          "llm_providers": ["Google Gemini 2.5 Pro", "Google Gemini 2.0 Flash"],
+          "llm_providers": [
+            "Google Gemini 2.5 Pro",
+            "Google Gemini 2.0 Flash"
+          ],
           "subprocess_support": true,
           "tool_support": true,
           "execution_environment": "Google Cloud VMs",
@@ -901,8 +943,17 @@
         "technical": {
           "context_window": 200000,
           "multi_file_support": true,
-          "language_support": ["JavaScript", "TypeScript", "React", "Node.js", "Python"],
-          "llm_providers": ["OpenAI GPT-4", "Claude"],
+          "language_support": [
+            "JavaScript",
+            "TypeScript",
+            "React",
+            "Node.js",
+            "Python"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Claude"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "execution_environment": "Browser-based IDE"
@@ -956,7 +1007,13 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
+          "llm_providers": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Local models",
+            "Custom APIs"
+          ]
         },
         "business": {
           "pricing_model": "free",
@@ -1120,8 +1177,12 @@
         "technical": {
           "context_window": 32768,
           "multi_file_support": true,
-          "language_support": ["Python"],
-          "llm_providers": ["Custom AI models"],
+          "language_support": [
+            "Python"
+          ],
+          "llm_providers": [
+            "Custom AI models"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "refactoring_focus": true,
@@ -1158,8 +1219,19 @@
         "technical": {
           "context_window": 150000,
           "multi_file_support": true,
-          "language_support": ["Python", "JavaScript", "TypeScript", "Java", "C++", "C#"],
-          "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Claude",
+            "Others"
+          ]
         },
         "business": {
           "pricing_model": "freemium",
@@ -1206,7 +1278,9 @@
             "C++",
             "Rust"
           ],
-          "llm_providers": ["Snyk AI Engine"],
+          "llm_providers": [
+            "Snyk AI Engine"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "security_focus": true,
@@ -1261,7 +1335,10 @@
             "JSON",
             "XML"
           ],
-          "llm_providers": ["OpenAI GPT-4o", "OpenAI o1"],
+          "llm_providers": [
+            "OpenAI GPT-4o",
+            "OpenAI o1"
+          ],
           "subprocess_support": false,
           "tool_capabilities": {
             "file_operations": false,
@@ -1333,11 +1410,17 @@
             "SVG",
             "Mermaid"
           ],
-          "llm_providers": ["Anthropic Claude"],
+          "llm_providers": [
+            "Anthropic Claude"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "execution_environment": "Browser sandbox",
-          "artifact_types": ["code", "diagrams", "interactive-components"]
+          "artifact_types": [
+            "code",
+            "diagrams",
+            "interactive-components"
+          ]
         },
         "business": {
           "pricing_model": "freemium"
@@ -1362,8 +1445,14 @@
         "technical": {
           "context_window": 50000,
           "multi_file_support": true,
-          "language_support": ["Java", "Kotlin"],
-          "llm_providers": ["Reinforcement Learning", "No LLMs"],
+          "language_support": [
+            "Java",
+            "Kotlin"
+          ],
+          "llm_providers": [
+            "Reinforcement Learning",
+            "No LLMs"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "test_generation": true,
@@ -1412,7 +1501,11 @@
             "Swift",
             "Kotlin"
           ],
-          "llm_providers": ["Custom models", "Local processing", "Cloud models"],
+          "llm_providers": [
+            "Custom models",
+            "Local processing",
+            "Cloud models"
+          ],
           "subprocess_support": false,
           "tool_support": false
         },
@@ -1461,7 +1554,10 @@
             "Rust",
             "C++"
           ],
-          "llm_providers": ["Multiple models", "Local models supported"]
+          "llm_providers": [
+            "Multiple models",
+            "Local models supported"
+          ]
         },
         "business": {
           "pricing_model": "freemium",
@@ -1507,7 +1603,12 @@
             "Swift",
             "Kotlin"
           ],
-          "llm_providers": ["OpenAI", "Anthropic", "Google", "Custom APIs"],
+          "llm_providers": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Custom APIs"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "multiplayer_editing": true,
@@ -1555,7 +1656,10 @@
             "Rust",
             "Ruby"
           ],
-          "llm_providers": ["OpenAI o3", "OpenAI GPT-4"],
+          "llm_providers": [
+            "OpenAI o3",
+            "OpenAI GPT-4"
+          ],
           "subprocess_support": true,
           "tool_support": true,
           "cli_based": true
@@ -1595,7 +1699,10 @@
             "Ruby",
             "PHP"
           ],
-          "llm_providers": ["Anthropic Claude Sonnet 3.7", "OpenAI o1"],
+          "llm_providers": [
+            "Anthropic Claude Sonnet 3.7",
+            "OpenAI o1"
+          ],
           "subprocess_support": true,
           "tool_support": true,
           "codebase_understanding": true,
@@ -1651,7 +1758,10 @@
             "Kotlin",
             "Swift"
           ],
-          "llm_providers": ["Amazon Bedrock", "Custom Amazon models"],
+          "llm_providers": [
+            "Amazon Bedrock",
+            "Custom Amazon models"
+          ],
           "subprocess_support": true,
           "tool_support": true,
           "aws_integration": true,
@@ -1707,7 +1817,9 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": ["Google Gemini"],
+          "llm_providers": [
+            "Google Gemini"
+          ],
           "subprocess_support": false,
           "tool_support": false
         },
@@ -1759,7 +1871,10 @@
             "Swift",
             "Kotlin"
           ],
-          "llm_providers": ["OpenAI GPT-4", "Anthropic Claude"],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Anthropic Claude"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "ast_analysis": true,
@@ -1809,7 +1924,11 @@
             "Swift",
             "Kotlin"
           ],
-          "llm_providers": ["Anthropic Claude", "OpenAI GPT-4", "Google Gemini"],
+          "llm_providers": [
+            "Anthropic Claude",
+            "OpenAI GPT-4",
+            "Google Gemini"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "codebase_indexing": true,
@@ -1846,8 +1965,18 @@
         "technical": {
           "context_window": 8192,
           "multi_file_support": true,
-          "language_support": ["C#", "JavaScript", "TypeScript", "Python", "Java", "C++", "SQL"],
-          "llm_providers": ["Microsoft ML models"],
+          "language_support": [
+            "C#",
+            "JavaScript",
+            "TypeScript",
+            "Python",
+            "Java",
+            "C++",
+            "SQL"
+          ],
+          "llm_providers": [
+            "Microsoft ML models"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "ide_integration": "Visual Studio, VS Code",
@@ -1904,7 +2033,11 @@
             "C++",
             "Scala"
           ],
-          "llm_providers": ["Claude Sonnet 4.0", "Claude Sonnet 3.7", "AWS Bedrock"],
+          "llm_providers": [
+            "Claude Sonnet 4.0",
+            "Claude Sonnet 3.7",
+            "AWS Bedrock"
+          ],
           "ide_integration": "VS Code Fork (Standalone IDE)",
           "ai_features": [
             "Specification-first development",
@@ -1950,11 +2083,160 @@
       },
       "created_at": "2025-07-22T18:48:41.792Z",
       "updated_at": "2025-07-22T20:15:00.000Z"
+    },
+    {
+      "id": "31",
+      "slug": "kiro",
+      "name": "Kiro",
+      "category": "proprietary-ide",
+      "status": "active",
+      "company_id": "5",
+      "info": {
+        "summary": "Specification-driven AI IDE that creates production-ready applications from detailed requirements",
+        "description": "Kiro is a next-generation AI IDE that transforms software development by implementing a specification-first methodology. Unlike 'vibe coding' tools that generate code from casual prompts, Kiro requires developers to think through requirements, generating comprehensive specification documents (requirements.md, design.md, tasks.md) before writing a single line of code. This approach bridges the gap between AI-assisted development and enterprise-grade software engineering, ensuring production-ready outputs from the start.",
+        "website": "https://kiro.dev",
+        "features": [
+          "Specification-driven development methodology",
+          "Automated generation of requirements.md, design.md, and tasks.md",
+          "Production-ready code generation from detailed specifications",
+          "Claude Sonnet 4.0 and 3.7 integration",
+          "VS Code fork with enhanced AI capabilities",
+          "MCP (Model Context Protocol) support",
+          "Multi-file project orchestration",
+          "Intelligent context management",
+          "Automated test generation from specifications",
+          "Built-in code review and quality assurance",
+          "Enterprise-grade security and compliance features",
+          "AWS service integration"
+        ],
+        "technical": {
+          "context_window": 200000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C#",
+            "Go",
+            "Ruby",
+            "Rust",
+            "PHP",
+            "Swift",
+            "Kotlin",
+            "C++",
+            "Scala",
+            "HTML",
+            "CSS",
+            "SQL",
+            "Shell",
+            "YAML",
+            "JSON",
+            "Markdown"
+          ],
+          "llm_providers": [
+            "Claude Sonnet 4.0",
+            "Claude Sonnet 3.7",
+            "AWS Bedrock"
+          ],
+          "ide_integration": "Code OSS Fork (VS Code open-source foundation)",
+          "subprocess_support": {
+            "agent_hooks": true,
+            "file_event_triggers": true,
+            "autonomous_execution": true,
+            "local_code_execution": true,
+            "structured_loop_planning": true
+          },
+          "tool_support": {
+            "mcp_protocol": true,
+            "mcp_servers": true,
+            "external_api_integration": true,
+            "database_connections": true,
+            "lsp_integration": true,
+            "open_vsx_plugins": true
+          },
+          "mcp_features": {
+            "aws_docs_server": true,
+            "context7_server": true,
+            "json_configuration": true,
+            "workspace_isolation": true,
+            "auto_approve_controls": true,
+            "server_status_monitoring": true
+          },
+          "ai_features": [
+            "Specification-first development",
+            "Automated documentation generation (requirements.md, design.md, tasks.md)",
+            "Task decomposition and planning",
+            "Production-ready code generation",
+            "Context-aware code completion",
+            "Intelligent refactoring suggestions",
+            "Automated test generation from specs",
+            "Code review and optimization",
+            "MCP protocol integration",
+            "Multi-agent collaboration",
+            "Agent hooks for automated actions",
+            "UI design image interpretation",
+            "Architecture diagram understanding",
+            "Steering files for project configuration",
+            "Transparent local execution"
+          ],
+          "security_features": {
+            "local_execution": true,
+            "transparent_actions": true,
+            "no_cloud_data_sharing": "unless explicitly allowed",
+            "autopilot_mode": "default enabled",
+            "sensitive_data_protection": true
+          },
+          "authentication": {
+            "google_signin": true,
+            "github_auth": true,
+            "builder_id": true,
+            "aws_sso": true,
+            "no_aws_account_required": true
+          }
+        },
+        "business": {
+          "pricing_model": "subscription",
+          "base_price": 0,
+          "enterprise_pricing": true,
+          "free_tier": true,
+          "pricing_details": {
+            "Free": "50 interactions per month - Perfect for trying Kiro",
+            "Pro": "$19/month - Unlimited interactions for individual developers",
+            "Pro+": "$39/month - Enhanced features and priority support",
+            "Enterprise": "Custom pricing - Advanced security, compliance, and team features"
+          }
+        },
+        "metrics": {
+          "launch_date": "2025-07-14",
+          "preview_status": "Public Preview",
+          "competitive_positioning": "Premium alternative to Cursor and GitHub Copilot",
+          "target_audience": "Professional developers building production systems",
+          "news_mentions": 7,
+          "news_mention_rate": "2.43%",
+          "free_tier_interactions": 50,
+          "pro_tier_interactions": 1000,
+          "pro_plus_interactions": 3000,
+          "additional_interaction_cost": 0.04,
+          "mcp_servers_supported": true,
+          "authentication_methods": 4
+        },
+        "differentiators": [
+          "Specification-first approach eliminates 'vibe coding chaos'",
+          "Generates comprehensive documentation before code",
+          "Production-ready outputs from the start",
+          "Enterprise-grade quality assurance built-in",
+          "AWS infrastructure and security",
+          "Claude Sonnet 4.0 powered intelligence"
+        ]
+      },
+      "created_at": "2025-07-22T18:48:41.792Z",
+      "updated_at": "2025-07-22T22:00:00.000Z"
     }
   ],
   "metadata": {
-    "total": 31,
-    "last_updated": "2025-07-23T00:05:02Z",
+    "total": 32,
+    "last_updated": "2025-07-23T02:08:33.209Z",
     "version": "2.0.0"
   }
 }

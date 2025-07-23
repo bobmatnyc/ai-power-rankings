@@ -26,6 +26,9 @@
         "noUnusedTemplateLiteral": "warn",
         "useTemplate": "warn"
       },
+      "complexity": {
+        "useLiteralKeys": "off"
+      },
       "correctness": {
         "noUnusedVariables": {
           "level": "error",

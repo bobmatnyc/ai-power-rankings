@@ -5,6 +5,78 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2025-07-22
+
+### Added
+- **🚀 Kiro AI Tool**: New specification-driven AI IDE added to rankings
+  - Comprehensive tool profile with Claude Sonnet 4.0/3.7 integration
+  - MCP (Model Context Protocol) support and enterprise features
+  - Production-ready development methodology focus
+  - 7 news articles integrated covering launch and features
+
+- **📊 Algorithm v7.0 - Enhanced Sentiment & Velocity**: Major ranking algorithm overhaul
+  - Increased sentiment weight from 10% to 15% for better crisis reflection
+  - Non-linear negative sentiment penalty (exponential scaling)
+  - Crisis detection system with 1.5x-2.0x impact multipliers
+  - Dynamic velocity scoring based on real-time news activity
+  - Replaced static velocity (60) with calculated scores (0-100)
+
+- **🔄 Dynamic Velocity Scoring System**: Real-time momentum tracking
+  - News volume component (40 points max)
+  - Release announcements (20 points max)
+  - Funding news (15 points max)
+  - Feature updates (15 points max)
+  - Recency bonus (10 points max)
+  - Momentum categories: High (≥70), Medium (40-69), Low (20-39), Stagnant (<20)
+
+### Changed
+- **🗂️ Tools Data Structure Refactoring**: Improved scalability and performance
+  - Migrated from monolithic tools.json to individual tool files
+  - New structure: `/data/json/tools/individual/[tool-slug].json`
+  - Centralized index file for efficient lookups
+  - Automated backup system during migration
+
+- **📈 Ranking Updates**: July 2025 rankings with algorithm v7
+  - GitHub Copilot maintains #1 with velocity score 90
+  - Windsurf rises to #2 (velocity 90, strong momentum)
+  - Cursor drops to #3 due to negative sentiment impact
+  - Claude Code enters top 10 at #9 (velocity 75)
+  - Kiro debuts at #16 with promising initial metrics
+
+- **📰 News Integration Enhancements**: Improved impact calculations
+  - Better handling of productivity paradox articles
+  - Enhanced sentiment analysis for crisis situations
+  - More accurate tool-article matching algorithms
+
+### Technical Updates
+- **Performance Optimizations**
+  - Faster cache generation with individual tool files
+  - Improved API response times for tool queries
+  - Reduced memory footprint for large datasets
+
+- **Data Integrity Improvements**
+  - Enhanced validation for tool metrics
+  - Automated consistency checks across repositories
+  - Better error handling in ranking calculations
+
+### Developer Experience
+- **New Scripts**:
+  - `calculate-velocity-scores.ts`: Generate velocity metrics from news
+  - `consolidate-tools-data.ts`: Migrate to individual file structure
+  - `test-velocity-integration.ts`: Validate velocity scoring system
+  - `execute-july-rankings-v7.ts`: Run algorithm v7 calculations
+
+### Fixed
+- **Sentiment Impact**: Negative news now properly affects rankings with exponential penalties
+- **Tool Matching**: Improved accuracy in associating news articles with correct tools
+- **Cache Generation**: Resolved issues with stale data in generated caches
+- **TypeScript Errors**: Fixed compilation issues in various modules
+
+### Breaking Changes
+- Tools API now returns data from individual files instead of monolithic JSON
+- Velocity score calculation changed from static (60) to dynamic (0-100)
+- Ranking algorithm weights adjusted - may cause significant position changes
+
 ## [3.2.0] - 2025-07-14
 
 ### Added

@@ -381,7 +381,7 @@ export class RankingsRepository extends BaseRepository<RankingsData> {
     // Create a map of previous positions
     const previousPositions = new Map<string, number>();
     previousData.rankings.forEach((r) => {
-      previousPositions.set(r.tool_id, r.position);
+      previousPositions.set(r.tool_id, r.position ?? r.rank ?? 0);
     });
 
     // Update movement data for the next period
@@ -396,7 +396,7 @@ export class RankingsRepository extends BaseRepository<RankingsData> {
         };
       } else {
         // Tool existed before
-        const change = previousPosition - ranking.position;
+        const change = previousPosition - (ranking.position ?? ranking.rank ?? 0);
         ranking.movement = {
           previous_position: previousPosition,
           change: Math.abs(change),

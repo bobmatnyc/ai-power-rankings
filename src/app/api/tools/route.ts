@@ -57,9 +57,7 @@ export async function GET(): Promise<NextResponse> {
     );
 
     const responseData = {
-      data: {
-        tools: toolsWithInfo,
-      },
+      tools: toolsWithInfo,
       _source: "json-db",
       _timestamp: new Date().toISOString(),
     };

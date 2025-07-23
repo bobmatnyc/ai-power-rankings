@@ -424,7 +424,7 @@ export async function POST(request: NextRequest) {
 
         if (previousPeriod) {
           previousRankingsMap = new Map(
-            previousPeriod.rankings.map((r: RankingEntry) => [r.tool_id, r.position])
+            previousPeriod.rankings.map((r: RankingEntry) => [r.tool_id, r.position ?? r.rank ?? 0])
           );
         }
       }

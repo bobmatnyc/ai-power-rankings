@@ -135,8 +135,11 @@ export class RankingEngineV7 {
       "proprietary-ide": 15,
     };
 
-    if (metrics.category && categoryBonus[metrics.category]) {
-      score = Math.min(100, score + categoryBonus[metrics.category]);
+    if (metrics.category && metrics.category in categoryBonus) {
+      const bonus = categoryBonus[metrics.category];
+      if (bonus !== undefined) {
+        score = Math.min(100, score + bonus);
+      }
     }
 
     // Multi-file support bonus
@@ -172,7 +175,7 @@ export class RankingEngineV7 {
       "orchestration",
     ];
 
-    const description = (metrics.info?.summary || "") + " " + (metrics.info?.description || "");
+    const description = ((metrics.info as any)?.summary || "") + " " + ((metrics.info && 'description' in metrics.info) ? (metrics.info as any).description : "");
     const matchedKeywords = innovativeKeywords.filter((keyword) =>
       description.toLowerCase().includes(keyword)
     ).length;
@@ -415,7 +418,7 @@ export class RankingEngineV7 {
       technicalPerformance: this.calculateTechnicalPerformance(metrics),
       developerAdoption: this.calculateDeveloperAdoption(metrics),
       marketTraction: this.calculateMarketTraction(metrics),
-      businessSentiment: this.calculateBusinessSentiment(metrics, newsImpact),
+      businessSentiment: this.calculateBusinessSentiment(metrics, newsImpact || undefined),
       developmentVelocity: this.calculateDevelopmentVelocity(metrics),
       platformResilience: this.calculatePlatformResilience(metrics),
       // Add legacy fields for compatibility
@@ -443,12 +446,6 @@ export class RankingEngineV7 {
               rawSentiment: 0,
               adjustedSentiment: 0,
               newsImpact: newsImpact.totalImpact,
-              crisisDetection: {
-                isInCrisis: false,
-                severityScore: 0,
-                negativePeriods: 0,
-                impactMultiplier: 1,
-              },
             }
           : undefined,
       algorithm_version: "v7.0",
@@ -465,18 +462,12 @@ export class RankingEngineV7 {
       score: score / 10, // Convert to 0-10 scale for legacy compatibility
       rawSentiment: 0,
       adjustedSentiment: 0,
-      crisisDetection: {
-        isInCrisis: false,
-        severityScore: 0,
-        negativePeriods: 0,
-        impactMultiplier: 1,
-      },
     };
   }
 
   applyEnhancedNewsImpact(
     baseScores: Record<string, number>,
-    newsImpact: ReturnType<typeof calculateToolNewsImpact>
+    _newsImpact: ReturnType<typeof calculateToolNewsImpact>
   ): Record<string, number> {
     // Legacy compatibility - just return scores as-is since news impact is already applied
     return baseScores;

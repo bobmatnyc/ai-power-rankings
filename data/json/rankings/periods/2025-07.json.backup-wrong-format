@@ -1,15 +1,43 @@
 {
-  "period": "2025-07",
+  "month": "2025-07",
+  "generated_at": "2025-07-23T00:39:07.867Z",
   "algorithm_version": "v7.0-fixed-velocity",
-  "algorithm_name": "Smart Defaults & Accurate Capability Scoring with Dynamic Velocity",
-  "created_at": "2025-07-23T00:39:07.867Z",
+  "algorithm_info": {
+    "version": "v7.0-fixed",
+    "name": "Smart Defaults & Accurate Capability Scoring with Dynamic Velocity",
+    "description": "Algorithm with fixed agentic, innovation, and technical scoring including subprocess/tool support and news-based velocity scores",
+    "weights": {
+      "agenticCapability": 0.25,
+      "innovation": 0.125,
+      "technicalPerformance": 0.125,
+      "developerAdoption": 0.125,
+      "marketTraction": 0.125,
+      "businessSentiment": 0.15,
+      "developmentVelocity": 0.05,
+      "platformResilience": 0.05
+    },
+    "features": [
+      "Accurate agentic capability scoring (autonomous vs autocomplete)",
+      "Enhanced innovation detection for breakthrough features",
+      "Subprocess and tool support scoring for true autonomy",
+      "Proper SWE-bench score interpretation",
+      "Category-based differentiation",
+      "Smart defaults and proxy metrics",
+      "News mentions as adoption proxy",
+      "Dynamic development velocity based on news analysis (0-100 scale)",
+      "Recognizes tools with advanced autonomous capabilities",
+      "Ensures accurate tool rankings"
+    ],
+    "updatedAt": "2025-07-23",
+    "velocity_integration": "Dynamic velocity scores from news-based calculation (0-100 scale)"
+  },
   "rankings": [
     {
       "tool_id": "1",
-      "tool_name": "Cursor",
       "rank": 1,
       "score": 93,
-      "tier": "S",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 91,
         "innovation": 90,
@@ -22,21 +50,14 @@
         "technicalCapability": 100,
         "communitySentiment": 85
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 1
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "2",
-      "tool_name": "GitHub Copilot",
       "rank": 2,
       "score": 81,
-      "tier": "A",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 50,
         "innovation": 90,
@@ -49,21 +70,14 @@
         "technicalCapability": 100,
         "communitySentiment": 75
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 2
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "31",
-      "tool_name": "Kiro",
       "rank": 3,
       "score": 76.9,
-      "tier": "A",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 78,
         "innovation": 90,
@@ -76,21 +90,14 @@
         "technicalCapability": 100,
         "communitySentiment": 70
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 3
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "4",
-      "tool_name": "Claude Code",
       "rank": 4,
       "score": 76.7,
-      "tier": "A",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 90,
         "innovation": 80,
@@ -103,21 +110,14 @@
         "technicalCapability": 100,
         "communitySentiment": 75
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 4
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "11",
-      "tool_name": "Google Jules",
       "rank": 5,
       "score": 71.6,
-      "tier": "B",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 95,
         "innovation": 67,
@@ -130,21 +130,14 @@
         "technicalCapability": 100,
         "communitySentiment": 75
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 5
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "14",
-      "tool_name": "Windsurf",
       "rank": 6,
       "score": 70.9,
-      "tier": "B",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 65,
         "innovation": 38,
@@ -157,21 +150,14 @@
         "technicalCapability": 85,
         "communitySentiment": 85
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 6
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "26",
-      "tool_name": "Amazon Q Developer",
       "rank": 7,
       "score": 67.1,
-      "tier": "B",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 86,
         "innovation": 69,
@@ -184,21 +170,14 @@
         "technicalCapability": 100,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 7
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "3",
-      "tool_name": "Devin",
       "rank": 8,
       "score": 67.1,
-      "tier": "B",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 95,
         "innovation": 66,
@@ -211,21 +190,14 @@
         "technicalCapability": 65,
         "communitySentiment": 75
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 8
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "24",
-      "tool_name": "OpenAI Codex CLI",
       "rank": 9,
       "score": 66.4,
-      "tier": "B",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 95,
         "innovation": 77,
@@ -238,21 +210,14 @@
         "technicalCapability": 90,
         "communitySentiment": 70
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 9
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "18",
-      "tool_name": "ChatGPT Canvas",
       "rank": 10,
       "score": 60.4,
-      "tier": "C",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 80,
         "innovation": 40,
@@ -265,21 +230,14 @@
         "technicalCapability": 75,
         "communitySentiment": 70
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 10
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "21",
-      "tool_name": "Tabnine",
       "rank": 11,
       "score": 60.3,
-      "tier": "C",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 45,
         "innovation": 30,
@@ -292,21 +250,14 @@
         "technicalCapability": 85,
         "communitySentiment": 70
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 11
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "7",
-      "tool_name": "Aider",
       "rank": 12,
       "score": 58.9,
-      "tier": "C",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 57.26,
         "innovation": 42,
@@ -319,21 +270,14 @@
         "technicalCapability": 100,
         "communitySentiment": 65
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 12
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "25",
-      "tool_name": "Augment Code",
       "rank": 13,
       "score": 58.6,
-      "tier": "C",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 75,
         "innovation": 57,
@@ -346,21 +290,14 @@
         "technicalCapability": 100,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 13
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "23",
-      "tool_name": "Zed",
       "rank": 14,
       "score": 58.1,
-      "tier": "C",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 65,
         "innovation": 38,
@@ -373,21 +310,14 @@
         "technicalCapability": 85,
         "communitySentiment": 70
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 14
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "6",
-      "tool_name": "Cline",
       "rank": 15,
       "score": 56.4,
-      "tier": "C",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 58,
         "innovation": 56,
@@ -400,21 +330,14 @@
         "technicalCapability": 95,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 15
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "12",
-      "tool_name": "Lovable",
       "rank": 16,
       "score": 54.9,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 30,
         "innovation": 30,
@@ -427,21 +350,14 @@
         "technicalCapability": 85,
         "communitySentiment": 65
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 16
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "27",
-      "tool_name": "Google Gemini Code Assist",
       "rank": 17,
       "score": 54.6,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 45,
         "innovation": 38,
@@ -454,21 +370,14 @@
         "technicalCapability": 90,
         "communitySentiment": 65
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 17
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "5",
-      "tool_name": "Bolt.new",
       "rank": 18,
       "score": 54.4,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 30,
         "innovation": 30,
@@ -481,21 +390,14 @@
         "technicalCapability": 75,
         "communitySentiment": 65
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 18
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "9",
-      "tool_name": "Replit Agent",
       "rank": 19,
       "score": 52.8,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 51,
         "innovation": 42,
@@ -508,21 +410,14 @@
         "technicalCapability": 80,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 19
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "29",
-      "tool_name": "Sourcegraph Cody",
       "rank": 20,
       "score": 52.4,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 45,
         "innovation": 34,
@@ -535,21 +430,14 @@
         "technicalCapability": 95,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 20
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "13",
-      "tool_name": "OpenHands",
       "rank": 21,
       "score": 51.6,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 46,
         "innovation": 42,
@@ -562,21 +450,14 @@
         "technicalCapability": 95,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 21
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "22",
-      "tool_name": "JetBrains AI Assistant",
       "rank": 22,
       "score": 51.5,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 48,
         "innovation": 40,
@@ -589,21 +470,14 @@
         "technicalCapability": 80,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 22
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "16",
-      "tool_name": "Qodo Gen",
       "rank": 23,
       "score": 49.8,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 38,
         "innovation": 42,
@@ -616,21 +490,14 @@
         "technicalCapability": 80,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 23
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "10",
-      "tool_name": "v0",
       "rank": 24,
       "score": 48.8,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 30,
         "innovation": 30,
@@ -643,21 +510,14 @@
         "technicalCapability": 75,
         "communitySentiment": 65
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 24
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "8",
-      "tool_name": "Continue",
       "rank": 25,
       "score": 48.6,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 40,
         "innovation": 30,
@@ -670,21 +530,14 @@
         "technicalCapability": 95,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 25
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "28",
-      "tool_name": "CodeRabbit",
       "rank": 26,
       "score": 45.3,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 35,
         "innovation": 30,
@@ -697,21 +550,14 @@
         "technicalCapability": 80,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 26
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "19",
-      "tool_name": "Claude Artifacts",
       "rank": 27,
       "score": 44,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 25,
         "innovation": 30,
@@ -724,21 +570,14 @@
         "technicalCapability": 80,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 27
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "17",
-      "tool_name": "Snyk Code",
       "rank": 28,
       "score": 43.3,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 35,
         "innovation": 34,
@@ -751,21 +590,14 @@
         "technicalCapability": 50,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 28
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "30",
-      "tool_name": "Microsoft IntelliCode",
       "rank": 29,
       "score": 43.1,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 45,
         "innovation": 38,
@@ -778,21 +610,14 @@
         "technicalCapability": 45,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 29
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "15",
-      "tool_name": "Sourcery",
       "rank": 30,
       "score": 42.6,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 35,
         "innovation": 34,
@@ -805,21 +630,14 @@
         "technicalCapability": 45,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 30
+      "algorithm_version": "v7.0-fixed-velocity"
     },
     {
       "tool_id": "20",
-      "tool_name": "Diffblue Cover",
       "rank": 31,
       "score": 40.4,
-      "tier": "D",
+      "previous_rank": null,
+      "trend": "stable",
       "factor_scores": {
         "agenticCapability": 38,
         "innovation": 40,
@@ -832,19 +650,7 @@
         "technicalCapability": 45,
         "communitySentiment": 60
       },
-      "sentiment_analysis": null,
-      "movement": {
-        "previous_position": null,
-        "change": 0,
-        "direction": "new"
-      },
-      "change_analysis": null,
-      "position": 31
+      "algorithm_version": "v7.0-fixed-velocity"
     }
-  ],
-  "metadata": {
-    "total_tools": 31,
-    "calculation_date": "2025-07-23T00:39:07.867Z",
-    "notes": "Fixed format from v7 algorithm output"
-  }
+  ]
 }
