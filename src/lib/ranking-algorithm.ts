@@ -10,6 +10,14 @@ export const DEFAULT_WEIGHTS: RankingWeights = {
   communitySentiment: 0.1,
 };
 
+// Re-export v7 as the latest version
+export { RankingEngineV7 as LatestRankingEngine } from "./ranking-algorithm-v7";
+export type { 
+  RankingWeightsV7 as LatestRankingWeights,
+  ToolMetricsV7 as LatestToolMetrics,
+  ToolScoreV7 as LatestToolScore 
+} from "./ranking-algorithm-v7";
+
 export class RankingEngine {
   constructor(private weights: RankingWeights = DEFAULT_WEIGHTS) {}
 

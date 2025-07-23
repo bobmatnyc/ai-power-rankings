@@ -163,7 +163,7 @@ function runTests() {
   });
 
   // Compare rankings
-  console.log("\n" + "=".repeat(80));
+  console.log(`\n${"=".repeat(80)}`);
   console.log("\nRankings Comparison:");
   console.log("-".repeat(40));
 
@@ -191,7 +191,7 @@ function runTests() {
   });
 
   // Verify key relationships
-  console.log("\n" + "=".repeat(80));
+  console.log(`\n${"=".repeat(80)}`);
   console.log("\nKey Relationships Verification:");
   console.log("-".repeat(40));
 
@@ -215,7 +215,7 @@ function runTests() {
     );
   }
 
-  console.log("\n" + "=".repeat(80));
+  console.log(`\n${"=".repeat(80)}`);
   console.log("\nAlgorithm Info:");
   console.log(JSON.stringify(RankingEngineV7.getAlgorithmInfo(), null, 2));
 }

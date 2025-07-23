@@ -2,7 +2,7 @@
 
 /**
  * Test script for rate limiting functionality
- * 
+ *
  * Usage:
  *   npm run test:rate-limit
  *   tsx scripts/test-rate-limiting.ts
@@ -13,8 +13,8 @@ import { config } from "dotenv";
 // Load environment variables
 config({ path: ".env.local" });
 
-const BASE_URL = process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
-const ADMIN_API_KEY = process.env["ADMIN_API_KEY"];
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 
 interface TestResult {
   test: string;
@@ -23,7 +23,10 @@ interface TestResult {
   data?: unknown;
 }
 
-async function makeContactRequest(data: Record<string, unknown>, headers: Record<string, string> = {}): Promise<Response> {
+async function makeContactRequest(
+  data: Record<string, unknown>,
+  headers: Record<string, string> = {}
+): Promise<Response> {
   return fetch(`${BASE_URL}/api/contact`, {
     method: "POST",
     headers: {
@@ -34,12 +37,16 @@ async function makeContactRequest(data: Record<string, unknown>, headers: Record
   });
 }
 
-async function makeAdminRequest(endpoint: string, method: string = "GET", body?: Record<string, unknown>): Promise<Response> {
+async function makeAdminRequest(
+  endpoint: string,
+  method: string = "GET",
+  body?: Record<string, unknown>
+): Promise<Response> {
   const url = `${BASE_URL}/api/admin/rate-limit${endpoint}`;
   const options: RequestInit = {
     method,
     headers: {
-      "Authorization": `Bearer ${ADMIN_API_KEY}`,
+      Authorization: `Bearer ${ADMIN_API_KEY}`,
       "Content-Type": "application/json",
     },
   };
@@ -171,11 +178,11 @@ async function testRateLimitExceeded(): Promise<TestResult> {
       }
 
       // Small delay between requests
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
-    const rateLimitedAttempt = results.find(r => r.status === 429);
-    
+    const rateLimitedAttempt = results.find((r) => r.status === 429);
+
     if (rateLimitedAttempt) {
       return {
         test: "Rate Limit Exceeded",
@@ -294,25 +301,25 @@ async function runTests(): Promise<void> {
     console.log(`Running: ${test.name}...`);
     const result = await test();
     results.push(result);
-    
+
     const status = result.success ? "✅ PASS" : "❌ FAIL";
     console.log(`${status}: ${result.message}`);
-    
+
     if (result.data) {
       console.log("Data:", JSON.stringify(result.data, null, 2));
     }
-    
+
     console.log("");
   }
 
   // Summary
-  const passed = results.filter(r => r.success).length;
+  const passed = results.filter((r) => r.success).length;
   const total = results.length;
-  
+
   console.log("📊 Test Summary");
   console.log(`Passed: ${passed}/${total}`);
   console.log(`Failed: ${total - passed}/${total}`);
-  
+
   if (passed === total) {
     console.log("🎉 All tests passed!");
   } else {

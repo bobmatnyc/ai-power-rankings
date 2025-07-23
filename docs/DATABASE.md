@@ -12,7 +12,12 @@ AI Power Rankings uses a static JSON file-based database system for all data sto
 data/
 ├── json/
 │   ├── tools/
-│   │   └── tools.json          # All AI tools data
+│   │   ├── individual/         # Individual tool files (primary)
+│   │   │   ├── aider.json
+│   │   │   ├── cursor.json
+│   │   │   └── ...           # 30 individual tool files
+│   │   ├── tools-index.json    # Lookup indices and metadata
+│   │   └── tools.json          # Legacy file (deprecated)
 │   ├── rankings/
 │   │   ├── index.json          # Rankings metadata
 │   │   └── periods/            # Individual ranking periods

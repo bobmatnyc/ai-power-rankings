@@ -48,7 +48,8 @@ npm run optimize:json
 
 #### File Size Targets
 
-- **tools.json**: < 500KB
+- **tools/individual/\*.json**: < 20KB each (30 files total)
+- **tools/tools-index.json**: < 50KB
 - **companies.json**: < 200KB
 - **rankings/\*.json**: < 100KB each
 - **news/articles.json**: Split if > 500KB
@@ -116,10 +117,15 @@ Place pre-generated cache files in public directory:
 The optimization script creates compressed versions:
 
 ```bash
-# Files generated:
-tools.json       # Original minified
-tools.json.gz    # Gzip compressed
-tools.json.br    # Brotli compressed
+# Files generated per tool:
+tools/individual/cursor.json       # Original minified
+tools/individual/cursor.json.gz    # Gzip compressed
+tools/individual/cursor.json.br    # Brotli compressed
+
+# Index files:
+tools/tools-index.json       # Original minified
+tools/tools-index.json.gz    # Gzip compressed  
+tools/tools-index.json.br    # Brotli compressed
 ```
 
 #### Serving Compressed Files

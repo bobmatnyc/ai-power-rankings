@@ -5,10 +5,9 @@
  * This pre-generates the data that was previously computed at runtime
  */
 
-import { getRankingsRepo, getToolsRepo } from "../src/lib/json-db";
-import { loggers } from "../src/lib/logger";
+import path from "node:path";
 import fs from "fs-extra";
-import path from "path";
+import { getRankingsRepo, getToolsRepo } from "../src/lib/json-db";
 
 interface RankingData {
   rank: number;
@@ -43,10 +42,10 @@ async function generateStaticRankings() {
 
     const rankingsRepo = getRankingsRepo();
     const toolsRepo = getToolsRepo();
-    
+
     // Force rebuild indices to ensure complete data
     await toolsRepo.forceRebuildIndices();
-    
+
     // Get tools using the repository (now fixed to return complete data)
     const allTools = await toolsRepo.getAll();
     const toolsMap = new Map();
@@ -75,12 +74,12 @@ async function generateStaticRankings() {
 
         // Extract actual SWE-bench score from tool data
         const swe_bench_data = tool.info?.metrics?.swe_bench;
-        const swe_bench_score = swe_bench_data?.verified || 
-                               swe_bench_data?.verified_basic ||
-                               swe_bench_data?.lite || 
-                               swe_bench_data?.full || 
-                               null;
-        
+        const swe_bench_score =
+          swe_bench_data?.verified ||
+          swe_bench_data?.verified_basic ||
+          swe_bench_data?.lite ||
+          swe_bench_data?.full ||
+          null;
 
         const result: RankingData = {
           rank: ranking.position,
@@ -146,7 +145,7 @@ async function generateStaticRankings() {
 
     console.log(`✅ Generated static rankings data: ${outputPath}`);
     console.log(`📈 Tools processed: ${validRankings.length}`);
-    console.log(`🏆 Top 3 tools:`);
+    console.log("🏆 Top 3 tools:");
     validRankings.slice(0, 3).forEach((tool, i) => {
       console.log(`   ${i + 1}. ${tool.tool.name} (${tool.scores.overall.toFixed(1)})`);
     });
@@ -156,7 +155,6 @@ async function generateStaticRankings() {
     await fs.ensureDir(path.dirname(publicPath));
     await fs.writeJSON(publicPath, staticData, { spaces: 2 });
     console.log(`📁 Also saved to public: ${publicPath}`);
-
   } catch (error) {
     console.error("❌ Failed to generate static rankings:", error);
     process.exit(1);

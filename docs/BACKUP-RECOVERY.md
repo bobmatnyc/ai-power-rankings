@@ -32,7 +32,13 @@ Backups are stored in `/data/backups/` with the following structure:
 /data/backups/
 ├── backup-2025-01-29-143022/
 │   ├── companies.json
-│   ├── tools.json
+│   ├── tools/
+│   │   ├── individual/
+│   │   │   ├── aider.json
+│   │   │   ├── cursor.json
+│   │   │   └── ... (30 individual tool files)
+│   │   ├── tools-index.json
+│   │   └── tools.json (legacy, if present)
 │   ├── rankings/
 │   │   ├── 2025-01-15.json
 │   │   ├── 2025-01-22.json
@@ -161,7 +167,14 @@ If data files are corrupted:
 2. **Restore Specific Files**
    ```bash
    # Copy specific files from backup
-   cp data/backups/backup-2025-01-29-143022/tools.json data/json/
+   # For tools (now stored as individual files):
+   cp -r data/backups/backup-2025-01-29-143022/tools/ data/json/
+   
+   # Or restore just specific tool files:
+   cp data/backups/backup-2025-01-29-143022/tools/individual/cursor.json data/json/tools/individual/
+   
+   # Restore the index:
+   cp data/backups/backup-2025-01-29-143022/tools/tools-index.json data/json/tools/
    ```
 
 3. **Validate After Restore**

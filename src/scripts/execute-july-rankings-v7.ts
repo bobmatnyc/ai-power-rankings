@@ -5,8 +5,8 @@
  * Smart defaults and proxy metrics for available data
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import { join } from "path";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { logger } from "../lib/logger";
 import { RankingEngineV7, type ToolMetricsV7, type ToolScoreV7 } from "../lib/ranking-algorithm-v7";
 import type { NewsArticle } from "../lib/ranking-news-impact";
@@ -108,7 +108,7 @@ async function main() {
           if (!newsByTool.has(toolId)) {
             newsByTool.set(toolId, []);
           }
-          newsByTool.get(toolId)!.push(article);
+          newsByTool.get(toolId)?.push(article);
         }
       }
     }
@@ -278,7 +278,7 @@ async function main() {
       const tool = scores.find((s) => s.tool.id === r.tool_id)?.tool;
       if (
         tool &&
-        (!categoryLeaders.has(tool.category) || categoryLeaders.get(tool.category)!.rank > r.rank)
+        (!categoryLeaders.has(tool.category) || categoryLeaders.get(tool.category)?.rank > r.rank)
       ) {
         categoryLeaders.set(tool.category, r);
       }

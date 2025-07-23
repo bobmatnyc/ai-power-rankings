@@ -67,12 +67,13 @@ export function calculateEffectiveNewsImpact(
   effectiveImpact *= ageFactor;
 
   // Apply PR discount if it's a company announcement
+  const sourceName = typeof article.source === "string" ? article.source : article.source?.name || "";
   const isCompanyAnnouncement =
     article.metadata?.is_company_announcement ||
     article.type === "company_news" ||
-    article.source.name.includes("Blog") ||
-    article.source.name.includes("Press Release") ||
-    article.source.name.includes("Company News");
+    sourceName.includes("Blog") ||
+    sourceName.includes("Press Release") ||
+    sourceName.includes("Company News");
 
   if (isCompanyAnnouncement) {
     effectiveImpact *= PR_DISCOUNT_FACTOR;

@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 
-import { readFileSync } from "fs";
+import { readFileSync } from "node:fs";
 import { RankingEngineV7 } from "../lib/ranking-algorithm-v7";
 
 // Read tools data
@@ -95,7 +95,7 @@ console.log(
 console.log("-".repeat(120));
 
 results.forEach((result) => {
-  const formatScore = (score: number) => (isNaN(score) ? "N/A" : score.toFixed(0));
+  const formatScore = (score: number) => (Number.isNaN(score) ? "N/A" : score.toFixed(0));
   console.log(
     `${result.name.padEnd(20)} | ${formatScore(result.factors.agenticCapability).padStart(7)} | ${formatScore(result.factors.innovation).padStart(5)} | ${formatScore(result.factors.technicalPerformance).padStart(5)} | ${formatScore(result.factors.developerAdoption).padStart(5)} | ${formatScore(result.factors.marketTraction).padStart(6)} | ${formatScore(result.factors.businessSentiment).padStart(5)} | ${formatScore(result.factors.developmentVelocity).padStart(5)} | ${formatScore(result.factors.platformResilience).padStart(5)} |`
   );

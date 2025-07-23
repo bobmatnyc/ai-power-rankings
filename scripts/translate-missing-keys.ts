@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 // Define comprehensive translations for all missing keys
 const translations: Record<string, Record<string, string>> = {
@@ -229,7 +229,7 @@ const translations: Record<string, Record<string, string>> = {
 
 // Function to update translations
 function updateTranslations(
-  langCode: string,
+  _langCode: string,
   langDict: Record<string, unknown>,
   translations: Record<string, string>
 ) {
@@ -248,7 +248,7 @@ function updateTranslations(
     }
 
     const lastKey = keyParts[keyParts.length - 1];
-    if (current[lastKey] && current[lastKey].startsWith("[TRANSLATE]")) {
+    if (current[lastKey]?.startsWith("[TRANSLATE]")) {
       current[lastKey] = translation;
       updateCount++;
     }
@@ -266,10 +266,10 @@ for (const [lang, langTranslations] of Object.entries(translations)) {
   const { dict: updatedDict, updateCount } = updateTranslations(lang, langDict, langTranslations);
 
   if (updateCount > 0) {
-    fs.writeFileSync(langPath, JSON.stringify(updatedDict, null, 2) + "\n");
+    fs.writeFileSync(langPath, `${JSON.stringify(updatedDict, null, 2)}\n`);
     console.log(`  Updated ${updateCount} translations`);
   } else {
-    console.log(`  No translations updated`);
+    console.log("  No translations updated");
   }
 }
 

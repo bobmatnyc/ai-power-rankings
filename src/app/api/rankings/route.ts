@@ -28,7 +28,7 @@ export async function GET(): Promise<NextResponse> {
         }
 
         return {
-          rank: ranking.position,
+          rank: ranking.rank || ranking.position,
           previousRank: ranking.movement?.previous_position || null,
           rankChange: ranking.movement?.change || 0,
           changeReason: ranking.change_analysis?.primary_reason || "",
@@ -46,16 +46,17 @@ export async function GET(): Promise<NextResponse> {
             overall: ranking.score,
             base_score: ranking.score,
             news_impact: ranking.factor_scores?.innovation || 0,
-            agentic_capability: ranking.factor_scores?.agentic_capability / 10 || 5,
+            agentic_capability: (ranking.factor_scores?.agenticCapability || ranking.factor_scores?.agentic_capability) / 10 || 5,
             innovation: ranking.factor_scores?.innovation / 10 || 5,
           },
           metrics: {
             news_articles_count: 0, // Not available in current data
             recent_funding_rounds: 0,
             recent_product_launches: 0,
-            users: ranking.factor_scores?.developer_adoption * 1000 || 10000,
+            users: (ranking.factor_scores?.developerAdoption || ranking.factor_scores?.developer_adoption) * 1000 || 10000,
             swe_bench_score:
               tool.info?.metrics?.swe_bench_score ||
+              ranking.factor_scores?.technicalPerformance ||
               ranking.factor_scores?.technical_performance ||
               null,
           },

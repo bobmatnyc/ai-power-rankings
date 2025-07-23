@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 interface NewsArticle {
   id: string;
@@ -80,7 +80,7 @@ function daysBetween(date1: Date, date2: Date): number {
 
 // Extract news type from content/tags
 function analyzeNewsType(article: NewsArticle) {
-  const content = (article.content + " " + article.summary + " " + article.title).toLowerCase();
+  const content = `${article.content} ${article.summary} ${article.title}`.toLowerCase();
   const tags = article.tags.map((t) => t.toLowerCase());
 
   const result = {
@@ -157,9 +157,7 @@ const now = new Date();
 
 tools.forEach((tool) => {
   // Find all articles mentioning this tool
-  const toolArticles = allArticles.filter(
-    (article) => article.tool_mentions && article.tool_mentions.includes(tool.id)
-  );
+  const toolArticles = allArticles.filter((article) => article.tool_mentions?.includes(tool.id));
 
   // Sort by date
   toolArticles.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -190,7 +188,7 @@ tools.forEach((tool) => {
     // Add highlight if significant
     if (newsType.isRelease || newsType.isFunding) {
       const highlight =
-        article.title.length > 80 ? article.title.substring(0, 77) + "..." : article.title;
+        article.title.length > 80 ? `${article.title.substring(0, 77)}...` : article.title;
       recentHighlights.push(highlight);
     }
   });

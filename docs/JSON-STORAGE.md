@@ -17,15 +17,21 @@ AI Power Rankings uses a JSON file-based storage system for all data persistence
 ```
 /data/json/
 ├── companies.json      # Company data
-├── tools.json         # Tool information
-├── rankings/          # Rankings by period
+├── tools/              # Tool information
+│   ├── individual/     # Individual tool files (primary storage)
+│   │   ├── aider.json
+│   │   ├── cursor.json
+│   │   └── ...        # 30 individual tool files
+│   ├── tools-index.json # Lookup indices and metadata
+│   └── tools.json      # Legacy monolithic file (deprecated)
+├── rankings/           # Rankings by period
 │   ├── 2025-01-15.json
 │   ├── 2025-01-22.json
-│   └── current.json   # Symlink to latest
-├── news/              # News articles
+│   └── current.json    # Symlink to latest
+├── news/               # News articles
 │   ├── articles.json
 │   └── ingestion-reports.json
-└── cache/             # Generated cache files
+└── cache/              # Generated cache files
     ├── rankings-cache.json
     ├── tools-cache.json
     └── news-cache.json
@@ -53,19 +59,83 @@ Each data type has a dedicated repository that handles:
 ```typescript
 import { getToolsRepo, getRankingsRepo } from "@/lib/json-db";
 
-// Get all tools
+// Get all tools (loads from individual files)
 const toolsRepo = getToolsRepo();
 const tools = await toolsRepo.getAll();
 
-// Get tool by slug
+// Get tool by slug (loads only that file)
 const tool = await toolsRepo.getBySlug("chatgpt");
 
-// Update tool
+// Update tool (writes to individual file)
 await toolsRepo.upsert({
   ...tool,
   updated_at: new Date().toISOString()
 });
+
+// Rebuild index after manual file changes
+await toolsRepo.rebuildIndex();
 ```
+
+## Tools Storage Architecture
+
+### Individual File Structure (New)
+
+As of July 2025, tools are stored as individual JSON files for better maintainability and performance:
+
+**Benefits of Individual Files:**
+- **Better Git diffs**: Changes to individual tools create cleaner diffs
+- **Parallel editing**: Multiple tools can be edited simultaneously without conflicts
+- **Faster access**: Loading a single tool doesn't require parsing all tools
+- **Easier maintenance**: Individual files are easier to validate and update
+- **Reduced memory**: Only load tools that are actually needed
+
+**File Structure:**
+```
+/data/json/tools/
+├── individual/           # Primary storage location
+│   ├── aider.json       # Each tool stored by slug
+│   ├── cursor.json
+│   └── ...              # 30 individual tool files
+├── tools-index.json     # Index for fast lookups
+└── tools.json           # Legacy file (deprecated, kept for compatibility)
+```
+
+**Index File Structure:**
+```json
+{
+  "metadata": {
+    "total": 30,
+    "last_updated": "2025-07-22T18:15:37.209Z",
+    "version": "1.0.0"
+  },
+  "index": {
+    "byId": {
+      "1": { "slug": "cursor", "name": "Cursor", "category": "code-editor", ... }
+    },
+    "bySlug": {
+      "cursor": "1"
+    },
+    "byCategory": {
+      "code-editor": ["1", "7", "11"],
+      "ai-assistant": ["3", "5", "8"]
+    }
+  }
+}
+```
+
+### Migration from Monolithic Structure
+
+**Previous Structure (Deprecated):**
+- Single `/data/json/tools.json` file containing all 30 tools
+- ~500KB file size requiring full parse for any operation
+- Git conflicts when multiple tools updated
+
+**Migration Process:**
+1. Each tool extracted to `/data/json/tools/individual/{slug}.json`
+2. Index file generated with lookup mappings
+3. Repository updated to use individual files
+4. Legacy file maintained for backward compatibility
+5. Cache regeneration to use new structure
 
 ## Schema Definitions
 
@@ -161,11 +231,15 @@ interface RankingEntry {
 ### Reading Data
 
 ```typescript
-// Direct file read
-const data = await fs.readFile('/data/json/tools.json', 'utf-8');
-const tools = JSON.parse(data);
+// Direct file read (individual tools)
+const toolData = await fs.readFile('/data/json/tools/individual/cursor.json', 'utf-8');
+const tool = JSON.parse(toolData);
 
-// Using repository
+// Load index for lookups
+const indexData = await fs.readFile('/data/json/tools/tools-index.json', 'utf-8');
+const index = JSON.parse(indexData);
+
+// Using repository (recommended)
 const toolsRepo = getToolsRepo();
 const activeTools = await toolsRepo.getByStatus('active');
 ```
@@ -193,6 +267,40 @@ const aiTools = tools
 // Search
 const results = await toolsRepo.search('chat');
 ```
+
+## Tools Repository Implementation
+
+### Key Features
+
+The `ToolsRepository` class (`/src/lib/json-db/tools-repository.ts`) provides:
+
+1. **Lazy Loading**: Individual tool files are loaded on-demand
+2. **In-Memory Caching**: Loaded tools are cached to avoid repeated file reads
+3. **Index Management**: Maintains fast lookup indices for ID, slug, and category
+4. **Atomic Operations**: All write operations are atomic with automatic backups
+5. **Schema Validation**: Every tool is validated against the schema before storage
+
+### Repository Methods
+
+```typescript
+// Core operations
+await toolsRepo.getAll();              // Load all tools
+await toolsRepo.getBySlug("cursor");   // Load single tool
+await toolsRepo.getByCategory("code-editor"); // Filter by category
+await toolsRepo.upsert(tool);          // Create or update
+await toolsRepo.delete("tool-id");     // Remove tool
+
+// Index operations
+await toolsRepo.rebuildIndex();        // Rebuild lookup indices
+await toolsRepo.validateAll();         // Validate all tool files
+```
+
+### Performance Characteristics
+
+- **getBySlug()**: O(1) lookup + single file read
+- **getAll()**: O(n) where n = number of tools (30 files)
+- **Index rebuild**: O(n) full scan of all files
+- **Memory usage**: ~2MB for full cache of 30 tools
 
 ## Performance Optimization
 
@@ -246,6 +354,79 @@ npm run validate:all
 - **Retention**: Last 10 backups kept automatically
 - **Git tracking**: All changes tracked in version control
 
+## Tools Migration Guide
+
+### Migrating from Monolithic to Individual Files
+
+If you have an existing `tools.json` file and need to migrate to the individual file structure:
+
+```bash
+# 1. Run the migration script
+npm run tools:migrate
+
+# This will:
+# - Read the existing tools.json
+# - Create individual files in tools/individual/
+# - Generate the tools-index.json
+# - Create a backup of the original file
+
+# 2. Verify the migration
+npm run validate:tools
+
+# 3. Update cache files
+npm run cache:tools
+```
+
+### Manual Migration Steps
+
+If automated migration is not available:
+
+```typescript
+// Migration script example
+import fs from 'fs-extra';
+import path from 'path';
+
+const toolsData = await fs.readJson('./data/json/tools.json');
+const individualDir = './data/json/tools/individual';
+
+// Create individual files
+for (const tool of toolsData.tools) {
+  const filename = `${tool.slug}.json`;
+  await fs.writeJson(
+    path.join(individualDir, filename),
+    tool,
+    { spaces: 2 }
+  );
+}
+
+// Create index
+const index = {
+  metadata: {
+    total: toolsData.tools.length,
+    last_updated: new Date().toISOString(),
+    version: "2.0.0"
+  },
+  index: {
+    byId: {},
+    bySlug: {},
+    byCategory: {}
+  }
+};
+
+// Build indices
+for (const tool of toolsData.tools) {
+  index.index.byId[tool.id] = tool;
+  index.index.bySlug[tool.slug] = tool.id;
+  
+  if (!index.index.byCategory[tool.category]) {
+    index.index.byCategory[tool.category] = [];
+  }
+  index.index.byCategory[tool.category].push(tool.id);
+}
+
+await fs.writeJson('./data/json/tools/tools-index.json', index, { spaces: 2 });
+```
+
 ## Migration Procedures
 
 ### Importing Data
@@ -278,6 +459,7 @@ npm run export:all --format=sql
 1. **File Permission Errors**
    ```bash
    chmod -R 755 data/json/
+   chmod -R 755 data/json/tools/individual/
    ```
 
 2. **Corrupted JSON**
@@ -290,6 +472,28 @@ npm run export:all --format=sql
    - Increase Node.js heap size
    - Enable incremental loading
    - Use streaming for large files
+
+4. **Tools Not Loading**
+   ```bash
+   # Check individual file exists
+   ls data/json/tools/individual/{tool-slug}.json
+   
+   # Validate specific tool
+   npm run validate:tool -- --slug=cursor
+   
+   # Rebuild index if needed
+   npm run tools:rebuild-index
+   ```
+
+5. **Index Out of Sync**
+   ```bash
+   # Signs: Tools exist but not found by repository
+   # Solution: Rebuild the index
+   npm run tools:rebuild-index
+   
+   # Verify index integrity
+   npm run tools:verify-index
+   ```
 
 ### Health Checks
 

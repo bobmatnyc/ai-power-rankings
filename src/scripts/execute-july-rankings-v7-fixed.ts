@@ -3,8 +3,8 @@
  * Generates new rankings with corrected scoring logic
  */
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { NewsRepository } from "../lib/json-db/news-repository";
 import { RankingsRepository } from "../lib/json-db/rankings-repository";
 import type { Tool } from "../lib/json-db/schemas";

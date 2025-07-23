@@ -10,45 +10,65 @@ ajvFormats(ajv);
 
 const rankingPeriodSchema = {
   type: "object",
-  required: ["period", "algorithm_version", "is_current", "created_at", "rankings"],
+  required: ["period", "algorithm_version", "rankings"],
   properties: {
     period: { type: "string", pattern: "^\\d{4}-\\d{2}(-\\d{2})?$" },
+    date: { type: ["string", "null"], format: "date" },
     algorithm_version: { type: "string" },
-    is_current: { type: "boolean" },
-    created_at: { type: "string", format: "date-time" },
+    algorithm_name: { type: ["string", "null"] },
+    is_current: { type: ["boolean", "null"] },
+    created_at: { type: ["string", "null"], format: "date-time" },
     preview_date: { type: ["string", "null"], format: "date-time" },
     rankings: {
       type: "array",
       items: {
         type: "object",
-        required: ["tool_id", "tool_name", "position", "score", "factor_scores"],
+        required: ["tool_id", "tool_name", "rank", "score", "factor_scores"],
         properties: {
           tool_id: { type: "string" },
           tool_name: { type: "string" },
-          position: { type: "number", minimum: 1 },
+          rank: { type: "number", minimum: 1 },
           score: { type: "number", minimum: 0 },
           tier: { type: ["string", "null"], enum: ["S", "A", "B", "C", "D"] },
           factor_scores: {
             type: "object",
-            required: [
-              "agentic_capability",
-              "innovation",
-              "technical_performance",
-              "developer_adoption",
-              "market_traction",
-              "business_sentiment",
-              "development_velocity",
-              "platform_resilience",
-            ],
             properties: {
-              agentic_capability: { type: "number" },
-              innovation: { type: "number" },
-              technical_performance: { type: "number" },
-              developer_adoption: { type: "number" },
-              market_traction: { type: "number" },
-              business_sentiment: { type: "number" },
-              development_velocity: { type: "number" },
-              platform_resilience: { type: "number" },
+              // Snake case for backward compatibility
+              agentic_capability: { type: ["number", "null"] },
+              innovation: { type: ["number", "null"] },
+              technical_performance: { type: ["number", "null"] },
+              developer_adoption: { type: ["number", "null"] },
+              market_traction: { type: ["number", "null"] },
+              business_sentiment: { type: ["number", "null"] },
+              development_velocity: { type: ["number", "null"] },
+              platform_resilience: { type: ["number", "null"] },
+              // Camel case for v7 algorithm
+              agenticCapability: { type: ["number", "null"] },
+              technicalPerformance: { type: ["number", "null"] },
+              developerAdoption: { type: ["number", "null"] },
+              marketTraction: { type: ["number", "null"] },
+              businessSentiment: { type: ["number", "null"] },
+              developmentVelocity: { type: ["number", "null"] },
+              platformResilience: { type: ["number", "null"] },
+              technicalCapability: { type: ["number", "null"] },
+              communitySentiment: { type: ["number", "null"] },
+            },
+          },
+          sentiment_analysis: {
+            type: ["object", "null"],
+            properties: {
+              rawSentiment: { type: "number" },
+              adjustedSentiment: { type: "number" },
+              newsImpact: { type: "number" },
+              crisisDetection: {
+                type: ["object", "null"],
+                properties: {
+                  isInCrisis: { type: "boolean" },
+                  severityScore: { type: "number" },
+                  negativePeriods: { type: "number" },
+                  impactMultiplier: { type: "number" },
+                },
+              },
             },
           },
           movement: {
@@ -67,6 +87,14 @@ const rankingPeriodSchema = {
             },
           },
         },
+      },
+    },
+    metadata: {
+      type: ["object", "null"],
+      properties: {
+        total_tools: { type: "number" },
+        calculation_date: { type: "string" },
+        notes: { type: ["string", "null"] },
       },
     },
   },
@@ -154,6 +182,15 @@ export class RankingsRepository extends BaseRepository<RankingsData> {
           errors: validateRankingPeriod.errors,
         });
         return null;
+      }
+
+      // Normalize the rankings to ensure position field exists
+      if (content.rankings && content.rankings.length > 0) {
+        content.rankings = content.rankings.map((ranking) => ({
+          ...ranking,
+          // Ensure position field exists (use rank if position is not present)
+          position: ranking.position ?? ranking.rank ?? 0,
+        }));
       }
 
       return content;

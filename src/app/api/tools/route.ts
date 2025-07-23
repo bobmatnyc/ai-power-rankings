@@ -56,14 +56,20 @@ export async function GET(): Promise<NextResponse> {
       })
     );
 
-    return cachedJsonResponse(
-      {
+    const responseData = {
+      data: {
         tools: toolsWithInfo,
-        _source: "json-db",
-        _timestamp: new Date().toISOString(),
       },
-      "/api/tools"
-    );
+      _source: "json-db",
+      _timestamp: new Date().toISOString(),
+    };
+
+    loggers.api.info("Returning tools response", { 
+      toolCount: toolsWithInfo.length,
+      firstTool: toolsWithInfo[0]?.name 
+    });
+
+    return cachedJsonResponse(responseData, "/api/tools");
   } catch (error) {
     loggers.api.error("Error in tools API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
