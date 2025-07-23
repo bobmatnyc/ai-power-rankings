@@ -18,7 +18,7 @@ interface Tool {
   category: string;
   status?: string;
   company_id: string;
-  info?: any;
+  info?: Record<string, unknown>;
 }
 
 interface RankingEntry {
@@ -26,8 +26,11 @@ interface RankingEntry {
   tool_name: string;
   rank: number;
   score: number;
-  previous_rank?: number;
-  movement?: number;
+  movement: {
+    previous_position: number | null;
+    change: number;
+    direction: "up" | "down" | "same" | "new";
+  };
   factor_scores: Record<string, number>;
   sentiment_analysis?: {
     rawSentiment: number;
@@ -66,11 +69,21 @@ function loadJSONData() {
   const newsPath = join(process.cwd(), "data/json/news/news.json");
   const newsData = JSON.parse(readFileSync(newsPath, "utf-8"));
 
-  // Load June rankings for comparison
-  const juneRankingsPath = join(process.cwd(), "data/json/rankings/periods/2025-06.json");
+  // Load June rankings for comparison (or the most recent previous rankings)
+  const rankingFiles = [
+    "2025-06-01.json",
+    "2025-06.json",
+    "2025-07-01.json", // Use the previous July version if it exists
+  ];
+
   let juneRankings: RankingPeriod | null = null;
-  if (existsSync(juneRankingsPath)) {
-    juneRankings = JSON.parse(readFileSync(juneRankingsPath, "utf-8"));
+  for (const fileName of rankingFiles) {
+    const rankingsPath = join(process.cwd(), "data/json/rankings/periods", fileName);
+    if (existsSync(rankingsPath)) {
+      juneRankings = JSON.parse(readFileSync(rankingsPath, "utf-8"));
+      logger.info(`Loaded previous rankings from ${fileName}`);
+      break;
+    }
   }
 
   return { tools: toolsData.tools, news: newsData.articles, juneRankings };
@@ -181,15 +194,35 @@ async function main() {
     const rankings: RankingEntry[] = scores.map((item, index) => {
       const rank = index + 1;
       const previousEntry = juneRankings?.rankings.find((r) => r.tool_id === item.tool.id);
-      const previousRank = previousEntry?.rank;
+      const previousRank = previousEntry?.position || previousEntry?.rank;
+
+      // Calculate movement object according to schema
+      let movement: {
+        previous_position: number | null;
+        change: number;
+        direction: "up" | "down" | "same" | "new";
+      };
+      if (previousRank) {
+        const change = previousRank - rank;
+        movement = {
+          previous_position: previousRank,
+          change: Math.abs(change),
+          direction: change > 0 ? "up" : change < 0 ? "down" : "same",
+        };
+      } else {
+        movement = {
+          previous_position: null,
+          change: 0,
+          direction: "new",
+        };
+      }
 
       return {
         tool_id: item.tool.id,
         tool_name: item.tool.name,
         rank,
         score: item.score.overallScore,
-        previous_rank: previousRank,
-        movement: previousRank ? previousRank - rank : undefined,
+        movement,
         factor_scores: item.score.factorScores,
         sentiment_analysis: item.score.sentimentAnalysis,
         algorithm_version: algorithmInfo.version,
@@ -259,16 +292,18 @@ async function main() {
 
     // Log biggest movers
     const bigMovers = rankings
-      .filter((r) => r.movement && Math.abs(r.movement) >= 3)
-      .sort((a, b) => Math.abs(b.movement!) - Math.abs(a.movement!));
+      .filter((r) => r.movement?.change && Math.abs(r.movement.change) >= 3)
+      .sort((a, b) => {
+        const changeA = a.movement?.change ?? 0;
+        const changeB = b.movement?.change ?? 0;
+        return Math.abs(changeB) - Math.abs(changeA);
+      });
 
     if (bigMovers.length > 0) {
       logger.info("\nBiggest Movers:");
       bigMovers.slice(0, 5).forEach((r) => {
-        const direction = r.movement! > 0 ? "up" : "down";
-        logger.info(
-          `- ${r.tool_name}: ${direction} ${Math.abs(r.movement!)} positions to #${r.rank}`
-        );
+        const direction = r.movement.direction === "up" ? "up" : "down";
+        logger.info(`- ${r.tool_name}: ${direction} ${r.movement.change} positions to #${r.rank}`);
       });
     }
 

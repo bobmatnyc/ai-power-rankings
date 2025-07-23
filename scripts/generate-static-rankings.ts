@@ -49,7 +49,7 @@ async function generateStaticRankings() {
     // Get tools using the repository (now fixed to return complete data)
     const allTools = await toolsRepo.getAll();
     const toolsMap = new Map();
-    allTools.forEach((tool: any) => {
+    allTools.forEach((tool) => {
       toolsMap.set(tool.id, tool);
     });
 
@@ -64,7 +64,7 @@ async function generateStaticRankings() {
 
     // Transform to expected format with tool details
     const formattedRankings = await Promise.all(
-      currentRankings.rankings.map(async (ranking: any) => {
+      currentRankings.rankings.map(async (ranking) => {
         const tool = toolsMap.get(ranking.tool_id);
 
         if (!tool) {
@@ -84,7 +84,13 @@ async function generateStaticRankings() {
         const result: RankingData = {
           rank: ranking.position,
           previousRank: ranking.movement?.previous_position || null,
-          rankChange: ranking.movement?.change || 0,
+          rankChange: ranking.movement?.previous_position
+            ? ranking.movement.direction === "up"
+              ? ranking.movement.change
+              : ranking.movement.direction === "down"
+                ? -ranking.movement.change
+                : 0
+            : 0,
           changeReason: ranking.change_analysis?.primary_reason || "",
           tool: {
             id: tool.id,

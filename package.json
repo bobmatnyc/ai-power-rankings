@@ -1,6 +1,6 @@
 {
   "name": "ai-power-rankings",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "private": true,
   "scripts": {
     "dev": "node scripts/clear-next-cache.js && next dev --turbo",
