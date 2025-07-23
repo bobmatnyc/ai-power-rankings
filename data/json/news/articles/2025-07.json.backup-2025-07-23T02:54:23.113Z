@@ -3,12 +3,18 @@
     "id": "3786cda1-ddd4-4858-a1f2-8e48b82c2bf6",
     "slug": "kiro-news-kiro-developer-tool-updates-funding",
     "title": "Kiro News: kiro developer tool updates funding",
-    "content": "Amazon Web Services launched Kiro, an AI-powered agentic IDE designed to help developers move from prototype to production with structured, production-ready code. AWS CEO Matt Garman highlighted that Kiro bridges the gap between quick code generation and shipping production-quality applications.",
-    "summary": "AWS launches Kiro, a new AI-powered IDE that transforms natural language specifications into production-ready code, addressing the challenges of 'vibe coding' in AI development.",
+    "content": "[\n  {\n    \"title\": \"AWS Kiro: 5 Key Features To Amazon's New AI Coding Tool - CRN\",\n    \"url\": \"https://www.crn.com/news/cloud/2025/aws-kiro-5-key-features-to-amazon-s-new-ai-coding-tool\",\n    \"date\": \"2025-07-15\",\n    \"summary\": \"Amazon Web Services launched Kiro, an AI-powered agentic IDE designed to help developers move from prototype to production with structured, production-ready code.",
+    "summary": "[\n  {\n    \"title\": \"AWS Kiro: 5 Key Features To Amazon's New AI Coding Tool - CRN\",\n    \"url\": \"https://www.crn.com/news/cloud/2025/aws-kiro-5-key-features-to-amazon-s-new-ai-coding-tool\",\n    \"date\": \"2025-07-15\",\n    \"summary\": \"Amazon Web Services launched Kiro, an AI-powered agentic IDE designed to help developers move from prototype to production with structured, production-ready code. AWS CEO Matt Garman highlighted that Kiro bridges the gap between quick code generation and shippi",
     "source": "Perplexity AI",
     "source_url": "https://perplexity.ai/search?q=kiro+developer+tool+updates+funding",
-    "tags": ["industry", "ai-agents", "ide"],
-    "tool_mentions": ["kiro"],
+    "tags": [
+      "industry",
+      "ai-agents",
+      "ide"
+    ],
+    "tool_mentions": [
+      "31"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-22T05:03:48.133Z"
@@ -17,12 +23,18 @@
     "id": "25ca318d-0cef-4fee-b204-ff5fccec55ab",
     "slug": "kiro-news-kiro-vs-cursor-copilot-claude-comparison",
     "title": "Kiro News: kiro vs Cursor Copilot Claude comparison",
-    "content": "This article compares Amazon's Kiro and Anthropic's Claude Code in AI-powered development. Claude Code has a proven track record with a 70% success rate on real-world bug fixing benchmarks and is used extensively internally at Anthropic, producing high-quality, maintainable code. Kiro, as Amazon's new entry, focuses on spec-driven development and production-ready code generation.",
-    "summary": "A comparison of Amazon Kiro vs. Anthropic Claude Code reveals different approaches to AI development, with Claude Code showing strong benchmark performance while Kiro emphasizes specification-driven development.",
+    "content": "[\n  {\n    \"title\": \"The Battle for AI-Powered Development: Amazon Kiro vs. Anthropic Claude Code\",\n    \"url\": \"https://rundatarun.io/p/the-battle-for-ai-powered-development\",\n    \"date\": \"2025-07-15\",\n    \"summary\": \"This article compares Amazon's Kiro and Anthropic's Claude Code in AI-powered development. Claude Code has a proven track record with a 70% success rate on real-world bug fixing benchmarks and is used extensively internally at Anthropic, producing high-quality, maintainable",
+    "summary": "[\n  {\n    \"title\": \"The Battle for AI-Powered Development: Amazon Kiro vs. Anthropic Claude Code\",\n    \"url\": \"https://rundatarun.io/p/the-battle-for-ai-powered-development\",\n    \"date\": \"2025-07-15\",\n    \"summary\": \"This article compares Amazon's Kiro and Anthropic's Claude Code in AI-powered development. Claude Code has a proven track record with a 70% success rate on real-world bug fixing benchmarks and is used extensively internally at Anthropic, producing high-quality, maintainable",
     "source": "Perplexity AI",
     "source_url": "https://perplexity.ai/search?q=kiro+vs+Cursor+Copilot+Claude+comparison",
-    "tags": ["industry", "benchmarks"],
-    "tool_mentions": ["kiro", "4"],
+    "tags": [
+      "industry",
+      "benchmarks"
+    ],
+    "tool_mentions": [
+      "31",
+      "4"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-22T05:03:36.598Z"
@@ -31,12 +43,16 @@
     "id": "b4611ba2-dc40-4bcd-922a-2eae11d5b708",
     "slug": "kiro-news-kiro-features-pricing-launch-announcement",
     "title": "Kiro News: kiro features pricing launch announcement",
-    "content": "Amazon launched a preview of Kiro, an AI-powered tool designed to help developers code, design systems, and manage tasks with minimal manual effort. Kiro supports a 'vibe coding' approach where much of the software-building process is automated through AI agents, while maintaining production-quality standards through specification-driven development.",
-    "summary": "Amazon enters the AI coding assistant market with Kiro Preview, offering developers a new approach to automated software development that balances creative freedom with production requirements.",
+    "content": "[\n  {\n    \"title\": \"Amazon Enters AI Vibe Coding Race With Launch of Kiro Preview\",\n    \"url\": \"https://www.tradingview.com/news/gurufocus:9c81eaa32094b:0-amazon-enters-ai-vibe-coding-race-with-launch-of-kiro-preview/\",\n    \"date\": \"2025-07-16\",\n    \"summary\": \"Amazon launched a preview of Kiro, an AI-powered tool designed to help developers code, design systems, and manage tasks with minimal manual effort.",
+    "summary": "[\n  {\n    \"title\": \"Amazon Enters AI Vibe Coding Race With Launch of Kiro Preview\",\n    \"url\": \"https://www.tradingview.com/news/gurufocus:9c81eaa32094b:0-amazon-enters-ai-vibe-coding-race-with-launch-of-kiro-preview/\",\n    \"date\": \"2025-07-16\",\n    \"summary\": \"Amazon launched a preview of Kiro, an AI-powered tool designed to help developers code, design systems, and manage tasks with minimal manual effort. Kiro supports a vibe coding approach where much of the software-building process",
     "source": "Perplexity AI",
     "source_url": "https://perplexity.ai/search?q=kiro+features+pricing+launch+announcement",
-    "tags": ["product"],
-    "tool_mentions": ["kiro"],
+    "tags": [
+      "product"
+    ],
+    "tool_mentions": [
+      "31"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-22T05:03:30.444Z"
@@ -45,12 +61,18 @@
     "id": "20cf0e81-0a4e-406a-aa8d-57a902ead1f1",
     "slug": "kiro-news-kiro-ai-coding-assistant-news-july-2025",
     "title": "Kiro News: kiro AI coding assistant news July 2025",
-    "content": "Amazon Web Services (AWS) unveiled Kiro, an agentic AI integrated development environment (IDE) designed to streamline software development by reducing issues associated with 'vibe coding'—where AI agents create software with minimal human input. Kiro focuses on transforming natural language specifications into well-structured, production-ready applications.",
-    "summary": "AWS launches Kiro, an agentic AI IDE designed to end the chaos of 'vibe coding' by providing structured, specification-driven development while maintaining the benefits of AI-powered code generation.",
+    "content": "[\n  {\n    \"title\": \"AWS launches Kiro, an agentic AI IDE, to end the chaos of vibe coding\",\n    \"url\": \"https://www.techradar.com/pro/aws-launches-kiro-an-agentic-ai-ide-to-end-the-chaos-of-vibe-coding\",\n    \"date\": \"2025-07-16\",\n    \"summary\": \"Amazon Web Services (AWS) unveiled Kiro, an agentic AI integrated development environment (IDE) designed to streamline software development by reducing issues associated with 'vibe coding'—where AI agents create software with minimal human input.",
+    "summary": "[\n  {\n    \"title\": \"AWS launches Kiro, an agentic AI IDE, to end the chaos of vibe coding\",\n    \"url\": \"https://www.techradar.com/pro/aws-launches-kiro-an-agentic-ai-ide-to-end-the-chaos-of-vibe-coding\",\n    \"date\": \"2025-07-16\",\n    \"summary\": \"Amazon Web Services (AWS) unveiled Kiro, an agentic AI integrated development environment (IDE) designed to streamline software development by reducing issues associated with 'vibe coding'—where AI agents create software with minimal human input.",
     "source": "Perplexity AI",
     "source_url": "https://perplexity.ai/search?q=kiro+AI+coding+assistant+news+July+2025",
-    "tags": ["industry", "ai-agents", "ide"],
-    "tool_mentions": ["kiro"],
+    "tags": [
+      "industry",
+      "ai-agents",
+      "ide"
+    ],
+    "tool_mentions": [
+      "31"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-22T05:03:24.918Z"
@@ -64,7 +86,11 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/why-i-built-my-own-multi-agent-framework",
-    "tags": ["product", "productivity", "ai-agents"],
+    "tags": [
+      "product",
+      "productivity",
+      "ai-agents"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
@@ -85,7 +111,14 @@
     "author": "Robert Matsuoka",
     "source": "hyperdev.substack.com",
     "source_url": "https://hyperdev.substack.com/p/claudes-growing-pains",
-    "tags": ["llm", "code-generation", "research", "business", "open-source", "developer-tools"],
+    "tags": [
+      "llm",
+      "code-generation",
+      "research",
+      "business",
+      "open-source",
+      "developer-tools"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-19T00:26:48.224Z",
     "updated_at": "2025-07-19T00:26:48.224Z",
@@ -100,8 +133,13 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/claudes-growing-pains",
-    "tags": ["product", "benchmarks"],
-    "tool_mentions": ["2"],
+    "tags": [
+      "product",
+      "benchmarks"
+    ],
+    "tool_mentions": [
+      "2"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-18T18:02:33.000Z"
@@ -156,7 +194,10 @@
     "content": "",
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2025/07/18/what-is-mistral-ai-everything-to-know-about-the-openai-competitor/",
-    "tags": ["ai-agents", "api"],
+    "tags": [
+      "ai-agents",
+      "api"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-19T00:25:00.705Z",
     "updated_at": "2025-07-19T00:25:00.705Z",
@@ -170,7 +211,9 @@
     "content": "",
     "source": "Aibase News",
     "source_url": "https://news.aibase.com/news/19742",
-    "tags": ["api"],
+    "tags": [
+      "api"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-19T00:25:00.812Z",
     "updated_at": "2025-07-19T00:25:00.812Z",
@@ -212,7 +255,9 @@
     "content": "",
     "source": "Webex",
     "source_url": "https://help.webex.com/en-us/article/a1gx3h/what's-new-in-webex-contact-center",
-    "tags": ["ai-agents"],
+    "tags": [
+      "ai-agents"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-19T00:25:01.128Z",
     "updated_at": "2025-07-19T00:25:01.128Z",
@@ -226,7 +271,10 @@
     "content": "",
     "source": "Simon Willison's Newsletter",
     "source_url": "https://simonw.substack.com/p/vibe-scraping-on-an-iphone-with-openai",
-    "tags": ["benchmarks", "api"],
+    "tags": [
+      "benchmarks",
+      "api"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-19T00:25:01.237Z",
     "updated_at": "2025-07-19T00:25:01.237Z",
@@ -241,7 +289,10 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/why-the-team-of-agents-works",
-    "tags": ["product", "ai-agents"],
+    "tags": [
+      "product",
+      "ai-agents"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
@@ -260,8 +311,14 @@
     "summary": "Amazon Web Services (AWS) announced Kiro AI in mid-July 2025, a specification-driven agentic integrated development environment (IDE) designed to bridge the gap between freeform 'vibe coding' and production-grade software development. Kiro transforms natural language specifications into working code.",
     "source": "TS2 Tech",
     "source_url": "https://ts2.tech/en/aws-kiro-ai-amazons-bold-new-agentic-ide-turning-vibe-coding-into-viable-software/",
-    "tags": ["product", "ai-agents", "ide"],
-    "tool_mentions": ["31"],
+    "tags": [
+      "product",
+      "ai-agents",
+      "ide"
+    ],
+    "tool_mentions": [
+      "31"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-17T04:00:00.000Z"
@@ -274,8 +331,12 @@
     "content": "",
     "source": "Business Insider",
     "source_url": "https://www.businessinsider.com/windsurf-google-cognition-acquisition-ai-coding-developer-data-ide-2025-7",
-    "tags": ["ai-agents"],
-    "tool_mentions": ["14"],
+    "tags": [
+      "ai-agents"
+    ],
+    "tool_mentions": [
+      "14"
+    ],
     "created_at": "2025-07-19T00:25:01.345Z",
     "updated_at": "2025-07-19T00:25:01.345Z",
     "date": "2025-07-17T00:00:00.000Z"
@@ -288,7 +349,9 @@
     "content": "",
     "source": "Impaakt",
     "source_url": "https://impaakt.co/meta-and-aws-partner-to-empower-ai-developers/",
-    "tags": ["open-source"],
+    "tags": [
+      "open-source"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-19T00:25:01.451Z",
     "updated_at": "2025-07-19T00:25:01.451Z",
@@ -302,7 +365,9 @@
     "content": "",
     "source": "DataCenters.com",
     "source_url": "https://www.datacenters.com/news/meta-s-65b-ai-data-center-expansion-engineering-the-physical-internet-for-the-ai-age",
-    "tags": ["ai-agents"],
+    "tags": [
+      "ai-agents"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-19T00:25:01.555Z",
     "updated_at": "2025-07-19T00:25:01.555Z",
@@ -317,7 +382,9 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/the-scrum-team",
-    "tags": ["product"],
+    "tags": [
+      "product"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
@@ -364,7 +431,9 @@
     "content": "",
     "source": "The Next Web",
     "source_url": "https://thenextweb.com/news/startup-whisper-emerges-from-stealth-with-god-mode-to-tackle-cybercrime",
-    "tags": ["api"],
+    "tags": [
+      "api"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-19T00:25:01.870Z",
     "updated_at": "2025-07-19T00:25:01.870Z",
@@ -379,8 +448,14 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/when-platform-partners-become-platform",
-    "tags": ["product"],
-    "tool_mentions": ["1", "2", "14"],
+    "tags": [
+      "product"
+    ],
+    "tool_mentions": [
+      "1",
+      "2",
+      "14"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "metadata": {
@@ -399,8 +474,17 @@
     "author": "Robert Matsuoka",
     "source": "hyperdev.substack.com",
     "source_url": "https://hyperdev.substack.com/p/when-platform-partners-become-platform",
-    "tags": ["code-generation", "research", "business", "open-source", "developer-tools"],
-    "tool_mentions": ["2", "1"],
+    "tags": [
+      "code-generation",
+      "research",
+      "business",
+      "open-source",
+      "developer-tools"
+    ],
+    "tool_mentions": [
+      "2",
+      "1"
+    ],
     "created_at": "2025-07-16T04:59:49.644Z",
     "updated_at": "2025-07-16T04:59:49.644Z",
     "date": "2025-07-15T18:00:00.000Z"
@@ -413,8 +497,12 @@
     "content": "",
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2025/07/14/cognition-maker-of-the-ai-coding-agent-devin-acquires-windsurf/",
-    "tags": ["ai-agents"],
-    "tool_mentions": ["14"],
+    "tags": [
+      "ai-agents"
+    ],
+    "tool_mentions": [
+      "14"
+    ],
     "created_at": "2025-07-19T00:25:01.973Z",
     "updated_at": "2025-07-19T00:25:01.973Z",
     "date": "2025-07-15T00:00:00.000Z"
@@ -428,7 +516,9 @@
     "source": "DevDiggers",
     "source_url": "https://devdiggers.com/best-chatgpt-alternatives/",
     "tags": [],
-    "tool_mentions": ["21"],
+    "tool_mentions": [
+      "21"
+    ],
     "created_at": "2025-07-19T00:25:02.080Z",
     "updated_at": "2025-07-19T00:25:02.080Z",
     "date": "2025-07-15T00:00:00.000Z"
@@ -441,8 +531,13 @@
     "content": "",
     "source": "Mindly Nova YouTube Channel",
     "source_url": "https://www.youtube.com/watch?v=Fi7NlaMhqrk",
-    "tags": ["productivity"],
-    "tool_mentions": ["1", "21"],
+    "tags": [
+      "productivity"
+    ],
+    "tool_mentions": [
+      "1",
+      "21"
+    ],
     "created_at": "2025-07-19T00:25:02.186Z",
     "updated_at": "2025-07-19T00:25:02.186Z",
     "date": "2025-07-15T00:00:00.000Z"
@@ -456,8 +551,14 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/the-reddit-reckoning",
-    "tags": ["product"],
-    "tool_mentions": ["1", "2", "14"],
+    "tags": [
+      "product"
+    ],
+    "tool_mentions": [
+      "1",
+      "2",
+      "14"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-14T18:02:37.000Z"
@@ -470,8 +571,14 @@
     "summary": "Kiro: A new agentic IDE",
     "source": "Hacker News",
     "source_url": "https://kiro.dev/blog/introducing-kiro/",
-    "tags": ["industry", "ai-agents", "ide"],
-    "tool_mentions": ["31"],
+    "tags": [
+      "industry",
+      "ai-agents",
+      "ide"
+    ],
+    "tool_mentions": [
+      "31"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-14T14:24:40.000Z"
@@ -484,8 +591,12 @@
     "summary": "Amazon has launched Kiro, a new AI-powered coding assistant that focuses on specification-driven development. Unlike traditional code completion tools, Kiro allows developers to write detailed specifications that are then transformed into production-ready code.",
     "source": "Amazon AWS",
     "source_url": "https://kiro.dev",
-    "tags": ["product"],
-    "tool_mentions": ["31"],
+    "tags": [
+      "product"
+    ],
+    "tool_mentions": [
+      "31"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-14T04:00:00.000Z"
@@ -498,7 +609,9 @@
     "content": "",
     "source": "AINvest",
     "source_url": "https://www.ainvest.com/news/meta-shifts-llama-ai-monetized-model-invests-200m-talent-2507/",
-    "tags": ["open-source"],
+    "tags": [
+      "open-source"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-19T00:25:02.295Z",
     "updated_at": "2025-07-19T00:25:02.295Z",
@@ -526,8 +639,13 @@
     "content": "",
     "source": "HowToHarbor YouTube Channel",
     "source_url": "https://www.youtube.com/watch?v=ZlTb-c-vaUY",
-    "tags": ["productivity"],
-    "tool_mentions": ["2", "21"],
+    "tags": [
+      "productivity"
+    ],
+    "tool_mentions": [
+      "2",
+      "21"
+    ],
     "created_at": "2025-07-19T00:25:02.505Z",
     "updated_at": "2025-07-19T00:25:02.505Z",
     "date": "2025-07-14T00:00:00.000Z"
@@ -541,7 +659,10 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/claude-multi-agent-pm",
-    "tags": ["industry", "ai-agents"],
+    "tags": [
+      "industry",
+      "ai-agents"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
@@ -555,8 +676,16 @@
     "content": "",
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2025/07/11/ai-coding-tools-may-not-speed-up-every-developer-study-shows/",
-    "tags": ["productivity", "developer tools", "METR study", "AI efficiency"],
-    "tool_mentions": ["1", "2"],
+    "tags": [
+      "productivity",
+      "developer tools",
+      "METR study",
+      "AI efficiency"
+    ],
+    "tool_mentions": [
+      "1",
+      "2"
+    ],
     "created_at": "2025-07-14T07:10:20.363Z",
     "updated_at": "2025-07-14T07:10:20.363Z",
     "impact_assessment": {
@@ -566,22 +695,34 @@
         {
           "tool_id": "1",
           "impact_type": "negative",
-          "factors_affected": ["business_sentiment", "user_satisfaction"]
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
         },
         {
           "tool_id": "2",
           "impact_type": "negative",
-          "factors_affected": ["business_sentiment", "user_satisfaction"]
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
         },
         {
           "tool_id": "26",
           "impact_type": "negative",
-          "factors_affected": ["business_sentiment", "user_satisfaction"]
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
         },
         {
           "tool_id": "27",
           "impact_type": "negative",
-          "factors_affected": ["business_sentiment", "user_satisfaction"]
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
         }
       ]
     },
@@ -601,8 +742,16 @@
     "content": "",
     "source": "The Register",
     "source_url": "https://www.theregister.com/2025/07/11/ai_code_tools_slow_down/",
-    "tags": ["productivity research", "developer perception", "METR study", "performance gap"],
-    "tool_mentions": ["1", "2"],
+    "tags": [
+      "productivity research",
+      "developer perception",
+      "METR study",
+      "performance gap"
+    ],
+    "tool_mentions": [
+      "1",
+      "2"
+    ],
     "created_at": "2025-07-14T07:10:20.574Z",
     "updated_at": "2025-07-14T07:10:20.574Z",
     "impact_assessment": {
@@ -612,22 +761,34 @@
         {
           "tool_id": "1",
           "impact_type": "negative",
-          "factors_affected": ["business_sentiment", "user_satisfaction"]
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
         },
         {
           "tool_id": "2",
           "impact_type": "negative",
-          "factors_affected": ["business_sentiment", "user_satisfaction"]
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
         },
         {
           "tool_id": "26",
           "impact_type": "negative",
-          "factors_affected": ["business_sentiment", "user_satisfaction"]
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
         },
         {
           "tool_id": "27",
           "impact_type": "negative",
-          "factors_affected": ["business_sentiment", "user_satisfaction"]
+          "factors_affected": [
+            "business_sentiment",
+            "user_satisfaction"
+          ]
         }
       ]
     },
@@ -647,7 +808,9 @@
     "content": "",
     "source": "Simon Willison's Blog",
     "source_url": "https://simonwillison.net/tags/github/",
-    "tags": ["api"],
+    "tags": [
+      "api"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-19T00:25:02.609Z",
     "updated_at": "2025-07-19T00:25:02.609Z",
@@ -662,7 +825,9 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/why-i-switched-my-workflow-to-trackdown",
-    "tags": ["product"],
+    "tags": [
+      "product"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
@@ -676,8 +841,17 @@
     "content": "",
     "source": "Business Insider",
     "source_url": "https://www.businessinsider.com/ai-coding-tools-popular-github-gemini-code-assist-cursor-q-2025-7",
-    "tags": ["market research", "tool adoption", "engineering teams", "AI workflows"],
-    "tool_mentions": ["2", "27", "1"],
+    "tags": [
+      "market research",
+      "tool adoption",
+      "engineering teams",
+      "AI workflows"
+    ],
+    "tool_mentions": [
+      "2",
+      "27",
+      "1"
+    ],
     "created_at": "2025-07-14T07:10:20.469Z",
     "updated_at": "2025-07-14T07:10:20.469Z",
     "date": "2025-07-09T00:00:00.000Z"
@@ -691,8 +865,14 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/the-benefits-of-nanny-coding",
-    "tags": ["product", "ai-agents"],
-    "tool_mentions": ["1", "14"],
+    "tags": [
+      "product",
+      "ai-agents"
+    ],
+    "tool_mentions": [
+      "1",
+      "14"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-08T18:01:00.000Z"
@@ -706,8 +886,13 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/i-hope-never-to-use-claude-code-again",
-    "tags": ["product", "ai-agents"],
-    "tool_mentions": ["2"],
+    "tags": [
+      "product",
+      "ai-agents"
+    ],
+    "tool_mentions": [
+      "2"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-07T18:02:16.000Z"
@@ -720,8 +905,15 @@
     "content": "",
     "source": "Microsoft News",
     "source_url": "https://microsoft.com/news/2025/deepcode-acquisition",
-    "tags": ["acquisition", "code review", "AI development tools", "Microsoft strategy"],
-    "tool_mentions": ["2"],
+    "tags": [
+      "acquisition",
+      "code review",
+      "AI development tools",
+      "Microsoft strategy"
+    ],
+    "tool_mentions": [
+      "2"
+    ],
     "created_at": "2025-07-08T06:35:48.166Z",
     "updated_at": "2025-07-08T06:35:48.166Z",
     "date": "2025-07-07T00:00:00.000Z"
@@ -735,7 +927,9 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/why-i-dropped-the-cms-and-the-database",
-    "tags": ["product"],
+    "tags": [
+      "product"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
@@ -749,7 +943,12 @@
     "content": "",
     "source": "TechCrunch",
     "source_url": "https://techcrunch.com/2025/07/05/codewhisperer-funding-round",
-    "tags": ["funding", "series C", "enterprise AI", "coding assistant"],
+    "tags": [
+      "funding",
+      "series C",
+      "enterprise AI",
+      "coding assistant"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-08T06:35:48.271Z",
     "updated_at": "2025-07-08T06:35:48.271Z",
@@ -763,8 +962,16 @@
     "content": "",
     "source": "VentureBeat",
     "source_url": "https://venturebeat.com/2025/07/04/ai-coding-assistant-market-report",
-    "tags": ["market growth", "enterprise adoption", "revenue projections", "industry analysis"],
-    "tool_mentions": ["2", "21"],
+    "tags": [
+      "market growth",
+      "enterprise adoption",
+      "revenue projections",
+      "industry analysis"
+    ],
+    "tool_mentions": [
+      "2",
+      "21"
+    ],
     "created_at": "2025-07-08T06:35:48.489Z",
     "updated_at": "2025-07-08T06:35:48.489Z",
     "date": "2025-07-04T00:00:00.000Z"
@@ -778,8 +985,15 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/instructions-still-matter",
-    "tags": ["product"],
-    "tool_mentions": ["1", "2", "14", "7"],
+    "tags": [
+      "product"
+    ],
+    "tool_mentions": [
+      "1",
+      "2",
+      "14",
+      "7"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-03T18:02:48.000Z"
@@ -792,8 +1006,15 @@
     "content": "",
     "source": "GitHub Blog",
     "source_url": "https://github.blog/2025-07-03-copilot-enterprise-security",
-    "tags": ["security", "enterprise features", "AI coding", "vulnerability scanning"],
-    "tool_mentions": ["2"],
+    "tags": [
+      "security",
+      "enterprise features",
+      "AI coding",
+      "vulnerability scanning"
+    ],
+    "tool_mentions": [
+      "2"
+    ],
     "created_at": "2025-07-08T06:35:48.062Z",
     "updated_at": "2025-07-08T06:35:48.062Z",
     "date": "2025-07-03T00:00:00.000Z"
@@ -806,7 +1027,12 @@
     "content": "",
     "source": "AI News",
     "source_url": "https://artificialintelligence-news.com/2025/07/03/deepmind-alphacoder-pro-launch",
-    "tags": ["enterprise AI", "Google DeepMind", "custom training", "security"],
+    "tags": [
+      "enterprise AI",
+      "Google DeepMind",
+      "custom training",
+      "security"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-08T06:35:48.378Z",
     "updated_at": "2025-07-08T06:35:48.378Z",
@@ -821,8 +1047,14 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/what-the-other-shoe-sounds-like-when",
-    "tags": ["industry", "api"],
-    "tool_mentions": ["1", "14"],
+    "tags": [
+      "industry",
+      "api"
+    ],
+    "tool_mentions": [
+      "1",
+      "14"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-07-02T18:02:48.000Z"
@@ -836,7 +1068,9 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/when-ai-starts-re-writing-itself",
-    "tags": ["product"],
+    "tags": [
+      "product"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
@@ -851,8 +1085,15 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/why-augment-code-is-betting-beyond",
-    "tags": ["product", "ai-agents"],
-    "tool_mentions": ["1", "2", "14"],
+    "tags": [
+      "product",
+      "ai-agents"
+    ],
+    "tool_mentions": [
+      "1",
+      "2",
+      "14"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-06-30T18:00:42.000Z"
@@ -866,8 +1107,14 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/design-systems-that-actually-work",
-    "tags": ["product"],
-    "tool_mentions": ["1", "2", "14"],
+    "tags": [
+      "product"
+    ],
+    "tool_mentions": [
+      "1",
+      "2",
+      "14"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-06-29T18:02:29.000Z"
@@ -881,7 +1128,9 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/warp-code-when-your-terminal-gets",
-    "tags": ["product"],
+    "tags": [
+      "product"
+    ],
     "tool_mentions": [],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
@@ -896,8 +1145,14 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/zen-coder-decent-execution-overengineered",
-    "tags": ["product"],
-    "tool_mentions": ["1", "2", "14"],
+    "tags": [
+      "product"
+    ],
+    "tool_mentions": [
+      "1",
+      "2",
+      "14"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-06-26T23:02:17.000Z"
@@ -911,8 +1166,13 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/when-following-directions-matters",
-    "tags": ["research", "benchmarks"],
-    "tool_mentions": ["14"],
+    "tags": [
+      "research",
+      "benchmarks"
+    ],
+    "tool_mentions": [
+      "14"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-06-26T18:00:46.000Z"
@@ -926,8 +1186,12 @@
     "author": "Masa Matsuoka",
     "source": "HyperDev by Masa Matsuoka",
     "source_url": "https://hyperdev.matsuoka.com/p/whither-lambdas",
-    "tags": ["product"],
-    "tool_mentions": ["1"],
+    "tags": [
+      "product"
+    ],
+    "tool_mentions": [
+      "1"
+    ],
     "created_at": "2025-07-22T18:48:41.791Z",
     "updated_at": "2025-07-22T18:48:41.791Z",
     "date": "2025-06-26T03:02:21.000Z"
