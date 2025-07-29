@@ -162,6 +162,24 @@ npm run check-deployment
 - GitHub metrics via GitHub API
 - News ingestion from Google Drive
 - AI-powered article analysis
+- **News Collection**: Automated AI news gathering from HackerNews and RSS feeds
+
+### News Collection
+
+Quick commands for collecting AI news:
+
+```bash
+# Collect news from last 7 days
+make collect-news
+
+# Collect news from last 3 days
+make collect-news-3d
+
+# Collect news from last 24 hours
+make collect-news-1d
+```
+
+See [docs/NEWS-COLLECTION.md](docs/NEWS-COLLECTION.md) for detailed information.
 
 ### Manual Updates
 

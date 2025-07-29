@@ -89,15 +89,29 @@ function loadJSONData() {
   return { tools: toolsData.tools, news: newsData.articles, juneRankings };
 }
 
-// Convert tool data to metrics format
-function convertToMetrics(tool: Tool): ToolMetricsV7 {
-  return {
+// Convert tool data to metrics format with velocity
+function convertToMetrics(tool: Tool, velocityScore?: number): ToolMetricsV7 {
+  const metrics: ToolMetricsV7 = {
     tool_id: tool.id,
     name: tool.name,
     category: tool.category,
     status: tool.status,
     info: tool.info,
   };
+
+  // Add velocity score to metrics if available
+  if (velocityScore !== undefined) {
+    if (!metrics.info) {
+      metrics.info = {};
+    }
+    if (!metrics.info.metrics) {
+      metrics.info.metrics = {};
+    }
+    // Store velocity as a metric that can be used by the ranking engine
+    metrics.info.metrics.development_velocity = velocityScore;
+  }
+
+  return metrics;
 }
 
 // Main execution
@@ -113,16 +127,24 @@ async function main() {
     logger.info("Calculating velocity scores from news...");
     const velocityScores = new Map<string, number>();
 
+    // Create slug to ID mapping
+    const slugToId = new Map<string, string>();
+    for (const tool of tools) {
+      slugToId.set(tool.slug, tool.id);
+    }
+
     // Group news by tool
     const newsByTool = new Map<string, NewsArticle[]>();
     for (const article of news as NewsArticle[]) {
-      if (article.tools) {
-        for (const toolId of article.tools) {
-          if (!newsByTool.has(toolId)) {
-            newsByTool.set(toolId, []);
-          }
-          newsByTool.get(toolId)?.push(article);
+      // Handle both 'tools' and 'tool_mentions' fields
+      const toolMentions = article.tool_mentions || article.tools || [];
+      for (const toolRef of toolMentions) {
+        // Convert slug to ID if necessary
+        const toolId = slugToId.get(toolRef) || toolRef;
+        if (!newsByTool.has(toolId)) {
+          newsByTool.set(toolId, []);
         }
+        newsByTool.get(toolId)?.push(article);
       }
     }
 
@@ -155,9 +177,9 @@ async function main() {
       }
     }
 
-    // Initialize ranking engine with velocity scores
+    // Initialize ranking engine with default weights
     logger.info("Initializing ranking engine...");
-    const engine = new RankingEngineV7(velocityScores);
+    const engine = new RankingEngineV7(); // Use default weights
     const algorithmInfo = RankingEngineV7.getAlgorithmInfo();
     logger.info(`Algorithm: ${algorithmInfo.name} (${algorithmInfo.version})`);
 
@@ -173,8 +195,24 @@ async function main() {
       }
 
       try {
-        const metrics = convertToMetrics(tool);
-        const score = engine.calculateToolScore(metrics, currentDate, news as NewsArticle[]);
+        const velocity = velocityScores.get(tool.id) || 10;
+        const metrics = convertToMetrics(tool, velocity);
+
+        // Transform news data to convert tool slugs to IDs for this tool
+        const transformedNews = news.map((article: any) => ({
+          ...article,
+          tool_mentions: (article.tool_mentions || []).map((mention: string) => {
+            // Convert slug to ID if it's for this tool
+            const mentionId = slugToId.get(mention) || mention;
+            return mentionId;
+          }),
+        }));
+
+        const score = engine.calculateToolScore(
+          metrics,
+          currentDate,
+          transformedNews as NewsArticle[]
+        );
         scores.push({ tool, score });
 
         // Log high-scoring tools
@@ -264,13 +302,13 @@ async function main() {
     logger.info("\nTop 10 Tools:");
     rankings.slice(0, 10).forEach((r) => {
       const movement =
-        r.movement !== undefined
-          ? r.movement > 0
-            ? `↑${r.movement}`
-            : r.movement < 0
-              ? `↓${Math.abs(r.movement)}`
-              : "→"
-          : "NEW";
+        r.movement.direction === "up"
+          ? `↑${r.movement.change}`
+          : r.movement.direction === "down"
+            ? `↓${r.movement.change}`
+            : r.movement.direction === "new"
+              ? "NEW"
+              : "→";
       logger.info(`${r.rank}. ${r.tool_name} (${r.score.toFixed(1)}) ${movement}`);
     });
 

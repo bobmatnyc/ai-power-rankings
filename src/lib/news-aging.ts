@@ -48,9 +48,10 @@ export function calculateNewsDecay(
  */
 export function calculateEffectiveNewsImpact(
   article: {
-    published_date: string;
-    source: { name: string };
-    type: string;
+    published_date?: string;
+    date?: string;
+    source?: { name: string } | string;
+    type?: string;
     metadata?: {
       is_company_announcement?: boolean;
       source_credibility?: number;
@@ -63,11 +64,13 @@ export function calculateEffectiveNewsImpact(
   let effectiveImpact = baseImpact;
 
   // Apply age-based decay
-  const ageFactor = calculateNewsDecay(article.published_date, referenceDate);
+  const articleDate = article.published_date || article.date || "";
+  const ageFactor = calculateNewsDecay(articleDate, referenceDate);
   effectiveImpact *= ageFactor;
 
   // Apply PR discount if it's a company announcement
-  const sourceName = typeof article.source === "string" ? article.source : article.source?.name || "";
+  const sourceName =
+    typeof article.source === "string" ? article.source : article.source?.name || "";
   const isCompanyAnnouncement =
     article.metadata?.is_company_announcement ||
     article.type === "company_news" ||

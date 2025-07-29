@@ -1,6 +1,62 @@
 {
   "articles": [
     {
+      "id": "6377029f-923d-4f07-9f43-b0030376fcba",
+      "slug": "news-claude-code-weekly-rate-limits",
+      "title": "Claude Code weekly rate limits",
+      "content": "",
+      "summary": "",
+      "source": "HackerNews",
+      "source_url": "https://news.ycombinator.com/item?id=44713757",
+      "tags": ["industry", "ai-coding"],
+      "tool_mentions": ["claude-code"],
+      "created_at": "2025-07-29T05:49:42.037881+00:00",
+      "updated_at": "2025-07-29T05:49:42.038025+00:00",
+      "date": "2025-07-28T18:27:51+00:00"
+    },
+    {
+      "id": "1f1a7bb2-1562-4621-b869-42549f7a4470",
+      "slug": "news-enough-ai-copilots-we-need-ai-huds",
+      "title": "Enough AI copilots, we need AI HUDs",
+      "content": "",
+      "summary": "",
+      "source": "HackerNews",
+      "source_url": "https://www.geoffreylitt.com/2025/07/27/enough-ai-copilots-we-need-ai-huds",
+      "tags": ["industry", "ai-coding"],
+      "tool_mentions": ["github-copilot"],
+      "created_at": "2025-07-29T05:49:42.038053+00:00",
+      "updated_at": "2025-07-29T05:49:42.038054+00:00",
+      "date": "2025-07-27T22:51:28+00:00"
+    },
+    {
+      "id": "43c1939f-120b-4d26-8403-9b9060b7cef9",
+      "slug": "news-anthropic-deploys-ai-agents-to-audit-models-for",
+      "title": "Anthropic deploys AI agents to audit models for safety",
+      "content": "<p>Anthropic has built an army of autonomous AI agents with a singular mission: to audit powerful models like Claude to improve safety. As these complex systems rapidly advance, the job of making sure they are safe and don&#8217;t harbour hidden dangers has become a herculean task. Anthropic believes it has found a solution, and it’s [&#8230;]</p>\n<p>The post <a href=\"https://www.artificialintelligence-news.com/news/anthropic-deploys-ai-agents-audit-models-for-safety/\">Anthropic deploys AI agent",
+      "summary": "<p>Anthropic has built an army of autonomous AI agents with a singular mission: to audit powerful models like Claude to improve safety. As these complex systems rapidly advance, the job of making sure...",
+      "source": "RSS - AI News",
+      "source_url": "https://www.artificialintelligence-news.com/news/anthropic-deploys-ai-agents-audit-models-for-safety/",
+      "tags": ["industry", "ai-coding"],
+      "tool_mentions": ["claude-code"],
+      "created_at": "2025-07-29T05:49:42.038154+00:00",
+      "updated_at": "2025-07-29T05:49:42.038156+00:00",
+      "date": "2025-07-25T13:40:34+00:00"
+    },
+    {
+      "id": "047fda02-b97b-425c-9200-39b1f225a319",
+      "slug": "news-google-s-newest-gemini-2-5-model-aims-for-intelligence",
+      "title": "Google’s newest Gemini 2.5 model aims for ‘intelligence per dollar’",
+      "content": "<p>Google just dropped the stable version of Gemini 2.5 Flash-Lite and they&#8217;ve essentially created a model that&#8217;s designed to be the workhorse for developers who need to build things at scale without breaking the bank. Building cool things with AI can often feel like a frustrating balancing act. You want a model that’s smart and [&#8230;]</p>\n<p>The post <a href=\"https://www.artificialintelligence-news.com/news/googles-newest-gemini-2-5-model-aims-intelligence-per-dollar/\">Google&#82",
+      "summary": "<p>Google just dropped the stable version of Gemini 2.5 Flash-Lite and they&#8217;ve essentially created a model that&#8217;s designed to be the workhorse for developers who need to build things at sc...",
+      "source": "RSS - AI News",
+      "source_url": "https://www.artificialintelligence-news.com/news/googles-newest-gemini-2-5-model-aims-intelligence-per-dollar/",
+      "tags": ["industry", "ai-coding"],
+      "tool_mentions": ["gemini-code-assist"],
+      "created_at": "2025-07-29T05:49:42.038212+00:00",
+      "updated_at": "2025-07-29T05:49:42.038213+00:00",
+      "date": "2025-07-22T17:02:58+00:00"
+    },
+    {
       "id": "3786cda1-ddd4-4858-a1f2-8e48b82c2bf6",
       "slug": "kiro-news-kiro-developer-tool-updates-funding",
       "title": "Kiro News: kiro developer tool updates funding",
@@ -12274,6 +12330,8 @@
   },
   "metadata": {
     "lastUpdated": "2025-07-23T17:09:45.869Z",
-    "totalArticles": 287
+    "totalArticles": 287,
+    "last_updated": "2025-07-29T05:55:25.928Z",
+    "total": 291
   }
 }

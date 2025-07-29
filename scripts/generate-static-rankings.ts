@@ -7,7 +7,7 @@
 
 import path from "node:path";
 import fs from "fs-extra";
-import { getRankingsRepo, getToolsRepo } from "../src/lib/json-db";
+import { getNewsRepo, getRankingsRepo, getToolsRepo } from "../src/lib/json-db";
 
 interface RankingData {
   rank: number;
@@ -42,6 +42,7 @@ async function generateStaticRankings() {
 
     const rankingsRepo = getRankingsRepo();
     const toolsRepo = getToolsRepo();
+    const newsRepo = getNewsRepo();
 
     // Force rebuild indices to ensure complete data
     // await toolsRepo.forceRebuildIndices(); // Method doesn't exist
@@ -49,8 +50,24 @@ async function generateStaticRankings() {
     // Get tools using the repository (now fixed to return complete data)
     const allTools = await toolsRepo.getAll();
     const toolsMap = new Map();
+    const toolSlugToIdMap = new Map();
     allTools.forEach((tool) => {
       toolsMap.set(tool.id, tool);
+      toolSlugToIdMap.set(tool.slug, tool.id);
+    });
+
+    // Get all news articles to count mentions
+    const allNews = await newsRepo.getAll();
+    const newsCountByTool = new Map<string, number>();
+
+    // Count news mentions for each tool
+    allNews.forEach((article) => {
+      const mentions = article.tool_mentions || [];
+      mentions.forEach((mention: string) => {
+        // Convert slug to ID if necessary
+        const toolId = toolSlugToIdMap.get(mention) || mention;
+        newsCountByTool.set(toolId, (newsCountByTool.get(toolId) || 0) + 1);
+      });
     });
 
     // Get current rankings
@@ -107,7 +124,7 @@ async function generateStaticRankings() {
             innovation: ranking.factor_scores?.innovation / 10 || 5,
           },
           metrics: {
-            news_articles_count: 0,
+            news_articles_count: newsCountByTool.get(tool.id) || 0,
             recent_funding_rounds: 0,
             recent_product_launches: 0,
             users: ranking.factor_scores?.developer_adoption * 1000 || 10000,
@@ -123,6 +140,14 @@ async function generateStaticRankings() {
     // Filter out null values
     const validRankings = formattedRankings.filter(Boolean) as RankingData[];
 
+    // Calculate stats
+    const toolsWithNews = validRankings.filter((r) => r.metrics.news_articles_count > 0).length;
+    const totalNewsArticles = validRankings.reduce(
+      (sum, r) => sum + r.metrics.news_articles_count,
+      0
+    );
+    const avgNewsPerTool = toolsWithNews > 0 ? totalNewsArticles / toolsWithNews : 0;
+
     const staticData = {
       rankings: validRankings,
       algorithm: {
@@ -133,9 +158,9 @@ async function generateStaticRankings() {
       },
       stats: {
         total_tools: validRankings.length,
-        tools_with_news: 0,
-        avg_news_boost: 0,
-        max_news_impact: 0,
+        tools_with_news: toolsWithNews,
+        avg_news_boost: avgNewsPerTool,
+        max_news_impact: Math.max(...validRankings.map((r) => r.metrics.news_articles_count)),
       },
       _source: "static-generation",
       _timestamp: new Date().toISOString(),

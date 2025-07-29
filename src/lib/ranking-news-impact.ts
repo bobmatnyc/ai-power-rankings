@@ -10,14 +10,18 @@ import { calculateEffectiveNewsImpact } from "./news-aging";
 
 export interface NewsArticle {
   id: string;
-  published_date: string;
-  type: string;
-  source: { name: string };
-  tools_mentioned: Array<{
-    tool_id: string;
-    relevance: "primary" | "secondary" | "mentioned";
-    sentiment?: "positive" | "neutral" | "negative" | "mixed";
-  }>;
+  published_date?: string;
+  date?: string;
+  type?: string;
+  source?: { name: string } | string;
+  tags?: string[];
+  tool_mentions?:
+    | string[]
+    | Array<{
+        tool_id: string;
+        relevance: "primary" | "secondary" | "mentioned";
+        sentiment?: "positive" | "neutral" | "negative" | "mixed";
+      }>;
   impact_assessment?: {
     importance?: "critical" | "high" | "medium" | "low";
     market_impact?: "major" | "moderate" | "minor" | "none";
@@ -39,7 +43,7 @@ export interface NewsArticle {
 export function calculateBaseNewsImpact(article: NewsArticle): number {
   let baseImpact = 0;
 
-  // Importance factor
+  // Importance factor - use defaults for now since we don't have impact_assessment
   const importanceScores = {
     critical: 10,
     high: 7,
@@ -49,7 +53,7 @@ export function calculateBaseNewsImpact(article: NewsArticle): number {
   const importance = article["impact_assessment"]?.["importance"] || "medium";
   baseImpact += importanceScores[importance] || importanceScores["medium"];
 
-  // Market impact factor
+  // Market impact factor - use defaults for now
   const marketImpactScores = {
     major: 8,
     moderate: 5,
@@ -59,7 +63,7 @@ export function calculateBaseNewsImpact(article: NewsArticle): number {
   const marketImpact = article["impact_assessment"]?.["market_impact"] || "minor";
   baseImpact += marketImpactScores[marketImpact] || marketImpactScores["minor"];
 
-  // News type factor
+  // News type factor - analyze from tags if type is not available
   const typeImpactScores: Record<string, number> = {
     funding: 8,
     acquisition: 9,
@@ -76,7 +80,14 @@ export function calculateBaseNewsImpact(article: NewsArticle): number {
     research_paper: 6,
     community_news: 3,
   };
-  baseImpact += typeImpactScores[article["type"]] || 3;
+
+  // Use type if available, otherwise default based on tags
+  if (article["type"]) {
+    baseImpact += typeImpactScores[article["type"]] || 3;
+  } else {
+    // Default impact based on presence of article
+    baseImpact += 3;
+  }
 
   // Normalize to 0-10 scale
   return Math.min(10, Math.max(0, baseImpact / 2.5));
@@ -85,7 +96,20 @@ export function calculateBaseNewsImpact(article: NewsArticle): number {
 /**
  * Calculate news sentiment impact for a specific tool
  */
-export function calculateSentimentImpact(toolMention: NewsArticle["tools_mentioned"][0]): number {
+export function calculateSentimentImpact(
+  toolMention:
+    | string
+    | {
+        tool_id: string;
+        relevance: "primary" | "secondary" | "mentioned";
+        sentiment?: "positive" | "neutral" | "negative" | "mixed";
+      }
+): number {
+  // Handle string format (no sentiment info)
+  if (typeof toolMention === "string") {
+    return 0; // Neutral sentiment for string mentions
+  }
+
   const sentimentScores = {
     positive: 1.0,
     neutral: 0,
@@ -99,8 +123,9 @@ export function calculateSentimentImpact(toolMention: NewsArticle["tools_mention
     mentioned: 0.2,
   };
 
-  const sentimentScore = sentimentScores[toolMention["sentiment"] || "neutral"];
-  const relevanceMultiplier = relevanceMultipliers[toolMention["relevance"]];
+  const sentiment = toolMention.sentiment || "neutral";
+  const sentimentScore = sentimentScores[sentiment];
+  const relevanceMultiplier = relevanceMultipliers[toolMention.relevance];
 
   return sentimentScore * relevanceMultiplier;
 }
@@ -130,14 +155,29 @@ export function calculateToolNewsImpact(
 
   for (const article of newsArticles) {
     // Find mentions of this tool
-    const toolMentions = (article.tools_mentioned || []).filter((t: any) => t === toolId);
-    if (toolMentions.length === 0) {
+    const mentions = article.tool_mentions || [];
+    let isToolMentioned = false;
+
+    // Handle both string array and object array formats
+    if (mentions.length > 0) {
+      if (typeof mentions[0] === "string") {
+        // Simple string array format - check if tool ID or slug matches
+        isToolMentioned = (mentions as string[]).includes(toolId);
+      } else {
+        // Object array format
+        isToolMentioned = (mentions as Array<{ tool_id: string }>).some(
+          (m) => m.tool_id === toolId
+        );
+      }
+    }
+
+    if (!isToolMentioned) {
       continue;
     }
 
     articleCount++;
 
-    const articleDate = new Date(article.published_date);
+    const articleDate = new Date(article.published_date || article.date || "");
     if (articleDate >= thirtyDaysAgo) {
       recentArticleCount++;
     }
@@ -217,14 +257,16 @@ export function applyNewsImpactToRanking(
     );
   }
 
-  logger.info("Applied news impact for tool:", {
-    newsImpact,
-    impactModifier,
-    adjustments: Object.entries(impactDistribution).map(([factor, weight]) => ({
-      factor,
-      adjustment: impactModifier * weight,
-    })),
-  });
+  if (newsImpact.totalImpact > 0) {
+    logger.info("Applied news impact for tool:", {
+      newsImpact,
+      impactModifier,
+      adjustments: Object.entries(impactDistribution).map(([factor, weight]) => ({
+        factor,
+        adjustment: impactModifier * weight,
+      })),
+    });
+  }
 
   return adjustedScores;
 }
