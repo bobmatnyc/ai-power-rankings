@@ -96,10 +96,13 @@
     },
     "metrics": {
       "swe_bench": {
+        "full": 33.83,
         "lite": 26.3,
-        "date": "2024",
-        "source": "SWE-bench leaderboard (historical data)",
-        "note": "Last major score from 2024"
+        "date": "2025-02-27",
+        "source": "Official SWE-bench leaderboard",
+        "model": "Claude 3.7 Sonnet (via SWE-agent 1.0)",
+        "note": "SWE-agent 1.0 achieved 33.83% on full SWE-bench using Claude 3.7 Sonnet (February 2025), while Aider's last published score was 26.3% on SWE-bench Lite (2024)",
+        "achievement": "SWE-agent 1.0 achieved #1 position on full benchmark"
       },
       "news_mentions": 1
     }

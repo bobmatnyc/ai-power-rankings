@@ -55,33 +55,6 @@
       }
     },
     {
-      "rank": 3,
-      "previousRank": 1,
-      "rankChange": -2,
-      "changeReason": "",
-      "tool": {
-        "id": "4",
-        "slug": "claude-code",
-        "name": "Claude Code",
-        "category": "autonomous-agent",
-        "status": "active",
-        "website_url": "https://anthropic.com/claude-code",
-        "description": "Terminal-based coding agent with deep codebase understanding and multi-file editing"
-      },
-      "scores": {
-        "overall": 87.5,
-        "agentic_capability": 5,
-        "innovation": 9
-      },
-      "metrics": {
-        "news_articles_count": 21,
-        "recent_funding_rounds": 0,
-        "recent_product_launches": 0,
-        "users": 10000,
-        "swe_bench_score": 70.3
-      }
-    },
-    {
       "rank": 4,
       "previousRank": null,
       "rankChange": 0,
@@ -847,11 +820,11 @@
     }
   },
   "stats": {
-    "total_tools": 31,
-    "tools_with_news": 20,
-    "avg_news_boost": 8.15,
+    "total_tools": 30,
+    "tools_with_news": 19,
+    "avg_news_boost": 7.473684210526316,
     "max_news_impact": 36
   },
   "_source": "static-generation",
-  "_timestamp": "2025-07-29T07:16:24.003Z"
+  "_timestamp": "2025-07-29T14:54:09.046Z"
 }

@@ -673,6 +673,39 @@
       "size": "large",
       "created_at": "2025-06-09T21:02:54.983891",
       "updated_at": "2025-06-09T21:02:54.983891"
+    },
+    {
+      "id": "78",
+      "slug": "warp",
+      "name": "Warp",
+      "description": "AI-powered terminal and autonomous coding agent platform",
+      "website": "https://www.warp.dev",
+      "founded": "2021",
+      "size": "startup",
+      "created_at": "2025-07-29T00:00:00.000Z",
+      "updated_at": "2025-07-29T00:00:00.000Z"
+    },
+    {
+      "id": "79",
+      "slug": "epam",
+      "name": "EPAM Systems",
+      "description": "Global provider of digital platform engineering and software development services",
+      "website": "https://www.epam.com",
+      "founded": "1993",
+      "size": "large",
+      "created_at": "2025-07-29T00:00:00.000Z",
+      "updated_at": "2025-07-29T00:00:00.000Z"
+    },
+    {
+      "id": "80",
+      "slug": "refact-ai",
+      "name": "Refact.ai",
+      "description": "Open-source AI coding agent achieving highest SWE-bench scores",
+      "website": "https://refact.ai",
+      "founded": "2023",
+      "size": "startup",
+      "created_at": "2025-07-29T00:00:00.000Z",
+      "updated_at": "2025-07-29T00:00:00.000Z"
     }
   ],
   "index": {

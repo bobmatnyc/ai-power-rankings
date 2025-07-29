@@ -118,13 +118,15 @@
     },
     "metrics": {
       "swe_bench": {
-        "verified": 70.3,
-        "verified_basic": 63.7,
-        "date": "2025-02-24",
-        "source": "Anthropic Blog - Claude 3.7 Sonnet",
-        "model": "Claude 3.7 Sonnet",
-        "methodology": "With scaffolding: 70.3%, Basic scaffold: 63.7%",
-        "achievement": "First release of Claude Code as limited research preview"
+        "verified": 72.7,
+        "verified_v3_7": 70.3,
+        "verified_basic_v3_7": 63.7,
+        "date": "2025-05-22",
+        "source": "Anthropic Blog - Claude 4",
+        "model": "Claude Sonnet 4",
+        "methodology": "Claude 4 Sonnet: 72.7% (standard), 80.2% (with parallel test-time compute); Claude 3.7: 70.3% (with scaffolding), 63.7% (basic scaffold)",
+        "achievement": "Claude Code upgraded from research preview to general availability with Claude 4 models",
+        "benchmark_version": "SWE-bench Verified (full 500 problems)"
       },
       "news_mentions": 2
     }

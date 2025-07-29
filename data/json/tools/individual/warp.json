@@ -1,0 +1,57 @@
+{
+  "id": "35",
+  "slug": "warp",
+  "name": "Warp",
+  "category": "autonomous-agent",
+  "status": "active",
+  "company_id": "78",
+  "info": {
+    "summary": "Production-ready single-agent system for autonomous software engineering",
+    "description": "AI-powered autonomous coding agent that achieved 71% on SWE-bench Verified with a single-agent architecture",
+    "website": "https://www.warp.dev",
+    "features": [
+      "Single-agent architecture for simplicity and reliability",
+      "Production-ready autonomous coding capabilities",
+      "SWE-bench Verified score of 71%",
+      "Terminal-based interface",
+      "Full command execution support"
+    ],
+    "technical": {
+      "context_window": null,
+      "multi_file_support": true,
+      "language_support": [
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "Java",
+        "C++",
+        "C#",
+        "Go",
+        "Rust",
+        "Ruby",
+        "PHP"
+      ],
+      "llm_providers": ["Multiple LLMs"],
+      "subprocess_support": true,
+      "tool_support": true,
+      "architecture": "Single-agent approach (explored but rejected multi-agent)"
+    },
+    "business": {
+      "pricing_model": "subscription",
+      "enterprise_pricing": true,
+      "free_tier": false
+    },
+    "metrics": {
+      "swe_bench": {
+        "verified": 71,
+        "date": "2025-06-23",
+        "source": "Official SWE-bench leaderboard",
+        "achievement": "Production-ready single-agent system, Top 5 ranking",
+        "architecture": "Single-agent approach (explored but rejected multi-agent)"
+      }
+    }
+  },
+  "created_at": "2025-07-29T00:00:00.000Z",
+  "updated_at": "2025-07-29T00:00:00.000Z",
+  "launch_date": "2025-06-23"
+}

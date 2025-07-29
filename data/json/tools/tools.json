@@ -425,13 +425,15 @@
         },
         "metrics": {
           "swe_bench": {
-            "verified": 70.3,
-            "verified_basic": 63.7,
-            "date": "2025-02-24",
-            "source": "Anthropic Blog - Claude 3.7 Sonnet",
-            "model": "Claude 3.7 Sonnet",
-            "methodology": "With scaffolding: 70.3%, Basic scaffold: 63.7%",
-            "achievement": "First release of Claude Code as limited research preview"
+            "verified": 72.7,
+            "verified_v3_7": 70.3,
+            "verified_basic_v3_7": 63.7,
+            "date": "2025-05-22",
+            "source": "Anthropic Blog - Claude 4",
+            "model": "Claude Sonnet 4",
+            "methodology": "Claude 4 Sonnet: 72.7% (standard), 80.2% (with parallel test-time compute); Claude 3.7: 70.3% (with scaffolding), 63.7% (basic scaffold)",
+            "achievement": "Claude Code upgraded from research preview to general availability with Claude 4 models",
+            "benchmark_version": "SWE-bench Verified (full 500 problems)"
           },
           "news_mentions": 2
         }
@@ -687,10 +689,13 @@
         },
         "metrics": {
           "swe_bench": {
+            "full": 33.83,
             "lite": 26.3,
-            "date": "2024",
-            "source": "SWE-bench leaderboard (historical data)",
-            "note": "Last major score from 2024"
+            "date": "2025-02-27",
+            "source": "Official SWE-bench leaderboard",
+            "model": "Claude 3.7 Sonnet (via SWE-agent 1.0)",
+            "note": "SWE-agent 1.0 achieved 33.83% on full SWE-bench using Claude 3.7 Sonnet (February 2025), while Aider's last published score was 26.3% on SWE-bench Lite (2024)",
+            "achievement": "SWE-agent 1.0 achieved #1 position on full benchmark"
           },
           "news_mentions": 1
         }
@@ -2005,11 +2010,187 @@
       },
       "created_at": "2025-07-22T18:48:41.792Z",
       "updated_at": "2025-07-22T22:00:00.000Z"
+    },
+    {
+      "id": "32",
+      "slug": "warp",
+      "name": "Warp",
+      "category": "autonomous-agent",
+      "status": "active",
+      "company_id": "78",
+      "info": {
+        "summary": "Production-ready single-agent system for autonomous software engineering",
+        "description": "AI-powered autonomous coding agent that achieved 71% on SWE-bench Verified with a single-agent architecture",
+        "website": "https://www.warp.dev",
+        "features": [
+          "Single-agent architecture for simplicity and reliability",
+          "Production-ready autonomous coding capabilities",
+          "SWE-bench Verified score of 71%",
+          "Terminal-based interface",
+          "Full command execution support"
+        ],
+        "technical": {
+          "context_window": null,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "Go",
+            "Rust",
+            "Ruby",
+            "PHP"
+          ],
+          "llm_providers": ["Multiple LLMs"],
+          "subprocess_support": true,
+          "tool_support": true,
+          "architecture": "Single-agent approach (explored but rejected multi-agent)"
+        },
+        "business": {
+          "pricing_model": "subscription",
+          "enterprise_pricing": true,
+          "free_tier": false
+        },
+        "metrics": {
+          "swe_bench": {
+            "verified": 71,
+            "date": "2025-06-23",
+            "source": "Official SWE-bench leaderboard",
+            "achievement": "Production-ready single-agent system, Top 5 ranking",
+            "architecture": "Single-agent approach (explored but rejected multi-agent)"
+          }
+        }
+      },
+      "created_at": "2025-07-29T00:00:00.000Z",
+      "updated_at": "2025-07-29T00:00:00.000Z",
+      "launch_date": "2025-06-23"
+    },
+    {
+      "id": "33",
+      "slug": "epam-ai-run",
+      "name": "EPAM AI/Run",
+      "category": "autonomous-agent",
+      "status": "active",
+      "company_id": "79",
+      "info": {
+        "summary": "Enterprise AI developer agent achieving 62.8% on SWE-bench Verified",
+        "description": "EPAM's AI developer agent that achieved 62.8% on SWE-bench Verified using Claude 3.5 Sonnet",
+        "website": "https://www.epam.com/services/engineering/ai-developer-tools",
+        "features": [
+          "Autonomous software engineering capabilities",
+          "Enterprise-grade reliability",
+          "Claude 3.5 Sonnet integration",
+          "62.8% SWE-bench Verified score"
+        ],
+        "technical": {
+          "context_window": null,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "Go",
+            "Ruby"
+          ],
+          "llm_providers": ["Anthropic Claude 3.5 Sonnet"],
+          "subprocess_support": true,
+          "tool_support": true
+        },
+        "business": {
+          "pricing_model": "enterprise",
+          "enterprise_pricing": true,
+          "free_tier": false
+        },
+        "metrics": {
+          "swe_bench": {
+            "verified": 62.8,
+            "date": "2025-02-28",
+            "source": "Official SWE-bench leaderboard",
+            "model": "Anthropic Claude 3.5 Sonnet",
+            "version": "v20250219"
+          }
+        }
+      },
+      "created_at": "2025-07-29T00:00:00.000Z",
+      "updated_at": "2025-07-29T00:00:00.000Z",
+      "launch_date": "2025-02-19"
+    },
+    {
+      "id": "34",
+      "slug": "refact-ai",
+      "name": "Refact.ai",
+      "category": "autonomous-agent",
+      "status": "active",
+      "company_id": "80",
+      "info": {
+        "summary": "Open-source agent achieving highest SWE-bench Verified score of 74.4%",
+        "description": "Open-source AI coding agent that achieved the highest recorded score of 74.4% on SWE-bench Verified using Claude 4 Sonnet",
+        "website": "https://refact.ai",
+        "features": [
+          "Highest SWE-bench Verified score at 74.4%",
+          "Open-source implementation",
+          "4-step strategy with extensive guardrails",
+          "Debug tools and error recovery",
+          "Claude 4 Sonnet powered",
+          "First agent to cross 70% threshold (May 2025)"
+        ],
+        "technical": {
+          "context_window": null,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "Go",
+            "Rust",
+            "Ruby",
+            "PHP"
+          ],
+          "llm_providers": ["Claude 4 Sonnet", "Claude 3.7 Sonnet"],
+          "subprocess_support": true,
+          "tool_support": true,
+          "methodology": "4-step strategy with extensive guardrails and debug tools"
+        },
+        "business": {
+          "pricing_model": "open-source",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true
+        },
+        "metrics": {
+          "swe_bench": {
+            "verified": 74.4,
+            "verified_v3_7": 70.4,
+            "lite": 60,
+            "date": "2025-06-03",
+            "source": "Official SWE-bench leaderboard & Refact.ai Blog",
+            "model": "Claude 4 Sonnet",
+            "achievement": "Highest recorded score on SWE-bench Verified, Current #1 position",
+            "improvement": "From 70.4% to 74.4% by upgrading to Claude 4",
+            "milestones": {
+              "may_2025": "First agent to cross 70% threshold with 70.4% (Claude 3.7)",
+              "june_2025": "Achieved 74.4% with Claude 4 upgrade"
+            }
+          }
+        }
+      },
+      "created_at": "2025-07-29T00:00:00.000Z",
+      "updated_at": "2025-07-29T00:00:00.000Z",
+      "launch_date": "2025-05-05"
     }
   ],
   "metadata": {
-    "total": 32,
-    "last_updated": "2025-07-23T02:08:33.209Z",
+    "total": 34,
+    "last_updated": "2025-07-29T00:00:00.000Z",
     "version": "2.0.0"
   }
 }

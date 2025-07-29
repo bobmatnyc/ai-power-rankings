@@ -79,7 +79,7 @@ const toolSchema = {
                 context: { type: ["string", "null"] },
                 updates: { type: ["string", "null"] },
               },
-              additionalProperties: false,
+              additionalProperties: true,
             },
             users: { type: ["number", "null"] },
             employees: { type: ["number", "null"] },
