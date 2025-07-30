@@ -21,9 +21,10 @@ const DEFAULT_CACHE_CONFIG: Record<string, CacheConfig> = {
     staleWhileRevalidate: 86400, // 24 hours stale
   },
   "/api/rankings": {
-    maxAge: 300,
-    sMaxAge: 3600,
-    staleWhileRevalidate: 86400,
+    maxAge: 0, // No browser cache - always fetch fresh
+    sMaxAge: 300, // 5 minutes CDN cache (reduced from 1 hour)
+    staleWhileRevalidate: 600, // 10 minutes stale (reduced from 24 hours)
+    mustRevalidate: true, // Force revalidation
   },
   "/api/news": {
     maxAge: 300,
@@ -112,6 +113,13 @@ export function setCacheHeaders(
   // Add performance headers
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Response-Source", "json-db");
+
+  // Add Vercel Edge Cache headers for better cache control
+  response.headers.set("X-Vercel-Cache", "MISS");
+  response.headers.set("CDN-Cache-Control", directives.join(", "));
+
+  // Add timestamp header for debugging
+  response.headers.set("X-Response-Time", new Date().toISOString());
 
   return response;
 }

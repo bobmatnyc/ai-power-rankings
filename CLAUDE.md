@@ -25,11 +25,12 @@ When user asks:
 
 **IMPORTANT**: Before starting any work, you MUST review these core files:
 
-1. **📋 `/docs/INSTRUCTIONS.md`** - Core development instructions
-2. **🔄 `/docs/WORKFLOW.md`** - Required workflow processes
-3. **📊 `/docs/PROJECT.md`** - Project specifications and requirements
-4. **🔧 `/docs/TOOLCHAIN.md`** - Technical implementation and toolchain guide
-5. **💾 `/docs/JSON-STORAGE.md`** - JSON file storage architecture and data management
+1. **📁 `/REPOSITORY-STRUCTURE.md`** - Complete repository organization guide
+2. **📋 `/docs/INSTRUCTIONS.md`** - Core development instructions
+3. **🔄 `/docs/WORKFLOW.md`** - Required workflow processes
+4. **📊 `/docs/PROJECT.md`** - Project specifications and requirements
+5. **🔧 `/docs/TOOLCHAIN.md`** - Technical implementation and toolchain guide
+6. **💾 `/docs/JSON-STORAGE.md`** - JSON file storage architecture and data management
 
 **Following these instructions is MANDATORY. Ask for clarification before considering ANY variance from the documented procedures.**
 
@@ -43,6 +44,11 @@ When user asks:
 4. **Validate against code as source of truth** - assume source code is correct when documentation conflicts arise
 
 ## 📚 Documentation Navigation
+
+### 🏗️ Repository Organization
+
+- [`/REPOSITORY-STRUCTURE.md`](/REPOSITORY-STRUCTURE.md) - Complete repository layout and organization
+- [`/docs/archive/2025-01-cleanup/CLEANUP-SUMMARY.md`](/docs/archive/2025-01-cleanup/CLEANUP-SUMMARY.md) - Recent cleanup operations
 
 ### 🔧 Core Development
 

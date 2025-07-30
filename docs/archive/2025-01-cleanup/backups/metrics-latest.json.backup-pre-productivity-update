@@ -1,0 +1,748 @@
+{
+  "export_date": "2025-07-14T07:15:28.757Z",
+  "file_number": 1,
+  "total_files": 1,
+  "date_range": {
+    "start": "2024-03-12",
+    "end": "2025-06-09"
+  },
+  "entries_count": 28,
+  "entries": [
+    {
+      "date": "2025-06-09",
+      "tool_id": "zed",
+      "source_url": "https://github.com/zed-industries/zed",
+      "metrics": {
+        "github_stars": {
+          "value": 47000,
+          "evidence": "Rapid growth in GitHub stars"
+        },
+        "innovation_score": {
+          "value": 7.5,
+          "evidence": "Rust-based architecture, true multiplayer editing, novel performance approach"
+        },
+        "agentic_capability": {
+          "value": 5.5,
+          "evidence": "AI assistant with suggestions, limited autonomous actions"
+        },
+        "business_sentiment": {
+          "value": 0.7,
+          "evidence": "Strong developer interest in Rust-based performance"
+        }
+      },
+      "source": {
+        "name": "github_api",
+        "type": "research",
+        "published_date": "2025-06-09"
+      },
+      "context": {
+        "notes": "Rapid growth in GitHub stars; Strong developer interest in Rust-based performance; AI assistant with suggestions, limited autonomous actions; Rust-based architecture, true multiplayer editing, novel performance approach",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-06-09",
+      "tool_id": "snyk-code",
+      "source_url": "https://github.com/ai-power-rankings/docs/METRICS-GUIDELINES.md",
+      "metrics": {
+        "innovation_score": {
+          "value": 3,
+          "evidence": "AI-powered security analysis"
+        },
+        "agentic_capability": {
+          "value": 3,
+          "evidence": "Analysis only, no autonomous fixes"
+        },
+        "business_sentiment": {
+          "value": 0.5,
+          "evidence": "Security focus valued"
+        }
+      },
+      "source": {
+        "name": "market_analysis",
+        "type": "research",
+        "published_date": "2025-06-09"
+      },
+      "context": {
+        "notes": "Security focus valued; Analysis only, no autonomous fixes; AI-powered security analysis",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-06-05",
+      "tool_id": "cursor",
+      "source_url": "https://techcrunch.com/2025/06/05/cursors-anysphere-nabs-9-9b-valuation-soars-past-500m-arr/",
+      "metrics": {
+        "funding_total": {
+          "value": 100000000000,
+          "evidence": "$1B+ total funding raised"
+        },
+        "valuation_latest": {
+          "value": 990000000000,
+          "evidence": "$9.9B Series C valuation"
+        }
+      },
+      "source": {
+        "name": "techcrunch",
+        "type": "media",
+        "published_date": "2025-06-05"
+      },
+      "context": {
+        "notes": "$9.9B Series C valuation; $1B+ total funding raised",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-06-01",
+      "tool_id": "cline",
+      "source_url": "https://github.com/cline/cline",
+      "metrics": {
+        "github_stars": {
+          "value": 39000,
+          "evidence": "Current GitHub stars"
+        },
+        "downloads_monthly": {
+          "value": 1200000,
+          "evidence": "1.2M+ VS Code installs"
+        }
+      },
+      "source": {
+        "name": "github_api",
+        "type": "estimate",
+        "published_date": "2025-06-01"
+      },
+      "context": {
+        "notes": "1.2M+ VS Code installs; Current GitHub stars",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-06-01",
+      "tool_id": "aider",
+      "source_url": "https://github.com/Aider-AI/aider",
+      "metrics": {
+        "github_forks": {
+          "value": 1800,
+          "evidence": "Current GitHub forks"
+        },
+        "github_stars": {
+          "value": 20000,
+          "evidence": "Current GitHub stars"
+        }
+      },
+      "source": {
+        "name": "github_api",
+        "type": "estimate",
+        "published_date": "2025-06-01"
+      },
+      "context": {
+        "notes": "Current GitHub forks; Current GitHub stars",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-06-01",
+      "tool_id": "openhands",
+      "source_url": "https://github.com/All-Hands-AI/OpenHands",
+      "metrics": {
+        "github_stars": {
+          "value": 40000,
+          "evidence": "Current GitHub stars"
+        },
+        "github_contributors": {
+          "value": 186,
+          "evidence": "Active contributors"
+        }
+      },
+      "source": {
+        "name": "github_api",
+        "type": "estimate",
+        "published_date": "2025-06-01"
+      },
+      "context": {
+        "notes": "Active contributors; Current GitHub stars",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-06-01",
+      "tool_id": "cursor",
+      "source_url": "https://www.bloomberg.com/news/articles/2025-06-05/anysphere-hailed-as-fastest-growing-startup-ever-raises-900-million",
+      "metrics": {
+        "monthly_arr": {
+          "value": 50000000000,
+          "evidence": "$500M+ ARR reached"
+        },
+        "autonomy_level": {
+          "value": 8,
+          "evidence": "Expert assessment of autonomy capabilities"
+        },
+        "estimated_users": {
+          "value": 360000,
+          "evidence": "360K+ paying developers"
+        },
+        "sentiment_score": {
+          "value": 0.85,
+          "evidence": "Very positive developer reception"
+        },
+        "llm_provider_count": {
+          "value": 3,
+          "evidence": "Claude, GPT-4, Gemini support"
+        }
+      },
+      "source": {
+        "name": "manual_entry",
+        "type": "media",
+        "published_date": "2025-06-01"
+      },
+      "context": {
+        "notes": "Very positive developer reception; Claude, GPT-4, Gemini support; Expert assessment of autonomy capabilities; 360K+ paying developers; $500M+ ARR reached",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-06-01",
+      "tool_id": "github-copilot",
+      "source_url": "https://www.reuters.com/business/ai-vibe-coding-startups-burst-onto-scene-with-sky-high-valuations-2025-06-03/",
+      "metrics": {
+        "monthly_arr": {
+          "value": 40000000000,
+          "evidence": "$400M ARR with 281% YoY growth"
+        },
+        "autonomy_level": {
+          "value": 6,
+          "evidence": "Enhanced with agent mode"
+        },
+        "sentiment_score": {
+          "value": 0.75,
+          "evidence": "Established positive sentiment"
+        },
+        "llm_provider_count": {
+          "value": 3,
+          "evidence": "Multi-model Copilot"
+        }
+      },
+      "source": {
+        "name": "manual_entry",
+        "type": "media",
+        "published_date": "2025-06-01"
+      },
+      "context": {
+        "notes": "Established positive sentiment; Multi-model Copilot; Enhanced with agent mode; $400M ARR with 281% YoY growth",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-06-01",
+      "tool_id": "devin",
+      "source_url": "internal://metrics/devin/2025-06-01/5eef0279-49bc-4fd6-adda-44903393c0cb",
+      "metrics": {
+        "autonomy_level": {
+          "value": 9,
+          "evidence": "Highest autonomy among current tools"
+        },
+        "sentiment_score": {
+          "value": 0.6,
+          "evidence": "Moderate sentiment due to pricing"
+        },
+        "llm_provider_count": {
+          "value": 1,
+          "evidence": "Primarily GPT-4 based"
+        }
+      },
+      "source": {
+        "name": "manual_entry",
+        "type": "manual",
+        "published_date": "2025-06-01"
+      },
+      "context": {
+        "notes": "Moderate sentiment due to pricing; Primarily GPT-4 based; Highest autonomy among current tools",
+        "is_verified": false,
+        "confidence_level": "low"
+      }
+    },
+    {
+      "date": "2025-05-22",
+      "tool_id": "claude-code",
+      "source_url": "https://www.anthropic.com/news/claude-4",
+      "metrics": {
+        "autonomy_level": {
+          "value": 9,
+          "evidence": "Terminal-based autonomous agent"
+        },
+        "sentiment_score": {
+          "value": 0.8,
+          "evidence": "Strong early reception"
+        },
+        "swe_bench_score": {
+          "value": 72.7,
+          "evidence": "Claude 4 Sonnet benchmark"
+        },
+        "llm_provider_count": {
+          "value": 2,
+          "evidence": "Claude 4 Opus and Sonnet"
+        }
+      },
+      "source": {
+        "name": "anthropic",
+        "type": "official",
+        "published_date": "2025-05-22"
+      },
+      "context": {
+        "notes": "Claude 4 Sonnet benchmark; Strong early reception; Claude 4 Opus and Sonnet; Terminal-based autonomous agent",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-05-21",
+      "tool_id": "jules",
+      "source_url": "https://blog.google/technology/google-labs/jules/",
+      "metrics": {
+        "autonomy_level": {
+          "value": 8,
+          "evidence": "Asynchronous autonomous capabilities"
+        },
+        "sentiment_score": {
+          "value": 0.65,
+          "evidence": "Mixed beta feedback"
+        },
+        "swe_bench_score": {
+          "value": 52.2,
+          "evidence": "SWE-bench Verified score"
+        },
+        "llm_provider_count": {
+          "value": 1,
+          "evidence": "Gemini 2.5 Pro only"
+        }
+      },
+      "source": {
+        "name": "google",
+        "type": "official",
+        "published_date": "2025-05-21"
+      },
+      "context": {
+        "notes": "SWE-bench Verified score; Mixed beta feedback; Gemini 2.5 Pro only; Asynchronous autonomous capabilities",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-05-01",
+      "tool_id": "github-copilot",
+      "source_url": "https://github.blog/news-insights/product-news/github-copilot-meet-the-new-coding-agent/",
+      "metrics": {
+        "estimated_users": {
+          "value": 15000000,
+          "evidence": "15M+ developers"
+        }
+      },
+      "source": {
+        "name": "github",
+        "type": "official",
+        "published_date": "2025-05-01"
+      },
+      "context": {
+        "notes": "15M+ developers",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-04-03",
+      "tool_id": "devin",
+      "source_url": "https://techcrunch.com/2025/04/03/devin-the-viral-coding-ai-agent-gets-a-new-pay-as-you-go-plan/",
+      "metrics": {
+        "pricing_per_month": {
+          "value": 2000,
+          "evidence": "Price cut to $20/month with Devin 2.0"
+        }
+      },
+      "source": {
+        "name": "techcrunch",
+        "type": "media",
+        "published_date": "2025-04-03"
+      },
+      "context": {
+        "notes": "Price cut to $20/month with Devin 2.0",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-03-18",
+      "tool_id": "devin",
+      "source_url": "https://www.bloomberg.com/news/articles/2025-03-18/cognition-ai-hits-4-billion-valuation-in-deal-led-by-lonsdale-s-firm",
+      "metrics": {
+        "funding_total": {
+          "value": 46500000000,
+          "evidence": "$465M total funding"
+        },
+        "valuation_latest": {
+          "value": 400000000000,
+          "evidence": "$4B valuation"
+        }
+      },
+      "source": {
+        "name": "bloomberg",
+        "type": "media",
+        "published_date": "2025-03-18"
+      },
+      "context": {
+        "notes": "$4B valuation; $465M total funding",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-03-01",
+      "tool_id": "bolt-new",
+      "source_url": "https://sacra.com/c/bolt-new/",
+      "metrics": {
+        "monthly_arr": {
+          "value": 4000000000,
+          "evidence": "$40M ARR achieved"
+        }
+      },
+      "source": {
+        "name": "sacra",
+        "type": "estimate",
+        "published_date": "2025-03-01"
+      },
+      "context": {
+        "notes": "$40M ARR achieved",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-02-25",
+      "tool_id": "lovable",
+      "source_url": "https://techcrunch.com/2025/02/25/swedens-lovable-an-app-building-ai-platform-rakes-in-16m-after-spectacular-growth/",
+      "metrics": {
+        "funding_total": {
+          "value": 1500000000,
+          "evidence": "$15M pre-Series A"
+        }
+      },
+      "source": {
+        "name": "techcrunch",
+        "type": "media",
+        "published_date": "2025-02-25"
+      },
+      "context": {
+        "notes": "$15M pre-Series A",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-01-01",
+      "tool_id": "bolt-new",
+      "source_url": "https://www.todayin-ai.com/p/stackblitz",
+      "metrics": {
+        "estimated_users": {
+          "value": 3000000,
+          "evidence": "3M registered users"
+        }
+      },
+      "source": {
+        "name": "todayin-ai",
+        "type": "estimate",
+        "published_date": "2025-01-01"
+      },
+      "context": {
+        "notes": "3M registered users",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2024-12-19",
+      "tool_id": "cursor",
+      "source_url": "https://techcrunch.com/2024/12/19/in-just-4-months-ai-coding-assistant-cursor-raised-another-100m-at-a-2-5b-valuation-led-by-thrive-sources-say/",
+      "metrics": {
+        "valuation_latest": {
+          "value": 260000000000,
+          "evidence": "$2.6B Series B valuation"
+        }
+      },
+      "source": {
+        "name": "techcrunch",
+        "type": "media",
+        "published_date": "2024-12-19"
+      },
+      "context": {
+        "notes": "$2.6B Series B valuation",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2024-12-01",
+      "tool_id": "cursor",
+      "source_url": "internal://metrics/cursor/2024-12-01/543cc236-f7f2-4729-9f9d-ad5a1ef55476",
+      "metrics": {
+        "monthly_arr": {
+          "value": 10000000000,
+          "evidence": "Estimated $100M ARR"
+        },
+        "estimated_users": {
+          "value": 250000,
+          "evidence": "Estimated users"
+        }
+      },
+      "source": {
+        "name": "manual_entry",
+        "type": "manual",
+        "published_date": "2024-12-01"
+      },
+      "context": {
+        "notes": "Estimated users; Estimated $100M ARR",
+        "is_verified": false,
+        "confidence_level": "low"
+      }
+    },
+    {
+      "date": "2024-11-01",
+      "tool_id": "cursor",
+      "source_url": "https://kenneth.io/post/annual-recurring-revenue-from-ai-copilots-and-code-editors",
+      "metrics": {
+        "monthly_arr": {
+          "value": 6500000000,
+          "evidence": "$65M ARR estimated November 2024"
+        }
+      },
+      "source": {
+        "name": "sacra",
+        "type": "estimate",
+        "published_date": "2024-11-01"
+      },
+      "context": {
+        "notes": "$65M ARR estimated November 2024",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2024-08-01",
+      "tool_id": "cursor",
+      "source_url": "internal://metrics/cursor/2024-08-01/b0dc5043-b76c-4c2f-b92d-08bbff901316",
+      "metrics": {
+        "estimated_users": {
+          "value": 100000,
+          "evidence": "Early adoption growth"
+        },
+        "valuation_latest": {
+          "value": 40000000000,
+          "evidence": "$400M Series A valuation"
+        }
+      },
+      "source": {
+        "name": "manual_entry",
+        "type": "manual",
+        "published_date": "2024-08-01"
+      },
+      "context": {
+        "notes": "Early adoption growth; $400M Series A valuation",
+        "is_verified": false,
+        "confidence_level": "low"
+      }
+    },
+    {
+      "date": "2024-06-01",
+      "tool_id": "github-copilot",
+      "source_url": "internal://metrics/github-copilot/2024-06-01/3fc1c275-e456-40ed-921c-61f6258ab127",
+      "metrics": {
+        "monthly_arr": {
+          "value": 15000000000,
+          "evidence": "Previous ARR estimate"
+        }
+      },
+      "source": {
+        "name": "manual_entry",
+        "type": "manual",
+        "published_date": "2024-06-01"
+      },
+      "context": {
+        "notes": "Previous ARR estimate",
+        "is_verified": false,
+        "confidence_level": "low"
+      }
+    },
+    {
+      "date": "2024-04-25",
+      "tool_id": "devin",
+      "source_url": "https://voicebot.ai/2024/04/25/cognition-labs-claims-2b-valuation-after-6-months-and-175m-investment-in-generative-ai-coding-assistant-devin/",
+      "metrics": {
+        "valuation_latest": {
+          "value": 200000000000,
+          "evidence": "$2B Series A valuation"
+        }
+      },
+      "source": {
+        "name": "voicebot",
+        "type": "estimate",
+        "published_date": "2024-04-25"
+      },
+      "context": {
+        "notes": "$2B Series A valuation",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2024-03-12",
+      "tool_id": "devin",
+      "source_url": "https://cognition.ai/blog/introducing-devin",
+      "metrics": {
+        "swe_bench_score": {
+          "value": 13.86,
+          "evidence": "Initial benchmark score"
+        },
+        "pricing_per_month": {
+          "value": 50000,
+          "evidence": "Original $500/month pricing"
+        }
+      },
+      "source": {
+        "name": "cognition",
+        "type": "official",
+        "published_date": "2024-03-12"
+      },
+      "context": {
+        "notes": "Original $500/month pricing; Initial benchmark score",
+        "is_verified": true,
+        "confidence_level": "high"
+      }
+    },
+    {
+      "date": "2025-07-14",
+      "tool_id": "1",
+      "source_url": "https://techcrunch.com/2025/07/11/ai-coding-tools-may-not-speed-up-every-developer-study-shows/",
+      "metrics": {
+        "business_sentiment_adjustment": {
+          "value": -0.13,
+          "evidence": "METR productivity paradox research - 43% cognitive bias in user satisfaction"
+        },
+        "risk_factor_addition": {
+          "value": "productivity_paradox_research",
+          "evidence": "19% actual productivity decrease vs 24% perceived improvement"
+        },
+        "market_impact": {
+          "value": 0.15,
+          "evidence": "15% market share impact from research findings"
+        }
+      },
+      "source": {
+        "name": "METR_research_integration",
+        "type": "research",
+        "published_date": "2025-07-14"
+      },
+      "context": {
+        "notes": "Third-place tool moderately impacted by productivity research, but lower market exposure.",
+        "is_verified": true,
+        "confidence_level": "high",
+        "research_impact": true
+      }
+    },
+    {
+      "date": "2025-07-14",
+      "tool_id": "2",
+      "source_url": "https://techcrunch.com/2025/07/11/ai-coding-tools-may-not-speed-up-every-developer-study-shows/",
+      "metrics": {
+        "business_sentiment_adjustment": {
+          "value": -0.36,
+          "evidence": "METR productivity paradox research - 43% cognitive bias in user satisfaction"
+        },
+        "risk_factor_addition": {
+          "value": "productivity_paradox_research",
+          "evidence": "19% actual productivity decrease vs 24% perceived improvement"
+        },
+        "market_impact": {
+          "value": 0.42,
+          "evidence": "42% market share impact from research findings"
+        }
+      },
+      "source": {
+        "name": "METR_research_integration",
+        "type": "research",
+        "published_date": "2025-07-14"
+      },
+      "context": {
+        "notes": "Market leader heavily impacted by productivity paradox research. High cognitive bias in user satisfaction.",
+        "is_verified": true,
+        "confidence_level": "high",
+        "research_impact": true
+      }
+    },
+    {
+      "date": "2025-07-14",
+      "tool_id": "26",
+      "source_url": "https://techcrunch.com/2025/07/11/ai-coding-tools-may-not-speed-up-every-developer-study-shows/",
+      "metrics": {
+        "business_sentiment_adjustment": {
+          "value": -0.13,
+          "evidence": "METR productivity paradox research - 43% cognitive bias in user satisfaction"
+        },
+        "risk_factor_addition": {
+          "value": "productivity_paradox_research",
+          "evidence": "19% actual productivity decrease vs 24% perceived improvement"
+        },
+        "market_impact": {
+          "value": 0.15,
+          "evidence": "15% market share impact from research findings"
+        }
+      },
+      "source": {
+        "name": "METR_research_integration",
+        "type": "research",
+        "published_date": "2025-07-14"
+      },
+      "context": {
+        "notes": "Third-place tool moderately impacted by productivity research, but lower market exposure.",
+        "is_verified": true,
+        "confidence_level": "high",
+        "research_impact": true
+      }
+    },
+    {
+      "date": "2025-07-14",
+      "tool_id": "27",
+      "source_url": "https://techcrunch.com/2025/07/11/ai-coding-tools-may-not-speed-up-every-developer-study-shows/",
+      "metrics": {
+        "business_sentiment_adjustment": {
+          "value": -0.24,
+          "evidence": "METR productivity paradox research - 43% cognitive bias in user satisfaction"
+        },
+        "risk_factor_addition": {
+          "value": "productivity_paradox_research",
+          "evidence": "19% actual productivity decrease vs 24% perceived improvement"
+        },
+        "market_impact": {
+          "value": 0.28,
+          "evidence": "28% market share impact from research findings"
+        }
+      },
+      "source": {
+        "name": "METR_research_integration",
+        "type": "research",
+        "published_date": "2025-07-14"
+      },
+      "context": {
+        "notes": "Second-place tool significantly affected by research findings on actual vs perceived productivity.",
+        "is_verified": true,
+        "confidence_level": "high",
+        "research_impact": true
+      }
+    }
+  ]
+}

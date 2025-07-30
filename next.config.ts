@@ -152,6 +152,29 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // API routes - ensure fresh data
+      {
+        source: "/api/rankings",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, s-maxage=300, stale-while-revalidate=600, must-revalidate",
+          },
+          {
+            key: "Surrogate-Control",
+            value: "max-age=300",
+          },
+        ],
+      },
+      {
+        source: "/api/tools",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+          },
+        ],
+      },
     ];
   },
   // TurboPack handles bundling, no webpack config needed

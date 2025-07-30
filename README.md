@@ -89,10 +89,13 @@ pnpm pre-deploy  # Run before any deployment
 Comprehensive documentation is available in the `/docs` directory:
 
 - **[CLAUDE.md](CLAUDE.md)** - AI agent instructions and entry point
+- **[REPOSITORY-STRUCTURE.md](REPOSITORY-STRUCTURE.md)** - Complete repository organization guide
 - **[docs/INSTRUCTIONS.md](docs/INSTRUCTIONS.md)** - Core development principles
 - **[docs/WORKFLOW.md](docs/WORKFLOW.md)** - Development workflow and processes
 - **[docs/PROJECT.md](docs/PROJECT.md)** - Project architecture and specifications
-- **[docs/DATABASE.md](docs/DATABASE.md)** - Database documentation and operations
+- **[docs/JSON-STORAGE.md](docs/JSON-STORAGE.md)** - JSON file storage architecture
+
+For a complete list of documentation, see the [docs directory](./docs/).
 
 ## 🏗️ Architecture
 
@@ -121,14 +124,15 @@ Comprehensive documentation is available in the `/docs` directory:
 - **Development Velocity** (5%) - Release frequency
 - **Platform Resilience** (5%) - Dependencies
 
-## 🗄️ Database
+## 🗂️ Data Storage
 
-The project uses Supabase (PostgreSQL) with:
+The project uses a JSON file-based architecture:
 
-- **Project ID**: `iupygejzjkwyxtitescy`
-- **Enhanced schema** with JSONB fields for flexible data storage
-- **Materialized views** for performance
-- **Source-oriented** metrics storage
+- **No Database Required**: All data stored in structured JSON files
+- **High Performance**: Direct file access ~10x faster than database queries
+- **Full Offline Support**: Works without internet connection
+- **Automatic Backups**: Rotation system preserves data history
+- **Type-Safe**: Full TypeScript schemas for all data structures
 
 ## 🚀 Deployment
 
@@ -159,27 +163,12 @@ npm run check-deployment
 
 ### Automated Collection
 
-- GitHub metrics via GitHub API
-- News ingestion from Google Drive
-- AI-powered article analysis
-- **News Collection**: Automated AI news gathering from HackerNews and RSS feeds
+- **GitHub Metrics**: Via GitHub API for development activity tracking
+- **News Ingestion**: From Google Drive with AI-powered analysis
+- **Article Scoring**: Automated relevance and impact scoring
+- **Ranking Integration**: News impacts tool rankings in real-time
 
-### News Collection
-
-Quick commands for collecting AI news:
-
-```bash
-# Collect news from last 7 days
-make collect-news
-
-# Collect news from last 3 days
-make collect-news-3d
-
-# Collect news from last 24 hours
-make collect-news-1d
-```
-
-See [docs/NEWS-COLLECTION.md](docs/NEWS-COLLECTION.md) for detailed information.
+For detailed information about news collection and ingestion, see [docs/NEWS-INGESTION.md](docs/NEWS-INGESTION.md).
 
 ### Manual Updates
 

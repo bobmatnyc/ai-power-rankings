@@ -46,18 +46,24 @@ export async function GET(): Promise<NextResponse> {
             overall: ranking.score,
             base_score: ranking.score,
             news_impact: ranking.factor_scores?.innovation || 0,
-            agentic_capability: ((ranking.factor_scores?.agenticCapability ?? ranking.factor_scores?.agentic_capability ?? 50) / 10) || 5,
+            agentic_capability:
+              (ranking.factor_scores?.agenticCapability ??
+                ranking.factor_scores?.agentic_capability ??
+                50) / 10 || 5,
             innovation: (ranking.factor_scores?.innovation ?? 50) / 10 || 5,
           },
           metrics: {
             news_articles_count: 0, // Not available in current data
             recent_funding_rounds: 0,
             recent_product_launches: 0,
-            users: ((ranking.factor_scores?.developerAdoption ?? ranking.factor_scores?.developer_adoption ?? 50) * 1000) || 10000,
+            users:
+              (ranking.factor_scores?.developerAdoption ??
+                ranking.factor_scores?.developer_adoption ??
+                50) * 1000 || 10000,
             swe_bench_score:
-              tool.info?.metrics?.swe_bench_score ||
-              ranking.factor_scores?.technicalPerformance ||
-              ranking.factor_scores?.technical_performance ||
+              tool.info?.metrics?.swe_bench?.verified ||
+              tool.info?.metrics?.swe_bench?.lite ||
+              tool.info?.metrics?.swe_bench?.full ||
               null,
           },
           tier: ranking.tier,
@@ -85,6 +91,7 @@ export async function GET(): Promise<NextResponse> {
         },
         _source: "json-db",
         _timestamp: new Date().toISOString(),
+        _cacheVersion: "2025-07-29-v1", // Force cache refresh
       },
       "/api/rankings"
     );

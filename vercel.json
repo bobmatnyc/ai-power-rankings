@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "node scripts/clear-next-cache.js && npm run cache:generate && npm run build",
   "outputDirectory": ".next",
   "regions": ["iad1"],
   "functions": {
@@ -45,6 +45,23 @@
         {
           "key": "CDN-Cache-Control",
           "value": "max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/api/rankings",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, s-maxage=300, stale-while-revalidate=600, must-revalidate"
+        },
+        {
+          "key": "Surrogate-Control",
+          "value": "max-age=300"
+        },
+        {
+          "key": "X-Cache-Tag",
+          "value": "rankings-data"
         }
       ]
     },

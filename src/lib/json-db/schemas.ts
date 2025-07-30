@@ -37,6 +37,17 @@ export interface Tool {
       funding_total?: number;
       last_funding_date?: string;
       swe_bench_score?: number;
+      swe_bench?: {
+        verified?: number;
+        lite?: number;
+        full?: number;
+        date?: string;
+        source?: string;
+        model?: string;
+        note?: string;
+        achievement?: string;
+      };
+      [key: string]: any;
     };
     company?: {
       id: string;

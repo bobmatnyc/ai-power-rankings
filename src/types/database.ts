@@ -47,6 +47,27 @@ export interface ToolInfo {
     acquisition_date?: string;
     discontinued_date?: string;
   };
+  metrics?: {
+    github_stars?: number;
+    github_contributors?: number;
+    estimated_users?: number;
+    monthly_arr?: number;
+    valuation?: number;
+    funding_total?: number;
+    last_funding_date?: string;
+    swe_bench_score?: number;
+    swe_bench?: {
+      verified?: number;
+      lite?: number;
+      full?: number;
+      date?: string;
+      source?: string;
+      model?: string;
+      note?: string;
+      achievement?: string;
+    };
+    [key: string]: any;
+  };
 }
 
 export interface ToolCapabilities {

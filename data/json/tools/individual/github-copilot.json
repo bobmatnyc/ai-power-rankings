@@ -13,7 +13,8 @@
       "AI-powered code completion",
       "Multi-file context understanding",
       "Copilot Chat for code questions",
-      "Autonomous coding agent (2025)",
+      "Agent Mode (GA April 2025) - Synchronous, real-time autonomous programming",
+      "Coding Agent (Preview May 2025) - Asynchronous, cloud-based development",
       "Terminal command execution",
       "GitHub Actions integration",
       "Self-healing error correction",
@@ -74,7 +75,9 @@
       }
     },
     "metrics": {
-      "users": 1500000,
+      "users": 1800000,
+      "paying_users": 1800000,
+      "business_customers": 50000,
       "github_stars": 5000,
       "monthly_arr": 400000000,
       "swe_bench": {
@@ -84,10 +87,11 @@
         "model": "Claude 3.7 Sonnet",
         "context": "Part of GitHub Copilot's new agentic capabilities in VS Code"
       },
-      "news_mentions": 20
+      "news_mentions": 20,
+      "enterprise_adoption": "97%+ of enterprise developers have used AI coding tools"
     }
   },
   "created_at": "2025-06-23T15:40:36.825Z",
-  "updated_at": "2025-07-22T00:00:00.000Z",
+  "updated_at": "2025-07-29T22:01:54.000Z",
   "launch_date": "2021-06-01"
 }

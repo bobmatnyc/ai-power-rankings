@@ -1,5 +1,7 @@
 # Comprehensive Deployment Guide
 
+> **Note**: This deployment process includes automatic cache clearing. See [CACHE-CLEARING.md](./CACHE-CLEARING.md) for details.
+
 ## Pre-Deployment Checklist
 
 ### 1. Code Quality
@@ -210,14 +212,18 @@ npm run backup:create
 ### 2. Deploy to Vercel
 
 ```bash
-# Deploy to preview
-vercel
+# Deploy to preview with automatic cache clearing
+npm run deploy
 
-# Deploy to production
-vercel --prod
+# Deploy to production with automatic cache clearing
+npm run deploy:prod
 
-# Or use GitHub integration
+# Or use GitHub integration (includes cache clearing via vercel.json)
 git push origin main
+
+# Legacy commands (use deployment scripts instead)
+# vercel
+# vercel --prod
 ```
 
 ## Post-Deployment Verification

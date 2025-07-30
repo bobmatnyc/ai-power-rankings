@@ -78,7 +78,7 @@
         "recent_funding_rounds": 0,
         "recent_product_launches": 0,
         "users": 10000,
-        "swe_bench_score": 72.7
+        "swe_bench_score": 80.2
       }
     },
     {
@@ -174,7 +174,7 @@
         "category": "code-editor",
         "status": "active",
         "website_url": "https://windsurf.com",
-        "description": "AI-powered IDE assistant acquired by OpenAI for $3 billion in April 2025"
+        "description": "AI-powered IDE assistant. OpenAI acquisition deal collapsed in July 2025, Google DeepMind hired leadership team for ~$2.4B"
       },
       "scores": {
         "overall": 73.8,
@@ -853,5 +853,5 @@
     "max_news_impact": 36
   },
   "_source": "static-generation",
-  "_timestamp": "2025-07-29T20:14:56.256Z"
+  "_timestamp": "2025-07-29T23:11:18.567Z"
 }

@@ -1,0 +1,4 @@
+# Minimal requirements for news collection
+# These are only needed for the news collection scripts
+requests>=2.31.0
+feedparser>=6.0.0

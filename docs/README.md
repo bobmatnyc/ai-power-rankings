@@ -11,9 +11,10 @@ Welcome to the AI Power Rankings documentation! This guide helps you navigate th
 3. **📊 [PROJECT.md](PROJECT.md)** - Business goals, functionality, and strategic direction
 4. **🔧 [TOOLCHAIN.md](TOOLCHAIN.md)** - Comprehensive toolchain mastery and technical configuration
 
-## 🔗 AI Assistant Entry Point
+## 🔗 Key Entry Points
 
 - **[../CLAUDE.md](../CLAUDE.md)** - Project context and task linkage requirements for AI assistants
+- **[../REPOSITORY-STRUCTURE.md](../REPOSITORY-STRUCTURE.md)** - Complete repository organization and layout guide
 
 ## ⚡ 2-Click Accessibility
 
@@ -81,7 +82,13 @@ docs/
 ├── INSTRUCTIONS.md                    # Core development instructions
 ├── WORKFLOW.md                        # Development workflow
 ├── PROJECT.md                         # Project specifications
-├── archive/                           # Historical documentation
+├── JSON-STORAGE.md                    # JSON file storage architecture
+├── DEPLOYMENT-GUIDE.md                # Deployment procedures
+├── archive/                           # Historical documentation and backups
+│   ├── ARCHIVE-GUIDE.md              # Guide to archive structure
+│   ├── 2025-01-cleanup/              # January 2025 cleanup artifacts
+│   ├── 2025-06-cleanup/              # June 2025 cleanup artifacts
+│   └── 2025-07-cleanup/              # July 2025 cleanup artifacts
 ├── design/                            # Design documents and architecture
 ├── data/                             # Data-related documentation
 ├── api/                              # API documentation
@@ -103,7 +110,11 @@ Architecture and design documents:
 
 #### `/archive`
 
-Historical documentation preserved for reference. Contains outdated documentation from previous phases.
+Historical documentation preserved for reference:
+
+- **[archive/ARCHIVE-GUIDE.md](archive/ARCHIVE-GUIDE.md)** - Guide to understanding the archive structure
+- **[archive/2025-01-cleanup/CLEANUP-SUMMARY.md](archive/2025-01-cleanup/CLEANUP-SUMMARY.md)** - January 2025 cleanup operations
+- Contains obsolete documentation, backup files, and deprecated scripts from previous project phases
 
 #### `/translations`
 
@@ -147,5 +158,5 @@ When adding new documentation:
 
 ---
 
-**Last updated:** July 2025  
+**Last updated:** January 2025  
 **Maintained by:** AI Power Rankings Development Team

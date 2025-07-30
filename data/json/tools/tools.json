@@ -144,7 +144,8 @@
           "AI-powered code completion",
           "Multi-file context understanding",
           "Copilot Chat for code questions",
-          "Autonomous coding agent (2025)",
+          "Agent Mode (GA April 2025) - Synchronous, real-time autonomous programming",
+          "Coding Agent (Preview May 2025) - Asynchronous, cloud-based development",
           "Terminal command execution",
           "GitHub Actions integration",
           "Self-healing error correction",
@@ -205,7 +206,9 @@
           }
         },
         "metrics": {
-          "users": 1500000,
+          "users": 1800000,
+          "paying_users": 1800000,
+          "business_customers": 50000,
           "github_stars": 5000,
           "monthly_arr": 400000000,
           "swe_bench": {
@@ -215,7 +218,8 @@
             "model": "Claude 3.7 Sonnet",
             "context": "Part of GitHub Copilot's new agentic capabilities in VS Code"
           },
-          "news_mentions": 20
+          "news_mentions": 20,
+          "enterprise_adoption": "97%+ of enterprise developers have used AI coding tools"
         }
       },
       "created_at": "2025-06-23T15:40:36.825Z",
@@ -425,14 +429,15 @@
         },
         "metrics": {
           "swe_bench": {
-            "verified": 72.7,
+            "verified": 80.2,
+            "verified_standard": 72.7,
             "verified_v3_7": 70.3,
             "verified_basic_v3_7": 63.7,
-            "date": "2025-05-22",
-            "source": "Anthropic Blog - Claude 4",
-            "model": "Claude Sonnet 4",
+            "date": "2025-07-29",
+            "source": "LogRocket July 2025 rankings",
+            "model": "Claude Sonnet 4 with parallel compute",
             "methodology": "Claude 4 Sonnet: 72.7% (standard), 80.2% (with parallel test-time compute); Claude 3.7: 70.3% (with scaffolding), 63.7% (basic scaffold)",
-            "achievement": "Claude Code upgraded from research preview to general availability with Claude 4 models",
+            "achievement": "Claude Code upgraded from research preview to general availability with Claude 4 models, highest score with parallel compute",
             "benchmark_version": "SWE-bench Verified (full 500 problems)"
           },
           "news_mentions": 2
@@ -986,7 +991,7 @@
       "company_id": "6",
       "info": {
         "summary": "The most powerful AI Code Editor",
-        "description": "AI-powered IDE assistant acquired by OpenAI for $3 billion in April 2025",
+        "description": "AI-powered IDE assistant. OpenAI acquisition deal collapsed in July 2025, Google DeepMind hired leadership team for ~$2.4B",
         "website": "https://windsurf.com",
         "features": [],
         "technical": {
@@ -1099,7 +1104,7 @@
           "pricing_details": {
             "Free": "$0/month - 25 prompt credits monthly (increased from 5), basic AI assistance, credit-based system",
             "Pro": "$15/month - Unlimited prompt credits, advanced AI features, priority support, OpenAI integration",
-            "pricing_note": "Acquired by OpenAI"
+            "pricing_note": "OpenAI deal collapsed July 2025; Google DeepMind hired leadership"
           }
         },
         "metrics": {
@@ -2190,7 +2195,7 @@
   ],
   "metadata": {
     "total": 34,
-    "last_updated": "2025-07-29T00:00:00.000Z",
+    "last_updated": "2025-07-29T22:01:54.000Z",
     "version": "2.0.0"
   }
 }
