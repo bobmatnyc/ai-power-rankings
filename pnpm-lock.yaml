@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@builder.io/partytown':
+    specifier: ^0.10.3
+    version: 0.10.3
   '@hookform/resolvers':
     specifier: ^5.1.0
     version: 5.1.1(react-hook-form@7.57.0)
@@ -613,6 +616,13 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@builder.io/partytown@0.10.3:
+    resolution: {integrity: sha512-N2SWA3c5vEad3rgdAFM3zMb6uc7aXqibkgAz4ijvYzycgQXJ4dE5oH6fGFMXSQWj6ayVlLT1/CmpflYUJHfmQg==}
+    engines: {node: '>=18.0.0'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+    hasBin: true
+    dev: false
 
   /@csstools/color-helpers@5.0.2:
     resolution: {integrity: sha512-JqWH1vsgdGcw2RR6VliXXdA0/59LttzlU8UlRT/iUUsEeWfYq8I+K0yhihEUTTHLRm1EXvpsCx3083EU15ecsA==}

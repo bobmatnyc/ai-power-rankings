@@ -1,0 +1,1292 @@
+2025-07-30 07:23:57,487 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:232 - Claude Code hook event: UserPromptSubmit (session: 417e857f)
+2025-07-30 07:23:57,487 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:245 - UserPromptSubmit: push 
+2025-07-30 08:15:57,803 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: UserPromptSubmit (session: a955b127)
+2025-07-30 08:15:57,804 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:244 - UserPromptSubmit: let's orchestrate resolution of these lighthouse performance issues:  
+Avoid serving legacy JavaScri...
+2025-07-30 08:16:11,491 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:16:11,491 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:16:11,682 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:16:11,682 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:16:18,613 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:16:18,613 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:16:18,776 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:16:18,776 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:16:34,610 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:16:34,610 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Task
+2025-07-30 08:16:38,512 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:16:38,512 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:16:38,687 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:16:38,687 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:16:46,180 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:16:46,180 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:16:46,317 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:16:46,317 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:16:50,641 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:16:50,641 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:16:50,817 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:16:50,817 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:17:00,951 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:17:00,951 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:17:01,262 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:17:01,262 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:17:04,911 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:17:04,911 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:17:05,167 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:17:05,167 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:17:12,242 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:17:12,242 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:17:12,417 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:17:12,417 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:17:19,024 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:17:19,024 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:17:19,939 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:17:19,939 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:17:23,830 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:17:23,830 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:17:23,980 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:17:23,980 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:17:28,565 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:17:28,565 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:17:28,730 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:17:28,730 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:17:33,383 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:17:33,383 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:17:37,389 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:17:37,389 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:17:47,273 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:17:47,273 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:17:48,028 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:17:48,028 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:17:52,109 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:17:52,110 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:17:52,294 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:17:52,294 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:17:56,704 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:17:56,704 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:17:56,956 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:17:56,956 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:18:02,347 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:18:02,347 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:18:02,993 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:18:02,993 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:18:07,371 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:18:07,371 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:18:07,742 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:18:07,742 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:18:12,397 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:18:12,397 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:18:12,660 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:18:12,661 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:18:17,780 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:18:17,780 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:18:23,445 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:18:23,445 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:18:23,661 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:18:23,662 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:18:30,361 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:18:30,361 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:18:30,737 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:18:30,737 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:18:37,411 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:18:37,411 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:18:37,668 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:18:37,668 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:18:46,020 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:18:46,020 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:18:46,751 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:18:46,751 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:18:55,438 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:18:55,438 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:18:55,802 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:18:55,802 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:19:08,100 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:19:08,100 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:19:08,954 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:19:08,954 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:19:13,221 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:19:13,221 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:19:13,647 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:19:13,647 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:19:18,299 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:19:18,299 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:19:18,600 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:19:18,601 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:19:23,838 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:19:23,838 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:19:24,101 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:19:24,101 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:19:32,420 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:19:32,420 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:19:32,922 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:19:32,922 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:19:38,572 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:19:38,573 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:19:39,163 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:19:39,164 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:19:47,060 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:19:47,060 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:19:47,744 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:19:47,744 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:19:54,044 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:19:54,044 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:19:54,598 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:19:54,598 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:20:03,287 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:20:03,287 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:20:03,955 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:20:03,956 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:20:50,667 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:20:50,667 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:20:51,016 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:20:51,016 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:20:54,270 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:20:54,270 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Task (exit code: N/A)
+2025-07-30 08:21:00,304 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:00,304 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:21:00,957 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:21:00,957 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:21:11,989 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:11,989 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Task
+2025-07-30 08:21:15,901 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:15,901 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:21:16,025 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:21:16,025 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:21:24,070 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:24,070 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:21:24,200 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:21:24,200 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:21:27,283 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:27,283 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:21:27,414 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:21:27,414 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:21:32,009 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:32,009 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:21:32,135 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:21:32,135 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:21:36,297 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:36,297 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:21:36,559 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:21:36,559 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:21:40,321 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:40,321 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:21:40,460 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:21:40,460 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:21:43,728 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:43,728 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:21:43,870 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:21:43,870 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:21:47,989 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:47,989 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:21:48,120 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:21:48,120 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:21:51,637 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:21:51,637 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:21:51,774 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:21:51,774 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:22:03,499 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:22:03,499 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:22:03,729 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:22:03,729 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:22:15,048 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:22:15,048 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:22:15,292 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:22:15,292 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:22:30,588 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:22:30,589 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:22:31,295 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:22:31,295 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:22:35,319 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:22:35,319 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:22:35,468 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:22:35,468 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:22:38,892 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:22:38,892 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:22:39,061 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:22:39,061 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:22:45,438 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:22:45,438 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:22:45,674 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:22:45,674 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:22:50,701 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:22:50,701 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:22:51,266 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:22:51,266 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:22:56,804 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:22:56,805 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:22:57,418 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:22:57,418 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:23:01,728 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:23:01,728 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:23:02,285 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:23:02,285 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:23:07,788 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:23:07,789 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:23:12,634 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:23:12,634 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:23:17,116 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:23:17,116 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:23:23,983 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:23:23,983 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:24:09,168 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:24:09,168 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:24:09,469 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:24:09,469 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:24:14,281 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:24:14,281 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:24:14,450 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:24:14,450 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:24:18,487 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:24:18,487 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:24:18,652 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:24:18,652 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:24:24,291 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:24:24,291 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:24:28,549 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:24:28,549 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:24:33,817 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:24:33,818 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:25:05,928 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:25:05,928 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:25:06,199 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:25:06,199 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:25:11,085 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:25:11,085 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:25:11,406 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:25:11,406 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:25:22,616 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:25:22,616 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:25:22,938 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:25:22,938 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:25:32,033 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:25:32,033 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:25:32,369 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:25:32,369 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:25:37,711 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:25:37,712 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:25:49,489 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:25:49,489 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:25:49,860 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:25:49,860 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:25:54,619 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:25:54,619 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:25:59,077 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:25:59,077 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:26:04,146 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:26:04,146 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:26:08,759 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:26:08,759 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:26:29,466 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:26:29,466 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Task (exit code: N/A)
+2025-07-30 08:26:38,698 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:26:38,698 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:26:39,400 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:26:39,400 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:26:52,305 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:26:52,305 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Task
+2025-07-30 08:26:59,552 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:26:59,552 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:26:59,732 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:26:59,732 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:27:04,703 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:27:04,703 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:27:04,974 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:27:04,974 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:27:08,429 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:27:08,430 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:27:08,608 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:27:08,608 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:27:16,358 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:27:16,358 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:27:16,546 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:27:16,546 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:27:20,006 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:27:20,006 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:27:20,184 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:27:20,184 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:27:23,840 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:27:23,840 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:27:24,018 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:27:24,018 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:27:28,392 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:27:28,392 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:27:28,573 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:27:28,573 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:27:35,277 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:27:35,277 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:27:35,941 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:27:35,942 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:27:42,544 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:27:42,544 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:27:42,741 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:27:42,741 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:27:50,043 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:27:50,043 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:27:50,320 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:27:50,321 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:27:55,929 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:27:55,929 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:27:56,209 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:27:56,210 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:28:17,634 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:28:17,634 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:28:17,915 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:28:17,915 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:28:24,544 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:28:24,544 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:28:24,827 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:28:24,827 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:28:30,576 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:28:30,576 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:28:30,760 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:28:30,760 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:28:34,735 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:28:34,735 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:28:34,923 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:28:34,923 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:29:01,161 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:29:01,161 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:29:01,458 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:29:01,459 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:29:13,331 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:29:13,331 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:29:13,651 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:29:13,651 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:29:20,691 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:29:20,691 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:29:20,976 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:29:20,976 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:29:41,452 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:29:41,453 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:29:41,745 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:29:41,745 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:29:46,249 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:29:46,249 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:29:46,569 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:29:46,569 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:30:12,343 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:30:12,343 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:30:12,913 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:30:12,913 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:30:18,776 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:30:18,776 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:30:19,137 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:30:19,137 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:30:33,078 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:30:33,078 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:30:33,411 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:30:33,411 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:30:51,068 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:30:51,068 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:30:51,419 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:30:51,419 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:31:04,280 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:31:04,280 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:31:04,663 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:31:04,663 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:31:11,741 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:31:11,741 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:31:12,127 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:31:12,127 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:31:37,073 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:31:37,073 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Task (exit code: N/A)
+2025-07-30 08:31:46,945 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:31:46,946 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:31:47,626 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:31:47,626 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:32:02,142 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:32:02,142 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Task
+2025-07-30 08:32:06,555 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:32:06,555 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:32:06,763 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:32:06,763 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:32:11,252 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:32:11,253 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:32:11,464 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:32:11,464 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:32:42,631 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:32:42,631 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:32:42,867 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:32:42,867 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:33:06,852 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:33:06,852 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:33:06,852 - claude_mpm_hooks_ai-power-rankings - WARNING - hook_handler.py:368 - Security: Potential path traversal attempt in Write: /Users/masa/Projects/managed/ai-power-rankings/src/app/api/proxy/[...path]/route.ts
+2025-07-30 08:33:07,070 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:33:07,070 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:33:18,465 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:33:18,465 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:33:18,679 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:33:18,679 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:33:29,866 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:33:29,866 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:33:30,175 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:33:30,175 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:33:34,907 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:33:34,907 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:33:37,595 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:33:37,595 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:33:50,727 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:33:50,727 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:33:51,019 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:33:51,019 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:33:55,438 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:33:55,438 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:33:55,656 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:33:55,657 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:34:01,889 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:34:01,889 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:34:02,186 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:34:02,186 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:34:27,772 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:34:27,773 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:34:28,160 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:34:28,160 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:34:50,931 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:34:50,931 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:34:51,255 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:34:51,255 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:35:22,740 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:35:22,740 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:35:23,072 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:35:23,072 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:35:33,137 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:35:33,137 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:35:33,482 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:35:33,482 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:35:38,893 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:35:38,893 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:35:39,454 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:35:39,454 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:35:44,882 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:35:44,883 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:35:45,582 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:35:45,582 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:35:51,051 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:35:51,051 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:35:51,705 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:35:51,705 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:35:56,731 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:35:56,731 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:35:57,007 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:35:57,008 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:36:04,791 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:36:04,792 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:36:05,153 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:36:05,153 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:36:10,546 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:36:10,547 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:36:10,905 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:36:10,905 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:36:16,140 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:36:16,140 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:36:48,955 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:36:48,955 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:36:49,468 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:36:49,468 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:36:56,757 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:36:56,757 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:36:57,148 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:36:57,148 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:37:08,695 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:37:08,695 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:37:09,084 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:37:09,084 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:37:19,719 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:37:19,719 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:37:20,254 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:37:20,254 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:37:25,600 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:37:25,600 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:37:58,611 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:37:58,611 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:37:59,049 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:37:59,049 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:38:04,092 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:38:04,092 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:38:31,841 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:38:31,842 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:38:32,235 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:38:32,235 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:38:37,940 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:38:37,940 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:38:42,871 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:38:42,871 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:39:11,211 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:39:11,211 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:39:11,636 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:39:11,636 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:39:16,232 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:39:16,232 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:39:16,741 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:39:16,741 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:39:51,010 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:39:51,010 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:39:51,441 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:39:51,441 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:39:56,524 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:39:56,524 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:40:04,161 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:40:04,161 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:40:09,693 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:40:09,693 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:40:19,694 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:40:19,694 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:40:20,151 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:40:20,151 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:40:25,607 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:40:25,607 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:40:26,084 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:40:26,084 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:40:33,529 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:40:33,529 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:40:34,024 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:40:34,024 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:40:41,488 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:40:41,488 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:40:42,015 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:40:42,015 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:40:48,291 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:40:48,291 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:40:48,839 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:40:48,839 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:40:54,006 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:40:54,006 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:40:55,831 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:40:55,831 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:41:18,184 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:41:18,184 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Task (exit code: N/A)
+2025-07-30 08:41:28,181 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:41:28,181 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:41:29,239 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:41:29,239 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:41:45,610 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:41:45,610 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Task
+2025-07-30 08:41:50,967 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:41:50,967 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:41:51,307 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:41:51,307 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:41:57,513 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:41:57,513 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:41:57,847 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:41:57,847 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:42:03,423 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:42:03,423 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:42:03,768 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:42:03,768 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:42:08,416 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:42:08,417 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:42:08,735 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:42:08,735 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:42:13,316 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:42:13,316 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:42:13,632 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:42:13,632 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:42:20,983 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:42:20,983 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 08:42:21,330 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:42:21,330 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 08:42:25,870 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:42:25,870 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:42:26,188 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:42:26,188 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:42:31,878 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:42:31,878 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:42:32,225 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:42:32,225 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:42:38,470 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:42:38,470 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:42:39,255 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:42:39,255 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:42:43,959 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:42:43,959 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:42:44,281 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:42:44,281 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:42:51,885 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:42:51,885 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:42:52,657 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:42:52,657 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:43:03,456 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:43:03,456 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:43:03,910 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:43:03,910 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:43:10,665 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:43:10,665 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:43:11,115 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:43:11,116 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:44:26,715 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:44:26,715 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:44:27,172 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:44:27,172 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:44:34,900 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:44:34,900 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:44:35,362 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:44:35,362 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:44:44,719 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:44:44,719 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:44:45,188 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:44:45,188 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:45:23,896 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:45:23,896 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:45:24,379 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:45:24,379 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:45:33,821 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:45:33,821 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:45:34,280 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:45:34,280 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:46:36,866 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:46:36,866 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:46:37,252 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:46:37,252 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:47:27,041 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:47:27,041 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:47:27,521 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:47:27,521 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:47:39,274 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:47:39,274 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:47:39,754 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:47:39,754 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:48:34,918 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:48:34,918 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:48:35,459 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:48:35,459 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:48:45,231 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:48:45,231 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:48:45,730 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:48:45,730 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:49:18,081 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:49:18,081 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:49:18,599 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:49:18,599 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:50:01,067 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:50:01,067 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:50:01,622 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:50:01,622 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:50:11,704 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:50:11,704 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:50:12,224 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:50:12,224 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:50:52,902 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:50:52,902 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:50:53,425 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:50:53,425 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:51:40,060 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:51:40,060 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:51:40,605 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:51:40,605 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:51:53,244 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:51:53,244 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:51:53,831 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:51:53,831 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:52:48,086 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:52:48,086 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 08:52:48,886 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:52:48,887 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 08:53:09,064 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:53:09,065 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Task (exit code: N/A)
+2025-07-30 08:53:19,155 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:53:19,155 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:53:20,981 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:53:20,982 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:53:40,995 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:53:40,995 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Task
+2025-07-30 08:53:48,977 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:53:48,978 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:53:49,591 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:53:49,591 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:53:56,375 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:53:56,375 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 08:53:56,939 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:53:56,939 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 08:54:01,225 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:54:01,225 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:54:08,961 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:54:08,961 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: LS
+2025-07-30 08:54:09,490 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:54:09,490 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: LS (exit code: N/A)
+2025-07-30 08:54:14,326 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:54:14,326 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:54:14,826 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:54:14,826 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:54:27,280 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:54:27,280 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 08:54:28,516 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:54:28,517 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 08:54:32,644 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:54:32,645 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:54:33,174 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:54:33,174 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:54:41,240 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:54:41,240 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:54:41,768 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:54:41,768 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:54:48,102 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:54:48,103 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:54:48,781 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:54:48,782 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:54:54,097 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:54:54,097 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:54:54,735 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:54:54,735 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:55:00,498 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:55:00,499 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:55:01,169 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:55:01,169 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:55:05,324 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:55:05,324 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:55:05,983 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:55:05,983 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 08:55:10,859 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:55:10,859 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:55:45,415 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:55:45,415 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:56:20,258 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:56:20,258 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:56:20,784 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:56:20,784 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:56:28,326 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:56:28,326 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:56:29,044 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:56:29,045 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:56:34,162 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:56:34,162 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:56:59,803 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:56:59,803 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:57:00,209 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:57:00,209 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:57:10,082 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:57:10,082 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:57:10,639 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:57:10,640 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:57:15,996 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:57:15,996 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:57:52,058 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:57:52,058 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 08:57:52,624 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:57:52,624 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 08:58:00,554 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:58:00,554 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:58:00,554 - claude_mpm_hooks_ai-power-rankings - WARNING - hook_handler.py:368 - Security: Potential path traversal attempt in Edit: /Users/masa/Projects/managed/ai-power-rankings/src/app/api/proxy/[...path]/route.ts
+2025-07-30 08:58:01,055 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:58:01,055 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:58:06,219 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:58:06,219 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:58:32,678 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:58:32,678 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:58:33,608 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:58:33,608 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:58:39,061 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:58:39,061 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:59:19,381 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:59:19,381 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:59:19,944 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:59:19,944 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:59:25,146 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:59:25,146 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 08:59:51,951 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:59:51,952 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 08:59:52,531 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 08:59:52,531 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 08:59:58,727 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 08:59:58,727 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:00:20,481 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:00:20,481 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: LS
+2025-07-30 09:00:20,988 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:00:20,988 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: LS (exit code: N/A)
+2025-07-30 09:00:26,721 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:00:26,721 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:00:27,177 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:00:27,177 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:00:34,212 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:00:34,212 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:00:35,150 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:00:35,150 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:00:43,104 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:00:43,104 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:00:43,695 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:00:43,695 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:00:49,823 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:00:49,824 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:00:50,325 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:00:50,325 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:00:55,396 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:00:55,396 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:00:55,897 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:00:55,897 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:01:01,708 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:01:01,708 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:01:02,719 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:01:02,719 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:01:08,181 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:01:08,181 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:01:08,804 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:01:08,804 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:01:14,243 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:01:14,243 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: LS
+2025-07-30 09:01:14,765 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:01:14,765 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: LS (exit code: N/A)
+2025-07-30 09:01:20,542 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:01:20,542 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:01:46,975 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:01:46,976 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 09:01:47,505 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:01:47,505 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 09:01:52,228 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:01:52,228 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 09:01:52,783 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:01:52,783 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 09:01:58,076 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:01:58,076 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:01:58,634 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:01:58,634 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:02:03,778 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:02:03,778 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:02:04,364 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:02:04,365 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:02:14,294 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:02:14,294 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:02:14,976 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:02:14,976 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:02:34,210 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:02:34,210 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:02:34,845 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:02:34,845 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:02:40,796 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:02:40,796 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 09:02:41,404 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:02:41,405 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 09:02:56,476 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:02:56,476 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: MultiEdit
+2025-07-30 09:02:57,190 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:02:57,190 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: MultiEdit (exit code: N/A)
+2025-07-30 09:03:03,247 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:03:03,247 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:03:27,966 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:03:27,966 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:03:28,597 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:03:28,597 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:03:34,902 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:03:34,902 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:03:35,539 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:03:35,539 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:03:42,939 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:03:42,939 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:03:43,687 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:03:43,687 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:03:49,792 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:03:49,793 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:04:14,533 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:04:14,533 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:04:15,188 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:04:15,188 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:04:21,197 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:04:21,197 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:04:21,962 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:04:21,962 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:04:28,552 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:04:28,553 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:04:53,170 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:04:53,170 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:04:53,852 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:04:53,852 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:05:00,053 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:05:00,053 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:05:00,849 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:05:00,849 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:05:07,132 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:05:07,132 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:05:32,541 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:05:32,541 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:05:33,413 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:05:33,413 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:05:40,725 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:05:40,725 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:06:06,717 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:06:06,717 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:06:07,578 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:06:07,578 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:06:13,419 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:06:13,419 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:06:39,162 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:06:39,162 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:06:39,954 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:06:39,954 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:06:47,155 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:06:47,155 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:06:48,040 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:06:48,040 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:06:54,830 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:06:54,830 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:07:19,611 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:07:19,611 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:07:20,516 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:07:20,516 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:07:27,103 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:07:27,103 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:07:59,438 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:07:59,438 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:08:00,405 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:08:00,405 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:08:06,919 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:08:06,919 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:08:31,961 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:08:31,961 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:08:32,890 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:08:32,890 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:08:41,110 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:08:41,110 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:08:42,272 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:08:42,272 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:08:49,259 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:08:49,259 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:09:14,825 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:09:14,826 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:09:23,702 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:09:23,702 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:09:25,127 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:09:25,127 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:09:32,310 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:09:32,310 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:09:57,027 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:09:57,028 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:09:58,268 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:09:58,268 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:10:06,398 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:10:06,399 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:10:39,771 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:10:39,771 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 09:10:40,769 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:10:40,769 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 09:10:47,009 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:10:47,009 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 09:10:48,020 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:10:48,020 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 09:10:54,343 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:10:54,343 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Glob
+2025-07-30 09:10:55,388 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:10:55,388 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Glob (exit code: N/A)
+2025-07-30 09:11:02,945 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:11:02,945 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:11:10,634 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:11:10,634 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: LS
+2025-07-30 09:11:11,675 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:11:11,675 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: LS (exit code: N/A)
+2025-07-30 09:11:19,286 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:11:19,287 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:11:21,000 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:11:21,000 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:11:32,212 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:11:32,212 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:11:33,392 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:11:33,392 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:11:40,304 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:11:40,304 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:11:41,619 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:11:41,619 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:11:48,945 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:11:48,945 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:11:50,165 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:11:50,165 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:11:57,218 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:11:57,219 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:11:58,440 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:11:58,440 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:12:05,691 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:12:05,691 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:12:30,702 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:12:30,702 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:12:32,229 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:12:32,229 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:12:46,122 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:12:46,122 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:12:47,470 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:12:47,470 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:13:27,753 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:13:27,754 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Task (exit code: N/A)
+2025-07-30 09:13:40,415 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:13:40,415 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:13:43,152 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:13:43,152 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:14:00,599 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:14:00,599 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Task
+2025-07-30 09:14:07,017 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:14:07,017 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:14:07,755 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:14:07,755 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:14:14,340 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:14:14,341 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: LS
+2025-07-30 09:14:15,143 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:14:15,143 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: LS (exit code: N/A)
+2025-07-30 09:14:20,853 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:14:20,853 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:14:21,658 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:14:21,659 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:14:26,966 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:14:26,966 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:14:27,741 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:14:27,741 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:14:34,583 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:14:34,583 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:14:35,816 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:14:35,816 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:14:40,402 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:14:40,403 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:14:41,182 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:14:41,182 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:14:50,186 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:14:50,187 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:14:51,411 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:14:51,411 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:14:56,958 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:14:56,958 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: LS
+2025-07-30 09:14:57,759 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:14:57,759 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: LS (exit code: N/A)
+2025-07-30 09:15:02,172 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:15:02,172 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:15:03,011 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:15:03,011 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:15:10,953 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:15:10,954 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:15:12,395 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:15:12,395 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:15:18,839 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:15:18,839 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:15:20,054 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:15:20,054 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:15:41,166 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:15:41,167 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:15:42,089 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:15:42,089 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:16:41,179 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:16:41,179 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:16:42,090 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:16:42,090 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:18:02,371 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:18:02,371 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 09:18:03,363 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:18:03,363 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 09:18:21,833 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:18:21,833 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Task (exit code: N/A)
+2025-07-30 09:18:32,909 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:18:32,909 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:18:35,664 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:18:35,664 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:19:54,035 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: UserPromptSubmit (session: a955b127)
+2025-07-30 09:19:54,035 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:244 - UserPromptSubmit: - Fix TypeScript errors before deployment
+    - Adjust webpack config for complete polyfill exclusio...
+2025-07-30 09:20:05,088 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:20:05,088 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:20:07,974 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:20:07,974 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:20:23,963 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:20:23,964 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Task
+2025-07-30 09:20:31,475 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:20:31,477 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:20:47,209 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:20:47,209 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:20:53,181 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:20:53,181 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:20:54,011 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:20:54,011 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:20:59,885 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:20:59,886 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:21:00,790 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:21:00,790 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:21:06,676 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:21:06,676 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:21:07,466 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:21:07,467 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:21:13,348 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:21:13,348 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:21:14,185 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:21:14,185 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:21:25,645 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:21:25,646 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:21:26,551 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:21:26,551 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:21:37,926 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:21:37,927 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:21:38,806 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:21:38,806 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:21:47,151 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:21:47,152 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:21:48,073 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:21:48,073 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:21:53,775 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:21:53,775 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:21:59,437 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:21:59,437 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:22:19,915 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:22:19,915 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:22:21,093 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:22:21,093 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:22:28,204 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:22:28,205 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:22:29,585 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:22:29,586 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:22:36,468 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:22:36,468 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:22:37,731 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:22:37,731 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:22:55,259 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:22:55,259 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 09:22:56,193 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:22:56,193 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 09:23:03,123 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:23:03,124 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:23:04,299 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:23:04,299 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:23:09,671 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:23:09,671 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:23:19,223 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:23:19,224 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:23:20,176 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:23:20,176 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:23:26,757 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:23:26,757 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:23:35,507 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:23:35,507 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:24:17,582 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:24:17,582 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:24:19,182 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:24:19,182 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:24:27,759 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:24:27,760 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:24:48,302 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: UserPromptSubmit (session: a955b127)
+2025-07-30 09:24:48,302 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:244 - UserPromptSubmit: what is this error?  "     Error: ⚠ You are using a non-standard "NODE_ENV" value in your environmen...
+2025-07-30 09:25:20,962 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: UserPromptSubmit (session: a955b127)
+2025-07-30 09:25:20,962 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:244 - UserPromptSubmit: include orchestration of these fixs as well
+2025-07-30 09:25:38,549 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:25:38,549 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:25:44,884 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:25:44,884 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:26:05,550 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:26:05,551 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Task
+2025-07-30 09:26:14,366 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:26:14,366 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:26:23,716 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:26:23,716 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:26:30,850 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:26:30,850 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:26:46,317 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:26:46,317 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:26:47,921 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:26:47,922 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:27:02,391 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:27:02,391 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:27:03,919 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:27:03,920 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:27:11,287 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:27:11,287 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:27:13,861 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:27:13,861 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:27:20,516 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:27:20,516 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:27:22,743 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:27:22,743 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:27:34,614 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:27:34,614 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:27:36,699 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:27:36,699 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:27:45,921 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:27:45,922 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:27:47,232 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:27:47,232 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:27:53,517 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:27:53,517 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Read
+2025-07-30 09:27:54,612 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:27:54,612 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Read (exit code: N/A)
+2025-07-30 09:28:59,991 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:28:59,991 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: MultiEdit
+2025-07-30 09:29:01,314 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:29:01,314 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: MultiEdit (exit code: N/A)
+2025-07-30 09:29:08,394 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:29:08,394 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:29:10,554 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:29:10,554 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:29:17,900 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:29:17,900 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:29:20,728 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:29:20,728 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:29:31,542 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:29:31,542 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:29:33,082 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:29:33,082 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:29:39,265 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:29:39,265 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:29:41,760 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:29:41,760 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:30:07,286 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:30:07,286 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:30:10,668 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:30:10,668 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:30:21,722 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:30:21,722 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Write
+2025-07-30 09:30:23,546 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:30:23,546 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Write (exit code: N/A)
+2025-07-30 09:30:34,029 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:30:34,029 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:30:35,483 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:30:35,484 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:30:44,278 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:30:44,279 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:30:47,801 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:30:47,801 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:30:57,384 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:30:57,384 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:30:58,864 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:30:58,864 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:31:06,418 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:31:06,418 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:31:08,111 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:31:08,111 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:31:16,054 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:31:16,054 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Grep
+2025-07-30 09:31:19,050 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:31:19,050 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Grep (exit code: N/A)
+2025-07-30 09:31:27,016 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:31:27,016 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:31:29,463 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:31:29,463 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:31:39,619 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:31:39,620 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:31:41,588 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:31:41,588 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:31:55,479 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:31:55,480 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Edit
+2025-07-30 09:31:56,939 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:31:56,939 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Edit (exit code: N/A)
+2025-07-30 09:32:07,169 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:32:07,170 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:32:08,906 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:32:08,906 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:32:16,158 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:32:16,158 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:33:08,555 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:33:08,555 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: MultiEdit
+2025-07-30 09:33:10,427 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:33:10,427 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: MultiEdit (exit code: N/A)
+2025-07-30 09:33:16,815 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:33:16,815 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:33:27,553 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:33:27,553 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:33:34,619 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:33:34,619 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:33:44,673 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:33:44,674 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:35:53,669 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:35:53,669 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash
+2025-07-30 09:36:31,632 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:36:31,632 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Bash (exit code: N/A)
+2025-07-30 09:36:43,000 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:36:43,001 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:36:44,403 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:36:44,403 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 09:37:07,141 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:37:07,142 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: Task (exit code: N/A)
+2025-07-30 09:37:24,726 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 09:37:24,727 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: TodoWrite
+2025-07-30 09:37:28,270 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PostToolUse (session: a955b127)
+2025-07-30 09:37:28,270 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:254 - PostToolUse: TodoWrite (exit code: N/A)
+2025-07-30 11:33:54,589 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: UserPromptSubmit (session: a955b127)
+2025-07-30 11:33:54,589 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:244 - UserPromptSubmit: push
+2025-07-30 11:34:05,204 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:231 - Claude Code hook event: PreToolUse (session: a955b127)
+2025-07-30 11:34:05,204 - claude_mpm_hooks_ai-power-rankings - INFO - hook_handler.py:247 - PreToolUse: Bash

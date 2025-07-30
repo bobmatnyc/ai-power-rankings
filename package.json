@@ -10,10 +10,11 @@
     "dev:pm2": "node scripts/dev-pm2.js",
     "dev:clean": "rm -rf .next && pnpm dev",
     "dev:monitor": "./scripts/monitor-dev.sh",
-    "build": "tsx scripts/generate-static-rankings.ts && next build",
+    "build": "tsx scripts/generate-static-rankings.ts && node scripts/copy-partytown.js && next build",
     "build:fast": "next build --no-lint --debug",
     "build:with-types": "npm run type-check && next build",
     "postbuild": "echo 'Build completed - cache will be cleared on deployment'",
+    "partytown:setup": "node scripts/copy-partytown.js",
     "deploy": "node scripts/deployment-with-cache-clear.js",
     "deploy:prod": "node scripts/deployment-with-cache-clear.js --prod",
     "deploy:preview": "node scripts/deployment-with-cache-clear.js",
@@ -45,6 +46,7 @@
     "export-by-date": "tsx scripts/export-by-date.ts",
     "export-showcase": "tsx scripts/export-showcase.ts",
     "check:tools-schema": "tsx scripts/check-tools-schema.ts",
+    "check-polyfills": "node scripts/check-polyfills.js",
     "prepare": "husky",
     "version:patch": "npm version patch && echo $(npm pkg get version | tr -d '\"') > VERSION",
     "version:minor": "npm version minor && echo $(npm pkg get version | tr -d '\"') > VERSION",
@@ -101,6 +103,7 @@
     "pre-push": "npm run type-check && npm run build"
   },
   "dependencies": {
+    "@builder.io/partytown": "^0.10.3",
     "@hookform/resolvers": "^5.1.0",
     "@marsidev/react-turnstile": "^1.1.0",
     "@next/third-parties": "^15.3.4",
@@ -211,17 +214,11 @@
   },
   "browserslist": {
     "production": [
-      "last 2 Chrome versions",
-      "last 2 Firefox versions",
-      "last 2 Safari versions",
-      "last 2 Edge versions",
-      "not dead",
-      "not ie 11",
-      "not op_mini all",
-      "Chrome >= 90",
-      "Firefox >= 88",
-      "Safari >= 14",
-      "Edge >= 90"
+      "Chrome >= 95",
+      "Firefox >= 95",
+      "Safari >= 15.4",
+      "Edge >= 95",
+      "not dead"
     ],
     "development": [
       "last 1 chrome version",

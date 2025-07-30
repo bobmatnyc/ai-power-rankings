@@ -10,6 +10,36 @@ export default {
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
+  // Safelist critical classes that might be dynamically generated
+  safelist: [
+    // Dynamic color classes
+    { pattern: /^(bg|text|border)-(primary|secondary|accent|destructive|muted|sidebar)(-foreground)?$/ },
+    // Dynamic state classes with actual utility classes
+    "hover:bg-accent",
+    "hover:text-accent-foreground",
+    "focus:outline-none",
+    "focus:ring-2",
+    "focus:ring-offset-2",
+    "active:scale-95",
+    "disabled:opacity-50",
+    "disabled:cursor-not-allowed",
+    "group-hover:opacity-100",
+    // Dynamic responsive classes
+    "sm:grid-cols-2",
+    "md:grid-cols-3",
+    "lg:grid-cols-4",
+    "xl:max-w-6xl",
+    "2xl:max-w-7xl",
+    // Animation classes
+    "animate-fade-in",
+    "animate-scale-in",
+    "animate-accordion-up",
+    "animate-accordion-down",
+    // Gradient utilities
+    "gradient-primary",
+    "gradient-accent",
+    "text-gradient",
+  ],
   theme: {
     container: {
       center: true,

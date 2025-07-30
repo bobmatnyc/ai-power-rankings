@@ -1,6 +1,8 @@
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { ClientLayout } from "@/components/layout/client-layout";
 import { i18n, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
@@ -64,6 +66,10 @@ export default async function RootLayout({
         <ClientLayout lang={lang} dict={dict}>
           {children}
         </ClientLayout>
+        
+        {/* Optimized analytics loading */}
+        <GoogleAnalytics />
+        <SpeedInsights />
         <Analytics />
       </body>
     </html>

@@ -22,7 +22,7 @@ interface ToolData {
 
 // Dynamic import for T-031 performance optimization
 const ClientRankings = dynamicImport(
-  () => import("./client-rankings").then((mod) => ({ default: mod.ClientRankings })),
+  () => import("./client-rankings-optimized").then((mod) => ({ default: mod.ClientRankings })),
   {
     loading: () => <RankingsTableSkeleton />,
   }

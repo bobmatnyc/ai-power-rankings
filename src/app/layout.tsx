@@ -3,6 +3,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { getBaseUrl } from "@/lib/get-base-url";
 import {
@@ -131,8 +132,14 @@ export default function RootLayout({
       <head>
         {/* Critical resource preloading for T-031 */}
         <link rel="preload" href="/crown-of-technology.webp" as="image" />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        
+        {/* Enhanced resource hints for faster loading */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.google-analytics.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        <link rel="dns-prefetch" href="https://www.google.com" />
+        <link rel="dns-prefetch" href="https://stats.g.doubleclick.net" />
 
         {/* Favicon links for better compatibility */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -145,19 +152,87 @@ export default function RootLayout({
           // biome-ignore lint/security/noDangerouslySetInnerHtml: Critical CSS for performance optimization
           dangerouslySetInnerHTML={{
             __html: `
+            /* Critical CSS Variables */
+            :root {
+              --background: 0 0% 100%;
+              --foreground: 222.2 84% 4.9%;
+              --primary: 217 91% 59%;
+              --primary-foreground: 210 40% 98%;
+              --border: 214.3 31.8% 91.4%;
+              --radius: 0.5rem;
+            }
+            
+            /* Base critical styles */
+            * {
+              border-color: hsl(var(--border));
+            }
+            
+            body {
+              background-color: hsl(var(--background));
+              color: hsl(var(--foreground));
+              margin: 0;
+              padding: 0;
+            }
+            
+            /* Critical layout styles */
             .hero-section { min-height: 400px; }
             .stats-grid { min-height: 120px; }
             .grid { display: grid; }
             .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-            @media (min-width: 768px) {
-              .md\\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-            }
             .gap-3 { gap: 0.75rem; }
             .gap-6 { gap: 1.5rem; }
+            
+            /* Critical typography */
+            .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+            .text-base { font-size: 1rem; line-height: 1.5rem; }
+            .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+            .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+            .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+            .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+            .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+            .font-medium { font-weight: 500; }
+            .font-semibold { font-weight: 600; }
+            .font-bold { font-weight: 700; }
+            
+            /* Critical spacing */
+            .p-4 { padding: 1rem; }
+            .p-6 { padding: 1.5rem; }
+            .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+            .px-4 { padding-left: 1rem; padding-right: 1rem; }
+            .mt-4 { margin-top: 1rem; }
+            .mb-4 { margin-bottom: 1rem; }
+            
+            /* Critical flexbox */
+            .flex { display: flex; }
+            .flex-col { flex-direction: column; }
+            .items-center { align-items: center; }
+            .justify-center { justify-content: center; }
+            .justify-between { justify-content: space-between; }
+            
+            /* Critical borders and rounding */
+            .rounded { border-radius: 0.25rem; }
+            .rounded-md { border-radius: calc(var(--radius) - 2px); }
+            .rounded-lg { border-radius: var(--radius); }
+            .border { border-width: 1px; }
+            
+            /* Critical colors */
+            .bg-primary { background-color: hsl(var(--primary)); }
+            .text-primary { color: hsl(var(--primary)); }
+            .text-primary-foreground { color: hsl(var(--primary-foreground)); }
+            
+            /* Critical responsive styles */
             @media (min-width: 768px) {
+              .md\\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
               .md\\:gap-6 { gap: 1.5rem; }
+              .md\\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
+              .md\\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+              .md\\:text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
             }
+            
+            /* Prevent layout shift */
+            img { max-width: 100%; height: auto; }
+            .min-h-screen { min-height: 100vh; }
           `,
           }}
         />
@@ -181,37 +256,12 @@ export default function RootLayout({
         />
         <AuthSessionProvider>{children}</AuthSessionProvider>
 
-        {/* Defer analytics loading for T-031 performance optimization */}
+        {/* Optimized analytics loading with web worker support */}
+        <GoogleAnalytics />
+        
+        {/* Vercel analytics with lazy loading */}
         <SpeedInsights />
         <Analytics />
-
-        {/* Load Google Analytics only after user interaction for T-041 performance */}
-        {process.env["NEXT_PUBLIC_GA_ID"] && (
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${process.env["NEXT_PUBLIC_GA_ID"]}`}
-            strategy="lazyOnload"
-          />
-        )}
-        {process.env["NEXT_PUBLIC_GA_ID"] && (
-          <Script id="google-analytics" strategy="lazyOnload">
-            {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${process.env["NEXT_PUBLIC_GA_ID"]}', {
-                'send_page_view': false
-              });
-              
-              // Send page view after a delay to not block initial render
-              setTimeout(() => {
-                gtag('event', 'page_view', {
-                  page_location: window.location.href,
-                  page_title: document.title
-                });
-              }, 3000);
-            `}
-          </Script>
-        )}
       </body>
     </html>
   );
