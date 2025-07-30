@@ -2,23 +2,32 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Locale } from "@/i18n/config";
+import { locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
+import { getUrl } from "@/lib/get-url";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ lang: Locale; slug: string }>;
 }): Promise<Metadata> {
-  const { lang: _lang, slug } = await params;
+  const { lang, slug } = await params;
   const newsRepo = getNewsRepo();
   const article = await newsRepo.getBySlug(slug);
+  const baseUrl = getUrl();
 
   if (!article) {
     return {
       title: "Article Not Found",
     };
   }
+
+  // Build hreflang alternates for all supported languages
+  const languages: Record<string, string> = {};
+  locales.forEach((locale) => {
+    languages[locale] = `${baseUrl}/${locale}/news/${slug}`;
+  });
 
   return {
     title: `${article.title} | AI Power Rankings`,
@@ -29,6 +38,14 @@ export async function generateMetadata({
       type: "article",
       publishedTime: article.published_date,
       modifiedTime: article.updated_at,
+      url: `${baseUrl}/${lang}/news/${slug}`,
+      siteName: "AI Power Rankings",
+    },
+    alternates: {
+      // Always set canonical to the English version
+      canonical: `${baseUrl}/en/news/${slug}`,
+      // Include hreflang tags for all supported languages
+      languages,
     },
   };
 }

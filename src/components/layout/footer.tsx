@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { useI18n } from "@/i18n/client";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { lang } = useI18n();
 
   return (
     <footer className="bg-gray-900 text-gray-300">
@@ -61,27 +65,27 @@ export function Footer() {
             <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/rankings" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/rankings`} className="hover:text-white transition-colors">
                   Current Rankings
                 </Link>
               </li>
               <li>
-                <Link href="/tools" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/tools`} className="hover:text-white transition-colors">
                   All Tools
                 </Link>
               </li>
               <li>
-                <Link href="/methodology" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/methodology`} className="hover:text-white transition-colors">
                   Methodology
                 </Link>
               </li>
               <li>
-                <Link href="/news" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/news`} className="hover:text-white transition-colors">
                   News & Updates
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/about`} className="hover:text-white transition-colors">
                   About Us
                 </Link>
               </li>
@@ -93,50 +97,50 @@ export function Footer() {
             <h4 className="text-lg font-semibold text-white mb-4">Categories</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/best-ide-assistants" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/best-ide-assistants`} className="hover:text-white transition-colors">
                   IDE Assistants
                 </Link>
               </li>
               <li>
-                <Link href="/best-autonomous-agents" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/best-autonomous-agents`} className="hover:text-white transition-colors">
                   Autonomous Agents
                 </Link>
               </li>
               <li>
-                <Link href="/best-ai-code-editors" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/best-ai-code-editors`} className="hover:text-white transition-colors">
                   AI Code Editors
                 </Link>
               </li>
               <li>
-                <Link href="/best-ai-app-builders" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/best-ai-app-builders`} className="hover:text-white transition-colors">
                   AI App Builders
                 </Link>
               </li>
               <li>
-                <Link href="/best-code-review-tools" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/best-code-review-tools`} className="hover:text-white transition-colors">
                   Code Review Tools
                 </Link>
               </li>
               <li>
-                <Link href="/best-devops-assistants" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/best-devops-assistants`} className="hover:text-white transition-colors">
                   DevOps Assistants
                 </Link>
               </li>
               <li>
-                <Link href="/best-testing-tools" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/best-testing-tools`} className="hover:text-white transition-colors">
                   Testing Tools
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/best-open-source-frameworks"
+                  href={`/${lang}/best-open-source-frameworks`}
                   className="hover:text-white transition-colors"
                 >
                   Open Source Frameworks
                 </Link>
               </li>
               <li>
-                <Link href="/best-ai-coding-tools" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/best-ai-coding-tools`} className="hover:text-white transition-colors">
                   All AI Tools
                 </Link>
               </li>
@@ -148,17 +152,17 @@ export function Footer() {
             <h4 className="text-lg font-semibold text-white mb-4">Legal</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/privacy`} className="hover:text-white transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/terms`} className="hover:text-white transition-colors">
                   Terms of Use
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
+                <Link href={`/${lang}/contact`} className="hover:text-white transition-colors">
                   Contact Us
                 </Link>
               </li>

@@ -86,7 +86,7 @@ export default auth((req) => {
     if (!pathnameHasLocale) {
       const locale = getLocale(req);
       req.nextUrl.pathname = `/${locale}${pathname}`;
-      return NextResponse.redirect(req.nextUrl);
+      return NextResponse.redirect(req.nextUrl, { status: 301 });
     }
 
     return NextResponse.next();
@@ -115,7 +115,7 @@ export default auth((req) => {
     // If authenticated, add locale and redirect
     const locale = getLocale(req);
     req.nextUrl.pathname = `/${locale}/dashboard`;
-    return NextResponse.redirect(req.nextUrl);
+    return NextResponse.redirect(req.nextUrl, { status: 301 });
   }
 
   // Check if there is any supported locale in the pathname
@@ -127,7 +127,7 @@ export default auth((req) => {
   if (!pathnameHasLocale) {
     const locale = getLocale(req);
     req.nextUrl.pathname = `/${locale}${pathname}`;
-    return NextResponse.redirect(req.nextUrl);
+    return NextResponse.redirect(req.nextUrl, { status: 301 });
   }
 
   // Handle our custom dashboard authentication (after locale is ensured)

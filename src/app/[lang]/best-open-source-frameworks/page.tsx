@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
 import type { Locale } from "@/i18n/config";
+import { locales } from "@/i18n/config";
 import { getCurrentYear } from "@/lib/get-current-year";
 import { getUrl } from "@/lib/get-url";
 
@@ -17,6 +18,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang } = await params;
   const baseUrl = getUrl();
   const currentYear = getCurrentYear();
+
+  // Build hreflang alternates for all supported languages
+  const languages: Record<string, string> = {};
+  locales.forEach((locale) => {
+    languages[locale] = `${baseUrl}/${locale}/best-open-source-frameworks`;
+  });
 
   return {
     title: `Best Open Source AI Frameworks ${currentYear} - Developer Tools & Libraries`,
@@ -41,7 +48,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       siteName: "AI Power Rankings",
     },
     alternates: {
-      canonical: `${baseUrl}/${lang}/best-open-source-frameworks`,
+      // Always set canonical to the English version
+      canonical: `${baseUrl}/en/best-open-source-frameworks`,
+      // Include hreflang tags for all supported languages
+      languages,
     },
   };
 }

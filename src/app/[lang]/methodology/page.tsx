@@ -1,9 +1,51 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { Locale } from "@/i18n/config";
+import { locales } from "@/i18n/config";
 import { contentLoader } from "@/lib/content-loader";
+import { getUrl } from "@/lib/get-url";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { lang } = await params;
+  const baseUrl = getUrl();
+
+  // Build hreflang alternates for all supported languages
+  const languages: Record<string, string> = {};
+  locales.forEach((locale) => {
+    languages[locale] = `${baseUrl}/${locale}/methodology`;
+  });
+
+  return {
+    title: "AI Power Rankings Methodology - How We Rank AI Coding Tools",
+    description: "Learn about our comprehensive methodology for ranking AI coding tools. Understand the criteria, metrics, and evaluation process behind our rankings.",
+    keywords: [
+      "AI ranking methodology",
+      "AI tool evaluation",
+      "ranking criteria",
+      "AI metrics",
+      "evaluation process",
+      "ranking system",
+      "AI assessment framework",
+      "coding tool comparison",
+    ],
+    openGraph: {
+      title: "AI Power Rankings Methodology",
+      description: "Discover how we evaluate and rank AI coding tools using our comprehensive methodology.",
+      type: "website",
+      url: `${baseUrl}/${lang}/methodology`,
+      siteName: "AI Power Rankings",
+    },
+    alternates: {
+      // Always set canonical to the English version
+      canonical: `${baseUrl}/en/methodology`,
+      // Include hreflang tags for all supported languages
+      languages,
+    },
+  };
 }
 
 export default async function MethodologyPage({ params }: PageProps): Promise<React.JSX.Element> {
