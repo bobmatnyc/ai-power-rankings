@@ -139,14 +139,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: `${baseUrl}/${lang}`,
       languages: {
         en: `${baseUrl}/en`,
-        ja: `${baseUrl}/ja`,
-        zh: `${baseUrl}/zh`,
-        ko: `${baseUrl}/ko`,
         de: `${baseUrl}/de`,
         fr: `${baseUrl}/fr`,
         it: `${baseUrl}/it`,
+        ja: `${baseUrl}/ja`,
+        ko: `${baseUrl}/ko`,
         uk: `${baseUrl}/uk`,
         hr: `${baseUrl}/hr`,
+        zh: `${baseUrl}/zh`,
+        es: `${baseUrl}/es`,
       },
     },
   };
