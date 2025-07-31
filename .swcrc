@@ -77,16 +77,8 @@
       "safari": "15.4",
       "edge": "95"
     },
-    "mode": "usage",
-    "coreJs": 3,
-    "exclude": [
-      "es.array.at",
-      "es.array.flat",
-      "es.array.flat-map",
-      "es.object.from-entries",
-      "es.object.has-own",
-      "es.string.trim-end",
-      "es.string.trim-start"
-    ]
+    "mode": "entry",
+    "coreJs": false,
+    "exclude": []
   }
 }
