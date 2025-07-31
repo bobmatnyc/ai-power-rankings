@@ -183,8 +183,12 @@ export class ToolsRepository {
 
     return {
       tools,
-      index: this.indexData!.index,
-      metadata: this.indexData!.metadata,
+      index: this.indexData?.index || { byId: {}, bySlug: {}, byCategory: {} },
+      metadata: this.indexData?.metadata || {
+        total: 0,
+        last_updated: new Date().toISOString(),
+        version: "2.0.0",
+      },
     };
   }
 
@@ -308,15 +312,17 @@ export class ToolsRepository {
 
       if (tool) {
         // Update indices
-        this.indexData!.index.byId[tool.id] = tool;
-        this.indexData!.index.bySlug[tool.slug] = tool;
+        if (this.indexData) {
+          this.indexData.index.byId[tool.id] = tool;
+          this.indexData.index.bySlug[tool.slug] = tool;
 
-        if (!this.indexData!.index.byCategory[tool.category]) {
-          this.indexData!.index.byCategory[tool.category] = [];
-        }
-        const categoryArray = this.indexData!.index.byCategory[tool.category];
-        if (categoryArray) {
-          categoryArray.push(tool.id);
+          if (!this.indexData.index.byCategory[tool.category]) {
+            this.indexData.index.byCategory[tool.category] = [];
+          }
+          const categoryArray = this.indexData.index.byCategory[tool.category];
+          if (categoryArray) {
+            categoryArray.push(tool.id);
+          }
         }
 
         totalTools++;
@@ -324,15 +330,17 @@ export class ToolsRepository {
     }
 
     // Update metadata
-    this.indexData!.metadata.total = totalTools;
-    this.indexData!.metadata.last_updated = new Date().toISOString();
+    if (this.indexData) {
+      this.indexData.metadata.total = totalTools;
+      this.indexData.metadata.last_updated = new Date().toISOString();
+    }
 
     // Save the updated index
     await this.saveIndex();
 
     this.logger.info("Index rebuilt", {
       total: totalTools,
-      categories: Object.keys(this.indexData!.index.byCategory).length,
+      categories: Object.keys(this.indexData?.index.byCategory || {}).length,
     });
   }
 
@@ -347,7 +355,7 @@ export class ToolsRepository {
     const tools: Tool[] = [];
 
     // Load each tool from the index
-    for (const slug of Object.keys(this.indexData!.index.bySlug)) {
+    for (const slug of Object.keys(this.indexData?.index.bySlug || {})) {
       const tool = await this.loadTool(slug);
       if (tool) {
         tools.push(tool);
@@ -365,8 +373,8 @@ export class ToolsRepository {
       await this.initialize();
     }
 
-    const toolRef = this.indexData!.index.byId[id];
-    if (toolRef && toolRef.slug) {
+    const toolRef = this.indexData?.index.byId[id];
+    if (toolRef?.slug) {
       return await this.loadTool(toolRef.slug);
     }
 
@@ -388,12 +396,12 @@ export class ToolsRepository {
       await this.initialize();
     }
 
-    const toolIds = this.indexData!.index.byCategory[category] || [];
+    const toolIds = this.indexData?.index.byCategory[category] || [];
     const tools: Tool[] = [];
 
     for (const id of toolIds) {
-      const toolRef = this.indexData!.index.byId[id];
-      if (toolRef && toolRef.slug) {
+      const toolRef = this.indexData?.index.byId[id];
+      if (toolRef?.slug) {
         const tool = await this.loadTool(toolRef.slug);
         if (tool) {
           tools.push(tool);
@@ -429,21 +437,23 @@ export class ToolsRepository {
     await this.saveTool(tool);
 
     // Update indices
-    this.indexData!.index.byId[tool.id] = tool;
-    this.indexData!.index.bySlug[tool.slug] = tool;
+    if (this.indexData) {
+      this.indexData.index.byId[tool.id] = tool;
+      this.indexData.index.bySlug[tool.slug] = tool;
 
-    // Update category index
-    if (!this.indexData!.index.byCategory[tool.category]) {
-      this.indexData!.index.byCategory[tool.category] = [];
-    }
-    const categoryTools = this.indexData!.index.byCategory[tool.category];
-    if (categoryTools && !categoryTools.includes(tool.id)) {
-      categoryTools.push(tool.id);
-    }
+      // Update category index
+      if (!this.indexData.index.byCategory[tool.category]) {
+        this.indexData.index.byCategory[tool.category] = [];
+      }
+      const categoryTools = this.indexData.index.byCategory[tool.category];
+      if (categoryTools && !categoryTools.includes(tool.id)) {
+        categoryTools.push(tool.id);
+      }
 
-    // Update metadata
-    this.indexData!.metadata.total = Object.keys(this.indexData!.index.byId).length;
-    this.indexData!.metadata.last_updated = new Date().toISOString();
+      // Update metadata
+      this.indexData.metadata.total = Object.keys(this.indexData.index.byId).length;
+      this.indexData.metadata.last_updated = new Date().toISOString();
+    }
 
     // Save the index
     await this.saveIndex();
@@ -457,7 +467,7 @@ export class ToolsRepository {
       await this.initialize();
     }
 
-    const toolRef = this.indexData!.index.byId[id];
+    const toolRef = this.indexData?.index.byId[id];
     if (!toolRef || !toolRef.slug) {
       return false;
     }
@@ -471,28 +481,30 @@ export class ToolsRepository {
     await this.deleteTool(tool.slug);
 
     // Remove from indices
-    delete this.indexData!.index.byId[id];
-    delete this.indexData!.index.bySlug[tool.slug];
+    if (this.indexData) {
+      delete this.indexData.index.byId[id];
+      delete this.indexData.index.bySlug[tool.slug];
 
-    // Remove from category index
-    if (this.indexData!.index.byCategory[tool.category]) {
-      const categoryTools = this.indexData!.index.byCategory[tool.category];
-      if (categoryTools) {
-        const index = categoryTools.indexOf(id);
-        if (index !== -1) {
-          categoryTools.splice(index, 1);
-        }
+      // Remove from category index
+      if (this.indexData.index.byCategory[tool.category]) {
+        const categoryTools = this.indexData.index.byCategory[tool.category];
+        if (categoryTools) {
+          const index = categoryTools.indexOf(id);
+          if (index !== -1) {
+            categoryTools.splice(index, 1);
+          }
 
-        // Remove empty category
-        if (categoryTools.length === 0) {
-          delete this.indexData!.index.byCategory[tool.category];
+          // Remove empty category
+          if (categoryTools.length === 0) {
+            delete this.indexData.index.byCategory[tool.category];
+          }
         }
       }
-    }
 
-    // Update metadata
-    this.indexData!.metadata.total = Object.keys(this.indexData!.index.byId).length;
-    this.indexData!.metadata.last_updated = new Date().toISOString();
+      // Update metadata
+      this.indexData.metadata.total = Object.keys(this.indexData.index.byId).length;
+      this.indexData.metadata.last_updated = new Date().toISOString();
+    }
 
     // Save the index
     await this.saveIndex();
@@ -526,7 +538,7 @@ export class ToolsRepository {
 
     const counts: Record<string, number> = {};
 
-    for (const [category, toolIds] of Object.entries(this.indexData!.index.byCategory)) {
+    for (const [category, toolIds] of Object.entries(this.indexData?.index.byCategory || {})) {
       counts[category] = toolIds.length;
     }
 
