@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { ClientLayout } from "@/components/layout/client-layout";
-import { i18n, type Locale } from "@/i18n/config";
+import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 
 const geistSans = Geist({
@@ -18,7 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateStaticParams() {
-  return i18n.locales.map((locale) => ({ lang: locale }));
+  // Only generate static params for main pages to prevent Vercel timeout
+  // Other locales will be rendered dynamically on-demand
+  return [{ lang: "en" }, { lang: "de" }, { lang: "ja" }];
 }
 
 export async function generateMetadata({
@@ -66,7 +68,7 @@ export default async function RootLayout({
         <ClientLayout lang={lang} dict={dict}>
           {children}
         </ClientLayout>
-        
+
         {/* Optimized analytics loading */}
         <GoogleAnalytics />
         <SpeedInsights />

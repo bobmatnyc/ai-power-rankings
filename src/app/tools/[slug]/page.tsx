@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import ToolDetailClientPage from "./client-page";
 import { generateToolMetadata } from "./metadata";
 
+// Force dynamic rendering to prevent build timeout
+export const dynamic = "force-dynamic";
+
 interface ToolPageProps {
   params: Promise<{ slug: string }>;
 }

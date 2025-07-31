@@ -1,6 +1,6 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import type { Metadata } from "next";
 import type { Locale } from "@/i18n/config";
 import { locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
@@ -24,7 +24,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: "About AI Power Rankings - Independent AI Tool Analysis & Reviews",
-    description: "Learn about AI Power Rankings, our mission to provide unbiased, data-driven rankings of AI coding tools. Discover our methodology and commitment to transparency.",
+    description:
+      "Learn about AI Power Rankings, our mission to provide unbiased, data-driven rankings of AI coding tools. Discover our methodology and commitment to transparency.",
     keywords: [
       "about AI Power Rankings",
       "AI tool analysis",
@@ -37,7 +38,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ],
     openGraph: {
       title: "About AI Power Rankings",
-      description: "Learn about our mission to provide unbiased, data-driven rankings of AI coding tools.",
+      description:
+        "Learn about our mission to provide unbiased, data-driven rankings of AI coding tools.",
       type: "website",
       url: `${baseUrl}/${lang}/about`,
       siteName: "AI Power Rankings",
@@ -69,8 +71,7 @@ export default async function AboutPage({ params }: PageProps): Promise<React.JS
   );
 }
 
-// Generate static params for all locales
+// Generate static params only for main pages to prevent Vercel timeout
 export async function generateStaticParams() {
-  const locales: Locale[] = ["en", "de", "fr", "hr", "it", "ja", "ko", "uk", "zh"];
-  return locales.map((lang) => ({ lang }));
+  return [{ lang: "en" }, { lang: "de" }, { lang: "ja" }];
 }

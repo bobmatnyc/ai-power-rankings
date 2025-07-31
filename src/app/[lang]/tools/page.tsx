@@ -1,11 +1,14 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import type { Locale } from "@/i18n/config";
 import { locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { getUrl } from "@/lib/get-url";
 import { getCurrentYear } from "@/lib/get-current-year";
+import { getUrl } from "@/lib/get-url";
 import ToolsClient from "./tools-client";
+
+// Force dynamic rendering to prevent build timeout
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -24,7 +27,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `All AI Coding Tools ${currentYear} - Complete Directory & Comparison`,
-    description: "Browse and compare 50+ AI coding tools including IDE assistants, code editors, autonomous agents, and more. Filter by category and explore detailed features.",
+    description:
+      "Browse and compare 50+ AI coding tools including IDE assistants, code editors, autonomous agents, and more. Filter by category and explore detailed features.",
     keywords: [
       "AI coding tools directory",
       "all AI development tools",

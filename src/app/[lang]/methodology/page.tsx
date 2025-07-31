@@ -21,7 +21,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: "AI Power Rankings Methodology - How We Rank AI Coding Tools",
-    description: "Learn about our comprehensive methodology for ranking AI coding tools. Understand the criteria, metrics, and evaluation process behind our rankings.",
+    description:
+      "Learn about our comprehensive methodology for ranking AI coding tools. Understand the criteria, metrics, and evaluation process behind our rankings.",
     keywords: [
       "AI ranking methodology",
       "AI tool evaluation",
@@ -34,7 +35,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ],
     openGraph: {
       title: "AI Power Rankings Methodology",
-      description: "Discover how we evaluate and rank AI coding tools using our comprehensive methodology.",
+      description:
+        "Discover how we evaluate and rank AI coding tools using our comprehensive methodology.",
       type: "website",
       url: `${baseUrl}/${lang}/methodology`,
       siteName: "AI Power Rankings",
@@ -86,8 +88,7 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
   );
 }
 
-// Generate static params for all locales
+// Generate static params only for main pages to prevent Vercel timeout
 export async function generateStaticParams() {
-  const locales: Locale[] = ["en", "de", "fr", "hr", "it", "ja", "ko", "uk", "zh"];
-  return locales.map((lang) => ({ lang }));
+  return [{ lang: "en" }, { lang: "de" }, { lang: "ja" }];
 }

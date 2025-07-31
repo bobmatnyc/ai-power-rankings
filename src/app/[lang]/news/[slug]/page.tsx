@@ -4,8 +4,11 @@ import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Locale } from "@/i18n/config";
 import { locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import { getUrl } from "@/lib/get-url";
+import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
+
+// Force dynamic rendering to prevent build timeout
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

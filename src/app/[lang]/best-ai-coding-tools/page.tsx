@@ -8,6 +8,10 @@ import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
 import type { Locale } from "@/i18n/config";
 import { locales } from "@/i18n/config";
 import { getCurrentYear } from "@/lib/get-current-year";
+
+// Force dynamic rendering to prevent build timeout
+export const dynamic = "force-dynamic";
+
 import { getUrl } from "@/lib/get-url";
 
 interface PageProps {

@@ -20,11 +20,15 @@ const nextConfig: NextConfig = {
     webVitalsAttribution: ["CLS", "LCP"],
     // Disable experimental CSS optimization to avoid conflicts with custom webpack plugin
     // optimizeCss: true,
-    // Reduce memory usage during builds
+    // Reduce memory usage during builds and prevent timeout
     workerThreads: false,
     // Disable all polyfills for modern browsers
     esmExternals: true,
+    // Note: staticPageGenerationTimeout is not available in NextConfig
+    // Instead we use force-dynamic on individual pages
   },
+  // Optimize output for faster builds
+  output: process.env["NEXT_OUTPUT"] === "export" ? "export" : undefined,
   eslint: {
     // During production builds, do not fail on warnings
     ignoreDuringBuilds: true,
@@ -252,11 +256,11 @@ const nextConfig: NextConfig = {
       );
 
       // Force modern browser targets in Babel/SWC
-      if (config.module && config.module.rules) {
+      if (config.module?.rules) {
         config.module.rules.forEach((rule: any) => {
           if (rule.use && Array.isArray(rule.use)) {
             rule.use.forEach((useEntry: any) => {
-              if (useEntry.loader && useEntry.loader.includes("swc-loader")) {
+              if (useEntry.loader?.includes("swc-loader")) {
                 useEntry.options = {
                   ...useEntry.options,
                   env: {
@@ -302,7 +306,7 @@ const nextConfig: NextConfig = {
                 return module.size() > 160000 && /node_modules[\\/]/.test(module.identifier());
               },
               name(module: any) {
-                const hash = require("crypto")
+                const hash = require("node:crypto")
                   .createHash("sha1")
                   .update(module.identifier())
                   .digest("hex")
@@ -329,7 +333,7 @@ const nextConfig: NextConfig = {
             // Shared modules
             shared: {
               name(_module: any, chunks: any) {
-                const hash = require("crypto")
+                const hash = require("node:crypto")
                   .createHash("sha1")
                   .update(chunks.reduce((acc: string, chunk: any) => acc + chunk.name, ""))
                   .digest("hex")

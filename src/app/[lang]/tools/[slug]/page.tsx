@@ -5,6 +5,9 @@ import { locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { ToolDetailClient } from "./tool-detail-client";
 
+// Force dynamic rendering to prevent build timeout
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ lang: Locale; slug: string }>;
 }

@@ -46,10 +46,9 @@ export default async function PrivacyPage({ params }: PageProps): Promise<React.
   );
 }
 
-// Generate static params for all locales
+// Generate static params only for main pages to prevent Vercel timeout
 export async function generateStaticParams() {
-  const locales: Locale[] = ["en", "de", "fr", "hr", "it", "ja", "ko", "uk", "zh"];
-  return locales.map((lang) => ({ lang }));
+  return [{ lang: "en" }, { lang: "de" }, { lang: "ja" }];
 }
 
 // Generate metadata

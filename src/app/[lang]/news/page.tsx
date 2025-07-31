@@ -1,11 +1,14 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import NewsContent from "@/components/news/news-content";
 import type { Locale } from "@/i18n/config";
 import { locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { getUrl } from "@/lib/get-url";
 import { getCurrentYear } from "@/lib/get-current-year";
+import { getUrl } from "@/lib/get-url";
+
+// Force dynamic rendering to prevent build timeout
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ lang: Locale }>;
@@ -24,7 +27,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `AI Coding Tools News ${currentYear} - Latest Updates & Announcements`,
-    description: "Stay updated with the latest AI coding tools news, updates, and industry announcements. Track developments from top AI companies and new feature releases.",
+    description:
+      "Stay updated with the latest AI coding tools news, updates, and industry announcements. Track developments from top AI companies and new feature releases.",
     keywords: [
       "AI coding tools news",
       "AI development updates",
