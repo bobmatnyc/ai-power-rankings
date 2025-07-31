@@ -54,7 +54,7 @@ export function NewsCard({ item }: NewsCardProps) {
     const date = new Date(dateString);
     
     // Check if date is valid
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       return "Date unavailable";
     }
     

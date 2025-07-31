@@ -125,10 +125,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       new_companies_created: 0,
       pending_tools_created: 0,
       processing_log: `Started processing ${newsItems.length} news items\n`,
-      errors: [] as Array<{ message: string; item?: unknown; error?: string }>,
+      errors: [] as Array<{ item_index?: number; item_title?: string; article_id?: string; error: string }>,
       ingested_news_ids: [] as string[],
-      created_tools: [] as Array<{ id: string; name: string; source: string }>,
-      created_companies: [] as Array<{ id: string; name: string; source: string }>,
+      created_tools: [] as Array<{ id: string; name: string; slug: string }>,
+      created_companies: [] as Array<{ id: string; name: string; slug: string }>,
     };
 
     // Process each news item
@@ -166,11 +166,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               toolIdentifier,
               item.source,
               item.url,
-              `Related tool mentioned in: ${item.title || (item as Record<string, unknown>).headline || 'Unknown'}`
+              `Related tool mentioned in: ${item.title || (item as any)["headline"] || 'Unknown'}`
             );
 
             // Only add to related tools if tool exists
-            if (tool) {
+            if (tool && tool.slug) {
               relatedToolIds.push(tool.id);
 
               if (!report.created_tools.find(t => t.id === tool.id)) {
@@ -195,11 +195,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             item.primary_tool,
             item.source,
             item.url,
-            `Primary tool mentioned in: ${item.title || (item as Record<string, unknown>).headline || 'Unknown'}`
+            `Primary tool mentioned in: ${item.title || (item as any)["headline"] || 'Unknown'}`
           );
 
           // Only add to related tools if tool exists
-          if (primaryTool) {
+          if (primaryTool && primaryTool.slug) {
             if (!relatedToolIds.includes(primaryTool.id)) {
               relatedToolIds.push(primaryTool.id);
             }

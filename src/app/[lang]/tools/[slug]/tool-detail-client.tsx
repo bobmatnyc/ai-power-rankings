@@ -256,11 +256,11 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
       {/* Tool Detail Tabs */}
       <ToolDetailTabs
         tool={tool}
-        ranking={toolData?.ranking}
+        ranking={toolData?.ranking as any}
         metrics={toolData?.metrics || metrics}
-        metricHistory={toolData?.metricHistory}
-        rankingsHistory={toolData?.rankingsHistory}
-        newsItems={toolData?.newsItems}
+        metricHistory={toolData?.metricHistory as any}
+        rankingsHistory={toolData?.rankingsHistory as any}
+        newsItems={toolData?.newsItems as any}
         pricingPlans={pricingPlans}
         dict={dict}
       />

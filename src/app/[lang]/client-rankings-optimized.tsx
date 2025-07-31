@@ -285,14 +285,16 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           });
 
           performance.mark("rankings-parse-end");
-          processRankingsInChunks(data.rankings || []);
+          const rankings = (data.rankings || []) as RankingData[];
+          processRankingsInChunks(rankings);
 
           // Update date immediately
-          if (data.algorithm?.date) {
-            const updateDate = new Date(data.algorithm.date);
+          const algorithm = data["algorithm"] as any;
+          if (algorithm?.["date"]) {
+            const updateDate = new Date(algorithm["date"]);
             
             // Check if date is valid
-            if (isNaN(updateDate.getTime())) {
+            if (Number.isNaN(updateDate.getTime())) {
               setLastUpdateDate("Daily");
             } else {
               setLastUpdateDate(
@@ -313,7 +315,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
             const updateDate = new Date(data.algorithm.date);
             
             // Check if date is valid
-            if (isNaN(updateDate.getTime())) {
+            if (Number.isNaN(updateDate.getTime())) {
               setLastUpdateDate("Daily");
             } else {
               setLastUpdateDate(

@@ -148,7 +148,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
             const updateDate = new Date(data.algorithm.date);
             
             // Check if date is valid
-            if (isNaN(updateDate.getTime())) {
+            if (Number.isNaN(updateDate.getTime())) {
               setLastUpdateDate("Daily");
             } else {
               // Format as "Jan 1, 2025" or similar
