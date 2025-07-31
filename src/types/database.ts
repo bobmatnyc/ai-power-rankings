@@ -66,7 +66,7 @@ export interface ToolInfo {
       note?: string;
       achievement?: string;
     };
-    [key: string]: any;
+    [key: string]: string | number | Record<string, unknown> | undefined;
   };
 }
 

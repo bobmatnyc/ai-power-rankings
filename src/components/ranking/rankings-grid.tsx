@@ -75,7 +75,6 @@ function RankingsGridContent({
   const tagsParam = searchParams.get("tags")?.split(",") || [];
   const sortParam = searchParams.get("sort") || "rank";
 
-
   const fetchAlgorithmDate = async (): Promise<void> => {
     try {
       const response = await fetch("/api/rankings?metadata=true");
@@ -147,7 +146,11 @@ function RankingsGridContent({
       fetchAlgorithmDate();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialRankings.length]);
+  }, [
+    initialRankings.length, // For SSR, we need to fetch the algorithm date separately
+    fetchAlgorithmDate,
+    fetchRankings,
+  ]);
 
   // Apply filters
   const filteredRankings = rankings.filter((r) => {

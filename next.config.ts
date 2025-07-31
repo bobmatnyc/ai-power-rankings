@@ -4,11 +4,12 @@ import type { NextConfig } from "next";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require("./next.config.env.js");
 
-// Bundle analyzer for T-031
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env["ANALYZE"] === "true",
-});
+// Bundle analyzer for T-031 - temporarily disabled due to missing dependency
+// TODO: Re-enable when @next/bundle-analyzer is reinstalled
+// const withBundleAnalyzer = require("@next/bundle-analyzer")({
+//   enabled: process.env["ANALYZE"] === "true",
+// });
+const withBundleAnalyzer = (config: NextConfig) => config;
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -71,9 +72,8 @@ const nextConfig: NextConfig = {
       transform: "@radix-ui/react-{{member}}",
       skipDefaultConversion: true,
     },
-    "lucide-react": {
-      transform: "lucide-react/dist/esm/icons/{{member}}",
-    },
+    // Removed lucide-react transform - causing module resolution issues
+    // Let Next.js handle lucide-react imports normally
   },
   // Headers for T-040 cache optimization
   async headers() {

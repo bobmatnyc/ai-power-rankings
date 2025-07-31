@@ -52,7 +52,7 @@ export default function ToolsPage(): React.JSX.Element {
 
   useEffect(() => {
     fetchTools();
-  }, []);
+  }, [fetchTools]);
 
   const categories = ["all", ...new Set(tools.map((t) => t.category))];
 

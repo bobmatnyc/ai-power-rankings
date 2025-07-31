@@ -48,7 +48,10 @@ export async function GET() {
     );
 
     // Calculate overall hit rate
-    const totalHits = Object.values(memoryStats).reduce((total, stat) => total + stat["totalHits"], 0);
+    const totalHits = Object.values(memoryStats).reduce(
+      (total, stat) => total + stat["totalHits"],
+      0
+    );
     const totalAccess = Object.values(memoryStats).reduce(
       (total, stat) => total + stat["totalHits"] + stat["totalMisses"],
       0

@@ -130,7 +130,8 @@ function transformToToolMetrics(tool: Tool, innovationScore?: number): ToolMetri
 
     // Agentic capabilities - using category and name-based defaults
     agentic_capability: getCategoryBasedAgenticScore(tool["category"], tool["name"]),
-    swe_bench_score: businessMetrics["swe_bench_score"] || (isPremium ? 45 : isAutonomous ? 35 : 20),
+    swe_bench_score:
+      businessMetrics["swe_bench_score"] || (isPremium ? 45 : isAutonomous ? 35 : 20),
     multi_file_capability: isAutonomous ? 9 : technical["multi_file_support"] ? 7 : 4,
     planning_depth: isAutonomous ? 8.5 : 6,
     context_utilization: isPremium ? 8 : 6.5,
@@ -295,7 +296,9 @@ export async function POST(request: NextRequest) {
       const beforeFilter = activeTools.length;
       activeTools = activeTools.filter((tool) => {
         // Use launch_date if available, otherwise fall back to created_at
-        const toolDate = tool["launch_date"] ? new Date(tool["launch_date"]) : new Date(tool["created_at"]);
+        const toolDate = tool["launch_date"]
+          ? new Date(tool["launch_date"])
+          : new Date(tool["created_at"]);
         return toolDate <= cutoffDate;
       });
       const afterFilter = activeTools.length;
@@ -380,20 +383,26 @@ export async function POST(request: NextRequest) {
         );
 
         // Apply additional news impact to factor scores
-        const adjustedFactorScores = applyNewsImpactToScores(score["factorScores"], enhancedMetrics);
+        const adjustedFactorScores = applyNewsImpactToScores(
+          score["factorScores"],
+          enhancedMetrics
+        );
 
         // Update the score's factor scores with the adjustments
         score["factorScores"] = {
           ...score["factorScores"],
           technicalPerformance:
-            adjustedFactorScores["technicalPerformance"] || score["factorScores"]["technicalPerformance"],
-          marketTraction: adjustedFactorScores["marketTraction"] || score["factorScores"]["marketTraction"],
+            adjustedFactorScores["technicalPerformance"] ||
+            score["factorScores"]["technicalPerformance"],
+          marketTraction:
+            adjustedFactorScores["marketTraction"] || score["factorScores"]["marketTraction"],
         };
 
         // Recalculate overall score after news adjustments
         const weights = RankingEngineV6.getAlgorithmInfo().weights;
         score["overallScore"] = Object.entries(weights).reduce((total, [factor, weight]) => {
-          const factorScore = score["factorScores"][factor as keyof typeof score["factorScores"]] || 0;
+          const factorScore =
+            score["factorScores"][factor as keyof (typeof score)["factorScores"]] || 0;
           return total + factorScore * weight;
         }, 0);
         score["overallScore"] = Math.max(
@@ -519,7 +528,8 @@ export async function POST(request: NextRequest) {
         movement,
         change_analysis:
           (changeAnalysis["rankChange"] && Math.abs(changeAnalysis["rankChange"]) >= 3) ||
-          (changeAnalysis["primaryReason"] && changeAnalysis["primaryReason"] !== "No significant change")
+          (changeAnalysis["primaryReason"] &&
+            changeAnalysis["primaryReason"] !== "No significant change")
             ? {
                 primary_reason: changeAnalysis["primaryReason"],
                 narrative_explanation: changeAnalysis["narrativeExplanation"],

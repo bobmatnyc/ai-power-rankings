@@ -15,9 +15,6 @@
   },
   "indexing": {
     "minItemsForIndex": 100,
-    "indexFields": [
-      "id",
-      "slug"
-    ]
+    "indexFields": ["id", "slug"]
   }
 }

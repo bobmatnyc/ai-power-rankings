@@ -152,7 +152,7 @@ export function EnhancedRankingsManager() {
   // Load available ranking periods on mount
   useEffect(() => {
     loadAvailablePeriods();
-  }, []);
+  }, [loadAvailablePeriods]);
 
   const handlePreviewRankings = async () => {
     setIsPreviewLoading(true);

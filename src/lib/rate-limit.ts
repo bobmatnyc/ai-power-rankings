@@ -108,7 +108,7 @@ export async function checkContactFormRateLimit(
     const strictModeKey = `strict_mode:${clientIP}`;
     const isStrictMode = await kv.get(strictModeKey);
 
-    let result;
+    let result: { success: boolean; limit: number; remaining: number; reset: number };
     if (isStrictMode) {
       // Use strict rate limiting for repeat offenders
       result = await contactFormStrictRateLimit.limit(identifier);

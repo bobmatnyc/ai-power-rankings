@@ -14,8 +14,8 @@
  * - Tool support alone: +8 agentic, +5 innovation, +5 technical
  */
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { calculateToolNewsImpact, type NewsArticle } from "./ranking-news-impact";
 
 export interface RankingWeightsV7 {
@@ -149,7 +149,7 @@ export class RankingEngineV7 {
 
         this.velocityScores = new Map();
         velocityData.scores.forEach((score) => {
-          this.velocityScores!.set(score.toolId, score.score);
+          this.velocityScores?.set(score.toolId, score.score);
         });
 
         console.log(`Loaded velocity scores for ${this.velocityScores.size} tools`);
@@ -198,8 +198,8 @@ export class RankingEngineV7 {
     ];
 
     const features = metrics.info?.features || [];
-    const description = (metrics.info?.summary || "") + " " + (metrics.info?.description || "");
-    const allText = features.join(" ") + " " + description;
+    const description = `${metrics.info?.summary || ""} ${metrics.info?.description || ""}`;
+    const allText = `${features.join(" ")} ${description}`;
 
     const agenticFeatureCount = agenticFeatures.filter((feature) =>
       allText.toLowerCase().includes(feature)
@@ -422,7 +422,11 @@ export class RankingEngineV7 {
     }
 
     // Ensure Claude Code's technical excellence is recognized
-    if (metrics.name?.toLowerCase().includes("claude code") && sweBench?.lite && sweBench.lite >= 47) {
+    if (
+      metrics.name?.toLowerCase().includes("claude code") &&
+      sweBench?.lite &&
+      sweBench.lite >= 47
+    ) {
       score = Math.max(score, 92); // Top technical performance
       score = Math.min(score, 95); // But keep reasonable
     }
@@ -539,7 +543,7 @@ export class RankingEngineV7 {
     }
 
     // Apply news impact if available
-    if (newsImpact && !isNaN(newsImpact.totalImpact)) {
+    if (newsImpact && !Number.isNaN(newsImpact.totalImpact)) {
       const impactModifier = newsImpact.totalImpact * 10;
       score = Math.max(0, Math.min(100, score + impactModifier));
     }
@@ -557,7 +561,7 @@ export class RankingEngineV7 {
    */
   private calculateDevelopmentVelocity(metrics: ToolMetricsV7): number {
     // First, try to use pre-calculated velocity scores from news analysis
-    if (this.velocityScores && this.velocityScores.has(metrics.tool_id)) {
+    if (this.velocityScores?.has(metrics.tool_id)) {
       const velocityScore = this.velocityScores.get(metrics.tool_id)!;
       console.log(`Using news-based velocity score for ${metrics.name}: ${velocityScore}`);
       return velocityScore;
@@ -661,7 +665,7 @@ export class RankingEngineV7 {
       overallScore: Math.round(overallScore * 10) / 10, // Round to 1 decimal
       factorScores,
       sentimentAnalysis:
-        newsImpact && !isNaN(newsImpact.totalImpact)
+        newsImpact && !Number.isNaN(newsImpact.totalImpact)
           ? {
               rawSentiment: 0,
               adjustedSentiment: 0,

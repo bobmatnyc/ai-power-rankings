@@ -1,25 +1,25 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
-import { ClientLayout } from "@/components/layout/client-layout";
 import { GoogleAnalyticsOptimized } from "@/components/analytics/GoogleAnalytics-optimized";
-import { getDictionary } from "@/i18n/get-dictionary";
+import { ClientLayout } from "@/components/layout/client-layout";
 import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
 import "@/globals.css";
 
 /**
  * Optimized font loading with display swap to prevent FOIT.
- * 
+ *
  * WHY: Font loading can block text rendering. Using display: 'swap'
  * ensures text is visible immediately with a fallback font.
  */
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
-  display: 'swap',
+  display: "swap",
   preload: true,
-  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-  adjustFontFallback: true
+  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
@@ -76,10 +76,10 @@ interface RootLayoutProps {
 
 /**
  * Optimized root layout with performance improvements.
- * 
+ *
  * WHY: The layout component renders on every page, so optimizations here
  * have the biggest impact on overall performance.
- * 
+ *
  * OPTIMIZATIONS:
  * - Lazy load non-critical components
  * - Use optimized Google Analytics with delayed loading
@@ -100,43 +100,40 @@ export default async function RootLayoutOptimized({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-        
+
         {/* Preload critical CSS */}
-        <link 
-          rel="preload" 
-          href="/_next/static/css/app/layout.css" 
-          as="style" 
+        <link
+          rel="preload"
+          href="/_next/static/css/app/layout.css"
+          as="style"
           crossOrigin="anonymous"
         />
-        
+
         {/* Optimize viewport for better CLS */}
-        <meta 
-          name="viewport" 
-          content="width=device-width, initial-scale=1, viewport-fit=cover" 
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
-      <body 
+      <body
         className={`${inter.className} min-h-screen bg-background text-foreground antialiased`}
         // CSS containment to improve rendering performance
         style={{
-          contain: 'layout style paint',
+          contain: "layout style paint",
           // Reserve space for scrollbar to prevent layout shift
-          scrollbarGutter: 'stable',
+          scrollbarGutter: "stable",
         }}
       >
         <ClientLayout lang={lang} dict={dict}>
           {children}
         </ClientLayout>
-        
+
         {/* Optimized Google Analytics with delayed loading */}
         <GoogleAnalyticsOptimized />
-          
-          {/* Performance monitoring in development */}
-          {process.env.NODE_ENV === 'development' && (
-            <script
-              // biome-ignore lint/security/noDangerouslySetInnerHTML: Safe performance monitoring
-              dangerouslySetInnerHTML={{
-                __html: `
+
+        {/* Performance monitoring in development */}
+        {process.env.NODE_ENV === "development" && (
+          <script
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe performance monitoring
+            dangerouslySetInnerHTML={{
+              __html: `
                   // Log performance metrics in development
                   if (window.performance && window.performance.timing) {
                     window.addEventListener('load', () => {
@@ -165,9 +162,9 @@ export default async function RootLayoutOptimized({
                     });
                   }
                 `,
-              }}
-            />
-          )}
+            }}
+          />
+        )}
       </body>
     </html>
   );

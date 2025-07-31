@@ -1,55 +1,55 @@
 #!/usr/bin/env node
 
-const { execSync, spawn } = require('child_process');
-const path = require('path');
+const { execSync, spawn } = require("node:child_process");
+const path = require("node:path");
 
 // Check if PM2 is installed
 try {
-  execSync('pm2 --version', { stdio: 'ignore' });
+  execSync("pm2 --version", { stdio: "ignore" });
 } catch (error) {
-  console.log('⚠️  PM2 not found. Installing PM2 globally...');
+  console.log("⚠️  PM2 not found. Installing PM2 globally...");
   try {
-    execSync('npm install -g pm2', { stdio: 'inherit' });
-    console.log('✅ PM2 installed successfully!');
+    execSync("npm install -g pm2", { stdio: "inherit" });
+    console.log("✅ PM2 installed successfully!");
   } catch (installError) {
-    console.error('❌ Failed to install PM2. Please install it manually: npm install -g pm2');
+    console.error("❌ Failed to install PM2. Please install it manually: npm install -g pm2");
     process.exit(1);
   }
 }
 
-const projectRoot = path.join(__dirname, '..');
+const projectRoot = path.join(__dirname, "..");
 const command = process.argv[2];
 
 switch (command) {
-  case 'start':
-    console.log('🚀 Starting dev server with PM2...');
+  case "start":
+    console.log("🚀 Starting dev server with PM2...");
     execSync(`pm2 start pnpm --name "ai-power-rankings-dev" -- dev`, {
       cwd: projectRoot,
-      stdio: 'inherit'
+      stdio: "inherit",
     });
-    console.log('\n✅ Dev server started!');
-    console.log('📝 View logs: pm2 logs ai-power-rankings-dev');
-    console.log('📊 Monitor: pm2 monit');
-    console.log('🛑 Stop: npm run dev:pm2 stop');
+    console.log("\n✅ Dev server started!");
+    console.log("📝 View logs: pm2 logs ai-power-rankings-dev");
+    console.log("📊 Monitor: pm2 monit");
+    console.log("🛑 Stop: npm run dev:pm2 stop");
     break;
 
-  case 'stop':
-    console.log('🛑 Stopping dev server...');
-    execSync('pm2 stop ai-power-rankings-dev', { stdio: 'inherit' });
+  case "stop":
+    console.log("🛑 Stopping dev server...");
+    execSync("pm2 stop ai-power-rankings-dev", { stdio: "inherit" });
     break;
 
-  case 'restart':
-    console.log('🔄 Restarting dev server...');
-    execSync('pm2 restart ai-power-rankings-dev', { stdio: 'inherit' });
+  case "restart":
+    console.log("🔄 Restarting dev server...");
+    execSync("pm2 restart ai-power-rankings-dev", { stdio: "inherit" });
     break;
 
-  case 'logs':
-    console.log('📝 Showing dev server logs...');
-    execSync('pm2 logs ai-power-rankings-dev', { stdio: 'inherit' });
+  case "logs":
+    console.log("📝 Showing dev server logs...");
+    execSync("pm2 logs ai-power-rankings-dev", { stdio: "inherit" });
     break;
 
-  case 'status':
-    execSync('pm2 list', { stdio: 'inherit' });
+  case "status":
+    execSync("pm2 list", { stdio: "inherit" });
     break;
 
   default:

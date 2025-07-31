@@ -31,7 +31,17 @@ export default async function UpdatesPage({ params }: PageProps) {
     newArticles: Array<Record<string, unknown>>;
     topRankings: Array<Record<string, unknown>>;
     majorChanges: Array<Record<string, unknown>>;
-    statistics?: Record<string, unknown>;
+    statistics?: {
+      newArticlesCount?: number;
+      totalArticles?: number;
+      toolsWithNews?: number;
+      totalTools?: number;
+      maxImpact?: {
+        toolName: string;
+        impact: number;
+      };
+      [key: string]: unknown;
+    };
   };
 
   try {
@@ -144,7 +154,9 @@ export default async function UpdatesPage({ params }: PageProps) {
                         <span className="font-medium">{String(change["toolName"])}</span>
                         <Badge
                           variant={
-                            String(change["changeCategory"]).includes("rise") ? "default" : "secondary"
+                            String(change["changeCategory"]).includes("rise")
+                              ? "default"
+                              : "secondary"
                           }
                           className={
                             change["changeCategory"] === "new_entry"
@@ -161,7 +173,9 @@ export default async function UpdatesPage({ params }: PageProps) {
                               : `↓${Number(change["currentRank"]) - Number(change["previousRank"])}`}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">{String(change["explanation"])}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {String(change["explanation"])}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -241,10 +255,11 @@ export default async function UpdatesPage({ params }: PageProps) {
                 </div>
                 <div className="text-center p-4 bg-muted/50 rounded-lg">
                   <div className="text-2xl font-bold">
-                    {Number((updates.statistics?.["maxImpact"] as any)?.["impact"] || 0).toFixed(1)}
+                    {Number(updates.statistics?.maxImpact?.impact || 0).toFixed(1)}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Max Impact ({String((updates.statistics?.["maxImpact"] as any)?.["toolName"] || "N/A")})
+                    Max Impact (
+                    {String(updates.statistics?.maxImpact?.toolName || "N/A")})
                   </div>
                 </div>
               </div>

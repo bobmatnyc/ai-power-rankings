@@ -54,7 +54,7 @@ export const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [fetchStats]);
 
   if (loading) {
     return <div style={{ padding: "20px" }}>Loading dashboard...</div>;

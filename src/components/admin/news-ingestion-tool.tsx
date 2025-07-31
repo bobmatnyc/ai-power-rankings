@@ -456,7 +456,9 @@ export function NewsIngestionTool() {
                       <div>Companies Created: {report.new_companies_created}</div>
                     </div>
                     <div className="text-xs text-gray-500 mt-2">
-                      {report.created_at ? new Date(report.created_at).toLocaleString() : "Date not available"}
+                      {report.created_at
+                        ? new Date(report.created_at).toLocaleString()
+                        : "Date not available"}
                     </div>
                   </div>
                 ))}
@@ -489,7 +491,10 @@ export function NewsIngestionTool() {
                         .filter((r) => r.status === "completed" || r.status === "partial")
                         .map((report) => (
                           <option key={report.id} value={report.id}>
-                            {report.filename} - {report.created_at ? new Date(report.created_at).toLocaleDateString() : "Date not available"}
+                            {report.filename} -{" "}
+                            {report.created_at
+                              ? new Date(report.created_at).toLocaleDateString()
+                              : "Date not available"}
                           </option>
                         ))}
                     </select>

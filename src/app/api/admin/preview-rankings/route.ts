@@ -285,20 +285,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         // Apply additional news impact to factor scores
         const { applyNewsImpactToScores } = await import("@/lib/ranking-news-enhancer");
-        const adjustedFactorScores = applyNewsImpactToScores(score["factorScores"], enhancedMetrics);
+        const adjustedFactorScores = applyNewsImpactToScores(
+          score["factorScores"],
+          enhancedMetrics
+        );
 
         // Update the score's factor scores with the adjustments
         score["factorScores"] = {
           ...score["factorScores"],
           technicalPerformance:
-            adjustedFactorScores["technicalPerformance"] || score.factorScores["technicalPerformance"],
-          marketTraction: adjustedFactorScores["marketTraction"] || score.factorScores["marketTraction"],
+            adjustedFactorScores["technicalPerformance"] ||
+            score.factorScores["technicalPerformance"],
+          marketTraction:
+            adjustedFactorScores["marketTraction"] || score.factorScores["marketTraction"],
         };
 
         // Recalculate overall score after news adjustments
         const weights = RankingEngineV6.getAlgorithmInfo().weights;
         score["overallScore"] = Object.entries(weights).reduce((total, [factor, weight]) => {
-          const factorScore = score["factorScores"][factor as keyof typeof score["factorScores"]] || 0;
+          const factorScore =
+            score["factorScores"][factor as keyof (typeof score)["factorScores"]] || 0;
           return total + factorScore * weight;
         }, 0);
         score["overallScore"] = Math.max(

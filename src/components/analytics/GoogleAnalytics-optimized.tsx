@@ -17,7 +17,7 @@ declare global {
  *
  * WHY: Google Tag Manager loads 131.7 KiB with 53.9 KiB unused (41% waste).
  * This causes 73ms and 71ms blocking tasks on the main thread.
- * 
+ *
  * OPTIMIZATIONS IMPLEMENTED:
  * - Delays GTM loading until after meaningful interaction (10s timeout)
  * - Uses requestIdleCallback for all GTM operations
@@ -51,18 +51,18 @@ export function GoogleAnalyticsOptimized(): React.JSX.Element | null {
     const loadGTM = () => {
       if (!hasInteracted) {
         hasInteracted = true;
-        
+
         // Cancel any pending timeouts
         if (timeoutIdRef.current) {
           clearTimeout(timeoutIdRef.current);
           timeoutIdRef.current = null;
         }
-        
+
         if (idleCallbackRef.current) {
           cancelIdleCallback(idleCallbackRef.current);
           idleCallbackRef.current = null;
         }
-        
+
         // Use React transition to mark GTM loading as non-urgent
         React.startTransition(() => {
           setShouldLoadGTM(true);
@@ -73,15 +73,15 @@ export function GoogleAnalyticsOptimized(): React.JSX.Element | null {
     // Debounced scroll handler to reduce event firing
     let scrollTimeout: NodeJS.Timeout | null = null;
     let scrollCount = 0;
-    
+
     const handleScroll = () => {
       scrollCount++;
-      
+
       // Only trigger after meaningful scroll (3+ events)
       if (scrollCount < 3) return;
-      
+
       if (scrollTimeout) clearTimeout(scrollTimeout);
-      
+
       scrollTimeout = setTimeout(() => {
         loadGTM();
       }, 150);
@@ -92,7 +92,7 @@ export function GoogleAnalyticsOptimized(): React.JSX.Element | null {
       // Ignore programmatic or insignificant interactions
       if (event.isTrusted && !hasInteracted) {
         // Use requestIdleCallback for non-critical loading
-        if ('requestIdleCallback' in window) {
+        if ("requestIdleCallback" in window) {
           idleCallbackRef.current = requestIdleCallback(loadGTM, { timeout: 1000 });
         } else {
           setTimeout(loadGTM, 0);
@@ -108,14 +108,14 @@ export function GoogleAnalyticsOptimized(): React.JSX.Element | null {
       { event: "keydown", handler: handleInteraction },
       // Additional meaningful interaction events
       { event: "click", handler: handleInteraction },
-      { event: "focus", handler: handleInteraction }
+      { event: "focus", handler: handleInteraction },
     ];
 
     // Add event listeners with proper options
     for (const { event, handler } of eventHandlers) {
-      window.addEventListener(event, handler, { 
+      window.addEventListener(event, handler, {
         passive: true,
-        capture: true // Capture phase for earlier detection
+        capture: true, // Capture phase for earlier detection
       });
     }
 
@@ -123,7 +123,7 @@ export function GoogleAnalyticsOptimized(): React.JSX.Element | null {
     timeoutIdRef.current = setTimeout(() => {
       if (!hasInteracted) {
         // Use idle callback even for timeout loading
-        if ('requestIdleCallback' in window) {
+        if ("requestIdleCallback" in window) {
           requestIdleCallback(loadGTM, { timeout: 5000 });
         } else {
           loadGTM();
@@ -135,10 +135,10 @@ export function GoogleAnalyticsOptimized(): React.JSX.Element | null {
       // Cleanup all resources
       if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current);
       if (scrollTimeout) clearTimeout(scrollTimeout);
-      if (idleCallbackRef.current && 'cancelIdleCallback' in window) {
+      if (idleCallbackRef.current && "cancelIdleCallback" in window) {
         cancelIdleCallback(idleCallbackRef.current);
       }
-      
+
       // Remove all event listeners
       for (const { event, handler } of eventHandlers) {
         window.removeEventListener(event, handler, { capture: true });
@@ -165,7 +165,7 @@ export function GoogleAnalyticsOptimized(): React.JSX.Element | null {
       <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
       <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       <link rel="preconnect" href="https://www.google-analytics.com" crossOrigin="anonymous" />
-      
+
       {/* Inline minimal GTM setup to reduce script execution */}
       <Script
         id="gtm-init"
@@ -194,62 +194,73 @@ export function GoogleAnalyticsOptimized(): React.JSX.Element | null {
         async
         onLoad={() => {
           // Configure GTM after script loads using idle callback
-          if ('requestIdleCallback' in window) {
-            requestIdleCallback(() => {
-              window.gtag('js', new Date());
-              
-              window.gtag('config', gaId, {
-                send_page_view: true,
-                transport_type: 'beacon',
-                // Performance optimizations
-                cookie_flags: 'SameSite=Strict;Secure',
-                cookie_expires: 63072000, // 2 years
-                allow_google_signals: false,
-                allow_ad_personalization_signals: false,
-                // Batch hits to reduce requests
-                batch_hits: true,
-                // Reduce data collection
-                restricted_data_processing: true,
-                // Custom configuration to reduce overhead
-                custom_map: {
-                  dimension1: 'user_engagement'
-                }
-              });
-              
-              // Mark GTM as loaded
-              window.__gtm_pending = false;
-              
-              // Defer performance tracking even further
-              requestIdleCallback(() => {
-                if (window.performance?.timing) {
-                  const timing = window.performance.timing;
-                  const loadTime = timing.loadEventEnd - timing.navigationStart;
-                  
-                  if (loadTime > 0 && loadTime < 60000) { // Sanity check
-                    window.gtag('event', 'page_timing', {
-                      event_category: 'Performance',
-                      event_label: 'Load Complete',
-                      value: Math.round(loadTime),
-                      non_interaction: true,
-                      // Additional performance metrics
-                      custom_map: {
-                        metric1: Math.round(timing.domContentLoadedEventEnd - timing.navigationStart),
-                        metric2: Math.round(timing.loadEventEnd - timing.domContentLoadedEventEnd)
+          if ("requestIdleCallback" in window) {
+            requestIdleCallback(
+              () => {
+                window.gtag("js", new Date());
+
+                window.gtag("config", gaId, {
+                  send_page_view: true,
+                  transport_type: "beacon",
+                  // Performance optimizations
+                  cookie_flags: "SameSite=Strict;Secure",
+                  cookie_expires: 63072000, // 2 years
+                  allow_google_signals: false,
+                  allow_ad_personalization_signals: false,
+                  // Batch hits to reduce requests
+                  batch_hits: true,
+                  // Reduce data collection
+                  restricted_data_processing: true,
+                  // Custom configuration to reduce overhead
+                  custom_map: {
+                    dimension1: "user_engagement",
+                  },
+                });
+
+                // Mark GTM as loaded
+                window.__gtm_pending = false;
+
+                // Defer performance tracking even further
+                requestIdleCallback(
+                  () => {
+                    if (window.performance?.timing) {
+                      const timing = window.performance.timing;
+                      const loadTime = timing.loadEventEnd - timing.navigationStart;
+
+                      if (loadTime > 0 && loadTime < 60000) {
+                        // Sanity check
+                        window.gtag("event", "page_timing", {
+                          event_category: "Performance",
+                          event_label: "Load Complete",
+                          value: Math.round(loadTime),
+                          non_interaction: true,
+                          // Additional performance metrics
+                          custom_map: {
+                            metric1: Math.round(
+                              timing.domContentLoadedEventEnd - timing.navigationStart
+                            ),
+                            metric2: Math.round(
+                              timing.loadEventEnd - timing.domContentLoadedEventEnd
+                            ),
+                          },
+                        });
                       }
-                    });
-                  }
-                }
-              }, { timeout: 10000 });
-            }, { timeout: 5000 });
+                    }
+                  },
+                  { timeout: 10000 }
+                );
+              },
+              { timeout: 5000 }
+            );
           } else {
             // Fallback for browsers without requestIdleCallback
             setTimeout(() => {
-              window.gtag('js', new Date());
-              window.gtag('config', gaId, {
+              window.gtag("js", new Date());
+              window.gtag("config", gaId, {
                 send_page_view: true,
-                transport_type: 'beacon',
+                transport_type: "beacon",
                 allow_google_signals: false,
-                allow_ad_personalization_signals: false
+                allow_ad_personalization_signals: false,
               });
               window.__gtm_pending = false;
             }, 100);

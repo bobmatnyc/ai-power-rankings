@@ -8,11 +8,11 @@
  */
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { execSync } = require("child_process");
+const { execSync } = require("node:child_process");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const fs = require("fs");
+const fs = require("node:fs");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const path = require("path");
+const path = require("node:path");
 
 // Configuration
 const DEFAULT_URL = "http://localhost:3000/en";
@@ -227,7 +227,7 @@ function main() {
   }
 
   // Exit with appropriate code
-  if (results && results.t040Passed) {
+  if (results?.t040Passed) {
     console.log("\n🎉 T-040 requirements met!");
     process.exit(0);
   } else {

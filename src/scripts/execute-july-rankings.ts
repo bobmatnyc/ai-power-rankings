@@ -246,7 +246,11 @@ async function executeJulyRankings() {
         ? junePeriod?.rankings.find((r: RankingEntry) => r.tool_id === tool.id)
         : null;
 
-      let movement;
+      let movement: {
+        previous_position?: number;
+        change: number;
+        direction: "up" | "down" | "same" | "new";
+      };
       if (previousPosition) {
         const change = previousPosition - position;
         movement = {

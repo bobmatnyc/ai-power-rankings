@@ -48,7 +48,7 @@ export const SubscribersManager: React.FC = () => {
 
   useEffect(() => {
     fetchSubscribers();
-  }, []);
+  }, [fetchSubscribers]);
 
   const sendTestEmail = async (subscriberId: string) => {
     try {

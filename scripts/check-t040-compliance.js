@@ -8,9 +8,9 @@
  */
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const fs = require("fs");
+const fs = require("node:fs");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const path = require("path");
+const path = require("node:path");
 
 // T-040 Requirements Checklist
 const T040_REQUIREMENTS = {
@@ -228,7 +228,7 @@ function runT040Compliance() {
     if (passed) passedChecks++;
   });
 
-  console.log(`\n📊 COMPLIANCE SUMMARY`);
+  console.log("\n📊 COMPLIANCE SUMMARY");
   console.log("====================");
   console.log(`Passed: ${passedChecks}/${totalChecks} checks`);
 

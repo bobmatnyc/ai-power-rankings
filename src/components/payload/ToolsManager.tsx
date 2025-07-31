@@ -51,7 +51,7 @@ export const ToolsManager: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const getLatestRanking = (toolId: string) => {
     return rankings

@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { type NextRequest, NextResponse } from "next/server";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
+import type { Tool } from "@/lib/json-db/schemas";
 import type { ToolsRepository } from "@/lib/json-db/tools-repository";
 import { loggers } from "@/lib/logger";
 
@@ -19,7 +20,7 @@ interface NewsItem {
   sentiment?: number;
   key_topics?: string[];
   is_featured?: boolean;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
 }
 
 // interface IngestionResult {
@@ -47,7 +48,7 @@ async function findOrCreateTool(
   newsSource: string,
   newsUrl?: string,
   newsContext?: string
-): Promise<any> {
+): Promise<Tool | null> {
   try {
     const slug = toolIdentifier.toLowerCase().replace(/\s+/g, "-");
 
@@ -124,10 +125,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       new_companies_created: 0,
       pending_tools_created: 0,
       processing_log: `Started processing ${newsItems.length} news items\n`,
-      errors: [] as any[],
+      errors: [] as Array<{ message: string; item?: unknown; error?: string }>,
       ingested_news_ids: [] as string[],
-      created_tools: [] as any[],
-      created_companies: [] as any[],
+      created_tools: [] as Array<{ id: string; name: string; source: string }>,
+      created_companies: [] as Array<{ id: string; name: string; source: string }>,
     };
 
     // Process each news item
@@ -165,14 +166,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               toolIdentifier,
               item.source,
               item.url,
-              `Related tool mentioned in: ${item.title || (item as any).headline}`
+              `Related tool mentioned in: ${item.title || (item as Record<string, unknown>).headline || 'Unknown'}`
             );
 
             // Only add to related tools if tool exists
             if (tool) {
               relatedToolIds.push(tool.id);
 
-              if (!report.created_tools.find((t: any) => t.id === tool.id)) {
+              if (!report.created_tools.find(t => t.id === tool.id)) {
                 report.created_tools.push({
                   id: tool.id,
                   name: tool.name,
@@ -194,7 +195,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             item.primary_tool,
             item.source,
             item.url,
-            `Primary tool mentioned in: ${item.title || (item as any).headline}`
+            `Primary tool mentioned in: ${item.title || (item as Record<string, unknown>).headline || 'Unknown'}`
           );
 
           // Only add to related tools if tool exists
@@ -203,7 +204,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               relatedToolIds.push(primaryTool.id);
             }
 
-            if (!report.created_tools.find((t: any) => t.id === primaryTool.id)) {
+            if (!report.created_tools.find(t => t.id === primaryTool.id)) {
               report.created_tools.push({
                 id: primaryTool.id,
                 name: primaryTool.name,

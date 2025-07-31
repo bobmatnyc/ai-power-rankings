@@ -79,7 +79,7 @@ export function SubscribersPage() {
 
   useEffect(() => {
     fetchSubscribers();
-  }, []);
+  }, [fetchSubscribers]);
 
   const exportSubscribers = async () => {
     try {

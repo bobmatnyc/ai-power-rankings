@@ -132,7 +132,7 @@ export default function RootLayout({
       <head>
         {/* Critical resource preloading for T-031 */}
         <link rel="preload" href="/crown-of-technology.webp" as="image" />
-        
+
         {/* Enhanced resource hints for faster loading */}
         <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://www.google-analytics.com" crossOrigin="anonymous" />
@@ -258,7 +258,7 @@ export default function RootLayout({
 
         {/* Optimized analytics loading with web worker support */}
         <GoogleAnalytics />
-        
+
         {/* Vercel analytics with lazy loading */}
         <SpeedInsights />
         <Analytics />

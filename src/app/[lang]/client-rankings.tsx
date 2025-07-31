@@ -146,13 +146,19 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           // Set last update date - show actual date
           if (data.algorithm?.date) {
             const updateDate = new Date(data.algorithm.date);
-            // Format as "Jan 1, 2025" or similar
-            const options: Intl.DateTimeFormatOptions = {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            };
-            setLastUpdateDate(updateDate.toLocaleDateString("en-US", options));
+            
+            // Check if date is valid
+            if (isNaN(updateDate.getTime())) {
+              setLastUpdateDate("Daily");
+            } else {
+              // Format as "Jan 1, 2025" or similar
+              const options: Intl.DateTimeFormatOptions = {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              };
+              setLastUpdateDate(updateDate.toLocaleDateString("en-US", options));
+            }
           } else {
             setLastUpdateDate("Daily");
           }

@@ -1,9 +1,9 @@
 /**
  * Utility functions for optimized lazy loading and code splitting.
- * 
+ *
  * WHY: These utilities help reduce initial bundle size and improve performance
  * by loading components only when they're needed or likely to be needed soon.
- * 
+ *
  * DESIGN DECISIONS:
  * - Intersection Observer for viewport-based loading
  * - Idle callback for low-priority components
@@ -13,7 +13,7 @@
 
 /**
  * Load a component when it enters the viewport.
- * 
+ *
  * @param elementId - ID of the element to observe
  * @param loadCallback - Function to call when element is visible
  * @param rootMargin - Margin around viewport to trigger loading early
@@ -45,7 +45,7 @@ export function loadOnVisible(
 
 /**
  * Load a component when the browser is idle.
- * 
+ *
  * @param loadCallback - Function to call when browser is idle
  * @param timeout - Maximum time to wait before loading (ms)
  */
@@ -62,14 +62,11 @@ export function loadOnIdle(loadCallback: () => void, timeout = 2000): void {
 
 /**
  * Prefetch a dynamic import on hover/focus for faster loading.
- * 
+ *
  * @param elementId - ID of the element to attach listeners to
  * @param importFn - Dynamic import function to prefetch
  */
-export function prefetchOnHover(
-  elementId: string,
-  importFn: () => Promise<any>
-): void {
+export function prefetchOnHover(elementId: string, importFn: () => Promise<any>): void {
   if (typeof window === "undefined") return;
 
   const element = document.getElementById(elementId);
@@ -90,7 +87,7 @@ export function prefetchOnHover(
 
 /**
  * Add resource hints for third-party resources.
- * 
+ *
  * @param urls - Array of URLs to add hints for
  * @param rel - Relationship type (preconnect, dns-prefetch, prefetch)
  */
@@ -104,18 +101,18 @@ export function addResourceHints(
     const link = document.createElement("link");
     link.rel = rel;
     link.href = url;
-    
+
     if (rel === "preconnect") {
       link.crossOrigin = "anonymous";
     }
-    
+
     document.head.appendChild(link);
   });
 }
 
 /**
  * Detect if the user is on a slow connection.
- * 
+ *
  * @returns true if connection is slow or save-data is enabled
  */
 export function isSlowConnection(): boolean {
@@ -124,16 +121,16 @@ export function isSlowConnection(): boolean {
   // Check for Save-Data header
   if ("connection" in navigator) {
     const connection = (navigator as any).connection;
-    
+
     if (connection.saveData) return true;
-    
+
     // Check effective connection type
     const slowConnections = ["slow-2g", "2g"];
     if (slowConnections.includes(connection.effectiveType)) return true;
-    
+
     // Check round-trip time (RTT)
     if (connection.rtt > 500) return true;
-    
+
     // Check downlink speed (less than 1 Mbps)
     if (connection.downlink < 1) return true;
   }
@@ -144,7 +141,7 @@ export function isSlowConnection(): boolean {
 /**
  * Progressive enhancement wrapper that loads enhanced features
  * only on capable devices and connections.
- * 
+ *
  * @param basicComponent - Basic component to show initially
  * @param options - Loading options
  */
@@ -167,7 +164,7 @@ export function progressiveEnhancement(
 
 /**
  * Create a performance-optimized dynamic import with retry logic.
- * 
+ *
  * @param importFn - Dynamic import function
  * @param retries - Number of retry attempts
  * @param delay - Delay between retries (ms)

@@ -97,37 +97,58 @@ export function Footer() {
             <h4 className="text-lg font-semibold text-white mb-4">Categories</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href={`/${lang}/best-ide-assistants`} className="hover:text-white transition-colors">
+                <Link
+                  href={`/${lang}/best-ide-assistants`}
+                  className="hover:text-white transition-colors"
+                >
                   IDE Assistants
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/best-autonomous-agents`} className="hover:text-white transition-colors">
+                <Link
+                  href={`/${lang}/best-autonomous-agents`}
+                  className="hover:text-white transition-colors"
+                >
                   Autonomous Agents
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/best-ai-code-editors`} className="hover:text-white transition-colors">
+                <Link
+                  href={`/${lang}/best-ai-code-editors`}
+                  className="hover:text-white transition-colors"
+                >
                   AI Code Editors
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/best-ai-app-builders`} className="hover:text-white transition-colors">
+                <Link
+                  href={`/${lang}/best-ai-app-builders`}
+                  className="hover:text-white transition-colors"
+                >
                   AI App Builders
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/best-code-review-tools`} className="hover:text-white transition-colors">
+                <Link
+                  href={`/${lang}/best-code-review-tools`}
+                  className="hover:text-white transition-colors"
+                >
                   Code Review Tools
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/best-devops-assistants`} className="hover:text-white transition-colors">
+                <Link
+                  href={`/${lang}/best-devops-assistants`}
+                  className="hover:text-white transition-colors"
+                >
                   DevOps Assistants
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/best-testing-tools`} className="hover:text-white transition-colors">
+                <Link
+                  href={`/${lang}/best-testing-tools`}
+                  className="hover:text-white transition-colors"
+                >
                   Testing Tools
                 </Link>
               </li>
@@ -140,7 +161,10 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/best-ai-coding-tools`} className="hover:text-white transition-colors">
+                <Link
+                  href={`/${lang}/best-ai-coding-tools`}
+                  className="hover:text-white transition-colors"
+                >
                   All AI Tools
                 </Link>
               </li>

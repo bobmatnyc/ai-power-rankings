@@ -12,7 +12,7 @@ if (process.env["NODE_ENV"] === "development") {
   }
   // Alternative approach for Node.js events
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const events = require("events");
+  const events = require("node:events");
   if (events.EventEmitter && events.EventEmitter.defaultMaxListeners < 20) {
     events.EventEmitter.defaultMaxListeners = 20;
   }

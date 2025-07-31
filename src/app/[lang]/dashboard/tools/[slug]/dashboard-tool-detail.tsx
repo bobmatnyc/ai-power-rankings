@@ -350,7 +350,9 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
                   </div>
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Multi-file Support</div>
-                    <div className="font-medium">{technical["multi_file_support"] ? "Yes" : "No"}</div>
+                    <div className="font-medium">
+                      {technical["multi_file_support"] ? "Yes" : "No"}
+                    </div>
                   </div>
                 </div>
                 {Array.isArray(technical["supported_languages"]) &&
@@ -368,18 +370,19 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
                   )}
               </div>
 
-              {Array.isArray(technical["llm_providers"]) && technical["llm_providers"].length > 0 && (
-                <div>
-                  <h4 className="font-medium mb-3">LLM Providers</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {(technical["llm_providers"] as string[]).map((provider: string) => (
-                      <Badge key={provider} variant="outline">
-                        {provider}
-                      </Badge>
-                    ))}
+              {Array.isArray(technical["llm_providers"]) &&
+                technical["llm_providers"].length > 0 && (
+                  <div>
+                    <h4 className="font-medium mb-3">LLM Providers</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {(technical["llm_providers"] as string[]).map((provider: string) => (
+                        <Badge key={provider} variant="outline">
+                          {provider}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {Array.isArray(technical["integrations"]) && technical["integrations"].length > 0 && (
                 <div>
@@ -414,7 +417,9 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
                   {Boolean(technical["response_time"]) && (
                     <div>
                       <div className="text-sm text-muted-foreground mb-1">Avg Response Time</div>
-                      <div className="font-medium text-lg">{String(technical["response_time"])}ms</div>
+                      <div className="font-medium text-lg">
+                        {String(technical["response_time"])}ms
+                      </div>
                     </div>
                   )}
                 </div>
@@ -452,7 +457,9 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
                 {metrics["employees"] && (
                   <div>
                     <div className="text-sm text-muted-foreground mb-1">Employees</div>
-                    <div className="font-medium">{Number(metrics["employees"]).toLocaleString()}</div>
+                    <div className="font-medium">
+                      {Number(metrics["employees"]).toLocaleString()}
+                    </div>
                   </div>
                 )}
               </div>

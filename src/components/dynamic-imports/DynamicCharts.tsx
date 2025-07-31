@@ -2,21 +2,21 @@ import { Suspense } from "react";
 
 /**
  * Dynamic chart imports with code splitting for performance optimization.
- * 
+ *
  * WHY: Charts library (recharts) is large and not needed for initial page load.
  * By dynamically importing, we reduce the initial bundle size by ~60KB.
- * 
+ *
  * DESIGN DECISION: We use lazy loading utilities because:
  * - Charts are below the fold and not immediately visible
  * - Users can interact with the page while charts load
  * - Improves First Contentful Paint (FCP) by 200-300ms
  * - Reduces main bundle size, improving caching efficiency
- * 
+ *
  * PERFORMANCE IMPACT:
  * - Reduces initial JS payload by ~60KB
  * - Improves Time to Interactive (TTI) by ~200ms
  * - Better code splitting for improved browser caching
- * 
+ *
  * USAGE:
  * Instead of direct imports, use the loadChartComponent function:
  * ```tsx
@@ -44,9 +44,5 @@ export async function loadChartComponent<T extends keyof typeof import("recharts
  * Use this to wrap any chart components for proper loading states.
  */
 export function ChartWrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <Suspense fallback={<ChartSkeleton />}>
-      {children}
-    </Suspense>
-  );
+  return <Suspense fallback={<ChartSkeleton />}>{children}</Suspense>;
 }

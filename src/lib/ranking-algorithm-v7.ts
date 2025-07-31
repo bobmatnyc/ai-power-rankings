@@ -175,7 +175,7 @@ export class RankingEngineV7 {
       "orchestration",
     ];
 
-    const description = ((metrics.info as any)?.summary || "") + " " + ((metrics.info && 'description' in metrics.info) ? (metrics.info as any).description : "");
+    const description = `${(metrics.info as any)?.summary || ""} ${metrics.info && "description" in metrics.info ? (metrics.info as any).description : ""}`;
     const matchedKeywords = innovativeKeywords.filter((keyword) =>
       description.toLowerCase().includes(keyword)
     ).length;
@@ -329,7 +329,7 @@ export class RankingEngineV7 {
     }
 
     // Apply news impact if available
-    if (newsImpact && !isNaN(newsImpact.totalImpact)) {
+    if (newsImpact && !Number.isNaN(newsImpact.totalImpact)) {
       const impactModifier = newsImpact.totalImpact * 10;
       score = Math.max(0, Math.min(100, score + impactModifier));
     }
@@ -441,7 +441,7 @@ export class RankingEngineV7 {
       overallScore: Math.round(overallScore * 10) / 10, // Round to 1 decimal
       factorScores,
       sentimentAnalysis:
-        newsImpact && !isNaN(newsImpact.totalImpact)
+        newsImpact && !Number.isNaN(newsImpact.totalImpact)
           ? {
               rawSentiment: 0,
               adjustedSentiment: 0,

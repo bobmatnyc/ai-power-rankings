@@ -223,7 +223,9 @@ export async function extractEnhancedNewsMetrics(
   const toolArticles = newsArticles
     .filter((a) => a["tool_mentions"]?.includes(toolId))
     .filter((a) => !previewDate || new Date(a["published_date"]) <= new Date(previewDate))
-    .sort((a, b) => new Date(b["published_date"]).getTime() - new Date(a["published_date"]).getTime());
+    .sort(
+      (a, b) => new Date(b["published_date"]).getTime() - new Date(a["published_date"]).getTime()
+    );
 
   const lastNewsDate = toolArticles[0]?.["published_date"];
 
@@ -342,7 +344,8 @@ export function applyNewsImpactToScores(
   if (enhancedNewsMetrics["technicalPerformanceBoost"] > 0) {
     adjustedScores["technicalPerformance"] = Math.min(
       10,
-      (adjustedScores["technicalPerformance"] || 5) + enhancedNewsMetrics["technicalPerformanceBoost"]
+      (adjustedScores["technicalPerformance"] || 5) +
+        enhancedNewsMetrics["technicalPerformanceBoost"]
     );
   }
 

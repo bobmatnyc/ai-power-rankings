@@ -203,7 +203,10 @@ export class UpdatesGenerator {
     }
 
     const previousPositions = new Map(
-      previousRanking.rankings.map((r) => [r.tool_id, { position: r.position ?? r.rank, score: r.score }])
+      previousRanking.rankings.map((r) => [
+        r.tool_id,
+        { position: r.position ?? r.rank, score: r.score },
+      ])
     );
 
     const majorChanges: UpdatesData["majorChanges"] = [];

@@ -71,7 +71,8 @@ export class SubscribersRepository extends BaseRepository<SubscribersData> {
     super(filePath, defaultData);
 
     // Use blob storage in production, local files in development
-    this.useBlob = process.env["NODE_ENV"] === "production" && !!process.env["BLOB_READ_WRITE_TOKEN"];
+    this.useBlob =
+      process.env["NODE_ENV"] === "production" && !!process.env["BLOB_READ_WRITE_TOKEN"];
   }
 
   static getInstance(): SubscribersRepository {

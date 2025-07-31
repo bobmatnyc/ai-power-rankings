@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getRankingsRepo } from "@/lib/json-db";
+import type { RankingEntry } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
 
 // GET all rankings for admin tools manager
@@ -11,13 +12,25 @@ export async function GET(_request: NextRequest) {
     const periods = await rankingsRepo.getAvailablePeriods();
 
     // Get all rankings from all periods
-    const allRankings: any[] = [];
+    const allRankings: Array<{
+      id: string;
+      period: string;
+      tool_id: string;
+      position: number;
+      score: number;
+      movement: string;
+      movement_positions: number;
+      previous_position?: number;
+      score_breakdown: Record<string, number>;
+      algorithm_version?: string;
+      created_at?: string;
+    }> = [];
 
     for (const period of periods) {
       const periodData = await rankingsRepo.getRankingsForPeriod(period);
       if (periodData?.rankings) {
         // Transform rankings to match the expected format
-        periodData.rankings.forEach((ranking: any) => {
+        periodData.rankings.forEach((ranking: RankingEntry) => {
           allRankings.push({
             id: `${period}-${ranking.tool_id}`,
             period: period,

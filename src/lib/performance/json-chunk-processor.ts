@@ -1,9 +1,9 @@
 /**
  * Utility for processing large JSON data without blocking the main thread.
- * 
+ *
  * WHY: Large JSON parsing (>50KB) can block the main thread for 50-100ms,
  * causing janky scrolling and poor interaction responsiveness.
- * 
+ *
  * DESIGN DECISION: Use requestIdleCallback API to parse JSON in chunks
  * during browser idle time, keeping each processing chunk under 5ms.
  * This maintains 60fps performance even with large datasets.
@@ -15,12 +15,12 @@ interface ChunkProcessorOptions {
    * Default: 5ms to maintain 60fps
    */
   maxChunkTime?: number;
-  
+
   /**
    * Callback fired after each chunk is processed
    */
   onProgress?: (processed: number, total: number) => void;
-  
+
   /**
    * Priority hint for requestIdleCallback
    */
@@ -29,7 +29,7 @@ interface ChunkProcessorOptions {
 
 /**
  * Parse large JSON strings without blocking the main thread.
- * 
+ *
  * @param jsonString The JSON string to parse
  * @param options Processing options
  * @returns Promise resolving to the parsed object
@@ -39,12 +39,12 @@ export async function parseJSONAsync<T = any>(
   options: ChunkProcessorOptions = {}
 ): Promise<T> {
   const { priority = "high" } = options;
-  
+
   // For small JSON strings, parse directly
   if (jsonString.length < 10000) {
     return JSON.parse(jsonString);
   }
-  
+
   // For larger strings, use async parsing
   return new Promise((resolve, reject) => {
     const parseTask = () => {
@@ -52,18 +52,18 @@ export async function parseJSONAsync<T = any>(
         const start = performance.now();
         const result = JSON.parse(jsonString);
         const duration = performance.now() - start;
-        
+
         // Log slow parses in development
         if (process.env.NODE_ENV === "development" && duration > 16) {
           console.warn(`JSON parse took ${duration.toFixed(2)}ms for ${jsonString.length} bytes`);
         }
-        
+
         resolve(result);
       } catch (error) {
         reject(error);
       }
     };
-    
+
     // Use requestIdleCallback for non-critical parsing
     if ("requestIdleCallback" in window && priority === "low") {
       requestIdleCallback(parseTask, { timeout: 100 });
@@ -76,7 +76,7 @@ export async function parseJSONAsync<T = any>(
 
 /**
  * Process an array of items in chunks without blocking the main thread.
- * 
+ *
  * @param items Array of items to process
  * @param processor Function to process each item
  * @param options Processing options
@@ -90,14 +90,14 @@ export async function processArrayInChunks<T, R>(
   const { maxChunkTime = 5, onProgress } = options;
   const results: R[] = [];
   let currentIndex = 0;
-  
+
   return new Promise((resolve) => {
     const processChunk = (deadline: IdleDeadline) => {
       const chunkStart = performance.now();
-      
+
       // Process items while we have time
       while (
-        currentIndex < items.length && 
+        currentIndex < items.length &&
         (deadline.timeRemaining() > 1 || performance.now() - chunkStart < maxChunkTime)
       ) {
         const item = items[currentIndex];
@@ -105,13 +105,13 @@ export async function processArrayInChunks<T, R>(
           results.push(processor(item, currentIndex));
         }
         currentIndex++;
-        
+
         // Report progress
         if (onProgress && currentIndex % 10 === 0) {
           onProgress(currentIndex, items.length);
         }
       }
-      
+
       // Schedule next chunk or complete
       if (currentIndex < items.length) {
         requestIdleCallback(processChunk);
@@ -122,7 +122,7 @@ export async function processArrayInChunks<T, R>(
         resolve(results);
       }
     };
-    
+
     // Start processing
     if ("requestIdleCallback" in window) {
       requestIdleCallback(processChunk);
@@ -130,7 +130,7 @@ export async function processArrayInChunks<T, R>(
       // Fallback for browsers without requestIdleCallback
       const mockDeadline: IdleDeadline = {
         timeRemaining: () => 50,
-        didTimeout: false
+        didTimeout: false,
       };
       setTimeout(() => processChunk(mockDeadline), 0);
     }
@@ -139,7 +139,7 @@ export async function processArrayInChunks<T, R>(
 
 /**
  * Transform and filter data in chunks for better performance.
- * 
+ *
  * @param data Array of data to transform
  * @param transform Transform function
  * @param filter Optional filter function
@@ -153,18 +153,19 @@ export async function transformDataAsync<T, R>(
   options: ChunkProcessorOptions = {}
 ): Promise<R[]> {
   // First filter if needed
-  const filtered = filter 
-    ? await processArrayInChunks(data, (item) => filter(item) ? item : null, options)
-        .then(results => results.filter(Boolean) as T[])
+  const filtered = filter
+    ? await processArrayInChunks(data, (item) => (filter(item) ? item : null), options).then(
+        (results) => results.filter(Boolean) as T[]
+      )
     : data;
-  
+
   // Then transform
   return processArrayInChunks(filtered, transform, options);
 }
 
 /**
  * Calculate aggregates over large datasets without blocking.
- * 
+ *
  * @param data Array of data to aggregate
  * @param aggregator Aggregation function
  * @param initialValue Initial value for the aggregation
@@ -180,13 +181,13 @@ export async function aggregateAsync<T, R>(
   const { maxChunkTime = 5 } = options;
   let result = initialValue;
   let currentIndex = 0;
-  
+
   return new Promise((resolve) => {
     const processChunk = (deadline: IdleDeadline) => {
       const chunkStart = performance.now();
-      
+
       while (
-        currentIndex < data.length && 
+        currentIndex < data.length &&
         (deadline.timeRemaining() > 1 || performance.now() - chunkStart < maxChunkTime)
       ) {
         const item = data[currentIndex];
@@ -195,20 +196,20 @@ export async function aggregateAsync<T, R>(
         }
         currentIndex++;
       }
-      
+
       if (currentIndex < data.length) {
         requestIdleCallback(processChunk);
       } else {
         resolve(result);
       }
     };
-    
+
     if ("requestIdleCallback" in window) {
       requestIdleCallback(processChunk);
     } else {
       const mockDeadline: IdleDeadline = {
         timeRemaining: () => 50,
-        didTimeout: false
+        didTimeout: false,
       };
       setTimeout(() => processChunk(mockDeadline), 0);
     }
@@ -218,7 +219,7 @@ export async function aggregateAsync<T, R>(
 /**
  * Sort large arrays without blocking the main thread.
  * Uses a hybrid approach with chunks for better performance.
- * 
+ *
  * @param data Array to sort
  * @param compareFn Comparison function
  * @param options Processing options
@@ -233,7 +234,7 @@ export async function sortAsync<T>(
   if (data.length < 1000) {
     return [...data].sort(compareFn);
   }
-  
+
   // For larger arrays, use a chunked approach
   return new Promise((resolve) => {
     setTimeout(() => {

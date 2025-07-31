@@ -82,7 +82,7 @@ function RankingsContentInner(): React.JSX.Element {
 
   useEffect(() => {
     fetchRankings();
-  }, []);
+  }, [fetchRankings]);
 
   useEffect(() => {
     // Update URL when category changes

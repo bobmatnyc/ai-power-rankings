@@ -69,7 +69,7 @@ export function SEODashboard() {
     if (status === "authenticated") {
       fetchSEOMetrics();
     }
-  }, [status]);
+  }, [status, fetchSEOMetrics]);
 
   const submitSitemap = async () => {
     try {

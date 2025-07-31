@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 interface NewsArticle {
   id: string;
@@ -70,7 +70,7 @@ async function splitNewsJson() {
         if (!articlesByMonth.has(monthKey)) {
           articlesByMonth.set(monthKey, []);
         }
-        articlesByMonth.get(monthKey)!.push(article);
+        articlesByMonth.get(monthKey)?.push(article);
 
         newsById.set(article.id, article);
         newsBySlug.set(article.slug, article);
@@ -91,7 +91,7 @@ async function splitNewsJson() {
         if (!articlesByMonth.has(monthKey)) {
           articlesByMonth.set(monthKey, []);
         }
-        articlesByMonth.get(monthKey)!.push(article);
+        articlesByMonth.get(monthKey)?.push(article);
 
         newsById.set(article.id, article);
         newsBySlug.set(article.slug, article);
@@ -112,7 +112,7 @@ async function splitNewsJson() {
         if (!articlesByMonth.has(monthKey)) {
           articlesByMonth.set(monthKey, []);
         }
-        articlesByMonth.get(monthKey)!.push(article);
+        articlesByMonth.get(monthKey)?.push(article);
 
         newsById.set(article.id, article);
         newsBySlug.set(article.slug, article);

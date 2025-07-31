@@ -62,9 +62,9 @@ export async function GET(): Promise<NextResponse> {
       _timestamp: new Date().toISOString(),
     };
 
-    loggers.api.info("Returning tools response", { 
+    loggers.api.info("Returning tools response", {
       toolCount: toolsWithInfo.length,
-      firstTool: toolsWithInfo[0]?.name 
+      firstTool: toolsWithInfo[0]?.name,
     });
 
     return cachedJsonResponse(responseData, "/api/tools");

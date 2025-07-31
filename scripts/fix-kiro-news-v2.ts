@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 async function fixKiroNews() {
   console.log("Starting Kiro news fix v2...");
@@ -14,10 +14,8 @@ async function fixKiroNews() {
   const fixedArticles = articles.map((article: any) => {
     // Only fix the 4 Kiro news articles that have JSON content
     if (
-      article.title &&
-      article.title.startsWith("Kiro News:") &&
-      ((article.content && article.content.includes("[\n  {")) ||
-        (article.summary && article.summary.includes("[\n  {")))
+      article.title?.startsWith("Kiro News:") &&
+      (article.content?.includes("[\n  {") || article.summary?.includes("[\n  {"))
     ) {
       fixedCount++;
       console.log(`Fixing article: ${article.title}`);
@@ -65,7 +63,7 @@ async function fixKiroNews() {
 
   if (fixedCount > 0) {
     // Create backup
-    const backupPath = newsPath + `.backup-${new Date().toISOString()}`;
+    const backupPath = `${newsPath}.backup-${new Date().toISOString()}`;
     await fs.copyFile(newsPath, backupPath);
     console.log(`Created backup: ${backupPath}`);
 
@@ -75,7 +73,7 @@ async function fixKiroNews() {
 
     // Regenerate cache
     console.log("Regenerating news cache...");
-    const { execSync } = require("child_process");
+    const { execSync } = require("node:child_process");
     execSync("pnpm run cache:news", { stdio: "inherit" });
   } else {
     console.log("No articles needed fixing");

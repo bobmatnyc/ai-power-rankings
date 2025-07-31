@@ -32,8 +32,8 @@ export class GoogleSearchConsole {
     }
 
     const projectId = process.env["GOOGLE_CLOUD_PROJECT_ID"] || "ai-power-ranking";
-    let auth;
-    let authClient;
+    let auth: unknown;
+    let authClient: unknown;
 
     // Option 1: Use OAuth access token from authenticated user (for production)
     if (this.accessToken) {

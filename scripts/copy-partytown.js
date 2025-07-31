@@ -1,13 +1,13 @@
 const fs = require("fs-extra");
-const path = require("path");
+const path = require("node:path");
 
 /**
  * Copy Partytown library files to public directory for web worker support.
- * 
+ *
  * WHY: Partytown needs its library files to be served from our domain
  * to execute third-party scripts in a web worker. This removes GTM/GA
  * from the main thread, improving performance significantly.
- * 
+ *
  * PERFORMANCE IMPACT:
  * - Removes ~100ms of main thread blocking time
  * - Reduces Total Blocking Time (TBT) by ~100ms
@@ -15,19 +15,9 @@ const path = require("path");
  */
 
 async function copyPartytownFiles() {
-  const partytownPath = path.join(
-    process.cwd(),
-    "node_modules",
-    "@builder.io",
-    "partytown",
-    "lib"
-  );
+  const partytownPath = path.join(process.cwd(), "node_modules", "@builder.io", "partytown", "lib");
 
-  const publicPartytownPath = path.join(
-    process.cwd(),
-    "public",
-    "partytown"
-  );
+  const publicPartytownPath = path.join(process.cwd(), "public", "partytown");
 
   try {
     // Ensure the destination directory exists

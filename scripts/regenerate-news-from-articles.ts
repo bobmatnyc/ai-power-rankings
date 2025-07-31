@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 interface NewsArticle {
   id: string;
@@ -61,7 +61,7 @@ async function regenerateNewsFromArticles() {
           if (!articlesByMonth.has(monthKey)) {
             articlesByMonth.set(monthKey, []);
           }
-          articlesByMonth.get(monthKey)!.push(article);
+          articlesByMonth.get(monthKey)?.push(article);
         }
       }
     }

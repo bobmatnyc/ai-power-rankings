@@ -17,12 +17,13 @@ export async function POST(_request: NextRequest) {
         updated: 0,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating tool display:", error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
+        error: errorMessage,
       },
       { status: 500 }
     );

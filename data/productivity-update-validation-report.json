@@ -29,18 +29,8 @@
       "status": "pass",
       "message": "4/4 affected tools have productivity adjustments",
       "details": {
-        "affected_tools": [
-          "1",
-          "2",
-          "26",
-          "27"
-        ],
-        "tools_with_adjustments": [
-          "1",
-          "2",
-          "26",
-          "27"
-        ],
+        "affected_tools": ["1", "2", "26", "27"],
+        "tools_with_adjustments": ["1", "2", "26", "27"],
         "adjustment_details": [
           {
             "tool_id": "1",

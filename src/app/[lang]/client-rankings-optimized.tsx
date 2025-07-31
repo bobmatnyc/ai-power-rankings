@@ -37,17 +37,21 @@ interface ClientRankingsProps {
 
 /**
  * Memoized component for individual ranking cards to prevent unnecessary re-renders.
- * 
+ *
  * WHY: Each ranking card re-renders when parent state changes, even if the card's
  * data hasn't changed. This causes 30+ component re-renders on each state update.
- * 
+ *
  * DESIGN DECISION: Using React.memo with areEqual comparison to only re-render
  * when the specific tool data changes, reducing render cycles by ~80%.
  */
 const RankingCard = memo(
-  ({ tool, lang, showRankChange = false }: { 
-    tool: RankingData; 
-    lang: string; 
+  ({
+    tool,
+    lang,
+    showRankChange = false,
+  }: {
+    tool: RankingData;
+    lang: string;
     showRankChange?: boolean;
   }) => {
     return (
@@ -89,20 +93,20 @@ RankingCard.displayName = "RankingCard";
 
 /**
  * Optimized stats component to prevent layout shifts and reduce re-renders.
- * 
+ *
  * WHY: Stats update frequently causing layout shifts and repaints. Each stat
  * update triggers a repaint of the entire stats section.
- * 
+ *
  * DESIGN DECISION: Isolate stats in a memoized component with fixed dimensions
  * to prevent layout shifts and minimize repaints to only changed values.
  */
 const StatsSection = memo(
-  ({ 
+  ({
     loading,
     totalTools,
     trendingUpCount,
     trendingDownCount,
-    lastUpdateDate 
+    lastUpdateDate,
   }: {
     loading: boolean;
     totalTools: number;
@@ -165,16 +169,16 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
   const [trendingUpCount, setTrendingUpCount] = useState(0);
   const [trendingDownCount, setTrendingDownCount] = useState(0);
   const [lastUpdateDate, setLastUpdateDate] = useState<string>("");
-  
+
   // Use transition API to mark updates as non-urgent
   const [, startTransition] = useTransition();
 
   /**
    * Process rankings data in chunks to avoid blocking the main thread.
-   * 
+   *
    * WHY: Processing 50+ ranking items synchronously blocks the main thread
    * for 50-100ms, causing jank during initial render.
-   * 
+   *
    * DESIGN DECISION: Use requestIdleCallback to process data in chunks when
    * the browser is idle, keeping each chunk under 5ms of processing time.
    */
@@ -186,32 +190,32 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
       // Process items while we have idle time (target 5ms chunks)
       while (currentIndex < rankings.length && deadline.timeRemaining() > 5) {
         const chunk = rankings.slice(currentIndex, currentIndex + CHUNK_SIZE);
-        
+
         if (currentIndex === 0) {
           // First chunk: Set top rankings immediately for fast initial render
           startTransition(() => {
             setTopRankings(chunk.slice(0, 3));
           });
         }
-        
+
         // Process trending calculations
         if (currentIndex < 30) {
-          const trendingUp = chunk.filter(r => r.rankChange && r.rankChange > 0);
-          const trendingDown = chunk.filter(r => r.rankChange && r.rankChange < 0);
-          
+          const trendingUp = chunk.filter((r) => r.rankChange && r.rankChange > 0);
+          const trendingDown = chunk.filter((r) => r.rankChange && r.rankChange < 0);
+
           startTransition(() => {
-            setTrendingUpCount(prev => prev + trendingUp.length);
-            setTrendingDownCount(prev => prev + trendingDown.length);
-            
+            setTrendingUpCount((prev) => prev + trendingUp.length);
+            setTrendingDownCount((prev) => prev + trendingDown.length);
+
             if (trendingUp.length > 0) {
-              setTrendingTools(prev => [...prev, ...trendingUp].slice(0, 3));
+              setTrendingTools((prev) => [...prev, ...trendingUp].slice(0, 3));
             }
           });
         }
-        
+
         currentIndex += CHUNK_SIZE;
       }
-      
+
       // Schedule next chunk if needed
       if (currentIndex < rankings.length) {
         requestIdleCallback(processChunk);
@@ -224,16 +228,20 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         });
       }
     };
-    
+
     // Start processing
-    if ('requestIdleCallback' in window) {
+    if ("requestIdleCallback" in window) {
       requestIdleCallback(processChunk);
     } else {
       // Fallback for browsers without requestIdleCallback
-      setTimeout(() => processChunk({ 
-        timeRemaining: () => 50, 
-        didTimeout: false 
-      } as IdleDeadline), 0);
+      setTimeout(
+        () =>
+          processChunk({
+            timeRemaining: () => 50,
+            didTimeout: false,
+          } as IdleDeadline),
+        0
+      );
     }
   }, []);
 
@@ -241,8 +249,8 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
     async function fetchRankings() {
       try {
         // Mark the start of data fetching for performance tracking
-        performance.mark('rankings-fetch-start');
-        
+        performance.mark("rankings-fetch-start");
+
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
 
@@ -251,10 +259,10 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           signal: controller.signal,
           cache: "force-cache", // Use cache when available
           headers: {
-            'Cache-Control': 'max-age=300' // 5 minute client cache
-          }
+            "Cache-Control": "max-age=300", // 5 minute client cache
+          },
         });
-        
+
         clearTimeout(timeoutId);
 
         if (!response.ok) {
@@ -262,62 +270,77 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         }
 
         // Mark when data is received
-        performance.mark('rankings-fetch-end');
-        
+        performance.mark("rankings-fetch-end");
+
         // Parse JSON in a non-blocking way
         const text = await response.text();
-        
+
         // Use a worker-like pattern for JSON parsing if the data is large
         if (text.length > 50000) {
           // For large JSON, parse in chunks
-          const data = await new Promise<any>((resolve) => {
+          const data = await new Promise<{ rankings?: unknown[]; [key: string]: unknown }>((resolve) => {
             setTimeout(() => {
               resolve(JSON.parse(text));
             }, 0);
           });
-          
-          performance.mark('rankings-parse-end');
+
+          performance.mark("rankings-parse-end");
           processRankingsInChunks(data.rankings || []);
-          
+
           // Update date immediately
           if (data.algorithm?.date) {
             const updateDate = new Date(data.algorithm.date);
-            setLastUpdateDate(updateDate.toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            }));
+            
+            // Check if date is valid
+            if (isNaN(updateDate.getTime())) {
+              setLastUpdateDate("Daily");
+            } else {
+              setLastUpdateDate(
+                updateDate.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })
+              );
+            }
           }
         } else {
           // For smaller JSON, parse directly
           const data = JSON.parse(text);
           processRankingsInChunks(data.rankings || []);
-          
+
           if (data.algorithm?.date) {
             const updateDate = new Date(data.algorithm.date);
-            setLastUpdateDate(updateDate.toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            }));
+            
+            // Check if date is valid
+            if (isNaN(updateDate.getTime())) {
+              setLastUpdateDate("Daily");
+            } else {
+              setLastUpdateDate(
+                updateDate.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })
+              );
+            }
           }
         }
-        
+
         // Measure and report performance
         performance.measure(
-          'rankings-fetch-duration',
-          'rankings-fetch-start',
-          'rankings-fetch-end'
+          "rankings-fetch-duration",
+          "rankings-fetch-start",
+          "rankings-fetch-end"
         );
-        
+
         // Log performance metrics in development
-        if (process.env.NODE_ENV === 'development') {
-          const measure = performance.getEntriesByName('rankings-fetch-duration')[0];
-          if (measure && 'duration' in measure) {
+        if (process.env.NODE_ENV === "development") {
+          const measure = performance.getEntriesByName("rankings-fetch-duration")[0];
+          if (measure && "duration" in measure) {
             console.log(`Rankings fetch took ${measure.duration.toFixed(2)}ms`);
           }
         }
-        
       } catch (error) {
         console.error("Failed to fetch rankings", error);
         setLoading(false);
@@ -391,12 +414,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
 
           <div className="grid md:grid-cols-2 gap-3 md:gap-6">
             {recentlyUpdated.map((tool) => (
-              <RankingCard
-                key={tool.tool.id}
-                tool={tool}
-                lang={lang}
-                showRankChange={false}
-              />
+              <RankingCard key={tool.tool.id} tool={tool} lang={lang} showRankChange={false} />
             ))}
           </div>
         </div>

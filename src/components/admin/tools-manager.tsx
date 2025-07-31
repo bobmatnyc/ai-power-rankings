@@ -163,7 +163,10 @@ export function ToolsManager() {
                 // Get latest ranking for each tool
                 const latestScores = tools
                   .map((tool) => getLatestRanking(tool.id))
-                  .filter((ranking): ranking is NonNullable<typeof ranking> => ranking !== null && ranking !== undefined && ranking.score > 0)
+                  .filter(
+                    (ranking): ranking is NonNullable<typeof ranking> =>
+                      ranking !== null && ranking !== undefined && ranking.score > 0
+                  )
                   .map((ranking) => ranking.score);
 
                 if (latestScores.length === 0) {

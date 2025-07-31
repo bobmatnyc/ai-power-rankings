@@ -13,7 +13,9 @@ export async function GET(request: NextRequest) {
 
     // Check if we should use cache-first approach
     const useCacheFirst =
-      process.env["USE_CACHE_FALLBACK"] === "true" || process.env["VERCEL_ENV"] === "preview" || true; // Enable for all environments temporarily
+      process.env["USE_CACHE_FALLBACK"] === "true" ||
+      process.env["VERCEL_ENV"] === "preview" ||
+      true; // Enable for all environments temporarily
 
     // For all environments, return cached data immediately
     if (useCacheFirst) {
