@@ -10,7 +10,7 @@
     "dev:pm2": "node scripts/dev-pm2.js",
     "dev:clean": "rm -rf .next && pnpm dev",
     "dev:monitor": "./scripts/monitor-dev.sh",
-    "build": "tsx scripts/generate-static-rankings.ts && node scripts/copy-partytown.js && next build",
+    "build": "tsx scripts/generate-static-rankings.ts && node scripts/copy-partytown.js && next build && node scripts/optimize-css-post-build.js",
     "build:fast": "next build --no-lint --debug",
     "build:with-types": "npm run type-check && next build",
     "postbuild": "echo 'Build completed - cache will be cleared on deployment'",

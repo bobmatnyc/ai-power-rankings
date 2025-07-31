@@ -18,7 +18,8 @@ const nextConfig: NextConfig = {
     // Keep existing optimizations
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons", "@next/font"],
     webVitalsAttribution: ["CLS", "LCP"],
-    // optimizeCss: true, // Temporarily disabled due to conflict with custom CSS optimization
+    // Disable experimental CSS optimization to avoid conflicts with custom webpack plugin
+    // optimizeCss: true,
     // Reduce memory usage during builds
     workerThreads: false,
     // Disable all polyfills for modern browsers
@@ -343,15 +344,14 @@ const nextConfig: NextConfig = {
         },
       };
 
-      // Apply CSS optimization plugin in production
-      // Temporarily disabled due to webpack cache conflict
-      // if (!dev) {
-      //   // eslint-disable-next-line @typescript-eslint/no-require-imports
+      // Temporarily disable custom CSS optimization plugin to avoid webpack cache conflicts
+      // Rely on Next.js built-in CSS optimization and Tailwind purging instead
+      // if (process.env.NODE_ENV === 'production') {
       //   const OptimizeCssPlugin = require("./src/lib/optimize-css-plugin");
       //   config.plugins.push(new OptimizeCssPlugin({
       //     enableCriticalCss: true,
       //     removeUnusedCss: true,
-      //     inlineCriticalCss: true,
+      //     inlineCriticalCss: false,
       //   }));
       // }
     }
