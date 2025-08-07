@@ -1,0 +1,152 @@
+{
+  "articles": [
+    {
+      "id": "cerebras-code-launch-2025-08-01",
+      "slug": "cerebras-introduces-cerebras-code-ultra-fast-ai-coding-assistant",
+      "title": "Cerebras Introduces Cerebras Code: Ultra-Fast AI Coding Assistant with 2,000 Tokens/Second",
+      "content": "<p>Cerebras Systems has launched Cerebras Code, a groundbreaking AI coding assistant that achieves an industry-leading 2,000 tokens per second generation speed. Leveraging the company's specialized AI hardware and the powerful Qwen3-Coder 480B model, Cerebras Code offers developers unprecedented speed and a massive 131,000 token context window.</p>\n<p>Unlike many competitors that require proprietary IDEs, Cerebras Code provides an OpenAI-compatible API that works with any development environment. The service integrates seamlessly with popular tools like Cursor, Continue.dev, Cline, and RooCode, giving developers the freedom to use their preferred workflows.</p>\n<p>\"We've focused on delivering raw performance without vendor lock-in,\" the company states. \"Developers can now experience AI-assisted coding at speeds that were previously impossible, all while maintaining the flexibility to work with their existing tools.\"</p>\n<p>Cerebras Code is available in two tiers: Cerebras Code Pro at $50/month offering 1,000 messages per day, and Cerebras Code Max at $200/month with 5,000 daily messages. Both plans include the full 131k context window and 2,000 tokens/second generation speed.</p>\n<p>The launch marks Cerebras' entry into the competitive AI coding assistant market, where it aims to differentiate itself through superior technical performance rather than proprietary ecosystem integration. Early benchmarks show leading performance on Agentic Coding and Browser-Use evaluations, with results comparable to Claude Sonnet 4 and GPT-4.</p>",
+      "summary": "Cerebras Systems launches Cerebras Code, an AI coding assistant achieving 2,000 tokens/second generation speed with a 131k context window. Available immediately at $50-200/month with OpenAI-compatible API supporting multiple IDEs.",
+      "source": "Cerebras Blog",
+      "source_url": "https://www.cerebras.ai/blog/introducing-cerebras-code",
+      "tags": ["product-launch", "ai-coding", "performance", "hardware-acceleration"],
+      "tool_mentions": ["cerebras-code"],
+      "created_at": "2025-08-02T00:00:00.000+00:00",
+      "updated_at": "2025-08-02T00:00:00.000+00:00",
+      "date": "2025-08-01T00:00:00.000+00:00"
+    },
+    {
+      "id": "claude-opus-4-1-launch-2025-08-05",
+      "slug": "anthropic-releases-claude-opus-4-1-improved-coding-accuracy",
+      "title": "Anthropic Releases Claude Opus 4.1 with 74.5% Software Engineering Accuracy",
+      "content": "<p>Anthropic has released Claude Opus 4.1, an improved version of their flagship AI model that delivers superior performance and precision for real-world coding and agentic tasks. The new model is a drop-in replacement for Claude Opus 4, offering enhanced capabilities without changing the API.</p>\n<p>The most significant improvement is in software engineering accuracy, where Claude Opus 4.1 achieves 74.5% compared to 72.5% with the previous Claude Opus 4 and 62.3% with Claude Sonnet 3.7. This represents a meaningful advancement in AI-assisted coding capabilities.</p>\n<p>\"Claude Opus 4.1 builds on the strengths of Opus 4 while delivering more reliable performance for complex development tasks,\" according to Anthropic's announcement. The model maintains the same advanced reasoning capabilities while improving precision in software engineering scenarios.</p>\n<p>Claude Opus 4.1 is immediately available to Claude Pro, Max, Team, and Enterprise users through the Claude interface, as well as developers using the Anthropic API, Amazon Bedrock, and Google Cloud's Vertex AI. The model represents Anthropic's continued focus on practical AI applications for developers and businesses.</p>",
+      "summary": "Anthropic releases Claude Opus 4.1, achieving 74.5% software engineering accuracy compared to 72.5% with Opus 4. Available immediately across Claude Pro/Max/Team/Enterprise and API platforms.",
+      "source": "Anthropic Blog",
+      "source_url": "https://www.anthropic.com/news/claude-opus-4-1",
+      "tags": ["product-launch", "ai-coding", "performance", "model-update"],
+      "tool_mentions": ["claude-code"],
+      "created_at": "2025-08-07T20:01:42.000+00:00",
+      "updated_at": "2025-08-07T20:01:42.000+00:00",
+      "date": "2025-08-05T00:00:00.000+00:00"
+    },
+    {
+      "id": "e5f6763a-6677-49a4-b4e3-37123d17c367",
+      "slug": "news-gpt-5",
+      "title": "GPT-5",
+      "content": "",
+      "summary": "",
+      "source": "HackerNews",
+      "source_url": "https://openai.com/gpt-5/",
+      "tags": [
+        "industry",
+        "ai-coding"
+      ],
+      "tool_mentions": [
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-08-07T20:01:42.346980+00:00",
+      "updated_at": "2025-08-07T20:01:42.347302+00:00",
+      "date": "2025-08-07T17:00:21+00:00"
+    },
+    {
+      "id": "c2e267ed-72a7-433e-abf7-308ae3d3f8a3",
+      "slug": "news-gpt-5-key-characteristics-pricing-and-system-card",
+      "title": "GPT-5: Key characteristics, pricing and system card",
+      "content": "",
+      "summary": "",
+      "source": "HackerNews",
+      "source_url": "https://simonwillison.net/2025/Aug/7/gpt-5/",
+      "tags": [
+        "industry",
+        "ai-coding"
+      ],
+      "tool_mentions": [
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-08-07T20:01:42.347340+00:00",
+      "updated_at": "2025-08-07T20:01:42.347343+00:00",
+      "date": "2025-08-07T17:46:18+00:00"
+    },
+    {
+      "id": "26617508-9f12-4174-8709-8d9f3ce20375",
+      "slug": "news-gpt-5-for-developers",
+      "title": "GPT-5 for Developers",
+      "content": "",
+      "summary": "",
+      "source": "HackerNews",
+      "source_url": "https://openai.com/index/introducing-gpt-5-for-developers",
+      "tags": [
+        "industry",
+        "ai-coding"
+      ],
+      "tool_mentions": [
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-08-07T20:01:42.347360+00:00",
+      "updated_at": "2025-08-07T20:01:42.347362+00:00",
+      "date": "2025-08-07T17:06:39+00:00"
+    },
+    {
+      "id": "0931ca7b-e0ca-41d4-abe7-3c2bb9151d72",
+      "slug": "news-show-hn-octofriend-a-cute-coding-agent-that",
+      "title": "Show HN: Octofriend, a cute coding agent that can swap between GPT-5 and Claude",
+      "content": "",
+      "summary": "",
+      "source": "HackerNews",
+      "source_url": "https://github.com/synthetic-lab/octofriend",
+      "tags": [
+        "industry",
+        "ai-coding"
+      ],
+      "tool_mentions": [
+        "claude-code",
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-08-07T20:01:42.347387+00:00",
+      "updated_at": "2025-08-07T20:01:42.347389+00:00",
+      "date": "2025-08-07T18:34:21+00:00"
+    },
+    {
+      "id": "30ef55bb-e7c4-493f-ba48-1c36378d2acb",
+      "slug": "news-claude-code-ide-integration-for-emacs",
+      "title": "Claude Code IDE integration for Emacs",
+      "content": "",
+      "summary": "",
+      "source": "HackerNews",
+      "source_url": "https://github.com/manzaltu/claude-code-ide.el",
+      "tags": [
+        "industry",
+        "ai-coding"
+      ],
+      "tool_mentions": [
+        "claude-code"
+      ],
+      "created_at": "2025-08-07T20:01:42.347415+00:00",
+      "updated_at": "2025-08-07T20:01:42.347417+00:00",
+      "date": "2025-08-06T13:17:38+00:00"
+    },
+    {
+      "id": "94a508fa-e497-4cbc-b59d-3f96216eabba",
+      "slug": "news-leak-suggests-openai-s-open-source-ai-model-release-is",
+      "title": "Leak suggests OpenAI's open-source AI model release is imminent",
+      "content": "<p>A leak suggests that OpenAI is about to launch a powerful new open-source AI model, potentially within hours. The evidence comes from a trail of digital breadcrumbs, eagerly pored over by developers. At the centre of it all are screenshots showing a series of model repositories with names like yofo-deepcurrent/gpt-oss-120b and yofo-wildflower/gpt-oss-20b. The repos have [&#8230;]</p>\n<p>The post <a href=\"https://www.artificialintelligence-news.com/news/leak-openai-open-source-ai-model-release\">Leak suggests OpenAI's open-source AI model release is imminent</a> appeared first on <a href=\"https://www.artificialintelligence-news.com\">AI News</a>.</p>",
+      "summary": "A leak suggests that OpenAI is about to launch a powerful new open-source AI model, potentially within hours. The evidence comes from a trail of digital breadcrumbs, eagerly pored over by developers.",
+      "source": "RSS - AI News",
+      "source_url": "https://www.artificialintelligence-news.com/news/leak-openai-open-source-ai-model-release-imminent/",
+      "tags": [
+        "industry",
+        "ai-coding"
+      ],
+      "tool_mentions": [
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-08-07T20:01:42.347664+00:00",
+      "updated_at": "2025-08-07T20:01:42.347667+00:00",
+      "date": "2025-08-01T12:03:44+00:00"
+    }
+  ],
+  "metadata": {
+    "month": "2025-08",
+    "total": 8,
+    "last_updated": "2025-08-07T20:01:42.324088+00:00"
+  }
+}
