@@ -2191,11 +2191,135 @@
       "created_at": "2025-07-29T00:00:00.000Z",
       "updated_at": "2025-07-29T00:00:00.000Z",
       "launch_date": "2025-05-05"
+    },
+    {
+      "id": "35",
+      "slug": "cerebras-code",
+      "name": "Cerebras Code",
+      "category": "code-assistant",
+      "status": "active",
+      "company_id": "81",
+      "info": {
+        "summary": "Ultra-fast AI coding assistant with 2,000 tokens/second generation",
+        "description": "AI coding assistant leveraging Cerebras' AI hardware for industry-leading speed (2,000 tokens/second) and massive 131k context window, powered by Qwen3-Coder 480B model",
+        "website": "https://cloud.cerebras.ai",
+        "features": [
+          "2,000 tokens/second generation speed",
+          "131,000 token context window",
+          "OpenAI-compatible API",
+          "No IDE lock-in - works with any editor",
+          "Cursor integration support",
+          "Continue.dev integration",
+          "Cline integration support",
+          "RooCode integration",
+          "Leading performance on coding benchmarks",
+          "Immediate availability without waitlists"
+        ],
+        "technical": {
+          "context_window": 131000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "Go",
+            "Rust",
+            "Ruby",
+            "PHP",
+            "Swift",
+            "Kotlin",
+            "Scala",
+            "HTML",
+            "CSS",
+            "SQL",
+            "Shell",
+            "YAML",
+            "JSON",
+            "Markdown"
+          ],
+          "llm_providers": ["Qwen3-Coder 480B"],
+          "ide_integration": "OpenAI-compatible (Any IDE)",
+          "subprocess_support": false,
+          "tool_support": false,
+          "ai_features": [
+            "High-speed code generation",
+            "Code completion and suggestions",
+            "Code debugging assistance",
+            "Code refactoring support",
+            "Multi-file context understanding",
+            "Cross-language support"
+          ],
+          "performance": {
+            "generation_speed": "2,000 tokens/second",
+            "model": "Qwen3-Coder 480B parameters",
+            "api_compatibility": "OpenAI-compatible"
+          }
+        },
+        "business": {
+          "pricing_model": "subscription",
+          "pricing_tiers": [
+            {
+              "name": "Cerebras Code Pro",
+              "price": 50,
+              "currency": "USD",
+              "period": "month",
+              "features": [
+                "1,000 messages per day",
+                "131k context window",
+                "2,000 tokens/second speed",
+                "All integrations included"
+              ]
+            },
+            {
+              "name": "Cerebras Code Max",
+              "price": 200,
+              "currency": "USD",
+              "period": "month",
+              "features": [
+                "5,000 messages per day",
+                "131k context window",
+                "2,000 tokens/second speed",
+                "All integrations included",
+                "Priority support"
+              ]
+            }
+          ],
+          "target_market": [
+            "Individual developers",
+            "Professional engineers",
+            "Development teams",
+            "Multi-agent system developers"
+          ],
+          "base_price": 50,
+          "enterprise_pricing": true,
+          "free_tier": false
+        },
+        "metrics": {
+          "performance_benchmarks": {
+            "agentic_coding": "Leading performance",
+            "browser_use": "Leading performance",
+            "bfcl": "Leading on Berkeley Function Calling Leaderboard",
+            "comparable_to": ["Claude Sonnet 4", "GPT-4"],
+            "source": "Cerebras official blog",
+            "date": "2025-08-01"
+          },
+          "launch_metrics": {
+            "immediate_availability": true,
+            "no_waitlist": true
+          }
+        }
+      },
+      "created_at": "2025-08-02T00:00:00.000Z",
+      "updated_at": "2025-08-02T00:00:00.000Z",
+      "launch_date": "2025-08-01"
     }
   ],
   "metadata": {
-    "total": 34,
-    "last_updated": "2025-07-29T22:01:54.000Z",
+    "total": 35,
+    "last_updated": "2025-08-02T00:00:00.000Z",
     "version": "2.0.0"
   }
 }

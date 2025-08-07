@@ -706,6 +706,18 @@
       "size": "startup",
       "created_at": "2025-07-29T00:00:00.000Z",
       "updated_at": "2025-07-29T00:00:00.000Z"
+    },
+    {
+      "id": "81",
+      "slug": "cerebras",
+      "name": "Cerebras Systems",
+      "description": "AI hardware and inference optimization company, creator of Cerebras Code",
+      "website": "https://cerebras.ai",
+      "founded": "2016",
+      "headquarters": "Sunnyvale, CA",
+      "size": "startup",
+      "created_at": "2025-08-02T00:00:00.000Z",
+      "updated_at": "2025-08-02T00:00:00.000Z"
     }
   ],
   "index": {

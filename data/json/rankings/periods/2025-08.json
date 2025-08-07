@@ -31,14 +31,13 @@
         "adjustedSentiment": 0.85,
         "newsImpact": 89.2
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 1
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "2",
       "tool_name": "GitHub Copilot",
       "rank": 2,
-      "score": 91,
+      "score": 91.0,
       "movement": {
         "previous_position": 1,
         "change": 1,
@@ -61,8 +60,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 118.2
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 2
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "1",
@@ -91,8 +89,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 102.5
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 3
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "18",
@@ -121,14 +118,13 @@
         "adjustedSentiment": 0.8,
         "newsImpact": 145.8
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 4
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "31",
       "tool_name": "Kiro",
       "rank": 5,
-      "score": 81,
+      "score": 81.0,
       "movement": {
         "previous_position": 4,
         "change": 1,
@@ -151,14 +147,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 25.2
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 5
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "11",
       "tool_name": "Google Jules",
       "rank": 6,
-      "score": 78,
+      "score": 78.0,
       "movement": {
         "previous_position": 5,
         "change": 1,
@@ -181,8 +176,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 11.06
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 6
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "26",
@@ -211,8 +205,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 6.79
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 7
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "14",
@@ -241,8 +234,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 66.73
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 8
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "12",
@@ -271,14 +263,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 13.6
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 9
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "7",
       "tool_name": "Aider",
       "rank": 10,
-      "score": 72,
+      "score": 72.0,
       "movement": {
         "previous_position": 9,
         "change": 1,
@@ -301,8 +292,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 6.06
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 10
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "21",
@@ -331,14 +321,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 38.05
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 11
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "5",
       "tool_name": "Bolt.new",
       "rank": 12,
-      "score": 71,
+      "score": 71.0,
       "movement": {
         "previous_position": 11,
         "change": 1,
@@ -361,8 +350,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 12.23
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 12
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "25",
@@ -391,8 +379,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 3.38
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 13
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "27",
@@ -421,14 +408,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 16.14
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 14
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "9",
       "tool_name": "Replit Agent",
       "rank": 15,
-      "score": 68,
+      "score": 68.0,
       "movement": {
         "previous_position": 14,
         "change": 1,
@@ -451,8 +437,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 6.81
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 15
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "23",
@@ -481,8 +466,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 10.38
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 16
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "24",
@@ -511,14 +495,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 3.52
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 17
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "10",
       "tool_name": "v0",
       "rank": 18,
-      "score": 65,
+      "score": 65.0,
       "movement": {
         "previous_position": 18,
         "change": 0,
@@ -541,14 +524,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 8.39
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 18
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "3",
       "tool_name": "Devin",
       "rank": 19,
-      "score": 64,
+      "score": 64.0,
       "movement": {
         "previous_position": 19,
         "change": 0,
@@ -571,14 +553,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 18.39
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 19
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "19",
       "tool_name": "Claude Artifacts",
       "rank": 20,
-      "score": 62,
+      "score": 62.0,
       "movement": {
         "previous_position": 20,
         "change": 0,
@@ -601,14 +582,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 5
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 20
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "29",
       "tool_name": "Sourcegraph Cody",
       "rank": 21,
-      "score": 62,
+      "score": 62.0,
       "movement": {
         "previous_position": 21,
         "change": 0,
@@ -631,8 +611,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 21
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "6",
@@ -661,8 +640,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 22
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "13",
@@ -691,14 +669,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 23
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "22",
       "tool_name": "JetBrains AI Assistant",
       "rank": 24,
-      "score": 61,
+      "score": 61.0,
       "movement": {
         "previous_position": 24,
         "change": 0,
@@ -721,14 +698,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 24
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "16",
       "tool_name": "Qodo Gen",
       "rank": 25,
-      "score": 59,
+      "score": 59.0,
       "movement": {
         "previous_position": 25,
         "change": 0,
@@ -751,8 +727,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 25
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "8",
@@ -781,8 +756,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 26
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "28",
@@ -811,14 +785,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 27
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "17",
       "tool_name": "Snyk Code",
       "rank": 28,
-      "score": 54,
+      "score": 54.0,
       "movement": {
         "previous_position": 28,
         "change": 0,
@@ -841,8 +814,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 28
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "30",
@@ -871,8 +843,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 29
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "15",
@@ -901,14 +872,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 30
+      "algorithm_version": "v7.0-fixed"
     },
     {
       "tool_id": "20",
       "tool_name": "Diffblue Cover",
       "rank": 31,
-      "score": 52,
+      "score": 52.0,
       "movement": {
         "previous_position": 31,
         "change": 0,
@@ -931,8 +901,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed",
-      "position": 31
+      "algorithm_version": "v7.0-fixed"
     }
   ],
   "metadata": {
