@@ -78,23 +78,23 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
     // Default to 'articles' mode, can be overridden via environment variable
     this.directoryMode = (process.env["NEWS_DIRECTORY_MODE"] as DirectoryMode) || "articles";
 
-    // Auto-detect directory mode if not specified
+    // Auto-detect directory mode if not specified (synchronously)
     this.autoDetectDirectoryMode();
   }
 
   /**
    * Auto-detect which directory mode to use based on directory existence
    */
-  private async autoDetectDirectoryMode(): Promise<void> {
+  private autoDetectDirectoryMode(): void {
     // Only auto-detect if not explicitly set via environment variable
     if (!process.env["NEWS_DIRECTORY_MODE"]) {
       try {
-        const byMonthExists = await fs.pathExists(this.byMonthDir);
-        const articlesExists = await fs.pathExists(this.articlesDir);
+        const byMonthExists = fs.existsSync(this.byMonthDir);
+        const articlesExists = fs.existsSync(this.articlesDir);
 
         // Always prefer /by-month/ if it exists and has JSON files
         if (byMonthExists) {
-          const files = await fs.readdir(this.byMonthDir);
+          const files = fs.readdirSync(this.byMonthDir);
           const hasJsonFiles = files.some((f) => f.endsWith(".json") && f !== "index.json");
           if (hasJsonFiles) {
             console.log("NEWS: Auto-detected by-month directory mode");
@@ -105,7 +105,7 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
 
         // Fallback to /articles/ if it exists and has JSON files
         if (articlesExists) {
-          const files = await fs.readdir(this.articlesDir);
+          const files = fs.readdirSync(this.articlesDir);
           const hasJsonFiles = files.some((f) => f.endsWith(".json") && f !== "index.json");
           if (hasJsonFiles) {
             console.log("NEWS: Auto-detected articles directory mode");
