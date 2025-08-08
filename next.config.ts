@@ -64,7 +64,7 @@ const nextConfig: NextConfig = {
   // Modern browser targeting for T-040 - remove legacy polyfills
   // Note: swcMinify is now enabled by default in Next.js 15
   // Disable polyfills for modern browsers
-  transpilePackages: [],
+  transpilePackages: ["recharts"],
 
   // Use modern JavaScript output
   modularizeImports: {
@@ -235,7 +235,21 @@ const nextConfig: NextConfig = {
         "regenerator-runtime": false,
         "regenerator-runtime/runtime": false,
         "@babel/runtime/regenerator": false,
-        "@swc/helpers": false,
+        // Allow specific SWC helpers needed for dynamic imports (Recharts)
+        // But block unnecessary ones to maintain bundle size optimization
+        "@swc/helpers/_interop_require_default": require.resolve(
+          "@swc/helpers/esm/_interop_require_default.js"
+        ),
+        "@swc/helpers/_interop_require_wildcard": require.resolve(
+          "@swc/helpers/esm/_interop_require_wildcard.js"
+        ),
+        // Block other SWC helpers we don't need
+        "@swc/helpers/_class_call_check": false,
+        "@swc/helpers/_create_class": false,
+        "@swc/helpers/_inherits": false,
+        "@swc/helpers/_possible_constructor_return": false,
+        "@swc/helpers/_get_prototype_of": false,
+        "@swc/helpers/_set_prototype_of": false,
       };
 
       // Completely ignore polyfill imports
@@ -250,8 +264,24 @@ const nextConfig: NextConfig = {
         new webpack.IgnorePlugin({
           resourceRegExp: /@babel\/runtime\/regenerator/,
         }),
+        // Ignore specific SWC helpers we don't need, but allow interop helpers for dynamic imports
         new webpack.IgnorePlugin({
-          resourceRegExp: /@swc\/helpers/,
+          resourceRegExp: /@swc\/helpers\/_class_call_check/,
+        }),
+        new webpack.IgnorePlugin({
+          resourceRegExp: /@swc\/helpers\/_create_class/,
+        }),
+        new webpack.IgnorePlugin({
+          resourceRegExp: /@swc\/helpers\/_inherits/,
+        }),
+        new webpack.IgnorePlugin({
+          resourceRegExp: /@swc\/helpers\/_possible_constructor_return/,
+        }),
+        new webpack.IgnorePlugin({
+          resourceRegExp: /@swc\/helpers\/_get_prototype_of/,
+        }),
+        new webpack.IgnorePlugin({
+          resourceRegExp: /@swc\/helpers\/_set_prototype_of/,
         })
       );
 
