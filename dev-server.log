@@ -1327,3 +1327,33 @@ Error fetching tool name: NotFound: Not Found
  GET /favicon.ico 200 in 42ms
  GET /favicon.ico 200 in 38ms
  ○ Compiling /api/admin/ranking-periods ...
+
+> ai-power-rankings@3.3.0 dev /Users/masa/Projects/managed/ai-power-rankings
+> node scripts/clear-next-cache.js && next dev --turbo
+
+🧹 Clearing Next.js cache...
+✅ Next.js cache cleared successfully
+ ⚠ You are using a non-standard "NODE_ENV" value in your environment. This creates inconsistencies in the project and is strongly advised against. Read more: https://nextjs.org/docs/messages/non-standard-node-env
+ ⚠ Port 3000 is in use, using available port 3002 instead.
+   ▲ Next.js 15.3.3 (Turbopack)
+   - Local:        http://localhost:3002
+   - Network:      http://192.168.5.254:3002
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Compiled middleware in 366ms
+   Reload env: .env.production
+ ✓ Ready in 1679ms
+ ⚠ Webpack is configured while Turbopack is not, which may cause problems.
+ ⚠ See instructions if you need to configure Turbopack:
+  https://nextjs.org/docs/app/api-reference/next-config-js/turbo
+
+ ○ Compiling /api/rankings/trending ...
+ ✓ Compiled /api/rankings/trending in 505ms
+{"level":"INFO","time":"2025-08-08T02:07:53.923Z","pid":83236,"hostname":"Masas-M4-Air.local","context":"API","msg":"Successfully loaded historical rankings"}
+ HEAD /api/rankings/trending 200 in 706ms
+{"level":"INFO","time":"2025-08-08T02:07:53.953Z","pid":83236,"hostname":"Masas-M4-Air.local","context":"API","msg":"Trending analysis completed"}
+{"level":"INFO","time":"2025-08-08T02:08:43.011Z","pid":83236,"hostname":"Masas-M4-Air.local","context":"API","msg":"Successfully loaded historical rankings"}
+ GET /api/rankings/trending?months=6 200 in 27ms
+{"level":"INFO","time":"2025-08-08T02:08:43.012Z","pid":83236,"hostname":"Masas-M4-Air.local","context":"API","msg":"Trending analysis completed"}
+[33m[auth][warn][debug-enabled][0m Read more: https://warnings.authjs.dev

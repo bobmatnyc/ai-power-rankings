@@ -178,6 +178,12 @@
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
     }
   },
+  "trending": {
+    "title": "Historical AI Tool Rankings",
+    "description": "Explore how AI tools have performed over time. Track rising stars, established leaders, and market shifts in the rapidly evolving AI landscape.",
+    "aboutTitle": "About Historical Trending",
+    "aboutDescription": "This chart shows how AI tools have moved in and out of the top 10 rankings over time. Tools that appear higher on the chart (closer to #1) are performing better."
+  },
   "footer": {
     "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
     "quickLinks": "Quick Links",
@@ -761,6 +767,7 @@
     "navigation": "Navigation",
     "quickLinks": "Quick Links",
     "trending": "Trending",
+    "historicalTrends": "Historical Trends",
     "categories": "Categories",
     "features": "Features",
     "clearFilters": "Clear Filters"

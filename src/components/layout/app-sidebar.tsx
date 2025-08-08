@@ -8,6 +8,7 @@ import {
   List,
   Newspaper,
   TrendingUp,
+  BarChart3,
   Wrench,
 } from "lucide-react";
 import Image from "next/image";
@@ -204,9 +205,9 @@ function SidebarContent(): React.JSX.Element {
                 let badgeCount = 0;
                 let badgeVariant: "default" | "secondary" | "success" | "destructive" = "default";
 
-                if (changes && changes.totalChanges > 0) {
+                if (changes && changes.totalChanges > 0 && changes.lastUpdated) {
                   const hoursSinceUpdate =
-                    (Date.now() - new Date(changes.lastUpdated!).getTime()) / (1000 * 60 * 60);
+                    (Date.now() - new Date(changes.lastUpdated).getTime()) / (1000 * 60 * 60);
 
                   if (hoursSinceUpdate < 24) {
                     if (item.href === `/${lang}/rankings`) {
@@ -270,6 +271,19 @@ function SidebarContent(): React.JSX.Element {
                 <TrendingUp className="h-4 w-4" />
                 <span>{dict.sidebar.trending}</span>
               </Link>
+              <Link
+                href={`/${lang}/trending`}
+                onClick={handleNavClick}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors",
+                  pathname === `/${lang}/trending`
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                <BarChart3 className="h-4 w-4" />
+                <span>{dict.sidebar.historicalTrends}</span>
+              </Link>
             </nav>
           </div>
 
@@ -312,6 +326,7 @@ function SidebarContent(): React.JSX.Element {
             <div className="space-y-1">
               {tagFilters.map((tag) => (
                 <button
+                  type="button"
                   key={tag.id}
                   onClick={() => {
                     window.location.href = createFilterUrl("tag", tag.id);

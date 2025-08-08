@@ -37,6 +37,7 @@ export const loggers = {
   backup: createLogger("BACKUP"),
   cache: createLogger("CACHE"),
   performance: createLogger("PERFORMANCE"),
+  client: createLogger("CLIENT"),
 };
 
 export default logger;
