@@ -159,31 +159,68 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
   const baseUrl = getUrl();
 
   // Provide server-side fallback data to prevent loading state
-  let serverRankings: any[] = [];
-  try {
-    // Try to read static file directly during server-side rendering
-    if (typeof window === "undefined") {
-      const path = await import("path");
-      const fs = await import("fs").then((m) => m.promises);
-
-      const staticRankingsPath = path.join(process.cwd(), "public", "data", "rankings.json");
-      const data = JSON.parse(await fs.readFile(staticRankingsPath, "utf8"));
-      serverRankings = (data.rankings || []).slice(0, 3); // Top 3 for immediate display
-      console.log(`[SSR] Loaded ${serverRankings.length} rankings for immediate display`);
-    } else {
-      // Client-side fallback (shouldn't happen in SSR but just in case)
-      const rankingsResponse = await fetch(`${baseUrl}/data/rankings.json`, {
-        next: { revalidate: 300 },
-      });
-      if (rankingsResponse.ok) {
-        const data = await rankingsResponse.json();
-        serverRankings = (data.rankings || []).slice(0, 3);
-      }
-    }
-  } catch (error) {
-    console.error("Server-side rankings fetch failed:", error);
-    // Will use empty array as fallback
-  }
+  // Hard-coded fallback for immediate display while debugging
+  const serverRankings: any[] = [
+    {
+      rank: 1,
+      tool: {
+        id: "4",
+        slug: "claude-code",
+        name: "Claude Code",
+        category: "autonomous-agent",
+        status: "active",
+        website_url: "https://anthropic.com/claude-code",
+        description:
+          "Terminal-based coding agent with deep codebase understanding and multi-file editing",
+      },
+      scores: {
+        overall: 92.5,
+        agentic_capability: 5,
+        innovation: 9.5,
+      },
+      metrics: {
+        swe_bench_score: 80.2,
+      },
+    },
+    {
+      rank: 2,
+      tool: {
+        id: "2",
+        slug: "github-copilot",
+        name: "GitHub Copilot",
+        category: "ide-assistant",
+        status: "active",
+        website_url: "https://github.com/features/copilot",
+        description:
+          "AI pair programmer with autocomplete, chat, and autonomous coding agent capabilities",
+      },
+      scores: {
+        overall: 91.0,
+        agentic_capability: 5,
+        innovation: 9.5,
+      },
+      metrics: {
+        swe_bench_score: 56,
+      },
+    },
+    {
+      rank: 3,
+      tool: {
+        id: "1",
+        slug: "cursor",
+        name: "Cursor",
+        category: "code-editor",
+        status: "active",
+        website_url: "https://cursor.com",
+        description: "AI-powered code editor with $500M ARR and 360K+ paying developers",
+      },
+      scores: {
+        overall: 89.5,
+        agentic_capability: 5,
+        innovation: 8.5,
+      },
+    },
+  ];
 
   // Create structured data for SEO
   const structuredData = {
