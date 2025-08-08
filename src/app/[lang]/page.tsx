@@ -161,12 +161,24 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
   // Provide server-side fallback data to prevent loading state
   let serverRankings: any[] = [];
   try {
-    const rankingsResponse = await fetch(`${baseUrl}/data/rankings.json`, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
-    });
-    if (rankingsResponse.ok) {
-      const data = await rankingsResponse.json();
+    // Try to read static file directly during server-side rendering
+    if (typeof window === "undefined") {
+      const path = await import("path");
+      const fs = await import("fs").then((m) => m.promises);
+
+      const staticRankingsPath = path.join(process.cwd(), "public", "data", "rankings.json");
+      const data = JSON.parse(await fs.readFile(staticRankingsPath, "utf8"));
       serverRankings = (data.rankings || []).slice(0, 3); // Top 3 for immediate display
+      console.log(`[SSR] Loaded ${serverRankings.length} rankings for immediate display`);
+    } else {
+      // Client-side fallback (shouldn't happen in SSR but just in case)
+      const rankingsResponse = await fetch(`${baseUrl}/data/rankings.json`, {
+        next: { revalidate: 300 },
+      });
+      if (rankingsResponse.ok) {
+        const data = await rankingsResponse.json();
+        serverRankings = (data.rankings || []).slice(0, 3);
+      }
     }
   } catch (error) {
     console.error("Server-side rankings fetch failed:", error);
