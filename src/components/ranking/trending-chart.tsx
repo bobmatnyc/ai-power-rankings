@@ -29,14 +29,14 @@
  * @fileoverview Interactive chart showing historical AI tool ranking trends
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartSkeleton, ChartWrapper } from '@/components/dynamic-imports/DynamicCharts';
-import type { TrendingAnalysisResult } from '@/lib/trending-analyzer';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ChartSkeleton, ChartWrapper } from "@/components/dynamic-imports/DynamicCharts";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { TrendingAnalysisResult } from "@/lib/trending-analyzer";
 
 // Dynamic import for Recharts components
 const loadRechartsComponents = async () => {
-  const recharts = await import('recharts');
+  const recharts = await import("recharts");
   return {
     LineChart: recharts.LineChart,
     Line: recharts.Line,
@@ -81,11 +81,11 @@ function generateToolColor(index: number): string {
   // Use golden ratio for better color distribution
   const goldenRatio = 0.618033988749;
   const hue = (index * goldenRatio * 360) % 360;
-  
+
   // Higher saturation and lightness for better visibility
   const saturation = 70 + (index % 3) * 10; // 70%, 80%, 90%
-  const lightness = 45 + (index % 2) * 10;  // 45%, 55%
-  
+  const lightness = 45 + (index % 2) * 10; // 45%, 55%
+
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
@@ -110,10 +110,7 @@ function CustomTooltip({ active, payload, label }: any) {
         {validData.map((entry: any) => (
           <div key={entry.dataKey} className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: entry.color }}
-              />
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
               <span className="text-foreground">{entry.name}</span>
             </div>
             <span className="font-medium text-foreground">#{entry.value}</span>
@@ -131,12 +128,12 @@ function CustomTooltip({ active, payload, label }: any) {
  * Custom legend component that allows toggling tool visibility.
  * Users can click on legend items to show/hide specific tool lines.
  */
-function CustomLegend({ 
-  payload, 
-  visibleTools, 
-  onToolToggle 
-}: { 
-  payload?: any[]; 
+function CustomLegend({
+  payload,
+  visibleTools,
+  onToolToggle,
+}: {
+  payload?: any[];
   visibleTools: Set<string>;
   onToolToggle: (toolId: string) => void;
 }) {
@@ -148,16 +145,17 @@ function CustomLegend({
         const isVisible = visibleTools.has(entry.dataKey);
         return (
           <button
+            type="button"
             key={entry.dataKey}
             onClick={() => onToolToggle(entry.dataKey)}
             className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs border transition-all ${
               isVisible
-                ? 'bg-primary/10 border-primary/20 text-primary'
-                : 'bg-muted border-muted-foreground/20 text-muted-foreground'
+                ? "bg-primary/10 border-primary/20 text-primary"
+                : "bg-muted border-muted-foreground/20 text-muted-foreground"
             } hover:scale-105`}
           >
             <div
-              className={`w-3 h-3 rounded-full ${isVisible ? '' : 'opacity-30'}`}
+              className={`w-3 h-3 rounded-full ${isVisible ? "" : "opacity-30"}`}
               style={{ backgroundColor: entry.color }}
             />
             <span>{entry.value}</span>
@@ -177,7 +175,7 @@ export function TrendingChart({
   height = 400,
   showLegend = true,
   maxTools = 15,
-  className = ''
+  className = "",
 }: TrendingChartProps) {
   const [chartComponents, setChartComponents] = useState<ChartComponents | null>(null);
   const [visibleTools, setVisibleTools] = useState<Set<string>>(new Set());
@@ -185,8 +183,8 @@ export function TrendingChart({
   // Load Recharts components dynamically
   useEffect(() => {
     let isMounted = true;
-    
-    loadRechartsComponents().then(components => {
+
+    loadRechartsComponents().then((components) => {
       if (isMounted) {
         setChartComponents(components);
       }
@@ -201,7 +199,7 @@ export function TrendingChart({
   useEffect(() => {
     if (data.tools.length > 0) {
       const topTools = data.tools.slice(0, Math.min(maxTools, 10));
-      setVisibleTools(new Set(topTools.map(tool => tool.tool_id)));
+      setVisibleTools(new Set(topTools.map((tool) => tool.tool_id)));
     }
   }, [data.tools, maxTools]);
 
@@ -210,13 +208,13 @@ export function TrendingChart({
     const limitedTools = data.tools.slice(0, maxTools);
     return {
       chartData: data.chart_data,
-      displayTools: limitedTools
+      displayTools: limitedTools,
     };
   }, [data.chart_data, data.tools, maxTools]);
 
   // Handle tool visibility toggle
   const handleToolToggle = useCallback((toolId: string) => {
-    setVisibleTools(prev => {
+    setVisibleTools((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(toolId)) {
         newSet.delete(toolId);
@@ -257,15 +255,8 @@ export function TrendingChart({
     );
   }
 
-  const {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-  } = chartComponents;
+  const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } =
+    chartComponents;
 
   return (
     <ChartWrapper>
@@ -276,13 +267,14 @@ export function TrendingChart({
             Top {displayTools.length} AI tools ranked over {data.metadata.total_periods} periods
             {data.metadata.date_range.start && data.metadata.date_range.end && (
               <span className="text-muted-foreground">
-                {' '}({data.metadata.date_range.start} to {data.metadata.date_range.end})
+                {" "}
+                ({data.metadata.date_range.start} to {data.metadata.date_range.end})
               </span>
             )}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div style={{ width: '100%', height: height }}>
+          <div style={{ width: "100%", height: height }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={chartData}
@@ -307,14 +299,14 @@ export function TrendingChart({
                   domain={[10, 1]}
                   tick={{ fontSize: 12 }}
                   tickFormatter={(value: number) => `#${value}`}
-                  label={{ value: 'Ranking Position', angle: -90, position: 'insideLeft' }}
+                  label={{ value: "Ranking Position", angle: -90, position: "insideLeft" }}
                 />
                 <Tooltip content={<CustomTooltip />} />
-                
+
                 {displayTools.map((tool, index) => {
                   const isVisible = visibleTools.has(tool.tool_id);
                   const color = generateToolColor(index);
-                  
+
                   return (
                     <Line
                       key={tool.tool_id}
@@ -332,7 +324,7 @@ export function TrendingChart({
                         r: 6,
                         stroke: color,
                         strokeWidth: 2,
-                        fill: 'white',
+                        fill: "white",
                       }}
                       connectNulls={false}
                     />

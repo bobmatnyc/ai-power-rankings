@@ -30,13 +30,13 @@ export interface RankingPeriod {
 export interface RankingEntry {
   tool_id: string;
   tool_name: string;
-  position?: number;  // Some periods use 'position'
-  rank?: number;      // Some periods use 'rank'
+  position?: number; // Some periods use 'position'
+  rank?: number; // Some periods use 'rank'
   score: number;
   movement?: {
     previous_position?: number;
     change?: number;
-    direction?: 'up' | 'down' | 'stable' | 'new';
+    direction?: "up" | "down" | "stable" | "new";
   };
 }
 
@@ -87,32 +87,32 @@ function formatPeriodDate(period: string): string {
   // Handle different period formats
   if (period.match(/^\d{4}-\d{2}$/)) {
     // Format: "2025-01" -> "Jan 2025"
-    const [year, month] = period.split('-');
-    const date = new Date(parseInt(year || ''), parseInt((month || '') as string) - 1, 1);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    const [year, month] = period.split("-");
+    const date = new Date(parseInt(year || ""), parseInt((month || "") as string) - 1, 1);
+    return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
   } else if (period.match(/^\d{4}-\d{2}-\d{2}$/)) {
     // Format: "2025-01-01" -> "Jan 1, 2025"
     const date = new Date(period);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   }
-  
+
   // Fallback for other formats
   return period;
 }
 
 /**
  * Analyzes historical ranking data to extract trending insights.
- * 
+ *
  * ALGORITHM:
  * 1. Extract top 10 tools from each period
  * 2. Track all tools that have appeared in top 10
  * 3. Create time series data for chart visualization
  * 4. Handle tools entering/leaving top 10 (null values for missing periods)
- * 
+ *
  * @param periods Array of ranking periods to analyze
  * @returns Structured trending analysis data for chart consumption
  */
@@ -124,27 +124,27 @@ export function analyzeTrendingData(periods: RankingPeriod[]): TrendingAnalysisR
       chart_data: [],
       metadata: {
         total_periods: 0,
-        date_range: { start: '', end: '' },
-        top_tools_count: 0
-      }
+        date_range: { start: "", end: "" },
+        top_tools_count: 0,
+      },
     };
   }
 
   // Sort periods chronologically
-  const sortedPeriods = [...periods].sort((a, b) => 
-    new Date(a.period).getTime() - new Date(b.period).getTime()
+  const sortedPeriods = [...periods].sort(
+    (a, b) => new Date(a.period).getTime() - new Date(b.period).getTime()
   );
 
   // Track all tools that have appeared in top 10
   const allToolsMap = new Map<string, TrendingTool>();
-  
+
   // Process each period to extract top 10 tools
   const chartData: TrendingDataPoint[] = [];
-  
-  sortedPeriods.forEach(period => {
+
+  sortedPeriods.forEach((period) => {
     // Extract top 10 tools from this period
     const top10Tools = period.rankings
-      .filter(entry => {
+      .filter((entry) => {
         const position = getRankingPosition(entry);
         return position > 0 && position <= 10;
       })
@@ -154,11 +154,11 @@ export function analyzeTrendingData(periods: RankingPeriod[]): TrendingAnalysisR
     // Initialize chart data point for this period
     const dataPoint: TrendingDataPoint = {
       period: period.period,
-      date: formatPeriodDate(period.period)
+      date: formatPeriodDate(period.period),
     };
 
     // Process each tool in top 10
-    top10Tools.forEach(entry => {
+    top10Tools.forEach((entry) => {
       const position = getRankingPosition(entry);
       const toolId = entry.tool_id;
       const toolName = entry.tool_name;
@@ -175,20 +175,21 @@ export function analyzeTrendingData(periods: RankingPeriod[]): TrendingAnalysisR
           first_appearance: period.period,
           last_appearance: period.period,
           best_position: position,
-          worst_position: position
+          worst_position: position,
         });
       }
 
       const toolData = allToolsMap.get(toolId);
-      if (!toolData) continue;
-      toolData.periods_in_top10++;
-      toolData.last_appearance = period.period;
-      toolData.best_position = Math.min(toolData.best_position, position);
-      toolData.worst_position = Math.max(toolData.worst_position, position);
+      if (toolData) {
+        toolData.periods_in_top10++;
+        toolData.last_appearance = period.period;
+        toolData.best_position = Math.min(toolData.best_position, position);
+        toolData.worst_position = Math.max(toolData.worst_position, position);
 
-      // If this is the latest period, set current position
-      if (period === sortedPeriods[sortedPeriods.length - 1]) {
-        toolData.current_position = position;
+        // If this is the latest period, set current position
+        if (period === sortedPeriods[sortedPeriods.length - 1]) {
+          toolData.current_position = position;
+        }
       }
     });
 
@@ -203,17 +204,17 @@ export function analyzeTrendingData(periods: RankingPeriod[]): TrendingAnalysisR
     }
     if (a.current_position && !b.current_position) return -1;
     if (!a.current_position && b.current_position) return 1;
-    
+
     if (a.best_position !== b.best_position) {
       return a.best_position - b.best_position;
     }
-    
+
     return b.periods_in_top10 - a.periods_in_top10;
   });
 
   // Fill in null values for tools not in top 10 for specific periods
-  chartData.forEach(dataPoint => {
-    tools.forEach(tool => {
+  chartData.forEach((dataPoint) => {
+    tools.forEach((tool) => {
       if (!(tool.tool_id in dataPoint)) {
         // Tool was not in top 10 for this period
         dataPoint[tool.tool_id] = null;
@@ -222,61 +223,59 @@ export function analyzeTrendingData(periods: RankingPeriod[]): TrendingAnalysisR
   });
 
   const dateRange = {
-    start: sortedPeriods[0]?.period || '',
-    end: sortedPeriods[sortedPeriods.length - 1]?.period || ''
+    start: sortedPeriods[0]?.period || "",
+    end: sortedPeriods[sortedPeriods.length - 1]?.period || "",
   };
 
   return {
-    periods: sortedPeriods.map(p => p.period),
+    periods: sortedPeriods.map((p) => p.period),
     tools,
     chart_data: chartData,
     metadata: {
       total_periods: periods.length,
       date_range: dateRange,
-      top_tools_count: tools.length
-    }
+      top_tools_count: tools.length,
+    },
   };
 }
 
 /**
  * Filters trending data for a specific time range.
  * Useful for implementing time range selectors in the UI.
- * 
+ *
  * @param data Full trending analysis result
  * @param months Number of months to show (from most recent)
  * @returns Filtered trending data
  */
 export function filterTrendingDataByTimeRange(
-  data: TrendingAnalysisResult, 
-  months: number | 'all'
+  data: TrendingAnalysisResult,
+  months: number | "all"
 ): TrendingAnalysisResult {
-  if (months === 'all') {
+  if (months === "all") {
     return data;
   }
 
   const cutoffDate = new Date();
   cutoffDate.setMonth(cutoffDate.getMonth() - months);
-  
-  const filteredChartData = data.chart_data.filter(point => {
+
+  const filteredChartData = data.chart_data.filter((point) => {
     const pointDate = new Date(point.period);
     return pointDate >= cutoffDate;
   });
 
-  const filteredPeriods = filteredChartData.map(point => point.period);
+  const filteredPeriods = filteredChartData.map((point) => point.period);
 
   // Recalculate tools metadata for the filtered period
   const toolsInFilteredPeriods = new Set<string>();
-  filteredChartData.forEach(point => {
-    data.tools.forEach(tool => {
+  filteredChartData.forEach((point) => {
+    data.tools.forEach((tool) => {
       if (point[tool.tool_id] !== null) {
         toolsInFilteredPeriods.add(tool.tool_id);
       }
     });
   });
 
-  const filteredTools = data.tools.filter(tool => 
-    toolsInFilteredPeriods.has(tool.tool_id)
-  );
+  const filteredTools = data.tools.filter((tool) => toolsInFilteredPeriods.has(tool.tool_id));
 
   return {
     periods: filteredPeriods,
@@ -285,10 +284,10 @@ export function filterTrendingDataByTimeRange(
     metadata: {
       total_periods: filteredChartData.length,
       date_range: {
-        start: filteredChartData[0]?.period || '',
-        end: filteredChartData[filteredChartData.length - 1]?.period || ''
+        start: filteredChartData[0]?.period || "",
+        end: filteredChartData[filteredChartData.length - 1]?.period || "",
       },
-      top_tools_count: filteredTools.length
-    }
+      top_tools_count: filteredTools.length,
+    },
   };
 }
