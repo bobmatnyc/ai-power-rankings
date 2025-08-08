@@ -1,8 +1,13 @@
 {
   "months": [
     {
+      "month": "2025-08",
+      "articleCount": 8,
+      "filename": "2025-08.json"
+    },
+    {
       "month": "2025-07",
-      "articleCount": 58,
+      "articleCount": 56,
       "filename": "2025-07.json"
     },
     {
@@ -141,6 +146,6 @@
       "filename": "2018-05.json"
     }
   ],
-  "totalArticles": 287,
-  "lastUpdated": "2025-07-23T17:09:45.854Z"
+  "totalArticles": 295,
+  "lastUpdated": "2025-08-08T04:25:00.000Z"
 }
