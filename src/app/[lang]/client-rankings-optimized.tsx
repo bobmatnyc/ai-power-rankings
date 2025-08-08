@@ -33,6 +33,7 @@ interface RankingData {
 interface ClientRankingsProps {
   loadingText: string;
   lang: string;
+  initialRankings?: RankingData[];
 }
 
 /**
@@ -160,11 +161,11 @@ const StatsSection = memo(
 
 StatsSection.displayName = "StatsSection";
 
-export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
-  const [topRankings, setTopRankings] = useState<RankingData[]>([]);
+export function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRankingsProps) {
+  const [topRankings, setTopRankings] = useState<RankingData[]>(initialRankings);
   const [trendingTools, setTrendingTools] = useState<RankingData[]>([]);
   const [recentlyUpdated, setRecentlyUpdated] = useState<RankingData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(initialRankings.length === 0);
   const [totalTools, setTotalTools] = useState(0);
   const [trendingUpCount, setTrendingUpCount] = useState(0);
   const [trendingDownCount, setTrendingDownCount] = useState(0);
@@ -246,20 +247,30 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
   }, []);
 
   useEffect(() => {
+    // Skip client-side fetch if we already have server-side data
+    if (initialRankings.length > 0) {
+      console.log("Using server-side rankings, skipping client fetch");
+      setTotalTools(initialRankings.length);
+      return;
+    }
+
     async function fetchRankings() {
       try {
+        console.log("Starting rankings fetch...");
         // Mark the start of data fetching for performance tracking
         performance.mark("rankings-fetch-start");
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased timeout to 10s
 
-        // Try static file first with more relaxed caching for immediate fixes
-        const response = await fetch("/data/rankings.json", {
+        // Try static file first with cache-busting for immediate fixes
+        const cacheBuster = new Date().getTime();
+        const response = await fetch(`/data/rankings.json?v=${cacheBuster}`, {
           signal: controller.signal,
           cache: "no-cache", // Ensure we get fresh data to debug
           headers: {
             "Cache-Control": "no-cache", // Force fresh fetch
+            Pragma: "no-cache", // HTTP/1.0 caches
           },
         });
 
@@ -269,6 +280,8 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           console.error(`Failed to fetch rankings: ${response.status} ${response.statusText}`);
           throw new Error(`Failed to fetch rankings: ${response.status}`);
         }
+
+        console.log("Successfully fetched rankings, parsing response...");
 
         // Mark when data is received
         performance.mark("rankings-fetch-end");
@@ -370,7 +383,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
     }
 
     fetchRankings();
-  }, [processRankingsInChunks]);
+  }, [processRankingsInChunks, initialRankings.length]);
 
   // Memoize trending tools display to prevent re-computation
   const trendingDisplay = useMemo(() => {

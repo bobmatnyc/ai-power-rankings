@@ -158,6 +158,21 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
   const dict = await getDictionary(lang);
   const baseUrl = getUrl();
 
+  // Provide server-side fallback data to prevent loading state
+  let serverRankings: any[] = [];
+  try {
+    const rankingsResponse = await fetch(`${baseUrl}/data/rankings.json`, {
+      next: { revalidate: 300 }, // Cache for 5 minutes
+    });
+    if (rankingsResponse.ok) {
+      const data = await rankingsResponse.json();
+      serverRankings = (data.rankings || []).slice(0, 3); // Top 3 for immediate display
+    }
+  } catch (error) {
+    console.error("Server-side rankings fetch failed:", error);
+    // Will use empty array as fallback
+  }
+
   // Create structured data for SEO
   const structuredData = {
     "@context": "https://schema.org",
@@ -247,8 +262,12 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             </div>
           </div>
 
-          {/* Top 3 Tools and all dynamic content */}
-          <ClientRankings loadingText={dict.common.loading} lang={lang} />
+          {/* Top 3 Tools and all dynamic content with server fallback */}
+          <ClientRankings
+            loadingText={dict.common.loading}
+            lang={lang}
+            initialRankings={serverRankings}
+          />
         </div>
       </section>
 
