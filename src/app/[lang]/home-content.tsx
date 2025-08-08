@@ -38,6 +38,17 @@ interface HomeContentProps {
 export function HomeContent({ topRankings, loading, loadingText, lang = "en" }: HomeContentProps) {
   return loading ? (
     <div className="text-center text-muted-foreground mb-12">{loadingText}</div>
+  ) : topRankings.length === 0 ? (
+    <div className="text-center text-muted-foreground mb-12">
+      <p>Unable to load rankings data. Please refresh the page or try again later.</p>
+      <button
+        type="button"
+        onClick={() => window.location.reload()}
+        className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors"
+      >
+        Reload Page
+      </button>
+    </div>
   ) : (
     <div className="grid md:grid-cols-3 gap-3 md:gap-6 mb-12">
       {topRankings.map((ranking, index) => (

@@ -252,20 +252,21 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         performance.mark("rankings-fetch-start");
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased timeout to 10s
 
-        // Try static file first with aggressive caching
+        // Try static file first with more relaxed caching for immediate fixes
         const response = await fetch("/data/rankings.json", {
           signal: controller.signal,
-          cache: "force-cache", // Use cache when available
+          cache: "no-cache", // Ensure we get fresh data to debug
           headers: {
-            "Cache-Control": "max-age=300", // 5 minute client cache
+            "Cache-Control": "no-cache", // Force fresh fetch
           },
         });
 
         clearTimeout(timeoutId);
 
         if (!response.ok) {
+          console.error(`Failed to fetch rankings: ${response.status} ${response.statusText}`);
           throw new Error(`Failed to fetch rankings: ${response.status}`);
         }
 
@@ -278,11 +279,13 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         // Use a worker-like pattern for JSON parsing if the data is large
         if (text.length > 50000) {
           // For large JSON, parse in chunks
-          const data = await new Promise<{ rankings?: unknown[]; [key: string]: unknown }>((resolve) => {
-            setTimeout(() => {
-              resolve(JSON.parse(text));
-            }, 0);
-          });
+          const data = await new Promise<{ rankings?: unknown[]; [key: string]: unknown }>(
+            (resolve) => {
+              setTimeout(() => {
+                resolve(JSON.parse(text));
+              }, 0);
+            }
+          );
 
           performance.mark("rankings-parse-end");
           const rankings = (data.rankings || []) as RankingData[];
@@ -292,7 +295,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           const algorithm = data["algorithm"] as any;
           if (algorithm?.["date"]) {
             const updateDate = new Date(algorithm["date"]);
-            
+
             // Check if date is valid
             if (Number.isNaN(updateDate.getTime())) {
               setLastUpdateDate("Daily");
@@ -313,7 +316,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
 
           if (data.algorithm?.date) {
             const updateDate = new Date(data.algorithm.date);
-            
+
             // Check if date is valid
             if (Number.isNaN(updateDate.getTime())) {
               setLastUpdateDate("Daily");
@@ -345,7 +348,24 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         }
       } catch (error) {
         console.error("Failed to fetch rankings", error);
+
+        // Enhanced error logging for debugging
+        if (error instanceof Error) {
+          console.error("Error name:", error.name);
+          console.error("Error message:", error.message);
+          if (error.name === "AbortError") {
+            console.error("Request timed out after 10 seconds");
+          }
+        }
+
+        // Set loading to false but also try to set some fallback data
         setLoading(false);
+
+        // Try to set a minimal fallback to show something rather than nothing
+        setTotalTools(0);
+        setTopRankings([]);
+        setTrendingTools([]);
+        setRecentlyUpdated([]);
       }
     }
 
