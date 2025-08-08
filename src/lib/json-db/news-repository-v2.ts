@@ -92,17 +92,31 @@ export class NewsRepositoryV2 extends BaseRepository<NewsData> {
         const byMonthExists = await fs.pathExists(this.byMonthDir);
         const articlesExists = await fs.pathExists(this.articlesDir);
 
-        // Prefer /by-month/ if it exists and has content
+        // Always prefer /by-month/ if it exists and has JSON files
         if (byMonthExists) {
           const files = await fs.readdir(this.byMonthDir);
           const hasJsonFiles = files.some((f) => f.endsWith(".json") && f !== "index.json");
           if (hasJsonFiles) {
+            console.log("NEWS: Auto-detected by-month directory mode");
             this.directoryMode = "by-month";
+            return;
           }
-        } else if (!articlesExists) {
-          // If neither exists, default to by-month for new installations
-          this.directoryMode = "by-month";
         }
+
+        // Fallback to /articles/ if it exists and has JSON files
+        if (articlesExists) {
+          const files = await fs.readdir(this.articlesDir);
+          const hasJsonFiles = files.some((f) => f.endsWith(".json") && f !== "index.json");
+          if (hasJsonFiles) {
+            console.log("NEWS: Auto-detected articles directory mode");
+            this.directoryMode = "articles";
+            return;
+          }
+        }
+
+        // If neither has content, default to by-month for new installations
+        console.log("NEWS: Defaulting to by-month directory mode");
+        this.directoryMode = "by-month";
       } catch (error) {
         // If there's an error, stick with the default
         console.warn("Error auto-detecting news directory mode:", error);
