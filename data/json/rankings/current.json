@@ -1,18 +1,18 @@
 {
   "period": "2025-08",
-  "date": "2025-08-07",
-  "algorithm_version": "v7.0-fixed",
-  "algorithm_name": "Smart Defaults & Proxy Metrics with News Impact",
+  "date": "2025-08-19",
+  "algorithm_version": "v7.1-news-update",
+  "algorithm_name": "Smart Defaults & Proxy Metrics with Enhanced News Impact",
   "rankings": [
     {
       "tool_id": "4",
       "tool_name": "Claude Code",
       "rank": 1,
-      "score": 92.5,
+      "score": 94.0,
       "movement": {
-        "previous_position": 3,
-        "change": 2,
-        "direction": "up"
+        "previous_position": 1,
+        "change": 0,
+        "direction": "same"
       },
       "factor_scores": {
         "agenticCapability": 100,
@@ -29,19 +29,19 @@
       "sentiment_analysis": {
         "rawSentiment": 0.8,
         "adjustedSentiment": 0.85,
-        "newsImpact": 89.2
+        "newsImpact": 95.5
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "2",
       "tool_name": "GitHub Copilot",
       "rank": 2,
-      "score": 91.0,
+      "score": 91.5,
       "movement": {
-        "previous_position": 1,
-        "change": 1,
-        "direction": "down"
+        "previous_position": 2,
+        "change": 0,
+        "direction": "same"
       },
       "factor_scores": {
         "agenticCapability": 95,
@@ -58,9 +58,9 @@
       "sentiment_analysis": {
         "rawSentiment": 0,
         "adjustedSentiment": 0,
-        "newsImpact": 118.2
+        "newsImpact": 120.0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "1",
@@ -68,9 +68,9 @@
       "rank": 3,
       "score": 89.5,
       "movement": {
-        "previous_position": 2,
-        "change": 1,
-        "direction": "down"
+        "previous_position": 3,
+        "change": 0,
+        "direction": "same"
       },
       "factor_scores": {
         "agenticCapability": 80,
@@ -89,17 +89,17 @@
         "adjustedSentiment": 0,
         "newsImpact": 102.5
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "18",
       "tool_name": "ChatGPT Canvas",
       "rank": 4,
-      "score": 82.5,
+      "score": 85.0,
       "movement": {
-        "previous_position": 17,
-        "change": 13,
-        "direction": "up"
+        "previous_position": 4,
+        "change": 0,
+        "direction": "same"
       },
       "factor_scores": {
         "agenticCapability": 80,
@@ -116,19 +116,19 @@
       "sentiment_analysis": {
         "rawSentiment": 0.7,
         "adjustedSentiment": 0.8,
-        "newsImpact": 145.8
+        "newsImpact": 180.0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "31",
       "tool_name": "Kiro",
       "rank": 5,
-      "score": 81.0,
+      "score": 81.5,
       "movement": {
-        "previous_position": 4,
-        "change": 1,
-        "direction": "down"
+        "previous_position": 5,
+        "change": 0,
+        "direction": "same"
       },
       "factor_scores": {
         "agenticCapability": 75,
@@ -145,9 +145,9 @@
       "sentiment_analysis": {
         "rawSentiment": 0,
         "adjustedSentiment": 0,
-        "newsImpact": 25.2
+        "newsImpact": 45.0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "11",
@@ -176,7 +176,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 11.06
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "26",
@@ -205,17 +205,17 @@
         "adjustedSentiment": 0,
         "newsImpact": 6.79
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "14",
       "tool_name": "Windsurf",
       "rank": 8,
-      "score": 74.5,
+      "score": 73.0,
       "movement": {
-        "previous_position": 7,
-        "change": 1,
-        "direction": "down"
+        "previous_position": 8,
+        "change": 0,
+        "direction": "same"
       },
       "factor_scores": {
         "agenticCapability": 75,
@@ -232,9 +232,9 @@
       "sentiment_analysis": {
         "rawSentiment": 0,
         "adjustedSentiment": 0,
-        "newsImpact": 66.73
+        "newsImpact": 55.0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "12",
@@ -263,7 +263,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 13.6
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "7",
@@ -292,7 +292,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 6.06
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "21",
@@ -321,7 +321,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 38.05
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "5",
@@ -350,7 +350,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 12.23
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "25",
@@ -379,7 +379,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 3.38
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "27",
@@ -408,7 +408,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 16.14
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "9",
@@ -437,7 +437,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 6.81
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "23",
@@ -466,7 +466,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 10.38
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "24",
@@ -495,7 +495,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 3.52
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "10",
@@ -524,13 +524,13 @@
         "adjustedSentiment": 0,
         "newsImpact": 8.39
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "3",
       "tool_name": "Devin",
       "rank": 19,
-      "score": 64.0,
+      "score": 65.0,
       "movement": {
         "previous_position": 19,
         "change": 0,
@@ -551,9 +551,9 @@
       "sentiment_analysis": {
         "rawSentiment": 0,
         "adjustedSentiment": 0,
-        "newsImpact": 18.39
+        "newsImpact": 22.0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "19",
@@ -582,7 +582,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 5
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "29",
@@ -611,7 +611,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "6",
@@ -640,7 +640,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "13",
@@ -669,7 +669,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "22",
@@ -698,7 +698,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "16",
@@ -727,7 +727,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "8",
@@ -756,7 +756,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "28",
@@ -785,7 +785,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "17",
@@ -814,7 +814,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "30",
@@ -843,7 +843,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "15",
@@ -872,7 +872,7 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     },
     {
       "tool_id": "20",
@@ -901,12 +901,12 @@
         "adjustedSentiment": 0,
         "newsImpact": 0
       },
-      "algorithm_version": "v7.0-fixed"
+      "algorithm_version": "v7.1-news-update"
     }
   ],
   "metadata": {
     "total_tools": 31,
-    "calculation_date": "2025-08-07T20:30:00.000Z",
-    "notes": "Algorithm v7.0-fixed with enhanced news impact analysis. Major boost for ChatGPT Canvas due to GPT-5 integration, Claude Code maintains #1 position with Opus 4.1 improvements."
+    "calculation_date": "2025-08-19T00:00:00.000Z",
+    "notes": "Algorithm v7.1 update with 299 total news articles analyzed. Claude Code strengthens #1 position with Opus 4.1 achieving 74.5% SWE accuracy. ChatGPT Canvas maintains #4 with GPT-5 integration boost. GitHub Copilot holds #2 with 1.8M users milestone. Windsurf faces uncertainty from Cognition acquisition."
   }
 }

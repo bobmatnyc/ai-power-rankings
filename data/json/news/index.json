@@ -1,6 +1,113 @@
 {
-  "month": "2025-08",
-  "articles": [
+  "total_articles": 294,
+  "last_updated": "2025-08-19T01:03:39.025699",
+  "months": [
+    {
+      "month": "2025-08",
+      "count": 9
+    },
+    {
+      "month": "2025-07",
+      "count": 56
+    },
+    {
+      "month": "2025-06",
+      "count": 115
+    },
+    {
+      "month": "2025-05",
+      "count": 12
+    },
+    {
+      "month": "2025-04",
+      "count": 5
+    },
+    {
+      "month": "2025-03",
+      "count": 7
+    },
+    {
+      "month": "2025-02",
+      "count": 9
+    },
+    {
+      "month": "2025-01",
+      "count": 6
+    },
+    {
+      "month": "2024-12",
+      "count": 13
+    },
+    {
+      "month": "2024-11",
+      "count": 12
+    },
+    {
+      "month": "2024-10",
+      "count": 15
+    },
+    {
+      "month": "2024-09",
+      "count": 10
+    },
+    {
+      "month": "2024-08",
+      "count": 6
+    },
+    {
+      "month": "2024-06",
+      "count": 1
+    },
+    {
+      "month": "2024-04",
+      "count": 2
+    },
+    {
+      "month": "2024-03",
+      "count": 3
+    },
+    {
+      "month": "2023-12",
+      "count": 2
+    },
+    {
+      "month": "2023-11",
+      "count": 1
+    },
+    {
+      "month": "2023-07",
+      "count": 2
+    },
+    {
+      "month": "2023-06",
+      "count": 1
+    },
+    {
+      "month": "2023-05",
+      "count": 1
+    },
+    {
+      "month": "2022-10",
+      "count": 1
+    },
+    {
+      "month": "2021-05",
+      "count": 2
+    },
+    {
+      "month": "2020-09",
+      "count": 1
+    },
+    {
+      "month": "2019-12",
+      "count": 1
+    },
+    {
+      "month": "2018-05",
+      "count": 1
+    }
+  ],
+  "recent_articles": [
     {
       "id": "0931ca7b-e0ca-41d4-abe7-3c2bb9151d72",
       "slug": "news-show-hn-octofriend-a-cute-coding-agent-that",
@@ -109,13 +216,37 @@
       "source_url": "https://www.cerebras.ai/blog/introducing-cerebras-code",
       "tags": ["product-launch", "ai-coding", "performance", "hardware-acceleration"],
       "tool_mentions": ["cerebras-code"],
+      "created_at": "2025-08-02T00:00:00.000Z",
+      "updated_at": "2025-08-02T00:00:00.000Z",
+      "date": "2025-08-01T00:00:00.000Z"
+    },
+    {
+      "id": "cerebras-code-launch-2025-08-01",
+      "slug": "cerebras-introduces-cerebras-code-ultra-fast-ai-coding-assistant",
+      "title": "Cerebras Introduces Cerebras Code: Ultra-Fast AI Coding Assistant with 2,000 Tokens/Second",
+      "content": "<p>Cerebras Systems has launched Cerebras Code, a groundbreaking AI coding assistant that achieves an industry-leading 2,000 tokens per second generation speed. Leveraging the company's specialized AI hardware and the powerful Qwen3-Coder 480B model, Cerebras Code offers developers unprecedented speed and a massive 131,000 token context window.</p>\n<p>Unlike many competitors that require proprietary IDEs, Cerebras Code provides an OpenAI-compatible API that works with any development environment. The service integrates seamlessly with popular tools like Cursor, Continue.dev, Cline, and RooCode, giving developers the freedom to use their preferred workflows.</p>\n<p>\"We've focused on delivering raw performance without vendor lock-in,\" the company states. \"Developers can now experience AI-assisted coding at speeds that were previously impossible, all while maintaining the flexibility to work with their existing tools.\"</p>\n<p>Cerebras Code is available in two tiers: Cerebras Code Pro at $50/month offering 1,000 messages per day, and Cerebras Code Max at $200/month with 5,000 daily messages. Both plans include the full 131k context window and 2,000 tokens/second generation speed.</p>\n<p>The launch marks Cerebras' entry into the competitive AI coding assistant market, where it aims to differentiate itself through superior technical performance rather than proprietary ecosystem integration. Early benchmarks show leading performance on Agentic Coding and Browser-Use evaluations, with results comparable to Claude Sonnet 4 and GPT-4.</p>",
+      "summary": "Cerebras Systems launches Cerebras Code, an AI coding assistant achieving 2,000 tokens/second generation speed with a 131k context window. Available immediately at $50-200/month with OpenAI-compatible API supporting multiple IDEs.",
+      "source": "Cerebras Blog",
+      "source_url": "https://www.cerebras.ai/blog/introducing-cerebras-code",
+      "tags": ["product-launch", "ai-coding", "performance", "hardware-acceleration"],
+      "tool_mentions": ["cerebras-code"],
       "created_at": "2025-08-02T00:00:00.000+00:00",
       "updated_at": "2025-08-02T00:00:00.000+00:00",
       "date": "2025-08-01T00:00:00.000+00:00"
+    },
+    {
+      "id": "6377029f-923d-4f07-9f43-b0030376fcba",
+      "slug": "news-claude-code-weekly-rate-limits",
+      "title": "Claude Code weekly rate limits",
+      "content": "",
+      "summary": "",
+      "source": "HackerNews",
+      "source_url": "https://news.ycombinator.com/item?id=44713757",
+      "tags": ["industry", "ai-coding"],
+      "tool_mentions": ["claude-code"],
+      "created_at": "2025-07-29T05:49:42.037881+00:00",
+      "updated_at": "2025-07-29T05:49:42.038025+00:00",
+      "date": "2025-07-28T18:27:51+00:00"
     }
-  ],
-  "metadata": {
-    "total_articles": 8,
-    "last_updated": "2025-08-19T01:03:39.014154"
-  }
+  ]
 }
