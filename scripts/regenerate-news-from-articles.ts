@@ -47,7 +47,8 @@ async function regenerateNewsFromArticles() {
 
       const filepath = path.join(articlesDir, file);
       const content = await fs.readFile(filepath, "utf-8");
-      const articles: NewsArticle[] = JSON.parse(content);
+      const data = JSON.parse(content);
+      const articles: NewsArticle[] = data.articles || data; // Handle both formats
 
       console.log(`📖 Processing ${file}: ${articles.length} articles`);
 
