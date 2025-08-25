@@ -52,12 +52,12 @@ export function NewsCard({ item }: NewsCardProps) {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    
+
     // Check if date is valid
     if (Number.isNaN(date.getTime())) {
       return "Date unavailable";
     }
-    
+
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffHours = Math.floor(diffMs / 3600000);

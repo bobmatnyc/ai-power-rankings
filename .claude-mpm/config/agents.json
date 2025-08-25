@@ -1,0 +1,235 @@
+{
+  "version": "2.0",
+  "project_name": "ai-power-rankings",
+  "description": "Multi-agent configuration for AI Power Rankings development",
+  "last_updated": "2025-08-25",
+  "agents": {
+    "enabled": true,
+    "configuration": {
+      "engineer": {
+        "role": "Software Engineer",
+        "description": "Handles implementation, architecture, and code quality",
+        "focus": ["architecture", "implementation", "refactoring", "optimization"],
+        "memory_file": "engineer_memories.md",
+        "guidelines": [
+          "Maintain files under 800 lines (400 ideal)",
+          "Apply SOLID principles rigorously",
+          "Use dependency injection for all dependencies",
+          "Achieve 20%+ code reduction in refactoring",
+          "Document WHY, not what",
+          "Extract shared logic after 2+ uses"
+        ],
+        "preferred_tasks": [
+          "Feature implementation",
+          "Code refactoring",
+          "Architecture decisions",
+          "Performance optimization",
+          "Technical debt reduction"
+        ],
+        "tools": ["Edit", "MultiEdit", "Write", "Read", "Grep", "Bash"],
+        "constraints": {
+          "max_file_lines": 800,
+          "ideal_file_lines": 400,
+          "max_function_lines": 30,
+          "max_class_lines": 200,
+          "max_nesting_levels": 3,
+          "max_parameters": 3
+        }
+      },
+      "qa": {
+        "role": "Quality Assurance Engineer",
+        "description": "Ensures code quality through testing and validation",
+        "focus": ["testing", "validation", "quality", "regression"],
+        "memory_file": "qa_memories.md",
+        "guidelines": [
+          "Write comprehensive test coverage",
+          "Validate all data transformations",
+          "Test edge cases and error conditions",
+          "Verify bug fixes with regression tests",
+          "Document test scenarios and coverage",
+          "Ensure TypeScript type safety"
+        ],
+        "preferred_tasks": [
+          "Writing unit tests",
+          "Integration testing",
+          "Bug reproduction",
+          "Test coverage analysis",
+          "Data validation",
+          "Quality metrics"
+        ],
+        "tools": ["Read", "Edit", "Bash", "Grep"],
+        "test_commands": [
+          "pnpm run test",
+          "pnpm run type-check",
+          "pnpm run lint",
+          "pnpm run ci:local"
+        ]
+      },
+      "research": {
+        "role": "Technical Researcher",
+        "description": "Investigates solutions and maintains documentation",
+        "focus": ["investigation", "documentation", "analysis", "best-practices"],
+        "memory_file": "research_memories.md",
+        "guidelines": [
+          "Research industry best practices",
+          "Keep documentation up-to-date",
+          "Analyze performance bottlenecks",
+          "Investigate technical solutions",
+          "Document architectural decisions",
+          "Research dependency updates"
+        ],
+        "preferred_tasks": [
+          "Documentation updates",
+          "Technical research",
+          "Performance analysis",
+          "Dependency analysis",
+          "Best practice research",
+          "Architecture documentation"
+        ],
+        "tools": ["Read", "Write", "WebSearch", "WebFetch", "Grep"],
+        "documentation_paths": [
+          "/docs",
+          "/CLAUDE.md",
+          "/README.md",
+          "/REPOSITORY-STRUCTURE.md"
+        ]
+      },
+      "ops": {
+        "role": "DevOps Engineer",
+        "description": "Manages deployments and infrastructure",
+        "focus": ["deployment", "infrastructure", "monitoring", "ci-cd"],
+        "memory_file": "ops_memories.md",
+        "guidelines": [
+          "Follow deployment checklist rigorously",
+          "Monitor performance metrics",
+          "Manage CI/CD pipelines",
+          "Handle infrastructure as code",
+          "Ensure zero-downtime deployments",
+          "Maintain backup and recovery procedures"
+        ],
+        "preferred_tasks": [
+          "Production deployments",
+          "Staging deployments",
+          "CI/CD configuration",
+          "Performance monitoring",
+          "Infrastructure updates",
+          "Backup management"
+        ],
+        "tools": ["Bash", "Read", "Edit"],
+        "deployment_commands": [
+          "pnpm run pre-deploy",
+          "pnpm run build",
+          "pnpm run cache:generate",
+          "git push production main"
+        ]
+      },
+      "version-control": {
+        "role": "Version Control Specialist",
+        "description": "Manages git operations and release processes",
+        "focus": ["git", "branching", "releases", "pull-requests"],
+        "memory_file": "version-control_memories.md",
+        "guidelines": [
+          "Create atomic, well-described commits",
+          "Link all commits to TrackDown tickets",
+          "Manage feature branches properly",
+          "Create comprehensive pull requests",
+          "Maintain clean git history",
+          "Follow semantic versioning"
+        ],
+        "preferred_tasks": [
+          "Creating pull requests",
+          "Managing branches",
+          "Creating releases",
+          "Commit organization",
+          "Merge conflict resolution",
+          "Release notes creation"
+        ],
+        "tools": ["Bash", "Read"],
+        "branch_patterns": {
+          "feature": "feature/TSK-{ticket}-{description}",
+          "bugfix": "bugfix/TSK-{ticket}-{description}",
+          "hotfix": "hotfix/TSK-{ticket}-{description}",
+          "release": "release/v{version}"
+        }
+      }
+    }
+  },
+  "memory": {
+    "max_size_kb": 8,
+    "max_sections": 10,
+    "max_items_per_section": 15,
+    "auto_truncate": true,
+    "update_triggers": [
+      "significant_learning",
+      "new_pattern_discovered",
+      "architectural_decision",
+      "performance_optimization",
+      "bug_root_cause"
+    ]
+  },
+  "integration": {
+    "trackdown": {
+      "enabled": true,
+      "auto_link": true,
+      "ticket_prefix": "TSK",
+      "required_in_commits": true,
+      "branch_naming": true,
+      "status_updates": true
+    },
+    "pm2": {
+      "enabled": true,
+      "auto_restart": true,
+      "commands": {
+        "start": "pnpm run dev:pm2 start",
+        "restart": "pnpm run dev:pm2 restart",
+        "logs": "pnpm run dev:pm2 logs",
+        "status": "pnpm run dev:pm2 status"
+      }
+    }
+  },
+  "workflow": {
+    "handoff_required_fields": [
+      "ticket_id",
+      "files_changed",
+      "summary",
+      "next_steps"
+    ],
+    "validation_gates": {
+      "pre_commit": ["type-check", "lint", "test"],
+      "pre_pr": ["ci:local", "build"],
+      "pre_deploy": ["pre-deploy", "cache:generate"]
+    },
+    "task_patterns": {
+      "feature": ["research", "engineer", "qa", "version-control", "ops"],
+      "bugfix": ["qa", "research", "engineer", "qa", "version-control"],
+      "documentation": ["research", "engineer", "version-control"],
+      "deployment": ["qa", "ops", "version-control"],
+      "optimization": ["research", "engineer", "qa", "ops"]
+    }
+  },
+  "project_specific": {
+    "data_paths": {
+      "json": "/data/json",
+      "cache": "/src/data/cache",
+      "backup": "/backups"
+    },
+    "key_modules": {
+      "rankings": "/src/lib/rankings",
+      "news": "/src/lib/news",
+      "tools": "/src/lib/tools",
+      "api": "/src/app/api"
+    },
+    "critical_files": [
+      "/data/json/news/news.json",
+      "/public/data/rankings.json",
+      "/src/data/cache/rankings-static.json",
+      "/src/data/cache/tools.json"
+    ],
+    "validation_requirements": {
+      "json_files": "Must be valid JSON",
+      "typescript": "No type errors allowed",
+      "rankings": "Score between 0-100",
+      "dates": "ISO 8601 format"
+    }
+  }
+}

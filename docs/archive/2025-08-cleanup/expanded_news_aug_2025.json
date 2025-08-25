@@ -1,0 +1,2130 @@
+{
+  "metadata": {
+    "collection_timestamp": "2025-08-19T05:54:30.367349+00:00",
+    "collection_period": {
+      "start": "2025-08-07T00:00:00+00:00",
+      "end": "2025-08-19T23:59:59+00:00"
+    },
+    "sources": [
+      "hackernews",
+      "algolia",
+      "dev.to"
+    ],
+    "raw_count": 127,
+    "filtered_count": 113
+  },
+  "items": [
+    {
+      "id": "devto-2781509",
+      "title": "My Journey into GitHub Security: A Hands-On DevOps Challenge",
+      "url": "https://dev.to/hritikraj8804/my-journey-into-github-security-a-hands-on-devops-challenge-30mp",
+      "published_date": "2025-08-18T16:25:47Z",
+      "source": "Dev.to",
+      "category": "security",
+      "summary": "I took the DevOps SRE Daily Challenge to build a secure GitHub environment from scratch. Here's a breakdown of my experience setting up branch protection, code scanning, and more!",
+      "tools_mentioned": [
+        "GitHub Copilot"
+      ],
+      "relevance_score": 0.9999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "github",
+        "getfitwithsagar",
+        "srelife",
+        "devopsforall"
+      ]
+    },
+    {
+      "id": "devto-2779879",
+      "title": "Claude 4.1 en Amazon Bedrock: La Evoluci\u00f3n Definitiva para AI Engineers",
+      "url": "https://dev.to/joseph_arriola/claude-41-en-amazon-bedrock-la-evolucion-definitiva-para-ai-engineers-36mo",
+      "published_date": "2025-08-18T06:46:00Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "An\u00e1lisis hands-on de la versi\u00f3n m\u00e1s refinada de Claude 4 en AWS: mejoras espec\u00edficas en coding...",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.9999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "aws",
+        "claude",
+        "genai",
+        "ai"
+      ]
+    },
+    {
+      "id": "devto-2778863",
+      "title": "ChatGPT 5: The Complete Guide to OpenAI's Next-Gen AI",
+      "url": "https://dev.to/vishva_murthy_4480fcb3d83/chatgpt-5-the-complete-guide-to-openais-next-gen-ai-5gn4",
+      "published_date": "2025-08-17T11:52:00Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "The digital world is buzzing with the arrival of OpenAI's latest marvel, ChatGPT 5. Heralded by...",
+      "tools_mentioned": [
+        "ChatGPT"
+      ],
+      "relevance_score": 0.9999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "openai",
+        "chatgpt",
+        "ai",
+        "llm"
+      ]
+    },
+    {
+      "id": "hn-44933255",
+      "title": "Claudia \u2013 Desktop companion for Claude code",
+      "url": "https://claudiacode.com/",
+      "published_date": "2025-08-17T17:26:56+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.95,
+      "engagement": {
+        "score": 488,
+        "comments": 221
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44939331",
+      "title": "LLMs and coding agents are a security nightmare",
+      "url": "https://garymarcus.substack.com/p/llms-coding-agents-security-nightmare",
+      "published_date": "2025-08-18T11:04:34+00:00",
+      "source": "HackerNews",
+      "category": "security",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.8999999999999999,
+      "engagement": {
+        "score": 184,
+        "comments": 89
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44935169",
+      "title": "Llama-Scan: Convert PDFs to Text W Local LLMs",
+      "url": "https://github.com/ngafar/llama-scan",
+      "published_date": "2025-08-17T21:40:47+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "Code Llama"
+      ],
+      "relevance_score": 0.8999999999999999,
+      "engagement": {
+        "score": 214,
+        "comments": 82
+      },
+      "tags": []
+    },
+    {
+      "id": "devto-2776578",
+      "title": "NekoCode: PR Review Feature Added - Please Help Test",
+      "url": "https://dev.to/charmpic/nekocode-pr-review-feature-added-please-help-test-109h",
+      "published_date": "2025-08-16T01:36:28Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Written by Claude Code \u2193  \ud83e\udd80 NekoCode: The Next-Gen Impact Analysis Tool Revolutionizing PR...",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.8999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "github",
+        "claudecode",
+        "nekocode"
+      ]
+    },
+    {
+      "id": "devto-2775386",
+      "title": "Pasting images in claude-code now works!",
+      "url": "https://dev.to/josharsh/pasting-images-in-claude-code-now-works-5hip",
+      "published_date": "2025-08-15T08:45:00Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "The Problem  Claude Code users cannot paste screenshots or images directly into the terminal using...",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.8999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "claude",
+        "claudecode",
+        "devtools"
+      ]
+    },
+    {
+      "id": "devto-2762915",
+      "title": "claude code",
+      "url": "https://dev.to/peak_tom_7fe2ed1d11aefd01/claude-code-o05",
+      "published_date": "2025-08-10T10:55:40Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "A post by JamieLeo",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.8999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "claude",
+        "ai"
+      ]
+    },
+    {
+      "id": "hn-44932651",
+      "title": "Show HN: OverType \u2013 A Markdown WYSIWYG editor that's just a textarea",
+      "url": "https://news.ycombinator.com/item?id=44932651",
+      "published_date": "2025-08-17T16:13:06Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.85,
+      "engagement": {
+        "score": 445,
+        "comments": 97
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44944620",
+      "title": "GenAI FOMO has spurred businesses to light nearly $40B on fire",
+      "url": "https://www.theregister.com/2025/08/18/generative_ai_zero_return_95_percent/",
+      "published_date": "2025-08-18T19:54:53+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.8,
+      "engagement": {
+        "score": 198,
+        "comments": 105
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44944291",
+      "title": "T-Mobile claimed selling location data without consent is legal\u2013judges disagree",
+      "url": "https://arstechnica.com/tech-policy/2025/08/t-mobile-claimed-selling-location-data-without-consent-is-legal-judges-disagree/",
+      "published_date": "2025-08-18T19:25:01+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.8,
+      "engagement": {
+        "score": 308,
+        "comments": 73
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44943986",
+      "title": "Show HN: We started building an AI dev tool but it turned into a Sims-style game",
+      "url": "https://www.youtube.com/watch?v=sRPnX_f2V_c",
+      "published_date": "2025-08-18T18:51:23+00:00",
+      "source": "HackerNews",
+      "category": "tutorial",
+      "summary": "Hi HN! We\u2019re Max and Peyton from The Interface (<a href=\"https:&#x2F;&#x2F;www.theinterface.com&#x2F;\" rel=\"nofollow\">https:&#x2F;&#x2F;www.theinterface.com&#x2F;</a>).<p>We started out building an AI agent dev tool, but somewhere along the way it turned into Sims for AI agents.<p>Demo video: <a href=\"https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=sRPnX_f2V_c\" rel=\"nofollow\">https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=sRPnX_f2V_c</a>.<p>The original idea was simple: make it easy to create AI ",
+      "tools_mentioned": [],
+      "relevance_score": 0.8,
+      "engagement": {
+        "score": 113,
+        "comments": 59
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44940944",
+      "title": "AI is predominantly replacing outsourced, offshore workers",
+      "url": "https://www.axios.com/2025/08/18/ai-jobs-layoffs",
+      "published_date": "2025-08-18T14:20:33+00:00",
+      "source": "HackerNews",
+      "category": "research",
+      "summary": "Paper:<p>https:&#x2F;&#x2F;nanda.media.mit.edu&#x2F;ai_report_2025.pdf<p>https:&#x2F;&#x2F;web.archive.org&#x2F;web&#x2F;20250818145714&#x2F;https:&#x2F;&#x2F;nanda.media.mit.edu&#x2F;ai_report_2025.pdf",
+      "tools_mentioned": [],
+      "relevance_score": 0.8,
+      "engagement": {
+        "score": 158,
+        "comments": 209
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44940554",
+      "title": "Class-action suit claims Otter AI records private work conversations",
+      "url": "https://www.npr.org/2025/08/15/g-s1-83087/otter-ai-transcription-class-action-lawsuit",
+      "published_date": "2025-08-18T13:47:38+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.8,
+      "engagement": {
+        "score": 141,
+        "comments": 44
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44939660",
+      "title": "When you're asking AI chatbots for answers, they're data-mining you",
+      "url": "https://www.theregister.com/2025/08/18/opinion_column_ai_surveillance/",
+      "published_date": "2025-08-18T11:58:17+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.8,
+      "engagement": {
+        "score": 156,
+        "comments": 75
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44925570",
+      "title": "One person was able to claim 20M IPs",
+      "url": "https://lists.nanog.org/archives/list/nanog@lists.nanog.org/thread/MMCCEQKA4UPGGWFWEBWLYKHTYCAOQIZS/#MMCCEQKA4UPGGWFWEBWLYKHTYCAOQIZS",
+      "published_date": "2025-08-16T17:57:55+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.8,
+      "engagement": {
+        "score": 199,
+        "comments": 59
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44891596",
+      "title": "LLMs tell bad jokes because they avoid surprises",
+      "url": "https://danfabulich.medium.com/llms-tell-bad-jokes-because-they-avoid-surprises-7f111aac4f96",
+      "published_date": "2025-08-13T17:53:12+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.8,
+      "engagement": {
+        "score": 138,
+        "comments": 142
+      },
+      "tags": []
+    },
+    {
+      "id": "devto-2782379",
+      "title": "From Code Struggles to AI-SymDev: Why I'm Redefining What It Means to Be a Developer in 2025",
+      "url": "https://dev.to/hiromis_rosamartinezmar/from-code-struggles-to-ai-symdev-why-im-redefining-what-it-means-to-be-a-developer-in-2025-54ae",
+      "published_date": "2025-08-19T05:44:15Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "A personal journey that challenges everything we think we know about software development           ...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "development",
+        "android",
+        "mobile"
+      ]
+    },
+    {
+      "id": "devto-2782231",
+      "title": "Prompt engineering is a mindset, a way of thinking that allows you to translate human needs into clear instructions AI can understand. Even if you don\u2019t code, you can think like a prompt engineer and unlock 10x better results with AI. Here\u2019s how.",
+      "url": "https://dev.to/jaideepparashar/prompt-engineering-is-a-mindset-a-way-of-thinking-that-allows-you-to-translate-human-needs-into-476i",
+      "published_date": "2025-08-19T04:05:35Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "How to Think Like a Prompt Engineer (Even Without Coding)      ...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "devops",
+        "python",
+        "machinelearning"
+      ]
+    },
+    {
+      "id": "devto-2782191",
+      "title": "Aggressive Proximity Patterns: Teaching AI Agents to Write Production-Ready Code",
+      "url": "https://dev.to/ian_hogers_279aa8f731f33f/aggressive-proximity-patterns-teaching-ai-agents-to-write-production-ready-code-2p4",
+      "published_date": "2025-08-19T03:24:19Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "Your AI Code Sucks. Here's How to Fix It   The brutal truth: Your AI writes code that works...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "agenticworkflows",
+        "codequality",
+        "programming"
+      ]
+    },
+    {
+      "id": "devto-2782172",
+      "title": "Why ChatGPT Prioritizes Engagement Over Truth",
+      "url": "https://dev.to/agustin_v_startari/why-chatgpt-prioritizes-engagement-over-truth-13p4",
+      "published_date": "2025-08-19T03:15:08Z",
+      "source": "Dev.to",
+      "category": "product-launch",
+      "summary": "The Commercial Logic of Law, Finance, and Governance *Introduction * The new optimizations introduced...",
+      "tools_mentioned": [
+        "ChatGPT"
+      ],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "react",
+        "discuss",
+        "opensource"
+      ]
+    },
+    {
+      "id": "devto-2781626",
+      "title": "The AI Skeptic's Guide to Context Windows",
+      "url": "https://dev.to/blockopensource/the-ai-skeptics-guide-to-context-windows-589m",
+      "published_date": "2025-08-18T17:50:26Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "Working with AI tools can feel like working with a flaky, chaotic, but overconfident coworker. You...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "coding",
+        "programming",
+        "goose"
+      ]
+    },
+    {
+      "id": "devto-2781594",
+      "title": "Why Astro Feels Like the Framework We\u2019ve Been Waiting For \ud83d\ude80",
+      "url": "https://dev.to/lovestaco/why-astro-feels-like-the-framework-weve-been-waiting-for-2a4e",
+      "published_date": "2025-08-18T17:28:39Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Hi there! I'm Maneshwar. Currently, I\u2019m building a private AI code review tool that runs on your LLM...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "webdev",
+        "programming",
+        "javascript",
+        "frontend"
+      ]
+    },
+    {
+      "id": "devto-2779345",
+      "title": "AI-First Development Workflow: From Issue Creation to Pull Request with GitHub Copilot",
+      "url": "https://dev.to/victorsaly/ai-first-development-workflow-from-issue-creation-to-pull-request-with-github-copilot-1cb8",
+      "published_date": "2025-08-17T20:41:49Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "95% AI autonomy + 79% time savings (29\u21926 days) with GitHub Copilot agents, safety validation, and continuous learning loops",
+      "tools_mentioned": [
+        "GitHub Copilot"
+      ],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "github",
+        "automation",
+        "devtools"
+      ]
+    },
+    {
+      "id": "devto-2777621",
+      "title": "Build a Local AI Agent with MCP Tools Using GPT-OSS, LangChain & Streamlit",
+      "url": "https://dev.to/nariman/build-a-local-ai-agent-with-mcp-tools-using-gpt-oss-langchain-streamlit-2mdb",
+      "published_date": "2025-08-16T19:17:19Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Want to run your own ChatGPT locally on your computer without subscriptions or API costs?   In this...",
+      "tools_mentioned": [
+        "ChatGPT"
+      ],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "langchain",
+        "chatgpt",
+        "ai",
+        "llm"
+      ]
+    },
+    {
+      "id": "devto-2775696",
+      "title": "The AI Debugger That Understands My Stack Better Than I Do",
+      "url": "https://dev.to/cromptai/the-ai-debugger-that-understands-my-stack-better-than-i-do-6ii",
+      "published_date": "2025-08-15T11:46:20Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Every developer hits that moment: You\u2019ve stared at the same bug for two hours, checked the logs...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "powerplatform",
+        "chatgpt",
+        "cromptai"
+      ]
+    },
+    {
+      "id": "devto-2775049",
+      "title": "[ChatGPT Blender] How to Work Around the BlenderGPT Error",
+      "url": "https://dev.to/uni928/chatgpt-x-blender-how-to-work-around-the-blendergpt-malfunction-4136",
+      "published_date": "2025-08-15T03:22:06Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "BlenderGPT may sometimes fail to work properly. One of the main causes is that the ChatGPT API Key...",
+      "tools_mentioned": [
+        "ChatGPT"
+      ],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "chatgpt",
+        "blender",
+        "blenderapi",
+        "webdev"
+      ]
+    },
+    {
+      "id": "devto-2773862",
+      "title": "How I Built a Codebase-Wide AI Memory That Scales With My Repo",
+      "url": "https://dev.to/cromptai/how-i-built-a-codebase-wide-ai-memory-that-scales-with-my-repo-2609",
+      "published_date": "2025-08-14T11:48:32Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "Every developer knows the pain of re-learning their own code. You revisit a module you wrote six...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "productivity",
+        "chatgpt",
+        "cromptai"
+      ]
+    },
+    {
+      "id": "devto-2773822",
+      "title": "Integrating ChatGPT AI Agents into Business Workflows: A Step-by-Step Approach",
+      "url": "https://dev.to/gyan_consulting/integrating-chatgpt-ai-agents-into-business-workflows-a-step-by-step-approach-1e4k",
+      "published_date": "2025-08-14T11:15:52Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Picture this: A tech startup with 15 employees processes 200 customer inquiries daily, manages...",
+      "tools_mentioned": [
+        "ChatGPT"
+      ],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "chatgpt",
+        "startup"
+      ]
+    },
+    {
+      "id": "devto-2773045",
+      "title": "How to Run gpt-oss Locally in NativeMind (Setup Guide)",
+      "url": "https://dev.to/nativemind/how-to-run-gpt-oss-locally-in-nativemind-setup-guide-2d08",
+      "published_date": "2025-08-14T02:18:28Z",
+      "source": "Dev.to",
+      "category": "product-launch",
+      "summary": "OpenAI recently released gpt-oss, a small open-weight language model, sparking excitement in the AI...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "gptoss",
+        "chatgpt",
+        "openai",
+        "nativemind"
+      ]
+    },
+    {
+      "id": "devto-2770798",
+      "title": "Hallucinations in Court: Early AI Adoption, Accountability, and How to Verify AI Outputs",
+      "url": "https://dev.to/jay_all_day/hallucinations-in-court-early-ai-adoption-accountability-and-how-to-verify-ai-outputs-5bkn",
+      "published_date": "2025-08-12T22:59:57Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "AI in the judiciary: early adoption, risks and guidelines",
+      "tools_mentioned": [],
+      "relevance_score": 0.7999999999999999,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "grok",
+        "lexis",
+        "claude",
+        "gemini"
+      ]
+    },
+    {
+      "id": "hn-44945008",
+      "title": "Tiny-tpu: A minimal tensor processing unit (TPU), inspired by Google's TPU",
+      "url": "https://github.com/tiny-tpu-v2/tiny-tpu",
+      "published_date": "2025-08-18T20:34:37+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.75,
+      "engagement": {
+        "score": 126,
+        "comments": 2
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44942731",
+      "title": "Show HN: Whispering \u2013 Open-source, local-first dictation you can trust",
+      "url": "https://github.com/epicenter-so/epicenter/tree/main/apps/whispering",
+      "published_date": "2025-08-18T16:52:29Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.75,
+      "engagement": {
+        "score": 329,
+        "comments": 105
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44937991",
+      "title": "Web apps in a single, portable, self-updating, vanilla HTML file",
+      "url": "https://hyperclay.com/",
+      "published_date": "2025-08-18T06:38:11+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.75,
+      "engagement": {
+        "score": 602,
+        "comments": 214
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44936945",
+      "title": "Google admits anti-competitive conduct involving Google Search in Australia",
+      "url": "https://www.accc.gov.au/media-release/google-admits-anti-competitive-conduct-involving-google-search-in-australia",
+      "published_date": "2025-08-18T02:54:55+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.75,
+      "engagement": {
+        "score": 291,
+        "comments": 196
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44932342",
+      "title": "Here be dragons: Preventing static damage, latchup, and metastability in the 386",
+      "url": "http://www.righto.com/2025/08/static-latchup-metastability-386.html",
+      "published_date": "2025-08-17T15:34:10+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.73,
+      "engagement": {
+        "score": 96,
+        "comments": 49
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44936575",
+      "title": "Non-Uniform Memory Access (NUMA) is reshaping microservice placement",
+      "url": "https://codemia.io/blog/path/NUMA-Is-the-New-Network-How-Per-Socket-Memory-Models-Are-Reshaping-Microservice-Placement",
+      "published_date": "2025-08-18T01:40:29Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.725,
+      "engagement": {
+        "score": 95,
+        "comments": 29
+      },
+      "tags": []
+    },
+    {
+      "id": "devto-2782282",
+      "title": "Mistakes Are Your First Teacher in Coding",
+      "url": "https://dev.to/sonmusui/mistakes-are-your-first-teacher-in-coding-48ac",
+      "published_date": "2025-08-19T05:09:25Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "If you\u2019re new to a programming language, don\u2019t chase perfect code. Make mistakes, even silly or...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "coding",
+        "programming",
+        "learning"
+      ]
+    },
+    {
+      "id": "devto-2782229",
+      "title": "How to Think Like a Prompt Engineer (Even Without Coding)",
+      "url": "https://dev.to/jaideepparashar/how-to-think-like-a-prompt-engineer-even-without-coding-769",
+      "published_date": "2025-08-19T04:01:54Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "Most people think prompt engineering is about memorising tricks or using fancy jargon. It\u2019s...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "devops",
+        "python",
+        "machinelearning"
+      ]
+    },
+    {
+      "id": "hn-44944592",
+      "title": "Show HN: I built a toy TPU that can do inference and training on the XOR problem",
+      "url": "https://www.tinytpu.com",
+      "published_date": "2025-08-18T19:52:14+00:00",
+      "source": "HackerNews",
+      "category": "tutorial",
+      "summary": "We wanted to do something very challenging to prove to ourselves that we can do anything we put our mind to. The reasoning for why we chose to build a toy TPU specifically is fairly simple:<p>- Building a chip for ML workloads seemed cool\n- There was no well-documented open source repo for an ML accelerator that performed both inference and training<p>None of us have real professional experience in hardware design, which, in a way, made the TPU even more appealing since we weren&#x27;t able to e",
+      "tools_mentioned": [],
+      "relevance_score": 0.7,
+      "engagement": {
+        "score": 80,
+        "comments": 15
+      },
+      "tags": []
+    },
+    {
+      "id": "devto-2781671",
+      "title": "A beginner's guide to the Qwen3-235b-A22b-Instruct-2507 model by Qwen on Replicate",
+      "url": "https://dev.to/aimodels-fyi/a-beginners-guide-to-the-qwen3-235b-a22b-instruct-2507-model-by-qwen-on-replicate-47jc",
+      "published_date": "2025-08-18T18:16:30Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "qwen3-235b-a22b-instruct-2507",
+      "tools_mentioned": [],
+      "relevance_score": 0.7,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "coding",
+        "ai",
+        "machinelearning",
+        "programming"
+      ]
+    },
+    {
+      "id": "devto-2781402",
+      "title": "Code changes and Improvements for neural web",
+      "url": "https://dev.to/okerew/code-changes-and-improvements-for-neural-web-f0p",
+      "published_date": "2025-08-18T14:52:44Z",
+      "source": "Dev.to",
+      "category": "product-launch",
+      "summary": "Fixed even more things in the neural web, including the posibility of ub introduced in the embeddings...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "machinelearning",
+        "cpp",
+        "c"
+      ]
+    },
+    {
+      "id": "devto-2779584",
+      "title": "Simplifying Git: A Practical Guide for Everyday Use.",
+      "url": "https://dev.to/zxcodes/simplifying-git-a-practical-guide-for-everyday-use-26np",
+      "published_date": "2025-08-18T01:48:43Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "This article was originally published on my personal blog on 2025/06/14  Hie! Welcome to another post...",
+      "tools_mentioned": [],
+      "relevance_score": 0.7,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "git",
+        "programming",
+        "tutorial",
+        "development"
+      ]
+    },
+    {
+      "id": "devto-2769200",
+      "title": "CLAUDE.md Configuration Files",
+      "url": "https://dev.to/dean_liu_cc5d1809d16009bb/claudemd-configuration-files-1dla",
+      "published_date": "2025-08-12T06:37:23Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "A post by dean liu",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.7,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "claude",
+        "configuration",
+        "tooling"
+      ]
+    },
+    {
+      "id": "devto-2761259",
+      "title": "SuperClaude \u6838\u5fc3\u547d\u4ee4\u5feb\u6377\u952e\u6307\u5357",
+      "url": "https://dev.to/dragon72463399/superclaude-he-xin-ming-ling-kuai-jie-jian-zhi-nan-4ckj",
+      "published_date": "2025-08-09T03:04:41Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "\ud83d\ude80 \u6838\u5fc3\u547d\u4ee4\u5feb\u6377\u952e            \u5f00\u53d1\u7c7b\u547d\u4ee4     /sc:build - \u667a\u80fd\u9879\u76ee\u6784\u5efa\uff0c\u81ea\u52a8\u68c0\u6d4b\u6846\u67b6\u5e76\u4f18\u5316\u6784\u5efa\u8fc7\u7a0b  /sc:implement -...",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.7,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "vibecoding",
+        "claude"
+      ]
+    },
+    {
+      "id": "hn-44941580",
+      "title": "Launch HN: Reality Defender (YC W22) \u2013 API for Deepfake and GenAI Detection",
+      "url": "https://www.realitydefender.com/platform/api",
+      "published_date": "2025-08-18T15:16:34+00:00",
+      "source": "HackerNews",
+      "category": "product-launch",
+      "summary": "Hi HN! This is Ben from Reality Defender (<a href=\"https:&#x2F;&#x2F;www.realitydefender.com\">https:&#x2F;&#x2F;www.realitydefender.com</a>). We build real-time multimodal and multi-model deepfake detection for Fortune 100s and governments all over the world. (We even won the RSAC Innovation Showcase award for our work: <a href=\"https:&#x2F;&#x2F;www.prnewswire.com&#x2F;news-releases&#x2F;reality-defender-wins-most-innovative-startup-at-rsa-conference-2024-innovation-sandbox-302137326.html\" rel=",
+      "tools_mentioned": [],
+      "relevance_score": 0.675,
+      "engagement": {
+        "score": 75,
+        "comments": 36
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44942761",
+      "title": "The lottery ticket hypothesis: why neural networks work",
+      "url": "https://nearlyright.com/how-ai-researchers-accidentally-discovered-that-everything-they-thought-about-learning-was-wrong/",
+      "published_date": "2025-08-18T16:54:25+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.655,
+      "engagement": {
+        "score": 81,
+        "comments": 40
+      },
+      "tags": []
+    },
+    {
+      "id": "devto-2782386",
+      "title": "AI\u2019s Billion-Dollar Showdown: Tech Titans Clash in a Race for Supremacy",
+      "url": "https://dev.to/nithya_iyer/ais-billion-dollar-showdown-tech-titans-clash-in-a-race-for-supremacy-54e6",
+      "published_date": "2025-08-19T05:49:37Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "The global race for artificial intelligence has escalated into a full-scale arms race. Top tech...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "technews",
+        "startup"
+      ]
+    },
+    {
+      "id": "devto-2771959",
+      "title": "Running AI Models with Docker Compose",
+      "url": "https://dev.to/pradumnasaraf/running-ai-models-with-docker-compose-27ng",
+      "published_date": "2025-08-19T04:39:59Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Docker Compose has completely changed the game in how we run and connect a multi-service application....",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "docker",
+        "ai",
+        "devops",
+        "programming"
+      ]
+    },
+    {
+      "id": "devto-2782146",
+      "title": "Diving Deep: K-Fold Cross-Validation",
+      "url": "https://dev.to/dev_patel_35864ca1db6093c/diving-deep-k-fold-cross-validation-3f23",
+      "published_date": "2025-08-19T02:29:45Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "Deep dive into undefined - Essential concepts for machine learning practitioners.",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "machinelearning",
+        "python",
+        "datascience",
+        "ai"
+      ]
+    },
+    {
+      "id": "devto-2782083",
+      "title": "Monolith vs Microservices: Kenapa Sebaiknya Mulai dari Monolith?",
+      "url": "https://dev.to/ferryops/monolith-vs-microservices-kenapa-sebaiknya-mulai-dari-monolith-5bi7",
+      "published_date": "2025-08-19T01:14:55Z",
+      "source": "Dev.to",
+      "category": "comparison",
+      "summary": "Dalam dunia pengembangan software, dua arsitektur yang paling sering dibandingkan adalah monolith dan...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "programming",
+        "webdev",
+        "architecture",
+        "indonesia"
+      ]
+    },
+    {
+      "id": "devto-2781892",
+      "title": "Introducing r/OpenAIML",
+      "url": "https://dev.to/ayanabha_chatterjee_b1378/introducing-ropenaiml-5g2n",
+      "published_date": "2025-08-18T20:46:37Z",
+      "source": "Dev.to",
+      "category": "comparison",
+      "summary": "Artificial intelligence is advancing at breakneck speed \u2013 new models and techniques emerge every...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "machinelearning",
+        "community",
+        "llm"
+      ]
+    },
+    {
+      "id": "devto-2781680",
+      "title": "3DR-LLM: Uma Metodologia Quantitativa para a Avalia\u00e7\u00e3o Hol\u00edstica de Grandes Modelos de Linguagem",
+      "url": "https://dev.to/lucash_ribeiro_dev/3dr-llm-uma-metodologia-quantitativa-para-a-avaliacao-holistica-de-grandes-modelos-de-linguagem-257l",
+      "published_date": "2025-08-18T18:27:37Z",
+      "source": "Dev.to",
+      "category": "business",
+      "summary": "Introduction: Beyond Leaderboards \u2014 The Need for Multidimensional LLM Evaluation...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "llm",
+        "ai",
+        "machinelearning",
+        "database"
+      ]
+    },
+    {
+      "id": "devto-2781534",
+      "title": "NVIDIA's Granary dataset is remarkable but it exposes a fundamental misunderstanding about production voice AI architecture.",
+      "url": "https://dev.to/vrinda_damani/nvidias-granary-dataset-is-remarkable-but-it-exposes-a-fundamental-misunderstanding-about-7dg",
+      "published_date": "2025-08-18T16:53:59Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "With ~1M hours of speech across 25 languages, Granary will advance multilingual ASR/AST models...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "machinelearning",
+        "nvidia",
+        "datascience"
+      ]
+    },
+    {
+      "id": "devto-2781458",
+      "title": "My First Week as a Data Science & Machine Learning Intern @ Techritoma Inc",
+      "url": "https://dev.to/eboke123/my-first-week-as-a-data-science-machine-learning-intern-techritoma-inc-5fma",
+      "published_date": "2025-08-18T15:57:09Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "This week has been nothing short of amazing! Here\u2019s a quick rundown of what I explored in my very...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "learning",
+        "machinelearning",
+        "development"
+      ]
+    },
+    {
+      "id": "devto-2779468",
+      "title": "[Boost]",
+      "url": "https://dev.to/mehulimukherjee/-5hel",
+      "published_date": "2025-08-17T22:58:15Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Stop Deploying AI Models Like It\u2019s 2010 \u2014 Meet GitOps for ML   ...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "git",
+        "github",
+        "aiops"
+      ]
+    },
+    {
+      "id": "devto-2778480",
+      "title": "You Will Need a Single Prompt to Get Desired AI Responses",
+      "url": "https://dev.to/codetestfactory/you-will-need-a-single-prompt-to-get-desired-ai-responses-4f84",
+      "published_date": "2025-08-17T07:24:54Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "I was at a \ud835\uddf0\ud835\uddee\ud835\uddf3\ud835\uddf2 \ud835\uddf6\ud835\uddfb \ud835\udddb\ud835\ude06\ud835\uddf1\ud835\uddf2\ud835\uddff\ud835\uddee\ud835\uddef\ud835\uddee\ud835\uddf1 debating remote-work productivity with friends - we asked the same...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "promptengineering",
+        "chatgpt",
+        "gemini"
+      ]
+    },
+    {
+      "id": "devto-2775576",
+      "title": "The Hype and the Hangover: Unpacking the Underwhelming Debut of GPT-5",
+      "url": "https://dev.to/grenishrai/the-hype-and-the-hangover-unpacking-the-underwhelming-debut-of-gpt-5-1cc6",
+      "published_date": "2025-08-15T11:21:44Z",
+      "source": "Dev.to",
+      "category": "product-launch",
+      "summary": "When it comes to the world of artificial intelligence that goes at a breakneck speed, few releases...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "openai",
+        "chatgpt",
+        "gpt5",
+        "ai"
+      ]
+    },
+    {
+      "id": "devto-2772016",
+      "title": "AI Chatbot Saras.chat",
+      "url": "https://dev.to/rajatpal96/ai-chatbot-saraschat-516i",
+      "published_date": "2025-08-13T12:36:24Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Hey everyone,  I wanted to share a new conversational AI chatbot called Saras. It\u2019s a powerful and...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "artificialintelligence",
+        "ai",
+        "chatgpt",
+        "discuss"
+      ]
+    },
+    {
+      "id": "devto-2768695",
+      "title": "Sahin AI Rules - The Ultimate AI Assistant Development Framework",
+      "url": "https://dev.to/sahinboydas/sahin-ai-rules-the-ultimate-ai-assistant-development-framework-1f52",
+      "published_date": "2025-08-11T23:09:19Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "\ud83c\udf10 Connect with...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "claude",
+        "rules",
+        "prompts"
+      ]
+    },
+    {
+      "id": "devto-2768280",
+      "title": "AI emails digest",
+      "url": "https://dev.to/vendkura/ai-emails-digest-29al",
+      "published_date": "2025-08-11T17:19:04Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "This morning, I woke up and took a look at my emails - full of unread newsletters. Tech in Asia,...",
+      "tools_mentioned": [],
+      "relevance_score": 0.6,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "email",
+        "claude"
+      ]
+    },
+    {
+      "id": "hn-44945667",
+      "title": "AI Is a Mass-Delusion Event",
+      "url": "https://www.theatlantic.com/technology/archive/2025/08/ai-mass-delusion-event/683909/",
+      "published_date": "2025-08-18T21:43:55+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.59,
+      "engagement": {
+        "score": 58,
+        "comments": 15
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44946011",
+      "title": "Nearly 90% of videogame developers use AI agents, Google study shows",
+      "url": "https://www.reuters.com/business/nearly-90-videogame-developers-use-ai-agents-google-study-shows-2025-08-18/",
+      "published_date": "2025-08-18T22:34:07Z",
+      "source": "HackerNews",
+      "category": "research",
+      "summary": "",
+      "tools_mentioned": [
+        "Gemini"
+      ],
+      "relevance_score": 0.5149999999999999,
+      "engagement": {
+        "score": 3,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44934420",
+      "title": "Show HN: Daily analysis of 9k GitHub repos using AI Coding Agents",
+      "url": "https://ai-coding.info/en",
+      "published_date": "2025-08-17T19:56:28Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "GitHub Copilot"
+      ],
+      "relevance_score": 0.5149999999999999,
+      "engagement": {
+        "score": 3,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "devto-2782253",
+      "title": "Day 70: When Your First Hater Becomes Your Best Motivator",
+      "url": "https://dev.to/casperday11/day-70-when-your-first-hater-becomes-your-best-motivator-38kj",
+      "published_date": "2025-08-19T04:37:10Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Today started like any typical dev morning - frontend bugs greeting me at 6 AM like unwelcome house...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "webdev",
+        "ai",
+        "productivity",
+        "programming"
+      ]
+    },
+    {
+      "id": "devto-2782114",
+      "title": "JavaScript Fundamentals \ud83c\udf5d",
+      "url": "https://dev.to/waeeelhajji/javascript-fundamentals-5cnc",
+      "published_date": "2025-08-19T01:59:39Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Chapter 1: Variable Declaration &amp; Scoped Memory Patterns    \u201cIf you don\u2019t understand...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "webdev",
+        "programming",
+        "javascript",
+        "learning"
+      ]
+    },
+    {
+      "id": "devto-2781899",
+      "title": "Probably Secure: A Look At The Security Concerns Of Deterministic Vs Probabilistic Systems",
+      "url": "https://dev.to/gitguardian/probably-secure-a-look-at-the-security-concerns-of-deterministic-vs-probabilistic-systems-9od",
+      "published_date": "2025-08-18T21:03:03Z",
+      "source": "Dev.to",
+      "category": "comparison",
+      "summary": "Would you rather have determined that you are in fact secure, or are you willing to accept that you...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "ai",
+        "llm",
+        "rag",
+        "security"
+      ]
+    },
+    {
+      "id": "devto-2781548",
+      "title": "How I stay immersed with Data science every day?\ud83d\udd0e",
+      "url": "https://dev.to/amira_bekhta_25/how-i-stay-immersed-with-data-science-every-day-1348",
+      "published_date": "2025-08-18T17:07:41Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "After posting a twitter thread in which I shared my best online resources to keep myself immersed...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "datascience",
+        "machinelearning",
+        "python",
+        "data"
+      ]
+    },
+    {
+      "id": "devto-2761853",
+      "title": "Git Full Speed Ahead Part 3: Git Remote Repositories: Push, Pull, and Collaborate Easily",
+      "url": "https://dev.to/pawic/git-full-speed-ahead-part-3-from-local-to-remote-connecting-your-workflow-to-the-world-1ec",
+      "published_date": "2025-08-18T12:12:24Z",
+      "source": "Dev.to",
+      "category": "comparison",
+      "summary": "Table of content   What is a Git Branch? Basic Git Branch Commands Creating a New Branch Switching...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "github",
+        "git",
+        "bash",
+        "programming"
+      ]
+    },
+    {
+      "id": "devto-2780969",
+      "title": "My Personal Git Workflow Rules for Portfolio Projects",
+      "url": "https://dev.to/a-k-0047/my-personal-git-workflow-rules-for-portfolio-projects-2hip",
+      "published_date": "2025-08-18T11:57:15Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Introduction   As I started publishing my personal web app projects as part of my portfolio,...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "git",
+        "github",
+        "portfolio",
+        "beginners"
+      ]
+    },
+    {
+      "id": "devto-2779791",
+      "title": "Perl \ud83d\udc2a Weekly #734 - CPAN Day",
+      "url": "https://dev.to/szabgab/perl-weekly-734-cpan-day-op6",
+      "published_date": "2025-08-18T04:56:39Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Originally published at Perl Weekly 734  Hi there,  Last week, 16th August, we all celebrated the...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "perl",
+        "news",
+        "programming"
+      ]
+    },
+    {
+      "id": "devto-2779333",
+      "title": "[Boost]",
+      "url": "https://dev.to/suundumused/-4h38",
+      "published_date": "2025-08-17T19:19:45Z",
+      "source": "Dev.to",
+      "category": "tutorial",
+      "summary": "\ud83d\ude80 How to change visibility in massive GitHub organizations like...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "git",
+        "epicgames",
+        "github",
+        "tutorial"
+      ]
+    },
+    {
+      "id": "devto-2777684",
+      "title": "Choosing the Right Git Branching Strategy for Your Team",
+      "url": "https://dev.to/cordlesswool/choosing-the-right-git-branching-strategy-for-your-team-3o8o",
+      "published_date": "2025-08-16T21:11:28Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Git Flow is a proven framework, but unlike Git itself, it's not a set standard. Just because it's...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "git",
+        "github",
+        "management",
+        "programming"
+      ]
+    },
+    {
+      "id": "devto-2776726",
+      "title": "Join Zillowe Foundation \u2014 Building Zoi, a Universal Package Manager (Open-source + GitLab Ultimate seat)",
+      "url": "https://dev.to/zillowe/join-zillowe-foundation-building-zoi-a-universal-package-manager-open-source-gitlab-ultimate-38aj",
+      "published_date": "2025-08-16T04:52:06Z",
+      "source": "Dev.to",
+      "category": "product-launch",
+      "summary": "Hello devs, I\u2019m launching Zillowe Foundation, an open-source software org focused on building...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "programming",
+        "opensource",
+        "github",
+        "rust"
+      ]
+    },
+    {
+      "id": "devto-2776676",
+      "title": "Managing Large Repositories with Git LFS and Sparse-Checkout",
+      "url": "https://dev.to/arasosman/managing-large-repositories-with-git-lfs-and-sparse-checkout-2ek7",
+      "published_date": "2025-08-16T02:56:29Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "Introduction   As software projects grow, so do their repositories. Large binary files,...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "git",
+        "github",
+        "webdev",
+        "development"
+      ]
+    },
+    {
+      "id": "devto-2775765",
+      "title": "\u201cMobile GitHub is too many taps\u201d \u2014 I built QuickIssue to file issues in 1 second \u26a1\ufe0f",
+      "url": "https://dev.to/bannzai/title-mobile-github-is-too-many-taps-i-built-quickissue-to-file-issues-in-1-second-38hi",
+      "published_date": "2025-08-15T13:20:55Z",
+      "source": "Dev.to",
+      "category": "ai-general",
+      "summary": "\ud83c\udf89 I built QuickIssue   Ever counted how many hoops you jump through just to open New issue...",
+      "tools_mentioned": [],
+      "relevance_score": 0.5,
+      "engagement": {
+        "score": 0,
+        "comments": 0
+      },
+      "tags": [
+        "showdev",
+        "github",
+        "claude",
+        "ai"
+      ]
+    },
+    {
+      "id": "hn-44943160",
+      "title": "TREAD: Token Routing for Efficient Architecture-Agnostic Diffusion Training",
+      "url": "https://arxiv.org/abs/2501.04765",
+      "published_date": "2025-08-18T17:29:16+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.47,
+      "engagement": {
+        "score": 34,
+        "comments": 6
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44946392",
+      "title": "Apple preps native Claude integration on Xcode",
+      "url": "https://9to5mac.com/2025/08/18/apple-preps-native-claude-integration-on-xcode/",
+      "published_date": "2025-08-18T23:20:33Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.46499999999999997,
+      "engagement": {
+        "score": 3,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44939534",
+      "title": "GitHub Copilot for Xcode \u2013 The Heist of the Century?",
+      "url": "https://medium.com/@bancarel.paul/copilot-for-xcode-the-heist-of-the-century-cd9829f1c1e6",
+      "published_date": "2025-08-18T11:40:01Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "GitHub Copilot"
+      ],
+      "relevance_score": 0.46499999999999997,
+      "engagement": {
+        "score": 3,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44895540",
+      "title": "GitHub Copilot: Remote Code Execution via Prompt Injection (CVE-2025-53773)",
+      "url": "https://embracethered.com/blog/posts/2025/github-copilot-remote-code-execution-via-prompt-injection/",
+      "published_date": "2025-08-14T00:36:33Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "GitHub Copilot"
+      ],
+      "relevance_score": 0.46499999999999997,
+      "engagement": {
+        "score": 3,
+        "comments": 1
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44913419",
+      "title": "Claude Code usage limits using agentic coding",
+      "url": "https://news.ycombinator.com/item?id=44913419",
+      "published_date": "2025-08-15T15:12:07Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.45999999999999996,
+      "engagement": {
+        "score": 2,
+        "comments": 1
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44947085",
+      "title": "Claude Code: Tips and Tricks",
+      "url": "https://post-training.aitinkerers.org/p/claude-code-tips-and-tricks",
+      "published_date": "2025-08-19T00:50:25Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.45499999999999996,
+      "engagement": {
+        "score": 1,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44934092",
+      "title": "Ask HN: What's the best free AI coding assistant available?",
+      "url": "https://news.ycombinator.com/item?id=44934092",
+      "published_date": "2025-08-17T19:15:02Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.43499999999999994,
+      "engagement": {
+        "score": 7,
+        "comments": 7
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44941755",
+      "title": "Show HN: Open-Source Framework for Real-Time AI Video Avatars",
+      "url": "https://github.com/videosdk-community/ai-avatar-demo",
+      "published_date": "2025-08-18T15:32:25Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.425,
+      "engagement": {
+        "score": 5,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44948022",
+      "title": "Show HN: Side Space \u2013 An Arc-like AI-powered Vertical tabs manager for Chrome",
+      "url": "https://chromewebstore.google.com/detail/side-space-ai-powered-ver/ipcmlnjbpgmnpahkkboglidcbkndekjj",
+      "published_date": "2025-08-19T03:35:27Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.415,
+      "engagement": {
+        "score": 3,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44939771",
+      "title": "Will AI code generation kill or elevate software craftsmanship?",
+      "url": "https://www.therubyaipodcast.com/2388930/episodes/17655188-roasting-ruby-ai-workflows-with-obie-fernandez",
+      "published_date": "2025-08-18T12:19:45Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.41,
+      "engagement": {
+        "score": 2,
+        "comments": 1
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44939735",
+      "title": "LLM Coding Assistant Census 2025",
+      "url": "https://aleyan.com/blog/2025-llm-assistant-census/",
+      "published_date": "2025-08-18T12:12:47Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.41,
+      "engagement": {
+        "score": 2,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44946921",
+      "title": "LLM Overcoding: How I Stopped Coding",
+      "url": "https://owebp.net/lwd1.html",
+      "published_date": "2025-08-19T00:26:33Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.40499999999999997,
+      "engagement": {
+        "score": 1,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44945706",
+      "title": "Show HN: AI agentic, no-code platform for automated forex trading",
+      "url": "https://oryntrade.com",
+      "published_date": "2025-08-18T21:50:31Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.40499999999999997,
+      "engagement": {
+        "score": 1,
+        "comments": 1
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44912035",
+      "title": "We tested three AI coding assistants on a repo",
+      "url": "https://news.ycombinator.com/item?id=44912035",
+      "published_date": "2025-08-15T13:15:33Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.40499999999999997,
+      "engagement": {
+        "score": 1,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44936104",
+      "title": "Ask HN: How are you teach your kids programming in 2025?",
+      "url": "https://news.ycombinator.com/item?id=44936104",
+      "published_date": "2025-08-18T00:17:23Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.38999999999999996,
+      "engagement": {
+        "score": 8,
+        "comments": 8
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44941043",
+      "title": "Show HN: Memori \u2013 Open-Source Memory Engine for AI Agents",
+      "url": "https://github.com/GibsonAI/memori",
+      "published_date": "2025-08-18T14:29:32Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.38,
+      "engagement": {
+        "score": 16,
+        "comments": 11
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44947629",
+      "title": "Charm Industrial accelerates carbon removal operations with Claude",
+      "url": "https://www.anthropic.com/customers/charm-industrial",
+      "published_date": "2025-08-19T02:25:25Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "Claude"
+      ],
+      "relevance_score": 0.375,
+      "engagement": {
+        "score": 5,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44915228",
+      "title": "Precision mapping tracks woody plant spread across Great Plains grasslands",
+      "url": "https://phys.org/news/2025-07-precision-tracks-woody-great-plains.html",
+      "published_date": "2025-08-15T17:39:24+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.375,
+      "engagement": {
+        "score": 15,
+        "comments": 2
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44891507",
+      "title": "Ask HN: How did Windsurf investors make out like bandits when employees got $0?",
+      "url": "https://news.ycombinator.com/item?id=44891507",
+      "published_date": "2025-08-13T17:46:33Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "Windsurf"
+      ],
+      "relevance_score": 0.375,
+      "engagement": {
+        "score": 5,
+        "comments": 1
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44941392",
+      "title": "Show HN: Catjam a VSCode extension that grooves with your typing speed",
+      "url": "https://github.com/AmirhosseinAghighi/catjam",
+      "published_date": "2025-08-18T15:01:15Z",
+      "source": "HackerNews",
+      "category": "comparison",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.36,
+      "engagement": {
+        "score": 2,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44935563",
+      "title": "VibeCoding \u2013 build apps with authentication, payments, and deployment baked in",
+      "url": "https://news.ycombinator.com/item?id=44935563",
+      "published_date": "2025-08-17T22:38:05Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.36,
+      "engagement": {
+        "score": 2,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44933068",
+      "title": "Show HN: A lightweight code visualizer tool for TypeScript and C# projects",
+      "url": "https://codemaps.silverveskilt.com/",
+      "published_date": "2025-08-17T17:03:07Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.36,
+      "engagement": {
+        "score": 2,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44915825",
+      "title": "Show HN: macOS app to give Cursor (and others) more context and tools",
+      "url": "https://bolide.ai/",
+      "published_date": "2025-08-15T18:25:03Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "Cursor"
+      ],
+      "relevance_score": 0.36,
+      "engagement": {
+        "score": 2,
+        "comments": 1
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44946420",
+      "title": "Ask HN: What is the most effective way to unblur a QR code?",
+      "url": "https://news.ycombinator.com/item?id=44946420",
+      "published_date": "2025-08-18T23:24:39Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.355,
+      "engagement": {
+        "score": 1,
+        "comments": 2
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44905148",
+      "title": "Windsurf Wave 12",
+      "url": "https://twitter.com/windsurf/status/1956074019393876280",
+      "published_date": "2025-08-14T20:16:20Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [
+        "Windsurf"
+      ],
+      "relevance_score": 0.355,
+      "engagement": {
+        "score": 1,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44947746",
+      "title": "AI browsers are coming for your clicks \u2013 and your privacy",
+      "url": "https://proton.me/blog/ai-browsers-perplexity-chrome-privacy",
+      "published_date": "2025-08-19T02:45:18Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.32,
+      "engagement": {
+        "score": 4,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44947611",
+      "title": "Ask HN: Has there been an increase in online censorship due to AI search's rise?",
+      "url": "https://news.ycombinator.com/item?id=44947611",
+      "published_date": "2025-08-19T02:22:23+00:00",
+      "source": "HackerNews",
+      "category": "product-launch",
+      "summary": "In the last 2-3 years, I have noticed an <i>aggressive</i> increase in censorship on western platforms like Reddit, StackExchange (History, Politics, Skeptics etc.), 9gag etc. True, that internet run communities have often tended to become &quot;echo chambers&quot; (perhaps because that is easier to manage). But I have been experiencing something new - it began with new rules discouraging (or even banning) non-western sources (like RT or Al-Jazeera) to now even deletion of posts that cite wester",
+      "tools_mentioned": [],
+      "relevance_score": 0.32,
+      "engagement": {
+        "score": 4,
+        "comments": 2
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44908542",
+      "title": "Ask HN: How is Cognition able to raise at $10B?",
+      "url": "https://news.ycombinator.com/item?id=44908542",
+      "published_date": "2025-08-15T04:13:59Z",
+      "source": "HackerNews",
+      "category": "business",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.32,
+      "engagement": {
+        "score": 4,
+        "comments": 10
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44946431",
+      "title": "GPT-5 just completed Pok\u00e9mon Red in a new world-record time",
+      "url": "https://www.techradar.com/ai-platforms-assistants/chatgpt/gpt-5-just-completed-pokemon-red-in-a-new-world-record-time-claude-gemini-and-chatgpt-o3-arent-even-close",
+      "published_date": "2025-08-18T23:25:51Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.315,
+      "engagement": {
+        "score": 3,
+        "comments": 1
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44942155",
+      "title": "Show HN: 9xchat \u2013 Desktop AI client with floating window and more",
+      "url": "https://9xchat.com",
+      "published_date": "2025-08-18T16:06:03Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.315,
+      "engagement": {
+        "score": 3,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44940358",
+      "title": "Ask HN: Are LLMs changing how you use and contribute to open source?",
+      "url": "https://news.ycombinator.com/item?id=44940358",
+      "published_date": "2025-08-18T13:26:56Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.315,
+      "engagement": {
+        "score": 3,
+        "comments": 2
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44938689",
+      "title": "Ask HN: Which way is the AI hocky curve going?",
+      "url": "https://news.ycombinator.com/item?id=44938689",
+      "published_date": "2025-08-18T09:04:37Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.315,
+      "engagement": {
+        "score": 3,
+        "comments": 2
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44947756",
+      "title": "Show HN: Memeclip.ai \u2013 AI-powered meme maker that turns text into memes",
+      "url": "https://memeclip.ai/",
+      "published_date": "2025-08-19T02:46:48Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.31,
+      "engagement": {
+        "score": 2,
+        "comments": 1
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44928344",
+      "title": "Ship a Paid SaaS (Auth and Stripe) to Vercel in 15 Minute",
+      "url": "https://news.ycombinator.com/item?id=44928344",
+      "published_date": "2025-08-17T02:07:18Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.31,
+      "engagement": {
+        "score": 2,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44823154",
+      "title": "Show HN: Blueprint, a desktop app to guard against rogue LLMs",
+      "url": "https://github.com/BlueprintDesignLab/blueprint",
+      "published_date": "2025-08-07T11:30:51Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.31,
+      "engagement": {
+        "score": 2,
+        "comments": 0
+      },
+      "tags": []
+    },
+    {
+      "id": "hn-44941454",
+      "title": "Show HN: One-Click Java JUnit Unit Test Generator with AI Agent",
+      "url": "https://plugins.jetbrains.com/plugin/27706-jaipilot--ai-unit-test-generator",
+      "published_date": "2025-08-18T15:06:14Z",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.305,
+      "engagement": {
+        "score": 1,
+        "comments": 1
+      },
+      "tags": []
+    }
+  ]
+}

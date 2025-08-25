@@ -7,8 +7,14 @@
       "content": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4.",
       "summary": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4....",
       "source": "GitHub Repository",
-      "tags": ["launch", "open-source", "cli"],
-      "tool_mentions": ["Aider"],
+      "tags": [
+        "launch",
+        "open-source",
+        "cli"
+      ],
+      "tool_mentions": [
+        "Aider"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2023-05-01T00:00:00.000Z"
@@ -22,8 +28,14 @@
       "content": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4.",
       "summary": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4....",
       "source": "GitHub Repository",
-      "tags": ["launch", "open-source", "cli"],
-      "tool_mentions": ["Aider"],
+      "tags": [
+        "launch",
+        "open-source",
+        "cli"
+      ],
+      "tool_mentions": [
+        "Aider"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2023-05-01T00:00:00.000Z"
@@ -37,8 +49,14 @@
       "content": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4.",
       "summary": "Aider launches as an open-source command-line AI pair programming tool, allowing developers to edit code in their local git repository using GPT-4....",
       "source": "GitHub Repository",
-      "tags": ["launch", "open-source", "cli"],
-      "tool_mentions": ["Aider"],
+      "tags": [
+        "launch",
+        "open-source",
+        "cli"
+      ],
+      "tool_mentions": [
+        "Aider"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2023-05-01T00:00:00.000Z"
@@ -47,6 +65,6 @@
   "metadata": {
     "month": "2023-04",
     "articleCount": 1,
-    "generatedAt": "2025-08-19T05:33:55.268Z"
+    "generatedAt": "2025-08-19T06:02:32.715Z"
   }
 }

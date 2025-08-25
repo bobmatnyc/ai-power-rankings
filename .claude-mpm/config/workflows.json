@@ -1,0 +1,287 @@
+{
+  "version": "1.0",
+  "last_updated": "2025-08-25",
+  "description": "Workflow definitions for AI Power Rankings multi-agent system",
+  "workflows": {
+    "feature_development": {
+      "description": "Standard feature development workflow",
+      "agents": ["pm", "research", "engineer", "qa", "version-control", "ops"],
+      "steps": [
+        {
+          "step": 1,
+          "agent": "pm",
+          "action": "Create task breakdown and requirements",
+          "outputs": ["task_list", "requirements"]
+        },
+        {
+          "step": 2,
+          "agent": "research",
+          "action": "Research best practices and solutions",
+          "outputs": ["recommendations", "documentation"]
+        },
+        {
+          "step": 3,
+          "agent": "engineer",
+          "action": "Implement feature with SOLID principles",
+          "outputs": ["code", "tests", "interfaces"]
+        },
+        {
+          "step": 4,
+          "agent": "qa",
+          "action": "Test implementation and validate quality",
+          "outputs": ["test_results", "coverage_report"]
+        },
+        {
+          "step": 5,
+          "agent": "version-control",
+          "action": "Create pull request with proper documentation",
+          "outputs": ["pr_url", "review_request"]
+        },
+        {
+          "step": 6,
+          "agent": "ops",
+          "action": "Deploy to staging and production",
+          "outputs": ["deployment_status", "monitoring_setup"]
+        }
+      ],
+      "quality_gates": {
+        "after_step_3": ["type-check", "lint", "test"],
+        "after_step_4": ["coverage >= 80%", "no critical bugs"],
+        "after_step_5": ["pr approved", "ci passing"],
+        "after_step_6": ["staging verified", "monitoring active"]
+      }
+    },
+    "bug_fix": {
+      "description": "Bug fixing workflow",
+      "agents": ["qa", "research", "engineer", "qa", "version-control"],
+      "steps": [
+        {
+          "step": 1,
+          "agent": "qa",
+          "action": "Reproduce and document bug",
+          "outputs": ["reproduction_steps", "test_case"]
+        },
+        {
+          "step": 2,
+          "agent": "research",
+          "action": "Investigate root cause",
+          "outputs": ["root_cause_analysis", "proposed_fix"]
+        },
+        {
+          "step": 3,
+          "agent": "engineer",
+          "action": "Implement fix with tests",
+          "outputs": ["fix", "regression_tests"]
+        },
+        {
+          "step": 4,
+          "agent": "qa",
+          "action": "Verify fix and check for regressions",
+          "outputs": ["verification_results", "regression_report"]
+        },
+        {
+          "step": 5,
+          "agent": "version-control",
+          "action": "Create hotfix PR",
+          "outputs": ["pr_url", "merge_status"]
+        }
+      ]
+    },
+    "news_ingestion": {
+      "description": "Monthly news article ingestion",
+      "agents": ["pm", "engineer", "qa", "ops"],
+      "steps": [
+        {
+          "step": 1,
+          "agent": "pm",
+          "action": "Prepare news collection from Google Drive",
+          "outputs": ["article_list", "metadata"]
+        },
+        {
+          "step": 2,
+          "agent": "engineer",
+          "action": "Run ingestion script and validate JSON",
+          "outputs": ["ingested_articles", "validation_report"]
+        },
+        {
+          "step": 3,
+          "agent": "qa",
+          "action": "Verify data integrity and formatting",
+          "outputs": ["integrity_check", "format_validation"]
+        },
+        {
+          "step": 4,
+          "agent": "ops",
+          "action": "Generate cache and deploy updates",
+          "outputs": ["cache_generated", "deployment_complete"]
+        }
+      ],
+      "validation": {
+        "json_valid": true,
+        "backup_created": true,
+        "cache_regenerated": true
+      }
+    },
+    "rankings_update": {
+      "description": "Rankings calculation and update",
+      "agents": ["engineer", "qa", "ops"],
+      "steps": [
+        {
+          "step": 1,
+          "agent": "engineer",
+          "action": "Calculate new rankings with Algorithm v7.1",
+          "outputs": ["rankings_data", "calculation_log"]
+        },
+        {
+          "step": 2,
+          "agent": "qa",
+          "action": "Validate scores and data consistency",
+          "outputs": ["validation_report", "anomaly_detection"]
+        },
+        {
+          "step": 3,
+          "agent": "ops",
+          "action": "Update cache and deploy",
+          "outputs": ["cache_updated", "deployment_status"]
+        }
+      ],
+      "validation": {
+        "scores_range": "0-100",
+        "no_duplicates": true,
+        "cache_generated": true
+      }
+    },
+    "deployment": {
+      "description": "Production deployment workflow",
+      "agents": ["qa", "ops", "version-control"],
+      "steps": [
+        {
+          "step": 1,
+          "agent": "qa",
+          "action": "Run pre-deployment validation",
+          "outputs": ["validation_passed", "test_results"]
+        },
+        {
+          "step": 2,
+          "agent": "ops",
+          "action": "Build and generate cache",
+          "outputs": ["build_complete", "cache_generated"]
+        },
+        {
+          "step": 3,
+          "agent": "ops",
+          "action": "Deploy to staging",
+          "outputs": ["staging_deployed", "staging_url"]
+        },
+        {
+          "step": 4,
+          "agent": "qa",
+          "action": "Verify staging environment",
+          "outputs": ["staging_verified", "smoke_tests_passed"]
+        },
+        {
+          "step": 5,
+          "agent": "version-control",
+          "action": "Merge to main branch",
+          "outputs": ["merged", "commit_hash"]
+        },
+        {
+          "step": 6,
+          "agent": "ops",
+          "action": "Deploy to production",
+          "outputs": ["production_deployed", "monitoring_active"]
+        }
+      ],
+      "rollback_trigger": {
+        "error_rate": "> 5%",
+        "response_time": "> 3s",
+        "build_failure": true
+      }
+    },
+    "code_cleanup": {
+      "description": "Code refactoring and cleanup",
+      "agents": ["research", "engineer", "qa"],
+      "steps": [
+        {
+          "step": 1,
+          "agent": "research",
+          "action": "Analyze codebase for improvements",
+          "outputs": ["analysis_report", "refactoring_plan"]
+        },
+        {
+          "step": 2,
+          "agent": "engineer",
+          "action": "Refactor with 20%+ reduction target",
+          "outputs": ["refactored_code", "reduction_metrics"]
+        },
+        {
+          "step": 3,
+          "agent": "qa",
+          "action": "Ensure no functionality broken",
+          "outputs": ["regression_tests", "compatibility_check"]
+        }
+      ],
+      "success_criteria": {
+        "code_reduction": ">= 20%",
+        "all_tests_pass": true,
+        "no_type_errors": true
+      }
+    }
+  },
+  "automation_rules": {
+    "auto_assign": {
+      "keywords_to_agent": {
+        "implement": "engineer",
+        "test": "qa",
+        "deploy": "ops",
+        "document": "research",
+        "merge": "version-control",
+        "plan": "pm"
+      }
+    },
+    "auto_validate": {
+      "on_commit": ["type-check", "lint"],
+      "on_pr": ["test", "build"],
+      "on_deploy": ["pre-deploy", "cache:generate"]
+    },
+    "auto_handoff": {
+      "after_implementation": "qa",
+      "after_testing": "version-control",
+      "after_pr": "ops",
+      "on_blocker": "pm"
+    }
+  },
+  "communication_protocols": {
+    "status_updates": {
+      "frequency": "on_step_complete",
+      "format": "Step {N} complete: {summary}",
+      "include": ["outputs", "next_agent", "blockers"]
+    },
+    "handoff_message": {
+      "template": "Handoff to {agent}: {context}",
+      "required": ["ticket_id", "current_state", "next_actions"]
+    },
+    "blocker_escalation": {
+      "template": "Blocked on {step}: {issue}",
+      "escalate_to": "pm",
+      "timeout": "30min"
+    }
+  },
+  "emergency_procedures": {
+    "production_down": {
+      "priority": "P0",
+      "agents": ["ops", "engineer"],
+      "immediate_actions": ["rollback", "investigate", "fix", "deploy"]
+    },
+    "data_corruption": {
+      "priority": "P0",
+      "agents": ["ops", "engineer", "qa"],
+      "immediate_actions": ["restore_backup", "validate_data", "fix_cause"]
+    },
+    "security_breach": {
+      "priority": "P0",
+      "agents": ["ops", "engineer", "pm"],
+      "immediate_actions": ["isolate", "patch", "audit", "report"]
+    }
+  }
+}

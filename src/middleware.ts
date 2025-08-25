@@ -85,8 +85,11 @@ export default auth((req) => {
 
     if (!pathnameHasLocale) {
       const locale = getLocale(req);
-      req.nextUrl.pathname = `/${locale}${pathname}`;
-      return NextResponse.redirect(req.nextUrl, { status: 301 });
+      // Use the host from the request headers to maintain the correct port
+      const host = req.headers.get("host") || "localhost:3001";
+      const protocol = req.headers.get("x-forwarded-proto") || "http";
+      const redirectUrl = new URL(`/${locale}${pathname}`, `${protocol}://${host}`);
+      return NextResponse.redirect(redirectUrl, { status: 301 });
     }
 
     return NextResponse.next();
@@ -114,8 +117,10 @@ export default auth((req) => {
     }
     // If authenticated, add locale and redirect
     const locale = getLocale(req);
-    req.nextUrl.pathname = `/${locale}/dashboard`;
-    return NextResponse.redirect(req.nextUrl, { status: 301 });
+    const host = req.headers.get("host") || "localhost:3001";
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
+    const redirectUrl = new URL(`/${locale}/dashboard`, `${protocol}://${host}`);
+    return NextResponse.redirect(redirectUrl, { status: 301 });
   }
 
   // Check if there is any supported locale in the pathname
@@ -126,8 +131,11 @@ export default auth((req) => {
   // For paths without locale, add the locale prefix first
   if (!pathnameHasLocale) {
     const locale = getLocale(req);
-    req.nextUrl.pathname = `/${locale}${pathname}`;
-    return NextResponse.redirect(req.nextUrl, { status: 301 });
+    // Use the host from the request headers to maintain the correct port
+    const host = req.headers.get("host") || "localhost:3001";
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
+    const redirectUrl = new URL(`/${locale}${pathname}`, `${protocol}://${host}`);
+    return NextResponse.redirect(redirectUrl, { status: 301 });
   }
 
   // Handle our custom dashboard authentication (after locale is ensured)

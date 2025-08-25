@@ -8,8 +8,12 @@
       "summary": "Endor Labs Inc. raised $93 million in Series B funding to secure AI-generated code from vulnerabilities. The funding round was led by DFJ Growth, with participation from new investor Salesforce Ventures and existing backers.",
       "source": "Siliconangle",
       "source_url": "https://siliconangle.com/2025/04/23/endor-labs-raises-93m-secure-ai-generated-code-vulnerabilities/",
-      "tags": ["funding"],
-      "tool_mentions": ["endor-labs-inc-"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "endor-labs-inc-"
+      ],
       "created_at": "2025-06-17T23:28:11.894Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-23T04:00:00.000Z"
@@ -22,8 +26,12 @@
       "summary": "OpenAI has completed its acquisition of Windsurf (formerly Codeium) for approximately $3 billion, marking one of the largest AI coding tool acquisitions and validating the agentic IDE market.",
       "source": "TechCrunch",
       "source_url": "https://techcrunch.com/2025/04/16/openai-is-reportedly-in-talks-to-buy-windsurf-for-3b-with-news-expected-later-this-week/",
-      "tags": ["general"],
-      "tool_mentions": ["windsurf"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "windsurf"
+      ],
       "created_at": "2025-06-18T00:04:17.611Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-16T04:00:00.000Z"
@@ -36,8 +44,12 @@
       "summary": "OpenAI has updated ChatGPT to include a new memory feature that allows it to reference all past conversations automatically. This feature includes semantically-relevant chat items from the past.",
       "source": "Community.Openai",
       "source_url": "https://community.openai.com/t/chatgpt-can-now-reference-all-past-conversations-april-10-2025/1229453?page=2",
-      "tags": ["general"],
-      "tool_mentions": ["chatgpt"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
       "created_at": "2025-06-17T23:28:12.106Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-10T04:00:00.000Z"
@@ -49,8 +61,14 @@
       "content": "GitHub Copilot now supports multiple AI models including Claude 3.7, o3-mini, and Gemini Flash 2.0, giving developers choice in their AI assistance.",
       "summary": "GitHub Copilot now supports multiple AI models including Claude 3.7, o3-mini, and Gemini Flash 2.0, giving developers choice in their AI assistance....",
       "source": "GitHub Announcement",
-      "tags": ["feature-update", "multi-model", "flexibility"],
-      "tool_mentions": ["GitHub Copilot"],
+      "tags": [
+        "feature-update",
+        "multi-model",
+        "flexibility"
+      ],
+      "tool_mentions": [
+        "GitHub Copilot"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-04-04T00:00:00.000Z"
@@ -63,8 +81,12 @@
       "summary": "Cognition introduced a new low-cost plan for Devin, its AI coding tool. The plan offers a $20 entry-level option with pay-as-you-go pricing, aimed at incentivizing more users to try the AI programming assistant.",
       "source": "Unknown",
       "source_url": "https://techcrunch.com/2025/04/03/devin-the-viral-coding-ai-agent-gets-a-new-pay-as-you-go-plan/",
-      "tags": ["product-update"],
-      "tool_mentions": ["devin"],
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "devin"
+      ],
       "created_at": "2025-06-17T23:28:12.504Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-03T04:00:00.000Z"
@@ -79,8 +101,12 @@
       "summary": "Endor Labs Inc. raised $93 million in Series B funding to secure AI-generated code from vulnerabilities. The funding round was led by DFJ Growth, with participation from new investor Salesforce Ventures and existing backers.",
       "source": "Siliconangle",
       "source_url": "https://siliconangle.com/2025/04/23/endor-labs-raises-93m-secure-ai-generated-code-vulnerabilities/",
-      "tags": ["funding"],
-      "tool_mentions": ["endor-labs-inc-"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "endor-labs-inc-"
+      ],
       "created_at": "2025-06-17T23:28:11.894Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-23T04:00:00.000Z"
@@ -93,8 +119,12 @@
       "summary": "OpenAI has completed its acquisition of Windsurf (formerly Codeium) for approximately $3 billion, marking one of the largest AI coding tool acquisitions and validating the agentic IDE market.",
       "source": "TechCrunch",
       "source_url": "https://techcrunch.com/2025/04/16/openai-is-reportedly-in-talks-to-buy-windsurf-for-3b-with-news-expected-later-this-week/",
-      "tags": ["general"],
-      "tool_mentions": ["windsurf"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "windsurf"
+      ],
       "created_at": "2025-06-18T00:04:17.611Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-16T04:00:00.000Z"
@@ -107,8 +137,12 @@
       "summary": "OpenAI has updated ChatGPT to include a new memory feature that allows it to reference all past conversations automatically. This feature includes semantically-relevant chat items from the past.",
       "source": "Community.Openai",
       "source_url": "https://community.openai.com/t/chatgpt-can-now-reference-all-past-conversations-april-10-2025/1229453?page=2",
-      "tags": ["general"],
-      "tool_mentions": ["chatgpt"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
       "created_at": "2025-06-17T23:28:12.106Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-10T04:00:00.000Z"
@@ -120,8 +154,14 @@
       "content": "GitHub Copilot now supports multiple AI models including Claude 3.7, o3-mini, and Gemini Flash 2.0, giving developers choice in their AI assistance.",
       "summary": "GitHub Copilot now supports multiple AI models including Claude 3.7, o3-mini, and Gemini Flash 2.0, giving developers choice in their AI assistance....",
       "source": "GitHub Announcement",
-      "tags": ["feature-update", "multi-model", "flexibility"],
-      "tool_mentions": ["GitHub Copilot"],
+      "tags": [
+        "feature-update",
+        "multi-model",
+        "flexibility"
+      ],
+      "tool_mentions": [
+        "GitHub Copilot"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-04-04T00:00:00.000Z"
@@ -134,8 +174,12 @@
       "summary": "Cognition introduced a new low-cost plan for Devin, its AI coding tool. The plan offers a $20 entry-level option with pay-as-you-go pricing, aimed at incentivizing more users to try the AI programming assistant.",
       "source": "Unknown",
       "source_url": "https://techcrunch.com/2025/04/03/devin-the-viral-coding-ai-agent-gets-a-new-pay-as-you-go-plan/",
-      "tags": ["product-update"],
-      "tool_mentions": ["devin"],
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "devin"
+      ],
       "created_at": "2025-06-17T23:28:12.504Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-03T04:00:00.000Z"
@@ -150,8 +194,12 @@
       "summary": "Endor Labs Inc. raised $93 million in Series B funding to secure AI-generated code from vulnerabilities. The funding round was led by DFJ Growth, with participation from new investor Salesforce Ventures and existing backers.",
       "source": "Siliconangle",
       "source_url": "https://siliconangle.com/2025/04/23/endor-labs-raises-93m-secure-ai-generated-code-vulnerabilities/",
-      "tags": ["funding"],
-      "tool_mentions": ["endor-labs-inc-"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "endor-labs-inc-"
+      ],
       "created_at": "2025-06-17T23:28:11.894Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-23T04:00:00.000Z"
@@ -164,8 +212,12 @@
       "summary": "OpenAI has completed its acquisition of Windsurf (formerly Codeium) for approximately $3 billion, marking one of the largest AI coding tool acquisitions and validating the agentic IDE market.",
       "source": "TechCrunch",
       "source_url": "https://techcrunch.com/2025/04/16/openai-is-reportedly-in-talks-to-buy-windsurf-for-3b-with-news-expected-later-this-week/",
-      "tags": ["general"],
-      "tool_mentions": ["windsurf"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "windsurf"
+      ],
       "created_at": "2025-06-18T00:04:17.611Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-16T04:00:00.000Z"
@@ -178,8 +230,12 @@
       "summary": "OpenAI has updated ChatGPT to include a new memory feature that allows it to reference all past conversations automatically. This feature includes semantically-relevant chat items from the past.",
       "source": "Community.Openai",
       "source_url": "https://community.openai.com/t/chatgpt-can-now-reference-all-past-conversations-april-10-2025/1229453?page=2",
-      "tags": ["general"],
-      "tool_mentions": ["chatgpt"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
       "created_at": "2025-06-17T23:28:12.106Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-10T04:00:00.000Z"
@@ -191,8 +247,14 @@
       "content": "GitHub Copilot now supports multiple AI models including Claude 3.7, o3-mini, and Gemini Flash 2.0, giving developers choice in their AI assistance.",
       "summary": "GitHub Copilot now supports multiple AI models including Claude 3.7, o3-mini, and Gemini Flash 2.0, giving developers choice in their AI assistance....",
       "source": "GitHub Announcement",
-      "tags": ["feature-update", "multi-model", "flexibility"],
-      "tool_mentions": ["GitHub Copilot"],
+      "tags": [
+        "feature-update",
+        "multi-model",
+        "flexibility"
+      ],
+      "tool_mentions": [
+        "GitHub Copilot"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-04-04T00:00:00.000Z"
@@ -205,8 +267,12 @@
       "summary": "Cognition introduced a new low-cost plan for Devin, its AI coding tool. The plan offers a $20 entry-level option with pay-as-you-go pricing, aimed at incentivizing more users to try the AI programming assistant.",
       "source": "Unknown",
       "source_url": "https://techcrunch.com/2025/04/03/devin-the-viral-coding-ai-agent-gets-a-new-pay-as-you-go-plan/",
-      "tags": ["product-update"],
-      "tool_mentions": ["devin"],
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "devin"
+      ],
       "created_at": "2025-06-17T23:28:12.504Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-04-03T04:00:00.000Z"
@@ -215,6 +281,6 @@
   "metadata": {
     "month": "2025-04",
     "articleCount": 5,
-    "generatedAt": "2025-08-19T05:33:55.273Z"
+    "generatedAt": "2025-08-19T06:02:32.721Z"
   }
 }

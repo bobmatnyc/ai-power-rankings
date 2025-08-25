@@ -1,0 +1,287 @@
+{
+  "version": "1.0",
+  "last_updated": "2025-08-25",
+  "description": "Agent-specific templates and behaviors for AI Power Rankings",
+  "templates": {
+    "engineer": {
+      "greeting": "I'll handle the implementation for this task.",
+      "task_patterns": {
+        "feature": {
+          "steps": [
+            "Review requirements and existing code",
+            "Plan architecture and interfaces",
+            "Implement with SOLID principles",
+            "Apply dependency injection",
+            "Refactor for code reduction",
+            "Update tests"
+          ],
+          "validations": ["type-check", "lint", "test"]
+        },
+        "refactor": {
+          "steps": [
+            "Analyze current implementation",
+            "Identify code duplication",
+            "Extract shared utilities",
+            "Apply DI patterns",
+            "Reduce file sizes to <800 lines",
+            "Update documentation"
+          ],
+          "target_reduction": "20%+"
+        },
+        "bugfix": {
+          "steps": [
+            "Reproduce the issue",
+            "Identify root cause",
+            "Implement fix with tests",
+            "Verify no regressions",
+            "Document the fix"
+          ]
+        }
+      },
+      "common_commands": [
+        "pnpm run dev:pm2 restart",
+        "pnpm run type-check",
+        "pnpm run lint",
+        "pnpm run test"
+      ],
+      "handoff_template": {
+        "required": ["ticket_id", "files_changed", "tests_added", "next_steps"],
+        "format": "## Handoff: [TICKET_ID]\n\n**Changes:**\n- [list changes]\n\n**Files Modified:**\n- [list files]\n\n**Tests:**\n- [list tests]\n\n**Next Steps:**\n- [list next actions]"
+      }
+    },
+    "qa": {
+      "greeting": "I'll ensure quality through comprehensive testing.",
+      "task_patterns": {
+        "test_creation": {
+          "steps": [
+            "Analyze component/function behavior",
+            "Write unit tests",
+            "Add integration tests",
+            "Test edge cases",
+            "Verify coverage",
+            "Run full test suite"
+          ]
+        },
+        "validation": {
+          "steps": [
+            "Run type-check",
+            "Run lint",
+            "Run test suite",
+            "Validate JSON data",
+            "Check rankings integrity",
+            "Verify build"
+          ]
+        },
+        "bug_verification": {
+          "steps": [
+            "Reproduce reported issue",
+            "Document reproduction steps",
+            "Test fix implementation",
+            "Verify no regressions",
+            "Update test cases"
+          ]
+        }
+      },
+      "validation_checklist": [
+        "TypeScript types valid",
+        "No lint errors",
+        "All tests passing",
+        "JSON files valid",
+        "Rankings scores 0-100",
+        "Dates in ISO 8601",
+        "Build successful"
+      ]
+    },
+    "research": {
+      "greeting": "I'll research and document the findings.",
+      "task_patterns": {
+        "documentation": {
+          "steps": [
+            "Review current documentation",
+            "Identify gaps or outdated info",
+            "Research best practices",
+            "Update documentation",
+            "Cross-reference with code",
+            "Ensure consistency"
+          ]
+        },
+        "investigation": {
+          "steps": [
+            "Define research scope",
+            "Gather information",
+            "Analyze findings",
+            "Document conclusions",
+            "Provide recommendations"
+          ]
+        },
+        "dependency_analysis": {
+          "steps": [
+            "Review package.json",
+            "Check for updates",
+            "Assess security vulnerabilities",
+            "Test compatibility",
+            "Document findings"
+          ]
+        }
+      },
+      "documentation_standards": {
+        "structure": "Clear headings, examples, references",
+        "tone": "Technical but accessible",
+        "requirements": ["WHY explanations", "Architecture decisions", "Usage examples"]
+      }
+    },
+    "ops": {
+      "greeting": "I'll handle the deployment and infrastructure tasks.",
+      "task_patterns": {
+        "deployment": {
+          "steps": [
+            "Run pre-deploy checks",
+            "Build application",
+            "Generate cache files",
+            "Deploy to staging",
+            "Verify staging",
+            "Deploy to production",
+            "Monitor deployment"
+          ],
+          "commands": [
+            "pnpm run pre-deploy",
+            "pnpm run build",
+            "pnpm run cache:generate",
+            "git push production main"
+          ]
+        },
+        "monitoring": {
+          "steps": [
+            "Check PM2 status",
+            "Review error logs",
+            "Monitor performance",
+            "Check build status",
+            "Verify cache freshness"
+          ]
+        },
+        "backup": {
+          "steps": [
+            "Identify critical data",
+            "Run backup script",
+            "Verify backup integrity",
+            "Store securely",
+            "Document backup location"
+          ]
+        }
+      },
+      "critical_checks": [
+        "No TypeScript errors",
+        "All tests passing",
+        "Cache files generated",
+        "Build successful",
+        "Staging verified"
+      ]
+    },
+    "version-control": {
+      "greeting": "I'll manage the git operations and version control.",
+      "task_patterns": {
+        "pull_request": {
+          "steps": [
+            "Create feature branch",
+            "Commit with ticket reference",
+            "Push to remote",
+            "Create PR with description",
+            "Link to ticket",
+            "Request review"
+          ],
+          "pr_template": "## Summary\n[Brief description]\n\n## Ticket\nResolves TSK-[NUMBER]\n\n## Changes\n- [List changes]\n\n## Testing\n- [How to test]\n\n## Checklist\n- [ ] Tests pass\n- [ ] Type-check clean\n- [ ] Lint clean"
+        },
+        "release": {
+          "steps": [
+            "Review changes since last release",
+            "Update version number",
+            "Generate changelog",
+            "Create release branch",
+            "Tag release",
+            "Create GitHub release"
+          ]
+        },
+        "branch_management": {
+          "patterns": {
+            "feature": "feature/TSK-{number}-{description}",
+            "bugfix": "bugfix/TSK-{number}-{description}",
+            "hotfix": "hotfix/TSK-{number}-{description}",
+            "release": "release/v{version}"
+          }
+        }
+      },
+      "commit_standards": {
+        "format": "[TYPE]: [description] (TSK-XXX)",
+        "types": ["feat", "fix", "docs", "style", "refactor", "test", "chore"],
+        "requirements": ["Link to ticket", "Clear description", "Atomic changes"]
+      }
+    },
+    "pm": {
+      "greeting": "I'll coordinate the project tasks and ensure smooth execution.",
+      "task_patterns": {
+        "planning": {
+          "steps": [
+            "Review project goals",
+            "Assess current status",
+            "Identify priorities",
+            "Create task breakdown",
+            "Assign to agents",
+            "Set timelines"
+          ]
+        },
+        "coordination": {
+          "steps": [
+            "Monitor task progress",
+            "Facilitate handoffs",
+            "Resolve blockers",
+            "Ensure quality gates",
+            "Update stakeholders"
+          ]
+        },
+        "reporting": {
+          "steps": [
+            "Gather status updates",
+            "Compile metrics",
+            "Generate reports",
+            "Identify risks",
+            "Propose mitigations"
+          ]
+        }
+      },
+      "project_metrics": [
+        "Task completion rate",
+        "Code coverage",
+        "Build success rate",
+        "Deployment frequency",
+        "Bug resolution time"
+      ]
+    }
+  },
+  "handoff_protocol": {
+    "trigger_phrases": [
+      "handoff to",
+      "passing to",
+      "ready for",
+      "needs attention from"
+    ],
+    "required_context": {
+      "ticket_id": "TSK-XXX reference",
+      "current_state": "What's been done",
+      "next_actions": "What needs doing",
+      "blockers": "Any issues or dependencies",
+      "files_changed": "Modified files list"
+    },
+    "validation": {
+      "ensure_clean_state": true,
+      "run_tests": true,
+      "update_ticket": true
+    }
+  },
+  "escalation_paths": {
+    "technical_blocker": ["research", "engineer", "pm"],
+    "quality_issue": ["qa", "engineer", "pm"],
+    "deployment_problem": ["ops", "engineer", "pm"],
+    "documentation_gap": ["research", "pm"],
+    "merge_conflict": ["version-control", "engineer"]
+  }
+}

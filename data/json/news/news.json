@@ -1,6 +1,225 @@
 {
   "articles": [
     {
+      "id": "aider-deepseek-r1-integration-2025-08-25",
+      "slug": "aider-adds-deepseek-r1-support-local-models",
+      "title": "Aider Adds DeepSeek R1 Support, Strengthens Position in Local AI Coding",
+      "content": "<p>Aider, the terminal-based AI pair programming tool, has announced support for DeepSeek R1 and Chat V3 models, expanding its capabilities for developers who prefer local model deployment. The integration positions Aider as a leading choice for developers seeking full control over their AI coding assistants.</p>\n<p>DeepSeek R1, a distilled model based on Qwen-14B tailored specifically for code, delivers impressive performance on coding tasks while being efficient enough to run on modest hardware. This aligns with Aider's philosophy of giving developers complete control over their development environment and AI model choices.</p>\n<p>Aider now supports Claude 3.7 Sonnet, DeepSeek models, OpenAI o1/o3-mini, and GPT-4o, while maintaining compatibility with virtually any LLM including local models. The tool's ability to directly edit multiple files across a codebase and automatic git integration continues to set it apart from closed-source alternatives.</p>\n<p>As noted by Thoughtworks in their Technology Radar, Aider's approach of running locally with developers' own API keys means they pay only for actual AI model usage without markup. This cost-effectiveness, combined with full control over context and data privacy, makes it particularly attractive for security-conscious organizations.</p>\n<p>The update reinforces a growing trend toward smaller, specialized models that organizations can run independently, reducing dependence on cloud-based AI services while maintaining high performance for specific tasks like code generation and refactoring.</p>",
+      "summary": "Aider adds support for DeepSeek R1 and Chat V3 models, strengthening its position as the terminal-based AI coding tool of choice for developers seeking local model control.",
+      "source": "Aider Blog",
+      "source_url": "https://aider.chat/blog/deepseek-r1-support",
+      "tags": [
+        "product-update",
+        "aider",
+        "local-models",
+        "deepseek",
+        "ai-coding"
+      ],
+      "tool_mentions": [
+        "aider"
+      ],
+      "created_at": "2025-08-25T10:00:00.000+00:00",
+      "updated_at": "2025-08-25T10:00:00.000+00:00",
+      "date": "2025-08-25T00:00:00.000+00:00",
+      "category": "Technical Analysis",
+      "author": "Aider Team",
+      "importance_score": 6,
+      "image_url": "https://aider.chat/images/deepseek-integration.jpg",
+      "related_tools": [
+        "aider",
+        "continue"
+      ]
+    },
+    {
+      "id": "continue-open-source-milestone-2025-08-24",
+      "slug": "continue-reaches-20k-github-stars-launches-hub",
+      "title": "Continue Reaches 20K GitHub Stars, Launches Community Hub for Custom AI Agents",
+      "content": "<p>Continue, the open-source AI coding assistant platform, has reached a significant milestone of 20,000 GitHub stars, reflecting growing developer interest in customizable, open-source alternatives to proprietary AI coding tools. The achievement coincides with the launch of Continue 1.0 and a new community hub for sharing custom AI coding agents.</p>\n<p>The new community hub enables developers to create, share, and discover custom AI coding assistants tailored to specific languages, frameworks, or development workflows. This positions Continue as the antithesis of proprietary 'black box' AI assistant providers, fostering an open ecosystem for collaborative development.</p>\n<p>'Instead of everybody building their own closed-source AI code assistant, we're creating an open architecture where all of us can work together to create the building blocks people need,' said Continue's team. The platform now supports centralized configurations and secure credential management for enterprise teams.</p>\n<p>Continue's approach allows developers to connect with any AI model and development environment, providing full control over their AI coding experience. The platform includes both open-source IDE extensions and a CLI tool, enabling teams to build shared custom AI coding agents with customizable tools.</p>\n<p>The milestone reflects a broader trend toward open-source AI development tools, with developers increasingly seeking alternatives that offer transparency, customization, and freedom from vendor lock-in. Continue's growth demonstrates strong demand for developer-controlled AI assistance.</p>",
+      "summary": "Continue reaches 20K GitHub stars and launches community hub for custom AI agents, positioning itself as the open-source alternative to proprietary AI coding assistants.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2025/08/24/continue-milestone-community-hub",
+      "tags": [
+        "open-source",
+        "community",
+        "continue",
+        "milestone",
+        "ai-coding"
+      ],
+      "tool_mentions": [
+        "continue"
+      ],
+      "created_at": "2025-08-24T11:00:00.000+00:00",
+      "updated_at": "2025-08-24T11:00:00.000+00:00",
+      "date": "2025-08-24T00:00:00.000+00:00",
+      "category": "Community Projects",
+      "author": "Sarah Johnson",
+      "importance_score": 7,
+      "image_url": "https://techcrunch.com/images/continue-hub.jpg",
+      "related_tools": [
+        "continue",
+        "aider"
+      ]
+    },
+    {
+      "id": "enterprise-ai-coding-market-report-2025-08-23",
+      "slug": "ai-coding-assistants-market-97-billion-2030",
+      "title": "AI Coding Assistants Market to Reach $97.9 Billion by 2030, Enterprise Adoption Accelerates",
+      "content": "<p>A comprehensive market research report reveals that the generative AI coding assistants market is projected to reach $97.9 billion by 2030, growing at a CAGR of 24.8%. The report highlights accelerating enterprise adoption driven by proven productivity gains and the emergence of low- and no-code platforms.</p>\n<p>GitHub Copilot maintains market leadership with over 5 million users and approximately 40% market share, followed by growing competition from Claude Code, Cursor, and Windsurf. Enterprise customers are increasingly adopting multi-model strategies to avoid vendor lock-in and optimize for specific use cases.</p>\n<p>Key findings show that 76% of developers are now using or planning to use AI coding assistants, up from 70% the previous year according to Stack Overflow's latest survey. Early enterprise adopters including Siemens and Morningstar report 30-40% productivity improvements in routine coding tasks.</p>\n<p>Security remains a primary concern, with 90% of developers expressing security worries about AI-generated code. In response, vendors are implementing enhanced security features, with tools like Windsurf achieving FedRAMP High certification and Tabnine offering comprehensive IP protection through code provenance tracking.</p>\n<p>The report identifies four critical dimensions differentiating tools: context understanding (with Claude-based tools leading at 200K+ token windows), deployment flexibility (from cloud-only to air-gapped), pricing models (shifting to usage-based credits), and agent capabilities (evolving from completion to autonomous coding).</p>",
+      "summary": "Market research projects AI coding assistants reaching $97.9B by 2030 with 24.8% CAGR, as 76% of developers adopt AI tools despite security concerns.",
+      "source": "ResearchAndMarkets",
+      "source_url": "https://www.researchandmarkets.com/ai-coding-assistants-2025",
+      "tags": [
+        "market-research",
+        "enterprise",
+        "industry-news",
+        "statistics",
+        "trends"
+      ],
+      "tool_mentions": [
+        "github-copilot",
+        "claude-code",
+        "cursor",
+        "windsurf",
+        "tabnine"
+      ],
+      "created_at": "2025-08-23T08:00:00.000+00:00",
+      "updated_at": "2025-08-23T08:00:00.000+00:00",
+      "date": "2025-08-23T00:00:00.000+00:00",
+      "category": "Industry News",
+      "author": "Research Team",
+      "importance_score": 9,
+      "image_url": "https://www.researchandmarkets.com/images/ai-coding-market.jpg",
+      "related_tools": [
+        "github-copilot",
+        "claude-code",
+        "cursor",
+        "windsurf",
+        "tabnine"
+      ]
+    },
+    {
+      "id": "windsurf-gpt5-pricing-changes-2025-08-22",
+      "slug": "windsurf-announces-gpt5-promotion-ending",
+      "title": "Windsurf Announces End of GPT-5 Promotion, Introduces Tiered Model Access",
+      "content": "<p>Windsurf (formerly Codeium) has announced that their GPT-5 promotion will end on August 26, 2025, transitioning to a new tiered pricing model that reflects the varying costs of different AI models. The change comes as the company continues its rebranding from Codeium to Windsurf following significant growth in their AI-powered IDE adoption.</p>\n<p>The new pricing structure introduces differentiated access to GPT-5's suite of models, including GPT-5 low reasoning, GPT-5 medium reasoning, and GPT-5 high reasoning tiers. Free tier users will have limited access to premium models, while paid subscribers will receive higher quotas based on their subscription level.</p>\n<p>Windsurf has also announced the beta rollout of GPT-4.5 support in their Cascade agent feature, though access will be incremental due to costs, rate limits, and quality considerations from early testing. The company is focusing on balancing model availability with sustainable pricing.</p>\n<p>Despite the pricing changes, Windsurf continues to offer robust free tier access to standard models, maintaining their commitment to accessibility. The platform has recently implemented over 100 bug fixes and reliability improvements, along with new features like DeepWiki-powered documentation and AI-powered find-and-replace functionality.</p>\n<p>The announcement follows speculation about OpenAI's potential acquisition interest, though Windsurf remains focused on their independent growth strategy and their vision of combining human ingenuity with machine capabilities.</p>",
+      "summary": "Windsurf announces end of GPT-5 promotion on August 26, introducing tiered model access while maintaining free tier availability and rolling out GPT-4.5 beta support.",
+      "source": "Windsurf Blog",
+      "source_url": "https://windsurf.com/blog/pricing-update-august-2025",
+      "tags": [
+        "pricing",
+        "windsurf",
+        "gpt-5",
+        "business-update",
+        "ai-coding"
+      ],
+      "tool_mentions": [
+        "windsurf",
+        "codeium"
+      ],
+      "created_at": "2025-08-22T14:00:00.000+00:00",
+      "updated_at": "2025-08-22T14:00:00.000+00:00",
+      "date": "2025-08-22T00:00:00.000+00:00",
+      "category": "Business Updates",
+      "author": "Windsurf Team",
+      "importance_score": 7,
+      "image_url": "https://windsurf.com/images/pricing-update.jpg",
+      "related_tools": [
+        "windsurf",
+        "codeium"
+      ]
+    },
+    {
+      "id": "cursor-security-patches-2025-08-21",
+      "slug": "cursor-releases-critical-security-patches-mcp-vulnerabilities",
+      "title": "Cursor Releases Critical Security Patches for MCP Vulnerabilities",
+      "content": "<p>Cursor has released version 1.4.1, addressing critical security vulnerabilities related to Model Context Protocol (MCP) configurations that could have allowed remote code execution through malicious file swaps. The update follows responsible disclosure of two vulnerabilities tracked as CVE-2025-54135 and CVE-2025-54136.</p>\n<p>The MCPoison vulnerability (CVE-2025-54136, CVSS score: 7.2) exploited how Cursor handled modifications to MCP server configurations. The patch now requires explicit user approval every time an entry in the MCP configuration file is modified, preventing silent malicious changes.</p>\n<p>A second vulnerability (CVE-2025-54135, CVSS score: 8.6) related to auto-run mode circumvention has also been patched. Cursor has deprecated the previous denylist-based protections in favor of a more secure allowlist approach, providing stronger security guarantees.</p>\n<p>Alongside security fixes, version 1.4.1 includes performance improvements for large codebases. The read file function now handles full files without the previous 2MB cap, the list function can explore full directory trees in one call, and grep matching has been improved with reduced noise.</p>\n<p>Anysphere, the company behind Cursor, emphasized their commitment to security as the platform continues its rapid growth, now serving over 1 million developers following their recent $900 million funding round at a $9 billion valuation.</p>",
+      "summary": "Cursor releases version 1.4.1 addressing critical MCP vulnerabilities (CVE-2025-54135/54136) with enhanced security controls and performance improvements for large codebases.",
+      "source": "The Hacker News",
+      "source_url": "https://thehackernews.com/2025/08/cursor-security-patches.html",
+      "tags": [
+        "security",
+        "cursor",
+        "vulnerability",
+        "patch",
+        "mcp"
+      ],
+      "tool_mentions": [
+        "cursor"
+      ],
+      "created_at": "2025-08-21T09:00:00.000+00:00",
+      "updated_at": "2025-08-21T09:00:00.000+00:00",
+      "date": "2025-08-21T00:00:00.000+00:00",
+      "category": "Security Reports",
+      "author": "Security Research Team",
+      "importance_score": 8,
+      "image_url": "https://thehackernews.com/images/cursor-security.jpg",
+      "related_tools": [
+        "cursor"
+      ]
+    },
+    {
+      "id": "github-copilot-gpt5-integration-2025-08-20",
+      "slug": "github-copilot-integrates-gpt-5-public-preview",
+      "title": "GitHub Copilot Integrates GPT-5 in Public Preview with 40% Reasoning Improvement",
+      "content": "<p>GitHub has announced the integration of OpenAI's GPT-5 model into GitHub Copilot, now available in public preview for all paid plans. The integration brings substantial improvements in reasoning capabilities, code quality, and user experience, marking a major advancement in AI-assisted development.</p>\n<p>GPT-5 delivers a 40% improvement in reasoning capabilities compared to GPT-4, with particular excellence in handling end-to-end complex coding tasks and large implementations with minimal prompting. The model introduces a revolutionary 'thinking' mode that provides clear, upfront explanations of its actions before generating code.</p>\n<p>The enhanced agentic capabilities make GPT-5 a true coding collaborator, capable of understanding project context, anticipating developer needs, and providing more accurate suggestions. Early adopters report significant productivity gains, especially in complex refactoring and architectural design tasks.</p>\n<p>GPT-5 is accessible through GitHub Copilot Chat on github.com, Visual Studio Code (in Agent, Ask, and Edit modes), and GitHub Mobile via the chat model picker. Users can seamlessly switch between GPT-5 and other available models including Claude Opus 4.1, providing flexibility in choosing the right AI assistant for specific tasks.</p>\n<p>GitHub has also implemented enhanced security scanning capabilities, with the remote GitHub MCP server now automatically scanning all tool call inputs in public repositories, blocking calls when exposed secrets are detected.</p>",
+      "summary": "GitHub Copilot integrates GPT-5 in public preview with 40% reasoning improvement, enhanced agentic capabilities, and automatic security scanning for exposed secrets.",
+      "source": "GitHub Blog",
+      "source_url": "https://github.blog/changelog/2025-08-20-gpt-5-public-preview",
+      "tags": [
+        "product-update",
+        "github-copilot",
+        "gpt-5",
+        "ai-coding",
+        "security"
+      ],
+      "tool_mentions": [
+        "github-copilot",
+        "chatgpt"
+      ],
+      "created_at": "2025-08-20T10:00:00.000+00:00",
+      "updated_at": "2025-08-20T10:00:00.000+00:00",
+      "date": "2025-08-20T00:00:00.000+00:00",
+      "category": "Product Launches",
+      "author": "GitHub Team",
+      "importance_score": 10,
+      "image_url": "https://github.blog/images/copilot-gpt5.jpg",
+      "related_tools": [
+        "github-copilot",
+        "chatgpt",
+        "openai"
+      ]
+    },
+    {
+      "id": "claude-opus-4-1-general-availability-2025-08-19",
+      "slug": "claude-opus-4-1-reaches-general-availability",
+      "title": "Claude Opus 4.1 Reaches General Availability with 74.5% SWE-bench Accuracy",
+      "content": "<p>Anthropic has announced the general availability of Claude Opus 4.1, marking a significant milestone in AI coding assistance. The model, which has been in limited release, now achieves an industry-leading 74.5% accuracy on the SWE-bench software engineering benchmark, surpassing both its predecessor and competing models.</p>\n<p>Claude Opus 4.1 represents the world's best coding model with sustained performance on complex, long-running tasks and agent workflows. The model excels particularly in Terminal-bench testing at 43.2%, demonstrating superior capabilities in real-world coding scenarios.</p>\n<p>Key improvements include enhanced context understanding with support for up to 1 million tokens, allowing developers to work with entire codebases in a single session. The model also features improved precision in code generation, reducing the need for manual corrections and debugging.</p>\n<p>Anthropic has integrated Claude Opus 4.1 across all platforms including Claude Pro, Max, Team, and Enterprise subscriptions, as well as through the Anthropic API, Amazon Bedrock, and Google Cloud's Vertex AI. Pricing remains consistent at $15/$75 per million tokens for input/output respectively.</p>\n<p>The release comes alongside Claude Code's general availability, which now includes background tasks via GitHub Actions and native integrations with VS Code and JetBrains IDEs, enabling seamless pair programming experiences.</p>",
+      "summary": "Claude Opus 4.1 reaches general availability with 74.5% SWE-bench accuracy and 1M token context window, establishing itself as the leading AI coding model across all major platforms.",
+      "source": "Anthropic Blog",
+      "source_url": "https://www.anthropic.com/news/claude-opus-4-1-ga",
+      "tags": [
+        "product-launch",
+        "ai-coding",
+        "claude",
+        "performance",
+        "benchmarks"
+      ],
+      "tool_mentions": [
+        "claude-code"
+      ],
+      "created_at": "2025-08-19T08:00:00.000+00:00",
+      "updated_at": "2025-08-19T08:00:00.000+00:00",
+      "date": "2025-08-19T00:00:00.000+00:00",
+      "category": "Product Launches",
+      "author": "Anthropic Team",
+      "importance_score": 9,
+      "image_url": "https://www.anthropic.com/images/claude-opus-4-1.jpg",
+      "related_tools": [
+        "claude-code",
+        "claude"
+      ]
+    },
+    {
       "id": "claude-desktop-companion-2025-08-18",
       "slug": "claudia-desktop-companion-for-claude-code",
       "title": "Claudia – Desktop Companion for Claude Code Enhances Developer Workflow",
@@ -3385,22 +3604,6 @@
       "date": "2025-06-05T09:43:00.000Z"
     },
     {
-      "id": "b32aef1a-7454-4fed-a3bf-f67488ec2099",
-      "slug": "cursor-raises-900m-at-99b-valuation-soars-past-500m-arr",
-      "title": "Cursor Raises $900M at $9.9B Valuation, Soars Past $500M ARR",
-      "content": "Anysphere, maker of the AI-powered code editor Cursor, has raised $900 million in Series C funding at a $9.9 billion valuation, making it one of the fastest-growing startups in history.",
-      "summary": "Anysphere, maker of the AI-powered code editor Cursor, has raised $900 million in Series C funding at a $9.9 billion valuation, making it one of the fastest-growing startups in history.",
-      "source": "TechCrunch",
-      "source_url": "https://techcrunch.com/2025/06/05/cursors-anysphere-nabs-9-9b-valuation-soars-past-500m-arr/",
-      "tags": [],
-      "tool_mentions": [
-        "1"
-      ],
-      "created_at": "2025-06-09T04:58:08.085264",
-      "updated_at": "2025-06-28T02:35:55.785Z",
-      "date": "2025-06-05T00:00:00"
-    },
-    {
       "id": "59d37146-4b32-4da0-b6f5-0efbd761d778",
       "slug": "anysphere-hailed-as-fastest-growing-startup-ever-raises-900-million",
       "title": "Anysphere Hailed as Fastest-Growing Startup Ever, Raises $900 Million",
@@ -3436,6 +3639,22 @@
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-06-05T00:00:00.000Z"
+    },
+    {
+      "id": "b32aef1a-7454-4fed-a3bf-f67488ec2099",
+      "slug": "cursor-raises-900m-at-99b-valuation-soars-past-500m-arr",
+      "title": "Cursor Raises $900M at $9.9B Valuation, Soars Past $500M ARR",
+      "content": "Anysphere, maker of the AI-powered code editor Cursor, has raised $900 million in Series C funding at a $9.9 billion valuation, making it one of the fastest-growing startups in history.",
+      "summary": "Anysphere, maker of the AI-powered code editor Cursor, has raised $900 million in Series C funding at a $9.9 billion valuation, making it one of the fastest-growing startups in history.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2025/06/05/cursors-anysphere-nabs-9-9b-valuation-soars-past-500m-arr/",
+      "tags": [],
+      "tool_mentions": [
+        "1"
+      ],
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-28T02:35:55.785Z",
+      "date": "2025-06-05T00:00:00"
     },
     {
       "id": "52564cec-6f62-46a2-9b64-cd75a6becdaa",
@@ -3604,22 +3823,6 @@
       "date": "2025-05-29T18:02:44.000Z"
     },
     {
-      "id": "e78496fa-547b-498a-9c0f-152df3ccd106",
-      "slug": "anthropic-launches-claude-4-with-record-727-swe-bench-score",
-      "title": "Anthropic Launches Claude 4 with Record 72.7% SWE-bench Score",
-      "content": "Anthropic has released Claude 4 Opus and Sonnet models, achieving a record-breaking 72.7% score on SWE-bench Verified, far exceeding previous benchmarks.",
-      "summary": "Anthropic has released Claude 4 Opus and Sonnet models, achieving a record-breaking 72.7% score on SWE-bench Verified, far exceeding previous benchmarks.",
-      "source": "Anthropic",
-      "source_url": "https://www.anthropic.com/news/claude-4",
-      "tags": [],
-      "tool_mentions": [
-        "4"
-      ],
-      "created_at": "2025-06-09T04:58:08.085264",
-      "updated_at": "2025-06-28T02:35:55.787Z",
-      "date": "2025-05-22T00:00:00"
-    },
-    {
       "id": "934164bf-b232-48cf-922b-26dd5e048fd5",
       "slug": "claude-4-opus-achieves-new-swe-bench-record-with-73-20-score",
       "title": "Claude 4 Opus Achieves New SWE-bench Record with 73.20% Score",
@@ -3636,6 +3839,22 @@
       "created_at": "2025-06-17T23:25:16.037Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-05-22T04:00:00.000Z"
+    },
+    {
+      "id": "e78496fa-547b-498a-9c0f-152df3ccd106",
+      "slug": "anthropic-launches-claude-4-with-record-727-swe-bench-score",
+      "title": "Anthropic Launches Claude 4 with Record 72.7% SWE-bench Score",
+      "content": "Anthropic has released Claude 4 Opus and Sonnet models, achieving a record-breaking 72.7% score on SWE-bench Verified, far exceeding previous benchmarks.",
+      "summary": "Anthropic has released Claude 4 Opus and Sonnet models, achieving a record-breaking 72.7% score on SWE-bench Verified, far exceeding previous benchmarks.",
+      "source": "Anthropic",
+      "source_url": "https://www.anthropic.com/news/claude-4",
+      "tags": [],
+      "tool_mentions": [
+        "4"
+      ],
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-28T02:35:55.787Z",
+      "date": "2025-05-22T00:00:00"
     },
     {
       "id": "d5e45fc8-44df-4910-90b6-85fc9e7ad18e",
@@ -4454,22 +4673,6 @@
       "date": "2024-12-05T05:00:00.000Z"
     },
     {
-      "id": "11a1de25-fcce-4d69-85a8-3c61678d7e16",
-      "slug": "devin-20-launches-with-20month-pricing-down-from-500",
-      "title": "Devin 2.0 Launches with $20/Month Pricing, Down from $500",
-      "content": "Cognition Labs has launched Devin 2.0 with general availability and slashed pricing from $500 to $20 per month to increase accessibility.",
-      "summary": "Cognition Labs has launched Devin 2.0 with general availability and slashed pricing from $500 to $20 per month to increase accessibility.",
-      "source": "VentureBeat",
-      "source_url": "https://venturebeat.com/programming-development/devin-2-0-is-here-cognition-slashes-price-of-ai-software-engineer-to-20-per-month-from-500/",
-      "tags": [],
-      "tool_mentions": [
-        "3"
-      ],
-      "created_at": "2025-06-09T04:58:08.085264",
-      "updated_at": "2025-06-28T02:35:55.791Z",
-      "date": "2024-12-01T00:00:00"
-    },
-    {
       "id": "197bf3f57a0-c51dd5b9-91d3dc4c",
       "slug": "chatgpt-canvas-full-release",
       "title": "ChatGPT Canvas Full Release",
@@ -4506,6 +4709,22 @@
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2024-12-01T00:00:00.000Z"
+    },
+    {
+      "id": "11a1de25-fcce-4d69-85a8-3c61678d7e16",
+      "slug": "devin-20-launches-with-20month-pricing-down-from-500",
+      "title": "Devin 2.0 Launches with $20/Month Pricing, Down from $500",
+      "content": "Cognition Labs has launched Devin 2.0 with general availability and slashed pricing from $500 to $20 per month to increase accessibility.",
+      "summary": "Cognition Labs has launched Devin 2.0 with general availability and slashed pricing from $500 to $20 per month to increase accessibility.",
+      "source": "VentureBeat",
+      "source_url": "https://venturebeat.com/programming-development/devin-2-0-is-here-cognition-slashes-price-of-ai-software-engineer-to-20-per-month-from-500/",
+      "tags": [],
+      "tool_mentions": [
+        "3"
+      ],
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-28T02:35:55.791Z",
+      "date": "2024-12-01T00:00:00"
     },
     {
       "id": "33f61999-3d14-4779-9bf8-468ad3d61540",
@@ -4757,22 +4976,6 @@
       "date": "2024-10-30T04:00:00.000Z"
     },
     {
-      "id": "199db55f-22ce-43fa-a889-010f32853456",
-      "slug": "github-copilot-introduces-multi-model-support-and-coding-agents",
-      "title": "GitHub Copilot Introduces Multi-Model Support and Coding Agents",
-      "content": "GitHub has launched multi-model Copilot supporting Claude 3.5 Sonnet and Gemini alongside GPT-4, plus new autonomous coding agents for complex tasks.",
-      "summary": "GitHub has launched multi-model Copilot supporting Claude 3.5 Sonnet and Gemini alongside GPT-4, plus new autonomous coding agents for complex tasks.",
-      "source": "GitHub",
-      "source_url": "https://github.blog/news-insights/product-news/github-copilot-meet-the-new-coding-agent/",
-      "tags": [],
-      "tool_mentions": [
-        "2"
-      ],
-      "created_at": "2025-06-09T04:58:08.085264",
-      "updated_at": "2025-06-28T02:35:55.790Z",
-      "date": "2024-10-29T00:00:00"
-    },
-    {
       "id": "39b31a05-9245-41ab-8ac6-ec4582f80dce",
       "slug": "bringing-developer-choice-to-copilot-with-anthropic-s-claude-3-5-sonnet-google-s-gemini-1-5-pro-and-",
       "title": "Bringing developer choice to Copilot with Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's o1-preview and o1-mini",
@@ -4849,6 +5052,22 @@
       "created_at": "2025-06-17T23:25:01.526Z",
       "updated_at": "2025-06-30T05:07:05.213Z",
       "date": "2024-10-29T04:00:00.000Z"
+    },
+    {
+      "id": "199db55f-22ce-43fa-a889-010f32853456",
+      "slug": "github-copilot-introduces-multi-model-support-and-coding-agents",
+      "title": "GitHub Copilot Introduces Multi-Model Support and Coding Agents",
+      "content": "GitHub has launched multi-model Copilot supporting Claude 3.5 Sonnet and Gemini alongside GPT-4, plus new autonomous coding agents for complex tasks.",
+      "summary": "GitHub has launched multi-model Copilot supporting Claude 3.5 Sonnet and Gemini alongside GPT-4, plus new autonomous coding agents for complex tasks.",
+      "source": "GitHub",
+      "source_url": "https://github.blog/news-insights/product-news/github-copilot-meet-the-new-coding-agent/",
+      "tags": [],
+      "tool_mentions": [
+        "2"
+      ],
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-28T02:35:55.790Z",
+      "date": "2024-10-29T00:00:00"
     },
     {
       "id": "d86eacf0-7991-47be-98b4-2a8844b2ee33",

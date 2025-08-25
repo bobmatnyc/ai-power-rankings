@@ -1,912 +1,857 @@
 {
-  "period": "2025-08",
-  "date": "2025-08-19",
-  "algorithm_version": "v7.1-news-update",
-  "algorithm_name": "Smart Defaults & Proxy Metrics with Enhanced News Impact",
   "rankings": [
     {
-      "tool_id": "4",
-      "tool_name": "Claude Code",
       "rank": 1,
-      "score": 94.0,
-      "movement": {
-        "previous_position": 1,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 2,
+      "rankChange": 1,
+      "changeReason": "",
+      "tool": {
+        "id": "2",
+        "slug": "github-copilot",
+        "name": "GitHub Copilot",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://github.com/features/copilot",
+        "description": "AI pair programmer with autocomplete, chat, and autonomous coding agent capabilities. Can execute multi-step tasks, run terminal commands, and self-heal errors"
       },
-      "factor_scores": {
-        "agenticCapability": 100,
-        "innovation": 95,
-        "technicalPerformance": 100,
-        "developerAdoption": 70,
-        "marketTraction": 75,
-        "businessSentiment": 100,
-        "developmentVelocity": 85,
-        "platformResilience": 75,
-        "technicalCapability": 100,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 100,
+        "agentic_capability": 5,
+        "innovation": 9.5
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0.8,
-        "adjustedSentiment": 0.85,
-        "newsImpact": 95.5
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 41,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 56
+      }
     },
     {
-      "tool_id": "2",
-      "tool_name": "GitHub Copilot",
       "rank": 2,
-      "score": 91.5,
-      "movement": {
-        "previous_position": 2,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 1,
+      "rankChange": -1,
+      "changeReason": "",
+      "tool": {
+        "id": "4",
+        "slug": "claude-code",
+        "name": "Claude Code",
+        "category": "autonomous-agent",
+        "status": "active",
+        "website_url": "https://anthropic.com/claude-code",
+        "description": "Terminal-based coding agent with deep codebase understanding and multi-file editing"
       },
-      "factor_scores": {
-        "agenticCapability": 95,
-        "innovation": 95,
-        "technicalPerformance": 65,
-        "developerAdoption": 100,
-        "marketTraction": 100,
-        "businessSentiment": 100,
-        "developmentVelocity": 80,
-        "platformResilience": 85,
-        "technicalCapability": 65,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 100,
+        "agentic_capability": 5,
+        "innovation": 9.5
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 120.0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 30,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 80.2
+      }
     },
     {
-      "tool_id": "1",
-      "tool_name": "Cursor",
       "rank": 3,
-      "score": 89.5,
-      "movement": {
-        "previous_position": 3,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 3,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "1",
+        "slug": "cursor",
+        "name": "Cursor",
+        "category": "code-editor",
+        "status": "active",
+        "website_url": "https://cursor.com",
+        "description": "AI-powered code editor with $500M ARR and 360K+ paying developers"
       },
-      "factor_scores": {
-        "agenticCapability": 80,
-        "innovation": 85,
-        "technicalPerformance": 95,
-        "developerAdoption": 100,
-        "marketTraction": 100,
-        "businessSentiment": 100,
-        "developmentVelocity": 80,
-        "platformResilience": 95,
-        "technicalCapability": 95,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 92.11250000000001,
+        "agentic_capability": 5,
+        "innovation": 8.5
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 102.5
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 28,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "18",
-      "tool_name": "ChatGPT Canvas",
       "rank": 4,
-      "score": 85.0,
-      "movement": {
-        "previous_position": 4,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 4,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "18",
+        "slug": "chatgpt-canvas",
+        "name": "ChatGPT Canvas",
+        "category": "autonomous-agent",
+        "status": "active",
+        "website_url": "https://openai.com/chatgpt",
+        "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions"
       },
-      "factor_scores": {
-        "agenticCapability": 80,
-        "innovation": 90,
-        "technicalPerformance": 90,
-        "developerAdoption": 50,
-        "marketTraction": 80,
-        "businessSentiment": 100,
-        "developmentVelocity": 70,
-        "platformResilience": 85,
-        "technicalCapability": 90,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 82.8835,
+        "agentic_capability": 5,
+        "innovation": 9
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0.7,
-        "adjustedSentiment": 0.8,
-        "newsImpact": 180.0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 8,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "31",
-      "tool_name": "Kiro",
       "rank": 5,
-      "score": 81.5,
-      "movement": {
-        "previous_position": 5,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 5,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "31",
+        "slug": "kiro",
+        "name": "Kiro",
+        "category": "proprietary-ide",
+        "status": "active",
+        "website_url": "https://kiro.dev",
+        "description": "Kiro is a next-generation AI IDE that transforms software development by implementing a specification-first methodology. Unlike 'vibe coding' tools that generate code from casual prompts, Kiro requires developers to think through requirements, generating comprehensive specification documents (requirements.md, design.md, tasks.md) before writing a single line of code. This approach bridges the gap between AI-assisted development and enterprise-grade software engineering, ensuring production-ready outputs from the start."
       },
-      "factor_scores": {
-        "agenticCapability": 75,
-        "innovation": 90,
-        "technicalPerformance": 100,
-        "developerAdoption": 70,
-        "marketTraction": 50,
-        "businessSentiment": 100,
-        "developmentVelocity": 80,
-        "platformResilience": 80,
-        "technicalCapability": 100,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 79.47065,
+        "agentic_capability": 5,
+        "innovation": 9
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 45.0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 7,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "11",
-      "tool_name": "Google Jules",
       "rank": 6,
-      "score": 78.0,
-      "movement": {
-        "previous_position": 5,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 6,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "11",
+        "slug": "jules",
+        "name": "Google Jules",
+        "category": "autonomous-agent",
+        "status": "active",
+        "website_url": "https://jules.google.com",
+        "description": "Asynchronous AI coding agent that works in background cloud VMs for GitHub workflows"
       },
-      "factor_scores": {
-        "agenticCapability": 100,
-        "innovation": 50,
-        "technicalPerformance": 100,
-        "developerAdoption": 50,
-        "marketTraction": 40,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 80,
-        "technicalCapability": 100,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 76.0578,
+        "agentic_capability": 5,
+        "innovation": 5
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 11.06
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 4,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 52.2
+      }
     },
     {
-      "tool_id": "26",
-      "tool_name": "Amazon Q Developer",
       "rank": 7,
-      "score": 75.5,
-      "movement": {
-        "previous_position": 6,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 7,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "26",
+        "slug": "amazon-q-developer",
+        "name": "Amazon Q Developer",
+        "category": "devops-assistant",
+        "status": "active",
+        "website_url": "https://aws.amazon.com/q/developer/",
+        "description": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration with the entire AWS ecosystem. Features agent architecture for autonomous cloud development tasks, from code generation to infrastructure deployment. Particularly valuable for teams building on AWS, offering specialized knowledge of AWS services and best practices."
       },
-      "factor_scores": {
-        "agenticCapability": 98.57142857142857,
-        "innovation": 50,
-        "technicalPerformance": 86,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 80,
-        "technicalCapability": 86,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 73.62004999999999,
+        "agentic_capability": 5,
+        "innovation": 5
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 6.79
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 3,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 55
+      }
     },
     {
-      "tool_id": "14",
-      "tool_name": "Windsurf",
       "rank": 8,
-      "score": 73.0,
-      "movement": {
-        "previous_position": 8,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 10,
+      "rankChange": 2,
+      "changeReason": "",
+      "tool": {
+        "id": "7",
+        "slug": "aider",
+        "name": "Aider",
+        "category": "open-source-framework",
+        "status": "active",
+        "website_url": "https://aider.chat",
+        "description": "AI pair programming in your terminal with git integration"
       },
-      "factor_scores": {
-        "agenticCapability": 75,
-        "innovation": 30,
-        "technicalPerformance": 90,
-        "developerAdoption": 80,
-        "marketTraction": 60,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 90,
-        "technicalCapability": 90,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 71.5,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 55.0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 3,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 26.3
+      }
     },
     {
-      "tool_id": "12",
-      "tool_name": "Lovable",
       "rank": 9,
-      "score": 72.5,
-      "movement": {
-        "previous_position": 8,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 9,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "12",
+        "slug": "lovable",
+        "name": "Lovable",
+        "category": "app-builder",
+        "status": "active",
+        "website_url": "https://lovable.dev",
+        "description": "AI full-stack engineer that builds entire web applications from natural language descriptions"
       },
-      "factor_scores": {
-        "agenticCapability": 60,
-        "innovation": 30,
-        "technicalPerformance": 100,
-        "developerAdoption": 70,
-        "marketTraction": 80,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 80,
-        "technicalCapability": 100,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 70.69475,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 13.6
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 4,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "7",
-      "tool_name": "Aider",
       "rank": 10,
-      "score": 72.0,
-      "movement": {
-        "previous_position": 9,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 8,
+      "rankChange": -2,
+      "changeReason": "",
+      "tool": {
+        "id": "14",
+        "slug": "windsurf",
+        "name": "Windsurf",
+        "category": "code-editor",
+        "status": "active",
+        "website_url": "https://windsurf.com",
+        "description": "AI-powered IDE assistant. OpenAI acquisition deal collapsed in July 2025, Google DeepMind hired leadership team for ~$2.4B"
       },
-      "factor_scores": {
-        "agenticCapability": 85.13333333333334,
-        "innovation": 30,
-        "technicalPerformance": 100,
-        "developerAdoption": 50,
-        "marketTraction": 40,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 100,
-        "technicalCapability": 100,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 70.5,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 6.06
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 18,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "21",
-      "tool_name": "Tabnine",
       "rank": 11,
-      "score": 71.8,
-      "movement": {
-        "previous_position": 10,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 11,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "21",
+        "slug": "tabnine",
+        "name": "Tabnine",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://tabnine.com",
+        "description": "AI code completion assistant emphasizing privacy with option for local models, supporting 30+ languages and most IDEs"
       },
-      "factor_scores": {
-        "agenticCapability": 70,
-        "innovation": 30,
-        "technicalPerformance": 90,
-        "developerAdoption": 70,
-        "marketTraction": 60,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 90,
-        "technicalCapability": 90,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 70.01217999999999,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 38.05
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 12,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "5",
-      "tool_name": "Bolt.new",
       "rank": 12,
-      "score": 71.0,
-      "movement": {
-        "previous_position": 11,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 12,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "5",
+        "slug": "bolt-new",
+        "name": "Bolt.new",
+        "category": "app-builder",
+        "status": "active",
+        "website_url": "https://bolt.new",
+        "description": "AI-powered full-stack web application builder with in-browser development environment"
       },
-      "factor_scores": {
-        "agenticCapability": 60,
-        "innovation": 30,
-        "technicalPerformance": 82,
-        "developerAdoption": 70,
-        "marketTraction": 90,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 70,
-        "technicalCapability": 82,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 69.2321,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 12.23
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 4,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "25",
-      "tool_name": "Augment Code",
       "rank": 13,
-      "score": 69.8,
-      "movement": {
-        "previous_position": 12,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 13,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "25",
+        "slug": "augment-code",
+        "name": "Augment Code",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://augmentcode.com",
+        "description": "Enterprise-grade AI coding assistant with 200K token context and deep codebase understanding"
       },
-      "factor_scores": {
-        "agenticCapability": 100,
-        "innovation": 30,
-        "technicalPerformance": 100,
-        "developerAdoption": 30,
-        "marketTraction": 30,
-        "businessSentiment": 93.8,
-        "developmentVelocity": 60,
-        "platformResilience": 70,
-        "technicalCapability": 100,
-        "communitySentiment": 93.8
+      "scores": {
+        "overall": 68.06197999999999,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 3.38
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 1,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 65.4
+      }
     },
     {
-      "tool_id": "27",
-      "tool_name": "Google Gemini Code Assist",
       "rank": 14,
-      "score": 69.5,
-      "movement": {
-        "previous_position": 13,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 14,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "27",
+        "slug": "gemini-code-assist",
+        "name": "Google Gemini Code Assist",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://cloud.google.com/code-assist",
+        "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models."
       },
-      "factor_scores": {
-        "agenticCapability": 70,
-        "innovation": 30,
-        "technicalPerformance": 100,
-        "developerAdoption": 50,
-        "marketTraction": 60,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 70,
-        "technicalCapability": 100,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 67.76945,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 16.14
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 6,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "9",
-      "tool_name": "Replit Agent",
       "rank": 15,
-      "score": 68.0,
-      "movement": {
-        "previous_position": 14,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 15,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "9",
+        "slug": "replit-agent",
+        "name": "Replit Agent",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://replit.com",
+        "description": "AI agent integrated into Replit online IDE for autonomous coding"
       },
-      "factor_scores": {
-        "agenticCapability": 70,
-        "innovation": 50,
-        "technicalPerformance": 83,
-        "developerAdoption": 30,
-        "marketTraction": 70,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 60,
-        "technicalCapability": 83,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 66.3068,
+        "agentic_capability": 5,
+        "innovation": 5
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 6.81
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 3,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "23",
-      "tool_name": "Zed",
       "rank": 16,
-      "score": 67.8,
-      "movement": {
-        "previous_position": 15,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 16,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "23",
+        "slug": "zed",
+        "name": "Zed",
+        "category": "code-editor",
+        "status": "active",
+        "website_url": "https://zed.dev",
+        "description": "High-performance, multiplayer code editor built in Rust with integrated AI assistant powered by multiple LLMs"
       },
-      "factor_scores": {
-        "agenticCapability": 75,
-        "innovation": 30,
-        "technicalPerformance": 90,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 90,
-        "technicalCapability": 90,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 66.11178,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 10.38
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 5,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "24",
-      "tool_name": "OpenAI Codex CLI",
       "rank": 17,
-      "score": 67.5,
-      "movement": {
-        "previous_position": 16,
-        "change": 1,
-        "direction": "down"
+      "previousRank": 17,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "24",
+        "slug": "openai-codex-cli",
+        "name": "OpenAI Codex CLI",
+        "category": "autonomous-agent",
+        "status": "active",
+        "website_url": "https://openai.com/research/codex-cli",
+        "description": "Modern CLI tool powered by o3 reasoning model for autonomous software engineering"
       },
-      "factor_scores": {
-        "agenticCapability": 80,
-        "innovation": 60,
-        "technicalPerformance": 85,
-        "developerAdoption": 30,
-        "marketTraction": 30,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 70,
-        "technicalCapability": 85,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 65.81925000000001,
+        "agentic_capability": 5,
+        "innovation": 6
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 3.52
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 1,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "10",
-      "tool_name": "v0",
       "rank": 18,
-      "score": 65.0,
-      "movement": {
-        "previous_position": 18,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 18,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "10",
+        "slug": "v0-vercel",
+        "name": "v0",
+        "category": "app-builder",
+        "status": "active",
+        "website_url": "https://v0.dev",
+        "description": "AI-powered UI generator creating React components from text prompts and images"
       },
-      "factor_scores": {
-        "agenticCapability": 60,
-        "innovation": 30,
-        "technicalPerformance": 80,
-        "developerAdoption": 50,
-        "marketTraction": 60,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 80,
-        "technicalCapability": 80,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 63.381499999999996,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 8.39
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 3,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "3",
-      "tool_name": "Devin",
       "rank": 19,
-      "score": 65.0,
-      "movement": {
-        "previous_position": 19,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 19,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "3",
+        "slug": "devin",
+        "name": "Devin",
+        "category": "autonomous-agent",
+        "status": "active",
+        "website_url": "https://cognition.ai",
+        "description": "Autonomous AI software engineer capable of planning, coding, debugging, and deploying applications"
       },
-      "factor_scores": {
-        "agenticCapability": 66.96,
-        "innovation": 50,
-        "technicalPerformance": 60,
-        "developerAdoption": 60,
-        "marketTraction": 30,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 80,
-        "technicalCapability": 60,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 63.381499999999996,
+        "agentic_capability": 5,
+        "innovation": 5
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 22.0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 7,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 13.86
+      }
     },
     {
-      "tool_id": "19",
-      "tool_name": "Claude Artifacts",
       "rank": 20,
-      "score": 62.0,
-      "movement": {
-        "previous_position": 20,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 20,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "19",
+        "slug": "claude-artifacts",
+        "name": "Claude Artifacts",
+        "category": "app-builder",
+        "status": "active",
+        "website_url": "https://claude.ai",
+        "description": "Interactive component generation feature within Claude that creates and iterates on code, diagrams, and applications in a side panel"
       },
-      "factor_scores": {
-        "agenticCapability": 50,
-        "innovation": 30,
-        "technicalPerformance": 100,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 100,
-        "developmentVelocity": 60,
-        "platformResilience": 70,
-        "technicalCapability": 100,
-        "communitySentiment": 100
+      "scores": {
+        "overall": 60.456199999999995,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 5
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 2,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "29",
-      "tool_name": "Sourcegraph Cody",
       "rank": 21,
-      "score": 62.0,
-      "movement": {
-        "previous_position": 21,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 21,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "29",
+        "slug": "sourcegraph-cody",
+        "name": "Sourcegraph Cody",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://sourcegraph.com/cody",
+        "description": "AI coding assistant that indexes entire repositories with embeddings to answer questions, generate code with full project context, and explain existing code"
       },
-      "factor_scores": {
-        "agenticCapability": 70,
-        "innovation": 30,
-        "technicalPerformance": 100,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 90,
-        "technicalCapability": 100,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 60.456199999999995,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "6",
-      "tool_name": "Cline",
       "rank": 22,
-      "score": 61.5,
-      "movement": {
-        "previous_position": 22,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 22,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "6",
+        "slug": "cline",
+        "name": "Cline",
+        "category": "open-source-framework",
+        "status": "active",
+        "website_url": "https://cline.bot",
+        "description": "Autonomous coding agent VS Code extension with multi-modal capabilities"
       },
-      "factor_scores": {
-        "agenticCapability": 65,
-        "innovation": 60,
-        "technicalPerformance": 90,
-        "developerAdoption": 30,
-        "marketTraction": 40,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 100,
-        "technicalCapability": 90,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 59.96865,
+        "agentic_capability": 5,
+        "innovation": 6
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "13",
-      "tool_name": "OpenHands",
       "rank": 23,
-      "score": 61.5,
-      "movement": {
-        "previous_position": 23,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 23,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "13",
+        "slug": "openhands",
+        "name": "OpenHands",
+        "category": "open-source-framework",
+        "status": "active",
+        "website_url": "https://all-hands.dev",
+        "description": "Open source autonomous AI agent for software engineering tasks"
       },
-      "factor_scores": {
-        "agenticCapability": 65,
-        "innovation": 50,
-        "technicalPerformance": 100,
-        "developerAdoption": 30,
-        "marketTraction": 40,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 100,
-        "technicalCapability": 100,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 59.96865,
+        "agentic_capability": 5,
+        "innovation": 5
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "22",
-      "tool_name": "JetBrains AI Assistant",
       "rank": 24,
-      "score": 61.0,
-      "movement": {
-        "previous_position": 24,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 24,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "22",
+        "slug": "jetbrains-ai",
+        "name": "JetBrains AI Assistant",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://jetbrains.com/ai/",
+        "description": "AI assistant integrated into JetBrains IDEs providing code completions, chat assistance, and multi-file editing with Junie agent"
       },
-      "factor_scores": {
-        "agenticCapability": 70,
-        "innovation": 40,
-        "technicalPerformance": 86,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 80,
-        "technicalCapability": 86,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 59.4811,
+        "agentic_capability": 5,
+        "innovation": 4
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "16",
-      "tool_name": "Qodo Gen",
       "rank": 25,
-      "score": 59.0,
-      "movement": {
-        "previous_position": 25,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 26,
+      "rankChange": 1,
+      "changeReason": "",
+      "tool": {
+        "id": "8",
+        "slug": "continue-dev",
+        "name": "Continue",
+        "category": "open-source-framework",
+        "status": "active",
+        "website_url": "https://continue.dev",
+        "description": "Open source autopilot for your IDE with customizable LLM backends"
       },
-      "factor_scores": {
-        "agenticCapability": 60,
-        "innovation": 40,
-        "technicalPerformance": 86,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 90,
-        "technicalCapability": 86,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 58.8,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "8",
-      "tool_name": "Continue",
       "rank": 26,
-      "score": 58.8,
-      "movement": {
-        "previous_position": 26,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 25,
+      "rankChange": -1,
+      "changeReason": "",
+      "tool": {
+        "id": "16",
+        "slug": "qodo-gen",
+        "name": "Qodo Gen",
+        "category": "testing-tool",
+        "status": "active",
+        "website_url": "https://qodo.ai",
+        "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents"
       },
-      "factor_scores": {
-        "agenticCapability": 65,
-        "innovation": 30,
-        "technicalPerformance": 100,
-        "developerAdoption": 30,
-        "marketTraction": 40,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 100,
-        "technicalCapability": 100,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 57.5309,
+        "agentic_capability": 5,
+        "innovation": 4
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "28",
-      "tool_name": "CodeRabbit",
       "rank": 27,
-      "score": 55.5,
-      "movement": {
-        "previous_position": 27,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 27,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "28",
+        "slug": "coderabbit",
+        "name": "CodeRabbit",
+        "category": "code-review",
+        "status": "active",
+        "website_url": "https://coderabbit.ai",
+        "description": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code understanding beyond surface-level pattern matching. With 10M+ pull requests processed, CodeRabbit demonstrates the scalability and effectiveness of AI-powered code review, helping teams maintain code quality and accelerate development cycles."
       },
-      "factor_scores": {
-        "agenticCapability": 60,
-        "innovation": 30,
-        "technicalPerformance": 86,
-        "developerAdoption": 30,
-        "marketTraction": 50,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 70,
-        "technicalCapability": 86,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 54.118050000000004,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "17",
-      "tool_name": "Snyk Code",
       "rank": 28,
-      "score": 54.0,
-      "movement": {
-        "previous_position": 28,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 28,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "17",
+        "slug": "snyk-code",
+        "name": "Snyk Code",
+        "category": "code-review",
+        "status": "active",
+        "website_url": "https://snyk.io/product/snyk-code/",
+        "description": "AI-driven static code analysis tool that continuously scans code for security vulnerabilities, bugs, and quality issues in real-time"
       },
-      "factor_scores": {
-        "agenticCapability": 60,
-        "innovation": 30,
-        "technicalPerformance": 66.27680000000001,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 70,
-        "technicalCapability": 66.27680000000001,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 52.6554,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "30",
-      "tool_name": "Microsoft IntelliCode",
       "rank": 29,
-      "score": 53.5,
-      "movement": {
-        "previous_position": 29,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 29,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "30",
+        "slug": "microsoft-intellicode",
+        "name": "Microsoft IntelliCode",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://visualstudio.microsoft.com/services/intellicode/",
+        "description": "AI-assisted development feature included in Visual Studio and VS Code that provides smarter IntelliSense by using ML to rank code suggestions by context and API usage patterns"
       },
-      "factor_scores": {
-        "agenticCapability": 70,
-        "innovation": 30,
-        "technicalPerformance": 61.6384,
-        "developerAdoption": 30,
-        "marketTraction": 40,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 70,
-        "technicalCapability": 61.6384,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 52.16785,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "15",
-      "tool_name": "Sourcery",
       "rank": 30,
-      "score": 53.3,
-      "movement": {
-        "previous_position": 30,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 30,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "15",
+        "slug": "sourcery",
+        "name": "Sourcery",
+        "category": "code-review",
+        "status": "active",
+        "website_url": "https://sourcery.ai",
+        "description": "AI code review and refactoring tool that automatically suggests improvements for code readability, efficiency, and maintainability"
       },
-      "factor_scores": {
-        "agenticCapability": 60,
-        "innovation": 30,
-        "technicalPerformance": 60.5536,
-        "developerAdoption": 30,
-        "marketTraction": 60,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 70,
-        "technicalCapability": 60.5536,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 51.972829999999995,
+        "agentic_capability": 5,
+        "innovation": 3
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     },
     {
-      "tool_id": "20",
-      "tool_name": "Diffblue Cover",
       "rank": 31,
-      "score": 52.0,
-      "movement": {
-        "previous_position": 31,
-        "change": 0,
-        "direction": "same"
+      "previousRank": 31,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "20",
+        "slug": "diffblue-cover",
+        "name": "Diffblue Cover",
+        "category": "testing-tool",
+        "status": "active",
+        "website_url": "https://diffblue.com/products/cover",
+        "description": "AI-powered unit test generation tool that autonomously writes entire suites of JUnit tests for Java code using reinforcement learning"
       },
-      "factor_scores": {
-        "agenticCapability": 60,
-        "innovation": 40,
-        "technicalPerformance": 68,
-        "developerAdoption": 30,
-        "marketTraction": 30,
-        "businessSentiment": 60,
-        "developmentVelocity": 60,
-        "platformResilience": 70,
-        "technicalCapability": 68,
-        "communitySentiment": 60
+      "scores": {
+        "overall": 50.7052,
+        "agentic_capability": 5,
+        "innovation": 4
       },
-      "sentiment_analysis": {
-        "rawSentiment": 0,
-        "adjustedSentiment": 0,
-        "newsImpact": 0
-      },
-      "algorithm_version": "v7.1-news-update"
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     }
   ],
-  "metadata": {
+  "algorithm": {
+    "version": "v7.1-august-25-update",
+    "name": "JSON-Based Rankings",
+    "weights": {
+      "newsImpact": 0.3,
+      "baseScore": 0.7
+    }
+  },
+  "stats": {
     "total_tools": 31,
-    "calculation_date": "2025-08-19T00:00:00.000Z",
-    "notes": "Algorithm v7.1 update with 299 total news articles analyzed. Claude Code strengthens #1 position with Opus 4.1 achieving 74.5% SWE accuracy. ChatGPT Canvas maintains #4 with GPT-5 integration boost. GitHub Copilot holds #2 with 1.8M users milestone. Windsurf faces uncertainty from Cognition acquisition."
-  }
+    "tools_with_news": 20,
+    "avg_news_boost": 9.5,
+    "max_news_impact": 41
+  },
+  "_source": "static-generation",
+    "_timestamp": "2025-08-25T19:16:41.213Z"
 }

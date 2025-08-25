@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "collection_timestamp": "2025-08-19T05:51:11.039361+00:00",
+    "collection_period": {
+      "start": "2025-08-05T05:51:03.148960+00:00",
+      "end": "2025-08-19T05:51:03.148960+00:00"
+    },
+    "sources": [
+      "hackernews",
+      "rss"
+    ],
+    "item_count": 8
+  },
+  "items": [
+    {
+      "id": "hn-44943986",
+      "title": "Show HN: We started building an AI dev tool but it turned into a Sims-style game",
+      "url": "https://www.youtube.com/watch?v=sRPnX_f2V_c",
+      "published_date": "2025-08-18T18:51:23+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 1.0
+    },
+    {
+      "id": "hn-44915228",
+      "title": "Precision mapping tracks woody plant spread across Great Plains grasslands",
+      "url": "https://phys.org/news/2025-07-precision-tracks-woody-great-plains.html",
+      "published_date": "2025-08-15T17:39:24+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.15
+    },
+    {
+      "id": "hn-44941580",
+      "title": "Launch HN: Reality Defender (YC W22) \u2013 API for Deepfake and GenAI Detection",
+      "url": "https://www.realitydefender.com/platform/api",
+      "published_date": "2025-08-18T15:16:34+00:00",
+      "source": "HackerNews",
+      "category": "product-launch",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.75
+    },
+    {
+      "id": "hn-44944592",
+      "title": "Show HN: I built a toy TPU that can do inference and training on the XOR problem",
+      "url": "https://www.tinytpu.com",
+      "published_date": "2025-08-18T19:52:14+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.8
+    },
+    {
+      "id": "hn-44944291",
+      "title": "T-Mobile claimed selling location data without consent is legal\u2013judges disagree",
+      "url": "https://arstechnica.com/tech-policy/2025/08/t-mobile-claimed-selling-location-data-without-consent-is-legal-judges-disagree/",
+      "published_date": "2025-08-18T19:25:01+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 1.0
+    },
+    {
+      "id": "hn-44944620",
+      "title": "GenAI FOMO has spurred businesses to light nearly $40B on fire",
+      "url": "https://www.theregister.com/2025/08/18/generative_ai_zero_return_95_percent/",
+      "published_date": "2025-08-18T19:54:53+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 1.0
+    },
+    {
+      "id": "hn-44943160",
+      "title": "TREAD: Token Routing for Efficient Architecture-Agnostic Diffusion Training",
+      "url": "https://arxiv.org/abs/2501.04765",
+      "published_date": "2025-08-18T17:29:16+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 0.34
+    },
+    {
+      "id": "hn-44925570",
+      "title": "One person was able to claim 20M IPs",
+      "url": "https://lists.nanog.org/archives/list/nanog@lists.nanog.org/thread/MMCCEQKA4UPGGWFWEBWLYKHTYCAOQIZS/#MMCCEQKA4UPGGWFWEBWLYKHTYCAOQIZS",
+      "published_date": "2025-08-16T17:57:55+00:00",
+      "source": "HackerNews",
+      "category": "ai-general",
+      "summary": "",
+      "tools_mentioned": [],
+      "relevance_score": 1.0
+    }
+  ]
+}

@@ -9,7 +9,9 @@
       "source": "Bloomberg",
       "source_url": "https://www.bloomberg.com/news/articles/2025-03-18/cognition-ai-hits-4-billion-valuation-in-deal-led-by-lonsdale-s-firm",
       "tags": [],
-      "tool_mentions": ["3"],
+      "tool_mentions": [
+        "3"
+      ],
       "created_at": "2025-06-09T04:58:08.085264",
       "updated_at": "2025-06-28T02:35:55.788Z",
       "date": "2025-03-18T00:00:00"
@@ -22,8 +24,12 @@
       "summary": "Codeium has achieved FedRAMP High certification, enabling secure AI-driven software development for U.S. federal agencies. This milestone ensures that Codeium meets rigorous federal security standards while enhancing efficiency and innovation.",
       "source": "Businesswire",
       "source_url": "https://www.businesswire.com/news/home/20250317975276/en/Codeium-Extensions-Achieve-FedRAMP-High-Certification-Bringing-AI-Powered-Coding-to-Federal-Agencies",
-      "tags": ["general"],
-      "tool_mentions": ["codeium-extension"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
       "created_at": "2025-06-17T23:28:09.704Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-17T04:00:00.000Z"
@@ -36,8 +42,12 @@
       "summary": "Cognition Labs (Devin) raised hundreds of millions at a $4 billion valuation, doubling from their previous $2B valuation. The Series B was led by 8VC with participation from Khosla Ventures and Founders Fund.",
       "source": "Verdict",
       "source_url": "https://www.verdict.co.uk/cognition-ais-4bn-funding/",
-      "tags": ["funding"],
-      "tool_mentions": ["devin"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "devin"
+      ],
       "created_at": "2025-06-18T00:04:20.714Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-17T04:00:00.000Z"
@@ -50,8 +60,15 @@
       "summary": "Developer forums and communities express mounting frustration with Google's approach to AI coding tools, citing rushed releases, limited functionality, and poor user experience compared to competitors like Cursor and Claude Code.",
       "source": "The Register",
       "source_url": "https://www.theregister.com/2025/04/11/firebase_studio_promises_app_prototypes/",
-      "tags": ["general"],
-      "tool_mentions": ["jules", "firebase-studio", "cursor", "claude-code"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "jules",
+        "firebase-studio",
+        "cursor",
+        "claude-code"
+      ],
       "created_at": "2025-06-18T08:23:45.421Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-15T04:00:00.000Z"
@@ -63,8 +80,14 @@
       "content": "Bolt.new launches Figma integration, enabling designers to convert their designs directly into production-ready code with a single click.",
       "summary": "Bolt.new launches Figma integration, enabling designers to convert their designs directly into production-ready code with a single click....",
       "source": "StackBlitz Blog",
-      "tags": ["feature-update", "design-integration", "figma"],
-      "tool_mentions": ["Bolt.new"],
+      "tags": [
+        "feature-update",
+        "design-integration",
+        "figma"
+      ],
+      "tool_mentions": [
+        "Bolt.new"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-03-13T00:00:00.000Z"
@@ -77,8 +100,12 @@
       "summary": "Nathan Benaich provides a guide to AI in March 2025, including updates on notable AI startups and their funding rounds. Specifically, Mercor, an AI recruiting startup, raised $100M Series B at a $2B valuation.",
       "source": "Nathanbenaich (Substack)",
       "source_url": "https://nathanbenaich.substack.com/p/your-guide-to-ai-march-2025",
-      "tags": ["funding"],
-      "tool_mentions": ["mercor"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "mercor"
+      ],
       "created_at": "2025-06-17T23:28:09.905Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-02T05:00:00.000Z"
@@ -94,7 +121,9 @@
       "source": "Bloomberg",
       "source_url": "https://www.bloomberg.com/news/articles/2025-03-18/cognition-ai-hits-4-billion-valuation-in-deal-led-by-lonsdale-s-firm",
       "tags": [],
-      "tool_mentions": ["3"],
+      "tool_mentions": [
+        "3"
+      ],
       "created_at": "2025-06-09T04:58:08.085264",
       "updated_at": "2025-06-28T02:35:55.788Z",
       "date": "2025-03-18T00:00:00"
@@ -107,8 +136,12 @@
       "summary": "Codeium has achieved FedRAMP High certification, enabling secure AI-driven software development for U.S. federal agencies. This milestone ensures that Codeium meets rigorous federal security standards while enhancing efficiency and innovation.",
       "source": "Businesswire",
       "source_url": "https://www.businesswire.com/news/home/20250317975276/en/Codeium-Extensions-Achieve-FedRAMP-High-Certification-Bringing-AI-Powered-Coding-to-Federal-Agencies",
-      "tags": ["general"],
-      "tool_mentions": ["codeium-extension"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
       "created_at": "2025-06-17T23:28:09.704Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-17T04:00:00.000Z"
@@ -121,8 +154,12 @@
       "summary": "Cognition Labs (Devin) raised hundreds of millions at a $4 billion valuation, doubling from their previous $2B valuation. The Series B was led by 8VC with participation from Khosla Ventures and Founders Fund.",
       "source": "Verdict",
       "source_url": "https://www.verdict.co.uk/cognition-ais-4bn-funding/",
-      "tags": ["funding"],
-      "tool_mentions": ["devin"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "devin"
+      ],
       "created_at": "2025-06-18T00:04:20.714Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-17T04:00:00.000Z"
@@ -135,8 +172,15 @@
       "summary": "Developer forums and communities express mounting frustration with Google's approach to AI coding tools, citing rushed releases, limited functionality, and poor user experience compared to competitors like Cursor and Claude Code.",
       "source": "The Register",
       "source_url": "https://www.theregister.com/2025/04/11/firebase_studio_promises_app_prototypes/",
-      "tags": ["general"],
-      "tool_mentions": ["jules", "firebase-studio", "cursor", "claude-code"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "jules",
+        "firebase-studio",
+        "cursor",
+        "claude-code"
+      ],
       "created_at": "2025-06-18T08:23:45.421Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-15T04:00:00.000Z"
@@ -148,8 +192,14 @@
       "content": "Bolt.new launches Figma integration, enabling designers to convert their designs directly into production-ready code with a single click.",
       "summary": "Bolt.new launches Figma integration, enabling designers to convert their designs directly into production-ready code with a single click....",
       "source": "StackBlitz Blog",
-      "tags": ["feature-update", "design-integration", "figma"],
-      "tool_mentions": ["Bolt.new"],
+      "tags": [
+        "feature-update",
+        "design-integration",
+        "figma"
+      ],
+      "tool_mentions": [
+        "Bolt.new"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-03-13T00:00:00.000Z"
@@ -162,8 +212,12 @@
       "summary": "Nathan Benaich provides a guide to AI in March 2025, including updates on notable AI startups and their funding rounds. Specifically, Mercor, an AI recruiting startup, raised $100M Series B at a $2B valuation.",
       "source": "Nathanbenaich (Substack)",
       "source_url": "https://nathanbenaich.substack.com/p/your-guide-to-ai-march-2025",
-      "tags": ["funding"],
-      "tool_mentions": ["mercor"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "mercor"
+      ],
       "created_at": "2025-06-17T23:28:09.905Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-02T05:00:00.000Z"
@@ -179,7 +233,9 @@
       "source": "Bloomberg",
       "source_url": "https://www.bloomberg.com/news/articles/2025-03-18/cognition-ai-hits-4-billion-valuation-in-deal-led-by-lonsdale-s-firm",
       "tags": [],
-      "tool_mentions": ["3"],
+      "tool_mentions": [
+        "3"
+      ],
       "created_at": "2025-06-09T04:58:08.085264",
       "updated_at": "2025-06-28T02:35:55.788Z",
       "date": "2025-03-18T00:00:00"
@@ -192,8 +248,12 @@
       "summary": "Codeium has achieved FedRAMP High certification, enabling secure AI-driven software development for U.S. federal agencies. This milestone ensures that Codeium meets rigorous federal security standards while enhancing efficiency and innovation.",
       "source": "Businesswire",
       "source_url": "https://www.businesswire.com/news/home/20250317975276/en/Codeium-Extensions-Achieve-FedRAMP-High-Certification-Bringing-AI-Powered-Coding-to-Federal-Agencies",
-      "tags": ["general"],
-      "tool_mentions": ["codeium-extension"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
       "created_at": "2025-06-17T23:28:09.704Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-17T04:00:00.000Z"
@@ -206,8 +266,12 @@
       "summary": "Cognition Labs (Devin) raised hundreds of millions at a $4 billion valuation, doubling from their previous $2B valuation. The Series B was led by 8VC with participation from Khosla Ventures and Founders Fund.",
       "source": "Verdict",
       "source_url": "https://www.verdict.co.uk/cognition-ais-4bn-funding/",
-      "tags": ["funding"],
-      "tool_mentions": ["devin"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "devin"
+      ],
       "created_at": "2025-06-18T00:04:20.714Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-17T04:00:00.000Z"
@@ -220,8 +284,15 @@
       "summary": "Developer forums and communities express mounting frustration with Google's approach to AI coding tools, citing rushed releases, limited functionality, and poor user experience compared to competitors like Cursor and Claude Code.",
       "source": "The Register",
       "source_url": "https://www.theregister.com/2025/04/11/firebase_studio_promises_app_prototypes/",
-      "tags": ["general"],
-      "tool_mentions": ["jules", "firebase-studio", "cursor", "claude-code"],
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "jules",
+        "firebase-studio",
+        "cursor",
+        "claude-code"
+      ],
       "created_at": "2025-06-18T08:23:45.421Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-15T04:00:00.000Z"
@@ -233,8 +304,14 @@
       "content": "Bolt.new launches Figma integration, enabling designers to convert their designs directly into production-ready code with a single click.",
       "summary": "Bolt.new launches Figma integration, enabling designers to convert their designs directly into production-ready code with a single click....",
       "source": "StackBlitz Blog",
-      "tags": ["feature-update", "design-integration", "figma"],
-      "tool_mentions": ["Bolt.new"],
+      "tags": [
+        "feature-update",
+        "design-integration",
+        "figma"
+      ],
+      "tool_mentions": [
+        "Bolt.new"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-03-13T00:00:00.000Z"
@@ -247,8 +324,12 @@
       "summary": "Nathan Benaich provides a guide to AI in March 2025, including updates on notable AI startups and their funding rounds. Specifically, Mercor, an AI recruiting startup, raised $100M Series B at a $2B valuation.",
       "source": "Nathanbenaich (Substack)",
       "source_url": "https://nathanbenaich.substack.com/p/your-guide-to-ai-march-2025",
-      "tags": ["funding"],
-      "tool_mentions": ["mercor"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "mercor"
+      ],
       "created_at": "2025-06-17T23:28:09.905Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-03-02T05:00:00.000Z"
@@ -257,6 +338,6 @@
   "metadata": {
     "month": "2025-03",
     "articleCount": 6,
-    "generatedAt": "2025-08-19T05:33:55.273Z"
+    "generatedAt": "2025-08-19T06:02:32.721Z"
   }
 }

@@ -171,3 +171,85 @@ process.env["GITHUB_TOKEN"];
 // ❌ WRONG
 process.env.GITHUB_TOKEN;
 ```
+
+## 🤖 Claude-MPM Multi-Agent Configuration
+
+### Agent System Overview
+
+This project uses Claude-MPM's multi-agent system for specialized task handling. Each agent has specific responsibilities and expertise areas.
+
+### Available Agents
+
+| Agent | Primary Focus | When to Use |
+|-------|--------------|-------------|
+| **Engineer** | Clean architecture, code reduction, SOLID principles | Feature implementation, refactoring, architecture decisions |
+| **QA** | Testing, validation, quality assurance | Test creation, bug verification, quality checks |
+| **Research** | Investigation, documentation, analysis | Technical research, documentation updates, dependency analysis |
+| **Ops** | Deployment, infrastructure, monitoring | Deployment tasks, CI/CD, performance optimization |
+| **Version Control** | Git operations, branching, PR management | Commits, merges, release management |
+
+### Agent Delegation Guidelines
+
+**IMPORTANT**: When working with multiple agents:
+
+1. **Start with the right agent** - Choose based on primary task type
+2. **Use explicit handoffs** - Be clear when switching between agents
+3. **Maintain context** - Reference TrackDown tickets in all agent work
+4. **Update memories** - Agents learn from each task for future improvements
+
+### Memory Management
+
+- **Location**: `.claude-mpm/memories/[agent]_memories.md`
+- **Auto-updated**: Agents update their memories after significant learnings
+- **Manual edits**: Developers can edit memory files for accuracy
+- **Size limits**: 8KB per file, auto-truncates when exceeded
+
+### Task Assignment Patterns
+
+```bash
+# Feature Development Flow
+@engineer "Implement new ranking algorithm feature (TSK-123)"
+@qa "Write tests for ranking algorithm"
+@version-control "Create PR for ranking feature"
+
+# Bug Fix Flow  
+@qa "Reproduce bug TSK-456 in rankings display"
+@engineer "Fix rankings display bug"
+@qa "Verify fix and update tests"
+
+# Documentation Flow
+@research "Analyze current API usage patterns"
+@engineer "Update API documentation based on findings"
+```
+
+### Integration with TrackDown
+
+**CRITICAL**: All agent work MUST reference TrackDown tickets:
+
+1. Include ticket ID in initial request to agent
+2. Agents will link commits to tickets automatically
+3. Use ticket branches for all development work
+4. Update ticket status through agent commands
+
+### Best Practices
+
+1. **Single Responsibility**: Give each agent one clear task at a time
+2. **Context Preservation**: Include ticket IDs and relevant file paths
+3. **Memory Updates**: Allow agents to update memories for learnings
+4. **Validation Steps**: Use QA agent to verify all changes
+5. **Documentation**: Update docs through Research agent findings
+
+### Quick Reference
+
+```bash
+# Check agent memories
+ls .claude-mpm/memories/
+
+# View agent configuration
+cat .claude-mpm/config/agents.json
+
+# Review Claude-MPM setup
+cat docs/CLAUDE-MPM-SETUP.md
+```
+
+For detailed multi-agent setup and configuration, see [`/docs/CLAUDE-MPM-SETUP.md`](/docs/CLAUDE-MPM-SETUP.md).

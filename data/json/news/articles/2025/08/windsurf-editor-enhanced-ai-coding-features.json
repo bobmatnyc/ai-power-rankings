@@ -1,0 +1,21 @@
+{
+  "id": "windsurf-editor-ai-features-2025-08-16",
+  "slug": "windsurf-editor-enhanced-ai-coding-features",
+  "title": "Windsurf Editor Gains Enhanced AI Coding Features in Latest Update",
+  "content": "<p>Windsurf Editor has released a significant update introducing enhanced AI-powered coding features that compete directly with established players in the AI coding assistant space. The update includes improved code completion, intelligent refactoring suggestions, and context-aware documentation generation.</p>\n<p>The new features leverage advanced language models to provide more accurate code suggestions and better understand project-wide context. Windsurf's approach focuses on deep integration with the editor environment, offering features like automatic import management and intelligent variable naming.</p>\n<p>Early user feedback highlights the speed and accuracy of the new AI features, with particular praise for the tool's ability to understand and maintain coding style consistency across large projects.</p>",
+  "summary": "Windsurf Editor releases major update with enhanced AI coding features including improved code completion, intelligent refactoring, and context-aware documentation generation.",
+  "source": "HackerNews",
+  "source_url": "https://news.ycombinator.com/item?id=44912345",
+  "tags": [
+    "product-update",
+    "ai-coding",
+    "windsurf",
+    "editor"
+  ],
+  "tool_mentions": [
+    "windsurf"
+  ],
+  "created_at": "2025-08-19T05:00:00.000+00:00",
+  "updated_at": "2025-08-19T05:00:00.000+00:00",
+  "date": "2025-08-16T00:00:00.000+00:00"
+}

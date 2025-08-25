@@ -7,8 +7,14 @@
       "content": "Microsoft introduces IntelliCode at Build 2018 conference, pioneering AI-assisted development with intelligent code completions based on machine learning models trained on thousands of open-source projects.",
       "summary": "Microsoft introduces IntelliCode at Build 2018 conference, pioneering AI-assisted development with intelligent code completions based on machine learning models trained on thousands of open-source pro...",
       "source": "Microsoft Developer Blog",
-      "tags": ["launch", "microsoft", "ai-pioneer"],
-      "tool_mentions": ["Microsoft IntelliCode"],
+      "tags": [
+        "launch",
+        "microsoft",
+        "ai-pioneer"
+      ],
+      "tool_mentions": [
+        "Microsoft IntelliCode"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2018-05-07T00:00:00.000Z"
@@ -22,8 +28,14 @@
       "content": "Microsoft introduces IntelliCode at Build 2018 conference, pioneering AI-assisted development with intelligent code completions based on machine learning models trained on thousands of open-source projects.",
       "summary": "Microsoft introduces IntelliCode at Build 2018 conference, pioneering AI-assisted development with intelligent code completions based on machine learning models trained on thousands of open-source pro...",
       "source": "Microsoft Developer Blog",
-      "tags": ["launch", "microsoft", "ai-pioneer"],
-      "tool_mentions": ["Microsoft IntelliCode"],
+      "tags": [
+        "launch",
+        "microsoft",
+        "ai-pioneer"
+      ],
+      "tool_mentions": [
+        "Microsoft IntelliCode"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2018-05-07T00:00:00.000Z"
@@ -37,8 +49,14 @@
       "content": "Microsoft introduces IntelliCode at Build 2018 conference, pioneering AI-assisted development with intelligent code completions based on machine learning models trained on thousands of open-source projects.",
       "summary": "Microsoft introduces IntelliCode at Build 2018 conference, pioneering AI-assisted development with intelligent code completions based on machine learning models trained on thousands of open-source pro...",
       "source": "Microsoft Developer Blog",
-      "tags": ["launch", "microsoft", "ai-pioneer"],
-      "tool_mentions": ["Microsoft IntelliCode"],
+      "tags": [
+        "launch",
+        "microsoft",
+        "ai-pioneer"
+      ],
+      "tool_mentions": [
+        "Microsoft IntelliCode"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2018-05-07T00:00:00.000Z"
@@ -47,6 +65,6 @@
   "metadata": {
     "month": "2018-05",
     "articleCount": 1,
-    "generatedAt": "2025-08-19T05:33:55.265Z"
+    "generatedAt": "2025-08-19T06:02:32.713Z"
   }
 }

@@ -7,8 +7,14 @@
       "content": "Snyk introduces Snyk Code, bringing AI-powered security vulnerability detection directly into developer workflows with real-time analysis and automated fixes.",
       "summary": "Snyk introduces Snyk Code, bringing AI-powered security vulnerability detection directly into developer workflows with real-time analysis and automated fixes....",
       "source": "Snyk Official Blog",
-      "tags": ["launch", "security", "code-analysis"],
-      "tool_mentions": ["Snyk Code"],
+      "tags": [
+        "launch",
+        "security",
+        "code-analysis"
+      ],
+      "tool_mentions": [
+        "Snyk Code"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2021-05-06T00:00:00.000Z"
@@ -22,8 +28,14 @@
       "content": "Snyk introduces Snyk Code, bringing AI-powered security vulnerability detection directly into developer workflows with real-time analysis and automated fixes.",
       "summary": "Snyk introduces Snyk Code, bringing AI-powered security vulnerability detection directly into developer workflows with real-time analysis and automated fixes....",
       "source": "Snyk Official Blog",
-      "tags": ["launch", "security", "code-analysis"],
-      "tool_mentions": ["Snyk Code"],
+      "tags": [
+        "launch",
+        "security",
+        "code-analysis"
+      ],
+      "tool_mentions": [
+        "Snyk Code"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2021-05-06T00:00:00.000Z"
@@ -37,8 +49,14 @@
       "content": "Snyk introduces Snyk Code, bringing AI-powered security vulnerability detection directly into developer workflows with real-time analysis and automated fixes.",
       "summary": "Snyk introduces Snyk Code, bringing AI-powered security vulnerability detection directly into developer workflows with real-time analysis and automated fixes....",
       "source": "Snyk Official Blog",
-      "tags": ["launch", "security", "code-analysis"],
-      "tool_mentions": ["Snyk Code"],
+      "tags": [
+        "launch",
+        "security",
+        "code-analysis"
+      ],
+      "tool_mentions": [
+        "Snyk Code"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2021-05-06T00:00:00.000Z"
@@ -47,6 +65,6 @@
   "metadata": {
     "month": "2021-05",
     "articleCount": 1,
-    "generatedAt": "2025-08-19T05:33:55.267Z"
+    "generatedAt": "2025-08-19T06:02:32.715Z"
   }
 }

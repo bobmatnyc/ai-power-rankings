@@ -60,5 +60,49 @@
     "2018-05": 1
   },
   "totalArticles": 287,
-  "lastUpdated": "2025-07-23T14:42:00.000Z"
+  "lastUpdated": "2025-07-23T14:42:00.000Z",
+  "articles": [
+    {
+      "id": "aider-deepseek-r1-integration-2025-08-25",
+      "slug": "aider-adds-deepseek-r1-support-local-models",
+      "date": "2025-08-25T00:00:00.000+00:00",
+      "file": "2025/08/aider-deepseek-r1-integration-2025-08-25.json"
+    },
+    {
+      "id": "continue-open-source-milestone-2025-08-24",
+      "slug": "continue-reaches-20k-github-stars-launches-hub",
+      "date": "2025-08-24T00:00:00.000+00:00",
+      "file": "2025/08/continue-open-source-milestone-2025-08-24.json"
+    },
+    {
+      "id": "enterprise-ai-coding-market-report-2025-08-23",
+      "slug": "ai-coding-assistants-market-97-billion-2030",
+      "date": "2025-08-23T00:00:00.000+00:00",
+      "file": "2025/08/enterprise-ai-coding-market-report-2025-08-23.json"
+    },
+    {
+      "id": "windsurf-gpt5-pricing-changes-2025-08-22",
+      "slug": "windsurf-announces-gpt5-promotion-ending",
+      "date": "2025-08-22T00:00:00.000+00:00",
+      "file": "2025/08/windsurf-gpt5-pricing-changes-2025-08-22.json"
+    },
+    {
+      "id": "cursor-security-patches-2025-08-21",
+      "slug": "cursor-releases-critical-security-patches-mcp-vulnerabilities",
+      "date": "2025-08-21T00:00:00.000+00:00",
+      "file": "2025/08/cursor-security-patches-2025-08-21.json"
+    },
+    {
+      "id": "github-copilot-gpt5-integration-2025-08-20",
+      "slug": "github-copilot-integrates-gpt-5-public-preview",
+      "date": "2025-08-20T00:00:00.000+00:00",
+      "file": "2025/08/github-copilot-gpt5-integration-2025-08-20.json"
+    },
+    {
+      "id": "claude-opus-4-1-general-availability-2025-08-19",
+      "slug": "claude-opus-4-1-reaches-general-availability",
+      "date": "2025-08-19T00:00:00.000+00:00",
+      "file": "2025/08/claude-opus-4-1-general-availability-2025-08-19.json"
+    }
+  ]
 }

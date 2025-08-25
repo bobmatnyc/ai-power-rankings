@@ -7,8 +7,14 @@
       "content": "StackBlitz's Bolt.new reaches $40M annual recurring revenue with developers building 25,000 applications daily on the platform.",
       "summary": "StackBlitz's Bolt.new reaches $40M annual recurring revenue with developers building 25,000 applications daily on the platform....",
       "source": "StackBlitz Announcement",
-      "tags": ["milestone", "usage", "growth"],
-      "tool_mentions": ["Bolt.new"],
+      "tags": [
+        "milestone",
+        "usage",
+        "growth"
+      ],
+      "tool_mentions": [
+        "Bolt.new"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-03-01T00:00:00.000Z"
@@ -21,8 +27,12 @@
       "summary": "Codeium, an AI-powered coding startup, is in talks to raise a $2.85 billion valuation. The company enhances productivity by providing intelligent code completion, refactoring, and debugging support through seamless integration into various IDEs.",
       "source": "Flowhunt",
       "source_url": "https://www.flowhunt.io/ai-companies/codeium-ai/",
-      "tags": ["funding"],
-      "tool_mentions": ["codeium-extension"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
       "created_at": "2025-06-17T23:28:06.378Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-27T05:00:00.000Z"
@@ -35,8 +45,12 @@
       "summary": "Codeium hit $40M ARR in February 2025, up from $12M at the end of 2024. The company employs a freemium model, offering a generous free tier to individual developers while monetizing through enterprise contracts.",
       "source": "Sacra",
       "source_url": "https://sacra.com/c/codeium/",
-      "tags": ["funding"],
-      "tool_mentions": ["codeium-extension"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
       "created_at": "2025-06-17T23:28:06.676Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-27T05:00:00.000Z"
@@ -50,7 +64,9 @@
       "source": "TechCrunch",
       "source_url": "https://techcrunch.com/2025/02/25/swedens-lovable-an-app-building-ai-platform-rakes-in-16m-after-spectacular-growth/",
       "tags": [],
-      "tool_mentions": ["12"],
+      "tool_mentions": [
+        "12"
+      ],
       "created_at": "2025-06-09T04:58:08.085264",
       "updated_at": "2025-06-28T02:35:55.789Z",
       "date": "2025-02-25T00:00:00"
@@ -63,8 +79,12 @@
       "summary": "Anthropic released Claude 3.7 Sonnet, a new AI model that can 'think' about questions for varying lengths of time. The model is designed to provide both real-time and more considered answers, representing a 'hybrid AI reasoning model' approach.",
       "source": "Unknown",
       "source_url": "https://techcrunch.com/2025/02/24/anthropic-launches-a-new-ai-model-that-thinks-as-long-as-you-want/",
-      "tags": ["product-update"],
-      "tool_mentions": ["claude-code"],
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "claude-code"
+      ],
       "created_at": "2025-06-17T23:28:07.022Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-24T05:00:00.000Z"
@@ -77,8 +97,12 @@
       "summary": "Moderne, a company specializing in automated code refactoring and analysis, has secured $30m in a Series B funding round. The investment was led by Acrew Capital, with participation from Morgan Stanley, Amex Ventures, and TIAA Ventures. Existing investors also joined the round.",
       "source": "Fintech.Global",
       "source_url": "https://fintech.global/2025/02/12/moderne-raises-30m-series-b-to-accelerate-ai-powered-code-transformation/",
-      "tags": ["funding"],
-      "tool_mentions": ["moderne"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "moderne"
+      ],
       "created_at": "2025-06-17T23:28:07.301Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-12T05:00:00.000Z"
@@ -90,8 +114,14 @@
       "content": "StackBlitz's Bolt.new adds mobile app development capabilities, allowing users to create iOS and Android applications entirely through natural language.",
       "summary": "StackBlitz's Bolt.new adds mobile app development capabilities, allowing users to create iOS and Android applications entirely through natural language....",
       "source": "StackBlitz Announcement",
-      "tags": ["feature-update", "mobile", "no-code"],
-      "tool_mentions": ["Bolt.new"],
+      "tags": [
+        "feature-update",
+        "mobile",
+        "no-code"
+      ],
+      "tool_mentions": [
+        "Bolt.new"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-02-12T00:00:00.000Z"
@@ -104,8 +134,12 @@
       "summary": "Moderne, the automated code refactoring and analysis company, announced it has closed $30 million in Series B funding led by Acrew Capital. The funding is further validation that Moderne is emerging as the only company driving mass-scale code modernization and tech debt remediation critical to the progress and success of enterprises and hyperscalers.",
       "source": "Intelcapital",
       "source_url": "https://www.intelcapital.com/moderne-secures-30m-to-drive-billions-in-enterprise-code-modernization-savings-based-on-its-innovative-tech-used-by-aws-microsoft-and-broadcom-ai-assistants/",
-      "tags": ["funding"],
-      "tool_mentions": ["moderne"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "moderne"
+      ],
       "created_at": "2025-06-17T23:28:07.580Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-11T05:00:00.000Z"
@@ -118,8 +152,12 @@
       "summary": "Despite reaching 1.5 million workspaces in its first month, Google's Firebase Studio remains stuck in preview phase with users reporting significant limitations in production readiness and feature completeness.",
       "source": "DataCamp",
       "source_url": "https://www.datacamp.com/tutorial/firebase-studio",
-      "tags": ["product-update"],
-      "tool_mentions": ["firebase-studio"],
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "firebase-studio"
+      ],
       "created_at": "2025-06-18T08:23:45.284Z",
       "updated_at": "2025-06-30T05:07:05.211Z",
       "date": "2025-02-01T05:00:00.000Z"
@@ -133,8 +171,14 @@
       "content": "StackBlitz's Bolt.new reaches $40M annual recurring revenue with developers building 25,000 applications daily on the platform.",
       "summary": "StackBlitz's Bolt.new reaches $40M annual recurring revenue with developers building 25,000 applications daily on the platform....",
       "source": "StackBlitz Announcement",
-      "tags": ["milestone", "usage", "growth"],
-      "tool_mentions": ["Bolt.new"],
+      "tags": [
+        "milestone",
+        "usage",
+        "growth"
+      ],
+      "tool_mentions": [
+        "Bolt.new"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-03-01T00:00:00.000Z"
@@ -147,8 +191,12 @@
       "summary": "Codeium, an AI-powered coding startup, is in talks to raise a $2.85 billion valuation. The company enhances productivity by providing intelligent code completion, refactoring, and debugging support through seamless integration into various IDEs.",
       "source": "Flowhunt",
       "source_url": "https://www.flowhunt.io/ai-companies/codeium-ai/",
-      "tags": ["funding"],
-      "tool_mentions": ["codeium-extension"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
       "created_at": "2025-06-17T23:28:06.378Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-27T05:00:00.000Z"
@@ -161,8 +209,12 @@
       "summary": "Codeium hit $40M ARR in February 2025, up from $12M at the end of 2024. The company employs a freemium model, offering a generous free tier to individual developers while monetizing through enterprise contracts.",
       "source": "Sacra",
       "source_url": "https://sacra.com/c/codeium/",
-      "tags": ["funding"],
-      "tool_mentions": ["codeium-extension"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
       "created_at": "2025-06-17T23:28:06.676Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-27T05:00:00.000Z"
@@ -176,7 +228,9 @@
       "source": "TechCrunch",
       "source_url": "https://techcrunch.com/2025/02/25/swedens-lovable-an-app-building-ai-platform-rakes-in-16m-after-spectacular-growth/",
       "tags": [],
-      "tool_mentions": ["12"],
+      "tool_mentions": [
+        "12"
+      ],
       "created_at": "2025-06-09T04:58:08.085264",
       "updated_at": "2025-06-28T02:35:55.789Z",
       "date": "2025-02-25T00:00:00"
@@ -189,8 +243,12 @@
       "summary": "Anthropic released Claude 3.7 Sonnet, a new AI model that can 'think' about questions for varying lengths of time. The model is designed to provide both real-time and more considered answers, representing a 'hybrid AI reasoning model' approach.",
       "source": "Unknown",
       "source_url": "https://techcrunch.com/2025/02/24/anthropic-launches-a-new-ai-model-that-thinks-as-long-as-you-want/",
-      "tags": ["product-update"],
-      "tool_mentions": ["claude-code"],
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "claude-code"
+      ],
       "created_at": "2025-06-17T23:28:07.022Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-24T05:00:00.000Z"
@@ -203,8 +261,12 @@
       "summary": "Moderne, a company specializing in automated code refactoring and analysis, has secured $30m in a Series B funding round. The investment was led by Acrew Capital, with participation from Morgan Stanley, Amex Ventures, and TIAA Ventures. Existing investors also joined the round.",
       "source": "Fintech.Global",
       "source_url": "https://fintech.global/2025/02/12/moderne-raises-30m-series-b-to-accelerate-ai-powered-code-transformation/",
-      "tags": ["funding"],
-      "tool_mentions": ["moderne"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "moderne"
+      ],
       "created_at": "2025-06-17T23:28:07.301Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-12T05:00:00.000Z"
@@ -216,8 +278,14 @@
       "content": "StackBlitz's Bolt.new adds mobile app development capabilities, allowing users to create iOS and Android applications entirely through natural language.",
       "summary": "StackBlitz's Bolt.new adds mobile app development capabilities, allowing users to create iOS and Android applications entirely through natural language....",
       "source": "StackBlitz Announcement",
-      "tags": ["feature-update", "mobile", "no-code"],
-      "tool_mentions": ["Bolt.new"],
+      "tags": [
+        "feature-update",
+        "mobile",
+        "no-code"
+      ],
+      "tool_mentions": [
+        "Bolt.new"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-02-12T00:00:00.000Z"
@@ -230,8 +298,12 @@
       "summary": "Moderne, the automated code refactoring and analysis company, announced it has closed $30 million in Series B funding led by Acrew Capital. The funding is further validation that Moderne is emerging as the only company driving mass-scale code modernization and tech debt remediation critical to the progress and success of enterprises and hyperscalers.",
       "source": "Intelcapital",
       "source_url": "https://www.intelcapital.com/moderne-secures-30m-to-drive-billions-in-enterprise-code-modernization-savings-based-on-its-innovative-tech-used-by-aws-microsoft-and-broadcom-ai-assistants/",
-      "tags": ["funding"],
-      "tool_mentions": ["moderne"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "moderne"
+      ],
       "created_at": "2025-06-17T23:28:07.580Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-11T05:00:00.000Z"
@@ -244,8 +316,12 @@
       "summary": "Despite reaching 1.5 million workspaces in its first month, Google's Firebase Studio remains stuck in preview phase with users reporting significant limitations in production readiness and feature completeness.",
       "source": "DataCamp",
       "source_url": "https://www.datacamp.com/tutorial/firebase-studio",
-      "tags": ["product-update"],
-      "tool_mentions": ["firebase-studio"],
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "firebase-studio"
+      ],
       "created_at": "2025-06-18T08:23:45.284Z",
       "updated_at": "2025-06-30T05:07:05.211Z",
       "date": "2025-02-01T05:00:00.000Z"
@@ -259,8 +335,14 @@
       "content": "StackBlitz's Bolt.new reaches $40M annual recurring revenue with developers building 25,000 applications daily on the platform.",
       "summary": "StackBlitz's Bolt.new reaches $40M annual recurring revenue with developers building 25,000 applications daily on the platform....",
       "source": "StackBlitz Announcement",
-      "tags": ["milestone", "usage", "growth"],
-      "tool_mentions": ["Bolt.new"],
+      "tags": [
+        "milestone",
+        "usage",
+        "growth"
+      ],
+      "tool_mentions": [
+        "Bolt.new"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-03-01T00:00:00.000Z"
@@ -273,8 +355,12 @@
       "summary": "Codeium, an AI-powered coding startup, is in talks to raise a $2.85 billion valuation. The company enhances productivity by providing intelligent code completion, refactoring, and debugging support through seamless integration into various IDEs.",
       "source": "Flowhunt",
       "source_url": "https://www.flowhunt.io/ai-companies/codeium-ai/",
-      "tags": ["funding"],
-      "tool_mentions": ["codeium-extension"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
       "created_at": "2025-06-17T23:28:06.378Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-27T05:00:00.000Z"
@@ -287,8 +373,12 @@
       "summary": "Codeium hit $40M ARR in February 2025, up from $12M at the end of 2024. The company employs a freemium model, offering a generous free tier to individual developers while monetizing through enterprise contracts.",
       "source": "Sacra",
       "source_url": "https://sacra.com/c/codeium/",
-      "tags": ["funding"],
-      "tool_mentions": ["codeium-extension"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
       "created_at": "2025-06-17T23:28:06.676Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-27T05:00:00.000Z"
@@ -302,7 +392,9 @@
       "source": "TechCrunch",
       "source_url": "https://techcrunch.com/2025/02/25/swedens-lovable-an-app-building-ai-platform-rakes-in-16m-after-spectacular-growth/",
       "tags": [],
-      "tool_mentions": ["12"],
+      "tool_mentions": [
+        "12"
+      ],
       "created_at": "2025-06-09T04:58:08.085264",
       "updated_at": "2025-06-28T02:35:55.789Z",
       "date": "2025-02-25T00:00:00"
@@ -315,8 +407,12 @@
       "summary": "Anthropic released Claude 3.7 Sonnet, a new AI model that can 'think' about questions for varying lengths of time. The model is designed to provide both real-time and more considered answers, representing a 'hybrid AI reasoning model' approach.",
       "source": "Unknown",
       "source_url": "https://techcrunch.com/2025/02/24/anthropic-launches-a-new-ai-model-that-thinks-as-long-as-you-want/",
-      "tags": ["product-update"],
-      "tool_mentions": ["claude-code"],
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "claude-code"
+      ],
       "created_at": "2025-06-17T23:28:07.022Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-24T05:00:00.000Z"
@@ -329,8 +425,12 @@
       "summary": "Moderne, a company specializing in automated code refactoring and analysis, has secured $30m in a Series B funding round. The investment was led by Acrew Capital, with participation from Morgan Stanley, Amex Ventures, and TIAA Ventures. Existing investors also joined the round.",
       "source": "Fintech.Global",
       "source_url": "https://fintech.global/2025/02/12/moderne-raises-30m-series-b-to-accelerate-ai-powered-code-transformation/",
-      "tags": ["funding"],
-      "tool_mentions": ["moderne"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "moderne"
+      ],
       "created_at": "2025-06-17T23:28:07.301Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-12T05:00:00.000Z"
@@ -342,8 +442,14 @@
       "content": "StackBlitz's Bolt.new adds mobile app development capabilities, allowing users to create iOS and Android applications entirely through natural language.",
       "summary": "StackBlitz's Bolt.new adds mobile app development capabilities, allowing users to create iOS and Android applications entirely through natural language....",
       "source": "StackBlitz Announcement",
-      "tags": ["feature-update", "mobile", "no-code"],
-      "tool_mentions": ["Bolt.new"],
+      "tags": [
+        "feature-update",
+        "mobile",
+        "no-code"
+      ],
+      "tool_mentions": [
+        "Bolt.new"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2025-02-12T00:00:00.000Z"
@@ -356,8 +462,12 @@
       "summary": "Moderne, the automated code refactoring and analysis company, announced it has closed $30 million in Series B funding led by Acrew Capital. The funding is further validation that Moderne is emerging as the only company driving mass-scale code modernization and tech debt remediation critical to the progress and success of enterprises and hyperscalers.",
       "source": "Intelcapital",
       "source_url": "https://www.intelcapital.com/moderne-secures-30m-to-drive-billions-in-enterprise-code-modernization-savings-based-on-its-innovative-tech-used-by-aws-microsoft-and-broadcom-ai-assistants/",
-      "tags": ["funding"],
-      "tool_mentions": ["moderne"],
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "moderne"
+      ],
       "created_at": "2025-06-17T23:28:07.580Z",
       "updated_at": "2025-06-30T05:07:05.212Z",
       "date": "2025-02-11T05:00:00.000Z"
@@ -370,8 +480,12 @@
       "summary": "Despite reaching 1.5 million workspaces in its first month, Google's Firebase Studio remains stuck in preview phase with users reporting significant limitations in production readiness and feature completeness.",
       "source": "DataCamp",
       "source_url": "https://www.datacamp.com/tutorial/firebase-studio",
-      "tags": ["product-update"],
-      "tool_mentions": ["firebase-studio"],
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "firebase-studio"
+      ],
       "created_at": "2025-06-18T08:23:45.284Z",
       "updated_at": "2025-06-30T05:07:05.211Z",
       "date": "2025-02-01T05:00:00.000Z"
@@ -380,6 +494,6 @@
   "metadata": {
     "month": "2025-02",
     "articleCount": 9,
-    "generatedAt": "2025-08-19T05:33:55.273Z"
+    "generatedAt": "2025-08-19T06:02:32.721Z"
   }
 }

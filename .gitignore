@@ -59,3 +59,15 @@ VERSION
 .claude
 .husky
 .prompt-cache
+
+# backup files
+/backups/
+*.backup-*
+*.backup
+*-backup-*
+
+# temporary Python scripts in root
+/*.py
+
+# MCP vector search
+.mcp-vector-search/

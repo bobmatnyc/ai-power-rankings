@@ -258,8 +258,7 @@ export default async function UpdatesPage({ params }: PageProps) {
                     {Number(updates.statistics?.maxImpact?.impact || 0).toFixed(1)}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Max Impact (
-                    {String(updates.statistics?.maxImpact?.toolName || "N/A")})
+                    Max Impact ({String(updates.statistics?.maxImpact?.toolName || "N/A")})
                   </div>
                 </div>
               </div>

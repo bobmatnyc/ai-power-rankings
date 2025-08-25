@@ -22,11 +22,11 @@
  * @fileoverview Page displaying historical AI tool ranking trends with interactive chart
  */
 
-import { Suspense } from 'react';
-import type { Metadata } from 'next';
-import { TrendingPageContent } from './trending-content';
-import { getDictionary } from '@/i18n/get-dictionary';
-import type { Locale } from '@/i18n/config';
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { TrendingPageContent } from "./trending-content";
+import { getDictionary } from "@/i18n/get-dictionary";
+import type { Locale } from "@/i18n/config";
 
 interface PageProps {
   params: Promise<{
@@ -40,38 +40,39 @@ interface PageProps {
 /**
  * Generates metadata for the trending page with proper internationalization.
  */
-export async function generateMetadata({
-  params,
-}: Pick<PageProps, 'params'>): Promise<Metadata> {
+export async function generateMetadata({ params }: Pick<PageProps, "params">): Promise<Metadata> {
   const { lang } = await params;
   const dict = await getDictionary(lang);
 
   return {
     title: `${dict.trending.title} | AI Power Rankings`,
-    description: dict.trending.description || 
-      'Explore how AI tools have trended over time. See which tools are rising, falling, or maintaining their positions in our comprehensive historical analysis.',
+    description:
+      dict.trending.description ||
+      "Explore how AI tools have trended over time. See which tools are rising, falling, or maintaining their positions in our comprehensive historical analysis.",
     openGraph: {
       title: `${dict.trending.title} | AI Power Rankings`,
-      description: dict.trending.description || 
-        'Historical trends and analysis of AI tool rankings over time.',
-      type: 'website',
+      description:
+        dict.trending.description ||
+        "Historical trends and analysis of AI tool rankings over time.",
+      type: "website",
       locale: lang,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: `${dict.trending.title} | AI Power Rankings`,
-      description: dict.trending.description || 
-        'Historical trends and analysis of AI tool rankings over time.',
+      description:
+        dict.trending.description ||
+        "Historical trends and analysis of AI tool rankings over time.",
     },
     alternates: {
       canonical: `/${lang}/trending`,
       languages: {
-        'en': '/en/trending',
-        'es': '/es/trending',
-        'fr': '/fr/trending',
-        'ko': '/ko/trending',
-        'hr': '/hr/trending',
-        'it': '/it/trending',
+        en: "/en/trending",
+        es: "/es/trending",
+        fr: "/fr/trending",
+        ko: "/ko/trending",
+        hr: "/hr/trending",
+        it: "/it/trending",
       },
     },
   };
@@ -141,25 +142,25 @@ function TrendingPageSkeleton() {
 
 /**
  * Main trending page component.
- * 
+ *
  * This is a Server Component that handles:
  * - Parameter parsing and validation
  * - Initial data fetching (if needed)
  * - Internationalization setup
  * - SEO metadata generation
- * 
+ *
  * The actual interactive content is delegated to TrendingPageContent
  * which is a Client Component for better separation of concerns.
  */
 export default async function TrendingPage({ params, searchParams }: PageProps) {
   const { lang } = await params;
   const { months } = await searchParams;
-  
+
   const dict = await getDictionary(lang);
 
   // Validate and parse the months parameter
-  let timeRange: number | 'all' = 'all';
-  if (months && months !== 'all') {
+  let timeRange: number | "all" = "all";
+  if (months && months !== "all") {
     const parsed = parseInt(months, 10);
     if (!Number.isNaN(parsed) && parsed > 0 && parsed <= 24) {
       timeRange = parsed;
@@ -173,35 +174,29 @@ export default async function TrendingPage({ params, searchParams }: PageProps) 
           {/* Page Header */}
           <div className="space-y-4">
             <h1 className="text-3xl font-bold tracking-tight">
-              {dict.trending?.title || 'Historical AI Tool Rankings'}
+              {dict.trending?.title || "Historical AI Tool Rankings"}
             </h1>
             <p className="text-lg text-muted-foreground max-w-3xl">
-              {dict.trending?.description || 
-                'Explore how AI tools have performed over time. Track rising stars, established leaders, and market shifts in the rapidly evolving AI landscape.'
-              }
+              {dict.trending?.description ||
+                "Explore how AI tools have performed over time. Track rising stars, established leaders, and market shifts in the rapidly evolving AI landscape."}
             </p>
           </div>
 
           {/* Interactive Content */}
           <Suspense fallback={<TrendingPageSkeleton />}>
-            <TrendingPageContent 
-              lang={lang}
-              initialTimeRange={timeRange}
-              dictionary={dict}
-            />
+            <TrendingPageContent lang={lang} initialTimeRange={timeRange} dictionary={dict} />
           </Suspense>
 
           {/* Additional Information */}
           <div className="mt-12 space-y-6">
             <div className="bg-muted/50 rounded-lg p-6">
               <h2 className="text-lg font-semibold mb-3">
-                {dict.trending?.aboutTitle || 'About Historical Trending'}
+                {dict.trending?.aboutTitle || "About Historical Trending"}
               </h2>
               <div className="space-y-3 text-sm text-muted-foreground">
                 <p>
-                  {dict.trending?.aboutDescription || 
-                    'This chart shows how AI tools have moved in and out of the top 10 rankings over time. Tools that appear higher on the chart (closer to #1) are performing better.'
-                  }
+                  {dict.trending?.aboutDescription ||
+                    "This chart shows how AI tools have moved in and out of the top 10 rankings over time. Tools that appear higher on the chart (closer to #1) are performing better."}
                 </p>
                 <ul className="list-disc list-inside space-y-1 ml-4">
                   <li>Rankings are updated monthly based on our comprehensive analysis</li>
@@ -225,11 +220,11 @@ export default async function TrendingPage({ params, searchParams }: PageProps) 
  */
 export function generateStaticParams() {
   return [
-    { lang: 'en' },
-    { lang: 'es' },
-    { lang: 'fr' },
-    { lang: 'ko' },
-    { lang: 'hr' },
-    { lang: 'it' },
+    { lang: "en" },
+    { lang: "es" },
+    { lang: "fr" },
+    { lang: "ko" },
+    { lang: "hr" },
+    { lang: "it" },
   ];
 }

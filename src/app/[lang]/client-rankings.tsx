@@ -146,7 +146,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
           // Set last update date - show actual date
           if (data.algorithm?.date) {
             const updateDate = new Date(data.algorithm.date);
-            
+
             // Check if date is valid
             if (Number.isNaN(updateDate.getTime())) {
               setLastUpdateDate("Daily");

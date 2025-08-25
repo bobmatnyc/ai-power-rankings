@@ -7,8 +7,14 @@
       "content": "JetBrains launches AI Assistant in Early Access Program for version 2023.2, bringing AI-powered code completion and generation to its entire IDE ecosystem.",
       "summary": "JetBrains launches AI Assistant in Early Access Program for version 2023.2, bringing AI-powered code completion and generation to its entire IDE ecosystem....",
       "source": "JetBrains Blog",
-      "tags": ["launch", "ide", "early-access"],
-      "tool_mentions": ["JetBrains AI Assistant"],
+      "tags": [
+        "launch",
+        "ide",
+        "early-access"
+      ],
+      "tool_mentions": [
+        "JetBrains AI Assistant"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2023-07-01T00:00:00.000Z"
@@ -22,8 +28,14 @@
       "content": "JetBrains launches AI Assistant in Early Access Program for version 2023.2, bringing AI-powered code completion and generation to its entire IDE ecosystem.",
       "summary": "JetBrains launches AI Assistant in Early Access Program for version 2023.2, bringing AI-powered code completion and generation to its entire IDE ecosystem....",
       "source": "JetBrains Blog",
-      "tags": ["launch", "ide", "early-access"],
-      "tool_mentions": ["JetBrains AI Assistant"],
+      "tags": [
+        "launch",
+        "ide",
+        "early-access"
+      ],
+      "tool_mentions": [
+        "JetBrains AI Assistant"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2023-07-01T00:00:00.000Z"
@@ -37,8 +49,14 @@
       "content": "JetBrains launches AI Assistant in Early Access Program for version 2023.2, bringing AI-powered code completion and generation to its entire IDE ecosystem.",
       "summary": "JetBrains launches AI Assistant in Early Access Program for version 2023.2, bringing AI-powered code completion and generation to its entire IDE ecosystem....",
       "source": "JetBrains Blog",
-      "tags": ["launch", "ide", "early-access"],
-      "tool_mentions": ["JetBrains AI Assistant"],
+      "tags": [
+        "launch",
+        "ide",
+        "early-access"
+      ],
+      "tool_mentions": [
+        "JetBrains AI Assistant"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2023-07-01T00:00:00.000Z"
@@ -47,6 +65,6 @@
   "metadata": {
     "month": "2023-06",
     "articleCount": 1,
-    "generatedAt": "2025-08-19T05:33:55.268Z"
+    "generatedAt": "2025-08-19T06:02:32.716Z"
   }
 }

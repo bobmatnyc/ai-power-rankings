@@ -125,12 +125,12 @@ export default function NewsDetailContent({
   }, [article.tool_mentions]);
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    
+
     // Check if date is valid
     if (Number.isNaN(date.getTime())) {
       return "Date unavailable";
     }
-    
+
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",

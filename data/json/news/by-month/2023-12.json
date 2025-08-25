@@ -7,8 +7,14 @@
       "content": "Sourcegraph Cody reaches v1.0 general availability, offering enterprise-ready AI coding assistance with advanced code understanding and security features.",
       "summary": "Sourcegraph Cody reaches v1.0 general availability, offering enterprise-ready AI coding assistance with advanced code understanding and security features....",
       "source": "Sourcegraph Blog",
-      "tags": ["launch", "general-availability", "enterprise"],
-      "tool_mentions": ["Sourcegraph Cody"],
+      "tags": [
+        "launch",
+        "general-availability",
+        "enterprise"
+      ],
+      "tool_mentions": [
+        "Sourcegraph Cody"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2023-12-14T00:00:00.000Z"
@@ -22,8 +28,14 @@
       "content": "Sourcegraph Cody reaches v1.0 general availability, offering enterprise-ready AI coding assistance with advanced code understanding and security features.",
       "summary": "Sourcegraph Cody reaches v1.0 general availability, offering enterprise-ready AI coding assistance with advanced code understanding and security features....",
       "source": "Sourcegraph Blog",
-      "tags": ["launch", "general-availability", "enterprise"],
-      "tool_mentions": ["Sourcegraph Cody"],
+      "tags": [
+        "launch",
+        "general-availability",
+        "enterprise"
+      ],
+      "tool_mentions": [
+        "Sourcegraph Cody"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2023-12-14T00:00:00.000Z"
@@ -37,8 +49,14 @@
       "content": "Sourcegraph Cody reaches v1.0 general availability, offering enterprise-ready AI coding assistance with advanced code understanding and security features.",
       "summary": "Sourcegraph Cody reaches v1.0 general availability, offering enterprise-ready AI coding assistance with advanced code understanding and security features....",
       "source": "Sourcegraph Blog",
-      "tags": ["launch", "general-availability", "enterprise"],
-      "tool_mentions": ["Sourcegraph Cody"],
+      "tags": [
+        "launch",
+        "general-availability",
+        "enterprise"
+      ],
+      "tool_mentions": [
+        "Sourcegraph Cody"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2023-12-14T00:00:00.000Z"
@@ -47,6 +65,6 @@
   "metadata": {
     "month": "2023-12",
     "articleCount": 1,
-    "generatedAt": "2025-08-19T05:33:55.269Z"
+    "generatedAt": "2025-08-19T06:02:32.717Z"
   }
 }

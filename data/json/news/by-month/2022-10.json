@@ -7,8 +7,14 @@
       "content": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities.",
       "summary": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities....",
       "source": "Product Hunt",
-      "tags": ["major-update", "expansion", "multi-language"],
-      "tool_mentions": ["Sourcery"],
+      "tags": [
+        "major-update",
+        "expansion",
+        "multi-language"
+      ],
+      "tool_mentions": [
+        "Sourcery"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2022-10-17T00:00:00.000Z"
@@ -22,8 +28,14 @@
       "content": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities.",
       "summary": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities....",
       "source": "Product Hunt",
-      "tags": ["major-update", "expansion", "multi-language"],
-      "tool_mentions": ["Sourcery"],
+      "tags": [
+        "major-update",
+        "expansion",
+        "multi-language"
+      ],
+      "tool_mentions": [
+        "Sourcery"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2022-10-17T00:00:00.000Z"
@@ -37,8 +49,14 @@
       "content": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities.",
       "summary": "Sourcery releases version 2.0, expanding beyond Python to support multiple programming languages with enhanced AI-powered refactoring capabilities....",
       "source": "Product Hunt",
-      "tags": ["major-update", "expansion", "multi-language"],
-      "tool_mentions": ["Sourcery"],
+      "tags": [
+        "major-update",
+        "expansion",
+        "multi-language"
+      ],
+      "tool_mentions": [
+        "Sourcery"
+      ],
       "created_at": "2025-06-30T05:11:28.927Z",
       "updated_at": "2025-06-30T05:11:28.927Z",
       "date": "2022-10-17T00:00:00.000Z"
@@ -47,6 +65,6 @@
   "metadata": {
     "month": "2022-10",
     "articleCount": 1,
-    "generatedAt": "2025-08-19T05:33:55.267Z"
+    "generatedAt": "2025-08-19T06:02:32.715Z"
   }
 }

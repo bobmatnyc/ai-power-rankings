@@ -1,0 +1,71 @@
+{
+  "version": "2.0",
+  "project_name": "ai-power-rankings",
+  "description": "AI Power Rankings - Next.js web application for AI technology rankings and news",
+  "last_updated": "2025-08-25",
+  "agents": {
+    "enabled": true,
+    "default": "engineer",
+    "auto_select": true,
+    "handoff_enabled": true
+  },
+  "tickets": {
+    "enabled": true,
+    "auto_create": true,
+    "prefix": "TSK",
+    "link_required": true,
+    "branch_naming": true,
+    "status_tracking": true,
+    "local_path": "/trackdown"
+  },
+  "memory": {
+    "auto_update": true,
+    "max_size_kb": 8,
+    "cleanup_on_overflow": true,
+    "preserve_critical": true
+  },
+  "validation": {
+    "pre_commit": ["type-check", "lint"],
+    "pre_push": ["test", "build"],
+    "pre_deploy": ["ci:local", "cache:generate"]
+  },
+  "project_paths": {
+    "root": "/Users/masa/Projects/managed/ai-power-rankings",
+    "src": "/src",
+    "docs": "/docs",
+    "data": "/data/json",
+    "cache": "/src/data/cache",
+    "trackdown": "/trackdown"
+  },
+  "critical_operations": {
+    "news_ingestion": {
+      "validate_json": true,
+      "backup_before": true,
+      "test_after": true
+    },
+    "rankings_update": {
+      "validate_scores": true,
+      "regenerate_cache": true,
+      "update_sitemap": true
+    },
+    "deployment": {
+      "run_pre_deploy": true,
+      "validate_build": true,
+      "check_types": true
+    }
+  },
+  "integrations": {
+    "pm2": {
+      "enabled": true,
+      "auto_restart_on_change": true
+    },
+    "vercel": {
+      "production_branch": "main",
+      "preview_branches": ["develop", "staging"]
+    },
+    "github": {
+      "protected_branches": ["main"],
+      "require_pr_reviews": true
+    }
+  }
+}
