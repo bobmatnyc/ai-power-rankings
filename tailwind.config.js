@@ -3,6 +3,7 @@ import tailwindcssAnimate from "tailwindcss-animate";
 
 /** @type {import('tailwindcss').Config} */
 export default {
+  mode: "jit", // Enable JIT mode for better performance
   darkMode: ["class"],
   content: [
     // Comprehensive content paths for better CSS purging

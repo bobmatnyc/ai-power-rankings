@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { DeferredStyles } from "@/components/DeferredStyles";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { getBaseUrl } from "@/lib/get-base-url";
 import {
@@ -11,7 +12,9 @@ import {
   generateOrganizationSchema,
   generateWebsiteSchema,
 } from "@/lib/schema";
-import "./globals.css";
+
+// Moved to DeferredStyles component for async loading
+// import "./globals.css";
 
 // Font optimization for T-031
 const inter = Inter({
@@ -262,6 +265,8 @@ export default function RootLayout({
         {/* Vercel analytics with lazy loading */}
         <SpeedInsights />
         <Analytics />
+        {/* Deferred CSS loading for performance */}
+        <DeferredStyles />
       </body>
     </html>
   );
