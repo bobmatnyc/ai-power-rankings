@@ -1,0 +1,47 @@
+{
+  "id": "39",
+  "slug": "kilocode",
+  "name": "KiloCode",
+  "category": "ide-assistant",
+  "status": "active",
+  "company_id": null,
+  "info": {
+    "summary": "AI-powered coding assistant for accelerated development",
+    "description": "KiloCode is an intelligent IDE assistant that helps developers write code faster with AI-powered suggestions and automation",
+    "website": "https://kilocode.ai",
+    "features": [
+      "Advanced code completion",
+      "AI-powered code generation",
+      "Intelligent error detection",
+      "Automated code optimization"
+    ],
+    "technical": {
+      "context_window": null,
+      "multi_file_support": true,
+      "language_support": [
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "Java",
+        "C++",
+        "C#",
+        "Go",
+        "Rust"
+      ],
+      "llm_providers": [
+        "Custom AI models"
+      ],
+      "subprocess_support": false,
+      "tool_support": false
+    },
+    "business": {
+      "pricing_model": "freemium",
+      "base_price": 0,
+      "enterprise_pricing": false,
+      "free_tier": true
+    },
+    "metrics": {}
+  },
+  "created_at": "2025-08-28T00:00:00.000Z",
+  "updated_at": "2025-08-28T00:00:00.000Z"
+}

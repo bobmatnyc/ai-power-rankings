@@ -1,6 +1,6 @@
 /**
  * Consolidated Admin Rankings Management API
- * 
+ *
  * Endpoints:
  * - GET: List periods, check data, get progress
  * - POST: Preview, build, set current, create period
@@ -9,17 +9,17 @@
  */
 
 import { type NextRequest, NextResponse } from "next/server";
-import { getRankingsRepo, getToolsRepo, getNewsRepo } from "@/lib/json-db";
+import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 // import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
-// import { 
-//   extractEnhancedNewsMetrics, 
+// import {
+//   extractEnhancedNewsMetrics,
 //   applyEnhancedNewsMetrics,
-//   applyNewsImpactToScores 
+//   applyNewsImpactToScores
 // } from "@/lib/ranking-news-enhancer";
-import { writeFileSync } from "fs";
-import { join } from "path";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 // Helper function for category-based agentic scores
 function getCategoryBasedAgenticScore(category: string, toolName: string): number {
@@ -77,7 +77,7 @@ function transformToToolMetrics(tool: any, innovationScore: number = 0): ToolMet
 
 /**
  * GET /api/admin/rankings
- * 
+ *
  * Query params:
  * - action: 'periods' | 'check-data' | 'progress' | 'all'
  * - period: specific period for check-data
@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
       case "check-data": {
         // Check rankings data integrity (replaces check-rankings-data)
         const period = searchParams.get("period");
-        
+
         if (!period) {
           const periods = await rankingsRepo.getPeriods();
           const allData = [];
@@ -191,23 +191,17 @@ export async function GET(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { error: `Unknown action: ${action}` },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
   } catch (error) {
     loggers.api.error("Error in admin/rankings GET", { error });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 /**
  * POST /api/admin/rankings
- * 
+ *
  * Actions:
  * - preview: Preview rankings for a period
  * - build: Build rankings and save to JSON
@@ -226,15 +220,12 @@ export async function POST(request: NextRequest) {
         const { period, algorithm_version = "v6.0", preview_date, compare_with } = body;
 
         if (!period) {
-          return NextResponse.json(
-            { error: "Period parameter is required" },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "Period parameter is required" }, { status: 400 });
         }
 
         const toolsRepo = getToolsRepo();
         const rankingsRepo = getRankingsRepo();
-        const newsRepo = getNewsRepo();
+        // const newsRepo = getNewsRepo();
 
         // Get comparison period
         let comparisonPeriod = compare_with;
@@ -259,7 +250,7 @@ export async function POST(request: NextRequest) {
 
         // Fetch tools and news
         let tools = await toolsRepo.getByStatus("active");
-        const newsArticles = await newsRepo.getAll();
+        // const newsArticles = await newsRepo.getAll();
 
         // Filter by preview date if provided
         if (preview_date) {
@@ -304,7 +295,7 @@ export async function POST(request: NextRequest) {
             //   preview_date,
             //   enableAI
             // );
-            const enhancedMetrics = {} as any;
+            // const enhancedMetrics = {} as any;
 
             const toolMetrics = transformToToolMetrics(tool, innovationScore);
             // toolMetrics = applyEnhancedNewsMetrics(toolMetrics, enhancedMetrics);
@@ -370,9 +361,13 @@ export async function POST(request: NextRequest) {
             score_change: currentRanking
               ? (newScore?.["overallScore"] || 0) - currentRanking["score"]
               : newScore?.["overallScore"] || 0,
-            movement: !currentPosition ? "new" : 
-              currentPosition > newPosition ? "up" :
-              currentPosition < newPosition ? "down" : "same",
+            movement: !currentPosition
+              ? "new"
+              : currentPosition > newPosition
+                ? "up"
+                : currentPosition < newPosition
+                  ? "down"
+                  : "same",
           });
         }
 
@@ -393,19 +388,16 @@ export async function POST(request: NextRequest) {
         const { period, dry_run = false } = body;
 
         if (!period) {
-          return NextResponse.json(
-            { error: "Period is required" },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "Period is required" }, { status: 400 });
         }
 
         // Similar logic to preview, but saves to file
         const toolsRepo = getToolsRepo();
-        const newsRepo = getNewsRepo();
+        // const newsRepo = getNewsRepo();
         const rankingsRepo = getRankingsRepo();
 
         const tools = await toolsRepo.getByStatus("active");
-        const newsArticles = await newsRepo.getAll();
+        // const newsArticles = await newsRepo.getAll();
 
         // Calculate rankings (same as preview)
         const rankingEngine = new RankingEngineV6();
@@ -431,22 +423,19 @@ export async function POST(request: NextRequest) {
             const innovationData = innovationMap.get(tool["id"]);
             const innovationScore = innovationData?.["score"] || 0;
 
-            const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false";
-            const enhancedMetrics = await extractEnhancedNewsMetrics(
-              tool["id"],
-              tool["name"],
-              newsArticles,
-              period,
-              enableAI
-            );
+            // const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false";
+            // const enhancedMetrics = await extractEnhancedNewsMetrics(
+            //   tool["id"],
+            //   tool["name"],
+            //   newsArticles,
+            //   period,
+            //   enableAI
+            // );
 
             const toolMetrics = transformToToolMetrics(tool, innovationScore);
             // toolMetrics = applyEnhancedNewsMetrics(toolMetrics, enhancedMetrics);
 
-            const score = rankingEngine.calculateToolScore(
-              toolMetrics,
-              new Date(period)
-            );
+            const score = rankingEngine.calculateToolScore(toolMetrics, new Date(period));
 
             scores.push(score);
           } catch (error) {
@@ -458,7 +447,7 @@ export async function POST(request: NextRequest) {
         scores.sort((a, b) => b.overallScore - a.overallScore);
 
         const rankings = scores.map((score, index) => {
-          const tool = tools.find(t => t.id === score.toolId);
+          const tool = tools.find((t) => t.id === score.toolId);
           return {
             position: index + 1,
             tool_id: score.toolId,
@@ -496,7 +485,7 @@ export async function POST(request: NextRequest) {
           rankings,
         };
 
-        await rankingsRepo.saveRankingsForPeriod(period, rankingData as any);
+        await rankingsRepo.saveRankingsForPeriod(rankingData as any);
 
         // Also update public rankings.json if this is the current period
         const publicPath = join(process.cwd(), "public", "data", "rankings.json");
@@ -515,10 +504,7 @@ export async function POST(request: NextRequest) {
         const { period } = body;
 
         if (!period) {
-          return NextResponse.json(
-            { error: "Period is required" },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "Period is required" }, { status: 400 });
         }
 
         const rankingsRepo = getRankingsRepo();
@@ -537,16 +523,23 @@ export async function POST(request: NextRequest) {
           const periodData = await rankingsRepo.getRankingsForPeriod(p);
           if (periodData) {
             (periodData as any).is_current = p === period;
-            await rankingsRepo.saveRankingsForPeriod(p, periodData as any);
+            await rankingsRepo.saveRankingsForPeriod(periodData as any);
           }
         }
 
         // Update public rankings.json
         const publicPath = join(process.cwd(), "public", "data", "rankings.json");
-        writeFileSync(publicPath, JSON.stringify({
-          ...data,
-          is_current: true,
-        }, null, 2));
+        writeFileSync(
+          publicPath,
+          JSON.stringify(
+            {
+              ...data,
+              is_current: true,
+            },
+            null,
+            2
+          )
+        );
 
         return NextResponse.json({
           success: true,
@@ -559,10 +552,7 @@ export async function POST(request: NextRequest) {
         const { period, copy_from } = body;
 
         if (!period) {
-          return NextResponse.json(
-            { error: "Period is required" },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "Period is required" }, { status: 400 });
         }
 
         const rankingsRepo = getRankingsRepo();
@@ -570,10 +560,7 @@ export async function POST(request: NextRequest) {
         // Check if period already exists
         const existing = await rankingsRepo.getRankingsForPeriod(period);
         if (existing) {
-          return NextResponse.json(
-            { error: `Period ${period} already exists` },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: `Period ${period} already exists` }, { status: 400 });
         }
 
         let rankingData;
@@ -603,7 +590,7 @@ export async function POST(request: NextRequest) {
           };
         }
 
-        await rankingsRepo.saveRankingsForPeriod(period, rankingData as any);
+        await rankingsRepo.saveRankingsForPeriod(rankingData as any);
 
         return NextResponse.json({
           success: true,
@@ -617,7 +604,7 @@ export async function POST(request: NextRequest) {
         // Sync current rankings (replaces sync-current-rankings)
         const rankingsRepo = getRankingsRepo();
         const periods = await rankingsRepo.getPeriods();
-        
+
         // Find current period
         let currentPeriod = null;
         let currentData = null;
@@ -639,25 +626,36 @@ export async function POST(request: NextRequest) {
         }
 
         if (!currentData) {
-          return NextResponse.json(
-            { error: "No rankings data found" },
-            { status: 404 }
-          );
+          return NextResponse.json({ error: "No rankings data found" }, { status: 404 });
         }
 
         // Update public rankings.json
         const publicPath = join(process.cwd(), "public", "data", "rankings.json");
-        writeFileSync(publicPath, JSON.stringify({
-          ...currentData,
-          is_current: true,
-        }, null, 2));
+        writeFileSync(
+          publicPath,
+          JSON.stringify(
+            {
+              ...currentData,
+              is_current: true,
+            },
+            null,
+            2
+          )
+        );
 
         // Update cache
         const cachePath = join(process.cwd(), "src", "data", "cache", "rankings-static.json");
-        writeFileSync(cachePath, JSON.stringify({
-          ...currentData,
-          is_current: true,
-        }, null, 2));
+        writeFileSync(
+          cachePath,
+          JSON.stringify(
+            {
+              ...currentData,
+              is_current: true,
+            },
+            null,
+            2
+          )
+        );
 
         return NextResponse.json({
           success: true,
@@ -668,23 +666,17 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { error: `Unknown action: ${action}` },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
   } catch (error) {
     loggers.api.error("Error in admin/rankings POST", { error });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 /**
  * DELETE /api/admin/rankings
- * 
+ *
  * Delete a ranking period
  */
 export async function DELETE(request: NextRequest) {
@@ -693,27 +685,18 @@ export async function DELETE(request: NextRequest) {
     const period = searchParams.get("period");
 
     if (!period) {
-      return NextResponse.json(
-        { error: "Period is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Period is required" }, { status: 400 });
     }
 
     const rankingsRepo = getRankingsRepo();
     const data = await rankingsRepo.getRankingsForPeriod(period);
 
     if (!data) {
-      return NextResponse.json(
-        { error: `Period ${period} not found` },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: `Period ${period} not found` }, { status: 404 });
     }
 
     if (data.is_current) {
-      return NextResponse.json(
-        { error: "Cannot delete current ranking period" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Cannot delete current ranking period" }, { status: 400 });
     }
 
     // Delete the period data
@@ -736,9 +719,6 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error) {
     loggers.api.error("Error in admin/rankings DELETE", { error });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 /**
  * Consolidated Admin Tool Management API
- * 
+ *
  * Endpoints:
  * - GET: Check tool existence, get tool details, or list tools
  * - POST: Update tool data, refresh display, or perform cleanup
@@ -21,7 +21,7 @@ interface ToolCheckResult {
 
 /**
  * GET /api/admin/tools
- * 
+ *
  * Query params:
  * - action: 'check-exist' | 'list' | 'cleanup-auto'
  * - tools: comma-separated tool names for check-exist
@@ -37,17 +37,17 @@ export async function GET(request: NextRequest) {
       case "check-exist": {
         // Check if specific tools exist (replaces check-tools-exist)
         const toolsParam = searchParams.get("tools");
-        const toolsToCheck = toolsParam 
-          ? toolsParam.split(",").map(t => t.trim())
+        const toolsToCheck = toolsParam
+          ? toolsParam.split(",").map((t) => t.trim())
           : ["gemini", "chatgpt"];
-        
+
         const results: Record<string, ToolCheckResult> = {};
 
         for (const toolName of toolsToCheck) {
           const bySlug = await toolsRepo.getBySlug(toolName);
           const allTools = await toolsRepo.getAll();
           const byName = allTools.find(
-            tool => tool.name.toLowerCase() === toolName.toLowerCase()
+            (tool) => tool.name.toLowerCase() === toolName.toLowerCase()
           );
 
           results[toolName] = {
@@ -63,15 +63,16 @@ export async function GET(request: NextRequest) {
       case "cleanup-auto": {
         // Find and list auto-generated tools (replaces cleanup-auto-tools GET)
         const tools = await toolsRepo.getAll();
-        const autoTools = tools.filter(tool => 
-          tool.id.startsWith("auto_") || 
-          tool.slug.includes("auto-generated") ||
-          tool.name.includes("(Auto)")
+        const autoTools = tools.filter(
+          (tool) =>
+            tool.id.startsWith("auto_") ||
+            tool.slug.includes("auto-generated") ||
+            tool.name.includes("(Auto)")
         );
 
         return NextResponse.json({
           total: autoTools.length,
-          tools: autoTools.map(t => ({
+          tools: autoTools.map((t) => ({
             id: t.id,
             slug: t.slug,
             name: t.name,
@@ -81,14 +82,13 @@ export async function GET(request: NextRequest) {
         });
       }
 
-      
       default: {
         // List tools with optional status filter
         const status = searchParams.get("status");
-        const tools = status 
-          ? await toolsRepo.getByStatus(status as "active" | "beta" | "deprecated" | "discontinued" | "acquired")
+        const tools = status
+          ? await toolsRepo.getByStatus(status as "active" | "deprecated" | "inactive")
           : await toolsRepo.getAll();
-        
+
         return NextResponse.json({
           total: tools.length,
           tools,
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/admin/tools
- * 
+ *
  * Actions:
  * - delete: Delete multiple tools
  * - refresh-display: Refresh tool display data
@@ -124,10 +124,7 @@ export async function POST(request: NextRequest) {
         const { toolIds } = body;
 
         if (!Array.isArray(toolIds) || toolIds.length === 0) {
-          return NextResponse.json(
-            { error: "toolIds array is required" },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "toolIds array is required" }, { status: 400 });
         }
 
         const deletedTools = [];
@@ -146,8 +143,7 @@ export async function POST(request: NextRequest) {
             const newsWithTool = await newsRepo.getByToolMention(toolId);
 
             for (const news of newsWithTool) {
-              const updatedToolMentions = 
-                news.tool_mentions?.filter(id => id !== toolId) || [];
+              const updatedToolMentions = news.tool_mentions?.filter((id) => id !== toolId) || [];
 
               const updatedNews = {
                 ...news,
@@ -196,18 +192,12 @@ export async function POST(request: NextRequest) {
         const { toolId } = body;
 
         if (!toolId) {
-          return NextResponse.json(
-            { error: "toolId is required" },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "toolId is required" }, { status: 400 });
         }
 
         const tool = await toolsRepo.getById(toolId);
         if (!tool) {
-          return NextResponse.json(
-            { error: `Tool ${toolId} not found` },
-            { status: 404 }
-          );
+          return NextResponse.json({ error: `Tool ${toolId} not found` }, { status: 404 });
         }
 
         // Update display_name if needed
@@ -228,10 +218,11 @@ export async function POST(request: NextRequest) {
       case "cleanup-auto": {
         // Delete auto-generated tools (replaces cleanup-auto-tools POST)
         const tools = await toolsRepo.getAll();
-        const autoTools = tools.filter(tool => 
-          tool.id.startsWith("auto_") || 
-          tool.slug.includes("auto-generated") ||
-          tool.name.includes("(Auto)")
+        const autoTools = tools.filter(
+          (tool) =>
+            tool.id.startsWith("auto_") ||
+            tool.slug.includes("auto-generated") ||
+            tool.name.includes("(Auto)")
         );
 
         const deletedTools = [];
@@ -273,10 +264,7 @@ export async function POST(request: NextRequest) {
 
         const tool = await toolsRepo.getById(toolId);
         if (!tool) {
-          return NextResponse.json(
-            { error: `Tool ${toolId} not found` },
-            { status: 404 }
-          );
+          return NextResponse.json({ error: `Tool ${toolId} not found` }, { status: 404 });
         }
 
         const updatedTool = {
@@ -297,23 +285,17 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { error: `Unknown action: ${action}` },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
   } catch (error) {
     loggers.api.error("Error in admin/tools POST", { error });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 /**
  * DELETE /api/admin/tools
- * 
+ *
  * Delete a single tool by ID
  */
 export async function DELETE(request: NextRequest) {
@@ -322,10 +304,7 @@ export async function DELETE(request: NextRequest) {
     const toolId = searchParams.get("id");
 
     if (!toolId) {
-      return NextResponse.json(
-        { error: "Tool ID is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Tool ID is required" }, { status: 400 });
     }
 
     const toolsRepo = getToolsRepo();
@@ -333,10 +312,7 @@ export async function DELETE(request: NextRequest) {
 
     const tool = await toolsRepo.getById(toolId);
     if (!tool) {
-      return NextResponse.json(
-        { error: `Tool ${toolId} not found` },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: `Tool ${toolId} not found` }, { status: 404 });
     }
 
     // Remove from news articles
@@ -344,7 +320,7 @@ export async function DELETE(request: NextRequest) {
     for (const news of newsWithTool) {
       const updatedNews = {
         ...news,
-        tool_mentions: news.tool_mentions?.filter(id => id !== toolId) || [],
+        tool_mentions: news.tool_mentions?.filter((id) => id !== toolId) || [],
         updated_at: new Date().toISOString(),
       };
       await newsRepo.upsert(updatedNews);
@@ -363,23 +339,17 @@ export async function DELETE(request: NextRequest) {
         },
       });
     } else {
-      return NextResponse.json(
-        { error: "Failed to delete tool" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to delete tool" }, { status: 500 });
     }
   } catch (error) {
     loggers.api.error("Error in admin/tools DELETE", { error });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 /**
  * PUT /api/admin/tools
- * 
+ *
  * Quick fix and update operations
  */
 export async function PUT(request: NextRequest) {
@@ -456,16 +426,10 @@ export async function PUT(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { error: `Unknown action: ${action}` },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
   } catch (error) {
     loggers.api.error("Error in admin/tools PUT", { error });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

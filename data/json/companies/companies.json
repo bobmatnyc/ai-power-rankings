@@ -718,6 +718,62 @@
       "size": "startup",
       "created_at": "2025-08-02T00:00:00.000Z",
       "updated_at": "2025-08-02T00:00:00.000Z"
+    },
+    {
+      "id": "17",
+      "slug": "alibaba",
+      "name": "Alibaba Group",
+      "description": "Chinese multinational technology company specializing in e-commerce, retail, internet, and AI technology",
+      "website": "https://www.alibaba.com",
+      "founded": "1999",
+      "headquarters": "Hangzhou, China",
+      "size": "large",
+      "created_at": "2025-08-28T18:45:36.786Z",
+      "updated_at": "2025-08-28T18:45:36.787Z"
+    },
+    {
+      "id": "82",
+      "slug": "trae-ai-inc",
+      "name": "Trae AI Inc.",
+      "description": "AI-powered coding assistant company focused on developer productivity",
+      "website": "https://www.trae.ai",
+      "founded": "2023",
+      "size": "startup",
+      "created_at": "2025-08-28T18:45:36.787Z",
+      "updated_at": "2025-08-28T18:45:36.787Z"
+    },
+    {
+      "id": "83",
+      "slug": "qoder-ai",
+      "name": "Qoder AI",
+      "description": "AI coding assistant company specializing in intelligent code generation",
+      "website": "https://qoder.ai",
+      "founded": "2023",
+      "size": "startup",
+      "created_at": "2025-08-28T18:45:36.787Z",
+      "updated_at": "2025-08-28T18:45:36.787Z"
+    },
+    {
+      "id": "84",
+      "slug": "roocode",
+      "name": "RooCode",
+      "description": "AI-powered code completion and generation platform",
+      "website": "https://roocode.ai",
+      "founded": "2024",
+      "size": "startup",
+      "created_at": "2025-08-28T18:45:36.787Z",
+      "updated_at": "2025-08-28T18:45:36.787Z"
+    },
+    {
+      "id": "85",
+      "slug": "kilocode-inc",
+      "name": "KiloCode Inc.",
+      "description": "Intelligent IDE assistant for accelerated software development",
+      "website": "https://kilocode.ai",
+      "founded": "2024",
+      "size": "startup",
+      "created_at": "2025-08-28T18:45:36.787Z",
+      "updated_at": "2025-08-28T18:45:36.787Z"
     }
   ],
   "index": {
@@ -881,6 +937,18 @@
         "size": "startup",
         "created_at": "2025-06-23T15:20:06.385Z",
         "updated_at": "2025-06-23T15:20:06.382Z"
+      },
+      "17": {
+        "id": "17",
+        "slug": "alibaba",
+        "name": "Alibaba Group",
+        "description": "Chinese multinational technology company specializing in e-commerce, retail, internet, and AI technology",
+        "website": "https://www.alibaba.com",
+        "founded": "1999",
+        "headquarters": "Hangzhou, China",
+        "size": "large",
+        "created_at": "2025-08-28T18:45:36.786Z",
+        "updated_at": "2025-08-28T18:45:36.787Z"
       },
       "27": {
         "id": "27",
@@ -1071,6 +1139,50 @@
         "founded": "2024",
         "created_at": "2025-06-24T03:10:12.432Z",
         "updated_at": "2025-06-24T03:10:12.458Z"
+      },
+      "82": {
+        "id": "82",
+        "slug": "trae-ai-inc",
+        "name": "Trae AI Inc.",
+        "description": "AI-powered coding assistant company focused on developer productivity",
+        "website": "https://www.trae.ai",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-08-28T18:45:36.787Z",
+        "updated_at": "2025-08-28T18:45:36.787Z"
+      },
+      "83": {
+        "id": "83",
+        "slug": "qoder-ai",
+        "name": "Qoder AI",
+        "description": "AI coding assistant company specializing in intelligent code generation",
+        "website": "https://qoder.ai",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-08-28T18:45:36.787Z",
+        "updated_at": "2025-08-28T18:45:36.787Z"
+      },
+      "84": {
+        "id": "84",
+        "slug": "roocode",
+        "name": "RooCode",
+        "description": "AI-powered code completion and generation platform",
+        "website": "https://roocode.ai",
+        "founded": "2024",
+        "size": "startup",
+        "created_at": "2025-08-28T18:45:36.787Z",
+        "updated_at": "2025-08-28T18:45:36.787Z"
+      },
+      "85": {
+        "id": "85",
+        "slug": "kilocode-inc",
+        "name": "KiloCode Inc.",
+        "description": "Intelligent IDE assistant for accelerated software development",
+        "website": "https://kilocode.ai",
+        "founded": "2024",
+        "size": "startup",
+        "created_at": "2025-08-28T18:45:36.787Z",
+        "updated_at": "2025-08-28T18:45:36.787Z"
       },
       "4257f187-2bed-41f2-bc5e-a6d069fdd834": {
         "id": "4257f187-2bed-41f2-bc5e-a6d069fdd834",
@@ -1821,12 +1933,68 @@
         "size": "large",
         "created_at": "2025-06-09T21:02:54.78774",
         "updated_at": "2025-06-09T21:02:54.78774"
+      },
+      "alibaba": {
+        "id": "17",
+        "slug": "alibaba",
+        "name": "Alibaba Group",
+        "description": "Chinese multinational technology company specializing in e-commerce, retail, internet, and AI technology",
+        "website": "https://www.alibaba.com",
+        "founded": "1999",
+        "headquarters": "Hangzhou, China",
+        "size": "large",
+        "created_at": "2025-08-28T18:45:36.786Z",
+        "updated_at": "2025-08-28T18:45:36.787Z"
+      },
+      "trae-ai-inc": {
+        "id": "82",
+        "slug": "trae-ai-inc",
+        "name": "Trae AI Inc.",
+        "description": "AI-powered coding assistant company focused on developer productivity",
+        "website": "https://www.trae.ai",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-08-28T18:45:36.787Z",
+        "updated_at": "2025-08-28T18:45:36.787Z"
+      },
+      "qoder-ai": {
+        "id": "83",
+        "slug": "qoder-ai",
+        "name": "Qoder AI",
+        "description": "AI coding assistant company specializing in intelligent code generation",
+        "website": "https://qoder.ai",
+        "founded": "2023",
+        "size": "startup",
+        "created_at": "2025-08-28T18:45:36.787Z",
+        "updated_at": "2025-08-28T18:45:36.787Z"
+      },
+      "roocode": {
+        "id": "84",
+        "slug": "roocode",
+        "name": "RooCode",
+        "description": "AI-powered code completion and generation platform",
+        "website": "https://roocode.ai",
+        "founded": "2024",
+        "size": "startup",
+        "created_at": "2025-08-28T18:45:36.787Z",
+        "updated_at": "2025-08-28T18:45:36.787Z"
+      },
+      "kilocode-inc": {
+        "id": "85",
+        "slug": "kilocode-inc",
+        "name": "KiloCode Inc.",
+        "description": "Intelligent IDE assistant for accelerated software development",
+        "website": "https://kilocode.ai",
+        "founded": "2024",
+        "size": "startup",
+        "created_at": "2025-08-28T18:45:36.787Z",
+        "updated_at": "2025-08-28T18:45:36.787Z"
       }
     }
   },
   "metadata": {
-    "total": 54,
-    "last_updated": "2025-06-28T02:37:01.467Z",
+    "total": 63,
+    "last_updated": "2025-08-28T18:45:36.788Z",
     "version": "1.0.0"
   }
 }

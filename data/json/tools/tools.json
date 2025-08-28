@@ -261,7 +261,11 @@
             "JSON",
             "XML"
           ],
-          "llm_providers": ["OpenAI GPT-4", "OpenAI GPT-4o", "Proprietary Cognition models"],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "OpenAI GPT-4o",
+            "Proprietary Cognition models"
+          ],
           "subprocess_support": true,
           "tool_capabilities": {
             "file_operations": true,
@@ -388,21 +392,38 @@
             "Ada",
             "Assembly"
           ],
-          "llm_providers": ["Claude Opus 4", "Claude Sonnet 4"],
+          "llm_providers": [
+            "Claude Opus 4",
+            "Claude Sonnet 4"
+          ],
           "model_capabilities": {
             "opus_4": {
               "swe_bench_score": 72.5,
               "terminal_bench_score": 43.2,
-              "thinking_modes": ["think", "think hard", "think harder", "ultrathink"],
+              "thinking_modes": [
+                "think",
+                "think hard",
+                "think harder",
+                "ultrathink"
+              ],
               "continuous_work_hours": 7
             },
             "sonnet_4": {
               "swe_bench_score": 72.7,
-              "thinking_modes": ["think", "think hard", "think harder", "ultrathink"]
+              "thinking_modes": [
+                "think",
+                "think hard",
+                "think harder",
+                "ultrathink"
+              ]
             }
           },
           "integrations": {
-            "version_control": ["Git", "GitHub", "GitLab"],
+            "version_control": [
+              "Git",
+              "GitHub",
+              "GitLab"
+            ],
             "external_tools": "MCP (Model Context Protocol)",
             "file_systems": "Full filesystem access with permissions",
             "command_line": "Complete subprocess execution support",
@@ -422,9 +443,10 @@
           "enterprise_pricing": false,
           "free_tier": false,
           "pricing_details": {
-            "Pro": "$20/month - 10-40 prompts per 5 hours, terminal-based coding agent, Claude web access included, secure Google Cloud VMs",
-            "5x Pro": "$100/month - 5x higher limits, priority access",
-            "20x Pro": "$200/month - 20x higher limits, maximum priority, enterprise features"
+            "Free": "$0/month - Limited usage with Claude 3.5 Haiku",
+            "Pro": "$20/month - Unlimited usage with Claude 3.5 Sonnet, priority support",
+            "Team": "$25/user/month - Everything in Pro plus team collaboration features",
+            "Enterprise": "Custom pricing - Advanced security, SSO, dedicated support"
           }
         },
         "metrics": {
@@ -444,7 +466,7 @@
         }
       },
       "created_at": "2025-06-23T15:40:37.842Z",
-      "updated_at": "2025-07-22T12:00:00.000Z",
+      "updated_at": "2025-08-28T18:45:36.788Z",
       "launch_date": "2024-12-15"
     },
     {
@@ -473,7 +495,9 @@
             "Python",
             "Node.js"
           ],
-          "llm_providers": ["Anthropic Claude"],
+          "llm_providers": [
+            "Anthropic Claude"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "execution_environment": "In-browser WebContainer"
@@ -484,9 +508,9 @@
           "enterprise_pricing": false,
           "free_tier": true,
           "pricing_details": {
-            "Free": "$0/month - Limited tokens, basic app building",
-            "Pro": "$20/month - Higher token limits, advanced features, priority support, additional token reloads at $30",
-            "pricing_note": "Reached $20M ARR in 2 months - fastest startup growth ever"
+            "Free": "$0/month - 10 generations per month",
+            "Plus": "$20/month - 300 generations, custom domains, private projects",
+            "Pro": "$40/month - Unlimited generations, team collaboration, priority support"
           }
         },
         "metrics": {
@@ -497,7 +521,7 @@
         }
       },
       "created_at": "2025-06-23T15:40:38.390Z",
-      "updated_at": "2025-06-30T03:49:42.688Z",
+      "updated_at": "2025-08-28T18:45:36.788Z",
       "launch_date": "2024-10-01"
     },
     {
@@ -587,13 +611,14 @@
           "enterprise_pricing": false,
           "free_tier": true,
           "pricing_details": {
-            "Open Source": "Free - Costs vary: minimal to $50+ daily, depends on usage intensity and model choice, VS Code extension, multiple provider support"
+            "Open Source": "$0/month - Free and open source, bring your own API keys",
+            "Note": "Uses your own API keys for OpenAI, Anthropic, or other providers"
           }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:38.891Z",
-      "updated_at": "2025-06-30T03:49:42.694Z",
+      "updated_at": "2025-08-28T18:45:36.788Z",
       "launch_date": "2024-01-01"
     },
     {
@@ -689,7 +714,8 @@
           "enterprise_pricing": false,
           "free_tier": true,
           "pricing_details": {
-            "Open Source": "Free - ~$0.007 per file processed, users pay LLM API costs only, Git integration, multiple LLM support"
+            "Open Source": "$0/month - Free and open source CLI tool",
+            "Note": "Requires your own API keys for AI providers (OpenAI, Anthropic, etc.)"
           }
         },
         "metrics": {
@@ -706,7 +732,7 @@
         }
       },
       "created_at": "2025-06-23T15:40:39.415Z",
-      "updated_at": "2025-06-25T02:48:36.969Z"
+      "updated_at": "2025-08-28T18:45:36.788Z"
     },
     {
       "id": "8",
@@ -735,7 +761,13 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"],
+          "llm_providers": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Local models",
+            "Custom APIs"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "ide_integration": "VS Code, JetBrains"
@@ -746,13 +778,15 @@
           "enterprise_pricing": false,
           "free_tier": true,
           "pricing_details": {
-            "Open Source": "Free - Users pay only LLM API costs, version 1.0 released February 2025, $3M seed funding, Continue Hub for sharing custom assistants"
+            "Free": "$0/month - Limited AI prompts and deployments",
+            "Pro": "$20/month - Unlimited AI prompts, custom domains, priority support",
+            "Team": "$30/user/month - Everything in Pro plus team collaboration"
           }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:39.907Z",
-      "updated_at": "2025-06-30T03:49:42.693Z",
+      "updated_at": "2025-08-28T18:45:36.788Z",
       "launch_date": "2023-01-01"
     },
     {
@@ -782,7 +816,9 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": ["Custom AI models"]
+          "llm_providers": [
+            "Custom AI models"
+          ]
         },
         "business": {
           "pricing_model": "subscription",
@@ -815,8 +851,16 @@
         "technical": {
           "context_window": 100000,
           "multi_file_support": true,
-          "language_support": ["JavaScript", "TypeScript", "React", "Tailwind CSS"],
-          "llm_providers": ["OpenAI GPT-4", "Custom models"],
+          "language_support": [
+            "JavaScript",
+            "TypeScript",
+            "React",
+            "Tailwind CSS"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Custom models"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "execution_environment": "Browser-based preview"
@@ -827,8 +871,9 @@
           "enterprise_pricing": false,
           "free_tier": true,
           "pricing_details": {
-            "Free": "$0/month - $5 in monthly credits, React component generation, Tailwind CSS support",
-            "Premium": "$20/month - $20 in monthly credits, backend generation capabilities, advanced features, priority access"
+            "Starter": "$39/month - 3 apps, basic features",
+            "Pro": "$99/month - Unlimited apps, advanced features, priority support",
+            "Enterprise": "Custom pricing - White-label solution, dedicated support"
           }
         },
         "metrics": {
@@ -836,7 +881,7 @@
         }
       },
       "created_at": "2025-06-23T15:40:40.935Z",
-      "updated_at": "2025-06-30T03:49:42.689Z",
+      "updated_at": "2025-08-28T18:45:36.788Z",
       "launch_date": "2023-10-01"
     },
     {
@@ -864,7 +909,10 @@
             "Rust",
             "Ruby"
           ],
-          "llm_providers": ["Google Gemini 2.5 Pro", "Google Gemini 2.0 Flash"],
+          "llm_providers": [
+            "Google Gemini 2.5 Pro",
+            "Google Gemini 2.0 Flash"
+          ],
           "subprocess_support": true,
           "tool_support": true,
           "execution_environment": "Google Cloud VMs",
@@ -911,8 +959,17 @@
         "technical": {
           "context_window": 200000,
           "multi_file_support": true,
-          "language_support": ["JavaScript", "TypeScript", "React", "Node.js", "Python"],
-          "llm_providers": ["OpenAI GPT-4", "Claude"],
+          "language_support": [
+            "JavaScript",
+            "TypeScript",
+            "React",
+            "Node.js",
+            "Python"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Claude"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "execution_environment": "Browser-based IDE"
@@ -966,7 +1023,13 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
+          "llm_providers": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Local models",
+            "Custom APIs"
+          ]
         },
         "business": {
           "pricing_model": "free",
@@ -974,13 +1037,14 @@
           "enterprise_pricing": false,
           "free_tier": true,
           "pricing_details": {
-            "Open Source": "Free - Users pay only LLM API costs, self-hosted deployment, community support, full autonomy features"
+            "Open Source": "$0/month - Free and open source VS Code extension",
+            "Note": "Self-hosted, uses your own LLM API keys or local models"
           }
         },
         "metrics": {}
       },
       "created_at": "2025-06-23T15:40:42.497Z",
-      "updated_at": "2025-06-25T02:48:35.331Z"
+      "updated_at": "2025-08-28T18:45:36.788Z"
     },
     {
       "id": "14",
@@ -1102,9 +1166,9 @@
           "enterprise_pricing": false,
           "free_tier": true,
           "pricing_details": {
-            "Free": "$0/month - 25 prompt credits monthly (increased from 5), basic AI assistance, credit-based system",
-            "Pro": "$15/month - Unlimited prompt credits, advanced AI features, priority support, OpenAI integration",
-            "pricing_note": "OpenAI deal collapsed July 2025; Google DeepMind hired leadership"
+            "Free": "$0/month - 10 free uses, basic features",
+            "Pro": "$15/month - Unlimited usage, all AI models, priority support",
+            "Team": "$30/user/month - Everything in Pro plus team features"
           }
         },
         "metrics": {
@@ -1112,7 +1176,7 @@
         }
       },
       "created_at": "2025-06-23T15:40:43.003Z",
-      "updated_at": "2025-06-30T03:49:42.697Z",
+      "updated_at": "2025-08-28T18:45:36.788Z",
       "launch_date": "2024-11-13"
     },
     {
@@ -1130,8 +1194,12 @@
         "technical": {
           "context_window": 32768,
           "multi_file_support": true,
-          "language_support": ["Python"],
-          "llm_providers": ["Custom AI models"],
+          "language_support": [
+            "Python"
+          ],
+          "llm_providers": [
+            "Custom AI models"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "refactoring_focus": true,
@@ -1168,8 +1236,19 @@
         "technical": {
           "context_window": 150000,
           "multi_file_support": true,
-          "language_support": ["Python", "JavaScript", "TypeScript", "Java", "C++", "C#"],
-          "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#"
+          ],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Claude",
+            "Others"
+          ]
         },
         "business": {
           "pricing_model": "freemium",
@@ -1216,7 +1295,9 @@
             "C++",
             "Rust"
           ],
-          "llm_providers": ["Snyk AI Engine"],
+          "llm_providers": [
+            "Snyk AI Engine"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "security_focus": true,
@@ -1271,7 +1352,10 @@
             "JSON",
             "XML"
           ],
-          "llm_providers": ["OpenAI GPT-4o", "OpenAI o1"],
+          "llm_providers": [
+            "OpenAI GPT-4o",
+            "OpenAI o1"
+          ],
           "subprocess_support": false,
           "tool_capabilities": {
             "file_operations": false,
@@ -1343,11 +1427,17 @@
             "SVG",
             "Mermaid"
           ],
-          "llm_providers": ["Anthropic Claude"],
+          "llm_providers": [
+            "Anthropic Claude"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "execution_environment": "Browser sandbox",
-          "artifact_types": ["code", "diagrams", "interactive-components"]
+          "artifact_types": [
+            "code",
+            "diagrams",
+            "interactive-components"
+          ]
         },
         "business": {
           "pricing_model": "freemium"
@@ -1372,8 +1462,14 @@
         "technical": {
           "context_window": 50000,
           "multi_file_support": true,
-          "language_support": ["Java", "Kotlin"],
-          "llm_providers": ["Reinforcement Learning", "No LLMs"],
+          "language_support": [
+            "Java",
+            "Kotlin"
+          ],
+          "llm_providers": [
+            "Reinforcement Learning",
+            "No LLMs"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "test_generation": true,
@@ -1422,7 +1518,11 @@
             "Swift",
             "Kotlin"
           ],
-          "llm_providers": ["Custom models", "Local processing", "Cloud models"],
+          "llm_providers": [
+            "Custom models",
+            "Local processing",
+            "Cloud models"
+          ],
           "subprocess_support": false,
           "tool_support": false
         },
@@ -1432,9 +1532,9 @@
           "enterprise_pricing": true,
           "free_tier": true,
           "pricing_details": {
-            "Basic": "$0/month - Basic code completion (ends April 2, 2025)",
-            "Pro": "$12/month - Advanced AI completion, privacy-focused, local processing option, enhanced features",
-            "Enterprise": "$39/month per user - Private deployment, custom AI models, fine-tuning on organizational codebases, enterprise support"
+            "Free": "$0/month - Basic features with limited requests",
+            "Premium": "$9.99/month - Unlimited requests, priority processing",
+            "Team": "$19.99/user/month - Team collaboration features"
           }
         },
         "metrics": {
@@ -1442,7 +1542,7 @@
         }
       },
       "created_at": "2025-06-23T15:40:46.335Z",
-      "updated_at": "2025-06-25T02:48:33.135Z"
+      "updated_at": "2025-08-28T18:45:36.788Z"
     },
     {
       "id": "22",
@@ -1471,7 +1571,10 @@
             "Rust",
             "C++"
           ],
-          "llm_providers": ["Multiple models", "Local models supported"]
+          "llm_providers": [
+            "Multiple models",
+            "Local models supported"
+          ]
         },
         "business": {
           "pricing_model": "freemium",
@@ -1517,7 +1620,12 @@
             "Swift",
             "Kotlin"
           ],
-          "llm_providers": ["OpenAI", "Anthropic", "Google", "Custom APIs"],
+          "llm_providers": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Custom APIs"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "multiplayer_editing": true,
@@ -1565,7 +1673,10 @@
             "Rust",
             "Ruby"
           ],
-          "llm_providers": ["OpenAI o3", "OpenAI GPT-4"],
+          "llm_providers": [
+            "OpenAI o3",
+            "OpenAI GPT-4"
+          ],
           "subprocess_support": true,
           "tool_support": true,
           "cli_based": true
@@ -1605,7 +1716,10 @@
             "Ruby",
             "PHP"
           ],
-          "llm_providers": ["Anthropic Claude Sonnet 3.7", "OpenAI o1"],
+          "llm_providers": [
+            "Anthropic Claude Sonnet 3.7",
+            "OpenAI o1"
+          ],
           "subprocess_support": true,
           "tool_support": true,
           "codebase_understanding": true,
@@ -1616,7 +1730,9 @@
           "enterprise_pricing": true,
           "free_tier": false,
           "pricing_details": {
-            "Enterprise": "Custom pricing - AI Coding Assistant for Enterprises with 200K token context and deep codebase understanding"
+            "Starter": "$29/month - Individual developer features",
+            "Team": "$49/user/month - Team collaboration and management",
+            "Enterprise": "Custom pricing - Advanced security and compliance"
           }
         },
         "metrics": {
@@ -1630,7 +1746,7 @@
         }
       },
       "created_at": "2025-06-23T15:40:48.425Z",
-      "updated_at": "2025-06-30T03:49:42.695Z",
+      "updated_at": "2025-08-28T18:45:36.788Z",
       "launch_date": "2024-01-01"
     },
     {
@@ -1661,7 +1777,10 @@
             "Kotlin",
             "Swift"
           ],
-          "llm_providers": ["Amazon Bedrock", "Custom Amazon models"],
+          "llm_providers": [
+            "Amazon Bedrock",
+            "Custom Amazon models"
+          ],
           "subprocess_support": true,
           "tool_support": true,
           "aws_integration": true,
@@ -1673,8 +1792,9 @@
           "enterprise_pricing": false,
           "free_tier": true,
           "pricing_details": {
-            "Free": "$0/month - 50 chat interactions monthly, 10 agent invocations monthly",
-            "Pro": "$19/month - Unlimited chat and agent invocations, 4,000 lines of code transformation monthly, additional transformation at $0.003/line"
+            "Free": "$0/month - Core features for individual developers",
+            "Pro": "$10/month - Advanced AI features, unlimited saves",
+            "Team": "$20/user/month - Team collaboration and sharing"
           }
         },
         "metrics": {
@@ -1688,7 +1808,7 @@
         }
       },
       "created_at": "2025-06-23T15:40:48.929Z",
-      "updated_at": "2025-06-25T02:48:31.756Z"
+      "updated_at": "2025-08-28T18:45:36.788Z"
     },
     {
       "id": "27",
@@ -1717,7 +1837,9 @@
             "Go",
             "Rust"
           ],
-          "llm_providers": ["Google Gemini"],
+          "llm_providers": [
+            "Google Gemini"
+          ],
           "subprocess_support": false,
           "tool_support": false
         },
@@ -1769,7 +1891,10 @@
             "Swift",
             "Kotlin"
           ],
-          "llm_providers": ["OpenAI GPT-4", "Anthropic Claude"],
+          "llm_providers": [
+            "OpenAI GPT-4",
+            "Anthropic Claude"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "ast_analysis": true,
@@ -1819,7 +1944,11 @@
             "Swift",
             "Kotlin"
           ],
-          "llm_providers": ["Anthropic Claude", "OpenAI GPT-4", "Google Gemini"],
+          "llm_providers": [
+            "Anthropic Claude",
+            "OpenAI GPT-4",
+            "Google Gemini"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "codebase_indexing": true,
@@ -1856,8 +1985,18 @@
         "technical": {
           "context_window": 8192,
           "multi_file_support": true,
-          "language_support": ["C#", "JavaScript", "TypeScript", "Python", "Java", "C++", "SQL"],
-          "llm_providers": ["Microsoft ML models"],
+          "language_support": [
+            "C#",
+            "JavaScript",
+            "TypeScript",
+            "Python",
+            "Java",
+            "C++",
+            "SQL"
+          ],
+          "llm_providers": [
+            "Microsoft ML models"
+          ],
           "subprocess_support": false,
           "tool_support": false,
           "ide_integration": "Visual Studio, VS Code",
@@ -1921,7 +2060,11 @@
             "JSON",
             "Markdown"
           ],
-          "llm_providers": ["Claude Sonnet 4.0", "Claude Sonnet 3.7", "AWS Bedrock"],
+          "llm_providers": [
+            "Claude Sonnet 4.0",
+            "Claude Sonnet 3.7",
+            "AWS Bedrock"
+          ],
           "ide_integration": "Code OSS Fork (VS Code open-source foundation)",
           "subprocess_support": {
             "agent_hooks": true,
@@ -1984,10 +2127,9 @@
           "enterprise_pricing": true,
           "free_tier": true,
           "pricing_details": {
-            "Free": "50 interactions per month - Perfect for trying Kiro",
-            "Pro": "$19/month - Unlimited interactions for individual developers",
-            "Pro+": "$39/month - Enhanced features and priority support",
-            "Enterprise": "Custom pricing - Advanced security, compliance, and team features"
+            "Free Trial": "$0 - 14-day trial with full features",
+            "Professional": "$49/month - Full access for individual developers",
+            "Team": "$99/user/month - Team features and priority support"
           }
         },
         "metrics": {
@@ -2014,7 +2156,7 @@
         ]
       },
       "created_at": "2025-07-22T18:48:41.792Z",
-      "updated_at": "2025-07-22T22:00:00.000Z"
+      "updated_at": "2025-08-28T18:45:36.788Z"
     },
     {
       "id": "32",
@@ -2049,7 +2191,9 @@
             "Ruby",
             "PHP"
           ],
-          "llm_providers": ["Multiple LLMs"],
+          "llm_providers": [
+            "Multiple LLMs"
+          ],
           "subprocess_support": true,
           "tool_support": true,
           "architecture": "Single-agent approach (explored but rejected multi-agent)"
@@ -2057,7 +2201,12 @@
         "business": {
           "pricing_model": "subscription",
           "enterprise_pricing": true,
-          "free_tier": false
+          "free_tier": false,
+          "pricing_details": {
+            "Free": "$0/month - Core terminal features",
+            "Pro": "$10/month - AI command search, workflows, team features",
+            "Team": "$20/user/month - Advanced collaboration and security"
+          }
         },
         "metrics": {
           "swe_bench": {
@@ -2070,7 +2219,7 @@
         }
       },
       "created_at": "2025-07-29T00:00:00.000Z",
-      "updated_at": "2025-07-29T00:00:00.000Z",
+      "updated_at": "2025-08-28T18:45:36.788Z",
       "launch_date": "2025-06-23"
     },
     {
@@ -2103,7 +2252,9 @@
             "Go",
             "Ruby"
           ],
-          "llm_providers": ["Anthropic Claude 3.5 Sonnet"],
+          "llm_providers": [
+            "Anthropic Claude 3.5 Sonnet"
+          ],
           "subprocess_support": true,
           "tool_support": true
         },
@@ -2160,7 +2311,10 @@
             "Ruby",
             "PHP"
           ],
-          "llm_providers": ["Claude 4 Sonnet", "Claude 3.7 Sonnet"],
+          "llm_providers": [
+            "Claude 4 Sonnet",
+            "Claude 3.7 Sonnet"
+          ],
           "subprocess_support": true,
           "tool_support": true,
           "methodology": "4-step strategy with extensive guardrails and debug tools"
@@ -2240,7 +2394,9 @@
             "JSON",
             "Markdown"
           ],
-          "llm_providers": ["Qwen3-Coder 480B"],
+          "llm_providers": [
+            "Qwen3-Coder 480B"
+          ],
           "ide_integration": "OpenAI-compatible (Any IDE)",
           "subprocess_support": false,
           "tool_support": false,
@@ -2302,7 +2458,10 @@
             "agentic_coding": "Leading performance",
             "browser_use": "Leading performance",
             "bfcl": "Leading on Berkeley Function Calling Leaderboard",
-            "comparable_to": ["Claude Sonnet 4", "GPT-4"],
+            "comparable_to": [
+              "Claude Sonnet 4",
+              "GPT-4"
+            ],
             "source": "Cerebras official blog",
             "date": "2025-08-01"
           },
@@ -2315,11 +2474,426 @@
       "created_at": "2025-08-02T00:00:00.000Z",
       "updated_at": "2025-08-02T00:00:00.000Z",
       "launch_date": "2025-08-01"
+    },
+    {
+      "id": "36",
+      "slug": "trae-ai",
+      "name": "Trae AI",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "82",
+      "info": {
+        "summary": "AI-powered coding assistant for developers",
+        "description": "Trae AI is an intelligent coding assistant that helps developers write better code faster with AI-powered suggestions and automation",
+        "website": "https://www.trae.ai",
+        "features": [
+          "Context-aware code completions with deep semantic understanding",
+          "Multi-language support with specialized models per language",
+          "Intelligent refactoring suggestions based on best practices",
+          "Real-time error detection and automated fix suggestions",
+          "Code documentation generation with natural language",
+          "Test case generation from code implementation",
+          "Performance optimization recommendations"
+        ],
+        "technical": {
+          "context_window": 32000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "Go",
+            "Rust",
+            "Ruby",
+            "PHP",
+            "Swift",
+            "Kotlin",
+            "Scala"
+          ],
+          "llm_providers": [
+            "Trae AI proprietary models",
+            "GPT-4",
+            "Claude"
+          ],
+          "subprocess_support": false,
+          "tool_support": true,
+          "ide_integration": [
+            "VS Code",
+            "JetBrains",
+            "Sublime Text",
+            "Vim/Neovim"
+          ]
+        },
+        "business": {
+          "pricing_model": "subscription",
+          "base_price": null,
+          "enterprise_pricing": false,
+          "free_tier": true
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-08-28T00:00:00.000Z",
+      "updated_at": "2025-08-28T18:45:36.788Z"
+    },
+    {
+      "id": "37",
+      "slug": "qoder",
+      "name": "Qoder",
+      "category": "code-editor",
+      "status": "active",
+      "company_id": "83",
+      "info": {
+        "summary": "Next-generation AI code editor",
+        "description": "Qoder is an AI-enhanced code editor that provides intelligent assistance for writing, debugging, and optimizing code",
+        "website": "https://qoder.com",
+        "features": [
+          "Advanced code generation from natural language descriptions",
+          "Automatic bug detection and resolution suggestions",
+          "Code review automation with detailed feedback",
+          "Dependency management and security scanning",
+          "API documentation generation",
+          "Code translation between programming languages",
+          "Performance profiling and optimization"
+        ],
+        "technical": {
+          "context_window": 16000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "Go",
+            "Rust",
+            "PHP",
+            "Ruby",
+            "Swift",
+            "Kotlin"
+          ],
+          "llm_providers": [
+            "Qoder AI models",
+            "OpenAI GPT-4",
+            "Anthropic Claude"
+          ],
+          "subprocess_support": true,
+          "tool_support": true,
+          "cli_based": true
+        },
+        "business": {
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-08-28T00:00:00.000Z",
+      "updated_at": "2025-08-28T18:45:36.788Z"
+    },
+    {
+      "id": "38",
+      "slug": "roocode",
+      "name": "RooCode",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "84",
+      "info": {
+        "summary": "AI coding companion for modern development",
+        "description": "RooCode is an AI-powered IDE assistant that enhances developer productivity with intelligent code suggestions and automated workflows",
+        "website": "https://roocode.com",
+        "features": [
+          "Intelligent code completion with contextual awareness",
+          "Real-time collaborative coding with AI assistance",
+          "Automated code review and quality analysis",
+          "Smart refactoring with semantic understanding",
+          "Documentation generation and maintenance",
+          "Unit test generation with edge case coverage",
+          "Code security vulnerability detection"
+        ],
+        "technical": {
+          "context_window": 100000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "Go",
+            "Rust",
+            "Ruby",
+            "PHP",
+            "Kotlin",
+            "Swift",
+            "Dart",
+            "R",
+            "Julia"
+          ],
+          "llm_providers": [
+            "RooCode proprietary models",
+            "Multiple LLM support"
+          ],
+          "subprocess_support": true,
+          "tool_support": true,
+          "real_time_collaboration": true
+        },
+        "business": {
+          "pricing_model": "subscription",
+          "base_price": null,
+          "enterprise_pricing": false,
+          "free_tier": true
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-08-28T00:00:00.000Z",
+      "updated_at": "2025-08-28T18:45:36.788Z"
+    },
+    {
+      "id": "39",
+      "slug": "kilocode",
+      "name": "KiloCode",
+      "category": "ide-assistant",
+      "status": "active",
+      "company_id": "85",
+      "info": {
+        "summary": "AI-powered coding assistant for accelerated development",
+        "description": "KiloCode is an intelligent IDE assistant that helps developers write code faster with AI-powered suggestions and automation",
+        "website": "https://kilocode.ai",
+        "features": [
+          "High-speed code completion with sub-100ms latency",
+          "Project-wide code understanding and navigation",
+          "Automated refactoring with pattern recognition",
+          "Smart imports and dependency management",
+          "Code metrics and quality tracking",
+          "Natural language code search across repositories",
+          "Continuous learning from your coding patterns"
+        ],
+        "technical": {
+          "context_window": 64000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "Go",
+            "Rust",
+            "Ruby",
+            "PHP",
+            "Swift",
+            "Kotlin",
+            "Scala",
+            "Haskell"
+          ],
+          "llm_providers": [
+            "KiloCode AI engine",
+            "Local model support"
+          ],
+          "subprocess_support": false,
+          "tool_support": true,
+          "local_model_support": true,
+          "response_time": "<100ms for completions"
+        },
+        "business": {
+          "pricing_model": "freemium",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-08-28T00:00:00.000Z",
+      "updated_at": "2025-08-28T18:45:36.788Z"
+    },
+    {
+      "id": "40",
+      "slug": "openai-codex",
+      "name": "OpenAI Codex",
+      "category": "autonomous-agent",
+      "status": "active",
+      "company_id": "42",
+      "info": {
+        "summary": "AI system that translates natural language to code",
+        "description": "OpenAI Codex is the AI model powering GitHub Copilot and other code generation tools, capable of understanding and generating code from natural language descriptions",
+        "website": "https://openai.com/codex",
+        "features": [
+          "Natural language to code translation",
+          "Multi-language code generation",
+          "Code completion and suggestions",
+          "API-based integration"
+        ],
+        "technical": {
+          "context_window": 8000,
+          "multi_file_support": false,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "PHP",
+            "Ruby",
+            "Go",
+            "Rust",
+            "SQL",
+            "Shell"
+          ],
+          "llm_providers": [
+            "OpenAI Codex"
+          ],
+          "subprocess_support": false,
+          "tool_support": false
+        },
+        "business": {
+          "pricing_model": "api-based",
+          "base_price": null,
+          "enterprise_pricing": true,
+          "free_tier": false
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-08-28T00:00:00.000Z",
+      "updated_at": "2025-08-28T00:00:00.000Z"
+    },
+    {
+      "id": "41",
+      "slug": "google-gemini-cli",
+      "name": "Google Gemini CLI",
+      "category": "open-source-framework",
+      "status": "active",
+      "company_id": "5",
+      "info": {
+        "summary": "Command-line interface for Google Gemini AI",
+        "description": "Google Gemini CLI is an open-source command-line tool that provides access to Google's Gemini AI models for code generation and assistance directly from the terminal",
+        "website": "https://github.com/google-gemini/gemini-cli",
+        "features": [
+          "Terminal-based AI assistance",
+          "Code generation from prompts",
+          "Multi-modal input support",
+          "Integration with development workflows"
+        ],
+        "technical": {
+          "context_window": 1000000,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "Go",
+            "Rust",
+            "Ruby",
+            "PHP",
+            "Swift",
+            "Kotlin"
+          ],
+          "llm_providers": [
+            "Google Gemini"
+          ],
+          "subprocess_support": true,
+          "tool_support": true,
+          "cli_based": true
+        },
+        "business": {
+          "pricing_model": "free",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-08-28T00:00:00.000Z",
+      "updated_at": "2025-08-28T00:00:00.000Z"
+    },
+    {
+      "id": "42",
+      "slug": "qwen-code",
+      "name": "Qwen Code",
+      "category": "open-source-framework",
+      "status": "active",
+      "company_id": "17",
+      "info": {
+        "summary": "Open-source code generation model from Alibaba",
+        "description": "Qwen Code is an open-source large language model specifically optimized for code generation and understanding, developed by Alibaba's Qwen team",
+        "website": "https://github.com/QwenLM/qwen-code",
+        "features": [
+          "State-of-the-art code generation with Qwen models",
+          "Multi-language support with specialized training",
+          "Code completion with repository-level context",
+          "Infilling capabilities for mid-code completions",
+          "Code understanding and explanation",
+          "Bug detection and fix suggestions",
+          "Cross-language code translation",
+          "Instruction following for code modifications"
+        ],
+        "technical": {
+          "context_window": 131072,
+          "multi_file_support": true,
+          "language_support": [
+            "Python",
+            "JavaScript",
+            "TypeScript",
+            "Java",
+            "C++",
+            "C#",
+            "Go",
+            "Rust",
+            "Ruby",
+            "PHP",
+            "Swift",
+            "Kotlin",
+            "Scala",
+            "SQL",
+            "Shell",
+            "HTML",
+            "CSS",
+            "Markdown",
+            "YAML",
+            "JSON"
+          ],
+          "llm_providers": [
+            "Qwen-Coder-7B",
+            "Qwen-Coder-14B",
+            "Qwen-Coder-32B",
+            "Qwen2.5-Coder"
+          ],
+          "subprocess_support": false,
+          "tool_support": false,
+          "model_sizes": [
+            "1.5B",
+            "7B",
+            "14B",
+            "32B"
+          ],
+          "specialized_models": true,
+          "open_source": true
+        },
+        "business": {
+          "pricing_model": "free",
+          "base_price": 0,
+          "enterprise_pricing": false,
+          "free_tier": true
+        },
+        "metrics": {}
+      },
+      "created_at": "2025-08-28T00:00:00.000Z",
+      "updated_at": "2025-08-28T18:45:36.788Z"
     }
   ],
   "metadata": {
-    "total": 35,
-    "last_updated": "2025-08-02T00:00:00.000Z",
-    "version": "2.0.0"
+    "total": 42,
+    "last_updated": "2025-08-28T18:45:36.788Z",
+    "version": "2.0.1"
   }
 }

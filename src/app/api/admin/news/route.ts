@@ -1,6 +1,6 @@
 /**
  * Consolidated Admin News Management API
- * 
+ *
  * Endpoints:
  * - GET: Get ingestion reports, fetch articles
  * - POST: Ingest news, manual ingest, rollback
@@ -21,7 +21,7 @@ function generateNewsId(title: string): string {
 
 /**
  * GET /api/admin/news
- * 
+ *
  * Query params:
  * - action: 'reports' | 'fetch-article' | 'status'
  * - url: URL for fetch-article action
@@ -37,19 +37,19 @@ export async function GET(request: NextRequest) {
         // Get ingestion reports (replaces ingestion-reports)
         const days = parseInt(searchParams.get("days") || "30", 10);
         const newsRepo = getNewsRepo();
-        
+
         const cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() - days);
 
         const allNews = await newsRepo.getAll();
         const recentNews = allNews.filter(
-          article => new Date(article.published_date || article.created_at) >= cutoffDate
+          (article) => new Date(article.published_date || article.created_at) >= cutoffDate
         );
 
         // Group by ingestion batch
         const ingestionBatches = new Map();
-        
-        recentNews.forEach(article => {
+
+        recentNews.forEach((article) => {
           const batchId = (article as any).ingestion_batch || "manual";
           if (!ingestionBatches.has(batchId)) {
             ingestionBatches.set(batchId, {
@@ -82,12 +82,9 @@ export async function GET(request: NextRequest) {
       case "fetch-article": {
         // Fetch article content (replaces fetch-article)
         const url = searchParams.get("url");
-        
+
         if (!url) {
-          return NextResponse.json(
-            { error: "URL parameter is required" },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "URL parameter is required" }, { status: 400 });
         }
 
         // This would typically fetch and parse the article
@@ -104,9 +101,9 @@ export async function GET(request: NextRequest) {
         // Get ingestion status
         const newsRepo = getNewsRepo();
         const allNews = await newsRepo.getAll();
-        
+
         const today = new Date();
-        const thisMonth = allNews.filter(article => {
+        const thisMonth = allNews.filter((article) => {
           const articleDate = new Date(article.published_date || article.created_at);
           return (
             articleDate.getMonth() === today.getMonth() &&
@@ -122,23 +119,17 @@ export async function GET(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { error: `Unknown action: ${action}` },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
   } catch (error) {
     loggers.api.error("Error in admin/news GET", { error });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 /**
  * POST /api/admin/news
- * 
+ *
  * Actions:
  * - ingest: Ingest news from Google Drive
  * - manual-ingest: Manually add news article
@@ -153,13 +144,7 @@ export async function POST(request: NextRequest) {
     switch (action) {
       case "ingest": {
         // Ingest news from Google Drive (replaces ingest-news)
-        const { 
-          dry_run = false, 
-          limit, 
-          start_date, 
-          end_date,
-          source = "google-drive" 
-        } = body;
+        const { dry_run = false, limit, start_date, end_date, source = "google-drive" } = body;
 
         loggers.api.info("Starting news ingestion", {
           dry_run,
@@ -176,7 +161,7 @@ export async function POST(request: NextRequest) {
           //   endDate: end_date,
           //   limit,
           // });
-          
+
           // Placeholder for now
           const newsData: any[] = [];
 
@@ -196,7 +181,7 @@ export async function POST(request: NextRequest) {
           // Ingest the news
           // const ingestor = new NewsIngestor();
           // const result = await ingestor.ingestBatch(newsData, source);
-          
+
           // Placeholder result
           const result = {
             ingested: 0,
@@ -215,7 +200,7 @@ export async function POST(request: NextRequest) {
         } catch (ingestionError) {
           loggers.api.error("News ingestion failed", { error: ingestionError });
           return NextResponse.json(
-            { 
+            {
               error: "Ingestion failed",
               details: ingestionError instanceof Error ? ingestionError.message : "Unknown error",
             },
@@ -226,10 +211,10 @@ export async function POST(request: NextRequest) {
 
       case "manual-ingest": {
         // Manually add news article (replaces manual-ingest)
-        const { 
-          title, 
-          content, 
-          url, 
+        const {
+          title,
+          content,
+          url,
           published_at,
           source = "manual",
           tool_mentions = [],
@@ -237,10 +222,7 @@ export async function POST(request: NextRequest) {
         } = body;
 
         if (!title || !content) {
-          return NextResponse.json(
-            { error: "Title and content are required" },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
         }
 
         const newsRepo = getNewsRepo();
@@ -279,16 +261,13 @@ export async function POST(request: NextRequest) {
         const { batch_id } = body;
 
         if (!batch_id) {
-          return NextResponse.json(
-            { error: "batch_id is required" },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "batch_id is required" }, { status: 400 });
         }
 
         const newsRepo = getNewsRepo();
         const allNews = await newsRepo.getAll();
         const batchArticles = allNews.filter(
-          article => (article as any).ingestion_batch === batch_id
+          (article) => (article as any).ingestion_batch === batch_id
         );
 
         if (batchArticles.length === 0) {
@@ -326,20 +305,14 @@ export async function POST(request: NextRequest) {
         const { article_id, metrics } = body;
 
         if (!article_id) {
-          return NextResponse.json(
-            { error: "article_id is required" },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: "article_id is required" }, { status: 400 });
         }
 
         const newsRepo = getNewsRepo();
         const article = await newsRepo.getById(article_id);
 
         if (!article) {
-          return NextResponse.json(
-            { error: `Article ${article_id} not found` },
-            { status: 404 }
-          );
+          return NextResponse.json({ error: `Article ${article_id} not found` }, { status: 404 });
         }
 
         const updatedArticle = {
@@ -364,23 +337,17 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { error: `Unknown action: ${action}` },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
     }
   } catch (error) {
     loggers.api.error("Error in admin/news POST", { error });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 /**
  * DELETE /api/admin/news
- * 
+ *
  * Delete news article or batch
  */
 export async function DELETE(request: NextRequest) {
@@ -401,12 +368,9 @@ export async function DELETE(request: NextRequest) {
     if (id) {
       // Delete single article
       const article = await newsRepo.getById(id);
-      
+
       if (!article) {
-        return NextResponse.json(
-          { error: `Article ${id} not found` },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: `Article ${id} not found` }, { status: 404 });
       }
 
       await newsRepo.delete(id);
@@ -423,9 +387,7 @@ export async function DELETE(request: NextRequest) {
     if (batch) {
       // Delete batch of articles
       const allNews = await newsRepo.getAll();
-      const batchArticles = allNews.filter(
-        article => (article as any).ingestion_batch === batch
-      );
+      const batchArticles = allNews.filter((article) => (article as any).ingestion_batch === batch);
 
       const deleted = [];
       for (const article of batchArticles) {
@@ -445,10 +407,7 @@ export async function DELETE(request: NextRequest) {
     }
   } catch (error) {
     loggers.api.error("Error in admin/news DELETE", { error });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   // Should not reach here

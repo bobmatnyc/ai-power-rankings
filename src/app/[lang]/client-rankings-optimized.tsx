@@ -264,7 +264,7 @@ export function ClientRankings({ loadingText, lang, initialRankings = [] }: Clie
         const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased timeout to 10s
 
         // Try static file first with cache-busting for immediate fixes
-        const cacheBuster = new Date().getTime();
+        const cacheBuster = Date.now();
         const response = await fetch(`/data/rankings.json?v=${cacheBuster}`, {
           signal: controller.signal,
           cache: "no-cache", // Ensure we get fresh data to debug
