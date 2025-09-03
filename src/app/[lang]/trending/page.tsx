@@ -22,11 +22,11 @@
  * @fileoverview Page displaying historical AI tool ranking trends with interactive chart
  */
 
-import { Suspense } from "react";
 import type { Metadata } from "next";
-import { TrendingPageContent } from "./trending-content";
-import { getDictionary } from "@/i18n/get-dictionary";
+import { Suspense } from "react";
 import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/get-dictionary";
+import { TrendingPageContent } from "./trending-content";
 
 interface PageProps {
   params: Promise<{

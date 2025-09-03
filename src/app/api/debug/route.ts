@@ -1,12 +1,13 @@
 /**
  * Consolidated Debug API
- * 
+ *
  * Endpoints for debugging and development
  * - GET: Various debug information based on type parameter
  */
 
-import { type NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
+
 // import { getTranslations } from "@/lib/i18n/server";
 // import { supportedLocales } from "@/lib/i18n/config";
 
@@ -14,7 +15,7 @@ const supportedLocales = ["en", "ja", "ko", "zh"];
 
 /**
  * GET /api/debug
- * 
+ *
  * Query params:
  * - type: 'env' | 'runtime' | 'static' | 'urls' | 'translations' | 'trending'
  */
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest) {
         const hasGithubToken = !!process.env["GITHUB_TOKEN"];
         const hasOpenAIKey = !!process.env["OPENAI_API_KEY"];
         const hasAnthropicKey = !!process.env["ANTHROPIC_API_KEY"];
-        
+
         return NextResponse.json({
           environment: process.env["NODE_ENV"],
           is_production: isProduction,
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
         const headersList = await headers();
         const host = headersList.get("host");
         const userAgent = headersList.get("user-agent");
-        
+
         return NextResponse.json({
           runtime: "nodejs",
           node_version: process.version,
@@ -71,7 +72,7 @@ export async function GET(request: NextRequest) {
         // Debug static file serving (replaces debug-static)
         const fs = await import("fs-extra");
         const path = await import("node:path");
-        
+
         const publicPath = path.join(process.cwd(), "public");
         const staticFiles = [];
 
@@ -87,7 +88,7 @@ export async function GET(request: NextRequest) {
         for (const file of filesToCheck) {
           const filePath = path.join(publicPath, file);
           const exists = await fs.pathExists(filePath);
-          
+
           if (exists) {
             const stats = await fs.stat(filePath);
             staticFiles.push({
@@ -116,7 +117,7 @@ export async function GET(request: NextRequest) {
         // Debug URL configuration (replaces debug-urls)
         const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000";
         const apiUrl = process.env["NEXT_PUBLIC_API_URL"] || baseUrl;
-        
+
         return NextResponse.json({
           base_url: baseUrl,
           api_url: apiUrl,
@@ -134,12 +135,12 @@ export async function GET(request: NextRequest) {
       case "translations": {
         // Debug missing translations (replaces missing-translations)
         const locale = searchParams.get("locale") || "en";
-        const missingKeys = [];
+        const missingKeys: string[] = [];
         const allKeys = new Set<string>();
 
         // Check translations for all namespaces
         const namespaces = ["common", "home", "rankings", "tools", "news"];
-        
+
         // Placeholder for translation checking
         // This would need the actual i18n implementation
         for (const ns of namespaces) {
@@ -159,11 +160,11 @@ export async function GET(request: NextRequest) {
         // Debug trending calculations (replaces debug-trending)
         const { getRankingsRepo } = await import("@/lib/json-db");
         const rankingsRepo = getRankingsRepo();
-        
+
         // Get recent periods for trending analysis
         const periods = await rankingsRepo.getPeriods();
         const recentPeriods = periods.slice(0, 3); // Last 3 periods
-        
+
         const trendingData = [];
         const periodRankings = new Map();
 
@@ -180,23 +181,21 @@ export async function GET(request: NextRequest) {
           const [currentPeriod, previousPeriod] = recentPeriods;
           const currentRankings = periodRankings.get(currentPeriod) || [];
           const previousRankings = periodRankings.get(previousPeriod) || [];
-          
-          const previousMap = new Map(
-            previousRankings.map((r: any) => [r.tool_id, r])
-          );
+
+          const previousMap = new Map(previousRankings.map((r: any) => [r.tool_id, r]));
 
           for (const current of currentRankings) {
             const previous = previousMap.get(current.tool_id);
-            
+
             if (previous) {
               const positionChange = (previous as any).position - (current as any).position;
               const scoreChange = (current as any).score - (previous as any).score;
-              
+
               trendingData.push({
                 tool_id: current.tool_id,
                 tool_name: current.tool_name,
-                current_position: current.position,
-                previous_position: previous.position,
+                current_position: (current as any).position,
+                previous_position: (previous as any).position,
                 position_change: positionChange,
                 score_change: scoreChange,
                 trending_score: positionChange * 2 + scoreChange * 10,
@@ -216,15 +215,12 @@ export async function GET(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { error: `Unknown debug type: ${type}` },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: `Unknown debug type: ${type}` }, { status: 400 });
     }
   } catch (error) {
     console.error("Debug endpoint error:", error);
     return NextResponse.json(
-      { 
+      {
         error: "Debug operation failed",
         details: error instanceof Error ? error.message : "Unknown error",
       },

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Dictionary } from "@/i18n/get-dictionary";
 import type { MetricHistory } from "@/types/database";
 
 interface ToolDetailTabsProps {
@@ -78,10 +79,10 @@ interface ToolDetailTabsProps {
     is_primary: boolean;
     is_active: boolean;
   }>;
-  dict: any;
+  dict: Dictionary;
 }
 
-const formatMetric = (value: number | undefined, type: string, dict: any): string => {
+const formatMetric = (value: number | undefined, type: string, dict: Dictionary): string => {
   if (value === undefined || value === 0) {
     return dict.common.notAvailable;
   }

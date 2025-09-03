@@ -5,70 +5,90 @@
 
 ## Project Overview
 - **Name**: AI Power Rankings
-- **Type**: Next.js web application
-- **Purpose**: AI technology rankings and news aggregation
-- **Stack**: Next.js 14, TypeScript, React, Tailwind CSS
-- **Database**: JSON file-based storage
+- **Type**: Next.js 15 web application
+- **Purpose**: AI technology rankings and news aggregation with multilingual support
+- **Stack**: Next.js 15, TypeScript, React, Tailwind CSS, JSON file storage
 - **Deployment**: Vercel
 - **Task System**: Local TrackDown in `/trackdown/`
+- **Principle**: Single-Path Standards (ONE way to do ANYTHING)
 
 ## Recent Project Updates
-- **August 2025 Cleanup**: Consolidated API routes, reduced code by 30%
+- **September 2025**: Claude Code optimization with priority-based organization
+- **August 2025**: Consolidated API routes, reduced code by 30%
 - **News System**: Expanded collection with 13 new articles for August 2025
 - **Algorithm**: Updated to v7.1 for improved ranking calculations
-- **Task Management**: Migrated from Notion to local TrackDown system
-- **Memory System**: Implemented Claude-MPM for multi-agent coordination
+- **Documentation**: Implemented priority-based CLAUDE.md (🔴🟡🟢⚪)
+- **Single-Path Standards**: Established THE ONE way for all operations
 
-## Critical Workflows
-- **Development**: Feature branch → PR → Review → Main
-- **Testing**: type-check → lint → test → ci:local
-- **Deployment**: pre-deploy → build → cache:generate → deploy
-- **News Ingestion**: Validate → Backup → Ingest → Test → Cache
-- **Rankings Update**: Calculate → Validate → Cache → Deploy
+## 🔴 CRITICAL Workflows (Single-Path)
+- **Development**: `pnpm run dev:pm2 start` (THE way to develop)
+- **Quality Check**: `pnpm run ci:local` (THE way to validate)
+- **Deployment**: `pnpm run pre-deploy && vercel deploy` (THE way to deploy)
+- **Cache Generation**: `pnpm run cache:generate` (THE way to cache)
+- **Data Backup**: `pnpm run backup:create` (THE way to backup)
 
-## Active Priorities
-1. Maintain code quality (TypeScript strict mode)
-2. Ensure data integrity (JSON validation)
-3. Optimize performance (cache generation)
-4. Regular news updates (monthly ingestion)
-5. Accurate rankings (Algorithm v7.1)
+## Active Priorities (By Priority Level)
+### 🔴 CRITICAL
+1. Enforce single-path standards (ONE way to do anything)
+2. Link all work to TrackDown tickets (mandatory)
+3. Run `pnpm run ci:local` before ANY commit
+4. Follow priority-based documentation order
 
-## Team Coordination
-- **Engineer**: Implementation and architecture
-- **QA**: Testing and validation
-- **Research**: Documentation and analysis
-- **Ops**: Deployment and monitoring
-- **Version Control**: Git and release management
+### 🟡 IMPORTANT  
+5. Maintain TypeScript quality (fix 300+ lint issues)
+6. Ensure data integrity (JSON validation)
+7. Optimize performance (cache generation)
 
-## Key Metrics
-- **Code Coverage**: Target 80%+
-- **Build Time**: Under 2 minutes
-- **Type Safety**: 100% (no any types)
-- **File Size**: Max 800 lines (ideal 400)
+### 🟢 STANDARD
+8. Regular news updates (monthly ingestion)
+9. Accurate rankings (Algorithm v7.1)
+10. Documentation maintenance
+
+## Team Coordination (Single-Path)
+- **Engineer**: `@engineer "task description (TSK-XXX)"` - Implementation
+- **QA**: `@qa "validation task (TSK-XXX)"` - Testing and validation  
+- **Research**: `@research "analysis task (TSK-XXX)"` - Documentation
+- **Ops**: `@ops "deployment task (TSK-XXX)"` - Infrastructure
+- **Version Control**: `@version-control "git task (TSK-XXX)"` - Git ops
+
+## Key Metrics & Quality Gates
+- **Linting**: 320+ issues to fix (75 errors, 245 warnings)
+- **Type Safety**: CRITICAL - Remove all `any` types (currently many)
+- **Build Time**: Under 2 minutes (currently working)
 - **Performance**: Lighthouse score 90+
+- **Code Coverage**: Target 80%+
 
-## Risk Management
+## Tool Configurations (Working)
+- **Biome**: biome.json configured for linting/formatting
+- **TypeScript**: tsconfig.json with strict mode
+- **Package Manager**: pnpm (not npm/yarn)
+- **Husky**: Pre-commit hooks configured
+- **Vitest**: Testing framework configured
+
+## Risk Management (Priority-Based)
+### 🔴 CRITICAL Risks
+- **Type Errors**: Many `any` types need fixing
+- **Single-Path Violations**: Multiple ways to do same tasks
+- **Documentation Drift**: Docs not matching reality
+
+### 🟡 IMPORTANT Risks  
 - **Data Loss**: Daily backups, version control
-- **Type Errors**: Pre-commit validation
-- **Deployment Failures**: Staging environment testing
+- **Deployment Failures**: Use staging validation
 - **Breaking Changes**: Feature flags, gradual rollout
 
-## Communication Patterns
-- **Handoffs**: Include ticket ID, changes, summary, next steps
-- **Commits**: Link to TrackDown tickets (TSK-XXX)
-- **PRs**: Comprehensive description with test plan
-- **Documentation**: Update immediately after changes
+## Resource Locations (By Priority)
+### 🔴 CRITICAL
+- **CLAUDE.md**: Project configuration (priority-organized)
+- **TrackDown**: `/trackdown/` directory (task management)
+- **Core Docs**: `/docs/INSTRUCTIONS.md`, `/docs/WORKFLOW.md`
 
-## Resource Locations
-- **Documentation**: `/docs/` directory
-- **Task Tracking**: `/trackdown/` directory
-- **Data Storage**: `/data/json/` directory
-- **Cache Files**: `/src/data/cache/` directory
-- **Configurations**: `/.claude-mpm/config/` directory
+### 🟡 IMPORTANT
+- **Data**: `/data/json/` directory (primary storage)
+- **Cache**: `/src/data/cache/` directory (performance)
+- **Memory**: `/.claude-mpm/memories/` (agent knowledge)
 
 ## Decision Log
+- **2025-09**: Implemented single-path standards and priority organization
 - **2025-08**: Adopted local TrackDown for task management
 - **2025-08**: Implemented Claude-MPM for agent coordination
 - **2025-08**: Consolidated API routes for maintainability
-- **2025-08**: Standardized on JSON file storage
-- **2025-07**: Upgraded to Algorithm v7.1

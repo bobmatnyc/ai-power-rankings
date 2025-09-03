@@ -30,6 +30,29 @@ interface RankingData {
   };
 }
 
+interface AlgorithmData {
+  version?: string;
+  name?: string;
+  date?: string;
+  weights?: {
+    newsImpact?: number;
+    baseScore?: number;
+  };
+}
+
+interface RankingsResponse {
+  rankings?: RankingData[];
+  algorithm?: AlgorithmData;
+  stats?: {
+    total_tools?: number;
+    tools_with_news?: number;
+    avg_news_boost?: number;
+    max_news_impact?: number;
+  };
+  _source?: string;
+  _timestamp?: string;
+}
+
 interface ClientRankingsProps {
   loadingText: string;
   lang: string;
@@ -292,22 +315,20 @@ export function ClientRankings({ loadingText, lang, initialRankings = [] }: Clie
         // Use a worker-like pattern for JSON parsing if the data is large
         if (text.length > 50000) {
           // For large JSON, parse in chunks
-          const data = await new Promise<{ rankings?: unknown[]; [key: string]: unknown }>(
-            (resolve) => {
-              setTimeout(() => {
-                resolve(JSON.parse(text));
-              }, 0);
-            }
-          );
+          const data = await new Promise<RankingsResponse>((resolve) => {
+            setTimeout(() => {
+              resolve(JSON.parse(text));
+            }, 0);
+          });
 
           performance.mark("rankings-parse-end");
           const rankings = (data.rankings || []) as RankingData[];
           processRankingsInChunks(rankings);
 
           // Update date immediately
-          const algorithm = data["algorithm"] as any;
-          if (algorithm?.["date"]) {
-            const updateDate = new Date(algorithm["date"]);
+          const algorithm = data.algorithm;
+          if (algorithm?.date) {
+            const updateDate = new Date(algorithm.date);
 
             // Check if date is valid
             if (Number.isNaN(updateDate.getTime())) {
@@ -324,7 +345,7 @@ export function ClientRankings({ loadingText, lang, initialRankings = [] }: Clie
           }
         } else {
           // For smaller JSON, parse directly
-          const data = JSON.parse(text);
+          const data: RankingsResponse = JSON.parse(text);
           processRankingsInChunks(data.rankings || []);
 
           if (data.algorithm?.date) {

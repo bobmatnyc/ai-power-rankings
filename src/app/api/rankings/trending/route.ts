@@ -23,12 +23,12 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
+import { loggers } from "@/lib/logger";
 import {
   analyzeTrendingData,
   filterTrendingDataByTimeRange,
   type RankingPeriod,
 } from "@/lib/trending-analyzer";
-import { loggers } from "@/lib/logger";
 
 /**
  * Reads all historical ranking period files from the data directory.

@@ -35,12 +35,61 @@ interface ToolDetailData {
     rank: number;
     previousRank?: number;
     rankChange?: number;
-    scores: Record<string, number>;
+    scores: {
+      overall: number;
+      agentic_capability: number;
+      innovation: number;
+      technical_performance: number;
+      developer_adoption: number;
+      market_traction: number;
+      business_sentiment: number;
+      development_velocity: number;
+      platform_resilience: number;
+    };
   };
-  metrics?: Record<string, number | string>;
-  metricHistory?: Array<Record<string, unknown>>;
-  rankingsHistory?: Array<Record<string, unknown>>;
-  newsItems?: Array<Record<string, unknown>>;
+  metrics?: {
+    users?: number;
+    monthly_arr?: number;
+    swe_bench_score?: number;
+    github_stars?: number;
+    valuation?: number;
+    funding?: number;
+    employees?: number;
+  };
+  metricHistory?: Array<{
+    metric_date: string;
+    source_name: string;
+    source_url: string;
+    metrics: Record<
+      string,
+      { value: number; evidence?: string; confidence?: "high" | "medium" | "low" }
+    >;
+    scoring_metrics: Record<
+      string,
+      { value: number; evidence?: string; confidence?: "high" | "medium" | "low" }
+    >;
+    published_date: string;
+  }>;
+  rankingsHistory?: Array<{
+    position: number;
+    score: number;
+    period: string;
+    ranking_periods: {
+      period: string;
+      display_name: string;
+      calculation_date: string;
+    };
+  }>;
+  newsItems?: Array<{
+    id: string;
+    title: string;
+    summary?: string;
+    url?: string;
+    source?: string;
+    published_at: string;
+    category?: string;
+    type?: string;
+  }>;
 }
 
 interface Tool {
@@ -256,11 +305,11 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
       {/* Tool Detail Tabs */}
       <ToolDetailTabs
         tool={tool}
-        ranking={toolData?.ranking as any}
+        ranking={toolData?.ranking}
         metrics={toolData?.metrics || metrics}
-        metricHistory={toolData?.metricHistory as any}
-        rankingsHistory={toolData?.rankingsHistory as any}
-        newsItems={toolData?.newsItems as any}
+        metricHistory={toolData?.metricHistory}
+        rankingsHistory={toolData?.rankingsHistory}
+        newsItems={toolData?.newsItems}
         pricingPlans={pricingPlans}
         dict={dict}
       />

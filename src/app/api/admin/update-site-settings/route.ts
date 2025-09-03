@@ -15,12 +15,12 @@ export async function POST(_request: NextRequest) {
       message: "Site settings updated successfully",
       algorithm_version: updatedSettings.algorithm_version,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating site settings:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : "Failed to update settings",
       },
       { status: 500 }
     );
@@ -37,7 +37,10 @@ export async function GET() {
       algorithm_version: settings.algorithm_version,
       settings: settings,
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to get settings" },
+      { status: 500 }
+    );
   }
 }

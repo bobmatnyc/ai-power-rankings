@@ -20,6 +20,32 @@ interface ToolData {
   category?: string;
 }
 
+interface RankingData {
+  rank: number;
+  previousRank?: number;
+  rankChange?: number;
+  changeReason?: string;
+  tool: {
+    id: string;
+    slug?: string;
+    name: string;
+    category: string;
+    status: string;
+    website_url?: string;
+    description?: string;
+  };
+  scores: {
+    overall: number;
+    agentic_capability: number;
+    innovation: number;
+  };
+  metrics: {
+    users?: number;
+    monthly_arr?: number;
+    swe_bench_score?: number;
+  };
+}
+
 // Dynamic import for T-031 performance optimization
 const ClientRankings = dynamicImport(
   () => import("./client-rankings-optimized").then((mod) => ({ default: mod.ClientRankings })),
@@ -160,7 +186,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
 
   // Provide server-side fallback data to prevent loading state
   // Hard-coded fallback for immediate display while debugging
-  const serverRankings: any[] = [
+  const serverRankings: RankingData[] = [
     {
       rank: 1,
       tool: {
@@ -219,6 +245,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
         agentic_capability: 5,
         innovation: 8.5,
       },
+      metrics: {},
     },
   ];
 

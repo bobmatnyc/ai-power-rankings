@@ -8,10 +8,6 @@
  * - PUT: Update or sync rankings
  */
 
-import { type NextRequest, NextResponse } from "next/server";
-import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
-import { loggers } from "@/lib/logger";
-import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 // import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
 // import {
 //   extractEnhancedNewsMetrics,
@@ -20,6 +16,11 @@ import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ran
 // } from "@/lib/ranking-news-enhancer";
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { type NextRequest, NextResponse } from "next/server";
+import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
+import type { RankingPeriod, RankingEntry, Tool } from "@/lib/json-db/schemas";
+import { loggers } from "@/lib/logger";
+import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 
 // Helper function for category-based agentic scores
 function getCategoryBasedAgenticScore(category: string, toolName: string): number {
@@ -41,7 +42,7 @@ function getCategoryBasedAgenticScore(category: string, toolName: string): numbe
 }
 
 // Helper function to transform tool to metrics
-function transformToToolMetrics(tool: any, innovationScore: number = 0): ToolMetricsV6 {
+function transformToToolMetrics(tool: Tool, innovationScore: number = 0): ToolMetricsV6 {
   const info = tool["info"];
   const technical = info?.technical || {};
   const businessMetrics = info?.metrics || {};
@@ -53,8 +54,8 @@ function transformToToolMetrics(tool: any, innovationScore: number = 0): ToolMet
     agentic_capability: getCategoryBasedAgenticScore(tool["category"], tool["name"]),
     swe_bench_score: businessMetrics["swe_bench_score"] || 0,
     multi_file_capability: technical["multi_file_support"] ? 75 : 25,
-    planning_depth: technical["planning_capability"] || 5,
-    context_utilization: technical["context_utilization"] || 5,
+    planning_depth: 5, // Default value as field doesn't exist in schema
+    context_utilization: 5, // Default value as field doesn't exist in schema
     context_window: technical["context_window"] || 100000,
     language_support: technical["supported_languages"] || 10,
     github_stars: businessMetrics["github_stars"] || 0,
@@ -70,8 +71,8 @@ function transformToToolMetrics(tool: any, innovationScore: number = 0): ToolMet
     release_frequency: 5,
     github_contributors: businessMetrics["github_contributors"] || 0,
     llm_provider_count: 1,
-    multi_model_support: technical["multi_model_support"] || false,
-    community_size: businessMetrics["community_size"] || 0,
+    multi_model_support: false, // Default value as field doesn't exist in schema
+    community_size: businessMetrics["estimated_users"] || 0, // Using estimated_users as proxy for community_size
   };
 }
 
@@ -101,7 +102,7 @@ export async function GET(request: NextRequest) {
               period,
               tool_count: data.rankings.length,
               algorithm_version: data.algorithm_version,
-              generated_at: (data as any).generated_at,
+              generated_at: (data as RankingPeriod & { generated_at?: string }).generated_at,
               is_current: data.is_current || false,
             });
           }
@@ -127,7 +128,7 @@ export async function GET(request: NextRequest) {
               allData.push({
                 period: p,
                 rankings: data.rankings.length,
-                has_scores: data.rankings.every((r: any) => r.score !== undefined),
+                has_scores: data.rankings.every((r) => r.score !== undefined),
                 algorithm_version: data.algorithm_version,
               });
             }
@@ -148,7 +149,7 @@ export async function GET(request: NextRequest) {
           period,
           tool_count: data.rankings.length,
           algorithm_version: data.algorithm_version,
-          generated_at: (data as any).generated_at,
+          generated_at: (data as RankingPeriod & { generated_at?: string }).generated_at,
           sample_rankings: data.rankings.slice(0, 5),
         });
       }
@@ -177,7 +178,7 @@ export async function GET(request: NextRequest) {
               rankings: data.rankings,
               metadata: {
                 algorithm_version: data.algorithm_version,
-                generated_at: (data as any).generated_at,
+                generated_at: (data as RankingPeriod & { generated_at?: string }).generated_at,
                 is_current: data.is_current || false,
               },
             });
@@ -229,7 +230,7 @@ export async function POST(request: NextRequest) {
 
         // Get comparison period
         let comparisonPeriod = compare_with;
-        let currentRankings: any[] = [];
+        let currentRankings: RankingEntry[] = [];
 
         if (compare_with === "auto" || !compare_with) {
           const availablePeriods = await rankingsRepo.getPeriods();
@@ -264,7 +265,8 @@ export async function POST(request: NextRequest) {
         }
 
         // Load innovation scores
-        const innovationScores: any[] = [];
+        const innovationScores: { tool_id: string; score?: number; innovation_score?: number }[] =
+          [];
         try {
           const fs = await import("fs-extra");
           const path = await import("node:path");
@@ -276,7 +278,7 @@ export async function POST(request: NextRequest) {
         } catch (error) {
           loggers.api.warn("Failed to load innovation scores", { error });
         }
-        const innovationMap = new Map(innovationScores.map((s: any) => [s.tool_id, s]));
+        const innovationMap = new Map(innovationScores.map((s) => [s.tool_id, s]));
 
         // Calculate scores
         const rankingEngine = new RankingEngineV6();
@@ -309,7 +311,7 @@ export async function POST(request: NextRequest) {
             //   score["factorScores"],
             //   enhancedMetrics
             // );
-            const adjustedFactorScores = {} as any;
+            const adjustedFactorScores = {} as Record<string, number>;
 
             score["factorScores"] = {
               ...score["factorScores"],
@@ -404,7 +406,8 @@ export async function POST(request: NextRequest) {
         const scores: ToolScoreV6[] = [];
 
         // Load innovation scores
-        const innovationScores: any[] = [];
+        const innovationScores: { tool_id: string; score?: number; innovation_score?: number }[] =
+          [];
         try {
           const fs = await import("fs-extra");
           const path = await import("node:path");
@@ -416,7 +419,7 @@ export async function POST(request: NextRequest) {
         } catch (error) {
           loggers.api.warn("Failed to load innovation scores", { error });
         }
-        const innovationMap = new Map(innovationScores.map((s: any) => [s.tool_id, s]));
+        const innovationMap = new Map(innovationScores.map((s) => [s.tool_id, s]));
 
         for (const tool of tools) {
           try {
@@ -485,7 +488,7 @@ export async function POST(request: NextRequest) {
           rankings,
         };
 
-        await rankingsRepo.saveRankingsForPeriod(rankingData as any);
+        await rankingsRepo.saveRankingsForPeriod(rankingData as RankingPeriod);
 
         // Also update public rankings.json if this is the current period
         const publicPath = join(process.cwd(), "public", "data", "rankings.json");
@@ -522,8 +525,8 @@ export async function POST(request: NextRequest) {
         for (const p of periods) {
           const periodData = await rankingsRepo.getRankingsForPeriod(p);
           if (periodData) {
-            (periodData as any).is_current = p === period;
-            await rankingsRepo.saveRankingsForPeriod(periodData as any);
+            (periodData as RankingPeriod & { is_current: boolean }).is_current = p === period;
+            await rankingsRepo.saveRankingsForPeriod(periodData as RankingPeriod);
           }
         }
 
@@ -563,7 +566,7 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: `Period ${period} already exists` }, { status: 400 });
         }
 
-        let rankingData;
+        let rankingData: RankingPeriod & { is_current?: boolean; generated_at: string };
         if (copy_from) {
           // Copy from existing period
           const sourceData = await rankingsRepo.getRankingsForPeriod(copy_from);
@@ -590,7 +593,7 @@ export async function POST(request: NextRequest) {
           };
         }
 
-        await rankingsRepo.saveRankingsForPeriod(rankingData as any);
+        await rankingsRepo.saveRankingsForPeriod(rankingData as RankingPeriod);
 
         return NextResponse.json({
           success: true,
@@ -621,8 +624,10 @@ export async function POST(request: NextRequest) {
         if (!currentData || !currentPeriod) {
           // Use most recent period as fallback
           const latestPeriod = periods[0];
-          currentData = await rankingsRepo.getRankingsForPeriod(latestPeriod!);
-          currentPeriod = latestPeriod!;
+          if (latestPeriod) {
+            currentData = await rankingsRepo.getRankingsForPeriod(latestPeriod);
+            currentPeriod = latestPeriod;
+          }
         }
 
         if (!currentData) {

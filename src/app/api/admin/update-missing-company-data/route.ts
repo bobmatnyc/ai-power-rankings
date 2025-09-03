@@ -69,8 +69,9 @@ export async function POST(_request: NextRequest) {
           results.updated++;
           loggers.api.info(`Updated ${update.name}`);
         }
-      } catch (error: any) {
-        results.errors.push(`${update.name}: ${error.message}`);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        results.errors.push(`${update.name}: ${errorMessage}`);
         loggers.api.error(`Error updating ${update.name}:`, error);
       }
     }
@@ -82,13 +83,15 @@ export async function POST(_request: NextRequest) {
       message: `Updated ${results.updated} out of ${results.total} companies`,
       results,
     });
-  } catch (error: any) {
+  } catch (error) {
     loggers.api.error("Error updating company data:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
-        details: error.stack,
+        error: errorMessage,
+        details: errorStack,
       },
       { status: 500 }
     );
@@ -124,8 +127,9 @@ export async function GET() {
       total: companiesWithMissingData.length,
       companies: missingData,
     });
-  } catch (error: any) {
+  } catch (error) {
     loggers.api.error("Error checking company data:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

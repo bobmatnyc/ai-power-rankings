@@ -9,7 +9,9 @@
 
 import { type NextRequest, NextResponse } from "next/server";
 import { getNewsRepo } from "@/lib/json-db";
+import type { NewsArticle } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
+
 // import { NewsIngestor } from "@/lib/news-ingestor";
 // import { fetchGoogleDriveNews } from "@/lib/news-fetcher";
 // import { generateNewsId } from "@/lib/utils/news";
@@ -49,8 +51,9 @@ export async function GET(request: NextRequest) {
         // Group by ingestion batch
         const ingestionBatches = new Map();
 
+        type ArticleWithBatch = NewsArticle & { ingestion_batch?: string };
         recentNews.forEach((article) => {
-          const batchId = (article as any).ingestion_batch || "manual";
+          const batchId = (article as ArticleWithBatch).ingestion_batch || "manual";
           if (!ingestionBatches.has(batchId)) {
             ingestionBatches.set(batchId, {
               batch_id: batchId,
@@ -163,14 +166,14 @@ export async function POST(request: NextRequest) {
           // });
 
           // Placeholder for now
-          const newsData: any[] = [];
+          const newsData: NewsArticle[] = [];
 
           if (dry_run) {
             return NextResponse.json({
               success: true,
               dry_run: true,
               articles_found: newsData.length,
-              sample: newsData.slice(0, 5).map((article: any) => ({
+              sample: newsData.slice(0, 5).map((article) => ({
                 title: article.title,
                 published_date: article.published_date,
                 source: article.source,
@@ -232,7 +235,7 @@ export async function POST(request: NextRequest) {
           id: generateNewsId(title),
           slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
           title,
-          summary: content.substring(0, 200) + "...",
+          summary: `${content.substring(0, 200)}...`,
           content,
           url,
           source,
@@ -242,7 +245,7 @@ export async function POST(request: NextRequest) {
           tool_mentions,
           tags,
           // ingestion_batch: `manual-${Date.now()}`,
-        } as any;
+        } as NewsArticle;
 
         await newsRepo.upsert(article);
 
@@ -265,9 +268,10 @@ export async function POST(request: NextRequest) {
         }
 
         const newsRepo = getNewsRepo();
+        type ArticleWithBatch = NewsArticle & { ingestion_batch?: string };
         const allNews = await newsRepo.getAll();
         const batchArticles = allNews.filter(
-          (article) => (article as any).ingestion_batch === batch_id
+          (article) => (article as ArticleWithBatch).ingestion_batch === batch_id
         );
 
         if (batchArticles.length === 0) {
@@ -315,16 +319,17 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: `Article ${article_id} not found` }, { status: 404 });
         }
 
-        const updatedArticle = {
+        type ArticleWithMetrics = NewsArticle & { metrics?: Record<string, unknown> };
+        const updatedArticle: ArticleWithMetrics = {
           ...article,
           metrics: {
-            ...(article as any).metrics,
+            ...(article as ArticleWithMetrics).metrics,
             ...metrics,
           },
           updated_at: new Date().toISOString(),
-        } as any;
+        };
 
-        await newsRepo.upsert(updatedArticle);
+        await newsRepo.upsert(updatedArticle as NewsArticle);
 
         return NextResponse.json({
           success: true,
@@ -386,8 +391,11 @@ export async function DELETE(request: NextRequest) {
 
     if (batch) {
       // Delete batch of articles
+      type ArticleWithBatch = NewsArticle & { ingestion_batch?: string };
       const allNews = await newsRepo.getAll();
-      const batchArticles = allNews.filter((article) => (article as any).ingestion_batch === batch);
+      const batchArticles = allNews.filter(
+        (article) => (article as ArticleWithBatch).ingestion_batch === batch
+      );
 
       const deleted = [];
       for (const article of batchArticles) {

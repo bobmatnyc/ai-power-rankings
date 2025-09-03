@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BarChart3,
   Filter,
   FlaskConical,
   Home,
@@ -8,7 +9,6 @@ import {
   List,
   Newspaper,
   TrendingUp,
-  BarChart3,
   Wrench,
 } from "lucide-react";
 import Image from "next/image";

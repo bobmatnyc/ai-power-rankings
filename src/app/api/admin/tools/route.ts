@@ -10,8 +10,8 @@
 
 import { type NextRequest, NextResponse } from "next/server";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
-import { loggers } from "@/lib/logger";
 import type { Tool } from "@/lib/json-db/schemas";
+import { loggers } from "@/lib/logger";
 
 interface ToolCheckResult {
   foundBySlug: boolean;

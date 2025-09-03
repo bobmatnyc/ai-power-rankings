@@ -2,6 +2,7 @@ import path from "node:path";
 import fs from "fs-extra";
 import { type NextRequest, NextResponse } from "next/server";
 import { getNewsRepo, getRankingsRepo, getToolsRepo } from "@/lib/json-db";
+import type { RankingEntry, Tool } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, type ToolMetricsV6 } from "@/lib/ranking-algorithm-v6";
 import {
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Get comparison period
     let comparisonPeriod = compare_with;
-    let currentRankings: any[] = [];
+    let currentRankings: RankingEntry[] = [];
 
     if (compare_with === "auto" || !compare_with) {
       const availablePeriods = await rankingsRepo.getPeriods();
@@ -145,11 +146,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const rankingEngine = new RankingEngineV6();
 
     // Calculate real scores for all tools
-    const scoredTools: Array<{ tool: any; score: number }> = [];
+    const scoredTools: Array<{ tool: Tool; score: number }> = [];
 
     // Get innovation scores
     const innovationScoresPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
-    let innovationScores: any[] = [];
+    interface InnovationScore {
+      tool_id: string;
+      score?: number;
+      [key: string]: unknown;
+    }
+    let innovationScores: InnovationScore[] = [];
     try {
       if (await fs.pathExists(innovationScoresPath)) {
         innovationScores = await fs.readJson(innovationScoresPath);
@@ -157,7 +163,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } catch (error) {
       loggers.api.warn("Failed to load innovation scores", { error });
     }
-    const innovationMap = new Map(innovationScores.map((s: any) => [s.tool_id, s]));
+    const innovationMap = new Map(innovationScores.map((s) => [s.tool_id, s]));
 
     for (let i = 0; i < tools.length; i++) {
       const tool = tools[i];
@@ -276,7 +282,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Update factorScores with adjusted values
       Object.keys(adjustedFactorScores).forEach((key) => {
         if (key in scoreResult.factorScores) {
-          (scoreResult.factorScores as any)[key] = adjustedFactorScores[key];
+          const adjustedValue = adjustedFactorScores[key];
+          if (adjustedValue !== undefined) {
+            (scoreResult.factorScores as Record<string, number>)[key] = adjustedValue;
+          }
         }
       });
 
