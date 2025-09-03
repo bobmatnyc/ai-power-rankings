@@ -29,17 +29,16 @@
       "sentiment_analysis": {
         "rawSentiment": 0.9,
         "adjustedSentiment": 0.92,
-        "newsImpact": 110,
+        "newsImpact": 110.0,
         "notes": "Terminal integration is a major technical advancement, reinforcing leadership position"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 1
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "2",
       "tool_name": "GitHub Copilot",
       "rank": 2,
-      "score": 93,
+      "score": 93.0,
       "movement": {
         "previous_position": 2,
         "change": 0,
@@ -60,11 +59,10 @@
       "sentiment_analysis": {
         "rawSentiment": 0.85,
         "adjustedSentiment": 0.88,
-        "newsImpact": 135,
+        "newsImpact": 135.0,
         "notes": "50% Fortune 500 adoption is a massive enterprise validation milestone"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 2
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "1",
@@ -91,17 +89,16 @@
       "sentiment_analysis": {
         "rawSentiment": 0.8,
         "adjustedSentiment": 0.85,
-        "newsImpact": 115,
+        "newsImpact": 115.0,
         "notes": "Outperforming in multi-file operations benchmark validates technical superiority"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 3
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "18",
       "tool_name": "ChatGPT Canvas",
       "rank": 4,
-      "score": 86,
+      "score": 86.0,
       "movement": {
         "previous_position": 4,
         "change": 0,
@@ -122,11 +119,10 @@
       "sentiment_analysis": {
         "rawSentiment": 0.72,
         "adjustedSentiment": 0.82,
-        "newsImpact": 175,
+        "newsImpact": 175.0,
         "notes": "Maintaining strong position with consistent improvements"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 4
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "10",
@@ -153,17 +149,16 @@
       "sentiment_analysis": {
         "rawSentiment": 0.88,
         "adjustedSentiment": 0.9,
-        "newsImpact": 145,
+        "newsImpact": 145.0,
         "notes": "100k+ component marketplace launch is a game-changer for UI development"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 5
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "31",
       "tool_name": "Kiro",
       "rank": 6,
-      "score": 81,
+      "score": 81.0,
       "movement": {
         "previous_position": 5,
         "change": 1,
@@ -184,11 +179,10 @@
       "sentiment_analysis": {
         "rawSentiment": 0,
         "adjustedSentiment": 0,
-        "newsImpact": 42,
+        "newsImpact": 42.0,
         "notes": "Innovation decay affecting score as newer tools gain momentum"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 6
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "14",
@@ -215,11 +209,10 @@
       "sentiment_analysis": {
         "rawSentiment": 0.75,
         "adjustedSentiment": 0.8,
-        "newsImpact": 95,
+        "newsImpact": 95.0,
         "notes": "Real-time collaboration features driving significant adoption gains"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 7
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "11",
@@ -249,14 +242,13 @@
         "newsImpact": 10.5,
         "notes": "Limited visibility while competitors accelerate"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 8
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "26",
       "tool_name": "Amazon Q Developer",
       "rank": 9,
-      "score": 75,
+      "score": 75.0,
       "movement": {
         "previous_position": 7,
         "change": 2,
@@ -280,14 +272,13 @@
         "newsImpact": 6.5,
         "notes": "Innovation decay impacting competitive position"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 9
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "12",
       "tool_name": "Lovable",
       "rank": 10,
-      "score": 72,
+      "score": 72.0,
       "movement": {
         "previous_position": 9,
         "change": 1,
@@ -311,8 +302,7 @@
         "newsImpact": 12.8,
         "notes": "Steady but unremarkable progress"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 10
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "7",
@@ -339,11 +329,10 @@
       "sentiment_analysis": {
         "rawSentiment": 0.65,
         "adjustedSentiment": 0.7,
-        "newsImpact": 25,
+        "newsImpact": 25.0,
         "notes": "Open-source surge benefiting adoption, 300% growth mentioned"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 11
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "21",
@@ -373,8 +362,7 @@
         "newsImpact": 36.5,
         "notes": "Maintaining position but losing mindshare to newer tools"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 12
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "5",
@@ -404,8 +392,7 @@
         "newsImpact": 11.8,
         "notes": "Innovation decay affecting ranking despite strong market traction"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 13
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "25",
@@ -435,14 +422,13 @@
         "newsImpact": 3.2,
         "notes": "Strong technical capability but limited market presence"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 14
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "27",
       "tool_name": "Google Gemini Code Assist",
       "rank": 15,
-      "score": 69,
+      "score": 69.0,
       "movement": {
         "previous_position": 14,
         "change": 1,
@@ -466,8 +452,7 @@
         "newsImpact": 15.5,
         "notes": "Steady but unremarkable in competitive landscape"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 15
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "9",
@@ -497,8 +482,7 @@
         "newsImpact": 8.5,
         "notes": "Banks adopting AI tools but Replit not specifically mentioned"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 16
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "23",
@@ -525,17 +509,16 @@
       "sentiment_analysis": {
         "rawSentiment": 0,
         "adjustedSentiment": 0,
-        "newsImpact": 10,
+        "newsImpact": 10.0,
         "notes": "Innovation decay affecting ranking"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 17
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "24",
       "tool_name": "OpenAI Codex CLI",
       "rank": 18,
-      "score": 67,
+      "score": 67.0,
       "movement": {
         "previous_position": 17,
         "change": 1,
@@ -559,14 +542,13 @@
         "newsImpact": 3.3,
         "notes": "Limited visibility in current market"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 18
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "3",
       "tool_name": "Devin",
       "rank": 19,
-      "score": 65,
+      "score": 65.0,
       "movement": {
         "previous_position": 19,
         "change": 0,
@@ -587,11 +569,10 @@
       "sentiment_analysis": {
         "rawSentiment": 0,
         "adjustedSentiment": 0,
-        "newsImpact": 20,
+        "newsImpact": 20.0,
         "notes": "Maintaining position but overshadowed by newer competitors"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 19
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "8",
@@ -618,11 +599,10 @@
       "sentiment_analysis": {
         "rawSentiment": 0.7,
         "adjustedSentiment": 0.75,
-        "newsImpact": 45,
+        "newsImpact": 45.0,
         "notes": "Benefiting from 300% open-source alternatives surge"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 20
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "19",
@@ -652,8 +632,7 @@
         "newsImpact": 4.8,
         "notes": "Overshadowed by Claude Code's terminal integration"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 21
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "29",
@@ -683,14 +662,13 @@
         "newsImpact": 0,
         "notes": "No significant news coverage"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 22
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "6",
       "tool_name": "Cline",
       "rank": 23,
-      "score": 61,
+      "score": 61.0,
       "movement": {
         "previous_position": 22,
         "change": 1,
@@ -714,14 +692,13 @@
         "newsImpact": 0,
         "notes": "Steady but limited visibility"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 23
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "13",
       "tool_name": "OpenHands",
       "rank": 24,
-      "score": 62,
+      "score": 62.0,
       "movement": {
         "previous_position": 23,
         "change": 1,
@@ -742,11 +719,10 @@
       "sentiment_analysis": {
         "rawSentiment": 0.1,
         "adjustedSentiment": 0.15,
-        "newsImpact": 8,
+        "newsImpact": 8.0,
         "notes": "Open-source momentum providing some benefit"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 24
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "22",
@@ -776,8 +752,7 @@
         "newsImpact": 0,
         "notes": "No significant developments"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 25
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "16",
@@ -807,14 +782,13 @@
         "newsImpact": 0,
         "notes": "Innovation decay impacting position"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 26
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "28",
       "tool_name": "CodeRabbit",
       "rank": 27,
-      "score": 55,
+      "score": 55.0,
       "movement": {
         "previous_position": 27,
         "change": 0,
@@ -838,8 +812,7 @@
         "newsImpact": 0,
         "notes": "Maintaining position with limited momentum"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 27
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "17",
@@ -869,14 +842,13 @@
         "newsImpact": 0,
         "notes": "Quality improvements study may provide minor uplift"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 28
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "30",
       "tool_name": "Microsoft IntelliCode",
       "rank": 29,
-      "score": 53,
+      "score": 53.0,
       "movement": {
         "previous_position": 29,
         "change": 0,
@@ -900,8 +872,7 @@
         "newsImpact": 0,
         "notes": "Legacy tool with minimal innovation"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 29
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "15",
@@ -931,8 +902,7 @@
         "newsImpact": 0,
         "notes": "Minimal market presence"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 30
+      "algorithm_version": "v7.1-september-update"
     },
     {
       "tool_id": "20",
@@ -962,8 +932,7 @@
         "newsImpact": 0,
         "notes": "Niche tool with limited growth"
       },
-      "algorithm_version": "v7.1-september-update",
-      "position": 31
+      "algorithm_version": "v7.1-september-update"
     }
   ],
   "metadata": {
