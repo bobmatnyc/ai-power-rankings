@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 
-export const oauthAuthHook = async (args: any) => {
+// biome-ignore lint/suspicious/noExplicitAny: Payload request type
+export const oauthAuthHook = async (args: { req: any }) => {
   const { req } = args;
 
   // Get the NextAuth session

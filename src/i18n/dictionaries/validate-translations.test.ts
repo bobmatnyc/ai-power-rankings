@@ -29,7 +29,11 @@ describe("Translation Files Validation", () => {
 
         const englishValueCount: Record<string, number> = {};
 
-        function checkForEnglishValues(obj: any, enObj: any, path: string[] = []) {
+        function checkForEnglishValues(
+          obj: Record<string, unknown>,
+          enObj: Record<string, unknown>,
+          path: string[] = []
+        ) {
           for (const key in obj) {
             const currentPath = [...path, key];
             const pathStr = currentPath.join(".");
@@ -65,7 +69,11 @@ describe("Translation Files Validation", () => {
               obj[key] !== null &&
               !Array.isArray(obj[key])
             ) {
-              checkForEnglishValues(obj[key], enObj?.[key], currentPath);
+              checkForEnglishValues(
+                obj[key] as Record<string, unknown>,
+                enObj?.[key] as Record<string, unknown>,
+                currentPath
+              );
             }
           }
         }
@@ -88,8 +96,8 @@ describe("Translation Files Validation", () => {
 
         // Check critical paths specifically
         criticalPaths.forEach((pathArray) => {
-          const value = pathArray.reduce((obj, key) => obj?.[key], langDict as any);
-          const enValue = pathArray.reduce((obj, key) => obj?.[key], enDict as any);
+          const value = pathArray.reduce<unknown>((obj, key) => (obj as any)?.[key], langDict);
+          const enValue = pathArray.reduce<unknown>((obj, key) => (obj as any)?.[key], enDict);
 
           if (value && enValue && value === enValue) {
             console.error(`\n❌ Critical translation missing in ${langFile}:`);
@@ -108,7 +116,11 @@ describe("Translation Files Validation", () => {
       it(`${langFile} should have all required keys`, () => {
         const langDict = JSON.parse(fs.readFileSync(path.join(dictionariesPath, langFile), "utf8"));
 
-        function getMissingKeys(enObj: any, langObj: any, path: string[] = []): string[] {
+        function getMissingKeys(
+          enObj: Record<string, unknown>,
+          langObj: Record<string, unknown>,
+          path: string[] = []
+        ): string[] {
           const missing: string[] = [];
 
           for (const key in enObj) {
@@ -122,7 +134,13 @@ describe("Translation Files Validation", () => {
               typeof langObj[key] === "object" &&
               langObj[key] !== null
             ) {
-              missing.push(...getMissingKeys(enObj[key], langObj[key], currentPath));
+              missing.push(
+                ...getMissingKeys(
+                  enObj[key] as Record<string, unknown>,
+                  langObj[key] as Record<string, unknown>,
+                  currentPath
+                )
+              );
             }
           }
 

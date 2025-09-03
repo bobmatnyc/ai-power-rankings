@@ -3,7 +3,7 @@
 import { ArrowUpDown, Grid, List, Star, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -75,7 +75,7 @@ function RankingsGridContent({
   const tagsParam = searchParams.get("tags")?.split(",") || [];
   const sortParam = searchParams.get("sort") || "rank";
 
-  const fetchAlgorithmDate = async (): Promise<void> => {
+  const fetchAlgorithmDate = useCallback(async (): Promise<void> => {
     try {
       const response = await fetch("/api/rankings?metadata=true");
       if (response.ok) {
@@ -93,9 +93,9 @@ function RankingsGridContent({
     } catch {
       // Silently fail, will use fallback
     }
-  };
+  }, [lang]);
 
-  const fetchRankings = async (): Promise<void> => {
+  const fetchRankings = useCallback(async (): Promise<void> => {
     try {
       const isDev = process.env["NODE_ENV"] === "development";
       const timestamp = Date.now();
@@ -134,7 +134,7 @@ function RankingsGridContent({
       setRankings([]); // Ensure rankings is always an array
       setLoading(false);
     }
-  };
+  }, [lang]);
 
   useEffect(() => {
     // Only fetch if no initial rankings provided

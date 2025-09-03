@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,7 +47,7 @@ export function SEODashboard() {
   const [error, setError] = useState<string | null>(null);
   const [submittingSitemap, setSubmittingSitemap] = useState(false);
 
-  const fetchSEOMetrics = async () => {
+  const fetchSEOMetrics = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/seo/metrics");
@@ -63,7 +63,7 @@ export function SEODashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -100,7 +100,8 @@ export function SEODashboard() {
       <div className="container mx-auto p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {Array.from({ length: 8 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
+            // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
+            <Card key={`skeleton-${i}`} className="animate-pulse">
               <CardHeader className="pb-2">
                 <div className="h-4 bg-gray-200 rounded w-3/4"></div>
               </CardHeader>
@@ -354,8 +355,11 @@ export function SEODashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {metrics.topKeywords.map((keyword, index) => (
-              <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+            {metrics.topKeywords.map((keyword) => (
+              <div
+                key={`keyword-${keyword.keyword}`}
+                className="flex items-center justify-between p-3 border rounded-lg"
+              >
                 <div className="flex-1">
                   <div className="font-medium">{keyword.keyword}</div>
                   <div className="text-sm text-muted-foreground">

@@ -247,8 +247,8 @@ For sentiment (-1 to 1):
         console.error("Error details:", {
           name: error.name,
           message: error.message,
-          cause: (error as any).cause,
-          data: (error as any).data,
+          cause: (error as unknown as { cause?: unknown }).cause,
+          data: (error as unknown as { data?: unknown }).data,
         });
       }
 

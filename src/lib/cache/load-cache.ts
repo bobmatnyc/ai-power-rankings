@@ -6,7 +6,7 @@ import { loggers } from "@/lib/logger";
 import type { CacheType } from "./cache-manager";
 import { CacheManager } from "./cache-manager";
 
-const fallbackData: Record<CacheType, any> = {
+const fallbackData: Record<CacheType, unknown> = {
   rankings: fallbackRankingsData,
   tools: fallbackToolsData,
   news: fallbackNewsData,
@@ -18,7 +18,7 @@ const fallbackData: Record<CacheType, any> = {
  * 2. Try filesystem cache via cache manager
  * 3. Fall back to imported JSON files
  */
-export async function loadCacheWithFallback(type: CacheType): Promise<any> {
+export async function loadCacheWithFallback(type: CacheType): Promise<unknown> {
   const cacheManager = new CacheManager();
 
   try {

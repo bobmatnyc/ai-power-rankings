@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -38,7 +38,7 @@ export default function ToolsPage(): React.JSX.Element {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("name");
 
-  const fetchTools = async (): Promise<void> => {
+  const fetchTools = useCallback(async (): Promise<void> => {
     try {
       const response = await fetch("/api/tools");
       const data = await response.json();
@@ -48,7 +48,7 @@ export default function ToolsPage(): React.JSX.Element {
       loggers.tools.error("Failed to fetch tools", { error });
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchTools();
@@ -140,18 +140,20 @@ export default function ToolsPage(): React.JSX.Element {
                   <StatusIndicator status={tool.status} showLabel />
                 </div>
                 <CardDescription>
-                  <div
+                  <button
+                    type="button"
                     onClick={(e) => {
                       e.preventDefault();
                       window.location.href = `/rankings?category=${tool.category}`;
                     }}
+                    className="p-0 bg-transparent border-0"
                   >
                     <Badge
                       className={`${getCategoryColor(tool.category)} cursor-pointer hover:opacity-80`}
                     >
                       {tool.category.replace(/-/g, " ")}
                     </Badge>
-                  </div>
+                  </button>
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1">

@@ -22,10 +22,11 @@ function extractKeysFromFile(filePath) {
   const content = fs.readFileSync(filePath, "utf8");
   const regex = /t\(['"`]([^'"`]+)['"`]\)/g;
   const keys = [];
-  let match;
+  let match = regex.exec(content);
 
-  while ((match = regex.exec(content)) !== null) {
+  while (match !== null) {
     keys.push(match[1]);
+    match = regex.exec(content);
   }
 
   return keys;

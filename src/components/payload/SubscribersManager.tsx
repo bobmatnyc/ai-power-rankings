@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface Subscriber {
   id: string;
@@ -32,7 +32,7 @@ export const SubscribersManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  const fetchSubscribers = async () => {
+  const fetchSubscribers = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/subscribers");
       const data = await response.json();
@@ -44,7 +44,7 @@ export const SubscribersManager: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchSubscribers();
@@ -99,6 +99,7 @@ export const SubscribersManager: React.FC = () => {
       >
         <h1 style={{ fontSize: "24px", fontWeight: "bold", margin: 0 }}>Newsletter Subscribers</h1>
         <button
+          type="button"
           onClick={exportSubscribers}
           style={{
             padding: "8px 16px",
@@ -288,6 +289,7 @@ export const SubscribersManager: React.FC = () => {
                 <td style={{ padding: "12px" }}>
                   {subscriber.status === "verified" && (
                     <button
+                      type="button"
                       onClick={() => sendTestEmail(subscriber.id)}
                       style={{
                         padding: "4px 8px",

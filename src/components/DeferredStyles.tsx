@@ -18,7 +18,8 @@ export function DeferredStyles() {
       try {
         // Load globals.css with dynamic import
         // TypeScript will complain but this works at runtime for CSS files
-        await import("../app/globals.css" as any);
+        // @ts-ignore - CSS imports are handled by bundler at runtime
+        await import("../app/globals.css");
       } catch (error) {
         console.warn("Failed to load deferred styles:", error);
       }
@@ -26,7 +27,12 @@ export function DeferredStyles() {
 
     // Use requestIdleCallback if available for optimal performance
     if ("requestIdleCallback" in window) {
-      (window as any).requestIdleCallback(loadDeferredStyles, {
+      // Type assertion for requestIdleCallback which isn't in all TypeScript lib versions
+      (
+        window as Window & {
+          requestIdleCallback: (cb: () => void, options?: { timeout: number }) => void;
+        }
+      ).requestIdleCallback(loadDeferredStyles, {
         timeout: 2000, // Fallback timeout of 2 seconds
       });
     } else {

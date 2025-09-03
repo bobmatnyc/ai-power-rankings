@@ -20,7 +20,7 @@ export async function GET(): Promise<NextResponse> {
       const cacheInfo = await new CacheManager().getInfo("tools");
 
       const apiResponse = NextResponse.json({
-        tools: cachedToolsData.tools,
+        tools: (cachedToolsData as any).tools,
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Cache-first approach (database stability mode)",
@@ -89,7 +89,7 @@ export async function GET(): Promise<NextResponse> {
       const cacheInfo = await new CacheManager().getInfo("tools");
 
       const apiResponse = NextResponse.json({
-        tools: cachedToolsData.tools,
+        tools: (cachedToolsData as any).tools,
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Database error fallback",

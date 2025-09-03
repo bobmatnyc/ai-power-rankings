@@ -430,7 +430,10 @@ export function RankingsManager() {
                           .sort((a, b) => Math.abs(b.position_change) - Math.abs(a.position_change))
                           .slice(0, 10)
                           .map((tool, idx) => (
-                            <div key={idx} className="p-3 border rounded-lg space-y-2">
+                            <div
+                              key={`tool-${tool.tool_id}-${idx}`}
+                              className="p-3 border rounded-lg space-y-2"
+                            >
                               <div className="flex items-center justify-between">
                                 <div className="font-medium">{tool.tool_name}</div>
                                 <div className="flex items-center gap-2">
@@ -468,7 +471,7 @@ export function RankingsManager() {
                     .filter((tool) => tool.movement === "up")
                     .map((tool, idx) => (
                       <div
-                        key={idx}
+                        key={`up-${tool.tool_id}-${idx}`}
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
                         <div className="flex items-center gap-3 flex-1">
@@ -502,7 +505,7 @@ export function RankingsManager() {
                     .filter((tool) => tool.movement === "down")
                     .map((tool, idx) => (
                       <div
-                        key={idx}
+                        key={`down-${tool.tool_id}-${idx}`}
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
                         <div className="flex items-center gap-3 flex-1">
@@ -536,7 +539,7 @@ export function RankingsManager() {
                     .filter((tool) => tool.movement === "new")
                     .map((tool, idx) => (
                       <div
-                        key={idx}
+                        key={`new-${tool.tool_id}-${idx}`}
                         className="flex items-center justify-between p-3 border rounded-lg bg-green-50"
                       >
                         <div>
@@ -559,7 +562,7 @@ export function RankingsManager() {
                     .filter((tool) => tool.movement === "dropped")
                     .map((tool, idx) => (
                       <div
-                        key={idx}
+                        key={`dropped-${tool.tool_id}-${idx}`}
                         className="flex items-center justify-between p-3 border rounded-lg bg-red-50"
                       >
                         <div>

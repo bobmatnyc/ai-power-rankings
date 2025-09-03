@@ -72,6 +72,7 @@ export function FAQSection({
                   itemScope
                   itemType="https://schema.org/Answer"
                 >
+                  {/* biome-ignore lint/security/noDangerouslySetInnerHtml: FAQ content is trusted and needed for SEO */}
                   <div itemProp="text" dangerouslySetInnerHTML={{ __html: faq.answer }} />
                 </div>
               </CollapsibleContent>

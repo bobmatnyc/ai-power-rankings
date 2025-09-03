@@ -274,7 +274,7 @@ export default function NewsDetailContent({
 
   // Generate scoring factors for detail view (similar to API logic)
   const generateDetailScoringFactors = (article: NewsArticle) => {
-    const factors: any = {};
+    const factors: Record<string, unknown> = {};
     const titleLower = article.title.toLowerCase();
     const eventType = getEventType(article);
     const importance = calculateImportanceScore(article);
@@ -297,41 +297,41 @@ export default function NewsDetailContent({
     switch (eventType) {
       case "milestone":
         if (titleLower.includes("funding") || titleLower.includes("raised")) {
-          factors.market_traction = baseMagnitude * 2 * multiplier;
-          factors.business_sentiment = baseMagnitude * 1.5 * multiplier;
-          factors.development_velocity = baseMagnitude * 0.5 * multiplier;
+          factors["market_traction"] = baseMagnitude * 2 * multiplier;
+          factors["business_sentiment"] = baseMagnitude * 1.5 * multiplier;
+          factors["development_velocity"] = baseMagnitude * 0.5 * multiplier;
         }
         break;
       case "feature":
         if (titleLower.includes("ai") || titleLower.includes("autonomous")) {
-          factors.agentic_capability = baseMagnitude * 2 * multiplier;
-          factors.innovation = baseMagnitude * 1.5 * multiplier;
+          factors["agentic_capability"] = baseMagnitude * 2 * multiplier;
+          factors["innovation"] = baseMagnitude * 1.5 * multiplier;
         }
         if (titleLower.includes("performance") || titleLower.includes("faster")) {
-          factors.technical_performance = baseMagnitude * 1.8 * multiplier;
+          factors["technical_performance"] = baseMagnitude * 1.8 * multiplier;
         }
         if (titleLower.includes("integration") || titleLower.includes("multi")) {
-          factors.platform_resilience = baseMagnitude * 1.2 * multiplier;
+          factors["platform_resilience"] = baseMagnitude * 1.2 * multiplier;
         }
         break;
       case "partnership":
-        factors.business_sentiment = baseMagnitude * 1.3 * multiplier;
-        factors.market_traction = baseMagnitude * 1.0 * multiplier;
-        factors.platform_resilience = baseMagnitude * 0.8 * multiplier;
+        factors["business_sentiment"] = baseMagnitude * 1.3 * multiplier;
+        factors["market_traction"] = baseMagnitude * 1.0 * multiplier;
+        factors["platform_resilience"] = baseMagnitude * 0.8 * multiplier;
         break;
       case "update":
-        factors.development_velocity = baseMagnitude * 1.5 * multiplier;
+        factors["development_velocity"] = baseMagnitude * 1.5 * multiplier;
         if (titleLower.includes("users") || titleLower.includes("community")) {
-          factors.developer_adoption = baseMagnitude * 1.2 * multiplier;
+          factors["developer_adoption"] = baseMagnitude * 1.2 * multiplier;
         }
         break;
       case "announcement":
-        factors.business_sentiment = baseMagnitude * 1.0 * multiplier;
+        factors["business_sentiment"] = baseMagnitude * 1.0 * multiplier;
         break;
     }
 
     // Round factors to 1 decimal place and filter out zeros
-    const filteredFactors: any = {};
+    const filteredFactors: Record<string, number> = {};
     Object.entries(factors).forEach(([key, value]) => {
       const rounded = Math.round((value as number) * 10) / 10;
       if (Math.abs(rounded) >= 0.1) {
@@ -343,13 +343,13 @@ export default function NewsDetailContent({
     if (Object.keys(filteredFactors).length === 0) {
       // Based on event type, add minimal default factors
       if (titleLower.includes("launch") || titleLower.includes("release")) {
-        filteredFactors.innovation = 0.3;
-        filteredFactors.development_velocity = 0.2;
+        filteredFactors["innovation"] = 0.3;
+        filteredFactors["development_velocity"] = 0.2;
       } else if (titleLower.includes("update") || titleLower.includes("improvement")) {
-        filteredFactors.development_velocity = 0.2;
+        filteredFactors["development_velocity"] = 0.2;
       } else {
         // General news article - minimal business sentiment impact
-        filteredFactors.business_sentiment = 0.1;
+        filteredFactors["business_sentiment"] = 0.1;
       }
     }
 
@@ -600,9 +600,9 @@ export default function NewsDetailContent({
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Quantitative Data</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {metrics.map((metric, index) => (
+                  {metrics.map((metric) => (
                     <div
-                      key={index}
+                      key={`metric-${metric.label}`}
                       className="flex items-center gap-3 p-3 rounded-lg border bg-muted/30"
                     >
                       {metric.icon === "trending-up" && (

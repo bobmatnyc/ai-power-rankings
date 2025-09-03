@@ -5,7 +5,7 @@ import { RankingChange } from "@/components/ui/ranking-change";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { getCategoryColor } from "@/lib/category-colors";
 import { calculateTier, getTierColor } from "@/lib/ranking-utils";
-import { extractTextFromRichText } from "@/lib/richtext-utils";
+import { extractTextFromRichText, type RichTextBlock } from "@/lib/richtext-utils";
 
 interface RankingData {
   rank: number;
@@ -19,7 +19,7 @@ interface RankingData {
     category: string;
     status: string;
     website_url?: string;
-    description?: string | any[]; // Can be string or RichText array
+    description?: string | RichTextBlock[]; // Can be string or RichText array
   };
   scores: {
     overall: number;

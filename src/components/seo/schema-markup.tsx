@@ -1,7 +1,7 @@
-import type { WithContext } from "schema-dts";
+import type { Thing, WithContext } from "schema-dts";
 
 interface SchemaMarkupProps {
-  schema: WithContext<any> | WithContext<any>[];
+  schema: WithContext<Thing> | WithContext<Thing>[];
 }
 
 export function SchemaMarkup({ schema }: SchemaMarkupProps) {
@@ -11,8 +11,9 @@ export function SchemaMarkup({ schema }: SchemaMarkupProps) {
     <>
       {schemas.map((s, index) => (
         <script
-          key={index}
+          key={`schema-${(s as any)["@type"] || index}`}
           type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD schema scripts require innerHTML for SEO
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(s),
           }}

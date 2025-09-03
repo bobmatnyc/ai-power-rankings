@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cachedJsonResponse } from "@/lib/api-cache";
 import { getCompaniesRepo, getToolsRepo } from "@/lib/json-db";
+import type { Tool } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
 
 export async function GET(): Promise<NextResponse> {
@@ -15,7 +16,7 @@ export async function GET(): Promise<NextResponse> {
 
     // Transform tools to match expected format with company info
     const toolsWithInfo = await Promise.all(
-      tools.map(async (tool: any) => {
+      tools.map(async (tool: Tool) => {
         // Get company info if company_id exists
         let companyName = "";
         if (tool.company_id) {
@@ -43,7 +44,7 @@ export async function GET(): Promise<NextResponse> {
             },
             links: {
               website: tool.info.website,
-              github: tool.info.technical?.github_repo,
+              github: (tool.info.technical as any)?.github_repo,
             },
             technical: tool.info.technical || {},
             business: tool.info.business || {},

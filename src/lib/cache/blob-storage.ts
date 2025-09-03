@@ -65,7 +65,7 @@ export class CacheBlobStorage {
   /**
    * Store cache data in blob storage
    */
-  async put(type: CacheType, data: any): Promise<void> {
+  async put(type: CacheType, data: unknown): Promise<void> {
     if (!CacheBlobStorage.shouldUseBlob()) {
       throw new Error("Blob storage is only available in production");
     }
@@ -99,7 +99,7 @@ export class CacheBlobStorage {
   /**
    * Get cache data from blob storage
    */
-  async get(type: CacheType): Promise<any | null> {
+  async get(type: CacheType): Promise<unknown | null> {
     if (!CacheBlobStorage.shouldUseBlob()) {
       return null;
     }

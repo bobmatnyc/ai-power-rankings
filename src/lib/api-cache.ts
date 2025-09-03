@@ -149,7 +149,7 @@ export function checkETag(request: Request, currentETag: string): boolean {
  * Create cached JSON response
  */
 export function cachedJsonResponse(
-  data: any,
+  data: unknown,
   pathname: string,
   status: number = 200,
   customConfig?: CacheConfig

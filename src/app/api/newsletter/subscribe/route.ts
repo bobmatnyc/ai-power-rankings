@@ -127,22 +127,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           lastName,
         },
       });
-    } catch (dbError: any) {
+    } catch (dbError) {
+      const error = dbError as Error;
       loggers.database.error("Database error during subscription", {
         error: dbError,
-        message: dbError.message,
+        message: error.message,
         email: `${email.substring(0, 3)}***`, // Log partial email for privacy
       });
 
       // Return more specific error based on the error
-      if (dbError.message?.includes("Email already exists")) {
+      if (error.message?.includes("Email already exists")) {
         return NextResponse.json({ error: "Email already registered" }, { status: 409 });
       }
 
       return NextResponse.json(
         {
           error: "Failed to save subscription",
-          debug: process.env["NODE_ENV"] === "development" ? dbError.message : undefined,
+          debug: process.env["NODE_ENV"] === "development" ? (dbError as any).message : undefined,
         },
         { status: 500 }
       );

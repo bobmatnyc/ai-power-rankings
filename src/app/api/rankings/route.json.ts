@@ -21,7 +21,7 @@ export async function GET(): Promise<NextResponse> {
 
       // Return the cached data with metadata
       const cachedResponse = {
-        ...cachedRankingsData,
+        ...(cachedRankingsData as any),
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Cache-first approach (database stability mode)",
@@ -46,7 +46,7 @@ export async function GET(): Promise<NextResponse> {
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
       const cachedResponse = {
-        ...cachedRankingsData,
+        ...(cachedRankingsData as any),
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "No current ranking period",
@@ -66,7 +66,7 @@ export async function GET(): Promise<NextResponse> {
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
       const cachedResponse = {
-        ...cachedRankingsData,
+        ...(cachedRankingsData as any),
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "No rankings data available",
@@ -187,7 +187,7 @@ export async function GET(): Promise<NextResponse> {
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
       const cachedResponse = {
-        ...cachedRankingsData,
+        ...(cachedRankingsData as any),
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Database error fallback",

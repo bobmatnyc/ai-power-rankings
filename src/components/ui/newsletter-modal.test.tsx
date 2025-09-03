@@ -41,13 +41,13 @@ vi.mock("@/i18n/client", () => ({
 vi.mock("@marsidev/react-turnstile", () => ({
   Turnstile: vi.fn(({ onSuccess, onError, onExpire }) => (
     <div data-testid="turnstile-mock">
-      <button data-testid="turnstile-success" onClick={() => onSuccess("mock-token")}>
+      <button type="button" data-testid="turnstile-success" onClick={() => onSuccess("mock-token")}>
         Complete Captcha
       </button>
-      <button data-testid="turnstile-error" onClick={() => onError()}>
+      <button type="button" data-testid="turnstile-error" onClick={() => onError()}>
         Error Captcha
       </button>
-      <button data-testid="turnstile-expire" onClick={() => onExpire()}>
+      <button type="button" data-testid="turnstile-expire" onClick={() => onExpire()}>
         Expire Captcha
       </button>
     </div>

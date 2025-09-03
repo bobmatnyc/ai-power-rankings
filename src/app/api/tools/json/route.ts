@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const toolsRepo = getToolsRepo();
     const companiesRepo = getCompaniesRepo();
 
-    let tools;
+    let tools: Tool[];
 
     // Apply filters
     if (search) {
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     } else if (category) {
       tools = await toolsRepo.getByCategory(category);
     } else if (status) {
-      tools = await toolsRepo.getByStatus(status as any);
+      tools = await toolsRepo.getByStatus(status as "active" | "inactive" | "deprecated");
     } else {
       tools = await toolsRepo.getAll();
     }

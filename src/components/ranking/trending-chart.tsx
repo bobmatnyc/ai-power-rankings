@@ -62,15 +62,24 @@ export interface TrendingChartProps {
   className?: string;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: Recharts components have complex prop types
 interface ChartComponents {
-  LineChart: any;
-  Line: any;
-  XAxis: any;
-  YAxis: any;
-  CartesianGrid: any;
-  Tooltip: any;
-  Legend: any;
-  ResponsiveContainer: any;
+  // biome-ignore lint/suspicious/noExplicitAny: External library type
+  LineChart: React.ComponentType<any>;
+  // biome-ignore lint/suspicious/noExplicitAny: External library type
+  Line: React.ComponentType<any>;
+  // biome-ignore lint/suspicious/noExplicitAny: External library type
+  XAxis: React.ComponentType<any>;
+  // biome-ignore lint/suspicious/noExplicitAny: External library type
+  YAxis: React.ComponentType<any>;
+  // biome-ignore lint/suspicious/noExplicitAny: External library type
+  CartesianGrid: React.ComponentType<any>;
+  // biome-ignore lint/suspicious/noExplicitAny: External library type
+  Tooltip: React.ComponentType<any>;
+  // biome-ignore lint/suspicious/noExplicitAny: External library type
+  Legend: React.ComponentType<any>;
+  // biome-ignore lint/suspicious/noExplicitAny: External library type
+  ResponsiveContainer: React.ComponentType<any>;
 }
 
 /**
@@ -93,21 +102,32 @@ function generateToolColor(index: number): string {
  * Custom tooltip component for the trending chart.
  * Shows detailed information about tool rankings at specific periods.
  */
-function CustomTooltip({ active, payload, label }: any) {
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number | null;
+    dataKey: string;
+    color: string;
+    name?: string;
+  }>;
+  label?: string;
+}
+
+function CustomTooltip({ active, payload, label }: TooltipProps) {
   if (!active || !payload || !payload.length) {
     return null;
   }
 
   // Filter out null values and sort by position
   const validData = payload
-    .filter((entry: any) => entry.value !== null)
-    .sort((a: any, b: any) => a.value - b.value);
+    .filter((entry) => entry.value !== null)
+    .sort((a, b) => (a.value ?? 0) - (b.value ?? 0));
 
   return (
     <div className="bg-background border rounded-lg shadow-lg p-4 min-w-[200px]">
       <h3 className="font-semibold text-sm mb-2">{label}</h3>
       <div className="space-y-1">
-        {validData.map((entry: any) => (
+        {validData.map((entry) => (
           <div key={entry.dataKey} className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
@@ -133,7 +153,7 @@ function CustomLegend({
   visibleTools,
   onToolToggle,
 }: {
-  payload?: any[];
+  payload?: Array<{ value: string; color: string; dataKey: string }>;
   visibleTools: Set<string>;
   onToolToggle: (toolId: string) => void;
 }) {
@@ -141,7 +161,7 @@ function CustomLegend({
 
   return (
     <div className="flex flex-wrap gap-2 mt-4 justify-center">
-      {payload.map((entry: any) => {
+      {payload.map((entry) => {
         const isVisible = visibleTools.has(entry.dataKey);
         return (
           <button

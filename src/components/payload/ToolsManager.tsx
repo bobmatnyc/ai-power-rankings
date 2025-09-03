@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface Tool {
   id: string;
@@ -30,7 +30,7 @@ export const ToolsManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [toolsRes, rankingsRes] = await Promise.all([
         fetch("/api/tools?limit=100"),
@@ -47,7 +47,7 @@ export const ToolsManager: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();

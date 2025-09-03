@@ -32,7 +32,6 @@ async function executeJulyRankingsWithVelocity() {
   // Initialize repositories
   const toolsRepo = new ToolsRepository();
   const newsRepo = new NewsRepository();
-  const rankingsRepo = new RankingsRepository();
 
   // Initialize ranking engine (it loads velocity scores automatically)
   const engine = new RankingEngineV7();

@@ -69,5 +69,6 @@ interface MarkdownContentProps {
 export function MarkdownContent({ content }: MarkdownContentProps) {
   const htmlContent = renderMarkdownToHtml(content);
 
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: Markdown content needs to be rendered as HTML
   return <div dangerouslySetInnerHTML={{ __html: htmlContent }} className="markdown-content" />;
 }

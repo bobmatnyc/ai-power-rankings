@@ -19,6 +19,22 @@ interface ToolCheckResult {
   tool: Tool | null;
 }
 
+// Extended Tool type with additional properties that may exist in the data
+interface ExtendedTool extends Tool {
+  display_name?: string;
+  company_info?: {
+    name?: string;
+    website?: string;
+    founded?: string | null;
+    employees?: string | null;
+    funding?: number | null;
+    valuation?: number | null;
+    size?: string;
+  };
+  company?: string;
+  website?: string;
+}
+
 /**
  * GET /api/admin/tools
  *
@@ -201,9 +217,10 @@ export async function POST(request: NextRequest) {
         }
 
         // Update display_name if needed
+        const extendedTool = tool as ExtendedTool;
         const updatedTool = {
           ...tool,
-          display_name: (tool as any).display_name || tool.name,
+          display_name: extendedTool.display_name || tool.name,
           updated_at: new Date().toISOString(),
         };
 
@@ -267,10 +284,11 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: `Tool ${toolId} not found` }, { status: 404 });
         }
 
+        const extendedTool = tool as ExtendedTool;
         const updatedTool = {
           ...tool,
           company_info: {
-            ...(tool as any).company_info,
+            ...extendedTool.company_info,
             ...companyData,
           },
           updated_at: new Date().toISOString(),
@@ -365,7 +383,8 @@ export async function PUT(request: NextRequest) {
         const fixedTools = [];
 
         for (const tool of tools) {
-          if (!(tool as any).display_name || (tool as any).display_name === tool.id) {
+          const extendedTool = tool as ExtendedTool;
+          if (!extendedTool.display_name || extendedTool.display_name === tool.id) {
             const updatedTool = {
               ...tool,
               display_name: tool.name,
@@ -393,10 +412,11 @@ export async function PUT(request: NextRequest) {
         const updatedTools = [];
 
         for (const tool of tools) {
-          if (!(tool as any).company_info || Object.keys((tool as any).company_info).length === 0) {
+          const extendedTool = tool as ExtendedTool;
+          if (!extendedTool.company_info || Object.keys(extendedTool.company_info).length === 0) {
             const companyInfo = {
-              name: (tool as any).company || tool.name,
-              website: (tool as any).website || "",
+              name: extendedTool.company || tool.name,
+              website: extendedTool.website || "",
               founded: null,
               employees: null,
               funding: null,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface DashboardStats {
   totalTools: number;
@@ -22,7 +22,7 @@ export const AdminDashboard: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       // Fetch stats from various APIs
       const [toolsRes, rankingsRes, newsRes, subscribersRes] = await Promise.all([
@@ -50,7 +50,7 @@ export const AdminDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchStats();

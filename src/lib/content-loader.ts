@@ -10,7 +10,7 @@ export interface ContentData {
   subtitle?: string;
   content: string;
   htmlContent: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export class ContentLoader {

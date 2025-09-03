@@ -123,8 +123,8 @@ export async function GET(
       employees: null, // Not available in current schema
     };
 
-    const metricHistory: any[] = [];
-    const pricingPlans: any[] = [];
+    const metricHistory: unknown[] = [];
+    const pricingPlans: unknown[] = [];
 
     const response = {
       tool,

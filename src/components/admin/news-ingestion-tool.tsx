@@ -608,9 +608,9 @@ export function NewsIngestionTool() {
                   <div className="mt-4">
                     <h4 className="font-medium mb-2">Warnings:</h4>
                     <div className="space-y-2">
-                      {rollbackPreview.warnings.map((warning, index) => (
+                      {rollbackPreview.warnings.map((warning) => (
                         <div
-                          key={index}
+                          key={`warning-${warning.name}`}
                           className="text-sm bg-yellow-50 border border-yellow-200 rounded p-2"
                         >
                           <strong>{warning.name}</strong>: {warning.reason}

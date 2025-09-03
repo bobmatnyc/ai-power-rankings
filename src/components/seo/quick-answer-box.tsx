@@ -52,6 +52,7 @@ export function QuickAnswerBox({
         <div
           itemProp="text"
           className="text-muted-foreground leading-relaxed"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Answer content is trusted and needed for SEO
           dangerouslySetInnerHTML={{ __html: answer }}
         />
       </CardContent>

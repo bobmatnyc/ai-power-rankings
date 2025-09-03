@@ -357,7 +357,7 @@ async function executeJulyRankings() {
     });
 
     // Generate change report
-    const changeReport = changeAnalyzer.generateChangeReport(changeAnalyses);
+    changeAnalyzer.generateChangeReport(changeAnalyses);
 
     console.log("\n📊 Summary Statistics:");
     console.log("══════════════════════");

@@ -104,7 +104,7 @@ export function RankingBuilder() {
       const response = await fetch("/api/admin/ranking-periods");
       if (response.ok) {
         const data = await response.json();
-        setAvailablePeriods(data.periods?.map((p: any) => p.period) || []);
+        setAvailablePeriods(data.periods?.map((p: { period: string }) => p.period) || []);
       }
     } catch (err) {
       console.error("Failed to load periods:", err);
@@ -233,7 +233,7 @@ export function RankingBuilder() {
     }
   };
 
-  const getMovementIcon = (movement: string, comparison: any) => {
+  const getMovementIcon = (movement: string, comparison: RankingComparison | null) => {
     const icon = (() => {
       switch (movement) {
         case "up":
@@ -264,32 +264,33 @@ export function RankingBuilder() {
               {movement === "up" && (
                 <>
                   <p className="font-medium">
-                    Moved up {comparison.position_change} position
-                    {comparison.position_change > 1 ? "s" : ""}
+                    Moved up {comparison?.position_change} position
+                    {(comparison?.position_change ?? 0) > 1 ? "s" : ""}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    From #{comparison.current_position} to #{comparison.new_position}
+                    From #{comparison?.current_position} to #{comparison?.new_position}
                   </p>
                 </>
               )}
               {movement === "down" && (
                 <>
                   <p className="font-medium">
-                    Moved down {Math.abs(comparison.position_change)} position
-                    {Math.abs(comparison.position_change) > 1 ? "s" : ""}
+                    Moved down {Math.abs(comparison?.position_change ?? 0)} position
+                    {Math.abs(comparison?.position_change ?? 0) > 1 ? "s" : ""}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    From #{comparison.current_position} to #{comparison.new_position}
+                    From #{comparison?.current_position} to #{comparison?.new_position}
                   </p>
                 </>
               )}
               {movement === "new" && <p className="font-medium">New entry in rankings</p>}
               {movement === "same" && <p className="font-medium">No change in position</p>}
-              {comparison.score_change && (
+              {comparison?.score_change && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  Score: {comparison.current_score?.toFixed(1) || "N/A"} →{" "}
-                  {comparison.new_score.toFixed(1)}({comparison.score_change > 0 ? "+" : ""}
-                  {comparison.score_change.toFixed(1)})
+                  Score: {comparison?.current_score?.toFixed(1) || "N/A"} →{" "}
+                  {comparison?.new_score?.toFixed(1)}(
+                  {(comparison?.score_change ?? 0) > 0 ? "+" : ""}
+                  {comparison?.score_change?.toFixed(1)})
                 </p>
               )}
             </div>

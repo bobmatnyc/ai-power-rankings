@@ -154,7 +154,7 @@ export default function ArticleScoringImpact({
               <span className="text-muted-foreground text-xs">Ranking Impact:</span>
               <div className="flex gap-1">
                 {affectedFactors.slice(0, 4).map((factor) => {
-                  const impact = scoring_factors?.[factor.key]!;
+                  const impact = scoring_factors?.[factor.key] ?? 0;
                   return (
                     <Tooltip key={factor.key}>
                       <TooltipTrigger asChild>
@@ -189,7 +189,7 @@ export default function ArticleScoringImpact({
                       <div className="space-y-1">
                         {affectedFactors.slice(4).map((factor) => (
                           <div key={factor.key} className="text-xs">
-                            {factor.name}: {formatImpact(scoring_factors?.[factor.key]!)}
+                            {factor.name}: {formatImpact(scoring_factors?.[factor.key] ?? 0)}
                           </div>
                         ))}
                       </div>
@@ -233,7 +233,7 @@ export default function ArticleScoringImpact({
           <div className="space-y-2">
             <ul className="space-y-1">
               {affectedFactors.map((factor) => {
-                const impact = scoring_factors?.[factor.key]!;
+                const impact = scoring_factors?.[factor.key] ?? 0;
                 return (
                   <li key={factor.key} className="flex items-center gap-2">
                     <span className="text-muted-foreground">•</span>

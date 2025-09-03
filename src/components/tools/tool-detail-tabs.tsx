@@ -75,7 +75,7 @@ interface ToolDetailTabsProps {
     currency: string;
     billing_cycle: string;
     features?: string[];
-    limits?: Record<string, any>;
+    limits?: Record<string, string | number | boolean>;
     is_primary: boolean;
     is_active: boolean;
   }>;
@@ -301,7 +301,10 @@ export function ToolDetailTabs({
                           <p className="text-sm font-medium text-muted-foreground">Features:</p>
                           <ul className="space-y-1">
                             {plan.features.map((feature, idx) => (
-                              <li key={idx} className="flex items-start gap-2 text-sm">
+                              <li
+                                key={`${plan.plan_name}-feature-${idx}`}
+                                className="flex items-start gap-2 text-sm"
+                              >
                                 <span className="text-primary mt-0.5">✓</span>
                                 <span>{feature}</span>
                               </li>
@@ -540,7 +543,13 @@ export function ToolDetailTabs({
                       },
                     };
 
-                    return <NewsCard key={index} item={newsItem} showToolLink={false} />;
+                    return (
+                      <NewsCard
+                        key={`${tool.id}-history-${history.published_date}`}
+                        item={newsItem}
+                        showToolLink={false}
+                      />
+                    );
                   })}
                 </div>
               </div>

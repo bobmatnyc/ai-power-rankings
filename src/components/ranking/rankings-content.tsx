@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -68,7 +68,7 @@ function RankingsContentInner(): React.JSX.Element {
   const categoryParam = searchParams.get("category") || "all";
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryParam);
 
-  const fetchRankings = async (): Promise<void> => {
+  const fetchRankings = useCallback(async (): Promise<void> => {
     try {
       const response = await fetch("/api/rankings");
       const data = await response.json();
@@ -78,7 +78,7 @@ function RankingsContentInner(): React.JSX.Element {
       loggers.ranking.error("Failed to fetch rankings", { error });
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchRankings();

@@ -1,14 +1,14 @@
 import { Building, CheckCircle, Code, ExternalLink, Star, Users, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { extractTextFromRichText } from "@/lib/richtext-utils";
+import { extractTextFromRichText, type RichTextBlock } from "@/lib/richtext-utils";
 import { QuickAnswerBox } from "./quick-answer-box";
 
 interface ToolOverviewProps {
   tool: {
     name: string;
     category: string;
-    description: string | any[]; // Can be string or RichText array
+    description: string | RichTextBlock[]; // Can be string or RichText array
     company?: string;
     website?: string;
     keyFeatures?: string[];
@@ -94,8 +94,8 @@ export function ToolOverview({ tool }: ToolOverviewProps) {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2" itemProp="featureList">
-              {tool.keyFeatures.map((feature, index) => (
-                <li key={index} className="flex items-start gap-2">
+              {tool.keyFeatures.map((feature) => (
+                <li key={`feature-${feature.substring(0, 30)}`} className="flex items-start gap-2">
                   <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                   <span>{feature}</span>
                 </li>
@@ -118,8 +118,11 @@ export function ToolOverview({ tool }: ToolOverviewProps) {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-1">
-                  {tool.pros.map((pro, index) => (
-                    <li key={index} className="text-sm text-green-600 dark:text-green-400">
+                  {tool.pros.map((pro) => (
+                    <li
+                      key={`pro-${pro.substring(0, 30)}`}
+                      className="text-sm text-green-600 dark:text-green-400"
+                    >
                       • {pro}
                     </li>
                   ))}
@@ -138,8 +141,11 @@ export function ToolOverview({ tool }: ToolOverviewProps) {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-1">
-                  {tool.cons.map((con, index) => (
-                    <li key={index} className="text-sm text-red-600 dark:text-red-400">
+                  {tool.cons.map((con) => (
+                    <li
+                      key={`con-${con.substring(0, 30)}`}
+                      className="text-sm text-red-600 dark:text-red-400"
+                    >
                       • {con}
                     </li>
                   ))}

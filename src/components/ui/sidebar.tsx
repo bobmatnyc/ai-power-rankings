@@ -80,6 +80,7 @@ const SidebarProvider = React.forwardRef<
         }
 
         // This sets the cookie to keep the sidebar state.
+        // biome-ignore lint/suspicious/noDocumentCookie: Sidebar state needs to persist
         document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
       },
       [setOpenProp, open]
@@ -182,7 +183,12 @@ const Sidebar = React.forwardRef<
       return (
         <>
           {openMobile && (
-            <div className="fixed inset-0 z-40 bg-black/50" onClick={() => setOpenMobile(false)} />
+            <button
+              type="button"
+              className="fixed inset-0 z-40 bg-black/50"
+              onClick={() => setOpenMobile(false)}
+              aria-label="Close sidebar"
+            />
           )}
           <div
             className={cn(

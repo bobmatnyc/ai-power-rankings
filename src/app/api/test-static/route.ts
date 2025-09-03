@@ -25,12 +25,13 @@ export async function GET() {
         path: rankingsPath,
       });
     }
-  } catch (error: any) {
+  } catch (error) {
+    const err = error as Error;
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
-        stack: error.stack,
+        error: err.message,
+        stack: err.stack,
       },
       { status: 500 }
     );

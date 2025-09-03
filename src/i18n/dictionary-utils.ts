@@ -40,16 +40,16 @@ export function clearMissingTranslations(): void {
  * Deep merge two objects, filling missing properties with fallback values
  */
 function deepMergeWithFallbacks(
-  target: any,
-  source: any,
+  target: Record<string, unknown>,
+  source: Record<string, unknown>,
   path: string = "",
   locale: string = "en"
-): any {
+): Record<string, unknown> {
   if (!source || typeof source !== "object") {
     return target;
   }
 
-  const result: any = { ...target };
+  const result: Record<string, unknown> = { ...target };
 
   for (const key in source) {
     const currentPath = path ? `${path}.${key}` : key;
@@ -60,7 +60,11 @@ function deepMergeWithFallbacks(
 
       if (source[key] && typeof source[key] === "object" && !Array.isArray(source[key])) {
         // For objects, create a structure with fallback values
-        result[key] = createFallbackStructure(source[key], currentPath, locale);
+        result[key] = createFallbackStructure(
+          source[key] as Record<string, unknown>,
+          currentPath,
+          locale
+        );
       } else {
         // For primitive values, use the path as fallback
         result[key] = `[${currentPath} undefined]`;
@@ -74,7 +78,12 @@ function deepMergeWithFallbacks(
       !Array.isArray(source[key])
     ) {
       // Both are objects, merge recursively
-      result[key] = deepMergeWithFallbacks(result[key], source[key], currentPath, locale);
+      result[key] = deepMergeWithFallbacks(
+        result[key] as Record<string, unknown>,
+        source[key] as Record<string, unknown>,
+        currentPath,
+        locale
+      );
     }
   }
 
@@ -84,19 +93,23 @@ function deepMergeWithFallbacks(
 /**
  * Create a fallback structure for missing objects
  */
-function createFallbackStructure(template: any, basePath: string, locale: string = "en"): any {
+function createFallbackStructure(
+  template: Record<string, unknown>,
+  basePath: string,
+  locale: string = "en"
+): Record<string, unknown> | string {
   if (!template || typeof template !== "object") {
     logMissingTranslation(basePath, locale);
     return `[${basePath} undefined]`;
   }
 
-  const result: any = {};
+  const result: Record<string, unknown> = {};
 
   for (const key in template) {
     const path = `${basePath}.${key}`;
 
     if (template[key] && typeof template[key] === "object" && !Array.isArray(template[key])) {
-      result[key] = createFallbackStructure(template[key], path, locale);
+      result[key] = createFallbackStructure(template[key] as Record<string, unknown>, path, locale);
     } else {
       logMissingTranslation(path, locale);
       result[key] = `[${path} undefined]`;
@@ -113,7 +126,7 @@ export async function processDictionary(dict: unknown, locale: string): Promise<
   try {
     // Start with the expected structure as our base
     const completeDict = deepMergeWithFallbacks(
-      dict || {},
+      (dict || {}) as Record<string, unknown>,
       EXPECTED_DICTIONARY_STRUCTURE,
       "",
       locale

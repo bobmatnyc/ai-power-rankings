@@ -14,7 +14,8 @@ function RankingsTableSkeleton() {
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-8">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="border rounded-lg p-4" style={{ minHeight: "120px" }}>
+          // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
+          <div key={`stat-${i}`} className="border rounded-lg p-4" style={{ minHeight: "120px" }}>
             <Skeleton className="h-4 w-20 mb-2" />
             <Skeleton className="h-8 w-12" />
           </div>
@@ -22,7 +23,8 @@ function RankingsTableSkeleton() {
       </div>
       <div className="space-y-3">
         {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i} className="border rounded-lg p-4">
+          // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
+          <div key={`rank-${i}`} className="border rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Skeleton className="h-10 w-10 rounded" />
@@ -46,7 +48,8 @@ function NewsSectionSkeleton() {
       <Skeleton className="h-8 w-48 mb-4" />
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="border rounded-lg p-4">
+          // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
+          <div key={`news-${i}`} className="border rounded-lg p-4">
             <Skeleton className="h-4 w-full mb-2" />
             <Skeleton className="h-4 w-3/4 mb-2" />
             <Skeleton className="h-3 w-1/2" />
@@ -65,13 +68,16 @@ function ComparisonTableSkeleton() {
         <div className="min-w-full">
           <div className="grid grid-cols-4 gap-4 mb-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-6 w-full" />
+              // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
+              <Skeleton key={`header-${i}`} className="h-6 w-full" />
             ))}
           </div>
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="grid grid-cols-4 gap-4 mb-2">
+            // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
+            <div key={`row-${i}`} className="grid grid-cols-4 gap-4 mb-2">
               {Array.from({ length: 4 }).map((_, j) => (
-                <Skeleton key={j} className="h-4 w-full" />
+                // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
+                <Skeleton key={`cell-${i}-${j}`} className="h-4 w-full" />
               ))}
             </div>
           ))}
@@ -87,7 +93,8 @@ function AdminDashboardSkeleton() {
       <Skeleton className="h-8 w-48" />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="border rounded-lg p-4">
+          // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
+          <div key={`admin-stat-${i}`} className="border rounded-lg p-4">
             <Skeleton className="h-4 w-20 mb-2" />
             <Skeleton className="h-8 w-12" />
           </div>
@@ -98,6 +105,7 @@ function AdminDashboardSkeleton() {
           <Skeleton className="h-6 w-32 mb-4" />
           <div className="space-y-2">
             {Array.from({ length: 5 }, (_, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
               <Skeleton key={`skeleton-left-${i}`} className="h-4 w-full" />
             ))}
           </div>
@@ -106,6 +114,7 @@ function AdminDashboardSkeleton() {
           <Skeleton className="h-6 w-32 mb-4" />
           <div className="space-y-2">
             {Array.from({ length: 5 }, (_, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
               <Skeleton key={`skeleton-right-${i}`} className="h-4 w-full" />
             ))}
           </div>

@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RankingChange } from "@/components/ui/ranking-change";
 import { ToolIcon } from "@/components/ui/tool-icon";
-import { extractTextFromRichText } from "@/lib/richtext-utils";
+import { extractTextFromRichText, type RichTextBlock } from "@/lib/richtext-utils";
 
 interface RankingData {
   rank: number;
@@ -17,7 +17,7 @@ interface RankingData {
     category: string;
     status: string;
     website_url?: string;
-    description?: string | any[]; // Can be string or RichText array
+    description?: string | RichTextBlock[]; // Can be string or RichText array
   };
   scores: {
     overall: number;

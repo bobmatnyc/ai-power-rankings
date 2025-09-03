@@ -7,21 +7,21 @@ import { loggers } from "@/lib/logger";
 export class DatabaseConnectionError extends Error {
   constructor(
     message: string,
-    public readonly originalError?: any
+    public readonly originalError?: unknown
   ) {
     super(message);
     this.name = "DatabaseConnectionError";
   }
 }
 
-export function isConnectionTerminationError(error: any): boolean {
+export function isConnectionTerminationError(error: unknown): boolean {
   if (!error) {
     return false;
   }
 
   // Check for Supabase/PgBouncer termination errors
   const errorStr = error.toString().toLowerCase();
-  const errorCode = error.code?.toLowerCase() || "";
+  const errorCode = (error as any).code?.toLowerCase() || "";
 
   return (
     errorStr.includes("db_termination") ||
@@ -34,7 +34,7 @@ export function isConnectionTerminationError(error: any): boolean {
     errorCode === "57p02" || // crash_shutdown
     errorCode === "57p03" || // cannot_connect_now
     errorCode === "xx000" || // internal_error
-    error.severity === "FATAL"
+    (error as any).severity === "FATAL"
   );
 }
 
@@ -43,12 +43,12 @@ export async function withConnectionRetry<T>(
   options: {
     maxRetries?: number;
     retryDelay?: number;
-    onRetry?: (attempt: number, error: any) => void;
+    onRetry?: (attempt: number, error: unknown) => void;
   } = {}
 ): Promise<T> {
   const { maxRetries = 3, retryDelay = 1000, onRetry } = options;
 
-  let lastError: any;
+  let lastError: unknown;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {

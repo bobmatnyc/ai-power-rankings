@@ -18,7 +18,6 @@ async function executeJulyRankingsV7Fixed() {
   // Initialize repositories
   const toolsRepo = new ToolsRepository();
   const newsRepo = new NewsRepository();
-  const rankingsRepo = new RankingsRepository();
 
   // Initialize ranking engine
   const engine = new RankingEngineV7();

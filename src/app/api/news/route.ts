@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
     // Transform to expected format
     const transformedNews = await Promise.all(
-      sortedNews.map(async (article: any) => {
+      sortedNews.map(async (article) => {
         // Get tool info from tool_mentions or tool_ids
         let toolNames = "Various Tools";
         let toolCategory = "ai-coding-tool";
@@ -49,8 +49,8 @@ export async function GET(request: NextRequest) {
           const firstToolName = article.tool_mentions[0];
           matchingTool = tools.find(
             (t) =>
-              t.name.toLowerCase() === firstToolName.toLowerCase() ||
-              t.slug === firstToolName.toLowerCase().replace(/\s+/g, "-")
+              t.name.toLowerCase() === firstToolName?.toLowerCase() ||
+              t.slug === firstToolName?.toLowerCase().replace(/\s+/g, "-")
           );
 
           if (!matchingTool) {
@@ -64,9 +64,9 @@ export async function GET(request: NextRequest) {
           toolCategory = matchingTool.category || "ai-coding-tool";
           toolWebsite = matchingTool.info?.website || "";
           primaryToolId = matchingTool.slug || matchingTool.id;
-        } else if (article.tool_ids && article.tool_ids.length > 0) {
+        } else if ((article as any).tool_ids && (article as any).tool_ids.length > 0) {
           // Fallback to old format with tool_ids
-          const firstToolId = article.tool_ids[0];
+          const firstToolId = (article as any).tool_ids[0];
           const tool = await toolsRepo.getById(firstToolId);
 
           if (tool) {
@@ -77,9 +77,9 @@ export async function GET(request: NextRequest) {
           }
 
           // If multiple tools, get all names
-          if (article.tool_ids.length > 1) {
+          if ((article as any).tool_ids.length > 1) {
             const tools = await Promise.all(
-              article.tool_ids.map(async (id: string) => {
+              (article as any).tool_ids.map(async (id: string) => {
                 const t = await toolsRepo.getById(id);
                 return t?.name || id;
               })
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
 
         // Generate scoring factor impacts based on content and event type
         const generateScoringFactors = (eventType: string, title: string, importance: number) => {
-          const factors: any = {};
+          const factors: Record<string, number> = {};
           const titleLower = title.toLowerCase();
 
           // Enhanced impact magnitude calculation for more varied scores
@@ -172,41 +172,41 @@ export async function GET(request: NextRequest) {
           switch (eventType) {
             case "milestone":
               if (titleLower.includes("funding") || titleLower.includes("raised")) {
-                factors.market_traction = baseMagnitude * 2 * multiplier;
-                factors.business_sentiment = baseMagnitude * 1.5 * multiplier;
-                factors.development_velocity = baseMagnitude * 0.5 * multiplier;
+                factors["market_traction"] = baseMagnitude * 2 * multiplier;
+                factors["business_sentiment"] = baseMagnitude * 1.5 * multiplier;
+                factors["development_velocity"] = baseMagnitude * 0.5 * multiplier;
               }
               break;
             case "feature":
               if (titleLower.includes("ai") || titleLower.includes("autonomous")) {
-                factors.agentic_capability = baseMagnitude * 2 * multiplier;
-                factors.innovation = baseMagnitude * 1.5 * multiplier;
+                factors["agentic_capability"] = baseMagnitude * 2 * multiplier;
+                factors["innovation"] = baseMagnitude * 1.5 * multiplier;
               }
               if (titleLower.includes("performance") || titleLower.includes("faster")) {
-                factors.technical_performance = baseMagnitude * 1.8 * multiplier;
+                factors["technical_performance"] = baseMagnitude * 1.8 * multiplier;
               }
               if (titleLower.includes("integration") || titleLower.includes("multi")) {
-                factors.platform_resilience = baseMagnitude * 1.2 * multiplier;
+                factors["platform_resilience"] = baseMagnitude * 1.2 * multiplier;
               }
               break;
             case "partnership":
-              factors.business_sentiment = baseMagnitude * 1.3 * multiplier;
-              factors.market_traction = baseMagnitude * 1.0 * multiplier;
-              factors.platform_resilience = baseMagnitude * 0.8 * multiplier;
+              factors["business_sentiment"] = baseMagnitude * 1.3 * multiplier;
+              factors["market_traction"] = baseMagnitude * 1.0 * multiplier;
+              factors["platform_resilience"] = baseMagnitude * 0.8 * multiplier;
               break;
             case "update":
-              factors.development_velocity = baseMagnitude * 1.5 * multiplier;
+              factors["development_velocity"] = baseMagnitude * 1.5 * multiplier;
               if (titleLower.includes("users") || titleLower.includes("community")) {
-                factors.developer_adoption = baseMagnitude * 1.2 * multiplier;
+                factors["developer_adoption"] = baseMagnitude * 1.2 * multiplier;
               }
               break;
             case "announcement":
-              factors.business_sentiment = baseMagnitude * 1.0 * multiplier;
+              factors["business_sentiment"] = baseMagnitude * 1.0 * multiplier;
               break;
           }
 
           // Round factors to 1 decimal place and filter out zeros
-          const filteredFactors: any = {};
+          const filteredFactors: Record<string, number> = {};
           Object.entries(factors).forEach(([key, value]) => {
             const rounded = Math.round((value as number) * 10) / 10;
             if (Math.abs(rounded) >= 0.1) {
@@ -218,7 +218,7 @@ export async function GET(request: NextRequest) {
         };
 
         // Enhanced importance scoring based on content
-        let importance = article.importance_score || 5;
+        let importance = (article as any).importance_score || 5;
         const titleLower = article.title.toLowerCase();
 
         // Boost importance for high-impact keywords
@@ -249,12 +249,12 @@ export async function GET(request: NextRequest) {
           tool_name: toolNames,
           tool_category: toolCategory,
           tool_website: toolWebsite,
-          event_date: article.published_date || article.published_at || article.created_at,
+          event_date: article.published_date || (article as any).published_at || article.created_at,
           event_type: eventType,
           title: article.title,
           description: article.summary || article.content,
           source_url: article.source_url,
-          source_name: article.source || article.source_name || "AI News",
+          source_name: article.source || (article as any).source_name || "AI News",
           metrics: {
             importance_score: importance,
           },
@@ -267,7 +267,7 @@ export async function GET(request: NextRequest) {
     // Apply filter
     let filteredNews = transformedNews;
     if (filter !== "all") {
-      filteredNews = transformedNews.filter((item: any) => item.event_type === filter);
+      filteredNews = transformedNews.filter((item) => item.event_type === filter);
     }
 
     // Apply pagination

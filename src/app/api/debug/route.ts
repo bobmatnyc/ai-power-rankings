@@ -7,6 +7,7 @@
 
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
+import type { RankingEntry } from "@/lib/json-db/schemas";
 
 // import { getTranslations } from "@/lib/i18n/server";
 // import { supportedLocales } from "@/lib/i18n/config";
@@ -182,20 +183,22 @@ export async function GET(request: NextRequest) {
           const currentRankings = periodRankings.get(currentPeriod) || [];
           const previousRankings = periodRankings.get(previousPeriod) || [];
 
-          const previousMap = new Map(previousRankings.map((r: any) => [r.tool_id, r]));
+          const previousMap = new Map(previousRankings.map((r: RankingEntry) => [r.tool_id, r]));
 
           for (const current of currentRankings) {
             const previous = previousMap.get(current.tool_id);
 
             if (previous) {
-              const positionChange = (previous as any).position - (current as any).position;
+              const currentPos = current.position ?? (current as any).rank ?? 0;
+              const previousPos = (previous as any).position ?? (previous as any).rank ?? 0;
+              const positionChange = previousPos - currentPos;
               const scoreChange = (current as any).score - (previous as any).score;
 
               trendingData.push({
                 tool_id: current.tool_id,
                 tool_name: current.tool_name,
-                current_position: (current as any).position,
-                previous_position: (previous as any).position,
+                current_position: currentPos,
+                previous_position: previousPos,
                 position_change: positionChange,
                 score_change: scoreChange,
                 trending_score: positionChange * 2 + scoreChange * 10,

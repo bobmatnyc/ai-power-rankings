@@ -59,9 +59,11 @@ function parseChangelog(content: string): Release[] {
       if (currentRelease) {
         releases.push(currentRelease);
       }
+      const version = releaseMatch[1] || "Unknown";
+      const date = (releaseMatch[2] || new Date().toISOString().split("T")[0]) as string;
       currentRelease = {
-        version: releaseMatch[1] || "Unknown",
-        date: (releaseMatch[2] || new Date().toISOString().split("T")[0])!,
+        version,
+        date,
         items: [],
       };
       currentCategory = "";

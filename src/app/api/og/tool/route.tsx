@@ -128,6 +128,7 @@ export async function GET(request: NextRequest) {
                 boxShadow: `0 25px 50px -12px ${categoryColor}40`,
               }}
             >
+              {/* biome-ignore lint/performance/noImgElement: OG images require <img> for server-side rendering */}
               <img
                 src={toolData.logo}
                 alt={`${toolData.name} logo`}

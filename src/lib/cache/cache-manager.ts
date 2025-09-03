@@ -34,7 +34,7 @@ export class CacheManager {
    * 1. Try blob storage first (if in production)
    * 2. Fall back to filesystem
    */
-  async get(type: CacheType): Promise<any | null> {
+  async get(type: CacheType): Promise<unknown | null> {
     // Try blob storage first in production
     if (CacheBlobStorage.shouldUseBlob()) {
       const blobData = await this.blobStorage.get(type);
@@ -63,7 +63,7 @@ export class CacheManager {
    * - In production: Store in blob storage only
    * - In development: Store in filesystem only
    */
-  async put(type: CacheType, data: any): Promise<void> {
+  async put(type: CacheType, data: unknown): Promise<void> {
     if (CacheBlobStorage.shouldUseBlob()) {
       // Production: Use blob storage
       await this.blobStorage.put(type, data);

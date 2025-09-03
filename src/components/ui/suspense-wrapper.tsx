@@ -58,7 +58,7 @@ export function withSuspense<P extends object>(
  * @param options Loading options
  * @returns Lazy loaded component with Suspense
  */
-export function lazyWithTracking<T extends ComponentType<any>>(
+export function lazyWithTracking<T extends ComponentType<unknown>>(
   importFn: () => Promise<{ default: T }>,
   options: {
     fallback?: ReactNode;
@@ -138,7 +138,7 @@ export function createResource<T>(
 } {
   let status: "pending" | "success" | "error" = "pending";
   let result: T;
-  let error: any;
+  let error: unknown;
   let suspender: Promise<void>;
 
   const load = () => {

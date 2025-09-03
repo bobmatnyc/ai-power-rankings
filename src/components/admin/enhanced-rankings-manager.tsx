@@ -19,7 +19,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -95,6 +95,19 @@ interface RankingPeriod {
   total_tools: number;
 }
 
+interface ToolRanking {
+  tool_id: string;
+  tool_name: string;
+  position: number;
+  score: number;
+  factor_scores?: {
+    agentic_capability?: number;
+    technical_performance?: number;
+    market_traction?: number;
+    developer_adoption?: number;
+  };
+}
+
 export function EnhancedRankingsManager() {
   // const { setChanges } = useRankingChanges();
 
@@ -123,10 +136,10 @@ export function EnhancedRankingsManager() {
 
   // State for UI
   // const [showCalendar, setShowCalendar] = useState(false);
-  const [selectedRankingData, setSelectedRankingData] = useState<any[]>([]);
+  const [selectedRankingData, setSelectedRankingData] = useState<ToolRanking[]>([]);
   const [isLoadingRankingData, setIsLoadingRankingData] = useState(false);
 
-  const loadAvailablePeriods = async () => {
+  const loadAvailablePeriods = useCallback(async () => {
     setIsLoadingPeriods(true);
     try {
       const response = await fetch("/api/admin/ranking-periods");
@@ -147,7 +160,7 @@ export function EnhancedRankingsManager() {
     } finally {
       setIsLoadingPeriods(false);
     }
-  };
+  }, []);
 
   // Load available ranking periods on mount
   useEffect(() => {
@@ -161,7 +174,12 @@ export function EnhancedRankingsManager() {
 
     try {
       const previewPeriod = format(previewDate, "yyyy-MM");
-      const body: any = {
+      const body: {
+        period: string;
+        algorithm_version: string;
+        preview_date: string;
+        compare_with?: string;
+      } = {
         period: previewPeriod,
         algorithm_version: "v6.0",
         preview_date: format(previewDate, "yyyy-MM-dd"),
@@ -612,15 +630,16 @@ export function EnhancedRankingsManager() {
                 >
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex-1">
-                      <div
-                        className="font-medium cursor-pointer hover:text-primary transition-colors"
+                      <button
+                        type="button"
+                        className="font-medium cursor-pointer hover:text-primary transition-colors text-left"
                         onClick={() => {
                           setSelectedRanking(period);
                           loadRankingData(period.period);
                         }}
                       >
                         {period.period}
-                      </div>
+                      </button>
                       <div className="text-sm text-muted-foreground">
                         {period.total_tools} tools • {period.algorithm_version}
                       </div>
@@ -1020,9 +1039,9 @@ export function EnhancedRankingsManager() {
                   {preview.rankings_comparison
                     .filter((tool) => tool.movement === "up")
                     .sort((a, b) => b.position_change - a.position_change)
-                    .map((tool, idx) => (
+                    .map((tool) => (
                       <div
-                        key={idx}
+                        key={tool.tool_id}
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
                         <div className="flex items-center gap-3 flex-1">
@@ -1055,9 +1074,9 @@ export function EnhancedRankingsManager() {
                   {preview.rankings_comparison
                     .filter((tool) => tool.movement === "down")
                     .sort((a, b) => a.position_change - b.position_change)
-                    .map((tool, idx) => (
+                    .map((tool) => (
                       <div
-                        key={idx}
+                        key={tool.tool_id}
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
                         <div className="flex items-center gap-3 flex-1">
@@ -1090,9 +1109,9 @@ export function EnhancedRankingsManager() {
                   {preview.rankings_comparison
                     .filter((tool) => tool.movement === "new")
                     .sort((a, b) => a.new_position - b.new_position)
-                    .map((tool, idx) => (
+                    .map((tool) => (
                       <div
-                        key={idx}
+                        key={tool.tool_id}
                         className="flex items-center justify-between p-3 border rounded-lg bg-green-50"
                       >
                         <div className="flex items-center gap-3 flex-1">
@@ -1124,9 +1143,9 @@ export function EnhancedRankingsManager() {
                 <div className="space-y-2">
                   {preview.rankings_comparison
                     .sort((a, b) => a.new_position - b.new_position)
-                    .map((tool, idx) => (
+                    .map((tool) => (
                       <div
-                        key={idx}
+                        key={tool.tool_id}
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
                         <div className="flex items-center gap-3 flex-1">

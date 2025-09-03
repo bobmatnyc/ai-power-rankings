@@ -101,6 +101,7 @@ export function TableOfContents({
         <nav className="space-y-2">
           {tocItems.map((item) => (
             <button
+              type="button"
               key={item.id}
               onClick={() => scrollToHeading(item.id)}
               className={`

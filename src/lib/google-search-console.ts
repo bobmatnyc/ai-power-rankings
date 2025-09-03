@@ -4,7 +4,7 @@ interface SearchAnalyticsQuery {
   startDate: string;
   endDate: string;
   dimensions?: string[];
-  dimensionFilterGroups?: any[];
+  dimensionFilterGroups?: Array<Record<string, unknown>>;
   rowLimit?: number;
   startRow?: number;
 }
@@ -16,6 +16,7 @@ interface SearchConsoleConfig {
 }
 
 export class GoogleSearchConsole {
+  // biome-ignore lint/suspicious/noExplicitAny: Google API client type
   private searchconsole: any;
   private siteUrl: string;
   private initialized: boolean = false;
@@ -32,7 +33,9 @@ export class GoogleSearchConsole {
     }
 
     const projectId = process.env["GOOGLE_CLOUD_PROJECT_ID"] || "ai-power-ranking";
+    // biome-ignore lint/suspicious/noExplicitAny: Google auth types
     let auth: any;
+    // biome-ignore lint/suspicious/noExplicitAny: Google auth types
     let authClient: any;
 
     // Option 1: Use OAuth access token from authenticated user (for production)
@@ -85,6 +88,7 @@ export class GoogleSearchConsole {
     // Initialize Search Console API
     this.searchconsole = google.searchconsole({
       version: "v1",
+      // biome-ignore lint/suspicious/noExplicitAny: Google auth type casting
       auth: authClient as any,
     });
 

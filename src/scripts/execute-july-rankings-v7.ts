@@ -199,7 +199,7 @@ async function main() {
         const metrics = convertToMetrics(tool, velocity);
 
         // Transform news data to convert tool slugs to IDs for this tool
-        const transformedNews = news.map((article: any) => ({
+        const transformedNews = news.map((article: Record<string, unknown>) => ({
           ...article,
           tool_mentions: (article.tool_mentions || []).map((mention: string) => {
             // Convert slug to ID if it's for this tool

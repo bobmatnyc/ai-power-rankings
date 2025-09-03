@@ -36,7 +36,7 @@ console.log();
 // Calculate scores for test tools
 const results = [];
 for (const toolSlug of testTools) {
-  const tool = toolsData.tools.find((t: any) => t.slug === toolSlug);
+  const tool = toolsData.tools.find((t) => t.slug === toolSlug);
   if (!tool) {
     console.log(`Tool ${toolSlug} not found`);
     continue;

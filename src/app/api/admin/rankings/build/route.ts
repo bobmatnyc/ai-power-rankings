@@ -457,7 +457,11 @@ export async function POST(request: NextRequest) {
         ? previousPeriod?.rankings.find((r: RankingEntry) => r.tool_id === tool["id"])
         : null;
 
-      let movement;
+      let movement: {
+        previous_position?: number;
+        change: number;
+        direction: "up" | "down" | "same" | "new";
+      };
       if (previousPosition) {
         const change = previousPosition - position;
         movement = {
@@ -482,13 +486,13 @@ export async function POST(request: NextRequest) {
           new_position: position,
           new_score: toolScore.overallScore,
         },
-        previousRanking
+        previousRanking && previousPosition !== undefined
           ? {
               tool_id: tool["id"],
               tool_name: tool["name"],
-              position: previousPosition!,
+              position: previousPosition,
               score: previousRanking.score,
-              current_position: previousPosition!,
+              current_position: previousPosition,
               current_score: previousRanking.score,
             }
           : null,

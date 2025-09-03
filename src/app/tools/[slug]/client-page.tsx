@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { NewsCard, type NewsItem } from "@/components/news/news-card";
 import { ComparisonTable, FAQSection, QuickAnswerBox } from "@/components/seo";
 import { Badge } from "@/components/ui/badge";
@@ -96,7 +96,7 @@ export default function ToolDetailClientPage({
   const [toolData, setToolData] = useState<ToolDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchToolDetail = async (slug: string): Promise<void> => {
+  const fetchToolDetail = useCallback(async (slug: string): Promise<void> => {
     try {
       const response = await fetch(`/api/tools/${slug}`);
       const data = await response.json();
@@ -106,7 +106,7 @@ export default function ToolDetailClientPage({
       loggers.tools.error("Failed to fetch tool details", { error, slug });
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (slug) {
@@ -202,6 +202,7 @@ export default function ToolDetailClientPage({
       <Script
         id="tool-schema"
         type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD schema scripts require innerHTML for SEO
         dangerouslySetInnerHTML={{
           __html: createJsonLdScript(toolSchema),
         }}
@@ -209,6 +210,7 @@ export default function ToolDetailClientPage({
       <Script
         id="tool-breadcrumb-schema"
         type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD schema scripts require innerHTML for SEO
         dangerouslySetInnerHTML={{
           __html: createJsonLdScript(breadcrumbSchema),
         }}
@@ -217,6 +219,7 @@ export default function ToolDetailClientPage({
         <Script
           id="tool-review-schema"
           type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD schema scripts require innerHTML for SEO
           dangerouslySetInnerHTML={{
             __html: createJsonLdScript(reviewSchema),
           }}
@@ -547,7 +550,13 @@ export default function ToolDetailClientPage({
                     },
                   };
 
-                  return <NewsCard key={index} item={newsItem} showToolLink={false} />;
+                  return (
+                    <NewsCard
+                      key={`${tool.id}-${history.published_date}`}
+                      item={newsItem}
+                      showToolLink={false}
+                    />
+                  );
                 })}
               </div>
             ) : (

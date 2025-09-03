@@ -26,7 +26,7 @@ export function AdminDashboard() {
       const response = await fetch("/api/admin/ranking-periods");
       if (response.ok) {
         const data = await response.json();
-        const current = data.periods?.find((p: any) => p.is_current);
+        const current = data.periods?.find((p: { is_current: boolean }) => p.is_current);
         if (current) {
           setCurrentLiveRanking(current.period);
         }

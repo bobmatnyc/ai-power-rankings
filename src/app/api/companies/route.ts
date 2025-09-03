@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
 
     const companiesRepo = getCompaniesRepo();
 
-    let companies;
+    let companies: Awaited<ReturnType<typeof companiesRepo.getAll>>;
 
     // Apply filters
     if (search) {

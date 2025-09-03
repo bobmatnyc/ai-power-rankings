@@ -6,8 +6,8 @@ import React, { useEffect, useState } from "react";
 // Declare gtag types
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void;
-    dataLayer: any[];
+    gtag: (command: string, ...args: unknown[]) => void;
+    dataLayer: unknown[];
     __gtm_pending?: boolean;
   }
 }

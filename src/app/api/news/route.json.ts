@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
       const cacheInfo = await new CacheManager().getInfo("news");
 
       const apiResponse = NextResponse.json({
-        news: cachedNewsData.news,
-        total: cachedNewsData.news.length,
+        news: (cachedNewsData as any).news,
+        total: (cachedNewsData as any).news.length,
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Cache-first approach (database stability mode)",
@@ -230,9 +230,9 @@ export async function GET(request: NextRequest) {
     const cacheInfo = await new CacheManager().getInfo("news");
 
     const apiResponse = NextResponse.json({
-      news: cachedNewsData.news.slice(0, 20), // Return first 20 items
-      total: cachedNewsData.news.length,
-      hasMore: cachedNewsData.news.length > 20,
+      news: (cachedNewsData as any).news.slice(0, 20), // Return first 20 items
+      total: (cachedNewsData as any).news.length,
+      hasMore: (cachedNewsData as any).news.length > 20,
       _cached: true,
       _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
       _cacheReason: "Database error fallback",

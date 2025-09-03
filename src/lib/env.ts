@@ -34,17 +34,17 @@ export const env = {
   NEXT_PUBLIC_PAYLOAD_URL: process.env["NEXT_PUBLIC_PAYLOAD_URL"] || getCurrentUrl(),
 
   // Other environment variables remain as-is
-  NEXT_PUBLIC_SUPABASE_URL: process.env["NEXT_PUBLIC_SUPABASE_URL"]!,
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"]!,
-  SUPABASE_SERVICE_ROLE_KEY: process.env["SUPABASE_SERVICE_ROLE_KEY"]!,
-  SUPABASE_DATABASE_URL: process.env["SUPABASE_DATABASE_URL"]!,
+  NEXT_PUBLIC_SUPABASE_URL: process.env["NEXT_PUBLIC_SUPABASE_URL"] ?? undefined,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"] ?? undefined,
+  SUPABASE_SERVICE_ROLE_KEY: process.env["SUPABASE_SERVICE_ROLE_KEY"] ?? undefined,
+  SUPABASE_DATABASE_URL: process.env["SUPABASE_DATABASE_URL"] ?? undefined,
 
   // Auth
-  NEXTAUTH_SECRET: process.env["NEXTAUTH_SECRET"]!,
-  AUTH_SECRET: process.env["AUTH_SECRET"]!,
+  NEXTAUTH_SECRET: process.env["NEXTAUTH_SECRET"] ?? undefined,
+  AUTH_SECRET: process.env["AUTH_SECRET"] ?? undefined,
 
   // Payload
-  PAYLOAD_SECRET: process.env["PAYLOAD_SECRET"]!,
+  PAYLOAD_SECRET: process.env["PAYLOAD_SECRET"] ?? undefined,
 
   // Feature flags
   NODE_ENV: process.env["NODE_ENV"] || "development",

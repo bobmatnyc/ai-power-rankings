@@ -7,7 +7,7 @@ import { loggers } from "@/lib/logger";
 
 export interface ApiError {
   error: string;
-  details?: any;
+  details?: unknown;
   timestamp: string;
 }
 

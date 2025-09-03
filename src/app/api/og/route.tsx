@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
         {/* Top section with logo/rank */}
         <div style={{ display: "flex", alignItems: "center", marginBottom: "40px", gap: "24px" }}>
           {logo && (
+            // biome-ignore lint/performance/noImgElement: OG images require <img> for server-side rendering
             <img
               src={logo}
               alt="Tool logo"

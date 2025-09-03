@@ -157,13 +157,16 @@ export default function MetricImpactDisplay({ impacts, toolName }: MetricImpactD
 
         {/* Individual Factor Impacts */}
         <div className="grid gap-4">
-          {impacts.map((impact, index) => {
+          {impacts.map((impact) => {
             const Icon = factorIcons[impact.factor];
             const ImpactIcon = getImpactIcon(impact.impact);
             const colorClass = impactColors[impact.impact][impact.magnitude];
 
             return (
-              <div key={index} className={`border rounded-lg p-4 ${colorClass}`}>
+              <div
+                key={`impact-${impact.factor}`}
+                className={`border rounded-lg p-4 ${colorClass}`}
+              >
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
                     <div className="p-2 rounded-full bg-background">
@@ -191,7 +194,10 @@ export default function MetricImpactDisplay({ impacts, toolName }: MetricImpactD
                         <p className="text-xs font-medium">Evidence:</p>
                         <ul className="text-xs space-y-0.5">
                           {impact.evidence.map((evidence, idx) => (
-                            <li key={idx} className="flex items-start gap-1">
+                            <li
+                              key={`${impact.factor}-evidence-${idx}`}
+                              className="flex items-start gap-1"
+                            >
                               <span className="text-muted-foreground">•</span>
                               <span className="italic">{evidence}</span>
                             </li>
