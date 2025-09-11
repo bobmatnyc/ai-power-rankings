@@ -3,6 +3,13 @@
  * Handles dynamic URLs based on the current environment and port
  */
 
+// Load environment variables from .env files FIRST
+import * as dotenv from 'dotenv';
+
+// Load .env.local first (higher priority), then .env
+dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '.env' });
+
 // Get the current URL dynamically
 function getCurrentUrl(): string {
   // In production, use the configured URLs

@@ -6,13 +6,16 @@
  * Quick test to verify we can connect to Payload and read data
  */
 
+// Load environment variables from .env files FIRST
+import * as dotenv from 'dotenv';
+
+// Load .env.local first (higher priority), then .env
+dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '.env' });
+
 import path from "node:path";
-import { configDotenv } from "dotenv";
 import { getPayload } from "payload";
 import config from "../../payload.config";
-
-// Load environment variables from .env.local
-configDotenv({ path: path.join(process.cwd(), ".env.local") });
 
 async function testConnection() {
   try {

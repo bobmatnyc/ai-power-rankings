@@ -7,8 +7,14 @@
  * Part of Epic EP-001: Migrate to Static JSON Database Architecture
  */
 
+// Load environment variables from .env files FIRST
+import * as dotenv from 'dotenv';
+
+// Load .env.local first (higher priority), then .env
+dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '.env' });
+
 import path from "node:path";
-import { configDotenv } from "dotenv";
 import fs from "fs-extra";
 import { getPayload } from "payload";
 import config from "../../payload.config";
@@ -20,9 +26,6 @@ import {
   initializeRepositories,
 } from "../../src/lib/json-db";
 import { loggers } from "../../src/lib/logger";
-
-// Load environment variables
-configDotenv();
 
 const logger = loggers.validation;
 
