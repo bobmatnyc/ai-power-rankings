@@ -15,7 +15,8 @@ AI Power Rankings tracks, analyzes, and ranks autonomous AI development tools th
 
 - **Framework**: Next.js 15 with App Router & Turbopack
 - **Language**: TypeScript (strict mode)
-- **Data Storage**: JSON File Architecture (no database required)
+- **Database**: PostgreSQL with Neon (JSONB storage) + JSON File fallback
+- **ORM**: Drizzle ORM with repository pattern
 - **Styling**: Tailwind CSS
 - **UI Components**: shadcn/ui + Radix UI
 - **Data Visualization**: Recharts
@@ -44,9 +45,13 @@ pnpm install
 cp .env.example .env.local
 ```
 
-4. Configure your `.env.local` with required keys (no database setup needed):
+4. Configure your `.env.local` with required keys:
 
 ```bash
+# Database Configuration (Required for production)
+DATABASE_URL="postgresql://username:password@host/database?sslmode=require"
+USE_DATABASE="true"  # Set to "false" to use JSON fallback
+
 # Analytics & Monitoring
 NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your_analytics_id
 
@@ -59,6 +64,16 @@ AUTHORIZED_EMAILS=admin@yoursite.com
 
 # Other optional integrations...
 ```
+
+### Database Setup
+
+The application supports both PostgreSQL and JSON file storage:
+
+- **Production**: Uses PostgreSQL with Neon for scalability and advanced features
+- **Development**: Can use JSON files for quick setup or PostgreSQL for full testing
+- **Fallback**: Automatically falls back to JSON files if database is unavailable
+
+For detailed database setup instructions, see [docs/DATABASE-SETUP.md](docs/DATABASE-SETUP.md).
 
 ## 🚦 Development
 
@@ -84,6 +99,13 @@ pnpm pre-deploy  # Run before any deployment
 - `pnpm test` - Run tests with Vitest
 - `pnpm validate:all` - Validate JSON data integrity
 
+### Database Scripts:
+
+- `pnpm db:test` - Test database connection (works with both JSON and PostgreSQL)
+- `pnpm db:migrate:json` - Migrate data from JSON files to PostgreSQL
+- `pnpm db:push` - Push schema changes to database
+- `pnpm db:studio` - Open Drizzle Studio (database GUI)
+
 ## 📚 Documentation
 
 Comprehensive documentation is available in the `/docs` directory:
@@ -99,12 +121,13 @@ For a complete list of documentation, see the [docs directory](./docs/).
 
 ## 🏗️ Architecture
 
-### JSON File-Based Architecture
+### Hybrid Architecture (PostgreSQL + JSON Fallback)
 
-- **100% Static Operation**: No database required, runs entirely from JSON files
-- **Performance Optimized**: ~10x faster data access compared to database queries
-- **Reliability**: Works offline, no database connection issues
-- **Data Storage**: All data in `/data/json/` with automatic backup rotation
+- **Production Database**: PostgreSQL with Neon for scalability and advanced queries
+- **Development Flexibility**: JSON files for rapid development and offline work
+- **Automatic Fallback**: System gracefully falls back to JSON if database unavailable
+- **Data Migration**: Tools migrate JSON data to PostgreSQL seamlessly
+- **Performance**: Sub-100ms response times with optimized JSONB queries
 
 ### Enhanced Ranking Algorithm v6.0-productivity-adjusted
 
@@ -126,13 +149,21 @@ For a complete list of documentation, see the [docs directory](./docs/).
 
 ## 🗂️ Data Storage
 
-The project uses a JSON file-based architecture:
+The project uses a hybrid storage architecture:
 
-- **No Database Required**: All data stored in structured JSON files
-- **High Performance**: Direct file access ~10x faster than database queries
+**PostgreSQL Database (Production)**
+- **31 Tools**: Migrated with full metadata and JSONB flexibility
+- **313 News Articles**: Full-text search and tool mention indexing
+- **Monthly Rankings**: Historical data with algorithm versioning
+- **Performance**: Sub-100ms queries with GIN indexes on JSONB columns
+
+**JSON File Fallback**
+- **High Performance**: Direct file access for development
 - **Full Offline Support**: Works without internet connection
 - **Automatic Backups**: Rotation system preserves data history
 - **Type-Safe**: Full TypeScript schemas for all data structures
+
+The system automatically detects database availability and switches between modes seamlessly.
 
 ## 🚀 Deployment
 

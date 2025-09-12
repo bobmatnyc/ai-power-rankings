@@ -3,12 +3,12 @@
  * Handles data access for AI tools (JSON or PostgreSQL)
  */
 
-import { BaseRepository, QueryOptions } from './base.repository';
+import { BaseRepository, type QueryOptions } from './base.repository';
 import { getDb } from '../connection';
 import { tools, type Tool, type NewTool } from '../schema';
 import { eq, desc, asc, sql } from 'drizzle-orm';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 interface ToolData {
   id: string;

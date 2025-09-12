@@ -1,6 +1,10 @@
 # Comprehensive Deployment Guide
 
-> **Note**: This deployment process includes automatic cache clearing. See [CACHE-CLEARING.md](./CACHE-CLEARING.md) for details.
+> **Status**: ✅ **PostgreSQL Migration Completed** - Production deployed with Neon database
+> 
+> **Live Site**: https://aipowerranking.com (31 tools, 313 news articles migrated)
+>
+> **Note**: This deployment process includes PostgreSQL database integration and automatic cache clearing.
 
 ## Pre-Deployment Checklist
 
@@ -17,10 +21,13 @@ npm run test
 npm run ci:local
 ```
 
-### 2. Data Preparation
+### 2. Database & Data Preparation
 
 ```bash
-# Validate all JSON data
+# Test database connection
+npm run db:test
+
+# Validate all data (works with both JSON and PostgreSQL)
 npm run validate:all
 
 # Create fresh backup
@@ -29,15 +36,34 @@ npm run backup:create
 # Generate cache files
 npm run cache:generate
 
-# Optimize JSON files for production
+# Optimize JSON files for production (fallback data)
 npm run optimize:json
+```
+
+#### Database-Specific Pre-deployment
+
+```bash
+# Verify PostgreSQL schema is current
+npm run db:push
+
+# Test data migration (dry-run)
+DATABASE_MIGRATION_MODE="dry-run" npm run db:migrate:json
+
+# Check database performance
+npm run db:benchmark
 ```
 
 ### 3. Environment Variables
 
-#### Required Environment Variables
+#### Required Environment Variables (PostgreSQL Production)
 
 ```env
+# Database Configuration (CRITICAL)
+DATABASE_URL="postgresql://neondb_owner:[password]@ep-wispy-fog-ad8d4skz-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"
+DATABASE_URL_UNPOOLED="postgresql://neondb_owner:[password]@ep-wispy-fog-ad8d4skz.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"
+USE_DATABASE="true"
+DATABASE_MIGRATION_MODE="migrate"
+
 # Authentication
 NEXTAUTH_SECRET=[strong-random-secret]
 NEXTAUTH_URL=https://aipowerranking.com
@@ -52,35 +78,42 @@ PERPLEXITY_API_KEY=[perplexity-key]
 GOOGLE_API_KEY=[google-key]
 GOOGLE_DRIVE_FOLDER_ID=[folder-id]
 
-# Email (Optional)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=[email]
-SMTP_PASS=[app-password]
+# Email Services
+RESEND_API_KEY=[resend-key]
+CONTACT_EMAIL=contact@aipowerranking.com
 EMAIL_FROM=noreply@aipowerranking.com
 
 # API Keys
 CRON_SECRET=[strong-random-secret]
-VERCEL_TOKEN=[vercel-api-token]
 OPENAI_API_KEY=[openai-key]
-RESEND_API_KEY=[resend-key]
 
 # Analytics
 NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_VERCEL_ANALYTICS_ID=[analytics-id]
 
-# Performance
+# Performance & Environment
 USE_CACHE_FALLBACK=true
 NODE_ENV=production
 ```
 
+> **Note**: Database credentials are encrypted as "Sensitive" variables in Vercel Dashboard.
+> See [ENVIRONMENT-VARIABLES.md](./ENVIRONMENT-VARIABLES.md) for complete variable documentation.
+
 #### Vercel Environment Setup
 
 ```bash
+# Database environment variables (CRITICAL - mark as Sensitive)
+vercel env add DATABASE_URL production
+vercel env add DATABASE_URL_UNPOOLED production
+vercel env add USE_DATABASE production
+
+# Authentication & API keys
+vercel env add NEXTAUTH_SECRET production
 vercel env add GITHUB_TOKEN production
 vercel env add PERPLEXITY_API_KEY production
 vercel env add GOOGLE_API_KEY production
-vercel env add NEXTAUTH_SECRET production
+vercel env add OPENAI_API_KEY production
+vercel env add RESEND_API_KEY production
 ```
 
 ## Deployment Configuration
@@ -355,34 +388,132 @@ export async function GET() {
 ### 1. Quick Application Rollback
 
 ```bash
-# Vercel CLI rollback
+# Vercel CLI rollback (preserves database)
 vercel rollback
 
 # Or via Vercel Dashboard:
 # Deployments → Select previous deployment → Promote to Production
 ```
 
-### 2. Data Rollback
+### 2. Database Rollback Options
+
+#### Option A: Switch to JSON Fallback (Fastest)
 
 ```bash
-# List available backups
+# 1. Set environment variable in Vercel Dashboard
+USE_DATABASE="false"
+
+# 2. Redeploy (uses JSON files as data source)
+vercel --prod
+
+# 3. Monitor logs to confirm JSON mode active
+vercel logs --prod
+```
+
+#### Option B: Database Point-in-Time Recovery
+
+```bash
+# 1. Access Neon Dashboard
+# https://console.neon.tech
+
+# 2. Navigate to your database
+# Select "Restore" → Choose restore point
+
+# 3. Update connection strings if needed
+vercel env add DATABASE_URL production
+```
+
+#### Option C: Data Restoration from Backup
+
+```bash
+# 1. List available JSON backups
 npm run backup:restore
 
-# Restore specific backup
-npm run backup:restore --backup=backup-2025-06-29-220000
+# 2. Restore specific backup to database
+npm run backup:restore --backup=backup-2025-09-11-150000
+DATABASE_MIGRATION_MODE="migrate" npm run db:migrate:json
 
-# Restore latest backup
-npm run backup:restore:latest
-
-# Redeploy with restored data
-vercel --prod
+# 3. Verify data integrity
+npm run validate:all
+npm run db:test
 ```
 
 ### 3. Emergency Procedures
 
-1. **Enable maintenance mode**: Return 503 from API routes
-2. **Restore from backup**: Use latest validated backup
-3. **Force redeploy**: `vercel --prod --force`
+#### Critical System Failure
+
+1. **Immediate Response** (< 2 minutes)
+   ```bash
+   # Switch to JSON fallback immediately
+   vercel env add USE_DATABASE false production
+   vercel --prod --force
+   ```
+
+2. **Investigate & Fix** (< 15 minutes)
+   ```bash
+   # Check database connectivity
+   npm run db:test
+   
+   # Check recent deployments
+   vercel ls
+   
+   # Review error logs
+   vercel logs --prod -n 100
+   ```
+
+3. **Recovery Actions**
+   ```bash
+   # Option 1: Fix database issue and re-enable
+   USE_DATABASE="true" vercel --prod
+   
+   # Option 2: Restore from backup
+   npm run backup:restore:latest
+   npm run db:migrate:json
+   
+   # Option 3: Rollback to last working deployment
+   vercel rollback
+   ```
+
+### 4. Database Migration Rollback
+
+If a database migration causes issues:
+
+```bash
+# 1. Revert schema changes
+npm run db:rollback --to=previous-migration
+
+# 2. Or switch to JSON fallback temporarily
+USE_DATABASE="false" vercel --prod
+
+# 3. Fix migration scripts and retry
+npm run db:generate  # Create new migration
+npm run db:push      # Apply to database
+USE_DATABASE="true" vercel --prod
+```
+
+### 5. Monitoring During Rollback
+
+```bash
+# Monitor API health during rollback
+curl https://aipowerranking.com/api/health
+
+# Check database connection status
+curl https://aipowerranking.com/api/db/status
+
+# Verify data integrity
+curl https://aipowerranking.com/api/tools | jq 'length'
+curl https://aipowerranking.com/api/rankings | jq '.rankings | length'
+```
+
+### 6. Post-Rollback Verification
+
+- [ ] ✅ Homepage loads with correct data
+- [ ] ✅ API endpoints return expected responses
+- [ ] ✅ Database connection stable (if applicable)
+- [ ] ✅ Performance metrics within acceptable range
+- [ ] ✅ Error rates below 1%
+- [ ] ✅ User authentication working
+- [ ] ✅ Admin functions accessible
 
 ## Troubleshooting
 
@@ -391,31 +522,78 @@ vercel --prod
 1. **Build Failures**
 
    - Check TypeScript errors: `npm run type-check`
-   - Verify environment variables are set
+   - Verify all environment variables are set in Vercel
    - Clear cache: `rm -rf .next`
+   - Test database connection: `npm run db:test`
 
-2. **"Module not found" errors**
+2. **Database Connection Failures**
 
-   - Ensure `data/json` files included in deployment
+   ```bash
+   # Verify credentials in Vercel Dashboard
+   vercel env ls
+   
+   # Test connection locally
+   NODE_ENV=production npm run db:test
+   
+   # Check Neon database status
+   # Visit: https://console.neon.tech
+   
+   # Switch to JSON fallback if needed
+   vercel env add USE_DATABASE false production
+   ```
+
+3. **"Module not found" errors**
+
+   - Ensure `data/json` files included in deployment (for fallback)
    - Check `.vercelignore` isn't excluding needed files
    - Verify `includeFiles` in `vercel.json`
+   - Test data access: `curl https://aipowerranking.com/api/tools`
 
-3. **Slow API responses**
+4. **Slow API responses (PostgreSQL specific)**
 
-   - Verify cache working: `GET /api/cache/stats`
-   - Check if `optimize:json` ran during build
-   - Monitor function cold starts
+   - Check database connection pooling
+   - Monitor JSONB query performance
+   - Verify GIN indexes are active: `npm run db:studio`
+   - Consider switching to JSON fallback temporarily
 
-4. **Out of memory errors**
+5. **Database Migration Errors**
 
-   - Reduce cache sizes in production
-   - Enable file chunking for large datasets
-   - Increase function memory allocation
+   ```bash
+   # Check migration status
+   npm run db:studio
+   
+   # Retry failed migrations
+   DATABASE_MIGRATION_MODE="migrate" npm run db:migrate:json
+   
+   # Validate migrated data
+   npm run validate:all
+   ```
 
-5. **Data not loading**
-   - Check JSON file validity: `npm run validate:all`
-   - Verify file permissions
-   - Check API route implementations
+6. **Data Inconsistency Issues**
+
+   ```bash
+   # Compare JSON vs Database counts
+   curl https://aipowerranking.com/api/tools | jq 'length'
+   
+   # Check for missing indexes
+   npm run db:analyze
+   
+   # Re-sync data if needed
+   npm run db:migrate:json --force
+   ```
+
+7. **Performance Degradation**
+
+   ```bash
+   # Check database query times
+   vercel logs --prod -n 50 | grep "Query took"
+   
+   # Monitor connection pool
+   npm run db:pool-status
+   
+   # Switch to JSON mode for immediate relief
+   USE_DATABASE="false" vercel --prod
+   ```
 
 ### Debug Commands
 
