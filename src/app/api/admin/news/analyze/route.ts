@@ -4,7 +4,10 @@ import { auth } from "@/auth";
 
 const AnalyzeRequestSchema = z.object({
   input: z.string().min(1),
-  type: z.enum(["url", "text"]),
+  type: z.enum(["url", "text", "file"]),
+  filename: z.string().optional(),
+  mimeType: z.string().optional(),
+  verbose: z.boolean().optional(),
 });
 
 const OpenRouterResponseSchema = z.object({
@@ -218,7 +221,8 @@ function performFallbackAnalysis(content: string, url?: string) {
   };
 }
 
-async function analyzeWithOpenRouter(content: string, url?: string) {
+async function analyzeWithOpenRouter(content: string, url?: string, verbose = false) {
+  const startTime = Date.now();
   const openRouterKey = process.env["OPENROUTER_API_KEY"];
 
   if (!openRouterKey) {
@@ -228,11 +232,17 @@ async function analyzeWithOpenRouter(content: string, url?: string) {
     );
   }
 
-  // Log key info for debugging (safely)
-  console.log(
-    "[News Analysis] Using OpenRouter API key starting with:",
-    `${openRouterKey.substring(0, 10)}...`
-  );
+  // Enhanced debugging with timing
+  if (verbose) {
+    console.log("[News Analysis] === OPENROUTER API CALL DEBUG ===");
+    console.log("[News Analysis] Timestamp:", new Date().toISOString());
+    console.log(
+      "[News Analysis] API Key (first 10 chars):",
+      `${openRouterKey.substring(0, 10)}...`
+    );
+    console.log("[News Analysis] Content length:", content.length, "characters");
+    console.log("[News Analysis] URL:", url || "N/A");
+  }
 
   const systemPrompt = `You are an AI news analyst specializing in AI tools and technology. 
 Analyze the provided news article and extract structured information about AI tools mentioned.
@@ -261,29 +271,64 @@ ${url ? `Article URL: ${url}` : ""}
 
 Return ONLY a valid JSON object with no additional text or markdown formatting.`;
 
+  const requestBody = {
+    model: "anthropic/claude-3-haiku",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    temperature: 0.3,
+    max_tokens: 2000,
+  };
+
+  const requestHeaders = {
+    Authorization: `Bearer ${openRouterKey}`,
+    "Content-Type": "application/json",
+    "HTTP-Referer": process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000",
+    "X-Title": "AI Power Rankings Admin",
+  };
+
+  if (verbose) {
+    console.log("[News Analysis] Request headers (without auth):", {
+      ...requestHeaders,
+      Authorization: "Bearer [REDACTED]",
+    });
+    console.log("[News Analysis] Request model:", requestBody.model);
+    console.log("[News Analysis] Message count:", requestBody.messages.length);
+    console.log("[News Analysis] Temperature:", requestBody.temperature);
+    console.log("[News Analysis] Max tokens:", requestBody.max_tokens);
+  }
+
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${openRouterKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000",
-        "X-Title": "AI Power Rankings Admin",
-      },
-      body: JSON.stringify({
-        model: "anthropic/claude-3-haiku",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.3,
-        max_tokens: 2000,
-      }),
+      headers: requestHeaders,
+      body: JSON.stringify(requestBody),
     });
+
+    const responseTime = Date.now() - startTime;
+
+    if (verbose) {
+      console.log("[News Analysis] Response status:", response.status);
+      console.log("[News Analysis] Response status text:", response.statusText);
+      console.log("[News Analysis] Response time:", `${responseTime}ms`);
+      console.log("[News Analysis] Response headers:", {
+        "content-type": response.headers.get("content-type"),
+        "x-ratelimit-limit": response.headers.get("x-ratelimit-limit"),
+        "x-ratelimit-remaining": response.headers.get("x-ratelimit-remaining"),
+        "x-ratelimit-reset": response.headers.get("x-ratelimit-reset"),
+      });
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
+
+      if (verbose) {
+        console.error("[News Analysis] Error response body:", errorText);
+      }
+
       let errorMessage = `OpenRouter API error (${response.status}): ${errorText}`;
+      let troubleshootingSteps: string[] = [];
 
       // Parse error response if it's JSON
       try {
@@ -293,13 +338,33 @@ Return ONLY a valid JSON object with no additional text or markdown formatting.`
 
           // Provide specific guidance for common errors
           if (response.status === 401) {
-            errorMessage +=
-              " - Please check that your OPENROUTER_API_KEY is valid and has not expired.";
+            troubleshootingSteps = [
+              "Verify OPENROUTER_API_KEY is set correctly in .env.local",
+              "Check that the API key has not expired",
+              "Ensure the API key has proper permissions",
+              "Try regenerating the API key from OpenRouter dashboard",
+            ];
           } else if (response.status === 429) {
-            errorMessage += " - Rate limit exceeded. Please wait and try again.";
+            const resetTime = response.headers.get("x-ratelimit-reset");
+            troubleshootingSteps = [
+              "Rate limit exceeded. Wait before retrying.",
+              resetTime
+                ? `Rate limit resets at: ${new Date(parseInt(resetTime) * 1000).toLocaleString()}`
+                : "Check OpenRouter dashboard for rate limit status",
+              `Remaining requests: ${response.headers.get("x-ratelimit-remaining") || "unknown"}`,
+            ];
           } else if (response.status === 402) {
-            errorMessage +=
-              " - Insufficient credits. Please add credits to your OpenRouter account.";
+            troubleshootingSteps = [
+              "Insufficient credits in OpenRouter account",
+              "Add credits at https://openrouter.ai/credits",
+              "Check your usage at https://openrouter.ai/activity",
+            ];
+          } else if (response.status === 503) {
+            troubleshootingSteps = [
+              "OpenRouter service is temporarily unavailable",
+              "Check https://status.openrouter.ai/ for service status",
+              "Try again in a few minutes",
+            ];
           }
         }
       } catch {
@@ -307,11 +372,35 @@ Return ONLY a valid JSON object with no additional text or markdown formatting.`
       }
 
       console.error("[News Analysis] OpenRouter API error:", errorMessage);
-      throw new Error(errorMessage);
+      if (troubleshootingSteps.length > 0) {
+        console.error("[News Analysis] Troubleshooting steps:", troubleshootingSteps);
+      }
+
+      const error = new Error(errorMessage) as Error & {
+        statusCode?: number;
+        troubleshooting?: string[];
+      };
+      error.statusCode = response.status;
+      error.troubleshooting = troubleshootingSteps;
+      throw error;
     }
 
-    const data = await response.json();
-    const content = data.choices[0]?.message?.content;
+    const responseText = await response.text();
+
+    if (verbose) {
+      console.log("[News Analysis] Raw response length:", responseText.length);
+      console.log("[News Analysis] Response preview:", responseText.substring(0, 200));
+    }
+
+    let data: unknown;
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      console.error("[News Analysis] Failed to parse response as JSON:", responseText);
+      throw new Error("Invalid JSON response from OpenRouter API");
+    }
+
+    const content = data.choices?.[0]?.message?.content;
 
     if (!content) {
       throw new Error("No response from OpenRouter");
@@ -367,8 +456,80 @@ Return ONLY a valid JSON object with no additional text or markdown formatting.`
   }
 }
 
+// Helper function to extract text from PDF
+async function extractTextFromPdf(base64Content: string): Promise<string> {
+  console.log("[News Analysis] PDF extraction requested");
+
+  try {
+    // Dynamic import to avoid issues with server-side rendering
+    const pdfParse = (await import("pdf-parse")).default;
+
+    const buffer = Buffer.from(base64Content, "base64");
+    const data = await pdfParse(buffer);
+
+    if (!data.text || data.text.length < 100) {
+      throw new Error(
+        "Could not extract sufficient text from PDF. Please copy and paste the text instead."
+      );
+    }
+
+    console.log(
+      `[News Analysis] Extracted ${data.text.length} characters from PDF (${data.numpages} pages)`
+    );
+
+    // Limit to 10k characters for processing
+    return data.text.substring(0, 10000);
+  } catch (error) {
+    console.error("[News Analysis] PDF extraction error:", error);
+
+    // Fallback: try basic text extraction
+    try {
+      const buffer = Buffer.from(base64Content, "base64");
+      const text = buffer.toString("utf-8", 0, Math.min(buffer.length, 10000));
+      // Extract readable ASCII text
+      const readableText = text
+        .replace(/[^\x20-\x7E\n\r\t]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      if (readableText.length >= 100) {
+        console.log("[News Analysis] Using fallback text extraction from PDF");
+        return readableText;
+      }
+    } catch {}
+
+    throw new Error(
+      "Failed to extract text from PDF. Please use text input or try a different file."
+    );
+  }
+}
+
+// Helper function to extract text from various file types
+async function extractTextFromFile(
+  base64Content: string,
+  mimeType: string,
+  filename: string
+): Promise<string> {
+  console.log(`[News Analysis] Extracting text from file: ${filename} (${mimeType})`);
+
+  if (mimeType === "application/pdf") {
+    return extractTextFromPdf(base64Content);
+  } else if (mimeType.startsWith("text/") || mimeType === "application/json") {
+    // Direct text extraction for text files
+    const buffer = Buffer.from(base64Content, "base64");
+    return buffer.toString("utf-8");
+  } else if (mimeType === "text/markdown" || filename.endsWith(".md")) {
+    // Markdown files
+    const buffer = Buffer.from(base64Content, "base64");
+    return buffer.toString("utf-8");
+  } else {
+    throw new Error(`Unsupported file type: ${mimeType}. Supported types: .txt, .md, .pdf, .json`);
+  }
+}
+
 export async function POST(request: NextRequest) {
-  console.log("[News Analysis] Received analysis request");
+  const requestStartTime = Date.now();
+  console.log("[News Analysis] Received analysis request at", new Date().toISOString());
 
   try {
     // Import auth utilities at the top of the function
@@ -385,7 +546,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { input, type } = AnalyzeRequestSchema.parse(body);
+    const { input, type, filename, mimeType, verbose = false } = AnalyzeRequestSchema.parse(body);
+
+    if (verbose) {
+      console.log("[News Analysis] Request details:", {
+        type,
+        inputLength: input.length,
+        filename,
+        mimeType,
+      });
+    }
 
     let content: string;
     let url: string | undefined;
@@ -393,6 +563,17 @@ export async function POST(request: NextRequest) {
     if (type === "url") {
       url = input;
       content = await fetchArticleContent(url);
+    } else if (type === "file") {
+      // Extract text from uploaded file
+      if (!mimeType || !filename) {
+        throw new Error("File upload requires mimeType and filename");
+      }
+      content = await extractTextFromFile(input, mimeType, filename);
+
+      if (verbose) {
+        console.log("[News Analysis] Extracted text length:", content.length);
+        console.log("[News Analysis] Text preview:", content.substring(0, 200));
+      }
     } else {
       content = input;
     }
@@ -404,7 +585,7 @@ export async function POST(request: NextRequest) {
 
     try {
       // Try OpenRouter first
-      analysis = await analyzeWithOpenRouter(content, url);
+      analysis = await analyzeWithOpenRouter(content, url, verbose);
     } catch (openRouterError) {
       console.warn("[News Analysis] OpenRouter failed, using fallback:", openRouterError);
 
@@ -416,13 +597,28 @@ export async function POST(request: NextRequest) {
       console.log("[News Analysis] Fallback analysis completed");
     }
 
-    return NextResponse.json({
+    const totalTime = Date.now() - requestStartTime;
+
+    const response = {
       success: true,
       analysis,
       warning: usingFallback
         ? "Analysis performed using fallback method due to OpenRouter API issues. For better results, please ensure OPENROUTER_API_KEY is valid."
         : undefined,
-    });
+      debug: verbose
+        ? {
+            processingTime: `${totalTime}ms`,
+            method: usingFallback ? "fallback" : "openrouter",
+            timestamp: new Date().toISOString(),
+          }
+        : undefined,
+    };
+
+    if (verbose) {
+      console.log("[News Analysis] Request completed in", `${totalTime}ms`);
+    }
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error("[News Analysis] Request error:", error);
 
@@ -435,14 +631,19 @@ export async function POST(request: NextRequest) {
       errorMessage = error.message;
 
       // Set appropriate status codes for different error types
-      if (
+      const errorWithDetails = error as Error & {
+        statusCode?: number;
+        troubleshooting?: string[];
+      };
+      if (errorWithDetails.statusCode) {
+        statusCode = errorWithDetails.statusCode;
+      } else if (
         error.message.includes("401") ||
         error.message.includes("Authentication") ||
         error.message.includes("User not found")
       ) {
         statusCode = 401;
         errorDetails.type = "authentication_error";
-        errorDetails.solution = "Please check your OPENROUTER_API_KEY in the environment variables";
       } else if (error.message.includes("429") || error.message.includes("Rate limit")) {
         statusCode = 429;
         errorDetails.type = "rate_limit_error";
@@ -455,6 +656,14 @@ export async function POST(request: NextRequest) {
       } else if (error.message.includes("validation") || error.message.includes("parse")) {
         statusCode = 400;
         errorDetails.type = "validation_error";
+      } else if (error.message.includes("Unsupported file type")) {
+        statusCode = 415;
+        errorDetails.type = "unsupported_media_type";
+      }
+
+      // Add troubleshooting steps if available
+      if (errorWithDetails.troubleshooting) {
+        errorDetails.troubleshooting = errorWithDetails.troubleshooting;
       }
 
       // Include stack trace in development only

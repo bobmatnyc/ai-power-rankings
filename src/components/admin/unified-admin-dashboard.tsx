@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  AlertCircle,
   Bot,
+  Bug,
   ChevronLeft,
   ChevronRight,
   FileText,
@@ -97,41 +99,121 @@ export default function UnifiedAdminDashboard() {
   const [activeTab, setActiveTab] = useState("news");
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<{
+    type?: string;
+    troubleshooting?: string[];
+  } | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<{
+    processingTime?: string;
+    method?: string;
+    timestamp?: string;
+  } | null>(null);
 
   // News upload state
   const [newsInput, setNewsInput] = useState("");
-  const [newsInputType, setNewsInputType] = useState<"url" | "text">("url");
+  const [newsInputType, setNewsInputType] = useState<"url" | "text" | "file">("url");
   const [newsAnalysis, setNewsAnalysis] = useState<NewsAnalysis | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [verboseLogging, setVerboseLogging] = useState(false);
 
   // Ranking state
   const [rankingPreview, setRankingPreview] = useState<RankingPreview | null>(null);
   const [rankingVersions, setRankingVersions] = useState<RankingVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
 
+  // Handle file selection
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const allowedTypes = ["text/plain", "text/markdown", "application/pdf", "application/json"];
+
+      const allowedExtensions = [".txt", ".md", ".pdf", ".json"];
+      const fileExtension = `.${file.name.split(".").pop()?.toLowerCase()}`;
+
+      if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+        setError(`Unsupported file type. Please upload: ${allowedExtensions.join(", ")}`);
+        return;
+      }
+
+      if (file.size > 10 * 1024 * 1024) {
+        // 10MB limit
+        setError("File too large. Maximum size is 10MB.");
+        return;
+      }
+
+      setSelectedFile(file);
+      setError(null);
+    }
+  };
+
+  // Convert file to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        // Remove data URL prefix (e.g., "data:text/plain;base64,")
+        const base64Content = base64.split(",")[1];
+        resolve(base64Content);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   // Handle news upload and analysis
   const handleNewsUpload = async () => {
     setIsProcessing(true);
     setError(null);
+    setErrorDetails(null);
     setSuccess(null);
     setNewsAnalysis(null);
+    setDebugInfo(null);
 
     try {
+      let input = newsInput;
+      let filename: string | undefined;
+      let mimeType: string | undefined;
+
+      // Handle file upload
+      if (newsInputType === "file") {
+        if (!selectedFile) {
+          throw new Error("Please select a file to upload");
+        }
+        input = await fileToBase64(selectedFile);
+        filename = selectedFile.name;
+        mimeType = selectedFile.type || "text/plain";
+      }
+
       const response = await fetch("/api/admin/news/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          input: newsInput,
+          input,
           type: newsInputType,
+          filename,
+          mimeType,
+          verbose: verboseLogging,
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(`Failed to analyze news: ${response.statusText}`);
+        setErrorDetails({
+          type: data.type,
+          troubleshooting: data.troubleshooting,
+        });
+        throw new Error(data.error || `Failed to analyze news: ${response.statusText}`);
       }
 
-      const data = await response.json();
       setNewsAnalysis(data.analysis);
+      setDebugInfo(data.debug);
+
+      if (data.warning) {
+        setError(data.warning);
+      }
 
       // Automatically generate ranking preview
       await generateRankingPreview(data.analysis);
@@ -248,8 +330,28 @@ export default function UnifiedAdminDashboard() {
       </div>
 
       {error && (
-        <Alert variant="destructive" className="mb-6">
-          <AlertDescription>{error}</AlertDescription>
+        <Alert variant={errorDetails?.type ? "destructive" : "default"} className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            <div className="space-y-2">
+              <p className="font-medium">{error}</p>
+              {errorDetails?.type && (
+                <p className="text-sm text-muted-foreground">
+                  Error type: {errorDetails.type.replace(/_/g, " ")}
+                </p>
+              )}
+              {errorDetails?.troubleshooting && (
+                <div className="mt-2">
+                  <p className="text-sm font-medium">Troubleshooting steps:</p>
+                  <ul className="list-disc pl-5 text-sm text-muted-foreground">
+                    {errorDetails.troubleshooting.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </AlertDescription>
         </Alert>
       )}
 
@@ -291,7 +393,11 @@ export default function UnifiedAdminDashboard() {
               <div className="flex gap-4">
                 <Select
                   value={newsInputType}
-                  onValueChange={(v) => setNewsInputType(v as "url" | "text")}
+                  onValueChange={(v) => {
+                    setNewsInputType(v as "url" | "text" | "file");
+                    setSelectedFile(null);
+                    setNewsInput("");
+                  }}
                 >
                   <SelectTrigger className="w-32">
                     <SelectValue />
@@ -305,6 +411,10 @@ export default function UnifiedAdminDashboard() {
                       <FileText className="mr-2 h-4 w-4 inline" />
                       Text
                     </SelectItem>
+                    <SelectItem value="file">
+                      <Upload className="mr-2 h-4 w-4 inline" />
+                      File
+                    </SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -315,19 +425,54 @@ export default function UnifiedAdminDashboard() {
                     onChange={(e) => setNewsInput(e.target.value)}
                     className="flex-1"
                   />
-                ) : (
+                ) : newsInputType === "text" ? (
                   <Textarea
                     placeholder="Paste article text here..."
                     value={newsInput}
                     onChange={(e) => setNewsInput(e.target.value)}
                     className="flex-1 min-h-[200px]"
                   />
+                ) : (
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="file"
+                        accept=".txt,.md,.pdf,.json"
+                        onChange={handleFileSelect}
+                        className="flex-1"
+                      />
+                      {selectedFile && (
+                        <Badge variant="secondary">
+                          {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Supported: .txt, .md, .pdf, .json (max 10MB)
+                    </p>
+                  </div>
                 )}
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="verbose"
+                    checked={verboseLogging}
+                    onChange={(e) => setVerboseLogging(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <Label htmlFor="verbose" className="text-sm font-normal cursor-pointer">
+                    <Bug className="inline h-3 w-3 mr-1" />
+                    Verbose logging (debugging)
+                  </Label>
+                </div>
               </div>
 
               <Button
                 onClick={handleNewsUpload}
-                disabled={!newsInput || isProcessing}
+                disabled={(newsInputType === "file" ? !selectedFile : !newsInput) || isProcessing}
                 className="w-full"
               >
                 {isProcessing ? (
@@ -464,6 +609,17 @@ export default function UnifiedAdminDashboard() {
                           +{newsAnalysis.qualitative_metrics.market_traction.toFixed(1)}
                         </span>
                       </div>
+                    </div>
+                  </div>
+                )}
+
+                {debugInfo && (
+                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                    <Label className="text-xs font-mono">Debug Information</Label>
+                    <div className="mt-1 text-xs font-mono text-gray-600">
+                      <p>Processing time: {debugInfo.processingTime}</p>
+                      <p>Method: {debugInfo.method}</p>
+                      <p>Timestamp: {debugInfo.timestamp}</p>
                     </div>
                   </div>
                 )}
