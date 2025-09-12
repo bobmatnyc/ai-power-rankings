@@ -128,9 +128,13 @@ Return ONLY a valid JSON object with no additional text or markdown formatting.`
     max_tokens: 2000,
   };
 
+  // Use correct header names for OpenRouter API
   const requestHeaders = {
     Authorization: `Bearer ${openRouterKey}`,
     "Content-Type": "application/json",
+    // OpenRouter expects "Referer" not "HTTP-Referer"
+    Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000",
+    // Also include HTTP-Referer for compatibility
     "HTTP-Referer": process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000",
     "X-Title": "AI Power Rankings Admin",
   };
@@ -170,7 +174,25 @@ Return ONLY a valid JSON object with no additional text or markdown formatting.`
     if (!response.ok) {
       const errorText = await response.text();
 
-      if (verbose) {
+      // Always log authentication errors for debugging
+      if (response.status === 401) {
+        console.error("[News Analysis] Authentication failed with OpenRouter API");
+        console.error("[News Analysis] Response status:", response.status);
+        console.error("[News Analysis] Response headers:", {
+          "www-authenticate": response.headers.get("www-authenticate"),
+          "x-error-code": response.headers.get("x-error-code"),
+          "x-error-message": response.headers.get("x-error-message"),
+        });
+        console.error("[News Analysis] Error response body:", errorText);
+        console.error("[News Analysis] API Key format check:");
+        console.error(`  - Length: ${openRouterKey.length} characters`);
+        console.error(`  - Starts with: ${openRouterKey.substring(0, 10)}...`);
+        console.error(`  - Ends with: ...${openRouterKey.substring(openRouterKey.length - 4)}`);
+        console.error("[News Analysis] Request headers sent:", {
+          ...requestHeaders,
+          Authorization: `Bearer ${openRouterKey.substring(0, 10)}...[REDACTED]`,
+        });
+      } else if (verbose) {
         console.error("[News Analysis] Error response body:", errorText);
       }
 
@@ -183,13 +205,19 @@ Return ONLY a valid JSON object with no additional text or markdown formatting.`
         if (errorJson.error?.message) {
           errorMessage = `OpenRouter API error: ${errorJson.error.message}`;
 
+          // Log additional error details for authentication failures
+          if (response.status === 401 && errorJson.error) {
+            console.error("[News Analysis] OpenRouter error details:", errorJson.error);
+          }
+
           // Provide specific guidance for common errors
           if (response.status === 401) {
             troubleshootingSteps = [
               "Verify OPENROUTER_API_KEY is set correctly in .env.local",
-              "Check that the API key has not expired",
-              "Ensure the API key has proper permissions",
-              "Try regenerating the API key from OpenRouter dashboard",
+              "Check that the API key starts with 'sk-or-' prefix",
+              "Ensure the API key has not expired or been revoked",
+              "Try regenerating the API key from https://openrouter.ai/keys",
+              "Verify the Referer header matches your allowed domains in OpenRouter settings",
             ];
           } else if (response.status === 429) {
             const resetTime = response.headers.get("x-ratelimit-reset");
@@ -247,7 +275,7 @@ Return ONLY a valid JSON object with no additional text or markdown formatting.`
       throw new Error("Invalid JSON response from OpenRouter API");
     }
 
-    const content = data.choices?.[0]?.message?.content;
+    const content = (data as any).choices?.[0]?.message?.content;
 
     if (!content) {
       throw new Error("No response from OpenRouter");
@@ -288,9 +316,17 @@ Return ONLY a valid JSON object with no additional text or markdown formatting.`
 
     // Add more context to the error
     if (error instanceof Error) {
-      if (error.message.includes("401") || error.message.includes("User not found")) {
+      if (
+        error.message.includes("401") ||
+        error.message.includes("User not found") ||
+        error.message.includes("Unauthorized")
+      ) {
         throw new Error(
-          "Authentication failed with OpenRouter. Please verify your OPENROUTER_API_KEY is valid. Get your API key at: https://openrouter.ai/keys"
+          "Authentication failed with OpenRouter. Please verify:\n" +
+            "1. OPENROUTER_API_KEY is set correctly in .env.local\n" +
+            "2. The API key starts with 'sk-or-' prefix\n" +
+            "3. The API key has not been revoked\n" +
+            "Get your API key at: https://openrouter.ai/keys"
         );
       } else if (error.message.includes("fetch")) {
         throw new Error(
@@ -475,39 +511,45 @@ export async function POST(request: NextRequest) {
         error.message.includes("User not found")
       ) {
         statusCode = 401;
-        errorDetails.type = "authentication_error";
-        errorDetails.help = "Please verify your OPENROUTER_API_KEY in .env.local";
-        errorDetails.documentation = "https://openrouter.ai/keys";
+        errorDetails["type"] = "authentication_error";
+        errorDetails["help"] = [
+          "Verify OPENROUTER_API_KEY is set correctly in .env.local",
+          "Check that the API key starts with 'sk-or-' prefix",
+          "Ensure the API key has not been revoked",
+          "Check the Referer header matches your allowed domains in OpenRouter",
+        ];
+        errorDetails["documentation"] = "https://openrouter.ai/keys";
       } else if (error.message.includes("429") || error.message.includes("Rate limit")) {
         statusCode = 429;
-        errorDetails.type = "rate_limit_error";
+        errorDetails["type"] = "rate_limit_error";
       } else if (error.message.includes("402") || error.message.includes("credits")) {
         statusCode = 402;
-        errorDetails.type = "payment_required";
+        errorDetails["type"] = "payment_required";
       } else if (error.message.includes("fetch") || error.message.includes("Network")) {
         statusCode = 503;
-        errorDetails.type = "network_error";
+        errorDetails["type"] = "network_error";
       } else if (error.message.includes("validation") || error.message.includes("parse")) {
         statusCode = 400;
-        errorDetails.type = "validation_error";
+        errorDetails["type"] = "validation_error";
       } else if (error.message.includes("Unsupported file type")) {
         statusCode = 415;
-        errorDetails.type = "unsupported_media_type";
+        errorDetails["type"] = "unsupported_media_type";
       } else if (error.message.includes("not configured") || error.message.includes("required")) {
         statusCode = 500;
-        errorDetails.type = "configuration_error";
-        errorDetails.help = "OpenRouter API key is required. Set OPENROUTER_API_KEY in .env.local";
-        errorDetails.documentation = "https://openrouter.ai/keys";
+        errorDetails["type"] = "configuration_error";
+        errorDetails["help"] =
+          "OpenRouter API key is required. Set OPENROUTER_API_KEY in .env.local";
+        errorDetails["documentation"] = "https://openrouter.ai/keys";
       }
 
       // Add troubleshooting steps if available
       if (errorWithDetails.troubleshooting) {
-        errorDetails.troubleshooting = errorWithDetails.troubleshooting;
+        errorDetails["troubleshooting"] = errorWithDetails.troubleshooting;
       }
 
       // Include stack trace in development only
       if (process.env["NODE_ENV"] === "development") {
-        errorDetails.stack = error.stack;
+        errorDetails["stack"] = error.stack;
       }
     }
 
