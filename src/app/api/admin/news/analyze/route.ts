@@ -292,8 +292,11 @@ Return ONLY a valid JSON object with no additional text or markdown formatting.`
       throw new Error("Invalid JSON response from AI");
     }
 
-    // Validate and return
-    const validated = OpenRouterResponseSchema.parse(parsed);
+    // Validate and return with more lenient handling
+    const validated = OpenRouterResponseSchema.parse({
+      ...parsed,
+      tool_mentions: (parsed as any).tool_mentions?.filter((tm: any) => tm?.tool) || [],
+    });
 
     // Ensure URL is included if it was provided
     if (url && !validated.url) {
