@@ -2,7 +2,25 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { isAuthorizedEmail } from "@/lib/auth-config";
+import { validateEnvironment } from "@/lib/startup-validation";
 import { i18n } from "./i18n/config";
+
+// Run startup validation once when middleware is first loaded
+// This ensures the application fails to start if required env vars are missing
+let startupValidationComplete = false;
+if (!startupValidationComplete) {
+  try {
+    validateEnvironment();
+    startupValidationComplete = true;
+  } catch (error) {
+    console.error("[Middleware] Startup validation failed:", error);
+    // In development, log the error but allow the app to continue
+    // In production, this will cause the deployment to fail
+    if (process.env["NODE_ENV"] === "production") {
+      throw error;
+    }
+  }
+}
 
 const locales = i18n.locales;
 

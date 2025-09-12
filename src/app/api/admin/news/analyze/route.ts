@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/auth";
+import { getOpenRouterApiKey } from "@/lib/startup-validation";
 
 const AnalyzeRequestSchema = z.object({
   input: z.string().min(1),
@@ -72,165 +73,11 @@ async function fetchArticleContent(url: string): Promise<string> {
   }
 }
 
-// Fallback analysis when OpenRouter is unavailable
-function performFallbackAnalysis(content: string, url?: string) {
-  console.log("[News Analysis] Using fallback analysis method");
-
-  // Extract potential tool mentions
-  const toolPatterns = [
-    /\b(GPT-4|GPT-3|ChatGPT|OpenAI|Claude|Anthropic|Gemini|Bard|LLaMA|Mistral|Copilot|GitHub Copilot|Cursor|v0|Vercel|Next\.js|React|TypeScript|Python|JavaScript|AI|ML|machine learning|artificial intelligence)\b/gi,
-  ];
-
-  interface FallbackToolMention {
-    tool: string;
-    context: string;
-    sentiment: number;
-  }
-
-  const toolMentions: FallbackToolMention[] = [];
-  const seenTools = new Set<string>();
-
-  for (const pattern of toolPatterns) {
-    const matches = content.matchAll(pattern);
-    for (const match of matches) {
-      const tool = match[0];
-      const normalizedTool = tool.toLowerCase();
-      if (!seenTools.has(normalizedTool)) {
-        seenTools.add(normalizedTool);
-        const matchIndex = match.index ?? 0;
-        const contextStart = Math.max(0, matchIndex - 50);
-        const contextEnd = Math.min(content.length, matchIndex + tool.length + 50);
-        const context = content.substring(contextStart, contextEnd).trim();
-
-        toolMentions.push({
-          tool: tool,
-          context: context,
-          sentiment: 0, // Neutral sentiment as fallback
-        });
-      }
-    }
-  }
-
-  // Extract first sentence as title
-  const firstSentence = content.match(/^[^.!?]+[.!?]/)?.[0] || "News Article";
-  const title = firstSentence.length > 100 ? `${firstSentence.substring(0, 97)}...` : firstSentence;
-
-  // Create summary from first 200 characters
-  const summary =
-    content.length > 200
-      ? `${content.substring(0, 197).replace(/\s+/g, " ").trim()}...`
-      : content.replace(/\s+/g, " ").trim();
-
-  // Extract domain from URL if available
-  let source = "Unknown";
-  if (url) {
-    try {
-      const urlObj = new URL(url);
-      source = urlObj.hostname.replace("www.", "");
-    } catch {
-      source = "Web";
-    }
-  }
-
-  // Extract key topics (simple word frequency)
-  const words = content.toLowerCase().split(/\s+/);
-  const wordFreq = new Map<string, number>();
-  const stopWords = new Set([
-    "the",
-    "a",
-    "an",
-    "and",
-    "or",
-    "but",
-    "in",
-    "on",
-    "at",
-    "to",
-    "for",
-    "of",
-    "with",
-    "by",
-    "from",
-    "as",
-    "is",
-    "was",
-    "are",
-    "were",
-    "been",
-    "be",
-    "have",
-    "has",
-    "had",
-    "do",
-    "does",
-    "did",
-    "will",
-    "would",
-    "could",
-    "should",
-    "may",
-    "might",
-    "can",
-    "shall",
-    "must",
-    "ought",
-    "i",
-    "you",
-    "he",
-    "she",
-    "it",
-    "we",
-    "they",
-    "them",
-    "their",
-    "this",
-    "that",
-    "these",
-    "those",
-  ]);
-
-  for (const word of words) {
-    const cleaned = word.replace(/[^a-z0-9]/g, "");
-    if (cleaned.length > 3 && !stopWords.has(cleaned)) {
-      wordFreq.set(cleaned, (wordFreq.get(cleaned) || 0) + 1);
-    }
-  }
-
-  const keyTopics = Array.from(wordFreq.entries())
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 8)
-    .map(([word]) => word);
-
-  return {
-    title,
-    summary,
-    source,
-    url: url || "",
-    published_date: new Date().toISOString().split("T")[0],
-    tool_mentions: toolMentions,
-    overall_sentiment: 0,
-    key_topics: keyTopics,
-    importance_score: 5,
-    qualitative_metrics: {
-      innovation_boost: 2.5,
-      business_sentiment: 0,
-      development_velocity: 2.5,
-      market_traction: 2.5,
-    },
-    _fallback: true, // Mark this as a fallback analysis
-  };
-}
-
 async function analyzeWithOpenRouter(content: string, url?: string, verbose = false) {
   const startTime = Date.now();
-  const openRouterKey = process.env["OPENROUTER_API_KEY"];
 
-  if (!openRouterKey) {
-    console.error("[News Analysis] OPENROUTER_API_KEY is not configured in environment variables");
-    throw new Error(
-      "OpenRouter API key not configured. Please set OPENROUTER_API_KEY in your environment variables."
-    );
-  }
+  // Get API key using validation helper - will throw if not configured
+  const openRouterKey = getOpenRouterApiKey();
 
   // Enhanced debugging with timing
   if (verbose) {
@@ -443,11 +290,15 @@ Return ONLY a valid JSON object with no additional text or markdown formatting.`
     if (error instanceof Error) {
       if (error.message.includes("401") || error.message.includes("User not found")) {
         throw new Error(
-          "Authentication failed with OpenRouter. Please verify your OPENROUTER_API_KEY is valid."
+          "Authentication failed with OpenRouter. Please verify your OPENROUTER_API_KEY is valid. Get your API key at: https://openrouter.ai/keys"
         );
       } else if (error.message.includes("fetch")) {
         throw new Error(
           "Network error connecting to OpenRouter API. Please check your internet connection."
+        );
+      } else if (error.message.includes("not configured")) {
+        throw new Error(
+          "OpenRouter API key is required for news analysis. Please set OPENROUTER_API_KEY in your .env.local file. Get your key at: https://openrouter.ai/keys"
         );
       }
     }
@@ -578,37 +429,18 @@ export async function POST(request: NextRequest) {
       content = input;
     }
 
-    let analysis:
-      | z.infer<typeof OpenRouterResponseSchema>
-      | ReturnType<typeof performFallbackAnalysis>;
-    let usingFallback = false;
-
-    try {
-      // Try OpenRouter first
-      analysis = await analyzeWithOpenRouter(content, url, verbose);
-    } catch (openRouterError) {
-      console.warn("[News Analysis] OpenRouter failed, using fallback:", openRouterError);
-
-      // Use fallback analysis
-      usingFallback = true;
-      analysis = performFallbackAnalysis(content, url);
-
-      // Add a warning to the response
-      console.log("[News Analysis] Fallback analysis completed");
-    }
+    // Analyze with OpenRouter (no fallback)
+    const analysis = await analyzeWithOpenRouter(content, url, verbose);
 
     const totalTime = Date.now() - requestStartTime;
 
     const response = {
       success: true,
       analysis,
-      warning: usingFallback
-        ? "Analysis performed using fallback method due to OpenRouter API issues. For better results, please ensure OPENROUTER_API_KEY is valid."
-        : undefined,
       debug: verbose
         ? {
             processingTime: `${totalTime}ms`,
-            method: usingFallback ? "fallback" : "openrouter",
+            method: "openrouter",
             timestamp: new Date().toISOString(),
           }
         : undefined,
@@ -644,6 +476,8 @@ export async function POST(request: NextRequest) {
       ) {
         statusCode = 401;
         errorDetails.type = "authentication_error";
+        errorDetails.help = "Please verify your OPENROUTER_API_KEY in .env.local";
+        errorDetails.documentation = "https://openrouter.ai/keys";
       } else if (error.message.includes("429") || error.message.includes("Rate limit")) {
         statusCode = 429;
         errorDetails.type = "rate_limit_error";
@@ -659,6 +493,11 @@ export async function POST(request: NextRequest) {
       } else if (error.message.includes("Unsupported file type")) {
         statusCode = 415;
         errorDetails.type = "unsupported_media_type";
+      } else if (error.message.includes("not configured") || error.message.includes("required")) {
+        statusCode = 500;
+        errorDetails.type = "configuration_error";
+        errorDetails.help = "OpenRouter API key is required. Set OPENROUTER_API_KEY in .env.local";
+        errorDetails.documentation = "https://openrouter.ai/keys";
       }
 
       // Add troubleshooting steps if available
