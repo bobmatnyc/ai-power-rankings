@@ -93,7 +93,9 @@ async function analyzeWithOpenRouter(content: string, url?: string, verbose = fa
 
   const systemPrompt = `You are an AI news analyst specializing in AI tools and technology. 
 Analyze the provided news article and extract structured information about AI tools mentioned.
-Focus on identifying tool mentions, sentiment, key topics, and qualitative metrics.
+Focus on identifying specific tool/product names (like GPT-4, Claude, Gemini, Copilot, ChatGPT, Midjourney, etc.), 
+sentiment about each tool, key topics, and qualitative metrics.
+Be very thorough in identifying ALL mentioned AI tools, models, and services.
 Return a JSON object matching the exact schema provided.`;
 
   const userPrompt = `Analyze this news article and extract the following information:
@@ -101,7 +103,12 @@ Return a JSON object matching the exact schema provided.`;
 2. Summary (2-3 sentences)
 3. Source (publication name or domain)
 4. Published date (estimate if needed, format: YYYY-MM-DD)
-5. Tool mentions with context and sentiment (-1 to 1)
+5. Tool mentions - IMPORTANT: List EVERY AI tool, model, or service mentioned by name:
+   - Include: GPT models (GPT-3, GPT-4, GPT-5), Claude models, Gemini, Copilot, ChatGPT, 
+     Midjourney, DALL-E, Stable Diffusion, LLaMA, Bard, Perplexity, Character.AI, 
+     Anthropic tools, OpenAI tools, Google AI tools, Microsoft AI tools, etc.
+   - For each tool provide: exact tool name, brief context of mention, sentiment (-1 to 1)
+   - Use the exact product/tool name as it appears (e.g., "GPT-5" not "OpenAI GPT-5")
 6. Overall sentiment about AI/tech (-1 to 1)
 7. Key topics (5-10 keywords)
 8. Importance score (0-10, based on impact and relevance)
@@ -116,7 +123,29 @@ ${content.substring(0, 8000)}
 
 ${url ? `Article URL: ${url}` : ""}
 
-Return ONLY a valid JSON object with no additional text or markdown formatting.`;
+Return ONLY a valid JSON object with this EXACT structure:
+{
+  "title": "article title",
+  "summary": "2-3 sentence summary",
+  "source": "publication name",
+  "published_date": "YYYY-MM-DD",
+  "tool_mentions": [
+    {
+      "tool": "exact tool name (e.g., 'GPT-5', 'Claude 3.5', 'Copilot')",
+      "context": "brief description of how it's mentioned",
+      "sentiment": 0.8
+    }
+  ],
+  "overall_sentiment": 0.9,
+  "key_topics": ["topic1", "topic2"],
+  "importance_score": 8,
+  "qualitative_metrics": {
+    "innovation_boost": 4,
+    "business_sentiment": 1,
+    "development_velocity": 4,
+    "market_traction": 3
+  }
+}`;
 
   const requestBody = {
     model: "anthropic/claude-3-haiku",

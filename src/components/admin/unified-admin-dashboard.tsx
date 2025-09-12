@@ -693,9 +693,146 @@ export default function UnifiedAdminDashboard() {
                   </div>
                 </div>
 
+                {rankingPreview.toolImpacts && rankingPreview.toolImpacts.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="font-semibold mb-3">Tool-by-Tool Impact Analysis</h3>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="text-left py-2">Tool</th>
+                            <th className="text-center py-2">Current</th>
+                            <th className="text-center py-2">Proposed</th>
+                            <th className="text-center py-2">Rank Change</th>
+                            <th className="text-center py-2">Score Impact</th>
+                            <th className="text-left py-2">Impact Breakdown</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {rankingPreview.toolImpacts.map((impact: any) => (
+                            <tr
+                              key={impact.tool}
+                              className={`border-b ${impact.mentioned ? "bg-blue-50" : ""}`}
+                            >
+                              <td className="py-2 font-medium">
+                                {impact.tool}
+                                {impact.mentioned && (
+                                  <Badge variant="secondary" className="ml-2 text-xs">
+                                    Mentioned
+                                  </Badge>
+                                )}
+                              </td>
+                              <td className="text-center py-2">
+                                <Badge variant="outline">{impact.currentRank}</Badge>
+                              </td>
+                              <td className="text-center py-2">
+                                <Badge
+                                  variant={
+                                    impact.rankChange > 0
+                                      ? "default"
+                                      : impact.rankChange < 0
+                                        ? "destructive"
+                                        : "outline"
+                                  }
+                                >
+                                  {impact.proposedRank}
+                                </Badge>
+                              </td>
+                              <td className="text-center py-2">
+                                {impact.rankChange !== 0 && (
+                                  <span
+                                    className={
+                                      impact.rankChange > 0 ? "text-green-600" : "text-red-600"
+                                    }
+                                  >
+                                    {impact.rankChange > 0 ? "↑" : "↓"}{" "}
+                                    {Math.abs(impact.rankChange)}
+                                  </span>
+                                )}
+                                {impact.rankChange === 0 && (
+                                  <span className="text-gray-400">-</span>
+                                )}
+                              </td>
+                              <td className="text-center py-2">
+                                {impact.scoreChange !== 0 ? (
+                                  <span
+                                    className={
+                                      impact.scoreChange > 0 ? "text-green-600" : "text-red-600"
+                                    }
+                                  >
+                                    {impact.scoreChange > 0 ? "+" : ""}
+                                    {impact.scoreChange.toFixed(2)}
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-400">-</span>
+                                )}
+                              </td>
+                              <td className="py-2">
+                                {impact.mentioned ? (
+                                  <div className="text-xs space-y-1">
+                                    {impact.impacts.sentiment !== 0 && (
+                                      <div>
+                                        <span className="text-gray-600">Sentiment:</span>{" "}
+                                        <span
+                                          className={
+                                            impact.impacts.sentiment > 0
+                                              ? "text-green-600"
+                                              : "text-red-600"
+                                          }
+                                        >
+                                          {impact.impacts.sentiment > 0 ? "+" : ""}
+                                          {impact.impacts.sentiment.toFixed(2)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {impact.impacts.innovation !== 0 && (
+                                      <div>
+                                        <span className="text-gray-600">Innovation:</span>{" "}
+                                        <span className="text-blue-600">
+                                          +{impact.impacts.innovation.toFixed(2)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {impact.impacts.business !== 0 && (
+                                      <div>
+                                        <span className="text-gray-600">Business:</span>{" "}
+                                        <span className="text-blue-600">
+                                          +{impact.impacts.business.toFixed(2)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {impact.impacts.development !== 0 && (
+                                      <div>
+                                        <span className="text-gray-600">Development:</span>{" "}
+                                        <span className="text-blue-600">
+                                          +{impact.impacts.development.toFixed(2)}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {impact.impacts.market !== 0 && (
+                                      <div>
+                                        <span className="text-gray-600">Market:</span>{" "}
+                                        <span className="text-blue-600">
+                                          +{impact.impacts.market.toFixed(2)}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <span className="text-xs text-gray-400">Indirect impact</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
                 {rankingPreview.summary.major_movers.length > 0 && (
                   <div className="mt-6">
-                    <h3 className="font-semibold mb-3">Major Changes</h3>
+                    <h3 className="font-semibold mb-3">Major Changes Summary</h3>
                     <div className="space-y-2">
                       {rankingPreview.summary.major_movers.map((mover) => (
                         <div

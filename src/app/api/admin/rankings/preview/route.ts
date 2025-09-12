@@ -75,9 +75,37 @@ async function loadCurrentRankings(): Promise<RankingItem[]> {
   }
 }
 
-function calculateNewRankings(current: RankingItem[], newsAnalysis: NewsAnalysis): RankingItem[] {
+interface ToolImpact {
+  tool: string;
+  currentScore: number;
+  proposedScore: number;
+  scoreChange: number;
+  currentRank: number;
+  proposedRank: number;
+  rankChange: number;
+  impacts: {
+    sentiment: number;
+    importance: number;
+    innovation: number;
+    business: number;
+    development: number;
+    market: number;
+    total: number;
+  };
+  mentioned: boolean;
+  context?: string;
+}
+
+function calculateNewRankings(
+  current: RankingItem[],
+  newsAnalysis: NewsAnalysis
+): {
+  rankings: RankingItem[];
+  toolImpacts: ToolImpact[];
+} {
   // Create a copy of current rankings
   const updated = current.map((item) => ({ ...item }));
+  const toolImpacts: ToolImpact[] = [];
 
   // Apply sentiment and importance boosts to mentioned tools
   newsAnalysis.tool_mentions.forEach((mention) => {
@@ -86,23 +114,58 @@ function calculateNewRankings(current: RankingItem[], newsAnalysis: NewsAnalysis
     );
 
     if (toolIndex !== -1) {
+      const currentTool = updated[toolIndex];
+      const originalScore = currentTool.score;
+
       // Calculate boost based on sentiment and importance
       const sentimentBoost = mention.sentiment * newsAnalysis.importance_score * 0.5;
       const importanceBoost = newsAnalysis.importance_score * 0.2;
 
       // Apply qualitative metrics if available
-      let qualitativeBoost = 0;
+      let innovationBoost = 0,
+        businessBoost = 0,
+        developmentBoost = 0,
+        marketBoost = 0;
       if (newsAnalysis.qualitative_metrics) {
         const metrics = newsAnalysis.qualitative_metrics;
-        qualitativeBoost =
-          (metrics.innovation_boost || 0) * 0.3 +
-          (metrics.business_sentiment || 0) * 0.2 +
-          (metrics.development_velocity || 0) * 0.2 +
-          (metrics.market_traction || 0) * 0.3;
+        innovationBoost = (metrics.innovation_boost || 0) * 0.3;
+        businessBoost = (metrics.business_sentiment || 0) * 0.2;
+        developmentBoost = (metrics.development_velocity || 0) * 0.2;
+        marketBoost = (metrics.market_traction || 0) * 0.3;
       }
 
+      const totalBoost =
+        sentimentBoost +
+        importanceBoost +
+        innovationBoost +
+        businessBoost +
+        developmentBoost +
+        marketBoost;
+
       // Update score
-      updated[toolIndex].score += sentimentBoost + importanceBoost + qualitativeBoost;
+      updated[toolIndex].score += totalBoost;
+
+      // Track impact for this tool
+      toolImpacts.push({
+        tool: currentTool.tool,
+        currentScore: originalScore,
+        proposedScore: updated[toolIndex].score,
+        scoreChange: totalBoost,
+        currentRank: current.findIndex((c) => c.tool === currentTool.tool) + 1,
+        proposedRank: 0, // Will be calculated after re-sorting
+        rankChange: 0, // Will be calculated after re-sorting
+        impacts: {
+          sentiment: sentimentBoost,
+          importance: importanceBoost,
+          innovation: innovationBoost,
+          business: businessBoost,
+          development: developmentBoost,
+          market: marketBoost,
+          total: totalBoost,
+        },
+        mentioned: true,
+        context: (mention as any).context || undefined,
+      });
     }
   });
 
@@ -114,6 +177,34 @@ function calculateNewRankings(current: RankingItem[], newsAnalysis: NewsAnalysis
     const oldRank = current.findIndex((c) => c.tool === item.tool) + 1;
     const newRank = index + 1;
 
+    // Update toolImpacts with new rankings
+    const impactIndex = toolImpacts.findIndex((ti) => ti.tool === item.tool);
+    if (impactIndex !== -1) {
+      toolImpacts[impactIndex].proposedRank = newRank;
+      toolImpacts[impactIndex].rankChange = oldRank - newRank;
+    } else if (oldRank !== newRank) {
+      // Tool not mentioned but rank changed due to others moving
+      toolImpacts.push({
+        tool: item.tool,
+        currentScore: item.score,
+        proposedScore: item.score,
+        scoreChange: 0,
+        currentRank: oldRank,
+        proposedRank: newRank,
+        rankChange: oldRank - newRank,
+        impacts: {
+          sentiment: 0,
+          importance: 0,
+          innovation: 0,
+          business: 0,
+          development: 0,
+          market: 0,
+          total: 0,
+        },
+        mentioned: false,
+      });
+    }
+
     return {
       ...item,
       rank: newRank,
@@ -121,7 +212,13 @@ function calculateNewRankings(current: RankingItem[], newsAnalysis: NewsAnalysis
     };
   });
 
-  return proposedRankings;
+  // Sort tool impacts by total impact
+  toolImpacts.sort((a, b) => Math.abs(b.impacts.total) - Math.abs(a.impacts.total));
+
+  return {
+    rankings: proposedRankings,
+    toolImpacts,
+  };
 }
 
 function generateSummary(current: RankingItem[], proposed: RankingItem[]) {
@@ -190,7 +287,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate proposed rankings
-    const proposedRankings = calculateNewRankings(currentRankings, newsAnalysis);
+    const { rankings: proposedRankings, toolImpacts } = calculateNewRankings(
+      currentRankings,
+      newsAnalysis
+    );
 
     // Generate summary
     const summary = generateSummary(currentRankings, proposedRankings);
@@ -200,6 +300,7 @@ export async function POST(request: NextRequest) {
       preview: {
         current: currentRankings.slice(0, 20), // Top 20 for preview
         proposed: proposedRankings.slice(0, 20), // Top 20 for preview
+        toolImpacts: toolImpacts.slice(0, 20), // Top 20 affected tools
         summary,
       },
     });
