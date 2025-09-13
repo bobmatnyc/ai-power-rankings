@@ -1,0 +1,67 @@
+{
+  "id": "32",
+  "slug": "google-opal",
+  "name": "Google Opal",
+  "category": "app-builder",
+  "status": "active",
+  "company_id": "5",
+  "info": {
+    "summary": "No-code AI app builder for creating mini-apps with natural language",
+    "description": "Google Opal is a no-code AI app builder that enables users to create and share AI mini-apps using natural language and visual workflows. Part of Google Labs, it allows anyone to build functional applications without writing code by describing what they want and chaining together prompts, AI models, and tools.",
+    "website": "https://opal.withgoogle.com",
+    "features": [
+      "Natural language interface for app creation",
+      "Visual workflow editor",
+      "No coding required",
+      "Instant sharing capabilities",
+      "Google account integration",
+      "Pre-built templates and examples",
+      "Chain multiple AI models and tools",
+      "Prompt-based app logic",
+      "Customizable user interfaces",
+      "Cloud-based deployment"
+    ],
+    "technical": {
+      "context_window": null,
+      "multi_file_support": false,
+      "language_support": [],
+      "llm_providers": ["Google AI Models"],
+      "subprocess_support": false,
+      "tool_support": true,
+      "execution_environment": "Google Cloud Platform",
+      "ai_features": [
+        "Natural language to app conversion",
+        "Visual workflow builder",
+        "Prompt chaining",
+        "AI model integration",
+        "Tool orchestration",
+        "Template library"
+      ]
+    },
+    "business": {
+      "pricing_model": "free",
+      "base_price": 0,
+      "enterprise_pricing": false,
+      "free_tier": true,
+      "pricing_details": {
+        "Beta": "Free during public beta (US-only)"
+      }
+    },
+    "metrics": {
+      "launch_date": "2025-07-24",
+      "preview_status": "Public Beta (US-only)",
+      "target_audience": "Non-technical users and citizen developers",
+      "competitive_positioning": "No-code alternative to traditional app development"
+    },
+    "differentiators": [
+      "Zero coding knowledge required",
+      "Google's ecosystem integration",
+      "Natural language interface",
+      "Instant deployment and sharing",
+      "Part of Google Labs experimental projects"
+    ]
+  },
+  "created_at": "2025-07-29T12:00:00.000Z",
+  "updated_at": "2025-07-29T12:00:00.000Z",
+  "launch_date": "2025-07-24"
+}

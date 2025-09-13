@@ -1,19 +1,12 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
 import UnifiedAdminDashboard from "@/components/admin/unified-admin-dashboard";
-import { shouldBypassAuth } from "@/lib/auth-utils";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 export default async function AdminPage() {
-  // Bypass authentication for local development
-  if (shouldBypassAuth()) {
-    console.log("🔓 Local environment detected - bypassing authentication");
-    return <UnifiedAdminDashboard />;
-  }
+  // Check if admin is authenticated
+  const isAuthenticated = isAdminAuthenticated();
 
-  // Production authentication check
-  const session = await auth();
-
-  if (!session?.user?.isAdmin) {
+  if (!isAuthenticated) {
     redirect("/admin/auth/signin");
   }
 

@@ -2,8 +2,35 @@
   "rankings": [
     {
       "rank": 1,
+      "previousRank": 3,
+      "rankChange": 2,
+      "changeReason": "",
+      "tool": {
+        "id": "1",
+        "slug": "cursor",
+        "name": "Cursor",
+        "category": "code-editor",
+        "status": "active",
+        "website_url": "https://cursor.com",
+        "description": "AI-powered code editor with $500M ARR and 360K+ paying developers"
+      },
+      "scores": {
+        "overall": 98.6,
+        "agentic_capability": 5,
+        "innovation": 8.8
+      },
+      "metrics": {
+        "news_articles_count": 28,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 2,
       "previousRank": 1,
-      "rankChange": 0,
+      "rankChange": -1,
       "changeReason": "",
       "tool": {
         "id": "4",
@@ -15,7 +42,7 @@
         "description": "Terminal-based coding agent with deep codebase understanding and multi-file editing"
       },
       "scores": {
-        "overall": 96,
+        "overall": 95.5,
         "agentic_capability": 5,
         "innovation": 9.8
       },
@@ -28,9 +55,9 @@
       }
     },
     {
-      "rank": 2,
+      "rank": 3,
       "previousRank": 2,
-      "rankChange": 0,
+      "rankChange": -1,
       "changeReason": "",
       "tool": {
         "id": "2",
@@ -53,6 +80,465 @@
         "users": 10000,
         "swe_bench_score": 56
       }
+    },
+    {
+      "rank": 4,
+      "previousRank": 4,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "18",
+        "slug": "chatgpt-canvas",
+        "name": "ChatGPT Canvas",
+        "category": "autonomous-agent",
+        "status": "active",
+        "website_url": "https://openai.com/chatgpt",
+        "description": "Collaborative workspace interface for ChatGPT that allows side-by-side editing of code and text with inline AI suggestions"
+      },
+      "scores": {
+        "overall": 86,
+        "agentic_capability": 5,
+        "innovation": 8.8
+      },
+      "metrics": {
+        "news_articles_count": 8,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 5,
+      "previousRank": 5,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "10",
+        "slug": "v0-vercel",
+        "name": "v0",
+        "category": "app-builder",
+        "status": "active",
+        "website_url": "https://v0.dev",
+        "description": "AI-powered UI generator creating React components from text prompts and images"
+      },
+      "scores": {
+        "overall": 82.5,
+        "agentic_capability": 5,
+        "innovation": 9.5
+      },
+      "metrics": {
+        "news_articles_count": 3,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 6,
+      "previousRank": 6,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "31",
+        "slug": "kiro",
+        "name": "Kiro",
+        "category": "proprietary-ide",
+        "status": "active",
+        "website_url": "https://kiro.dev",
+        "description": "Kiro is a next-generation AI IDE that transforms software development by implementing a specification-first methodology. Unlike 'vibe coding' tools that generate code from casual prompts, Kiro requires developers to think through requirements, generating comprehensive specification documents (requirements.md, design.md, tasks.md) before writing a single line of code. This approach bridges the gap between AI-assisted development and enterprise-grade software engineering, ensuring production-ready outputs from the start."
+      },
+      "scores": {
+        "overall": 81,
+        "agentic_capability": 5,
+        "innovation": 8.8
+      },
+      "metrics": {
+        "news_articles_count": 7,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 7,
+      "previousRank": 7,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "14",
+        "slug": "windsurf",
+        "name": "Windsurf",
+        "category": "code-editor",
+        "status": "active",
+        "website_url": "https://windsurf.com",
+        "description": "AI-powered IDE assistant. OpenAI acquisition deal collapsed in July 2025, Google DeepMind hired leadership team for ~$2.4B"
+      },
+      "scores": {
+        "overall": 79.5,
+        "agentic_capability": 5,
+        "innovation": 8.5
+      },
+      "metrics": {
+        "news_articles_count": 18,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 8,
+      "previousRank": 8,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "11",
+        "slug": "jules",
+        "name": "Google Jules",
+        "category": "autonomous-agent",
+        "status": "active",
+        "website_url": "https://jules.google.com",
+        "description": "Asynchronous AI coding agent that works in background cloud VMs for GitHub workflows"
+      },
+      "scores": {
+        "overall": 77.5,
+        "agentic_capability": 5,
+        "innovation": 4.8
+      },
+      "metrics": {
+        "news_articles_count": 4,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 52.2
+      }
+    },
+    {
+      "rank": 9,
+      "previousRank": 9,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "26",
+        "slug": "amazon-q-developer",
+        "name": "Amazon Q Developer",
+        "category": "devops-assistant",
+        "status": "active",
+        "website_url": "https://aws.amazon.com/q/developer/",
+        "description": "AWS's comprehensive AI development assistant, evolved from CodeWhisperer to provide deep integration with the entire AWS ecosystem. Features agent architecture for autonomous cloud development tasks, from code generation to infrastructure deployment. Particularly valuable for teams building on AWS, offering specialized knowledge of AWS services and best practices."
+      },
+      "scores": {
+        "overall": 75,
+        "agentic_capability": 5,
+        "innovation": 4.8
+      },
+      "metrics": {
+        "news_articles_count": 3,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 55
+      }
+    },
+    {
+      "rank": 10,
+      "previousRank": 11,
+      "rankChange": 1,
+      "changeReason": "",
+      "tool": {
+        "id": "7",
+        "slug": "aider",
+        "name": "Aider",
+        "category": "open-source-framework",
+        "status": "active",
+        "website_url": "https://aider.chat",
+        "description": "AI pair programming in your terminal with git integration"
+      },
+      "scores": {
+        "overall": 73.5,
+        "agentic_capability": 5,
+        "innovation": 3.5
+      },
+      "metrics": {
+        "news_articles_count": 3,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 26.3
+      }
+    },
+    {
+      "rank": 11,
+      "previousRank": 10,
+      "rankChange": -1,
+      "changeReason": "",
+      "tool": {
+        "id": "12",
+        "slug": "lovable",
+        "name": "Lovable",
+        "category": "app-builder",
+        "status": "active",
+        "website_url": "https://lovable.dev",
+        "description": "AI full-stack engineer that builds entire web applications from natural language descriptions"
+      },
+      "scores": {
+        "overall": 72,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 4,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 12,
+      "previousRank": 12,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "21",
+        "slug": "tabnine",
+        "name": "Tabnine",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://tabnine.com",
+        "description": "AI code completion assistant emphasizing privacy with option for local models, supporting 30+ languages and most IDEs"
+      },
+      "scores": {
+        "overall": 71.5,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 12,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 13,
+      "previousRank": 13,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "5",
+        "slug": "bolt-new",
+        "name": "Bolt.new",
+        "category": "app-builder",
+        "status": "active",
+        "website_url": "https://bolt.new",
+        "description": "AI-powered full-stack web application builder with in-browser development environment"
+      },
+      "scores": {
+        "overall": 70.5,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 4,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 14,
+      "previousRank": 14,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "25",
+        "slug": "augment-code",
+        "name": "Augment Code",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://augmentcode.com",
+        "description": "Enterprise-grade AI coding assistant with 200K token context and deep codebase understanding"
+      },
+      "scores": {
+        "overall": 69.5,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 1,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 65.4
+      }
+    },
+    {
+      "rank": 15,
+      "previousRank": 15,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "27",
+        "slug": "gemini-code-assist",
+        "name": "Google Gemini Code Assist",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://cloud.google.com/code-assist",
+        "description": "Google's strategic response to GitHub Copilot, featuring an industry-leading 2M token context window and aggressive free tier offering 180K monthly completions. Represents Google's bid to capture developer mindshare through superior technical specifications and generous free usage. Demonstrates Google's commitment to competing in the developer tools space with its advanced Gemini models."
+      },
+      "scores": {
+        "overall": 69,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 6,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 16,
+      "previousRank": 16,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "9",
+        "slug": "replit-agent",
+        "name": "Replit Agent",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://replit.com",
+        "description": "AI agent integrated into Replit online IDE for autonomous coding"
+      },
+      "scores": {
+        "overall": 68.5,
+        "agentic_capability": 5,
+        "innovation": 5.2
+      },
+      "metrics": {
+        "news_articles_count": 3,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 17,
+      "previousRank": 17,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "23",
+        "slug": "zed",
+        "name": "Zed",
+        "category": "code-editor",
+        "status": "active",
+        "website_url": "https://zed.dev",
+        "description": "High-performance, multiplayer code editor built in Rust with integrated AI assistant powered by multiple LLMs"
+      },
+      "scores": {
+        "overall": 67.5,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 5,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 18,
+      "previousRank": 18,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "24",
+        "slug": "openai-codex-cli",
+        "name": "OpenAI Codex CLI",
+        "category": "autonomous-agent",
+        "status": "active",
+        "website_url": "https://openai.com/research/codex-cli",
+        "description": "Modern CLI tool powered by o3 reasoning model for autonomous software engineering"
+      },
+      "scores": {
+        "overall": 67,
+        "agentic_capability": 5,
+        "innovation": 5.8
+      },
+      "metrics": {
+        "news_articles_count": 1,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 19,
+      "previousRank": 19,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "3",
+        "slug": "devin",
+        "name": "Devin",
+        "category": "autonomous-agent",
+        "status": "active",
+        "website_url": "https://cognition.ai",
+        "description": "Autonomous AI software engineer capable of planning, coding, debugging, and deploying applications"
+      },
+      "scores": {
+        "overall": 65,
+        "agentic_capability": 5,
+        "innovation": 4.8
+      },
+      "metrics": {
+        "news_articles_count": 7,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 13.86
+      }
+    },
+    {
+      "rank": 20,
+      "previousRank": 20,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "8",
+        "slug": "continue-dev",
+        "name": "Continue",
+        "category": "open-source-framework",
+        "status": "active",
+        "website_url": "https://continue.dev",
+        "description": "Open source autopilot for your IDE with customizable LLM backends"
+      },
+      "scores": {
+        "overall": 63.5,
+        "agentic_capability": 5,
+        "innovation": 4.5
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
     }
   ],
   "algorithm": {
@@ -70,10 +556,10 @@
     "max_news_impact": 41
   },
   "_source": "static-generation",
-  "_timestamp": "2025-09-11T20:23:55.495Z",
+  "_timestamp": "2025-09-13T01:13:35.292Z",
   "metadata": {
-    "last_updated": "2025-09-11T22:07:52.057Z",
-    "version": "1.0.1",
-    "version_id": "7213aa5d-88a1-40b1-a041-1fd9efa1e744"
+    "last_updated": "2025-09-13T01:24:43.516Z",
+    "version": "1.0.2",
+    "version_id": "385ce883-1be2-4ebb-bc1e-4e87c6fb9983"
   }
 }

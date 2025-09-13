@@ -1,0 +1,19 @@
+{
+  "id": "windsurf-gpt5-pricing-changes-2025-08-22",
+  "slug": "windsurf-announces-gpt5-promotion-ending",
+  "title": "Windsurf Announces End of GPT-5 Promotion, Introduces Tiered Model Access",
+  "content": "<p>Windsurf (formerly Codeium) has announced that their GPT-5 promotion will end on August 26, 2025, transitioning to a new tiered pricing model that reflects the varying costs of different AI models. The change comes as the company continues its rebranding from Codeium to Windsurf following significant growth in their AI-powered IDE adoption.</p>\n<p>The new pricing structure introduces differentiated access to GPT-5's suite of models, including GPT-5 low reasoning, GPT-5 medium reasoning, and GPT-5 high reasoning tiers. Free tier users will have limited access to premium models, while paid subscribers will receive higher quotas based on their subscription level.</p>\n<p>Windsurf has also announced the beta rollout of GPT-4.5 support in their Cascade agent feature, though access will be incremental due to costs, rate limits, and quality considerations from early testing. The company is focusing on balancing model availability with sustainable pricing.</p>\n<p>Despite the pricing changes, Windsurf continues to offer robust free tier access to standard models, maintaining their commitment to accessibility. The platform has recently implemented over 100 bug fixes and reliability improvements, along with new features like DeepWiki-powered documentation and AI-powered find-and-replace functionality.</p>\n<p>The announcement follows speculation about OpenAI's potential acquisition interest, though Windsurf remains focused on their independent growth strategy and their vision of combining human ingenuity with machine capabilities.</p>",
+  "summary": "Windsurf announces end of GPT-5 promotion on August 26, introducing tiered model access while maintaining free tier availability and rolling out GPT-4.5 beta support.",
+  "source": "Windsurf Blog",
+  "source_url": "https://windsurf.com/blog/pricing-update-august-2025",
+  "tags": ["pricing", "windsurf", "gpt-5", "business-update", "ai-coding"],
+  "tool_mentions": ["windsurf", "codeium"],
+  "created_at": "2025-08-22T14:00:00.000+00:00",
+  "updated_at": "2025-08-22T14:00:00.000+00:00",
+  "date": "2025-08-22T00:00:00.000+00:00",
+  "category": "Business Updates",
+  "author": "Windsurf Team",
+  "importance_score": 7,
+  "image_url": "https://windsurf.com/images/pricing-update.jpg",
+  "related_tools": ["windsurf", "codeium"]
+}

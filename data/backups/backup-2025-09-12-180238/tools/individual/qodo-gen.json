@@ -1,0 +1,34 @@
+{
+  "id": "16",
+  "slug": "qodo-gen",
+  "name": "Qodo Gen",
+  "category": "testing-tool",
+  "status": "active",
+  "company_id": "40",
+  "info": {
+    "summary": "Quality-first AI coding platform",
+    "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents",
+    "website": "https://qodo.ai",
+    "features": [],
+    "technical": {
+      "context_window": 150000,
+      "multi_file_support": true,
+      "language_support": ["Python", "JavaScript", "TypeScript", "Java", "C++", "C#"],
+      "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
+    },
+    "business": {
+      "pricing_model": "freemium",
+      "base_price": 0,
+      "enterprise_pricing": false,
+      "free_tier": true,
+      "pricing_details": {
+        "Developer": "Free - Generous free tier, basic testing capabilities",
+        "Teams": "$19/month per user - Seat-based pricing (active contributors only), advanced testing features, team collaboration"
+      }
+    },
+    "metrics": {}
+  },
+  "created_at": "2025-06-23T15:40:43.986Z",
+  "updated_at": "2025-06-30T03:49:42.696Z",
+  "launch_date": "2022-01-01"
+}

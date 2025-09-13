@@ -1,0 +1,607 @@
+{
+  "articles": [
+    {
+      "id": "197bf3f57a0-39257e5d-cbd44fad",
+      "slug": "lovable-achieves-5-56m-arr-with-140-000-users",
+      "title": "Lovable Achieves £5.56M ARR with 140,000 Users",
+      "content": "Lovable (formerly GPT Engineer) ends 2024 with £5.56M ARR, 140,000 total users, and 30,000 paying customers, demonstrating strong market traction.",
+      "summary": "Lovable (formerly GPT Engineer) ends 2024 with £5.56M ARR, 140,000 total users, and 30,000 paying customers, demonstrating strong market traction....",
+      "source": "EU-Startups",
+      "tags": [
+        "milestone",
+        "revenue",
+        "user-growth"
+      ],
+      "tool_mentions": [
+        "Lovable"
+      ],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2024-12-31T00:00:00.000Z"
+    },
+    {
+      "id": "27ab8005-461f-4322-b2c4-9bcd02a7d399",
+      "slug": "in-just-4-months-ai-coding-assistant-cursor-raised-another-100m-at-a-2-6b-valuation-led-by-thrive-so",
+      "title": "In just 4 months, AI coding assistant Cursor raised another $100M at a $2.6B valuation led by Thrive, sources say",
+      "content": "Anysphere, developer of AI coding assistant Cursor, raised $100 million in Series B funding at a $2.6 billion valuation. The round was led by Thrive Capital, just four months after their previous funding round.",
+      "summary": "Anysphere, developer of AI coding assistant Cursor, raised $100 million in Series B funding at a $2.6 billion valuation. The round was led by Thrive Capital, just four months after their previous funding round.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2024/12/19/in-just-4-months-ai-coding-assistant-cursor-raised-another-100m-at-a-2-5b-valuation-led-by-thrive-sources-say/",
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "cursor"
+      ],
+      "created_at": "2025-06-17T23:25:09.540Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-19T05:00:00.000Z"
+    },
+    {
+      "id": "7be5489d-01df-43e2-ab1a-57ab7a686abc",
+      "slug": "github-launches-a-free-version-of-its-copilot",
+      "title": "GitHub launches a free version of its Copilot",
+      "content": "Microsoft-owned GitHub announced a free version of its popular Copilot code completion/AI pair programming tool. The free plan includes 2000 code completions and 50 chat requests per month, with access to GPT-4o and Claude 3.5 Sonnet models.",
+      "summary": "Microsoft-owned GitHub announced a free version of its popular Copilot code completion/AI pair programming tool. The free plan includes 2000 code completions and 50 chat requests per month, with access to GPT-4o and Claude 3.5 Sonnet models.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2024/12/18/github-launches-a-free-version-of-its-copilot/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "github-copilot",
+        "claude-code",
+        "gpt-4"
+      ],
+      "created_at": "2025-06-17T23:25:11.397Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-18T05:00:00.000Z"
+    },
+    {
+      "id": "6a29c7f4-99b7-4aa9-becf-6a6988321786",
+      "slug": "windsurf-vs-cursor-which-is-the-better-ai-code-editor",
+      "title": "Windsurf vs Cursor: which is the better AI code editor?",
+      "content": "A comparison between Windsurf and Cursor, highlighting the features of both IDEs. Cursor is noted for its power features, such as multi-tabbing and AI-driven auto-completions, but also has limitations like needing to accept changes before seeing results.",
+      "summary": "A comparison between Windsurf and Cursor, highlighting the features of both IDEs. Cursor is noted for its power features, such as multi-tabbing and AI-driven auto-completions, but also has limitations like needing to accept changes before seeing results.",
+      "source": "Builder.io",
+      "source_url": "https://www.builder.io/blog/windsurf-vs-cursor",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "cursor",
+        "windsurf"
+      ],
+      "created_at": "2025-06-17T23:25:11.891Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-17T05:00:00.000Z"
+    },
+    {
+      "id": "94e09f89-1e6f-4e5a-b17e-a4d0b9f6955e",
+      "slug": "code-assist-google-s-enterprise-focused-coding-assistant-gets-third-party-tools",
+      "title": "Code Assist, Google's enterprise-focused coding assistant, gets third-party tools",
+      "content": "Google announced support for third-party tools in Gemini Code Assist, its enterprise-focused AI code completion service. Code Assist can pull in real-time data and access info from outside applications, enhancing productivity and observability for developers.",
+      "summary": "Google announced support for third-party tools in Gemini Code Assist, its enterprise-focused AI code completion service. Code Assist can pull in real-time data and access info from outside applications, enhancing productivity and observability for developers.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2024/12/17/code-assist-googles-enterprise-focused-code-assistant-gets-third-party-tools/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "gemini-code-assist"
+      ],
+      "created_at": "2025-06-17T23:25:11.746Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-17T05:00:00.000Z"
+    },
+    {
+      "id": "cd58b839-3b55-4470-acb0-c4c38eadb5eb",
+      "slug": "huge-developer-survey-shows-which-ai-assistants-are-most-adopted",
+      "title": "Huge developer survey shows which AI assistants are most adopted",
+      "content": "A huge developer survey shows which AI assistants are most adopted and trends towards coding with VR headsets. The survey highlights the growing adoption of AI coding assistants in the developer community.",
+      "summary": "A huge developer survey shows which AI assistants are most adopted and trends towards coding with VR headsets. The survey highlights the growing adoption of AI coding assistants in the developer community.",
+      "source": "DevClass",
+      "source_url": "https://devclass.com/2024/12/13/huge-developer-survey-shows-which-ai-assistants-are-most-adopted-and-trend-towards-coding-with-vr-headsets/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [],
+      "created_at": "2025-06-17T23:25:12.026Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-13T05:00:00.000Z"
+    },
+    {
+      "id": "50a25f3b-e2e8-4430-99de-90897bf1d424",
+      "slug": "google-launches-jules-ai-coding-agent-achieves-52-on-swe-bench-in-debut",
+      "title": "Google Launches Jules AI Coding Agent, Achieves 52% on SWE-bench in Debut",
+      "content": "Google has launched Jules, an asynchronous AI coding agent powered by Gemini 2.5 Pro that achieved 52.2% on SWE-bench Verified, marking Google's serious entry into autonomous coding.",
+      "summary": "Google has launched Jules, an asynchronous AI coding agent powered by Gemini 2.5 Pro that achieved 52.2% on SWE-bench Verified, marking Google's serious entry into autonomous coding.",
+      "source": "Google",
+      "source_url": "https://jules.google/",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "jules"
+      ],
+      "created_at": "2025-06-18T00:04:18.303Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-11T05:00:00.000Z"
+    },
+    {
+      "id": "8f7ad25a-8f97-4ed8-86d8-c3b4540d0644",
+      "slug": "openai-launches-chatgpt-pro-at-200-month-with-unlimited-o1-access",
+      "title": "OpenAI Launches ChatGPT Pro at $200/Month with Unlimited o1 Access",
+      "content": "OpenAI has introduced ChatGPT Pro, a new $200/month tier for power users featuring unlimited access to advanced models including o1 reasoning model and GPT-4.1.",
+      "summary": "OpenAI has introduced ChatGPT Pro, a new $200/month tier for power users featuring unlimited access to advanced models including o1 reasoning model and GPT-4.1.",
+      "source": "Reuters",
+      "source_url": "https://www.reuters.com/technology/artificial-intelligence/openai-launches-200-chatgpt-subscription-research-use-2024-12-05/",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-06-18T00:04:18.048Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-05T05:00:00.000Z"
+    },
+    {
+      "id": "9435d390-4bb1-4e84-a081-d15768b030aa",
+      "slug": "openai-finally-releases-chatgpt-pro-o1-in-december-2024",
+      "title": "OpenAI FINALLY Releases ChatGPT Pro o1 in December 2024",
+      "content": "OpenAI releases ChatGPT Pro o1 in December 2024, featuring enhanced reasoning capabilities and multimodal support for image uploads. The $200/month plan offers unlimited access to OpenAI's most advanced tools.",
+      "summary": "OpenAI releases ChatGPT Pro o1 in December 2024, featuring enhanced reasoning capabilities and multimodal support for image uploads. The $200/month plan offers unlimited access to OpenAI's most advanced tools.",
+      "source": "Masters of AI & Automation",
+      "source_url": "https://www.youtube.com/watch?v=bUahn-wZMfE",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
+      "created_at": "2025-06-17T23:25:11.601Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-05T05:00:00.000Z"
+    },
+    {
+      "id": "f9ea6bcb-ba1a-474e-be88-28c5ebcf49cc",
+      "slug": "openai-launches-200-chatgpt-pro-with-unlimited-o1-access-and-canvas",
+      "title": "OpenAI Launches $200 ChatGPT Pro with Unlimited O1 Access and Canvas",
+      "content": "OpenAI introduces ChatGPT Pro at $200/month featuring unlimited o1 access, Canvas workspace, and advanced coding capabilities targeted at professional developers.",
+      "summary": "OpenAI introduces ChatGPT Pro at $200/month featuring unlimited o1 access, Canvas workspace, and advanced coding capabilities targeted at professional developers.",
+      "source": "OpenAI",
+      "source_url": "https://openai.com/index/introducing-chatgpt-pro/",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-06-18T00:59:19.150Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-12-05T05:00:00.000Z"
+    },
+    {
+      "id": "11a1de25-fcce-4d69-85a8-3c61678d7e16",
+      "slug": "devin-20-launches-with-20month-pricing-down-from-500",
+      "title": "Devin 2.0 Launches with $20/Month Pricing, Down from $500",
+      "content": "Cognition Labs has launched Devin 2.0 with general availability and slashed pricing from $500 to $20 per month to increase accessibility.",
+      "summary": "Cognition Labs has launched Devin 2.0 with general availability and slashed pricing from $500 to $20 per month to increase accessibility.",
+      "source": "VentureBeat",
+      "source_url": "https://venturebeat.com/programming-development/devin-2-0-is-here-cognition-slashes-price-of-ai-software-engineer-to-20-per-month-from-500/",
+      "tags": [],
+      "tool_mentions": [
+        "3"
+      ],
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-28T02:35:55.791Z",
+      "date": "2024-12-01T00:00:00"
+    }
+  ],
+  "newsById": {
+    "197bf3f57a0-39257e5d-cbd44fad": {
+      "id": "197bf3f57a0-39257e5d-cbd44fad",
+      "slug": "lovable-achieves-5-56m-arr-with-140-000-users",
+      "title": "Lovable Achieves £5.56M ARR with 140,000 Users",
+      "content": "Lovable (formerly GPT Engineer) ends 2024 with £5.56M ARR, 140,000 total users, and 30,000 paying customers, demonstrating strong market traction.",
+      "summary": "Lovable (formerly GPT Engineer) ends 2024 with £5.56M ARR, 140,000 total users, and 30,000 paying customers, demonstrating strong market traction....",
+      "source": "EU-Startups",
+      "tags": [
+        "milestone",
+        "revenue",
+        "user-growth"
+      ],
+      "tool_mentions": [
+        "Lovable"
+      ],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2024-12-31T00:00:00.000Z"
+    },
+    "27ab8005-461f-4322-b2c4-9bcd02a7d399": {
+      "id": "27ab8005-461f-4322-b2c4-9bcd02a7d399",
+      "slug": "in-just-4-months-ai-coding-assistant-cursor-raised-another-100m-at-a-2-6b-valuation-led-by-thrive-so",
+      "title": "In just 4 months, AI coding assistant Cursor raised another $100M at a $2.6B valuation led by Thrive, sources say",
+      "content": "Anysphere, developer of AI coding assistant Cursor, raised $100 million in Series B funding at a $2.6 billion valuation. The round was led by Thrive Capital, just four months after their previous funding round.",
+      "summary": "Anysphere, developer of AI coding assistant Cursor, raised $100 million in Series B funding at a $2.6 billion valuation. The round was led by Thrive Capital, just four months after their previous funding round.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2024/12/19/in-just-4-months-ai-coding-assistant-cursor-raised-another-100m-at-a-2-5b-valuation-led-by-thrive-sources-say/",
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "cursor"
+      ],
+      "created_at": "2025-06-17T23:25:09.540Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-19T05:00:00.000Z"
+    },
+    "7be5489d-01df-43e2-ab1a-57ab7a686abc": {
+      "id": "7be5489d-01df-43e2-ab1a-57ab7a686abc",
+      "slug": "github-launches-a-free-version-of-its-copilot",
+      "title": "GitHub launches a free version of its Copilot",
+      "content": "Microsoft-owned GitHub announced a free version of its popular Copilot code completion/AI pair programming tool. The free plan includes 2000 code completions and 50 chat requests per month, with access to GPT-4o and Claude 3.5 Sonnet models.",
+      "summary": "Microsoft-owned GitHub announced a free version of its popular Copilot code completion/AI pair programming tool. The free plan includes 2000 code completions and 50 chat requests per month, with access to GPT-4o and Claude 3.5 Sonnet models.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2024/12/18/github-launches-a-free-version-of-its-copilot/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "github-copilot",
+        "claude-code",
+        "gpt-4"
+      ],
+      "created_at": "2025-06-17T23:25:11.397Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-18T05:00:00.000Z"
+    },
+    "6a29c7f4-99b7-4aa9-becf-6a6988321786": {
+      "id": "6a29c7f4-99b7-4aa9-becf-6a6988321786",
+      "slug": "windsurf-vs-cursor-which-is-the-better-ai-code-editor",
+      "title": "Windsurf vs Cursor: which is the better AI code editor?",
+      "content": "A comparison between Windsurf and Cursor, highlighting the features of both IDEs. Cursor is noted for its power features, such as multi-tabbing and AI-driven auto-completions, but also has limitations like needing to accept changes before seeing results.",
+      "summary": "A comparison between Windsurf and Cursor, highlighting the features of both IDEs. Cursor is noted for its power features, such as multi-tabbing and AI-driven auto-completions, but also has limitations like needing to accept changes before seeing results.",
+      "source": "Builder.io",
+      "source_url": "https://www.builder.io/blog/windsurf-vs-cursor",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "cursor",
+        "windsurf"
+      ],
+      "created_at": "2025-06-17T23:25:11.891Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-17T05:00:00.000Z"
+    },
+    "94e09f89-1e6f-4e5a-b17e-a4d0b9f6955e": {
+      "id": "94e09f89-1e6f-4e5a-b17e-a4d0b9f6955e",
+      "slug": "code-assist-google-s-enterprise-focused-coding-assistant-gets-third-party-tools",
+      "title": "Code Assist, Google's enterprise-focused coding assistant, gets third-party tools",
+      "content": "Google announced support for third-party tools in Gemini Code Assist, its enterprise-focused AI code completion service. Code Assist can pull in real-time data and access info from outside applications, enhancing productivity and observability for developers.",
+      "summary": "Google announced support for third-party tools in Gemini Code Assist, its enterprise-focused AI code completion service. Code Assist can pull in real-time data and access info from outside applications, enhancing productivity and observability for developers.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2024/12/17/code-assist-googles-enterprise-focused-code-assistant-gets-third-party-tools/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "gemini-code-assist"
+      ],
+      "created_at": "2025-06-17T23:25:11.746Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-17T05:00:00.000Z"
+    },
+    "cd58b839-3b55-4470-acb0-c4c38eadb5eb": {
+      "id": "cd58b839-3b55-4470-acb0-c4c38eadb5eb",
+      "slug": "huge-developer-survey-shows-which-ai-assistants-are-most-adopted",
+      "title": "Huge developer survey shows which AI assistants are most adopted",
+      "content": "A huge developer survey shows which AI assistants are most adopted and trends towards coding with VR headsets. The survey highlights the growing adoption of AI coding assistants in the developer community.",
+      "summary": "A huge developer survey shows which AI assistants are most adopted and trends towards coding with VR headsets. The survey highlights the growing adoption of AI coding assistants in the developer community.",
+      "source": "DevClass",
+      "source_url": "https://devclass.com/2024/12/13/huge-developer-survey-shows-which-ai-assistants-are-most-adopted-and-trend-towards-coding-with-vr-headsets/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [],
+      "created_at": "2025-06-17T23:25:12.026Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-13T05:00:00.000Z"
+    },
+    "50a25f3b-e2e8-4430-99de-90897bf1d424": {
+      "id": "50a25f3b-e2e8-4430-99de-90897bf1d424",
+      "slug": "google-launches-jules-ai-coding-agent-achieves-52-on-swe-bench-in-debut",
+      "title": "Google Launches Jules AI Coding Agent, Achieves 52% on SWE-bench in Debut",
+      "content": "Google has launched Jules, an asynchronous AI coding agent powered by Gemini 2.5 Pro that achieved 52.2% on SWE-bench Verified, marking Google's serious entry into autonomous coding.",
+      "summary": "Google has launched Jules, an asynchronous AI coding agent powered by Gemini 2.5 Pro that achieved 52.2% on SWE-bench Verified, marking Google's serious entry into autonomous coding.",
+      "source": "Google",
+      "source_url": "https://jules.google/",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "jules"
+      ],
+      "created_at": "2025-06-18T00:04:18.303Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-11T05:00:00.000Z"
+    },
+    "8f7ad25a-8f97-4ed8-86d8-c3b4540d0644": {
+      "id": "8f7ad25a-8f97-4ed8-86d8-c3b4540d0644",
+      "slug": "openai-launches-chatgpt-pro-at-200-month-with-unlimited-o1-access",
+      "title": "OpenAI Launches ChatGPT Pro at $200/Month with Unlimited o1 Access",
+      "content": "OpenAI has introduced ChatGPT Pro, a new $200/month tier for power users featuring unlimited access to advanced models including o1 reasoning model and GPT-4.1.",
+      "summary": "OpenAI has introduced ChatGPT Pro, a new $200/month tier for power users featuring unlimited access to advanced models including o1 reasoning model and GPT-4.1.",
+      "source": "Reuters",
+      "source_url": "https://www.reuters.com/technology/artificial-intelligence/openai-launches-200-chatgpt-subscription-research-use-2024-12-05/",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-06-18T00:04:18.048Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-05T05:00:00.000Z"
+    },
+    "9435d390-4bb1-4e84-a081-d15768b030aa": {
+      "id": "9435d390-4bb1-4e84-a081-d15768b030aa",
+      "slug": "openai-finally-releases-chatgpt-pro-o1-in-december-2024",
+      "title": "OpenAI FINALLY Releases ChatGPT Pro o1 in December 2024",
+      "content": "OpenAI releases ChatGPT Pro o1 in December 2024, featuring enhanced reasoning capabilities and multimodal support for image uploads. The $200/month plan offers unlimited access to OpenAI's most advanced tools.",
+      "summary": "OpenAI releases ChatGPT Pro o1 in December 2024, featuring enhanced reasoning capabilities and multimodal support for image uploads. The $200/month plan offers unlimited access to OpenAI's most advanced tools.",
+      "source": "Masters of AI & Automation",
+      "source_url": "https://www.youtube.com/watch?v=bUahn-wZMfE",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
+      "created_at": "2025-06-17T23:25:11.601Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-05T05:00:00.000Z"
+    },
+    "f9ea6bcb-ba1a-474e-be88-28c5ebcf49cc": {
+      "id": "f9ea6bcb-ba1a-474e-be88-28c5ebcf49cc",
+      "slug": "openai-launches-200-chatgpt-pro-with-unlimited-o1-access-and-canvas",
+      "title": "OpenAI Launches $200 ChatGPT Pro with Unlimited O1 Access and Canvas",
+      "content": "OpenAI introduces ChatGPT Pro at $200/month featuring unlimited o1 access, Canvas workspace, and advanced coding capabilities targeted at professional developers.",
+      "summary": "OpenAI introduces ChatGPT Pro at $200/month featuring unlimited o1 access, Canvas workspace, and advanced coding capabilities targeted at professional developers.",
+      "source": "OpenAI",
+      "source_url": "https://openai.com/index/introducing-chatgpt-pro/",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-06-18T00:59:19.150Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-12-05T05:00:00.000Z"
+    },
+    "11a1de25-fcce-4d69-85a8-3c61678d7e16": {
+      "id": "11a1de25-fcce-4d69-85a8-3c61678d7e16",
+      "slug": "devin-20-launches-with-20month-pricing-down-from-500",
+      "title": "Devin 2.0 Launches with $20/Month Pricing, Down from $500",
+      "content": "Cognition Labs has launched Devin 2.0 with general availability and slashed pricing from $500 to $20 per month to increase accessibility.",
+      "summary": "Cognition Labs has launched Devin 2.0 with general availability and slashed pricing from $500 to $20 per month to increase accessibility.",
+      "source": "VentureBeat",
+      "source_url": "https://venturebeat.com/programming-development/devin-2-0-is-here-cognition-slashes-price-of-ai-software-engineer-to-20-per-month-from-500/",
+      "tags": [],
+      "tool_mentions": [
+        "3"
+      ],
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-28T02:35:55.791Z",
+      "date": "2024-12-01T00:00:00"
+    }
+  },
+  "newsBySlug": {
+    "lovable-achieves-5-56m-arr-with-140-000-users": {
+      "id": "197bf3f57a0-39257e5d-cbd44fad",
+      "slug": "lovable-achieves-5-56m-arr-with-140-000-users",
+      "title": "Lovable Achieves £5.56M ARR with 140,000 Users",
+      "content": "Lovable (formerly GPT Engineer) ends 2024 with £5.56M ARR, 140,000 total users, and 30,000 paying customers, demonstrating strong market traction.",
+      "summary": "Lovable (formerly GPT Engineer) ends 2024 with £5.56M ARR, 140,000 total users, and 30,000 paying customers, demonstrating strong market traction....",
+      "source": "EU-Startups",
+      "tags": [
+        "milestone",
+        "revenue",
+        "user-growth"
+      ],
+      "tool_mentions": [
+        "Lovable"
+      ],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2024-12-31T00:00:00.000Z"
+    },
+    "in-just-4-months-ai-coding-assistant-cursor-raised-another-100m-at-a-2-6b-valuation-led-by-thrive-so": {
+      "id": "27ab8005-461f-4322-b2c4-9bcd02a7d399",
+      "slug": "in-just-4-months-ai-coding-assistant-cursor-raised-another-100m-at-a-2-6b-valuation-led-by-thrive-so",
+      "title": "In just 4 months, AI coding assistant Cursor raised another $100M at a $2.6B valuation led by Thrive, sources say",
+      "content": "Anysphere, developer of AI coding assistant Cursor, raised $100 million in Series B funding at a $2.6 billion valuation. The round was led by Thrive Capital, just four months after their previous funding round.",
+      "summary": "Anysphere, developer of AI coding assistant Cursor, raised $100 million in Series B funding at a $2.6 billion valuation. The round was led by Thrive Capital, just four months after their previous funding round.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2024/12/19/in-just-4-months-ai-coding-assistant-cursor-raised-another-100m-at-a-2-5b-valuation-led-by-thrive-sources-say/",
+      "tags": [
+        "funding"
+      ],
+      "tool_mentions": [
+        "cursor"
+      ],
+      "created_at": "2025-06-17T23:25:09.540Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-19T05:00:00.000Z"
+    },
+    "github-launches-a-free-version-of-its-copilot": {
+      "id": "7be5489d-01df-43e2-ab1a-57ab7a686abc",
+      "slug": "github-launches-a-free-version-of-its-copilot",
+      "title": "GitHub launches a free version of its Copilot",
+      "content": "Microsoft-owned GitHub announced a free version of its popular Copilot code completion/AI pair programming tool. The free plan includes 2000 code completions and 50 chat requests per month, with access to GPT-4o and Claude 3.5 Sonnet models.",
+      "summary": "Microsoft-owned GitHub announced a free version of its popular Copilot code completion/AI pair programming tool. The free plan includes 2000 code completions and 50 chat requests per month, with access to GPT-4o and Claude 3.5 Sonnet models.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2024/12/18/github-launches-a-free-version-of-its-copilot/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "github-copilot",
+        "claude-code",
+        "gpt-4"
+      ],
+      "created_at": "2025-06-17T23:25:11.397Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-18T05:00:00.000Z"
+    },
+    "windsurf-vs-cursor-which-is-the-better-ai-code-editor": {
+      "id": "6a29c7f4-99b7-4aa9-becf-6a6988321786",
+      "slug": "windsurf-vs-cursor-which-is-the-better-ai-code-editor",
+      "title": "Windsurf vs Cursor: which is the better AI code editor?",
+      "content": "A comparison between Windsurf and Cursor, highlighting the features of both IDEs. Cursor is noted for its power features, such as multi-tabbing and AI-driven auto-completions, but also has limitations like needing to accept changes before seeing results.",
+      "summary": "A comparison between Windsurf and Cursor, highlighting the features of both IDEs. Cursor is noted for its power features, such as multi-tabbing and AI-driven auto-completions, but also has limitations like needing to accept changes before seeing results.",
+      "source": "Builder.io",
+      "source_url": "https://www.builder.io/blog/windsurf-vs-cursor",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "cursor",
+        "windsurf"
+      ],
+      "created_at": "2025-06-17T23:25:11.891Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-17T05:00:00.000Z"
+    },
+    "code-assist-google-s-enterprise-focused-coding-assistant-gets-third-party-tools": {
+      "id": "94e09f89-1e6f-4e5a-b17e-a4d0b9f6955e",
+      "slug": "code-assist-google-s-enterprise-focused-coding-assistant-gets-third-party-tools",
+      "title": "Code Assist, Google's enterprise-focused coding assistant, gets third-party tools",
+      "content": "Google announced support for third-party tools in Gemini Code Assist, its enterprise-focused AI code completion service. Code Assist can pull in real-time data and access info from outside applications, enhancing productivity and observability for developers.",
+      "summary": "Google announced support for third-party tools in Gemini Code Assist, its enterprise-focused AI code completion service. Code Assist can pull in real-time data and access info from outside applications, enhancing productivity and observability for developers.",
+      "source": "TechCrunch",
+      "source_url": "https://techcrunch.com/2024/12/17/code-assist-googles-enterprise-focused-code-assistant-gets-third-party-tools/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "gemini-code-assist"
+      ],
+      "created_at": "2025-06-17T23:25:11.746Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-17T05:00:00.000Z"
+    },
+    "huge-developer-survey-shows-which-ai-assistants-are-most-adopted": {
+      "id": "cd58b839-3b55-4470-acb0-c4c38eadb5eb",
+      "slug": "huge-developer-survey-shows-which-ai-assistants-are-most-adopted",
+      "title": "Huge developer survey shows which AI assistants are most adopted",
+      "content": "A huge developer survey shows which AI assistants are most adopted and trends towards coding with VR headsets. The survey highlights the growing adoption of AI coding assistants in the developer community.",
+      "summary": "A huge developer survey shows which AI assistants are most adopted and trends towards coding with VR headsets. The survey highlights the growing adoption of AI coding assistants in the developer community.",
+      "source": "DevClass",
+      "source_url": "https://devclass.com/2024/12/13/huge-developer-survey-shows-which-ai-assistants-are-most-adopted-and-trend-towards-coding-with-vr-headsets/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [],
+      "created_at": "2025-06-17T23:25:12.026Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-13T05:00:00.000Z"
+    },
+    "google-launches-jules-ai-coding-agent-achieves-52-on-swe-bench-in-debut": {
+      "id": "50a25f3b-e2e8-4430-99de-90897bf1d424",
+      "slug": "google-launches-jules-ai-coding-agent-achieves-52-on-swe-bench-in-debut",
+      "title": "Google Launches Jules AI Coding Agent, Achieves 52% on SWE-bench in Debut",
+      "content": "Google has launched Jules, an asynchronous AI coding agent powered by Gemini 2.5 Pro that achieved 52.2% on SWE-bench Verified, marking Google's serious entry into autonomous coding.",
+      "summary": "Google has launched Jules, an asynchronous AI coding agent powered by Gemini 2.5 Pro that achieved 52.2% on SWE-bench Verified, marking Google's serious entry into autonomous coding.",
+      "source": "Google",
+      "source_url": "https://jules.google/",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "jules"
+      ],
+      "created_at": "2025-06-18T00:04:18.303Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-11T05:00:00.000Z"
+    },
+    "openai-launches-chatgpt-pro-at-200-month-with-unlimited-o1-access": {
+      "id": "8f7ad25a-8f97-4ed8-86d8-c3b4540d0644",
+      "slug": "openai-launches-chatgpt-pro-at-200-month-with-unlimited-o1-access",
+      "title": "OpenAI Launches ChatGPT Pro at $200/Month with Unlimited o1 Access",
+      "content": "OpenAI has introduced ChatGPT Pro, a new $200/month tier for power users featuring unlimited access to advanced models including o1 reasoning model and GPT-4.1.",
+      "summary": "OpenAI has introduced ChatGPT Pro, a new $200/month tier for power users featuring unlimited access to advanced models including o1 reasoning model and GPT-4.1.",
+      "source": "Reuters",
+      "source_url": "https://www.reuters.com/technology/artificial-intelligence/openai-launches-200-chatgpt-subscription-research-use-2024-12-05/",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-06-18T00:04:18.048Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-05T05:00:00.000Z"
+    },
+    "openai-finally-releases-chatgpt-pro-o1-in-december-2024": {
+      "id": "9435d390-4bb1-4e84-a081-d15768b030aa",
+      "slug": "openai-finally-releases-chatgpt-pro-o1-in-december-2024",
+      "title": "OpenAI FINALLY Releases ChatGPT Pro o1 in December 2024",
+      "content": "OpenAI releases ChatGPT Pro o1 in December 2024, featuring enhanced reasoning capabilities and multimodal support for image uploads. The $200/month plan offers unlimited access to OpenAI's most advanced tools.",
+      "summary": "OpenAI releases ChatGPT Pro o1 in December 2024, featuring enhanced reasoning capabilities and multimodal support for image uploads. The $200/month plan offers unlimited access to OpenAI's most advanced tools.",
+      "source": "Masters of AI & Automation",
+      "source_url": "https://www.youtube.com/watch?v=bUahn-wZMfE",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
+      "created_at": "2025-06-17T23:25:11.601Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-12-05T05:00:00.000Z"
+    },
+    "openai-launches-200-chatgpt-pro-with-unlimited-o1-access-and-canvas": {
+      "id": "f9ea6bcb-ba1a-474e-be88-28c5ebcf49cc",
+      "slug": "openai-launches-200-chatgpt-pro-with-unlimited-o1-access-and-canvas",
+      "title": "OpenAI Launches $200 ChatGPT Pro with Unlimited O1 Access and Canvas",
+      "content": "OpenAI introduces ChatGPT Pro at $200/month featuring unlimited o1 access, Canvas workspace, and advanced coding capabilities targeted at professional developers.",
+      "summary": "OpenAI introduces ChatGPT Pro at $200/month featuring unlimited o1 access, Canvas workspace, and advanced coding capabilities targeted at professional developers.",
+      "source": "OpenAI",
+      "source_url": "https://openai.com/index/introducing-chatgpt-pro/",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "chatgpt-canvas"
+      ],
+      "created_at": "2025-06-18T00:59:19.150Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-12-05T05:00:00.000Z"
+    },
+    "devin-20-launches-with-20month-pricing-down-from-500": {
+      "id": "11a1de25-fcce-4d69-85a8-3c61678d7e16",
+      "slug": "devin-20-launches-with-20month-pricing-down-from-500",
+      "title": "Devin 2.0 Launches with $20/Month Pricing, Down from $500",
+      "content": "Cognition Labs has launched Devin 2.0 with general availability and slashed pricing from $500 to $20 per month to increase accessibility.",
+      "summary": "Cognition Labs has launched Devin 2.0 with general availability and slashed pricing from $500 to $20 per month to increase accessibility.",
+      "source": "VentureBeat",
+      "source_url": "https://venturebeat.com/programming-development/devin-2-0-is-here-cognition-slashes-price-of-ai-software-engineer-to-20-per-month-from-500/",
+      "tags": [],
+      "tool_mentions": [
+        "3"
+      ],
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-28T02:35:55.791Z",
+      "date": "2024-12-01T00:00:00"
+    }
+  },
+  "metadata": {
+    "month": "2024-12",
+    "articleCount": 11,
+    "generatedAt": "2025-08-19T06:02:32.720Z"
+  }
+}

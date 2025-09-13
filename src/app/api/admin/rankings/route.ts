@@ -18,7 +18,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
 import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
-import type { RankingPeriod, RankingEntry, Tool } from "@/lib/json-db/schemas";
+import type { RankingEntry, RankingPeriod, Tool } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 

@@ -1,0 +1,153 @@
+{
+  "subscribers": [
+    {
+      "email": "test@example.com",
+      "status": "pending",
+      "verification_token": "2b51427752d90f6cb08d98de4c6c4e588a87b3498d5934d9865b9428ec7aa8bb",
+      "metadata": {
+        "source": "website",
+        "user_agent": "curl/8.7.1",
+        "firstName": "Test",
+        "lastName": "User"
+      },
+      "id": "bad4c2d7-afb8-4aae-8e13-5570cc6a40d7",
+      "created_at": "2025-07-03T23:22:26.561Z",
+      "updated_at": "2025-07-03T23:26:10.920Z"
+    },
+    {
+      "email": "claude.test@example.com",
+      "status": "pending",
+      "verification_token": "02400481b8a715a6aa2bcb397b35a6791299b4310ba8ca1b6bbd3389fddd0b7b",
+      "metadata": {
+        "source": "website",
+        "user_agent": "curl/8.7.1",
+        "firstName": "Claude",
+        "lastName": "Assistant"
+      },
+      "id": "10189dde-34d2-46c7-aab1-bc2fa06d4808",
+      "created_at": "2025-07-03T23:26:19.469Z",
+      "updated_at": "2025-07-03T23:26:19.469Z"
+    },
+    {
+      "email": "test@test.com",
+      "status": "pending",
+      "verification_token": "4819646daad10317e1740129156b17d097d7e85a0928af5cfe3ba5acc2d75164",
+      "metadata": {
+        "source": "website",
+        "user_agent": "curl/8.7.1",
+        "firstName": "Test",
+        "lastName": "User"
+      },
+      "id": "8e280c5c-9f88-4f5a-82ce-fa11c0eda069",
+      "created_at": "2025-07-04T17:27:42.764Z",
+      "updated_at": "2025-07-04T17:27:42.764Z"
+    }
+  ],
+  "index": {
+    "byId": {
+      "bad4c2d7-afb8-4aae-8e13-5570cc6a40d7": {
+        "email": "test@example.com",
+        "status": "pending",
+        "verification_token": "2b51427752d90f6cb08d98de4c6c4e588a87b3498d5934d9865b9428ec7aa8bb",
+        "metadata": {
+          "source": "website",
+          "user_agent": "curl/8.7.1",
+          "firstName": "Test",
+          "lastName": "User"
+        },
+        "id": "bad4c2d7-afb8-4aae-8e13-5570cc6a40d7",
+        "created_at": "2025-07-03T23:22:26.561Z",
+        "updated_at": "2025-07-03T23:26:10.920Z"
+      },
+      "10189dde-34d2-46c7-aab1-bc2fa06d4808": {
+        "email": "claude.test@example.com",
+        "status": "pending",
+        "verification_token": "02400481b8a715a6aa2bcb397b35a6791299b4310ba8ca1b6bbd3389fddd0b7b",
+        "metadata": {
+          "source": "website",
+          "user_agent": "curl/8.7.1",
+          "firstName": "Claude",
+          "lastName": "Assistant"
+        },
+        "id": "10189dde-34d2-46c7-aab1-bc2fa06d4808",
+        "created_at": "2025-07-03T23:26:19.469Z",
+        "updated_at": "2025-07-03T23:26:19.469Z"
+      },
+      "8e280c5c-9f88-4f5a-82ce-fa11c0eda069": {
+        "email": "test@test.com",
+        "status": "pending",
+        "verification_token": "4819646daad10317e1740129156b17d097d7e85a0928af5cfe3ba5acc2d75164",
+        "metadata": {
+          "source": "website",
+          "user_agent": "curl/8.7.1",
+          "firstName": "Test",
+          "lastName": "User"
+        },
+        "id": "8e280c5c-9f88-4f5a-82ce-fa11c0eda069",
+        "created_at": "2025-07-04T17:27:42.764Z",
+        "updated_at": "2025-07-04T17:27:42.764Z"
+      }
+    },
+    "byEmail": {
+      "test@example.com": {
+        "email": "test@example.com",
+        "status": "pending",
+        "verification_token": "2b51427752d90f6cb08d98de4c6c4e588a87b3498d5934d9865b9428ec7aa8bb",
+        "metadata": {
+          "source": "website",
+          "user_agent": "curl/8.7.1",
+          "firstName": "Test",
+          "lastName": "User"
+        },
+        "id": "bad4c2d7-afb8-4aae-8e13-5570cc6a40d7",
+        "created_at": "2025-07-03T23:22:26.561Z",
+        "updated_at": "2025-07-03T23:26:10.920Z"
+      },
+      "claude.test@example.com": {
+        "email": "claude.test@example.com",
+        "status": "pending",
+        "verification_token": "02400481b8a715a6aa2bcb397b35a6791299b4310ba8ca1b6bbd3389fddd0b7b",
+        "metadata": {
+          "source": "website",
+          "user_agent": "curl/8.7.1",
+          "firstName": "Claude",
+          "lastName": "Assistant"
+        },
+        "id": "10189dde-34d2-46c7-aab1-bc2fa06d4808",
+        "created_at": "2025-07-03T23:26:19.469Z",
+        "updated_at": "2025-07-03T23:26:19.469Z"
+      },
+      "test@test.com": {
+        "email": "test@test.com",
+        "status": "pending",
+        "verification_token": "4819646daad10317e1740129156b17d097d7e85a0928af5cfe3ba5acc2d75164",
+        "metadata": {
+          "source": "website",
+          "user_agent": "curl/8.7.1",
+          "firstName": "Test",
+          "lastName": "User"
+        },
+        "id": "8e280c5c-9f88-4f5a-82ce-fa11c0eda069",
+        "created_at": "2025-07-04T17:27:42.764Z",
+        "updated_at": "2025-07-04T17:27:42.764Z"
+      }
+    },
+    "byStatus": {
+      "pending": [
+        "bad4c2d7-afb8-4aae-8e13-5570cc6a40d7",
+        "10189dde-34d2-46c7-aab1-bc2fa06d4808",
+        "8e280c5c-9f88-4f5a-82ce-fa11c0eda069"
+      ],
+      "verified": [],
+      "unsubscribed": []
+    }
+  },
+  "metadata": {
+    "total": 3,
+    "verified": 0,
+    "pending": 3,
+    "unsubscribed": 0,
+    "last_updated": "2025-07-04T17:27:42.765Z",
+    "version": "1.0.0"
+  }
+}

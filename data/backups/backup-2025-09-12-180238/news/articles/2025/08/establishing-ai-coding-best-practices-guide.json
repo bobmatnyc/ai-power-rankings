@@ -1,0 +1,23 @@
+{
+  "id": "ai-coding-best-practices-2025-08-08",
+  "slug": "establishing-ai-coding-best-practices-guide",
+  "title": "Industry Groups Publish Comprehensive AI Coding Best Practices Guide",
+  "content": "<p>A coalition of technology companies and developer organizations has published a comprehensive guide to AI coding best practices, establishing industry standards for the responsible use of AI assistance in software development.</p>\n<p>The guide covers critical areas including code review requirements for AI-generated code, attribution and licensing considerations, security validation processes, and guidelines for maintaining code quality. It emphasizes the importance of human oversight and the need for developers to understand and verify AI-generated code.</p>\n<p>Key recommendations include implementing staged rollouts of AI tools, establishing clear policies on acceptable use cases, and maintaining audit trails of AI assistance. The guide also addresses ethical considerations such as bias in code generation and the importance of diverse training data.</p>\n<p>Major AI coding tool providers including GitHub, Anthropic, and OpenAI have endorsed the guidelines, committing to implement recommended safety features and transparency measures in their products.</p>",
+  "summary": "Industry coalition publishes AI coding best practices guide covering code review, security validation, and ethical considerations, endorsed by major tool providers.",
+  "source": "Dev.to",
+  "source_url": "https://dev.to/ai-coding-best-practices",
+  "tags": [
+    "best-practices",
+    "industry",
+    "guidelines",
+    "ai-coding"
+  ],
+  "tool_mentions": [
+    "github-copilot",
+    "claude-code",
+    "chatgpt"
+  ],
+  "created_at": "2025-08-19T05:00:00.000+00:00",
+  "updated_at": "2025-08-19T05:00:00.000+00:00",
+  "date": "2025-08-08T00:00:00.000+00:00"
+}

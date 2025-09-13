@@ -4,24 +4,24 @@
  */
 
 // Load environment variables from .env files FIRST
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
 // Load environment-specific config
-const NODE_ENV = process.env["NODE_ENV"] || 'development';
+const NODE_ENV = process.env["NODE_ENV"] || "development";
 
-if (NODE_ENV === 'production') {
+if (NODE_ENV === "production") {
   // In production, load .env.production.local first, then .env.production
-  dotenv.config({ path: '.env.production.local' });
-  dotenv.config({ path: '.env.production' });
+  dotenv.config({ path: ".env.production.local" });
+  dotenv.config({ path: ".env.production" });
 } else {
   // In development, load .env.local first, then .env
-  dotenv.config({ path: '.env.local' });
-  dotenv.config({ path: '.env' });
+  dotenv.config({ path: ".env.local" });
+  dotenv.config({ path: ".env" });
 }
 
-import { drizzle } from 'drizzle-orm/neon-http';
-import { neon } from '@neondatabase/serverless';
-import * as schema from './schema';
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
+import * as schema from "./schema";
 
 // Environment variables with fallback
 const DATABASE_URL = process.env["DATABASE_URL"];
@@ -42,8 +42,8 @@ export function getDb() {
   }
 
   // Check if database URL is configured
-  if (!DATABASE_URL || DATABASE_URL.includes('YOUR_PASSWORD')) {
-    console.warn('Database URL not configured. Using JSON file storage.');
+  if (!DATABASE_URL || DATABASE_URL.includes("YOUR_PASSWORD")) {
+    console.warn("Database URL not configured. Using JSON file storage.");
     return null;
   }
 
@@ -55,14 +55,14 @@ export function getDb() {
   try {
     // Create Neon SQL client
     sql = neon(DATABASE_URL);
-    
+
     // Create Drizzle instance with schema
     db = drizzle(sql, { schema });
-    
-    console.log('✅ Database connection established');
+
+    console.log("✅ Database connection established");
     return db;
   } catch (error) {
-    console.error('❌ Failed to connect to database:', error);
+    console.error("❌ Failed to connect to database:", error);
     return null;
   }
 }
@@ -72,9 +72,9 @@ export function getDb() {
  */
 export async function testConnection(): Promise<boolean> {
   const database = getDb();
-  
+
   if (!database) {
-    console.log('Database is disabled or not configured');
+    console.log("Database is disabled or not configured");
     return false;
   }
 
@@ -84,10 +84,10 @@ export async function testConnection(): Promise<boolean> {
       sql = neon(DATABASE_URL!);
     }
     const result = await sql`SELECT NOW() as current_time`;
-    console.log('✅ Database connection test successful:', result[0]);
+    console.log("✅ Database connection test successful:", result[0]);
     return true;
   } catch (error) {
-    console.error('❌ Database connection test failed:', error);
+    console.error("❌ Database connection test failed:", error);
     return false;
   }
 }
@@ -101,7 +101,7 @@ export function closeDb() {
   }
   if (db) {
     db = null;
-    console.log('Database connection closed');
+    console.log("Database connection closed");
   }
 }
 

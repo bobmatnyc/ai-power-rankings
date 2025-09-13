@@ -1,0 +1,15 @@
+{
+  "version_id": "9512ec85-8590-4db3-8a4a-58e8211f2c9d",
+  "analysis": {
+    "title": "Test News Article",
+    "tool_mentions": [
+      {
+        "tool": "Claude",
+        "sentiment": 0.8
+      }
+    ],
+    "overall_sentiment": 0.7,
+    "importance_score": 5
+  },
+  "created_at": "2025-09-11T21:57:52.002Z"
+}

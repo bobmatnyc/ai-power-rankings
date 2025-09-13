@@ -6,7 +6,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { NewsRepository } from "../lib/json-db/news-repository";
-import { RankingsRepository } from "../lib/json-db/rankings-repository";
 import type { Tool } from "../lib/json-db/schemas";
 import { ToolsRepository } from "../lib/json-db/tools-repository";
 import { RankingEngineV7 } from "../lib/ranking-algorithm-v7-fixed";

@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2025-09-12
+
+### Added
+- **🎯 Tool-by-Tool Rankings Impact Display**: Enhanced article analysis UI showing individual tool impacts
+  - Detailed cards for each tool mention with impact percentages
+  - Context snippets showing where tools are mentioned
+  - Color-coded sentiment indicators (green/red/gray)
+  - Relevance scoring for each tool mention
+
+- **🔌 Neon PostgreSQL Integration**: Production database with Drizzle ORM
+  - Full PostgreSQL database integration with Neon hosting
+  - Drizzle ORM for type-safe database operations
+  - 42 tools, 313 news articles, and rankings data migrated
+  - Real-time database connectivity verification endpoints
+
+- **📊 September 2025 Rankings Update**: Latest AI tool rankings
+  - Cursor takes #1 position with 98.6 overall score
+  - Claude Code at #2 with 95.5 score and 80.2 SWE-bench
+  - GitHub Copilot at #3 with strong enterprise adoption
+  - Algorithm v7.1 with enhanced sentiment analysis
+
+### Changed
+- **🎨 Admin Dashboard Improvements**: Better visualization of article impacts
+  - Replaced simple badge display with detailed impact cards
+  - Added context quotes from articles for each tool
+  - Improved visual hierarchy with gray card backgrounds
+  - Enhanced qualitative metrics display
+
+- **📈 Rankings Display**: Updated rankings presentation
+  - New top 3: Cursor, Claude Code, GitHub Copilot
+  - Better rank change indicators with arrows
+  - Enhanced score impact breakdowns
+
+### Fixed
+- **🐛 Turbopack Runtime Error**: Resolved Next.js build issues
+  - Fixed missing chunks error in development
+  - Resolved Edge Runtime compatibility issues
+  - Improved build performance and stability
+
+### Technical Updates
+- **Database Configuration**
+  - Environment variables properly configured for Neon
+  - Connection pooling setup for production
+  - Migration scripts updated for PostgreSQL
+
 ## [3.3.0] - 2025-07-22
 
 ### Added

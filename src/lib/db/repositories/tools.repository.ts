@@ -3,12 +3,12 @@
  * Handles data access for AI tools (JSON or PostgreSQL)
  */
 
-import { BaseRepository, type QueryOptions } from './base.repository';
-import { getDb } from '../connection';
-import { tools, type Tool, type NewTool } from '../schema';
-import { eq, desc, asc, sql } from 'drizzle-orm';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { asc, desc, eq, sql } from "drizzle-orm";
+import { getDb } from "../connection";
+import { type NewTool, type Tool, tools } from "../schema";
+import { BaseRepository, type QueryOptions } from "./base.repository";
 
 interface ToolData {
   id: string;
@@ -21,7 +21,7 @@ interface ToolData {
 }
 
 export class ToolsRepository extends BaseRepository<ToolData> {
-  private jsonPath = path.join(process.cwd(), 'data', 'json', 'tools', 'tools.json');
+  private jsonPath = path.join(process.cwd(), "data", "json", "tools", "tools.json");
   private jsonCache: { tools: ToolData[] } | null = null;
   private lastCacheTime = 0;
   private CACHE_TTL = 5000; // 5 seconds cache
@@ -102,19 +102,19 @@ export class ToolsRepository extends BaseRepository<ToolData> {
   async findByCategory(category: string): Promise<ToolData[]> {
     if (this.useDatabase) {
       const db = getDb();
-      if (!db) throw new Error('Database not connected');
-      
+      if (!db) throw new Error("Database not connected");
+
       const results = await db
         .select()
         .from(tools)
         .where(eq(tools.category, category))
         .orderBy(desc(tools.createdAt));
-      
+
       return this.mapDbToolsToData(results);
     }
-    
+
     const allTools = await this.findAllFromJson();
-    return allTools.filter(tool => tool.category === category);
+    return allTools.filter((tool) => tool.category === category);
   }
 
   /**
@@ -123,8 +123,8 @@ export class ToolsRepository extends BaseRepository<ToolData> {
   async search(query: string): Promise<ToolData[]> {
     if (this.useDatabase) {
       const db = getDb();
-      if (!db) throw new Error('Database not connected');
-      
+      if (!db) throw new Error("Database not connected");
+
       const results = await db
         .select()
         .from(tools)
@@ -133,15 +133,16 @@ export class ToolsRepository extends BaseRepository<ToolData> {
               ${tools.data}->>'description' ILIKE ${`%${query}%`}`
         )
         .orderBy(desc(tools.createdAt));
-      
+
       return this.mapDbToolsToData(results);
     }
-    
+
     const allTools = await this.findAllFromJson();
     const lowerQuery = query.toLowerCase();
-    return allTools.filter(tool => 
-      tool.name.toLowerCase().includes(lowerQuery) ||
-      tool.description?.toLowerCase().includes(lowerQuery)
+    return allTools.filter(
+      (tool) =>
+        tool.name.toLowerCase().includes(lowerQuery) ||
+        tool.description?.toLowerCase().includes(lowerQuery)
     );
   }
 
@@ -149,16 +150,17 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   private async findAllFromDb(options?: QueryOptions): Promise<ToolData[]> {
     const db = getDb();
-    if (!db) throw new Error('Database not connected');
+    if (!db) throw new Error("Database not connected");
 
     let query = db.select().from(tools);
 
     // Apply ordering
     if (options?.orderBy) {
       const column = tools[options.orderBy as keyof typeof tools] || tools.createdAt;
-      query = options.orderDirection === 'desc' 
-        ? query.orderBy(desc(column))
-        : query.orderBy(asc(column));
+      query =
+        options.orderDirection === "desc"
+          ? query.orderBy(desc(column))
+          : query.orderBy(asc(column));
     } else {
       query = query.orderBy(desc(tools.createdAt));
     }
@@ -177,41 +179,33 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   private async findByIdFromDb(id: string): Promise<ToolData | null> {
     const db = getDb();
-    if (!db) throw new Error('Database not connected');
+    if (!db) throw new Error("Database not connected");
 
-    const results = await db
-      .select()
-      .from(tools)
-      .where(sql`${tools.data}->>'id' = ${id}`)
-      .limit(1);
+    const results = await db.select().from(tools).where(sql`${tools.data}->>'id' = ${id}`).limit(1);
 
     return results.length > 0 ? this.mapDbToolToData(results[0]) : null;
   }
 
   private async findBySlugFromDb(slug: string): Promise<ToolData | null> {
     const db = getDb();
-    if (!db) throw new Error('Database not connected');
+    if (!db) throw new Error("Database not connected");
 
-    const results = await db
-      .select()
-      .from(tools)
-      .where(eq(tools.slug, slug))
-      .limit(1);
+    const results = await db.select().from(tools).where(eq(tools.slug, slug)).limit(1);
 
     return results.length > 0 ? this.mapDbToolToData(results[0]) : null;
   }
 
   private async createInDb(data: Partial<ToolData>): Promise<ToolData> {
     const db = getDb();
-    if (!db) throw new Error('Database not connected');
+    if (!db) throw new Error("Database not connected");
 
     const { slug, name, category, status, company_id, ...rest } = data;
-    
+
     const newTool: NewTool = {
       slug: slug!,
       name: name!,
-      category: category || 'uncategorized',
-      status: status || 'active',
+      category: category || "uncategorized",
+      status: status || "active",
       companyId: company_id,
       data: { id: data.id, ...rest },
     };
@@ -222,13 +216,13 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   private async updateInDb(id: string, data: Partial<ToolData>): Promise<ToolData | null> {
     const db = getDb();
-    if (!db) throw new Error('Database not connected');
+    if (!db) throw new Error("Database not connected");
 
     const existing = await this.findByIdFromDb(id);
     if (!existing) return null;
 
     const { slug, name, category, status, company_id, ...rest } = data;
-    
+
     const updateData: Partial<Tool> = {
       ...(slug && { slug }),
       ...(name && { name }),
@@ -250,22 +244,18 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   private async deleteFromDb(id: string): Promise<boolean> {
     const db = getDb();
-    if (!db) throw new Error('Database not connected');
+    if (!db) throw new Error("Database not connected");
 
-    const result = await db
-      .delete(tools)
-      .where(sql`${tools.data}->>'id' = ${id}`);
+    const result = await db.delete(tools).where(sql`${tools.data}->>'id' = ${id}`);
 
     return true; // Drizzle doesn't return affected rows for Neon
   }
 
   private async countInDb(): Promise<number> {
     const db = getDb();
-    if (!db) throw new Error('Database not connected');
+    if (!db) throw new Error("Database not connected");
 
-    const result = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(tools);
+    const result = await db.select({ count: sql<number>`count(*)::int` }).from(tools);
 
     return result[0].count;
   }
@@ -274,17 +264,17 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   private loadJsonData(): { tools: ToolData[] } {
     const now = Date.now();
-    if (this.jsonCache && (now - this.lastCacheTime) < this.CACHE_TTL) {
+    if (this.jsonCache && now - this.lastCacheTime < this.CACHE_TTL) {
       return this.jsonCache;
     }
 
     try {
-      const content = fs.readFileSync(this.jsonPath, 'utf-8');
+      const content = fs.readFileSync(this.jsonPath, "utf-8");
       this.jsonCache = JSON.parse(content);
       this.lastCacheTime = now;
       return this.jsonCache!;
     } catch (error) {
-      console.error('Error loading tools JSON:', error);
+      console.error("Error loading tools JSON:", error);
       return { tools: [] };
     }
   }
@@ -295,7 +285,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       this.jsonCache = data;
       this.lastCacheTime = Date.now();
     } catch (error) {
-      console.error('Error saving tools JSON:', error);
+      console.error("Error saving tools JSON:", error);
       throw error;
     }
   }
@@ -310,7 +300,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
         const aVal = a[options.orderBy!];
         const bVal = b[options.orderBy!];
         const comparison = aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
-        return options.orderDirection === 'desc' ? -comparison : comparison;
+        return options.orderDirection === "desc" ? -comparison : comparison;
       });
     }
 
@@ -327,12 +317,12 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   private async findByIdFromJson(id: string): Promise<ToolData | null> {
     const data = this.loadJsonData();
-    return data.tools.find(tool => tool.id === id) || null;
+    return data.tools.find((tool) => tool.id === id) || null;
   }
 
   private async findBySlugFromJson(slug: string): Promise<ToolData | null> {
     const data = this.loadJsonData();
-    return data.tools.find(tool => tool.slug === slug) || null;
+    return data.tools.find((tool) => tool.slug === slug) || null;
   }
 
   private async createInJson(toolData: Partial<ToolData>): Promise<ToolData> {
@@ -341,11 +331,11 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       id: toolData.id || String(Date.now()),
       slug: toolData.slug!,
       name: toolData.name!,
-      category: toolData.category || 'uncategorized',
-      status: toolData.status || 'active',
+      category: toolData.category || "uncategorized",
+      status: toolData.status || "active",
       ...toolData,
     };
-    
+
     data.tools.push(newTool);
     this.saveJsonData(data);
     return newTool;
@@ -353,10 +343,10 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   private async updateInJson(id: string, updateData: Partial<ToolData>): Promise<ToolData | null> {
     const data = this.loadJsonData();
-    const index = data.tools.findIndex(tool => tool.id === id);
-    
+    const index = data.tools.findIndex((tool) => tool.id === id);
+
     if (index === -1) return null;
-    
+
     data.tools[index] = { ...data.tools[index], ...updateData };
     this.saveJsonData(data);
     return data.tools[index];
@@ -365,8 +355,8 @@ export class ToolsRepository extends BaseRepository<ToolData> {
   private async deleteFromJson(id: string): Promise<boolean> {
     const data = this.loadJsonData();
     const initialLength = data.tools.length;
-    data.tools = data.tools.filter(tool => tool.id !== id);
-    
+    data.tools = data.tools.filter((tool) => tool.id !== id);
+
     if (data.tools.length < initialLength) {
       this.saveJsonData(data);
       return true;
@@ -394,7 +384,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
   }
 
   private mapDbToolsToData(dbTools: Tool[]): ToolData[] {
-    return dbTools.map(tool => this.mapDbToolToData(tool));
+    return dbTools.map((tool) => this.mapDbToolToData(tool));
   }
 }
 

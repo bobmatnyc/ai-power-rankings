@@ -7,7 +7,7 @@ export interface QueryOptions {
   limit?: number;
   offset?: number;
   orderBy?: string;
-  orderDirection?: 'asc' | 'desc';
+  orderDirection?: "asc" | "desc";
 }
 
 export interface Repository<T> {
@@ -33,9 +33,9 @@ export abstract class BaseRepository<T> implements Repository<T> {
   abstract update(id: string, data: Partial<T>): Promise<T | null>;
   abstract delete(id: string): Promise<boolean>;
   abstract count(): Promise<number>;
-  
+
   // Optional methods
-  async findBySlug?(slug: string): Promise<T | null> {
-    throw new Error('findBySlug not implemented');
+  async findBySlug?(_slug: string): Promise<T | null> {
+    throw new Error("findBySlug not implemented");
   }
 }

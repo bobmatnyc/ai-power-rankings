@@ -324,9 +324,31 @@ export default function UnifiedAdminDashboard() {
 
   return (
     <div className="container mx-auto p-6 max-w-7xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">AI-Powered Admin Dashboard</h1>
-        <p className="text-gray-600">Streamlined news ingestion and ranking management</p>
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">AI-Powered Admin Dashboard</h1>
+          <p className="text-gray-600">Streamlined news ingestion and ranking management</p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => (window.location.href = "/")}
+            className="flex items-center gap-2"
+          >
+            <span>← Exit Admin</span>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={async () => {
+              // Call logout API
+              await fetch("/api/admin/auth", { method: "DELETE" });
+              window.location.href = "/admin/auth/signin";
+            }}
+            className="flex items-center gap-2"
+          >
+            <span>Logout</span>
+          </Button>
+        </div>
       </div>
 
       {error && (
@@ -518,22 +540,63 @@ export default function UnifiedAdminDashboard() {
                 </div>
 
                 <div>
-                  <Label>Tool Mentions</Label>
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <Label>Tool-by-Tool Rankings Impact</Label>
+                  <div className="mt-3 space-y-3">
                     {newsAnalysis.tool_mentions.map((mention) => (
-                      <Badge
+                      <div
                         key={`${mention.tool}-${mention.context.substring(0, 10)}`}
-                        variant={
-                          mention.sentiment > 0
-                            ? "default"
-                            : mention.sentiment < 0
-                              ? "destructive"
-                              : "secondary"
-                        }
+                        className="border rounded-lg p-3 bg-gray-50"
                       >
-                        {mention.tool} ({mention.sentiment > 0 ? "+" : ""}
-                        {(mention.sentiment * 100).toFixed(0)}%)
-                      </Badge>
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-sm">{mention.tool}</span>
+                            <Badge
+                              variant={
+                                mention.sentiment > 0
+                                  ? "default"
+                                  : mention.sentiment < 0
+                                    ? "destructive"
+                                    : "secondary"
+                              }
+                              className="text-xs"
+                            >
+                              {mention.sentiment > 0 ? "+" : ""}
+                              {(mention.sentiment * 100).toFixed(0)}% impact
+                            </Badge>
+                          </div>
+                        </div>
+                        {mention.context && (
+                          <p className="text-xs text-gray-600 italic mb-2">
+                            Context: "{mention.context.substring(0, 150)}
+                            {mention.context.length > 150 ? "..." : ""}"
+                          </p>
+                        )}
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-gray-500">Sentiment Impact:</span>
+                            <span
+                              className={`ml-1 font-medium ${
+                                mention.sentiment > 0
+                                  ? "text-green-600"
+                                  : mention.sentiment < 0
+                                    ? "text-red-600"
+                                    : "text-gray-600"
+                              }`}
+                            >
+                              {mention.sentiment > 0 ? "+" : ""}
+                              {(mention.sentiment * 100).toFixed(0)}%
+                            </span>
+                          </div>
+                          {mention.relevance !== undefined && (
+                            <div>
+                              <span className="text-gray-500">Relevance:</span>
+                              <span className="ml-1 font-medium">
+                                {(mention.relevance * 100).toFixed(0)}%
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>

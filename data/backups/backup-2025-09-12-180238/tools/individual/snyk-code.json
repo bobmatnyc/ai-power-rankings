@@ -1,0 +1,50 @@
+{
+  "id": "17",
+  "slug": "snyk-code",
+  "name": "Snyk Code",
+  "category": "code-review",
+  "status": "active",
+  "company_id": "41",
+  "info": {
+    "summary": "Developer security platform",
+    "description": "AI-driven static code analysis tool that continuously scans code for security vulnerabilities, bugs, and quality issues in real-time",
+    "website": "https://snyk.io/product/snyk-code/",
+    "features": [],
+    "technical": {
+      "context_window": 16384,
+      "multi_file_support": true,
+      "language_support": [
+        "JavaScript",
+        "TypeScript",
+        "Python",
+        "Java",
+        "C#",
+        "Go",
+        "Ruby",
+        "PHP",
+        "Kotlin",
+        "Swift",
+        "C++",
+        "Rust"
+      ],
+      "llm_providers": ["Snyk AI Engine"],
+      "subprocess_support": false,
+      "tool_support": false,
+      "security_focus": true,
+      "real_time_scanning": true
+    },
+    "business": {
+      "pricing_model": "freemium",
+      "base_price": 0,
+      "enterprise_pricing": true,
+      "free_tier": true,
+      "pricing_details": {
+        "Free": "$0/month - 100 security scans monthly, Basic vulnerability detection",
+        "Team": "$25/month per contributing developer - Full security features"
+      }
+    },
+    "metrics": {}
+  },
+  "created_at": "2025-06-23T15:40:44.487Z",
+  "updated_at": "2025-06-25T02:48:34.239Z"
+}

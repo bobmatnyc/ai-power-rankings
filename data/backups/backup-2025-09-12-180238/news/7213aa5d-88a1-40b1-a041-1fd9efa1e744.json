@@ -1,0 +1,18 @@
+{
+  "version_id": "7213aa5d-88a1-40b1-a041-1fd9efa1e744",
+  "analysis": {
+    "title": "QA Test News",
+    "summary": "Testing admin functionality without OAuth",
+    "source": "QA Test Suite",
+    "tool_mentions": [
+      {
+        "tool": "Claude Code",
+        "context": "positive testing",
+        "sentiment": 1
+      }
+    ],
+    "overall_sentiment": 0.8,
+    "importance_score": 5
+  },
+  "created_at": "2025-09-11T22:07:52.063Z"
+}

@@ -1,0 +1,907 @@
+{
+  "articles": [
+    {
+      "id": "197bf3f57a0-1bf7e9ca-7641aa34",
+      "slug": "opendevin-rebrands-to-openhands",
+      "title": "OpenDevin Rebrands to OpenHands",
+      "content": "OpenDevin rebrands to OpenHands, continuing its mission to provide open-source autonomous AI software engineering capabilities to developers worldwide.",
+      "summary": "OpenDevin rebrands to OpenHands, continuing its mission to provide open-source autonomous AI software engineering capabilities to developers worldwide....",
+      "source": "GitHub Repository",
+      "tags": [
+        "rebrand",
+        "open-source",
+        "autonomous"
+      ],
+      "tool_mentions": [
+        "OpenHands"
+      ],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2024-11-01T00:00:00.000Z"
+    },
+    {
+      "id": "c7bbaf63-663a-4ea8-a93d-0df07965df75",
+      "slug": "introducing-chatgpt-search-openai",
+      "title": "Introducing ChatGPT search - OpenAI",
+      "content": "OpenAI introduced ChatGPT search, a new feature for deep research and analysis of code repositories on GitHub.",
+      "summary": "OpenAI introduced ChatGPT search, a new feature for deep research and analysis of code repositories on GitHub.",
+      "source": "Openai",
+      "source_url": "https://openai.com/index/introducing-chatgpt-search/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
+      "created_at": "2025-06-17T23:25:02.635Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-31T04:00:00.000Z"
+    },
+    {
+      "id": "3b46e3e5-6392-4c99-91a6-ab3bd9f8c6b9",
+      "slug": "stackblitz-bolt-achieves-unprecedented-4m-arr-in-30-days-after-near-shutdown",
+      "title": "StackBlitz Bolt Achieves Unprecedented $4M ARR in 30 Days After Near-Shutdown",
+      "content": "StackBlitz nearly shut down before pivoting to Bolt, an AI app builder that achieved $4 million ARR in just 30 days, demonstrating explosive demand for autonomous development tools.",
+      "summary": "StackBlitz nearly shut down before pivoting to Bolt, an AI app builder that achieved $4 million ARR in just 30 days, demonstrating explosive demand for autonomous development tools.",
+      "source": "Business Insider",
+      "source_url": "https://www.businessinsider.com/stackblitz-bolt-silicon-valley-hottest-ai-coding-startup-nearly-died-2025-5",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "bolt-new"
+      ],
+      "created_at": "2025-06-18T00:04:17.741Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-30T04:00:00.000Z"
+    },
+    {
+      "id": "199db55f-22ce-43fa-a889-010f32853456",
+      "slug": "github-copilot-introduces-multi-model-support-and-coding-agents",
+      "title": "GitHub Copilot Introduces Multi-Model Support and Coding Agents",
+      "content": "GitHub has launched multi-model Copilot supporting Claude 3.5 Sonnet and Gemini alongside GPT-4, plus new autonomous coding agents for complex tasks.",
+      "summary": "GitHub has launched multi-model Copilot supporting Claude 3.5 Sonnet and Gemini alongside GPT-4, plus new autonomous coding agents for complex tasks.",
+      "source": "GitHub",
+      "source_url": "https://github.blog/news-insights/product-news/github-copilot-meet-the-new-coding-agent/",
+      "tags": [],
+      "tool_mentions": [
+        "2"
+      ],
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-28T02:35:55.790Z",
+      "date": "2024-10-29T00:00:00"
+    },
+    {
+      "id": "39b31a05-9245-41ab-8ac6-ec4582f80dce",
+      "slug": "bringing-developer-choice-to-copilot-with-anthropic-s-claude-3-5-sonnet-google-s-gemini-1-5-pro-and-",
+      "title": "Bringing developer choice to Copilot with Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's o1-preview and o1-mini",
+      "content": "GitHub is bringing developer choice to Copilot by integrating Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's o1-preview and o1-mini models. This integration aims to provide developers with a broad choice of models suited for development tasks.",
+      "summary": "GitHub is bringing developer choice to Copilot by integrating Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's o1-preview and o1-mini models. This integration aims to provide developers with a broad choice of models suited for development tasks.",
+      "source": "Github.Blog",
+      "source_url": "https://github.blog/news-insights/product-news/bringing-developer-choice-to-copilot/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "claude-code",
+        "gemini-code-assist",
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:01.676Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    {
+      "id": "c72be02c-773b-414a-ba11-f4b22dc04f9c",
+      "slug": "claude-3-5-sonnet-on-github-copilot",
+      "title": "Claude 3.5 Sonnet on GitHub Copilot",
+      "content": "Claude 3.5 Sonnet is now available on GitHub Copilot, offering advanced coding capabilities. It excels in solving real-world GitHub issues and achieving top scores in benchmarks like SWE-bench Verified and HumanEval. The integration allows developers to write production-ready code, debug with inline chat, create tests from implementation, and understand code with contextual explanations.",
+      "summary": "Claude 3.5 Sonnet is now available on GitHub Copilot, offering advanced coding capabilities. It excels in solving real-world GitHub issues and achieving top scores in benchmarks like SWE-bench Verified and HumanEval. The integration allows developers to write production-ready code, debug with inline chat, create tests from implementation, and understand code with contextual explanations.",
+      "source": "Anthropic",
+      "source_url": "https://www.anthropic.com/news/github-copilot",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "claude-code",
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:02.109Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    {
+      "id": "e9327935-5748-47bd-8136-3f628b8d83e1",
+      "slug": "new-from-universe-2024-get-the-latest-previews-and-releases",
+      "title": "New from Universe 2024: Get the latest previews and releases",
+      "content": "The article provides an overview of the latest previews and releases from GitHub Universe '24, including updates to GitHub Copilot and the introduction of new AI-native tools.",
+      "summary": "The article provides an overview of the latest previews and releases from GitHub Universe '24, including updates to GitHub Copilot and the introduction of new AI-native tools.",
+      "source": "Github.Blog",
+      "source_url": "https://github.blog/news-insights/product-news/universe-2024-previews-releases/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:01.843Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    {
+      "id": "ec0b95f7-6f1b-4bb5-9bc8-89d69a135aee",
+      "slug": "github-embraces-developer-choice-with-multi-model-copilot-new-app-tool-github-spark-and-ai-native-de",
+      "title": "GitHub Embraces Developer Choice with Multi-Model Copilot, New App Tool GitHub Spark, and AI-Native Developer Experience",
+      "content": "GitHub announced the next evolution of its Copilot-powered developer platform at GitHub Universe '24. The platform now offers multi-model Copilot, enabling developers to choose from industry-leading models like Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's GPT-4o, o1-preview, and o1-mini. Additionally, GitHub introduced GitHub Spark, an AI-native tool for building web apps in natural language, and updated Copilot in VS Code, Copilot Workspace, GitHub Models, and Copilot...",
+      "summary": "GitHub announced the next evolution of its Copilot-powered developer platform at GitHub Universe '24. The platform now offers multi-model Copilot, enabling developers to choose from industry-leading models like Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's GPT-4o, o1-preview, and o1-mini. Additionally, GitHub introduced GitHub Spark, an AI-native tool for building web apps in natural language, and updated Copilot in VS Code, Copilot Workspace, GitHub Models, and Copilot...",
+      "source": "GitHub",
+      "source_url": "https://github.com/newsroom/press-releases/github-universe-2024",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "claude-code",
+        "gpt-4",
+        "gemini-code-assist",
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:01.526Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    {
+      "id": "d86eacf0-7991-47be-98b4-2a8844b2ee33",
+      "slug": "ai-at-wharton-full-report",
+      "title": "AI at Wharton: Full Report",
+      "content": "The report discusses the current state of the AI market, noting that Microsoft and Google are seen as leaders in AI. It also touches on the growing trend of General AI (GEN AI).",
+      "summary": "The report discusses the current state of the AI market, noting that Microsoft and Google are seen as leaders in AI. It also touches on the growing trend of General AI (GEN AI).",
+      "source": "Ai.Wharton.Upenn.Edu",
+      "source_url": "https://ai.wharton.upenn.edu/wp-content/uploads/2024/11/AI-Report_Full-Report.pdf",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [],
+      "created_at": "2025-06-17T23:25:03.820Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-28T04:00:00.000Z"
+    },
+    {
+      "id": "abbc957a-f6ec-4487-871c-ea49007c2ad9",
+      "slug": "replit-codesandbox-and-glitch-unveil-enhanced-ai-coding-capabilities",
+      "title": "Replit, CodeSandbox, and Glitch Unveil Enhanced AI Coding Capabilities",
+      "content": "The merged entity of Replit, CodeSandbox, and Glitch has unveiled significant enhancements to their AI coding capabilities. These updates include advanced auto-completion features, improved debugging tools, and enhanced collaboration features. The platforms aim to make coding more efficient and enjoyable for developers of all levels.",
+      "summary": "The merged entity of Replit, CodeSandbox, and Glitch has unveiled significant enhancements to their AI coding capabilities. These updates include advanced auto-completion features, improved debugging tools, and enhanced collaboration features. The platforms aim to make coding more efficient and enjoyable for developers of all levels.",
+      "source": "CNET",
+      "source_url": "https://www.cnet.com/news/replit-codesandbox-glitch-unveil-enhanced-ai-coding-capabilities/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "replit-agent",
+        "glitch",
+        "codesandbox"
+      ],
+      "created_at": "2025-06-17T23:25:03.559Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-20T04:00:00.000Z"
+    },
+    {
+      "id": "cd5cf5e2-d932-49e4-88f5-f7d763e8112d",
+      "slug": "watch-webinar-introducing-codeium-ai-demo-almtoolbox",
+      "title": "Watch Webinar: Introducing Codeium AI + Demo - ALMtoolbox",
+      "content": "Codeium hosted a webinar in October 2024 to introduce its AI features and provide a demo. The webinar covered various aspects of generative AI for developers, including autocomplete, chat, and context-aware AI. It also highlighted Codeium's ability to function in on-prem and air-gapped environments.",
+      "summary": "Codeium hosted a webinar in October 2024 to introduce its AI features and provide a demo. The webinar covered various aspects of generative AI for developers, including autocomplete, chat, and context-aware AI. It also highlighted Codeium's ability to function in on-prem and air-gapped environments.",
+      "source": "Almtoolbox",
+      "source_url": "https://www.almtoolbox.com/blog/codeium-ai-webinar-oct-2024/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
+      "created_at": "2025-06-17T23:25:03.011Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-17T04:00:00.000Z"
+    },
+    {
+      "id": "fb40df80-0e6f-4360-84b1-58d3e5a4a0df",
+      "slug": "glitch-joins-replit-and-codesandbox-in-ai-coding-platform-consolidation",
+      "title": "Glitch Joins Replit and CodeSandbox in AI Coding Platform Consolidation",
+      "content": "Glitch, another prominent coding platform, has announced its integration with the newly merged Replit and CodeSandbox. This consolidation aims to create a robust ecosystem for AI-driven coding tools, offering developers a wide range of features and functionalities. The move is seen as a strategic step towards dominating the coding platform market.",
+      "summary": "Glitch, another prominent coding platform, has announced its integration with the newly merged Replit and CodeSandbox. This consolidation aims to create a robust ecosystem for AI-driven coding tools, offering developers a wide range of features and functionalities. The move is seen as a strategic step towards dominating the coding platform market.",
+      "source": "VentureBeat",
+      "source_url": "https://venturebeat.com/2024/10/17/glitch-joins-replit-codesandbox-ai-coding-platform-consolidation/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "replit-agent",
+        "glitch",
+        "codesandbox"
+      ],
+      "created_at": "2025-06-17T23:25:03.357Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-10-17T04:00:00.000Z"
+    },
+    {
+      "id": "ea180cb3-f634-4e53-8c0c-efe8c5353cfb",
+      "slug": "replit-and-codesandbox-merge-to-create-a-unified-ai-coding-platform",
+      "title": "Replit and CodeSandbox Merge to Create a Unified AI Coding Platform",
+      "content": "Replit and CodeSandbox have announced a merger to create a unified AI coding platform. The combined entity aims to leverage the strengths of both platforms to provide a more comprehensive and innovative coding experience. This move is expected to enhance the capabilities of AI-driven coding tools and improve the overall developer experience.",
+      "summary": "Replit and CodeSandbox have announced a merger to create a unified AI coding platform. The combined entity aims to leverage the strengths of both platforms to provide a more comprehensive and innovative coding experience. This move is expected to enhance the capabilities of AI-driven coding tools and improve the overall developer experience.",
+      "source": "TechCrunch",
+      "source_url": "https://www.techcrunch.com/2024/10/15/replit-codesandbox-merge-ai-coding-platform/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "replit-agent",
+        "codesandbox"
+      ],
+      "created_at": "2025-06-17T23:25:03.148Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-15T04:00:00.000Z"
+    },
+    {
+      "id": "0a481067-23e4-4248-ae67-a943799da88f",
+      "slug": "chatgpt-4o-with-canvas-your-thoughts-and-experience",
+      "title": "ChatGPT-4o with canvas : Your Thoughts and Experience",
+      "content": "Users discussed their experiences with ChatGPT-4o and Canvas, highlighting its features and comfort in creating projects and codes.",
+      "summary": "Users discussed their experiences with ChatGPT-4o and Canvas, highlighting its features and comfort in creating projects and codes.",
+      "source": "Community.Openai",
+      "source_url": "https://community.openai.com/t/chatgpt-4o-with-canvas-your-thoughts-and-experience/966926",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt",
+        "gpt-4"
+      ],
+      "created_at": "2025-06-17T23:25:02.804Z",
+      "updated_at": "2025-06-30T05:07:05.211Z",
+      "date": "2024-10-04T04:00:00.000Z"
+    },
+    {
+      "id": "f6657a4c-e04e-499a-972a-87fe8a5d112e",
+      "slug": "introducing-canvas-a-new-way-to-write-and-code-with-chatgpt",
+      "title": "Introducing canvas, a new way to write and code with ChatGPT",
+      "content": "OpenAI introduced Canvas, a new interface for working with ChatGPT on writing and coding projects that go beyond simple chat.",
+      "summary": "OpenAI introduced Canvas, a new interface for working with ChatGPT on writing and coding projects that go beyond simple chat.",
+      "source": "Openai",
+      "source_url": "https://openai.com/index/introducing-canvas/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
+      "created_at": "2025-06-17T23:25:02.342Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-10-03T04:00:00.000Z"
+    },
+    {
+      "id": "197bf3f57a0-6b466789-72eb880a",
+      "slug": "openai-launches-chatgpt-canvas-in-beta",
+      "title": "OpenAI Launches ChatGPT Canvas in Beta",
+      "content": "OpenAI introduces ChatGPT Canvas, a new interface for working with ChatGPT on writing and coding projects, featuring side-by-side editing and real-time collaboration.",
+      "summary": "OpenAI introduces ChatGPT Canvas, a new interface for working with ChatGPT on writing and coding projects, featuring side-by-side editing and real-time collaboration....",
+      "source": "OpenAI Blog",
+      "tags": [
+        "launch",
+        "openai",
+        "beta"
+      ],
+      "tool_mentions": [
+        "ChatGPT Canvas"
+      ],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2024-10-03T00:00:00.000Z"
+    }
+  ],
+  "newsById": {
+    "197bf3f57a0-1bf7e9ca-7641aa34": {
+      "id": "197bf3f57a0-1bf7e9ca-7641aa34",
+      "slug": "opendevin-rebrands-to-openhands",
+      "title": "OpenDevin Rebrands to OpenHands",
+      "content": "OpenDevin rebrands to OpenHands, continuing its mission to provide open-source autonomous AI software engineering capabilities to developers worldwide.",
+      "summary": "OpenDevin rebrands to OpenHands, continuing its mission to provide open-source autonomous AI software engineering capabilities to developers worldwide....",
+      "source": "GitHub Repository",
+      "tags": [
+        "rebrand",
+        "open-source",
+        "autonomous"
+      ],
+      "tool_mentions": [
+        "OpenHands"
+      ],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2024-11-01T00:00:00.000Z"
+    },
+    "c7bbaf63-663a-4ea8-a93d-0df07965df75": {
+      "id": "c7bbaf63-663a-4ea8-a93d-0df07965df75",
+      "slug": "introducing-chatgpt-search-openai",
+      "title": "Introducing ChatGPT search - OpenAI",
+      "content": "OpenAI introduced ChatGPT search, a new feature for deep research and analysis of code repositories on GitHub.",
+      "summary": "OpenAI introduced ChatGPT search, a new feature for deep research and analysis of code repositories on GitHub.",
+      "source": "Openai",
+      "source_url": "https://openai.com/index/introducing-chatgpt-search/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
+      "created_at": "2025-06-17T23:25:02.635Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-31T04:00:00.000Z"
+    },
+    "3b46e3e5-6392-4c99-91a6-ab3bd9f8c6b9": {
+      "id": "3b46e3e5-6392-4c99-91a6-ab3bd9f8c6b9",
+      "slug": "stackblitz-bolt-achieves-unprecedented-4m-arr-in-30-days-after-near-shutdown",
+      "title": "StackBlitz Bolt Achieves Unprecedented $4M ARR in 30 Days After Near-Shutdown",
+      "content": "StackBlitz nearly shut down before pivoting to Bolt, an AI app builder that achieved $4 million ARR in just 30 days, demonstrating explosive demand for autonomous development tools.",
+      "summary": "StackBlitz nearly shut down before pivoting to Bolt, an AI app builder that achieved $4 million ARR in just 30 days, demonstrating explosive demand for autonomous development tools.",
+      "source": "Business Insider",
+      "source_url": "https://www.businessinsider.com/stackblitz-bolt-silicon-valley-hottest-ai-coding-startup-nearly-died-2025-5",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "bolt-new"
+      ],
+      "created_at": "2025-06-18T00:04:17.741Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-30T04:00:00.000Z"
+    },
+    "199db55f-22ce-43fa-a889-010f32853456": {
+      "id": "199db55f-22ce-43fa-a889-010f32853456",
+      "slug": "github-copilot-introduces-multi-model-support-and-coding-agents",
+      "title": "GitHub Copilot Introduces Multi-Model Support and Coding Agents",
+      "content": "GitHub has launched multi-model Copilot supporting Claude 3.5 Sonnet and Gemini alongside GPT-4, plus new autonomous coding agents for complex tasks.",
+      "summary": "GitHub has launched multi-model Copilot supporting Claude 3.5 Sonnet and Gemini alongside GPT-4, plus new autonomous coding agents for complex tasks.",
+      "source": "GitHub",
+      "source_url": "https://github.blog/news-insights/product-news/github-copilot-meet-the-new-coding-agent/",
+      "tags": [],
+      "tool_mentions": [
+        "2"
+      ],
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-28T02:35:55.790Z",
+      "date": "2024-10-29T00:00:00"
+    },
+    "39b31a05-9245-41ab-8ac6-ec4582f80dce": {
+      "id": "39b31a05-9245-41ab-8ac6-ec4582f80dce",
+      "slug": "bringing-developer-choice-to-copilot-with-anthropic-s-claude-3-5-sonnet-google-s-gemini-1-5-pro-and-",
+      "title": "Bringing developer choice to Copilot with Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's o1-preview and o1-mini",
+      "content": "GitHub is bringing developer choice to Copilot by integrating Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's o1-preview and o1-mini models. This integration aims to provide developers with a broad choice of models suited for development tasks.",
+      "summary": "GitHub is bringing developer choice to Copilot by integrating Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's o1-preview and o1-mini models. This integration aims to provide developers with a broad choice of models suited for development tasks.",
+      "source": "Github.Blog",
+      "source_url": "https://github.blog/news-insights/product-news/bringing-developer-choice-to-copilot/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "claude-code",
+        "gemini-code-assist",
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:01.676Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    "c72be02c-773b-414a-ba11-f4b22dc04f9c": {
+      "id": "c72be02c-773b-414a-ba11-f4b22dc04f9c",
+      "slug": "claude-3-5-sonnet-on-github-copilot",
+      "title": "Claude 3.5 Sonnet on GitHub Copilot",
+      "content": "Claude 3.5 Sonnet is now available on GitHub Copilot, offering advanced coding capabilities. It excels in solving real-world GitHub issues and achieving top scores in benchmarks like SWE-bench Verified and HumanEval. The integration allows developers to write production-ready code, debug with inline chat, create tests from implementation, and understand code with contextual explanations.",
+      "summary": "Claude 3.5 Sonnet is now available on GitHub Copilot, offering advanced coding capabilities. It excels in solving real-world GitHub issues and achieving top scores in benchmarks like SWE-bench Verified and HumanEval. The integration allows developers to write production-ready code, debug with inline chat, create tests from implementation, and understand code with contextual explanations.",
+      "source": "Anthropic",
+      "source_url": "https://www.anthropic.com/news/github-copilot",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "claude-code",
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:02.109Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    "e9327935-5748-47bd-8136-3f628b8d83e1": {
+      "id": "e9327935-5748-47bd-8136-3f628b8d83e1",
+      "slug": "new-from-universe-2024-get-the-latest-previews-and-releases",
+      "title": "New from Universe 2024: Get the latest previews and releases",
+      "content": "The article provides an overview of the latest previews and releases from GitHub Universe '24, including updates to GitHub Copilot and the introduction of new AI-native tools.",
+      "summary": "The article provides an overview of the latest previews and releases from GitHub Universe '24, including updates to GitHub Copilot and the introduction of new AI-native tools.",
+      "source": "Github.Blog",
+      "source_url": "https://github.blog/news-insights/product-news/universe-2024-previews-releases/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:01.843Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    "ec0b95f7-6f1b-4bb5-9bc8-89d69a135aee": {
+      "id": "ec0b95f7-6f1b-4bb5-9bc8-89d69a135aee",
+      "slug": "github-embraces-developer-choice-with-multi-model-copilot-new-app-tool-github-spark-and-ai-native-de",
+      "title": "GitHub Embraces Developer Choice with Multi-Model Copilot, New App Tool GitHub Spark, and AI-Native Developer Experience",
+      "content": "GitHub announced the next evolution of its Copilot-powered developer platform at GitHub Universe '24. The platform now offers multi-model Copilot, enabling developers to choose from industry-leading models like Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's GPT-4o, o1-preview, and o1-mini. Additionally, GitHub introduced GitHub Spark, an AI-native tool for building web apps in natural language, and updated Copilot in VS Code, Copilot Workspace, GitHub Models, and Copilot...",
+      "summary": "GitHub announced the next evolution of its Copilot-powered developer platform at GitHub Universe '24. The platform now offers multi-model Copilot, enabling developers to choose from industry-leading models like Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's GPT-4o, o1-preview, and o1-mini. Additionally, GitHub introduced GitHub Spark, an AI-native tool for building web apps in natural language, and updated Copilot in VS Code, Copilot Workspace, GitHub Models, and Copilot...",
+      "source": "GitHub",
+      "source_url": "https://github.com/newsroom/press-releases/github-universe-2024",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "claude-code",
+        "gpt-4",
+        "gemini-code-assist",
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:01.526Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    "d86eacf0-7991-47be-98b4-2a8844b2ee33": {
+      "id": "d86eacf0-7991-47be-98b4-2a8844b2ee33",
+      "slug": "ai-at-wharton-full-report",
+      "title": "AI at Wharton: Full Report",
+      "content": "The report discusses the current state of the AI market, noting that Microsoft and Google are seen as leaders in AI. It also touches on the growing trend of General AI (GEN AI).",
+      "summary": "The report discusses the current state of the AI market, noting that Microsoft and Google are seen as leaders in AI. It also touches on the growing trend of General AI (GEN AI).",
+      "source": "Ai.Wharton.Upenn.Edu",
+      "source_url": "https://ai.wharton.upenn.edu/wp-content/uploads/2024/11/AI-Report_Full-Report.pdf",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [],
+      "created_at": "2025-06-17T23:25:03.820Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-28T04:00:00.000Z"
+    },
+    "abbc957a-f6ec-4487-871c-ea49007c2ad9": {
+      "id": "abbc957a-f6ec-4487-871c-ea49007c2ad9",
+      "slug": "replit-codesandbox-and-glitch-unveil-enhanced-ai-coding-capabilities",
+      "title": "Replit, CodeSandbox, and Glitch Unveil Enhanced AI Coding Capabilities",
+      "content": "The merged entity of Replit, CodeSandbox, and Glitch has unveiled significant enhancements to their AI coding capabilities. These updates include advanced auto-completion features, improved debugging tools, and enhanced collaboration features. The platforms aim to make coding more efficient and enjoyable for developers of all levels.",
+      "summary": "The merged entity of Replit, CodeSandbox, and Glitch has unveiled significant enhancements to their AI coding capabilities. These updates include advanced auto-completion features, improved debugging tools, and enhanced collaboration features. The platforms aim to make coding more efficient and enjoyable for developers of all levels.",
+      "source": "CNET",
+      "source_url": "https://www.cnet.com/news/replit-codesandbox-glitch-unveil-enhanced-ai-coding-capabilities/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "replit-agent",
+        "glitch",
+        "codesandbox"
+      ],
+      "created_at": "2025-06-17T23:25:03.559Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-20T04:00:00.000Z"
+    },
+    "cd5cf5e2-d932-49e4-88f5-f7d763e8112d": {
+      "id": "cd5cf5e2-d932-49e4-88f5-f7d763e8112d",
+      "slug": "watch-webinar-introducing-codeium-ai-demo-almtoolbox",
+      "title": "Watch Webinar: Introducing Codeium AI + Demo - ALMtoolbox",
+      "content": "Codeium hosted a webinar in October 2024 to introduce its AI features and provide a demo. The webinar covered various aspects of generative AI for developers, including autocomplete, chat, and context-aware AI. It also highlighted Codeium's ability to function in on-prem and air-gapped environments.",
+      "summary": "Codeium hosted a webinar in October 2024 to introduce its AI features and provide a demo. The webinar covered various aspects of generative AI for developers, including autocomplete, chat, and context-aware AI. It also highlighted Codeium's ability to function in on-prem and air-gapped environments.",
+      "source": "Almtoolbox",
+      "source_url": "https://www.almtoolbox.com/blog/codeium-ai-webinar-oct-2024/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
+      "created_at": "2025-06-17T23:25:03.011Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-17T04:00:00.000Z"
+    },
+    "fb40df80-0e6f-4360-84b1-58d3e5a4a0df": {
+      "id": "fb40df80-0e6f-4360-84b1-58d3e5a4a0df",
+      "slug": "glitch-joins-replit-and-codesandbox-in-ai-coding-platform-consolidation",
+      "title": "Glitch Joins Replit and CodeSandbox in AI Coding Platform Consolidation",
+      "content": "Glitch, another prominent coding platform, has announced its integration with the newly merged Replit and CodeSandbox. This consolidation aims to create a robust ecosystem for AI-driven coding tools, offering developers a wide range of features and functionalities. The move is seen as a strategic step towards dominating the coding platform market.",
+      "summary": "Glitch, another prominent coding platform, has announced its integration with the newly merged Replit and CodeSandbox. This consolidation aims to create a robust ecosystem for AI-driven coding tools, offering developers a wide range of features and functionalities. The move is seen as a strategic step towards dominating the coding platform market.",
+      "source": "VentureBeat",
+      "source_url": "https://venturebeat.com/2024/10/17/glitch-joins-replit-codesandbox-ai-coding-platform-consolidation/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "replit-agent",
+        "glitch",
+        "codesandbox"
+      ],
+      "created_at": "2025-06-17T23:25:03.357Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-10-17T04:00:00.000Z"
+    },
+    "ea180cb3-f634-4e53-8c0c-efe8c5353cfb": {
+      "id": "ea180cb3-f634-4e53-8c0c-efe8c5353cfb",
+      "slug": "replit-and-codesandbox-merge-to-create-a-unified-ai-coding-platform",
+      "title": "Replit and CodeSandbox Merge to Create a Unified AI Coding Platform",
+      "content": "Replit and CodeSandbox have announced a merger to create a unified AI coding platform. The combined entity aims to leverage the strengths of both platforms to provide a more comprehensive and innovative coding experience. This move is expected to enhance the capabilities of AI-driven coding tools and improve the overall developer experience.",
+      "summary": "Replit and CodeSandbox have announced a merger to create a unified AI coding platform. The combined entity aims to leverage the strengths of both platforms to provide a more comprehensive and innovative coding experience. This move is expected to enhance the capabilities of AI-driven coding tools and improve the overall developer experience.",
+      "source": "TechCrunch",
+      "source_url": "https://www.techcrunch.com/2024/10/15/replit-codesandbox-merge-ai-coding-platform/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "replit-agent",
+        "codesandbox"
+      ],
+      "created_at": "2025-06-17T23:25:03.148Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-15T04:00:00.000Z"
+    },
+    "0a481067-23e4-4248-ae67-a943799da88f": {
+      "id": "0a481067-23e4-4248-ae67-a943799da88f",
+      "slug": "chatgpt-4o-with-canvas-your-thoughts-and-experience",
+      "title": "ChatGPT-4o with canvas : Your Thoughts and Experience",
+      "content": "Users discussed their experiences with ChatGPT-4o and Canvas, highlighting its features and comfort in creating projects and codes.",
+      "summary": "Users discussed their experiences with ChatGPT-4o and Canvas, highlighting its features and comfort in creating projects and codes.",
+      "source": "Community.Openai",
+      "source_url": "https://community.openai.com/t/chatgpt-4o-with-canvas-your-thoughts-and-experience/966926",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt",
+        "gpt-4"
+      ],
+      "created_at": "2025-06-17T23:25:02.804Z",
+      "updated_at": "2025-06-30T05:07:05.211Z",
+      "date": "2024-10-04T04:00:00.000Z"
+    },
+    "f6657a4c-e04e-499a-972a-87fe8a5d112e": {
+      "id": "f6657a4c-e04e-499a-972a-87fe8a5d112e",
+      "slug": "introducing-canvas-a-new-way-to-write-and-code-with-chatgpt",
+      "title": "Introducing canvas, a new way to write and code with ChatGPT",
+      "content": "OpenAI introduced Canvas, a new interface for working with ChatGPT on writing and coding projects that go beyond simple chat.",
+      "summary": "OpenAI introduced Canvas, a new interface for working with ChatGPT on writing and coding projects that go beyond simple chat.",
+      "source": "Openai",
+      "source_url": "https://openai.com/index/introducing-canvas/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
+      "created_at": "2025-06-17T23:25:02.342Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-10-03T04:00:00.000Z"
+    },
+    "197bf3f57a0-6b466789-72eb880a": {
+      "id": "197bf3f57a0-6b466789-72eb880a",
+      "slug": "openai-launches-chatgpt-canvas-in-beta",
+      "title": "OpenAI Launches ChatGPT Canvas in Beta",
+      "content": "OpenAI introduces ChatGPT Canvas, a new interface for working with ChatGPT on writing and coding projects, featuring side-by-side editing and real-time collaboration.",
+      "summary": "OpenAI introduces ChatGPT Canvas, a new interface for working with ChatGPT on writing and coding projects, featuring side-by-side editing and real-time collaboration....",
+      "source": "OpenAI Blog",
+      "tags": [
+        "launch",
+        "openai",
+        "beta"
+      ],
+      "tool_mentions": [
+        "ChatGPT Canvas"
+      ],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2024-10-03T00:00:00.000Z"
+    }
+  },
+  "newsBySlug": {
+    "opendevin-rebrands-to-openhands": {
+      "id": "197bf3f57a0-1bf7e9ca-7641aa34",
+      "slug": "opendevin-rebrands-to-openhands",
+      "title": "OpenDevin Rebrands to OpenHands",
+      "content": "OpenDevin rebrands to OpenHands, continuing its mission to provide open-source autonomous AI software engineering capabilities to developers worldwide.",
+      "summary": "OpenDevin rebrands to OpenHands, continuing its mission to provide open-source autonomous AI software engineering capabilities to developers worldwide....",
+      "source": "GitHub Repository",
+      "tags": [
+        "rebrand",
+        "open-source",
+        "autonomous"
+      ],
+      "tool_mentions": [
+        "OpenHands"
+      ],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2024-11-01T00:00:00.000Z"
+    },
+    "introducing-chatgpt-search-openai": {
+      "id": "c7bbaf63-663a-4ea8-a93d-0df07965df75",
+      "slug": "introducing-chatgpt-search-openai",
+      "title": "Introducing ChatGPT search - OpenAI",
+      "content": "OpenAI introduced ChatGPT search, a new feature for deep research and analysis of code repositories on GitHub.",
+      "summary": "OpenAI introduced ChatGPT search, a new feature for deep research and analysis of code repositories on GitHub.",
+      "source": "Openai",
+      "source_url": "https://openai.com/index/introducing-chatgpt-search/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
+      "created_at": "2025-06-17T23:25:02.635Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-31T04:00:00.000Z"
+    },
+    "stackblitz-bolt-achieves-unprecedented-4m-arr-in-30-days-after-near-shutdown": {
+      "id": "3b46e3e5-6392-4c99-91a6-ab3bd9f8c6b9",
+      "slug": "stackblitz-bolt-achieves-unprecedented-4m-arr-in-30-days-after-near-shutdown",
+      "title": "StackBlitz Bolt Achieves Unprecedented $4M ARR in 30 Days After Near-Shutdown",
+      "content": "StackBlitz nearly shut down before pivoting to Bolt, an AI app builder that achieved $4 million ARR in just 30 days, demonstrating explosive demand for autonomous development tools.",
+      "summary": "StackBlitz nearly shut down before pivoting to Bolt, an AI app builder that achieved $4 million ARR in just 30 days, demonstrating explosive demand for autonomous development tools.",
+      "source": "Business Insider",
+      "source_url": "https://www.businessinsider.com/stackblitz-bolt-silicon-valley-hottest-ai-coding-startup-nearly-died-2025-5",
+      "tags": [
+        "product-update"
+      ],
+      "tool_mentions": [
+        "bolt-new"
+      ],
+      "created_at": "2025-06-18T00:04:17.741Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-30T04:00:00.000Z"
+    },
+    "github-copilot-introduces-multi-model-support-and-coding-agents": {
+      "id": "199db55f-22ce-43fa-a889-010f32853456",
+      "slug": "github-copilot-introduces-multi-model-support-and-coding-agents",
+      "title": "GitHub Copilot Introduces Multi-Model Support and Coding Agents",
+      "content": "GitHub has launched multi-model Copilot supporting Claude 3.5 Sonnet and Gemini alongside GPT-4, plus new autonomous coding agents for complex tasks.",
+      "summary": "GitHub has launched multi-model Copilot supporting Claude 3.5 Sonnet and Gemini alongside GPT-4, plus new autonomous coding agents for complex tasks.",
+      "source": "GitHub",
+      "source_url": "https://github.blog/news-insights/product-news/github-copilot-meet-the-new-coding-agent/",
+      "tags": [],
+      "tool_mentions": [
+        "2"
+      ],
+      "created_at": "2025-06-09T04:58:08.085264",
+      "updated_at": "2025-06-28T02:35:55.790Z",
+      "date": "2024-10-29T00:00:00"
+    },
+    "bringing-developer-choice-to-copilot-with-anthropic-s-claude-3-5-sonnet-google-s-gemini-1-5-pro-and-": {
+      "id": "39b31a05-9245-41ab-8ac6-ec4582f80dce",
+      "slug": "bringing-developer-choice-to-copilot-with-anthropic-s-claude-3-5-sonnet-google-s-gemini-1-5-pro-and-",
+      "title": "Bringing developer choice to Copilot with Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's o1-preview and o1-mini",
+      "content": "GitHub is bringing developer choice to Copilot by integrating Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's o1-preview and o1-mini models. This integration aims to provide developers with a broad choice of models suited for development tasks.",
+      "summary": "GitHub is bringing developer choice to Copilot by integrating Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's o1-preview and o1-mini models. This integration aims to provide developers with a broad choice of models suited for development tasks.",
+      "source": "Github.Blog",
+      "source_url": "https://github.blog/news-insights/product-news/bringing-developer-choice-to-copilot/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "claude-code",
+        "gemini-code-assist",
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:01.676Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    "claude-3-5-sonnet-on-github-copilot": {
+      "id": "c72be02c-773b-414a-ba11-f4b22dc04f9c",
+      "slug": "claude-3-5-sonnet-on-github-copilot",
+      "title": "Claude 3.5 Sonnet on GitHub Copilot",
+      "content": "Claude 3.5 Sonnet is now available on GitHub Copilot, offering advanced coding capabilities. It excels in solving real-world GitHub issues and achieving top scores in benchmarks like SWE-bench Verified and HumanEval. The integration allows developers to write production-ready code, debug with inline chat, create tests from implementation, and understand code with contextual explanations.",
+      "summary": "Claude 3.5 Sonnet is now available on GitHub Copilot, offering advanced coding capabilities. It excels in solving real-world GitHub issues and achieving top scores in benchmarks like SWE-bench Verified and HumanEval. The integration allows developers to write production-ready code, debug with inline chat, create tests from implementation, and understand code with contextual explanations.",
+      "source": "Anthropic",
+      "source_url": "https://www.anthropic.com/news/github-copilot",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "claude-code",
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:02.109Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    "new-from-universe-2024-get-the-latest-previews-and-releases": {
+      "id": "e9327935-5748-47bd-8136-3f628b8d83e1",
+      "slug": "new-from-universe-2024-get-the-latest-previews-and-releases",
+      "title": "New from Universe 2024: Get the latest previews and releases",
+      "content": "The article provides an overview of the latest previews and releases from GitHub Universe '24, including updates to GitHub Copilot and the introduction of new AI-native tools.",
+      "summary": "The article provides an overview of the latest previews and releases from GitHub Universe '24, including updates to GitHub Copilot and the introduction of new AI-native tools.",
+      "source": "Github.Blog",
+      "source_url": "https://github.blog/news-insights/product-news/universe-2024-previews-releases/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:01.843Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    "github-embraces-developer-choice-with-multi-model-copilot-new-app-tool-github-spark-and-ai-native-de": {
+      "id": "ec0b95f7-6f1b-4bb5-9bc8-89d69a135aee",
+      "slug": "github-embraces-developer-choice-with-multi-model-copilot-new-app-tool-github-spark-and-ai-native-de",
+      "title": "GitHub Embraces Developer Choice with Multi-Model Copilot, New App Tool GitHub Spark, and AI-Native Developer Experience",
+      "content": "GitHub announced the next evolution of its Copilot-powered developer platform at GitHub Universe '24. The platform now offers multi-model Copilot, enabling developers to choose from industry-leading models like Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's GPT-4o, o1-preview, and o1-mini. Additionally, GitHub introduced GitHub Spark, an AI-native tool for building web apps in natural language, and updated Copilot in VS Code, Copilot Workspace, GitHub Models, and Copilot...",
+      "summary": "GitHub announced the next evolution of its Copilot-powered developer platform at GitHub Universe '24. The platform now offers multi-model Copilot, enabling developers to choose from industry-leading models like Anthropic's Claude 3.5 Sonnet, Google's Gemini 1.5 Pro, and OpenAI's GPT-4o, o1-preview, and o1-mini. Additionally, GitHub introduced GitHub Spark, an AI-native tool for building web apps in natural language, and updated Copilot in VS Code, Copilot Workspace, GitHub Models, and Copilot...",
+      "source": "GitHub",
+      "source_url": "https://github.com/newsroom/press-releases/github-universe-2024",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "claude-code",
+        "gpt-4",
+        "gemini-code-assist",
+        "github-copilot"
+      ],
+      "created_at": "2025-06-17T23:25:01.526Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-10-29T04:00:00.000Z"
+    },
+    "ai-at-wharton-full-report": {
+      "id": "d86eacf0-7991-47be-98b4-2a8844b2ee33",
+      "slug": "ai-at-wharton-full-report",
+      "title": "AI at Wharton: Full Report",
+      "content": "The report discusses the current state of the AI market, noting that Microsoft and Google are seen as leaders in AI. It also touches on the growing trend of General AI (GEN AI).",
+      "summary": "The report discusses the current state of the AI market, noting that Microsoft and Google are seen as leaders in AI. It also touches on the growing trend of General AI (GEN AI).",
+      "source": "Ai.Wharton.Upenn.Edu",
+      "source_url": "https://ai.wharton.upenn.edu/wp-content/uploads/2024/11/AI-Report_Full-Report.pdf",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [],
+      "created_at": "2025-06-17T23:25:03.820Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-28T04:00:00.000Z"
+    },
+    "replit-codesandbox-and-glitch-unveil-enhanced-ai-coding-capabilities": {
+      "id": "abbc957a-f6ec-4487-871c-ea49007c2ad9",
+      "slug": "replit-codesandbox-and-glitch-unveil-enhanced-ai-coding-capabilities",
+      "title": "Replit, CodeSandbox, and Glitch Unveil Enhanced AI Coding Capabilities",
+      "content": "The merged entity of Replit, CodeSandbox, and Glitch has unveiled significant enhancements to their AI coding capabilities. These updates include advanced auto-completion features, improved debugging tools, and enhanced collaboration features. The platforms aim to make coding more efficient and enjoyable for developers of all levels.",
+      "summary": "The merged entity of Replit, CodeSandbox, and Glitch has unveiled significant enhancements to their AI coding capabilities. These updates include advanced auto-completion features, improved debugging tools, and enhanced collaboration features. The platforms aim to make coding more efficient and enjoyable for developers of all levels.",
+      "source": "CNET",
+      "source_url": "https://www.cnet.com/news/replit-codesandbox-glitch-unveil-enhanced-ai-coding-capabilities/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "replit-agent",
+        "glitch",
+        "codesandbox"
+      ],
+      "created_at": "2025-06-17T23:25:03.559Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-20T04:00:00.000Z"
+    },
+    "watch-webinar-introducing-codeium-ai-demo-almtoolbox": {
+      "id": "cd5cf5e2-d932-49e4-88f5-f7d763e8112d",
+      "slug": "watch-webinar-introducing-codeium-ai-demo-almtoolbox",
+      "title": "Watch Webinar: Introducing Codeium AI + Demo - ALMtoolbox",
+      "content": "Codeium hosted a webinar in October 2024 to introduce its AI features and provide a demo. The webinar covered various aspects of generative AI for developers, including autocomplete, chat, and context-aware AI. It also highlighted Codeium's ability to function in on-prem and air-gapped environments.",
+      "summary": "Codeium hosted a webinar in October 2024 to introduce its AI features and provide a demo. The webinar covered various aspects of generative AI for developers, including autocomplete, chat, and context-aware AI. It also highlighted Codeium's ability to function in on-prem and air-gapped environments.",
+      "source": "Almtoolbox",
+      "source_url": "https://www.almtoolbox.com/blog/codeium-ai-webinar-oct-2024/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "codeium-extension"
+      ],
+      "created_at": "2025-06-17T23:25:03.011Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-17T04:00:00.000Z"
+    },
+    "glitch-joins-replit-and-codesandbox-in-ai-coding-platform-consolidation": {
+      "id": "fb40df80-0e6f-4360-84b1-58d3e5a4a0df",
+      "slug": "glitch-joins-replit-and-codesandbox-in-ai-coding-platform-consolidation",
+      "title": "Glitch Joins Replit and CodeSandbox in AI Coding Platform Consolidation",
+      "content": "Glitch, another prominent coding platform, has announced its integration with the newly merged Replit and CodeSandbox. This consolidation aims to create a robust ecosystem for AI-driven coding tools, offering developers a wide range of features and functionalities. The move is seen as a strategic step towards dominating the coding platform market.",
+      "summary": "Glitch, another prominent coding platform, has announced its integration with the newly merged Replit and CodeSandbox. This consolidation aims to create a robust ecosystem for AI-driven coding tools, offering developers a wide range of features and functionalities. The move is seen as a strategic step towards dominating the coding platform market.",
+      "source": "VentureBeat",
+      "source_url": "https://venturebeat.com/2024/10/17/glitch-joins-replit-codesandbox-ai-coding-platform-consolidation/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "replit-agent",
+        "glitch",
+        "codesandbox"
+      ],
+      "created_at": "2025-06-17T23:25:03.357Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-10-17T04:00:00.000Z"
+    },
+    "replit-and-codesandbox-merge-to-create-a-unified-ai-coding-platform": {
+      "id": "ea180cb3-f634-4e53-8c0c-efe8c5353cfb",
+      "slug": "replit-and-codesandbox-merge-to-create-a-unified-ai-coding-platform",
+      "title": "Replit and CodeSandbox Merge to Create a Unified AI Coding Platform",
+      "content": "Replit and CodeSandbox have announced a merger to create a unified AI coding platform. The combined entity aims to leverage the strengths of both platforms to provide a more comprehensive and innovative coding experience. This move is expected to enhance the capabilities of AI-driven coding tools and improve the overall developer experience.",
+      "summary": "Replit and CodeSandbox have announced a merger to create a unified AI coding platform. The combined entity aims to leverage the strengths of both platforms to provide a more comprehensive and innovative coding experience. This move is expected to enhance the capabilities of AI-driven coding tools and improve the overall developer experience.",
+      "source": "TechCrunch",
+      "source_url": "https://www.techcrunch.com/2024/10/15/replit-codesandbox-merge-ai-coding-platform/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "replit-agent",
+        "codesandbox"
+      ],
+      "created_at": "2025-06-17T23:25:03.148Z",
+      "updated_at": "2025-06-30T05:07:05.212Z",
+      "date": "2024-10-15T04:00:00.000Z"
+    },
+    "chatgpt-4o-with-canvas-your-thoughts-and-experience": {
+      "id": "0a481067-23e4-4248-ae67-a943799da88f",
+      "slug": "chatgpt-4o-with-canvas-your-thoughts-and-experience",
+      "title": "ChatGPT-4o with canvas : Your Thoughts and Experience",
+      "content": "Users discussed their experiences with ChatGPT-4o and Canvas, highlighting its features and comfort in creating projects and codes.",
+      "summary": "Users discussed their experiences with ChatGPT-4o and Canvas, highlighting its features and comfort in creating projects and codes.",
+      "source": "Community.Openai",
+      "source_url": "https://community.openai.com/t/chatgpt-4o-with-canvas-your-thoughts-and-experience/966926",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt",
+        "gpt-4"
+      ],
+      "created_at": "2025-06-17T23:25:02.804Z",
+      "updated_at": "2025-06-30T05:07:05.211Z",
+      "date": "2024-10-04T04:00:00.000Z"
+    },
+    "introducing-canvas-a-new-way-to-write-and-code-with-chatgpt": {
+      "id": "f6657a4c-e04e-499a-972a-87fe8a5d112e",
+      "slug": "introducing-canvas-a-new-way-to-write-and-code-with-chatgpt",
+      "title": "Introducing canvas, a new way to write and code with ChatGPT",
+      "content": "OpenAI introduced Canvas, a new interface for working with ChatGPT on writing and coding projects that go beyond simple chat.",
+      "summary": "OpenAI introduced Canvas, a new interface for working with ChatGPT on writing and coding projects that go beyond simple chat.",
+      "source": "Openai",
+      "source_url": "https://openai.com/index/introducing-canvas/",
+      "tags": [
+        "general"
+      ],
+      "tool_mentions": [
+        "chatgpt"
+      ],
+      "created_at": "2025-06-17T23:25:02.342Z",
+      "updated_at": "2025-06-30T05:07:05.213Z",
+      "date": "2024-10-03T04:00:00.000Z"
+    },
+    "openai-launches-chatgpt-canvas-in-beta": {
+      "id": "197bf3f57a0-6b466789-72eb880a",
+      "slug": "openai-launches-chatgpt-canvas-in-beta",
+      "title": "OpenAI Launches ChatGPT Canvas in Beta",
+      "content": "OpenAI introduces ChatGPT Canvas, a new interface for working with ChatGPT on writing and coding projects, featuring side-by-side editing and real-time collaboration.",
+      "summary": "OpenAI introduces ChatGPT Canvas, a new interface for working with ChatGPT on writing and coding projects, featuring side-by-side editing and real-time collaboration....",
+      "source": "OpenAI Blog",
+      "tags": [
+        "launch",
+        "openai",
+        "beta"
+      ],
+      "tool_mentions": [
+        "ChatGPT Canvas"
+      ],
+      "created_at": "2025-06-30T05:11:28.927Z",
+      "updated_at": "2025-06-30T05:11:28.927Z",
+      "date": "2024-10-03T00:00:00.000Z"
+    }
+  },
+  "metadata": {
+    "month": "2024-10",
+    "articleCount": 16,
+    "generatedAt": "2025-08-19T06:02:32.719Z"
+  }
+}

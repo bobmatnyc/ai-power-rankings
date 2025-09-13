@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 // Load environment variables from .env files FIRST
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
 // Load .env.local first (higher priority), then .env
-dotenv.config({ path: '.env.local' });
-dotenv.config({ path: '.env' });
+dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env" });
+
 import { Client } from "pg";
 
 async function testConnection() {
