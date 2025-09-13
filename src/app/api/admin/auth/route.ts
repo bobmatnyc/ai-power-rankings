@@ -23,24 +23,29 @@ export async function POST(request: NextRequest) {
     const hashedInput = hashPassword(password);
 
     if (hashedInput === ADMIN_PASSWORD_HASH) {
-      // Set a secure session token
-      const sessionToken = crypto.randomBytes(32).toString("hex");
+      try {
+        // Set a secure session token
+        const sessionToken = crypto.randomBytes(32).toString("hex");
 
-      const response = NextResponse.json(
-        { success: true, message: "Authentication successful" },
-        { status: 200 }
-      );
+        const response = NextResponse.json(
+          { success: true, message: "Authentication successful" },
+          { status: 200 }
+        );
 
-      // Set a secure HTTP-only cookie for the session
-      response.cookies.set("admin-session", sessionToken, {
-        httpOnly: true,
-        secure: process.env["NODE_ENV"] === "production",
-        sameSite: "strict",
-        maxAge: 60 * 60 * 24, // 24 hours
-        path: "/", // Allow cookie for all paths including /api/admin
-      });
+        // Set a secure HTTP-only cookie for the session
+        response.cookies.set("admin-session", sessionToken, {
+          httpOnly: true,
+          secure: process.env["NODE_ENV"] === "production",
+          sameSite: "lax", // Changed from strict to lax for better compatibility
+          maxAge: 60 * 60 * 24, // 24 hours
+          path: "/", // Allow cookie for all paths including /api/admin
+        });
 
-      return response;
+        return response;
+      } catch (innerError) {
+        console.error("Error setting cookie:", innerError);
+        throw innerError;
+      }
     } else {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
