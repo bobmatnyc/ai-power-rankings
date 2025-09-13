@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
 // Static admin password - CHANGE THIS IN PRODUCTION!
@@ -13,7 +14,16 @@ function hashPassword(password: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { password } = await request.json();
+    // Parse request body
+    let body: { password?: string };
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error("[AUTH] Failed to parse request body:", parseError);
+      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    }
+
+    const { password } = body;
 
     if (!password) {
       return NextResponse.json({ error: "Password is required" }, { status: 400 });
@@ -21,46 +31,61 @@ export async function POST(request: NextRequest) {
 
     // Hash the provided password and compare
     const hashedInput = hashPassword(password);
+    const isValidPassword = hashedInput === ADMIN_PASSWORD_HASH;
 
-    if (hashedInput === ADMIN_PASSWORD_HASH) {
+    if (isValidPassword) {
       try {
-        // Set a secure session token
+        // Generate a secure session token
         const sessionToken = crypto.randomBytes(32).toString("hex");
 
-        const response = NextResponse.json(
-          { success: true, message: "Authentication successful" },
-          { status: 200 }
-        );
-
-        // Set a secure HTTP-only cookie for the session
-        response.cookies.set("admin-session", sessionToken, {
+        // Get the cookies store and set the session cookie
+        // In Next.js 15, cookies can only be set in Server Actions or Route Handlers
+        const cookieStore = await cookies();
+        cookieStore.set("admin-session", sessionToken, {
           httpOnly: true,
           secure: process.env["NODE_ENV"] === "production",
-          sameSite: "lax", // Changed from strict to lax for better compatibility
+          sameSite: "lax",
           maxAge: 60 * 60 * 24, // 24 hours
-          path: "/", // Allow cookie for all paths including /api/admin
+          path: "/",
         });
 
-        return response;
-      } catch (innerError) {
-        console.error("Error setting cookie:", innerError);
-        throw innerError;
+        // Return success response
+        return NextResponse.json(
+          {
+            success: true,
+            message: "Authentication successful",
+          },
+          { status: 200 }
+        );
+      } catch (cookieError) {
+        console.error("[AUTH] Error setting cookie:", cookieError);
+        // Return generic error to avoid exposing internal details
+        return NextResponse.json({ error: "Session creation failed" }, { status: 500 });
       }
     } else {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
   } catch (error) {
-    console.error("Auth error:", error);
+    console.error("[AUTH] Unexpected auth error:", error);
     return NextResponse.json({ error: "Authentication failed" }, { status: 500 });
   }
 }
 
 export async function DELETE() {
-  // Logout endpoint
-  const response = NextResponse.json({ success: true, message: "Logged out" }, { status: 200 });
+  try {
+    // Get the cookies store and delete the session cookie
+    const cookieStore = await cookies();
+    cookieStore.delete("admin-session");
 
-  // Clear the session cookie
-  response.cookies.delete("admin-session");
-
-  return response;
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Logged out successfully",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("[AUTH] Logout error:", error);
+    return NextResponse.json({ error: "Logout failed" }, { status: 500 });
+  }
 }
