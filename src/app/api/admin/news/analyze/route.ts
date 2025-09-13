@@ -321,9 +321,18 @@ Return ONLY a valid JSON object with this EXACT structure:
     }
 
     // Validate and return with more lenient handling
+    const parsedObj = parsed as any;
     const validated = OpenRouterResponseSchema.parse({
-      ...parsed,
-      tool_mentions: (parsed as any).tool_mentions?.filter((tm: any) => tm?.tool) || [],
+      title: parsedObj.title,
+      summary: parsedObj.summary,
+      source: parsedObj.source,
+      url: parsedObj.url,
+      published_date: parsedObj.published_date,
+      tool_mentions: parsedObj.tool_mentions?.filter((tm: any) => tm?.tool) || [],
+      overall_sentiment: parsedObj.overall_sentiment,
+      key_topics: parsedObj.key_topics,
+      importance_score: parsedObj.importance_score,
+      qualitative_metrics: parsedObj.qualitative_metrics,
     });
 
     // Ensure URL is included if it was provided
@@ -380,7 +389,7 @@ async function extractTextFromPdf(base64Content: string): Promise<string> {
 
   try {
     // Dynamic import to avoid issues with server-side rendering
-    const pdfParse = (await import("pdf-parse")).default;
+    const pdfParse = (await import("pdf-parse" as any)).default as any;
 
     const buffer = Buffer.from(base64Content, "base64");
     const data = await pdfParse(buffer);

@@ -2,6 +2,9 @@ import crypto from "node:crypto";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
+// Force Node.js runtime instead of Edge Runtime
+export const runtime = "nodejs";
+
 // Static admin password - CHANGE THIS IN PRODUCTION!
 const ADMIN_PASSWORD_HASH =
   process.env["ADMIN_PASSWORD_HASH"] ||
@@ -14,15 +17,8 @@ function hashPassword(password: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse request body
-    let body: { password?: string };
-    try {
-      body = await request.json();
-    } catch (parseError) {
-      console.error("[AUTH] Failed to parse request body:", parseError);
-      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-    }
-
+    // Parse JSON body
+    const body = await request.json();
     const { password } = body;
 
     if (!password) {
@@ -34,39 +30,32 @@ export async function POST(request: NextRequest) {
     const isValidPassword = hashedInput === ADMIN_PASSWORD_HASH;
 
     if (isValidPassword) {
-      try {
-        // Generate a secure session token
-        const sessionToken = crypto.randomBytes(32).toString("hex");
+      // Generate a secure session token
+      const sessionToken = crypto.randomBytes(32).toString("hex");
 
-        // Get the cookies store and set the session cookie
-        // In Next.js 15, cookies can only be set in Server Actions or Route Handlers
-        const cookieStore = await cookies();
-        cookieStore.set("admin-session", sessionToken, {
-          httpOnly: true,
-          secure: process.env["NODE_ENV"] === "production",
-          sameSite: "lax",
-          maxAge: 60 * 60 * 24, // 24 hours
-          path: "/",
-        });
+      // Get the cookies store and set the session cookie
+      const cookieStore = await cookies();
+      cookieStore.set("admin-session", sessionToken, {
+        httpOnly: true,
+        secure: process.env["NODE_ENV"] === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24, // 24 hours
+        path: "/",
+      });
 
-        // Return success response
-        return NextResponse.json(
-          {
-            success: true,
-            message: "Authentication successful",
-          },
-          { status: 200 }
-        );
-      } catch (cookieError) {
-        console.error("[AUTH] Error setting cookie:", cookieError);
-        // Return generic error to avoid exposing internal details
-        return NextResponse.json({ error: "Session creation failed" }, { status: 500 });
-      }
+      // Return success response
+      return NextResponse.json(
+        {
+          success: true,
+          message: "Authentication successful",
+        },
+        { status: 200 }
+      );
     } else {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
   } catch (error) {
-    console.error("[AUTH] Unexpected auth error:", error);
+    console.error("[AUTH] Error processing request:", error);
     return NextResponse.json({ error: "Authentication failed" }, { status: 500 });
   }
 }

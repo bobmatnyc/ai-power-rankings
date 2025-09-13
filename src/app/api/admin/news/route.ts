@@ -31,7 +31,7 @@ function generateNewsId(title: string): string {
  * - days: number of days for reports (default 30)
  */
 export async function GET(request: NextRequest) {
-  return withAdminAuth(async () => {
+  return withAdminAuth(async (): Promise<NextResponse> => {
     try {
       const { searchParams } = new URL(request.url);
       const action = searchParams.get("action") || "reports";
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
  * - update-metrics: Update news metrics
  */
 export async function POST(request: NextRequest) {
-  return withAdminAuth(async () => {
+  return withAdminAuth(async (): Promise<NextResponse> => {
     try {
       const body = await request.json();
       const { action } = body;
@@ -361,7 +361,7 @@ export async function POST(request: NextRequest) {
  * Delete news article or batch
  */
 export async function DELETE(request: NextRequest) {
-  return withAdminAuth(async () => {
+  return withAdminAuth(async (): Promise<NextResponse> => {
     try {
       const { searchParams } = new URL(request.url);
       const id = searchParams.get("id");

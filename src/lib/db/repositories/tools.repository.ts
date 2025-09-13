@@ -49,7 +49,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
   /**
    * Find tool by slug
    */
-  async findBySlug(slug: string): Promise<ToolData | null> {
+  override async findBySlug(slug: string): Promise<ToolData | null> {
     if (this.useDatabase) {
       return this.findBySlugFromDb(slug);
     }
@@ -142,7 +142,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     return allTools.filter(
       (tool) =>
         tool.name.toLowerCase().includes(lowerQuery) ||
-        tool.description?.toLowerCase().includes(lowerQuery)
+        tool["description"]?.toLowerCase().includes(lowerQuery)
     );
   }
 
@@ -152,28 +152,44 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     const db = getDb();
     if (!db) throw new Error("Database not connected");
 
-    let query = db.select().from(tools);
+    // Build the query with proper typing
+    const baseQuery = db.select().from(tools);
+    let results;
 
-    // Apply ordering
+    // Apply ordering and pagination based on options
     if (options?.orderBy) {
-      const column = tools[options.orderBy as keyof typeof tools] || tools.createdAt;
-      query =
-        options.orderDirection === "desc"
-          ? query.orderBy(desc(column))
-          : query.orderBy(asc(column));
+      // Type-safe column access
+      const columnName = options.orderBy as keyof typeof tools;
+      const column = columnName in tools ? tools[columnName] : tools.createdAt;
+      const orderedQuery = options.orderDirection === "desc"
+        ? baseQuery.orderBy(desc(column as any))
+        : baseQuery.orderBy(asc(column as any));
+      
+      // Apply pagination if needed
+      if (options?.limit && options?.offset) {
+        results = await orderedQuery.limit(options.limit).offset(options.offset);
+      } else if (options?.limit) {
+        results = await orderedQuery.limit(options.limit);
+      } else if (options?.offset) {
+        results = await orderedQuery.offset(options.offset);
+      } else {
+        results = await orderedQuery;
+      }
     } else {
-      query = query.orderBy(desc(tools.createdAt));
+      const orderedQuery = baseQuery.orderBy(desc(tools.createdAt));
+      
+      // Apply pagination if needed
+      if (options?.limit && options?.offset) {
+        results = await orderedQuery.limit(options.limit).offset(options.offset);
+      } else if (options?.limit) {
+        results = await orderedQuery.limit(options.limit);
+      } else if (options?.offset) {
+        results = await orderedQuery.offset(options.offset);
+      } else {
+        results = await orderedQuery;
+      }
     }
 
-    // Apply pagination
-    if (options?.limit) {
-      query = query.limit(options.limit);
-    }
-    if (options?.offset) {
-      query = query.offset(options.offset);
-    }
-
-    const results = await query;
     return this.mapDbToolsToData(results);
   }
 
@@ -183,7 +199,8 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     const results = await db.select().from(tools).where(sql`${tools.data}->>'id' = ${id}`).limit(1);
 
-    return results.length > 0 ? this.mapDbToolToData(results[0]) : null;
+    const firstResult = results[0];
+    return firstResult ? this.mapDbToolToData(firstResult) : null;
   }
 
   private async findBySlugFromDb(slug: string): Promise<ToolData | null> {
@@ -192,7 +209,8 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     const results = await db.select().from(tools).where(eq(tools.slug, slug)).limit(1);
 
-    return results.length > 0 ? this.mapDbToolToData(results[0]) : null;
+    const firstResult = results[0];
+    return firstResult ? this.mapDbToolToData(firstResult) : null;
   }
 
   private async createInDb(data: Partial<ToolData>): Promise<ToolData> {
@@ -211,7 +229,9 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     };
 
     const results = await db.insert(tools).values(newTool).returning();
-    return this.mapDbToolToData(results[0]);
+    const firstResult = results[0];
+    if (!firstResult) throw new Error("Failed to create tool");
+    return this.mapDbToolToData(firstResult);
   }
 
   private async updateInDb(id: string, data: Partial<ToolData>): Promise<ToolData | null> {
@@ -239,14 +259,15 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       .where(sql`${tools.data}->>'id' = ${id}`)
       .returning();
 
-    return results.length > 0 ? this.mapDbToolToData(results[0]) : null;
+    const firstResult = results[0];
+    return firstResult ? this.mapDbToolToData(firstResult) : null;
   }
 
   private async deleteFromDb(id: string): Promise<boolean> {
     const db = getDb();
     if (!db) throw new Error("Database not connected");
 
-    const result = await db.delete(tools).where(sql`${tools.data}->>'id' = ${id}`);
+    await db.delete(tools).where(sql`${tools.data}->>'id' = ${id}`);
 
     return true; // Drizzle doesn't return affected rows for Neon
   }
@@ -257,7 +278,8 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     const result = await db.select({ count: sql<number>`count(*)::int` }).from(tools);
 
-    return result[0].count;
+    const firstResult = result[0];
+    return firstResult ? firstResult.count : 0;
   }
 
   // ============= JSON Methods =============
@@ -327,12 +349,19 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   private async createInJson(toolData: Partial<ToolData>): Promise<ToolData> {
     const data = this.loadJsonData();
+    
+    // Ensure required fields are present
+    if (!toolData.slug || !toolData.name) {
+      throw new Error("slug and name are required");
+    }
+    
     const newTool: ToolData = {
       id: toolData.id || String(Date.now()),
-      slug: toolData.slug!,
-      name: toolData.name!,
+      slug: toolData.slug,
+      name: toolData.name,
       category: toolData.category || "uncategorized",
       status: toolData.status || "active",
+      company_id: toolData.company_id,
       ...toolData,
     };
 
@@ -347,9 +376,17 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     if (index === -1) return null;
 
-    data.tools[index] = { ...data.tools[index], ...updateData };
+    const existingTool = data.tools[index];
+    if (!existingTool) return null;
+    
+    // Ensure all required fields are present
+    const updatedTool: ToolData = { 
+      ...existingTool,
+      ...updateData 
+    };
+    data.tools[index] = updatedTool;
     this.saveJsonData(data);
-    return data.tools[index];
+    return updatedTool;
   }
 
   private async deleteFromJson(id: string): Promise<boolean> {
