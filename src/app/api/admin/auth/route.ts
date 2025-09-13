@@ -4,8 +4,8 @@ import { type NextRequest, NextResponse } from "next/server";
 // Static admin password - CHANGE THIS IN PRODUCTION!
 const ADMIN_PASSWORD_HASH =
   process.env["ADMIN_PASSWORD_HASH"] ||
-  // Default hash for "AIPowerAdmin2025!" - MUST CHANGE IN PRODUCTION
-  "8b4a6f1e9c2d5a3b7e8f9d1c4a6b8e3f5d7a9c2e4b6d8f1a3c5e7b9d2f4a6c8e";
+  // Default hash for "AIPowerRankings2025!" - MUST CHANGE IN PRODUCTION
+  "81eaffa435589268fd13207632546cb3cf57a2e4a72667637de89d247aad6545";
 
 function hashPassword(password: string): string {
   return crypto.createHash("sha256").update(password).digest("hex");

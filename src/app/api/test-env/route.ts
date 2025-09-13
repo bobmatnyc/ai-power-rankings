@@ -26,9 +26,9 @@ export async function GET() {
           const rankingsCount = await db.execute(sql`SELECT COUNT(*) as count FROM rankings`);
 
           dbDetails = {
-            toolsCount: toolsCount.rows[0]?.count || 0,
-            newsCount: newsCount.rows[0]?.count || 0,
-            rankingsCount: rankingsCount.rows[0]?.count || 0,
+            toolsCount: toolsCount.rows[0]?.["count"] || 0,
+            newsCount: newsCount.rows[0]?.["count"] || 0,
+            rankingsCount: rankingsCount.rows[0]?.["count"] || 0,
             databaseHost: databaseUrl.includes("neon.tech") ? "neon" : "unknown",
             isProduction: !!databaseUrl.includes("ep-wispy-fog"),
           };
