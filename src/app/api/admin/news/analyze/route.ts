@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { auth } from "@/auth";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 
 const AnalyzeRequestSchema = z.object({
@@ -451,17 +450,13 @@ export async function POST(request: NextRequest) {
   console.log("[News Analysis] Received analysis request at", new Date().toISOString());
 
   try {
-    // Import auth utilities at the top of the function
-    const { shouldBypassAuth } = await import("@/lib/auth-utils");
-
-    // Skip authentication check for local development
-    if (!shouldBypassAuth()) {
-      const session = await auth();
-      if (!session?.user?.isAdmin) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-    } else {
-      console.log("🔓 Local environment - bypassing auth for news analysis");
+    // Check admin authentication
+    const { isAdminAuthenticated } = await import("@/lib/admin-auth");
+    const isAuthenticated = await isAdminAuthenticated();
+    
+    if (!isAuthenticated) {
+      console.log("[News Analysis] Unauthorized - admin authentication required");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();

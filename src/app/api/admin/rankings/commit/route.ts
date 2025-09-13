@@ -2,7 +2,6 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import { auth } from "@/auth";
 
 interface Tool {
   name: string;
@@ -106,23 +105,15 @@ function generateVersionNumber(versions: RankingVersion[]): string {
 
 export async function POST(request: NextRequest) {
   try {
-    // Import auth utilities at the top of the function
-    const { shouldBypassAuth, getLocalMockSession } = await import("@/lib/auth-utils");
-
-    let userEmail = "admin";
-
-    // Skip authentication check for local development
-    if (!shouldBypassAuth()) {
-      const session = await auth();
-      if (!session?.user?.isAdmin) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-      userEmail = session.user?.email ?? "admin";
-    } else {
-      console.log("🔓 Local environment - bypassing auth for rankings commit");
-      const mockSession = getLocalMockSession();
-      userEmail = mockSession.user.email;
+    // Check admin authentication
+    const { isAdminAuthenticated } = await import("@/lib/admin-auth");
+    const isAuthenticated = await isAdminAuthenticated();
+    
+    if (!isAuthenticated) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    
+    const userEmail = "admin";
 
     const body = (await request.json()) as {
       preview: {
