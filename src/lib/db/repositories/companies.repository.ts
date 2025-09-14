@@ -18,10 +18,10 @@ interface CompanyData {
   founded?: string;
   size?: string;
   headquarters?: string;
-  description?: string | any[];
+  description?: string | Array<{ children?: Array<{ text: string }> }>;
   created_at?: string;
   updated_at?: string;
-  [key: string]: any; // Additional fields from JSON
+  [key: string]: unknown; // Additional fields from JSON
 }
 
 export class CompaniesRepository extends BaseRepository<CompanyData> {
@@ -137,7 +137,7 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
         } else if (Array.isArray(company.description)) {
           // Extract text from rich text format
           descriptionText = company.description
-            .map((block: any) => block.children?.map((child: any) => child.text).join(""))
+            .map((block: { children?: Array<{ text: string }> }) => block.children?.map((child) => child.text).join(""))
             .join(" ");
         }
         if (descriptionText.toLowerCase().includes(lowerQuery)) {
@@ -183,16 +183,34 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
 
     // Build the query with proper typing
     const baseQuery = db.select().from(companies);
-    let results;
+    let results: Company[];
 
     // Apply ordering and pagination based on options
     if (options?.orderBy) {
-      // Type-safe column access
-      const columnName = options.orderBy as keyof typeof companies;
-      const column = columnName in companies ? companies[columnName] : companies.name;
-      const orderedQuery = options.orderDirection === "desc"
-        ? baseQuery.orderBy(desc(column as any))
-        : baseQuery.orderBy(asc(column as any));
+      // Type-safe column access - use proper column reference
+      let orderedQuery;
+      if (options.orderBy === 'name') {
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(companies.name))
+          : baseQuery.orderBy(asc(companies.name));
+      } else if (options.orderBy === 'slug') {
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(companies.slug))
+          : baseQuery.orderBy(asc(companies.slug));
+      } else if (options.orderBy === 'createdAt') {
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(companies.createdAt))
+          : baseQuery.orderBy(asc(companies.createdAt));
+      } else if (options.orderBy === 'updatedAt') {
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(companies.updatedAt))
+          : baseQuery.orderBy(asc(companies.updatedAt));
+      } else {
+        // Default to name if unknown column
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(companies.name))
+          : baseQuery.orderBy(asc(companies.name));
+      }
 
       // Apply pagination if needed
       if (options?.limit && options?.offset) {
@@ -248,9 +266,14 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
 
     const { slug, name, ...rest } = data;
 
+    // Validate required fields
+    if (!slug || !name) {
+      throw new Error("Company slug and name are required for creation");
+    }
+
     const newCompany: NewCompany = {
-      slug: slug!,
-      name: name!,
+      slug: slug,
+      name: name,
       data: { id: data.id, ...rest },
     };
 
@@ -344,7 +367,18 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
       companies.sort((a, b) => {
         const aVal = a[options.orderBy!];
         const bVal = b[options.orderBy!];
-        const comparison = aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+        // Type-safe comparison
+        let comparison = 0;
+        if (typeof aVal === 'string' && typeof bVal === 'string') {
+          comparison = aVal.localeCompare(bVal);
+        } else if (typeof aVal === 'number' && typeof bVal === 'number') {
+          comparison = aVal - bVal;
+        } else if (aVal instanceof Date && bVal instanceof Date) {
+          comparison = aVal.getTime() - bVal.getTime();
+        } else {
+          // Fallback to string comparison
+          comparison = String(aVal).localeCompare(String(bVal));
+        }
         return options.orderDirection === "desc" ? -comparison : comparison;
       });
     }
@@ -433,11 +467,11 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
 
   private mapDbCompanyToData(dbCompany: Company): CompanyData {
     // Ensure data exists and spread it properly
-    const companyData = dbCompany.data as any || {};
+    const companyData = (dbCompany.data as Record<string, unknown>) || {};
 
     return {
       // Use the id from the database record if not in data
-      id: companyData.id || dbCompany.id,
+      id: (companyData.id as string) || dbCompany.id,
       slug: dbCompany.slug,
       name: dbCompany.name,
       // Spread the additional data fields

@@ -266,7 +266,7 @@ export class GoogleSearchConsole {
   }
 
   // Helper methods
-  private calculateMetrics(rows: any[]) {
+  private calculateMetrics(rows: Array<{ clicks: number; impressions: number; ctr: number; position: number }>) {
     if (!rows || rows.length === 0) {
       return { clicks: 0, impressions: 0, ctr: 0, position: 0 };
     }

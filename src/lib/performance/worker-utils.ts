@@ -262,10 +262,10 @@ export async function filterAndSortInWorker(
  * @returns Promise resolving to aggregated data
  */
 export async function aggregateDataInWorker(
-  data: any[],
+  data: unknown[],
   groupBy: string,
   aggregations: Record<string, "sum" | "avg" | "min" | "max" | "count">
-): Promise<Record<string, any>> {
+): Promise<Record<string, unknown>> {
   const pool = getWorkerPool();
   return pool.execute({
     type: "AGGREGATE_DATA",

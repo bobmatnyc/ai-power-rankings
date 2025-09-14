@@ -4,6 +4,51 @@ import { loadCacheWithFallback } from "@/lib/cache/load-cache";
 import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 
+// Type definitions for cached rankings data
+interface CachedRankingItem {
+  tool_id: string;
+  tool_name: string;
+  rank: number;
+  score: number;
+  movement?: {
+    previous_position: number;
+    change: number;
+    direction: string;
+  };
+  factor_scores: {
+    agenticCapability?: number;
+    innovation?: number;
+    technicalPerformance?: number;
+    developerAdoption?: number;
+    marketTraction?: number;
+    businessSentiment?: number;
+    developmentVelocity?: number;
+    platformResilience?: number;
+    technicalCapability?: number;
+    communitySentiment?: number;
+  };
+  sentiment_analysis?: {
+    rawSentiment: number;
+    adjustedSentiment: number;
+    newsImpact: number;
+    notes: string;
+  };
+  algorithm_version: string;
+  position: number;
+}
+
+interface CachedRankingsData {
+  period: string;
+  date: string;
+  algorithm_version: string;
+  algorithm_name: string;
+  rankings: CachedRankingItem[];
+  _cached?: boolean;
+  _cachedAt?: string;
+  _cacheReason?: string;
+  _cacheSource?: string;
+}
+
 export async function GET(): Promise<NextResponse> {
   try {
     // Check if we should use cache-first approach
@@ -16,12 +61,12 @@ export async function GET(): Promise<NextResponse> {
     if (useCacheFirst) {
       loggers.ranking.debug("Using cache-first approach for rankings");
 
-      const cachedRankingsData = await loadCacheWithFallback("rankings");
+      const cachedRankingsData = await loadCacheWithFallback("rankings") as CachedRankingsData;
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
       // Return the cached data with metadata
-      const cachedResponse = {
-        ...(cachedRankingsData as any),
+      const cachedResponse: CachedRankingsData = {
+        ...cachedRankingsData,
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Cache-first approach (database stability mode)",
@@ -42,11 +87,11 @@ export async function GET(): Promise<NextResponse> {
     if (!currentPeriod) {
       loggers.ranking.warn("No current ranking period set, falling back to cache");
 
-      const cachedRankingsData = await loadCacheWithFallback("rankings");
+      const cachedRankingsData = await loadCacheWithFallback("rankings") as CachedRankingsData;
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
-      const cachedResponse = {
-        ...(cachedRankingsData as any),
+      const cachedResponse: CachedRankingsData = {
+        ...cachedRankingsData,
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "No current ranking period",
@@ -62,11 +107,11 @@ export async function GET(): Promise<NextResponse> {
     if (!periodData || !periodData.rankings || periodData.rankings.length === 0) {
       loggers.ranking.warn("No rankings available for current period, falling back to cache");
 
-      const cachedRankingsData = await loadCacheWithFallback("rankings");
+      const cachedRankingsData = await loadCacheWithFallback("rankings") as CachedRankingsData;
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
-      const cachedResponse = {
-        ...(cachedRankingsData as any),
+      const cachedResponse: CachedRankingsData = {
+        ...cachedRankingsData,
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "No rankings data available",
@@ -183,11 +228,11 @@ export async function GET(): Promise<NextResponse> {
 
     // Fall back to cached data on error
     try {
-      const cachedRankingsData = await loadCacheWithFallback("rankings");
+      const cachedRankingsData = await loadCacheWithFallback("rankings") as CachedRankingsData;
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
-      const cachedResponse = {
-        ...(cachedRankingsData as any),
+      const cachedResponse: CachedRankingsData = {
+        ...cachedRankingsData,
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Database error fallback",

@@ -803,7 +803,7 @@ export default function UnifiedAdminDashboard() {
                           </tr>
                         </thead>
                         <tbody>
-                          {rankingPreview.toolImpacts.map((impact: any) => (
+                          {rankingPreview.toolImpacts.map((impact) => (
                             <tr
                               key={impact.tool}
                               className={`border-b ${impact.mentioned ? "bg-blue-50" : ""}`}

@@ -44,7 +44,7 @@ export async function GET(): Promise<NextResponse> {
             },
             links: {
               website: tool.info.website,
-              github: (tool.info.technical as any)?.github_repo,
+              github: (tool.info.technical as { github_repo?: string })?.github_repo,
             },
             technical: tool.info.technical || {},
             business: tool.info.business || {},

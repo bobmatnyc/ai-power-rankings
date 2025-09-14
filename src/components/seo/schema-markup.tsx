@@ -11,7 +11,7 @@ export function SchemaMarkup({ schema }: SchemaMarkupProps) {
     <>
       {schemas.map((s, index) => (
         <script
-          key={`schema-${(s as any)["@type"] || index}`}
+          key={`schema-${(s as { "@type"?: string })["@type"] || index}`}
           type="application/ld+json"
           // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD schema scripts require innerHTML for SEO
           dangerouslySetInnerHTML={{

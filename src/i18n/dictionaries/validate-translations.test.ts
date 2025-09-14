@@ -96,8 +96,14 @@ describe("Translation Files Validation", () => {
 
         // Check critical paths specifically
         criticalPaths.forEach((pathArray) => {
-          const value = pathArray.reduce<unknown>((obj, key) => (obj as any)?.[key], langDict);
-          const enValue = pathArray.reduce<unknown>((obj, key) => (obj as any)?.[key], enDict);
+          const value = pathArray.reduce<unknown>((obj, key) => {
+            const objRecord = obj as Record<string, unknown>;
+            return objRecord?.[key];
+          }, langDict);
+          const enValue = pathArray.reduce<unknown>((obj, key) => {
+            const objRecord = obj as Record<string, unknown>;
+            return objRecord?.[key];
+          }, enDict);
 
           if (value && enValue && value === enValue) {
             console.error(`\n❌ Critical translation missing in ${langFile}:`);

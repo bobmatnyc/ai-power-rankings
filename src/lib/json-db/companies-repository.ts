@@ -116,8 +116,8 @@ export class CompaniesRepository extends BaseRepository<CompaniesData> {
           descriptionText = company.description;
         } else if (Array.isArray(company.description)) {
           // Extract text from rich text format
-          descriptionText = (company.description as any[])
-            .map((block: any) => block.children?.map((child: any) => child.text).join(""))
+          descriptionText = (company.description as Array<{ children?: Array<{ text: string }> }>)
+            .map((block) => block.children?.map((child) => child.text).join(""))
             .join(" ");
         }
         if (descriptionText.toLowerCase().includes(searchTerm)) {

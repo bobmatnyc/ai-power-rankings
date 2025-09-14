@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DOMPurify from "dompurify";
 
 interface NewsArticle {
   id: string;
@@ -30,9 +31,16 @@ interface NewsArticle {
   importance_score?: number;
 }
 
-// Simple markdown to HTML converter for preview
+// Safe markdown to HTML converter for preview
 function markdownToHtml(markdown: string): string {
   let html = markdown;
+
+  // Escape HTML first to prevent XSS
+  html = html.replace(/&/g, '&amp;')
+             .replace(/</g, '&lt;')
+             .replace(/>/g, '&gt;')
+             .replace(/"/g, '&quot;')
+             .replace(/'/g, '&#39;');
 
   // Headers
   html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
@@ -47,8 +55,11 @@ function markdownToHtml(markdown: string): string {
   html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
   html = html.replace(/_(.+?)_/g, '<em>$1</em>');
 
-  // Links
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  // Links - unescape the URL part
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, url) => {
+    const unescapedUrl = url.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return `<a href="${unescapedUrl}" target="_blank" rel="noopener">${text}</a>`;
+  });
 
   // Line breaks
   html = html.replace(/\n\n/g, '</p><p>');
@@ -58,9 +69,24 @@ function markdownToHtml(markdown: string): string {
   html = html.replace(/^\* (.+)$/gim, '<li>$1</li>');
   html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
 
-  // Code blocks
-  html = html.replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>');
-  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Code blocks - unescape code content
+  html = html.replace(/```([^`]+)```/g, (_match, code) => {
+    const unescapedCode = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return `<pre><code>${unescapedCode}</code></pre>`;
+  });
+  html = html.replace(/`([^`]+)`/g, (_match, code) => {
+    const unescapedCode = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return `<code>${unescapedCode}</code>`;
+  });
+
+  // Sanitize the final HTML
+  if (typeof window !== 'undefined') {
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'ul', 'ol', 'li', 'strong', 'em', 'code', 'pre', 'blockquote', 'br'],
+      ALLOWED_ATTR: ['href', 'target', 'rel'],
+      ALLOW_DATA_ATTR: false
+    });
+  }
 
   return html;
 }

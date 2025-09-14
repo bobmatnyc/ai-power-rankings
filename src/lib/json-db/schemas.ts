@@ -47,7 +47,7 @@ export interface Tool {
         note?: string;
         achievement?: string;
       };
-      [key: string]: any;
+      [key: string]: number | string | { [k: string]: number | string | undefined } | undefined;
     };
     company?: {
       id: string;
@@ -241,7 +241,13 @@ export interface IngestionReport {
     name: string;
     slug: string;
   }>;
-  ranking_changes_preview?: any;
+  ranking_changes_preview?: Array<{
+    tool_id: string;
+    tool_name: string;
+    old_rank?: number;
+    new_rank?: number;
+    score_change?: number;
+  }>;
   file_size?: number;
   processing_duration?: number;
   created_at: string;

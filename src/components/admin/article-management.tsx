@@ -40,8 +40,13 @@ interface Article {
   ingestionDate: string;
   category?: string;
   tags?: string[];
-  toolMentions?: any[];
-  rankingsSnapshot?: any;
+  toolMentions?: Array<{
+    tool: string;
+    relevance: number;
+    sentiment: number;
+    context: string;
+  }>;
+  rankingsSnapshot?: Record<string, unknown>;
   status: string;
 }
 
@@ -151,8 +156,9 @@ export function ArticleManagement() {
       setPreview(data);
       setWorkflowStep("preview");
       setSuccess("Preview generated successfully!");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -196,8 +202,9 @@ export function ArticleManagement() {
         setActiveTab("manage");
         resetAddForm();
       }, 2000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -224,8 +231,9 @@ export function ArticleManagement() {
       setSuccess("Article text updated successfully! (Rankings not changed)");
       setEditingArticle(null);
       await loadArticles();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -247,8 +255,9 @@ export function ArticleManagement() {
 
       setSuccess("Rankings recalculated successfully!");
       await loadArticles();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -274,8 +283,9 @@ export function ArticleManagement() {
 
       setSuccess("Article deleted and rankings rolled back successfully!");
       await loadArticles();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -389,7 +399,7 @@ export function ArticleManagement() {
                   {/* Input Method Selection */}
                   <div className="space-y-4">
                     <Label>Choose Input Method</Label>
-                    <RadioGroup value={ingestionType} onValueChange={(v) => setIngestionType(v as any)}>
+                    <RadioGroup value={ingestionType} onValueChange={(v) => setIngestionType(v as "url" | "text" | "file")}>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="url" id="url" />
                         <Label htmlFor="url" className="flex items-center gap-2 cursor-pointer">

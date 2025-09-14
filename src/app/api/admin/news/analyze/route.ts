@@ -5,6 +5,54 @@ import { getNewsRepo } from "@/lib/json-db";
 import type { NewsArticle } from "@/lib/json-db/schemas";
 import crypto from "node:crypto";
 
+// Type definitions for OpenRouter API
+interface OpenRouterMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
+interface OpenRouterRequest {
+  model: string;
+  messages: OpenRouterMessage[];
+  temperature: number;
+  max_tokens: number;
+}
+
+interface OpenRouterChoice {
+  message: {
+    content: string;
+    role: string;
+  };
+  index: number;
+  finish_reason: string;
+}
+
+interface OpenRouterResponse {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: OpenRouterChoice[];
+  usage?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+}
+
+interface OpenRouterError {
+  error: {
+    message: string;
+    type: string;
+    code?: string;
+  };
+}
+
+interface ExtendedError extends Error {
+  statusCode?: number;
+  troubleshooting?: string[];
+}
+
 const AnalyzeRequestSchema = z.object({
   input: z.string().min(1),
   type: z.enum(["url", "text", "file"]),
@@ -150,7 +198,7 @@ Return ONLY a valid JSON object with this EXACT structure:
   }
 }`;
 
-  const requestBody = {
+  const requestBody: OpenRouterRequest = {
     model: "anthropic/claude-3-haiku",
     messages: [
       { role: "system", content: systemPrompt },
@@ -233,7 +281,7 @@ Return ONLY a valid JSON object with this EXACT structure:
 
       // Parse error response if it's JSON
       try {
-        const errorJson = JSON.parse(errorText);
+        const errorJson = JSON.parse(errorText) as OpenRouterError;
         if (errorJson.error?.message) {
           errorMessage = `OpenRouter API error: ${errorJson.error.message}`;
 
@@ -283,10 +331,7 @@ Return ONLY a valid JSON object with this EXACT structure:
         console.error("[News Analysis] Troubleshooting steps:", troubleshootingSteps);
       }
 
-      const error = new Error(errorMessage) as Error & {
-        statusCode?: number;
-        troubleshooting?: string[];
-      };
+      const error = new Error(errorMessage) as ExtendedError;
       error.statusCode = response.status;
       error.troubleshooting = troubleshootingSteps;
       throw error;
@@ -307,7 +352,8 @@ Return ONLY a valid JSON object with this EXACT structure:
       throw new Error("Invalid JSON response from OpenRouter API");
     }
 
-    const content = (data as any).choices?.[0]?.message?.content;
+    const openRouterData = data as OpenRouterResponse;
+    const content = openRouterData.choices?.[0]?.message?.content;
 
     if (!content) {
       throw new Error("No response from OpenRouter");
@@ -325,18 +371,22 @@ Return ONLY a valid JSON object with this EXACT structure:
     }
 
     // Validate and return with more lenient handling
-    const parsedObj = parsed as any;
+    const parsedObj = parsed as Record<string, unknown>;
     const validated = OpenRouterResponseSchema.parse({
-      title: parsedObj.title,
-      summary: parsedObj.summary,
-      source: parsedObj.source,
-      url: parsedObj.url,
-      published_date: parsedObj.published_date,
-      tool_mentions: parsedObj.tool_mentions?.filter((tm: any) => tm?.tool) || [],
-      overall_sentiment: parsedObj.overall_sentiment,
-      key_topics: parsedObj.key_topics,
-      importance_score: parsedObj.importance_score,
-      qualitative_metrics: parsedObj.qualitative_metrics,
+      title: parsedObj["title"],
+      summary: parsedObj["summary"],
+      source: parsedObj["source"],
+      url: parsedObj["url"],
+      published_date: parsedObj["published_date"],
+      tool_mentions: Array.isArray(parsedObj["tool_mentions"])
+        ? (parsedObj["tool_mentions"] as Array<unknown>).filter((tm): tm is { tool: string } =>
+            typeof tm === 'object' && tm !== null && 'tool' in tm && typeof (tm as Record<string, unknown>)["tool"] === 'string'
+          )
+        : [],
+      overall_sentiment: parsedObj["overall_sentiment"],
+      key_topics: parsedObj["key_topics"],
+      importance_score: parsedObj["importance_score"],
+      qualitative_metrics: parsedObj["qualitative_metrics"],
     });
 
     // Ensure URL is included if it was provided
@@ -393,7 +443,8 @@ async function extractTextFromPdf(base64Content: string): Promise<string> {
 
   try {
     // Dynamic import to avoid issues with server-side rendering
-    const pdfParse = (await import("pdf-parse" as any)).default as any;
+    // @ts-ignore - pdf-parse doesn't have proper TypeScript definitions
+    const pdfParse = (await import("pdf-parse")).default;
 
     const buffer = Buffer.from(base64Content, "base64");
     const data = await pdfParse(buffer);
@@ -579,10 +630,7 @@ export async function POST(request: NextRequest) {
       errorMessage = error.message;
 
       // Set appropriate status codes for different error types
-      const errorWithDetails = error as Error & {
-        statusCode?: number;
-        troubleshooting?: string[];
-      };
+      const errorWithDetails = error as ExtendedError;
       if (errorWithDetails.statusCode) {
         statusCode = errorWithDetails.statusCode;
       } else if (

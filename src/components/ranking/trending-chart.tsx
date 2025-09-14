@@ -62,7 +62,6 @@ export interface TrendingChartProps {
   className?: string;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: Recharts components have complex prop types
 interface ChartComponents {
   // biome-ignore lint/suspicious/noExplicitAny: External library type
   LineChart: React.ComponentType<any>;

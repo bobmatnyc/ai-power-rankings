@@ -6,6 +6,8 @@
 import { z } from "zod";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import type { Article, DryRunResult } from "@/lib/db/article-schema";
+import type { Ranking } from "@/lib/db/schema";
+import type { RankingEntry } from "@/lib/json-db/schemas";
 
 // Validation schemas
 export const ArticleIngestionSchema = z.object({
@@ -342,13 +344,20 @@ export class RankingsCalculator {
    */
   calculateRankingChanges(
     analysis: AIAnalysisResult,
-    currentRankings: any[] // You'll need to fetch current rankings from DB
+    currentRankings: Ranking[] // Current rankings from DB
   ): DryRunResult["predictedChanges"] {
     const changes: DryRunResult["predictedChanges"] = [];
 
     // Process each tool mention
     for (const mention of analysis.tool_mentions) {
-      const currentTool = currentRankings.find((r) => r.tool_name === mention.tool);
+      // Extract ranking entries from the JSONB data field
+      const rankingData = currentRankings[0]?.data as RankingEntry[] | undefined;
+
+      if (!rankingData) {
+        continue;
+      }
+
+      const currentTool = rankingData.find((r) => r.tool_name === mention.tool);
 
       if (currentTool) {
         // Calculate impact based on sentiment and relevance
@@ -361,11 +370,14 @@ export class RankingsCalculator {
         // Estimate rank change (would need full recalculation in practice)
         const rankChange = Math.round(scoreChange * 10); // Simplified
 
+        // Use rank or position field (rank is the newer field)
+        const currentRank = currentTool.rank ?? currentTool.position ?? 0;
+
         changes.push({
-          toolId: currentTool.id,
+          toolId: currentTool.tool_id,
           toolName: mention.tool,
-          currentRank: currentTool.rank,
-          predictedRank: Math.max(1, currentTool.rank - rankChange),
+          currentRank: currentRank,
+          predictedRank: Math.max(1, currentRank - rankChange),
           rankChange: rankChange,
           currentScore: currentTool.score,
           predictedScore: newScore,
@@ -502,7 +514,7 @@ export class ArticleIngestionService {
 
       // Step 3: Get current state for comparison
       // TODO: Fetch from database
-      const currentRankings: any[] = []; // Placeholder
+      const currentRankings: Ranking[] = []; // Placeholder - should be fetched from DB
       const existingTools: string[] = []; // Placeholder
       const existingCompanies: string[] = []; // Placeholder
 
@@ -534,7 +546,7 @@ export class ArticleIngestionService {
             tags: analysis.tags,
             category: analysis.category,
             importanceScore: analysis.importance_score,
-            sentimentScore: analysis.overall_sentiment,
+            sentimentScore: analysis.overall_sentiment.toString(),
             toolMentions: analysis.tool_mentions,
             companyMentions: analysis.company_mentions,
             author: input.metadata?.author,

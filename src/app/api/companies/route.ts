@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { cachedJsonResponse } from "@/lib/api-cache";
 import { companiesRepository } from "@/lib/db/repositories/companies.repository";
 import { loggers } from "@/lib/logger";
+import type { Company } from "@/lib/json-db/schemas";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
     const size = searchParams.get("size");
 
-    let companies: any[];
+    let companies: Company[];
 
     // Apply filters
     if (search) {
@@ -59,22 +60,22 @@ export async function POST(request: NextRequest) {
   try {
     // TODO: Add authentication check here
 
-    const body = await request.json();
+    const body = await request.json() as Partial<Company>;
 
     // Generate slug if not provided
     const slug =
       body.slug ||
       body.name
-        .toLowerCase()
+        ?.toLowerCase()
         .replace(/[^a-z0-9\s-]/g, "")
         .replace(/\s+/g, "-")
         .replace(/-+/g, "-")
-        .trim();
+        .trim() || "";
 
-    const company = {
+    const company: Company = {
       id: body.id || `company-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       slug,
-      name: body.name,
+      name: body.name || "",
       description: body.description,
       website: body.website,
       founded: body.founded,

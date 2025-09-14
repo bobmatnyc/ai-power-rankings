@@ -3,6 +3,7 @@ import { cachedJsonResponse } from "@/lib/api-cache";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 import { findToolByText } from "@/lib/tool-matcher";
+import type { Tool } from "@/lib/json-db/schemas";
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
 
         // Try to extract tool from title using the term mapping
         const tools = await toolsRepo.getAll();
-        let matchingTool = null;
+        let matchingTool: Tool | null = null;
 
         // First, try to find tool using the term mapping
         const matchedSlug = findToolByText(article.title);
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
             (t) =>
               t.name.toLowerCase() === firstToolName?.toLowerCase() ||
               t.slug === firstToolName?.toLowerCase().replace(/\s+/g, "-")
-          );
+          ) || null;
 
           if (!matchingTool) {
             // Use the tool mention as the name even if we don't find a match
@@ -64,9 +65,10 @@ export async function GET(request: NextRequest) {
           toolCategory = matchingTool.category || "ai-coding-tool";
           toolWebsite = matchingTool.info?.website || "";
           primaryToolId = matchingTool.slug || matchingTool.id;
-        } else if ((article as any).tool_ids && (article as any).tool_ids.length > 0) {
+        } else if ('tool_ids' in article && Array.isArray((article as Record<string, unknown>).tool_ids) && ((article as Record<string, unknown>).tool_ids as string[]).length > 0) {
           // Fallback to old format with tool_ids
-          const firstToolId = (article as any).tool_ids[0];
+          const toolIds = (article as Record<string, unknown>).tool_ids as string[];
+          const firstToolId = toolIds[0];
           const tool = await toolsRepo.getById(firstToolId);
 
           if (tool) {
@@ -77,9 +79,9 @@ export async function GET(request: NextRequest) {
           }
 
           // If multiple tools, get all names
-          if ((article as any).tool_ids.length > 1) {
+          if (toolIds.length > 1) {
             const tools = await Promise.all(
-              (article as any).tool_ids.map(async (id: string) => {
+              toolIds.map(async (id) => {
                 const t = await toolsRepo.getById(id);
                 return t?.name || id;
               })
@@ -218,7 +220,7 @@ export async function GET(request: NextRequest) {
         };
 
         // Enhanced importance scoring based on content
-        let importance = (article as any).importance_score || 5;
+        let importance = article.importance_score || 5;
         const titleLower = article.title.toLowerCase();
 
         // Boost importance for high-impact keywords
@@ -249,12 +251,12 @@ export async function GET(request: NextRequest) {
           tool_name: toolNames,
           tool_category: toolCategory,
           tool_website: toolWebsite,
-          event_date: article.published_date || (article as any).published_at || article.created_at,
+          event_date: article.published_date || ('published_at' in article ? (article as Record<string, unknown>).published_at as string : undefined) || article.created_at,
           event_type: eventType,
           title: article.title,
           description: article.summary || article.content,
           source_url: article.source_url,
-          source_name: article.source || (article as any).source_name || "AI News",
+          source_name: article.source || ('source_name' in article ? (article as Record<string, unknown>).source_name as string : undefined) || "AI News",
           metrics: {
             importance_score: importance,
           },

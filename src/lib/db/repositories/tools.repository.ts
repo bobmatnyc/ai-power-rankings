@@ -17,7 +17,7 @@ interface ToolData {
   category: string;
   status: string;
   company_id?: string;
-  [key: string]: any; // Additional fields from JSON
+  [key: string]: unknown; // Additional fields from JSON
 }
 
 export class ToolsRepository extends BaseRepository<ToolData> {
@@ -140,9 +140,13 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     const allTools = await this.findAllFromJson();
     const lowerQuery = query.toLowerCase();
     return allTools.filter(
-      (tool) =>
-        tool.name.toLowerCase().includes(lowerQuery) ||
-        tool["description"]?.toLowerCase().includes(lowerQuery)
+      (tool) => {
+        const hasNameMatch = tool.name.toLowerCase().includes(lowerQuery);
+        // Use bracket notation for index signature access
+        const description = tool["description"] as string | undefined;
+        const hasDescriptionMatch = description?.toLowerCase().includes(lowerQuery) || false;
+        return hasNameMatch || hasDescriptionMatch;
+      }
     );
   }
 
@@ -154,16 +158,42 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     // Build the query with proper typing
     const baseQuery = db.select().from(tools);
-    let results;
+    let results: Tool[];
 
     // Apply ordering and pagination based on options
     if (options?.orderBy) {
-      // Type-safe column access
-      const columnName = options.orderBy as keyof typeof tools;
-      const column = columnName in tools ? tools[columnName] : tools.createdAt;
-      const orderedQuery = options.orderDirection === "desc"
-        ? baseQuery.orderBy(desc(column as any))
-        : baseQuery.orderBy(asc(column as any));
+      // Type-safe column access - use proper column reference
+      let orderedQuery;
+      if (options.orderBy === 'name') {
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.name))
+          : baseQuery.orderBy(asc(tools.name));
+      } else if (options.orderBy === 'slug') {
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.slug))
+          : baseQuery.orderBy(asc(tools.slug));
+      } else if (options.orderBy === 'category') {
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.category))
+          : baseQuery.orderBy(asc(tools.category));
+      } else if (options.orderBy === 'status') {
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.status))
+          : baseQuery.orderBy(asc(tools.status));
+      } else if (options.orderBy === 'createdAt') {
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.createdAt))
+          : baseQuery.orderBy(asc(tools.createdAt));
+      } else if (options.orderBy === 'updatedAt') {
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.updatedAt))
+          : baseQuery.orderBy(asc(tools.updatedAt));
+      } else {
+        // Default to createdAt if unknown column
+        orderedQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.createdAt))
+          : baseQuery.orderBy(asc(tools.createdAt));
+      }
       
       // Apply pagination if needed
       if (options?.limit && options?.offset) {
@@ -219,9 +249,14 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     const { slug, name, category, status, company_id, ...rest } = data;
 
+    // Validate required fields
+    if (!slug || !name) {
+      throw new Error("Tool slug and name are required for creation");
+    }
+
     const newTool: NewTool = {
-      slug: slug!,
-      name: name!,
+      slug: slug,
+      name: name,
       category: category || "uncategorized",
       status: status || "active",
       companyId: company_id,
@@ -321,7 +356,18 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       tools.sort((a, b) => {
         const aVal = a[options.orderBy!];
         const bVal = b[options.orderBy!];
-        const comparison = aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+        // Type-safe comparison
+        let comparison = 0;
+        if (typeof aVal === 'string' && typeof bVal === 'string') {
+          comparison = aVal.localeCompare(bVal);
+        } else if (typeof aVal === 'number' && typeof bVal === 'number') {
+          comparison = aVal - bVal;
+        } else if (aVal instanceof Date && bVal instanceof Date) {
+          comparison = aVal.getTime() - bVal.getTime();
+        } else {
+          // Fallback to string comparison
+          comparison = String(aVal).localeCompare(String(bVal));
+        }
         return options.orderDirection === "desc" ? -comparison : comparison;
       });
     }
@@ -409,14 +455,15 @@ export class ToolsRepository extends BaseRepository<ToolData> {
   // ============= Helper Methods =============
 
   private mapDbToolToData(dbTool: Tool): ToolData {
+    const toolData = dbTool.data as Record<string, unknown>;
     return {
-      id: (dbTool.data as any).id || dbTool.id,
+      id: (toolData["id"] as string) || dbTool.id,
       slug: dbTool.slug,
       name: dbTool.name,
       category: dbTool.category,
       status: dbTool.status,
       company_id: dbTool.companyId || undefined,
-      ...(dbTool.data as any),
+      ...toolData,
     };
   }
 

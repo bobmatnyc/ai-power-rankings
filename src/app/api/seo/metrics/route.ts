@@ -146,7 +146,7 @@ export async function GET() {
       fetchCoreWebVitalsData(),
     ]);
 
-    const seoScore = (searchConsoleData as any).seoScore || 75;
+    const seoScore = (searchConsoleData as { seoScore?: number }).seoScore || 75;
 
     const metrics = {
       ...searchConsoleData,

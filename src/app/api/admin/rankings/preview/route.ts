@@ -2,12 +2,15 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
 
+interface ToolMention {
+  tool: string;
+  sentiment: number;
+  context?: string;
+}
+
 interface NewsAnalysis {
   title: string;
-  tool_mentions: Array<{
-    tool: string;
-    sentiment: number;
-  }>;
+  tool_mentions: ToolMention[];
   overall_sentiment: number;
   importance_score: number;
   qualitative_metrics?: {
@@ -114,6 +117,9 @@ function calculateNewRankings(
 
     if (toolIndex !== -1) {
       const currentTool = updated[toolIndex];
+      if (!currentTool) {
+        return; // Skip if tool not found
+      }
       const originalScore = currentTool.score;
 
       // Calculate boost based on sentiment and importance
@@ -142,15 +148,17 @@ function calculateNewRankings(
         marketBoost;
 
       // Update score
-      updated[toolIndex].score += totalBoost;
+      const updatedTool = updated[toolIndex];
+      if (updatedTool) {
+        updatedTool.score += totalBoost;
 
-      // Track impact for this tool
-      toolImpacts.push({
-        tool: currentTool.tool,
-        currentScore: originalScore,
-        proposedScore: updated[toolIndex].score,
-        scoreChange: totalBoost,
-        currentRank: current.findIndex((c) => c.tool === currentTool.tool) + 1,
+        // Track impact for this tool
+        toolImpacts.push({
+          tool: currentTool.tool,
+          currentScore: originalScore,
+          proposedScore: updatedTool.score,
+          scoreChange: totalBoost,
+          currentRank: current.findIndex((c) => c.tool === currentTool.tool) + 1,
         proposedRank: 0, // Will be calculated after re-sorting
         rankChange: 0, // Will be calculated after re-sorting
         impacts: {
@@ -162,9 +170,10 @@ function calculateNewRankings(
           market: marketBoost,
           total: totalBoost,
         },
-        mentioned: true,
-        context: (mention as any).context || undefined,
-      });
+          mentioned: true,
+          context: mention.context || undefined,
+        });
+      }
     }
   });
 
@@ -179,8 +188,11 @@ function calculateNewRankings(
     // Update toolImpacts with new rankings
     const impactIndex = toolImpacts.findIndex((ti) => ti.tool === item.tool);
     if (impactIndex !== -1) {
-      toolImpacts[impactIndex].proposedRank = newRank;
-      toolImpacts[impactIndex].rankChange = oldRank - newRank;
+      const impact = toolImpacts[impactIndex];
+      if (impact) {
+        impact.proposedRank = newRank;
+        impact.rankChange = oldRank - newRank;
+      }
     } else if (oldRank !== newRank) {
       // Tool not mentioned but rank changed due to others moving
       toolImpacts.push({

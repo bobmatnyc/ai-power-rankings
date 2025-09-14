@@ -3,6 +3,7 @@ import { CacheManager } from "@/lib/cache/cache-manager";
 import { loadCacheWithFallback } from "@/lib/cache/load-cache";
 import { getCompaniesRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
+import type { Tool } from "@/lib/json-db/schemas";
 
 export async function GET(): Promise<NextResponse> {
   try {
@@ -20,7 +21,7 @@ export async function GET(): Promise<NextResponse> {
       const cacheInfo = await new CacheManager().getInfo("tools");
 
       const apiResponse = NextResponse.json({
-        tools: (cachedToolsData as any).tools,
+        tools: cachedToolsData as Tool[],
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Cache-first approach (database stability mode)",
@@ -89,7 +90,7 @@ export async function GET(): Promise<NextResponse> {
       const cacheInfo = await new CacheManager().getInfo("tools");
 
       const apiResponse = NextResponse.json({
-        tools: (cachedToolsData as any).tools,
+        tools: cachedToolsData as Tool[],
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Database error fallback",

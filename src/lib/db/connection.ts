@@ -81,7 +81,10 @@ export async function testConnection(): Promise<boolean> {
   try {
     // Simple query to test connection
     if (!sql) {
-      sql = neon(DATABASE_URL!);
+      if (!DATABASE_URL) {
+        throw new Error("DATABASE_URL environment variable is not defined");
+      }
+      sql = neon(DATABASE_URL);
     }
     const result = await sql`SELECT NOW() as current_time`;
     console.log("✅ Database connection test successful:", result[0]);

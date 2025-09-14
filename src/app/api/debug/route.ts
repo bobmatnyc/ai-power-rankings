@@ -167,7 +167,7 @@ export async function GET(request: NextRequest) {
         const recentPeriods = periods.slice(0, 3); // Last 3 periods
 
         const trendingData = [];
-        const periodRankings = new Map();
+        const periodRankings = new Map<string, RankingEntry[]>();
 
         // Load rankings for recent periods
         for (const period of recentPeriods) {
@@ -183,16 +183,16 @@ export async function GET(request: NextRequest) {
           const currentRankings = periodRankings.get(currentPeriod) || [];
           const previousRankings = periodRankings.get(previousPeriod) || [];
 
-          const previousMap = new Map(previousRankings.map((r: RankingEntry) => [r.tool_id, r]));
+          const previousMap = new Map(previousRankings.map((r) => [r.tool_id, r]));
 
           for (const current of currentRankings) {
             const previous = previousMap.get(current.tool_id);
 
             if (previous) {
-              const currentPos = current.position ?? (current as any).rank ?? 0;
-              const previousPos = (previous as any).position ?? (previous as any).rank ?? 0;
+              const currentPos = current.position ?? current.rank ?? 0;
+              const previousPos = previous.position ?? previous.rank ?? 0;
               const positionChange = previousPos - currentPos;
-              const scoreChange = (current as any).score - (previous as any).score;
+              const scoreChange = current.score - previous.score;
 
               trendingData.push({
                 tool_id: current.tool_id,

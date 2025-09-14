@@ -21,7 +21,10 @@ export function isConnectionTerminationError(error: unknown): boolean {
 
   // Check for Supabase/PgBouncer termination errors
   const errorStr = error.toString().toLowerCase();
-  const errorCode = (error as any).code?.toLowerCase() || "";
+
+  // Create a type-safe error object with optional properties
+  const errorObj = error as { code?: string; severity?: string };
+  const errorCode = errorObj.code?.toLowerCase() || "";
 
   return (
     errorStr.includes("db_termination") ||
@@ -34,7 +37,7 @@ export function isConnectionTerminationError(error: unknown): boolean {
     errorCode === "57p02" || // crash_shutdown
     errorCode === "57p03" || // cannot_connect_now
     errorCode === "xx000" || // internal_error
-    (error as any).severity === "FATAL"
+    errorObj.severity === "FATAL"
   );
 }
 

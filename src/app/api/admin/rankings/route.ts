@@ -85,7 +85,7 @@ function transformToToolMetrics(tool: Tool, innovationScore: number = 0): ToolMe
  * - period: specific period for check-data
  */
 export async function GET(request: NextRequest) {
-  return withAdminAuth(async () => {
+  return withAdminAuth<any>(async () => {
     try {
       const { searchParams } = new URL(request.url);
       const action = searchParams.get("action") || "periods";
@@ -214,7 +214,7 @@ export async function GET(request: NextRequest) {
  * - sync-current: Sync current rankings
  */
 export async function POST(request: NextRequest) {
-  return withAdminAuth(async () => {
+  return withAdminAuth<any>(async () => {
     try {
       const body = await request.json();
       const { action } = body;
@@ -700,7 +700,7 @@ export async function POST(request: NextRequest) {
  * Delete a ranking period
  */
 export async function DELETE(request: NextRequest) {
-  return withAdminAuth(async () => {
+  return withAdminAuth<any>(async () => {
     try {
       const { searchParams } = new URL(request.url);
       const period = searchParams.get("period");

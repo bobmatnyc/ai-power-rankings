@@ -13,6 +13,7 @@ import type {
   ArticleRankingsChange,
   NewArticleRankingsChange,
   DryRunResult,
+  ArticleProcessingLog,
 } from "@/lib/db/article-schema";
 import {
   ContentExtractor,
@@ -47,7 +48,7 @@ export class ArticleDatabaseService {
 
     // For dry runs, we don't need to create a processing log with articleId
     // For actual ingestion, we'll create the log after creating the article
-    let processingLog: any = null;
+    let processingLog: ArticleProcessingLog | null = null;
 
     try {
       // Step 1: Extract content
@@ -119,7 +120,7 @@ export class ArticleDatabaseService {
             tags: analysis.tags,
             category: analysis.category,
             importanceScore: analysis.importance_score,
-            sentimentScore: analysis.overall_sentiment,
+            sentimentScore: analysis.overall_sentiment.toString(),
             toolMentions: analysis.tool_mentions,
             companyMentions: analysis.company_mentions,
             author: input.metadata?.author,
@@ -164,7 +165,7 @@ export class ArticleDatabaseService {
           tags: analysis.tags,
           category: analysis.category,
           importanceScore: analysis.importance_score,
-          sentimentScore: analysis.overall_sentiment,
+          sentimentScore: analysis.overall_sentiment.toString(),
           toolMentions: analysis.tool_mentions,
           companyMentions: analysis.company_mentions,
           rankingsSnapshot,
@@ -221,9 +222,9 @@ export class ArticleDatabaseService {
           oldRank: change.currentRank,
           newRank: change.predictedRank,
           rankChange: change.rankChange,
-          oldScore: change.currentScore,
-          newScore: change.predictedScore,
-          scoreChange: change.scoreChange,
+          oldScore: change.currentScore?.toString(),
+          newScore: change.predictedScore?.toString(),
+          scoreChange: change.scoreChange?.toString(),
           changeType:
             (change.scoreChange || 0) > 0
               ? "increase"
@@ -339,9 +340,9 @@ export class ArticleDatabaseService {
         oldRank: change.currentRank,
         newRank: change.predictedRank,
         rankChange: change.rankChange,
-        oldScore: change.currentScore,
-        newScore: change.predictedScore,
-        scoreChange: change.scoreChange,
+        oldScore: change.currentScore?.toString(),
+        newScore: change.predictedScore?.toString(),
+        scoreChange: change.scoreChange?.toString(),
         changeType:
           (change.scoreChange || 0) > 0
             ? "increase"
@@ -434,8 +435,14 @@ export class ArticleDatabaseService {
    * Get current rankings from database
    */
   private async getCurrentRankings(): Promise<any[]> {
+    // Check if db is initialized
+    if (!this.db) {
+      console.warn("[ArticleDatabaseService] Database not initialized");
+      return [];
+    }
+
     // Get the most recent rankings
-    const [latestRanking] = await this.db?.select()
+    const [latestRanking] = await this.db.select()
       .from(rankings)
       .where(eq(rankings.isCurrent, true))
       .limit(1);
@@ -459,7 +466,11 @@ export class ArticleDatabaseService {
    * Get existing tool names from database
    */
   private async getExistingToolNames(): Promise<string[]> {
-    const allTools = await this.db?.select({ name: tools.name }).from(tools);
+    if (!this.db) {
+      console.warn("[ArticleDatabaseService] Database not initialized");
+      return [];
+    }
+    const allTools = await this.db.select({ name: tools.name }).from(tools);
     return allTools.map((t) => t.name);
   }
 
@@ -467,7 +478,11 @@ export class ArticleDatabaseService {
    * Get existing company names from database
    */
   private async getExistingCompanyNames(): Promise<string[]> {
-    const allCompanies = await this.db?.select({ name: companies.name }).from(companies);
+    if (!this.db) {
+      console.warn("[ArticleDatabaseService] Database not initialized");
+      return [];
+    }
+    const allCompanies = await this.db.select({ name: companies.name }).from(companies);
     return allCompanies.map((c) => c.name);
   }
 
@@ -485,7 +500,7 @@ export class ArticleDatabaseService {
   /**
    * Apply ranking changes to the database
    */
-  private async applyRankingChanges(changes: ArticleRankingsChange[]): Promise<void> {
+  private async applyRankingChanges(changes: (ArticleRankingsChange | NewArticleRankingsChange)[]): Promise<void> {
     // This is a simplified implementation
     // In production, you'd update the actual rankings table
     console.log(`[ArticleDatabaseService] Applying ${changes.length} ranking changes`);
@@ -501,7 +516,7 @@ export class ArticleDatabaseService {
   /**
    * Restore rankings from a snapshot
    */
-  private async restoreRankingsFromSnapshot(_snapshot: any): Promise<void> {
+  private async restoreRankingsFromSnapshot(_snapshot: unknown): Promise<void> {
     console.log("[ArticleDatabaseService] Restoring rankings from snapshot");
 
     // TODO: Implement snapshot restoration

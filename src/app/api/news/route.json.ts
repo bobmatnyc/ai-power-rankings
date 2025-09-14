@@ -4,6 +4,28 @@ import { loadCacheWithFallback } from "@/lib/cache/load-cache";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 
+interface CachedNewsItem {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  summary: string;
+  source: string;
+  source_url?: string;
+  tags?: string[];
+  tool_mentions?: string[];
+  created_at: string;
+  updated_at: string;
+  date: string;
+  category?: string;
+  author?: string;
+  importance_score?: number;
+  image_url?: string;
+  related_tools?: string[];
+}
+
+type CachedNewsData = CachedNewsItem[];
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -25,9 +47,10 @@ export async function GET(request: NextRequest) {
       const cachedNewsData = await loadCacheWithFallback("news");
       const cacheInfo = await new CacheManager().getInfo("news");
 
+      const newsData = cachedNewsData as CachedNewsData;
       const apiResponse = NextResponse.json({
-        news: (cachedNewsData as any).news,
-        total: (cachedNewsData as any).news.length,
+        news: newsData,
+        total: newsData.length,
         _cached: true,
         _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
         _cacheReason: "Cache-first approach (database stability mode)",
@@ -229,10 +252,11 @@ export async function GET(request: NextRequest) {
     const cachedNewsData = await loadCacheWithFallback("news");
     const cacheInfo = await new CacheManager().getInfo("news");
 
+    const newsData = cachedNewsData as CachedNewsData;
     const apiResponse = NextResponse.json({
-      news: (cachedNewsData as any).news.slice(0, 20), // Return first 20 items
-      total: (cachedNewsData as any).news.length,
-      hasMore: (cachedNewsData as any).news.length > 20,
+      news: newsData.slice(0, 20), // Return first 20 items
+      total: newsData.length,
+      hasMore: newsData.length > 20,
       _cached: true,
       _cachedAt: cacheInfo.lastModified || new Date().toISOString(),
       _cacheReason: "Database error fallback",

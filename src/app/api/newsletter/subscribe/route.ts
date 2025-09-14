@@ -143,7 +143,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(
         {
           error: "Failed to save subscription",
-          debug: process.env["NODE_ENV"] === "development" ? (dbError as any).message : undefined,
+          debug: process.env["NODE_ENV"] === "development" ? error.message : undefined,
         },
         { status: 500 }
       );
