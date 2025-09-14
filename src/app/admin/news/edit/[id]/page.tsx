@@ -337,6 +337,7 @@ export default function EditNewsPage() {
               </TabsContent>
               <TabsContent value="preview">
                 <div className="border rounded-md p-4 min-h-[400px] prose prose-sm max-w-none">
+                  {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Content is sanitized with DOMPurify in markdownToHtml function */}
                   <div dangerouslySetInnerHTML={{ __html: markdownToHtml(content) }} />
                 </div>
               </TabsContent>
@@ -447,6 +448,7 @@ export default function EditNewsPage() {
             <article className="prose prose-lg max-w-none">
               <h1>{title || "Untitled Article"}</h1>
               {summary && <p className="lead">{summary}</p>}
+              {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Content is sanitized with DOMPurify in markdownToHtml function */}
               <div dangerouslySetInnerHTML={{ __html: markdownToHtml(content) }} />
             </article>
           </CardContent>

@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               {rankingData.topTools.slice(0, 3).map((tool, index) => (
                 <div
-                  key={`tool-${index}`}
+                  key={`${tool}-rank-${index + 1}`}
                   style={{
                     display: "flex",
                     alignItems: "center",

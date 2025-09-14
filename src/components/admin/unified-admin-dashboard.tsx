@@ -345,7 +345,9 @@ export default function UnifiedAdminDashboard() {
         <div className="flex gap-2">
           <Button
             variant="outline"
-            onClick={() => (window.location.href = "/")}
+            onClick={() => {
+              window.location.href = "/";
+            }}
             className="flex items-center gap-2"
           >
             <span>← Exit Admin</span>

@@ -163,7 +163,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     // Apply ordering and pagination based on options
     if (options?.orderBy) {
       // Type-safe column access - use proper column reference
-      let orderedQuery;
+      let orderedQuery: typeof baseQuery;
       if (options.orderBy === 'name') {
         orderedQuery = options.orderDirection === "desc"
           ? baseQuery.orderBy(desc(tools.name))
