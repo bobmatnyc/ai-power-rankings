@@ -14,6 +14,9 @@ dependencies:
   '@marsidev/react-turnstile':
     specifier: ^1.1.0
     version: 1.1.0(react-dom@19.1.0)(react@19.1.0)
+  '@neondatabase/serverless':
+    specifier: ^1.0.1
+    version: 1.0.1
   '@next/third-parties':
     specifier: ^15.3.4
     version: 15.3.4(next@15.3.3)(react@19.1.0)
@@ -110,6 +113,12 @@ dependencies:
   date-fns:
     specifier: ^4.1.0
     version: 4.1.0
+  dotenv:
+    specifier: ^16.5.0
+    version: 16.5.0
+  drizzle-orm:
+    specifier: ^0.44.5
+    version: 0.44.5(@neondatabase/serverless@1.0.1)(@opentelemetry/api@1.9.0)(@upstash/redis@1.35.1)(pg@8.16.3)
   enquirer:
     specifier: ^2.4.1
     version: 2.4.1
@@ -149,6 +158,9 @@ dependencies:
   pdf-parse:
     specifier: ^1.1.1
     version: 1.1.1
+  pg:
+    specifier: ^8.16.3
+    version: 8.16.3
   pino:
     specifier: ^9.7.0
     version: 9.7.0
@@ -205,9 +217,6 @@ devDependencies:
   '@fullhuman/postcss-purgecss':
     specifier: ^7.0.2
     version: 7.0.2(postcss@8.5.4)
-  '@neondatabase/serverless':
-    specifier: ^1.0.1
-    version: 1.0.1
   '@next/bundle-analyzer':
     specifier: ^15.3.4
     version: 15.3.4
@@ -259,15 +268,9 @@ devDependencies:
   cssnano:
     specifier: ^7.0.7
     version: 7.0.7(postcss@8.5.4)
-  dotenv:
-    specifier: ^16.5.0
-    version: 16.5.0
   drizzle-kit:
     specifier: ^0.31.4
     version: 0.31.4
-  drizzle-orm:
-    specifier: ^0.44.5
-    version: 0.44.5(@neondatabase/serverless@1.0.1)(@opentelemetry/api@1.9.0)(@upstash/redis@1.35.1)
   husky:
     specifier: ^9.1.7
     version: 9.1.7
@@ -283,6 +286,9 @@ devDependencies:
   node-fetch:
     specifier: ^3.3.2
     version: 3.3.2
+  playwright:
+    specifier: ^1.55.0
+    version: 1.55.0
   postcss:
     specifier: ^8.4.31
     version: 8.5.4
@@ -1586,7 +1592,7 @@ packages:
     dependencies:
       '@types/node': 22.18.1
       '@types/pg': 8.15.5
-    dev: true
+    dev: false
 
   /@next/bundle-analyzer@15.3.4:
     resolution: {integrity: sha512-AN9H9S+4WaIIahyJBGe6arLj5kopvVZPLffAJsDhkbQPGqirYqaHhwO6vheytXtdq3xNjwJLpbmYNa5ZQnitSw==}
@@ -3584,7 +3590,7 @@ packages:
     resolution: {integrity: sha512-rzSDyhn4cYznVG+PCzGe1lwuMYJrcBS1fc3JqSa2PvtABwWo+dZ1ij5OVok3tqfpEBCBoaR4d7upFJk73HRJDw==}
     dependencies:
       undici-types: 6.21.0
-    dev: true
+    dev: false
 
   /@types/nodemailer@6.4.17:
     resolution: {integrity: sha512-I9CCaIp6DTldEg7vyUTZi8+9Vo0hi1/T8gv3C89yk1rSAAzoKQ8H8ki/jBYJSFoH/BisgLP8tkZMlQ91CIquww==}
@@ -3604,7 +3610,7 @@ packages:
       '@types/node': 20.19.0
       pg-protocol: 1.10.3
       pg-types: 2.2.0
-    dev: true
+    dev: false
 
   /@types/pg@8.6.1:
     resolution: {integrity: sha512-1Kc4oAGzAl7uqUStZCDvaLFqZrW9qWSjXOmBfdgyBP5La7Us6Mg4GBvRlSoaZMhQF/zSj1C8CtKMBkoiT8eL8w==}
@@ -3971,6 +3977,7 @@ packages:
     resolution: {integrity: sha512-sIMuAMU9IYbE2bkgDby8KLoQKRiBMXn0moXxqLvUmQ7VUu2CvulZLtK8O0x3WQZFvvZhU5sRC2/lOVZdGfudkA==}
     dependencies:
       uncrypto: 0.1.3
+    dev: false
 
   /@vercel/analytics@1.5.0(next@15.3.3)(react@19.1.0):
     resolution: {integrity: sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g==}
@@ -5477,7 +5484,7 @@ packages:
   /dotenv@16.5.0:
     resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
     engines: {node: '>=12'}
-    dev: true
+    dev: false
 
   /drizzle-kit@0.31.4:
     resolution: {integrity: sha512-tCPWVZWZqWVx2XUsVpJRnH9Mx0ClVOf5YUHerZ5so1OKSlqww4zy1R5ksEdGRcO3tM3zj0PYN6V48TbQCL1RfA==}
@@ -5491,7 +5498,7 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm@0.44.5(@neondatabase/serverless@1.0.1)(@opentelemetry/api@1.9.0)(@upstash/redis@1.35.1):
+  /drizzle-orm@0.44.5(@neondatabase/serverless@1.0.1)(@opentelemetry/api@1.9.0)(@upstash/redis@1.35.1)(pg@8.16.3):
     resolution: {integrity: sha512-jBe37K7d8ZSKptdKfakQFdeljtu3P2Cbo7tJoJSVZADzIKOBo9IAJPOmMsH2bZl90bZgh8FQlD8BjxXA/zuBkQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -5586,7 +5593,8 @@ packages:
       '@neondatabase/serverless': 1.0.1
       '@opentelemetry/api': 1.9.0
       '@upstash/redis': 1.35.1
-    dev: true
+      pg: 8.16.3
+    dev: false
 
   /dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -6408,6 +6416,14 @@ packages:
       jsonfile: 6.1.0
       universalify: 2.0.1
     dev: false
+
+  /fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
 
   /fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
@@ -8379,14 +8395,30 @@ packages:
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
     dev: true
 
+  /pg-cloudflare@1.2.7:
+    resolution: {integrity: sha512-YgCtzMH0ptvZJslLM1ffsY4EuGaU0cx4XSdXLRFae8bPP4dS5xL1tNB3k2o/N64cHJpwU7dxKli/nZ2lUa5fLg==}
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /pg-connection-string@2.9.1:
+    resolution: {integrity: sha512-nkc6NpDcvPVpZXxrreI/FOtX3XemeLl8E0qFr6F2Lrm/I8WOnaWNhIPK2Z7OHpw7gh5XJThi6j6ppgNoaT1w4w==}
+    dev: false
+
   /pg-int8@1.0.1:
     resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
     engines: {node: '>=4.0.0'}
-    dev: true
+
+  /pg-pool@3.10.1(pg@8.16.3):
+    resolution: {integrity: sha512-Tu8jMlcX+9d8+QVzKIvM/uJtp07PKr82IUOYEphaWcoBhIYkoHpLXN3qO59nAI11ripznDsEzEv8nUxBVWajGg==}
+    peerDependencies:
+      pg: '>=8.0'
+    dependencies:
+      pg: 8.16.3
+    dev: false
 
   /pg-protocol@1.10.3:
     resolution: {integrity: sha512-6DIBgBQaTKDJyxnXaLiLR8wBpQQcGWuAESkRBX/t6OwA8YsqP+iVSiond2EDy6Y/dsGk8rh/jtax3js5NeV7JQ==}
-    dev: true
 
   /pg-types@2.2.0:
     resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
@@ -8397,7 +8429,30 @@ packages:
       postgres-bytea: 1.0.0
       postgres-date: 1.0.7
       postgres-interval: 1.2.0
-    dev: true
+
+  /pg@8.16.3:
+    resolution: {integrity: sha512-enxc1h0jA/aq5oSDMvqyW3q89ra6XIIDZgCX9vkMrnz5DFTw/Ny3Li2lFQ+pt3L6MCgm/5o2o8HW9hiJji+xvw==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      pg-native: '>=3.0.1'
+    peerDependenciesMeta:
+      pg-native:
+        optional: true
+    dependencies:
+      pg-connection-string: 2.9.1
+      pg-pool: 3.10.1(pg@8.16.3)
+      pg-protocol: 1.10.3
+      pg-types: 2.2.0
+      pgpass: 1.0.5
+    optionalDependencies:
+      pg-cloudflare: 1.2.7
+    dev: false
+
+  /pgpass@1.0.5:
+    resolution: {integrity: sha512-FdW9r/jQZhSeohs1Z3sI1yxFQNFvMcnmfuj4WBMUTxOrAyLMaTcE1aAMBiTlbMNaXvBCQuVi0R7hd8udDSP7ug==}
+    dependencies:
+      split2: 4.2.0
+    dev: false
 
   /picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -8470,6 +8525,22 @@ packages:
   /pirates@4.0.7:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
     engines: {node: '>= 6'}
+    dev: true
+
+  /playwright-core@1.55.0:
+    resolution: {integrity: sha512-GvZs4vU3U5ro2nZpeiwyb0zuFaqb9sUiAJuyrWpcGouD8y9/HLgGbNRjIph7zU9D3hnPaisMl9zG9CgFi/biIg==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dev: true
+
+  /playwright@1.55.0:
+    resolution: {integrity: sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      playwright-core: 1.55.0
+    optionalDependencies:
+      fsevents: 2.3.2
     dev: true
 
   /possible-typed-array-names@1.1.0:
@@ -8861,24 +8932,20 @@ packages:
   /postgres-array@2.0.0:
     resolution: {integrity: sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA==}
     engines: {node: '>=4'}
-    dev: true
 
   /postgres-bytea@1.0.0:
     resolution: {integrity: sha512-xy3pmLuQqRBZBXDULy7KbaitYqLcmxigw14Q5sj8QBVLqEwXfeybIKVWiqAXTlcvdvb0+xkOtDbfQMOf4lST1w==}
     engines: {node: '>=0.10.0'}
-    dev: true
 
   /postgres-date@1.0.7:
     resolution: {integrity: sha512-suDmjLVQg78nMK2UZ454hAG+OAW+HQPZ6n++TNDUX+L0+uUlLywnoxJKDou51Zm+zTCjrCl0Nq6J9C5hP9vK/Q==}
     engines: {node: '>=0.10.0'}
-    dev: true
 
   /postgres-interval@1.2.0:
     resolution: {integrity: sha512-9ZhXKM/rw350N1ovuWHbGxnGh/SNJ4cnxHiM0rxE4VN41wsg8P8zWn9hv/buK00RP4WvlOyr/RBDiptyxVbkZQ==}
     engines: {node: '>=0.10.0'}
     dependencies:
       xtend: 4.0.2
-    dev: true
 
   /preact-render-to-string@6.5.11(preact@10.24.3):
     resolution: {integrity: sha512-ubnauqoGczeGISiOh6RjX0/cdaF8v/oDXIjO85XALCQjwQP+SB4RDXXtvZ6yTYSjG+PC1QRP2AhPgCEsM2EvUw==}
@@ -10284,6 +10351,7 @@ packages:
 
   /uncrypto@0.1.3:
     resolution: {integrity: sha512-Ql87qFHB3s/De2ClA9e0gsnS6zXG27SkTiSJwjCc9MebbfapQfuPzumMIUMi38ezPZVNFcHI9sUIepeQfw8J8Q==}
+    dev: false
 
   /undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
@@ -10845,7 +10913,6 @@ packages:
   /xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
-    dev: true
 
   /y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}

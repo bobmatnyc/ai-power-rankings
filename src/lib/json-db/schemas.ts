@@ -144,6 +144,9 @@ export interface NewsArticle {
   tool_mentions?: string[]; // tool IDs mentioned
   created_at: string;
   updated_at: string;
+  category?: string; // Article category
+  importance_score?: number; // Importance score (1-10)
+  related_tools?: string[]; // Related tool IDs
 }
 
 export interface Company {

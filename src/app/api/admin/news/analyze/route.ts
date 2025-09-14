@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
+import { getNewsRepo } from "@/lib/json-db";
+import type { NewsArticle } from "@/lib/json-db/schemas";
+import crypto from "node:crypto";
 
 const AnalyzeRequestSchema = z.object({
   input: z.string().min(1),
@@ -8,6 +11,7 @@ const AnalyzeRequestSchema = z.object({
   filename: z.string().optional(),
   mimeType: z.string().optional(),
   verbose: z.boolean().optional(),
+  saveAsArticle: z.boolean().optional(),
 });
 
 const OpenRouterResponseSchema = z.object({
@@ -469,7 +473,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { input, type, filename, mimeType, verbose = false } = AnalyzeRequestSchema.parse(body);
+    const { input, type, filename, mimeType, verbose = false, saveAsArticle = false } = AnalyzeRequestSchema.parse(body);
 
     if (verbose) {
       console.log("[News Analysis] Request details:", {
@@ -504,11 +508,51 @@ export async function POST(request: NextRequest) {
     // Analyze with OpenRouter (no fallback)
     const analysis = await analyzeWithOpenRouter(content, url, verbose);
 
+    // Save as article if requested
+    let savedArticle: NewsArticle | null = null;
+    if (saveAsArticle) {
+      const newsRepo = getNewsRepo();
+      const now = new Date().toISOString();
+      const articleId = crypto.randomUUID();
+
+      // Convert analysis to article format
+      const article: NewsArticle = {
+        id: articleId,
+        slug: analysis.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
+        title: analysis.title,
+        summary: analysis.summary,
+        content: `<p>${analysis.summary}</p>\n\n<p>${content.substring(0, 5000)}...</p>`,
+        author: "AI News Analyst",
+        published_date: analysis.published_date ? `${analysis.published_date}T00:00:00.000Z` : now,
+        source: analysis.source || "Unknown",
+        source_url: url || undefined,
+        tags: analysis.key_topics || [],
+        tool_mentions: analysis.tool_mentions?.map(tm => tm.tool) || [],
+        created_at: now,
+        updated_at: now,
+        category: "AI News",
+        importance_score: analysis.importance_score || 5,
+        related_tools: analysis.tool_mentions?.map(tm => tm.tool) || [],
+      };
+
+      await newsRepo.upsert(article);
+      savedArticle = article;
+
+      if (verbose) {
+        console.log("[News Analysis] Article saved with ID:", articleId);
+      }
+    }
+
     const totalTime = Date.now() - requestStartTime;
 
     const response = {
       success: true,
       analysis,
+      savedArticle: savedArticle ? {
+        id: savedArticle.id,
+        slug: savedArticle.slug,
+        title: savedArticle.title
+      } : undefined,
       debug: verbose
         ? {
             processingTime: `${totalTime}ms`,

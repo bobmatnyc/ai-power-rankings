@@ -1,18 +1,18 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getCompaniesRepo, getToolsRepo } from "@/lib/json-db";
+import { companiesRepository } from "@/lib/db/repositories/companies.repository";
+import { getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 
 // GET single company by ID or slug
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    const companiesRepo = getCompaniesRepo();
     const toolsRepo = getToolsRepo();
 
     // Try to get by ID first, then by slug
-    let company = await companiesRepo.getById(id);
+    let company = await companiesRepository.findById(id);
     if (!company) {
-      company = await companiesRepo.getBySlug(id);
+      company = await companiesRepository.findBySlug(id);
     }
 
     if (!company) {
@@ -34,7 +34,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
           status: tool.status,
         })),
       },
-      _source: "json-db",
+      _source: process.env["USE_DATABASE"] === "true" ? "postgresql" : "json-db",
     };
 
     return NextResponse.json(response);
@@ -58,12 +58,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     // TODO: Add authentication check here
 
     const body = await request.json();
-    const companiesRepo = getCompaniesRepo();
 
     // Get existing company
-    let existing = await companiesRepo.getById(id);
+    let existing = await companiesRepository.findById(id);
     if (!existing) {
-      existing = await companiesRepo.getBySlug(id);
+      existing = await companiesRepository.findBySlug(id);
     }
 
     if (!existing) {
@@ -79,11 +78,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       updated_at: new Date().toISOString(),
     };
 
-    await companiesRepo.upsert(updatedCompany);
+    const updated = await companiesRepository.update(existing.id, updatedCompany);
 
     return NextResponse.json({
       success: true,
-      company: updatedCompany,
+      company: updated || updatedCompany,
     });
   } catch (error) {
     loggers.api.error("Update company error", { error, id });
@@ -107,13 +106,12 @@ export async function DELETE(
   try {
     // TODO: Add authentication check here
 
-    const companiesRepo = getCompaniesRepo();
     const toolsRepo = getToolsRepo();
 
     // Check if company exists
-    let company = await companiesRepo.getById(id);
+    let company = await companiesRepository.findById(id);
     if (!company) {
-      company = await companiesRepo.getBySlug(id);
+      company = await companiesRepository.findBySlug(id);
     }
 
     if (!company) {
@@ -134,7 +132,7 @@ export async function DELETE(
       );
     }
 
-    const deleted = await companiesRepo.delete(company.id);
+    const deleted = await companiesRepository.delete(company.id);
 
     if (!deleted) {
       return NextResponse.json({ error: "Failed to delete company" }, { status: 500 });

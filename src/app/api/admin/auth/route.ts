@@ -56,7 +56,15 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error("[AUTH] Error processing request:", error);
-    return NextResponse.json({ error: "Authentication failed" }, { status: 500 });
+    console.error("[AUTH] Error details:", {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    return NextResponse.json({
+      error: "Authentication failed",
+      details: process.env["NODE_ENV"] === "development" ? String(error) : undefined
+    }, { status: 500 });
   }
 }
 

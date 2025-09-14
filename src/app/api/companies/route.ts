@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { cachedJsonResponse } from "@/lib/api-cache";
-import { getCompaniesRepo } from "@/lib/json-db";
+import { companiesRepository } from "@/lib/db/repositories/companies.repository";
 import { loggers } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
@@ -11,17 +11,15 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
     const size = searchParams.get("size");
 
-    const companiesRepo = getCompaniesRepo();
-
-    let companies: Awaited<ReturnType<typeof companiesRepo.getAll>>;
+    let companies: any[];
 
     // Apply filters
     if (search) {
-      companies = await companiesRepo.search(search);
+      companies = await companiesRepository.search(search);
     } else if (size) {
-      companies = await companiesRepo.getBySize(size);
+      companies = await companiesRepository.findBySize(size);
     } else {
-      companies = await companiesRepo.getAll();
+      companies = await companiesRepository.findAll();
     }
 
     // Sort alphabetically by name
@@ -39,7 +37,7 @@ export async function GET(request: NextRequest) {
         page,
         totalPages: Math.ceil(companies.length / limit),
         hasMore: endIndex < companies.length,
-        _source: "json-db",
+        _source: process.env["USE_DATABASE"] === "true" ? "postgresql" : "json-db",
       },
       "/api/companies"
     );
@@ -62,7 +60,6 @@ export async function POST(request: NextRequest) {
     // TODO: Add authentication check here
 
     const body = await request.json();
-    const companiesRepo = getCompaniesRepo();
 
     // Generate slug if not provided
     const slug =
@@ -90,11 +87,11 @@ export async function POST(request: NextRequest) {
       updated_at: new Date().toISOString(),
     };
 
-    await companiesRepo.upsert(company);
+    const createdCompany = await companiesRepository.create(company);
 
     return NextResponse.json({
       success: true,
-      company,
+      company: createdCompany,
     });
   } catch (error) {
     loggers.api.error("Create company error", { error });

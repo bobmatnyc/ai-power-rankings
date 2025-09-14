@@ -20,12 +20,15 @@ export default function AdminSignIn() {
     setIsLoading(true);
 
     try {
+      // Properly escape password for JSON
+      const payload = { password: password };
+
       const response = await fetch("/api/admin/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();

@@ -9,7 +9,7 @@
  */
 
 const fs = require("fs-extra");
-const path = require("path");
+const path = require("node:path");
 
 async function generateSlug(title) {
   if (!title || typeof title !== "string") {

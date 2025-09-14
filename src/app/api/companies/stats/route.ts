@@ -1,14 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getCompaniesRepo, getToolsRepo } from "@/lib/json-db";
+import { companiesRepository } from "@/lib/db/repositories/companies.repository";
+import { getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 
 // GET company statistics
 export async function GET(_request: NextRequest) {
   try {
-    const companiesRepo = getCompaniesRepo();
     const toolsRepo = getToolsRepo();
 
-    const companies = await companiesRepo.getAll();
+    const companies = await companiesRepository.findAll();
     const tools = await toolsRepo.getAll();
 
     // Calculate statistics
@@ -60,7 +60,7 @@ export async function GET(_request: NextRequest) {
             : "0",
       },
       topCompanies: companyToolCounts,
-      _source: "json-db",
+      _source: process.env["USE_DATABASE"] === "true" ? "postgresql" : "json-db",
     };
 
     const apiResponse = NextResponse.json(response);

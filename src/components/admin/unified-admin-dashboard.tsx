@@ -11,11 +11,13 @@ import {
   History,
   Loader2,
   Mail,
+  Newspaper,
   TrendingUp,
   Upload,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { SubscribersPage } from "@/components/admin/subscribers-page";
+import { ArticleManagement } from "@/components/admin/article-management";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -195,6 +197,7 @@ export default function UnifiedAdminDashboard() {
           filename,
           mimeType,
           verbose: verboseLogging,
+          saveAsArticle: true, // Automatically save as article
         }),
       });
 
@@ -213,6 +216,11 @@ export default function UnifiedAdminDashboard() {
 
       if (data.warning) {
         setError(data.warning);
+      }
+
+      // Show success message with saved article info
+      if (data.savedArticle) {
+        setSuccess(`News analyzed and saved! Article ID: ${data.savedArticle.id}`);
       }
 
       // Automatically generate ranking preview
@@ -287,7 +295,7 @@ export default function UnifiedAdminDashboard() {
   };
 
   // Load ranking versions
-  const loadRankingVersions = async () => {
+  const loadRankingVersions = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/rankings/versions");
       if (response.ok) {
@@ -297,7 +305,7 @@ export default function UnifiedAdminDashboard() {
     } catch (err) {
       console.error("Failed to load ranking versions:", err);
     }
-  };
+  }, []);
 
   // Rollback to a specific version
   const rollbackToVersion = async (versionId: string) => {
@@ -321,6 +329,11 @@ export default function UnifiedAdminDashboard() {
       setIsProcessing(false);
     }
   };
+
+  // Load ranking versions on component mount
+  useEffect(() => {
+    loadRankingVersions();
+  }, [loadRankingVersions]);
 
   return (
     <div className="container mx-auto p-6 max-w-7xl">
@@ -384,10 +397,14 @@ export default function UnifiedAdminDashboard() {
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="news">
             <FileText className="mr-2 h-4 w-4" />
             News Upload
+          </TabsTrigger>
+          <TabsTrigger value="articles">
+            <Newspaper className="mr-2 h-4 w-4" />
+            Articles
           </TabsTrigger>
           <TabsTrigger value="rankings">
             <TrendingUp className="mr-2 h-4 w-4" />
@@ -406,10 +423,20 @@ export default function UnifiedAdminDashboard() {
         <TabsContent value="news" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Upload & Analyze News</CardTitle>
-              <CardDescription>
-                Add news via URL or text for AI-powered analysis and ranking updates
-              </CardDescription>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle>Upload & Analyze News</CardTitle>
+                  <CardDescription>
+                    Add news via URL or text for AI-powered analysis and ranking updates
+                  </CardDescription>
+                </div>
+                <a href="/admin/news" target="_blank" rel="noopener">
+                  <Button variant="outline" size="sm">
+                    <FileText className="h-4 w-4 mr-2" />
+                    View All Articles
+                  </Button>
+                </a>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-4">
@@ -689,6 +716,10 @@ export default function UnifiedAdminDashboard() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        <TabsContent value="articles" className="space-y-6">
+          <ArticleManagement />
         </TabsContent>
 
         <TabsContent value="rankings" className="space-y-6">

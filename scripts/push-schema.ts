@@ -4,26 +4,26 @@
  * Script to push database schema to Neon PostgreSQL
  */
 
-import * as dotenv from 'dotenv';
-import { drizzle } from 'drizzle-orm/neon-http';
-import { neon } from '@neondatabase/serverless';
-import { sql } from 'drizzle-orm';
-import * as schema from '../src/lib/db/schema';
+import { neon } from "@neondatabase/serverless";
+import * as dotenv from "dotenv";
+import { sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/neon-http";
+import * as schema from "../src/lib/db/schema";
 
 // Load environment variables
-dotenv.config({ path: '.env.production.local' });
-dotenv.config({ path: '.env.local' });
-dotenv.config({ path: '.env' });
+dotenv.config({ path: ".env.production.local" });
+dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env" });
 
-const DATABASE_URL = process.env['DATABASE_URL_UNPOOLED'] || process.env['DATABASE_URL'];
+const DATABASE_URL = process.env["DATABASE_URL_UNPOOLED"] || process.env["DATABASE_URL"];
 
 if (!DATABASE_URL) {
-  console.error('❌ DATABASE_URL not found in environment variables');
+  console.error("❌ DATABASE_URL not found in environment variables");
   process.exit(1);
 }
 
 async function pushSchema() {
-  console.log('🚀 Pushing schema to Neon database...\n');
+  console.log("🚀 Pushing schema to Neon database...\n");
 
   try {
     // Create connection
@@ -102,7 +102,7 @@ async function pushSchema() {
         "created_at" timestamp DEFAULT now() NOT NULL,
         "updated_at" timestamp DEFAULT now() NOT NULL,
         CONSTRAINT "tools_slug_unique" UNIQUE("slug")
-      )`
+      )`,
     ];
 
     // Create indexes
@@ -137,22 +137,22 @@ async function pushSchema() {
       sql`CREATE INDEX IF NOT EXISTS "tools_category_idx" ON "tools" ("category")`,
       sql`CREATE INDEX IF NOT EXISTS "tools_status_idx" ON "tools" ("status")`,
       sql`CREATE INDEX IF NOT EXISTS "tools_name_idx" ON "tools" ("name")`,
-      sql`CREATE INDEX IF NOT EXISTS "tools_data_gin_idx" ON "tools" USING gin ("data")`
+      sql`CREATE INDEX IF NOT EXISTS "tools_data_gin_idx" ON "tools" USING gin ("data")`,
     ];
 
     // Execute table creation
-    console.log('📊 Creating tables...');
+    console.log("📊 Creating tables...");
     for (const statement of statements) {
       await db.execute(statement);
     }
-    console.log('✅ Tables created successfully\n');
+    console.log("✅ Tables created successfully\n");
 
     // Execute index creation
-    console.log('🔍 Creating indexes...');
+    console.log("🔍 Creating indexes...");
     for (const statement of indexStatements) {
       await db.execute(statement);
     }
-    console.log('✅ Indexes created successfully\n');
+    console.log("✅ Indexes created successfully\n");
 
     // Verify tables exist
     const tablesQuery = sql`
@@ -161,21 +161,20 @@ async function pushSchema() {
       WHERE table_schema = 'public' 
       ORDER BY table_name;
     `;
-    
+
     const tables = await db.execute(tablesQuery);
-    console.log('📋 Tables in database:');
+    console.log("📋 Tables in database:");
     tables.rows.forEach((row: any) => {
       console.log(`   - ${row.table_name}`);
     });
 
-    console.log('\n🎉 Schema push completed successfully!');
-    console.log('\nNext steps:');
-    console.log('1. Run data migration: DATABASE_MIGRATION_MODE=migrate npm run db:migrate:json');
-    console.log('2. Configure Vercel: ./scripts/setup-vercel-env.sh');
-    console.log('3. Deploy to production: vercel --prod');
-
+    console.log("\n🎉 Schema push completed successfully!");
+    console.log("\nNext steps:");
+    console.log("1. Run data migration: DATABASE_MIGRATION_MODE=migrate npm run db:migrate:json");
+    console.log("2. Configure Vercel: ./scripts/setup-vercel-env.sh");
+    console.log("3. Deploy to production: vercel --prod");
   } catch (error) {
-    console.error('❌ Error pushing schema:', error);
+    console.error("❌ Error pushing schema:", error);
     process.exit(1);
   }
 }

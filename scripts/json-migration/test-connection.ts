@@ -7,13 +7,12 @@
  */
 
 // Load environment variables from .env files FIRST
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
 // Load .env.local first (higher priority), then .env
-dotenv.config({ path: '.env.local' });
-dotenv.config({ path: '.env' });
+dotenv.config({ path: ".env.local" });
+dotenv.config({ path: ".env" });
 
-import path from "node:path";
 import { getPayload } from "payload";
 import config from "../../payload.config";
 

@@ -1,8 +1,13 @@
 {
   "months": [
     {
+      "month": "news-backup-20250807-161702",
+      "articleCount": 1,
+      "filename": "news-backup-20250807-161702.json"
+    },
+    {
       "month": "2025-08",
-      "articleCount": 21,
+      "articleCount": 28,
       "filename": "2025-08.json"
     },
     {
@@ -96,6 +101,11 @@
       "filename": "2023-11.json"
     },
     {
+      "month": "2023-08",
+      "articleCount": 1,
+      "filename": "2023-08.json"
+    },
+    {
       "month": "2023-07",
       "articleCount": 1,
       "filename": "2023-07.json"
@@ -146,6 +156,6 @@
       "filename": "2018-05.json"
     }
   ],
-  "totalArticles": 306,
-  "lastUpdated": "2025-08-19T06:02:32.713Z"
+  "totalArticles": 315,
+  "lastUpdated": "2025-09-14T01:08:00.000Z"
 }
