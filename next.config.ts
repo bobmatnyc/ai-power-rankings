@@ -29,7 +29,8 @@ const nextConfig: NextConfig = {
     // Instead we use force-dynamic on individual pages
   },
   // Optimize output for faster builds
-  output: process.env["NEXT_OUTPUT"] === "export" ? "export" : undefined,
+  // Disable static export to avoid Html import issue in Next.js 15.3.x
+  output: undefined, // process.env["NEXT_OUTPUT"] === "export" ? "export" : undefined,
   eslint: {
     // During production builds, do not fail on warnings
     ignoreDuringBuilds: true,

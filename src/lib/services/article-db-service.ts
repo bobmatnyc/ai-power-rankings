@@ -124,7 +124,6 @@ export class ArticleDatabaseService {
             toolMentions: analysis.tool_mentions,
             companyMentions: analysis.company_mentions,
             author: input.metadata?.author,
-            model: analysis.model,
             publishedDate: analysis.published_date
               ? new Date(analysis.published_date)
               : undefined,

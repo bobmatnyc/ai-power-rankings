@@ -178,10 +178,10 @@ export async function GET(request: NextRequest) {
         }
 
         // Calculate trending scores
-        if (periodRankings.size >= 2) {
+        if (periodRankings.size >= 2 && recentPeriods.length >= 2) {
           const [currentPeriod, previousPeriod] = recentPeriods;
-          const currentRankings = periodRankings.get(currentPeriod) || [];
-          const previousRankings = periodRankings.get(previousPeriod) || [];
+          const currentRankings = currentPeriod ? periodRankings.get(currentPeriod) || [] : [];
+          const previousRankings = previousPeriod ? periodRankings.get(previousPeriod) || [] : [];
 
           const previousMap = new Map(previousRankings.map((r) => [r.tool_id, r]));
 
@@ -218,7 +218,7 @@ export async function GET(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json({ error: `Unknown debug type: ${type}` }, { status: 400 });
+        return NextResponse.json({ error: `Unknown debug type: ${String(type)}` }, { status: 400 });
     }
   } catch (error) {
     console.error("Debug endpoint error:", error);

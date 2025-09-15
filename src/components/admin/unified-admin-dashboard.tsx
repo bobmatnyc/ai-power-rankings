@@ -349,6 +349,7 @@ export default function UnifiedAdminDashboard() {
 
       return () => clearTimeout(timer);
     }
+    return undefined; // Explicit return for when showDbStatus is false
   }, [loadRankingVersions, loadDatabaseStatus, showDbStatus]);
 
   return (

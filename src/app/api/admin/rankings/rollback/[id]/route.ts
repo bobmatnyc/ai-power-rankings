@@ -71,7 +71,7 @@ async function loadVersionHistory(): Promise<RankingVersion[]> {
   }
 }
 
-export async function POST(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // Check admin authentication
     const { isAdminAuthenticated } = await import("@/lib/admin-auth");
@@ -83,7 +83,8 @@ export async function POST(_request: NextRequest, { params }: { params: { id: st
     
     const userEmail = "admin";
 
-    const versionId = params.id;
+    const resolvedParams = await params;
+    const versionId = resolvedParams.id;
 
     // Load version history
     const versions = await loadVersionHistory();

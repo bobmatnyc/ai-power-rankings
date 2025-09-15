@@ -18,6 +18,10 @@ export const config: NextAuthConfig = {
       },
     }),
   ],
+  pages: {
+    signIn: "/dashboard/auth/signin",
+    error: "/dashboard/auth/error",
+  },
   callbacks: {
     authorized() {
       // Don't interfere with Payload's admin routes - let Payload handle its own auth

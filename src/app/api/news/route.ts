@@ -22,8 +22,9 @@ export async function GET(request: NextRequest) {
 
     // Helper function to get the effective date (same logic as used for event_date)
     const getEffectiveDate = (article: NewsArticle) => {
+      const articleWithExtra = article as NewsArticle & { published_at?: string };
       return article.published_date ||
-             ('published_at' in article ? (article as Record<string, unknown>).published_at as string : undefined) ||
+             articleWithExtra.published_at ||
              article.created_at ||
              article.date ||
              new Date().toISOString();
@@ -76,11 +77,11 @@ export async function GET(request: NextRequest) {
           toolCategory = matchingTool.category || "ai-coding-tool";
           toolWebsite = matchingTool.info?.website || "";
           primaryToolId = matchingTool.slug || matchingTool.id;
-        } else if ('tool_ids' in article && Array.isArray((article as Record<string, unknown>).tool_ids) && ((article as Record<string, unknown>).tool_ids as string[]).length > 0) {
+        } else if ('tool_ids' in article && Array.isArray((article as NewsArticle & { tool_ids?: string[] }).tool_ids) && ((article as NewsArticle & { tool_ids?: string[] }).tool_ids?.length ?? 0) > 0) {
           // Fallback to old format with tool_ids
-          const toolIds = (article as Record<string, unknown>).tool_ids as string[];
+          const toolIds = (article as NewsArticle & { tool_ids?: string[] }).tool_ids!;
           const firstToolId = toolIds[0];
-          const tool = await toolsRepo.getById(firstToolId);
+          const tool = firstToolId ? await toolsRepo.getById(firstToolId) : null;
 
           if (tool) {
             toolNames = tool.name;
@@ -267,7 +268,7 @@ export async function GET(request: NextRequest) {
           title: article.title,
           description: article.summary || article.content,
           source_url: article.source_url,
-          source_name: article.source || ('source_name' in article ? (article as Record<string, unknown>).source_name as string : undefined) || "AI News",
+          source_name: article.source || ((article as NewsArticle & { source_name?: string }).source_name) || "AI News",
           metrics: {
             importance_score: importance,
           },

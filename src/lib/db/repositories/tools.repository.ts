@@ -157,67 +157,58 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     if (!db) throw new Error("Database not connected");
 
     // Build the query with proper typing
-    const baseQuery = db.select().from(tools);
+    let baseQuery = db.select().from(tools);
     let results: Tool[];
 
     // Apply ordering and pagination based on options
     if (options?.orderBy) {
       // Type-safe column access - use proper column reference
-      let orderedQuery: typeof baseQuery;
       if (options.orderBy === 'name') {
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.name))
-          : baseQuery.orderBy(asc(tools.name));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.name)) as typeof baseQuery
+          : baseQuery.orderBy(asc(tools.name)) as typeof baseQuery;
       } else if (options.orderBy === 'slug') {
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.slug))
-          : baseQuery.orderBy(asc(tools.slug));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.slug)) as typeof baseQuery
+          : baseQuery.orderBy(asc(tools.slug)) as typeof baseQuery;
       } else if (options.orderBy === 'category') {
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.category))
-          : baseQuery.orderBy(asc(tools.category));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.category)) as typeof baseQuery
+          : baseQuery.orderBy(asc(tools.category)) as typeof baseQuery;
       } else if (options.orderBy === 'status') {
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.status))
-          : baseQuery.orderBy(asc(tools.status));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.status)) as typeof baseQuery
+          : baseQuery.orderBy(asc(tools.status)) as typeof baseQuery;
       } else if (options.orderBy === 'createdAt') {
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.createdAt))
-          : baseQuery.orderBy(asc(tools.createdAt));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.createdAt)) as typeof baseQuery
+          : baseQuery.orderBy(asc(tools.createdAt)) as typeof baseQuery;
       } else if (options.orderBy === 'updatedAt') {
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.updatedAt))
-          : baseQuery.orderBy(asc(tools.updatedAt));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.updatedAt)) as typeof baseQuery
+          : baseQuery.orderBy(asc(tools.updatedAt)) as typeof baseQuery;
       } else {
         // Default to createdAt if unknown column
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.createdAt))
-          : baseQuery.orderBy(asc(tools.createdAt));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(tools.createdAt)) as typeof baseQuery
+          : baseQuery.orderBy(asc(tools.createdAt)) as typeof baseQuery;
       }
-      
-      // Apply pagination if needed
-      if (options?.limit && options?.offset) {
-        results = await orderedQuery.limit(options.limit).offset(options.offset);
-      } else if (options?.limit) {
-        results = await orderedQuery.limit(options.limit);
-      } else if (options?.offset) {
-        results = await orderedQuery.offset(options.offset);
-      } else {
-        results = await orderedQuery;
-      }
+    }
+
+    // Apply default ordering if no orderBy was specified
+    if (!options?.orderBy) {
+      baseQuery = baseQuery.orderBy(desc(tools.createdAt)) as typeof baseQuery;
+    }
+
+    // Apply pagination if needed
+    if (options?.limit && options?.offset) {
+      results = await baseQuery.limit(options.limit).offset(options.offset);
+    } else if (options?.limit) {
+      results = await baseQuery.limit(options.limit);
+    } else if (options?.offset) {
+      results = await baseQuery.offset(options.offset);
     } else {
-      const orderedQuery = baseQuery.orderBy(desc(tools.createdAt));
-      
-      // Apply pagination if needed
-      if (options?.limit && options?.offset) {
-        results = await orderedQuery.limit(options.limit).offset(options.offset);
-      } else if (options?.limit) {
-        results = await orderedQuery.limit(options.limit);
-      } else if (options?.offset) {
-        results = await orderedQuery.offset(options.offset);
-      } else {
-        results = await orderedQuery;
-      }
+      results = await baseQuery;
     }
 
     return this.mapDbToolsToData(results);

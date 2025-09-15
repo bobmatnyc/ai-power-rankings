@@ -182,59 +182,50 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
     if (!db) throw new Error("Database not connected");
 
     // Build the query with proper typing
-    const baseQuery = db.select().from(companies);
+    let baseQuery = db.select().from(companies);
     let results: Company[];
 
     // Apply ordering and pagination based on options
     if (options?.orderBy) {
       // Type-safe column access - use proper column reference
-      let orderedQuery: typeof baseQuery;
       if (options.orderBy === 'name') {
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(companies.name))
-          : baseQuery.orderBy(asc(companies.name));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(companies.name)) as typeof baseQuery
+          : baseQuery.orderBy(asc(companies.name)) as typeof baseQuery;
       } else if (options.orderBy === 'slug') {
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(companies.slug))
-          : baseQuery.orderBy(asc(companies.slug));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(companies.slug)) as typeof baseQuery
+          : baseQuery.orderBy(asc(companies.slug)) as typeof baseQuery;
       } else if (options.orderBy === 'createdAt') {
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(companies.createdAt))
-          : baseQuery.orderBy(asc(companies.createdAt));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(companies.createdAt)) as typeof baseQuery
+          : baseQuery.orderBy(asc(companies.createdAt)) as typeof baseQuery;
       } else if (options.orderBy === 'updatedAt') {
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(companies.updatedAt))
-          : baseQuery.orderBy(asc(companies.updatedAt));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(companies.updatedAt)) as typeof baseQuery
+          : baseQuery.orderBy(asc(companies.updatedAt)) as typeof baseQuery;
       } else {
         // Default to name if unknown column
-        orderedQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(companies.name))
-          : baseQuery.orderBy(asc(companies.name));
+        baseQuery = options.orderDirection === "desc"
+          ? baseQuery.orderBy(desc(companies.name)) as typeof baseQuery
+          : baseQuery.orderBy(asc(companies.name)) as typeof baseQuery;
       }
+    }
 
-      // Apply pagination if needed
-      if (options?.limit && options?.offset) {
-        results = await orderedQuery.limit(options.limit).offset(options.offset);
-      } else if (options?.limit) {
-        results = await orderedQuery.limit(options.limit);
-      } else if (options?.offset) {
-        results = await orderedQuery.offset(options.offset);
-      } else {
-        results = await orderedQuery;
-      }
+    // Apply default ordering if no orderBy was specified
+    if (!options?.orderBy) {
+      baseQuery = baseQuery.orderBy(asc(companies.name)) as typeof baseQuery;
+    }
+
+    // Apply pagination if needed
+    if (options?.limit && options?.offset) {
+      results = await baseQuery.limit(options.limit).offset(options.offset);
+    } else if (options?.limit) {
+      results = await baseQuery.limit(options.limit);
+    } else if (options?.offset) {
+      results = await baseQuery.offset(options.offset);
     } else {
-      const orderedQuery = baseQuery.orderBy(asc(companies.name));
-
-      // Apply pagination if needed
-      if (options?.limit && options?.offset) {
-        results = await orderedQuery.limit(options.limit).offset(options.offset);
-      } else if (options?.limit) {
-        results = await orderedQuery.limit(options.limit);
-      } else if (options?.offset) {
-        results = await orderedQuery.offset(options.offset);
-      } else {
-        results = await orderedQuery;
-      }
+      results = await baseQuery;
     }
 
     return this.mapDbCompaniesToData(results);
@@ -471,7 +462,7 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
 
     return {
       // Use the id from the database record if not in data
-      id: (companyData.id as string) || dbCompany.id,
+      id: (companyData["id"] as string) || dbCompany.id,
       slug: dbCompany.slug,
       name: dbCompany.name,
       // Spread the additional data fields

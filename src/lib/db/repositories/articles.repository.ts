@@ -38,7 +38,11 @@ export class ArticlesRepository {
     if (!result || result.length === 0) {
       throw new Error("Failed to create article");
     }
-    return result[0];
+    const createdArticle = result[0];
+    if (!createdArticle) {
+      throw new Error("Failed to create article - no result returned");
+    }
+    return createdArticle;
   }
 
   /**
@@ -73,20 +77,20 @@ export class ArticlesRepository {
     limit?: number;
     offset?: number;
   }): Promise<Article[]> {
-    let query = this.db?.select().from(articles);
+    if (!this.db) return [];
+
+    let query = this.db.select().from(articles).orderBy(desc(articles.publishedDate));
 
     if (options?.status) {
-      query = query.where(eq(articles.status, options.status));
+      query = query.where(eq(articles.status, options.status)) as typeof query;
     }
 
-    query = query.orderBy(desc(articles.publishedDate));
-
     if (options?.limit) {
-      query = query.limit(options.limit);
+      query = query.limit(options.limit) as typeof query;
     }
 
     if (options?.offset) {
-      query = query.offset(options.offset);
+      query = query.offset(options.offset) as typeof query;
     }
 
     const result = await query;
@@ -199,11 +203,16 @@ export class ArticlesRepository {
    * Create a processing log entry
    */
   async createProcessingLog(log: NewArticleProcessingLog): Promise<ArticleProcessingLog> {
-    const result = await this.db?.insert(articleProcessingLogs).values(log).returning();
+    if (!this.db) throw new Error("Database not connected");
+    const result = await this.db.insert(articleProcessingLogs).values(log).returning();
     if (!result || result.length === 0) {
       throw new Error("Failed to create processing log");
     }
-    return result[0];
+    const createdLog = result[0];
+    if (!createdLog) {
+      throw new Error("Failed to create processing log - no result returned");
+    }
+    return createdLog;
   }
 
   /**

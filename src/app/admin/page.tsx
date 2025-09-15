@@ -4,7 +4,7 @@ import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 export default async function AdminPage() {
   // Check if admin is authenticated
-  const isAuthenticated = isAdminAuthenticated();
+  const isAuthenticated = await isAdminAuthenticated();
 
   if (!isAuthenticated) {
     redirect("/admin/auth/signin");

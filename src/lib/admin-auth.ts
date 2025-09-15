@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { sessionStore } from "./admin-session-store";
 
 export async function isAdminAuthenticated(request?: Request): Promise<boolean> {
   // Check if running in local development
@@ -34,12 +35,24 @@ export async function isAdminAuthenticated(request?: Request): Promise<boolean> 
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get("admin-session");
 
-  // Check if session token exists
-  return !!sessionToken?.value;
+  // Check if session token exists and is valid
+  if (!sessionToken?.value) {
+    return false;
+  }
+
+  // Validate the session token against our store
+  return sessionStore.validateSession(sessionToken.value);
 }
 
 export async function clearAdminSession() {
   const cookieStore = await cookies();
+  const sessionToken = cookieStore.get("admin-session");
+
+  // Remove from session store if exists
+  if (sessionToken?.value) {
+    sessionStore.deleteSession(sessionToken.value);
+  }
+
   cookieStore.delete("admin-session");
 }
 

@@ -87,7 +87,7 @@ export async function testConnection(): Promise<boolean> {
       sql = neon(DATABASE_URL);
     }
     const result = await sql`SELECT NOW() as current_time`;
-    console.log("✅ Database connection test successful:", result[0]);
+    console.log("✅ Database connection test successful:", Array.isArray(result) && result.length > 0 ? result[0] : result);
     return true;
   } catch (error) {
     console.error("❌ Database connection test failed:", error);
