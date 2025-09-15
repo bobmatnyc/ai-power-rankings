@@ -67,10 +67,9 @@ npm run dev:default
 
 🔍 Scanning ports 3000-3100 for availability...
 ⚠️  Port 3000 is in use by node (PID: 12345)
-⚠️  Port 3001 is in use by Code Helper (PID: 23456)
-✅ Found available port: 3002
-📍 Starting Next.js on http://localhost:3002
-💡 Tip: Set PORT=3002 in .env.development to always use this port
+✅ Port 3001 is available and designated for AI Power Rankings
+📍 Starting Next.js on http://localhost:3001
+💡 Tip: Port 3001 is the standard development port for this project
 ```
 
 ## Troubleshooting

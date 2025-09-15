@@ -175,7 +175,7 @@ export function ToolsManager() {
 
                 const avgScore =
                   latestScores.reduce((sum, score) => sum + score, 0) / latestScores.length;
-                return avgScore.toFixed(1);
+                return (avgScore || 0).toFixed(1);
               })()}
             </div>
             <p className="text-xs text-muted-foreground">Across all tools</p>
@@ -289,7 +289,7 @@ export function ToolsManager() {
                       </TableCell>
                       <TableCell>
                         {ranking ? (
-                          <div className="font-medium">{ranking.score.toFixed(1)}</div>
+                          <div className="font-medium">{(ranking.score || 0).toFixed(1)}</div>
                         ) : (
                           <span className="text-muted-foreground">—</span>
                         )}

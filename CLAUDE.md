@@ -33,14 +33,19 @@
 
 **Tech Stack**: Next.js 15, TypeScript, Tailwind CSS, JSON file-based storage, Vercel deployment
 
+**Development Server**: The AI Power Rankings development server runs on **port 3001** as the designated development port.
+
 ## 🎯 Single-Path Standards (ONE Way to Do ANYTHING)
 
 ### Development Commands
 ```bash
-# THE way to start development
+# THE way to start development (runs on port 3001)
 pnpm run dev:pm2 start
 
-# THE way to check code quality  
+# Access the development site at:
+# http://localhost:3001
+
+# THE way to check code quality
 pnpm run ci:local
 
 # THE way to build for production
@@ -144,11 +149,14 @@ This prevents deployment failures due to TypeScript errors or code quality issue
 ### 🔴 CRITICAL - Essential Commands
 
 ```bash
-# THE way to develop (PM2 process management)
-pnpm run dev:pm2 start   # Start dev server (THE ONLY WAY)
+# THE way to develop (PM2 process management on port 3001)
+pnpm run dev:pm2 start   # Start dev server on port 3001 (THE ONLY WAY)
 pnpm run dev:pm2 logs    # View server logs
-pnpm run dev:pm2 restart # Restart server  
+pnpm run dev:pm2 restart # Restart server
 pnpm run dev:pm2 stop    # Stop server
+
+# Access development site at:
+# http://localhost:3001
 
 # THE way to validate code before commit
 pnpm run ci:local        # Run all checks (THE ONLY WAY)

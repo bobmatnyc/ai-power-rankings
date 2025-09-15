@@ -124,6 +124,7 @@ export class ArticleDatabaseService {
             toolMentions: analysis.tool_mentions,
             companyMentions: analysis.company_mentions,
             author: input.metadata?.author,
+            model: analysis.model,
             publishedDate: analysis.published_date
               ? new Date(analysis.published_date)
               : undefined,
@@ -188,29 +189,43 @@ export class ArticleDatabaseService {
           performedBy: "admin",
         });
 
-        // Create new companies if needed
-        for (const company of newCompanies) {
-          await this.articlesRepo.createAutoCompany(
-            {
-              name: company.name,
-              slug: company.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-              website: company.website,
-            },
-            article.id
-          );
+        // Create new companies if needed (only if article was saved)
+        if (!input.dryRun && article?.id) {
+          for (const company of newCompanies) {
+            try {
+              await this.articlesRepo.createAutoCompany(
+                {
+                  name: company.name,
+                  slug: company.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+                  website: company.website,
+                },
+                article.id
+              );
+            } catch (companyError) {
+              console.error(`[ArticleDB] Failed to create company ${company.name}:`, companyError);
+              // Continue with other companies even if one fails
+            }
+          }
         }
 
-        // Create new tools if needed
-        for (const tool of newTools) {
-          await this.articlesRepo.createAutoTool(
-            {
-              name: tool.name,
-              slug: tool.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-              category: tool.category || "other",
-              companyId: tool.companyId,
-            },
-            article.id
-          );
+        // Create new tools if needed (only if article was saved)
+        if (!input.dryRun && article?.id) {
+          for (const tool of newTools) {
+            try {
+              await this.articlesRepo.createAutoTool(
+                {
+                  name: tool.name,
+                  slug: tool.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+                  category: tool.category || "other",
+                  companyId: tool.companyId,
+                },
+                article.id
+              );
+            } catch (toolError) {
+              console.error(`[ArticleDB] Failed to create tool ${tool.name}:`, toolError);
+              // Continue with other tools even if one fails
+            }
+          }
         }
 
         // Apply ranking changes

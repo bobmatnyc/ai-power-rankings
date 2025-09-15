@@ -72,18 +72,23 @@ Part of EP-044: Documentation Optimization Epic
 ### Development Build Workflow
 
 ```bash
-# 1. Start development server
+# 1. Start development server (runs on port 3001)
 pnpm run dev:pm2 start
 
-# 2. Monitor during development
+# 2. Access the development site
+# http://localhost:3001
+
+# 3. Monitor during development
 pnpm run dev:pm2 logs
 
-# 3. Restart when needed
+# 4. Restart when needed
 pnpm run dev:pm2 restart
 
-# 4. Clean shutdown
+# 5. Clean shutdown
 pnpm run dev:pm2 stop
 ```
+
+**Note:** The development server runs on port 3001 as the designated development port for AI Power Rankings.
 
 ### Production Build Process
 

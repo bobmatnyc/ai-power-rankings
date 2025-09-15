@@ -2,35 +2,8 @@
   "rankings": [
     {
       "rank": 1,
-      "previousRank": 3,
-      "rankChange": 2,
-      "changeReason": "",
-      "tool": {
-        "id": "1",
-        "slug": "cursor",
-        "name": "Cursor",
-        "category": "code-editor",
-        "status": "active",
-        "website_url": "https://cursor.com",
-        "description": "AI-powered code editor with $500M ARR and 360K+ paying developers"
-      },
-      "scores": {
-        "overall": 98.6,
-        "agentic_capability": 5,
-        "innovation": 8.8
-      },
-      "metrics": {
-        "news_articles_count": 28,
-        "recent_funding_rounds": 0,
-        "recent_product_launches": 0,
-        "users": 10000,
-        "swe_bench_score": null
-      }
-    },
-    {
-      "rank": 2,
       "previousRank": 1,
-      "rankChange": -1,
+      "rankChange": 0,
       "changeReason": "",
       "tool": {
         "id": "4",
@@ -55,9 +28,9 @@
       }
     },
     {
-      "rank": 3,
+      "rank": 2,
       "previousRank": 2,
-      "rankChange": -1,
+      "rankChange": 0,
       "changeReason": "",
       "tool": {
         "id": "2",
@@ -79,6 +52,33 @@
         "recent_product_launches": 0,
         "users": 10000,
         "swe_bench_score": 56
+      }
+    },
+    {
+      "rank": 3,
+      "previousRank": 3,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "1",
+        "slug": "cursor",
+        "name": "Cursor",
+        "category": "code-editor",
+        "status": "active",
+        "website_url": "https://cursor.com",
+        "description": "AI-powered code editor with $500M ARR and 360K+ paying developers"
+      },
+      "scores": {
+        "overall": 91.5,
+        "agentic_capability": 5,
+        "innovation": 8.8
+      },
+      "metrics": {
+        "news_articles_count": 28,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
       }
     },
     {
@@ -110,8 +110,8 @@
     },
     {
       "rank": 5,
-      "previousRank": 5,
-      "rankChange": 0,
+      "previousRank": 18,
+      "rankChange": 13,
       "changeReason": "",
       "tool": {
         "id": "10",
@@ -137,8 +137,8 @@
     },
     {
       "rank": 6,
-      "previousRank": 6,
-      "rankChange": 0,
+      "previousRank": 5,
+      "rankChange": -1,
       "changeReason": "",
       "tool": {
         "id": "31",
@@ -164,8 +164,8 @@
     },
     {
       "rank": 7,
-      "previousRank": 7,
-      "rankChange": 0,
+      "previousRank": 8,
+      "rankChange": 1,
       "changeReason": "",
       "tool": {
         "id": "14",
@@ -191,8 +191,8 @@
     },
     {
       "rank": 8,
-      "previousRank": 8,
-      "rankChange": 0,
+      "previousRank": 6,
+      "rankChange": -2,
       "changeReason": "",
       "tool": {
         "id": "11",
@@ -218,8 +218,8 @@
     },
     {
       "rank": 9,
-      "previousRank": 9,
-      "rankChange": 0,
+      "previousRank": 7,
+      "rankChange": -2,
       "changeReason": "",
       "tool": {
         "id": "26",
@@ -245,34 +245,7 @@
     },
     {
       "rank": 10,
-      "previousRank": 11,
-      "rankChange": 1,
-      "changeReason": "",
-      "tool": {
-        "id": "7",
-        "slug": "aider",
-        "name": "Aider",
-        "category": "open-source-framework",
-        "status": "active",
-        "website_url": "https://aider.chat",
-        "description": "AI pair programming in your terminal with git integration"
-      },
-      "scores": {
-        "overall": 73.5,
-        "agentic_capability": 5,
-        "innovation": 3.5
-      },
-      "metrics": {
-        "news_articles_count": 3,
-        "recent_funding_rounds": 0,
-        "recent_product_launches": 0,
-        "users": 10000,
-        "swe_bench_score": 26.3
-      }
-    },
-    {
-      "rank": 11,
-      "previousRank": 10,
+      "previousRank": 9,
       "rankChange": -1,
       "changeReason": "",
       "tool": {
@@ -298,9 +271,36 @@
       }
     },
     {
+      "rank": 11,
+      "previousRank": 10,
+      "rankChange": -1,
+      "changeReason": "",
+      "tool": {
+        "id": "7",
+        "slug": "aider",
+        "name": "Aider",
+        "category": "open-source-framework",
+        "status": "active",
+        "website_url": "https://aider.chat",
+        "description": "AI pair programming in your terminal with git integration"
+      },
+      "scores": {
+        "overall": 73.5,
+        "agentic_capability": 5,
+        "innovation": 3.5
+      },
+      "metrics": {
+        "news_articles_count": 3,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": 26.3
+      }
+    },
+    {
       "rank": 12,
-      "previousRank": 12,
-      "rankChange": 0,
+      "previousRank": 11,
+      "rankChange": -1,
       "changeReason": "",
       "tool": {
         "id": "21",
@@ -326,8 +326,8 @@
     },
     {
       "rank": 13,
-      "previousRank": 13,
-      "rankChange": 0,
+      "previousRank": 12,
+      "rankChange": -1,
       "changeReason": "",
       "tool": {
         "id": "5",
@@ -353,8 +353,8 @@
     },
     {
       "rank": 14,
-      "previousRank": 14,
-      "rankChange": 0,
+      "previousRank": 13,
+      "rankChange": -1,
       "changeReason": "",
       "tool": {
         "id": "25",
@@ -380,8 +380,8 @@
     },
     {
       "rank": 15,
-      "previousRank": 15,
-      "rankChange": 0,
+      "previousRank": 14,
+      "rankChange": -1,
       "changeReason": "",
       "tool": {
         "id": "27",
@@ -407,8 +407,8 @@
     },
     {
       "rank": 16,
-      "previousRank": 16,
-      "rankChange": 0,
+      "previousRank": 15,
+      "rankChange": -1,
       "changeReason": "",
       "tool": {
         "id": "9",
@@ -434,8 +434,8 @@
     },
     {
       "rank": 17,
-      "previousRank": 17,
-      "rankChange": 0,
+      "previousRank": 16,
+      "rankChange": -1,
       "changeReason": "",
       "tool": {
         "id": "23",
@@ -461,8 +461,8 @@
     },
     {
       "rank": 18,
-      "previousRank": 18,
-      "rankChange": 0,
+      "previousRank": 17,
+      "rankChange": -1,
       "changeReason": "",
       "tool": {
         "id": "24",
@@ -515,8 +515,8 @@
     },
     {
       "rank": 20,
-      "previousRank": 20,
-      "rankChange": 0,
+      "previousRank": 26,
+      "rankChange": 6,
       "changeReason": "",
       "tool": {
         "id": "8",
@@ -531,6 +531,303 @@
         "overall": 63.5,
         "agentic_capability": 5,
         "innovation": 4.5
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 21,
+      "previousRank": 20,
+      "rankChange": -1,
+      "changeReason": "",
+      "tool": {
+        "id": "19",
+        "slug": "claude-artifacts",
+        "name": "Claude Artifacts",
+        "category": "app-builder",
+        "status": "active",
+        "website_url": "https://claude.ai",
+        "description": "Interactive component generation feature within Claude that creates and iterates on code, diagrams, and applications in a side panel"
+      },
+      "scores": {
+        "overall": 61.5,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 2,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 22,
+      "previousRank": 21,
+      "rankChange": -1,
+      "changeReason": "",
+      "tool": {
+        "id": "29",
+        "slug": "sourcegraph-cody",
+        "name": "Sourcegraph Cody",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://sourcegraph.com/cody",
+        "description": "AI coding assistant that indexes entire repositories with embeddings to answer questions, generate code with full project context, and explain existing code"
+      },
+      "scores": {
+        "overall": 61.5,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 23,
+      "previousRank": 22,
+      "rankChange": -1,
+      "changeReason": "",
+      "tool": {
+        "id": "6",
+        "slug": "cline",
+        "name": "Cline",
+        "category": "open-source-framework",
+        "status": "active",
+        "website_url": "https://cline.bot",
+        "description": "Autonomous coding agent VS Code extension with multi-modal capabilities"
+      },
+      "scores": {
+        "overall": 61,
+        "agentic_capability": 5,
+        "innovation": 5.8
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 24,
+      "previousRank": 23,
+      "rankChange": -1,
+      "changeReason": "",
+      "tool": {
+        "id": "13",
+        "slug": "openhands",
+        "name": "OpenHands",
+        "category": "open-source-framework",
+        "status": "active",
+        "website_url": "https://all-hands.dev",
+        "description": "Open source autonomous AI agent for software engineering tasks"
+      },
+      "scores": {
+        "overall": 62,
+        "agentic_capability": 5,
+        "innovation": 5.2
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 25,
+      "previousRank": 24,
+      "rankChange": -1,
+      "changeReason": "",
+      "tool": {
+        "id": "22",
+        "slug": "jetbrains-ai",
+        "name": "JetBrains AI Assistant",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://jetbrains.com/ai/",
+        "description": "AI assistant integrated into JetBrains IDEs providing code completions, chat assistance, and multi-file editing with Junie agent"
+      },
+      "scores": {
+        "overall": 60.5,
+        "agentic_capability": 5,
+        "innovation": 3.8
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 26,
+      "previousRank": 25,
+      "rankChange": -1,
+      "changeReason": "",
+      "tool": {
+        "id": "16",
+        "slug": "qodo-gen",
+        "name": "Qodo Gen",
+        "category": "testing-tool",
+        "status": "active",
+        "website_url": "https://qodo.ai",
+        "description": "AI-powered testing platform that generates unit tests, reviews code, and assists with quality assurance using multiple AI agents"
+      },
+      "scores": {
+        "overall": 58.5,
+        "agentic_capability": 5,
+        "innovation": 3.8
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 27,
+      "previousRank": 27,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "28",
+        "slug": "coderabbit",
+        "name": "CodeRabbit",
+        "category": "code-review",
+        "status": "active",
+        "website_url": "https://coderabbit.ai",
+        "description": "Advanced AI code review platform that uses Abstract Syntax Tree (AST) analysis for deeper code understanding beyond surface-level pattern matching. With 10M+ pull requests processed, CodeRabbit demonstrates the scalability and effectiveness of AI-powered code review, helping teams maintain code quality and accelerate development cycles."
+      },
+      "scores": {
+        "overall": 55,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 28,
+      "previousRank": 28,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "17",
+        "slug": "snyk-code",
+        "name": "Snyk Code",
+        "category": "code-review",
+        "status": "active",
+        "website_url": "https://snyk.io/product/snyk-code/",
+        "description": "AI-driven static code analysis tool that continuously scans code for security vulnerabilities, bugs, and quality issues in real-time"
+      },
+      "scores": {
+        "overall": 53.5,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 29,
+      "previousRank": 29,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "30",
+        "slug": "microsoft-intellicode",
+        "name": "Microsoft IntelliCode",
+        "category": "ide-assistant",
+        "status": "active",
+        "website_url": "https://visualstudio.microsoft.com/services/intellicode/",
+        "description": "AI-assisted development feature included in Visual Studio and VS Code that provides smarter IntelliSense by using ML to rank code suggestions by context and API usage patterns"
+      },
+      "scores": {
+        "overall": 53,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 30,
+      "previousRank": 30,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "15",
+        "slug": "sourcery",
+        "name": "Sourcery",
+        "category": "code-review",
+        "status": "active",
+        "website_url": "https://sourcery.ai",
+        "description": "AI code review and refactoring tool that automatically suggests improvements for code readability, efficiency, and maintainability"
+      },
+      "scores": {
+        "overall": 52.8,
+        "agentic_capability": 5,
+        "innovation": 2.8
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 10000,
+        "swe_bench_score": null
+      }
+    },
+    {
+      "rank": 31,
+      "previousRank": 31,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "20",
+        "slug": "diffblue-cover",
+        "name": "Diffblue Cover",
+        "category": "testing-tool",
+        "status": "active",
+        "website_url": "https://diffblue.com/products/cover",
+        "description": "AI-powered unit test generation tool that autonomously writes entire suites of JUnit tests for Java code using reinforcement learning"
+      },
+      "scores": {
+        "overall": 51.5,
+        "agentic_capability": 5,
+        "innovation": 3.8
       },
       "metrics": {
         "news_articles_count": 0,
@@ -556,10 +853,5 @@
     "max_news_impact": 41
   },
   "_source": "static-generation",
-  "_timestamp": "2025-09-13T01:13:35.292Z",
-  "metadata": {
-    "last_updated": "2025-09-13T01:24:43.516Z",
-    "version": "1.0.2",
-    "version_id": "385ce883-1be2-4ebb-bc1e-4e87c6fb9983"
-  }
+  "_timestamp": "2025-09-15T13:17:36.434Z"
 }

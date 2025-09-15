@@ -4,7 +4,7 @@
 
 ### Method 1: Admin UI Upload (Recommended)
 
-1. Go to http://localhost:3000/admin/ingest-news
+1. Go to http://localhost:3001/admin/ingest-news
 2. Click "Upload JSON File"
 3. Select your news JSON file
 4. Click "Upload and Process"
@@ -12,7 +12,7 @@
 ### Method 2: API Upload
 
 ```bash
-curl -X POST http://localhost:3000/api/admin/ingest-news \
+curl -X POST http://localhost:3001/api/admin/ingest-news \
   -H "Content-Type: multipart/form-data" \
   -F "file=@your-news-items.json"
 ```
@@ -119,13 +119,13 @@ curl -X POST http://localhost:3000/api/admin/ingest-news \
 
 ### Ingestion Reports
 
-- Go to http://localhost:3000/admin/ingest-news
+- Go to http://localhost:3001/admin/ingest-news
 - Click "View Reports" tab
 - See detailed processing results
 
 ### Check Ingested News
 
-- Go to http://localhost:3000/admin/collections/news
+- Go to http://localhost:3001/admin/collections/news
 - View all news items in Payload CMS
 
 ## Troubleshooting

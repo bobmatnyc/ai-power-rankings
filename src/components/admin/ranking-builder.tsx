@@ -288,7 +288,7 @@ export function RankingBuilder() {
               {comparison?.score_change && (
                 <p className="text-xs text-muted-foreground mt-1">
                   Score: {comparison?.current_score?.toFixed(1) || "N/A"} →{" "}
-                  {comparison?.new_score?.toFixed(1)}(
+                  {(comparison?.new_score || 0).toFixed(1)}(
                   {(comparison?.score_change ?? 0) > 0 ? "+" : ""}
                   {comparison?.score_change?.toFixed(1)})
                 </p>
@@ -531,7 +531,7 @@ export function RankingBuilder() {
                           <div>
                             <div className="font-medium">{comparison.tool_name}</div>
                             <div className="text-sm text-muted-foreground">
-                              Score: {comparison.new_score.toFixed(1)}
+                              Score: {(comparison.new_score || 0).toFixed(1)}
                               {comparison.current_score && (
                                 <span
                                   className={cn(
@@ -540,7 +540,7 @@ export function RankingBuilder() {
                                   )}
                                 >
                                   ({comparison.score_change > 0 ? "+" : ""}
-                                  {comparison.score_change.toFixed(1)})
+                                  {(comparison.score_change || 0).toFixed(1)})
                                 </span>
                               )}
                             </div>

@@ -15,7 +15,7 @@ const path = require("node:path");
  */
 
 async function copyPartytownFiles() {
-  const partytownPath = path.join(process.cwd(), "node_modules", "@builder.io", "partytown", "lib");
+  const partytownPath = path.join(process.cwd(), "node_modules", "@qwik.dev", "partytown", "lib");
 
   const publicPartytownPath = path.join(process.cwd(), "public", "partytown");
 

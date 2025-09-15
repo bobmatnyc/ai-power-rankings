@@ -9,8 +9,8 @@ import { getDb } from "@/lib/db/connection";
  */
 export async function GET(request: NextRequest) {
   try {
-    // Check admin authentication
-    const isAuthenticated = await isAdminAuthenticated();
+    // Check admin authentication (automatically skipped in local dev)
+    const isAuthenticated = await isAdminAuthenticated(request);
     if (!isAuthenticated) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

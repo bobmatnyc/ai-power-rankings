@@ -2,18 +2,16 @@
 
 import {
   AlertCircle,
-  Bot,
-  Bug,
   ChevronLeft,
   ChevronRight,
-  FileText,
-  Globe,
+  Database,
   History,
   Loader2,
   Mail,
   Newspaper,
   TrendingUp,
   Upload,
+  X,
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { SubscribersPage } from "@/components/admin/subscribers-page";
@@ -22,18 +20,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 
 interface NewsAnalysis {
   title: string;
@@ -45,6 +33,7 @@ interface NewsAnalysis {
     tool: string;
     context: string;
     sentiment: number;
+    relevance?: number;
   }>;
   overall_sentiment: number;
   key_topics: string[];
@@ -80,6 +69,21 @@ interface RankingPreview {
       reason: string;
     }>;
   };
+  toolImpacts?: Array<{
+    tool: string;
+    currentRank: number;
+    proposedRank: number;
+    rankChange: number;
+    scoreChange: number;
+    mentioned: boolean;
+    impacts: {
+      sentiment: number;
+      innovation: number;
+      business: number;
+      development: number;
+      market: number;
+    };
+  }>;
 }
 
 interface RankingVersion {
@@ -97,163 +101,45 @@ interface RankingVersion {
   }>;
 }
 
+interface DatabaseStatus {
+  connected: boolean;
+  enabled: boolean;
+  configured: boolean;
+  hasActiveInstance: boolean;
+  environment: string;
+  nodeEnv: string;
+  database: string;
+  host: string;
+  maskedHost?: string;
+  provider: string;
+  timestamp: string;
+  status: string;
+  type?: "postgresql" | "json";
+  displayEnvironment?: "development" | "production" | "local";
+}
+
 export default function UnifiedAdminDashboard() {
-  const [activeTab, setActiveTab] = useState("news");
+  const [activeTab, setActiveTab] = useState("articles");
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [errorDetails, setErrorDetails] = useState<{
+  const [errorDetails] = useState<{
     type?: string;
     troubleshooting?: string[];
   } | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<{
-    processingTime?: string;
-    method?: string;
-    timestamp?: string;
-  } | null>(null);
+  const [dbStatus, setDbStatus] = useState<DatabaseStatus | null>(null);
+  const [showDbStatus, setShowDbStatus] = useState(true);
+  const [isLoadingDbStatus, setIsLoadingDbStatus] = useState(true);
 
-  // News upload state
-  const [newsInput, setNewsInput] = useState("");
-  const [newsInputType, setNewsInputType] = useState<"url" | "text" | "file">("url");
+  // News upload state (kept for ranking preview functionality)
   const [newsAnalysis, setNewsAnalysis] = useState<NewsAnalysis | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [verboseLogging, setVerboseLogging] = useState(false);
 
   // Ranking state
   const [rankingPreview, setRankingPreview] = useState<RankingPreview | null>(null);
   const [rankingVersions, setRankingVersions] = useState<RankingVersion[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
 
-  // Handle file selection
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const allowedTypes = ["text/plain", "text/markdown", "application/pdf", "application/json"];
-
-      const allowedExtensions = [".txt", ".md", ".pdf", ".json"];
-      const fileExtension = `.${file.name.split(".").pop()?.toLowerCase()}`;
-
-      if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
-        setError(`Unsupported file type. Please upload: ${allowedExtensions.join(", ")}`);
-        return;
-      }
-
-      if (file.size > 10 * 1024 * 1024) {
-        // 10MB limit
-        setError("File too large. Maximum size is 10MB.");
-        return;
-      }
-
-      setSelectedFile(file);
-      setError(null);
-    }
-  };
-
-  // Convert file to base64
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const base64 = reader.result as string;
-        // Remove data URL prefix (e.g., "data:text/plain;base64,")
-        const base64Content = base64.split(",")[1];
-        resolve(base64Content);
-      };
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
-  // Handle news upload and analysis
-  const handleNewsUpload = async () => {
-    setIsProcessing(true);
-    setError(null);
-    setErrorDetails(null);
-    setSuccess(null);
-    setNewsAnalysis(null);
-    setDebugInfo(null);
-
-    try {
-      let input = newsInput;
-      let filename: string | undefined;
-      let mimeType: string | undefined;
-
-      // Handle file upload
-      if (newsInputType === "file") {
-        if (!selectedFile) {
-          throw new Error("Please select a file to upload");
-        }
-        input = await fileToBase64(selectedFile);
-        filename = selectedFile.name;
-        mimeType = selectedFile.type || "text/plain";
-      }
-
-      const response = await fetch("/api/admin/news/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          input,
-          type: newsInputType,
-          filename,
-          mimeType,
-          verbose: verboseLogging,
-          saveAsArticle: true, // Automatically save as article
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setErrorDetails({
-          type: data.type,
-          troubleshooting: data.troubleshooting,
-        });
-        throw new Error(data.error || `Failed to analyze news: ${response.statusText}`);
-      }
-
-      setNewsAnalysis(data.analysis);
-      setDebugInfo(data.debug);
-
-      if (data.warning) {
-        setError(data.warning);
-      }
-
-      // Show success message with saved article info
-      if (data.savedArticle) {
-        setSuccess(`News analyzed and saved! Article ID: ${data.savedArticle.id}`);
-      }
-
-      // Automatically generate ranking preview
-      await generateRankingPreview(data.analysis);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to analyze news");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  // Generate ranking preview based on news analysis
-  const generateRankingPreview = async (analysis: NewsAnalysis) => {
-    setIsProcessing(true);
-    try {
-      const response = await fetch("/api/admin/rankings/preview", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ news_analysis: analysis }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate ranking preview");
-      }
-
-      const data = await response.json();
-      setRankingPreview(data.preview);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate preview");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  // Removed unused file handling functions - file upload now handled in ArticleManagement component
 
   // Commit ranking changes
   const commitRankingChanges = async () => {
@@ -265,6 +151,7 @@ export default function UnifiedAdminDashboard() {
     try {
       const response = await fetch("/api/admin/rankings/commit", {
         method: "POST",
+        credentials: 'include',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           preview: rankingPreview,
@@ -283,7 +170,6 @@ export default function UnifiedAdminDashboard() {
       // Reset states
       setNewsAnalysis(null);
       setRankingPreview(null);
-      setNewsInput("");
 
       // Reload versions
       await loadRankingVersions();
@@ -297,11 +183,21 @@ export default function UnifiedAdminDashboard() {
   // Load ranking versions
   const loadRankingVersions = useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/rankings/versions");
-      if (response.ok) {
-        const data = await response.json();
-        setRankingVersions(data.versions);
+      const response = await fetch("/api/admin/rankings/versions", {
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          console.error("Authentication required for ranking versions");
+        } else {
+          console.error(`Failed to load ranking versions: ${response.status}`);
+        }
+        return;
       }
+
+      const data = await response.json();
+      setRankingVersions(data.versions);
     } catch (err) {
       console.error("Failed to load ranking versions:", err);
     }
@@ -315,6 +211,7 @@ export default function UnifiedAdminDashboard() {
     try {
       const response = await fetch(`/api/admin/rankings/rollback/${versionId}`, {
         method: "POST",
+        credentials: 'include'
       });
 
       if (!response.ok) {
@@ -330,19 +227,316 @@ export default function UnifiedAdminDashboard() {
     }
   };
 
-  // Load ranking versions on component mount
+  // Load database status
+  const loadDatabaseStatus = useCallback(async () => {
+    setIsLoadingDbStatus(true);
+
+    // Don't load DB status if we've already closed it
+    if (!showDbStatus) {
+      setIsLoadingDbStatus(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/admin/db-status", {
+        credentials: 'include', // Include cookies for authentication
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      // Check if response is JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        // Try to get the response as text for debugging
+        const text = await response.text();
+
+        // Check if it's an HTML error page
+        if (text.includes("<!DOCTYPE") || text.includes("<html")) {
+          // This might be a 404 or routing issue - fallback to JSON mode
+          setDbStatus({
+            connected: false,
+            enabled: false,
+            configured: false,
+            hasActiveInstance: false,
+            environment: "local",
+            nodeEnv: "development",
+            database: "json",
+            host: "localhost",
+            maskedHost: "localhost",
+            provider: "json",
+            timestamp: new Date().toISOString(),
+            status: "json_mode",
+            type: "json" as const,
+            displayEnvironment: "local" as const
+          });
+        }
+        return;
+      }
+
+      if (!response.ok) {
+        // Handle errors silently
+        if (response.status === 401) {
+          // Authentication error - In production, this means user needs to authenticate
+          // In local development, this shouldn't happen anymore as auth is skipped
+          console.log("Database status authentication check (should not happen in local dev)");
+          setIsLoadingDbStatus(false);
+          return;
+        } else if (response.status === 404) {
+          // API route doesn't exist - use JSON mode
+          setDbStatus({
+            connected: false,
+            enabled: false,
+            configured: false,
+            hasActiveInstance: false,
+            environment: "local",
+            nodeEnv: "development",
+            database: "json",
+            host: "localhost",
+            maskedHost: "localhost",
+            provider: "json",
+            timestamp: new Date().toISOString(),
+            status: "json_mode",
+            type: "json" as const,
+            displayEnvironment: "local" as const
+          });
+        }
+        return;
+      }
+
+      // Parse the successful JSON response
+      try {
+        const data = await response.json();
+        setDbStatus(data);
+      } catch (parseError) {
+        console.error("Failed to parse database status response:", parseError);
+      }
+
+    } catch (err) {
+      // Network error - fallback to JSON mode silently
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setDbStatus({
+          connected: false,
+          enabled: false,
+          configured: false,
+          hasActiveInstance: false,
+          environment: "local",
+          nodeEnv: "development",
+          database: "json",
+          host: "localhost",
+          maskedHost: "localhost",
+          provider: "json",
+          timestamp: new Date().toISOString(),
+          status: "json_mode",
+          type: "json" as const,
+          displayEnvironment: "local" as const
+        });
+      }
+    } finally {
+      setIsLoadingDbStatus(false);
+    }
+  }, [showDbStatus]);
+
+  // Load ranking versions and database status on component mount
   useEffect(() => {
     loadRankingVersions();
-  }, [loadRankingVersions]);
+    // Add a small delay before loading database status to ensure cookies are properly set
+    if (showDbStatus) {
+      const timer = setTimeout(() => {
+        loadDatabaseStatus();
+      }, 100); // Small delay to ensure authentication is ready
+
+      return () => clearTimeout(timer);
+    }
+  }, [loadRankingVersions, loadDatabaseStatus, showDbStatus]);
 
   return (
     <div className="container mx-auto p-6 max-w-7xl">
+      {/* Database Status Indicator */}
+      {showDbStatus && (
+        <Card className="mb-4 border-l-4"
+          style={{
+            borderLeftColor: dbStatus?.type === "json" ? "#3b82f6" : // Blue for JSON
+                            dbStatus?.displayEnvironment === "development" ? "#10b981" : // Green for Dev
+                            dbStatus?.displayEnvironment === "production" ? "#ef4444" : // Red for Prod
+                            "#6b7280" // Gray for unknown
+          }}
+        >
+          <CardContent className="py-3 px-4">
+            {isLoadingDbStatus ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
+                <span className="text-sm text-gray-600">Loading database status...</span>
+              </div>
+            ) : dbStatus ? (
+              <>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Database className={`h-5 w-5 ${
+                      dbStatus.type === "json" ? "text-blue-600" :
+                      dbStatus.displayEnvironment === "development" ? "text-green-600" :
+                      dbStatus.displayEnvironment === "production" ? "text-red-600" :
+                      "text-gray-600"
+                    }`} />
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm">Database:</span>
+
+                      {/* Environment Badge */}
+                      <Badge
+                        variant={dbStatus.type === "json" ? "secondary" :
+                                dbStatus.displayEnvironment === "development" ? "default" :
+                                "destructive"}
+                        className={`text-xs ${
+                          dbStatus.type === "json" ? "bg-blue-100 text-blue-800 border-blue-200" :
+                          dbStatus.displayEnvironment === "development" ? "bg-green-100 text-green-800 border-green-200" :
+                          "bg-red-100 text-red-800 border-red-200"
+                        }`}
+                      >
+                        {dbStatus.type === "json" ? "JSON Files" :
+                         dbStatus.displayEnvironment === "development" ? "Development" :
+                         "Production"}
+                      </Badge>
+
+                      <span className="text-sm text-gray-600">|</span>
+
+                      {/* Database Name */}
+                      {dbStatus.type !== "json" && (
+                        <>
+                          <span className="text-sm font-mono text-gray-700">{dbStatus.database}</span>
+                          <span className="text-sm text-gray-600">|</span>
+                        </>
+                      )}
+
+                      {/* Host (masked) */}
+                      {dbStatus.type !== "json" && dbStatus.maskedHost && dbStatus.maskedHost !== "N/A" && (
+                        <>
+                          <span className="text-sm font-mono text-gray-500">{dbStatus.maskedHost}</span>
+                          <span className="text-sm text-gray-600">|</span>
+                        </>
+                      )}
+
+                      {/* Connection Status */}
+                      <div className="flex items-center gap-1.5">
+                        <div className="relative">
+                          <div
+                            className={`h-2.5 w-2.5 rounded-full ${
+                              dbStatus.type === "json" ? "bg-blue-500" :
+                              dbStatus.connected ? "bg-green-500" : "bg-red-500"
+                            }`}
+                          />
+                          {(dbStatus.type !== "json" && dbStatus.connected) && (
+                            <div className="absolute inset-0 h-2.5 w-2.5 rounded-full bg-green-500 animate-ping" />
+                          )}
+                        </div>
+                        <span className="text-sm font-medium text-gray-700">
+                          {dbStatus.type === "json" ? "JSON Mode" :
+                           dbStatus.connected ? "Connected" : "Disconnected"}
+                        </span>
+                      </div>
+
+                      {/* Provider Badge */}
+                      {dbStatus.type !== "json" && dbStatus.provider && dbStatus.provider !== "N/A" && (
+                        <>
+                          <span className="text-sm text-gray-600">|</span>
+                          <Badge variant="outline" className="text-xs uppercase">
+                            {dbStatus.provider}
+                          </Badge>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={loadDatabaseStatus}
+                      disabled={isLoadingDbStatus}
+                      className="h-7 px-2"
+                      title="Refresh database status"
+                    >
+                      {isLoadingDbStatus ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <History className="h-3 w-3" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowDbStatus(false)}
+                      className="h-7 w-7 p-0"
+                      title="Hide database status"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Status Messages */}
+                {dbStatus.type === "json" && (
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <div className="h-1 w-1 rounded-full bg-blue-500" />
+                    <span className="text-xs text-blue-700">
+                      Using local JSON file storage. Database features disabled.
+                    </span>
+                  </div>
+                )}
+                {dbStatus.type !== "json" && !dbStatus.connected && dbStatus.configured && (
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <div className="h-1 w-1 rounded-full bg-red-500" />
+                    <span className="text-xs text-red-600">
+                      Database is configured but not connected. Check your connection settings.
+                    </span>
+                  </div>
+                )}
+                {dbStatus.type !== "json" && !dbStatus.configured && (
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <div className="h-1 w-1 rounded-full bg-yellow-500" />
+                    <span className="text-xs text-yellow-700">
+                      Database not configured. Set DATABASE_URL to enable PostgreSQL.
+                    </span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Database className="h-4 w-4 text-gray-400" />
+                  <span className="text-sm text-gray-600">Database status pending...</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={loadDatabaseStatus}
+                  className="h-7 px-2"
+                >
+                  <History className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       <div className="mb-8 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold mb-2">AI-Powered Admin Dashboard</h1>
           <p className="text-gray-600">Streamlined news ingestion and ranking management</p>
         </div>
         <div className="flex gap-2">
+          {!showDbStatus && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowDbStatus(true)}
+              className="flex items-center gap-2"
+              title="Show database status"
+            >
+              <Database className="h-4 w-4" />
+              <span>DB Status</span>
+            </Button>
+          )}
           <Button
             variant="outline"
             onClick={() => {
@@ -356,7 +550,10 @@ export default function UnifiedAdminDashboard() {
             variant="outline"
             onClick={async () => {
               // Call logout API
-              await fetch("/api/admin/auth", { method: "DELETE" });
+              await fetch("/api/admin/auth", {
+                method: "DELETE",
+                credentials: 'include'
+              });
               window.location.href = "/admin/auth/signin";
             }}
             className="flex items-center gap-2"
@@ -399,11 +596,7 @@ export default function UnifiedAdminDashboard() {
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="news">
-            <FileText className="mr-2 h-4 w-4" />
-            News Upload
-          </TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="articles">
             <Newspaper className="mr-2 h-4 w-4" />
             Articles
@@ -422,303 +615,7 @@ export default function UnifiedAdminDashboard() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="news" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle>Upload & Analyze News</CardTitle>
-                  <CardDescription>
-                    Add news via URL or text for AI-powered analysis and ranking updates
-                  </CardDescription>
-                </div>
-                <a href="/admin/news" target="_blank" rel="noopener">
-                  <Button variant="outline" size="sm">
-                    <FileText className="h-4 w-4 mr-2" />
-                    View All Articles
-                  </Button>
-                </a>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-4">
-                <Select
-                  value={newsInputType}
-                  onValueChange={(v) => {
-                    setNewsInputType(v as "url" | "text" | "file");
-                    setSelectedFile(null);
-                    setNewsInput("");
-                  }}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="url">
-                      <Globe className="mr-2 h-4 w-4 inline" />
-                      URL
-                    </SelectItem>
-                    <SelectItem value="text">
-                      <FileText className="mr-2 h-4 w-4 inline" />
-                      Text
-                    </SelectItem>
-                    <SelectItem value="file">
-                      <Upload className="mr-2 h-4 w-4 inline" />
-                      File
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {newsInputType === "url" ? (
-                  <Input
-                    placeholder="https://example.com/article"
-                    value={newsInput}
-                    onChange={(e) => setNewsInput(e.target.value)}
-                    className="flex-1"
-                  />
-                ) : newsInputType === "text" ? (
-                  <Textarea
-                    placeholder="Paste article text here..."
-                    value={newsInput}
-                    onChange={(e) => setNewsInput(e.target.value)}
-                    className="flex-1 min-h-[200px]"
-                  />
-                ) : (
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <Input
-                        type="file"
-                        accept=".txt,.md,.pdf,.json"
-                        onChange={handleFileSelect}
-                        className="flex-1"
-                      />
-                      {selectedFile && (
-                        <Badge variant="secondary">
-                          {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Supported: .txt, .md, .pdf, .json (max 10MB)
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="verbose"
-                    checked={verboseLogging}
-                    onChange={(e) => setVerboseLogging(e.target.checked)}
-                    className="rounded border-gray-300"
-                  />
-                  <Label htmlFor="verbose" className="text-sm font-normal cursor-pointer">
-                    <Bug className="inline h-3 w-3 mr-1" />
-                    Verbose logging (debugging)
-                  </Label>
-                </div>
-              </div>
-
-              <Button
-                onClick={handleNewsUpload}
-                disabled={(newsInputType === "file" ? !selectedFile : !newsInput) || isProcessing}
-                className="w-full"
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Analyzing with AI...
-                  </>
-                ) : (
-                  <>
-                    <Bot className="mr-2 h-4 w-4" />
-                    Analyze News
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
-
-          {newsAnalysis && (
-            <Card>
-              <CardHeader>
-                <CardTitle>AI Analysis Results</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label>Title</Label>
-                  <p className="text-lg font-medium">{newsAnalysis.title}</p>
-                </div>
-
-                <div>
-                  <Label>Summary</Label>
-                  <p className="text-gray-700">{newsAnalysis.summary}</p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Source</Label>
-                    <p>{newsAnalysis.source}</p>
-                  </div>
-                  <div>
-                    <Label>Published</Label>
-                    <p>{new Date(newsAnalysis.published_date).toLocaleDateString()}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Tool-by-Tool Rankings Impact</Label>
-                  <div className="mt-3 space-y-3">
-                    {newsAnalysis.tool_mentions.map((mention) => (
-                      <div
-                        key={`${mention.tool}-${mention.context.substring(0, 10)}`}
-                        className="border rounded-lg p-3 bg-gray-50"
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm">{mention.tool}</span>
-                            <Badge
-                              variant={
-                                mention.sentiment > 0
-                                  ? "default"
-                                  : mention.sentiment < 0
-                                    ? "destructive"
-                                    : "secondary"
-                              }
-                              className="text-xs"
-                            >
-                              {mention.sentiment > 0 ? "+" : ""}
-                              {(mention.sentiment * 100).toFixed(0)}% impact
-                            </Badge>
-                          </div>
-                        </div>
-                        {mention.context && (
-                          <p className="text-xs text-gray-600 italic mb-2">
-                            Context: "{mention.context.substring(0, 150)}
-                            {mention.context.length > 150 ? "..." : ""}"
-                          </p>
-                        )}
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div>
-                            <span className="text-gray-500">Sentiment Impact:</span>
-                            <span
-                              className={`ml-1 font-medium ${
-                                mention.sentiment > 0
-                                  ? "text-green-600"
-                                  : mention.sentiment < 0
-                                    ? "text-red-600"
-                                    : "text-gray-600"
-                              }`}
-                            >
-                              {mention.sentiment > 0 ? "+" : ""}
-                              {(mention.sentiment * 100).toFixed(0)}%
-                            </span>
-                          </div>
-                          {mention.relevance !== undefined && (
-                            <div>
-                              <span className="text-gray-500">Relevance:</span>
-                              <span className="ml-1 font-medium">
-                                {(mention.relevance * 100).toFixed(0)}%
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label>Key Topics</Label>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {newsAnalysis.key_topics.map((topic) => (
-                      <Badge key={topic} variant="outline">
-                        {topic}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Overall Sentiment</Label>
-                    <div className="flex items-center gap-2">
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full ${newsAnalysis.overall_sentiment > 0 ? "bg-green-500" : "bg-red-500"}`}
-                          style={{ width: `${Math.abs(newsAnalysis.overall_sentiment) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-medium">
-                        {(newsAnalysis.overall_sentiment * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <Label>Importance Score</Label>
-                    <div className="flex items-center gap-2">
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-500 h-2 rounded-full"
-                          style={{ width: `${newsAnalysis.importance_score * 10}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-medium">
-                        {newsAnalysis.importance_score}/10
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {newsAnalysis.qualitative_metrics && (
-                  <div>
-                    <Label>Qualitative Metrics</Label>
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      <div className="text-sm">
-                        <span className="text-gray-600">Innovation:</span>{" "}
-                        <span className="font-medium">
-                          +{newsAnalysis.qualitative_metrics.innovation_boost.toFixed(1)}
-                        </span>
-                      </div>
-                      <div className="text-sm">
-                        <span className="text-gray-600">Business:</span>{" "}
-                        <span className="font-medium">
-                          {newsAnalysis.qualitative_metrics.business_sentiment > 0 ? "+" : ""}
-                          {newsAnalysis.qualitative_metrics.business_sentiment.toFixed(1)}
-                        </span>
-                      </div>
-                      <div className="text-sm">
-                        <span className="text-gray-600">Development:</span>{" "}
-                        <span className="font-medium">
-                          +{newsAnalysis.qualitative_metrics.development_velocity.toFixed(1)}
-                        </span>
-                      </div>
-                      <div className="text-sm">
-                        <span className="text-gray-600">Market:</span>{" "}
-                        <span className="font-medium">
-                          +{newsAnalysis.qualitative_metrics.market_traction.toFixed(1)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {debugInfo && (
-                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                    <Label className="text-xs font-mono">Debug Information</Label>
-                    <div className="mt-1 text-xs font-mono text-gray-600">
-                      <p>Processing time: {debugInfo.processingTime}</p>
-                      <p>Method: {debugInfo.method}</p>
-                      <p>Timestamp: {debugInfo.timestamp}</p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
+        {/* Removed News Upload tab content - Article Management now handles file uploads */}
 
         <TabsContent value="articles" className="space-y-6">
           <ArticleManagement />
@@ -744,7 +641,7 @@ export default function UnifiedAdminDashboard() {
                             </Badge>
                             {item.tool}
                           </span>
-                          <span className="text-gray-500">{item.score.toFixed(1)}</span>
+                          <span className="text-gray-500">{(item.score || 0).toFixed(1)}</span>
                         </div>
                       ))}
                     </div>
@@ -782,7 +679,7 @@ export default function UnifiedAdminDashboard() {
                               </span>
                             )}
                           </span>
-                          <span className="text-gray-500">{item.score.toFixed(1)}</span>
+                          <span className="text-gray-500">{(item.score || 0).toFixed(1)}</span>
                         </div>
                       ))}
                     </div>
@@ -857,7 +754,7 @@ export default function UnifiedAdminDashboard() {
                                     }
                                   >
                                     {impact.scoreChange > 0 ? "+" : ""}
-                                    {impact.scoreChange.toFixed(2)}
+                                    {(impact.scoreChange || 0).toFixed(2)}
                                   </span>
                                 ) : (
                                   <span className="text-gray-400">-</span>
@@ -877,7 +774,7 @@ export default function UnifiedAdminDashboard() {
                                           }
                                         >
                                           {impact.impacts.sentiment > 0 ? "+" : ""}
-                                          {impact.impacts.sentiment.toFixed(2)}
+                                          {(impact.impacts.sentiment || 0).toFixed(2)}
                                         </span>
                                       </div>
                                     )}
@@ -885,7 +782,7 @@ export default function UnifiedAdminDashboard() {
                                       <div>
                                         <span className="text-gray-600">Innovation:</span>{" "}
                                         <span className="text-blue-600">
-                                          +{impact.impacts.innovation.toFixed(2)}
+                                          +{(impact.impacts.innovation || 0).toFixed(2)}
                                         </span>
                                       </div>
                                     )}
@@ -893,7 +790,7 @@ export default function UnifiedAdminDashboard() {
                                       <div>
                                         <span className="text-gray-600">Business:</span>{" "}
                                         <span className="text-blue-600">
-                                          +{impact.impacts.business.toFixed(2)}
+                                          +{(impact.impacts.business || 0).toFixed(2)}
                                         </span>
                                       </div>
                                     )}
@@ -901,7 +798,7 @@ export default function UnifiedAdminDashboard() {
                                       <div>
                                         <span className="text-gray-600">Development:</span>{" "}
                                         <span className="text-blue-600">
-                                          +{impact.impacts.development.toFixed(2)}
+                                          +{(impact.impacts.development || 0).toFixed(2)}
                                         </span>
                                       </div>
                                     )}
@@ -909,7 +806,7 @@ export default function UnifiedAdminDashboard() {
                                       <div>
                                         <span className="text-gray-600">Market:</span>{" "}
                                         <span className="text-blue-600">
-                                          +{impact.impacts.market.toFixed(2)}
+                                          +{(impact.impacts.market || 0).toFixed(2)}
                                         </span>
                                       </div>
                                     )}

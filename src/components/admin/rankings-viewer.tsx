@@ -405,7 +405,7 @@ export function RankingsViewer() {
                         <div className="flex-1">
                           <div className="font-medium">{entry.tool_name}</div>
                           <div className="text-sm text-muted-foreground">
-                            Score: {entry.score.toFixed(1)}
+                            Score: {(entry.score || 0).toFixed(1)}
                           </div>
                         </div>
                       </div>

@@ -323,7 +323,7 @@ const nextConfig: NextConfig = {
             // Analytics and monitoring
             analytics: {
               name: "analytics",
-              test: /[\\/]node_modules[\\/](@vercel[\\/]analytics|@vercel[\\/]speed-insights|@builder\.io[\\/]partytown)[\\/]/,
+              test: /[\\/]node_modules[\\/](@vercel[\\/]analytics|@vercel[\\/]speed-insights|@qwik\.dev[\\/]partytown)[\\/]/,
               priority: 35,
               reuseExistingChunk: true,
             },

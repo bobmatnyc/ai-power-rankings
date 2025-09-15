@@ -20,14 +20,23 @@ try {
 const projectRoot = path.join(__dirname, "..");
 const command = process.argv[2];
 
+// Default port for development server
+// Port 3001 is the designated port for AI Power Rankings development
+const PORT = process.env.PORT || 3001;
+
 switch (command) {
   case "start":
-    console.log("🚀 Starting dev server with PM2...");
+    console.log(`🚀 Starting dev server with PM2 on port ${PORT}...`);
     execSync(`pm2 start pnpm --name "ai-power-rankings-dev" -- dev`, {
       cwd: projectRoot,
       stdio: "inherit",
+      env: {
+        ...process.env,
+        PORT: PORT.toString(),
+      },
     });
-    console.log("\n✅ Dev server started!");
+    console.log(`\n✅ Dev server started on port ${PORT}!`);
+    console.log(`🌐 Access at: http://localhost:${PORT}`);
     console.log("📝 View logs: pm2 logs ai-power-rankings-dev");
     console.log("📊 Monitor: pm2 monit");
     console.log("🛑 Stop: npm run dev:pm2 stop");
@@ -57,15 +66,18 @@ switch (command) {
 AI Power Rankings Dev Server Manager (PM2)
 
 Usage:
-  npm run dev:pm2 start    - Start the dev server
+  npm run dev:pm2 start    - Start the dev server on port 3001
   npm run dev:pm2 stop     - Stop the dev server
   npm run dev:pm2 restart  - Restart the dev server
   npm run dev:pm2 logs     - View server logs
   npm run dev:pm2 status   - Check server status
 
 The dev server will:
+- Run on port 3001 by default (designated development port)
 - Keep running even if you close your terminal
 - Automatically restart if it crashes
 - Save logs for debugging
+
+Access the development site at: http://localhost:3001
     `);
 }

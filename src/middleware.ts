@@ -104,7 +104,7 @@ export default auth((req) => {
     if (!pathnameHasLocale) {
       const locale = getLocale(req);
       // Use the host from the request headers to maintain the correct port
-      const host = req.headers.get("host") || "localhost:3001";
+      const host = req.headers.get("host") || "localhost:3000";
       const protocol = req.headers.get("x-forwarded-proto") || "http";
       const redirectUrl = new URL(`/${locale}${pathname}`, `${protocol}://${host}`);
       return NextResponse.redirect(redirectUrl, { status: 301 });
@@ -135,7 +135,7 @@ export default auth((req) => {
     }
     // If authenticated, add locale and redirect
     const locale = getLocale(req);
-    const host = req.headers.get("host") || "localhost:3001";
+    const host = req.headers.get("host") || "localhost:3000";
     const protocol = req.headers.get("x-forwarded-proto") || "http";
     const redirectUrl = new URL(`/${locale}/dashboard`, `${protocol}://${host}`);
     return NextResponse.redirect(redirectUrl, { status: 301 });
@@ -150,7 +150,7 @@ export default auth((req) => {
   if (!pathnameHasLocale) {
     const locale = getLocale(req);
     // Use the host from the request headers to maintain the correct port
-    const host = req.headers.get("host") || "localhost:3001";
+    const host = req.headers.get("host") || "localhost:3000";
     const protocol = req.headers.get("x-forwarded-proto") || "http";
     const redirectUrl = new URL(`/${locale}${pathname}`, `${protocol}://${host}`);
     return NextResponse.redirect(redirectUrl, { status: 301 });
@@ -182,7 +182,7 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next, assets, api, data, and static files)
-    "/((?!api|_next/static|_next/image|assets|data|favicon.ico|crown.*|robots.txt|sitemap.xml).*)",
+    // Skip all internal paths (_next, assets, api, data, partytown, and static files)
+    "/((?!api|_next/static|_next/image|assets|data|partytown|favicon.ico|crown.*|robots.txt|sitemap.xml).*)",
   ],
 };

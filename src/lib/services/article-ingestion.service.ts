@@ -32,8 +32,9 @@ export type ArticleIngestionInput = z.infer<typeof ArticleIngestionSchema>;
 const AIAnalysisSchema = z.object({
   title: z.string(),
   summary: z.string(),
+  rewritten_excerpt: z.string().optional(),
   source: z.string().optional(),
-  url: z.string().optional(),
+  url: z.string().optional().nullable(),
   published_date: z.string().optional(),
   category: z.string().optional(),
   tags: z.array(z.string()),
@@ -233,7 +234,7 @@ export class AIAnalyzer {
     url?: string;
     fileName?: string;
     author?: string;
-  }): Promise<AIAnalysisResult> {
+  }): Promise<AIAnalysisResult & { model: string }> {
     console.log("[AIAnalyzer] Starting content analysis");
 
     const systemPrompt = `You are an expert AI industry analyst specializing in AI tools, technologies, and market trends.
@@ -246,7 +247,9 @@ Focus on:
 4. Predicting potential ranking impacts based on the news
 5. Extracting key insights and trends
 
-Be thorough and precise in your analysis.`;
+Be thorough and precise in your analysis.
+
+IMPORTANT: You MUST return ONLY a valid JSON object. Do not include any explanatory text before or after the JSON.`;
 
     const userPrompt = `Analyze this article and extract comprehensive information:
 
@@ -290,7 +293,14 @@ Return a detailed JSON analysis with this structure:
     "likely_losers": ["Tools likely to drop"],
     "emerging_tools": ["New or emerging tools mentioned"]
   }
-}`;
+}
+
+Return ONLY the JSON object above with actual data. No additional text or explanation.`;
+
+    // Using Claude 4 Sonnet model for enhanced analysis capabilities
+    // Claude 4 Sonnet provides superior analysis quality with improved understanding
+    // of context, nuance, and technical details in AI articles
+    const modelName = "anthropic/claude-sonnet-4";
 
     try {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -301,33 +311,81 @@ Return a detailed JSON analysis with this structure:
           Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000",
         },
         body: JSON.stringify({
-          model: "anthropic/claude-3-haiku",
+          model: modelName,
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },
           ],
-          temperature: 0.3,
-          max_tokens: 3000,
+          temperature: 0.2, // Lower temperature for more consistent, focused analysis with Claude 4
+          max_tokens: 8000, // Increased for Claude 4 Sonnet's enhanced capabilities and detailed analysis
         }),
       });
 
       if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`OpenRouter API error: ${error}`);
+        const errorText = await response.text();
+        console.error("[AIAnalyzer] OpenRouter API error:", response.status, errorText);
+
+        // Check for common error patterns
+        if (response.status === 401) {
+          throw new Error("OpenRouter authentication failed. Please check your API key.");
+        } else if (response.status === 429) {
+          throw new Error("OpenRouter rate limit exceeded. Please try again later.");
+        } else if (response.status === 402) {
+          throw new Error("OpenRouter insufficient credits. Please add credits to your account.");
+        }
+
+        throw new Error(`OpenRouter API error (${response.status}): ${errorText.substring(0, 200)}`);
       }
 
-      const data = await response.json();
+      const responseText = await response.text();
+      let data: any;
+
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("[AIAnalyzer] Failed to parse OpenRouter response:", responseText.substring(0, 500));
+        throw new Error("Invalid JSON response from OpenRouter API");
+      }
+
       const content = data.choices?.[0]?.message?.content;
 
       if (!content) {
-        throw new Error("No response from AI");
+        console.error("[AIAnalyzer] No content in OpenRouter response:", data);
+        throw new Error("No response content from AI");
       }
 
       // Parse and validate the response
       const jsonStr = content.replace(/```json\n?|\n?```/g, "").trim();
-      const parsed = JSON.parse(jsonStr);
 
-      return AIAnalysisSchema.parse(parsed);
+      let parsed: any;
+      try {
+        parsed = JSON.parse(jsonStr);
+      } catch (parseError) {
+        console.error("[AIAnalyzer] Failed to parse AI response as JSON:", jsonStr.substring(0, 500));
+        throw new Error("AI response was not valid JSON");
+      }
+
+      // Handle null fields - convert to undefined for Zod validation
+      if (parsed && typeof parsed === 'object') {
+        if ('url' in parsed && parsed.url === null) {
+          parsed.url = undefined;
+        }
+        if ('published_date' in parsed && parsed.published_date === null) {
+          parsed.published_date = undefined;
+        }
+        if ('source' in parsed && parsed.source === null) {
+          parsed.source = undefined;
+        }
+        if ('category' in parsed && parsed.category === null) {
+          parsed.category = undefined;
+        }
+      }
+
+      const result = AIAnalysisSchema.parse(parsed);
+      return {
+        ...result,
+        model: "Claude 4 Sonnet", // Display friendly model name using Claude 4
+      };
     } catch (error) {
       console.error("[AIAnalyzer] Analysis failed:", error);
       throw new Error(`AI analysis failed: ${error instanceof Error ? error.message : "Unknown error"}`);

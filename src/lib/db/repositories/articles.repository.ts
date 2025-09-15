@@ -274,22 +274,46 @@ export class ArticlesRepository {
     },
     articleId: string
   ): Promise<{ id: string; name: string; slug: string }> {
-    const result = await this.db?.insert(companies)
-      .values({
-        name: companyData.name,
-        slug: companyData.slug,
-        data: {
-          website: companyData.website,
-          autoCreated: true,
-          createdByArticleId: articleId,
-          firstMentionedDate: new Date().toISOString(),
-        },
-      })
-      .returning();
-    if (!result || result.length === 0) {
-      throw new Error("Failed to create company");
+    try {
+      // Ensure slug is valid and unique
+      const validSlug = companyData.slug.toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+      // Check if company already exists
+      const existing = await this.db?.select()
+        .from(companies)
+        .where(eq(companies.slug, validSlug))
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        console.log(`[ArticlesRepo] Company ${validSlug} already exists, returning existing`);
+        return existing[0] as { id: string; name: string; slug: string };
+      }
+
+      const result = await this.db?.insert(companies)
+        .values({
+          slug: validSlug,
+          name: companyData.name,
+          data: {
+            website: companyData.website || null,
+            autoCreated: true,
+            createdByArticleId: articleId,
+            firstMentionedDate: new Date().toISOString(),
+          },
+        })
+        .returning();
+
+      if (!result || result.length === 0) {
+        throw new Error(`Failed to create company: ${companyData.name}`);
+      }
+
+      console.log(`[ArticlesRepo] Created new company: ${validSlug}`);
+      return result[0] as { id: string; name: string; slug: string };
+    } catch (error) {
+      console.error("[ArticlesRepo] Error creating company:", error);
+      throw new Error(`Failed to create company ${companyData.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-    return result[0] as { id: string; name: string; slug: string };
   }
 
   /**

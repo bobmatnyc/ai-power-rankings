@@ -16,7 +16,7 @@ The system provides manual ingestion of news articles through the admin dashboar
 
 Access the news ingestion tool at:
 
-- Development: `http://localhost:3000/admin/news-ingestion`
+- Development: `http://localhost:3001/admin/news-ingestion`
 - Production: `https://aipowerrankings.com/admin/news-ingestion`
 
 ## File Format

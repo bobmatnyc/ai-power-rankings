@@ -307,7 +307,7 @@ export function RankingsManager() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">
-                        {preview.summary.average_score_change.toFixed(1)}
+                        {(preview.summary.average_score_change || 0).toFixed(1)}
                       </div>
                     </CardContent>
                   </Card>
@@ -491,7 +491,7 @@ export function RankingsManager() {
                         <div className="flex items-center gap-2">
                           {getChangeBadge(tool.position_change)}
                           <div className="text-sm text-muted-foreground">
-                            Score: {tool.new_score.toFixed(2)}
+                            Score: {(tool.new_score || 0).toFixed(2)}
                           </div>
                         </div>
                       </div>
@@ -525,7 +525,7 @@ export function RankingsManager() {
                         <div className="flex items-center gap-2">
                           {getChangeBadge(tool.position_change)}
                           <div className="text-sm text-muted-foreground">
-                            Score: {tool.new_score.toFixed(2)}
+                            Score: {(tool.new_score || 0).toFixed(2)}
                           </div>
                         </div>
                       </div>

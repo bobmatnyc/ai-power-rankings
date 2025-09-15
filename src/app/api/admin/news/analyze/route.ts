@@ -65,6 +65,7 @@ const AnalyzeRequestSchema = z.object({
 const OpenRouterResponseSchema = z.object({
   title: z.string(),
   summary: z.string(),
+  rewritten_content: z.string().optional(),
   source: z.string(),
   url: z.string().optional(),
   published_date: z.string(),
@@ -127,6 +128,13 @@ async function fetchArticleContent(url: string): Promise<string> {
 async function analyzeWithOpenRouter(content: string, url?: string, verbose = false) {
   const startTime = Date.now();
 
+  // Define modelName at function scope so it's accessible throughout
+  // Available Claude 4 models on OpenRouter:
+  // - anthropic/claude-opus-4 (72.5% SWE-bench, best for complex long-running tasks)
+  // - anthropic/claude-opus-4.1 (74.5% SWE-bench, improved multi-file refactoring)
+  // - anthropic/claude-sonnet-4 (72.7% SWE-bench, balanced efficiency & capability)
+  const modelName = "anthropic/claude-sonnet-4";  // Claude 4 Sonnet - latest model with excellent extraction
+
   // Get API key using validation helper - will throw if not configured
   const openRouterKey = getOpenRouterApiKey();
 
@@ -142,24 +150,58 @@ async function analyzeWithOpenRouter(content: string, url?: string, verbose = fa
     console.log("[News Analysis] URL:", url || "N/A");
   }
 
-  const systemPrompt = `You are an AI news analyst specializing in AI tools and technology. 
-Analyze the provided news article and extract structured information about AI tools mentioned.
-Focus on identifying specific tool/product names (like GPT-4, Claude, Gemini, Copilot, ChatGPT, Midjourney, etc.), 
-sentiment about each tool, key topics, and qualitative metrics.
-Be very thorough in identifying ALL mentioned AI tools, models, and services.
-Return a JSON object matching the exact schema provided.`;
+  const systemPrompt = `You are a professional AI news editor and analyst specializing in technology journalism.
 
-  const userPrompt = `Analyze this news article and extract the following information:
-1. Title (infer if not obvious)
-2. Summary (2-3 sentences)
+IMPORTANT: Your primary task is to REWRITE all content in a professional, neutral news style:
+- Use third-person voice exclusively (no "I", "we", "our", "you")
+- Remove ALL promotional language, marketing speak, and sales pitches
+- Start with a strong lead paragraph containing the key facts (who, what, when, where, why)
+- Use clear, concise sentences in active voice
+- Maintain strict factual accuracy while improving readability
+- Remove personal opinions unless they're quoted from sources
+- Write as if for a reputable technology news publication (like Reuters, TechCrunch, or The Verge)
+- Use journalistic standards: attribute claims, cite sources, maintain objectivity
+
+CRITICAL EXTRACTION REQUIREMENTS:
+You MUST be EXHAUSTIVE in extracting ALL information:
+1. Extract EVERY tool/product mentioned by name (including platforms like GitHub, Reddit, YouTube)
+2. Extract EVERY company mentioned (including VCs, research labs, survey companies)
+3. Extract ALL numerical metrics:
+   - Funding amounts (e.g., $150M, $320M)
+   - Valuations (e.g., $1.25B, $0.5B)
+   - Percentages and fractions (e.g., "1 in 10" = 10%, ">50%" = 50%)
+   - Counts (e.g., 19 coding agents, 5 LLM models)
+   - Dates and timeframes
+4. Note competitive relationships (X competitor to Y, X vs Y)
+5. Extract performance claims and benchmarks
+
+Be THOROUGH - if a tool, company, or metric is mentioned even once, include it.`;
+
+  const userPrompt = `STEP 1 - REWRITE THE ARTICLE:
+First, rewrite the following content in professional news style:
+- Transform any first-person narrative into third-person reporting
+- Replace marketing language with neutral, factual descriptions
+- Structure with: lead paragraph (key facts), supporting details, context
+- Remove promotional content, hyperbole, and unsubstantiated claims
+- Maintain all factual information and data points
+- Use AP/Reuters style guidelines for technology reporting
+
+STEP 2 - ANALYZE AND EXTRACT:
+Then analyze the rewritten article and extract the following information:
+1. Title (professional news headline style)
+2. Summary (2-3 sentences in news style)
 3. Source (publication name or domain)
 4. Published date (estimate if needed, format: YYYY-MM-DD)
-5. Tool mentions - IMPORTANT: List EVERY AI tool, model, or service mentioned by name:
-   - Include: GPT models (GPT-3, GPT-4, GPT-5), Claude models, Gemini, Copilot, ChatGPT, 
-     Midjourney, DALL-E, Stable Diffusion, LLaMA, Bard, Perplexity, Character.AI, 
-     Anthropic tools, OpenAI tools, Google AI tools, Microsoft AI tools, etc.
-   - For each tool provide: exact tool name, brief context of mention, sentiment (-1 to 1)
-   - Use the exact product/tool name as it appears (e.g., "GPT-5" not "OpenAI GPT-5")
+5. Tool mentions - EXHAUSTIVE LIST OF EVERY tool/product/service mentioned:
+   - Include ALL AI tools: Codeium, Magic, Nvidia NIM, SWE-agent, Copilot, GPT models, Claude, etc.
+   - Include ALL platforms: GitHub, Reddit, YouTube, Twitter, Product Hunt, etc.
+   - Include ALL services: OpenAI API, Anthropic API, OpenRouter, etc.
+   - For each tool provide:
+     * exact tool name as mentioned
+     * context of mention
+     * sentiment (-1 to 1)
+     * any metrics mentioned (funding, valuation, performance, adoption %)
+   - If a tool is compared to another (e.g., "Codeium, a Copilot competitor"), list BOTH tools
 6. Overall sentiment about AI/tech (-1 to 1)
 7. Key topics (5-10 keywords)
 8. Importance score (0-10, based on impact and relevance)
@@ -168,6 +210,11 @@ Return a JSON object matching the exact schema provided.`;
    - business_sentiment (-2 to 2): Business/market sentiment
    - development_velocity (0-5): Speed of development/releases
    - market_traction (0-5): Market adoption/traction
+10. QUANTITATIVE METRICS - Extract ALL numbers mentioned:
+    - Total funding amounts mentioned (e.g., "$150M + $320M = $470M")
+    - Companies/organizations count
+    - Tools/products count
+    - Adoption percentages (e.g., "10%" from "1 in 10")
 
 Article content:
 ${content.substring(0, 8000)}
@@ -176,8 +223,9 @@ ${url ? `Article URL: ${url}` : ""}
 
 Return ONLY a valid JSON object with this EXACT structure:
 {
-  "title": "article title",
-  "summary": "2-3 sentence summary",
+  "title": "professional news headline",
+  "summary": "2-3 sentence summary in news style",
+  "rewritten_content": "first 500 characters of the professionally rewritten article",
   "source": "publication name",
   "published_date": "YYYY-MM-DD",
   "tool_mentions": [
@@ -199,13 +247,13 @@ Return ONLY a valid JSON object with this EXACT structure:
 }`;
 
   const requestBody: OpenRouterRequest = {
-    model: "anthropic/claude-3-haiku",
+    model: modelName,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
     temperature: 0.3,
-    max_tokens: 2000,
+    max_tokens: 4000,  // Increased for Claude 4's enhanced capabilities
   };
 
   // Use correct header names for OpenRouter API
@@ -372,11 +420,19 @@ Return ONLY a valid JSON object with this EXACT structure:
 
     // Validate and return with more lenient handling
     const parsedObj = parsed as Record<string, unknown>;
+
+    // Handle URL field - convert null to undefined
+    const urlValue = parsedObj["url"];
+    const processedUrl = (urlValue === null || urlValue === undefined || urlValue === "")
+      ? undefined
+      : urlValue;
+
     const validated = OpenRouterResponseSchema.parse({
       title: parsedObj["title"],
       summary: parsedObj["summary"],
+      rewritten_content: parsedObj["rewritten_content"],
       source: parsedObj["source"],
-      url: parsedObj["url"],
+      url: processedUrl,
       published_date: parsedObj["published_date"],
       tool_mentions: Array.isArray(parsedObj["tool_mentions"])
         ? (parsedObj["tool_mentions"] as Array<unknown>).filter((tm): tm is { tool: string } =>
@@ -404,7 +460,11 @@ Return ONLY a valid JSON object with this EXACT structure:
       }
     }
 
-    return validated;
+    // Add the model name to the response
+    return {
+      ...validated,
+      model: modelName,
+    };
   } catch (error) {
     console.error("[News Analysis] OpenRouter analysis error:", error);
 

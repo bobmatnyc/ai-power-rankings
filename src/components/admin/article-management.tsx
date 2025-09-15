@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -25,19 +26,25 @@ import {
   AlertCircle,
   Clock,
   Newspaper,
-  ArrowRight
+  ArrowRight,
+  Loader2,
+  Bot
 } from "lucide-react";
 import { format } from "date-fns";
 
 interface Article {
   id: string;
+  slug: string;
   title: string;
   summary?: string;
   content?: string;
-  url?: string;
+  sourceUrl?: string;
+  sourceName?: string;
   author?: string;
-  publishedAt?: string;
-  ingestionDate: string;
+  publishedDate?: string | Date | null;
+  ingestedAt?: string | Date | null;
+  createdAt: string | Date;
+  updatedAt: string | Date;
   category?: string;
   tags?: string[];
   toolMentions?: Array<{
@@ -45,9 +52,18 @@ interface Article {
     relevance: number;
     sentiment: number;
     context: string;
-  }>;
+  }> | Record<string, unknown>[] | null;
+  companyMentions?: Record<string, unknown>[] | null;
   rankingsSnapshot?: Record<string, unknown>;
   status: string;
+  isProcessed?: boolean;
+  processedAt?: string | Date | null;
+  importanceScore?: number;
+  sentimentScore?: string | number;
+  ingestionType?: string;
+  fileName?: string;
+  fileType?: string;
+  ingestedBy?: string;
 }
 
 interface ArticleStats {
@@ -59,7 +75,9 @@ interface ArticleStats {
 }
 
 interface IngestionPreview {
-  article: Partial<Article>;
+  article: Partial<Article> & {
+    model?: string;
+  };
   impactedTools: Array<{
     tool: string;
     currentScore: number;
@@ -85,13 +103,18 @@ export function ArticleManagement() {
   // Add Article State
   const [ingestionType, setIngestionType] = useState<"url" | "text" | "file">("url");
   const [inputContent, setInputContent] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [metadata, setMetadata] = useState({
     author: "",
     category: "",
     tags: "",
+    fileName: "",
+    fileType: "",
   });
   const [preview, setPreview] = useState<IngestionPreview | null>(null);
   const [workflowStep, setWorkflowStep] = useState<"input" | "preview" | "saved">("input");
+  const [processingProgress, setProcessingProgress] = useState(0);
+  const [processingStep, setProcessingStep] = useState<string>("");
 
   // Edit Article State
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
@@ -131,18 +154,26 @@ export function ArticleManagement() {
     setSuccess(null);
 
     try {
+      // Handle file upload if needed
+      let finalInputContent = inputContent;
+      if (ingestionType === "file" && selectedFile) {
+        finalInputContent = await readFileContent(selectedFile);
+      }
+
       const response = await fetch("/api/admin/articles/ingest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          type: ingestionType,
-          input: inputContent,
+          type: ingestionType === "file" ? "text" : ingestionType,
+          input: finalInputContent,
           dryRun: true,
           metadata: {
             author: metadata.author || undefined,
             category: metadata.category || undefined,
             tags: metadata.tags ? metadata.tags.split(",").map(t => t.trim()) : undefined,
+            fileName: metadata.fileName || undefined,
+            fileType: metadata.fileType || undefined,
           },
         }),
       });
@@ -153,14 +184,35 @@ export function ArticleManagement() {
       }
 
       const data = await response.json();
-      setPreview(data);
-      setWorkflowStep("preview");
-      setSuccess("Preview generated successfully!");
+
+      // Extract the result from the response
+      if (data.success && data.result) {
+        // Map predictedChanges to impactedTools for the UI
+        const mappedResult = {
+          ...data.result,
+          impactedTools: data.result.predictedChanges || [],
+          newTools: data.result.newTools?.map((t: any) =>
+            typeof t === 'string' ? t : t.name || t.tool
+          ) || [],
+        };
+        setPreview(mappedResult);
+        setWorkflowStep("preview");
+        setSuccess(data.message || "Preview generated successfully!");
+      } else {
+        throw new Error(data.error || "Failed to generate preview");
+      }
     } catch (err) {
       const error = err as Error;
       setError(error.message);
+      setProcessingProgress(0);
+      setProcessingStep("");
     } finally {
       setLoading(false);
+      // Reset progress after a delay
+      setTimeout(() => {
+        setProcessingProgress(0);
+        setProcessingStep("");
+      }, 2000);
     }
   };
 
@@ -168,31 +220,71 @@ export function ArticleManagement() {
     setLoading(true);
     setError(null);
     setSuccess(null);
+    setProcessingProgress(0);
+    setProcessingStep("Preparing article...");
 
     try {
+      // Handle file upload if needed
+      let finalInputContent = inputContent;
+      if (ingestionType === "file" && selectedFile) {
+        setProcessingProgress(10);
+        setProcessingStep("Extracting file content...");
+        finalInputContent = await readFileContent(selectedFile);
+      }
+
+      setProcessingProgress(25);
+      setProcessingStep("Analyzing with AI...");
+
       const response = await fetch("/api/admin/articles/ingest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          type: ingestionType,
-          input: inputContent,
+          type: ingestionType === "file" ? "text" : ingestionType,
+          input: finalInputContent,
           dryRun: false,
           metadata: {
             author: metadata.author || undefined,
             category: metadata.category || undefined,
             tags: metadata.tags ? metadata.tags.split(",").map(t => t.trim()) : undefined,
+            fileName: metadata.fileName || undefined,
+            fileType: metadata.fileType || undefined,
           },
         }),
       });
+
+      setProcessingProgress(50);
+      setProcessingStep("Calculating ranking impacts...");
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to save article");
       }
 
-      setSuccess("Article saved successfully and rankings updated!");
-      setWorkflowStep("saved");
+      const data = await response.json();
+
+      setProcessingProgress(75);
+      setProcessingStep("Saving to database...");
+
+      if (data.success && data.result) {
+        // Map predictedChanges to impactedTools for the UI
+        const mappedResult = {
+          ...data.result,
+          impactedTools: data.result.predictedChanges || [],
+          newTools: data.result.newTools?.map((t: any) =>
+            typeof t === 'string' ? t : t.name || t.tool
+          ) || [],
+        };
+        setPreview(mappedResult);  // Keep the result for display
+        setProcessingProgress(90);
+        setProcessingStep("Updating rankings...");
+        setSuccess(data.message || "Article saved successfully and rankings updated!");
+        setProcessingProgress(100);
+        setProcessingStep("Complete!");
+        setWorkflowStep("saved");
+      } else {
+        throw new Error(data.error || "Failed to save article");
+      }
 
       // Reload articles
       await loadArticles();
@@ -293,11 +385,66 @@ export function ArticleManagement() {
 
   const resetAddForm = () => {
     setInputContent("");
-    setMetadata({ author: "", category: "", tags: "" });
+    setSelectedFile(null);
+    setMetadata({ author: "", category: "", tags: "", fileName: "", fileType: "" });
     setPreview(null);
     setWorkflowStep("input");
     setError(null);
     setSuccess(null);
+  };
+
+  // File reading utilities
+  const readFileContent = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target?.result as string;
+        resolve(content);
+      };
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file type
+    const allowedExtensions = [".txt", ".md", ".json", ".pdf", ".docx"];
+    const fileExtension = `.${file.name.split(".").pop()?.toLowerCase()}`;
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      setError(`Unsupported file type. Please upload: ${allowedExtensions.join(", ")}`);
+      return;
+    }
+
+    // Check file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      setError("File too large. Maximum size is 10MB.");
+      return;
+    }
+
+    setSelectedFile(file);
+    setMetadata({
+      ...metadata,
+      fileName: file.name,
+      fileType: fileExtension.substring(1),
+    });
+    setError(null);
+
+    // For text-based files, read content immediately
+    if (['.txt', '.md', '.json'].includes(fileExtension)) {
+      try {
+        const content = await readFileContent(file);
+        setInputContent(content);
+      } catch {
+        setError("Failed to read file content");
+      }
+    } else {
+      // For PDF and DOCX, we'll handle them specially
+      setInputContent(`[File: ${file.name} - Processing will extract text content]`);
+    }
   };
 
   return (
@@ -330,7 +477,7 @@ export function ArticleManagement() {
               </div>
               <div>
                 <p className="text-muted-foreground">Avg Tool Mentions</p>
-                <p className="text-2xl font-bold">{stats.averageToolMentions.toFixed(1)}</p>
+                <p className="text-2xl font-bold">{stats.averageToolMentions?.toFixed(1) ?? "0.0"}</p>
               </div>
             </div>
           </CardContent>
@@ -415,10 +562,10 @@ export function ArticleManagement() {
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="file" id="file" disabled />
-                        <Label htmlFor="file" className="flex items-center gap-2 cursor-pointer opacity-50">
+                        <RadioGroupItem value="file" id="file" />
+                        <Label htmlFor="file" className="flex items-center gap-2 cursor-pointer">
                           <Upload className="h-4 w-4" />
-                          Upload - File Upload (Coming Soon)
+                          Upload - File Upload (.txt, .md, .json, .pdf, .docx)
                         </Label>
                       </div>
                     </RadioGroup>
@@ -442,8 +589,40 @@ export function ArticleManagement() {
                         className="font-mono text-sm"
                       />
                     ) : (
-                      <div className="border-2 border-dashed rounded-lg p-8 text-center text-muted-foreground">
-                        File upload coming soon
+                      <div className="space-y-4">
+                        <div className="border-2 border-dashed rounded-lg p-6">
+                          <input
+                            type="file"
+                            accept=".txt,.md,.json,.pdf,.docx"
+                            onChange={handleFileSelect}
+                            className="mb-3 w-full"
+                          />
+                          {selectedFile && (
+                            <div className="space-y-2 text-sm">
+                              <div className="flex items-center gap-2">
+                                <FileText className="h-4 w-4" />
+                                <span className="font-medium">{selectedFile.name}</span>
+                                <Badge variant="secondary">
+                                  {(selectedFile.size / 1024).toFixed(1)} KB
+                                </Badge>
+                              </div>
+                              {inputContent && (
+                                <div className="mt-3 p-3 bg-muted rounded-md">
+                                  <Label className="text-xs">File Content Preview</Label>
+                                  <p className="text-xs mt-1 line-clamp-3 font-mono">
+                                    {inputContent.substring(0, 200)}
+                                    {inputContent.length > 200 ? "..." : ""}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          {!selectedFile && (
+                            <p className="text-muted-foreground text-sm">
+                              Select a file to upload (.txt, .md, .json, .pdf, .docx - max 10MB)
+                            </p>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -477,15 +656,35 @@ export function ArticleManagement() {
                   </div>
 
                   {/* Preview Button */}
+                  {/* Progress Meter */}
+                  {loading && processingProgress > 0 && (
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">{processingStep}</span>
+                        <span className="font-medium">{processingProgress}%</span>
+                      </div>
+                      <Progress value={processingProgress} className="h-2" />
+                    </div>
+                  )}
+
                   <div className="flex justify-center pt-4">
                     <Button
                       onClick={handlePreview}
-                      disabled={!inputContent || loading}
+                      disabled={(!inputContent && ingestionType !== "file") || (ingestionType === "file" && !selectedFile) || loading}
                       size="lg"
                       className="min-w-[200px]"
                     >
-                      <Eye className="mr-2 h-4 w-4" />
-                      Preview Impact
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Processing...
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="mr-2 h-4 w-4" />
+                          Preview Impact
+                        </>
+                      )}
                     </Button>
                   </div>
                 </>
@@ -503,12 +702,27 @@ export function ArticleManagement() {
                       <CardContent className="space-y-2">
                         <div>
                           <Label>Title</Label>
-                          <p className="font-medium">{preview.article.title || "Untitled"}</p>
+                          <p className="font-medium">{preview?.article?.title || "Untitled"}</p>
                         </div>
-                        {preview.article.summary && (
+                        {preview?.article?.summary && (
                           <div>
                             <Label>Summary</Label>
-                            <p className="text-sm text-muted-foreground">{preview.article.summary}</p>
+                            <p className="text-sm text-muted-foreground">{preview?.article?.summary}</p>
+                          </div>
+                        )}
+                        {preview?.article?.model && (
+                          <div>
+                            <Label>AI Model Used</Label>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Bot className="h-4 w-4 text-primary" />
+                              <Badge variant="secondary" className="font-mono">
+                                {preview.article.model === "anthropic/claude-sonnet-4"
+                                  ? "Claude 4 Sonnet"
+                                  : preview.article.model === "anthropic/claude-3-haiku"
+                                  ? "Claude 3 Haiku"
+                                  : preview.article.model}
+                              </Badge>
+                            </div>
                           </div>
                         )}
                       </CardContent>
@@ -523,27 +737,27 @@ export function ArticleManagement() {
                         <div className="grid grid-cols-3 gap-4 mb-4">
                           <div className="text-center">
                             <p className="text-sm text-muted-foreground">Tools Affected</p>
-                            <p className="text-2xl font-bold">{preview.summary.totalToolsAffected}</p>
+                            <p className="text-2xl font-bold">{preview?.summary?.totalToolsAffected ?? 0}</p>
                           </div>
                           <div className="text-center">
                             <p className="text-sm text-muted-foreground">New Tools</p>
-                            <p className="text-2xl font-bold">{preview.summary.totalNewTools}</p>
+                            <p className="text-2xl font-bold">{preview?.summary?.totalNewTools ?? 0}</p>
                           </div>
                           <div className="text-center">
                             <p className="text-sm text-muted-foreground">Avg Score Change</p>
                             <p className="text-2xl font-bold">
-                              {preview.summary.averageScoreChange > 0 ? "+" : ""}
-                              {preview.summary.averageScoreChange.toFixed(1)}
+                              {(preview?.summary?.averageScoreChange ?? 0) > 0 ? "+" : ""}
+                              {preview?.summary?.averageScoreChange?.toFixed(1) ?? "0.0"}
                             </p>
                           </div>
                         </div>
 
                         {/* Impacted Tools List */}
-                        {preview.impactedTools.length > 0 && (
+                        {preview?.impactedTools && preview.impactedTools.length > 0 && (
                           <div className="space-y-2">
                             <Label>Tool Score Changes (Preview)</Label>
                             <div className="space-y-1 max-h-40 overflow-y-auto border rounded-lg p-2">
-                              {preview.impactedTools.map((tool) => (
+                              {preview?.impactedTools?.map((tool) => (
                                 <div key={tool.tool} className="flex items-center justify-between text-sm py-1">
                                   <span className="font-medium">{tool.tool}</span>
                                   <div className="flex items-center gap-2">
@@ -554,7 +768,7 @@ export function ArticleManagement() {
                                       variant={tool.change > 0 ? "default" : "secondary"}
                                       className="ml-2"
                                     >
-                                      {tool.change > 0 ? "+" : ""}{tool.change.toFixed(1)}
+                                      {tool.change > 0 ? "+" : ""}{tool.change?.toFixed(1) ?? "0.0"}
                                     </Badge>
                                   </div>
                                 </div>
@@ -564,11 +778,11 @@ export function ArticleManagement() {
                         )}
 
                         {/* New Tools */}
-                        {preview.newTools.length > 0 && (
+                        {preview?.newTools && preview.newTools.length > 0 && (
                           <div className="space-y-2 mt-4">
                             <Label>New Tools to be Created</Label>
                             <div className="flex flex-wrap gap-2">
-                              {preview.newTools.map((tool) => (
+                              {preview?.newTools?.map((tool) => (
                                 <Badge key={tool} variant="outline">
                                   <Plus className="mr-1 h-3 w-3" />
                                   {tool}
@@ -589,14 +803,34 @@ export function ArticleManagement() {
                         <X className="mr-2 h-4 w-4" />
                         Back to Edit
                       </Button>
+                      {/* Progress Meter for Save */}
+                      {loading && processingProgress > 0 && (
+                        <div className="w-full max-w-md space-y-2 mb-4">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">{processingStep}</span>
+                            <span className="font-medium">{processingProgress}%</span>
+                          </div>
+                          <Progress value={processingProgress} className="h-2" />
+                        </div>
+                      )}
+
                       <Button
                         onClick={handleSave}
                         disabled={loading}
                         size="lg"
                         className="min-w-[200px]"
                       >
-                        <Save className="mr-2 h-4 w-4" />
-                        Save Article
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="mr-2 h-4 w-4" />
+                            Save Article
+                          </>
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -632,12 +866,12 @@ export function ArticleManagement() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {articles.map((article) => (
+                  {articles.filter(article => article && typeof article === 'object').map((article) => (
                     <Card key={article.id} className="overflow-hidden">
                       <CardContent className="pt-6">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h4 className="font-semibold text-lg">{article.title}</h4>
+                            <h4 className="font-semibold text-lg">{article?.title || "Untitled Article"}</h4>
                             {article.summary && (
                               <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                                 {article.summary}
@@ -651,14 +885,24 @@ export function ArticleManagement() {
                               )}
                               <Badge variant="outline" className="font-normal">
                                 <Clock className="mr-1 h-3 w-3" />
-                                {format(new Date(article.ingestionDate), "MMM d, yyyy")}
+                                {(() => {
+                                  const dateToUse = article.ingestedAt || article.createdAt;
+                                  if (dateToUse && typeof dateToUse === 'string' && !Number.isNaN(Date.parse(dateToUse))) {
+                                    return format(new Date(dateToUse), "MMM d, yyyy");
+                                  } else if (dateToUse instanceof Date) {
+                                    return format(dateToUse, "MMM d, yyyy");
+                                  }
+                                  return "Unknown date";
+                                })()}
                               </Badge>
                               {article.category && (
                                 <Badge variant="secondary">{article.category}</Badge>
                               )}
-                              {article.toolMentions && article.toolMentions.length > 0 && (
+                              {article.toolMentions && (
                                 <Badge>
-                                  {article.toolMentions.length} tools
+                                  {Array.isArray(article.toolMentions)
+                                    ? `${article.toolMentions.length} tools`
+                                    : "Has tool mentions"}
                                 </Badge>
                               )}
                             </div>
@@ -670,7 +914,7 @@ export function ArticleManagement() {
                               onClick={() => {
                                 setEditingArticle(article);
                                 setEditContent({
-                                  title: article.title,
+                                  title: article?.title || "",
                                   content: article.content || "",
                                   summary: article.summary || "",
                                 });

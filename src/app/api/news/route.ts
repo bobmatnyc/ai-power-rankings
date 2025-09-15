@@ -3,7 +3,7 @@ import { cachedJsonResponse } from "@/lib/api-cache";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 import { findToolByText } from "@/lib/tool-matcher";
-import type { Tool } from "@/lib/json-db/schemas";
+import type { Tool, NewsArticle } from "@/lib/json-db/schemas";
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,10 +20,21 @@ export async function GET(request: NextRequest) {
     // Get all news articles
     const allNews = await newsRepo.getAll();
 
-    // Sort by published date (newest first)
-    const sortedNews = allNews.sort(
-      (a, b) => new Date(b.published_date).getTime() - new Date(a.published_date).getTime()
-    );
+    // Helper function to get the effective date (same logic as used for event_date)
+    const getEffectiveDate = (article: NewsArticle) => {
+      return article.published_date ||
+             ('published_at' in article ? (article as Record<string, unknown>).published_at as string : undefined) ||
+             article.created_at ||
+             article.date ||
+             new Date().toISOString();
+    };
+
+    // Sort by effective date (newest first) - using the same date field that will be used for event_date
+    const sortedNews = allNews.sort((a, b) => {
+      const dateA = new Date(getEffectiveDate(a)).getTime();
+      const dateB = new Date(getEffectiveDate(b)).getTime();
+      return dateB - dateA;
+    });
 
     // Transform to expected format
     const transformedNews = await Promise.all(
@@ -251,7 +262,7 @@ export async function GET(request: NextRequest) {
           tool_name: toolNames,
           tool_category: toolCategory,
           tool_website: toolWebsite,
-          event_date: article.published_date || ('published_at' in article ? (article as Record<string, unknown>).published_at as string : undefined) || article.created_at,
+          event_date: getEffectiveDate(article),
           event_type: eventType,
           title: article.title,
           description: article.summary || article.content,
