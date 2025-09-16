@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { withAdminAuth } from "@/lib/admin-auth";
 
 interface DebugResponse {
   success: boolean;
@@ -15,8 +16,19 @@ interface DebugResponse {
   error?: string;
 }
 
+export async function GET(request: NextRequest) {
+  return withAdminAuth(async () => {
+    return NextResponse.json({
+      success: true,
+      message: "Admin authentication is working correctly",
+      timestamp: new Date().toISOString()
+    });
+  }, request);
+}
+
 export async function POST(request: NextRequest) {
-  try {
+  return withAdminAuth(async () => {
+    try {
     // Get headers
     const headers = Object.fromEntries(request.headers.entries());
 
@@ -53,12 +65,13 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    return NextResponse.json(response);
-  } catch (error) {
-    const errorResponse: DebugResponse = {
-      success: false,
-      error: String(error),
-    };
-    return NextResponse.json(errorResponse, { status: 500 });
-  }
+      return NextResponse.json(response);
+    } catch (error) {
+      const errorResponse: DebugResponse = {
+        success: false,
+        error: String(error),
+      };
+      return NextResponse.json(errorResponse, { status: 500 });
+    }
+  }, request);
 }

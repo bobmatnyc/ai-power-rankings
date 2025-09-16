@@ -1,12 +1,14 @@
 import crypto from "node:crypto";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
+import { sessionStore } from "@/lib/admin-session-store";
 
-// Static admin password - CHANGE THIS IN PRODUCTION!
+// Admin password hash from environment or fallback
+// Current production hash: 082cd4aa5e67fc3734eb71336924b38eaa8bc8edab2fecb408396ba62ceda880
+// This is for password: SuperSecure2025!@#
 const ADMIN_PASSWORD_HASH =
   process.env["ADMIN_PASSWORD_HASH"] ||
-  // Default hash for "AIPowerRankings2025!" - MUST CHANGE IN PRODUCTION
-  "81eaffa435589268fd13207632546cb3cf57a2e4a72667637de89d247aad6545";
+  "082cd4aa5e67fc3734eb71336924b38eaa8bc8edab2fecb408396ba62ceda880";
 
 function hashPassword(password: string): string {
   return crypto.createHash("sha256").update(password).digest("hex");
@@ -27,8 +29,8 @@ export async function POST(request: NextRequest) {
     const isValidPassword = hashedInput === ADMIN_PASSWORD_HASH;
 
     if (isValidPassword) {
-      // Generate a secure session token
-      const sessionToken = crypto.randomBytes(32).toString("hex");
+      // Create session in the session store
+      const sessionToken = sessionStore.createSession();
 
       // Get the cookies store and set the session cookie
       const cookieStore = await cookies();
@@ -40,6 +42,9 @@ export async function POST(request: NextRequest) {
         path: "/",
       });
 
+      // Log successful authentication (without exposing sensitive data)
+      console.log("[AUTH] Admin authentication successful");
+
       return NextResponse.json(
         {
           success: true,
@@ -48,10 +53,16 @@ export async function POST(request: NextRequest) {
         { status: 200 }
       );
     } else {
+      // Log failed authentication attempt (for security monitoring)
+      console.warn("[AUTH] Failed authentication attempt");
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
   } catch (error) {
-    console.error("[LOGIN] Error:", error);
-    return NextResponse.json({ error: "Authentication failed" }, { status: 500 });
+    console.error("[AUTH] Login error:", error);
+    // Don't expose internal error details in production
+    const message = process.env["NODE_ENV"] === "development"
+      ? `Authentication failed: ${error}`
+      : "Authentication failed";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

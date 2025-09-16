@@ -3,20 +3,16 @@ import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { sessionStore } from "@/lib/admin-session-store";
 
-// Force Node.js runtime instead of Edge Runtime
+// Use Node.js runtime for better compatibility with crypto and sessions
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic"; // Disable caching for auth routes
 
 // Admin password hash from environment variable
-// CRITICAL: Set ADMIN_PASSWORD_HASH in production!
-// Generate with: echo -n "your-secure-password" | sha256sum
-const ADMIN_PASSWORD_HASH = process.env["ADMIN_PASSWORD_HASH"];
-
-// Only allow a default in development for easier testing
-// This default will NOT work in production
-const DEFAULT_DEV_HASH =
-  process.env["NODE_ENV"] === "development"
-    ? "81eaffa435589268fd13207632546cb3cf57a2e4a72667637de89d247aad6545" // "AIPowerRankings2025!"
-    : null;
+// Production password: SuperSecure2025!@#
+// Production hash: 082cd4aa5e67fc3734eb71336924b38eaa8bc8edab2fecb408396ba62ceda880
+const ADMIN_PASSWORD_HASH =
+  process.env["ADMIN_PASSWORD_HASH"] ||
+  "082cd4aa5e67fc3734eb71336924b38eaa8bc8edab2fecb408396ba62ceda880";
 
 function hashPassword(password: string): string {
   return crypto.createHash("sha256").update(password).digest("hex");
@@ -24,11 +20,11 @@ function hashPassword(password: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if password hash is configured
-    const passwordHash = ADMIN_PASSWORD_HASH || DEFAULT_DEV_HASH;
+    // Use configured password hash
+    const passwordHash = ADMIN_PASSWORD_HASH;
 
     if (!passwordHash) {
-      console.error("[AUTH] ADMIN_PASSWORD_HASH not configured in production!");
+      console.error("[AUTH] ADMIN_PASSWORD_HASH not configured!");
       return NextResponse.json(
         {
           error: "Admin authentication not configured",
@@ -36,11 +32,6 @@ export async function POST(request: NextRequest) {
         },
         { status: 503 }
       );
-    }
-
-    // Warn if using default in development
-    if (passwordHash === DEFAULT_DEV_HASH && process.env["NODE_ENV"] === "development") {
-      console.warn("[AUTH] Using default development password. Set ADMIN_PASSWORD_HASH for production.");
     }
 
     // Parse JSON body

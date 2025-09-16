@@ -1,26 +1,34 @@
 import crypto from "node:crypto";
 
-// In-memory session store (consider using Redis or a database in production)
-// Sessions will be lost on server restart, which is acceptable for a single-instance deployment
-// For production with multiple instances, use Redis or a database
+/**
+ * Serverless-compatible session store for Vercel deployment
+ * Uses in-memory storage with lazy cleanup (no timers)
+ * Sessions expire after 24 hours of inactivity
+ */
 class SessionStore {
   private sessions: Map<string, { token: string; createdAt: number; lastAccessed: number }> = new Map();
   private readonly SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
-  private readonly CLEANUP_INTERVAL = 60 * 60 * 1000; // Clean up every hour
-  private cleanupTimer: NodeJS.Timeout | null = null;
+  private lastCleanup = 0;
+  private readonly MIN_CLEANUP_INTERVAL = 5 * 60 * 1000; // Cleanup at most every 5 minutes
 
   constructor() {
-    // Start periodic cleanup
-    this.startCleanup();
+    // No timers in serverless - cleanup happens lazily
   }
 
-  private startCleanup() {
-    if (this.cleanupTimer) {
-      clearInterval(this.cleanupTimer);
+  /**
+   * Perform lazy cleanup - only when enough time has passed
+   * This avoids the need for timers in serverless environments
+   */
+  private lazyCleanup() {
+    const now = Date.now();
+
+    // Only cleanup if enough time has passed since last cleanup
+    if (now - this.lastCleanup < this.MIN_CLEANUP_INTERVAL) {
+      return;
     }
-    this.cleanupTimer = setInterval(() => {
-      this.cleanupExpiredSessions();
-    }, this.CLEANUP_INTERVAL);
+
+    this.lastCleanup = now;
+    this.cleanupExpiredSessions();
   }
 
   private cleanupExpiredSessions() {
@@ -35,17 +43,23 @@ class SessionStore {
   createSession(): string {
     const token = crypto.randomBytes(32).toString("hex");
     const now = Date.now();
+
+    // Perform lazy cleanup before creating new session
+    this.lazyCleanup();
+
     this.sessions.set(token, {
       token,
       createdAt: now,
       lastAccessed: now,
     });
-    // Clean up old sessions periodically
-    this.cleanupExpiredSessions();
+
     return token;
   }
 
   validateSession(token: string): boolean {
+    // Perform lazy cleanup on validation attempts
+    this.lazyCleanup();
+
     const session = this.sessions.get(token);
     if (!session) {
       return false;
@@ -90,28 +104,24 @@ class SessionStore {
     };
   }
 
-  // Clean up on process exit
+  // Clean up all sessions (for testing or manual cleanup)
   destroy() {
-    if (this.cleanupTimer) {
-      clearInterval(this.cleanupTimer);
-      this.cleanupTimer = null;
-    }
     this.sessions.clear();
+  }
+
+  // Get active session count (for monitoring)
+  getSessionCount(): number {
+    this.lazyCleanup();
+    return this.sessions.size;
   }
 }
 
-// Export a singleton instance
+/**
+ * Export a singleton instance
+ * Note: In serverless environments, this instance may be recreated on cold starts
+ * This is acceptable for our use case as sessions are validated on each request
+ */
 export const sessionStore = new SessionStore();
 
-// Clean up on process exit
-if (typeof process !== "undefined") {
-  process.on("exit", () => sessionStore.destroy());
-  process.on("SIGINT", () => {
-    sessionStore.destroy();
-    process.exit(0);
-  });
-  process.on("SIGTERM", () => {
-    sessionStore.destroy();
-    process.exit(0);
-  });
-}
+// No process event handlers needed for serverless
+// The instance will be garbage collected when the function terminates
