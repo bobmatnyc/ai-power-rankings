@@ -1,12 +1,12 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle } from "lucide-react";
 
-export default function Error({
+export default function ErrorBoundary({
   error,
   reset,
 }: {
@@ -30,13 +30,9 @@ export default function Error({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-center">
-          <p className="text-gray-600">
-            We encountered an error while processing your request.
-          </p>
+          <p className="text-gray-600">We encountered an error while processing your request.</p>
           {error.message && (
-            <p className="text-sm text-gray-500 bg-gray-100 p-2 rounded">
-              {error.message}
-            </p>
+            <p className="text-sm text-gray-500 bg-gray-100 p-2 rounded">{error.message}</p>
           )}
           <div className="flex flex-col gap-2 pt-4">
             <Button onClick={reset}>Try Again</Button>

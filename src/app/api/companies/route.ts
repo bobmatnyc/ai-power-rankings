@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { cachedJsonResponse } from "@/lib/api-cache";
 import { companiesRepository } from "@/lib/db/repositories/companies.repository";
-import { loggers } from "@/lib/logger";
 import type { Company } from "@/lib/json-db/schemas";
+import { loggers } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,17 +24,18 @@ export async function GET(request: NextRequest) {
     }
 
     // Convert CompanyData to Company format, normalizing description field
-    const companies: Company[] = companiesData.map(company => ({
+    const companies: Company[] = companiesData.map((company) => ({
       id: company.id,
       slug: company.slug,
       name: company.name,
-      description: typeof company.description === 'string'
-        ? company.description
-        : Array.isArray(company.description)
-          ? company.description.map(block =>
-              block.children?.map(child => child.text).join('') || ''
-            ).join('\n')
-          : undefined,
+      description:
+        typeof company.description === "string"
+          ? company.description
+          : Array.isArray(company.description)
+            ? company.description
+                .map((block) => block.children?.map((child) => child.text).join("") || "")
+                .join("\n")
+            : undefined,
       website: company.website,
       founded: company.founded,
       headquarters: company.headquarters,
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
       investors: company["investors"] as string[] | undefined,
       created_at: company.created_at || new Date().toISOString(),
       updated_at: company.updated_at || new Date().toISOString(),
-    }))
+    }));
 
     // Sort alphabetically by name
     companies.sort((a, b) => a.name.localeCompare(b.name));
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
   try {
     // TODO: Add authentication check here
 
-    const body = await request.json() as Partial<Company>;
+    const body = (await request.json()) as Partial<Company>;
 
     // Generate slug if not provided
     const slug =
@@ -93,7 +94,8 @@ export async function POST(request: NextRequest) {
         .replace(/[^a-z0-9\s-]/g, "")
         .replace(/\s+/g, "-")
         .replace(/-+/g, "-")
-        .trim() || "";
+        .trim() ||
+      "";
 
     const company: Company = {
       id: body.id || `company-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -111,20 +113,28 @@ export async function POST(request: NextRequest) {
       updated_at: new Date().toISOString(),
     };
 
-    const createdCompanyData = await companiesRepository.create(company as any); // Type mismatch due to repository expecting CompanyData
+    // Convert Company to the format expected by repository (CompanyData)
+    const companyData: Parameters<typeof companiesRepository.create>[0] = {
+      ...company,
+      funding_total: company.funding_total,
+      last_funding_round: company.last_funding_round,
+      investors: company.investors,
+    };
+    const createdCompanyData = await companiesRepository.create(companyData);
 
     // Convert back to Company format
     const createdCompany: Company = {
       id: createdCompanyData.id,
       slug: createdCompanyData.slug,
       name: createdCompanyData.name,
-      description: typeof createdCompanyData.description === 'string'
-        ? createdCompanyData.description
-        : Array.isArray(createdCompanyData.description)
-          ? createdCompanyData.description.map(block =>
-              block.children?.map(child => child.text).join('') || ''
-            ).join('\n')
-          : undefined,
+      description:
+        typeof createdCompanyData.description === "string"
+          ? createdCompanyData.description
+          : Array.isArray(createdCompanyData.description)
+            ? createdCompanyData.description
+                .map((block) => block.children?.map((child) => child.text).join("") || "")
+                .join("\n")
+            : undefined,
       website: createdCompanyData.website,
       founded: createdCompanyData.founded,
       headquarters: createdCompanyData.headquarters,

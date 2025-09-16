@@ -69,5 +69,16 @@ VERSION
 # temporary Python scripts in root
 /*.py
 
+# temporary test files and reports in root
+/test-*.js
+/test-*.ts
+/test-*.md
+/test-*.sh
+/*_TEST_REPORT.md
+/*_FIX_REPORT.md
+
+# archive of old test scripts
+/scripts/test/archive/
+
 # MCP vector search
 .mcp-vector-search/

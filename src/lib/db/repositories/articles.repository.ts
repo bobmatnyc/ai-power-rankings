@@ -3,21 +3,21 @@
  * Handles all database operations for articles and rankings management
  */
 
-import { eq, desc, and, sql as sqlTag } from "drizzle-orm";
-import { getDb } from "@/lib/db/connection";
+import { and, desc, eq, sql as sqlTag } from "drizzle-orm";
 import {
-  articles,
-  articleRankingsChanges,
-  articleProcessingLogs,
   type Article,
-  type NewArticle,
-  type ArticleRankingsChange,
-  type NewArticleRankingsChange,
   type ArticleProcessingLog,
-  type NewArticleProcessingLog,
+  type ArticleRankingsChange,
   type ArticleWithImpact,
+  articleProcessingLogs,
+  articleRankingsChanges,
+  articles,
+  type NewArticle,
+  type NewArticleProcessingLog,
+  type NewArticleRankingsChange,
 } from "@/lib/db/article-schema";
-import { tools, companies } from "@/lib/db/schema";
+import { getDb } from "@/lib/db/connection";
+import { companies, tools } from "@/lib/db/schema";
 
 export class ArticlesRepository {
   private db: ReturnType<typeof getDb>;
@@ -34,15 +34,48 @@ export class ArticlesRepository {
    */
   async createArticle(article: NewArticle): Promise<Article> {
     if (!this.db) throw new Error("Database not connected");
-    const result = await this.db.insert(articles).values(article).returning();
-    if (!result || result.length === 0) {
-      throw new Error("Failed to create article");
+
+    // Ensure JSON fields are properly formatted
+    const articleData = {
+      ...article,
+      // Ensure arrays are properly formatted
+      tags: article.tags || [],
+      // Ensure JSON fields are properly formatted (already JSONB in schema, pass as-is)
+      toolMentions: article.toolMentions || [],
+      companyMentions: article.companyMentions || [],
+      rankingsSnapshot: article.rankingsSnapshot || null,
+      // Ensure numeric fields have proper defaults
+      importanceScore: article.importanceScore ?? 5,
+      sentimentScore: article.sentimentScore || "0",
+      // Ensure timestamps are properly formatted
+      publishedDate: article.publishedDate || new Date(),
+      ingestedAt: article.ingestedAt || new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    try {
+      const result = await this.db.insert(articles).values(articleData).returning();
+      if (!result || result.length === 0) {
+        throw new Error("Failed to create article");
+      }
+      const createdArticle = result[0];
+      if (!createdArticle) {
+        throw new Error("Failed to create article - no result returned");
+      }
+      return createdArticle;
+    } catch (error) {
+      console.error("[ArticlesRepo] Error creating article:", error);
+      if (error instanceof Error) {
+        // Log the actual SQL error for debugging
+        console.error("[ArticlesRepo] SQL Error details:", {
+          message: error.message,
+          stack: error.stack,
+          data: articleData,
+        });
+      }
+      throw error;
     }
-    const createdArticle = result[0];
-    if (!createdArticle) {
-      throw new Error("Failed to create article - no result returned");
-    }
-    return createdArticle;
   }
 
   /**
@@ -50,10 +83,7 @@ export class ArticlesRepository {
    */
   async getArticleById(id: string): Promise<Article | null> {
     if (!this.db) return null;
-    const result = await this.db.select()
-      .from(articles)
-      .where(eq(articles.id, id))
-      .limit(1);
+    const result = await this.db.select().from(articles).where(eq(articles.id, id)).limit(1);
     return result?.[0] || null;
   }
 
@@ -62,10 +92,7 @@ export class ArticlesRepository {
    */
   async getArticleBySlug(slug: string): Promise<Article | null> {
     if (!this.db) return null;
-    const result = await this.db.select()
-      .from(articles)
-      .where(eq(articles.slug, slug))
-      .limit(1);
+    const result = await this.db.select().from(articles).where(eq(articles.slug, slug)).limit(1);
     return result?.[0] || null;
   }
 
@@ -101,7 +128,8 @@ export class ArticlesRepository {
    * Update an article
    */
   async updateArticle(id: string, updates: Partial<Article>): Promise<Article | null> {
-    const result = await this.db?.update(articles)
+    const result = await this.db
+      ?.update(articles)
       .set({
         ...updates,
         updatedAt: new Date(),
@@ -117,9 +145,10 @@ export class ArticlesRepository {
   async deleteArticle(id: string, hard = false): Promise<boolean> {
     if (hard) {
       const result = await this.db?.delete(articles).where(eq(articles.id, id));
-      return result && 'rowCount' in result ? result.rowCount > 0 : false;
+      return result && "rowCount" in result ? result.rowCount > 0 : false;
     } else {
-      const result = await this.db?.update(articles)
+      const result = await this.db
+        ?.update(articles)
         .set({
           status: "deleted",
           updatedAt: new Date(),
@@ -142,7 +171,9 @@ export class ArticlesRepository {
 
     const impact = {
       toolsAffected: new Set(changes.map((c) => c.toolId)).size,
-      companiesMentioned: Array.isArray(article.companyMentions) ? article.companyMentions.length : 0,
+      companiesMentioned: Array.isArray(article.companyMentions)
+        ? article.companyMentions.length
+        : 0,
       avgRankChange:
         changes.reduce((sum, c) => sum + (c.rankChange || 0), 0) / (changes.length || 1),
       avgScoreChange:
@@ -163,15 +194,55 @@ export class ArticlesRepository {
    */
   async saveRankingChanges(changes: NewArticleRankingsChange[]): Promise<ArticleRankingsChange[]> {
     if (changes.length === 0) return [];
-    const saved = await this.db?.insert(articleRankingsChanges).values(changes).returning();
-    return saved || [];
+
+    // Ensure all required fields are properly set for each change
+    const validatedChanges = changes.map((change) => ({
+      ...change,
+      // Ensure required fields are not null/undefined
+      articleId: change.articleId,
+      toolId: change.toolId || "unknown", // tool_id is required, provide fallback
+      toolName: change.toolName || "Unknown Tool",
+      metricChanges: change.metricChanges || {},
+      // Convert numeric fields properly
+      oldRank: change.oldRank ?? null,
+      newRank: change.newRank ?? null,
+      rankChange: change.rankChange ?? null,
+      oldScore: change.oldScore || "0",
+      newScore: change.newScore || "0",
+      scoreChange: change.scoreChange || "0",
+      changeType: change.changeType || "no_change",
+      changeReason: change.changeReason || "",
+      isApplied: change.isApplied ?? true,
+      appliedAt: change.appliedAt || new Date(),
+      rolledBack: change.rolledBack ?? false,
+      rolledBackAt: change.rolledBackAt || null,
+      createdAt: new Date(),
+    }));
+
+    try {
+      const saved = await this.db
+        ?.insert(articleRankingsChanges)
+        .values(validatedChanges)
+        .returning();
+      return saved || [];
+    } catch (error) {
+      console.error("[ArticlesRepo] Error saving ranking changes:", error);
+      if (error instanceof Error) {
+        console.error("[ArticlesRepo] SQL Error details:", {
+          message: error.message,
+          changes: validatedChanges,
+        });
+      }
+      throw error;
+    }
   }
 
   /**
    * Get ranking changes for an article
    */
   async getArticleRankingChanges(articleId: string): Promise<ArticleRankingsChange[]> {
-    const result = await this.db?.select()
+    const result = await this.db
+      ?.select()
       .from(articleRankingsChanges)
       .where(eq(articleRankingsChanges.articleId, articleId))
       .orderBy(desc(articleRankingsChanges.createdAt));
@@ -182,7 +253,8 @@ export class ArticlesRepository {
    * Rollback ranking changes for an article
    */
   async rollbackArticleRankings(articleId: string): Promise<number> {
-    const result = await this.db?.update(articleRankingsChanges)
+    const result = await this.db
+      ?.update(articleRankingsChanges)
       .set({
         isApplied: false,
         rolledBack: true,
@@ -196,7 +268,7 @@ export class ArticlesRepository {
         )
       );
 
-    return result && 'rowCount' in result ? result.rowCount : 0;
+    return result && "rowCount" in result ? result.rowCount : 0;
   }
 
   /**
@@ -222,7 +294,8 @@ export class ArticlesRepository {
     id: string,
     updates: Partial<ArticleProcessingLog>
   ): Promise<ArticleProcessingLog | null> {
-    const result = await this.db?.update(articleProcessingLogs)
+    const result = await this.db
+      ?.update(articleProcessingLogs)
       .set(updates)
       .where(eq(articleProcessingLogs.id, id))
       .returning();
@@ -233,7 +306,8 @@ export class ArticlesRepository {
    * Get processing logs for an article
    */
   async getArticleProcessingLogs(articleId: string): Promise<ArticleProcessingLog[]> {
-    const result = await this.db?.select()
+    const result = await this.db
+      ?.select()
       .from(articleProcessingLogs)
       .where(eq(articleProcessingLogs.articleId, articleId))
       .orderBy(desc(articleProcessingLogs.createdAt));
@@ -252,7 +326,8 @@ export class ArticlesRepository {
     },
     articleId: string
   ): Promise<{ id: string; name: string; slug: string; category: string }> {
-    const result = await this.db?.insert(tools)
+    const result = await this.db
+      ?.insert(tools)
       .values({
         name: toolData.name,
         slug: toolData.slug,
@@ -285,12 +360,14 @@ export class ArticlesRepository {
   ): Promise<{ id: string; name: string; slug: string }> {
     try {
       // Ensure slug is valid and unique
-      const validSlug = companyData.slug.toLowerCase()
+      const validSlug = companyData.slug
+        .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
 
       // Check if company already exists
-      const existing = await this.db?.select()
+      const existing = await this.db
+        ?.select()
         .from(companies)
         .where(eq(companies.slug, validSlug))
         .limit(1);
@@ -300,7 +377,8 @@ export class ArticlesRepository {
         return existing[0] as { id: string; name: string; slug: string };
       }
 
-      const result = await this.db?.insert(companies)
+      const result = await this.db
+        ?.insert(companies)
         .values({
           slug: validSlug,
           name: companyData.name,
@@ -321,7 +399,9 @@ export class ArticlesRepository {
       return result[0] as { id: string; name: string; slug: string };
     } catch (error) {
       console.error("[ArticlesRepo] Error creating company:", error);
-      throw new Error(`Failed to create company ${companyData.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to create company ${companyData.name}: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
     }
   }
 
@@ -330,11 +410,10 @@ export class ArticlesRepository {
    */
   async getArticlesByToolMention(toolName: string): Promise<Article[]> {
     // Use JSONB containment operator
-    const result = await this.db?.select()
+    const result = await this.db
+      ?.select()
       .from(articles)
-      .where(
-        sqlTag`${articles.toolMentions} @> ${JSON.stringify([{ tool: toolName }])}`
-      )
+      .where(sqlTag`${articles.toolMentions} @> ${JSON.stringify([{ tool: toolName }])}`)
       .orderBy(desc(articles.publishedDate));
     return result || [];
   }
@@ -344,11 +423,10 @@ export class ArticlesRepository {
    */
   async getArticlesByCompanyMention(companyName: string): Promise<Article[]> {
     // Use JSONB containment operator
-    const result = await this.db?.select()
+    const result = await this.db
+      ?.select()
       .from(articles)
-      .where(
-        sqlTag`${articles.companyMentions} @> ${JSON.stringify([{ company: companyName }])}`
-      )
+      .where(sqlTag`${articles.companyMentions} @> ${JSON.stringify([{ company: companyName }])}`)
       .orderBy(desc(articles.publishedDate));
     return result || [];
   }
@@ -357,14 +435,10 @@ export class ArticlesRepository {
    * Get articles by importance score threshold
    */
   async getImportantArticles(minScore = 7): Promise<Article[]> {
-    const result = await this.db?.select()
+    const result = await this.db
+      ?.select()
       .from(articles)
-      .where(
-        and(
-          eq(articles.status, "active"),
-          sqlTag`${articles.importanceScore} >= ${minScore}`
-        )
-      )
+      .where(and(eq(articles.status, "active"), sqlTag`${articles.importanceScore} >= ${minScore}`))
       .orderBy(desc(articles.importanceScore), desc(articles.publishedDate));
     return result || [];
   }
@@ -374,11 +448,10 @@ export class ArticlesRepository {
    */
   async searchArticlesByTags(tags: string[]): Promise<Article[]> {
     // Use array overlap operator
-    const result = await this.db?.select()
+    const result = await this.db
+      ?.select()
       .from(articles)
-      .where(
-        sqlTag`${articles.tags} && ARRAY[${tags.map((t) => `'${t}'`).join(",")}]::text[]`
-      )
+      .where(sqlTag`${articles.tags} && ARRAY[${tags.map((t) => `'${t}'`).join(",")}]::text[]`)
       .orderBy(desc(articles.publishedDate));
     return result || [];
   }
@@ -393,7 +466,8 @@ export class ArticlesRepository {
     totalToolMentions: number;
     averageImportance: number;
   }> {
-    const stats = await this.db?.select({
+    const stats = await this.db
+      ?.select({
         total: sqlTag`COUNT(*)`.as("total"),
         active: sqlTag`COUNT(CASE WHEN status = 'active' THEN 1 END)`.as("active"),
         deleted: sqlTag`COUNT(CASE WHEN status = 'deleted' THEN 1 END)`.as("deleted"),
@@ -402,7 +476,8 @@ export class ArticlesRepository {
       .from(articles);
 
     // Get tool mentions count
-    const toolMentions = await this.db?.select({
+    const toolMentions = await this.db
+      ?.select({
         count: sqlTag`COUNT(*)`.as("count"),
       })
       .from(articleRankingsChanges);
@@ -423,7 +498,8 @@ export class ArticlesRepository {
    * Get recent ranking changes across all articles
    */
   async getRecentRankingChanges(limit = 50): Promise<ArticleRankingsChange[]> {
-    const result = await this.db?.select()
+    const result = await this.db
+      ?.select()
       .from(articleRankingsChanges)
       .where(eq(articleRankingsChanges.isApplied, true))
       .orderBy(desc(articleRankingsChanges.appliedAt))
@@ -435,7 +511,8 @@ export class ArticlesRepository {
    * Check if an article slug exists
    */
   async slugExists(slug: string): Promise<boolean> {
-    const result = await this.db?.select({ count: sqlTag`COUNT(*)`.as("count") })
+    const result = await this.db
+      ?.select({ count: sqlTag`COUNT(*)`.as("count") })
       .from(articles)
       .where(eq(articles.slug, slug));
     const firstResult = result?.[0];

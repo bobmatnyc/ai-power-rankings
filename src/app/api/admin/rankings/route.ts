@@ -84,8 +84,45 @@ function transformToToolMetrics(tool: Tool, innovationScore: number = 0): ToolMe
  * - action: 'periods' | 'check-data' | 'progress' | 'all'
  * - period: specific period for check-data
  */
+// Type for GET response data
+type GetResponseData =
+  | {
+      periods: Array<{
+        period: string;
+        tool_count: number;
+        algorithm_version: string;
+        generated_at?: string;
+        is_current: boolean;
+      }>;
+      total: number;
+    }
+  | {
+      periods: Array<{
+        period: string;
+        rankings: number;
+        has_scores: boolean;
+        algorithm_version: string;
+      }>;
+    }
+  | {
+      period: string;
+      tool_count: number;
+      algorithm_version: string;
+      generated_at?: string;
+      sample_rankings: RankingEntry[];
+    }
+  | { status: string; progress: number; message: string }
+  | {
+      periods: Array<{
+        period: string;
+        rankings: RankingEntry[];
+        metadata: { algorithm_version: string; generated_at?: string; is_current: boolean };
+      }>;
+      total_periods: number;
+    };
+
 export async function GET(request: NextRequest) {
-  return withAdminAuth<any>(async () => {
+  return withAdminAuth<GetResponseData>(async () => {
     try {
       const { searchParams } = new URL(request.url);
       const action = searchParams.get("action") || "periods";
@@ -213,8 +250,30 @@ export async function GET(request: NextRequest) {
  * - create-period: Create new ranking period
  * - sync-current: Sync current rankings
  */
+// Type for POST response data
+type PostResponseData =
+  | {
+      rankings: RankingEntry[];
+      metadata: {
+        period: string;
+        algorithm_version: string;
+        preview_date: string;
+        changes?: Record<string, unknown>;
+      };
+    }
+  | { success: boolean; period: string; message: string; details: Record<string, unknown> }
+  | { success: boolean; period: string; tool_count?: number; algorithm_version?: string }
+  | { success: boolean; message: string; current_period?: string; previous_period?: string }
+  | {
+      success: boolean;
+      current: RankingPeriod;
+      total_tools?: number;
+      missing_scores?: string[];
+      rankings_count?: number;
+    };
+
 export async function POST(request: NextRequest) {
-  return withAdminAuth<any>(async () => {
+  return withAdminAuth<PostResponseData>(async () => {
     try {
       const body = await request.json();
       const { action } = body;
@@ -699,8 +758,11 @@ export async function POST(request: NextRequest) {
  *
  * Delete a ranking period
  */
+// Type for DELETE response data
+type DeleteResponseData = { success: boolean; message: string };
+
 export async function DELETE(request: NextRequest) {
-  return withAdminAuth<any>(async () => {
+  return withAdminAuth<DeleteResponseData>(async () => {
     try {
       const { searchParams } = new URL(request.url);
       const period = searchParams.get("period");

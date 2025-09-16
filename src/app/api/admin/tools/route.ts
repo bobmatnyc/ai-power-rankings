@@ -45,7 +45,9 @@ interface ExtendedTool extends Tool {
  * - status: filter by status for list action
  */
 export async function GET(request: NextRequest) {
-  return withAdminAuth<any>(async () => {
+  return withAdminAuth<
+    Record<string, ToolCheckResult> | { total: number; tools: unknown[] } | { error: string }
+  >(async () => {
     try {
       const { searchParams } = new URL(request.url);
       const action = searchParams.get("action") || "list";
@@ -131,7 +133,16 @@ export async function GET(request: NextRequest) {
  * - update-company: Update company data for a tool
  */
 export async function POST(request: NextRequest) {
-  return withAdminAuth<any>(async () => {
+  return withAdminAuth<
+    | {
+        success: boolean;
+        message: string;
+        deletedCount?: number;
+        refreshedCount?: number;
+        result?: unknown;
+      }
+    | { error: string }
+  >(async () => {
     try {
       const body = await request.json();
       const { action } = body;
@@ -322,7 +333,9 @@ export async function POST(request: NextRequest) {
  * Delete a single tool by ID
  */
 export async function DELETE(request: NextRequest) {
-  return withAdminAuth<any>(async () => {
+  return withAdminAuth<
+    { success: boolean; message: string; deletedCount?: number } | { error: string }
+  >(async () => {
     try {
       const { searchParams } = new URL(request.url);
       const toolId = searchParams.get("id");
@@ -378,7 +391,7 @@ export async function DELETE(request: NextRequest) {
  * Quick fix and update operations
  */
 export async function PUT(request: NextRequest) {
-  return withAdminAuth<any>(async () => {
+  return withAdminAuth<{ success: boolean; message: string } | { error: string }>(async () => {
     try {
       const body = await request.json();
       const { action } = body;

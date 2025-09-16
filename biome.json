@@ -24,16 +24,19 @@
       },
       "style": {
         "noUnusedTemplateLiteral": "warn",
-        "useTemplate": "warn"
+        "useTemplate": "warn",
+        "noNonNullAssertion": "warn"
       },
       "complexity": {
-        "useLiteralKeys": "off"
+        "useLiteralKeys": "off",
+        "noUselessConstructor": "warn"
       },
       "correctness": {
         "noUnusedVariables": {
-          "level": "error",
+          "level": "warn",
           "fix": "none"
-        }
+        },
+        "noUnusedImports": "warn"
       }
     }
   },

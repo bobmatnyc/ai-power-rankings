@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { cachedJsonResponse } from "@/lib/api-cache";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
+import type { NewsArticle, Tool } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
 import { findToolByText } from "@/lib/tool-matcher";
-import type { Tool, NewsArticle } from "@/lib/json-db/schemas";
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,11 +23,13 @@ export async function GET(request: NextRequest) {
     // Helper function to get the effective date (same logic as used for event_date)
     const getEffectiveDate = (article: NewsArticle) => {
       const articleWithExtra = article as NewsArticle & { published_at?: string };
-      return article.published_date ||
-             articleWithExtra.published_at ||
-             article.created_at ||
-             article.date ||
-             new Date().toISOString();
+      return (
+        article.published_date ||
+        articleWithExtra.published_at ||
+        article.created_at ||
+        article.date ||
+        new Date().toISOString()
+      );
     };
 
     // Sort by effective date (newest first) - using the same date field that will be used for event_date
@@ -60,11 +62,12 @@ export async function GET(request: NextRequest) {
         if (!matchingTool && article.tool_mentions && article.tool_mentions.length > 0) {
           // Try to find tools by name
           const firstToolName = article.tool_mentions[0];
-          matchingTool = tools.find(
-            (t) =>
-              t.name.toLowerCase() === firstToolName?.toLowerCase() ||
-              t.slug === firstToolName?.toLowerCase().replace(/\s+/g, "-")
-          ) || null;
+          matchingTool =
+            tools.find(
+              (t) =>
+                t.name.toLowerCase() === firstToolName?.toLowerCase() ||
+                t.slug === firstToolName?.toLowerCase().replace(/\s+/g, "-")
+            ) || null;
 
           if (!matchingTool) {
             // Use the tool mention as the name even if we don't find a match
@@ -77,10 +80,14 @@ export async function GET(request: NextRequest) {
           toolCategory = matchingTool.category || "ai-coding-tool";
           toolWebsite = matchingTool.info?.website || "";
           primaryToolId = matchingTool.slug || matchingTool.id;
-        } else if ('tool_ids' in article && Array.isArray((article as NewsArticle & { tool_ids?: string[] }).tool_ids) && ((article as NewsArticle & { tool_ids?: string[] }).tool_ids?.length ?? 0) > 0) {
+        } else if (
+          "tool_ids" in article &&
+          Array.isArray((article as NewsArticle & { tool_ids?: string[] }).tool_ids) &&
+          ((article as NewsArticle & { tool_ids?: string[] }).tool_ids?.length ?? 0) > 0
+        ) {
           // Fallback to old format with tool_ids
-          const toolIds = (article as NewsArticle & { tool_ids?: string[] }).tool_ids!;
-          const firstToolId = toolIds[0];
+          const toolIds = (article as NewsArticle & { tool_ids?: string[] }).tool_ids;
+          const firstToolId = toolIds?.[0];
           const tool = firstToolId ? await toolsRepo.getById(firstToolId) : null;
 
           if (tool) {
@@ -268,7 +275,10 @@ export async function GET(request: NextRequest) {
           title: article.title,
           description: article.summary || article.content,
           source_url: article.source_url,
-          source_name: article.source || ((article as NewsArticle & { source_name?: string }).source_name) || "AI News",
+          source_name:
+            article.source ||
+            (article as NewsArticle & { source_name?: string }).source_name ||
+            "AI News",
           metrics: {
             importance_score: importance,
           },

@@ -1,36 +1,35 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { format } from "date-fns";
 import {
-  Plus,
-  Upload,
-  Link,
-  FileText,
+  AlertCircle,
+  ArrowRight,
+  Bot,
+  CheckCircle,
+  Clock,
+  Edit,
   Eye,
+  FileText,
+  Link,
+  Loader2,
+  Newspaper,
+  Plus,
+  RefreshCw,
   Save,
   Trash2,
-  RefreshCw,
-  Edit,
+  Upload,
   X,
-  CheckCircle,
-  AlertCircle,
-  Clock,
-  Newspaper,
-  ArrowRight,
-  Loader2,
-  Bot
 } from "lucide-react";
-import { format } from "date-fns";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Article {
   id: string;
@@ -47,12 +46,15 @@ interface Article {
   updatedAt: string | Date;
   category?: string;
   tags?: string[];
-  toolMentions?: Array<{
-    tool: string;
-    relevance: number;
-    sentiment: number;
-    context: string;
-  }> | Record<string, unknown>[] | null;
+  toolMentions?:
+    | Array<{
+        tool: string;
+        relevance: number;
+        sentiment: number;
+        context: string;
+      }>
+    | Record<string, unknown>[]
+    | null;
   companyMentions?: Record<string, unknown>[] | null;
   rankingsSnapshot?: Record<string, unknown>;
   status: string;
@@ -112,6 +114,7 @@ export function ArticleManagement() {
     fileType: "",
   });
   const [preview, setPreview] = useState<IngestionPreview | null>(null);
+  const [savedPreviewData, setSavedPreviewData] = useState<IngestionPreview | null>(null);
   const [workflowStep, setWorkflowStep] = useState<"input" | "preview" | "saved">("input");
   const [processingProgress, setProcessingProgress] = useState(0);
   const [processingStep, setProcessingStep] = useState<string>("");
@@ -152,13 +155,26 @@ export function ArticleManagement() {
     setLoading(true);
     setError(null);
     setSuccess(null);
+    setProcessingProgress(0);
+    setProcessingStep("Initializing...");
 
     try {
+      // Simulate progress updates
+      setProcessingProgress(10);
+      setProcessingStep("Preparing content...");
       // Handle file upload if needed
       let finalInputContent = inputContent;
       if (ingestionType === "file" && selectedFile) {
+        setProcessingProgress(20);
+        setProcessingStep("Reading file...");
         finalInputContent = await readFileContent(selectedFile);
       }
+
+      setProcessingProgress(30);
+      setProcessingStep("Analyzing with AI...");
+
+      setProcessingProgress(40);
+      setProcessingStep("Sending to Claude AI...");
 
       const response = await fetch("/api/admin/articles/ingest", {
         method: "POST",
@@ -171,7 +187,7 @@ export function ArticleManagement() {
           metadata: {
             author: metadata.author || undefined,
             category: metadata.category || undefined,
-            tags: metadata.tags ? metadata.tags.split(",").map(t => t.trim()) : undefined,
+            tags: metadata.tags ? metadata.tags.split(",").map((t) => t.trim()) : undefined,
             fileName: metadata.fileName || undefined,
             fileType: metadata.fileType || undefined,
           },
@@ -183,19 +199,42 @@ export function ArticleManagement() {
         throw new Error(errorData.error || "Failed to preview article");
       }
 
+      setProcessingProgress(60);
+      setProcessingStep("Processing AI response...");
+
       const data = await response.json();
+
+      setProcessingProgress(80);
+      setProcessingStep("Calculating ranking impacts...");
 
       // Extract the result from the response
       if (data.success && data.result) {
-        // Map predictedChanges to impactedTools for the UI
+        // Map predictedChanges to impactedTools for the UI with correct field names
         const mappedResult = {
           ...data.result,
-          impactedTools: data.result.predictedChanges || [],
-          newTools: data.result.newTools?.map((t: any) =>
-            typeof t === 'string' ? t : t.name || t.tool
-          ) || [],
+          impactedTools: (data.result.predictedChanges || []).map(
+            (change: {
+              toolName?: string;
+              tool?: string;
+              currentScore?: number;
+              predictedScore?: number;
+              newScore?: number;
+            }) => ({
+              tool: change.toolName || change.tool || "Unknown Tool",
+              currentScore: change.currentScore || 0,
+              newScore: change.predictedScore || change.newScore || 0,
+              change: (change.predictedScore || change.newScore || 0) - (change.currentScore || 0),
+            })
+          ),
+          newTools:
+            data.result.newTools?.map((t: { name?: string; tool?: string } | string) =>
+              typeof t === "string" ? t : t.name || t.tool
+            ) || [],
         };
+        setProcessingProgress(100);
+        setProcessingStep("Complete!");
         setPreview(mappedResult);
+        setSavedPreviewData(data.result); // Store the raw result for save operation
         setWorkflowStep("preview");
         setSuccess(data.message || "Preview generated successfully!");
       } else {
@@ -224,58 +263,108 @@ export function ArticleManagement() {
     setProcessingStep("Preparing article...");
 
     try {
-      // Handle file upload if needed
-      let finalInputContent = inputContent;
-      if (ingestionType === "file" && selectedFile) {
-        setProcessingProgress(10);
-        setProcessingStep("Extracting file content...");
-        finalInputContent = await readFileContent(selectedFile);
-      }
+      let response: Response;
+      let data: { success?: boolean; message?: string; error?: string };
 
-      setProcessingProgress(25);
-      setProcessingStep("Analyzing with AI...");
+      // Check if we have preprocessed data from preview
+      if (savedPreviewData) {
+        // Use the cached analysis - MUCH faster!
+        setProcessingProgress(25);
+        setProcessingStep("Using cached analysis...");
 
-      const response = await fetch("/api/admin/articles/ingest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          type: ingestionType === "file" ? "text" : ingestionType,
-          input: finalInputContent,
+        const requestBody = {
+          type: "preprocessed" as const,
+          preprocessedData: savedPreviewData,
           dryRun: false,
           metadata: {
             author: metadata.author || undefined,
             category: metadata.category || undefined,
-            tags: metadata.tags ? metadata.tags.split(",").map(t => t.trim()) : undefined,
+            tags: metadata.tags ? metadata.tags.split(",").map((t) => t.trim()) : undefined,
             fileName: metadata.fileName || undefined,
             fileType: metadata.fileType || undefined,
           },
-        }),
-      });
+        };
 
-      setProcessingProgress(50);
-      setProcessingStep("Calculating ranking impacts...");
+        setProcessingProgress(50);
+        setProcessingStep("Saving to database...");
+
+        response = await fetch("/api/admin/articles/ingest", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(requestBody),
+        });
+
+        setProcessingProgress(75);
+        setProcessingStep("Updating rankings...");
+      } else {
+        // Fallback to full processing if no preview data
+        let finalInputContent = inputContent;
+        if (ingestionType === "file" && selectedFile) {
+          setProcessingProgress(10);
+          setProcessingStep("Extracting file content...");
+          finalInputContent = await readFileContent(selectedFile);
+        }
+
+        setProcessingProgress(25);
+        setProcessingStep("Analyzing with AI...");
+
+        response = await fetch("/api/admin/articles/ingest", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            type: ingestionType === "file" ? "text" : ingestionType,
+            input: finalInputContent,
+            dryRun: false,
+            metadata: {
+              author: metadata.author || undefined,
+              category: metadata.category || undefined,
+              tags: metadata.tags ? metadata.tags.split(",").map((t) => t.trim()) : undefined,
+              fileName: metadata.fileName || undefined,
+              fileType: metadata.fileType || undefined,
+            },
+          }),
+        });
+
+        setProcessingProgress(50);
+        setProcessingStep("Calculating ranking impacts...");
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to save article");
       }
 
-      const data = await response.json();
+      data = await response.json();
 
-      setProcessingProgress(75);
-      setProcessingStep("Saving to database...");
+      setProcessingProgress(85);
+      setProcessingStep("Finalizing...");
 
       if (data.success && data.result) {
-        // Map predictedChanges to impactedTools for the UI
+        // Map predictedChanges to impactedTools for the UI with correct field names
         const mappedResult = {
           ...data.result,
-          impactedTools: data.result.predictedChanges || [],
-          newTools: data.result.newTools?.map((t: any) =>
-            typeof t === 'string' ? t : t.name || t.tool
-          ) || [],
+          impactedTools: (data.result.predictedChanges || []).map(
+            (change: {
+              toolName?: string;
+              tool?: string;
+              currentScore?: number;
+              predictedScore?: number;
+              newScore?: number;
+            }) => ({
+              tool: change.toolName || change.tool || "Unknown Tool",
+              currentScore: change.currentScore || 0,
+              newScore: change.predictedScore || change.newScore || 0,
+              change: (change.predictedScore || change.newScore || 0) - (change.currentScore || 0),
+            })
+          ),
+          newTools:
+            data.result.newTools?.map((t: { name?: string; tool?: string } | string) =>
+              typeof t === "string" ? t : t.name || t.tool
+            ) || [],
         };
-        setPreview(mappedResult);  // Keep the result for display
+        setPreview(mappedResult); // Keep the result for display
         setProcessingProgress(90);
         setProcessingStep("Updating rankings...");
         setSuccess(data.message || "Article saved successfully and rankings updated!");
@@ -356,7 +445,11 @@ export function ArticleManagement() {
   };
 
   const handleDelete = async (articleId: string) => {
-    if (!confirm("Are you sure? This will delete the article and automatically rollback any ranking changes it made.")) {
+    if (
+      !confirm(
+        "Are you sure? This will delete the article and automatically rollback any ranking changes it made."
+      )
+    ) {
       return;
     }
 
@@ -388,6 +481,7 @@ export function ArticleManagement() {
     setSelectedFile(null);
     setMetadata({ author: "", category: "", tags: "", fileName: "", fileType: "" });
     setPreview(null);
+    setSavedPreviewData(null);
     setWorkflowStep("input");
     setError(null);
     setSuccess(null);
@@ -434,7 +528,7 @@ export function ArticleManagement() {
     setError(null);
 
     // For text-based files, read content immediately
-    if (['.txt', '.md', '.json'].includes(fileExtension)) {
+    if ([".txt", ".md", ".json"].includes(fileExtension)) {
       try {
         const content = await readFileContent(file);
         setInputContent(content);
@@ -477,7 +571,9 @@ export function ArticleManagement() {
               </div>
               <div>
                 <p className="text-muted-foreground">Avg Tool Mentions</p>
-                <p className="text-2xl font-bold">{stats.averageToolMentions?.toFixed(1) ?? "0.0"}</p>
+                <p className="text-2xl font-bold">
+                  {stats.averageToolMentions?.toFixed(1) ?? "0.0"}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -518,22 +614,34 @@ export function ArticleManagement() {
               <CardTitle className="text-lg">Add News Article</CardTitle>
               {/* Workflow Progress Indicator */}
               <div className="flex items-center gap-2 mt-4">
-                <div className={`flex items-center gap-2 ${workflowStep === "input" ? "text-primary" : "text-muted-foreground"}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${workflowStep === "input" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+                <div
+                  className={`flex items-center gap-2 ${workflowStep === "input" ? "text-primary" : "text-muted-foreground"}`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${workflowStep === "input" ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+                  >
                     1
                   </div>
                   <span className="text-sm font-medium">Input</span>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                <div className={`flex items-center gap-2 ${workflowStep === "preview" ? "text-primary" : "text-muted-foreground"}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${workflowStep === "preview" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+                <div
+                  className={`flex items-center gap-2 ${workflowStep === "preview" ? "text-primary" : "text-muted-foreground"}`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${workflowStep === "preview" ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+                  >
                     2
                   </div>
                   <span className="text-sm font-medium">Preview</span>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                <div className={`flex items-center gap-2 ${workflowStep === "saved" ? "text-primary" : "text-muted-foreground"}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${workflowStep === "saved" ? "bg-primary text-primary-foreground" : "bg-muted"}`}>
+                <div
+                  className={`flex items-center gap-2 ${workflowStep === "saved" ? "text-primary" : "text-muted-foreground"}`}
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${workflowStep === "saved" ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+                  >
                     3
                   </div>
                   <span className="text-sm font-medium">Save</span>
@@ -546,7 +654,10 @@ export function ArticleManagement() {
                   {/* Input Method Selection */}
                   <div className="space-y-4">
                     <Label>Choose Input Method</Label>
-                    <RadioGroup value={ingestionType} onValueChange={(v) => setIngestionType(v as "url" | "text" | "file")}>
+                    <RadioGroup
+                      value={ingestionType}
+                      onValueChange={(v) => setIngestionType(v as "url" | "text" | "file")}
+                    >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="url" id="url" />
                         <Label htmlFor="url" className="flex items-center gap-2 cursor-pointer">
@@ -634,7 +745,7 @@ export function ArticleManagement() {
                       <Input
                         placeholder="Article author"
                         value={metadata.author}
-                        onChange={(e) => setMetadata({...metadata, author: e.target.value})}
+                        onChange={(e) => setMetadata({ ...metadata, author: e.target.value })}
                       />
                     </div>
                     <div className="space-y-2">
@@ -642,7 +753,7 @@ export function ArticleManagement() {
                       <Input
                         placeholder="e.g., AI News"
                         value={metadata.category}
-                        onChange={(e) => setMetadata({...metadata, category: e.target.value})}
+                        onChange={(e) => setMetadata({ ...metadata, category: e.target.value })}
                       />
                     </div>
                     <div className="space-y-2">
@@ -650,42 +761,59 @@ export function ArticleManagement() {
                       <Input
                         placeholder="tag1, tag2, tag3"
                         value={metadata.tags}
-                        onChange={(e) => setMetadata({...metadata, tags: e.target.value})}
+                        onChange={(e) => setMetadata({ ...metadata, tags: e.target.value })}
                       />
                     </div>
                   </div>
 
-                  {/* Preview Button */}
-                  {/* Progress Meter */}
-                  {loading && processingProgress > 0 && (
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">{processingStep}</span>
-                        <span className="font-medium">{processingProgress}%</span>
-                      </div>
-                      <Progress value={processingProgress} className="h-2" />
+                  {/* Preview Button with integrated progress */}
+                  <div className="flex flex-col items-center pt-4">
+                    <div className="relative">
+                      <Button
+                        onClick={handlePreview}
+                        disabled={
+                          (!inputContent && ingestionType !== "file") ||
+                          (ingestionType === "file" && !selectedFile) ||
+                          loading
+                        }
+                        size="lg"
+                        className="relative min-w-[250px] overflow-hidden transition-all"
+                      >
+                        {/* Progress fill background */}
+                        {loading && processingProgress > 0 && (
+                          <div
+                            className="absolute inset-0 bg-primary/20 transition-all duration-300"
+                            style={{
+                              width: `${processingProgress}%`,
+                              background:
+                                "linear-gradient(90deg, hsl(var(--primary) / 0.3) 0%, hsl(var(--primary) / 0.15) 100%)",
+                            }}
+                          />
+                        )}
+                        {/* Button content */}
+                        <span className="relative z-10 flex items-center">
+                          {loading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              {processingProgress > 0
+                                ? `Processing... ${processingProgress}%`
+                                : "Processing..."}
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="mr-2 h-4 w-4" />
+                              Preview Impact
+                            </>
+                          )}
+                        </span>
+                      </Button>
                     </div>
-                  )}
-
-                  <div className="flex justify-center pt-4">
-                    <Button
-                      onClick={handlePreview}
-                      disabled={(!inputContent && ingestionType !== "file") || (ingestionType === "file" && !selectedFile) || loading}
-                      size="lg"
-                      className="min-w-[200px]"
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          <Eye className="mr-2 h-4 w-4" />
-                          Preview Impact
-                        </>
-                      )}
-                    </Button>
+                    {/* Progress step text below button */}
+                    {loading && processingStep && (
+                      <p className="text-xs text-muted-foreground mt-2 text-center">
+                        {processingStep}
+                      </p>
+                    )}
                   </div>
                 </>
               )}
@@ -707,7 +835,9 @@ export function ArticleManagement() {
                         {preview?.article?.summary && (
                           <div>
                             <Label>Summary</Label>
-                            <p className="text-sm text-muted-foreground">{preview?.article?.summary}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {preview?.article?.summary}
+                            </p>
                           </div>
                         )}
                         {preview?.article?.model && (
@@ -719,8 +849,8 @@ export function ArticleManagement() {
                                 {preview.article.model === "anthropic/claude-sonnet-4"
                                   ? "Claude 4 Sonnet"
                                   : preview.article.model === "anthropic/claude-3-haiku"
-                                  ? "Claude 3 Haiku"
-                                  : preview.article.model}
+                                    ? "Claude 3 Haiku"
+                                    : preview.article.model}
                               </Badge>
                             </div>
                           </div>
@@ -737,11 +867,15 @@ export function ArticleManagement() {
                         <div className="grid grid-cols-3 gap-4 mb-4">
                           <div className="text-center">
                             <p className="text-sm text-muted-foreground">Tools Affected</p>
-                            <p className="text-2xl font-bold">{preview?.summary?.totalToolsAffected ?? 0}</p>
+                            <p className="text-2xl font-bold">
+                              {preview?.summary?.totalToolsAffected ?? 0}
+                            </p>
                           </div>
                           <div className="text-center">
                             <p className="text-sm text-muted-foreground">New Tools</p>
-                            <p className="text-2xl font-bold">{preview?.summary?.totalNewTools ?? 0}</p>
+                            <p className="text-2xl font-bold">
+                              {preview?.summary?.totalNewTools ?? 0}
+                            </p>
                           </div>
                           <div className="text-center">
                             <p className="text-sm text-muted-foreground">Avg Score Change</p>
@@ -757,18 +891,24 @@ export function ArticleManagement() {
                           <div className="space-y-2">
                             <Label>Tool Score Changes (Preview)</Label>
                             <div className="space-y-1 max-h-40 overflow-y-auto border rounded-lg p-2">
-                              {preview?.impactedTools?.map((tool) => (
-                                <div key={tool.tool} className="flex items-center justify-between text-sm py-1">
+                              {preview?.impactedTools?.map((tool, index) => (
+                                <div
+                                  key={`${tool.tool}-${index}`}
+                                  className="flex items-center justify-between text-sm py-1"
+                                >
                                   <span className="font-medium">{tool.tool}</span>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-muted-foreground">{tool.currentScore}</span>
+                                    <span className="text-muted-foreground">
+                                      {tool.currentScore}
+                                    </span>
                                     <ArrowRight className="h-3 w-3" />
                                     <span className="font-medium">{tool.newScore}</span>
                                     <Badge
                                       variant={tool.change > 0 ? "default" : "secondary"}
                                       className="ml-2"
                                     >
-                                      {tool.change > 0 ? "+" : ""}{tool.change?.toFixed(1) ?? "0.0"}
+                                      {tool.change > 0 ? "+" : ""}
+                                      {tool.change?.toFixed(1) ?? "0.0"}
                                     </Badge>
                                   </div>
                                 </div>
@@ -783,7 +923,7 @@ export function ArticleManagement() {
                             <Label>New Tools to be Created</Label>
                             <div className="flex flex-wrap gap-2">
                               {preview?.newTools?.map((tool) => (
-                                <Badge key={tool} variant="outline">
+                                <Badge key={`new-tool-${tool}`} variant="outline">
                                   <Plus className="mr-1 h-3 w-3" />
                                   {tool}
                                 </Badge>
@@ -795,43 +935,58 @@ export function ArticleManagement() {
                     </Card>
 
                     {/* Action Buttons */}
-                    <div className="flex justify-center gap-4 pt-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => setWorkflowStep("input")}
-                      >
-                        <X className="mr-2 h-4 w-4" />
-                        Back to Edit
-                      </Button>
-                      {/* Progress Meter for Save */}
-                      {loading && processingProgress > 0 && (
-                        <div className="w-full max-w-md space-y-2 mb-4">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">{processingStep}</span>
-                            <span className="font-medium">{processingProgress}%</span>
-                          </div>
-                          <Progress value={processingProgress} className="h-2" />
-                        </div>
-                      )}
+                    <div className="flex flex-col items-center">
+                      <div className="flex gap-4 pt-4">
+                        <Button variant="outline" onClick={() => setWorkflowStep("input")}>
+                          <X className="mr-2 h-4 w-4" />
+                          Back to Edit
+                        </Button>
 
-                      <Button
-                        onClick={handleSave}
-                        disabled={loading}
-                        size="lg"
-                        className="min-w-[200px]"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Saving...
-                          </>
-                        ) : (
-                          <>
-                            <Save className="mr-2 h-4 w-4" />
-                            Save Article
-                          </>
-                        )}
-                      </Button>
+                        {/* Save Button with integrated progress */}
+                        <div className="relative">
+                          <Button
+                            onClick={handleSave}
+                            disabled={loading}
+                            size="lg"
+                            className="relative min-w-[250px] overflow-hidden transition-all"
+                          >
+                            {/* Progress fill background */}
+                            {loading && processingProgress > 0 && (
+                              <div
+                                className="absolute inset-0 bg-primary/20 transition-all duration-300"
+                                style={{
+                                  width: `${processingProgress}%`,
+                                  background:
+                                    "linear-gradient(90deg, hsl(var(--primary) / 0.3) 0%, hsl(var(--primary) / 0.15) 100%)",
+                                }}
+                              />
+                            )}
+                            {/* Button content */}
+                            <span className="relative z-10 flex items-center">
+                              {loading ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  {processingProgress > 0
+                                    ? `Saving... ${processingProgress}%`
+                                    : "Saving..."}
+                                </>
+                              ) : (
+                                <>
+                                  <Save className="mr-2 h-4 w-4" />
+                                  Save Article
+                                </>
+                              )}
+                            </span>
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Progress step text below buttons */}
+                      {loading && processingStep && (
+                        <p className="text-xs text-muted-foreground mt-2 text-center">
+                          {processingStep}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </>
@@ -854,7 +1009,8 @@ export function ArticleManagement() {
             <CardHeader>
               <CardTitle className="text-lg">Edit / Delete Articles</CardTitle>
               <CardDescription>
-                Edit: Update text without changing rankings | Delete: Remove article and rollback rankings
+                Edit: Update text without changing rankings | Delete: Remove article and rollback
+                rankings
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -866,90 +1022,98 @@ export function ArticleManagement() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {articles.filter(article => article && typeof article === 'object').map((article) => (
-                    <Card key={article.id} className="overflow-hidden">
-                      <CardContent className="pt-6">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-lg">{article?.title || "Untitled Article"}</h4>
-                            {article.summary && (
-                              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                                {article.summary}
-                              </p>
-                            )}
-                            <div className="flex flex-wrap items-center gap-3 mt-3 text-xs">
-                              {article.author && (
+                  {articles
+                    .filter((article) => article && typeof article === "object")
+                    .map((article) => (
+                      <Card key={article.id} className="overflow-hidden">
+                        <CardContent className="pt-6">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-lg">
+                                {article?.title || "Untitled Article"}
+                              </h4>
+                              {article.summary && (
+                                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                  {article.summary}
+                                </p>
+                              )}
+                              <div className="flex flex-wrap items-center gap-3 mt-3 text-xs">
+                                {article.author && (
+                                  <Badge variant="outline" className="font-normal">
+                                    By {article.author}
+                                  </Badge>
+                                )}
                                 <Badge variant="outline" className="font-normal">
-                                  By {article.author}
+                                  <Clock className="mr-1 h-3 w-3" />
+                                  {(() => {
+                                    const dateToUse = article.ingestedAt || article.createdAt;
+                                    if (
+                                      dateToUse &&
+                                      typeof dateToUse === "string" &&
+                                      !Number.isNaN(Date.parse(dateToUse))
+                                    ) {
+                                      return format(new Date(dateToUse), "MMM d, yyyy");
+                                    } else if (dateToUse instanceof Date) {
+                                      return format(dateToUse, "MMM d, yyyy");
+                                    }
+                                    return "Unknown date";
+                                  })()}
                                 </Badge>
-                              )}
-                              <Badge variant="outline" className="font-normal">
-                                <Clock className="mr-1 h-3 w-3" />
-                                {(() => {
-                                  const dateToUse = article.ingestedAt || article.createdAt;
-                                  if (dateToUse && typeof dateToUse === 'string' && !Number.isNaN(Date.parse(dateToUse))) {
-                                    return format(new Date(dateToUse), "MMM d, yyyy");
-                                  } else if (dateToUse instanceof Date) {
-                                    return format(dateToUse, "MMM d, yyyy");
-                                  }
-                                  return "Unknown date";
-                                })()}
-                              </Badge>
-                              {article.category && (
-                                <Badge variant="secondary">{article.category}</Badge>
-                              )}
-                              {article.toolMentions && (
-                                <Badge>
-                                  {Array.isArray(article.toolMentions)
-                                    ? `${article.toolMentions.length} tools`
-                                    : "Has tool mentions"}
-                                </Badge>
-                              )}
+                                {article.category && (
+                                  <Badge variant="secondary">{article.category}</Badge>
+                                )}
+                                {article.toolMentions && (
+                                  <Badge>
+                                    {Array.isArray(article.toolMentions)
+                                      ? `${article.toolMentions.length} tools`
+                                      : "Has tool mentions"}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-2 ml-4">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setEditingArticle(article);
+                                  setEditContent({
+                                    title: article?.title || "",
+                                    content: article.content || "",
+                                    summary: article.summary || "",
+                                  });
+                                }}
+                                title="Edit article text (won't change rankings)"
+                              >
+                                <Edit className="h-4 w-4 mr-1" />
+                                Edit
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleRecalculate(article.id)}
+                                disabled={loading}
+                                title="Recalculate rankings based on current content"
+                              >
+                                <RefreshCw className="h-4 w-4 mr-1" />
+                                Recalc
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDelete(article.id)}
+                                disabled={loading}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                title="Delete article and rollback ranking changes"
+                              >
+                                <Trash2 className="h-4 w-4 mr-1" />
+                                Delete
+                              </Button>
                             </div>
                           </div>
-                          <div className="flex flex-col gap-2 ml-4">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setEditingArticle(article);
-                                setEditContent({
-                                  title: article?.title || "",
-                                  content: article.content || "",
-                                  summary: article.summary || "",
-                                });
-                              }}
-                              title="Edit article text (won't change rankings)"
-                            >
-                              <Edit className="h-4 w-4 mr-1" />
-                              Edit
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleRecalculate(article.id)}
-                              disabled={loading}
-                              title="Recalculate rankings based on current content"
-                            >
-                              <RefreshCw className="h-4 w-4 mr-1" />
-                              Recalc
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDelete(article.id)}
-                              disabled={loading}
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                              title="Delete article and rollback ranking changes"
-                            >
-                              <Trash2 className="h-4 w-4 mr-1" />
-                              Delete
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </CardContent>
+                      </Card>
+                    ))}
                 </div>
               )}
             </CardContent>
@@ -964,8 +1128,8 @@ export function ArticleManagement() {
             <CardHeader>
               <CardTitle>Edit Article</CardTitle>
               <CardDescription>
-                Update article text. Note: This will NOT recalculate rankings automatically.
-                Use the "Recalc" button after saving if you want to update rankings.
+                Update article text. Note: This will NOT recalculate rankings automatically. Use the
+                "Recalc" button after saving if you want to update rankings.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1 overflow-y-auto space-y-4">
@@ -973,7 +1137,7 @@ export function ArticleManagement() {
                 <Label>Title</Label>
                 <Input
                   value={editContent.title}
-                  onChange={(e) => setEditContent({...editContent, title: e.target.value})}
+                  onChange={(e) => setEditContent({ ...editContent, title: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
@@ -981,7 +1145,7 @@ export function ArticleManagement() {
                 <Textarea
                   rows={3}
                   value={editContent.summary}
-                  onChange={(e) => setEditContent({...editContent, summary: e.target.value})}
+                  onChange={(e) => setEditContent({ ...editContent, summary: e.target.value })}
                   placeholder="Brief summary of the article..."
                 />
               </div>
@@ -990,23 +1154,17 @@ export function ArticleManagement() {
                 <Textarea
                   rows={15}
                   value={editContent.content}
-                  onChange={(e) => setEditContent({...editContent, content: e.target.value})}
+                  onChange={(e) => setEditContent({ ...editContent, content: e.target.value })}
                   className="font-mono text-sm"
                   placeholder="Full article content..."
                 />
               </div>
             </CardContent>
             <div className="p-6 border-t flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setEditingArticle(null)}
-              >
+              <Button variant="outline" onClick={() => setEditingArticle(null)}>
                 Cancel
               </Button>
-              <Button
-                onClick={handleUpdateArticle}
-                disabled={loading}
-              >
+              <Button onClick={handleUpdateArticle} disabled={loading}>
                 <Save className="mr-2 h-4 w-4" />
                 Save Changes
               </Button>

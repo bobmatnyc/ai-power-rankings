@@ -3,23 +3,23 @@
  * Enhanced service that integrates with the database for full article management
  */
 
-import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
-import { getDb } from "@/lib/db/connection";
-import { tools, rankings, companies } from "@/lib/db/schema";
-import { eq, } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type {
   Article,
-  NewArticle,
-  ArticleRankingsChange,
-  NewArticleRankingsChange,
-  DryRunResult,
   ArticleProcessingLog,
+  ArticleRankingsChange,
+  DryRunResult,
+  NewArticle,
+  NewArticleRankingsChange,
 } from "@/lib/db/article-schema";
+import { getDb } from "@/lib/db/connection";
+import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
+import { companies, rankings, tools } from "@/lib/db/schema";
 import {
-  ContentExtractor,
   AIAnalyzer,
-  RankingsCalculator,
   type ArticleIngestionInput,
+  ContentExtractor,
+  RankingsCalculator,
 } from "./article-ingestion.service";
 
 export class ArticleDatabaseService {
@@ -54,33 +54,47 @@ export class ArticleDatabaseService {
       // Step 1: Extract content
       let content: string;
       let sourceUrl: string | undefined;
+      let analysis: any; // Will be assigned based on input type
 
-      switch (input.type) {
-        case "url":
-          sourceUrl = input.input;
-          content = await this.contentExtractor.extractFromUrl(input.input);
-          break;
-        case "file":
-          if (!input.mimeType || !input.fileName) {
-            throw new Error("File ingestion requires mimeType and fileName");
-          }
-          content = await this.contentExtractor.extractFromFile(
-            input.input,
-            input.mimeType,
-            input.fileName
-          );
-          break;
-        case "text":
-          content = input.input;
-          break;
+      // Handle preprocessed data (skip extraction and AI analysis)
+      if (input.type === "preprocessed") {
+        // Use the already-analyzed data
+        if (!input.preprocessedData) {
+          throw new Error("Preprocessed type requires preprocessedData");
+        }
+        // The preprocessedData contains the full result including article and predictedChanges
+        analysis = input.preprocessedData.article || input.preprocessedData;
+        content = analysis.content || analysis.rewritten_excerpt || "";
+        sourceUrl = analysis.sourceUrl || analysis.url;
+      } else {
+        // Normal flow for other types
+        switch (input.type) {
+          case "url":
+            sourceUrl = input.input;
+            content = await this.contentExtractor.extractFromUrl(input.input!);
+            break;
+          case "file":
+            if (!input.mimeType || !input.fileName) {
+              throw new Error("File ingestion requires mimeType and fileName");
+            }
+            content = await this.contentExtractor.extractFromFile(
+              input.input!,
+              input.mimeType,
+              input.fileName
+            );
+            break;
+          case "text":
+            content = input.input!;
+            break;
+        }
+
+        // Step 2: Analyze content with AI (only for non-preprocessed)
+        analysis = await this.aiAnalyzer.analyzeContent(content, {
+          url: sourceUrl,
+          fileName: input.fileName,
+          author: input.metadata?.author,
+        });
       }
-
-      // Step 2: Analyze content with AI
-      const analysis = await this.aiAnalyzer.analyzeContent(content, {
-        url: sourceUrl,
-        fileName: input.fileName,
-        author: input.metadata?.author,
-      });
 
       // Step 3: Get current state from database
       const currentRankings = await this.getCurrentRankings();
@@ -90,17 +104,31 @@ export class ArticleDatabaseService {
       // Step 4: Take rankings snapshot (for rollback)
       const rankingsSnapshot = await this.createRankingsSnapshot();
 
-      // Step 5: Calculate predicted changes
-      const predictedChanges = this.rankingsCalculator.calculateRankingChanges(
-        analysis,
-        currentRankings
-      );
+      // Step 5: Calculate predicted changes (or use preprocessed ones)
+      let predictedChanges: unknown;
+      let newTools: string[] | undefined;
+      let newCompanies: string[] | undefined;
 
-      const { newTools, newCompanies } = this.rankingsCalculator.identifyNewEntities(
-        analysis,
-        existingTools,
-        existingCompanies
-      );
+      if (input.type === "preprocessed" && input.preprocessedData.predictedChanges) {
+        // Use the already-calculated changes and entities
+        predictedChanges = input.preprocessedData.predictedChanges;
+        newTools = input.preprocessedData.newTools || [];
+        newCompanies = input.preprocessedData.newCompanies || [];
+      } else {
+        // Calculate changes
+        predictedChanges = this.rankingsCalculator.calculateRankingChanges(
+          analysis,
+          currentRankings
+        );
+
+        const entities = this.rankingsCalculator.identifyNewEntities(
+          analysis,
+          existingTools,
+          existingCompanies
+        );
+        newTools = entities.newTools;
+        newCompanies = entities.newCompanies;
+      }
 
       // Step 6: Handle dry run vs complete ingestion
       if (input.dryRun) {
@@ -120,13 +148,11 @@ export class ArticleDatabaseService {
             tags: analysis.tags,
             category: analysis.category,
             importanceScore: analysis.importance_score,
-            sentimentScore: analysis.overall_sentiment.toString(),
+            sentimentScore: analysis.overall_sentiment?.toString() || "0",
             toolMentions: analysis.tool_mentions,
             companyMentions: analysis.company_mentions,
             author: input.metadata?.author,
-            publishedDate: analysis.published_date
-              ? new Date(analysis.published_date)
-              : undefined,
+            publishedDate: analysis.published_date ? new Date(analysis.published_date) : undefined,
           },
           predictedChanges,
           newTools,
@@ -136,10 +162,10 @@ export class ArticleDatabaseService {
             totalNewTools: newTools.length,
             totalNewCompanies: newCompanies.length,
             averageRankChange:
-              predictedChanges.reduce((sum, c) => sum + (c.rankChange || 0), 0) /
+              predictedChanges.reduce((sum: number, c: any) => sum + (c.rankChange || 0), 0) /
               (predictedChanges.length || 1),
             averageScoreChange:
-              predictedChanges.reduce((sum, c) => sum + (c.scoreChange || 0), 0) /
+              predictedChanges.reduce((sum: number, c: any) => sum + (c.scoreChange || 0), 0) /
               (predictedChanges.length || 1),
           },
         };
@@ -154,25 +180,26 @@ export class ArticleDatabaseService {
         // Create article
         const newArticle: NewArticle = {
           slug,
-          title: analysis.title,
-          summary: analysis.summary,
-          content,
+          title: analysis.title || "Untitled",
+          summary: analysis.summary || "",
+          content: content || "",
           ingestionType: input.type,
-          sourceUrl,
-          sourceName: analysis.source,
-          fileName: input.fileName,
-          fileType: input.mimeType,
-          tags: analysis.tags,
-          category: analysis.category,
-          importanceScore: analysis.importance_score,
-          sentimentScore: analysis.overall_sentiment.toString(),
-          toolMentions: analysis.tool_mentions,
-          companyMentions: analysis.company_mentions,
-          rankingsSnapshot,
-          author: input.metadata?.author || analysis.source,
-          publishedDate: analysis.published_date
-            ? new Date(analysis.published_date)
-            : new Date(),
+          sourceUrl: sourceUrl || null,
+          sourceName: analysis.source || null,
+          fileName: input.fileName || null,
+          fileType: input.mimeType || null,
+          tags: Array.isArray(analysis.tags) ? analysis.tags : [],
+          category: analysis.category || null,
+          importanceScore: analysis.importance_score || 5,
+          sentimentScore: analysis.overall_sentiment?.toString() || "0",
+          // Ensure JSON fields are arrays or objects, not strings
+          toolMentions: Array.isArray(analysis.tool_mentions) ? analysis.tool_mentions : [],
+          companyMentions: Array.isArray(analysis.company_mentions)
+            ? analysis.company_mentions
+            : [],
+          rankingsSnapshot: rankingsSnapshot || null,
+          author: input.metadata?.author || analysis.source || null,
+          publishedDate: analysis.published_date ? new Date(analysis.published_date) : new Date(),
           ingestedBy: "admin",
           status: "active",
           isProcessed: false,
@@ -228,7 +255,7 @@ export class ArticleDatabaseService {
         }
 
         // Apply ranking changes
-        const rankingChanges: NewArticleRankingsChange[] = predictedChanges.map((change) => ({
+        const rankingChanges: NewArticleRankingsChange[] = predictedChanges.map((change: any) => ({
           articleId: article.id,
           toolId: change.toolId,
           toolName: change.toolName,
@@ -236,15 +263,15 @@ export class ArticleDatabaseService {
           oldRank: change.currentRank,
           newRank: change.predictedRank,
           rankChange: change.rankChange,
-          oldScore: change.currentScore?.toString(),
-          newScore: change.predictedScore?.toString(),
-          scoreChange: change.scoreChange?.toString(),
+          oldScore: change.currentScore?.toString() || "0",
+          newScore: change.predictedScore?.toString() || "0",
+          scoreChange: change.scoreChange?.toString() || "0",
           changeType:
             (change.scoreChange || 0) > 0
               ? "increase"
               : (change.scoreChange || 0) < 0
-              ? "decrease"
-              : "no_change",
+                ? "decrease"
+                : "no_change",
           changeReason: `Article ingestion: ${analysis.title}`,
           isApplied: true,
         }));
@@ -354,15 +381,15 @@ export class ArticleDatabaseService {
         oldRank: change.currentRank,
         newRank: change.predictedRank,
         rankChange: change.rankChange,
-        oldScore: change.currentScore?.toString(),
-        newScore: change.predictedScore?.toString(),
-        scoreChange: change.scoreChange?.toString(),
+        oldScore: change.currentScore?.toString() || "0",
+        newScore: change.predictedScore?.toString() || "0",
+        scoreChange: change.scoreChange?.toString() || "0",
         changeType:
           (change.scoreChange || 0) > 0
             ? "increase"
             : (change.scoreChange || 0) < 0
-            ? "decrease"
-            : "no_change",
+              ? "decrease"
+              : "no_change",
         changeReason: `Recalculation: ${article.title}`,
         isApplied: true,
       }));
@@ -449,55 +476,193 @@ export class ArticleDatabaseService {
    * Get current rankings from database
    */
   private async getCurrentRankings(): Promise<any[]> {
-    // Check if db is initialized
-    if (!this.db) {
-      console.warn("[ArticleDatabaseService] Database not initialized");
-      return [];
+    // First try to get from database
+    if (this.db) {
+      try {
+        // Get the most recent rankings
+        const [latestRanking] = await this.db
+          .select()
+          .from(rankings)
+          .where(eq(rankings.isCurrent, true))
+          .limit(1);
+
+        if (latestRanking && latestRanking.data) {
+          // Extract tools from rankings data
+          const rankingData = latestRanking.data as any[];
+          console.log(
+            "[ArticleDatabaseService] Sample raw ranking data:",
+            JSON.stringify(rankingData[0])
+          );
+
+          const mappedRankings = rankingData.map((item, index) => ({
+            id: item.tool_id || item.id,
+            tool_id: item.tool_id || item.id,
+            tool_name: item.tool_name || item.name || item.tool?.name, // Handle nested tool object
+            name: item.tool_name || item.name || item.tool?.name,
+            rank: item.rank || index + 1,
+            score: item.score || 0,
+            metrics: item.metrics || {},
+          }));
+          console.log(
+            `[ArticleDatabaseService] Found ${mappedRankings.length} rankings in database`
+          );
+          console.log(
+            "[ArticleDatabaseService] Sample tool names from DB:",
+            mappedRankings.slice(0, 3).map((r: any) => r.tool_name)
+          );
+          return mappedRankings;
+        }
+      } catch (error) {
+        console.warn(
+          "[ArticleDatabaseService] Database query failed, falling back to static data:",
+          error
+        );
+      }
     }
 
-    // Get the most recent rankings
-    const [latestRanking] = await this.db.select()
-      .from(rankings)
-      .where(eq(rankings.isCurrent, true))
-      .limit(1);
-
-    if (!latestRanking) {
+    // Fallback to static rankings file for dry runs or when DB is unavailable
+    console.log("[ArticleDatabaseService] Using static rankings file for current rankings");
+    try {
+      const staticRankings = await import("@/data/cache/rankings-static.json");
+      const mappedRankings = staticRankings.rankings.map((r: any, index: number) => ({
+        id: r.tool.id,
+        tool_id: r.tool.id, // Add tool_id for compatibility
+        tool_name: r.tool.name, // This is the key field for matching
+        name: r.tool.name, // Also add name for compatibility
+        rank: r.rank || index + 1,
+        score: r.scores.overall / 100, // Convert percentage to decimal
+        metrics: r.metrics || {},
+      }));
+      console.log(
+        `[ArticleDatabaseService] Found ${mappedRankings.length} rankings in static file`
+      );
+      console.log(
+        "[ArticleDatabaseService] Sample tool names:",
+        mappedRankings.slice(0, 5).map((r: any) => r.tool_name)
+      );
+      return mappedRankings;
+    } catch (error) {
+      console.error("[ArticleDatabaseService] Failed to load static rankings:", error);
       return [];
     }
-
-    // Extract tools from rankings data
-    const rankingData = latestRanking.data as any[];
-    return rankingData.map((item, index) => ({
-      id: item.tool_id || item.id,
-      tool_name: item.tool_name || item.name,
-      rank: index + 1,
-      score: item.score || 0,
-      metrics: item.metrics || {},
-    }));
   }
 
   /**
    * Get existing tool names from database
    */
   private async getExistingToolNames(): Promise<string[]> {
-    if (!this.db) {
-      console.warn("[ArticleDatabaseService] Database not initialized");
-      return [];
+    // First try to get from database
+    if (this.db) {
+      try {
+        const allTools = await this.db.select({ name: tools.name }).from(tools);
+        if (allTools && allTools.length > 0) {
+          console.log(`[ArticleDatabaseService] Found ${allTools.length} tools in database`);
+          return allTools.map((t) => t.name);
+        }
+      } catch (error) {
+        console.warn(
+          "[ArticleDatabaseService] Database query failed, falling back to static data:",
+          error
+        );
+      }
     }
-    const allTools = await this.db.select({ name: tools.name }).from(tools);
-    return allTools.map((t) => t.name);
+
+    // Fallback to static rankings file for dry runs or when DB is unavailable
+    console.log("[ArticleDatabaseService] Using static rankings file for existing tools");
+    try {
+      const staticRankings = await import("@/data/cache/rankings-static.json");
+      const toolNames = staticRankings.rankings.map((r: any) => r.tool.name);
+      console.log(`[ArticleDatabaseService] Found ${toolNames.length} tools in static rankings`);
+      return toolNames;
+    } catch (error) {
+      console.error("[ArticleDatabaseService] Failed to load static rankings:", error);
+      // Return known tools as a last resort
+      return [
+        "Claude Code",
+        "GitHub Copilot",
+        "Cursor",
+        "ChatGPT Canvas",
+        "v0",
+        "Kiro",
+        "Windsurf",
+        "Google Jules",
+        "Amazon Q Developer",
+        "Lovable",
+        "Aider",
+        "Tabnine",
+        "Bolt.new",
+        "Augment Code",
+        "Google Gemini Code Assist",
+        "Replit Agent",
+        "Zed",
+        "OpenAI Codex CLI",
+        "Devin",
+        "Continue",
+        "Claude Artifacts",
+        "Sourcegraph Cody",
+        "Cline",
+        "OpenHands",
+        "JetBrains AI Assistant",
+        "Qodo Gen",
+        "CodeRabbit",
+        "Snyk Code",
+        "Microsoft IntelliCode",
+        "Sourcery",
+        "Diffblue Cover",
+      ];
+    }
   }
 
   /**
    * Get existing company names from database
    */
   private async getExistingCompanyNames(): Promise<string[]> {
-    if (!this.db) {
-      console.warn("[ArticleDatabaseService] Database not initialized");
-      return [];
+    // First try to get from database
+    if (this.db) {
+      try {
+        const allCompanies = await this.db.select({ name: companies.name }).from(companies);
+        if (allCompanies && allCompanies.length > 0) {
+          console.log(
+            `[ArticleDatabaseService] Found ${allCompanies.length} companies in database`
+          );
+          return allCompanies.map((c) => c.name);
+        }
+      } catch (error) {
+        console.warn(
+          "[ArticleDatabaseService] Database query failed for companies, using fallback:",
+          error
+        );
+      }
     }
-    const allCompanies = await this.db.select({ name: companies.name }).from(companies);
-    return allCompanies.map((c) => c.name);
+
+    // Fallback to known companies for dry runs or when DB is unavailable
+    console.log("[ArticleDatabaseService] Using known company list");
+    return [
+      "Anthropic",
+      "OpenAI",
+      "Google",
+      "Microsoft",
+      "GitHub",
+      "Amazon",
+      "Replit",
+      "Cognition",
+      "Cursor",
+      "Codeium",
+      "Vercel",
+      "Sourcegraph",
+      "Continue",
+      "JetBrains",
+      "Qodo",
+      "CodeRabbit",
+      "Stackblitz",
+      "Augment",
+      "Lovable",
+      "Zed",
+      "Kiro",
+      "Snyk",
+      "Sourcery",
+      "Diffblue",
+    ];
   }
 
   /**
@@ -514,7 +679,9 @@ export class ArticleDatabaseService {
   /**
    * Apply ranking changes to the database
    */
-  private async applyRankingChanges(changes: (ArticleRankingsChange | NewArticleRankingsChange)[]): Promise<void> {
+  private async applyRankingChanges(
+    changes: (ArticleRankingsChange | NewArticleRankingsChange)[]
+  ): Promise<void> {
     // This is a simplified implementation
     // In production, you'd update the actual rankings table
     console.log(`[ArticleDatabaseService] Applying ${changes.length} ranking changes`);
