@@ -35,45 +35,207 @@ export class ArticlesRepository {
   async createArticle(article: NewArticle): Promise<Article> {
     if (!this.db) throw new Error("Database not connected");
 
+    // Validate and sanitize data before insert
+    const validateAndSanitize = (value: any, fieldName: string, maxLength?: number): any => {
+      if (typeof value === "string" && maxLength && value.length > maxLength) {
+        console.warn(
+          `[ArticlesRepo] Truncating ${fieldName} from ${value.length} to ${maxLength} characters`
+        );
+        return value.substring(0, maxLength);
+      }
+      return value;
+    };
+
+    // Validate ingestion type against allowed values
+    const validIngestionTypes = ["url", "text", "file"];
+    const ingestionType = article.ingestionType || "text";
+    if (!validIngestionTypes.includes(ingestionType)) {
+      console.warn(
+        `[ArticlesRepo] Invalid ingestion type '${ingestionType}', defaulting to 'text'`
+      );
+      article.ingestionType = "text";
+    }
+
     // Ensure JSON fields are properly formatted
     const articleData = {
       ...article,
+      // Validate string fields with database constraints
+      slug: validateAndSanitize(article.slug, "slug", 255),
+      title: validateAndSanitize(article.title || "Untitled", "title", 500),
+      summary: validateAndSanitize(article.summary || "", "summary", undefined), // text field, no limit
+      content: validateAndSanitize(article.content || "", "content", undefined), // text field, no limit
+
+      // Ingestion metadata
+      ingestionType: validateAndSanitize(article.ingestionType, "ingestionType", 20),
+      sourceUrl: validateAndSanitize(article.sourceUrl, "sourceUrl", 1000),
+      sourceName: validateAndSanitize(article.sourceName, "sourceName", 255),
+      fileName: validateAndSanitize(article.fileName, "fileName", 255),
+      fileType: validateAndSanitize(article.fileType, "fileType", 50),
+
       // Ensure arrays are properly formatted
-      tags: article.tags || [],
+      tags: Array.isArray(article.tags) ? article.tags : [],
+
+      // Category and author
+      category: validateAndSanitize(article.category, "category", 100),
+      author: validateAndSanitize(article.author, "author", 255),
+      ingestedBy: validateAndSanitize(article.ingestedBy || "admin", "ingestedBy", 255),
+
       // Ensure JSON fields are properly formatted (already JSONB in schema, pass as-is)
-      toolMentions: article.toolMentions || [],
-      companyMentions: article.companyMentions || [],
-      rankingsSnapshot: article.rankingsSnapshot || null,
+      // But validate they are arrays/objects, not strings
+      toolMentions: (() => {
+        if (!article.toolMentions) return [];
+        if (Array.isArray(article.toolMentions)) return article.toolMentions;
+        if (typeof article.toolMentions === "string") {
+          try {
+            const parsed = JSON.parse(article.toolMentions);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            console.error(
+              "[ArticlesRepo] Invalid toolMentions JSON string, defaulting to empty array"
+            );
+            return [];
+          }
+        }
+        return [];
+      })(),
+
+      companyMentions: (() => {
+        if (!article.companyMentions) return [];
+        if (Array.isArray(article.companyMentions)) return article.companyMentions;
+        if (typeof article.companyMentions === "string") {
+          try {
+            const parsed = JSON.parse(article.companyMentions);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch {
+            console.error(
+              "[ArticlesRepo] Invalid companyMentions JSON string, defaulting to empty array"
+            );
+            return [];
+          }
+        }
+        return [];
+      })(),
+
+      rankingsSnapshot: (() => {
+        if (!article.rankingsSnapshot) return null;
+        if (typeof article.rankingsSnapshot === "object") return article.rankingsSnapshot;
+        if (typeof article.rankingsSnapshot === "string") {
+          try {
+            return JSON.parse(article.rankingsSnapshot);
+          } catch {
+            console.error(
+              "[ArticlesRepo] Invalid rankingsSnapshot JSON string, defaulting to null"
+            );
+            return null;
+          }
+        }
+        return null;
+      })(),
+
       // Ensure numeric fields have proper defaults
-      importanceScore: article.importanceScore ?? 5,
-      sentimentScore: article.sentimentScore || "0",
+      importanceScore: (() => {
+        const score = article.importanceScore ?? 5;
+        // Ensure it's within valid range (1-10)
+        if (score < 1) return 1;
+        if (score > 10) return 10;
+        return score;
+      })(),
+
+      sentimentScore: (() => {
+        const score = article.sentimentScore || "0";
+        // Ensure it's a valid decimal string
+        const numScore = parseFloat(score.toString());
+        if (isNaN(numScore)) return "0.00";
+        // Clamp to valid range (-1 to 1)
+        if (numScore < -1) return "-1.00";
+        if (numScore > 1) return "1.00";
+        return numScore.toFixed(2);
+      })(),
+
+      // Status field
+      status: validateAndSanitize(article.status || "active", "status", 20),
+
       // Ensure timestamps are properly formatted
       publishedDate: article.publishedDate || new Date(),
       ingestedAt: article.ingestedAt || new Date(),
+      processedAt: article.processedAt || null,
       createdAt: new Date(),
       updatedAt: new Date(),
+
+      // Boolean field
+      isProcessed: article.isProcessed ?? false,
     };
+
+    // Log the data being inserted for debugging
+    console.log("[ArticlesRepo] Creating article with data:", {
+      slug: articleData.slug,
+      title: articleData.title?.substring(0, 50) + "...",
+      contentLength: articleData.content?.length,
+      toolMentionsCount: articleData.toolMentions?.length,
+      companyMentionsCount: articleData.companyMentions?.length,
+      importanceScore: articleData.importanceScore,
+      sentimentScore: articleData.sentimentScore,
+    });
 
     try {
       const result = await this.db.insert(articles).values(articleData).returning();
       if (!result || result.length === 0) {
-        throw new Error("Failed to create article");
+        throw new Error("Failed to create article - no rows returned from insert");
       }
       const createdArticle = result[0];
       if (!createdArticle) {
         throw new Error("Failed to create article - no result returned");
       }
+
+      console.log(`[ArticlesRepo] Successfully created article with ID: ${createdArticle.id}`);
       return createdArticle;
     } catch (error) {
       console.error("[ArticlesRepo] Error creating article:", error);
+
       if (error instanceof Error) {
-        // Log the actual SQL error for debugging
-        console.error("[ArticlesRepo] SQL Error details:", {
+        // Enhanced error logging for better debugging
+        const errorDetails: any = {
           message: error.message,
-          stack: error.stack,
-          data: articleData,
+          name: error.name,
+        };
+
+        // Check for specific database errors
+        if (error.message.includes("violates check constraint")) {
+          errorDetails.type = "CHECK_CONSTRAINT_VIOLATION";
+          errorDetails.hint = "One or more field values do not meet database constraints";
+        } else if (error.message.includes("value too long")) {
+          errorDetails.type = "FIELD_TOO_LONG";
+          errorDetails.hint = "One or more text fields exceed maximum length";
+        } else if (error.message.includes("invalid input syntax")) {
+          errorDetails.type = "INVALID_DATA_TYPE";
+          errorDetails.hint = "Data type mismatch for one or more fields";
+        } else if (error.message.includes("duplicate key")) {
+          errorDetails.type = "DUPLICATE_KEY";
+          errorDetails.hint = "Article with this slug already exists";
+        } else if (error.message.includes("not-null constraint")) {
+          errorDetails.type = "NULL_CONSTRAINT";
+          errorDetails.hint = "Required field is missing or null";
+        }
+
+        console.error("[ArticlesRepo] Detailed error info:", errorDetails);
+        console.error("[ArticlesRepo] Failed data sample:", {
+          slug: articleData.slug,
+          title: articleData.title?.substring(0, 100),
+          tagsCount: articleData.tags?.length,
+          toolMentionsType: typeof articleData.toolMentions,
+          companyMentionsType: typeof articleData.companyMentions,
+          rankingsSnapshotType: typeof articleData.rankingsSnapshot,
         });
+
+        // Throw a more informative error
+        const enhancedError = new Error(
+          `Database insert failed: ${errorDetails.type || "UNKNOWN_ERROR"}. ${errorDetails.hint || error.message}`
+        );
+        (enhancedError as any).originalError = error;
+        (enhancedError as any).errorDetails = errorDetails;
+        throw enhancedError;
       }
+
       throw error;
     }
   }

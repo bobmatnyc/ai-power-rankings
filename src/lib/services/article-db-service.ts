@@ -177,33 +177,114 @@ export class ArticleDatabaseService {
         // Generate unique slug
         const slug = await this.articlesRepo.generateUniqueSlug(analysis.title);
 
-        // Create article
+        // Helper function to safely convert to string
+        const safeToString = (value: any, defaultValue: string = "0"): string => {
+          if (value === null || value === undefined) return defaultValue;
+          return value.toString();
+        };
+
+        // Helper function to ensure array format
+        const ensureArray = (value: any): any[] => {
+          if (!value) return [];
+          if (Array.isArray(value)) return value;
+          if (typeof value === "string") {
+            try {
+              const parsed = JSON.parse(value);
+              return Array.isArray(parsed) ? parsed : [];
+            } catch {
+              console.warn("[ArticleDB] Failed to parse JSON string, treating as empty array");
+              return [];
+            }
+          }
+          return [];
+        };
+
+        // Validate and clean tool mentions
+        const cleanedToolMentions = ensureArray(analysis.tool_mentions).map((mention: any) => {
+          if (typeof mention === "string") {
+            // If it's just a string, convert to object format
+            return { name: mention, relevance: 0.5, sentiment: 0, context: "" };
+          }
+          // Ensure all properties exist with defaults
+          return {
+            name: mention.name || mention.tool_name || "Unknown",
+            relevance: mention.relevance ?? 0.5,
+            sentiment: mention.sentiment ?? 0,
+            context: mention.context || "",
+            ...mention, // Keep any additional properties
+          };
+        });
+
+        // Validate and clean company mentions
+        const cleanedCompanyMentions = ensureArray(analysis.company_mentions).map(
+          (mention: any) => {
+            if (typeof mention === "string") {
+              // If it's just a string, convert to object format
+              return { name: mention, relevance: 0.5, context: "" };
+            }
+            // Ensure all properties exist with defaults
+            return {
+              name: mention.name || mention.company_name || "Unknown",
+              relevance: mention.relevance ?? 0.5,
+              context: mention.context || "",
+              ...mention, // Keep any additional properties
+            };
+          }
+        );
+
+        // Create article with validated data
         const newArticle: NewArticle = {
           slug,
-          title: analysis.title || "Untitled",
+          title: (analysis.title || "Untitled").substring(0, 500), // Enforce max length
           summary: analysis.summary || "",
           content: content || "",
-          ingestionType: input.type,
-          sourceUrl: sourceUrl || null,
-          sourceName: analysis.source || null,
-          fileName: input.fileName || null,
-          fileType: input.mimeType || null,
-          tags: Array.isArray(analysis.tags) ? analysis.tags : [],
-          category: analysis.category || null,
-          importanceScore: analysis.importance_score || 5,
-          sentimentScore: analysis.overall_sentiment?.toString() || "0",
-          // Ensure JSON fields are arrays or objects, not strings
-          toolMentions: Array.isArray(analysis.tool_mentions) ? analysis.tool_mentions : [],
-          companyMentions: Array.isArray(analysis.company_mentions)
-            ? analysis.company_mentions
-            : [],
+          // Map preprocessed to 'text' since it's not a valid enum value in the database
+          ingestionType: input.type === "preprocessed" ? "text" : input.type,
+          sourceUrl: sourceUrl ? sourceUrl.substring(0, 1000) : null, // Enforce max length
+          sourceName: analysis.source ? analysis.source.substring(0, 255) : null,
+          fileName: input.fileName ? input.fileName.substring(0, 255) : null,
+          fileType: input.mimeType ? input.mimeType.substring(0, 50) : null,
+          tags: ensureArray(analysis.tags).filter((tag: any) => typeof tag === "string"),
+          category: analysis.category ? analysis.category.substring(0, 100) : null,
+          importanceScore: (() => {
+            const score = parseInt(safeToString(analysis.importance_score, "5"));
+            if (isNaN(score) || score < 1) return 5;
+            if (score > 10) return 10;
+            return score;
+          })(),
+          sentimentScore: (() => {
+            const score = parseFloat(safeToString(analysis.overall_sentiment, "0"));
+            if (isNaN(score)) return "0.00";
+            if (score < -1) return "-1.00";
+            if (score > 1) return "1.00";
+            return score.toFixed(2);
+          })(),
+          // Ensure JSON fields are properly formatted
+          toolMentions: cleanedToolMentions,
+          companyMentions: cleanedCompanyMentions,
           rankingsSnapshot: rankingsSnapshot || null,
-          author: input.metadata?.author || analysis.source || null,
-          publishedDate: analysis.published_date ? new Date(analysis.published_date) : new Date(),
+          author: (input.metadata?.author || analysis.source || "Unknown").substring(0, 255),
+          publishedDate: (() => {
+            if (analysis.published_date) {
+              const date = new Date(analysis.published_date);
+              return isNaN(date.getTime()) ? new Date() : date;
+            }
+            return new Date();
+          })(),
           ingestedBy: "admin",
           status: "active",
           isProcessed: false,
         };
+
+        console.log("[ArticleDB] Prepared article for database insert:", {
+          slug: newArticle.slug,
+          titleLength: newArticle.title.length,
+          contentLength: newArticle.content.length,
+          toolMentionsCount: newArticle.toolMentions.length,
+          companyMentionsCount: newArticle.companyMentions.length,
+          importanceScore: newArticle.importanceScore,
+          sentimentScore: newArticle.sentimentScore,
+        });
 
         const article = await this.articlesRepo.createArticle(newArticle);
 
