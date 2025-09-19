@@ -6,7 +6,7 @@ Each agent maintains project-specific knowledge in these files. Agents read thei
 ## Manual Editing
 Feel free to edit these files to:
 - Add project-specific guidelines
-- Remove outdated information  
+- Remove outdated information
 - Reorganize for better clarity
 - Add domain-specific knowledge
 
@@ -22,6 +22,8 @@ Standard markdown with structured sections. Agents expect:
 - Implementation Guidelines
 - Common Mistakes to Avoid
 - Current Technical Context
+
+Memory files follow the naming convention: `{agent_id}_memories.md`
 
 ## How It Works
 1. Agents read their memory file before starting tasks
