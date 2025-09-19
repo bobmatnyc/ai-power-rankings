@@ -275,8 +275,8 @@ type PostResponseData =
   | {
       success: boolean;
       preview: {
-        period: any;
-        algorithm_version: any;
+        period: string;
+        algorithm_version: string;
         total_tools: number;
         rankings_comparison: {
           tool_id: string;
@@ -290,7 +290,7 @@ type PostResponseData =
           score_change: number;
           movement: string;
         }[];
-        comparison_period: any;
+        comparison_period: string | null;
       };
     }
   | { error: string };

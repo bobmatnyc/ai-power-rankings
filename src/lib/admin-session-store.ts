@@ -6,7 +6,8 @@ import crypto from "node:crypto";
  * Sessions expire after 24 hours of inactivity
  */
 class SessionStore {
-  private sessions: Map<string, { token: string; createdAt: number; lastAccessed: number }> = new Map();
+  private sessions: Map<string, { token: string; createdAt: number; lastAccessed: number }> =
+    new Map();
   private readonly SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
   private lastCleanup = 0;
   private readonly MIN_CLEANUP_INTERVAL = 5 * 60 * 1000; // Cleanup at most every 5 minutes
@@ -78,7 +79,9 @@ class SessionStore {
   }
 
   // Get session info for debugging (development only)
-  getSessionInfo(token: string): { createdAt: Date; lastAccessed: Date; remainingTime: string } | null {
+  getSessionInfo(
+    token: string
+  ): { createdAt: Date; lastAccessed: Date; remainingTime: string } | null {
     if (process.env["NODE_ENV"] !== "development") {
       return null;
     }

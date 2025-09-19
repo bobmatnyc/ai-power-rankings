@@ -61,7 +61,7 @@ export async function GET(): Promise<NextResponse> {
     if (useCacheFirst) {
       loggers.ranking.debug("Using cache-first approach for rankings");
 
-      const cachedRankingsData = await loadCacheWithFallback("rankings") as CachedRankingsData;
+      const cachedRankingsData = (await loadCacheWithFallback("rankings")) as CachedRankingsData;
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
       // Return the cached data with metadata
@@ -87,7 +87,7 @@ export async function GET(): Promise<NextResponse> {
     if (!currentPeriod) {
       loggers.ranking.warn("No current ranking period set, falling back to cache");
 
-      const cachedRankingsData = await loadCacheWithFallback("rankings") as CachedRankingsData;
+      const cachedRankingsData = (await loadCacheWithFallback("rankings")) as CachedRankingsData;
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
       const cachedResponse: CachedRankingsData = {
@@ -107,7 +107,7 @@ export async function GET(): Promise<NextResponse> {
     if (!periodData || !periodData.rankings || periodData.rankings.length === 0) {
       loggers.ranking.warn("No rankings available for current period, falling back to cache");
 
-      const cachedRankingsData = await loadCacheWithFallback("rankings") as CachedRankingsData;
+      const cachedRankingsData = (await loadCacheWithFallback("rankings")) as CachedRankingsData;
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
       const cachedResponse: CachedRankingsData = {
@@ -228,7 +228,7 @@ export async function GET(): Promise<NextResponse> {
 
     // Fall back to cached data on error
     try {
-      const cachedRankingsData = await loadCacheWithFallback("rankings") as CachedRankingsData;
+      const cachedRankingsData = (await loadCacheWithFallback("rankings")) as CachedRankingsData;
       const cacheInfo = await new CacheManager().getInfo("rankings");
 
       const cachedResponse: CachedRankingsData = {

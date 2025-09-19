@@ -199,6 +199,7 @@ export default function ToolDetailClientPage({
 
   return (
     <div className="container mx-auto p-4 md:p-8 max-w-6xl">
+      {/* biome-ignore lint/correctness/useUniqueElementIds: Static ID required for Next.js Script component */}
       <Script
         id="tool-schema"
         type="application/ld+json"
@@ -207,6 +208,7 @@ export default function ToolDetailClientPage({
           __html: createJsonLdScript(toolSchema),
         }}
       />
+      {/* biome-ignore lint/correctness/useUniqueElementIds: Static ID required for Next.js Script component */}
       <Script
         id="tool-breadcrumb-schema"
         type="application/ld+json"
@@ -216,6 +218,7 @@ export default function ToolDetailClientPage({
         }}
       />
       {reviewSchema && (
+        /* biome-ignore lint/correctness/useUniqueElementIds: Static ID required for Next.js Script component */
         <Script
           id="tool-review-schema"
           type="application/ld+json"

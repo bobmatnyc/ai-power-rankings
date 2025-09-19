@@ -1,5 +1,5 @@
-import { getAuth } from "./auth-helper";
 import { NextResponse } from "next/server";
+import { getAuth } from "./auth-helper";
 
 /**
  * Check if the current user is authenticated with Clerk

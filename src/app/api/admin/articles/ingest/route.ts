@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { isAuthenticated } from "@/lib/clerk-auth";
-import { ArticleIngestionSchema } from "@/lib/services/article-ingestion.service";
-import { ArticleDatabaseService } from "@/lib/services/article-db-service";
 import { getDb } from "@/lib/db/connection";
+import { ArticleDatabaseService } from "@/lib/services/article-db-service";
+import { ArticleIngestionSchema } from "@/lib/services/article-ingestion.service";
 
 /**
  * POST /api/admin/articles/ingest

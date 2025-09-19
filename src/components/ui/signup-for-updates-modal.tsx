@@ -20,7 +20,7 @@ interface SignupForUpdatesModalProps {
 
 export function SignupForUpdatesModal({
   open,
-  onOpenChange
+  onOpenChange,
 }: SignupForUpdatesModalProps): React.JSX.Element {
   const { dict } = useI18n();
   const { isSignedIn } = useAuth();
@@ -77,7 +77,7 @@ export function SignupForUpdatesModal({
     };
 
     autoSubscribe();
-  }, [isSignedIn, user, open, onOpenChange]); // Removed circular deps
+  }, [isSignedIn, user, open, onOpenChange, isSubscribed, isSubscribing]); // Removed circular deps
 
   const handleSubscribe = async (): Promise<void> => {
     if (!user) return;
@@ -126,9 +126,7 @@ export function SignupForUpdatesModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle>
-            {dict.newsletter?.modal?.title || "Signup For Updates"}
-          </DialogTitle>
+          <DialogTitle>{dict.newsletter?.modal?.title || "Signup For Updates"}</DialogTitle>
           <DialogDescription>
             {isSignedIn
               ? "You're signed in! We'll notify you about important updates."
@@ -155,9 +153,7 @@ export function SignupForUpdatesModal({
             <div className="space-y-4">
               <div className="bg-muted/50 rounded-lg p-4">
                 <p className="text-sm font-medium mb-1">Signed in as:</p>
-                <p className="text-sm text-muted-foreground">
-                  {user?.fullName || user?.username}
-                </p>
+                <p className="text-sm text-muted-foreground">{user?.fullName || user?.username}</p>
                 <p className="text-sm text-muted-foreground">
                   {user?.primaryEmailAddress?.emailAddress}
                 </p>
@@ -171,11 +167,7 @@ export function SignupForUpdatesModal({
               )}
 
               <div className="flex gap-3">
-                <Button
-                  className="flex-1"
-                  onClick={handleSubscribe}
-                  disabled={isSubscribing}
-                >
+                <Button className="flex-1" onClick={handleSubscribe} disabled={isSubscribing}>
                   {isSubscribing ? "Subscribing..." : "Confirm Subscription"}
                 </Button>
                 <Button

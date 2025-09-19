@@ -169,7 +169,7 @@ async function interactiveRestore() {
   });
 
   rl.question("> ", async (answer) => {
-    const choice = parseInt(answer);
+    const choice = parseInt(answer, 10);
     rl.close();
 
     if (choice === 0 || choice > backups.length || Number.isNaN(choice)) {

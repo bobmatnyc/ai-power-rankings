@@ -95,7 +95,11 @@ class PerformanceMonitor {
   /**
    * Get attribution information for a long task.
    */
-  private getTaskAttribution(entry: PerformanceEntry & { attribution?: Array<{ containerType?: string; containerSrc?: string; name?: string }> }): string[] {
+  private getTaskAttribution(
+    entry: PerformanceEntry & {
+      attribution?: Array<{ containerType?: string; containerSrc?: string; name?: string }>;
+    }
+  ): string[] {
     const attribution: string[] = [];
 
     if (entry.attribution) {
@@ -366,7 +370,11 @@ export const perfUtils = {
   /**
    * Create a debounced version of a function that tracks performance.
    */
-  debounceWithTracking<T extends (...args: unknown[]) => unknown>(fn: T, delay: number, name: string): T {
+  debounceWithTracking<T extends (...args: unknown[]) => unknown>(
+    fn: T,
+    delay: number,
+    name: string
+  ): T {
     let timeoutId: NodeJS.Timeout | null = null;
     let callCount = 0;
 

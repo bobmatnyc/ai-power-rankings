@@ -6,7 +6,7 @@ export async function POST() {
     {
       success: true,
       message: "Please use Clerk sign-out functionality",
-      redirect: "/sign-in"
+      redirect: "/sign-in",
     },
     { status: 200 }
   );

@@ -653,9 +653,7 @@ export class ArticlesRepository {
       .from(articles)
       .where(sqlTag`${articles.createdAt} >= ${startOfThisMonth}`);
 
-    const articlesThisMonth = thisMonthStats?.[0]
-      ? Number(thisMonthStats[0].count || 0)
-      : 0;
+    const articlesThisMonth = thisMonthStats?.[0] ? Number(thisMonthStats[0].count || 0) : 0;
 
     // Get articles for last month
     const lastMonthStats = await this.db
@@ -667,9 +665,7 @@ export class ArticlesRepository {
         sqlTag`${articles.createdAt} >= ${startOfLastMonth} AND ${articles.createdAt} <= ${endOfLastMonth}`
       );
 
-    const articlesLastMonth = lastMonthStats?.[0]
-      ? Number(lastMonthStats[0].count || 0)
-      : 0;
+    const articlesLastMonth = lastMonthStats?.[0] ? Number(lastMonthStats[0].count || 0) : 0;
 
     // Calculate average tool mentions per article
     // First, get all articles with their tool mentions
@@ -695,9 +691,7 @@ export class ArticlesRepository {
       }
     }
 
-    const averageToolMentions = articlesWithTools > 0
-      ? totalMentions / articlesWithTools
-      : 0;
+    const averageToolMentions = articlesWithTools > 0 ? totalMentions / articlesWithTools : 0;
 
     // Get top categories
     const categoryStats = await this.db
@@ -711,10 +705,11 @@ export class ArticlesRepository {
       .orderBy(sqlTag`COUNT(*) DESC`)
       .limit(5);
 
-    const topCategories = categoryStats?.map((cat) => ({
-      category: cat.category || "Uncategorized",
-      count: Number(cat.count || 0),
-    })) || [];
+    const topCategories =
+      categoryStats?.map((cat) => ({
+        category: cat.category || "Uncategorized",
+        count: Number(cat.count || 0),
+      })) || [];
 
     return {
       totalArticles,

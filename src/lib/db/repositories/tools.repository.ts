@@ -139,15 +139,13 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     const allTools = await this.findAllFromJson();
     const lowerQuery = query.toLowerCase();
-    return allTools.filter(
-      (tool) => {
-        const hasNameMatch = tool.name.toLowerCase().includes(lowerQuery);
-        // Use bracket notation for index signature access
-        const description = tool["description"] as string | undefined;
-        const hasDescriptionMatch = description?.toLowerCase().includes(lowerQuery) || false;
-        return hasNameMatch || hasDescriptionMatch;
-      }
-    );
+    return allTools.filter((tool) => {
+      const hasNameMatch = tool.name.toLowerCase().includes(lowerQuery);
+      // Use bracket notation for index signature access
+      const description = tool["description"] as string | undefined;
+      const hasDescriptionMatch = description?.toLowerCase().includes(lowerQuery) || false;
+      return hasNameMatch || hasDescriptionMatch;
+    });
   }
 
   // ============= Database Methods =============
@@ -163,35 +161,42 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     // Apply ordering and pagination based on options
     if (options?.orderBy) {
       // Type-safe column access - use proper column reference
-      if (options.orderBy === 'name') {
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.name)) as typeof baseQuery
-          : baseQuery.orderBy(asc(tools.name)) as typeof baseQuery;
-      } else if (options.orderBy === 'slug') {
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.slug)) as typeof baseQuery
-          : baseQuery.orderBy(asc(tools.slug)) as typeof baseQuery;
-      } else if (options.orderBy === 'category') {
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.category)) as typeof baseQuery
-          : baseQuery.orderBy(asc(tools.category)) as typeof baseQuery;
-      } else if (options.orderBy === 'status') {
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.status)) as typeof baseQuery
-          : baseQuery.orderBy(asc(tools.status)) as typeof baseQuery;
-      } else if (options.orderBy === 'createdAt') {
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.createdAt)) as typeof baseQuery
-          : baseQuery.orderBy(asc(tools.createdAt)) as typeof baseQuery;
-      } else if (options.orderBy === 'updatedAt') {
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.updatedAt)) as typeof baseQuery
-          : baseQuery.orderBy(asc(tools.updatedAt)) as typeof baseQuery;
+      if (options.orderBy === "name") {
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(tools.name)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(tools.name)) as typeof baseQuery);
+      } else if (options.orderBy === "slug") {
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(tools.slug)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(tools.slug)) as typeof baseQuery);
+      } else if (options.orderBy === "category") {
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(tools.category)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(tools.category)) as typeof baseQuery);
+      } else if (options.orderBy === "status") {
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(tools.status)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(tools.status)) as typeof baseQuery);
+      } else if (options.orderBy === "createdAt") {
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(tools.createdAt)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(tools.createdAt)) as typeof baseQuery);
+      } else if (options.orderBy === "updatedAt") {
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(tools.updatedAt)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(tools.updatedAt)) as typeof baseQuery);
       } else {
         // Default to createdAt if unknown column
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(tools.createdAt)) as typeof baseQuery
-          : baseQuery.orderBy(asc(tools.createdAt)) as typeof baseQuery;
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(tools.createdAt)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(tools.createdAt)) as typeof baseQuery);
       }
     }
 
@@ -349,9 +354,9 @@ export class ToolsRepository extends BaseRepository<ToolData> {
         const bVal = b[options.orderBy!];
         // Type-safe comparison
         let comparison = 0;
-        if (typeof aVal === 'string' && typeof bVal === 'string') {
+        if (typeof aVal === "string" && typeof bVal === "string") {
           comparison = aVal.localeCompare(bVal);
-        } else if (typeof aVal === 'number' && typeof bVal === 'number') {
+        } else if (typeof aVal === "number" && typeof bVal === "number") {
           comparison = aVal - bVal;
         } else if (aVal instanceof Date && bVal instanceof Date) {
           comparison = aVal.getTime() - bVal.getTime();
@@ -386,12 +391,12 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   private async createInJson(toolData: Partial<ToolData>): Promise<ToolData> {
     const data = this.loadJsonData();
-    
+
     // Ensure required fields are present
     if (!toolData.slug || !toolData.name) {
       throw new Error("slug and name are required");
     }
-    
+
     const newTool: ToolData = {
       id: toolData.id || String(Date.now()),
       slug: toolData.slug,
@@ -415,11 +420,11 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     const existingTool = data.tools[index];
     if (!existingTool) return null;
-    
+
     // Ensure all required fields are present
-    const updatedTool: ToolData = { 
+    const updatedTool: ToolData = {
       ...existingTool,
-      ...updateData 
+      ...updateData,
     };
     data.tools[index] = updatedTool;
     this.saveJsonData(data);

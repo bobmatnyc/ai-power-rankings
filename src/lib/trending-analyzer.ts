@@ -88,7 +88,7 @@ function formatPeriodDate(period: string): string {
   if (period.match(/^\d{4}-\d{2}$/)) {
     // Format: "2025-01" -> "Jan 2025"
     const [year, month] = period.split("-");
-    const date = new Date(parseInt(year || ""), parseInt((month || "") as string) - 1, 1);
+    const date = new Date(parseInt(year || "", 10), parseInt((month || "") as string, 10) - 1, 1);
     return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
   } else if (period.match(/^\d{4}-\d{2}-\d{2}$/)) {
     // Format: "2025-01-01" -> "Jan 1, 2025"

@@ -1,16 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { isAuthenticated as checkAuth } from "@/lib/clerk-auth";
-import { ArticleDatabaseService } from "@/lib/services/article-db-service";
 import { getDb } from "@/lib/db/connection";
+import { ArticleDatabaseService } from "@/lib/services/article-db-service";
 
 /**
  * GET /api/admin/articles/[id]/recalculate?stream=true&dryRun=true
  * Stream recalculation progress using Server-Sent Events (supports preview mode)
  */
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params;
     const { id } = params;
@@ -28,17 +25,17 @@ export async function GET(
     // Check database availability
     const db = getDb();
     if (!db) {
-      return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Database connection not available" }, { status: 503 });
     }
 
     if (!stream) {
-      return NextResponse.json({ error: "Use POST method for non-streaming requests" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Use POST method for non-streaming requests" },
+        { status: 400 }
+      );
     }
 
-    console.log(`[API] Starting SSE ${dryRun ? 'preview' : 'recalculation'} for article: ${id}`);
+    console.log(`[API] Starting SSE ${dryRun ? "preview" : "recalculation"} for article: ${id}`);
 
     // Create a readable stream for SSE
     const encoder = new TextEncoder();
@@ -47,7 +44,7 @@ export async function GET(
         try {
           // Send progress updates
           const sendProgress = (progress: number, step: string) => {
-            const data = JSON.stringify({ type: 'progress', progress, step });
+            const data = JSON.stringify({ type: "progress", progress, step });
             controller.enqueue(encoder.encode(`data: ${data}\n\n`));
           };
 
@@ -61,13 +58,18 @@ export async function GET(
           const article = await articlesRepo.getArticleById(id);
 
           if (!article) {
-            const errorData = JSON.stringify({ type: 'error', message: 'Article not found' });
+            const errorData = JSON.stringify({ type: "error", message: "Article not found" });
             controller.enqueue(encoder.encode(`data: ${errorData}\n\n`));
             controller.close();
             return;
           }
 
-          sendProgress(20, dryRun ? "Analyzing article content for preview..." : "Analyzing article content with AI...");
+          sendProgress(
+            20,
+            dryRun
+              ? "Analyzing article content for preview..."
+              : "Analyzing article content with AI..."
+          );
 
           // Perform the recalculation with progress callback
           const result = await articleService.recalculateArticleRankingsWithProgress(
@@ -82,10 +84,10 @@ export async function GET(
 
           // Send completion with results
           const completeData = JSON.stringify({
-            type: 'complete',
+            type: "complete",
             changes: result.changes || [],
             summary: result.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
-            isDryRun: dryRun
+            isDryRun: dryRun,
           });
           controller.enqueue(encoder.encode(`data: ${completeData}\n\n`));
 
@@ -94,10 +96,10 @@ export async function GET(
           // Close the stream
           controller.close();
         } catch (error) {
-          console.error(`[API] SSE error during ${dryRun ? 'preview' : 'recalculation'}:`, error);
+          console.error(`[API] SSE error during ${dryRun ? "preview" : "recalculation"}:`, error);
           const errorData = JSON.stringify({
-            type: 'error',
-            message: error instanceof Error ? error.message : 'Failed to process article'
+            type: "error",
+            message: error instanceof Error ? error.message : "Failed to process article",
           });
           controller.enqueue(encoder.encode(`data: ${errorData}\n\n`));
           controller.close();
@@ -108,9 +110,9 @@ export async function GET(
     // Return SSE response
     return new Response(readableStream, {
       headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
       },
     });
   } catch (error) {
@@ -126,10 +128,7 @@ export async function GET(
  * POST /api/admin/articles/[id]/recalculate
  * Recalculate rankings for a specific article (fallback for non-SSE, supports preview mode)
  */
-export async function POST(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params;
     const { id } = params;
@@ -157,20 +156,16 @@ export async function POST(
     // Check database availability
     const db = getDb();
     if (!db) {
-      return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Database connection not available" }, { status: 503 });
     }
 
-    console.log(`[API] ${dryRun ? 'Previewing' : 'Recalculating'} rankings for article: ${id}`);
+    console.log(`[API] ${dryRun ? "Previewing" : "Recalculating"} rankings for article: ${id}`);
 
     const articleService = new ArticleDatabaseService();
-    const result = await articleService.recalculateArticleRankingsWithProgress(
-      id,
-      undefined,
-      { dryRun, useCachedAnalysis }
-    );
+    const result = await articleService.recalculateArticleRankingsWithProgress(id, undefined, {
+      dryRun,
+      useCachedAnalysis,
+    });
 
     return NextResponse.json({
       success: true,
@@ -179,7 +174,7 @@ export async function POST(
         : "Article rankings recalculated successfully",
       changes: result.changes || [],
       summary: result.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
-      isDryRun: dryRun
+      isDryRun: dryRun,
     });
   } catch (error) {
     console.error("[API] Error processing article:", error);

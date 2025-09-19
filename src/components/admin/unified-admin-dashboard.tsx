@@ -13,9 +13,9 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
-import { SubscribersPage } from "@/components/admin/subscribers-page";
+import { useCallback, useEffect, useState } from "react";
 import { ArticleManagement } from "@/components/admin/article-management";
+import { SubscribersPage } from "@/components/admin/subscribers-page";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -151,7 +151,7 @@ export default function UnifiedAdminDashboard() {
     try {
       const response = await fetch("/api/admin/rankings/commit", {
         method: "POST",
-        credentials: 'include',
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           preview: rankingPreview,
@@ -184,7 +184,7 @@ export default function UnifiedAdminDashboard() {
   const loadRankingVersions = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/rankings/versions", {
-        credentials: 'include'
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -211,7 +211,7 @@ export default function UnifiedAdminDashboard() {
     try {
       const response = await fetch(`/api/admin/rankings/rollback/${versionId}`, {
         method: "POST",
-        credentials: 'include'
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -239,11 +239,11 @@ export default function UnifiedAdminDashboard() {
 
     try {
       const response = await fetch("/api/admin/db-status", {
-        credentials: 'include', // Include cookies for authentication
+        credentials: "include", // Include cookies for authentication
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
       });
 
       // Check if response is JSON
@@ -269,7 +269,7 @@ export default function UnifiedAdminDashboard() {
             timestamp: new Date().toISOString(),
             status: "json_mode",
             type: "json" as const,
-            displayEnvironment: "local" as const
+            displayEnvironment: "local" as const,
           });
         }
         return;
@@ -299,7 +299,7 @@ export default function UnifiedAdminDashboard() {
             timestamp: new Date().toISOString(),
             status: "json_mode",
             type: "json" as const,
-            displayEnvironment: "local" as const
+            displayEnvironment: "local" as const,
           });
         }
         return;
@@ -312,10 +312,9 @@ export default function UnifiedAdminDashboard() {
       } catch (parseError) {
         console.error("Failed to parse database status response:", parseError);
       }
-
     } catch (err) {
       // Network error - fallback to JSON mode silently
-      if (err instanceof TypeError && err.message.includes('fetch')) {
+      if (err instanceof TypeError && err.message.includes("fetch")) {
         setDbStatus({
           connected: false,
           enabled: false,
@@ -330,7 +329,7 @@ export default function UnifiedAdminDashboard() {
           timestamp: new Date().toISOString(),
           status: "json_mode",
           type: "json" as const,
-          displayEnvironment: "local" as const
+          displayEnvironment: "local" as const,
         });
       }
     } finally {
@@ -356,12 +355,20 @@ export default function UnifiedAdminDashboard() {
     <div className="container mx-auto p-6 max-w-7xl">
       {/* Database Status Indicator */}
       {showDbStatus && (
-        <Card className="mb-4 border-l-4"
+        <Card
+          className="mb-4 border-l-4"
           style={{
-            borderLeftColor: dbStatus?.type === "json" ? "#3b82f6" : // Blue for JSON
-                            dbStatus?.displayEnvironment === "development" ? "#10b981" : // Green for Dev
-                            dbStatus?.displayEnvironment === "production" ? "#ef4444" : // Red for Prod
-                            "#6b7280" // Gray for unknown
+            borderLeftColor:
+              dbStatus?.type === "json"
+                ? "#3b82f6"
+                : // Blue for JSON
+                  dbStatus?.displayEnvironment === "development"
+                  ? "#10b981"
+                  : // Green for Dev
+                    dbStatus?.displayEnvironment === "production"
+                    ? "#ef4444"
+                    : // Red for Prod
+                      "#6b7280", // Gray for unknown
           }}
         >
           <CardContent className="py-3 px-4">
@@ -374,29 +381,42 @@ export default function UnifiedAdminDashboard() {
               <>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Database className={`h-5 w-5 ${
-                      dbStatus.type === "json" ? "text-blue-600" :
-                      dbStatus.displayEnvironment === "development" ? "text-green-600" :
-                      dbStatus.displayEnvironment === "production" ? "text-red-600" :
-                      "text-gray-600"
-                    }`} />
+                    <Database
+                      className={`h-5 w-5 ${
+                        dbStatus.type === "json"
+                          ? "text-blue-600"
+                          : dbStatus.displayEnvironment === "development"
+                            ? "text-green-600"
+                            : dbStatus.displayEnvironment === "production"
+                              ? "text-red-600"
+                              : "text-gray-600"
+                      }`}
+                    />
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm">Database:</span>
 
                       {/* Environment Badge */}
                       <Badge
-                        variant={dbStatus.type === "json" ? "secondary" :
-                                dbStatus.displayEnvironment === "development" ? "default" :
-                                "destructive"}
+                        variant={
+                          dbStatus.type === "json"
+                            ? "secondary"
+                            : dbStatus.displayEnvironment === "development"
+                              ? "default"
+                              : "destructive"
+                        }
                         className={`text-xs ${
-                          dbStatus.type === "json" ? "bg-blue-100 text-blue-800 border-blue-200" :
-                          dbStatus.displayEnvironment === "development" ? "bg-green-100 text-green-800 border-green-200" :
-                          "bg-red-100 text-red-800 border-red-200"
+                          dbStatus.type === "json"
+                            ? "bg-blue-100 text-blue-800 border-blue-200"
+                            : dbStatus.displayEnvironment === "development"
+                              ? "bg-green-100 text-green-800 border-green-200"
+                              : "bg-red-100 text-red-800 border-red-200"
                         }`}
                       >
-                        {dbStatus.type === "json" ? "JSON Files" :
-                         dbStatus.displayEnvironment === "development" ? "Development" :
-                         "Production"}
+                        {dbStatus.type === "json"
+                          ? "JSON Files"
+                          : dbStatus.displayEnvironment === "development"
+                            ? "Development"
+                            : "Production"}
                       </Badge>
 
                       <span className="text-sm text-gray-600">|</span>
@@ -404,47 +424,61 @@ export default function UnifiedAdminDashboard() {
                       {/* Database Name */}
                       {dbStatus.type !== "json" && (
                         <>
-                          <span className="text-sm font-mono text-gray-700">{dbStatus.database}</span>
+                          <span className="text-sm font-mono text-gray-700">
+                            {dbStatus.database}
+                          </span>
                           <span className="text-sm text-gray-600">|</span>
                         </>
                       )}
 
                       {/* Host (masked) */}
-                      {dbStatus.type !== "json" && dbStatus.maskedHost && dbStatus.maskedHost !== "N/A" && (
-                        <>
-                          <span className="text-sm font-mono text-gray-500">{dbStatus.maskedHost}</span>
-                          <span className="text-sm text-gray-600">|</span>
-                        </>
-                      )}
+                      {dbStatus.type !== "json" &&
+                        dbStatus.maskedHost &&
+                        dbStatus.maskedHost !== "N/A" && (
+                          <>
+                            <span className="text-sm font-mono text-gray-500">
+                              {dbStatus.maskedHost}
+                            </span>
+                            <span className="text-sm text-gray-600">|</span>
+                          </>
+                        )}
 
                       {/* Connection Status */}
                       <div className="flex items-center gap-1.5">
                         <div className="relative">
                           <div
                             className={`h-2.5 w-2.5 rounded-full ${
-                              dbStatus.type === "json" ? "bg-blue-500" :
-                              dbStatus.connected ? "bg-green-500" : "bg-red-500"
+                              dbStatus.type === "json"
+                                ? "bg-blue-500"
+                                : dbStatus.connected
+                                  ? "bg-green-500"
+                                  : "bg-red-500"
                             }`}
                           />
-                          {(dbStatus.type !== "json" && dbStatus.connected) && (
+                          {dbStatus.type !== "json" && dbStatus.connected && (
                             <div className="absolute inset-0 h-2.5 w-2.5 rounded-full bg-green-500 animate-ping" />
                           )}
                         </div>
                         <span className="text-sm font-medium text-gray-700">
-                          {dbStatus.type === "json" ? "JSON Mode" :
-                           dbStatus.connected ? "Connected" : "Disconnected"}
+                          {dbStatus.type === "json"
+                            ? "JSON Mode"
+                            : dbStatus.connected
+                              ? "Connected"
+                              : "Disconnected"}
                         </span>
                       </div>
 
                       {/* Provider Badge */}
-                      {dbStatus.type !== "json" && dbStatus.provider && dbStatus.provider !== "N/A" && (
-                        <>
-                          <span className="text-sm text-gray-600">|</span>
-                          <Badge variant="outline" className="text-xs uppercase">
-                            {dbStatus.provider}
-                          </Badge>
-                        </>
-                      )}
+                      {dbStatus.type !== "json" &&
+                        dbStatus.provider &&
+                        dbStatus.provider !== "N/A" && (
+                          <>
+                            <span className="text-sm text-gray-600">|</span>
+                            <Badge variant="outline" className="text-xs uppercase">
+                              {dbStatus.provider}
+                            </Badge>
+                          </>
+                        )}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -506,12 +540,7 @@ export default function UnifiedAdminDashboard() {
                   <Database className="h-4 w-4 text-gray-400" />
                   <span className="text-sm text-gray-600">Database status pending...</span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={loadDatabaseStatus}
-                  className="h-7 px-2"
-                >
+                <Button variant="ghost" size="sm" onClick={loadDatabaseStatus} className="h-7 px-2">
                   <History className="h-3 w-3" />
                 </Button>
               </div>
@@ -553,7 +582,7 @@ export default function UnifiedAdminDashboard() {
               // Call logout API
               await fetch("/api/admin/auth", {
                 method: "DELETE",
-                credentials: 'include'
+                credentials: "include",
               });
               window.location.href = "/admin/auth/signin";
             }}

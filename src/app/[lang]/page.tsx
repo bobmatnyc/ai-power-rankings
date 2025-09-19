@@ -2,12 +2,12 @@ import { ArrowRight, ArrowUp, Star } from "lucide-react";
 import type { Metadata } from "next";
 import NextDynamic from "next/dynamic";
 import Link from "next/link";
+import { SignupForUpdatesButton } from "@/components/auth/signup-button-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
 import { RankingsTableSkeleton } from "@/components/ui/skeleton";
-import { SignupForUpdatesButton } from "@/components/auth/signup-button-wrapper";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
@@ -52,20 +52,14 @@ interface PageProps {
 }
 
 // Dynamic import for T-031 performance optimization
-const ClientRankings = NextDynamic(
-  () => import("./client-rankings-optimized"),
-  {
-    loading: () => <RankingsTableSkeleton />,
-  }
-);
+const ClientRankings = NextDynamic(() => import("./client-rankings-optimized"), {
+  loading: () => <RankingsTableSkeleton />,
+});
 
 // Dynamic import for T-033 What's New modal
-const WhatsNewModalClient = NextDynamic(
-  () => import("@/components/ui/whats-new-modal-client"),
-  {
-    loading: () => <div></div>,
-  }
-);
+const WhatsNewModalClient = NextDynamic(() => import("@/components/ui/whats-new-modal-client"), {
+  loading: () => <div></div>,
+});
 
 // Force dynamic rendering to ensure API calls work at runtime
 export const dynamic = "force-dynamic";
@@ -325,10 +319,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
               <p className="text-sm text-muted-foreground mb-3">
                 Get weekly updates on the latest AI tool rankings
               </p>
-              <SignupForUpdatesButton
-                text={dict.common.signupForUpdates}
-                className="text-primary hover:text-primary/80"
-              />
+              <SignupForUpdatesButton className="text-primary hover:text-primary/80" />
             </div>
           </div>
 
@@ -487,6 +478,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       </section>
 
       {/* Methodology Brief */}
+      {/* biome-ignore lint/correctness/useUniqueElementIds: Static ID needed for anchor navigation */}
       <section id="methodology" className="container mx-auto px-2 md:px-4 py-16">
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-8 text-center text-3xl font-bold">{dict.home.methodology.title}</h2>

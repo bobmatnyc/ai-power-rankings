@@ -17,7 +17,7 @@ function parseDatabaseUrl(url: string | undefined) {
       database: "N/A",
       host: "N/A",
       provider: "N/A",
-      maskedHost: "N/A"
+      maskedHost: "N/A",
     };
   }
 
@@ -82,7 +82,7 @@ function parseDatabaseUrl(url: string | undefined) {
       database,
       host: hostname,
       maskedHost,
-      provider
+      provider,
     };
   } catch (error) {
     console.error("Error parsing database URL:", error);
@@ -91,7 +91,7 @@ function parseDatabaseUrl(url: string | undefined) {
       database: "parse_error",
       host: "parse_error",
       maskedHost: "parse_error",
-      provider: "unknown"
+      provider: "unknown",
     };
   }
 }
@@ -102,10 +102,7 @@ export async function GET() {
     const isAuth = await isAuthenticated();
 
     if (!isAuth) {
-      return NextResponse.json(
-        { error: "Unauthorized - Admin session required" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized - Admin session required" }, { status: 401 });
     }
 
     // Get database configuration
@@ -145,18 +142,20 @@ export async function GET() {
       timestamp: new Date().toISOString(),
 
       // Status summary
-      status: isConnected ? "connected" :
-              !useDatabase ? "disabled" :
-              !databaseUrl ? "not_configured" :
-              "disconnected",
+      status: isConnected
+        ? "connected"
+        : !useDatabase
+          ? "disabled"
+          : !databaseUrl
+            ? "not_configured"
+            : "disconnected",
 
       // Display type for UI
       type: !useDatabase ? "json" : "postgresql",
-      displayEnvironment: !useDatabase ? "local" : dbInfo.environment
+      displayEnvironment: !useDatabase ? "local" : dbInfo.environment,
     };
 
     return NextResponse.json(status);
-
   } catch (error) {
     console.error("Error getting database status:", error);
     return NextResponse.json(
@@ -164,7 +163,7 @@ export async function GET() {
         error: "Failed to get database status",
         message: error instanceof Error ? error.message : "Unknown error",
         connected: false,
-        status: "error"
+        status: "error",
       },
       { status: 500 }
     );

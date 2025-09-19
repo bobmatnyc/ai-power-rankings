@@ -8,10 +8,7 @@ import { loggers } from "@/lib/logger";
  * GET /api/admin/news/[id]
  * Get a single news article by ID
  */
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   return withAuth(async (): Promise<NextResponse> => {
     try {
       const { id } = await params;
@@ -19,10 +16,7 @@ export async function GET(
       const article = await newsRepo.getById(id);
 
       if (!article) {
-        return NextResponse.json(
-          { error: "Article not found" },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: "Article not found" }, { status: 404 });
       }
 
       return NextResponse.json({
@@ -31,10 +25,7 @@ export async function GET(
       });
     } catch (error) {
       loggers.api.error("Error in admin/news/[id] GET", { error });
-      return NextResponse.json(
-        { error: "Failed to load article" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to load article" }, { status: 500 });
     }
   });
 }
@@ -43,10 +34,7 @@ export async function GET(
  * PUT /api/admin/news/[id]
  * Update a news article
  */
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   return withAuth(async (): Promise<NextResponse> => {
     try {
       const { id } = await params;
@@ -56,10 +44,7 @@ export async function PUT(
       // Check if article exists
       const existingArticle = await newsRepo.getById(id);
       if (!existingArticle) {
-        return NextResponse.json(
-          { error: "Article not found" },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: "Article not found" }, { status: 404 });
       }
 
       // Merge updates with existing article
@@ -74,10 +59,7 @@ export async function PUT(
 
       // Validate required fields
       if (!updatedArticle.title || !updatedArticle.content) {
-        return NextResponse.json(
-          { error: "Title and content are required" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
       }
 
       // Save the updated article
@@ -91,10 +73,7 @@ export async function PUT(
       });
     } catch (error) {
       loggers.api.error("Error in admin/news/[id] PUT", { error });
-      return NextResponse.json(
-        { error: "Failed to update article" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to update article" }, { status: 500 });
     }
   });
 }
@@ -115,20 +94,14 @@ export async function DELETE(
       // Check if article exists
       const existingArticle = await newsRepo.getById(id);
       if (!existingArticle) {
-        return NextResponse.json(
-          { error: "Article not found" },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: "Article not found" }, { status: 404 });
       }
 
       // Delete the article
       const deleted = await newsRepo.delete(id);
 
       if (!deleted) {
-        return NextResponse.json(
-          { error: "Failed to delete article" },
-          { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to delete article" }, { status: 500 });
       }
 
       loggers.api.info("Article deleted", { articleId: id });
@@ -142,10 +115,7 @@ export async function DELETE(
       });
     } catch (error) {
       loggers.api.error("Error in admin/news/[id] DELETE", { error });
-      return NextResponse.json(
-        { error: "Failed to delete article" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to delete article" }, { status: 500 });
     }
   });
 }

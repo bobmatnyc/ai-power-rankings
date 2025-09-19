@@ -7,8 +7,8 @@ import { loggers } from "@/lib/logger";
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get("limit") || "50");
-    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "50", 10);
+    const page = parseInt(searchParams.get("page") || "1", 10);
     const search = searchParams.get("search");
     const size = searchParams.get("size");
 

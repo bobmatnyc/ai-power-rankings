@@ -159,17 +159,17 @@ function calculateNewRankings(
           proposedScore: updatedTool.score,
           scoreChange: totalBoost,
           currentRank: current.findIndex((c) => c.tool === currentTool.tool) + 1,
-        proposedRank: 0, // Will be calculated after re-sorting
-        rankChange: 0, // Will be calculated after re-sorting
-        impacts: {
-          sentiment: sentimentBoost,
-          importance: importanceBoost,
-          innovation: innovationBoost,
-          business: businessBoost,
-          development: developmentBoost,
-          market: marketBoost,
-          total: totalBoost,
-        },
+          proposedRank: 0, // Will be calculated after re-sorting
+          rankChange: 0, // Will be calculated after re-sorting
+          impacts: {
+            sentiment: sentimentBoost,
+            importance: importanceBoost,
+            innovation: innovationBoost,
+            business: businessBoost,
+            development: developmentBoost,
+            market: marketBoost,
+            total: totalBoost,
+          },
           mentioned: true,
           context: mention.context || undefined,
         });

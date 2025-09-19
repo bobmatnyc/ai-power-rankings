@@ -403,10 +403,10 @@ export function ArticleManagement() {
               change: (change.predictedScore || change.newScore || 0) - (change.currentScore || 0),
             })
           ),
-          newTools:
-            ((result.newTools || []) as any[]).map((t: { name?: string; tool?: string } | string) =>
+          newTools: ((result.newTools || []) as any[]).map(
+            (t: { name?: string; tool?: string } | string) =>
               typeof t === "string" ? t : t.name || t.tool || ""
-            ),
+          ),
           summary: result.summary || {
             totalToolsAffected: 0,
             totalNewTools: 0,
@@ -481,22 +481,24 @@ export function ArticleManagement() {
     }
 
     // Initialize progress for this article
-    setRecalcProgress(prev => new Map(prev).set(articleId, {
-      articleId,
-      progress: 0,
-      step: "Initializing preview...",
-      isActive: true
-    }));
+    setRecalcProgress((prev) =>
+      new Map(prev).set(articleId, {
+        articleId,
+        progress: 0,
+        step: "Initializing preview...",
+        isActive: true,
+      })
+    );
 
     try {
       // Check if we're in the browser and EventSource is available
-      if (typeof window === 'undefined' || !window.EventSource) {
+      if (typeof window === "undefined" || !window.EventSource) {
         // Fallback to regular POST without SSE
         const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ dryRun: true })
+          body: JSON.stringify({ dryRun: true }),
         });
 
         if (!response.ok) {
@@ -508,12 +510,12 @@ export function ArticleManagement() {
           articleId,
           toolChanges: data.changes || [],
           summary: data.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
-          isPreview: true
+          isPreview: true,
         });
         setShowRecalcPreviewModal(true);
 
         // Clean up progress
-        setRecalcProgress(prev => {
+        setRecalcProgress((prev) => {
           const newMap = new Map(prev);
           newMap.delete(articleId);
           return newMap;
@@ -533,26 +535,28 @@ export function ArticleManagement() {
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
 
-        if (data.type === 'progress') {
-          setRecalcProgress(prev => new Map(prev).set(articleId, {
-            articleId,
-            progress: data.progress,
-            step: data.step,
-            isActive: true
-          }));
-        } else if (data.type === 'complete') {
+        if (data.type === "progress") {
+          setRecalcProgress((prev) =>
+            new Map(prev).set(articleId, {
+              articleId,
+              progress: data.progress,
+              step: data.step,
+              isActive: true,
+            })
+          );
+        } else if (data.type === "complete") {
           // Preview complete, show modal
           setRecalcPreviewData({
             articleId,
             toolChanges: data.changes || [],
             summary: data.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
-            isPreview: true
+            isPreview: true,
           });
           setShowRecalcPreviewModal(true);
 
           // Clean up progress
           setTimeout(() => {
-            setRecalcProgress(prev => {
+            setRecalcProgress((prev) => {
               const newMap = new Map(prev);
               newMap.delete(articleId);
               return newMap;
@@ -561,7 +565,7 @@ export function ArticleManagement() {
 
           eventSource.close();
           eventSourcesRef.current.delete(articleId);
-        } else if (data.type === 'error') {
+        } else if (data.type === "error") {
           throw new Error(data.message || "Failed to generate preview");
         }
       };
@@ -576,37 +580,39 @@ export function ArticleManagement() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ dryRun: true })
-        }).then(async (response) => {
-          if (!response.ok) {
-            throw new Error("Failed to generate preview");
-          }
-          const data = await response.json();
+          body: JSON.stringify({ dryRun: true }),
+        })
+          .then(async (response) => {
+            if (!response.ok) {
+              throw new Error("Failed to generate preview");
+            }
+            const data = await response.json();
 
-          setRecalcPreviewData({
-            articleId,
-            toolChanges: data.changes || [],
-            summary: data.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
-            isPreview: true
-          });
-          setShowRecalcPreviewModal(true);
+            setRecalcPreviewData({
+              articleId,
+              toolChanges: data.changes || [],
+              summary: data.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
+              isPreview: true,
+            });
+            setShowRecalcPreviewModal(true);
 
-          // Clean up progress
-          setRecalcProgress(prev => {
-            const newMap = new Map(prev);
-            newMap.delete(articleId);
-            return newMap;
+            // Clean up progress
+            setRecalcProgress((prev) => {
+              const newMap = new Map(prev);
+              newMap.delete(articleId);
+              return newMap;
+            });
+          })
+          .catch((err) => {
+            throw err;
           });
-        }).catch(err => {
-          throw err;
-        });
       };
     } catch (err) {
       const error = err as Error;
       setError(error.message);
 
       // Clean up progress on error
-      setRecalcProgress(prev => {
+      setRecalcProgress((prev) => {
         const newMap = new Map(prev);
         newMap.delete(articleId);
         return newMap;
@@ -630,13 +636,13 @@ export function ArticleManagement() {
 
     try {
       // Check if we're in the browser and EventSource is available
-      if (typeof window === 'undefined' || !window.EventSource) {
+      if (typeof window === "undefined" || !window.EventSource) {
         // Fallback to regular POST without SSE
         const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ dryRun: false, useCachedAnalysis: true })
+          body: JSON.stringify({ dryRun: false, useCachedAnalysis: true }),
         });
 
         if (!response.ok) {
@@ -660,14 +666,14 @@ export function ArticleManagement() {
       eventSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
 
-        if (data.type === 'complete') {
+        if (data.type === "complete") {
           // Application complete
           setShowRecalcPreviewModal(false);
           setRecalcPreviewData(null);
           setSuccess("Rankings updated successfully!");
           eventSource.close();
           loadArticles();
-        } else if (data.type === 'error') {
+        } else if (data.type === "error") {
           throw new Error(data.message || "Failed to apply changes");
         }
       };
@@ -681,18 +687,20 @@ export function ArticleManagement() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ dryRun: false, useCachedAnalysis: true })
-        }).then(async (response) => {
-          if (!response.ok) {
-            throw new Error("Failed to apply changes");
-          }
-          setShowRecalcPreviewModal(false);
-          setRecalcPreviewData(null);
-          setSuccess("Rankings updated successfully!");
-          await loadArticles();
-        }).catch(err => {
-          throw err;
-        });
+          body: JSON.stringify({ dryRun: false, useCachedAnalysis: true }),
+        })
+          .then(async (response) => {
+            if (!response.ok) {
+              throw new Error("Failed to apply changes");
+            }
+            setShowRecalcPreviewModal(false);
+            setRecalcPreviewData(null);
+            setSuccess("Rankings updated successfully!");
+            await loadArticles();
+          })
+          .catch((err) => {
+            throw err;
+          });
       };
     } catch (err) {
       const error = err as Error;
@@ -1461,14 +1469,19 @@ export function ArticleManagement() {
                                 Score: {change.oldScore.toFixed(1)}
                               </span>
                               <ArrowRight className="h-3 w-3" />
-                              <span className="font-medium">
-                                {change.newScore.toFixed(1)}
-                              </span>
+                              <span className="font-medium">{change.newScore.toFixed(1)}</span>
                             </div>
                             <Badge
-                              variant={change.change > 0 ? "default" : change.change < 0 ? "destructive" : "secondary"}
+                              variant={
+                                change.change > 0
+                                  ? "default"
+                                  : change.change < 0
+                                    ? "destructive"
+                                    : "secondary"
+                              }
                             >
-                              {change.change > 0 ? "+" : ""}{change.change.toFixed(2)}
+                              {change.change > 0 ? "+" : ""}
+                              {change.change.toFixed(2)}
                             </Badge>
                           </div>
                         </div>
@@ -1483,7 +1496,8 @@ export function ArticleManagement() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    No ranking changes detected. The article's current impact on rankings is accurate.
+                    No ranking changes detected. The article's current impact on rankings is
+                    accurate.
                   </AlertDescription>
                 </Alert>
               )}
@@ -1492,7 +1506,8 @@ export function ArticleManagement() {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  The AI analysis has been cached. Clicking "Apply Changes" will use this cached analysis for faster processing.
+                  The AI analysis has been cached. Clicking "Apply Changes" will use this cached
+                  analysis for faster processing.
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -1584,14 +1599,19 @@ export function ArticleManagement() {
                                 Score: {change.oldScore.toFixed(1)}
                               </span>
                               <ArrowRight className="h-3 w-3" />
-                              <span className="font-medium">
-                                {change.newScore.toFixed(1)}
-                              </span>
+                              <span className="font-medium">{change.newScore.toFixed(1)}</span>
                             </div>
                             <Badge
-                              variant={change.change > 0 ? "default" : change.change < 0 ? "destructive" : "secondary"}
+                              variant={
+                                change.change > 0
+                                  ? "default"
+                                  : change.change < 0
+                                    ? "destructive"
+                                    : "secondary"
+                              }
                             >
-                              {change.change > 0 ? "+" : ""}{change.change.toFixed(2)}
+                              {change.change > 0 ? "+" : ""}
+                              {change.change.toFixed(2)}
                             </Badge>
                           </div>
                         </div>
@@ -1606,7 +1626,8 @@ export function ArticleManagement() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    No ranking changes detected after recalculation. The article's impact remains the same.
+                    No ranking changes detected after recalculation. The article's impact remains
+                    the same.
                   </AlertDescription>
                 </Alert>
               )}

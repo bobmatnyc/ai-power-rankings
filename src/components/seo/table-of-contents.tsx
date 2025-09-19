@@ -35,7 +35,7 @@ export function TableOfContents({
     const items: TOCItem[] = [];
 
     headings.forEach((heading, index) => {
-      const level = parseInt(heading.tagName.substring(1));
+      const level = parseInt(heading.tagName.substring(1), 10);
       let id = heading.id;
 
       // Generate ID if it doesn't exist

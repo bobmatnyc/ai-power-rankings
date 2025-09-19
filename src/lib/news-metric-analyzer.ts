@@ -119,7 +119,7 @@ export class NewsMetricAnalyzer {
       const isSignificant = fundingMetrics.some(
         (m) =>
           m.value.includes("billion") ||
-          (m.value.includes("million") && parseInt(m.value.match(/\d+/)?.[0] || "0") >= 50)
+          (m.value.includes("million") && parseInt(m.value.match(/\d+/)?.[0] || "0", 10) >= 50)
       );
       impacts.push({
         factor: "marketTraction",

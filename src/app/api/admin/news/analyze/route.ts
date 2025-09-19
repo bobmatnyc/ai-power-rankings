@@ -1,9 +1,9 @@
+import crypto from "node:crypto";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { getNewsRepo } from "@/lib/json-db";
 import type { NewsArticle } from "@/lib/json-db/schemas";
-import crypto from "node:crypto";
+import { getOpenRouterApiKey } from "@/lib/startup-validation";
 
 // Type definitions for OpenRouter API
 interface OpenRouterMessage {
@@ -133,7 +133,7 @@ async function analyzeWithOpenRouter(content: string, url?: string, verbose = fa
   // - anthropic/claude-opus-4 (72.5% SWE-bench, best for complex long-running tasks)
   // - anthropic/claude-opus-4.1 (74.5% SWE-bench, improved multi-file refactoring)
   // - anthropic/claude-sonnet-4 (72.7% SWE-bench, balanced efficiency & capability)
-  const modelName = "anthropic/claude-sonnet-4";  // Claude 4 Sonnet - latest model with excellent extraction
+  const modelName = "anthropic/claude-sonnet-4"; // Claude 4 Sonnet - latest model with excellent extraction
 
   // Get API key using validation helper - will throw if not configured
   const openRouterKey = getOpenRouterApiKey();
@@ -253,7 +253,7 @@ Return ONLY a valid JSON object with this EXACT structure:
       { role: "user", content: userPrompt },
     ],
     temperature: 0.3,
-    max_tokens: 4000,  // Increased for Claude 4's enhanced capabilities
+    max_tokens: 4000, // Increased for Claude 4's enhanced capabilities
   };
 
   // Use correct header names for OpenRouter API
@@ -352,7 +352,7 @@ Return ONLY a valid JSON object with this EXACT structure:
             troubleshootingSteps = [
               "Rate limit exceeded. Wait before retrying.",
               resetTime
-                ? `Rate limit resets at: ${new Date(parseInt(resetTime) * 1000).toLocaleString()}`
+                ? `Rate limit resets at: ${new Date(parseInt(resetTime, 10) * 1000).toLocaleString()}`
                 : "Check OpenRouter dashboard for rate limit status",
               `Remaining requests: ${response.headers.get("x-ratelimit-remaining") || "unknown"}`,
             ];
@@ -423,9 +423,8 @@ Return ONLY a valid JSON object with this EXACT structure:
 
     // Handle URL field - convert null to undefined
     const urlValue = parsedObj["url"];
-    const processedUrl = (urlValue === null || urlValue === undefined || urlValue === "")
-      ? undefined
-      : urlValue;
+    const processedUrl =
+      urlValue === null || urlValue === undefined || urlValue === "" ? undefined : urlValue;
 
     const validated = OpenRouterResponseSchema.parse({
       title: parsedObj["title"],
@@ -435,8 +434,12 @@ Return ONLY a valid JSON object with this EXACT structure:
       url: processedUrl,
       published_date: parsedObj["published_date"],
       tool_mentions: Array.isArray(parsedObj["tool_mentions"])
-        ? (parsedObj["tool_mentions"] as Array<unknown>).filter((tm): tm is { tool: string } =>
-            typeof tm === 'object' && tm !== null && 'tool' in tm && typeof (tm as Record<string, unknown>)["tool"] === 'string'
+        ? (parsedObj["tool_mentions"] as Array<unknown>).filter(
+            (tm): tm is { tool: string } =>
+              typeof tm === "object" &&
+              tm !== null &&
+              "tool" in tm &&
+              typeof (tm as Record<string, unknown>)["tool"] === "string"
           )
         : [],
       overall_sentiment: parsedObj["overall_sentiment"],
@@ -503,7 +506,7 @@ async function extractTextFromPdf(base64Content: string): Promise<string> {
 
   try {
     // Dynamic import to avoid issues with server-side rendering
-    // @ts-ignore - pdf-parse doesn't have proper TypeScript definitions
+    // @ts-expect-error - pdf-parse doesn't have proper TypeScript definitions
     const pdfParse = (await import("pdf-parse")).default;
 
     const buffer = Buffer.from(base64Content, "base64");
@@ -577,14 +580,21 @@ export async function POST(request: NextRequest) {
     // Check admin authentication
     const { isAuthenticated } = await import("@/lib/clerk-auth");
     const isAuth = await isAuthenticated();
-    
+
     if (!isAuth) {
       console.log("[News Analysis] Unauthorized - admin authentication required");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { input, type, filename, mimeType, verbose = false, saveAsArticle = false } = AnalyzeRequestSchema.parse(body);
+    const {
+      input,
+      type,
+      filename,
+      mimeType,
+      verbose = false,
+      saveAsArticle = false,
+    } = AnalyzeRequestSchema.parse(body);
 
     if (verbose) {
       console.log("[News Analysis] Request details:", {
@@ -629,7 +639,10 @@ export async function POST(request: NextRequest) {
       // Convert analysis to article format
       const article: NewsArticle = {
         id: articleId,
-        slug: analysis.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
+        slug: analysis.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, ""),
         title: analysis.title,
         summary: analysis.summary,
         content: `<p>${analysis.summary}</p>\n\n<p>${content.substring(0, 5000)}...</p>`,
@@ -638,12 +651,12 @@ export async function POST(request: NextRequest) {
         source: analysis.source || "Unknown",
         source_url: url || undefined,
         tags: analysis.key_topics || [],
-        tool_mentions: analysis.tool_mentions?.map(tm => tm.tool) || [],
+        tool_mentions: analysis.tool_mentions?.map((tm) => tm.tool) || [],
         created_at: now,
         updated_at: now,
         category: "AI News",
         importance_score: analysis.importance_score || 5,
-        related_tools: analysis.tool_mentions?.map(tm => tm.tool) || [],
+        related_tools: analysis.tool_mentions?.map((tm) => tm.tool) || [],
       };
 
       await newsRepo.upsert(article);
@@ -659,11 +672,13 @@ export async function POST(request: NextRequest) {
     const response = {
       success: true,
       analysis,
-      savedArticle: savedArticle ? {
-        id: savedArticle.id,
-        slug: savedArticle.slug,
-        title: savedArticle.title
-      } : undefined,
+      savedArticle: savedArticle
+        ? {
+            id: savedArticle.id,
+            slug: savedArticle.slug,
+            title: savedArticle.title,
+          }
+        : undefined,
       debug: verbose
         ? {
             processingTime: `${totalTime}ms`,

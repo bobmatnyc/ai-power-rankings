@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { AuthProviderWrapper } from "@/components/auth/auth-provider-wrapper";
 import "./globals.css";
 
@@ -49,17 +49,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
       <body className={inter.className}>
-        <AuthProviderWrapper>
-          {children}
-        </AuthProviderWrapper>
+        <AuthProviderWrapper>{children}</AuthProviderWrapper>
         <Analytics />
         <SpeedInsights />
       </body>

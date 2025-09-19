@@ -10,19 +10,29 @@ import {
   index,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   text,
   timestamp,
   uniqueIndex,
   uuid,
   varchar,
-  pgEnum,
 } from "drizzle-orm/pg-core";
 
 // Enums
 export const ingestionTypeEnum = pgEnum("ingestion_type", ["url", "text", "file"]);
-export const articleStatusEnum = pgEnum("article_status", ["draft", "active", "archived", "deleted"]);
-export const changeTypeEnum = pgEnum("change_type", ["increase", "decrease", "new_entry", "no_change"]);
+export const articleStatusEnum = pgEnum("article_status", [
+  "draft",
+  "active",
+  "archived",
+  "deleted",
+]);
+export const changeTypeEnum = pgEnum("change_type", [
+  "increase",
+  "decrease",
+  "new_entry",
+  "no_change",
+]);
 export const processingActionEnum = pgEnum("processing_action", [
   "dry_run",
   "ingest",

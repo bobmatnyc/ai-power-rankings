@@ -20,7 +20,8 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noExplicitAny": "warn"
+        "noExplicitAny": "warn",
+        "useIterableCallbackReturn": "warn"
       },
       "style": {
         "noUnusedTemplateLiteral": "warn",
@@ -36,7 +37,9 @@
           "level": "warn",
           "fix": "none"
         },
-        "noUnusedImports": "warn"
+        "noUnusedImports": "warn",
+        "useUniqueElementIds": "off",
+        "noNestedComponentDefinitions": "warn"
       }
     }
   },
@@ -61,6 +64,9 @@
       "enabled": true,
       "indentStyle": "space",
       "indentWidth": 2
+    },
+    "linter": {
+      "enabled": false
     }
   },
   "assist": {

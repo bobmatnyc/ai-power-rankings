@@ -7,7 +7,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { asc, desc, eq, sql } from "drizzle-orm";
 import { getDb } from "../connection";
-import { type Company, type NewCompany, companies } from "../schema";
+import { type Company, companies, type NewCompany } from "../schema";
 import { BaseRepository, type QueryOptions } from "./base.repository";
 
 interface CompanyData {
@@ -137,7 +137,9 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
         } else if (Array.isArray(company.description)) {
           // Extract text from rich text format
           descriptionText = company.description
-            .map((block: { children?: Array<{ text: string }> }) => block.children?.map((child) => child.text).join(""))
+            .map((block: { children?: Array<{ text: string }> }) =>
+              block.children?.map((child) => child.text).join("")
+            )
             .join(" ");
         }
         if (descriptionText.toLowerCase().includes(lowerQuery)) {
@@ -188,27 +190,32 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
     // Apply ordering and pagination based on options
     if (options?.orderBy) {
       // Type-safe column access - use proper column reference
-      if (options.orderBy === 'name') {
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(companies.name)) as typeof baseQuery
-          : baseQuery.orderBy(asc(companies.name)) as typeof baseQuery;
-      } else if (options.orderBy === 'slug') {
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(companies.slug)) as typeof baseQuery
-          : baseQuery.orderBy(asc(companies.slug)) as typeof baseQuery;
-      } else if (options.orderBy === 'createdAt') {
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(companies.createdAt)) as typeof baseQuery
-          : baseQuery.orderBy(asc(companies.createdAt)) as typeof baseQuery;
-      } else if (options.orderBy === 'updatedAt') {
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(companies.updatedAt)) as typeof baseQuery
-          : baseQuery.orderBy(asc(companies.updatedAt)) as typeof baseQuery;
+      if (options.orderBy === "name") {
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(companies.name)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(companies.name)) as typeof baseQuery);
+      } else if (options.orderBy === "slug") {
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(companies.slug)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(companies.slug)) as typeof baseQuery);
+      } else if (options.orderBy === "createdAt") {
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(companies.createdAt)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(companies.createdAt)) as typeof baseQuery);
+      } else if (options.orderBy === "updatedAt") {
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(companies.updatedAt)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(companies.updatedAt)) as typeof baseQuery);
       } else {
         // Default to name if unknown column
-        baseQuery = options.orderDirection === "desc"
-          ? baseQuery.orderBy(desc(companies.name)) as typeof baseQuery
-          : baseQuery.orderBy(asc(companies.name)) as typeof baseQuery;
+        baseQuery =
+          options.orderDirection === "desc"
+            ? (baseQuery.orderBy(desc(companies.name)) as typeof baseQuery)
+            : (baseQuery.orderBy(asc(companies.name)) as typeof baseQuery);
       }
     }
 
@@ -235,7 +242,11 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
     const db = getDb();
     if (!db) throw new Error("Database not connected");
 
-    const results = await db.select().from(companies).where(sql`${companies.data}->>'id' = ${id}`).limit(1);
+    const results = await db
+      .select()
+      .from(companies)
+      .where(sql`${companies.data}->>'id' = ${id}`)
+      .limit(1);
 
     const firstResult = results[0];
     return firstResult ? this.mapDbCompanyToData(firstResult) : null;
@@ -360,9 +371,9 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
         const bVal = b[options.orderBy!];
         // Type-safe comparison
         let comparison = 0;
-        if (typeof aVal === 'string' && typeof bVal === 'string') {
+        if (typeof aVal === "string" && typeof bVal === "string") {
           comparison = aVal.localeCompare(bVal);
-        } else if (typeof aVal === 'number' && typeof bVal === 'number') {
+        } else if (typeof aVal === "number" && typeof bVal === "number") {
           comparison = aVal - bVal;
         } else if (aVal instanceof Date && bVal instanceof Date) {
           comparison = aVal.getTime() - bVal.getTime();
@@ -417,7 +428,10 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
     return newCompany;
   }
 
-  private async updateInJson(id: string, updateData: Partial<CompanyData>): Promise<CompanyData | null> {
+  private async updateInJson(
+    id: string,
+    updateData: Partial<CompanyData>
+  ): Promise<CompanyData | null> {
     const data = this.loadJsonData();
     const index = data.companies.findIndex((company) => company.id === id);
 
@@ -430,7 +444,7 @@ export class CompaniesRepository extends BaseRepository<CompanyData> {
     const updatedCompany: CompanyData = {
       ...existingCompany,
       ...updateData,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
     data.companies[index] = updatedCompany;
     this.saveJsonData(data);

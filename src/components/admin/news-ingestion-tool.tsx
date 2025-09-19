@@ -12,7 +12,7 @@ import {
   Upload,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -60,6 +60,9 @@ interface ArticlePreview {
 }
 
 export function NewsIngestionTool() {
+  const fileInputId = useId();
+  const generatePreviewId = useId();
+
   const [isUploading, setIsUploading] = useState(false);
   const [generatePreview, setGeneratePreview] = useState(true);
   const [uploadResult, setUploadResult] = useState<{
@@ -342,9 +345,9 @@ export function NewsIngestionTool() {
             <CardContent>
               <form onSubmit={handleFileUpload} className="space-y-4">
                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                  <Label htmlFor="file">JSON File</Label>
+                  <Label htmlFor={fileInputId}>JSON File</Label>
                   <Input
-                    id="file"
+                    id={fileInputId}
                     name="file"
                     type="file"
                     accept=".json"
@@ -355,12 +358,12 @@ export function NewsIngestionTool() {
 
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    id="generate_preview"
+                    id={generatePreviewId}
                     checked={generatePreview}
                     onCheckedChange={(checked) => setGeneratePreview(!!checked)}
                   />
                   <Label
-                    htmlFor="generate_preview"
+                    htmlFor={generatePreviewId}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Generate ranking preview after ingestion

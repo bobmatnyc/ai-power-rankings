@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Save, Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
+import DOMPurify from "dompurify";
+import { ArrowLeft, Eye, EyeOff, Loader2, Save, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useCallback, useEffect, useId, useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import DOMPurify from "dompurify";
+import { Textarea } from "@/components/ui/textarea";
 
 interface NewsArticle {
   id: string;
@@ -36,55 +36,89 @@ function markdownToHtml(markdown: string): string {
   let html = markdown;
 
   // Escape HTML first to prevent XSS
-  html = html.replace(/&/g, '&amp;')
-             .replace(/</g, '&lt;')
-             .replace(/>/g, '&gt;')
-             .replace(/"/g, '&quot;')
-             .replace(/'/g, '&#39;');
+  html = html
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
   // Headers
-  html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-  html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-  html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+  html = html.replace(/^### (.*$)/gim, "<h3>$1</h3>");
+  html = html.replace(/^## (.*$)/gim, "<h2>$1</h2>");
+  html = html.replace(/^# (.*$)/gim, "<h1>$1</h1>");
 
   // Bold
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/__(.+?)__/g, "<strong>$1</strong>");
 
   // Italic
-  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-  html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+  html = html.replace(/_(.+?)_/g, "<em>$1</em>");
 
   // Links - unescape the URL part
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, url) => {
-    const unescapedUrl = url.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    const unescapedUrl = url
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&amp;/g, "&");
     return `<a href="${unescapedUrl}" target="_blank" rel="noopener">${text}</a>`;
   });
 
   // Line breaks
-  html = html.replace(/\n\n/g, '</p><p>');
+  html = html.replace(/\n\n/g, "</p><p>");
   html = `<p>${html}</p>`;
 
   // Lists
-  html = html.replace(/^\* (.+)$/gim, '<li>$1</li>');
-  html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+  html = html.replace(/^\* (.+)$/gim, "<li>$1</li>");
+  html = html.replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>");
 
   // Code blocks - unescape code content
   html = html.replace(/```([^`]+)```/g, (_match, code) => {
-    const unescapedCode = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    const unescapedCode = code
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&amp;/g, "&");
     return `<pre><code>${unescapedCode}</code></pre>`;
   });
   html = html.replace(/`([^`]+)`/g, (_match, code) => {
-    const unescapedCode = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    const unescapedCode = code
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&amp;/g, "&");
     return `<code>${unescapedCode}</code>`;
   });
 
   // Sanitize the final HTML
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     return DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'ul', 'ol', 'li', 'strong', 'em', 'code', 'pre', 'blockquote', 'br'],
-      ALLOWED_ATTR: ['href', 'target', 'rel'],
-      ALLOW_DATA_ATTR: false
+      ALLOWED_TAGS: [
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "p",
+        "a",
+        "ul",
+        "ol",
+        "li",
+        "strong",
+        "em",
+        "code",
+        "pre",
+        "blockquote",
+        "br",
+      ],
+      ALLOWED_ATTR: ["href", "target", "rel"],
+      ALLOW_DATA_ATTR: false,
     });
   }
 
@@ -95,6 +129,18 @@ export default function EditNewsPage() {
   const params = useParams();
   const router = useRouter();
   const id = params["id"] as string;
+
+  // Generate unique IDs for form inputs
+  const titleId = useId();
+  const summaryId = useId();
+  const contentId = useId();
+  const authorId = useId();
+  const sourceId = useId();
+  const sourceUrlId = useId();
+  const categoryId = useId();
+  const tagsId = useId();
+  const toolMentionsId = useId();
+  const importanceScoreId = useId();
 
   const [article, setArticle] = useState<NewsArticle | null>(null);
   const [loading, setLoading] = useState(true);
@@ -201,15 +247,30 @@ export default function EditNewsPage() {
           const topicsLower = analysis.key_topics.map((t: string) => t.toLowerCase());
           let extractedCategory = "AI News"; // Default
 
-          if (topicsLower.some((t: string) => t.includes("code") || t.includes("programming") || t.includes("developer"))) {
+          if (
+            topicsLower.some(
+              (t: string) =>
+                t.includes("code") || t.includes("programming") || t.includes("developer")
+            )
+          ) {
             extractedCategory = "Code Assistant";
-          } else if (topicsLower.some((t: string) => t.includes("llm") || t.includes("language model"))) {
+          } else if (
+            topicsLower.some((t: string) => t.includes("llm") || t.includes("language model"))
+          ) {
             extractedCategory = "LLM";
-          } else if (topicsLower.some((t: string) => t.includes("image") || t.includes("visual") || t.includes("art"))) {
+          } else if (
+            topicsLower.some(
+              (t: string) => t.includes("image") || t.includes("visual") || t.includes("art")
+            )
+          ) {
             extractedCategory = "Image Generation";
-          } else if (topicsLower.some((t: string) => t.includes("research") || t.includes("paper"))) {
+          } else if (
+            topicsLower.some((t: string) => t.includes("research") || t.includes("paper"))
+          ) {
             extractedCategory = "Research";
-          } else if (topicsLower.some((t: string) => t.includes("business") || t.includes("enterprise"))) {
+          } else if (
+            topicsLower.some((t: string) => t.includes("business") || t.includes("enterprise"))
+          ) {
             extractedCategory = "Enterprise";
           }
 
@@ -269,8 +330,18 @@ export default function EditNewsPage() {
         source,
         source_url: sourceUrl || null,
         category,
-        tags: tags ? tags.split(",").map(t => t.trim()).filter(Boolean) : [],
-        tool_mentions: toolMentions ? toolMentions.split(",").map(t => t.trim()).filter(Boolean) : [],
+        tags: tags
+          ? tags
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : [],
+        tool_mentions: toolMentions
+          ? toolMentions
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : [],
         importance_score: importanceScore,
         updated_at: new Date().toISOString(),
       };
@@ -284,9 +355,7 @@ export default function EditNewsPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(
-          id === "new"
-            ? { action: "manual-ingest", ...updatedArticle }
-            : updatedArticle
+          id === "new" ? { action: "manual-ingest", ...updatedArticle } : updatedArticle
         ),
       });
 
@@ -329,15 +398,10 @@ export default function EditNewsPage() {
               Back to News
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold">
-            {id === "new" ? "Create Article" : "Edit Article"}
-          </h1>
+          <h1 className="text-3xl font-bold">{id === "new" ? "Create Article" : "Edit Article"}</h1>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setShowPreview(!showPreview)}
-          >
+          <Button variant="outline" onClick={() => setShowPreview(!showPreview)}>
             {showPreview ? (
               <>
                 <EyeOff className="h-4 w-4 mr-2" />
@@ -377,15 +441,13 @@ export default function EditNewsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Article Details</CardTitle>
-            <CardDescription>
-              Edit the article content using markdown syntax
-            </CardDescription>
+            <CardDescription>Edit the article content using markdown syntax</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor={titleId}>Title *</Label>
               <Input
-                id="title"
+                id={titleId}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Article title"
@@ -394,9 +456,9 @@ export default function EditNewsPage() {
             </div>
 
             <div>
-              <Label htmlFor="summary">Summary</Label>
+              <Label htmlFor={summaryId}>Summary</Label>
               <Textarea
-                id="summary"
+                id={summaryId}
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 placeholder="Brief summary of the article"
@@ -411,9 +473,9 @@ export default function EditNewsPage() {
               </TabsList>
               <TabsContent value="edit">
                 <div>
-                  <Label htmlFor="content">Content (Markdown) *</Label>
+                  <Label htmlFor={contentId}>Content (Markdown) *</Label>
                   <Textarea
-                    id="content"
+                    id={contentId}
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Article content in markdown format..."
@@ -439,16 +501,14 @@ export default function EditNewsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Metadata</CardTitle>
-            <CardDescription>
-              Additional information about the article
-            </CardDescription>
+            <CardDescription>Additional information about the article</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="author">Author</Label>
+                <Label htmlFor={authorId}>Author</Label>
                 <Input
-                  id="author"
+                  id={authorId}
                   value={author}
                   onChange={(e) => setAuthor(e.target.value)}
                   placeholder="Author name"
@@ -456,9 +516,9 @@ export default function EditNewsPage() {
               </div>
 
               <div>
-                <Label htmlFor="source">Source</Label>
+                <Label htmlFor={sourceId}>Source</Label>
                 <Input
-                  id="source"
+                  id={sourceId}
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
                   placeholder="Publication source"
@@ -467,9 +527,9 @@ export default function EditNewsPage() {
             </div>
 
             <div>
-              <Label htmlFor="sourceUrl">Source URL</Label>
+              <Label htmlFor={sourceUrlId}>Source URL</Label>
               <Input
-                id="sourceUrl"
+                id={sourceUrlId}
                 type="url"
                 value={sourceUrl}
                 onChange={(e) => setSourceUrl(e.target.value)}
@@ -478,10 +538,10 @@ export default function EditNewsPage() {
             </div>
 
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor={categoryId}>Category</Label>
               <div className="flex gap-2">
                 <Input
-                  id="category"
+                  id={categoryId}
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   placeholder="e.g., AI News, Technical Analysis"
@@ -509,9 +569,9 @@ export default function EditNewsPage() {
             </div>
 
             <div>
-              <Label htmlFor="tags">Tags (comma-separated)</Label>
+              <Label htmlFor={tagsId}>Tags (comma-separated)</Label>
               <Input
-                id="tags"
+                id={tagsId}
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="ai, machine-learning, gpt"
@@ -519,9 +579,9 @@ export default function EditNewsPage() {
             </div>
 
             <div>
-              <Label htmlFor="toolMentions">Tool Mentions (comma-separated)</Label>
+              <Label htmlFor={toolMentionsId}>Tool Mentions (comma-separated)</Label>
               <Input
-                id="toolMentions"
+                id={toolMentionsId}
                 value={toolMentions}
                 onChange={(e) => setToolMentions(e.target.value)}
                 placeholder="GPT-4, Claude, Copilot"
@@ -529,22 +589,28 @@ export default function EditNewsPage() {
             </div>
 
             <div>
-              <Label htmlFor="importanceScore">Importance Score (0-10)</Label>
+              <Label htmlFor={importanceScoreId}>Importance Score (0-10)</Label>
               <Input
-                id="importanceScore"
+                id={importanceScoreId}
                 type="number"
                 min="0"
                 max="10"
                 value={importanceScore}
-                onChange={(e) => setImportanceScore(parseInt(e.target.value) || 0)}
+                onChange={(e) => setImportanceScore(parseInt(e.target.value, 10) || 0)}
               />
             </div>
 
             {article && (
               <div className="pt-4 border-t space-y-2 text-sm text-muted-foreground">
                 <p>ID: {article.id || "Will be generated"}</p>
-                <p>Created: {article.created_at ? new Date(article.created_at).toLocaleString() : "N/A"}</p>
-                <p>Updated: {article.updated_at ? new Date(article.updated_at).toLocaleString() : "N/A"}</p>
+                <p>
+                  Created:{" "}
+                  {article.created_at ? new Date(article.created_at).toLocaleString() : "N/A"}
+                </p>
+                <p>
+                  Updated:{" "}
+                  {article.updated_at ? new Date(article.updated_at).toLocaleString() : "N/A"}
+                </p>
               </div>
             )}
           </CardContent>

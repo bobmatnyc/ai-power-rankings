@@ -17,10 +17,10 @@ export function DeferredStyles() {
     const loadDeferredStyles = () => {
       try {
         // Create a link element to load CSS asynchronously
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = '/globals.css';
-        link.type = 'text/css';
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "/globals.css";
+        link.type = "text/css";
 
         // Add to head when loaded to prevent FOUC
         link.onload = () => {

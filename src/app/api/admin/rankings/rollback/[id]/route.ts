@@ -80,7 +80,7 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
     if (!isAuth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    
+
     const userEmail = "admin";
 
     const resolvedParams = await params;

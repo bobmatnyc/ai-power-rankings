@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, type ReactNode, useContext } from "react";
 
 // Mock user object for development
 const mockUser = {
@@ -51,11 +51,7 @@ export function NoAuthProvider({ children }: NoAuthProviderProps) {
     },
   };
 
-  return (
-    <NoAuthContext.Provider value={value}>
-      {children}
-    </NoAuthContext.Provider>
-  );
+  return <NoAuthContext.Provider value={value}>{children}</NoAuthContext.Provider>;
 }
 
 // Export hooks that mimic Clerk's API

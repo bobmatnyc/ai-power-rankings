@@ -1,10 +1,11 @@
 "use client";
 
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { Bell } from "lucide-react";
+import { usePathname } from "next/navigation";
 // CRITICAL FIX: Explicit React import for jsx-dev-runtime stability
 import * as React from "react";
-import { useState, useEffect } from "react";
-import { Bell } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { BuildTimeBadge } from "@/components/layout/build-time-badge";
 import { Footer } from "@/components/layout/footer";
@@ -18,8 +19,11 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
 // CRITICAL FIX: Stabilize component for HMR
-const ClientLayoutContent = React.memo(function ClientLayoutContent({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
+const ClientLayoutContent = React.memo(function ClientLayoutContent({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const [hasScrolled, setHasScrolled] = useState(false);
   const { dict, lang } = useI18n();
@@ -40,11 +44,6 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({ children }
   // Check if on home page on mobile to hide header until scroll
   const isHomePage = pathname === `/${lang}`;
   const shouldHideHeader = isHomePage && !hasScrolled;
-
-  const handleSignupClick = (): void => {
-    // Navigate to the about page with a query param to open the modal
-    router.push(`/${lang}/about?signup=true`);
-  };
 
   return (
     <SidebarProvider>
@@ -76,26 +75,29 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({ children }
                 {/* Language selector */}
                 <LanguageSelector />
 
-                {/* Desktop button */}
-                <Button
-                  onClick={handleSignupClick}
-                  size="sm"
-                  className="hidden md:flex items-center gap-2"
-                >
-                  <Bell className="h-4 w-4" />
-                  {dict.navigation.signupForUpdates || dict.navigation.subscribeToUpdates}
-                </Button>
+                {/* Show Sign In button when signed out */}
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    {/* Desktop button */}
+                    <Button size="sm" className="hidden md:flex items-center gap-2">
+                      <Bell className="h-4 w-4" />
+                      Sign In For Updates
+                    </Button>
+                  </SignInButton>
 
-                {/* Mobile icon button */}
-                <Button
-                  onClick={handleSignupClick}
-                  size="icon"
-                  variant="ghost"
-                  className="md:hidden"
-                >
-                  <Bell className="h-5 w-5" />
-                  <span className="sr-only">{dict.navigation.signupForUpdates || dict.navigation.subscribeToUpdates}</span>
-                </Button>
+                  <SignInButton mode="modal">
+                    {/* Mobile icon button */}
+                    <Button size="icon" variant="ghost" className="md:hidden">
+                      <Bell className="h-5 w-5" />
+                      <span className="sr-only">Sign In For Updates</span>
+                    </Button>
+                  </SignInButton>
+                </SignedOut>
+
+                {/* Show User button when signed in */}
+                <SignedIn>
+                  <UserButton afterSignOutUrl="/" />
+                </SignedIn>
               </div>
             </div>
           </div>

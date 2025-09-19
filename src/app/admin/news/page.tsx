@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { Edit, Trash2, Plus, Loader2, Search } from "lucide-react";
+import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface NewsArticle {
   id: string;
@@ -71,7 +71,7 @@ export default function NewsListPage() {
       }
 
       // Remove from local state
-      setArticles(articles.filter(article => article.id !== id));
+      setArticles(articles.filter((article) => article.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete article");
     } finally {
@@ -79,14 +79,14 @@ export default function NewsListPage() {
     }
   };
 
-  const filteredArticles = articles.filter(article => {
+  const filteredArticles = articles.filter((article) => {
     const query = searchQuery.toLowerCase();
     return (
       article.title.toLowerCase().includes(query) ||
       article.summary?.toLowerCase().includes(query) ||
       article.source?.toLowerCase().includes(query) ||
-      article.tags?.some(tag => tag.toLowerCase().includes(query)) ||
-      article.tool_mentions?.some(tool => tool.toLowerCase().includes(query))
+      article.tags?.some((tag) => tag.toLowerCase().includes(query)) ||
+      article.tool_mentions?.some((tool) => tool.toLowerCase().includes(query))
     );
   });
 
@@ -103,9 +103,7 @@ export default function NewsListPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">News Articles</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage and edit news articles
-          </p>
+          <p className="text-muted-foreground mt-1">Manage and edit news articles</p>
         </div>
         <Link href="/admin">
           <Button variant="outline">Back to Admin</Button>
@@ -152,18 +150,12 @@ export default function NewsListPage() {
                   <CardContent className="pt-6">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold mb-2">
-                          {article.title}
-                        </h3>
+                        <h3 className="text-lg font-semibold mb-2">{article.title}</h3>
                         {article.summary && (
-                          <p className="text-sm text-muted-foreground mb-3">
-                            {article.summary}
-                          </p>
+                          <p className="text-sm text-muted-foreground mb-3">{article.summary}</p>
                         )}
                         <div className="flex flex-wrap gap-2 mb-3">
-                          {article.source && (
-                            <Badge variant="outline">{article.source}</Badge>
-                          )}
+                          {article.source && <Badge variant="outline">{article.source}</Badge>}
                           {article.category && (
                             <Badge variant="secondary">{article.category}</Badge>
                           )}

@@ -19,7 +19,7 @@ export async function isAdminAuthenticated(request?: Request): Promise<boolean> 
         host.includes("127.0.0.1") ||
         host.includes(":3002") || // AI Power Rankings dev port
         host.includes(":3001") || // Alternative dev port
-        host.includes(":3000")    // Default Next.js dev port
+        host.includes(":3000") // Default Next.js dev port
       );
     }
 

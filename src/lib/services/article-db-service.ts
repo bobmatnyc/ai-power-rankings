@@ -110,15 +110,16 @@ export class ArticleDatabaseService {
       const rankingsSnapshot = await this.createRankingsSnapshot();
 
       // Step 5: Calculate predicted changes (or use preprocessed ones)
-      let predictedChanges: DryRunResult['predictedChanges'];
-      let newTools: DryRunResult['newTools'];
-      let newCompanies: DryRunResult['newCompanies'];
+      let predictedChanges: DryRunResult["predictedChanges"];
+      let newTools: DryRunResult["newTools"];
+      let newCompanies: DryRunResult["newCompanies"];
 
       if (input.type === "preprocessed" && input.preprocessedData.predictedChanges) {
         // Use the already-calculated changes and entities
-        predictedChanges = input.preprocessedData.predictedChanges as DryRunResult['predictedChanges'];
-        newTools = (input.preprocessedData.newTools || []) as DryRunResult['newTools'];
-        newCompanies = (input.preprocessedData.newCompanies || []) as DryRunResult['newCompanies'];
+        predictedChanges = input.preprocessedData
+          .predictedChanges as DryRunResult["predictedChanges"];
+        newTools = (input.preprocessedData.newTools || []) as DryRunResult["newTools"];
+        newCompanies = (input.preprocessedData.newCompanies || []) as DryRunResult["newCompanies"];
       } else {
         // Calculate changes
         predictedChanges = this.rankingsCalculator.calculateRankingChanges(
@@ -131,8 +132,8 @@ export class ArticleDatabaseService {
           existingTools,
           existingCompanies
         );
-        newTools = entities.newTools as DryRunResult['newTools'];
-        newCompanies = entities.newCompanies as DryRunResult['newCompanies'];
+        newTools = entities.newTools as DryRunResult["newTools"];
+        newCompanies = entities.newCompanies as DryRunResult["newCompanies"];
       }
 
       // Step 6: Handle dry run vs complete ingestion
@@ -252,14 +253,14 @@ export class ArticleDatabaseService {
           tags: ensureArray(analysis.tags).filter((tag: any) => typeof tag === "string"),
           category: analysis.category ? analysis.category.substring(0, 100) : null,
           importanceScore: (() => {
-            const score = parseInt(safeToString(analysis.importance_score, "5"));
-            if (isNaN(score) || score < 1) return 5;
+            const score = parseInt(safeToString(analysis.importance_score, "5"), 10);
+            if (Number.isNaN(score) || score < 1) return 5;
             if (score > 10) return 10;
             return score;
           })(),
           sentimentScore: (() => {
             const score = parseFloat(safeToString(analysis.overall_sentiment, "0"));
-            if (isNaN(score)) return "0.00";
+            if (Number.isNaN(score)) return "0.00";
             if (score < -1) return "-1.00";
             if (score > 1) return "1.00";
             return score.toFixed(2);
@@ -272,7 +273,7 @@ export class ArticleDatabaseService {
           publishedDate: (() => {
             if (analysis.published_date) {
               const date = new Date(analysis.published_date);
-              return isNaN(date.getTime()) ? new Date() : date;
+              return Number.isNaN(date.getTime()) ? new Date() : date;
             }
             return new Date();
           })(),
@@ -285,8 +286,12 @@ export class ArticleDatabaseService {
           slug: newArticle.slug,
           titleLength: newArticle.title.length,
           contentLength: newArticle.content.length,
-          toolMentionsCount: Array.isArray(newArticle.toolMentions) ? newArticle.toolMentions.length : 0,
-          companyMentionsCount: Array.isArray(newArticle.companyMentions) ? newArticle.companyMentions.length : 0,
+          toolMentionsCount: Array.isArray(newArticle.toolMentions)
+            ? newArticle.toolMentions.length
+            : 0,
+          companyMentionsCount: Array.isArray(newArticle.companyMentions)
+            ? newArticle.companyMentions.length
+            : 0,
           importanceScore: newArticle.importanceScore,
           sentimentScore: newArticle.sentimentScore,
         });
@@ -350,26 +355,28 @@ export class ArticleDatabaseService {
         }
 
         // Apply ranking changes
-        const rankingChanges: NewArticleRankingsChange[] = (predictedChanges as any[]).map((change: any) => ({
-          articleId: article.id,
-          toolId: change.toolId,
-          toolName: change.toolName,
-          metricChanges: change.metrics,
-          oldRank: change.currentRank,
-          newRank: change.predictedRank,
-          rankChange: change.rankChange,
-          oldScore: change.currentScore?.toString() || "0",
-          newScore: change.predictedScore?.toString() || "0",
-          scoreChange: change.scoreChange?.toString() || "0",
-          changeType:
-            (change.scoreChange || 0) > 0
-              ? "increase"
-              : (change.scoreChange || 0) < 0
-                ? "decrease"
-                : "no_change",
-          changeReason: `Article ingestion: ${analysis.title}`,
-          isApplied: true,
-        }));
+        const rankingChanges: NewArticleRankingsChange[] = (predictedChanges as any[]).map(
+          (change: any) => ({
+            articleId: article.id,
+            toolId: change.toolId,
+            toolName: change.toolName,
+            metricChanges: change.metrics,
+            oldRank: change.currentRank,
+            newRank: change.predictedRank,
+            rankChange: change.rankChange,
+            oldScore: change.currentScore?.toString() || "0",
+            newScore: change.predictedScore?.toString() || "0",
+            scoreChange: change.scoreChange?.toString() || "0",
+            changeType:
+              (change.scoreChange || 0) > 0
+                ? "increase"
+                : (change.scoreChange || 0) < 0
+                  ? "decrease"
+                  : "no_change",
+            changeReason: `Article ingestion: ${analysis.title}`,
+            isApplied: true,
+          })
+        );
 
         if (rankingChanges.length > 0) {
           await this.articlesRepo.saveRankingChanges(rankingChanges);
@@ -567,7 +574,7 @@ export class ArticleDatabaseService {
       // Check if we should use cached analysis
       if (useCachedAnalysis) {
         const cached = this.recalculationCache.get(articleId);
-        if (cached && (Date.now() - cached.timestamp) < this.CACHE_EXPIRY_MS) {
+        if (cached && Date.now() - cached.timestamp < this.CACHE_EXPIRY_MS) {
           progressCallback?.(30, "Using cached AI analysis...");
           analysis = cached.analysis;
         }
@@ -585,7 +592,7 @@ export class ArticleDatabaseService {
         // Cache the analysis for potential apply operation
         this.recalculationCache.set(articleId, {
           analysis,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
 
@@ -605,20 +612,19 @@ export class ArticleDatabaseService {
         progressCallback?.(100, "Preview complete!");
 
         // Format preview results
-        const changes = predictedChanges.map(change => ({
+        const changes = predictedChanges.map((change) => ({
           tool: change.toolName,
           oldScore: change.currentScore || 0,
           newScore: change.predictedScore || 0,
           change: change.scoreChange || 0,
           oldRank: change.currentRank,
-          newRank: change.predictedRank
+          newRank: change.predictedRank,
         }));
 
         const summary = {
           totalToolsAffected: changes.length,
-          averageScoreChange: changes.length > 0
-            ? changes.reduce((sum, c) => sum + c.change, 0) / changes.length
-            : 0
+          averageScoreChange:
+            changes.length > 0 ? changes.reduce((sum, c) => sum + c.change, 0) / changes.length : 0,
         };
 
         // Return preview results WITHOUT any database modifications
@@ -684,20 +690,19 @@ export class ArticleDatabaseService {
       this.recalculationCache.delete(articleId);
 
       // Format and return results using original predictedChanges data
-      const changes = predictedChanges.map(change => ({
+      const changes = predictedChanges.map((change) => ({
         tool: change.toolName,
         oldScore: change.currentScore || 0,
         newScore: change.predictedScore || 0,
         change: change.scoreChange || 0,
         oldRank: change.currentRank,
-        newRank: change.predictedRank
+        newRank: change.predictedRank,
       }));
 
       const summary = {
         totalToolsAffected: changes.length,
-        averageScoreChange: changes.length > 0
-          ? changes.reduce((sum, c) => sum + c.change, 0) / changes.length
-          : 0
+        averageScoreChange:
+          changes.length > 0 ? changes.reduce((sum, c) => sum + c.change, 0) / changes.length : 0,
       };
 
       return { changes, summary };
@@ -783,7 +788,7 @@ export class ArticleDatabaseService {
           .where(eq(rankings.isCurrent, true))
           .limit(1);
 
-        if (latestRanking && latestRanking.data) {
+        if (latestRanking?.data) {
           // Extract tools from rankings data
           const rankingData = latestRanking.data as any[];
           console.log(

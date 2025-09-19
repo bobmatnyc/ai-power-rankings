@@ -46,7 +46,7 @@ export function WhatsNewModal({
         setTimeout(() => onOpenChange(true), 1000);
       } else {
         // Check if 24 hours have passed
-        const lastDismissTime = parseInt(lastDismissed);
+        const lastDismissTime = parseInt(lastDismissed, 10);
         const now = Date.now();
         const hoursSinceLastDismiss = (now - lastDismissTime) / (1000 * 60 * 60);
 

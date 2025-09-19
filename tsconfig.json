@@ -59,6 +59,7 @@
     "data/**/*",
     "src/scripts/**/*",
     "src/i18n/dictionaries/**/*.js",
-    "trackdown/**/*"
+    "trackdown/**/*",
+    "tests/**/*"
   ]
 }

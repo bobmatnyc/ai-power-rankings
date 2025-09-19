@@ -12,7 +12,7 @@ function WhatsNewModalClient(): React.JSX.Element {
       // Check if user has dismissed the modal recently (within 7 days)
       const dismissedAt = localStorage.getItem("whatsNewDismissed");
       if (dismissedAt) {
-        const dismissTime = parseInt(dismissedAt);
+        const dismissTime = parseInt(dismissedAt, 10);
         const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
         if (dismissTime > sevenDaysAgo) {
           return false; // Don't show if dismissed within last 7 days
@@ -22,7 +22,7 @@ function WhatsNewModalClient(): React.JSX.Element {
       // Check if user has seen modal today
       const lastShown = localStorage.getItem("whatsNewLastShown");
       if (lastShown) {
-        const lastShownDate = new Date(parseInt(lastShown));
+        const lastShownDate = new Date(parseInt(lastShown, 10));
         const today = new Date();
         if (lastShownDate.toDateString() === today.toDateString()) {
           return false; // Don't show if already shown today

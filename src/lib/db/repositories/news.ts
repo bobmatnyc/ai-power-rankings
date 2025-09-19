@@ -3,9 +3,9 @@
  * Handles all database operations for news articles
  */
 
+import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { db } from "../index";
-import { news, type NewNewsArticle } from "../schema";
-import { desc, eq, sql, gte, lte, and } from "drizzle-orm";
+import { type NewNewsArticle, news } from "../schema";
 
 export class NewsRepository {
   /**
@@ -18,10 +18,7 @@ export class NewsRepository {
     }
 
     try {
-      const articles = await db
-        .select()
-        .from(news)
-        .orderBy(desc(news.publishedAt));
+      const articles = await db.select().from(news).orderBy(desc(news.publishedAt));
 
       return articles;
     } catch (error) {
@@ -48,9 +45,7 @@ export class NewsRepository {
         .offset(offset);
 
       // Get total count
-      const countResult = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(news);
+      const countResult = await db.select({ count: sql<number>`count(*)` }).from(news);
 
       const total = Number(countResult[0]?.count || 0);
       const hasMore = offset + limit < total;
@@ -69,11 +64,7 @@ export class NewsRepository {
     if (!db) return null;
 
     try {
-      const results = await db
-        .select()
-        .from(news)
-        .where(eq(news.slug, slug))
-        .limit(1);
+      const results = await db.select().from(news).where(eq(news.slug, slug)).limit(1);
 
       return results[0] || null;
     } catch (error) {
@@ -92,12 +83,7 @@ export class NewsRepository {
       const articles = await db
         .select()
         .from(news)
-        .where(
-          and(
-            gte(news.publishedAt, startDate),
-            lte(news.publishedAt, endDate)
-          )
-        )
+        .where(and(gte(news.publishedAt, startDate), lte(news.publishedAt, endDate)))
         .orderBy(desc(news.publishedAt));
 
       return articles;
@@ -152,17 +138,17 @@ export class NewsRepository {
    */
   async getStatistics() {
     const [total, currentMonth, lastMonth, avgMentions] = await Promise.all([
-      this.getAll().then(articles => articles.length),
-      this.getCurrentMonth().then(articles => articles.length),
-      this.getLastMonth().then(articles => articles.length),
-      this.getAverageToolMentions()
+      this.getAll().then((articles) => articles.length),
+      this.getCurrentMonth().then((articles) => articles.length),
+      this.getLastMonth().then((articles) => articles.length),
+      this.getAverageToolMentions(),
     ]);
 
     return {
       total,
       currentMonth,
       lastMonth,
-      averageToolMentions: Math.round(avgMentions * 10) / 10 // Round to 1 decimal
+      averageToolMentions: Math.round(avgMentions * 10) / 10, // Round to 1 decimal
     };
   }
 
@@ -182,7 +168,7 @@ export class NewsRepository {
           slug: articleData.slug || this.generateSlug(articleData.title),
           publishedAt: articleData.publishedAt || new Date(),
           data: articleData.data || {},
-          toolMentions: articleData.toolMentions || []
+          toolMentions: articleData.toolMentions || [],
         })
         .returning();
 
@@ -206,7 +192,7 @@ export class NewsRepository {
         .update(news)
         .set({
           ...updates,
-          updatedAt: new Date()
+          updatedAt: new Date(),
         })
         .where(eq(news.slug, slug))
         .returning();
@@ -227,10 +213,7 @@ export class NewsRepository {
     }
 
     try {
-      const result = await db
-        .delete(news)
-        .where(eq(news.slug, slug))
-        .returning();
+      const result = await db.delete(news).where(eq(news.slug, slug)).returning();
 
       return result[0];
     } catch (error) {

@@ -5,7 +5,7 @@ import { loggers } from "@/lib/logger";
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get("limit") || "10");
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
 
     const newsRepo = getNewsRepo();
     const toolsRepo = getToolsRepo();

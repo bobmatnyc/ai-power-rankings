@@ -27,7 +27,7 @@ export function getUrl(): string {
   }
 
   // Development - server with headers (Next.js 13+)
-  if (typeof process !== "undefined" && process.env["__NEXT_PRIVATE_ORIGIN"]) {
+  if (process?.env["__NEXT_PRIVATE_ORIGIN"]) {
     return process.env["__NEXT_PRIVATE_ORIGIN"];
   }
 

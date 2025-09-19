@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/clerk-auth";
-import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getDb } from "@/lib/db/connection";
+import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 
 /**
  * GET /api/admin/articles
@@ -18,10 +18,7 @@ export async function GET(request: NextRequest) {
     // Check database availability
     const db = getDb();
     if (!db) {
-      return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Database connection not available" }, { status: 503 });
     }
 
     // Parse query parameters

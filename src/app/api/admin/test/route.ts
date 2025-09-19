@@ -21,7 +21,7 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Admin authentication is working correctly",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   });
 }
@@ -29,41 +29,43 @@ export async function GET(_request: NextRequest) {
 export async function POST(request: NextRequest) {
   return withAuth(async () => {
     try {
-    // Get headers
-    const headers = Object.fromEntries(request.headers.entries());
+      // Get headers
+      const headers = Object.fromEntries(request.headers.entries());
 
-    // Try to get body in different ways
-    let bodyText = "";
-    let bodyJson: unknown = null;
-    let error: string | null = null;
+      // Try to get body in different ways
+      let bodyText = "";
+      let bodyJson: unknown = null;
+      let error: string | null = null;
 
-    try {
-      // Clone request to preserve it
-      const clonedRequest = request.clone();
-      bodyText = await clonedRequest.text();
-    } catch (e) {
-      error = `text() failed: ${e}`;
-    }
-
-    try {
-      bodyJson = await request.json();
-    } catch (e) {
-      error = `json() failed: ${e}`;
-    }
-
-    const response: DebugResponse = {
-      success: true,
-      debug: {
-        method: request.method,
-        url: request.url,
-        headers,
-        bodyText,
-        bodyJson,
-        error,
-        hasBody: !!request.body,
-        bodyReadable: request.body ? (request.body as ReadableStream).locked !== undefined : undefined,
+      try {
+        // Clone request to preserve it
+        const clonedRequest = request.clone();
+        bodyText = await clonedRequest.text();
+      } catch (e) {
+        error = `text() failed: ${e}`;
       }
-    };
+
+      try {
+        bodyJson = await request.json();
+      } catch (e) {
+        error = `json() failed: ${e}`;
+      }
+
+      const response: DebugResponse = {
+        success: true,
+        debug: {
+          method: request.method,
+          url: request.url,
+          headers,
+          bodyText,
+          bodyJson,
+          error,
+          hasBody: !!request.body,
+          bodyReadable: request.body
+            ? (request.body as ReadableStream).locked !== undefined
+            : undefined,
+        },
+      };
 
       return NextResponse.json(response);
     } catch (error) {

@@ -98,7 +98,7 @@ function generateVersionNumber(versions: RankingVersion[]): string {
 
   const lastVersion = versions[versions.length - 1]?.version || "0.0.0";
   const parts = lastVersion.split(".");
-  const patch = parseInt(parts[2] || "0") + 1;
+  const patch = parseInt(parts[2] || "0", 10) + 1;
 
   return `${parts[0]}.${parts[1]}.${patch}`;
 }
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
     if (!isAuth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    
+
     const userEmail = "admin";
 
     const body = (await request.json()) as {

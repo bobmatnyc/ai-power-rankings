@@ -745,7 +745,7 @@ export class RankingsCalculator {
             // Check for funding amounts
             const fundingMatch = contextLower.match(/\$(\d+)([mb])/i);
             if (fundingMatch) {
-              const amount = parseInt(fundingMatch[1] ?? "0");
+              const amount = parseInt(fundingMatch[1] ?? "0", 10);
               const unit = fundingMatch[2]?.toLowerCase() ?? "m";
               const amountInMillions = unit === "b" ? amount * 1000 : amount;
 
@@ -986,7 +986,9 @@ export class ArticleIngestionService {
       }));
 
       // Extract tool names from the static data
-      const existingTools: string[] = staticRankings.rankings.map((r: any) => r.tool?.name || r.tool_name || "").filter(Boolean);
+      const existingTools: string[] = staticRankings.rankings
+        .map((r: any) => r.tool?.name || r.tool_name || "")
+        .filter(Boolean);
 
       // For companies, we'll use an empty array for now since we don't have company data in static rankings
       const existingCompanies: string[] = [];

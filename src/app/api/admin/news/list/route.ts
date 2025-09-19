@@ -14,6 +14,7 @@ export async function GET(_request: NextRequest) {
     try {
       // Try database first
       const dbArticles = await newsRepository.getAll();
+      // biome-ignore lint/suspicious/noExplicitAny: Articles can be from database or JSON with different shapes
       let articles: any[] = [];
       let stats = null;
 
@@ -44,15 +45,12 @@ export async function GET(_request: NextRequest) {
           total: articles.length,
           currentMonth: 0,
           lastMonth: 0,
-          averageToolMentions: 0
-        }
+          averageToolMentions: 0,
+        },
       });
     } catch (error) {
       loggers.api.error("Error in admin/news/list GET", { error });
-      return NextResponse.json(
-        { error: "Failed to load articles" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to load articles" }, { status: 500 });
     }
   });
 }

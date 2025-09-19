@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { isAuthenticated } from "@/lib/clerk-auth";
-import { ArticleDatabaseService } from "@/lib/services/article-db-service";
-import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getDb } from "@/lib/db/connection";
+import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
+import { ArticleDatabaseService } from "@/lib/services/article-db-service";
 
 const UpdateArticleSchema = z.object({
   title: z.string().optional(),
@@ -17,10 +17,7 @@ const UpdateArticleSchema = z.object({
  * GET /api/admin/articles/[id]
  * Get a specific article with impact statistics
  */
-export async function GET(
-  _request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params;
     const { id } = params;
@@ -33,20 +30,14 @@ export async function GET(
     // Check database availability
     const db = getDb();
     if (!db) {
-      return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Database connection not available" }, { status: 503 });
     }
 
     const articlesRepo = new ArticlesRepository();
     const article = await articlesRepo.getArticleWithImpact(id);
 
     if (!article) {
-      return NextResponse.json(
-        { error: "Article not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
     // Get processing logs
@@ -73,10 +64,7 @@ export async function GET(
  * PATCH /api/admin/articles/[id]
  * Update an article (text only, no recalculation)
  */
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params;
     const { id } = params;
@@ -89,10 +77,7 @@ export async function PATCH(
     // Check database availability
     const db = getDb();
     if (!db) {
-      return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Database connection not available" }, { status: 503 });
     }
 
     const body = await request.json();
@@ -127,10 +112,7 @@ export async function PATCH(
  * DELETE /api/admin/articles/[id]
  * Delete an article and rollback its ranking changes
  */
-export async function DELETE(
-  _request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params;
     const { id } = params;
@@ -143,10 +125,7 @@ export async function DELETE(
     // Check database availability
     const db = getDb();
     if (!db) {
-      return NextResponse.json(
-        { error: "Database connection not available" },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: "Database connection not available" }, { status: 503 });
     }
 
     const articleService = new ArticleDatabaseService();

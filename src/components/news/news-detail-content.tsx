@@ -255,7 +255,7 @@ export default function NewsDetailContent({
     if (contextWindow) {
       contextWindow.forEach((c) => {
         const tokens = c.match(/\d+[,.]?\d*[KM]?/)?.[0];
-        if (tokens && parseInt(tokens.replace(/[,KM]/g, "")) > 1000) {
+        if (tokens && parseInt(tokens.replace(/[,KM]/g, ""), 10) > 1000) {
           metrics.push({
             type: "technical",
             value: `${tokens} tokens`,

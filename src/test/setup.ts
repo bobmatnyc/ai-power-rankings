@@ -49,11 +49,11 @@ const originalConsole = { ...console };
 if (process.env["LOG_LEVEL"] === "silent") {
   global.console = {
     ...console,
-    log: vi.fn((..._args: any[]) => {}),
-    warn: vi.fn((..._args: any[]) => {}),
-    error: vi.fn((..._args: any[]) => {}),
-    info: vi.fn((..._args: any[]) => {}),
-    debug: vi.fn((..._args: any[]) => {}),
+    log: vi.fn((..._args: unknown[]) => {}),
+    warn: vi.fn((..._args: unknown[]) => {}),
+    error: vi.fn((..._args: unknown[]) => {}),
+    info: vi.fn((..._args: unknown[]) => {}),
+    debug: vi.fn((..._args: unknown[]) => {}),
   };
 }
 

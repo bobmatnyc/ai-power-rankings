@@ -5,7 +5,7 @@ export async function POST() {
   return NextResponse.json(
     {
       error: "Legacy authentication endpoint deprecated. Please use Clerk authentication.",
-      redirect: "/sign-in"
+      redirect: "/sign-in",
     },
     { status: 410 } // Gone
   );
@@ -16,7 +16,7 @@ export async function DELETE() {
   return NextResponse.json(
     {
       success: true,
-      message: "Please use Clerk sign-out"
+      message: "Please use Clerk sign-out",
     },
     { status: 200 }
   );

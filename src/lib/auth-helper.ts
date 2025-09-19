@@ -29,7 +29,7 @@ export async function getAuth() {
         lastName: "User",
         fullName: "Dev User",
         username: "devuser",
-      }
+      },
     };
   }
 

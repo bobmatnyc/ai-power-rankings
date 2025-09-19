@@ -437,7 +437,7 @@ export function EnhancedRankingsManager() {
       };
       const monthIndex = monthMap[month?.toLowerCase() || ""];
       if (monthIndex !== undefined && year) {
-        return new Date(parseInt(year), monthIndex, 1);
+        return new Date(parseInt(year, 10), monthIndex, 1);
       }
     }
 
@@ -461,7 +461,7 @@ export function EnhancedRankingsManager() {
       };
       const monthIndex = monthMap[month?.toLowerCase() || ""];
       if (monthIndex !== undefined && year) {
-        return new Date(parseInt(year), monthIndex, 1);
+        return new Date(parseInt(year, 10), monthIndex, 1);
       }
     }
 

@@ -242,7 +242,7 @@ export class CompaniesRepository extends BaseRepository<CompaniesData> {
         return false;
       }
 
-      const foundedYear = parseInt(company.founded);
+      const foundedYear = parseInt(company.founded, 10);
       if (Number.isNaN(foundedYear)) {
         return false;
       }

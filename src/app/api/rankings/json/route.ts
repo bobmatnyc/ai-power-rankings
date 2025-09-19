@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const period = searchParams.get("period");
-    const limit = parseInt(searchParams.get("limit") || "100");
+    const limit = parseInt(searchParams.get("limit") || "100", 10);
 
     const rankingsRepo = getRankingsRepo();
     const toolsRepo = getToolsRepo();
