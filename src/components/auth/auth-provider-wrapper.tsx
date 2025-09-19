@@ -8,10 +8,11 @@ interface AuthProviderWrapperProps {
   children: ReactNode;
 }
 
-// Check if authentication should be disabled
-const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-
 export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
+  // Check if authentication should be disabled - using optional chaining for safety
+  const isAuthDisabled =
+    typeof window !== "undefined" && process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+
   // In development mode with NEXT_PUBLIC_DISABLE_AUTH=true, use NoAuthProvider
   if (isAuthDisabled) {
     console.log("🔓 Authentication disabled for development");

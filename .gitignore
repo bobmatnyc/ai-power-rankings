@@ -85,3 +85,4 @@ VERSION
 
 # temporary files and development artifacts
 /tmp/
+.env*.local

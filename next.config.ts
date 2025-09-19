@@ -28,18 +28,8 @@ const nextConfig: NextConfig = {
     // Note: staticPageGenerationTimeout is not available in NextConfig
     // Instead we use force-dynamic on individual pages
   },
-  // Turbopack configuration for Next.js 15+
-  // CRITICAL FIX: Stable configuration to prevent jsx-dev-runtime HMR issues
-  turbopack: {
-    // Minimal rules to avoid module factory conflicts
-    rules: {},
-    // Force stable module resolution patterns
-    resolveAlias: {
-      // Ensure consistent jsx-dev-runtime resolution
-      "react/jsx-dev-runtime": "react/jsx-dev-runtime",
-      "react/jsx-runtime": "react/jsx-runtime",
-    },
-  },
+  // Removed turbopack config - let Next.js handle defaults
+  // to avoid module resolution conflicts
   // Optimize output for faster builds
   // Disable static export to avoid Html import issue in Next.js 15.3.x
   output: undefined, // process.env["NEXT_OUTPUT"] === "export" ? "export" : undefined,
@@ -210,180 +200,16 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // Configure webpack to exclude unnecessary polyfills for modern browsers
-  // Only apply webpack config when NOT using Turbopack to avoid conflicts
-  webpack: (config, { isServer, dev, nextRuntime }) => {
-    // Skip webpack config when using Turbopack to prevent HMR issues
-    // Detect Turbopack usage via environment or command line
-    const usingTurbopack = dev && (
-      process.argv.includes('--turbo') ||
-      process.env["TURBOPACK"] === '1' ||
-      nextRuntime === 'edge'
-    );
-
-    if (usingTurbopack) {
-      return config;
-    }
-
-    if (!isServer) {
-      // Completely disable core-js polyfills for modern browsers
+  // Simplified webpack configuration to avoid module resolution conflicts
+  webpack: (config, { isServer }) => {
+    // Only apply minimal necessary customizations
+    if (!isServer && process.env["NODE_ENV"] === "production") {
+      // Minimal polyfill disabling for production only
       config.resolve.alias = {
         ...config.resolve.alias,
-        // Disable all core-js polyfills - our browsers support these natively
         "core-js": false,
-        "core-js/modules": false,
-        "core-js/stable": false,
-        "core-js/features": false,
-        "core-js/fn": false,
-        "core-js/library": false,
-        "core-js/stage": false,
-        "core-js/web": false,
-        "core-js/modules/es.array.at": false,
-        "core-js/modules/es.array.flat": false,
-        "core-js/modules/es.array.flat-map": false,
-        "core-js/modules/es.object.from-entries": false,
-        "core-js/modules/es.object.has-own": false,
-        "core-js/modules/es.string.trim-end": false,
-        "core-js/modules/es.string.trim-start": false,
-        "core-js/modules/es.promise": false,
-        "core-js/modules/es.string.includes": false,
-        "core-js/modules/es.object.assign": false,
-        "core-js/modules/es.object.keys": false,
-        "core-js/modules/es.object.values": false,
-        "core-js/modules/es.object.entries": false,
-        "core-js/modules/es.array.includes": false,
-        "core-js/modules/es.array.iterator": false,
-        "core-js/modules/es.map": false,
-        "core-js/modules/es.set": false,
-        "core-js/modules/es.weak-map": false,
-        "core-js/modules/es.weak-set": false,
-        // Also disable regenerator-runtime
         "regenerator-runtime": false,
-        "regenerator-runtime/runtime": false,
-        "@babel/runtime/regenerator": false
-        // Removed @swc/helpers blocking - these are necessary for dynamic imports
-        // The helpers provide critical runtime support for async/await and dynamic imports
       };
-
-      // Completely ignore polyfill imports
-      const webpack = require("webpack");
-      config.plugins.push(
-        new webpack.IgnorePlugin({
-          resourceRegExp: /^core-js/,
-        }),
-        new webpack.IgnorePlugin({
-          resourceRegExp: /^regenerator-runtime/,
-        }),
-        new webpack.IgnorePlugin({
-          resourceRegExp: /@babel\/runtime\/regenerator/,
-        })
-        // Removed @swc/helpers IgnorePlugin - these helpers are necessary for dynamic imports
-        // particularly in middleware.ts which uses dynamic import() for Clerk
-      );
-
-      // Force modern browser targets in Babel/SWC
-      if (config.module?.rules) {
-        config.module.rules.forEach((rule: any) => {
-          if (rule.use && Array.isArray(rule.use)) {
-            rule.use.forEach((useEntry: any) => {
-              if (useEntry.loader?.includes("swc-loader")) {
-                useEntry.options = {
-                  ...useEntry.options,
-                  env: {
-                    targets: {
-                      chrome: "95",
-                      firefox: "95",
-                      safari: "15.4",
-                      edge: "95",
-                    },
-                    loose: true,
-                    modules: false,
-                    forceAllTransforms: false,
-                  },
-                };
-              }
-            });
-          }
-        });
-      }
-
-      // Enhanced code splitting configuration
-      config.optimization = {
-        ...config.optimization,
-        runtimeChunk: "single",
-        splitChunks: {
-          chunks: "all",
-          maxInitialRequests: 25,
-          minSize: 20000,
-          cacheGroups: {
-            default: false,
-            vendors: false,
-            // Separate framework code
-            framework: {
-              name: "framework",
-              chunks: "all",
-              test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-sync-external-store)[\\/]/,
-              priority: 40,
-              enforce: true,
-            },
-            // Separate UI libraries
-            lib: {
-              test(module: any) {
-                return module.size() > 160000 && /node_modules[\\/]/.test(module.identifier());
-              },
-              name(module: any) {
-                const hash = require("node:crypto")
-                  .createHash("sha1")
-                  .update(module.identifier())
-                  .digest("hex")
-                  .substring(0, 8);
-                return `lib-${hash}`;
-              },
-              priority: 30,
-              minChunks: 1,
-              reuseExistingChunk: true,
-            },
-            // Analytics and monitoring
-            analytics: {
-              name: "analytics",
-              test: /[\\/]node_modules[\\/](@vercel[\\/]analytics|@vercel[\\/]speed-insights|@qwik\.dev[\\/]partytown)[\\/]/,
-              priority: 35,
-              reuseExistingChunk: true,
-            },
-            // Common components
-            commons: {
-              name: "commons",
-              minChunks: 2,
-              priority: 20,
-            },
-            // Shared modules
-            shared: {
-              name(_module: any, chunks: any) {
-                const hash = require("node:crypto")
-                  .createHash("sha1")
-                  .update(chunks.reduce((acc: string, chunk: any) => acc + chunk.name, ""))
-                  .digest("hex")
-                  .substring(0, 8);
-                return `shared-${hash}`;
-              },
-              priority: 10,
-              minChunks: 2,
-              reuseExistingChunk: true,
-            },
-          },
-        },
-      };
-
-      // Temporarily disable custom CSS optimization plugin to avoid webpack cache conflicts
-      // Rely on Next.js built-in CSS optimization and Tailwind purging instead
-      // if (process.env.NODE_ENV === 'production') {
-      //   const OptimizeCssPlugin = require("./src/lib/optimize-css-plugin");
-      //   config.plugins.push(new OptimizeCssPlugin({
-      //     enableCriticalCss: true,
-      //     removeUnusedCss: true,
-      //     inlineCriticalCss: false,
-      //   }));
-      // }
     }
     return config;
   },
