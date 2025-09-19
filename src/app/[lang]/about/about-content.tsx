@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NewsletterModal } from "@/components/ui/newsletter-modal";
+import { SignupForUpdatesModal } from "@/components/ui/signup-for-updates-modal";
 import { TechStackModal } from "@/components/ui/tech-stack-modal";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
@@ -19,10 +20,19 @@ interface AboutContentProps {
 export function AboutContent({ lang, dict }: AboutContentProps): React.JSX.Element {
   const searchParams = useSearchParams();
   const [newsletterOpen, setNewsletterOpen] = useState(false);
+  const [signupOpen, setSignupOpen] = useState(false);
 
   useEffect(() => {
-    // Check if we should open the newsletter modal
-    if (searchParams.get("subscribe") === "true") {
+    // Check if we should open the signup modal (new)
+    if (searchParams.get("signup") === "true") {
+      setSignupOpen(true);
+      // Clean up the URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("signup");
+      window.history.replaceState({}, "", url.pathname);
+    }
+    // Check if we should open the newsletter modal (legacy)
+    else if (searchParams.get("subscribe") === "true") {
       setNewsletterOpen(true);
       // Clean up the URL
       const url = new URL(window.location.href);
@@ -47,8 +57,8 @@ export function AboutContent({ lang, dict }: AboutContentProps): React.JSX.Eleme
         <CardContent className="prose prose-gray dark:prose-invert max-w-none">
           <p className="text-muted-foreground">{dict.about.mission.description}</p>
           <div className="mt-6">
-            <Button onClick={() => setNewsletterOpen(true)}>
-              {dict.navigation.subscribeToUpdates}
+            <Button onClick={() => setSignupOpen(true)}>
+              {dict.navigation.signupForUpdates || dict.navigation.subscribeToUpdates}
             </Button>
           </div>
         </CardContent>
@@ -195,6 +205,7 @@ export function AboutContent({ lang, dict }: AboutContentProps): React.JSX.Eleme
         </CardContent>
       </Card>
 
+      <SignupForUpdatesModal open={signupOpen} onOpenChange={setSignupOpen} />
       <NewsletterModal open={newsletterOpen} onOpenChange={setNewsletterOpen} />
     </div>
   );

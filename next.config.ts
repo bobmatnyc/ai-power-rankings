@@ -28,6 +28,18 @@ const nextConfig: NextConfig = {
     // Note: staticPageGenerationTimeout is not available in NextConfig
     // Instead we use force-dynamic on individual pages
   },
+  // Turbopack configuration for Next.js 15+
+  // CRITICAL FIX: Stable configuration to prevent jsx-dev-runtime HMR issues
+  turbopack: {
+    // Minimal rules to avoid module factory conflicts
+    rules: {},
+    // Force stable module resolution patterns
+    resolveAlias: {
+      // Ensure consistent jsx-dev-runtime resolution
+      "react/jsx-dev-runtime": "react/jsx-dev-runtime",
+      "react/jsx-runtime": "react/jsx-runtime",
+    },
+  },
   // Optimize output for faster builds
   // Disable static export to avoid Html import issue in Next.js 15.3.x
   output: undefined, // process.env["NEXT_OUTPUT"] === "export" ? "export" : undefined,
@@ -199,7 +211,20 @@ const nextConfig: NextConfig = {
     ];
   },
   // Configure webpack to exclude unnecessary polyfills for modern browsers
-  webpack: (config, { isServer }) => {
+  // Only apply webpack config when NOT using Turbopack to avoid conflicts
+  webpack: (config, { isServer, dev, nextRuntime }) => {
+    // Skip webpack config when using Turbopack to prevent HMR issues
+    // Detect Turbopack usage via environment or command line
+    const usingTurbopack = dev && (
+      process.argv.includes('--turbo') ||
+      process.env["TURBOPACK"] === '1' ||
+      nextRuntime === 'edge'
+    );
+
+    if (usingTurbopack) {
+      return config;
+    }
+
     if (!isServer) {
       // Completely disable core-js polyfills for modern browsers
       config.resolve.alias = {
@@ -235,9 +260,9 @@ const nextConfig: NextConfig = {
         // Also disable regenerator-runtime
         "regenerator-runtime": false,
         "regenerator-runtime/runtime": false,
-        "@babel/runtime/regenerator": false,
-        // Simplified SWC helper handling - allow necessary helpers to avoid module resolution issues
-        // Remove selective blocking to prevent production issues
+        "@babel/runtime/regenerator": false
+        // Removed @swc/helpers blocking - these are necessary for dynamic imports
+        // The helpers provide critical runtime support for async/await and dynamic imports
       };
 
       // Completely ignore polyfill imports
@@ -251,12 +276,9 @@ const nextConfig: NextConfig = {
         }),
         new webpack.IgnorePlugin({
           resourceRegExp: /@babel\/runtime\/regenerator/,
-        }),
-        // Simplified: only ignore broad @swc/helpers to prevent module resolution issues
-        // Allow specific helpers that might be needed for dynamic imports
-        new webpack.IgnorePlugin({
-          resourceRegExp: /^@swc\/helpers$/,
         })
+        // Removed @swc/helpers IgnorePlugin - these helpers are necessary for dynamic imports
+        // particularly in middleware.ts which uses dynamic import() for Clerk
       );
 
       // Force modern browser targets in Babel/SWC

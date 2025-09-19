@@ -46,7 +46,7 @@ interface SubscriberStats {
 }
 
 export function SubscribersPage() {
-  const { data: _session } = useSession();
+  const _session = useSession();
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [stats, setStats] = useState<SubscriberStats>({
     total: 0,

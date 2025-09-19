@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { withAdminAuth } from "@/lib/admin-auth";
+import { withAuth } from "@/lib/clerk-auth";
 import { getNewsRepo } from "@/lib/json-db";
 import type { NewsArticle } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
@@ -12,7 +12,7 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withAdminAuth(async (): Promise<NextResponse> => {
+  return withAuth(async (): Promise<NextResponse> => {
     try {
       const { id } = await params;
       const newsRepo = getNewsRepo();
@@ -47,7 +47,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withAdminAuth(async (): Promise<NextResponse> => {
+  return withAuth(async (): Promise<NextResponse> => {
     try {
       const { id } = await params;
       const body = await request.json();
@@ -107,7 +107,7 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withAdminAuth(async (): Promise<NextResponse> => {
+  return withAuth(async (): Promise<NextResponse> => {
     try {
       const { id } = await params;
       const newsRepo = getNewsRepo();

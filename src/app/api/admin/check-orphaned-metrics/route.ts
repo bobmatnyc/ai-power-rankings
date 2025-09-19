@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server";
-
 export async function GET() {
   return NextResponse.json({
     message: "Endpoint not available with JSON repositories",

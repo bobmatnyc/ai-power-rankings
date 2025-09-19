@@ -3,9 +3,13 @@
   "version": "3.3.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/clear-next-cache.js && next dev --turbo",
-    "dev:default": "next dev --turbo",
-    "dev:no-cache-clear": "next dev --turbo",
+    "dev": "node scripts/clear-next-cache.js && next dev",
+    "dev:default": "next dev",
+    "dev:no-cache-clear": "next dev",
+    "dev:turbo": "node scripts/clear-next-cache.js && next dev --turbo",
+    "dev:turbo-safe": "next dev --turbo",
+    "dev:webpack": "node scripts/clear-next-cache.js && next dev",
+    "dev:no-turbo": "next dev",
     "dev:server": "node scripts/dev-server.js",
     "dev:pm2": "node scripts/dev-pm2.js",
     "dev:clean": "rm -rf .next && pnpm dev",
@@ -112,6 +116,7 @@
     "pre-push": "npm run type-check && npm run build"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.32.0",
     "@hookform/resolvers": "^5.1.0",
     "@marsidev/react-turnstile": "^1.1.0",
     "@neondatabase/serverless": "^1.0.1",

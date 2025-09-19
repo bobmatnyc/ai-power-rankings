@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { isAuthenticated } from "@/lib/clerk-auth";
 import { ArticleDatabaseService } from "@/lib/services/article-db-service";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getDb } from "@/lib/db/connection";
@@ -25,8 +25,8 @@ export async function GET(
     const params = await context.params;
     const { id } = params;
     // Check admin authentication
-    const isAuthenticated = await isAdminAuthenticated();
-    if (!isAuthenticated) {
+    const isAuth = await isAuthenticated();
+    if (!isAuth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -81,8 +81,8 @@ export async function PATCH(
     const params = await context.params;
     const { id } = params;
     // Check admin authentication
-    const isAuthenticated = await isAdminAuthenticated();
-    if (!isAuthenticated) {
+    const isAuth = await isAuthenticated();
+    if (!isAuth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -135,8 +135,8 @@ export async function DELETE(
     const params = await context.params;
     const { id } = params;
     // Check admin authentication
-    const isAuthenticated = await isAdminAuthenticated();
-    if (!isAuthenticated) {
+    const isAuth = await isAuthenticated();
+    if (!isAuth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

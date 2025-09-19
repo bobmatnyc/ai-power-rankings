@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { withAdminAuth } from "@/lib/admin-auth";
+import { withAuth } from "@/lib/clerk-auth";
 
 interface DebugResponse {
   success: boolean;
@@ -17,7 +17,7 @@ interface DebugResponse {
 }
 
 export async function GET(request: NextRequest) {
-  return withAdminAuth(async () => {
+  return withAuth(async () => {
     return NextResponse.json({
       success: true,
       message: "Admin authentication is working correctly",
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  return withAdminAuth(async () => {
+  return withAuth(async () => {
     try {
     // Get headers
     const headers = Object.fromEntries(request.headers.entries());

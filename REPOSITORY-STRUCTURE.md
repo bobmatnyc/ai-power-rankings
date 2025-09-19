@@ -27,6 +27,7 @@ ai-power-rankings/
 ├── postcss.config.js     # PostCSS configuration
 ├── vitest.config.ts      # Vitest testing configuration
 ├── vercel.json           # Vercel deployment configuration
+├── drizzle.config.ts     # Drizzle ORM configuration
 ├── components.json       # shadcn/ui component configuration
 └── gpm.config.js         # Git project manager configuration
 ```
@@ -50,7 +51,9 @@ src/
 │   ├── tools/            # Tool detail components
 │   └── ui/               # Reusable UI components (shadcn/ui)
 ├── lib/                  # Core utilities and business logic
-│   ├── json-db/          # JSON database repositories
+│   ├── db/               # Database schema and configuration
+│   │   ├── schema.ts     # Drizzle schema definitions
+│   │   └── migrations/   # Database migration files
 │   ├── cache/            # Caching utilities
 │   ├── seo/              # SEO utilities
 │   └── *.ts              # Various utility functions
@@ -65,27 +68,19 @@ src/
 └── scripts/              # Build and maintenance scripts
 ```
 
-### `/data` - Data Storage
-All application data, using JSON file-based architecture.
+### `/data` - Static Data (Legacy)
+Legacy JSON files, now migrated to PostgreSQL database.
 
 ```
 data/
-├── json/                 # Primary JSON data storage
-│   ├── companies/        # Company information
-│   ├── news/             # News articles and updates
-│   │   ├── articles/     # Articles by month (YYYY-MM.json)
-│   │   └── by-month/     # Monthly indexes
-│   ├── rankings/         # Power rankings data
-│   │   └── periods/      # Historical rankings by date
-│   ├── tools/            # Tool information
-│   │   └── individual/   # Individual tool JSON files
-│   ├── subscribers/      # Newsletter subscribers
-│   └── settings/         # Site configuration
-├── backups/              # Automated backup storage
+├── json/                 # Legacy JSON files (archived)
+├── backups/              # Database backup storage
 ├── imports/              # Data import staging
-├── exports/              # Data export results
-└── metrics-by-date/      # Historical metrics tracking
+└── exports/              # Data export results
 ```
+
+**Note**: All application data is now stored in PostgreSQL database using Drizzle ORM.
+Schema definitions are in `/src/lib/db/schema.ts`.
 
 ### `/docs` - Documentation
 Comprehensive project documentation.
@@ -96,7 +91,7 @@ docs/
 ├── WORKFLOW.md           # Development workflow guide
 ├── PROJECT.md            # Project specifications
 ├── TOOLCHAIN.md          # Technical implementation guide
-├── JSON-STORAGE.md       # JSON architecture documentation
+├── DATABASE.md           # PostgreSQL & Drizzle ORM documentation
 ├── DEPLOYMENT-GUIDE.md   # Deployment procedures
 ├── archive/              # Archived documentation and backups
 │   ├── 2025-01-cleanup/  # January 2025 cleanup artifacts
@@ -130,14 +125,19 @@ scripts/
 └── [various].ts          # Other utility scripts
 ```
 
-### `/database` - Database Schema
-SQL schema and migration files (legacy, for reference).
+### Database Management
 
-```
-database/
-├── schema.sql            # Database schema
-├── migrations/           # SQL migration files
-└── validation-queries.sql # Data validation queries
+**Primary Database**: PostgreSQL with Drizzle ORM
+- **Schema**: `/src/lib/db/schema.ts`
+- **Migrations**: `/src/lib/db/migrations/`
+- **Configuration**: `/drizzle.config.ts`
+
+**Database Commands**:
+```bash
+pnpm run db:push      # Push schema changes (development)
+pnpm run db:generate  # Generate migration files
+pnpm run db:migrate   # Run migrations (production)
+pnpm run db:studio    # Open Drizzle Studio UI
 ```
 
 ### `/tasks` & `/TICKETS` - Task Management

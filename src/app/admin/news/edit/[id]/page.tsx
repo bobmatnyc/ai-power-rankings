@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Save, Eye, EyeOff, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -114,6 +114,7 @@ export default function EditNewsPage() {
   const [tags, setTags] = useState("");
   const [toolMentions, setToolMentions] = useState("");
   const [importanceScore, setImportanceScore] = useState(5);
+  const [analyzing, setAnalyzing] = useState(false);
 
   const loadArticle = useCallback(async () => {
     setLoading(true);
@@ -148,7 +149,7 @@ export default function EditNewsPage() {
     if (id !== "new") {
       loadArticle();
     } else {
-      // New article
+      // New article - set defaults including author
       setLoading(false);
       const now = new Date().toISOString();
       setArticle({
@@ -160,8 +161,98 @@ export default function EditNewsPage() {
         created_at: now,
         updated_at: now,
       });
+      // Set default author for new articles
+      setAuthor("Robert Matsuoka");
     }
   }, [id, loadArticle]);
+
+  const handleAnalyzeContent = async () => {
+    if (!content || analyzing) return;
+
+    setAnalyzing(true);
+    setError(null);
+
+    try {
+      // Call the analyze endpoint to extract category and tags
+      const response = await fetch("/api/admin/news/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          input: content,
+          type: "text",
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to analyze content");
+      }
+
+      const result = await response.json();
+      const analysis = result.analysis;
+
+      // Update form fields with extracted data
+      if (analysis.key_topics && Array.isArray(analysis.key_topics)) {
+        // Extract category from topics if not already set
+        if (!category && analysis.key_topics.length > 0) {
+          // Map common topics to categories
+          const topicsLower = analysis.key_topics.map((t: string) => t.toLowerCase());
+          let extractedCategory = "AI News"; // Default
+
+          if (topicsLower.some((t: string) => t.includes("code") || t.includes("programming") || t.includes("developer"))) {
+            extractedCategory = "Code Assistant";
+          } else if (topicsLower.some((t: string) => t.includes("llm") || t.includes("language model"))) {
+            extractedCategory = "LLM";
+          } else if (topicsLower.some((t: string) => t.includes("image") || t.includes("visual") || t.includes("art"))) {
+            extractedCategory = "Image Generation";
+          } else if (topicsLower.some((t: string) => t.includes("research") || t.includes("paper"))) {
+            extractedCategory = "Research";
+          } else if (topicsLower.some((t: string) => t.includes("business") || t.includes("enterprise"))) {
+            extractedCategory = "Enterprise";
+          }
+
+          setCategory(extractedCategory);
+        }
+
+        // Set tags from key topics
+        setTags(analysis.key_topics.join(", "));
+      }
+
+      // Extract tool mentions
+      if (analysis.tool_mentions && Array.isArray(analysis.tool_mentions)) {
+        const tools = analysis.tool_mentions.map((tm: { tool: string }) => tm.tool);
+        setToolMentions(tools.join(", "));
+      }
+
+      // Update other fields if not set
+      if (!title && analysis.title) {
+        setTitle(analysis.title);
+      }
+
+      if (!summary && analysis.summary) {
+        setSummary(analysis.summary);
+      }
+
+      if (analysis.importance_score !== undefined) {
+        setImportanceScore(analysis.importance_score);
+      }
+
+      // Set author to default if not already set
+      if (!author) {
+        setAuthor("Robert Matsuoka");
+      }
+
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      console.error("Failed to analyze content:", err);
+      setError(err instanceof Error ? err.message : "Failed to analyze content");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -388,12 +479,33 @@ export default function EditNewsPage() {
 
             <div>
               <Label htmlFor="category">Category</Label>
-              <Input
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="e.g., AI News, Technical Analysis"
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  placeholder="e.g., AI News, Technical Analysis"
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAnalyzeContent}
+                  disabled={!content || analyzing}
+                  title="Analyze content to extract category and tags"
+                >
+                  {analyzing ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  {analyzing ? "Analyzing..." : "AI Extract"}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Use AI Extract to automatically derive category and tags from content
+              </p>
             </div>
 
             <div>

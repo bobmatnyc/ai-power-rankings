@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-
 export async function POST() {
   try {
     // User management is no longer needed with JSON repositories

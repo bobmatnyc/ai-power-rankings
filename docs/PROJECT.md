@@ -98,12 +98,14 @@ AI Power Rankings is the definitive platform for tracking and ranking agentic AI
 
 - **Next.js 15+**: Modern React framework with App Router
 - **TypeScript**: Type-safe development throughout
-- **JSON-First Storage**: Resilient file-based data architecture
-- **Cache-First Design**: Optimal performance with database fallback
+- **PostgreSQL Database**: Production-grade relational database with Drizzle ORM
+- **Type-Safe Queries**: Drizzle ORM providing full TypeScript support for database operations
 - **Vercel Deployment**: Scalable hosting with edge optimization
 
 ### Data Infrastructure
 
+- **PostgreSQL Database**: Robust relational database for all application data
+- **Drizzle ORM**: Type-safe database queries and migrations
 - **Source-Oriented Metrics**: Each article can provide metrics for multiple tools
 - **AI-Powered Extraction**: GPT-4 based metrics extraction from news articles
 - **GitHub Integration**: Automated repository metrics collection

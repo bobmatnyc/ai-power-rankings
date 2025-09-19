@@ -184,7 +184,7 @@ const StatsSection = memo(
 
 StatsSection.displayName = "StatsSection";
 
-export function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRankingsProps) {
+function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRankingsProps) {
   const [topRankings, setTopRankings] = useState<RankingData[]>(initialRankings);
   const [trendingTools, setTrendingTools] = useState<RankingData[]>([]);
   const [recentlyUpdated, setRecentlyUpdated] = useState<RankingData[]>([]);
@@ -478,3 +478,5 @@ export function ClientRankings({ loadingText, lang, initialRankings = [] }: Clie
     </>
   );
 }
+
+export default ClientRankings;

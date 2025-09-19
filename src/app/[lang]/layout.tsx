@@ -58,22 +58,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
   params: Promise<{ lang: Locale }>;
-}>): Promise<React.JSX.Element> {
+}>) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
 
   return (
-    <html lang={lang}>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}>
-        <ClientLayout lang={lang} dict={dict}>
-          {children}
-        </ClientLayout>
+    <div className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}>
+      <ClientLayout lang={lang} dict={dict}>
+        {children}
+      </ClientLayout>
 
-        {/* Optimized analytics loading */}
-        <GoogleAnalytics />
-        <SpeedInsights />
-        <Analytics />
-      </body>
-    </html>
+      {/* Optimized analytics loading */}
+      <GoogleAnalytics />
+      <SpeedInsights />
+      <Analytics />
+    </div>
   );
 }

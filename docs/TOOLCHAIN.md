@@ -20,9 +20,10 @@ This document provides comprehensive toolchain mastery for the AI Power Rankings
 
 ### Data Architecture
 
-- **Primary Storage**: JSON file-based system (`/data/json/`)
-- **Cache Layer**: Pre-generated static JSON files (`/src/data/cache/`)
-- **Database**: Supabase (optional enhancement, cache-first approach)
+- **Primary Storage**: PostgreSQL database with Drizzle ORM
+- **ORM**: Drizzle - type-safe database queries and migrations
+- **Database Schema**: `/src/lib/db/schema.ts`
+- **Migrations**: `/src/lib/db/migrations/`
 - **Email**: Resend
 - **Analytics**: Custom implementation
 
@@ -48,12 +49,13 @@ src/
 │   ├── tools/          # Tools display components
 │   └── ui/             # Reusable UI components (shadcn/ui)
 ├── lib/                # Core utilities and services
-│   ├── json-db/        # JSON database repositories
+│   ├── db/             # Database schema and migrations
+│   │   ├── schema.ts   # Drizzle schema definitions
+│   │   └── migrations/ # Database migration files
 │   ├── i18n/           # Internationalization utilities
 │   ├── seo/            # SEO utilities and tools
 │   └── cache/          # Cache management
-├── data/               # Data storage and caching
-│   ├── cache/          # Generated cache files
+├── data/               # Static data and content
 │   └── pages/          # Static page content
 ├── types/              # TypeScript type definitions
 ├── hooks/              # Custom React hooks
@@ -118,13 +120,11 @@ pnpm test                  # Run test suite
 pnpm run test:watch        # Run tests in watch mode
 pnpm run test:coverage     # Generate coverage report
 
-# Data Management
-pnpm run cache:generate    # Generate all cache files
-pnpm run cache:rankings    # Generate rankings cache
-pnpm run cache:tools       # Generate tools cache
-pnpm run cache:news        # Generate news cache
-pnpm run validate:all      # Validate JSON files
-pnpm run backup:create     # Create data backup
+# Database Management
+pnpm run db:push           # Push schema changes to database
+pnpm run db:generate       # Generate migration files
+pnpm run db:migrate        # Run database migrations
+pnpm run db:studio         # Open Drizzle Studio UI
 ```
 
 ## 🎨 Styling System
@@ -148,23 +148,38 @@ pnpm run backup:create     # Create data backup
 
 ## 🗄️ Data Management
 
-### JSON Database System
+### Database System - Drizzle ORM with PostgreSQL
 
-The project uses a custom JSON-based database system located in `/src/lib/json-db/`:
+The project uses Drizzle ORM for type-safe database operations:
 
 ```typescript
-// Repository pattern for data access
-import { toolsRepository } from "@/lib/json-db";
+// Database connection
+import { db } from "@/lib/db";
+import { tools, rankings, news } from "@/lib/db/schema";
 
-const tools = await toolsRepository.getAll();
-const tool = await toolsRepository.getBySlug("tool-name");
+// Type-safe queries
+const allTools = await db.select().from(tools);
+const tool = await db.select().from(tools).where(eq(tools.slug, "tool-name"));
 ```
 
-### Cache Architecture
+### Database Configuration
 
-- **Build-time**: Static JSON generation in `/src/data/cache/`
-- **Runtime**: API route caching with revalidation
-- **Client-side**: React Query for data fetching
+- **ORM**: Drizzle with full TypeScript support
+- **Database**: PostgreSQL (via DATABASE_URL environment variable)
+- **Schema**: Defined in `/src/lib/db/schema.ts`
+- **Migrations**: Located in `/src/lib/db/migrations/`
+- **Studio UI**: Access with `pnpm run db:studio`
+
+### Migration Workflow
+
+```bash
+# Development (push schema changes directly)
+pnpm run db:push
+
+# Production (generate and run migrations)
+pnpm run db:generate   # Create migration files
+pnpm run db:migrate    # Apply migrations
+```
 
 ## 🌐 Internationalization (i18n)
 

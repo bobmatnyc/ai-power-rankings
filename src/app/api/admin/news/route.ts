@@ -8,7 +8,7 @@
  */
 
 import { type NextRequest, NextResponse } from "next/server";
-import { withAdminAuth } from "@/lib/admin-auth";
+import { withAuth } from "@/lib/clerk-auth";
 import { getNewsRepo } from "@/lib/json-db";
 import type { NewsArticle } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
@@ -31,7 +31,7 @@ function generateNewsId(title: string): string {
  * - days: number of days for reports (default 30)
  */
 export async function GET(request: NextRequest) {
-  return withAdminAuth(async (): Promise<NextResponse> => {
+  return withAuth(async (): Promise<NextResponse> => {
     try {
       const { searchParams } = new URL(request.url);
       const action = searchParams.get("action") || "reports";
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
  * - update-metrics: Update news metrics
  */
 export async function POST(request: NextRequest) {
-  return withAdminAuth(async (): Promise<NextResponse> => {
+  return withAuth(async (): Promise<NextResponse> => {
     try {
       const body = await request.json();
       const { action } = body;
@@ -221,11 +221,16 @@ export async function POST(request: NextRequest) {
           const {
             title,
             content,
+            author,
+            summary,
             url,
+            source_url,
             published_at,
             source = "manual",
             tool_mentions = [],
             tags = [],
+            category,
+            importance_score,
           } = body;
 
           if (!title || !content) {
@@ -239,15 +244,19 @@ export async function POST(request: NextRequest) {
             id: generateNewsId(title),
             slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
             title,
-            summary: `${content.substring(0, 200)}...`,
+            summary: summary || `${content.substring(0, 200)}...`,
             content,
-            url,
+            author,
+            url: url || source_url,
             source,
+            source_url,
             published_date: published_at || now,
             created_at: now,
             updated_at: now,
             tool_mentions,
             tags,
+            category,
+            importance_score,
             // ingestion_batch: `manual-${Date.now()}`,
           } as NewsArticle;
 
@@ -361,7 +370,7 @@ export async function POST(request: NextRequest) {
  * Delete news article or batch
  */
 export async function DELETE(request: NextRequest) {
-  return withAdminAuth(async (): Promise<NextResponse> => {
+  return withAuth(async (): Promise<NextResponse> => {
     try {
       const { searchParams } = new URL(request.url);
       const id = searchParams.get("id");

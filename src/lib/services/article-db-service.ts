@@ -40,6 +40,11 @@ export class ArticleDatabaseService {
     this.rankingsCalculator = new RankingsCalculator();
   }
 
+  // Expose the articles repository for direct access
+  getArticlesRepo(): ArticlesRepository {
+    return this.articlesRepo;
+  }
+
   /**
    * Complete article ingestion with database operations
    */
@@ -297,46 +302,55 @@ export class ArticleDatabaseService {
         });
 
         // Create new companies if needed (only if article was saved)
-        if (!input.dryRun && article?.id) {
+        if (!input.dryRun && article?.id && newCompanies) {
           for (const company of newCompanies) {
+            // Handle both string and object formats
+            const companyName = typeof company === 'string' ? company : company.name;
+            const companyWebsite = typeof company === 'object' ? company.website : undefined;
+
             try {
               await this.articlesRepo.createAutoCompany(
                 {
-                  name: company.name,
-                  slug: company.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-                  website: company.website,
+                  name: companyName,
+                  slug: companyName.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+                  website: companyWebsite,
                 },
                 article.id
               );
             } catch (companyError) {
-              console.error(`[ArticleDB] Failed to create company ${company.name}:`, companyError);
+              console.error(`[ArticleDB] Failed to create company ${companyName}:`, companyError);
               // Continue with other companies even if one fails
             }
           }
         }
 
         // Create new tools if needed (only if article was saved)
-        if (!input.dryRun && article?.id) {
+        if (!input.dryRun && article?.id && newTools) {
           for (const tool of newTools) {
+            // Handle both string and object formats
+            const toolName = typeof tool === 'string' ? tool : tool.name;
+            const toolCategory = typeof tool === 'object' ? (tool.category || "other") : "other";
+            const toolCompanyId = typeof tool === 'object' ? tool.companyId : undefined;
+
             try {
               await this.articlesRepo.createAutoTool(
                 {
-                  name: tool.name,
-                  slug: tool.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-                  category: tool.category || "other",
-                  companyId: tool.companyId,
+                  name: toolName,
+                  slug: toolName.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+                  category: toolCategory,
+                  companyId: toolCompanyId,
                 },
                 article.id
               );
             } catch (toolError) {
-              console.error(`[ArticleDB] Failed to create tool ${tool.name}:`, toolError);
+              console.error(`[ArticleDB] Failed to create tool ${toolName}:`, toolError);
               // Continue with other tools even if one fails
             }
           }
         }
 
         // Apply ranking changes
-        const rankingChanges: NewArticleRankingsChange[] = predictedChanges.map((change: any) => ({
+        const rankingChanges: NewArticleRankingsChange[] = (predictedChanges as any[]).map((change: any) => ({
           articleId: article.id,
           toolId: change.toolId,
           toolName: change.toolName,
@@ -376,8 +390,8 @@ export class ArticleDatabaseService {
             status: "completed",
             completedAt: new Date(),
             durationMs: Date.now() - startTime,
-            toolsAffected: predictedChanges.length,
-            companiesAffected: newCompanies.length,
+            toolsAffected: (predictedChanges as any[]).length,
+            companiesAffected: newCompanies?.length || 0,
             rankingsChanged: rankingChanges.length,
           });
         }
@@ -495,6 +509,208 @@ export class ArticleDatabaseService {
         durationMs: Date.now() - startTime,
         errorMessage: error instanceof Error ? error.message : "Unknown error",
       });
+
+      throw error;
+    }
+  }
+
+  /**
+   * Cache for storing AI analysis results to avoid duplicate calls
+   */
+  private recalculationCache: Map<string, { analysis: any; timestamp: number }> = new Map();
+  private readonly CACHE_EXPIRY_MS = 15 * 60 * 1000; // 15 minutes
+
+  /**
+   * Recalculate rankings for an article with progress tracking
+   */
+  async recalculateArticleRankingsWithProgress(
+    articleId: string,
+    progressCallback?: (progress: number, step: string) => void,
+    options?: { dryRun?: boolean; useCachedAnalysis?: boolean }
+  ): Promise<{
+    changes: Array<{
+      tool: string;
+      oldScore: number;
+      newScore: number;
+      change: number;
+      oldRank?: number;
+      newRank?: number;
+    }>;
+    summary: {
+      totalToolsAffected: number;
+      averageScoreChange: number;
+    };
+    article?: Article;
+    analysis?: any;
+  }> {
+    const startTime = Date.now();
+    const isDryRun = options?.dryRun || false;
+    const useCachedAnalysis = options?.useCachedAnalysis || false;
+
+    // Send initial progress
+    progressCallback?.(0, isDryRun ? "Starting preview..." : "Starting recalculation...");
+
+    // IMPORTANT: Do NOT create processing log for dry runs
+    // This prevents any database modifications during preview
+    let processingLog: any = null;
+
+    try {
+      // Get the article
+      progressCallback?.(10, "Loading article from database...");
+      const article = await this.articlesRepo.getArticleById(articleId);
+      if (!article) {
+        throw new Error("Article not found");
+      }
+
+      let analysis: any;
+
+      // Check if we should use cached analysis
+      if (useCachedAnalysis) {
+        const cached = this.recalculationCache.get(articleId);
+        if (cached && (Date.now() - cached.timestamp) < this.CACHE_EXPIRY_MS) {
+          progressCallback?.(30, "Using cached AI analysis...");
+          analysis = cached.analysis;
+        }
+      }
+
+      // If no cached analysis or not using cache, re-analyze
+      if (!analysis) {
+        progressCallback?.(30, "Analyzing content with AI...");
+        analysis = await this.aiAnalyzer.analyzeContent(article.content, {
+          url: article.sourceUrl || undefined,
+          fileName: article.fileName || undefined,
+          author: article.author || undefined,
+        });
+
+        // Cache the analysis for potential apply operation
+        this.recalculationCache.set(articleId, {
+          analysis,
+          timestamp: Date.now()
+        });
+      }
+
+      // Get current rankings
+      progressCallback?.(50, "Loading current rankings...");
+      const currentRankings = await this.getCurrentRankings();
+
+      // Calculate new changes
+      progressCallback?.(60, "Calculating ranking changes...");
+      const predictedChanges = this.rankingsCalculator.calculateRankingChanges(
+        analysis,
+        currentRankings
+      );
+
+      // For dry run, stop here and return preview results
+      if (isDryRun) {
+        progressCallback?.(100, "Preview complete!");
+
+        // Format preview results
+        const changes = predictedChanges.map(change => ({
+          tool: change.toolName,
+          oldScore: change.currentScore || 0,
+          newScore: change.predictedScore || 0,
+          change: change.scoreChange || 0,
+          oldRank: change.currentRank,
+          newRank: change.predictedRank
+        }));
+
+        const summary = {
+          totalToolsAffected: changes.length,
+          averageScoreChange: changes.length > 0
+            ? changes.reduce((sum, c) => sum + c.change, 0) / changes.length
+            : 0
+        };
+
+        // Return preview results WITHOUT any database modifications
+        return { changes, summary, article, analysis };
+      }
+
+      // ==== ACTUAL APPLICATION PHASE (non-dry run) ====
+      // Only create processing log when actually applying changes
+      processingLog = await this.articlesRepo.createProcessingLog({
+        articleId,
+        action: "recalculate",
+        status: "started",
+        performedBy: "admin",
+      });
+
+      // Continue with actual application of changes for non-dry run
+      progressCallback?.(70, "Rolling back previous changes...");
+      await this.articlesRepo.rollbackArticleRankings(articleId);
+
+      // Apply new changes
+      progressCallback?.(80, "Applying new ranking changes...");
+      const rankingChanges: NewArticleRankingsChange[] = predictedChanges.map((change) => ({
+        articleId,
+        toolId: change.toolId,
+        toolName: change.toolName,
+        metricChanges: change.metrics,
+        oldRank: change.currentRank,
+        newRank: change.predictedRank,
+        rankChange: change.rankChange,
+        oldScore: change.currentScore?.toString() || "0",
+        newScore: change.predictedScore?.toString() || "0",
+        scoreChange: change.scoreChange?.toString() || "0",
+        changeType:
+          (change.scoreChange || 0) > 0
+            ? "increase"
+            : (change.scoreChange || 0) < 0
+              ? "decrease"
+              : "no_change",
+        changeReason: `Recalculation: ${article.title}`,
+        isApplied: true,
+      }));
+
+      if (rankingChanges.length > 0) {
+        await this.articlesRepo.saveRankingChanges(rankingChanges);
+        await this.applyRankingChanges(rankingChanges);
+      }
+
+      progressCallback?.(90, "Finalizing changes...");
+
+      // Update processing log
+      if (processingLog) {
+        await this.articlesRepo.updateProcessingLog(processingLog.id, {
+          status: "completed",
+          completedAt: new Date(),
+          durationMs: Date.now() - startTime,
+          rankingsChanged: rankingChanges.length,
+        });
+      }
+
+      progressCallback?.(100, "Recalculation complete!");
+
+      // Clear the cache after successful application
+      this.recalculationCache.delete(articleId);
+
+      // Format and return results using original predictedChanges data
+      const changes = predictedChanges.map(change => ({
+        tool: change.toolName,
+        oldScore: change.currentScore || 0,
+        newScore: change.predictedScore || 0,
+        change: change.scoreChange || 0,
+        oldRank: change.currentRank,
+        newRank: change.predictedRank
+      }));
+
+      const summary = {
+        totalToolsAffected: changes.length,
+        averageScoreChange: changes.length > 0
+          ? changes.reduce((sum, c) => sum + c.change, 0) / changes.length
+          : 0
+      };
+
+      return { changes, summary };
+    } catch (error) {
+      // Update processing log with error (only for non-dry runs)
+      if (processingLog) {
+        await this.articlesRepo.updateProcessingLog(processingLog.id, {
+          status: "failed",
+          completedAt: new Date(),
+          durationMs: Date.now() - startTime,
+          errorMessage: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
 
       throw error;
     }

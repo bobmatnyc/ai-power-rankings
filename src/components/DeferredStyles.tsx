@@ -14,12 +14,25 @@ import { useEffect } from "react";
 export function DeferredStyles() {
   useEffect(() => {
     // Load non-critical CSS after initial render
-    const loadDeferredStyles = async () => {
+    const loadDeferredStyles = () => {
       try {
-        // Load globals.css with dynamic import
-        // TypeScript will complain but this works at runtime for CSS files
-        // @ts-ignore - CSS imports are handled by bundler at runtime
-        await import("../app/globals.css");
+        // Create a link element to load CSS asynchronously
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '/globals.css';
+        link.type = 'text/css';
+
+        // Add to head when loaded to prevent FOUC
+        link.onload = () => {
+          document.head.appendChild(link);
+        };
+
+        link.onerror = () => {
+          console.warn("Failed to load deferred styles");
+        };
+
+        // Start loading (but don't append yet)
+        document.head.appendChild(link);
       } catch (error) {
         console.warn("Failed to load deferred styles:", error);
       }

@@ -17,7 +17,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
-import { withAdminAuth } from "@/lib/admin-auth";
+import { withAuth } from "@/lib/clerk-auth";
 import { getRankingsRepo, getToolsRepo } from "@/lib/json-db";
 import type { RankingEntry, RankingPeriod, Tool } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
@@ -122,7 +122,7 @@ type GetResponseData =
     };
 
 export async function GET(request: NextRequest) {
-  return withAdminAuth<GetResponseData>(async () => {
+  return withAuth<GetResponseData>(async () => {
     try {
       const { searchParams } = new URL(request.url);
       const action = searchParams.get("action") || "periods";
@@ -273,7 +273,7 @@ type PostResponseData =
     };
 
 export async function POST(request: NextRequest) {
-  return withAdminAuth<PostResponseData>(async () => {
+  return withAuth<PostResponseData>(async () => {
     try {
       const body = await request.json();
       const { action } = body;
@@ -762,7 +762,7 @@ export async function POST(request: NextRequest) {
 type DeleteResponseData = { success: boolean; message: string };
 
 export async function DELETE(request: NextRequest) {
-  return withAdminAuth<DeleteResponseData>(async () => {
+  return withAuth<DeleteResponseData>(async () => {
     try {
       const { searchParams } = new URL(request.url);
       const period = searchParams.get("period");

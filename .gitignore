@@ -82,3 +82,6 @@ VERSION
 
 # MCP vector search
 .mcp-vector-search/
+
+# temporary files and development artifacts
+/tmp/

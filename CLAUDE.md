@@ -14,13 +14,15 @@
 - **Development**: `pnpm run dev:pm2 start` (THE way to develop)
 - **Quality Check**: `pnpm run ci:local` (THE way to validate code)
 - **Deployment**: `pnpm run pre-deploy && vercel deploy` (THE way to deploy)
-- **Cache Generation**: `pnpm run cache:generate` (THE way to update caches)
+- **Database Migrations**: `pnpm run db:migrate` (THE way to run migrations)
+- **Database Studio**: `pnpm run db:studio` (THE way to inspect database)
 
 ### 🟢 STANDARD - Daily Operations
 - **Testing**: `pnpm run test` (THE way to run tests)
 - **Linting**: `pnpm run lint` (THE way to check code style)
 - **Type Checking**: `pnpm run type-check` (THE way to validate types)
-- **Data Backup**: `pnpm run backup:create` (THE way to backup data)
+- **Database Push**: `pnpm run db:push` (THE way to push schema changes)
+- **Generate Migrations**: `pnpm run db:generate` (THE way to create migrations)
 
 ### ⚪ OPTIONAL - Additional Tools
 - **Performance Monitoring**: `pnpm run perf:audit`
@@ -31,7 +33,7 @@
 
 **Next.js 15 web application** providing AI power rankings and news aggregation with comprehensive data management and multilingual support.
 
-**Tech Stack**: Next.js 15, TypeScript, Tailwind CSS, JSON file-based storage, Vercel deployment
+**Tech Stack**: Next.js 15, TypeScript, Tailwind CSS, Drizzle ORM, PostgreSQL, Vercel deployment
 
 **Development Server**: The AI Power Rankings development server runs on **port 3001** as the designated development port.
 
@@ -76,7 +78,7 @@ cat docs/DEPLOYMENT-GUIDE.md
 3. **🔄 [`/docs/WORKFLOW.md`](/docs/WORKFLOW.md)** - Required processes
 4. **📊 [`/docs/PROJECT.md`](/docs/PROJECT.md)** - Project specifications
 5. **🔧 [`/docs/TOOLCHAIN.md`](/docs/TOOLCHAIN.md)** - Technical implementation
-6. **💾 [`/docs/JSON-STORAGE.md`](/docs/JSON-STORAGE.md)** - Data architecture
+6. **💾 [`/docs/DATABASE.md`](/docs/DATABASE.md)** - Database architecture with Drizzle ORM
 
 **Following these is MANDATORY. No exceptions without explicit approval.**
 
@@ -88,13 +90,12 @@ cat docs/DEPLOYMENT-GUIDE.md
 - [`/docs/WORKFLOW.md`](/docs/WORKFLOW.md) - Required processes (READ THIRD)
 - [`/docs/PROJECT.md`](/docs/PROJECT.md) - Project specifications
 - [`/docs/TOOLCHAIN.md`](/docs/TOOLCHAIN.md) - Technical implementation guide
-- [`/docs/JSON-STORAGE.md`](/docs/JSON-STORAGE.md) - Data architecture
+- [`/docs/DATABASE.md`](/docs/DATABASE.md) - Database architecture with Drizzle ORM
 
 ### 🟡 IMPORTANT - Core Systems
 - [`/docs/DEPLOYMENT-GUIDE.md`](/docs/DEPLOYMENT-GUIDE.md) - Deployment procedures (THE way to deploy)
 - [`/docs/TESTING.md`](/docs/TESTING.md) - Testing strategy (THE way to test)
-- [`/docs/CACHE.md`](/docs/CACHE.md) - Cache generation (THE way to cache)
-- [`/docs/BACKUP-RECOVERY.md`](/docs/BACKUP-RECOVERY.md) - Data backup (THE way to backup)
+- [`/docs/DATABASE.md`](/docs/DATABASE.md) - PostgreSQL + Drizzle ORM guide
 - [`/docs/LINTING-STANDARDS.md`](/docs/LINTING-STANDARDS.md) - Code quality standards
 
 ### 🟢 STANDARD - Features & Operations
@@ -173,24 +174,24 @@ pnpm run lint           # Check code style
 pnpm run type-check     # Check TypeScript
 pnpm run test           # Run tests
 
-# Cache Management  
-pnpm run cache:generate # Generate all cache files (THE way)
+# Database Management
+pnpm run db:push        # Push schema changes to database
+pnpm run db:generate    # Generate migration files
+pnpm run db:migrate     # Run pending migrations
+pnpm run db:studio      # Open Drizzle Studio UI
 ```
 
-### 🟢 STANDARD - Data & Build Operations
+### 🟢 STANDARD - Database & Build Operations
 
 ```bash
-# Data Management
-pnpm run validate:all   # Validate JSON files
-pnpm run backup:create  # Create data backup
+# Database Operations
+pnpm run db:push        # Push schema changes (development)
+pnpm run db:generate    # Generate migration files
+pnpm run db:migrate     # Run migrations (production)
+pnpm run db:studio      # Open database UI
 
 # Build Operations
 pnpm run build         # Build for production
-
-# Specific Cache Operations
-pnpm run cache:rankings # Generate rankings cache only
-pnpm run cache:tools    # Generate tools cache only
-pnpm run cache:news     # Generate news cache only
 ```
 
 ### ⚪ OPTIONAL - Alternative/Legacy Commands (Use Only When Necessary)
@@ -222,11 +223,12 @@ pnpm run dev:pm2 logs
 ### 🔴 CRITICAL - Core Application
 - `/src/app` - Next.js App Router pages (THE app structure)
 - `/src/lib` - Core utilities and services (THE business logic)
-- `/data/json` - Primary JSON data storage (THE data source)
+- `/src/lib/db` - Database schema and migrations (THE data layer)
 
-### 🟡 IMPORTANT - Components & Cache  
+### 🟡 IMPORTANT - Components & Database
 - `/src/components` - React components (THE UI components)
-- `/src/data/cache` - Generated cache files (THE performance layer)
+- `/src/lib/db/schema.ts` - Database schema definitions (THE data model)
+- `/src/lib/db/migrations` - Database migration files (THE schema history)
 
 ### 🟢 STANDARD - Documentation & Scripts
 - `/docs` - Project documentation (THE knowledge base)

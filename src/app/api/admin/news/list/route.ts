@@ -1,30 +1,48 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { withAdminAuth } from "@/lib/admin-auth";
+import { withAuth } from "@/lib/clerk-auth";
+import { newsRepository } from "@/lib/db/repositories/news";
 import { getNewsRepo } from "@/lib/json-db";
 import { loggers } from "@/lib/logger";
 
 /**
  * GET /api/admin/news/list
  *
- * Returns all news articles sorted by published date
+ * Returns all news articles sorted by published date with statistics
  */
 export async function GET(_request: NextRequest) {
-  return withAdminAuth(async (): Promise<NextResponse> => {
+  return withAuth(async (): Promise<NextResponse> => {
     try {
-      const newsRepo = getNewsRepo();
-      const articles = await newsRepo.getAll();
+      // Try database first
+      let articles = await newsRepository.getAll();
+      let stats = null;
 
-      // Sort by published date (newest first)
-      const sortedArticles = articles.sort((a, b) => {
-        const dateA = new Date(a.published_date || a.created_at);
-        const dateB = new Date(b.published_date || b.created_at);
-        return dateB.getTime() - dateA.getTime();
-      });
+      // If no articles in database, fallback to JSON
+      if (!articles || articles.length === 0) {
+        loggers.api.info("No articles in database, falling back to JSON");
+        const newsRepo = getNewsRepo();
+        const jsonArticles = await newsRepo.getAll();
+
+        // Sort by published date (newest first)
+        articles = jsonArticles.sort((a, b) => {
+          const dateA = new Date(a.published_date || a.created_at);
+          const dateB = new Date(b.published_date || b.created_at);
+          return dateB.getTime() - dateA.getTime();
+        });
+      } else {
+        // Get statistics from database
+        stats = await newsRepository.getStatistics();
+      }
 
       return NextResponse.json({
         success: true,
-        articles: sortedArticles,
-        total: sortedArticles.length,
+        articles: articles,
+        total: articles.length,
+        stats: stats || {
+          total: articles.length,
+          currentMonth: 0,
+          lastMonth: 0,
+          averageToolMentions: 0
+        }
       });
     } catch (error) {
       loggers.api.error("Error in admin/news/list GET", { error });

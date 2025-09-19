@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
+import { isAuthenticated } from "@/lib/clerk-auth";
 import { getDb, testConnection } from "@/lib/db/connection";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 // Force Node.js runtime instead of Edge Runtime
 export const runtime = "nodejs";
@@ -96,12 +96,12 @@ function parseDatabaseUrl(url: string | undefined) {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     // Check admin authentication (automatically skipped in local dev)
-    const isAuthenticated = await isAdminAuthenticated(request);
+    const isAuth = await isAuthenticated();
 
-    if (!isAuthenticated) {
+    if (!isAuth) {
       return NextResponse.json(
         { error: "Unauthorized - Admin session required" },
         { status: 401 }

@@ -145,7 +145,7 @@ export class ArticlesRepository {
         const score = article.sentimentScore || "0";
         // Ensure it's a valid decimal string
         const numScore = parseFloat(score.toString());
-        if (isNaN(numScore)) return "0.00";
+        if (Number.isNaN(numScore)) return "0.00";
         // Clamp to valid range (-1 to 1)
         if (numScore < -1) return "-1.00";
         if (numScore > 1) return "1.00";
@@ -169,7 +169,7 @@ export class ArticlesRepository {
     // Log the data being inserted for debugging
     console.log("[ArticlesRepo] Creating article with data:", {
       slug: articleData.slug,
-      title: articleData.title?.substring(0, 50) + "...",
+      title: `${articleData.title?.substring(0, 50)}...`,
       contentLength: articleData.content?.length,
       toolMentionsCount: articleData.toolMentions?.length,
       companyMentionsCount: articleData.companyMentions?.length,
@@ -622,37 +622,106 @@ export class ArticlesRepository {
    * Get article statistics
    */
   async getArticleStats(): Promise<{
-    total: number;
-    active: number;
-    deleted: number;
-    totalToolMentions: number;
-    averageImportance: number;
+    totalArticles: number;
+    articlesThisMonth: number;
+    articlesLastMonth: number;
+    averageToolMentions: number;
+    topCategories: Array<{ category: string; count: number }>;
   }> {
+    // Get basic counts
     const stats = await this.db
       ?.select({
         total: sqlTag`COUNT(*)`.as("total"),
         active: sqlTag`COUNT(CASE WHEN status = 'active' THEN 1 END)`.as("active"),
-        deleted: sqlTag`COUNT(CASE WHEN status = 'deleted' THEN 1 END)`.as("deleted"),
-        avgImportance: sqlTag`AVG(importance_score)`.as("avgImportance"),
       })
       .from(articles);
 
-    // Get tool mentions count
-    const toolMentions = await this.db
+    const firstStat = stats?.[0];
+    const totalArticles = firstStat ? Number(firstStat.total || 0) : 0;
+
+    // Calculate current month and last month dates
+    const now = new Date();
+    const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+
+    // Get articles for this month
+    const thisMonthStats = await this.db
       ?.select({
         count: sqlTag`COUNT(*)`.as("count"),
       })
-      .from(articleRankingsChanges);
+      .from(articles)
+      .where(sqlTag`${articles.createdAt} >= ${startOfThisMonth}`);
 
-    const firstStat = stats?.[0];
-    const firstToolMention = toolMentions?.[0];
+    const articlesThisMonth = thisMonthStats?.[0]
+      ? Number(thisMonthStats[0].count || 0)
+      : 0;
+
+    // Get articles for last month
+    const lastMonthStats = await this.db
+      ?.select({
+        count: sqlTag`COUNT(*)`.as("count"),
+      })
+      .from(articles)
+      .where(
+        sqlTag`${articles.createdAt} >= ${startOfLastMonth} AND ${articles.createdAt} <= ${endOfLastMonth}`
+      );
+
+    const articlesLastMonth = lastMonthStats?.[0]
+      ? Number(lastMonthStats[0].count || 0)
+      : 0;
+
+    // Calculate average tool mentions per article
+    // First, get all articles with their tool mentions
+    const articlesWithMentions = await this.db
+      ?.select({
+        toolMentions: articles.toolMentions,
+      })
+      .from(articles)
+      .where(eq(articles.status, "active"));
+
+    let totalMentions = 0;
+    let articlesWithTools = 0;
+
+    if (articlesWithMentions) {
+      for (const article of articlesWithMentions) {
+        if (article.toolMentions && Array.isArray(article.toolMentions)) {
+          const mentionCount = article.toolMentions.length;
+          if (mentionCount > 0) {
+            totalMentions += mentionCount;
+            articlesWithTools++;
+          }
+        }
+      }
+    }
+
+    const averageToolMentions = articlesWithTools > 0
+      ? totalMentions / articlesWithTools
+      : 0;
+
+    // Get top categories
+    const categoryStats = await this.db
+      ?.select({
+        category: articles.category,
+        count: sqlTag`COUNT(*)`.as("count"),
+      })
+      .from(articles)
+      .where(eq(articles.status, "active"))
+      .groupBy(articles.category)
+      .orderBy(sqlTag`COUNT(*) DESC`)
+      .limit(5);
+
+    const topCategories = categoryStats?.map((cat) => ({
+      category: cat.category || "Uncategorized",
+      count: Number(cat.count || 0),
+    })) || [];
 
     return {
-      total: firstStat ? Number(firstStat.total || 0) : 0,
-      active: firstStat ? Number(firstStat.active || 0) : 0,
-      deleted: firstStat ? Number(firstStat.deleted || 0) : 0,
-      totalToolMentions: firstToolMention ? Number(firstToolMention.count || 0) : 0,
-      averageImportance: firstStat ? Number(firstStat.avgImportance || 0) : 0,
+      totalArticles,
+      articlesThisMonth,
+      articlesLastMonth,
+      averageToolMentions,
+      topCategories,
     };
   }
 

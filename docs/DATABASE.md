@@ -1,347 +1,311 @@
-# Database Architecture - JSON Storage System
+# 🗄️ AI Power Rankings - Database Architecture
 
 ## Overview
 
-AI Power Rankings uses a static JSON file-based database system for all data storage. This architecture eliminates traditional database dependencies, improves development velocity, and enables version control for all data changes.
+AI Power Rankings uses **PostgreSQL** as its primary database with **Drizzle ORM** for type-safe database operations. This document covers the complete database setup, schema design, and operational procedures.
 
-## Architecture
+## 🎯 Quick Reference
 
-### Directory Structure
+### Essential Commands
 
-```
-data/
-├── json/
-│   ├── tools/
-│   │   ├── individual/         # Individual tool files (primary)
-│   │   │   ├── aider.json
-│   │   │   ├── cursor.json
-│   │   │   └── ...           # 30 individual tool files
-│   │   ├── tools-index.json    # Lookup indices and metadata
-│   │   └── tools.json          # Legacy file (deprecated)
-│   ├── rankings/
-│   │   ├── index.json          # Rankings metadata
-│   │   └── periods/            # Individual ranking periods
-│   │       ├── 2025-01.json
-│   │       └── 2025-06.json
-│   ├── news/
-│   │   └── news.json           # News articles
-│   ├── companies/
-│   │   └── companies.json      # Company data
-│   ├── subscribers/
-│   │   └── subscribers.json    # Newsletter subscribers
-│   └── settings/
-│       └── site-settings.json  # Site configuration
-└── backups/                    # Automated backups
-    └── backup-YYYY-MM-DD-HHMMSS/
+```bash
+# Development
+pnpm run db:push        # Push schema changes directly to database
+pnpm run db:studio      # Open Drizzle Studio UI for database inspection
+
+# Production
+pnpm run db:generate    # Generate migration files from schema changes
+pnpm run db:migrate     # Apply migrations to database
 ```
 
-## Repository Pattern
+## 🏗️ Architecture
 
-All data access is managed through repository classes that extend `BaseRepository`:
+### Technology Stack
 
-### BaseRepository
+- **Database**: PostgreSQL 15+
+- **ORM**: Drizzle ORM v0.44+
+- **Connection**: Pooled connections via Vercel/Supabase
+- **Type Safety**: Full TypeScript integration
+- **Migrations**: Automated schema migrations
 
+### Configuration Files
+
+- `/drizzle.config.ts` - Drizzle configuration
+- `/src/lib/db/schema.ts` - Database schema definitions
+- `/src/lib/db/index.ts` - Database connection setup
+- `/src/lib/db/migrations/` - Migration files directory
+
+## 📊 Database Schema
+
+### Core Tables
+
+#### Tools Table
 ```typescript
-import { BaseRepository } from '@/lib/json-db/base-repository';
-
-class YourRepository extends BaseRepository<YourDataType> {
-  constructor() {
-    super(filePath, defaultData);
-  }
-}
-```
-
-**Features:**
-- Atomic writes with automatic backups
-- File locking to prevent race conditions
-- Automatic JSON validation
-- Built-in error recovery
-- Logging for all operations
-
-### Available Repositories
-
-1. **ToolsRepository** - `/lib/json-db/tools-repository.ts`
-   - Manages AI tools data
-   - Methods: `getAll()`, `getById()`, `getBySlug()`, `getByStatus()`, `create()`, `update()`, `delete()`
-
-2. **RankingsRepository** - `/lib/json-db/rankings-repository.ts`
-   - Manages ranking periods and entries
-   - Methods: `getPeriods()`, `getRankingsForPeriod()`, `saveRankingsForPeriod()`, `getCurrentPeriod()`, `setCurrentPeriod()`
-
-3. **NewsRepository** - `/lib/json-db/news-repository.ts`
-   - Manages news articles
-   - Methods: `getAll()`, `getById()`, `getBySlug()`, `getByDate()`, `getRecent()`, `create()`, `update()`
-
-4. **CompaniesRepository** - `/lib/json-db/companies-repository.ts`
-   - Manages company data
-   - Methods: `getAll()`, `getById()`, `getBySlug()`, `create()`, `update()`, `delete()`
-
-5. **SubscribersRepository** - `/lib/json-db/subscribers-repository.ts`
-   - Manages newsletter subscribers
-   - Methods: `getAll()`, `getByEmail()`, `getByStatus()`, `create()`, `update()`, `verifySubscriber()`
-
-## Data Schemas
-
-All data structures are defined in `/lib/json-db/schemas.ts`:
-
-### Tool Schema
-```typescript
-interface Tool {
-  id: string;
-  slug: string;
-  name: string;
-  category: string;
-  status: 'active' | 'inactive' | 'deprecated';
-  company_id?: string;
-  info: {
-    summary: string;
-    description: string;
-    website: string;
-    features: string[];
-    technical: {
-      context_window?: number;
-      supported_languages?: number;
-      // ...
-    };
-    business: {
-      pricing_model?: string;
-      business_model?: string;
-      // ...
-    };
-    metrics: {
-      github_stars?: number;
-      estimated_users?: number;
-      // ...
-    };
-  };
-  created_at: string;
-  updated_at: string;
-}
-```
-
-### Ranking Schema
-```typescript
-interface RankingPeriod {
-  period: string;          // "2025-06"
-  algorithm_version: string;
-  is_current: boolean;
-  created_at: string;
-  rankings: RankingEntry[];
-}
-
-interface RankingEntry {
-  tool_id: string;
-  tool_name: string;
-  position: number;
-  score: number;
-  tier?: 'S' | 'A' | 'B' | 'C' | 'D';
-  factor_scores: {
-    agentic_capability: number;
-    innovation: number;
-    // ...
-  };
-}
-```
-
-## Usage Examples
-
-### Reading Data
-
-```typescript
-import { getToolsRepo, getRankingsRepo } from '@/lib/json-db';
-
-// Get all active tools
-const toolsRepo = getToolsRepo();
-const activeTools = await toolsRepo.getByStatus('active');
-
-// Get current rankings
-const rankingsRepo = getRankingsRepo();
-const currentPeriod = await rankingsRepo.getCurrentPeriod();
-const rankings = await rankingsRepo.getRankingsForPeriod(currentPeriod);
-```
-
-### Writing Data
-
-```typescript
-// Update a tool
-await toolsRepo.update(toolId, {
-  info: {
-    metrics: {
-      github_stars: 25000
-    }
-  }
-});
-
-// Create a new ranking period
-await rankingsRepo.saveRankingsForPeriod({
-  period: "2025-07",
-  algorithm_version: "v6.0",
-  is_current: false,
-  created_at: new Date().toISOString(),
-  rankings: calculatedRankings
+export const tools = pgTable('tools', {
+  id: serial('id').primaryKey(),
+  slug: text('slug').notNull().unique(),
+  name: text('name').notNull(),
+  description: text('description'),
+  category: text('category'),
+  website: text('website'),
+  github_url: text('github_url'),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').defaultNow(),
 });
 ```
 
-## Backup and Recovery
+#### Rankings Table
+```typescript
+export const rankings = pgTable('rankings', {
+  id: serial('id').primaryKey(),
+  tool_id: integer('tool_id').references(() => tools.id),
+  period: date('period').notNull(),
+  rank: integer('rank').notNull(),
+  score: real('score').notNull(),
+  tier: text('tier').notNull(),
+  metrics: jsonb('metrics'),
+  created_at: timestamp('created_at').defaultNow(),
+});
+```
+
+#### News Articles Table
+```typescript
+export const articles = pgTable('articles', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  url: text('url').notNull().unique(),
+  published_date: timestamp('published_date'),
+  source: text('source'),
+  content: text('content'),
+  metrics: jsonb('metrics'),
+  tags: text('tags').array(),
+  created_at: timestamp('created_at').defaultNow(),
+});
+```
+
+#### Companies Table
+```typescript
+export const companies = pgTable('companies', {
+  id: serial('id').primaryKey(),
+  slug: text('slug').notNull().unique(),
+  name: text('name').notNull(),
+  description: text('description'),
+  website: text('website'),
+  logo_url: text('logo_url'),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').defaultNow(),
+});
+```
+
+## 🔧 Database Operations
+
+### Connection Setup
+
+```typescript
+// src/lib/db/index.ts
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from './schema';
+
+const connectionString = process.env["DATABASE_URL"]!;
+const client = postgres(connectionString);
+export const db = drizzle(client, { schema });
+```
+
+### Common Queries
+
+#### Fetching All Tools
+```typescript
+import { db } from '@/lib/db';
+import { tools } from '@/lib/db/schema';
+
+const allTools = await db.select().from(tools);
+```
+
+#### Get Tool by Slug
+```typescript
+import { eq } from 'drizzle-orm';
+
+const tool = await db
+  .select()
+  .from(tools)
+  .where(eq(tools.slug, 'cursor'))
+  .limit(1);
+```
+
+#### Latest Rankings
+```typescript
+import { desc } from 'drizzle-orm';
+
+const latestRankings = await db
+  .select()
+  .from(rankings)
+  .orderBy(desc(rankings.period))
+  .limit(50);
+```
+
+#### Insert New Article
+```typescript
+const newArticle = await db
+  .insert(articles)
+  .values({
+    title: 'AI Coding Revolution',
+    url: 'https://example.com/article',
+    source: 'TechCrunch',
+    published_date: new Date(),
+  })
+  .returning();
+```
+
+## 🚀 Migration Workflow
+
+### Development Workflow
+
+1. **Modify Schema**: Edit `/src/lib/db/schema.ts`
+2. **Push Changes**: `pnpm run db:push` (direct schema sync)
+3. **Verify**: `pnpm run db:studio` (inspect changes)
+
+### Production Workflow
+
+1. **Modify Schema**: Edit `/src/lib/db/schema.ts`
+2. **Generate Migration**: `pnpm run db:generate`
+3. **Review Migration**: Check files in `/src/lib/db/migrations/`
+4. **Apply Migration**: `pnpm run db:migrate`
+5. **Verify**: Check production database
+
+### Migration Best Practices
+
+- Always test migrations in development first
+- Review generated SQL before applying to production
+- Keep migrations small and focused
+- Never modify existing migration files
+- Use transactions for complex migrations
+
+## 🔍 Drizzle Studio
+
+Access the visual database browser:
+
+```bash
+pnpm run db:studio
+```
+
+Features:
+- Browse all tables and data
+- Execute queries
+- Modify data directly
+- Export data
+- View relationships
+
+Default URL: `http://localhost:4983`
+
+## 🔐 Environment Variables
+
+Required environment variables:
+
+```env
+# Development (.env.local)
+DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+DIRECT_DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+
+# Production (.env.production)
+DATABASE_URL=postgresql://user:password@host:5432/dbname?pgbouncer=true
+DIRECT_DATABASE_URL=postgresql://user:password@host:5432/dbname
+```
+
+- `DATABASE_URL`: Pooled connection for application queries
+- `DIRECT_DATABASE_URL`: Direct connection for migrations
+
+## 📈 Performance Optimization
+
+### Indexes
+
+Key indexes for performance:
+
+```sql
+-- Tools lookup
+CREATE INDEX idx_tools_slug ON tools(slug);
+
+-- Rankings queries
+CREATE INDEX idx_rankings_period ON rankings(period DESC);
+CREATE INDEX idx_rankings_tool_period ON rankings(tool_id, period DESC);
+
+-- Articles by date
+CREATE INDEX idx_articles_published ON articles(published_date DESC);
+```
+
+### Query Optimization
+
+- Use `select()` with specific columns instead of `*`
+- Implement pagination for large datasets
+- Use database-level filtering instead of application filtering
+- Leverage indexes for common query patterns
+
+## 🛡️ Backup and Recovery
+
+### Backup Strategy
+
+```bash
+# Manual backup
+pg_dump $DATABASE_URL > backup_$(date +%Y%m%d).sql
+
+# Restore from backup
+psql $DATABASE_URL < backup_20250129.sql
+```
 
 ### Automated Backups
 
-The system automatically creates backups:
-1. **Before every write operation** - Ensures data safety
-2. **Daily at 2 AM** - Scheduled backups in production
-3. **Rotation policy** - Keeps last 10 backups
+- Vercel/Supabase provides automated daily backups
+- Point-in-time recovery available
+- Regular backup testing recommended
 
-### Manual Backup Commands
-
-```bash
-# Create backup
-npm run backup:create
-
-# Restore from latest backup
-npm run backup:restore:latest
-
-# Interactive restore (choose backup)
-npm run backup:restore
-```
-
-### Backup Structure
-```
-data/backups/
-└── backup-2025-06-29-220000/
-    ├── tools/
-    ├── rankings/
-    ├── news/
-    ├── companies/
-    ├── subscribers/
-    ├── settings/
-    └── backup-metadata.json
-```
-
-## Performance Optimization
-
-### Caching
-- In-memory caching via LowDB
-- File reads are cached until write operations
-- No cache expiration needed (data changes infrequently)
-
-### Indexing
-Each repository maintains indices for fast lookups:
-- `byId` - O(1) lookup by ID
-- `bySlug` - O(1) lookup by slug
-- `byDate` - O(1) lookup by date (news)
-- `byStatus` - O(1) filtering by status
-
-### File Size Management
-- Tools: ~65KB (30 tools)
-- Rankings: ~10KB per period
-- News: ~50KB (20 articles)
-- All files remain under 100KB for fast parsing
-
-## Migration from Previous System
-
-### From Payload CMS + Supabase
-```bash
-# Run migration scripts
-npm run json:migrate
-npm run json:migrate:historical
-npm run json:validate
-```
-
-### Rollback if needed
-```bash
-# List available rollback points
-npm run json:rollback:list
-
-# Rollback to specific point
-npm run json:rollback
-```
-
-## API Integration
-
-All API endpoints use the repository pattern:
-
-```typescript
-// Example: /api/tools/route.ts
-import { getToolsRepo } from '@/lib/json-db';
-
-export async function GET() {
-  const toolsRepo = getToolsRepo();
-  const tools = await toolsRepo.getAll();
-  
-  return NextResponse.json({
-    tools,
-    _source: 'json-db'
-  });
-}
-```
-
-## Development Workflow
-
-### Local Development
-1. Data files are tracked in git (except backups)
-2. Changes to data create diffs for review
-3. Commits capture data history
-
-### Testing
-```bash
-# Validate all JSON files
-npm run validate:all
-
-# Test specific repository
-npm run test:api:tools
-npm run test:api:rankings
-```
-
-### Deployment
-1. Data files are included in the build
-2. Vercel serves them as static assets
-3. No database connection needed
-4. Zero cold starts
-
-## Troubleshooting
+## 🔥 Troubleshooting
 
 ### Common Issues
 
-1. **File locked error**
-   - Another process is writing
-   - Wait and retry
-   - Check for hung processes
+#### Connection Errors
+- Verify `DATABASE_URL` is set correctly
+- Check network/firewall settings
+- Ensure database server is running
 
-2. **Invalid JSON error**
-   - Run validation: `npm run validate:all`
-   - Check file syntax
-   - Restore from backup if corrupted
+#### Migration Failures
+- Check for conflicting schema changes
+- Verify database permissions
+- Review migration SQL for errors
 
-3. **Missing data**
-   - Check file exists in correct location
-   - Verify file permissions
-   - Run initialization: `npm run json:migrate`
+#### Type Errors
+- Run `pnpm run db:generate` after schema changes
+- Ensure TypeScript types are regenerated
+- Check for version mismatches
 
 ### Debug Commands
 
 ```bash
-# Check file integrity
-npm run health:check
+# Test database connection
+npx drizzle-kit check
 
-# View backup list
-ls -la data/backups/
+# View pending migrations
+npx drizzle-kit migrations list
 
-# Manually inspect JSON
-cat data/json/tools/tools.json | jq '.tools | length'
+# Generate SQL without applying
+npx drizzle-kit generate --dry-run
 ```
 
-## Security Considerations
+## 📚 Additional Resources
 
-1. **No SQL injection** - No SQL queries
-2. **No connection strings** - No database credentials
-3. **File permissions** - Managed by OS/deployment platform
-4. **Validation** - All inputs validated before writing
-5. **Backups** - Automatic recovery from corruption
+- [Drizzle ORM Documentation](https://orm.drizzle.team/)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [Vercel PostgreSQL Guide](https://vercel.com/docs/storage/vercel-postgres)
+- [Database Schema Design Best Practices](https://orm.drizzle.team/docs/guides/database-design)
 
-## Future Enhancements
+## 🎯 Migration from JSON
 
-- [ ] Implement file-based transactions
-- [ ] Add compression for large datasets
-- [ ] Create data migration tooling
-- [ ] Build admin UI for data management
-- [ ] Add real-time sync capabilities
+The project has migrated from JSON file storage to PostgreSQL. Legacy JSON files are archived in `/data/json/` for reference. All new development should use the database exclusively.
+
+### Data Migration Script
+
+```bash
+# One-time migration from JSON to database
+pnpm run migrate:json-to-db
+```
+
+This completes the database architecture documentation for AI Power Rankings.

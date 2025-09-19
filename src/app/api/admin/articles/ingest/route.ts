@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { isAuthenticated } from "@/lib/clerk-auth";
 import { ArticleIngestionSchema } from "@/lib/services/article-ingestion.service";
 import { ArticleDatabaseService } from "@/lib/services/article-db-service";
 import { getDb } from "@/lib/db/connection";
@@ -12,8 +12,8 @@ import { getDb } from "@/lib/db/connection";
 export async function POST(request: NextRequest) {
   try {
     // Check admin authentication
-    const isAuthenticated = await isAdminAuthenticated();
-    if (!isAuthenticated) {
+    const isAuth = await isAuthenticated();
+    if (!isAuth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

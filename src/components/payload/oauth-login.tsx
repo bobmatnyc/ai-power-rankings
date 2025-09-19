@@ -6,7 +6,9 @@ import { useEffect } from "react";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 
 const OAuthLoginContent = () => {
-  const { data: session, status } = useSession();
+  const sessionData = useSession();
+  const session = sessionData?.data;
+  const status = sessionData?.status;
 
   useEffect(() => {
     if (session?.user?.email) {

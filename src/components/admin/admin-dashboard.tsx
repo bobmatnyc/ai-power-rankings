@@ -16,7 +16,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function AdminDashboard() {
-  const { data: session } = useSession();
+  const session = useSession();
   const [currentLiveRanking, setCurrentLiveRanking] = useState<string | null>(null);
   const [isLoadingRanking, setIsLoadingRanking] = useState(true);
 
@@ -104,7 +104,7 @@ export function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* User Welcome */}
-      <div className="text-sm text-muted-foreground">Welcome back, {session?.user?.email}</div>
+      <div className="text-sm text-muted-foreground">Welcome back, {session?.data?.user?.email}</div>
 
       {/* Admin Sections Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">

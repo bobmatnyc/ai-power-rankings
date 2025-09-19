@@ -1,0 +1,206 @@
+{
+  "errors": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "location": {
+        "url": "http://localhost:3001/en/icon.png"
+      },
+      "timestamp": "2025-09-19T13:42:38.663Z"
+    }
+  ],
+  "warnings": [
+    {
+      "type": "warn",
+      "text": "Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@radix-ui+react-dialog@1.1.14_@types+react-dom@19.1.6_@types+react@19.1.6_react-dom@19.1.0_react@19.1.0/node_modules/@radix-ui/react-dialog/dist/index.mjs",
+        "lineNumber": 509,
+        "columnNumber": 45
+      },
+      "timestamp": "2025-09-19T13:42:40.709Z"
+    },
+    {
+      "type": "warn",
+      "text": "Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@radix-ui+react-dialog@1.1.14_@types+react-dom@19.1.6_@types+react@19.1.6_react-dom@19.1.0_react@19.1.0/node_modules/@radix-ui/react-dialog/dist/index.mjs",
+        "lineNumber": 509,
+        "columnNumber": 45
+      },
+      "timestamp": "2025-09-19T13:42:40.710Z"
+    }
+  ],
+  "logs": [
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.3.3_@babel+core@7.27.4_@opentelemetry+api@1.9.0_react-dom@19.1.0_react@19.1.0/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js",
+        "lineNumber": 25022,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.551Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.689Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.689Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.691Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.691Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.693Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.693Z"
+    },
+    {
+      "type": "log",
+      "text": "Using server-side rankings, skipping client fetch",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/app/[lang]/client-rankings-optimized.tsx",
+        "lineNumber": 389,
+        "columnNumber": 24
+      },
+      "timestamp": "2025-09-19T13:42:38.699Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.704Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.704Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.705Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.705Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.707Z"
+    },
+    {
+      "type": "log",
+      "text": "ToolIcon: JSHandle@object",
+      "location": {
+        "url": "webpack-internal:///(app-pages-browser)/./src/components/ui/tool-icon.tsx",
+        "lineNumber": 25,
+        "columnNumber": 16
+      },
+      "timestamp": "2025-09-19T13:42:38.707Z"
+    },
+    {
+      "type": "log",
+      "text": "%c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit",
+      "location": {
+        "url": "https://va.vercel-scripts.com/v1/script.debug.js",
+        "lineNumber": 0,
+        "columnNumber": 461
+      },
+      "timestamp": "2025-09-19T13:42:38.728Z"
+    },
+    {
+      "type": "log",
+      "text": "%c[Vercel Web Analytics]%c [pageview] http://localhost:3001/en color: rgb(120, 120, 120) color: inherit JSHandle@object",
+      "location": {
+        "url": "https://va.vercel-scripts.com/v1/script.debug.js",
+        "lineNumber": 0,
+        "columnNumber": 461
+      },
+      "timestamp": "2025-09-19T13:42:38.728Z"
+    },
+    {
+      "type": "log",
+      "text": "%c[Vercel Speed Insights]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit",
+      "location": {
+        "url": "https://va.vercel-scripts.com/v1/speed-insights/script.debug.js",
+        "lineNumber": 0,
+        "columnNumber": 11257
+      },
+      "timestamp": "2025-09-19T13:42:38.729Z"
+    }
+  ]
+}

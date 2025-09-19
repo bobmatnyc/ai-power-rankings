@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
+import { getAuth } from "@/lib/auth-helper";
 import UnifiedAdminDashboard from "@/components/admin/unified-admin-dashboard";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
 
 export default async function AdminPage() {
-  // Check if admin is authenticated
-  const isAuthenticated = await isAdminAuthenticated();
+  // Check if user is authenticated
+  const { userId } = await getAuth();
 
-  if (!isAuthenticated) {
-    redirect("/admin/auth/signin");
+  if (!userId) {
+    redirect("/sign-in");
   }
 
   return <UnifiedAdminDashboard />;

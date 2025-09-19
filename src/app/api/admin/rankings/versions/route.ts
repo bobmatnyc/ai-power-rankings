@@ -16,10 +16,10 @@ interface RankingVersion {
 export async function GET(_request: NextRequest) {
   try {
     // Check admin authentication
-    const { isAdminAuthenticated } = await import("@/lib/admin-auth");
-    const isAuthenticated = await isAdminAuthenticated();
-    
-    if (!isAuthenticated) {
+    const { isAuthenticated } = await import("@/lib/clerk-auth");
+    const isAuth = await isAuthenticated();
+
+    if (!isAuth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

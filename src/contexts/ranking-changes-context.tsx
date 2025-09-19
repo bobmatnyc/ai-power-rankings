@@ -1,7 +1,6 @@
 "use client";
 
-import type React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import * as React from "react";
 
 interface RankingChanges {
   totalChanges: number;
@@ -17,10 +16,10 @@ interface RankingChangesContextType {
   clearChanges: () => void;
 }
 
-const RankingChangesContext = createContext<RankingChangesContextType | undefined>(undefined);
+const RankingChangesContext = React.createContext<RankingChangesContextType | undefined>(undefined);
 
 export function RankingChangesProvider({ children }: { children: React.ReactNode }) {
-  const [changes, setChanges] = useState<RankingChanges | null>(() => {
+  const [changes, setChanges] = React.useState<RankingChanges | null>(() => {
     // Load from localStorage on mount
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("rankingChanges");
@@ -38,7 +37,7 @@ export function RankingChangesProvider({ children }: { children: React.ReactNode
   });
 
   // Save to localStorage whenever changes update
-  useEffect(() => {
+  React.useEffect(() => {
     if (changes) {
       localStorage.setItem("rankingChanges", JSON.stringify(changes));
     } else {
@@ -59,7 +58,7 @@ export function RankingChangesProvider({ children }: { children: React.ReactNode
 }
 
 export function useRankingChanges() {
-  const context = useContext(RankingChangesContext);
+  const context = React.useContext(RankingChangesContext);
   if (context === undefined) {
     throw new Error("useRankingChanges must be used within a RankingChangesProvider");
   }

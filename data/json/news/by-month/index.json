@@ -6,6 +6,11 @@
       "filename": "news-backup-20250807-161702.json"
     },
     {
+      "month": "2025-09",
+      "articleCount": 2,
+      "filename": "2025-09.json"
+    },
+    {
       "month": "2025-08",
       "articleCount": 28,
       "filename": "2025-08.json"
@@ -156,6 +161,6 @@
       "filename": "2018-05.json"
     }
   ],
-  "totalArticles": 316,
-  "lastUpdated": "2025-09-14T16:06:12.347Z"
+  "totalArticles": 318,
+  "lastUpdated": "2025-09-18T14:42:27.957Z"
 }

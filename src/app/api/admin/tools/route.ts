@@ -9,7 +9,7 @@
  */
 
 import { type NextRequest, NextResponse } from "next/server";
-import { withAdminAuth } from "@/lib/admin-auth";
+import { withAuth } from "@/lib/clerk-auth";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import type { Tool } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
@@ -45,7 +45,7 @@ interface ExtendedTool extends Tool {
  * - status: filter by status for list action
  */
 export async function GET(request: NextRequest) {
-  return withAdminAuth<
+  return withAuth<
     Record<string, ToolCheckResult> | { total: number; tools: unknown[] } | { error: string }
   >(async () => {
     try {
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
  * - update-company: Update company data for a tool
  */
 export async function POST(request: NextRequest) {
-  return withAdminAuth<
+  return withAuth<
     | {
         success: boolean;
         message: string;
@@ -333,7 +333,7 @@ export async function POST(request: NextRequest) {
  * Delete a single tool by ID
  */
 export async function DELETE(request: NextRequest) {
-  return withAdminAuth<
+  return withAuth<
     { success: boolean; message: string; deletedCount?: number } | { error: string }
   >(async () => {
     try {
@@ -391,7 +391,7 @@ export async function DELETE(request: NextRequest) {
  * Quick fix and update operations
  */
 export async function PUT(request: NextRequest) {
-  return withAdminAuth<{ success: boolean; message: string } | { error: string }>(async () => {
+  return withAuth<{ success: boolean; message: string } | { error: string }>(async () => {
     try {
       const body = await request.json();
       const { action } = body;

@@ -41,7 +41,7 @@ interface SEOMetrics {
 }
 
 export function SEODashboard() {
-  const { data: session, status } = useSession();
+  const session = useSession();
   const [metrics, setMetrics] = useState<SEOMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,10 +66,10 @@ export function SEODashboard() {
   }, []);
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (session?.status === "authenticated") {
       fetchSEOMetrics();
     }
-  }, [status, fetchSEOMetrics]);
+  }, [session?.status, fetchSEOMetrics]);
 
   const submitSitemap = async () => {
     try {
@@ -184,7 +184,7 @@ export function SEODashboard() {
             Last updated: {new Date(metrics.lastUpdated).toLocaleString()}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">{session?.user?.email}</span>
+            <span className="text-sm text-muted-foreground">{session?.data?.user?.email}</span>
             <Button
               variant="outline"
               size="sm"

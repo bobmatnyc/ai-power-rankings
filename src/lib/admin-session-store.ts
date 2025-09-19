@@ -11,10 +11,6 @@ class SessionStore {
   private lastCleanup = 0;
   private readonly MIN_CLEANUP_INTERVAL = 5 * 60 * 1000; // Cleanup at most every 5 minutes
 
-  constructor() {
-    // No timers in serverless - cleanup happens lazily
-  }
-
   /**
    * Perform lazy cleanup - only when enough time has passed
    * This avoids the need for timers in serverless environments

@@ -575,10 +575,10 @@ export async function POST(request: NextRequest) {
 
   try {
     // Check admin authentication
-    const { isAdminAuthenticated } = await import("@/lib/admin-auth");
-    const isAuthenticated = await isAdminAuthenticated();
+    const { isAuthenticated } = await import("@/lib/clerk-auth");
+    const isAuth = await isAuthenticated();
     
-    if (!isAuthenticated) {
+    if (!isAuth) {
       console.log("[News Analysis] Unauthorized - admin authentication required");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

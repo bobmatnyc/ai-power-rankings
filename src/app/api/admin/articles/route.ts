@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { isAuthenticated } from "@/lib/clerk-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getDb } from "@/lib/db/connection";
 
@@ -10,8 +10,8 @@ import { getDb } from "@/lib/db/connection";
 export async function GET(request: NextRequest) {
   try {
     // Check admin authentication (automatically skipped in local dev)
-    const isAuthenticated = await isAdminAuthenticated(request);
-    if (!isAuthenticated) {
+    const isAuth = await isAuthenticated();
+    if (!isAuth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
       pagination: {
         limit,
         offset,
-        total: stats?.total || articles.length,
+        total: stats?.totalArticles || articles.length,
       },
     });
   } catch (error) {

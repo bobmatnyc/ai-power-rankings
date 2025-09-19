@@ -1,12 +1,13 @@
 import { ArrowRight, ArrowUp, Star } from "lucide-react";
 import type { Metadata } from "next";
-import dynamicImport from "next/dynamic";
+import NextDynamic from "next/dynamic";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
 import { RankingsTableSkeleton } from "@/components/ui/skeleton";
+import { SignupForUpdatesButton } from "@/components/auth/signup-button-wrapper";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
@@ -46,28 +47,25 @@ interface RankingData {
   };
 }
 
+interface PageProps {
+  params: Promise<{ lang: Locale }>;
+}
+
 // Dynamic import for T-031 performance optimization
-const ClientRankings = dynamicImport(
-  () => import("./client-rankings-optimized").then((mod) => ({ default: mod.ClientRankings })),
+const ClientRankings = NextDynamic(
+  () => import("./client-rankings-optimized"),
   {
     loading: () => <RankingsTableSkeleton />,
   }
 );
 
 // Dynamic import for T-033 What's New modal
-const WhatsNewModalClient = dynamicImport(
-  () =>
-    import("@/components/ui/whats-new-modal-client").then((mod) => ({
-      default: mod.WhatsNewModalClient,
-    })),
+const WhatsNewModalClient = NextDynamic(
+  () => import("@/components/ui/whats-new-modal-client"),
   {
     loading: () => <div></div>,
   }
 );
-
-interface PageProps {
-  params: Promise<{ lang: Locale }>;
-}
 
 // Force dynamic rendering to ensure API calls work at runtime
 export const dynamic = "force-dynamic";
@@ -327,14 +325,10 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
               <p className="text-sm text-muted-foreground mb-3">
                 Get weekly updates on the latest AI tool rankings
               </p>
-              <Button variant="ghost" size="sm" asChild>
-                <Link
-                  href={`/${lang}/about?subscribe=true`}
-                  className="text-primary hover:text-primary/80"
-                >
-                  Subscribe to Updates →
-                </Link>
-              </Button>
+              <SignupForUpdatesButton
+                text={dict.common.signupForUpdates}
+                className="text-primary hover:text-primary/80"
+              />
             </div>
           </div>
 

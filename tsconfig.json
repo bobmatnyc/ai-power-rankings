@@ -13,6 +13,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "jsxImportSource": "react",
+    // CRITICAL FIX: Explicit JSX runtime configuration for Next.js 15 + React 19
+    "jsxFactory": "React.createElement",
+    "jsxFragmentFactory": "React.Fragment",
     "incremental": true,
 
     // Strict type checking options

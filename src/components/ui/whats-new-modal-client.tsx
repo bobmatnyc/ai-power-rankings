@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { WhatsNewModal } from "./whats-new-modal";
 
-export function WhatsNewModalClient(): React.JSX.Element {
+function WhatsNewModalClient(): React.JSX.Element {
   const [showWhatsNew, setShowWhatsNew] = useState(false);
 
   useEffect(() => {
@@ -46,3 +46,5 @@ export function WhatsNewModalClient(): React.JSX.Element {
 
   return <WhatsNewModal open={showWhatsNew} onOpenChange={setShowWhatsNew} />;
 }
+
+export default WhatsNewModalClient;

@@ -14,13 +14,12 @@ import {
   Loader2,
   Newspaper,
   Plus,
-  RefreshCw,
   Save,
   Trash2,
   Upload,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -94,6 +93,30 @@ interface IngestionPreview {
   };
 }
 
+interface RecalcProgress {
+  articleId: string;
+  progress: number;
+  step: string;
+  isActive: boolean;
+}
+
+interface RecalcResult {
+  articleId: string;
+  toolChanges: Array<{
+    tool: string;
+    oldScore: number;
+    newScore: number;
+    change: number;
+    oldRank?: number;
+    newRank?: number;
+  }>;
+  summary: {
+    totalToolsAffected: number;
+    averageScoreChange: number;
+  };
+  isPreview?: boolean;
+}
+
 export function ArticleManagement() {
   const [activeTab, setActiveTab] = useState("add");
   const [articles, setArticles] = useState<Article[]>([]);
@@ -101,6 +124,17 @@ export function ArticleManagement() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  // Recalculation progress tracking
+  const [recalcProgress, setRecalcProgress] = useState<Map<string, RecalcProgress>>(new Map());
+  const [recalcResults, setRecalcResults] = useState<RecalcResult | null>(null);
+  const [showResultsModal, setShowResultsModal] = useState(false);
+  const [showRecalcPreviewModal, setShowRecalcPreviewModal] = useState(false);
+  const [recalcPreviewData, setRecalcPreviewData] = useState<RecalcResult | null>(null);
+  const [isApplying, setIsApplying] = useState(false);
+
+  // EventSource references for cleanup
+  const eventSourcesRef = useRef<Map<string, EventSource>>(new Map());
 
   // Add Article State
   const [ingestionType, setIngestionType] = useState<"url" | "text" | "file">("url");
@@ -146,9 +180,18 @@ export function ArticleManagement() {
     }
   }, []);
 
-  // Load articles on mount
+  // Load articles on mount and cleanup EventSources on unmount
   useEffect(() => {
     loadArticles();
+
+    // Cleanup function to close all EventSources on unmount
+    return () => {
+      eventSourcesRef.current.forEach((eventSource, articleId) => {
+        console.log(`Cleaning up EventSource for article ${articleId}`);
+        eventSource.close();
+      });
+      eventSourcesRef.current.clear();
+    };
   }, [loadArticles]);
 
   const handlePreview = async () => {
@@ -264,7 +307,7 @@ export function ArticleManagement() {
 
     try {
       let response: Response;
-      let data: { success?: boolean; message?: string; error?: string };
+      let data: { success?: boolean; message?: string; error?: string; result?: unknown };
 
       // Check if we have preprocessed data from preview
       if (savedPreviewData) {
@@ -420,29 +463,238 @@ export function ArticleManagement() {
     }
   };
 
-  const handleRecalculate = async (articleId: string) => {
-    setLoading(true);
+  const handleRecalculatePreview = useCallback(async (articleId: string) => {
     setError(null);
 
-    try {
-      const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
-        method: "POST",
-        credentials: "include",
-      });
+    // Close any existing EventSource for this article
+    const existingEventSource = eventSourcesRef.current.get(articleId);
+    if (existingEventSource) {
+      console.log(`Closing existing EventSource for article ${articleId}`);
+      existingEventSource.close();
+      eventSourcesRef.current.delete(articleId);
+    }
 
-      if (!response.ok) {
-        throw new Error("Failed to recalculate rankings");
+    // Initialize progress for this article
+    setRecalcProgress(prev => new Map(prev).set(articleId, {
+      articleId,
+      progress: 0,
+      step: "Initializing preview...",
+      isActive: true
+    }));
+
+    try {
+      // Check if we're in the browser and EventSource is available
+      if (typeof window === 'undefined' || !window.EventSource) {
+        // Fallback to regular POST without SSE
+        const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ dryRun: true })
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to generate preview");
+        }
+
+        const data = await response.json();
+        setRecalcPreviewData({
+          articleId,
+          toolChanges: data.changes || [],
+          summary: data.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
+          isPreview: true
+        });
+        setShowRecalcPreviewModal(true);
+
+        // Clean up progress
+        setRecalcProgress(prev => {
+          const newMap = new Map(prev);
+          newMap.delete(articleId);
+          return newMap;
+        });
+        return;
       }
 
-      setSuccess("Rankings recalculated successfully!");
-      await loadArticles();
+      // Use EventSource for real-time progress updates with dry run
+      const eventSource = new EventSource(
+        `/api/admin/articles/${articleId}/recalculate?stream=true&dryRun=true`,
+        { withCredentials: true } as EventSourceInit
+      );
+
+      // Store the EventSource for cleanup
+      eventSourcesRef.current.set(articleId, eventSource);
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === 'progress') {
+          setRecalcProgress(prev => new Map(prev).set(articleId, {
+            articleId,
+            progress: data.progress,
+            step: data.step,
+            isActive: true
+          }));
+        } else if (data.type === 'complete') {
+          // Preview complete, show modal
+          setRecalcPreviewData({
+            articleId,
+            toolChanges: data.changes || [],
+            summary: data.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
+            isPreview: true
+          });
+          setShowRecalcPreviewModal(true);
+
+          // Clean up progress
+          setTimeout(() => {
+            setRecalcProgress(prev => {
+              const newMap = new Map(prev);
+              newMap.delete(articleId);
+              return newMap;
+            });
+          }, 1000);
+
+          eventSource.close();
+          eventSourcesRef.current.delete(articleId);
+        } else if (data.type === 'error') {
+          throw new Error(data.message || "Failed to generate preview");
+        }
+      };
+
+      eventSource.onerror = (error) => {
+        console.error("EventSource error:", error);
+        eventSource.close();
+        eventSourcesRef.current.delete(articleId);
+
+        // Fallback to regular POST if SSE fails
+        fetch(`/api/admin/articles/${articleId}/recalculate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ dryRun: true })
+        }).then(async (response) => {
+          if (!response.ok) {
+            throw new Error("Failed to generate preview");
+          }
+          const data = await response.json();
+
+          setRecalcPreviewData({
+            articleId,
+            toolChanges: data.changes || [],
+            summary: data.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
+            isPreview: true
+          });
+          setShowRecalcPreviewModal(true);
+
+          // Clean up progress
+          setRecalcProgress(prev => {
+            const newMap = new Map(prev);
+            newMap.delete(articleId);
+            return newMap;
+          });
+        }).catch(err => {
+          throw err;
+        });
+      };
+    } catch (err) {
+      const error = err as Error;
+      setError(error.message);
+
+      // Clean up progress on error
+      setRecalcProgress(prev => {
+        const newMap = new Map(prev);
+        newMap.delete(articleId);
+        return newMap;
+      });
+
+      // Clean up EventSource reference on error
+      const errorEventSource = eventSourcesRef.current.get(articleId);
+      if (errorEventSource) {
+        errorEventSource.close();
+        eventSourcesRef.current.delete(articleId);
+      }
+    }
+  }, []);
+
+  const handleApplyRecalculation = useCallback(async () => {
+    if (!recalcPreviewData) return;
+
+    setIsApplying(true);
+    setError(null);
+    const articleId = recalcPreviewData.articleId;
+
+    try {
+      // Check if we're in the browser and EventSource is available
+      if (typeof window === 'undefined' || !window.EventSource) {
+        // Fallback to regular POST without SSE
+        const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ dryRun: false, useCachedAnalysis: true })
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to apply changes");
+        }
+
+        await response.json();
+        setShowRecalcPreviewModal(false);
+        setRecalcPreviewData(null);
+        setSuccess("Rankings updated successfully!");
+        await loadArticles();
+        return;
+      }
+
+      // Use EventSource for real-time progress updates with cached analysis
+      const eventSource = new EventSource(
+        `/api/admin/articles/${articleId}/recalculate?stream=true&dryRun=false&useCachedAnalysis=true`,
+        { withCredentials: true } as EventSourceInit
+      );
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === 'complete') {
+          // Application complete
+          setShowRecalcPreviewModal(false);
+          setRecalcPreviewData(null);
+          setSuccess("Rankings updated successfully!");
+          eventSource.close();
+          loadArticles();
+        } else if (data.type === 'error') {
+          throw new Error(data.message || "Failed to apply changes");
+        }
+      };
+
+      eventSource.onerror = (error) => {
+        console.error("EventSource error:", error);
+        eventSource.close();
+
+        // Fallback to regular POST if SSE fails
+        fetch(`/api/admin/articles/${articleId}/recalculate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ dryRun: false, useCachedAnalysis: true })
+        }).then(async (response) => {
+          if (!response.ok) {
+            throw new Error("Failed to apply changes");
+          }
+          setShowRecalcPreviewModal(false);
+          setRecalcPreviewData(null);
+          setSuccess("Rankings updated successfully!");
+          await loadArticles();
+        }).catch(err => {
+          throw err;
+        });
+      };
     } catch (err) {
       const error = err as Error;
       setError(error.message);
     } finally {
-      setLoading(false);
+      setIsApplying(false);
     }
-  };
+  }, [recalcPreviewData, loadArticles]);
 
   const handleDelete = async (articleId: string) => {
     if (
@@ -1091,12 +1343,31 @@ export function ArticleManagement() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => handleRecalculate(article.id)}
-                                disabled={loading}
-                                title="Recalculate rankings based on current content"
+                                onClick={() => handleRecalculatePreview(article.id)}
+                                disabled={recalcProgress.has(article.id)}
+                                title="Preview ranking changes before applying"
+                                className="relative min-w-[90px]"
                               >
-                                <RefreshCw className="h-4 w-4 mr-1" />
-                                Recalc
+                                {recalcProgress.has(article.id) ? (
+                                  <>
+                                    {/* Progress fill background */}
+                                    <div
+                                      className="absolute inset-0 bg-primary/20 rounded transition-all duration-300"
+                                      style={{
+                                        width: `${recalcProgress.get(article.id)?.progress || 0}%`,
+                                      }}
+                                    />
+                                    <span className="relative z-10 flex items-center">
+                                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                                      {recalcProgress.get(article.id)?.progress || 0}%
+                                    </span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    Preview
+                                  </>
+                                )}
                               </Button>
                               <Button
                                 size="sm"
@@ -1111,6 +1382,14 @@ export function ArticleManagement() {
                               </Button>
                             </div>
                           </div>
+                          {/* Progress step display */}
+                          {recalcProgress.has(article.id) && (
+                            <div className="mt-3 pt-3 border-t">
+                              <p className="text-xs text-muted-foreground text-center">
+                                {recalcProgress.get(article.id)?.step}
+                              </p>
+                            </div>
+                          )}
                         </CardContent>
                       </Card>
                     ))}
@@ -1120,6 +1399,227 @@ export function ArticleManagement() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Recalculation Preview Modal */}
+      {showRecalcPreviewModal && recalcPreviewData && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <CardHeader>
+              <CardTitle>Preview Ranking Changes</CardTitle>
+              <CardDescription>
+                Review the proposed ranking changes before applying them.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-y-auto space-y-4">
+              {/* Summary */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Impact Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Tools Affected</p>
+                      <p className="text-2xl font-bold">
+                        {recalcPreviewData.summary.totalToolsAffected}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Avg Score Change</p>
+                      <p className="text-2xl font-bold">
+                        {recalcPreviewData.summary.averageScoreChange > 0 ? "+" : ""}
+                        {recalcPreviewData.summary.averageScoreChange.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Tool Changes */}
+              {recalcPreviewData.toolChanges.length > 0 && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Proposed Tool Score Changes</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {recalcPreviewData.toolChanges.map((change, index) => (
+                        <div
+                          key={`${change.tool}-${index}`}
+                          className="flex items-center justify-between py-2 border-b last:border-0"
+                        >
+                          <span className="font-medium">{change.tool}</span>
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-muted-foreground">
+                                Score: {change.oldScore.toFixed(1)}
+                              </span>
+                              <ArrowRight className="h-3 w-3" />
+                              <span className="font-medium">
+                                {change.newScore.toFixed(1)}
+                              </span>
+                            </div>
+                            <Badge
+                              variant={change.change > 0 ? "default" : change.change < 0 ? "destructive" : "secondary"}
+                            >
+                              {change.change > 0 ? "+" : ""}{change.change.toFixed(2)}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* No Changes */}
+              {recalcPreviewData.toolChanges.length === 0 && (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    No ranking changes detected. The article's current impact on rankings is accurate.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Info about caching */}
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  The AI analysis has been cached. Clicking "Apply Changes" will use this cached analysis for faster processing.
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+            <div className="p-6 border-t flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowRecalcPreviewModal(false);
+                  setRecalcPreviewData(null);
+                }}
+                disabled={isApplying}
+              >
+                <X className="mr-2 h-4 w-4" />
+                Cancel
+              </Button>
+              <Button
+                onClick={handleApplyRecalculation}
+                disabled={isApplying || recalcPreviewData.toolChanges.length === 0}
+              >
+                {isApplying ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Applying...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="mr-2 h-4 w-4" />
+                    Apply Changes
+                  </>
+                )}
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Results Modal (for backwards compatibility) */}
+      {showResultsModal && recalcResults && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <CardHeader>
+              <CardTitle>Recalculation Results</CardTitle>
+              <CardDescription>
+                Rankings have been recalculated based on the current article content.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-y-auto space-y-4">
+              {/* Summary */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Impact Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Tools Affected</p>
+                      <p className="text-2xl font-bold">
+                        {recalcResults.summary.totalToolsAffected}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Avg Score Change</p>
+                      <p className="text-2xl font-bold">
+                        {recalcResults.summary.averageScoreChange > 0 ? "+" : ""}
+                        {recalcResults.summary.averageScoreChange.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Tool Changes */}
+              {recalcResults.toolChanges.length > 0 && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Tool Score Changes</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {recalcResults.toolChanges.map((change, index) => (
+                        <div
+                          key={`${change.tool}-${index}`}
+                          className="flex items-center justify-between py-2 border-b last:border-0"
+                        >
+                          <span className="font-medium">{change.tool}</span>
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-muted-foreground">
+                                Score: {change.oldScore.toFixed(1)}
+                              </span>
+                              <ArrowRight className="h-3 w-3" />
+                              <span className="font-medium">
+                                {change.newScore.toFixed(1)}
+                              </span>
+                            </div>
+                            <Badge
+                              variant={change.change > 0 ? "default" : change.change < 0 ? "destructive" : "secondary"}
+                            >
+                              {change.change > 0 ? "+" : ""}{change.change.toFixed(2)}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* No Changes */}
+              {recalcResults.toolChanges.length === 0 && (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    No ranking changes detected after recalculation. The article's impact remains the same.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </CardContent>
+            <div className="p-6 border-t">
+              <Button
+                onClick={() => {
+                  setShowResultsModal(false);
+                  setRecalcResults(null);
+                }}
+                className="w-full"
+              >
+                <CheckCircle className="mr-2 h-4 w-4" />
+                Close
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Edit Modal */}
       {editingArticle && (
