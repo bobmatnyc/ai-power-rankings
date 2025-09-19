@@ -133,16 +133,7 @@ export async function GET(request: NextRequest) {
  * - update-company: Update company data for a tool
  */
 export async function POST(request: NextRequest) {
-  return withAuth<
-    | {
-        success: boolean;
-        message: string;
-        deletedCount?: number;
-        refreshedCount?: number;
-        result?: unknown;
-      }
-    | { error: string }
-  >(async () => {
+  return withAuth(async (): Promise<NextResponse> => {
     try {
       const body = await request.json();
       const { action } = body;
@@ -333,9 +324,7 @@ export async function POST(request: NextRequest) {
  * Delete a single tool by ID
  */
 export async function DELETE(request: NextRequest) {
-  return withAuth<
-    { success: boolean; message: string; deletedCount?: number } | { error: string }
-  >(async () => {
+  return withAuth(async (): Promise<NextResponse> => {
     try {
       const { searchParams } = new URL(request.url);
       const toolId = searchParams.get("id");

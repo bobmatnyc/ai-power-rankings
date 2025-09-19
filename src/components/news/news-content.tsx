@@ -22,7 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import { loggers } from "@/lib/logger";
+import { loggers } from "@/lib/logger-client";
 import ArticleScoringImpact from "./article-scoring-impact";
 import ScoringMetrics from "./scoring-metrics";
 

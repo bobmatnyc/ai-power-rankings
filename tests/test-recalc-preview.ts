@@ -22,14 +22,18 @@ async function testRecalculationPreview() {
     }
 
     const testArticle = articles[0];
-    console.log(`✅ Found article: "${testArticle.title}" (ID: ${testArticle.id})\n`);
+    if (!testArticle) {
+      console.error("❌ No valid article found for testing");
+      process.exit(1);
+    }
+    console.log(`✅ Found article: "${testArticle!.title}" (ID: ${testArticle!.id})\n`);
 
     // Test 1: Preview without applying (dry run)
     console.log("🔍 Test 1: Preview Changes (Dry Run)");
     console.log("=" + "=".repeat(50));
 
     const previewResult = await articleService.recalculateArticleRankingsWithProgress(
-      testArticle.id,
+      testArticle!.id,
       (progress, step) => {
         console.log(`  [${progress}%] ${step}`);
       },
@@ -54,7 +58,7 @@ async function testRecalculationPreview() {
     console.log("=" + "=".repeat(50));
 
     const applyResult = await articleService.recalculateArticleRankingsWithProgress(
-      testArticle.id,
+      testArticle!.id,
       (progress, step) => {
         console.log(`  [${progress}%] ${step}`);
       },
@@ -84,7 +88,7 @@ async function testRecalculationPreview() {
 
     const startTime = Date.now();
     await articleService.recalculateArticleRankingsWithProgress(
-      testArticle.id,
+      testArticle!.id,
       (progress, step) => {
         if (progress % 20 === 0) {
           console.log(`  [${progress}%] ${step}`);
@@ -96,7 +100,7 @@ async function testRecalculationPreview() {
 
     const cachedStartTime = Date.now();
     await articleService.recalculateArticleRankingsWithProgress(
-      testArticle.id,
+      testArticle!.id,
       (progress, step) => {
         if (progress % 20 === 0) {
           console.log(`  [${progress}%] ${step} (cached)`);

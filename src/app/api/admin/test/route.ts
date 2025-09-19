@@ -16,14 +16,14 @@ interface DebugResponse {
   error?: string;
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   return withAuth(async () => {
     return NextResponse.json({
       success: true,
       message: "Admin authentication is working correctly",
       timestamp: new Date().toISOString()
     });
-  }, request);
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -73,5 +73,5 @@ export async function POST(request: NextRequest) {
       };
       return NextResponse.json(errorResponse, { status: 500 });
     }
-  }, request);
+  });
 }

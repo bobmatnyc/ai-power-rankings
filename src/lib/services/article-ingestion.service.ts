@@ -6,7 +6,6 @@
 import { z } from "zod";
 import type { Article, DryRunResult } from "@/lib/db/article-schema";
 import type { Ranking } from "@/lib/db/schema";
-import type { RankingEntry } from "@/lib/json-db/schemas";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 
 // Validation schemas
@@ -746,8 +745,8 @@ export class RankingsCalculator {
             // Check for funding amounts
             const fundingMatch = contextLower.match(/\$(\d+)([mb])/i);
             if (fundingMatch) {
-              const amount = parseInt(fundingMatch[1]);
-              const unit = fundingMatch[2].toLowerCase();
+              const amount = parseInt(fundingMatch[1] ?? "0");
+              const unit = fundingMatch[2]?.toLowerCase() ?? "m";
               const amountInMillions = unit === "b" ? amount * 1000 : amount;
 
               // Scale based on funding size
@@ -962,7 +961,7 @@ export class ArticleIngestionService {
   /**
    * Get current system state (rankings, tools, companies) for analysis
    */
-  private async getCurrentState(isDryRun: boolean): Promise<{
+  private async getCurrentState(_isDryRun: boolean): Promise<{
     currentRankings: Ranking[];
     existingTools: string[];
     existingCompanies: string[];
@@ -974,17 +973,20 @@ export class ArticleIngestionService {
       const staticRankings = await import("@/data/cache/rankings-static.json");
 
       // Map static rankings to the expected format
+      // Using the actual Ranking type structure from the database
       const currentRankings: Ranking[] = staticRankings.rankings.map((r: any, index: number) => ({
-        id: r.tool.id,
-        tool_id: r.tool.id,
-        tool_name: r.tool.name,
-        rank: r.rank || index + 1,
-        score: r.scores.overall / 100, // Convert percentage to decimal
-        metrics: r.metrics || {},
+        id: r.tool.id || `ranking-${index}`,
+        data: r, // The full ranking data goes in the data field
+        period: "2025-09",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        algorithmVersion: "v1.0",
+        isCurrent: true,
+        publishedAt: null,
       }));
 
-      // Extract tool names
-      const existingTools: string[] = currentRankings.map((r) => r.tool_name);
+      // Extract tool names from the static data
+      const existingTools: string[] = staticRankings.rankings.map((r: any) => r.tool?.name || r.tool_name || "").filter(Boolean);
 
       // For companies, we'll use an empty array for now since we don't have company data in static rankings
       const existingCompanies: string[] = [];
@@ -1017,17 +1019,20 @@ export class ArticleIngestionService {
 
     try {
       // Step 1: Extract content
-      let content: string;
+      let content: string = "";
       let sourceUrl: string | undefined;
 
       switch (input.type) {
         case "url":
+          if (!input.input) {
+            throw new Error("URL input is required for URL type");
+          }
           sourceUrl = input.input;
           content = await this.contentExtractor.extractFromUrl(input.input);
           break;
         case "file":
-          if (!input.mimeType || !input.fileName) {
-            throw new Error("File ingestion requires mimeType and fileName");
+          if (!input.mimeType || !input.fileName || !input.input) {
+            throw new Error("File ingestion requires input, mimeType and fileName");
           }
           content = await this.contentExtractor.extractFromFile(
             input.input,
@@ -1036,6 +1041,9 @@ export class ArticleIngestionService {
           );
           break;
         case "text":
+          if (!input.input) {
+            throw new Error("Text input is required for text type");
+          }
           content = input.input;
           break;
       }

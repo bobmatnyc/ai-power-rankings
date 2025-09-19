@@ -82,7 +82,7 @@ async function testDryRunSafety() {
           log(`  ⚠️  WRITE QUERY DETECTED: ${query.substring(0, 50)}...`, 'red');
         }
       }
-      return originalQuery.apply(this, args);
+      return originalQuery.apply(this, args as any);
     };
 
     const ingestResult = await articleService.ingestArticle({
@@ -96,7 +96,12 @@ async function testDryRunSafety() {
     (db as any).execute = originalQuery;
 
     log("✅ Dry run completed", 'green');
-    log(`  Predicted ${ingestResult.predictedChanges.length} ranking changes`, 'yellow');
+    // Type guard to check if result is DryRunResult
+    if ('predictedChanges' in ingestResult) {
+      log(`  Predicted ${ingestResult.predictedChanges.length} ranking changes`, 'yellow');
+    } else {
+      log(`  Error: Expected DryRunResult but got Article`, 'red');
+    }
 
     // Check for write queries
     const writeQueries = dryRunQueries.filter(q => q.match(/INSERT|UPDATE|DELETE/i));
@@ -125,6 +130,11 @@ async function testDryRunSafety() {
       const testArticles = await db.select().from(articles).orderBy(desc(articles.createdAt)).limit(1);
       const testArticle = testArticles[0];
 
+      if (!testArticle) {
+        log('No test article found, skipping recalculation test', 'yellow');
+        return;
+      }
+
       log(`📝 Running recalculation with dryRun=true for: "${testArticle.title?.substring(0, 40)}..."`, 'yellow');
 
       // Monitor queries during recalculation
@@ -134,7 +144,7 @@ async function testDryRunSafety() {
         if (typeof query === 'string') {
           recalcQueries.push(query);
         }
-        return originalQuery.apply(this, args);
+        return originalQuery.apply(this, args as any);
       };
 
       const recalcResult = await articleService.recalculateArticleRankingsWithProgress(
@@ -224,9 +234,9 @@ async function getTableCounts() {
   const [changeCount] = await db.select({ count: sql<number>`count(*)` }).from(articleRankingsChanges);
 
   return {
-    articles: Number(articleCount.count),
-    processingLogs: Number(logCount.count),
-    rankingChanges: Number(changeCount.count)
+    articles: Number(articleCount?.count || 0),
+    processingLogs: Number(logCount?.count || 0),
+    rankingChanges: Number(changeCount?.count || 0)
   };
 }
 

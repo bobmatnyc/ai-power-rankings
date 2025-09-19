@@ -9,7 +9,7 @@
 
 import { getDb } from "@/lib/db/connection";
 import { ArticleDatabaseService } from "@/lib/services/article-db-service";
-import { articles, articleProcessingLogs, articleRankingsChanges } from "@/lib/db/article-schema";
+import { articles, articleProcessingLogs, articleRankingsChanges, type DryRunResult, type Article } from "@/lib/db/article-schema";
 import { sql } from "drizzle-orm";
 
 async function getTableCounts() {
@@ -21,9 +21,9 @@ async function getTableCounts() {
   const [changesCount] = await db.select({ count: sql<number>`count(*)` }).from(articleRankingsChanges);
 
   return {
-    articles: articlesCount.count,
-    logs: logsCount.count,
-    changes: changesCount.count
+    articles: articlesCount?.count ?? 0,
+    logs: logsCount?.count ?? 0,
+    changes: changesCount?.count ?? 0
   };
 }
 
@@ -81,16 +81,27 @@ The tools are setting new standards for developer productivity and code quality.
   console.log(`   Ranking Changes: ${afterPreviewCounts.changes} (${afterPreviewCounts.changes - beforeCounts.changes > 0 ? '+' : ''}${afterPreviewCounts.changes - beforeCounts.changes})`);
 
   console.log("\n📋 PREVIEW RESULTS:");
-  console.log(`   Article Title: ${previewResult.article?.title}`);
-  console.log(`   Tools Affected: ${previewResult.summary?.totalToolsAffected || 0}`);
-  console.log(`   New Tools: ${previewResult.summary?.totalNewTools || 0}`);
-  console.log(`   Avg Score Change: ${previewResult.summary?.averageScoreChange?.toFixed(3) || '0.000'}`);
 
-  if (previewResult.predictedChanges && Array.isArray(previewResult.predictedChanges)) {
-    console.log("\n🎯 PREDICTED TOOL CHANGES:");
-    previewResult.predictedChanges.forEach((change: any, index: number) => {
-      console.log(`   ${index + 1}. ${change.toolName}: ${change.currentScore?.toFixed(2) || '0.00'} → ${change.predictedScore?.toFixed(2) || '0.00'} (${change.scoreChange > 0 ? '+' : ''}${change.scoreChange?.toFixed(3) || '0.000'})`);
-    });
+  // Type guard to check if result is DryRunResult
+  if ('predictedChanges' in previewResult && 'summary' in previewResult) {
+    // It's a DryRunResult
+    const dryRun = previewResult as DryRunResult;
+    console.log(`   Article Title: ${dryRun.article?.title}`);
+    console.log(`   Tools Affected: ${dryRun.summary?.totalToolsAffected || 0}`);
+    console.log(`   New Tools: ${dryRun.summary?.totalNewTools || 0}`);
+    console.log(`   Avg Score Change: ${dryRun.summary?.averageScoreChange?.toFixed(3) || '0.000'}`);
+
+    if (dryRun.predictedChanges && Array.isArray(dryRun.predictedChanges)) {
+      console.log("\n🎯 PREDICTED TOOL CHANGES:");
+      dryRun.predictedChanges.forEach((change: any, index: number) => {
+        console.log(`   ${index + 1}. ${change.toolName}: ${change.currentScore?.toFixed(2) || '0.00'} → ${change.predictedScore?.toFixed(2) || '0.00'} (${change.scoreChange > 0 ? '+' : ''}${change.scoreChange?.toFixed(3) || '0.000'})`);
+      });
+    }
+  } else {
+    // It's an Article (unexpected for preview)
+    const article = previewResult as Article;
+    console.log(`   Article Title: ${article.title}`);
+    console.log(`   ERROR: Article was created instead of preview (unexpected)`);
   }
 
   // Verify preview didn't modify database
@@ -125,8 +136,16 @@ The tools are setting new standards for developer productivity and code quality.
   console.log(`   Ranking Changes: ${afterApplyCounts.changes} (${afterApplyCounts.changes - afterPreviewCounts.changes > 0 ? '+' : ''}${afterApplyCounts.changes - afterPreviewCounts.changes})`);
 
   console.log("\n📋 APPLY RESULTS:");
-  console.log(`   Article ID: ${applyResult.id}`);
-  console.log(`   Article Title: ${applyResult.title}`);
+  // Type guard for applyResult
+  if ('id' in applyResult && 'title' in applyResult && !('predictedChanges' in applyResult)) {
+    // It's an Article
+    const article = applyResult as Article;
+    console.log(`   Article ID: ${article.id}`);
+    console.log(`   Article Title: ${article.title}`);
+  } else {
+    // It's a DryRunResult (unexpected for apply)
+    console.log(`   ERROR: Got DryRunResult instead of Article (unexpected)`);
+  }
   console.log(`   Apply Duration: ${applyDuration}ms`);
   console.log(`   Fast Apply (< 1s): ${applyDuration < 1000 ? 'YES' : 'NO'}`);
 

@@ -110,15 +110,15 @@ export class ArticleDatabaseService {
       const rankingsSnapshot = await this.createRankingsSnapshot();
 
       // Step 5: Calculate predicted changes (or use preprocessed ones)
-      let predictedChanges: unknown;
-      let newTools: string[] | undefined;
-      let newCompanies: string[] | undefined;
+      let predictedChanges: DryRunResult['predictedChanges'];
+      let newTools: DryRunResult['newTools'];
+      let newCompanies: DryRunResult['newCompanies'];
 
       if (input.type === "preprocessed" && input.preprocessedData.predictedChanges) {
         // Use the already-calculated changes and entities
-        predictedChanges = input.preprocessedData.predictedChanges;
-        newTools = input.preprocessedData.newTools || [];
-        newCompanies = input.preprocessedData.newCompanies || [];
+        predictedChanges = input.preprocessedData.predictedChanges as DryRunResult['predictedChanges'];
+        newTools = (input.preprocessedData.newTools || []) as DryRunResult['newTools'];
+        newCompanies = (input.preprocessedData.newCompanies || []) as DryRunResult['newCompanies'];
       } else {
         // Calculate changes
         predictedChanges = this.rankingsCalculator.calculateRankingChanges(
@@ -131,8 +131,8 @@ export class ArticleDatabaseService {
           existingTools,
           existingCompanies
         );
-        newTools = entities.newTools;
-        newCompanies = entities.newCompanies;
+        newTools = entities.newTools as DryRunResult['newTools'];
+        newCompanies = entities.newCompanies as DryRunResult['newCompanies'];
       }
 
       // Step 6: Handle dry run vs complete ingestion
@@ -167,10 +167,10 @@ export class ArticleDatabaseService {
             totalNewTools: newTools.length,
             totalNewCompanies: newCompanies.length,
             averageRankChange:
-              predictedChanges.reduce((sum: number, c: any) => sum + (c.rankChange || 0), 0) /
+              predictedChanges.reduce((sum, c) => sum + (c.rankChange || 0), 0) /
               (predictedChanges.length || 1),
             averageScoreChange:
-              predictedChanges.reduce((sum: number, c: any) => sum + (c.scoreChange || 0), 0) /
+              predictedChanges.reduce((sum, c) => sum + (c.scoreChange || 0), 0) /
               (predictedChanges.length || 1),
           },
         };
@@ -285,8 +285,8 @@ export class ArticleDatabaseService {
           slug: newArticle.slug,
           titleLength: newArticle.title.length,
           contentLength: newArticle.content.length,
-          toolMentionsCount: newArticle.toolMentions.length,
-          companyMentionsCount: newArticle.companyMentions.length,
+          toolMentionsCount: Array.isArray(newArticle.toolMentions) ? newArticle.toolMentions.length : 0,
+          companyMentionsCount: Array.isArray(newArticle.companyMentions) ? newArticle.companyMentions.length : 0,
           importanceScore: newArticle.importanceScore,
           sentimentScore: newArticle.sentimentScore,
         });
@@ -304,9 +304,9 @@ export class ArticleDatabaseService {
         // Create new companies if needed (only if article was saved)
         if (!input.dryRun && article?.id && newCompanies) {
           for (const company of newCompanies) {
-            // Handle both string and object formats
-            const companyName = typeof company === 'string' ? company : company.name;
-            const companyWebsite = typeof company === 'object' ? company.website : undefined;
+            // Company should always be an object per DryRunResult type
+            const companyName = company.name;
+            const companyWebsite = company.website;
 
             try {
               await this.articlesRepo.createAutoCompany(
@@ -327,10 +327,10 @@ export class ArticleDatabaseService {
         // Create new tools if needed (only if article was saved)
         if (!input.dryRun && article?.id && newTools) {
           for (const tool of newTools) {
-            // Handle both string and object formats
-            const toolName = typeof tool === 'string' ? tool : tool.name;
-            const toolCategory = typeof tool === 'object' ? (tool.category || "other") : "other";
-            const toolCompanyId = typeof tool === 'object' ? tool.companyId : undefined;
+            // Tool should always be an object per DryRunResult type
+            const toolName = tool.name;
+            const toolCategory = tool.category || "other";
+            const toolCompanyId = tool.companyId;
 
             try {
               await this.articlesRepo.createAutoTool(

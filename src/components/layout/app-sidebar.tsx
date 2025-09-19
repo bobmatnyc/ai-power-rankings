@@ -22,7 +22,7 @@ import { Sidebar, useSidebar } from "@/components/ui/sidebar";
 import { useRankingChanges } from "@/contexts/ranking-changes-context";
 import { useI18n } from "@/i18n/client";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import { loggers } from "@/lib/logger";
+import { loggers } from "@/lib/logger-client";
 import { cn } from "@/lib/utils";
 
 // Navigation items will be built dynamically with i18n

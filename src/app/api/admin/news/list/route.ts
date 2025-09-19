@@ -13,11 +13,12 @@ export async function GET(_request: NextRequest) {
   return withAuth(async (): Promise<NextResponse> => {
     try {
       // Try database first
-      let articles = await newsRepository.getAll();
+      const dbArticles = await newsRepository.getAll();
+      let articles: any[] = [];
       let stats = null;
 
       // If no articles in database, fallback to JSON
-      if (!articles || articles.length === 0) {
+      if (!dbArticles || dbArticles.length === 0) {
         loggers.api.info("No articles in database, falling back to JSON");
         const newsRepo = getNewsRepo();
         const jsonArticles = await newsRepo.getAll();
@@ -29,6 +30,8 @@ export async function GET(_request: NextRequest) {
           return dateB.getTime() - dateA.getTime();
         });
       } else {
+        // Convert database articles to a consistent format
+        articles = dbArticles;
         // Get statistics from database
         stats = await newsRepository.getStatistics();
       }

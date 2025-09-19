@@ -5,7 +5,6 @@
  * Comprehensive testing of the article database insert fix
  */
 
-import { readFileSync } from 'fs';
 import { join } from 'path';
 
 interface TestResult {

@@ -76,9 +76,9 @@ class DryRunIsolationTester {
       .limit(5);
 
     return {
-      articlesCount: articlesResult[0].count,
-      processingLogsCount: logsResult[0].count,
-      rankingChangesCount: changesResult[0].count,
+      articlesCount: articlesResult?.count || 0,
+      processingLogsCount: logsResult?.count || 0,
+      rankingChangesCount: changesResult?.count || 0,
       latestArticleIds: latestArticles.map(a => a.id),
       latestProcessingLogIds: latestLogs.map(l => l.id),
       latestRankingChangeIds: latestChanges.map(c => c.id),
@@ -173,10 +173,10 @@ These tools are transforming how developers work, with significant improvements 
           details: "✅ Preview mode created no database records",
           proof: {
             previewResult: {
-              hasArticle: !!result.article,
-              hasChanges: !!result.predictedChanges,
-              articleTitle: result.article?.title,
-              toolsAffected: result.summary?.totalToolsAffected || 0
+              hasArticle: 'article' in result && !!result.article,
+              hasChanges: 'predictedChanges' in result && !!result.predictedChanges,
+              articleTitle: 'article' in result ? (result as any).article?.title : undefined,
+              toolsAffected: 'summary' in result ? ((result as any).summary?.totalToolsAffected || 0) : 0
             },
             databaseComparison: comparison
           }
@@ -196,8 +196,8 @@ These tools are transforming how developers work, with significant improvements 
       return {
         testName: "Article Ingestion Preview Database Isolation",
         passed: false,
-        details: `❌ Preview failed with error: ${error.message}`,
-        proof: { error: error.message }
+        details: `❌ Preview failed with error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        proof: { error: error instanceof Error ? error.message : String(error) }
       };
     }
   }
@@ -270,8 +270,8 @@ These tools are transforming how developers work, with significant improvements 
       return {
         testName: "Recalculation Preview Database Isolation",
         passed: false,
-        details: `❌ Recalculation preview failed: ${error.message}`,
-        proof: { error: error.message, testArticleId }
+        details: `❌ Recalculation preview failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        proof: { error: error instanceof Error ? error.message : String(error), testArticleId }
       };
     }
   }

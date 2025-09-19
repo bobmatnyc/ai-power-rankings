@@ -21,7 +21,7 @@ let testsFailed = 0;
 
 async function runTest(
   name: string,
-  input: ArticleIngestionInput,
+  input: Omit<ArticleIngestionInput, 'dryRun'>,
   expectSuccess: boolean = true
 ): Promise<void> {
   console.log(`\n📝 Test: ${name}`);
@@ -30,19 +30,19 @@ async function runTest(
   try {
     // First do a dry run to check preview
     console.log("🔍 Running preview (dry run)...");
-    const dryRunInput = { ...input, dryRun: true };
+    const dryRunInput = { ...input, dryRun: true } as ArticleIngestionInput;
     const preview = await service.ingestArticle(dryRunInput);
 
     if ("article" in preview) {
       console.log("✅ Preview generated successfully");
       console.log(`   - Title: ${preview.article.title}`);
-      console.log(`   - Tools detected: ${preview.article.toolMentions?.length || 0}`);
-      console.log(`   - Companies detected: ${preview.article.companyMentions?.length || 0}`);
+      console.log(`   - Tools detected: ${Array.isArray(preview.article.toolMentions) ? preview.article.toolMentions.length : 0}`);
+      console.log(`   - Companies detected: ${Array.isArray(preview.article.companyMentions) ? preview.article.companyMentions.length : 0}`);
     }
 
     // Now attempt actual save
     console.log("\n💾 Attempting database save...");
-    const saveInput = { ...input, dryRun: false };
+    const saveInput = { ...input, dryRun: false } as ArticleIngestionInput;
     const result = await service.ingestArticle(saveInput);
 
     if ("id" in result) {

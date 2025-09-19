@@ -9,7 +9,6 @@
  */
 
 import { readFileSync } from 'fs';
-import { join } from 'path';
 import { glob } from 'glob';
 
 // Colors for console output

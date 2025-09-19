@@ -197,7 +197,7 @@ async function runTests() {
 
     // Test apply flow
     if (previewResult && previewResult.summary.totalToolsAffected > 0) {
-      const applyResult = await testApplyFlow(article.id, authCookie);
+      await testApplyFlow(article.id, authCookie);
 
       console.log("\n🔄 Verification:");
       console.log("  ✅ Preview showed changes without applying");

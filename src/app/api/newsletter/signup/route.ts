@@ -7,7 +7,7 @@ import { type NextRequest, NextResponse } from "next/server";
  * POST /api/newsletter/signup
  * Handles authenticated signups for newsletter updates using Clerk auth
  */
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(request: NextRequest) {
   return withAuth(async () => {
     try {
       const { userId, email, firstName, lastName } = await request.json();
@@ -33,33 +33,36 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const repo = new SubscribersRepository();
 
       // Check if already subscribed
-      const existingSubscriber = await repo.findByEmail(email);
-      if (existingSubscriber?.isActive) {
+      const existingSubscriber = await repo.getByEmail(email);
+      if (existingSubscriber && existingSubscriber.status === "verified") {
         return NextResponse.json({
           message: "You're already subscribed to updates!",
           alreadySubscribed: true,
-        });
+        } as any);
       }
 
       // Create or update subscriber
       if (existingSubscriber) {
         // Reactivate existing subscriber
-        await repo.update(existingSubscriber.id, {
-          isActive: true,
-          firstName: firstName || existingSubscriber.firstName,
-          lastName: lastName || existingSubscriber.lastName,
-          clerkUserId: userId,
-          subscribedAt: new Date().toISOString(),
+        await repo.updateSubscriber(existingSubscriber.id, {
+          status: "verified",
+          verified_at: new Date().toISOString(),
+          metadata: {
+            ...existingSubscriber.metadata,
+            firstName: firstName || existingSubscriber.metadata?.firstName,
+            lastName: lastName || existingSubscriber.metadata?.lastName,
+          },
         });
       } else {
         // Create new subscriber
         await repo.create({
           email,
-          firstName: firstName || "",
-          lastName: lastName || "",
-          isActive: true,
-          clerkUserId: userId,
-          subscribedAt: new Date().toISOString(),
+          status: "verified",
+          metadata: {
+            firstName: firstName || "",
+            lastName: lastName || "",
+            source: "clerk-auth",
+          },
         });
       }
 
@@ -69,7 +72,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({
         success: true,
         message: "Successfully signed up for updates!",
-      });
+      } as any);
     } catch (error) {
       console.error("Newsletter signup error:", error);
       return NextResponse.json(

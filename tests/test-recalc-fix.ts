@@ -83,7 +83,7 @@ async function testRecalculation() {
     let hasIssues = false;
     const validationResults: string[] = [];
 
-    result.changes.forEach((change, index) => {
+    result.changes.forEach((change) => {
       const issues: string[] = [];
 
       // Check for NaN or undefined values
@@ -127,7 +127,7 @@ async function testRecalculation() {
     sortedChanges.forEach(change => {
       const changeColor = change.change > 0 ? colors.green : change.change < 0 ? colors.red : colors.white;
       const changeSymbol = change.change > 0 ? '+' : '';
-      const rankChangeSymbol = change.newRank < change.oldRank ? '↑' : change.newRank > change.oldRank ? '↓' : '→';
+      const rankChangeSymbol = (change.newRank || 0) < (change.oldRank || 0) ? '↑' : (change.newRank || 0) > (change.oldRank || 0) ? '↓' : '→';
 
       console.log(
         `${colors.white}${change.tool.padEnd(28)}${colors.reset} ` +

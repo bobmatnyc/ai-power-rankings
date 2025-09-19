@@ -33,8 +33,8 @@ async function testSSERecalculation() {
     }
 
     const testArticle = articles[0];
-    console.log(`✅ Found article: "${testArticle.title}"`);
-    console.log(`   ID: ${testArticle.id}`);
+    console.log(`✅ Found article: "${testArticle?.title || 'Unknown'}"`);
+    console.log(`   ID: ${testArticle?.id || 'Unknown'}`);
 
     // Simulate SSE endpoint behavior
     console.log("\n📡 Simulating SSE endpoint (what the browser would receive):\n");
@@ -45,7 +45,7 @@ async function testSSERecalculation() {
     const sseMessages: Array<{ type: string; [key: string]: any }> = [];
 
     const result = await articleService.recalculateArticleRankingsWithProgress(
-      testArticle.id,
+      testArticle?.id || '',
       (progress: number, step: string) => {
         const message = { type: 'progress', progress, step };
         sseMessages.push(message);
@@ -75,10 +75,10 @@ async function testSSERecalculation() {
 
     sseMessages.forEach((msg, index) => {
       if (index === 0 || index === sseMessages.length - 1 || index % 2 === 0) {
-        const filled = Math.floor(msg.progress / 5);
+        const filled = Math.floor(msg["progress"] / 5);
         const empty = 20 - filled;
         const progressBar = "█".repeat(filled) + "░".repeat(empty);
-        console.log(`[${progressBar}] ${msg.progress}% - ${msg.step}`);
+        console.log(`[${progressBar}] ${msg["progress"]}% - ${msg["step"]}`);
       }
     });
 

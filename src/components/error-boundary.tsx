@@ -3,7 +3,7 @@
 import { AlertCircle } from "lucide-react";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/logger-client";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;

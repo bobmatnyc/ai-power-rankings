@@ -119,10 +119,11 @@ type GetResponseData =
         metadata: { algorithm_version: string; generated_at?: string; is_current: boolean };
       }>;
       total_periods: number;
-    };
+    }
+  | { error: string };
 
 export async function GET(request: NextRequest) {
-  return withAuth<GetResponseData>(async () => {
+  return withAuth(async (): Promise<NextResponse<GetResponseData>> => {
     try {
       const { searchParams } = new URL(request.url);
       const action = searchParams.get("action") || "periods";
@@ -270,10 +271,32 @@ type PostResponseData =
       total_tools?: number;
       missing_scores?: string[];
       rankings_count?: number;
-    };
+    }
+  | {
+      success: boolean;
+      preview: {
+        period: any;
+        algorithm_version: any;
+        total_tools: number;
+        rankings_comparison: {
+          tool_id: string;
+          tool_name: string;
+          category: string;
+          current_rank: number;
+          current_score: number;
+          previous_rank?: number;
+          previous_score?: number;
+          rank_change: number;
+          score_change: number;
+          movement: string;
+        }[];
+        comparison_period: any;
+      };
+    }
+  | { error: string };
 
 export async function POST(request: NextRequest) {
-  return withAuth<PostResponseData>(async () => {
+  return withAuth(async (): Promise<NextResponse<PostResponseData>> => {
     try {
       const body = await request.json();
       const { action } = body;
@@ -423,11 +446,12 @@ export async function POST(request: NextRequest) {
             comparisons.push({
               tool_id: String(tool["id"]),
               tool_name: tool["name"],
-              current_position: currentPosition,
-              new_position: newPosition,
-              current_score: currentRanking?.score,
-              new_score: newScore?.["overallScore"] || 0,
-              position_change: currentPosition ? currentPosition - newPosition : 0,
+              category: tool["category"] || "",
+              current_rank: currentPosition || 0,
+              current_score: currentRanking?.score || 0,
+              previous_rank: currentPosition,
+              previous_score: currentRanking?.score,
+              rank_change: currentPosition ? currentPosition - newPosition : 0,
               score_change: currentRanking
                 ? (newScore?.["overallScore"] || 0) - currentRanking["score"]
                 : newScore?.["overallScore"] || 0,
@@ -759,10 +783,10 @@ export async function POST(request: NextRequest) {
  * Delete a ranking period
  */
 // Type for DELETE response data
-type DeleteResponseData = { success: boolean; message: string };
+type DeleteResponseData = { success: boolean; message: string } | { error: string };
 
 export async function DELETE(request: NextRequest) {
-  return withAuth<DeleteResponseData>(async () => {
+  return withAuth(async (): Promise<NextResponse<DeleteResponseData>> => {
     try {
       const { searchParams } = new URL(request.url);
       const period = searchParams.get("period");

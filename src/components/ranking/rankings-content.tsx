@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCategoryColor } from "@/lib/category-colors";
-import { loggers } from "@/lib/logger";
+import { loggers } from "@/lib/logger-client";
 
 interface RankingData {
   rank: number;

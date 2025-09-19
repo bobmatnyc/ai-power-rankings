@@ -14,7 +14,7 @@ import {
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { getCategoryColor } from "@/lib/category-colors";
-import { loggers } from "@/lib/logger";
+import { loggers } from "@/lib/logger-client";
 
 interface Tool {
   id: string;

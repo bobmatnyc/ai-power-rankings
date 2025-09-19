@@ -33,14 +33,18 @@ async function testRecalculationProgress() {
     }
 
     const testArticle = articles[0];
-    console.log(`✅ Found article: "${testArticle.title}"`);
-    console.log(`   ID: ${testArticle.id}`);
+    if (!testArticle) {
+      console.error("❌ No valid article found for testing");
+      process.exit(1);
+    }
+    console.log(`✅ Found article: "${testArticle!.title}"`);
+    console.log(`   ID: ${testArticle!.id}`);
 
     // Test recalculation with progress tracking
     console.log("\n🔄 Starting recalculation with progress tracking...\n");
 
     const result = await articleService.recalculateArticleRankingsWithProgress(
-      testArticle.id,
+      testArticle!.id,
       (progress: number, step: string) => {
         // Display progress bar
         const filled = Math.floor(progress / 5);

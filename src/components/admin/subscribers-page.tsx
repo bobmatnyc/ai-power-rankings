@@ -46,7 +46,7 @@ interface SubscriberStats {
 }
 
 export function SubscribersPage() {
-  const _session = useSession();
+  useSession(); // Verify authentication
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [stats, setStats] = useState<SubscriberStats>({
     total: 0,

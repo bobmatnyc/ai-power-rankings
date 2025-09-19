@@ -5,8 +5,8 @@
  * Verify that articles are being correctly stored in the database
  */
 
-import { getDb } from './src/lib/db/connection';
-import { articles, articleRankingsChanges, articleProcessingLogs } from './src/lib/db/article-schema';
+import { getDb } from '@/lib/db/connection';
+import { articles, articleRankingsChanges, articleProcessingLogs } from '@/lib/db/article-schema';
 import { desc, eq } from 'drizzle-orm';
 
 class DatabaseVerificationTest {
@@ -60,7 +60,7 @@ class DatabaseVerificationTest {
       }
 
       console.log('\nRecent articles:');
-      recentArticles.forEach((article, index) => {
+      recentArticles.forEach((article: any, index: number) => {
         console.log(`  ${index + 1}. ID: ${article.id}`);
         console.log(`     Title: ${article.title}`);
         console.log(`     Slug: ${article.slug}`);
@@ -207,7 +207,7 @@ class DatabaseVerificationTest {
 
       if (recentChanges.length > 0) {
         console.log('\nRecent ranking changes:');
-        recentChanges.forEach((change, index) => {
+        recentChanges.forEach((change: any, index: number) => {
           console.log(`  ${index + 1}. Tool: ${change.toolName}`);
           console.log(`     Article ID: ${change.articleId}`);
           console.log(`     Rank Change: ${change.oldRank} → ${change.newRank} (${change.rankChange > 0 ? '+' : ''}${change.rankChange})`);
@@ -240,7 +240,7 @@ class DatabaseVerificationTest {
 
       if (recentLogs.length > 0) {
         console.log('\nRecent processing logs:');
-        recentLogs.forEach((log, index) => {
+        recentLogs.forEach((log: any, index: number) => {
           console.log(`  ${index + 1}. Action: ${log.action}`);
           console.log(`     Status: ${log.status}`);
           console.log(`     Article ID: ${log.articleId}`);

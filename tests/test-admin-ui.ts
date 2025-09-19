@@ -113,7 +113,7 @@ class AdminUITest {
           console.log('Found password field');
 
           // Try default admin password (from environment or common defaults)
-          const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+          const adminPassword = process.env["ADMIN_PASSWORD"] || 'admin123';
           await passwordField.fill(adminPassword);
 
           const submitButton = await this.page.locator('button[type="submit"]').first();

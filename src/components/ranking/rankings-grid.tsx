@@ -17,7 +17,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import { loggers } from "@/lib/logger";
+import { loggers } from "@/lib/logger-client";
 import { RankingCard } from "./ranking-card";
 import { TierLegend } from "./tier-legend";
 

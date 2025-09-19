@@ -13,7 +13,7 @@ import { StatusIndicator } from "@/components/ui/status-indicator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { codeAssistantFAQs, generalFAQs, toolComparisonData } from "@/data/seo-content";
-import { loggers } from "@/lib/logger";
+import { loggers } from "@/lib/logger-client";
 import {
   createJsonLdScript,
   generateBreadcrumbSchema,

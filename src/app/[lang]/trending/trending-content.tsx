@@ -35,7 +35,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import { loggers } from "@/lib/logger";
+import { loggers } from "@/lib/logger-client";
 import type { TrendingAnalysisResult } from "@/lib/trending-analyzer";
 
 export interface TrendingPageContentProps {
@@ -66,8 +66,7 @@ const TIME_RANGE_OPTIONS = [
  */
 async function fetchTrendingData(timeRange: number | "all"): Promise<TrendingAnalysisResult> {
   // Use absolute URL in production to avoid any relative path issues
-  const baseUrl =
-    typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+  const baseUrl = window?.location.origin ? window.location.origin : "";
   const url = `${baseUrl}/api/rankings/trending${timeRange !== "all" ? `?months=${timeRange}` : ""}`;
 
   loggers.client.info("Fetching trending data", { timeRange, url });

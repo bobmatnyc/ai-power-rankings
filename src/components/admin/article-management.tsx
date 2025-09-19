@@ -386,9 +386,10 @@ export function ArticleManagement() {
 
       if (data.success && data.result) {
         // Map predictedChanges to impactedTools for the UI with correct field names
-        const mappedResult = {
-          ...data.result,
-          impactedTools: (data.result.predictedChanges || []).map(
+        const result = data.result as any;
+        const mappedResult: IngestionPreview = {
+          article: result.article || {},
+          impactedTools: ((result.predictedChanges || []) as any[]).map(
             (change: {
               toolName?: string;
               tool?: string;
@@ -403,9 +404,14 @@ export function ArticleManagement() {
             })
           ),
           newTools:
-            data.result.newTools?.map((t: { name?: string; tool?: string } | string) =>
-              typeof t === "string" ? t : t.name || t.tool
-            ) || [],
+            ((result.newTools || []) as any[]).map((t: { name?: string; tool?: string } | string) =>
+              typeof t === "string" ? t : t.name || t.tool || ""
+            ),
+          summary: result.summary || {
+            totalToolsAffected: 0,
+            totalNewTools: 0,
+            averageScoreChange: 0,
+          },
         };
         setPreview(mappedResult); // Keep the result for display
         setProcessingProgress(90);

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import { loggers } from "@/lib/logger";
+import { loggers } from "@/lib/logger-client";
 import { ToolsContent } from "./tools-content";
 
 interface Tool {

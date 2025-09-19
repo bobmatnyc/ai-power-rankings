@@ -97,11 +97,18 @@ async function testUIFlow() {
       // Refresh article list
       const refreshedArticles = await db.select().from(articles).orderBy(desc(articles.createdAt));
       if (refreshedArticles.length > 0) {
-        initialArticles.push(refreshedArticles[0]);
+        initialArticles.push(refreshedArticles[0]!);
       }
     }
 
     const testArticle = initialArticles[0];
+    if (!testArticle) {
+      log('❌ No test article available', 'red');
+      process.exit(1);
+    }
+    if (!testArticle) {
+      throw new Error("No test article available");
+    }
     log(`\n🎯 Using article: "${testArticle.title?.substring(0, 50)}..."`, 'cyan');
 
     // Step 2: Simulate UI preview request (dry run = true)
@@ -179,9 +186,11 @@ async function testUIFlow() {
     if (applyChecks.logsIncreased) {
       log("  ✅ Processing log created for actual application", 'green');
       const newLog = afterApplyLogs[0];
-      log(`    Log ID: ${newLog.id}`, 'yellow');
-      log(`    Action: ${newLog.action}`, 'yellow');
-      log(`    Status: ${newLog.status}`, 'yellow');
+      if (newLog) {
+        log(`    Log ID: ${newLog.id}`, 'yellow');
+        log(`    Action: ${newLog.action}`, 'yellow');
+        log(`    Status: ${newLog.status}`, 'yellow');
+      }
     } else {
       log("  ❌ No processing log created during apply", 'red');
     }

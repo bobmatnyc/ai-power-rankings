@@ -184,9 +184,9 @@ async function testDryRunSafety() {
       // Rollback the changes we just applied
       log("\n🔄 Rolling back test changes...", 'blue');
       await db.delete(articleProcessingLogs)
-        .where(eq(articleProcessingLogs.articleId, testArticle.id));
+        .where(eq(articleProcessingLogs.articleId, testArticle?.id || ''));
       await db.delete(articleRankingsChanges)
-        .where(eq(articleRankingsChanges.articleId, testArticle.id));
+        .where(eq(articleRankingsChanges.articleId, testArticle?.id || ''));
       log("  ✅ Rolled back test changes", 'green');
     }
 

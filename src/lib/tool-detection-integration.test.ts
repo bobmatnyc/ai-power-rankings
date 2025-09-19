@@ -158,14 +158,14 @@ describe("Tool Detection Integration Tests", () => {
 
       const processed = ToolMapper.processToolMentions(mockMentions);
 
-      expect(processed[0].tool).toBe("ChatGPT Canvas");
-      expect(processed[1].tool).toBe("Claude Code");
-      expect(processed[2].tool).toBe("Replit Agent");
+      expect(processed[0]?.tool).toBe("ChatGPT Canvas");
+      expect(processed[1]?.tool).toBe("Claude Code");
+      expect(processed[2]?.tool).toBe("Replit Agent");
 
       // Original context and scores should be preserved
-      expect(processed[0].context).toBe("Using GPT-4 for code generation");
-      expect(processed[0].sentiment).toBe(0.8);
-      expect(processed[0].relevance).toBe(0.9);
+      expect(processed[0]?.context).toBe("Using GPT-4 for code generation");
+      expect(processed[0]?.sentiment).toBe(0.8);
+      expect(processed[0]?.relevance).toBe(0.9);
     });
   });
 });
