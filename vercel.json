@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node scripts/clear-next-cache.js && npm run cache:generate && node scripts/build-production.js",
+  "buildCommand": "node scripts/clear-next-cache.js && node scripts/build-production.js",
   "outputDirectory": ".next",
   "regions": ["iad1"],
   "functions": {
