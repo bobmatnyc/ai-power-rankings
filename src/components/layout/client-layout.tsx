@@ -77,7 +77,11 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
 
                 {/* Show Sign In button when signed out */}
                 <SignedOut>
-                  <SignInButton mode="modal">
+                  <SignInButton
+                    mode="redirect"
+                    forceRedirectUrl={`/${lang}`}
+                    fallbackRedirectUrl={`/${lang}`}
+                  >
                     {/* Desktop button */}
                     <Button size="sm" className="hidden md:flex items-center gap-2">
                       <Bell className="h-4 w-4" />
@@ -85,7 +89,11 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
                     </Button>
                   </SignInButton>
 
-                  <SignInButton mode="modal">
+                  <SignInButton
+                    mode="redirect"
+                    forceRedirectUrl={`/${lang}`}
+                    fallbackRedirectUrl={`/${lang}`}
+                  >
                     {/* Mobile icon button */}
                     <Button size="icon" variant="ghost" className="md:hidden">
                       <Bell className="h-5 w-5" />
@@ -96,7 +104,7 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
 
                 {/* Show User button when signed in */}
                 <SignedIn>
-                  <UserButton afterSignOutUrl="/" />
+                  <UserButton afterSignOutUrl={`/${lang}`} />
                 </SignedIn>
               </div>
             </div>

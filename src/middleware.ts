@@ -81,12 +81,19 @@ function getLocale(request: NextRequest): string {
 }
 
 // Define protected routes
-const isProtectedRoute = createRouteMatcher([
-  "/admin(.*)",
-  "/(.*)dashboard(.*)",
+const isProtectedRoute = createRouteMatcher(["/admin(.*)", "/(.*)dashboard(.*)"]);
+
+// Define public routes that should be accessible without authentication
+const isPublicRoute = createRouteMatcher([
+  "/(.*)sign-in(.*)",
+  "/(.*)sign-up(.*)",
+  "/",
+  "/(.*)/news(.*)",
+  "/(.*)/companies(.*)",
+  "/(.*)/about(.*)",
 ]);
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   const pathname = req.nextUrl.pathname;
 
   // Allow sitemap.xml to be accessed without locale prefix
@@ -149,11 +156,10 @@ export default clerkMiddleware((auth, req) => {
     return NextResponse.redirect(redirectUrl, { status: 301 });
   }
 
-  // Protect routes based on authentication
-  const { userId } = auth();
-  if (isProtectedRoute(req) && !userId) {
-    const locale = pathname.split("/")[1] || getLocale(req);
-    return NextResponse.redirect(new URL(`/${locale}/sign-in`, req.url));
+  // Protect routes based on authentication - but allow public routes
+  if (isProtectedRoute(req) && !isPublicRoute(req)) {
+    // Use auth.protect() for protected routes
+    await auth.protect();
   }
 
   const response = NextResponse.next();
