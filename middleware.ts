@@ -1,29 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-// Conditionally import Clerk only if auth is enabled
+// Check if authentication should be disabled
 const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-
-// Lazy loading for Clerk middleware when auth is enabled
-let clerkMiddleware: any = null;
-let isProtectedRoute: any = () => false;
-
-// Function to initialize Clerk middleware if needed
-async function initializeClerkMiddleware() {
-  if (isAuthDisabled || clerkMiddleware) {
-    return;
-  }
-
-  try {
-    const { clerkMiddleware: clerkMw, createRouteMatcher } = await import("@clerk/nextjs/server");
-    clerkMiddleware = clerkMw;
-
-    // Define protected routes
-    isProtectedRoute = createRouteMatcher(["/admin(.*)", "/dashboard(.*)"]);
-  } catch (error) {
-    console.warn("Clerk not available, running in no-auth mode");
-  }
-}
 
 // Supported locales
 const locales = ["en", "ja", "zh", "es", "fr", "de", "ko", "pt"];
@@ -85,31 +64,52 @@ function localeMiddleware(req: NextRequest): NextResponse | undefined {
   return undefined;
 }
 
-// Export the appropriate middleware based on auth configuration
-export default async function middleware(req: NextRequest) {
-  // If auth is disabled, only handle locale redirects
-  if (isAuthDisabled) {
-    return localeMiddleware(req);
+// Import Clerk conditionally
+let clerkMiddleware: any = null;
+let createRouteMatcher: any = null;
+
+if (!isAuthDisabled) {
+  try {
+    const clerkModule = require("@clerk/nextjs/server");
+    clerkMiddleware = clerkModule.clerkMiddleware;
+    createRouteMatcher = clerkModule.createRouteMatcher;
+  } catch (error) {
+    console.warn("Clerk not available, running in no-auth mode");
+  }
+}
+
+// Define protected routes
+const isProtectedRoute = createRouteMatcher
+  ? createRouteMatcher(["/admin(.*)", "/dashboard(.*)"])
+  : () => false;
+
+// Create the Clerk middleware if available
+const authMiddleware = clerkMiddleware
+  ? clerkMiddleware(async (auth: any, req: NextRequest) => {
+      // Protect admin routes
+      if (isProtectedRoute(req)) {
+        await auth.protect();
+      }
+
+      // Handle locale redirects
+      const localeResponse = localeMiddleware(req);
+      if (localeResponse) {
+        return localeResponse;
+      }
+
+      return NextResponse.next();
+    })
+  : null;
+
+// Export the middleware
+export default function middleware(req: NextRequest) {
+  // If auth is disabled or Clerk is not available, only handle locale redirects
+  if (isAuthDisabled || !authMiddleware) {
+    return localeMiddleware(req) || NextResponse.next();
   }
 
-  // Initialize Clerk middleware if needed
-  await initializeClerkMiddleware();
-
-  // If Clerk is not available, fall back to locale middleware only
-  if (!clerkMiddleware) {
-    return localeMiddleware(req);
-  }
-
-  // If auth is enabled, use Clerk middleware with locale handling
-  return clerkMiddleware((auth: any, req: NextRequest) => {
-    // Protect admin routes
-    if (isProtectedRoute(req)) {
-      auth().protect();
-    }
-
-    // Handle locale redirects
-    return localeMiddleware(req);
-  })(req);
+  // If auth is enabled, use Clerk middleware
+  return authMiddleware(req);
 }
 
 export const config = {

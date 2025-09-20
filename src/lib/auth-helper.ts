@@ -1,16 +1,7 @@
+import { auth, currentUser } from "@clerk/nextjs/server";
+
 // Check if authentication should be disabled
 const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-
-// Conditionally import Clerk auth
-let clerkAuth: any = null;
-if (!isAuthDisabled) {
-  try {
-    const clerkModule = require("@clerk/nextjs/server");
-    clerkAuth = clerkModule.auth;
-  } catch (error) {
-    console.warn("Clerk not available, running in no-auth mode");
-  }
-}
 
 /**
  * Server-side auth helper that works with both Clerk and no-auth mode
@@ -18,7 +9,7 @@ if (!isAuthDisabled) {
  */
 export async function getAuth() {
   // In development mode with auth disabled, return mock user data
-  if (isAuthDisabled || !clerkAuth) {
+  if (isAuthDisabled) {
     return {
       userId: "dev-user",
       sessionId: "dev-session",
@@ -35,8 +26,23 @@ export async function getAuth() {
 
   // In production or when auth is enabled, use Clerk
   try {
-    const authData = await clerkAuth();
-    return authData;
+    const authData = await auth();
+    const user = authData.userId ? await currentUser() : null;
+
+    return {
+      userId: authData.userId,
+      sessionId: authData.sessionId,
+      user: user
+        ? {
+            id: user.id,
+            emailAddresses: user.emailAddresses || [],
+            firstName: user.firstName,
+            lastName: user.lastName,
+            fullName: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+            username: user.username,
+          }
+        : null,
+    };
   } catch (error) {
     console.error("Auth error:", error);
     // If Clerk fails, return null to trigger redirect
@@ -48,12 +54,12 @@ export async function getAuth() {
  * Check if user is authenticated
  */
 export async function isAuthenticated() {
-  if (isAuthDisabled || !clerkAuth) {
+  if (isAuthDisabled) {
     return true; // Always authenticated in dev mode
   }
 
   try {
-    const { userId } = await clerkAuth();
+    const { userId } = await auth();
     return !!userId;
   } catch (error) {
     console.error("Auth check error:", error);
