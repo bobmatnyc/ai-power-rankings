@@ -86,16 +86,6 @@ const isProtectedRoute = createRouteMatcher([
   "/(.*)dashboard(.*)",
 ]);
 
-// Define public routes that don't need authentication
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/(.*)sign-in(.*)",
-  "/(.*)sign-up(.*)",
-  "/api(.*)",
-  "/sitemap.xml",
-  "/robots.txt",
-]);
-
 export default clerkMiddleware((auth, req) => {
   const pathname = req.nextUrl.pathname;
 
@@ -160,7 +150,8 @@ export default clerkMiddleware((auth, req) => {
   }
 
   // Protect routes based on authentication
-  if (isProtectedRoute(req) && !auth().userId) {
+  const { userId } = auth();
+  if (isProtectedRoute(req) && !userId) {
     const locale = pathname.split("/")[1] || getLocale(req);
     return NextResponse.redirect(new URL(`/${locale}/sign-in`, req.url));
   }
