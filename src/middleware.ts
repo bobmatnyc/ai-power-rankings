@@ -1,7 +1,6 @@
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
-import { isAuthorizedEmail } from "@/lib/auth-config";
 import { validateEnvironment } from "@/lib/startup-validation";
 import { i18n } from "./i18n/config";
 
@@ -81,7 +80,23 @@ function getLocale(request: NextRequest): string {
   return i18n.defaultLocale;
 }
 
-export default auth((req) => {
+// Define protected routes
+const isProtectedRoute = createRouteMatcher([
+  "/admin(.*)",
+  "/(.*)dashboard(.*)",
+]);
+
+// Define public routes that don't need authentication
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/(.*)sign-in(.*)",
+  "/(.*)sign-up(.*)",
+  "/api(.*)",
+  "/sitemap.xml",
+  "/robots.txt",
+]);
+
+export default clerkMiddleware((auth, req) => {
   const pathname = req.nextUrl.pathname;
 
   // Allow sitemap.xml to be accessed without locale prefix
@@ -89,14 +104,17 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // Skip Payload CMS admin and API routes completely - they handle their own routing
-  if (pathname.startsWith("/admin") || pathname.startsWith("/api")) {
+  // Skip API routes completely - they handle their own routing
+  if (pathname.startsWith("/api")) {
     return NextResponse.next();
   }
 
-  // Skip authentication in development mode
-  if (process.env["NODE_ENV"] === "development") {
-    // Only handle locale redirection in development
+  // Check if auth is disabled
+  const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+
+  // Skip authentication in development mode or when auth is disabled
+  if (process.env["NODE_ENV"] === "development" || isAuthDisabled) {
+    // Only handle locale redirection
     const pathnameHasLocale = locales.some(
       (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     );
@@ -126,21 +144,6 @@ export default auth((req) => {
     return response;
   }
 
-  // Special handling for /dashboard without locale
-  if (pathname === "/dashboard") {
-    // Check auth first
-    if (!req.auth?.user || !isAuthorizedEmail(req.auth.user.email)) {
-      const locale = getLocale(req);
-      return NextResponse.redirect(new URL(`/${locale}/dashboard/auth/signin`, req.url));
-    }
-    // If authenticated, add locale and redirect
-    const locale = getLocale(req);
-    const host = req.headers.get("host") || "localhost:3000";
-    const protocol = req.headers.get("x-forwarded-proto") || "http";
-    const redirectUrl = new URL(`/${locale}/dashboard`, `${protocol}://${host}`);
-    return NextResponse.redirect(redirectUrl, { status: 301 });
-  }
-
   // Check if there is any supported locale in the pathname
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
@@ -156,13 +159,10 @@ export default auth((req) => {
     return NextResponse.redirect(redirectUrl, { status: 301 });
   }
 
-  // Handle our custom dashboard authentication (after locale is ensured)
-  if (pathname.includes("/dashboard") && !pathname.includes("/dashboard/auth")) {
-    if (!req.auth?.user || !isAuthorizedEmail(req.auth.user.email)) {
-      // Extract locale from the pathname
-      const locale = pathname.split("/")[1] || getLocale(req);
-      return NextResponse.redirect(new URL(`/${locale}/dashboard/auth/signin`, req.url));
-    }
+  // Protect routes based on authentication
+  if (isProtectedRoute(req) && !auth().userId) {
+    const locale = pathname.split("/")[1] || getLocale(req);
+    return NextResponse.redirect(new URL(`/${locale}/sign-in`, req.url));
   }
 
   const response = NextResponse.next();
@@ -183,6 +183,6 @@ export default auth((req) => {
 export const config = {
   matcher: [
     // Skip all internal paths (_next, assets, api, data, partytown, and static files)
-    "/((?!api|_next/static|_next/image|assets|data|partytown|favicon.ico|crown.*|robots.txt|sitemap.xml).*)",
+    "/((?!_next/static|_next/image|assets|data|partytown|favicon.ico|crown.*|robots.txt|sitemap.xml).*)",
   ],
 };
