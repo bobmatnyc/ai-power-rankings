@@ -2,24 +2,21 @@
 
 import React, { createContext, type ReactNode, useContext } from "react";
 
-// Mock user object for development
-const mockUser = {
-  id: "dev-user",
-  emailAddresses: [{ emailAddress: "dev@localhost" }],
-  firstName: "Dev",
-  lastName: "User",
-  fullName: "Dev User",
-  username: "devuser",
-  primaryEmailAddress: {
-    emailAddress: "dev@localhost",
-  },
-};
+// Type definitions for the NoAuth context
+interface NoAuthContextType {
+  isLoaded: boolean;
+  isSignedIn: boolean;
+  user: null;
+  session: null;
+  signOut: () => Promise<void>;
+}
 
 // Create contexts that mimic Clerk's structure
-const NoAuthContext = createContext({
+const NoAuthContext = createContext<NoAuthContextType>({
   isLoaded: true,
-  isSignedIn: false, // Changed to false to simulate signed-out state
+  isSignedIn: false, // Simulate signed-out state
   user: null,
+  session: null,
   signOut: async () => {
     console.log("Sign out called in development mode");
   },
@@ -49,8 +46,8 @@ export function useAuth() {
   return {
     isLoaded: context.isLoaded,
     isSignedIn: context.isSignedIn,
-    userId: context.user?.id || null,
-    sessionId: context.session?.id || null,
+    userId: null, // Always null when not signed in
+    sessionId: null, // Always null when not signed in
     signOut: context.signOut,
     getToken: async () => null, // Return null when not signed in
     has: () => false, // Return false when not signed in
@@ -108,7 +105,9 @@ export function SignInButton({ children }: { children: ReactNode }) {
 
   // If children is a React element, clone it with onClick
   if (React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement, { onClick: handleClick });
+    return React.cloneElement(children as React.ReactElement<{ onClick?: () => void }>, {
+      onClick: handleClick,
+    });
   }
 
   // Otherwise wrap in a button
