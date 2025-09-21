@@ -13,6 +13,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { ArticleManagement } from "@/components/admin/article-management";
 import { SubscribersPage } from "@/components/admin/subscribers-page";
@@ -119,6 +120,8 @@ interface DatabaseStatus {
 }
 
 export default function UnifiedAdminDashboard() {
+  const params = useParams();
+  const lang = (params?.lang as string) || "en";
   const [activeTab, setActiveTab] = useState("articles");
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -584,7 +587,7 @@ export default function UnifiedAdminDashboard() {
                 method: "DELETE",
                 credentials: "include",
               });
-              window.location.href = "/admin/auth/signin";
+              window.location.href = `/${lang}/admin/auth/signin`;
             }}
             className="flex items-center gap-2"
           >

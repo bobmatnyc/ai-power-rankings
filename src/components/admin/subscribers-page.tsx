@@ -12,6 +12,7 @@ import {
   UserX,
 } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -46,6 +47,8 @@ interface SubscriberStats {
 }
 
 export function SubscribersPage() {
+  const params = useParams();
+  const lang = (params?.lang as string) || "en";
   useSession(); // Verify authentication
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [stats, setStats] = useState<SubscriberStats>({
@@ -159,7 +162,7 @@ export function SubscribersPage() {
       {/* Navigation */}
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" asChild>
-          <Link href="/admin" className="flex items-center gap-2">
+          <Link href={`/${lang}/admin`} className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Admin
           </Link>

@@ -1,11 +1,11 @@
 "use client";
 
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { Bell } from "lucide-react";
 import { usePathname } from "next/navigation";
 // CRITICAL FIX: Explicit React import for jsx-dev-runtime stability
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@/components/auth/auth-components";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { BuildTimeBadge } from "@/components/layout/build-time-badge";
 import { Footer } from "@/components/layout/footer";

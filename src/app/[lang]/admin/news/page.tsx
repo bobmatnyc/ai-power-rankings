@@ -2,6 +2,7 @@
 
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +29,8 @@ interface NewsArticle {
 }
 
 export default function NewsListPage() {
+  const params = useParams();
+  const lang = (params?.lang as string) || "en";
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -105,7 +108,7 @@ export default function NewsListPage() {
           <h1 className="text-3xl font-bold">News Articles</h1>
           <p className="text-muted-foreground mt-1">Manage and edit news articles</p>
         </div>
-        <Link href="/admin">
+        <Link href={`/${lang}/admin`}>
           <Button variant="outline">Back to Admin</Button>
         </Link>
       </div>
@@ -130,7 +133,7 @@ export default function NewsListPage() {
                 />
               </div>
             </div>
-            <Link href="/admin/news/new">
+            <Link href={`/${lang}/admin/news/new`}>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 New Article
@@ -174,7 +177,7 @@ export default function NewsListPage() {
                         </div>
                       </div>
                       <div className="flex gap-2 ml-4">
-                        <Link href={`/admin/news/edit/${article.id}`}>
+                        <Link href={`/${lang}/admin/news/edit/${article.id}`}>
                           <Button size="sm" variant="outline">
                             <Edit className="h-4 w-4" />
                           </Button>

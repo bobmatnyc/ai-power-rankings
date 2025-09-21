@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, type ReactNode, useContext } from "react";
+import React, { createContext, type ReactNode, useContext } from "react";
 
 // Mock user object for development
 const mockUser = {
@@ -15,22 +15,11 @@ const mockUser = {
   },
 };
 
-// Mock session object for development
-const mockSession = {
-  id: "dev-session",
-  userId: "dev-user",
-  user: mockUser,
-  status: "active",
-  lastActiveAt: new Date(),
-  expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
-};
-
 // Create contexts that mimic Clerk's structure
 const NoAuthContext = createContext({
   isLoaded: true,
-  isSignedIn: true,
-  user: mockUser,
-  session: mockSession,
+  isSignedIn: false, // Changed to false to simulate signed-out state
+  user: null,
   signOut: async () => {
     console.log("Sign out called in development mode");
   },
@@ -43,9 +32,9 @@ interface NoAuthProviderProps {
 export function NoAuthProvider({ children }: NoAuthProviderProps) {
   const value = {
     isLoaded: true,
-    isSignedIn: true,
-    user: mockUser,
-    session: mockSession,
+    isSignedIn: false, // Changed to false to simulate signed-out state
+    user: null,
+    session: null,
     signOut: async () => {
       console.log("Sign out called in development mode");
     },
@@ -60,11 +49,11 @@ export function useAuth() {
   return {
     isLoaded: context.isLoaded,
     isSignedIn: context.isSignedIn,
-    userId: context.user?.id,
-    sessionId: context.session?.id,
+    userId: context.user?.id || null,
+    sessionId: context.session?.id || null,
     signOut: context.signOut,
-    getToken: async () => "dev-token",
-    has: () => true,
+    getToken: async () => null, // Return null when not signed in
+    has: () => false, // Return false when not signed in
   };
 }
 
@@ -73,7 +62,7 @@ export function useUser() {
   return {
     isLoaded: context.isLoaded,
     isSignedIn: context.isSignedIn,
-    user: context.user,
+    user: context.user || null,
   };
 }
 
@@ -94,4 +83,52 @@ export function useSession() {
     isSignedIn: context.isSignedIn,
     session: context.session,
   };
+}
+
+// Mock SignedIn and SignedOut components for development mode
+export function SignedIn({ children }: { children: ReactNode }) {
+  const context = useContext(NoAuthContext);
+  // Only render children if signed in
+  return context.isSignedIn ? children : null;
+}
+
+export function SignedOut({ children }: { children: ReactNode }) {
+  const context = useContext(NoAuthContext);
+  // Only render children if signed out
+  return !context.isSignedIn ? children : null;
+}
+
+// Mock SignInButton component
+export function SignInButton({ children }: { children: ReactNode }) {
+  const handleClick = () => {
+    // In development mode, just log the action
+    console.log("SignInButton clicked (development mode)");
+    console.log("Would redirect to: /sign-in");
+  };
+
+  // If children is a React element, clone it with onClick
+  if (React.isValidElement(children)) {
+    return React.cloneElement(children as React.ReactElement, { onClick: handleClick });
+  }
+
+  // Otherwise wrap in a button
+  return (
+    <button type="button" onClick={handleClick}>
+      {children}
+    </button>
+  );
+}
+
+// Mock UserButton component
+export function UserButton() {
+  const context = useContext(NoAuthContext);
+  if (!context.isSignedIn) return null;
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+        <span className="text-xs">DU</span>
+      </div>
+    </div>
+  );
 }

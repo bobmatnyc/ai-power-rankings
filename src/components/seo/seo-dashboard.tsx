@@ -13,6 +13,7 @@ import {
   Upload,
 } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +42,8 @@ interface SEOMetrics {
 }
 
 export function SEODashboard() {
+  const params = useParams();
+  const lang = (params?.lang as string) || "en";
   const session = useSession();
   const [metrics, setMetrics] = useState<SEOMetrics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -163,7 +166,7 @@ export function SEODashboard() {
       {/* Navigation */}
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" asChild>
-          <Link href="/admin" className="flex items-center gap-2">
+          <Link href={`/${lang}/admin`} className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Admin
           </Link>

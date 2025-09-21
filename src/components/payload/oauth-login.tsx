@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 
 const OAuthLoginContent = () => {
+  const params = useParams();
+  const lang = (params?.lang as string) || "en";
   const sessionData = useSession();
   const session = sessionData?.data;
   const status = sessionData?.status;
@@ -13,14 +16,14 @@ const OAuthLoginContent = () => {
   useEffect(() => {
     if (session?.user?.email) {
       // Only redirect if we're actually on the login page to avoid loops
-      if (window.location.pathname === "/admin/login") {
-        window.location.href = "/admin";
+      if (window.location.pathname === `/${lang}/admin/login`) {
+        window.location.href = `/${lang}/admin`;
       }
     }
-  }, [session]);
+  }, [session, lang]);
 
   const handleGoogleSignIn = async () => {
-    await signIn("google", { callbackUrl: "/admin" });
+    await signIn("google", { callbackUrl: `/${lang}/admin` });
   };
 
   if (status === "loading") {
@@ -40,7 +43,7 @@ const OAuthLoginContent = () => {
         <div className="text-center">
           <p className="mb-4">
             Authenticated. Please navigate to{" "}
-            <Link href="/admin" className="text-blue-600 underline">
+            <Link href={`/${lang}/admin`} className="text-blue-600 underline">
               /admin
             </Link>
           </p>
