@@ -41,6 +41,18 @@
       "id": "8e280c5c-9f88-4f5a-82ce-fa11c0eda069",
       "created_at": "2025-07-04T17:27:42.764Z",
       "updated_at": "2025-07-04T17:27:42.764Z"
+    },
+    {
+      "email": "bob@matsuoka.com",
+      "status": "verified",
+      "metadata": {
+        "firstName": "Robert",
+        "lastName": "Matsuoka",
+        "source": "clerk-auth"
+      },
+      "id": "8633d075-8f09-4ebf-a81d-98ea95f3b7be",
+      "created_at": "2025-09-22T13:47:37.520Z",
+      "updated_at": "2025-09-22T13:47:37.520Z"
     }
   ],
   "index": {
@@ -86,6 +98,18 @@
         "id": "8e280c5c-9f88-4f5a-82ce-fa11c0eda069",
         "created_at": "2025-07-04T17:27:42.764Z",
         "updated_at": "2025-07-04T17:27:42.764Z"
+      },
+      "8633d075-8f09-4ebf-a81d-98ea95f3b7be": {
+        "email": "bob@matsuoka.com",
+        "status": "verified",
+        "metadata": {
+          "firstName": "Robert",
+          "lastName": "Matsuoka",
+          "source": "clerk-auth"
+        },
+        "id": "8633d075-8f09-4ebf-a81d-98ea95f3b7be",
+        "created_at": "2025-09-22T13:47:37.520Z",
+        "updated_at": "2025-09-22T13:47:37.520Z"
       }
     },
     "byEmail": {
@@ -130,6 +154,18 @@
         "id": "8e280c5c-9f88-4f5a-82ce-fa11c0eda069",
         "created_at": "2025-07-04T17:27:42.764Z",
         "updated_at": "2025-07-04T17:27:42.764Z"
+      },
+      "bob@matsuoka.com": {
+        "email": "bob@matsuoka.com",
+        "status": "verified",
+        "metadata": {
+          "firstName": "Robert",
+          "lastName": "Matsuoka",
+          "source": "clerk-auth"
+        },
+        "id": "8633d075-8f09-4ebf-a81d-98ea95f3b7be",
+        "created_at": "2025-09-22T13:47:37.520Z",
+        "updated_at": "2025-09-22T13:47:37.520Z"
       }
     },
     "byStatus": {
@@ -138,16 +174,16 @@
         "10189dde-34d2-46c7-aab1-bc2fa06d4808",
         "8e280c5c-9f88-4f5a-82ce-fa11c0eda069"
       ],
-      "verified": [],
+      "verified": ["8633d075-8f09-4ebf-a81d-98ea95f3b7be"],
       "unsubscribed": []
     }
   },
   "metadata": {
-    "total": 3,
-    "verified": 0,
+    "total": 4,
+    "verified": 1,
     "pending": 3,
     "unsubscribed": 0,
-    "last_updated": "2025-07-04T17:27:42.765Z",
+    "last_updated": "2025-09-22T13:47:37.521Z",
     "version": "1.0.0"
   }
 }

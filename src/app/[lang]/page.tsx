@@ -2,7 +2,7 @@ import { ArrowRight, ArrowUp, Star } from "lucide-react";
 import type { Metadata } from "next";
 import NextDynamic from "next/dynamic";
 import Link from "next/link";
-import { SignupForUpdatesButton } from "@/components/auth/signup-button-wrapper";
+import { SignupUpdatesButton } from "@/components/auth/signup-updates-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -319,7 +319,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
               <p className="text-sm text-muted-foreground mb-3">
                 Get weekly updates on the latest AI tool rankings
               </p>
-              <SignupForUpdatesButton className="text-primary hover:text-primary/80" />
+              <SignupUpdatesButton className="text-primary hover:text-primary/80" />
             </div>
           </div>
 

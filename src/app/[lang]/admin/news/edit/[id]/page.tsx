@@ -392,7 +392,7 @@ export default function EditNewsPage() {
     <div className="container mx-auto p-6 max-w-6xl">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
-          <Link href={`/${params?.lang || "en"}/admin/news`}>
+          <Link href={`/${params?.["lang"] || "en"}/admin/news`}>
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to News

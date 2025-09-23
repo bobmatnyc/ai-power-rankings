@@ -1,5 +1,5 @@
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { GoogleSearchConsole } from "@/lib/google-search-console";
 
 // Mock data for development - will be replaced with real API integrations
@@ -53,7 +53,7 @@ const getMockSEOMetrics = () => {
 };
 
 // Fetch real Google Search Console data
-async function fetchGoogleSearchConsoleData(accessToken?: string) {
+async function fetchGoogleSearchConsoleData() {
   // Check if we have the required environment variables
   const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
 
@@ -63,10 +63,9 @@ async function fetchGoogleSearchConsoleData(accessToken?: string) {
   }
 
   try {
-    // Initialize Google Search Console client
+    // Initialize Google Search Console client - using service account authentication
     const gsc = new GoogleSearchConsole({
       siteUrl,
-      accessToken, // Pass the OAuth token from the authenticated user
     });
 
     // Fetch various metrics
@@ -133,16 +132,14 @@ function calculateSEOScore(_metrics: {
 
 export async function GET() {
   try {
-    // Get the session with access token
-    const session = await auth();
-
-    // Check authentication
-    if (!session || session.user?.email !== "bob@matsuoka.com") {
+    // Check authentication using Clerk
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const [searchConsoleData] = await Promise.all([
-      fetchGoogleSearchConsoleData(session.accessToken),
+      fetchGoogleSearchConsoleData(),
       fetchCoreWebVitalsData(),
     ]);
 
@@ -163,16 +160,14 @@ export async function GET() {
 
 export async function POST() {
   try {
-    // Get the session with access token
-    const session = await auth();
-
-    // Check authentication
-    if (!session || session.user?.email !== "bob@matsuoka.com") {
+    // Check authentication using Clerk
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Force refresh of SEO data
-    const refreshedMetrics = await fetchGoogleSearchConsoleData(session.accessToken);
+    const refreshedMetrics = await fetchGoogleSearchConsoleData();
 
     return NextResponse.json({
       message: "SEO metrics refreshed successfully",

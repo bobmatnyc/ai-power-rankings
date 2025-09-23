@@ -43,7 +43,7 @@ interface SEOMetrics {
 
 export function SEODashboard() {
   const params = useParams();
-  const lang = (params?.lang as string) || "en";
+  const lang = (params?.["lang"] as string) || "en";
   const session = useSession();
   const [metrics, setMetrics] = useState<SEOMetrics | null>(null);
   const [loading, setLoading] = useState(true);

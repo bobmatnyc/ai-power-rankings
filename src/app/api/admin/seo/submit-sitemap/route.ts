@@ -1,12 +1,12 @@
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { GoogleSearchConsole } from "@/lib/google-search-console";
 
 export async function POST() {
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session || session.user?.email !== "bob@matsuoka.com") {
+    // Check authentication using Clerk
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -20,10 +20,9 @@ export async function POST() {
       );
     }
 
-    // Initialize Google Search Console with OAuth token
+    // Initialize Google Search Console - will use service account authentication instead of OAuth
     const gsc = new GoogleSearchConsole({
       siteUrl,
-      accessToken: session.accessToken,
     });
 
     // Submit sitemap

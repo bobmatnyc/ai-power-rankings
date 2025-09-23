@@ -1,11 +1,15 @@
 "use client";
 
-import { Bell } from "lucide-react";
 import { usePathname } from "next/navigation";
 // CRITICAL FIX: Explicit React import for jsx-dev-runtime stability
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@/components/auth/auth-components";
+import {
+  SignedInWrapper,
+  SignedOutWrapper,
+  SignInButton,
+  UserButtonWrapper,
+} from "@/components/auth/auth-components";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { BuildTimeBadge } from "@/components/layout/build-time-badge";
 import { Footer } from "@/components/layout/footer";
@@ -75,37 +79,18 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
                 {/* Language selector */}
                 <LanguageSelector />
 
-                {/* Show Sign In button when signed out */}
-                <SignedOut>
-                  <SignInButton
-                    mode="redirect"
-                    forceRedirectUrl={`/${lang}`}
-                    fallbackRedirectUrl={`/${lang}`}
-                  >
-                    {/* Desktop button */}
-                    <Button size="sm" className="hidden md:flex items-center gap-2">
-                      <Bell className="h-4 w-4" />
+                {/* Auth buttons - using wrappers that handle SSR properly */}
+                <SignedOutWrapper>
+                  <SignInButton mode="modal" forceRedirectUrl={`/${lang}`}>
+                    <Button size="sm" variant="outline">
                       Sign In For Updates
                     </Button>
                   </SignInButton>
+                </SignedOutWrapper>
 
-                  <SignInButton
-                    mode="redirect"
-                    forceRedirectUrl={`/${lang}`}
-                    fallbackRedirectUrl={`/${lang}`}
-                  >
-                    {/* Mobile icon button */}
-                    <Button size="icon" variant="ghost" className="md:hidden">
-                      <Bell className="h-5 w-5" />
-                      <span className="sr-only">Sign In For Updates</span>
-                    </Button>
-                  </SignInButton>
-                </SignedOut>
-
-                {/* Show User button when signed in */}
-                <SignedIn>
-                  <UserButton afterSignOutUrl={`/${lang}`} />
-                </SignedIn>
+                <SignedInWrapper>
+                  <UserButtonWrapper afterSignOutUrl={`/${lang}`} />
+                </SignedInWrapper>
               </div>
             </div>
           </div>

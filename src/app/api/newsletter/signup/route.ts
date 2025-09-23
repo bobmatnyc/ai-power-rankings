@@ -18,6 +18,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "User ID mismatch" }, { status: 403 });
       }
 
+      // Check if user is admin (for logging purposes)
+      const isAdminUser = auth.user?.isAdmin === true;
+
       // Validate required fields
       if (!email) {
         return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -61,7 +64,9 @@ export async function POST(request: NextRequest) {
       }
 
       // Log the subscription
-      console.log(`✅ User ${userId} subscribed to updates with email ${email}`);
+      console.log(
+        `✅ User ${userId} subscribed to updates with email ${email}${isAdminUser ? " (Admin)" : ""}`
+      );
 
       return NextResponse.json({
         success: true,

@@ -121,7 +121,7 @@ interface DatabaseStatus {
 
 export default function UnifiedAdminDashboard() {
   const params = useParams();
-  const lang = (params?.lang as string) || "en";
+  const lang = (params?.["lang"] as string) || "en";
   const [activeTab, setActiveTab] = useState("articles");
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);

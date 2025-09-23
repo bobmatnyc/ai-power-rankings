@@ -20,6 +20,7 @@ export async function getAuth() {
         lastName: "User",
         fullName: "Dev User",
         username: "devuser",
+        isAdmin: true, // Dev mode always has admin access
       },
     };
   }
@@ -40,6 +41,7 @@ export async function getAuth() {
             lastName: user.lastName,
             fullName: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
             username: user.username,
+            isAdmin: user.publicMetadata?.isAdmin === true, // Check public metadata for admin flag
           }
         : null,
     };
@@ -65,4 +67,12 @@ export async function isAuthenticated() {
     console.error("Auth check error:", error);
     return false;
   }
+}
+
+/**
+ * Check if user is an admin
+ */
+export async function isAdmin() {
+  const authData = await getAuth();
+  return authData.user?.isAdmin === true;
 }

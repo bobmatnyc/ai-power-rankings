@@ -17,6 +17,9 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
   // Extract locale from pathname (e.g., /en/..., /de/..., etc.)
   const locale = pathname?.split("/")[1] || "en";
 
+  // Log the Clerk key being used
+  console.log("Clerk publishable key:", process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]);
+
   // In development mode with NEXT_PUBLIC_DISABLE_AUTH=true, use NoAuthProvider
   if (isAuthDisabled) {
     console.log("🔓 Authentication disabled for development");

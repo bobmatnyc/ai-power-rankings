@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher, currentUser } from "@clerk/nextjs/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { validateEnvironment } from "@/lib/startup-validation";
@@ -80,6 +80,9 @@ function getLocale(request: NextRequest): string {
   return i18n.defaultLocale;
 }
 
+// Define admin routes
+const isAdminRoute = createRouteMatcher(["/(.*)admin(.*)"]);
+
 // Define protected routes
 const isProtectedRoute = createRouteMatcher(["/admin(.*)", "/(.*)dashboard(.*)"]);
 
@@ -93,7 +96,7 @@ const isPublicRoute = createRouteMatcher([
   "/(.*)/about(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware(async (authFunc, req) => {
   const pathname = req.nextUrl.pathname;
 
   // Allow sitemap.xml to be accessed without locale prefix
@@ -158,8 +161,26 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Protect routes based on authentication - but allow public routes
   if (isProtectedRoute(req) && !isPublicRoute(req)) {
-    // Use auth.protect() for protected routes
-    await auth.protect();
+    // Use authFunc.protect() for protected routes
+    await authFunc.protect();
+
+    // For admin routes, check if user has admin metadata
+    if (isAdminRoute(req)) {
+      const { userId } = await authFunc();
+      if (userId) {
+        const user = await currentUser();
+        const isAdminUser = user?.publicMetadata?.isAdmin === true;
+
+        if (!isAdminUser) {
+          // Redirect non-admin users to home page
+          const locale = pathname.split("/")[1] || "en";
+          const host = req.headers.get("host") || "localhost:3000";
+          const protocol = req.headers.get("x-forwarded-proto") || "http";
+          const redirectUrl = new URL(`/${locale}`, `${protocol}://${host}`);
+          return NextResponse.redirect(redirectUrl, { status: 303 });
+        }
+      }
+    }
   }
 
   const response = NextResponse.next();

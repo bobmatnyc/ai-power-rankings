@@ -55,7 +55,7 @@ export function VerifyContent({ lang, dict }: VerifyContentProps): React.JSX.Ele
       title: dict.newsletter.verify.error.title,
       description: errorMessage,
       buttonText: dict.newsletter.verify.tryAgain,
-      buttonHref: `/${lang}/about?subscribe=true`,
+      buttonHref: `/${lang}`,
     };
   };
 

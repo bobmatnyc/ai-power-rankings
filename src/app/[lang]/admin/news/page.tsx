@@ -30,7 +30,7 @@ interface NewsArticle {
 
 export default function NewsListPage() {
   const params = useParams();
-  const lang = (params?.lang as string) || "en";
+  const lang = (params?.["lang"] as string) || "en";
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

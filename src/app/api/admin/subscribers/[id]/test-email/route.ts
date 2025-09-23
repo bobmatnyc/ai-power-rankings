@@ -1,13 +1,13 @@
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { sendTestEmail } from "@/lib/email/email-service";
 import { getSubscribersRepo } from "@/lib/json-db";
 
 export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session || session.user?.email !== "bob@matsuoka.com") {
+    // Check authentication using Clerk
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

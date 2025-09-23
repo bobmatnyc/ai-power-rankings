@@ -48,7 +48,7 @@ interface SubscriberStats {
 
 export function SubscribersPage() {
   const params = useParams();
-  const lang = (params?.lang as string) || "en";
+  const lang = (params?.["lang"] as string) || "en";
   useSession(); // Verify authentication
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [stats, setStats] = useState<SubscriberStats>({
