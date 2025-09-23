@@ -80,11 +80,11 @@ function getLocale(request: NextRequest): string {
   return i18n.defaultLocale;
 }
 
-// Define admin routes
-const isAdminRoute = createRouteMatcher(["/(.*)admin(.*)"]);
+// Define admin routes (including API admin routes)
+const isAdminRoute = createRouteMatcher(["/(.*)admin(.*)", "/api/admin(.*)"]);
 
-// Define protected routes
-const isProtectedRoute = createRouteMatcher(["/admin(.*)", "/(.*)dashboard(.*)"]);
+// Define protected routes (including API admin routes)
+const isProtectedRoute = createRouteMatcher(["/admin(.*)", "/(.*)dashboard(.*)", "/api/admin(.*)"]);
 
 // Define public routes that should be accessible without authentication
 const isPublicRoute = createRouteMatcher([
@@ -94,6 +94,26 @@ const isPublicRoute = createRouteMatcher([
   "/(.*)/news(.*)",
   "/(.*)/companies(.*)",
   "/(.*)/about(.*)",
+  // Public API routes
+  "/api/news(.*)",
+  "/api/rankings(.*)",
+  "/api/companies(.*)",
+  "/api/tools(.*)",
+  "/api/newsletter(.*)",
+  "/api/contact(.*)",
+  "/api/changelog(.*)",
+  "/api/health",
+  "/api/seo(.*)",
+  "/api/cache(.*)",
+  "/api/updates(.*)",
+  "/api/favicon(.*)",
+  "/api/test-endpoint",
+  "/api/test-env",
+  "/api/test-static",
+  "/api/no-auth",
+  "/api/debug",
+  "/api/ai(.*)",
+  "/api/proxy(.*)",
 ]);
 
 export default clerkMiddleware(async (authFunc, req) => {
@@ -104,17 +124,17 @@ export default clerkMiddleware(async (authFunc, req) => {
     return NextResponse.next();
   }
 
-  // Skip API routes completely - they handle their own routing
-  if (pathname.startsWith("/api")) {
-    return NextResponse.next();
-  }
-
   // Check if auth is disabled
   const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 
   // Skip authentication in development mode or when auth is disabled
   if (process.env["NODE_ENV"] === "development" || isAuthDisabled) {
-    // Only handle locale redirection
+    // API routes don't need locale redirection
+    if (pathname.startsWith("/api")) {
+      return NextResponse.next();
+    }
+
+    // Only handle locale redirection for non-API routes
     const pathnameHasLocale = locales.some(
       (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     );
@@ -144,40 +164,66 @@ export default clerkMiddleware(async (authFunc, req) => {
     return response;
   }
 
-  // Check if there is any supported locale in the pathname
-  const pathnameHasLocale = locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
+  // API routes don't need locale handling
+  if (pathname.startsWith("/api")) {
+    // Protect admin API routes
+    if (isProtectedRoute(req) && !isPublicRoute(req)) {
+      // Use authFunc.protect() for protected routes
+      await authFunc.protect();
 
-  // For paths without locale, add the locale prefix first
-  if (!pathnameHasLocale) {
-    const locale = getLocale(req);
-    // Use the host from the request headers to maintain the correct port
-    const host = req.headers.get("host") || "localhost:3000";
-    const protocol = req.headers.get("x-forwarded-proto") || "http";
-    const redirectUrl = new URL(`/${locale}${pathname}`, `${protocol}://${host}`);
-    return NextResponse.redirect(redirectUrl, { status: 301 });
-  }
+      // For admin routes, check if user has admin metadata
+      if (isAdminRoute(req)) {
+        const { userId } = await authFunc();
+        if (userId) {
+          const user = await currentUser();
+          const isAdminUser = user?.publicMetadata?.isAdmin === true;
 
-  // Protect routes based on authentication - but allow public routes
-  if (isProtectedRoute(req) && !isPublicRoute(req)) {
-    // Use authFunc.protect() for protected routes
-    await authFunc.protect();
+          if (!isAdminUser) {
+            // Return unauthorized response for non-admin users
+            return NextResponse.json(
+              { error: "Forbidden - Admin access required" },
+              { status: 403 }
+            );
+          }
+        }
+      }
+    }
+  } else {
+    // For non-API routes, handle locale redirection
+    const pathnameHasLocale = locales.some(
+      (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    );
 
-    // For admin routes, check if user has admin metadata
-    if (isAdminRoute(req)) {
-      const { userId } = await authFunc();
-      if (userId) {
-        const user = await currentUser();
-        const isAdminUser = user?.publicMetadata?.isAdmin === true;
+    // For paths without locale, add the locale prefix first
+    if (!pathnameHasLocale) {
+      const locale = getLocale(req);
+      // Use the host from the request headers to maintain the correct port
+      const host = req.headers.get("host") || "localhost:3000";
+      const protocol = req.headers.get("x-forwarded-proto") || "http";
+      const redirectUrl = new URL(`/${locale}${pathname}`, `${protocol}://${host}`);
+      return NextResponse.redirect(redirectUrl, { status: 301 });
+    }
 
-        if (!isAdminUser) {
-          // Redirect non-admin users to home page
-          const locale = pathname.split("/")[1] || "en";
-          const host = req.headers.get("host") || "localhost:3000";
-          const protocol = req.headers.get("x-forwarded-proto") || "http";
-          const redirectUrl = new URL(`/${locale}`, `${protocol}://${host}`);
-          return NextResponse.redirect(redirectUrl, { status: 303 });
+    // Protect routes based on authentication - but allow public routes
+    if (isProtectedRoute(req) && !isPublicRoute(req)) {
+      // Use authFunc.protect() for protected routes
+      await authFunc.protect();
+
+      // For admin routes, check if user has admin metadata
+      if (isAdminRoute(req)) {
+        const { userId } = await authFunc();
+        if (userId) {
+          const user = await currentUser();
+          const isAdminUser = user?.publicMetadata?.isAdmin === true;
+
+          if (!isAdminUser) {
+            // Redirect non-admin users to home page
+            const locale = pathname.split("/")[1] || "en";
+            const host = req.headers.get("host") || "localhost:3000";
+            const protocol = req.headers.get("x-forwarded-proto") || "http";
+            const redirectUrl = new URL(`/${locale}`, `${protocol}://${host}`);
+            return NextResponse.redirect(redirectUrl, { status: 303 });
+          }
         }
       }
     }
@@ -200,7 +246,9 @@ export default clerkMiddleware(async (authFunc, req) => {
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next, assets, api, data, partytown, and static files)
+    // Include API routes in middleware processing
+    "/api/:path*",
+    // Skip internal Next.js paths but include everything else
     "/((?!_next/static|_next/image|assets|data|partytown|favicon.ico|crown.*|robots.txt|sitemap.xml).*)",
   ],
 };
