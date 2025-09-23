@@ -62,8 +62,8 @@ export async function GET() {
           const timeResult = await sql`SELECT NOW() as current_time, version() as pg_version`;
           results.tests["basicQuery"] = {
             status: "passed",
-            serverTime: timeResult[0]["current_time"],
-            version: timeResult[0]["pg_version"],
+            serverTime: timeResult?.[0]?.["current_time"] || "unknown",
+            version: timeResult?.[0]?.["pg_version"] || "unknown",
           };
 
           // Test 4: Check tables
@@ -87,7 +87,7 @@ export async function GET() {
               results.tests["articlesTable"] = {
                 status: "passed",
                 exists: true,
-                count: countResult[0]["count"],
+                count: countResult?.[0]?.["count"] || 0,
               };
             } else {
               results.tests["articlesTable"] = {
