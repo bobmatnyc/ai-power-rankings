@@ -23,10 +23,6 @@ import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
 
-// Environment variables with fallback
-const DATABASE_URL = process.env["DATABASE_URL"];
-const USE_DATABASE = process.env["USE_DATABASE"] === "true";
-
 // Singleton pattern for database connection
 let db: ReturnType<typeof drizzle> | null = null;
 let sql: ReturnType<typeof neon> | null = null;
@@ -36,6 +32,10 @@ let sql: ReturnType<typeof neon> | null = null;
  * Returns null if database is disabled or not configured
  */
 export function getDb() {
+  // Read environment variables at runtime, not build time
+  const DATABASE_URL = process.env["DATABASE_URL"];
+  const USE_DATABASE = process.env["USE_DATABASE"] === "true";
+
   // Return null if database is disabled
   if (!USE_DATABASE) {
     return null;
@@ -53,7 +53,7 @@ export function getDb() {
   }
 
   try {
-    // Create Neon SQL client
+    // Create Neon SQL client (DATABASE_URL is guaranteed to exist here)
     sql = neon(DATABASE_URL);
 
     // Create Drizzle instance with schema
@@ -80,6 +80,7 @@ export async function testConnection(): Promise<boolean> {
 
   try {
     // Simple query to test connection
+    const DATABASE_URL = process.env["DATABASE_URL"];
     if (!sql) {
       if (!DATABASE_URL) {
         throw new Error("DATABASE_URL environment variable is not defined");
