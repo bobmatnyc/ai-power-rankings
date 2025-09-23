@@ -19,12 +19,12 @@ export async function GET() {
         VERCEL_ENV: process.env["VERCEL_ENV"] || "not-set",
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
       {
         success: false,
-        error: error?.message || "Unknown error",
-        type: error?.constructor?.name || "Unknown",
+        error: error instanceof Error ? error.message : "Unknown error",
+        type: error instanceof Error ? error.constructor.name : "Unknown",
       },
       { status: 500 }
     );

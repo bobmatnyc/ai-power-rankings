@@ -15,7 +15,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized - Admin access required" }, { status: 401 });
     }
 
-    const results: any = {
+    const results: Record<string, unknown> = {
       timestamp: new Date().toISOString(),
       tests: {},
     };
@@ -48,10 +48,10 @@ export async function GET() {
             success: true,
             result: testQuery,
           };
-        } catch (queryErr: any) {
+        } catch (queryErr: unknown) {
           results.tests.simpleQuery = {
             success: false,
-            error: queryErr.message,
+            error: queryErr instanceof Error ? queryErr.message : "Unknown error",
           };
         }
 
@@ -66,10 +66,10 @@ export async function GET() {
             success: true,
             count: countResult[0]?.count || 0,
           };
-        } catch (countErr: any) {
+        } catch (countErr: unknown) {
           results.tests.articlesCount = {
             success: false,
-            error: countErr.message,
+            error: countErr instanceof Error ? countErr.message : "Unknown error",
           };
         }
       } else {
@@ -82,11 +82,11 @@ export async function GET() {
           ],
         };
       }
-    } catch (importErr: any) {
+    } catch (importErr: unknown) {
       results.tests.importError = {
         success: false,
-        error: importErr.message,
-        stack: importErr.stack,
+        error: importErr instanceof Error ? importErr.message : "Unknown error",
+        stack: importErr instanceof Error ? importErr.stack : undefined,
       };
     }
 
@@ -106,17 +106,17 @@ export async function GET() {
           success: true,
           count: articles.length,
         };
-      } catch (getErr: any) {
+      } catch (getErr: unknown) {
         results.tests.getArticles = {
           success: false,
-          error: getErr.message,
+          error: getErr instanceof Error ? getErr.message : "Unknown error",
         };
       }
-    } catch (repoErr: any) {
+    } catch (repoErr: unknown) {
       results.tests.repository = {
         success: false,
-        error: repoErr.message,
-        stack: repoErr.stack,
+        error: repoErr instanceof Error ? repoErr.message : "Unknown error",
+        stack: repoErr instanceof Error ? repoErr.stack : undefined,
       };
     }
 
@@ -127,13 +127,13 @@ export async function GET() {
         "Cache-Control": "no-cache",
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Direct DB test error:", error);
     return NextResponse.json(
       {
         error: "Test Failed",
-        message: error.message,
-        stack: error.stack,
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
       },
       { status: 500 }
     );

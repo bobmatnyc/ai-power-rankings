@@ -18,14 +18,14 @@ export async function GET() {
 
     interface TestResult {
       status: string;
-      [key: string]: any;
+      [key: string]: unknown;
     }
 
     interface TestResults {
       timestamp: string;
-      environment: Record<string, any>;
+      environment: Record<string, unknown>;
       tests: Record<string, TestResult>;
-      summary?: Record<string, any>;
+      summary?: Record<string, unknown>;
     }
 
     const results: TestResults = {
@@ -77,11 +77,13 @@ export async function GET() {
             results.tests["tables"] = {
               status: "passed",
               count: tables.length,
-              list: tables.map((t: any) => t.table_name),
+              list: tables.map((t: Record<string, unknown>) => t.table_name),
             };
 
             // Test 5: Check articles table
-            const hasArticles = tables.some((t: any) => t.table_name === "articles");
+            const hasArticles = tables.some(
+              (t: Record<string, unknown>) => t.table_name === "articles"
+            );
             if (hasArticles) {
               const countResult = await sql`SELECT COUNT(*) as count FROM articles`;
               results.tests["articlesTable"] = {
