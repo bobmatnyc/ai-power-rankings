@@ -180,38 +180,64 @@ export function ArticleManagement() {
       if (!response.ok) {
         // Log the specific error for debugging
         let errorMessage = `Failed to load articles (Status: ${response.status})`;
+        let errorDetails = "";
+
+        // Check Content-Type header to determine response format
+        const contentType = response.headers.get("Content-Type") || "";
+        const isJson = contentType.includes("application/json");
 
         try {
-          const errorData = await response.json();
-          console.error("[ArticleManagement] API Error:", errorData);
+          if (isJson) {
+            const errorData = await response.json();
+            console.error("[ArticleManagement] API Error:", errorData);
 
-          if (response.status === 401) {
-            errorMessage = "Authentication required. Please sign in again.";
-            // In production, this might mean the Clerk session expired
-            if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
-              console.log(
-                "[ArticleManagement] Auth failed in production, might need to refresh Clerk session"
-              );
+            if (response.status === 401) {
+              errorMessage =
+                errorData.message ||
+                "Authentication required. Please sign in to access admin features.";
+              errorDetails =
+                errorData.help || "Check that you are signed in and have admin privileges.";
+            } else if (response.status === 403) {
+              errorMessage = errorData.message || "Admin access required.";
+              errorDetails =
+                errorData.help || "Your account needs admin privileges. Contact an administrator.";
+
+              // Log the user ID if provided for debugging
+              if (errorData.userId) {
+                console.log("[ArticleManagement] User ID:", errorData.userId);
+                console.log("[ArticleManagement] To grant admin access, run:");
+                console.log("  pnpm tsx scripts/verify-admin-auth.ts [user-email] grant");
+              }
+            } else if (errorData.error) {
+              errorMessage = errorData.message || errorData.error;
+              errorDetails = errorData.details || "";
             }
-          } else if (errorData.error) {
-            errorMessage = errorData.error;
-          }
-        } catch (parseError) {
-          // If response isn't JSON, try to get text
-          try {
+          } else {
+            // Response is not JSON - likely HTML redirect
             const errorText = await response.text();
             console.error(
-              "[ArticleManagement] Failed to load articles:",
+              "[ArticleManagement] Non-JSON response:",
               response.status,
-              errorText
+              errorText.substring(0, 500) // Log first 500 chars
             );
-            errorMessage = `${errorMessage}: ${errorText.substring(0, 100)}`;
-          } catch {
-            // Ignore parse errors
+
+            // Check if it's HTML (sign-in page redirect)
+            if (errorText.includes("<!DOCTYPE html>") || errorText.includes("<html")) {
+              errorMessage = "Authentication configuration error";
+              errorDetails =
+                "The API returned an HTML page instead of JSON. This usually means authentication is misconfigured. Please check your Clerk settings or disable auth for development.";
+            } else {
+              errorMessage = `${errorMessage}: ${errorText.substring(0, 100)}`;
+            }
           }
+        } catch (parseError) {
+          console.error("[ArticleManagement] Could not parse error response:", parseError);
+          errorMessage = `Request failed with status ${response.status}`;
         }
 
-        throw new Error(errorMessage);
+        // Combine message and details for the error
+        const fullError = errorDetails ? `${errorMessage}\n\n${errorDetails}` : errorMessage;
+        throw new Error(fullError);
       }
 
       const data = await response.json();

@@ -168,23 +168,48 @@ export default clerkMiddleware(async (authFunc, req) => {
   if (pathname.startsWith("/api")) {
     // Protect admin API routes
     if (isProtectedRoute(req) && !isPublicRoute(req)) {
-      // Use authFunc.protect() for protected routes
-      await authFunc.protect();
+      // Check authentication WITHOUT redirecting (important for API routes)
+      const { userId } = await authFunc();
+
+      // If not authenticated, return JSON error (not redirect)
+      if (!userId) {
+        return NextResponse.json(
+          {
+            error: "Unauthorized",
+            message: "Authentication required. Please sign in to access this resource.",
+            code: "AUTH_REQUIRED",
+          },
+          {
+            status: 401,
+            headers: {
+              "Content-Type": "application/json",
+              "WWW-Authenticate": "Bearer",
+            },
+          }
+        );
+      }
 
       // For admin routes, check if user has admin metadata
       if (isAdminRoute(req)) {
-        const { userId } = await authFunc();
-        if (userId) {
-          const user = await currentUser();
-          const isAdminUser = user?.publicMetadata?.isAdmin === true;
+        const user = await currentUser();
+        const isAdminUser = user?.publicMetadata?.isAdmin === true;
 
-          if (!isAdminUser) {
-            // Return unauthorized response for non-admin users
-            return NextResponse.json(
-              { error: "Forbidden - Admin access required" },
-              { status: 403 }
-            );
-          }
+        if (!isAdminUser) {
+          // Return forbidden response for non-admin users
+          return NextResponse.json(
+            {
+              error: "Forbidden",
+              message: "Admin access required. Your account does not have admin privileges.",
+              code: "ADMIN_REQUIRED",
+              help: "Please contact an administrator to grant admin access to your account.",
+            },
+            {
+              status: 403,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
         }
       }
     }

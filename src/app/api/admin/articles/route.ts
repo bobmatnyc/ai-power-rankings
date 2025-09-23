@@ -1,5 +1,5 @@
+import { currentUser } from "@clerk/nextjs/server";
 import { type NextRequest, NextResponse } from "next/server";
-import { isAuthenticated } from "@/lib/clerk-auth";
 import { getDb } from "@/lib/db/connection";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 
@@ -15,22 +15,76 @@ export async function GET(request: NextRequest) {
     const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
     console.log("[API] Auth disabled mode:", isAuthDisabled);
 
-    // Check admin authentication (automatically skipped in local dev)
-    console.log("[API] Checking authentication...");
-    const isAuth = await isAuthenticated();
-    console.log("[API] Authentication result:", isAuth);
+    if (!isAuthDisabled) {
+      // In production, verify authentication and admin status
+      console.log("[API] Checking authentication...");
 
-    if (!isAuth && !isAuthDisabled) {
-      console.log("[API] Articles endpoint - unauthorized access attempt");
-      // Add more detailed error for debugging
-      return NextResponse.json(
-        {
-          error: "Unauthorized",
-          details: "Authentication required. Please ensure you are logged in.",
-          authDisabled: isAuthDisabled,
-        },
-        { status: 401 }
-      );
+      try {
+        // Get current user to check admin status
+        const user = await currentUser();
+        console.log("[API] Current user ID:", user?.id);
+        console.log("[API] User publicMetadata:", user?.publicMetadata);
+
+        if (!user) {
+          console.log("[API] No authenticated user found");
+          return NextResponse.json(
+            {
+              error: "Unauthorized",
+              message: "Authentication required. Please sign in to access this resource.",
+              code: "AUTH_REQUIRED",
+            },
+            {
+              status: 401,
+              headers: {
+                "Content-Type": "application/json",
+                "WWW-Authenticate": "Bearer",
+              },
+            }
+          );
+        }
+
+        // Check if user has admin privileges
+        const isAdmin = user.publicMetadata?.isAdmin === true;
+        console.log("[API] User isAdmin:", isAdmin);
+
+        if (!isAdmin) {
+          console.log("[API] User lacks admin privileges");
+          return NextResponse.json(
+            {
+              error: "Forbidden",
+              message: "Admin access required. Your account does not have admin privileges.",
+              code: "ADMIN_REQUIRED",
+              userId: user.id,
+              help: "To grant admin access, update your Clerk user's publicMetadata with: { isAdmin: true }",
+            },
+            {
+              status: 403,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        }
+
+        console.log("[API] Authentication successful - user is admin");
+      } catch (authError) {
+        console.error("[API] Authentication error:", authError);
+        return NextResponse.json(
+          {
+            error: "Authentication Error",
+            message: "Failed to verify authentication status.",
+            details: authError instanceof Error ? authError.message : "Unknown error",
+          },
+          {
+            status: 500,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+    } else {
+      console.log("[API] Skipping authentication - auth is disabled");
     }
 
     // Check database availability
@@ -89,13 +143,34 @@ export async function GET(request: NextRequest) {
 
     console.log("[API] Sending response with", articles.length, "articles");
 
-    return NextResponse.json(responseData);
+    return NextResponse.json(responseData, {
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
   } catch (error) {
     console.error("[API] Error fetching articles - Full error:", error);
     console.error("[API] Error stack:", error instanceof Error ? error.stack : "No stack");
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to fetch articles" },
-      { status: 500 }
+      {
+        error: "Internal Server Error",
+        message: error instanceof Error ? error.message : "Failed to fetch articles",
+        details:
+          process.env["NODE_ENV"] === "development"
+            ? error instanceof Error
+              ? error.stack
+              : "Unknown error"
+            : undefined,
+      },
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 }
