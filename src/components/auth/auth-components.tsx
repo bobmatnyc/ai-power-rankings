@@ -33,7 +33,7 @@ export function SignInButtonWrapper({
   ...props
 }: {
   children: React.ReactNode;
-  [key: string]: any;
+  [key: string]: unknown;
 }) {
   // Use the SignInButton component directly - Clerk handles SSR properly
   const ButtonComponent = isAuthDisabled ? MockSignInButton : ClerkSignInButton;
@@ -108,7 +108,7 @@ export function SignedInWrapper({ children }: { children: React.ReactNode }) {
 }
 
 // Helper component for when Clerk is enabled
-function ClerkUserButtonWrapper(props: any) {
+function ClerkUserButtonWrapper(props: Record<string, unknown>) {
   const [mounted, setMounted] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
 
@@ -130,7 +130,7 @@ function ClerkUserButtonWrapper(props: any) {
 }
 
 // Helper component for mock UserButton
-function MockUserButtonWrapper(props: any) {
+function MockUserButtonWrapper(props: Record<string, unknown>) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -145,7 +145,7 @@ function MockUserButtonWrapper(props: any) {
 }
 
 // Wrapper for UserButton that handles SSR properly
-export function UserButtonWrapper(props: any) {
+export function UserButtonWrapper(props: Record<string, unknown>) {
   // If auth is disabled, use mock component
   if (isAuthDisabled) {
     return <MockUserButtonWrapper {...props} />;

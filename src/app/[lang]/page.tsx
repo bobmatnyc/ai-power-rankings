@@ -478,7 +478,6 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       </section>
 
       {/* Methodology Brief */}
-      {/* biome-ignore lint/correctness/useUniqueElementIds: Static ID needed for anchor navigation */}
       <section id="methodology" className="container mx-auto px-2 md:px-4 py-16">
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-8 text-center text-3xl font-bold">{dict.home.methodology.title}</h2>

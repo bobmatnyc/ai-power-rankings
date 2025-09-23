@@ -156,7 +156,6 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
 
   return (
     <div className="px-3 md:px-6 py-8 max-w-7xl mx-auto">
-      {/* biome-ignore lint/correctness/useUniqueElementIds: Static ID required for Next.js Script component */}
       <Script
         id="faq-schema"
         type="application/ld+json"
@@ -165,7 +164,6 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
           __html: createJsonLdScript(faqSchema),
         }}
       />
-      {/* biome-ignore lint/correctness/useUniqueElementIds: Static ID required for Next.js Script component */}
       <Script
         id="breadcrumb-schema"
         type="application/ld+json"
