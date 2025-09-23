@@ -1,12 +1,12 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { neon } from "@neondatabase/serverless";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 /**
  * GET /api/admin/db-test
  * Test database connection directly
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check authentication
     const user = await currentUser();
@@ -16,7 +16,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized - Admin access required" }, { status: 401 });
     }
 
-    const results: Record<string, any> = {
+    interface TestResult {
+      status: string;
+      [key: string]: any;
+    }
+
+    interface TestResults {
+      timestamp: string;
+      environment: Record<string, any>;
+      tests: Record<string, TestResult>;
+      summary?: Record<string, any>;
+    }
+
+    const results: TestResults = {
       timestamp: new Date().toISOString(),
       environment: {
         NODE_ENV: process.env["NODE_ENV"],
@@ -32,26 +44,26 @@ export async function GET(request: NextRequest) {
     // Test 1: Check if DATABASE_URL is valid
     const dbUrl = process.env["DATABASE_URL"];
     if (!dbUrl) {
-      results.tests.urlCheck = { status: "failed", error: "DATABASE_URL not found" };
+      results.tests["urlCheck"] = { status: "failed", error: "DATABASE_URL not found" };
     } else if (dbUrl.includes("YOUR_PASSWORD")) {
-      results.tests.urlCheck = { status: "failed", error: "DATABASE_URL contains placeholder" };
+      results.tests["urlCheck"] = { status: "failed", error: "DATABASE_URL contains placeholder" };
     } else {
-      results.tests.urlCheck = { status: "passed", message: "DATABASE_URL configured" };
+      results.tests["urlCheck"] = { status: "passed", message: "DATABASE_URL configured" };
     }
 
     // Test 2: Try to create connection
     if (dbUrl && !dbUrl.includes("YOUR_PASSWORD")) {
       try {
         const sql = neon(dbUrl);
-        results.tests.connectionCreation = { status: "passed", message: "Neon client created" };
+        results.tests["connectionCreation"] = { status: "passed", message: "Neon client created" };
 
         // Test 3: Simple query
         try {
           const timeResult = await sql`SELECT NOW() as current_time, version() as pg_version`;
-          results.tests.basicQuery = {
+          results.tests["basicQuery"] = {
             status: "passed",
-            serverTime: timeResult[0].current_time,
-            version: timeResult[0].pg_version,
+            serverTime: timeResult[0]["current_time"],
+            version: timeResult[0]["pg_version"],
           };
 
           // Test 4: Check tables
@@ -62,7 +74,7 @@ export async function GET(request: NextRequest) {
               WHERE table_schema = 'public'
               ORDER BY table_name
             `;
-            results.tests.tables = {
+            results.tests["tables"] = {
               status: "passed",
               count: tables.length,
               list: tables.map((t: any) => t.table_name),
@@ -72,32 +84,32 @@ export async function GET(request: NextRequest) {
             const hasArticles = tables.some((t: any) => t.table_name === "articles");
             if (hasArticles) {
               const countResult = await sql`SELECT COUNT(*) as count FROM articles`;
-              results.tests.articlesTable = {
+              results.tests["articlesTable"] = {
                 status: "passed",
                 exists: true,
-                count: countResult[0].count,
+                count: countResult[0]["count"],
               };
             } else {
-              results.tests.articlesTable = {
+              results.tests["articlesTable"] = {
                 status: "failed",
                 exists: false,
                 error: "Articles table not found",
               };
             }
           } catch (tableError) {
-            results.tests.tables = {
+            results.tests["tables"] = {
               status: "failed",
               error: tableError instanceof Error ? tableError.message : "Unknown error",
             };
           }
         } catch (queryError) {
-          results.tests.basicQuery = {
+          results.tests["basicQuery"] = {
             status: "failed",
             error: queryError instanceof Error ? queryError.message : "Unknown error",
           };
         }
       } catch (connectionError) {
-        results.tests.connectionCreation = {
+        results.tests["connectionCreation"] = {
           status: "failed",
           error: connectionError instanceof Error ? connectionError.message : "Unknown error",
         };
@@ -108,13 +120,13 @@ export async function GET(request: NextRequest) {
     try {
       const { getDb } = await import("@/lib/db/connection");
       const db = getDb();
-      results.tests.getDbFunction = {
+      results.tests["getDbFunction"] = {
         status: db ? "passed" : "failed",
         hasConnection: !!db,
         message: db ? "getDb() returns connection" : "getDb() returns null",
       };
     } catch (importError) {
-      results.tests.getDbFunction = {
+      results.tests["getDbFunction"] = {
         status: "failed",
         error: importError instanceof Error ? importError.message : "Unknown error",
       };
@@ -122,8 +134,8 @@ export async function GET(request: NextRequest) {
 
     // Summary
     const allTests = Object.values(results.tests);
-    const passedTests = allTests.filter((t: any) => t.status === "passed").length;
-    const failedTests = allTests.filter((t: any) => t.status === "failed").length;
+    const passedTests = allTests.filter((t: TestResult) => t.status === "passed").length;
+    const failedTests = allTests.filter((t: TestResult) => t.status === "failed").length;
 
     results.summary = {
       totalTests: allTests.length,
