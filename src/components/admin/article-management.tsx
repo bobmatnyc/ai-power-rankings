@@ -189,6 +189,13 @@ export function ArticleManagement() {
           slug: article.slug,
           status: article.status || "active",
           publishedDate: article.publishedAt || article.published_date || article.created_at,
+          // Add date fields that the UI expects
+          createdAt: article.created_at || article.publishedAt || article.published_date,
+          ingestedAt:
+            article.ingested_at ||
+            article.created_at ||
+            article.publishedAt ||
+            article.published_date,
           author: article.author,
           category: article.category,
           tags: article.tags || [],
