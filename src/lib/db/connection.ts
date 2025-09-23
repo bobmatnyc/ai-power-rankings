@@ -21,6 +21,8 @@ if (NODE_ENV === "development") {
 
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
+// Explicitly import article tables to ensure they're included
+import { articleProcessingLogs, articleRankingsChanges, articles } from "./article-schema";
 import * as schema from "./schema";
 
 // Singleton pattern for database connection
@@ -57,7 +59,14 @@ export function getDb() {
     sql = neon(DATABASE_URL);
 
     // Create Drizzle instance with schema
-    db = drizzle(sql, { schema });
+    // Ensure article tables are included
+    const fullSchema = {
+      ...schema,
+      articles,
+      articleProcessingLogs,
+      articleRankingsChanges,
+    };
+    db = drizzle(sql, { schema: fullSchema });
 
     console.log("✅ Database connection established");
     return db;
