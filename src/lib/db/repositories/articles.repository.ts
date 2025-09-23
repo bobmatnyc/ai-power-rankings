@@ -24,8 +24,17 @@ export class ArticlesRepository {
 
   constructor() {
     this.db = getDb();
+    // Don't throw in constructor - check in each method instead
+    // This allows the class to be instantiated even if DB is temporarily unavailable
+  }
+
+  private ensureConnection() {
     if (!this.db) {
-      throw new Error("Database connection not available");
+      // Try to get connection again in case it wasn't available at construction time
+      this.db = getDb();
+      if (!this.db) {
+        throw new Error("Database connection not available");
+      }
     }
   }
 
@@ -266,7 +275,7 @@ export class ArticlesRepository {
     limit?: number;
     offset?: number;
   }): Promise<Article[]> {
-    if (!this.db) return [];
+    this.ensureConnection();
 
     let query = this.db.select().from(articles).orderBy(desc(articles.publishedDate));
 
@@ -628,6 +637,8 @@ export class ArticlesRepository {
     averageToolMentions: number;
     topCategories: Array<{ category: string; count: number }>;
   }> {
+    this.ensureConnection();
+
     // Get basic counts
     const stats = await this.db
       ?.select({
