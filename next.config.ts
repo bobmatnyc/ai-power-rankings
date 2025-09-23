@@ -19,8 +19,8 @@ const nextConfig: NextConfig = {
     // Keep existing optimizations
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons", "@next/font"],
     webVitalsAttribution: ["CLS", "LCP"],
-    // Disable experimental CSS optimization to avoid conflicts with custom webpack plugin
-    // optimizeCss: true,
+    // Enable CSS optimization
+    optimizeCss: true,
     // Reduce memory usage during builds and prevent timeout
     workerThreads: false,
     // Disable all polyfills for modern browsers

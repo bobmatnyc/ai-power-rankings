@@ -1,13 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Post-Build CSS Optimization Script
- *
- * WHY: Next.js 15.3.3 has conflicts with PostCSS plugin loading for PurgeCSS.
- * This script post-processes the built CSS files to apply aggressive optimization.
- *
- * DESIGN DECISION: Run after Next.js build to avoid webpack plugin conflicts
- * while still achieving the target <20KB CSS bundle size.
+ * Post-Build CSS Optimization Script - AGGRESSIVE VERSION
+ * Target: <20KB total CSS bundle size
  */
 
 const fs = require("node:fs");
@@ -18,43 +13,20 @@ const cssnano = require("cssnano");
 const { glob } = require("glob");
 
 const BUILD_DIR = ".next/static/css";
-const SOURCE_DIRS = [
-  "src/**/*.{js,jsx,ts,tsx}",
-  "pages/**/*.{js,jsx,ts,tsx}",
-  "components/**/*.{js,jsx,ts,tsx}",
-  "app/**/*.{js,jsx,ts,tsx}",
-];
+const SOURCE_DIRS = ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"];
 
-// Ultra-minimal critical classes - only the most essential ones
+// ULTRA-MINIMAL safelist - only absolutely critical classes
 const CRITICAL_CLASSES = [
-  // Absolutely essential base elements
-  "html",
-  "body",
-  "main",
-
-  // Core layout (top 10 most used from analysis)
-  "flex",
-  "items-center",
-  "justify-center",
-  "grid",
-  "container",
-  "w-full",
-
-  // Essential typography (top 5)
-  "text-sm",
-  "text-center",
-  "font-bold",
-
-  // Critical custom theme colors
-  "text-muted-foreground",
-  "text-primary",
-
   // Next.js essentials
   "__next",
+  "__next-route-announcer__",
+
+  // Only the most essential that can't be statically analyzed
+  "dark", // Dark mode toggle
 ];
 
 async function optimizeCSS() {
-  console.log("🎯 Starting aggressive CSS optimization...\n");
+  console.log("🎯 Starting AGGRESSIVE CSS optimization (target: <20KB)...\n");
 
   // Find CSS files
   const cssFiles = await glob(`${BUILD_DIR}/*.css`);
@@ -65,10 +37,13 @@ async function optimizeCSS() {
   }
 
   console.log(`📂 Found ${cssFiles.length} CSS files:`);
+  let totalOriginalSize = 0;
   cssFiles.forEach((file) => {
     const size = fs.statSync(file).size;
+    totalOriginalSize += size;
     console.log(`   ${path.basename(file)} (${(size / 1024).toFixed(1)} KB)`);
   });
+  console.log(`   Total original: ${(totalOriginalSize / 1024).toFixed(1)} KB\n`);
 
   for (const cssFile of cssFiles) {
     await optimizeSingleFile(cssFile);
@@ -81,18 +56,21 @@ async function optimizeCSS() {
     const size = fs.statSync(cssFile).size;
     totalSize += size;
     const sizeKB = (size / 1024).toFixed(1);
-    const status = size < 20480 ? "✅" : size < 51200 ? "⚠️" : "❌";
+    const status = size < 10240 ? "✅" : size < 20480 ? "🟡" : "❌";
     console.log(`   ${status} ${path.basename(cssFile)}: ${sizeKB} KB`);
   }
 
   const totalKB = (totalSize / 1024).toFixed(1);
+  const reduction = (((totalOriginalSize - totalSize) / totalOriginalSize) * 100).toFixed(1);
   const targetMet = totalSize < 20480;
-  console.log(`\n🎯 Total CSS size: ${totalKB} KB (Target: <20 KB) ${targetMet ? "✅" : "❌"}`);
+
+  console.log(`\n📉 Reduction: ${reduction}%`);
+  console.log(`🎯 Total CSS size: ${totalKB} KB (Target: <20 KB) ${targetMet ? "✅" : "❌"}`);
 
   if (targetMet) {
     console.log("🎉 CSS optimization target achieved!");
   } else {
-    console.log("⚠️  Still above target - consider more aggressive purging");
+    console.log("⚠️  Consider removing Tailwind Typography plugin or further reducing components");
   }
 }
 
@@ -106,35 +84,35 @@ async function optimizeSingleFile(cssFile) {
     // Read CSS content
     const css = fs.readFileSync(cssFile, "utf8");
 
-    // Step 1: Apply PurgeCSS
-    console.log("   1️⃣ Applying PurgeCSS...");
+    // Step 1: AGGRESSIVE PurgeCSS
+    console.log("   1️⃣ Applying AGGRESSIVE PurgeCSS...");
     const purgeResult = await new PurgeCSS().purge({
       content: SOURCE_DIRS,
       css: [{ raw: css, extension: "css" }],
       safelist: {
         standard: CRITICAL_CLASSES,
         deep: [
-          // Only essential theme colors
-          /^(text|bg)-(primary|muted)(-foreground)?$/,
-          // Only essential responsive breakpoints
-          /^md:(grid-cols-[2-5]|block|hidden)$/,
-          // Essential prose classes only
-          /^prose$/,
-          /^prose-lg$/,
-          /^prose-gray$/,
-          /^prose-invert$/,
-        ],
-        greedy: [
-          // Minimal greedy patterns
-          /^prose-/,
+          // Only keep dynamic theme colors
+          /^(text|bg|border)-(primary|secondary|accent|destructive|muted)(-foreground)?$/,
         ],
       },
+      // More aggressive extraction
       defaultExtractor: (content) => {
-        // Enhanced content extraction
+        // Extract classes more precisely
         const broadMatches = content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || [];
         const innerMatches = content.match(/[^<>"'`\s.()]*[^<>"'`\s.():]/g) || [];
-        return [...new Set([...broadMatches, ...innerMatches])];
+        // Filter out non-class matches
+        const filtered = [...new Set([...broadMatches, ...innerMatches])].filter(
+          (match) => !match.startsWith("/") && !match.includes("=") && match.length > 1
+        );
+        return filtered;
       },
+      // Remove all unused keyframes
+      keyframes: true,
+      // Remove all unused font-face rules
+      fontFace: true,
+      // Remove unused CSS variables
+      variables: true,
     });
 
     const purgedCSS = purgeResult[0].css;
@@ -142,20 +120,32 @@ async function optimizeSingleFile(cssFile) {
     const purgeReduction = (((originalSize - purgedSize) / originalSize) * 100).toFixed(1);
     console.log(`   📉 PurgeCSS: ${(purgedSize / 1024).toFixed(1)} KB (-${purgeReduction}%)`);
 
-    // Step 2: Apply cssnano minification
-    console.log("   2️⃣ Applying cssnano minification...");
+    // Step 2: MAXIMUM cssnano minification
+    console.log("   2️⃣ Applying MAXIMUM cssnano minification...");
     const minifyResult = await postcss([
       cssnano({
         preset: [
-          "default",
+          "default", // Use default preset with aggressive options
           {
             discardComments: { removeAll: true },
             normalizeWhitespace: true,
             discardDuplicates: true,
-            calc: true,
+            discardEmpty: true,
+            minifyFontValues: true,
+            minifyGradients: true,
+            minifyParams: true,
+            minifySelectors: true,
+            calc: { precision: 2 },
             colormin: true,
-            // Safe optimizations only
-            reduceIdents: false,
+            convertValues: true,
+            mergeLonghand: true,
+            mergeRules: true,
+            uniqueSelectors: true,
+            // Aggressive optimizations
+            reduceIdents: false, // Keep false for safety
+            mergeIdents: false,
+            autoprefixer: false, // Remove vendor prefixes for modern browsers
+            discardUnused: true,
             zindex: false,
           },
         ],
