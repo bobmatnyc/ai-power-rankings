@@ -77,12 +77,12 @@ export async function GET() {
             results.tests["tables"] = {
               status: "passed",
               count: tables.length,
-              list: tables.map((t: Record<string, unknown>) => t.table_name),
+              list: tables.map((t: Record<string, unknown>) => t["table_name"]),
             };
 
             // Test 5: Check articles table
             const hasArticles = tables.some(
-              (t: Record<string, unknown>) => t.table_name === "articles"
+              (t: Record<string, unknown>) => t["table_name"] === "articles"
             );
             if (hasArticles) {
               const countResult = await sql`SELECT COUNT(*) as count FROM articles`;

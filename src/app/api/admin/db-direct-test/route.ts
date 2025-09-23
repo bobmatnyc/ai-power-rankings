@@ -21,11 +21,13 @@ export async function GET() {
     };
 
     // Test 1: Check environment variables
-    results.tests.environment = {
-      USE_DATABASE: process.env["USE_DATABASE"],
-      USE_DATABASE_IS_TRUE: process.env["USE_DATABASE"] === "true",
-      DATABASE_URL_EXISTS: !!process.env["DATABASE_URL"],
-      DATABASE_URL_LENGTH: process.env["DATABASE_URL"]?.length || 0,
+    results["tests"] = {
+      environment: {
+        USE_DATABASE: process.env["USE_DATABASE"],
+        USE_DATABASE_IS_TRUE: process.env["USE_DATABASE"] === "true",
+        DATABASE_URL_EXISTS: !!process.env["DATABASE_URL"],
+        DATABASE_URL_LENGTH: process.env["DATABASE_URL"]?.length || 0,
+      },
     };
 
     // Test 2: Try to get database connection
@@ -33,7 +35,7 @@ export async function GET() {
       const { getDb } = await import("@/lib/db/connection");
       const db = getDb();
 
-      results.tests.getDb = {
+      (results["tests"] as any).getDb = {
         success: !!db,
         hasConnection: !!db,
         connectionType: db ? typeof db : "null",
@@ -44,12 +46,12 @@ export async function GET() {
         try {
           const { sql } = await import("drizzle-orm");
           const testQuery = await db.execute(sql`SELECT 1 as test`);
-          results.tests.simpleQuery = {
+          (results["tests"] as any).simpleQuery = {
             success: true,
             result: testQuery,
           };
         } catch (queryErr: unknown) {
-          results.tests.simpleQuery = {
+          (results["tests"] as any).simpleQuery = {
             success: false,
             error: queryErr instanceof Error ? queryErr.message : "Unknown error",
           };
@@ -62,18 +64,18 @@ export async function GET() {
 
           const countResult = await db.select({ count: sql`count(*)` }).from(articles);
 
-          results.tests.articlesCount = {
+          (results["tests"] as any).articlesCount = {
             success: true,
             count: countResult[0]?.count || 0,
           };
         } catch (countErr: unknown) {
-          results.tests.articlesCount = {
+          (results["tests"] as any).articlesCount = {
             success: false,
             error: countErr instanceof Error ? countErr.message : "Unknown error",
           };
         }
       } else {
-        results.tests.connectionFailed = {
+        (results["tests"] as any).connectionFailed = {
           reason: "getDb() returned null",
           possibleCauses: [
             "USE_DATABASE is not 'true'",
@@ -83,7 +85,7 @@ export async function GET() {
         };
       }
     } catch (importErr: unknown) {
-      results.tests.importError = {
+      (results["tests"] as any).importError = {
         success: false,
         error: importErr instanceof Error ? importErr.message : "Unknown error",
         stack: importErr instanceof Error ? importErr.stack : undefined,
@@ -94,7 +96,7 @@ export async function GET() {
     try {
       const { ArticlesRepository } = await import("@/lib/db/repositories/articles.repository");
       const repo = new ArticlesRepository();
-      results.tests.repository = {
+      (results["tests"] as any).repository = {
         success: true,
         message: "ArticlesRepository created successfully",
       };
@@ -102,18 +104,18 @@ export async function GET() {
       // Try to get articles
       try {
         const articles = await repo.getArticles({ limit: 1 });
-        results.tests.getArticles = {
+        (results["tests"] as any).getArticles = {
           success: true,
           count: articles.length,
         };
       } catch (getErr: unknown) {
-        results.tests.getArticles = {
+        (results["tests"] as any).getArticles = {
           success: false,
           error: getErr instanceof Error ? getErr.message : "Unknown error",
         };
       }
     } catch (repoErr: unknown) {
-      results.tests.repository = {
+      (results["tests"] as any).repository = {
         success: false,
         error: repoErr instanceof Error ? repoErr.message : "Unknown error",
         stack: repoErr instanceof Error ? repoErr.stack : undefined,

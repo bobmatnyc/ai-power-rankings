@@ -44,46 +44,49 @@ export async function GET() {
     };
 
     // Try direct Neon connection if we should
-    if (results.tests.envCheck.shouldConnect && dbUrl) {
+    if ((results["tests"] as any).envCheck.shouldConnect && dbUrl) {
       try {
         // Dynamic import to avoid build-time issues
         const { neon } = await import("@neondatabase/serverless");
-        results.tests.neonImport = { status: "success", message: "Neon module loaded" };
+        (results["tests"] as any).neonImport = { status: "success", message: "Neon module loaded" };
 
         try {
           const sql = neon(dbUrl);
-          results.tests.neonConnection = { status: "success", message: "Neon client created" };
+          (results["tests"] as any).neonConnection = {
+            status: "success",
+            message: "Neon client created",
+          };
 
           try {
             const result = await sql`SELECT 1 as test`;
-            results.tests.simpleQuery = {
+            (results["tests"] as any).simpleQuery = {
               status: "success",
               result: result[0],
               message: "Database query successful",
             };
           } catch (queryErr) {
-            results.tests.simpleQuery = {
+            (results["tests"] as any).simpleQuery = {
               status: "failed",
               error: queryErr instanceof Error ? queryErr.message : "Unknown query error",
               stack: queryErr instanceof Error ? queryErr.stack : undefined,
             };
           }
         } catch (connErr) {
-          results.tests.neonConnection = {
+          (results["tests"] as any).neonConnection = {
             status: "failed",
             error: connErr instanceof Error ? connErr.message : "Unknown connection error",
             stack: connErr instanceof Error ? connErr.stack : undefined,
           };
         }
       } catch (importErr) {
-        results.tests.neonImport = {
+        (results["tests"] as any).neonImport = {
           status: "failed",
           error: importErr instanceof Error ? importErr.message : "Cannot import Neon",
           stack: importErr instanceof Error ? importErr.stack : undefined,
         };
       }
     } else {
-      results.tests.connectionSkipped = {
+      (results["tests"] as any).connectionSkipped = {
         reason: !useDb
           ? "USE_DATABASE not set"
           : useDb !== "true"
