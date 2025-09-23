@@ -16,19 +16,10 @@ export default {
         border: "hsl(var(--border))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        primary: "hsl(var(--primary))",
+        "primary-foreground": "hsl(var(--primary-foreground))",
+        muted: "hsl(var(--muted))",
+        "muted-foreground": "hsl(var(--muted-foreground))",
       },
     },
   },
@@ -45,20 +36,13 @@ export default {
     zIndex: true,
     overflow: true,
     visibility: true,
-    boxSizing: true,
-    float: true,
-    clear: true,
 
     // Flexbox essentials
     flexDirection: true,
     flexWrap: true,
     alignItems: true,
     justifyContent: true,
-    alignContent: true,
-    alignSelf: true,
     flex: true,
-    flexGrow: true,
-    flexShrink: true,
     gap: true,
 
     // Grid essentials
@@ -76,9 +60,7 @@ export default {
     width: true,
     height: true,
     maxWidth: true,
-    minWidth: true,
     minHeight: true,
-    maxHeight: true,
 
     // Typography essentials
     fontSize: true,
@@ -87,7 +69,6 @@ export default {
     textAlign: true,
     textColor: true,
     textDecoration: true,
-    whitespace: true,
 
     // Backgrounds
     backgroundColor: true,
@@ -96,7 +77,6 @@ export default {
     borderRadius: true,
     borderWidth: true,
     borderColor: true,
-    borderStyle: true,
 
     // Interactivity
     cursor: true,
@@ -110,7 +90,6 @@ export default {
     // Transforms (basic)
     transform: true,
     scale: true,
-    translate: true,
 
     // Opacity
     opacity: true,
@@ -119,17 +98,21 @@ export default {
     screenReaders: true,
 
     // Disable everything else
+    float: false,
+    clear: false,
     isolation: false,
     objectFit: false,
     objectPosition: false,
     overscrollBehavior: false,
     container: false,
     boxDecorationBreak: false,
+    boxSizing: false,
     tableLayout: false,
     captionSide: false,
     borderCollapse: false,
     borderSpacing: false,
     transformOrigin: false,
+    translate: false,
     rotate: false,
     skew: false,
     touchAction: false,
@@ -152,12 +135,18 @@ export default {
     gridRowStart: false,
     gridRowEnd: false,
     flexBasis: false,
+    flexGrow: false,
+    flexShrink: false,
     order: false,
     justifyItems: false,
     justifySelf: false,
+    alignContent: false,
+    alignSelf: false,
     placeContent: false,
     placeItems: false,
     placeSelf: false,
+    minWidth: false,
+    maxHeight: false,
     size: false,
     fontFamily: false,
     fontStyle: false,
@@ -177,6 +166,7 @@ export default {
     textWrap: false,
     textIndent: false,
     verticalAlign: false,
+    whitespace: false,
     wordBreak: false,
     hyphens: false,
     content: false,
@@ -188,6 +178,7 @@ export default {
     backgroundSize: false,
     backgroundImage: false,
     gradientColorStops: false,
+    borderStyle: false,
     borderOpacity: false,
     divideColor: false,
     divideOpacity: false,

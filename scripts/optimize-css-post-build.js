@@ -15,14 +15,14 @@ const { glob } = require("glob");
 const BUILD_DIR = ".next/static/css";
 const SOURCE_DIRS = ["src/**/*.{js,jsx,ts,tsx}", "app/**/*.{js,jsx,ts,tsx}"];
 
-// ULTRA-MINIMAL safelist - only absolutely critical classes
+// ABSOLUTELY MINIMAL safelist - only Next.js internals
 const CRITICAL_CLASSES = [
-  // Next.js essentials
+  // Next.js essentials (MUST keep)
   "__next",
   "__next-route-announcer__",
 
-  // Only the most essential that can't be statically analyzed
-  "dark", // Dark mode toggle
+  // Dark mode (required for theme toggle)
+  "dark",
 ];
 
 async function optimizeCSS() {
@@ -91,21 +91,31 @@ async function optimizeSingleFile(cssFile) {
       css: [{ raw: css, extension: "css" }],
       safelist: {
         standard: CRITICAL_CLASSES,
-        deep: [
-          // Only keep dynamic theme colors
-          /^(text|bg|border)-(primary|secondary|accent|destructive|muted)(-foreground)?$/,
+        // Remove deep patterns - let static analysis handle them
+        deep: [],
+        // Add greedy patterns for absolutely critical dynamic classes
+        greedy: [
+          // Keep only the most used color utilities
+          /^(text|bg|border)-(primary|muted|background|foreground)$/,
         ],
       },
-      // More aggressive extraction
+      // ULTRA-AGGRESSIVE extraction - only exact Tailwind patterns
       defaultExtractor: (content) => {
-        // Extract classes more precisely
-        const broadMatches = content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || [];
-        const innerMatches = content.match(/[^<>"'`\s.()]*[^<>"'`\s.():]/g) || [];
-        // Filter out non-class matches
-        const filtered = [...new Set([...broadMatches, ...innerMatches])].filter(
-          (match) => !match.startsWith("/") && !match.includes("=") && match.length > 1
-        );
-        return filtered;
+        // More precise Tailwind class extraction
+        // Match Tailwind-specific patterns including arbitrary values
+        const matches = content.match(/[\w-/:%.[\]!]+/g) || [];
+
+        // Filter to only likely Tailwind classes
+        return matches.filter((match) => {
+          // Skip URLs, paths, and non-class patterns
+          if (match.startsWith("/") || match.startsWith("http") || match.includes("://"))
+            return false;
+          if (match.includes("=") || match.endsWith(".js") || match.endsWith(".css")) return false;
+          if (/^\d+$/.test(match)) return false; // Skip pure numbers
+
+          // Keep classes that look like Tailwind utilities
+          return match.length > 1 && match.length < 50;
+        });
       },
       // Remove all unused keyframes
       keyframes: true,
@@ -131,22 +141,31 @@ async function optimizeSingleFile(cssFile) {
             normalizeWhitespace: true,
             discardDuplicates: true,
             discardEmpty: true,
-            minifyFontValues: true,
             minifyGradients: true,
-            minifyParams: true,
             minifySelectors: true,
-            calc: { precision: 2 },
-            colormin: true,
             convertValues: true,
             mergeLonghand: true,
             mergeRules: true,
             uniqueSelectors: true,
-            // Aggressive optimizations
+            // MAXIMUM optimizations
             reduceIdents: false, // Keep false for safety
             mergeIdents: false,
-            autoprefixer: false, // Remove vendor prefixes for modern browsers
+            autoprefixer: false, // Remove ALL vendor prefixes
             discardUnused: true,
             zindex: false,
+            // Additional aggressive optimizations
+            normalizeUrl: true,
+            normalizeUnicode: true,
+            normalizeDisplayValues: true,
+            normalizeTimingFunctions: true,
+            normalizePositions: true,
+            orderedValues: true,
+            minifyParams: true,
+            minifyFontValues: { removeQuotes: true },
+            // Reduce precision for calculations
+            calc: { precision: 0 },
+            // Aggressive color minification
+            colormin: { legacy: false },
           },
         ],
       }),

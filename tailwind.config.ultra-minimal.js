@@ -1,163 +1,127 @@
-// ULTRA-MINIMAL Tailwind Configuration
-// Target: <20KB total CSS bundle
+// ULTRA-MINIMAL Tailwind - Bare essentials only
+// Target: <15KB CSS
 
 /** @type {import('tailwindcss').Config} */
 export default {
   mode: "jit",
   darkMode: ["class"],
-  content: ["./src/**/*.{ts,tsx,js,jsx}"],
-  // Extremely minimal safelist
+  content: ["./src/app/**/*.{ts,tsx}", "./src/components/**/*.{ts,tsx}"],
   safelist: ["__next", "dark"],
   theme: {
-    // Use default theme with minimal extensions
-    extend: {
-      colors: {
-        // Only CSS variables - no actual color values
-        border: "hsl(var(--border))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-    },
+    // No extensions - use defaults only
+    extend: {},
   },
   plugins: [],
-  // WHITELIST APPROACH: Only enable what we actually use
+  // EXTREME WHITELIST: Only absolute essentials
   corePlugins: {
-    // Reset/Preflight
-    preflight: true,
+    preflight: true, // Reset styles
 
-    // Layout essentials only
+    // Minimal layout
     display: true,
     position: true,
     inset: true,
     zIndex: true,
     overflow: true,
-    visibility: true,
-    boxSizing: true,
-    float: true,
-    clear: true,
 
-    // Flexbox essentials
+    // Minimal flexbox
     flexDirection: true,
-    flexWrap: true,
     alignItems: true,
     justifyContent: true,
-    alignContent: true,
-    alignSelf: true,
     flex: true,
-    flexGrow: true,
-    flexShrink: true,
     gap: true,
 
-    // Grid essentials
+    // Minimal grid
     gridTemplateColumns: true,
     gridColumn: true,
-    gridTemplateRows: true,
-    gridRow: true,
 
-    // Spacing
+    // Minimal spacing
     padding: true,
     margin: true,
-    space: true,
 
-    // Sizing
+    // Minimal sizing
     width: true,
     height: true,
     maxWidth: true,
-    minWidth: true,
     minHeight: true,
-    maxHeight: true,
 
-    // Typography essentials
+    // Minimal typography
     fontSize: true,
     fontWeight: true,
     lineHeight: true,
     textAlign: true,
     textColor: true,
-    textDecoration: true,
-    whitespace: true,
 
-    // Backgrounds
+    // Minimal backgrounds
     backgroundColor: true,
 
-    // Borders
+    // Minimal borders
     borderRadius: true,
     borderWidth: true,
     borderColor: true,
-    borderStyle: true,
 
-    // Interactivity
-    cursor: true,
-    pointerEvents: true,
-
-    // Transitions
-    transitionProperty: true,
-    transitionDuration: true,
-    transitionTimingFunction: true,
-
-    // Transforms (basic)
-    transform: true,
-    scale: true,
-    translate: true,
-
-    // Opacity
+    // Minimal effects
     opacity: true,
 
-    // Accessibility
-    screenReaders: true,
+    // Minimal transitions
+    transitionProperty: true,
+    transitionDuration: true,
 
-    // Disable everything else
-    isolation: false,
-    objectFit: false,
-    objectPosition: false,
-    overscrollBehavior: false,
+    // Disable ALL others
     container: false,
-    boxDecorationBreak: false,
+    float: false,
+    clear: false,
+    boxSizing: false,
     tableLayout: false,
-    captionSide: false,
     borderCollapse: false,
     borderSpacing: false,
     transformOrigin: false,
+    translate: false,
     rotate: false,
     skew: false,
+    scale: false,
+    transform: false,
+    animation: false,
+    cursor: false,
     touchAction: false,
-    scrollBehavior: false,
-    scrollMargin: false,
-    scrollPadding: false,
+    userSelect: false,
+    resize: false,
+    scrollSnapType: false,
     scrollSnapAlign: false,
     scrollSnapStop: false,
-    scrollSnapType: false,
+    scrollMargin: false,
+    scrollPadding: false,
+    scrollBehavior: false,
+    listStylePosition: false,
+    listStyleType: false,
+    listStyleImage: false,
     appearance: false,
     columns: false,
     breakAfter: false,
     breakBefore: false,
     breakInside: false,
-    gridAutoFlow: false,
     gridAutoColumns: false,
+    gridAutoFlow: false,
     gridAutoRows: false,
-    gridColumnStart: false,
     gridColumnEnd: false,
-    gridRowStart: false,
+    gridColumnStart: false,
+    gridRow: false,
     gridRowEnd: false,
+    gridRowStart: false,
+    gridTemplateRows: false,
     flexBasis: false,
+    flexGrow: false,
+    flexShrink: false,
+    flexWrap: false,
     order: false,
     justifyItems: false,
     justifySelf: false,
+    alignContent: false,
+    alignSelf: false,
     placeContent: false,
     placeItems: false,
     placeSelf: false,
+    minWidth: false,
+    maxHeight: false,
     size: false,
     fontFamily: false,
     fontStyle: false,
@@ -165,9 +129,7 @@ export default {
     fontVariantNumeric: false,
     letterSpacing: false,
     lineClamp: false,
-    listStyleImage: false,
-    listStylePosition: false,
-    listStyleType: false,
+    textDecoration: false,
     textDecorationColor: false,
     textDecorationStyle: false,
     textDecorationThickness: false,
@@ -177,6 +139,7 @@ export default {
     textWrap: false,
     textIndent: false,
     verticalAlign: false,
+    whitespace: false,
     wordBreak: false,
     hyphens: false,
     content: false,
@@ -188,6 +151,7 @@ export default {
     backgroundSize: false,
     backgroundImage: false,
     gradientColorStops: false,
+    borderStyle: false,
     borderOpacity: false,
     divideColor: false,
     divideOpacity: false,
@@ -206,7 +170,6 @@ export default {
     boxShadowColor: false,
     mixBlendMode: false,
     backgroundBlendMode: false,
-    blur: false,
     brightness: false,
     contrast: false,
     dropShadow: false,
@@ -215,6 +178,7 @@ export default {
     invert: false,
     saturate: false,
     sepia: false,
+    blur: false,
     filter: false,
     backdropBlur: false,
     backdropBrightness: false,
@@ -227,15 +191,23 @@ export default {
     backdropSepia: false,
     backdropFilter: false,
     transitionDelay: false,
-    animation: false,
+    transitionTimingFunction: false,
     caretColor: false,
     accentColor: false,
-    resize: false,
-    userSelect: false,
+    pointerEvents: false,
     willChange: false,
     fill: false,
     stroke: false,
     strokeWidth: false,
     aspectRatio: false,
+    screenReaders: false,
+    visibility: false,
+    space: false,
+    captionSide: false,
+    isolation: false,
+    objectFit: false,
+    objectPosition: false,
+    overscrollBehavior: false,
+    boxDecorationBreak: false,
   },
 };
