@@ -19,7 +19,7 @@ export async function GET() {
     const dbUrl = process.env["DATABASE_URL"];
     const useDb = process.env["USE_DATABASE"];
 
-    const results = {
+    const results: any = {
       timestamp: new Date().toISOString(),
       environment: {
         NODE_ENV: process.env["NODE_ENV"] || "not set",
