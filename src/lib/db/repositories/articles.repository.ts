@@ -42,6 +42,8 @@ export class ArticlesRepository {
    * Create a new article
    */
   async createArticle(article: NewArticle): Promise<Article> {
+    this.ensureConnection();
+
     if (!this.db) throw new Error("Database not connected");
 
     // Validate and sanitize data before insert
@@ -277,7 +279,11 @@ export class ArticlesRepository {
   }): Promise<Article[]> {
     this.ensureConnection();
 
-    let query = this.db!.select().from(articles).orderBy(desc(articles.publishedDate));
+    if (!this.db) {
+      throw new Error("Database connection not available after ensureConnection()");
+    }
+
+    let query = this.db.select().from(articles).orderBy(desc(articles.publishedDate));
 
     if (options?.status) {
       query = query.where(eq(articles.status, options.status)) as typeof query;
@@ -314,12 +320,18 @@ export class ArticlesRepository {
    * Delete an article (soft delete by default)
    */
   async deleteArticle(id: string, hard = false): Promise<boolean> {
+    this.ensureConnection();
+
+    if (!this.db) {
+      throw new Error("Database connection not available after ensureConnection()");
+    }
+
     if (hard) {
-      const result = await this.db?.delete(articles).where(eq(articles.id, id));
+      const result = await this.db.delete(articles).where(eq(articles.id, id));
       return result && "rowCount" in result ? result.rowCount > 0 : false;
     } else {
       const result = await this.db
-        ?.update(articles)
+        .update(articles)
         .set({
           status: "deleted",
           updatedAt: new Date(),
@@ -639,9 +651,13 @@ export class ArticlesRepository {
   }> {
     this.ensureConnection();
 
+    if (!this.db) {
+      throw new Error("Database connection not available after ensureConnection()");
+    }
+
     // Get basic counts
     const stats = await this.db
-      ?.select({
+      .select({
         total: sqlTag`COUNT(*)`.as("total"),
         active: sqlTag`COUNT(CASE WHEN status = 'active' THEN 1 END)`.as("active"),
       })
