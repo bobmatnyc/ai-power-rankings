@@ -179,9 +179,39 @@ export function ArticleManagement() {
 
       if (!response.ok) {
         // Log the specific error for debugging
-        const errorText = await response.text();
-        console.error("[ArticleManagement] Failed to load articles:", response.status, errorText);
-        throw new Error(`Failed to load articles: ${response.status} - ${errorText}`);
+        let errorMessage = `Failed to load articles (Status: ${response.status})`;
+
+        try {
+          const errorData = await response.json();
+          console.error("[ArticleManagement] API Error:", errorData);
+
+          if (response.status === 401) {
+            errorMessage = "Authentication required. Please sign in again.";
+            // In production, this might mean the Clerk session expired
+            if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
+              console.log(
+                "[ArticleManagement] Auth failed in production, might need to refresh Clerk session"
+              );
+            }
+          } else if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (parseError) {
+          // If response isn't JSON, try to get text
+          try {
+            const errorText = await response.text();
+            console.error(
+              "[ArticleManagement] Failed to load articles:",
+              response.status,
+              errorText
+            );
+            errorMessage = `${errorMessage}: ${errorText.substring(0, 100)}`;
+          } catch {
+            // Ignore parse errors
+          }
+        }
+
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();

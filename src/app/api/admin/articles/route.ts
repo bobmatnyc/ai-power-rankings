@@ -11,14 +11,26 @@ export async function GET(request: NextRequest) {
   console.log("[API] Articles endpoint - Request received");
 
   try {
+    // Check if auth is disabled (development mode)
+    const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+    console.log("[API] Auth disabled mode:", isAuthDisabled);
+
     // Check admin authentication (automatically skipped in local dev)
     console.log("[API] Checking authentication...");
     const isAuth = await isAuthenticated();
     console.log("[API] Authentication result:", isAuth);
 
-    if (!isAuth) {
+    if (!isAuth && !isAuthDisabled) {
       console.log("[API] Articles endpoint - unauthorized access attempt");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      // Add more detailed error for debugging
+      return NextResponse.json(
+        {
+          error: "Unauthorized",
+          details: "Authentication required. Please ensure you are logged in.",
+          authDisabled: isAuthDisabled,
+        },
+        { status: 401 }
+      );
     }
 
     // Check database availability
