@@ -3,20 +3,20 @@
  * Manages PostgreSQL connection using Drizzle ORM and Neon
  */
 
-// Load environment variables from .env files FIRST
-import * as dotenv from "dotenv";
-
-// Load environment-specific config
+// Only load dotenv in development environments
+// In production (Vercel), environment variables are set via the dashboard
 const NODE_ENV = process.env["NODE_ENV"] || "development";
 
-if (NODE_ENV === "production") {
-  // In production, load .env.production.local first, then .env.production
-  dotenv.config({ path: ".env.production.local" });
-  dotenv.config({ path: ".env.production" });
-} else {
-  // In development, load .env.local first, then .env
-  dotenv.config({ path: ".env.local" });
-  dotenv.config({ path: ".env" });
+if (NODE_ENV === "development") {
+  // Load environment variables from .env files in development only
+  try {
+    const dotenv = require("dotenv");
+    dotenv.config({ path: ".env.local" });
+    dotenv.config({ path: ".env" });
+  } catch (error) {
+    // Fail silently if dotenv is not available
+    console.warn("dotenv not available, skipping .env file loading");
+  }
 }
 
 import { neon } from "@neondatabase/serverless";
@@ -63,6 +63,19 @@ export function getDb() {
     return db;
   } catch (error) {
     console.error("❌ Failed to connect to database:", error);
+
+    // Log additional context in production for debugging
+    if (NODE_ENV === "production") {
+      console.error("Production database connection failure details:", {
+        hasUrl: !!DATABASE_URL,
+        urlLength: DATABASE_URL?.length || 0,
+        useDatabase: USE_DATABASE,
+        nodeEnv: NODE_ENV,
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
+        errorStack: error instanceof Error ? error.stack?.substring(0, 500) : "No stack",
+      });
+    }
+
     return null;
   }
 }
@@ -95,6 +108,18 @@ export async function testConnection(): Promise<boolean> {
     return true;
   } catch (error) {
     console.error("❌ Database connection test failed:", error);
+
+    // Additional logging for production debugging
+    if (NODE_ENV === "production") {
+      console.error("Production connection test failure:", {
+        hasDatabase: !!database,
+        hasSql: !!sql,
+        hasUrl: !!process.env["DATABASE_URL"],
+        errorType: error instanceof Error ? error.constructor.name : typeof error,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
+    }
+
     return false;
   }
 }

@@ -5,7 +5,7 @@
  * This helps us observe what errors are happening in production
  */
 
-const PRODUCTION_URL = "https://ai-power-ranking-3karnhnzh-1-m.vercel.app";
+const PRODUCTION_URL = "https://ai-power-ranking-niwmgl4g5-1-m.vercel.app";
 const STAGING_URL = "https://ai-power-ranking-iufz3m0sh-1-m.vercel.app";
 
 async function testEndpoint(url: string, name: string) {
