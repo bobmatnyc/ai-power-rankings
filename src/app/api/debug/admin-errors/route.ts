@@ -29,13 +29,13 @@ export async function GET() {
     // Test 2: Import auth modules
     addLog("🔐 Testing auth imports...");
     try {
-      const { currentUser } = await import("@clerk/nextjs/server");
+      await import("@clerk/nextjs/server");
       addLog("  ✅ Clerk currentUser import successful");
 
-      const { isAuthenticated } = await import("@/lib/clerk-auth");
+      await import("@/lib/clerk-auth");
       addLog("  ✅ clerk-auth import successful");
 
-      const { getAuth } = await import("@/lib/auth-helper");
+      await import("@/lib/auth-helper");
       addLog("  ✅ auth-helper import successful");
     } catch (importError) {
       addLog(
@@ -70,7 +70,7 @@ export async function GET() {
       const { ArticlesRepository } = await import("@/lib/db/repositories/articles.repository");
       addLog("  ✅ ArticlesRepository import successful");
 
-      const repo = new ArticlesRepository();
+      new ArticlesRepository();
       addLog("  ✅ ArticlesRepository instantiation successful");
     } catch (repoError) {
       addLog(

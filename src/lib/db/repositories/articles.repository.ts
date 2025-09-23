@@ -277,7 +277,7 @@ export class ArticlesRepository {
   }): Promise<Article[]> {
     this.ensureConnection();
 
-    let query = this.db.select().from(articles).orderBy(desc(articles.publishedDate));
+    let query = this.db!.select().from(articles).orderBy(desc(articles.publishedDate));
 
     if (options?.status) {
       query = query.where(eq(articles.status, options.status)) as typeof query;
