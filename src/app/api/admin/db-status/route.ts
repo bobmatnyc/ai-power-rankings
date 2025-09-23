@@ -29,16 +29,21 @@ function parseDatabaseUrl(url: string | undefined) {
     let environment: "development" | "production" = "production";
     const hostname = urlObj.hostname || "";
 
-    // Check for development patterns
+    // Check for development patterns - specifically check for development database hostnames
     if (
       hostname.includes("ep-bold-sunset") || // Specific Neon dev instance
+      hostname.includes("ep-autumn-glitter") || // Additional Neon dev instance
       hostname.includes("localhost") ||
       hostname.includes("127.0.0.1") ||
       hostname.includes("dev") ||
-      hostname.includes("test") ||
-      urlObj.pathname.slice(1) === "neondb" // Default Neon dev database
+      hostname.includes("test")
     ) {
       environment = "development";
+    }
+
+    // Production patterns - explicitly check for production database hostnames
+    if (hostname.includes("ep-wispy-fog")) {
+      environment = "production";
     }
 
     // Extract database name from pathname
