@@ -1,21 +1,5 @@
 [
   {
-    "id": "news_test_article_2025_09_18t14_42_27_822z_1758206547955",
-    "slug": "test-article-2025-09-18t14-42-27-822z",
-    "title": "Test Article - 2025-09-18T14:42:27.822Z",
-    "summary": "Test article for author verification",
-    "content": "This is a test article to verify the default author functionality. Claude Code and GitHub Copilot are mentioned here.",
-    "author": "Robert Matsuoka",
-    "source": "Test Suite",
-    "published_date": "2025-09-18T14:42:27.823Z",
-    "created_at": "2025-09-18T14:42:27.955Z",
-    "updated_at": "2025-09-18T14:42:27.955Z",
-    "tool_mentions": ["Claude Code", "GitHub Copilot"],
-    "tags": ["test", "verification"],
-    "category": "Test Category",
-    "importance_score": 5
-  },
-  {
     "id": "news_claude_4_revolutionizes_ai_code_generation_with_multi_file_support_1758206490658",
     "slug": "claude-4-revolutionizes-ai-code-generation-with-multi-file-support",
     "title": "Claude 4 Revolutionizes AI Code Generation with Multi-File Support",

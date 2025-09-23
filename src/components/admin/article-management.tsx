@@ -162,25 +162,40 @@ export function ArticleManagement() {
   });
 
   const loadArticles = useCallback(async () => {
+    setLoading(true);
     try {
+      console.log("[ArticleManagement] Starting to load articles...");
+
       // Load articles from database
       const response = await fetch("/api/admin/articles?includeStats=true", {
         credentials: "include",
+        headers: {
+          Accept: "application/json",
+        },
       });
+
+      console.log("[ArticleManagement] API Response status:", response.status);
+      console.log("[ArticleManagement] API Response headers:", response.headers);
 
       if (!response.ok) {
         // Log the specific error for debugging
         const errorText = await response.text();
-        console.error("Failed to load articles:", response.status, errorText);
-        throw new Error(`Failed to load articles: ${response.status}`);
+        console.error("[ArticleManagement] Failed to load articles:", response.status, errorText);
+        throw new Error(`Failed to load articles: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
+      console.log("[ArticleManagement] API Response data:", data);
+      console.log("[ArticleManagement] Articles received:", data.articles?.length || 0);
+      console.log("[ArticleManagement] Stats received:", data.stats);
+
       setArticles(data.articles || []);
       setStats(data.stats || null);
     } catch (err) {
+      console.error("[ArticleManagement] Error loading articles:", err);
       setError("Failed to load articles");
-      console.error(err);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -1284,7 +1299,12 @@ export function ArticleManagement() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {articles.length === 0 ? (
+              {loading && articles.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Loader2 className="h-12 w-12 mx-auto mb-4 animate-spin" />
+                  <p>Loading articles...</p>
+                </div>
+              ) : articles.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <Newspaper className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>No articles found</p>
