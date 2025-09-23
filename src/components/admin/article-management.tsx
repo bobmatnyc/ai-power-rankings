@@ -163,51 +163,16 @@ export function ArticleManagement() {
 
   const loadArticles = useCallback(async () => {
     try {
-      // Try new articles endpoint first
-      let response = await fetch("/api/admin/articles?includeStats=true", {
+      // Load articles from database
+      const response = await fetch("/api/admin/articles?includeStats=true", {
         credentials: "include",
       });
 
-      // If articles endpoint fails (503 = no database table), fallback to news endpoint
-      if (response.status === 503 || response.status === 500) {
-        console.log("Articles table not found, falling back to news endpoint");
-        response = await fetch("/api/admin/news/list", {
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to load articles from both endpoints");
-        }
-
-        const newsData = await response.json();
-        // Map news data to article format
-        const mappedArticles = (newsData.articles || []).map((article: any) => ({
-          id: article.id,
-          title: article.title,
-          summary: article.summary,
-          content: article.content,
-          slug: article.slug,
-          status: article.status || "active",
-          publishedDate: article.publishedAt || article.published_date || article.created_at,
-          // Add date fields that the UI expects
-          createdAt: article.created_at || article.publishedAt || article.published_date,
-          ingestedAt:
-            article.ingested_at ||
-            article.created_at ||
-            article.publishedAt ||
-            article.published_date,
-          author: article.author,
-          category: article.category,
-          tags: article.tags || [],
-          toolMentions: article.toolMentions || [],
-        }));
-        setArticles(mappedArticles);
-        setStats(newsData.stats || null);
-        return;
-      }
-
       if (!response.ok) {
-        throw new Error("Failed to load articles");
+        // Log the specific error for debugging
+        const errorText = await response.text();
+        console.error("Failed to load articles:", response.status, errorText);
+        throw new Error(`Failed to load articles: ${response.status}`);
       }
 
       const data = await response.json();
