@@ -377,38 +377,6 @@ export function ArticleManagement() {
           body: JSON.stringify(requestBody),
         });
 
-        // If articles table doesn't exist, fallback to news endpoint
-        if (response.status === 503 || response.status === 500) {
-          console.log("Articles table not found, falling back to news endpoint for save");
-
-          // Extract article data from preprocessed data
-          const articleData = savedPreviewData as any;
-
-          // Prepare news article format
-          const newsArticle = {
-            title: articleData.title || "Untitled Article",
-            summary: articleData.summary || "",
-            content: articleData.content || "",
-            author: metadata.author || articleData.author || "Unknown",
-            category: metadata.category || articleData.category || "General",
-            tags: metadata.tags
-              ? metadata.tags.split(",").map((t) => t.trim())
-              : articleData.tags || [],
-            tool_mentions: articleData.tools || [],
-            importance_score: 5, // Default importance
-          };
-
-          response = await fetch("/api/admin/news", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({
-              action: "manual-ingest",
-              article: newsArticle,
-            }),
-          });
-        }
-
         setProcessingProgress(75);
         setProcessingStep("Updating rankings...");
       } else {
@@ -441,33 +409,6 @@ export function ArticleManagement() {
           }),
         });
 
-        // If articles table doesn't exist, fallback to news endpoint
-        if (response.status === 503 || response.status === 500) {
-          console.log("Articles table not found, falling back to news endpoint for direct save");
-
-          // For direct save without preview, we need to generate minimal article data
-          const newsArticle = {
-            title: finalInputContent.slice(0, 100) || "Untitled Article",
-            summary: finalInputContent.slice(0, 200) || "",
-            content: finalInputContent,
-            author: metadata.author || "Unknown",
-            category: metadata.category || "General",
-            tags: metadata.tags ? metadata.tags.split(",").map((t) => t.trim()) : [],
-            tool_mentions: [], // Would need AI to extract these
-            importance_score: 5, // Default importance
-          };
-
-          response = await fetch("/api/admin/news", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({
-              action: "manual-ingest",
-              article: newsArticle,
-            }),
-          });
-        }
-
         setProcessingProgress(50);
         setProcessingStep("Calculating ranking impacts...");
       }
@@ -482,10 +423,9 @@ export function ArticleManagement() {
       setProcessingProgress(85);
       setProcessingStep("Finalizing...");
 
-      if ((data.success && data.result) || data.success) {
+      if (data.success && data.result) {
         // Map predictedChanges to impactedTools for the UI with correct field names
-        // Handle both articles endpoint response and news endpoint response
-        const result = data.result || (data as any);
+        const result = data.result as any;
         const mappedResult: IngestionPreview = {
           article: result.article || {},
           impactedTools: ((result.predictedChanges || []) as any[]).map(

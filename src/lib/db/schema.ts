@@ -200,3 +200,19 @@ export type Company = typeof companies.$inferSelect;
 export type NewCompany = typeof companies.$inferInsert;
 export type Migration = typeof migrations.$inferSelect;
 export type NewMigration = typeof migrations.$inferInsert;
+
+export type {
+  Article,
+  ArticleProcessingLog,
+  ArticleRankingsChange,
+  NewArticle,
+  NewArticleProcessingLog,
+  NewArticleRankingsChange,
+} from "./article-schema";
+// Export article tables from article-schema.ts
+export {
+  articleProcessingLogs,
+  articleRankingsChanges,
+  articleStatusEnum,
+  articles,
+} from "./article-schema";
