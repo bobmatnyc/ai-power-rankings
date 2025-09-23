@@ -1,6 +1,9 @@
 # 🔧 INSTRUCTIONS (AI Power Rankings Development)
 
-Updated: 2025-06-09
+Updated: 2025-09-23
+
+<!-- PM_INSTRUCTIONS_VERSION: 0003 -->
+<!-- 🔴 CRITICAL PM OVERRIDE: See /docs/PM_INSTRUCTIONS.md for PM-specific rules -->
 
 ---
 
@@ -18,6 +21,13 @@ Updated: 2025-06-09
 6. **Confirm before architectural shifts or abstractions.**
 
 > You are expected to follow all rules by default. No mocks, hacks, or shortcuts unless explicitly approved.
+
+### 🔴 PM-Specific Override
+**If you are the PM (Project Manager):**
+- **MANDATORY**: Read `/docs/PM_INSTRUCTIONS.md` FIRST
+- **DELEGATE 100%** of implementation work
+- **NEVER** write code, edit files, or implement features yourself
+- **ALWAYS** use Task tool with appropriate agent
 
 ---
 
