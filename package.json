@@ -50,6 +50,8 @@
     "db:studio": "drizzle-kit studio",
     "db:migrate:json": "tsx scripts/migrate-json-to-db.ts",
     "db:test": "tsx scripts/test-db-connection.ts",
+    "db:check": "tsx scripts/check-database-config.ts",
+    "db:check:all": "tsx scripts/check-database-config.ts --all",
     "db:switch-prod": "node scripts/switch-to-production-db.js",
     "db:switch-dev": "node scripts/switch-to-dev-db.js",
     "collect:github": "tsx scripts/collect-github-data.ts",

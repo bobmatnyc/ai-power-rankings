@@ -1,6 +1,11 @@
 /**
  * Database Connection Module
  * Manages PostgreSQL connection using Drizzle ORM and Neon
+ *
+ * Database Branching Strategy:
+ * - Development: Uses DATABASE_URL_DEVELOPMENT (fallback to DATABASE_URL)
+ * - Production: Always uses DATABASE_URL
+ * - Staging: Uses DATABASE_URL_STAGING (if available)
  */
 
 // Only load dotenv in development environments
@@ -30,12 +35,58 @@ let db: ReturnType<typeof drizzle> | null = null;
 let sql: ReturnType<typeof neon> | null = null;
 
 /**
+ * Get the appropriate database URL based on environment
+ * Implements database branching strategy for different environments
+ */
+function getDatabaseUrl(): string | undefined {
+  const nodeEnv = NODE_ENV;
+
+  // Development environment
+  if (nodeEnv === "development") {
+    const devUrl = process.env["DATABASE_URL_DEVELOPMENT"];
+    const fallbackUrl = process.env["DATABASE_URL"];
+
+    if (devUrl && !devUrl.includes("YOUR_PASSWORD")) {
+      console.log("🔧 Using DATABASE_URL_DEVELOPMENT (development branch)");
+      return devUrl;
+    } else if (fallbackUrl && !fallbackUrl.includes("YOUR_PASSWORD")) {
+      console.log("⚠️ DATABASE_URL_DEVELOPMENT not found, falling back to DATABASE_URL");
+      return fallbackUrl;
+    }
+    return undefined;
+  }
+
+  // Staging environment
+  if ((nodeEnv as string) === "staging") {
+    const stagingUrl = process.env["DATABASE_URL_STAGING"];
+    const fallbackUrl = process.env["DATABASE_URL"];
+
+    if (stagingUrl && !stagingUrl.includes("YOUR_PASSWORD")) {
+      console.log("🚦 Using DATABASE_URL_STAGING (staging branch)");
+      return stagingUrl;
+    } else if (fallbackUrl && !fallbackUrl.includes("YOUR_PASSWORD")) {
+      console.log("⚠️ DATABASE_URL_STAGING not found, falling back to DATABASE_URL");
+      return fallbackUrl;
+    }
+    return undefined;
+  }
+
+  // Production environment
+  const prodUrl = process.env["DATABASE_URL"];
+  if (prodUrl && !prodUrl.includes("YOUR_PASSWORD")) {
+    console.log("🚀 Using DATABASE_URL (production branch)");
+    return prodUrl;
+  }
+
+  return undefined;
+}
+
+/**
  * Get database connection
  * Returns null if database is disabled or not configured
  */
 export function getDb() {
   // Read environment variables at runtime, not build time
-  const DATABASE_URL = process.env["DATABASE_URL"];
   const USE_DATABASE = process.env["USE_DATABASE"] === "true";
 
   // Return null if database is disabled
@@ -43,9 +94,13 @@ export function getDb() {
     return null;
   }
 
+  // Get appropriate database URL based on environment
+  const DATABASE_URL = getDatabaseUrl();
+
   // Check if database URL is configured
-  if (!DATABASE_URL || DATABASE_URL.includes("YOUR_PASSWORD")) {
-    console.warn("Database URL not configured. Using JSON file storage.");
+  if (!DATABASE_URL) {
+    console.warn("Database URL not configured for environment:", NODE_ENV);
+    console.warn("Using JSON file storage.");
     return null;
   }
 
@@ -69,6 +124,8 @@ export function getDb() {
     db = drizzle(sql, { schema: fullSchema });
 
     console.log("✅ Database connection established");
+    console.log("📍 Environment:", NODE_ENV);
+    console.log("🔗 Database host:", DATABASE_URL.split("@")[1]?.split("/")[0] || "unknown");
     return db;
   } catch (error) {
     console.error("❌ Failed to connect to database:", error);
@@ -102,10 +159,10 @@ export async function testConnection(): Promise<boolean> {
 
   try {
     // Simple query to test connection
-    const DATABASE_URL = process.env["DATABASE_URL"];
+    const DATABASE_URL = getDatabaseUrl();
     if (!sql) {
       if (!DATABASE_URL) {
-        throw new Error("DATABASE_URL environment variable is not defined");
+        throw new Error("No database URL available for environment: " + NODE_ENV);
       }
       sql = neon(DATABASE_URL);
     }
@@ -123,7 +180,8 @@ export async function testConnection(): Promise<boolean> {
       console.error("Production connection test failure:", {
         hasDatabase: !!database,
         hasSql: !!sql,
-        hasUrl: !!process.env["DATABASE_URL"],
+        hasUrl: !!getDatabaseUrl(),
+        environment: NODE_ENV,
         errorType: error instanceof Error ? error.constructor.name : typeof error,
         errorMessage: error instanceof Error ? error.message : String(error),
       });
