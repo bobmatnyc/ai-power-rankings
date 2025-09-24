@@ -154,7 +154,7 @@ export default function UnifiedAdminDashboard() {
     try {
       const response = await fetch("/api/admin/rankings/commit", {
         method: "POST",
-        credentials: "include",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           preview: rankingPreview,
@@ -187,7 +187,10 @@ export default function UnifiedAdminDashboard() {
   const loadRankingVersions = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/rankings/versions", {
-        credentials: "include",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
@@ -214,7 +217,10 @@ export default function UnifiedAdminDashboard() {
     try {
       const response = await fetch(`/api/admin/rankings/rollback/${versionId}`, {
         method: "POST",
-        credentials: "include",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
@@ -242,7 +248,7 @@ export default function UnifiedAdminDashboard() {
 
     try {
       const response = await fetch("/api/admin/db-status", {
-        credentials: "include", // Include cookies for authentication
+        credentials: "same-origin", // Use same-origin for better Clerk compatibility
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -279,33 +285,36 @@ export default function UnifiedAdminDashboard() {
       }
 
       if (!response.ok) {
-        // Handle errors silently
+        // Enhanced error logging for debugging
+        console.error("[UnifiedAdminDashboard] Database status request failed:", {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+        });
+
+        // Handle errors with better logging
         if (response.status === 401) {
-          // Authentication error - Check if we're actually using the database
-          // Fallback to checking environment directly
-          const useDatabase = process.env["NEXT_PUBLIC_USE_DATABASE"] === "true";
-          if (useDatabase) {
-            // We're using database but can't get detailed status
-            setDbStatus({
-              connected: true,
-              enabled: true,
-              configured: true,
-              hasActiveInstance: true,
-              environment: "production",
-              nodeEnv: "production",
-              database: "postgresql",
-              host: "neon",
-              maskedHost: "neon",
-              provider: "neon",
-              timestamp: new Date().toISOString(),
-              status: "connected",
-              type: "postgresql" as const,
-              displayEnvironment: "production" as const,
-            });
-          } else {
-            console.log("Database status authentication check - using JSON mode");
-            setIsLoadingDbStatus(false);
-          }
+          console.error(
+            "[UnifiedAdminDashboard] Authentication failed for database status. " +
+              "This might be a credentials configuration issue."
+          );
+          // Set a default status indicating auth issue
+          setDbStatus({
+            connected: false,
+            enabled: false,
+            configured: false,
+            hasActiveInstance: false,
+            environment: "unknown",
+            nodeEnv: "unknown",
+            database: "unknown",
+            host: "unknown",
+            maskedHost: "unknown",
+            provider: "unknown",
+            timestamp: new Date().toISOString(),
+            status: "auth_error",
+            type: "json" as const,
+            displayEnvironment: "local" as const,
+          });
           return;
         } else if (response.status === 404) {
           // API route doesn't exist - use JSON mode
@@ -606,7 +615,7 @@ export default function UnifiedAdminDashboard() {
               // Call logout API
               await fetch("/api/admin/auth", {
                 method: "DELETE",
-                credentials: "include",
+                credentials: "same-origin",
               });
               window.location.href = `/${lang}/admin/auth/signin`;
             }}

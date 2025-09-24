@@ -168,9 +168,10 @@ export function ArticleManagement() {
 
       // Load articles from database
       const response = await fetch("/api/admin/articles?includeStats=true", {
-        credentials: "include",
+        credentials: "same-origin", // Use same-origin for better Clerk compatibility
         headers: {
           Accept: "application/json",
+          "Content-Type": "application/json",
         },
       });
 
@@ -178,6 +179,14 @@ export function ArticleManagement() {
       console.log("[ArticleManagement] API Response headers:", response.headers);
 
       if (!response.ok) {
+        // Enhanced error logging for debugging
+        console.error("[ArticleManagement] Request failed:", {
+          status: response.status,
+          statusText: response.statusText,
+          url: "/api/admin/articles",
+          headers: Object.fromEntries(response.headers.entries()),
+        });
+
         // Log the specific error for debugging
         let errorMessage = `Failed to load articles (Status: ${response.status})`;
         let errorDetails = "";
@@ -296,8 +305,8 @@ export function ArticleManagement() {
 
       const response = await fetch("/api/admin/articles/ingest", {
         method: "POST",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({
           type: ingestionType === "file" ? "text" : ingestionType,
           input: finalInputContent,
@@ -408,8 +417,8 @@ export function ArticleManagement() {
 
         response = await fetch("/api/admin/articles/ingest", {
           method: "POST",
+          credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify(requestBody),
         });
 
@@ -429,8 +438,8 @@ export function ArticleManagement() {
 
         response = await fetch("/api/admin/articles/ingest", {
           method: "POST",
+          credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({
             type: ingestionType === "file" ? "text" : ingestionType,
             input: finalInputContent,
@@ -524,8 +533,8 @@ export function ArticleManagement() {
     try {
       const response = await fetch(`/api/admin/articles/${editingArticle.id}`, {
         method: "PATCH",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify(editContent),
       });
 
@@ -571,8 +580,8 @@ export function ArticleManagement() {
         // Fallback to regular POST without SSE
         const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
           method: "POST",
+          credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({ dryRun: true }),
         });
 
@@ -653,8 +662,8 @@ export function ArticleManagement() {
         // Fallback to regular POST if SSE fails
         fetch(`/api/admin/articles/${articleId}/recalculate`, {
           method: "POST",
+          credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({ dryRun: true }),
         })
           .then(async (response) => {
@@ -715,8 +724,8 @@ export function ArticleManagement() {
         // Fallback to regular POST without SSE
         const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
           method: "POST",
+          credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({ dryRun: false, useCachedAnalysis: true }),
         });
 
@@ -760,8 +769,8 @@ export function ArticleManagement() {
         // Fallback to regular POST if SSE fails
         fetch(`/api/admin/articles/${articleId}/recalculate`, {
           method: "POST",
+          credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({ dryRun: false, useCachedAnalysis: true }),
         })
           .then(async (response) => {
@@ -800,7 +809,10 @@ export function ArticleManagement() {
     try {
       const response = await fetch(`/api/admin/articles/${articleId}`, {
         method: "DELETE",
-        credentials: "include",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
