@@ -27,12 +27,12 @@ export async function GET() {
   try {
     // 1. Check Clerk authentication
     console.log("[DEBUG-AUTH] Checking Clerk authentication...");
-    debugInfo.authentication = {};
+    debugInfo["authentication"] = {};
 
     try {
       // Get current user
       const user = await currentUser();
-      debugInfo.authentication.currentUser = user
+      debugInfo["authentication"]["currentUser"] = user
         ? {
             id: user.id,
             firstName: user.firstName,
@@ -51,7 +51,7 @@ export async function GET() {
 
       // Get auth session
       const authResult = await getAuth();
-      debugInfo.authentication.session = authResult
+      debugInfo["authentication"]["session"] = authResult
         ? {
             userId: authResult.userId,
             sessionId: authResult.sessionId,
@@ -64,8 +64,8 @@ export async function GET() {
 
       // Check admin status
       const isAdmin = user?.publicMetadata?.isAdmin === true;
-      debugInfo.authentication.isAdmin = isAdmin;
-      debugInfo.authentication.adminCheckDetails = {
+      debugInfo["authentication"]["isAdmin"] = isAdmin;
+      debugInfo["authentication"]["adminCheckDetails"] = {
         hasUser: !!user,
         hasPublicMetadata: !!user?.publicMetadata,
         isAdminValue: user?.publicMetadata?.isAdmin,
@@ -74,7 +74,7 @@ export async function GET() {
       };
     } catch (authError) {
       console.error("[DEBUG-AUTH] Auth error:", authError);
-      debugInfo.authentication.error = {
+      debugInfo["authentication"]["error"] = {
         message: authError instanceof Error ? authError.message : "Unknown auth error",
         stack: authError instanceof Error ? authError.stack?.split("\n").slice(0, 5) : undefined,
       };
@@ -82,7 +82,7 @@ export async function GET() {
 
     // 2. Check environment variables (sanitized)
     console.log("[DEBUG-AUTH] Checking environment variables...");
-    debugInfo.environmentVariables = {
+    debugInfo["environmentVariables"] = {
       auth: {
         NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]
           ? "✅ Set"
@@ -113,40 +113,40 @@ export async function GET() {
 
     // 3. Test database connection
     console.log("[DEBUG-AUTH] Testing database connection...");
-    debugInfo.database = {
+    debugInfo["database"] = {
       status: "checking",
     };
 
     try {
       const db = getDb();
-      debugInfo.database.hasConnection = !!db;
+      debugInfo["database"]["hasConnection"] = !!db;
 
       if (db) {
         // Test the connection
         const connectionTest = await testConnection();
-        debugInfo.database.connectionTestResult = connectionTest;
+        debugInfo["database"]["connectionTestResult"] = connectionTest;
 
         // Try to run a simple query
         try {
           const result = await db.execute(
             "SELECT version() as version, current_database() as database, current_user as user"
           );
-          debugInfo.database.queryTest = {
+          debugInfo["database"]["queryTest"] = {
             success: true,
             result: result.rows?.[0] || "No result",
           };
         } catch (queryError) {
-          debugInfo.database.queryTest = {
+          debugInfo["database"]["queryTest"] = {
             success: false,
             error: queryError instanceof Error ? queryError.message : "Query failed",
           };
         }
       } else {
-        debugInfo.database.status = "No database connection available";
+        debugInfo["database"]["status"] = "No database connection available";
       }
     } catch (dbError) {
       console.error("[DEBUG-AUTH] Database error:", dbError);
-      debugInfo.database.error = {
+      debugInfo["database"]["error"] = {
         message: dbError instanceof Error ? dbError.message : "Unknown database error",
         stack: dbError instanceof Error ? dbError.stack?.split("\n").slice(0, 5) : undefined,
       };
@@ -154,7 +154,7 @@ export async function GET() {
 
     // 4. Test ArticlesRepository
     console.log("[DEBUG-AUTH] Testing ArticlesRepository...");
-    debugInfo.articlesRepository = {
+    debugInfo["articlesRepository"] = {
       status: "checking",
     };
 
@@ -166,10 +166,10 @@ export async function GET() {
         // Try to get article count
         try {
           const stats = await articlesRepo.getArticleStats();
-          debugInfo.articlesRepository.stats = stats;
-          debugInfo.articlesRepository.success = true;
+          debugInfo["articlesRepository"]["stats"] = stats;
+          debugInfo["articlesRepository"]["success"] = true;
         } catch (repoError) {
-          debugInfo.articlesRepository.error = {
+          debugInfo["articlesRepository"]["error"] = {
             message: repoError instanceof Error ? repoError.message : "Repository operation failed",
             stack:
               repoError instanceof Error ? repoError.stack?.split("\n").slice(0, 5) : undefined,
@@ -183,7 +183,7 @@ export async function GET() {
             limit: 3,
             offset: 0,
           });
-          debugInfo.articlesRepository.sampleArticles = {
+          debugInfo["articlesRepository"]["sampleArticles"] = {
             count: articles.length,
             firstArticle: articles[0]
               ? {
@@ -195,17 +195,17 @@ export async function GET() {
               : null,
           };
         } catch (articlesError) {
-          debugInfo.articlesRepository.articlesError = {
+          debugInfo["articlesRepository"]["articlesError"] = {
             message:
               articlesError instanceof Error ? articlesError.message : "Failed to fetch articles",
           };
         }
       } else {
-        debugInfo.articlesRepository.status = "No database connection available";
+        debugInfo["articlesRepository"]["status"] = "No database connection available";
       }
     } catch (repoError) {
       console.error("[DEBUG-AUTH] Repository error:", repoError);
-      debugInfo.articlesRepository.error = {
+      debugInfo["articlesRepository"]["error"] = {
         message: repoError instanceof Error ? repoError.message : "Unknown repository error",
         stack: repoError instanceof Error ? repoError.stack?.split("\n").slice(0, 5) : undefined,
       };
@@ -213,7 +213,7 @@ export async function GET() {
 
     // 5. Test what the admin articles endpoint would return
     console.log("[DEBUG-AUTH] Simulating admin articles endpoint logic...");
-    debugInfo.adminEndpointSimulation = {
+    debugInfo["adminEndpointSimulation"] = {
       wouldAuthenticate: false,
       wouldAuthorize: false,
       wouldFetchArticles: false,
@@ -221,66 +221,74 @@ export async function GET() {
     };
 
     const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-    debugInfo.adminEndpointSimulation.isAuthDisabled = isAuthDisabled;
+    debugInfo["adminEndpointSimulation"]["isAuthDisabled"] = isAuthDisabled;
 
     if (!isAuthDisabled) {
-      const user = debugInfo.authentication.currentUser;
+      const user = debugInfo["authentication"]["currentUser"];
       if (!user) {
-        debugInfo.adminEndpointSimulation.details.reason = "No authenticated user";
-        debugInfo.adminEndpointSimulation.details.wouldReturn = "401 Unauthorized";
+        debugInfo["adminEndpointSimulation"]["details"]["reason"] = "No authenticated user";
+        debugInfo["adminEndpointSimulation"]["details"]["wouldReturn"] = "401 Unauthorized";
       } else {
-        debugInfo.adminEndpointSimulation.wouldAuthenticate = true;
+        debugInfo["adminEndpointSimulation"]["wouldAuthenticate"] = true;
         const isAdmin = user.publicMetadata?.isAdmin === true;
         if (!isAdmin) {
-          debugInfo.adminEndpointSimulation.details.reason = "User is not admin";
-          debugInfo.adminEndpointSimulation.details.wouldReturn = "403 Forbidden";
-          debugInfo.adminEndpointSimulation.details.userMetadata = user.publicMetadata;
+          debugInfo["adminEndpointSimulation"]["details"]["reason"] = "User is not admin";
+          debugInfo["adminEndpointSimulation"]["details"]["wouldReturn"] = "403 Forbidden";
+          debugInfo["adminEndpointSimulation"]["details"]["userMetadata"] = user.publicMetadata;
         } else {
-          debugInfo.adminEndpointSimulation.wouldAuthorize = true;
-          debugInfo.adminEndpointSimulation.wouldFetchArticles = !!debugInfo.database.hasConnection;
-          debugInfo.adminEndpointSimulation.details.wouldReturn = debugInfo.database.hasConnection
+          debugInfo["adminEndpointSimulation"]["wouldAuthorize"] = true;
+          debugInfo["adminEndpointSimulation"]["wouldFetchArticles"] =
+            !!debugInfo["database"]["hasConnection"];
+          debugInfo["adminEndpointSimulation"]["details"]["wouldReturn"] = debugInfo["database"][
+            "hasConnection"
+          ]
             ? "200 OK with articles"
             : "503 Service Unavailable (no database)";
         }
       }
     } else {
-      debugInfo.adminEndpointSimulation.wouldAuthenticate = true;
-      debugInfo.adminEndpointSimulation.wouldAuthorize = true;
-      debugInfo.adminEndpointSimulation.wouldFetchArticles = !!debugInfo.database.hasConnection;
-      debugInfo.adminEndpointSimulation.details.reason = "Auth is disabled";
-      debugInfo.adminEndpointSimulation.details.wouldReturn = debugInfo.database.hasConnection
+      debugInfo["adminEndpointSimulation"]["wouldAuthenticate"] = true;
+      debugInfo["adminEndpointSimulation"]["wouldAuthorize"] = true;
+      debugInfo["adminEndpointSimulation"]["wouldFetchArticles"] =
+        !!debugInfo["database"]["hasConnection"];
+      debugInfo["adminEndpointSimulation"]["details"]["reason"] = "Auth is disabled";
+      debugInfo["adminEndpointSimulation"]["details"]["wouldReturn"] = debugInfo["database"][
+        "hasConnection"
+      ]
         ? "200 OK with articles"
         : "503 Service Unavailable (no database)";
     }
 
     // 6. Summary and recommendations
     console.log("[DEBUG-AUTH] Generating summary...");
-    debugInfo.summary = {
-      authenticationStatus: debugInfo.authentication.currentUser
+    debugInfo["summary"] = {
+      authenticationStatus: debugInfo["authentication"]["currentUser"]
         ? "✅ Authenticated"
         : "❌ Not authenticated",
-      adminStatus: debugInfo.authentication.isAdmin ? "✅ Is admin" : "❌ Not admin",
-      databaseStatus: debugInfo.database.hasConnection ? "✅ Connected" : "❌ Not connected",
-      expectedBehavior: debugInfo.adminEndpointSimulation.details.wouldReturn,
+      adminStatus: debugInfo["authentication"]["isAdmin"] ? "✅ Is admin" : "❌ Not admin",
+      databaseStatus: debugInfo["database"]["hasConnection"] ? "✅ Connected" : "❌ Not connected",
+      expectedBehavior: debugInfo["adminEndpointSimulation"]["details"]["wouldReturn"],
       recommendations: [],
     };
 
     // Generate recommendations based on findings
-    if (!debugInfo.authentication.currentUser) {
-      debugInfo.summary.recommendations.push("User is not authenticated. Ensure you're signed in.");
+    if (!debugInfo["authentication"]["currentUser"]) {
+      debugInfo["summary"]["recommendations"].push(
+        "User is not authenticated. Ensure you're signed in."
+      );
     }
-    if (debugInfo.authentication.currentUser && !debugInfo.authentication.isAdmin) {
-      debugInfo.summary.recommendations.push(
+    if (debugInfo["authentication"]["currentUser"] && !debugInfo["authentication"]["isAdmin"]) {
+      debugInfo["summary"]["recommendations"].push(
         "User is authenticated but not admin. Update Clerk user metadata with { isAdmin: true }"
       );
     }
-    if (!debugInfo.database.hasConnection) {
-      debugInfo.summary.recommendations.push(
+    if (!debugInfo["database"]["hasConnection"]) {
+      debugInfo["summary"]["recommendations"].push(
         "Database is not connected. Check DATABASE_URL environment variable and USE_DATABASE setting."
       );
     }
     if (!process.env["CLERK_SECRET_KEY"]) {
-      debugInfo.summary.recommendations.push(
+      debugInfo["summary"]["recommendations"].push(
         "CLERK_SECRET_KEY is not set. This is required for server-side authentication."
       );
     }
