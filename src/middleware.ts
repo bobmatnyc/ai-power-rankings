@@ -279,8 +279,10 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    // Include API routes in middleware processing
-    "/api/:path*",
+    // Include ALL API routes explicitly - required for Clerk auth() to work
+    "/api/(.*)",
+    // Include admin API routes explicitly
+    "/api/admin/(.*)",
     // Skip internal Next.js paths but include everything else
     "/((?!_next/static|_next/image|assets|data|partytown|favicon.ico|crown.*|robots.txt|sitemap.xml).*)",
   ],
