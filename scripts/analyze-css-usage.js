@@ -11,7 +11,6 @@
  */
 
 const fs = require("node:fs");
-const path = require("node:path");
 const { glob } = require("glob");
 
 // Source directories to scan
@@ -24,7 +23,6 @@ const SOURCE_DIRS = [
 
 // Pattern to match class names
 const CLASS_PATTERN = /className\s*[=:]\s*[`"']([^`"']*)[`"']/g;
-const CLASS_PATTERN_TEMPLATE = /className\s*[=:]\s*[`]([^`]*)[`]/g;
 
 async function analyzeUsage() {
   console.log("🔍 Analyzing CSS class usage in codebase...\n");
@@ -89,8 +87,8 @@ function extractClasses(content) {
   const classes = new Set();
 
   // Match regular className patterns
-  let match;
-  while ((match = CLASS_PATTERN.exec(content)) !== null) {
+  let match = CLASS_PATTERN.exec(content);
+  while (match !== null) {
     const classString = match[1];
     // Split by spaces and filter out template literals
     classString.split(/\s+/).forEach((cls) => {
@@ -98,6 +96,7 @@ function extractClasses(content) {
         classes.add(cls.trim());
       }
     });
+    match = CLASS_PATTERN.exec(content);
   }
 
   // Reset regex

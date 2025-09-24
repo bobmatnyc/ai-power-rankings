@@ -18,7 +18,7 @@ if (NODE_ENV === "development") {
     const dotenv = require("dotenv");
     dotenv.config({ path: ".env.local" });
     dotenv.config({ path: ".env" });
-  } catch (error) {
+  } catch {
     // Fail silently if dotenv is not available
     console.warn("dotenv not available, skipping .env file loading");
   }
@@ -162,7 +162,7 @@ export async function testConnection(): Promise<boolean> {
     const DATABASE_URL = getDatabaseUrl();
     if (!sql) {
       if (!DATABASE_URL) {
-        throw new Error("No database URL available for environment: " + NODE_ENV);
+        throw new Error(`No database URL available for environment: ${NODE_ENV}`);
       }
       sql = neon(DATABASE_URL);
     }

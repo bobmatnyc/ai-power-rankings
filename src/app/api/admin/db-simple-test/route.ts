@@ -1,6 +1,10 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+interface TestResult {
+  [key: string]: unknown;
+}
+
 /**
  * GET /api/admin/db-simple-test
  * Simple test to check environment variables only
@@ -19,6 +23,15 @@ export async function GET() {
     const dbUrl = process.env["DATABASE_URL"];
     const useDb = process.env["USE_DATABASE"];
 
+    const tests: TestResult = {};
+    tests["envCheck"] = {
+      hasDbUrl: !!dbUrl,
+      hasUseDb: !!useDb,
+      useDbIsTrue: useDb === "true",
+      urlIsValid: !!dbUrl && !dbUrl.includes("YOUR_PASSWORD"),
+      shouldConnect: useDb === "true" && !!dbUrl && !dbUrl.includes("YOUR_PASSWORD"),
+    };
+
     const results: Record<string, unknown> = {
       timestamp: new Date().toISOString(),
       environment: {
@@ -32,61 +45,54 @@ export async function GET() {
         DATABASE_URL_STARTS_WITH: dbUrl ? dbUrl.substring(0, 15) : "not set",
         DATABASE_URL_CONTAINS_PASSWORD_PLACEHOLDER: dbUrl ? dbUrl.includes("YOUR_PASSWORD") : false,
       },
-      tests: {
-        envCheck: {
-          hasDbUrl: !!dbUrl,
-          hasUseDb: !!useDb,
-          useDbIsTrue: useDb === "true",
-          urlIsValid: !!dbUrl && !dbUrl.includes("YOUR_PASSWORD"),
-          shouldConnect: useDb === "true" && !!dbUrl && !dbUrl.includes("YOUR_PASSWORD"),
-        },
-      },
+      tests,
     };
 
     // Try direct Neon connection if we should
-    if ((results["tests"] as any).envCheck.shouldConnect && dbUrl) {
+    const envCheckResult = tests["envCheck"] as { shouldConnect?: boolean };
+    if (envCheckResult.shouldConnect && dbUrl) {
       try {
         // Dynamic import to avoid build-time issues
         const { neon } = await import("@neondatabase/serverless");
-        (results["tests"] as any).neonImport = { status: "success", message: "Neon module loaded" };
+        tests["neonImport"] = { status: "success", message: "Neon module loaded" };
 
         try {
           const sql = neon(dbUrl);
-          (results["tests"] as any).neonConnection = {
+          tests["neonConnection"] = {
             status: "success",
             message: "Neon client created",
           };
 
           try {
             const result = await sql`SELECT 1 as test`;
-            (results["tests"] as any).simpleQuery = {
+            tests["simpleQuery"] = {
               status: "success",
               result: result[0],
               message: "Database query successful",
             };
-          } catch (queryErr) {
-            (results["tests"] as any).simpleQuery = {
+          } catch (queryErr: unknown) {
+            tests["simpleQuery"] = {
               status: "failed",
               error: queryErr instanceof Error ? queryErr.message : "Unknown query error",
               stack: queryErr instanceof Error ? queryErr.stack : undefined,
             };
           }
-        } catch (connErr) {
-          (results["tests"] as any).neonConnection = {
+        } catch (connErr: unknown) {
+          tests["neonConnection"] = {
             status: "failed",
             error: connErr instanceof Error ? connErr.message : "Unknown connection error",
             stack: connErr instanceof Error ? connErr.stack : undefined,
           };
         }
-      } catch (importErr) {
-        (results["tests"] as any).neonImport = {
+      } catch (importErr: unknown) {
+        tests["neonImport"] = {
           status: "failed",
           error: importErr instanceof Error ? importErr.message : "Cannot import Neon",
           stack: importErr instanceof Error ? importErr.stack : undefined,
         };
       }
     } else {
-      (results["tests"] as any).connectionSkipped = {
+      tests["connectionSkipped"] = {
         reason: !useDb
           ? "USE_DATABASE not set"
           : useDb !== "true"
@@ -106,14 +112,14 @@ export async function GET() {
         "Cache-Control": "no-cache",
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Simple DB test error:", error);
     return NextResponse.json(
       {
         error: "Test Failed",
         message: error instanceof Error ? error.message : "Unknown error",
         stack: error instanceof Error ? error.stack : undefined,
-        type: error?.constructor?.name,
+        type: (error as { constructor?: { name?: string } })?.constructor?.name,
       },
       { status: 500 }
     );
