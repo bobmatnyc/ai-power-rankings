@@ -27,26 +27,44 @@ export async function getAuth() {
 
   // In production or when auth is enabled, use Clerk
   try {
+    console.log("[auth-helper] Getting auth data from Clerk...");
     const authData = await auth();
-    const user = authData.userId ? await currentUser() : null;
+    console.log("[auth-helper] Auth data received, userId:", authData?.userId);
+
+    let user = null;
+    if (authData?.userId) {
+      try {
+        console.log("[auth-helper] Fetching current user...");
+        user = await currentUser();
+        console.log("[auth-helper] Current user fetched:", user?.id);
+      } catch (userError) {
+        console.error("[auth-helper] Error fetching current user:", userError);
+        console.error("[auth-helper] User error stack:", userError instanceof Error ? userError.stack : "No stack");
+        // Continue without user data rather than failing completely
+        user = null;
+      }
+    }
 
     return {
-      userId: authData.userId,
-      sessionId: authData.sessionId,
+      userId: authData?.userId || null,
+      sessionId: authData?.sessionId || null,
       user: user
         ? {
             id: user.id,
             emailAddresses: user.emailAddresses || [],
-            firstName: user.firstName,
-            lastName: user.lastName,
-            fullName: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
-            username: user.username,
+            firstName: user.firstName || null,
+            lastName: user.lastName || null,
+            fullName: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Unknown",
+            username: user.username || null,
             isAdmin: user.publicMetadata?.isAdmin === true, // Check public metadata for admin flag
           }
         : null,
     };
   } catch (error) {
-    console.error("Auth error:", error);
+    console.error("[auth-helper] Auth error in getAuth:", error);
+    console.error("[auth-helper] Error stack:", error instanceof Error ? error.stack : "No stack");
+    console.error("[auth-helper] Error type:", typeof error);
+    console.error("[auth-helper] Error constructor:", error?.constructor?.name);
     // If Clerk fails, return null to trigger redirect
     return { userId: null, sessionId: null, user: null };
   }
@@ -61,10 +79,13 @@ export async function isAuthenticated() {
   }
 
   try {
-    const { userId } = await auth();
-    return !!userId;
+    console.log("[auth-helper] isAuthenticated - checking auth...");
+    const authResult = await auth();
+    console.log("[auth-helper] isAuthenticated - userId:", authResult?.userId);
+    return !!authResult?.userId;
   } catch (error) {
-    console.error("Auth check error:", error);
+    console.error("[auth-helper] Auth check error in isAuthenticated:", error);
+    console.error("[auth-helper] Error stack:", error instanceof Error ? error.stack : "No stack");
     return false;
   }
 }
@@ -73,6 +94,15 @@ export async function isAuthenticated() {
  * Check if user is an admin
  */
 export async function isAdmin() {
-  const authData = await getAuth();
-  return authData.user?.isAdmin === true;
+  try {
+    console.log("[auth-helper] Checking admin status...");
+    const authData = await getAuth();
+    const adminStatus = authData.user?.isAdmin === true;
+    console.log("[auth-helper] Admin status:", adminStatus);
+    return adminStatus;
+  } catch (error) {
+    console.error("[auth-helper] Error checking admin status:", error);
+    console.error("[auth-helper] Error stack:", error instanceof Error ? error.stack : "No stack");
+    return false;
+  }
 }

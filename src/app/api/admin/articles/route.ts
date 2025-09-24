@@ -1,7 +1,7 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { type NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/connection";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
+import { getAuth, isAdmin } from "@/lib/auth-helper";
 
 /**
  * GET /api/admin/articles
@@ -20,12 +20,13 @@ export async function GET(request: NextRequest) {
       console.log("[API] Checking authentication...");
 
       try {
-        // Get current user to check admin status
-        const user = await currentUser();
-        console.log("[API] Current user ID:", user?.id);
-        console.log("[API] User publicMetadata:", user?.publicMetadata);
+        // Get auth data using the auth helper
+        console.log("[API] Getting auth data using auth-helper...");
+        const authData = await getAuth();
+        console.log("[API] Auth data received - userId:", authData.userId);
+        console.log("[API] User data:", authData.user ? { id: authData.user.id, isAdmin: authData.user.isAdmin } : null);
 
-        if (!user) {
+        if (!authData.userId || !authData.user) {
           console.log("[API] No authenticated user found");
           return NextResponse.json(
             {
@@ -43,18 +44,19 @@ export async function GET(request: NextRequest) {
           );
         }
 
-        // Check if user has admin privileges
-        const isAdmin = user.publicMetadata?.isAdmin === true;
-        console.log("[API] User isAdmin:", isAdmin);
+        // Check if user has admin privileges using the helper
+        console.log("[API] Checking admin privileges...");
+        const userIsAdmin = await isAdmin();
+        console.log("[API] User isAdmin:", userIsAdmin);
 
-        if (!isAdmin) {
+        if (!userIsAdmin) {
           console.log("[API] User lacks admin privileges");
           return NextResponse.json(
             {
               error: "Forbidden",
               message: "Admin access required. Your account does not have admin privileges.",
               code: "ADMIN_REQUIRED",
-              userId: user.id,
+              userId: authData.user.id,
               help: "To grant admin access, update your Clerk user's publicMetadata with: { isAdmin: true }",
             },
             {
@@ -69,11 +71,17 @@ export async function GET(request: NextRequest) {
         console.log("[API] Authentication successful - user is admin");
       } catch (authError) {
         console.error("[API] Authentication error:", authError);
+        console.error("[API] Auth error stack:", authError instanceof Error ? authError.stack : "No stack");
+        console.error("[API] Auth error type:", typeof authError);
+        console.error("[API] Auth error constructor:", authError?.constructor?.name);
+
         return NextResponse.json(
           {
             error: "Authentication Error",
             message: "Failed to verify authentication status.",
             details: authError instanceof Error ? authError.message : "Unknown error",
+            stack: process.env["NODE_ENV"] === "development" ?
+              (authError instanceof Error ? authError.stack : String(authError)) : undefined
           },
           {
             status: 500,

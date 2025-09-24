@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAuthenticated } from "@/lib/clerk-auth";
+import { isAuthenticated } from "@/lib/auth-helper";
 import { getDb, testConnection } from "@/lib/db/connection";
 
 // Force Node.js runtime instead of Edge Runtime
@@ -103,12 +103,38 @@ function parseDatabaseUrl(url: string | undefined) {
 
 export async function GET() {
   try {
-    // Check admin authentication (automatically skipped in local dev)
-    const isAuth = await isAuthenticated();
+    // Log start of request for debugging
+    console.log("[db-status] Starting GET request");
+    console.log("[db-status] Auth disabled:", process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true");
+
+    // Check admin authentication with error handling
+    let isAuth = false;
+    try {
+      console.log("[db-status] Checking authentication...");
+      isAuth = await isAuthenticated();
+      console.log("[db-status] Authentication result:", isAuth);
+    } catch (authError) {
+      console.error("[db-status] Authentication check failed:", authError);
+      console.error("[db-status] Auth error stack:", authError instanceof Error ? authError.stack : "No stack");
+
+      // Return specific error for auth failures
+      return NextResponse.json(
+        {
+          error: "Authentication check failed",
+          message: authError instanceof Error ? authError.message : "Unknown authentication error",
+          details: process.env["NODE_ENV"] === "development" ?
+            (authError instanceof Error ? authError.stack : String(authError)) : undefined
+        },
+        { status: 500 }
+      );
+    }
 
     if (!isAuth) {
+      console.log("[db-status] User not authenticated, returning 401");
       return NextResponse.json({ error: "Unauthorized - Admin session required" }, { status: 401 });
     }
+
+    console.log("[db-status] User authenticated, proceeding with database status check");
 
     // Get database configuration
     const databaseUrl = process.env["DATABASE_URL"];
@@ -160,9 +186,11 @@ export async function GET() {
       displayEnvironment: !useDatabase ? "local" : dbInfo.environment,
     };
 
+    console.log("[db-status] Returning status response");
     return NextResponse.json(status);
   } catch (error) {
-    console.error("Error getting database status:", error);
+    console.error("[db-status] Error getting database status:", error);
+    console.error("[db-status] Error stack:", error instanceof Error ? error.stack : "No stack");
     return NextResponse.json(
       {
         error: "Failed to get database status",
