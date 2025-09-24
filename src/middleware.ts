@@ -95,6 +95,11 @@ const isPublicRoute = createRouteMatcher([
   "/(.*)/companies(.*)",
   "/(.*)/about(.*)",
   "/(.*)db-test(.*)", // Database test page
+  "/(.*)test-endpoints(.*)", // Test endpoints page
+  "/(.*)admin-test(.*)", // Admin test pages
+  "/(.*)admin-diagnostics(.*)", // Admin diagnostics pages
+  "/(.*)admin-simple-test(.*)", // Simple test pages
+  "/(.*)admin-basic-test(.*)", // Basic test pages
   // Public API routes
   "/api/news(.*)",
   "/api/rankings(.*)",
@@ -116,6 +121,10 @@ const isPublicRoute = createRouteMatcher([
   "/api/ai(.*)",
   "/api/proxy(.*)",
   "/api/db-test(.*)", // Database test API routes
+  "/api/auth-verify", // Auth verification endpoint
+  "/api/admin/test-basic", // Basic test endpoint (no auth needed)
+  "/api/admin/test-auth", // Auth test endpoint
+  "/api/admin/test-user", // User test endpoint
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
