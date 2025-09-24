@@ -99,7 +99,7 @@ async function runDiagnostics() {
           message: "SELECT NOW() query successful",
           details: {
             serverTime: timeResult?.[0]?.current_time,
-            version: timeResult?.[0]?.pg_version?.substring(0, 50) + "...",
+            version: `${timeResult?.[0]?.pg_version?.substring(0, 50)}...`,
           },
         });
 
@@ -297,7 +297,7 @@ async function runDiagnostics() {
   }
 
   // Summary
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("📊 DIAGNOSTIC SUMMARY");
   console.log("=".repeat(60));
 

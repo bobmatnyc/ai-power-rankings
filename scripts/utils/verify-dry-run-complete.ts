@@ -32,9 +32,9 @@ async function main() {
     const tester = new DryRunIsolationTester();
     const results = await tester.runAllTests();
 
-    const passedCount = results.filter(r => r.passed).length;
+    const passedCount = results.filter((r) => r.passed).length;
     const totalCount = results.length;
-    const successRate = (passedCount / totalCount * 100).toFixed(1);
+    const successRate = ((passedCount / totalCount) * 100).toFixed(1);
 
     console.log(`
 ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -48,10 +48,12 @@ async function main() {
 
     // Analyze results for critical verification points
     const criticalTests = {
-      "Preview Database Isolation": results.find(r => r.testName.includes("Preview Database Isolation")),
-      "No Processing Logs": results.find(r => r.testName.includes("No Processing Logs")),
-      "Cache Flow": results.find(r => r.testName.includes("Cache")),
-      "Error Isolation": results.find(r => r.testName.includes("Error"))
+      "Preview Database Isolation": results.find((r) =>
+        r.testName.includes("Preview Database Isolation")
+      ),
+      "No Processing Logs": results.find((r) => r.testName.includes("No Processing Logs")),
+      "Cache Flow": results.find((r) => r.testName.includes("Cache")),
+      "Error Isolation": results.find((r) => r.testName.includes("Error")),
     };
 
     Object.entries(criticalTests).forEach(([name, result]) => {
@@ -98,7 +100,6 @@ async function main() {
       `);
       process.exit(1);
     }
-
   } catch (error) {
     console.log(`
 ❌ VERIFICATION ERROR: Test execution failed

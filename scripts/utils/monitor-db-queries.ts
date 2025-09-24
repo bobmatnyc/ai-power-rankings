@@ -7,13 +7,13 @@
  * that dry run operations don't execute any write queries.
  */
 
-import { getDb } from "@/lib/db/connection";
 import { sql } from "drizzle-orm";
+import { getDb } from "@/lib/db/connection";
 
 interface QueryLog {
   timestamp: string;
   query: string;
-  queryType: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE' | 'OTHER';
+  queryType: "SELECT" | "INSERT" | "UPDATE" | "DELETE" | "OTHER";
   params?: any[];
 }
 
@@ -21,7 +21,6 @@ class DatabaseQueryMonitor {
   private db: ReturnType<typeof getDb>;
   private queryLog: QueryLog[] = [];
   private isMonitoring: boolean = false;
-  private originalExecute: any;
 
   constructor() {
     this.db = getDb();
@@ -84,49 +83,20 @@ class DatabaseQueryMonitor {
   }
 
   /**
-   * Classify query type based on SQL content
-   */
-  private classifyQuery(query: string): QueryLog['queryType'] {
-    const upperQuery = query.trim().toUpperCase();
-
-    if (upperQuery.startsWith('SELECT')) return 'SELECT';
-    if (upperQuery.startsWith('INSERT')) return 'INSERT';
-    if (upperQuery.startsWith('UPDATE')) return 'UPDATE';
-    if (upperQuery.startsWith('DELETE')) return 'DELETE';
-
-    return 'OTHER';
-  }
-
-  /**
-   * Log a database query
-   */
-  private logQuery(query: string, params?: any[]): void {
-    if (!this.isMonitoring) return;
-
-    const queryLog: QueryLog = {
-      timestamp: new Date().toISOString(),
-      query: query.replace(/\s+/g, ' ').trim(),
-      queryType: this.classifyQuery(query),
-      params: params || []
-    };
-
-    this.queryLog.push(queryLog);
-
-    // Real-time logging
-    const typeColor = this.getQueryTypeColor(queryLog.queryType);
-    console.log(`${typeColor}${queryLog.queryType}\x1b[0m ${queryLog.timestamp}: ${queryLog.query.substring(0, 100)}${queryLog.query.length > 100 ? '...' : ''}`);
-  }
-
-  /**
    * Get color code for query type
    */
-  private getQueryTypeColor(type: QueryLog['queryType']): string {
+  private getQueryTypeColor(type: QueryLog["queryType"]): string {
     switch (type) {
-      case 'SELECT': return '\x1b[32m'; // Green
-      case 'INSERT': return '\x1b[31m'; // Red
-      case 'UPDATE': return '\x1b[33m'; // Yellow
-      case 'DELETE': return '\x1b[35m'; // Magenta
-      default: return '\x1b[36m'; // Cyan
+      case "SELECT":
+        return "\x1b[32m"; // Green
+      case "INSERT":
+        return "\x1b[31m"; // Red
+      case "UPDATE":
+        return "\x1b[33m"; // Yellow
+      case "DELETE":
+        return "\x1b[35m"; // Magenta
+      default:
+        return "\x1b[36m"; // Cyan
     }
   }
 
@@ -143,21 +113,21 @@ class DatabaseQueryMonitor {
     };
     violations: QueryLog[];
   } {
-    const writeTypes = ['INSERT', 'UPDATE', 'DELETE'];
-    const violations = queries.filter(q => writeTypes.includes(q.queryType));
+    const writeTypes = ["INSERT", "UPDATE", "DELETE"];
+    const violations = queries.filter((q) => writeTypes.includes(q.queryType));
     const writeQueries = violations.length;
 
     const summary = {
       totalQueries: queries.length,
-      selectQueries: queries.filter(q => q.queryType === 'SELECT').length,
+      selectQueries: queries.filter((q) => q.queryType === "SELECT").length,
       writeQueries,
-      writeTypes: [...new Set(violations.map(q => q.queryType))]
+      writeTypes: [...new Set(violations.map((q) => q.queryType))],
     };
 
     return {
       isCompliant: writeQueries === 0,
       summary,
-      violations
+      violations,
     };
   }
 
@@ -165,22 +135,24 @@ class DatabaseQueryMonitor {
    * Generate a detailed report of monitored queries
    */
   generateQueryReport(queries: QueryLog[]): void {
-    console.log("\n" + "=".repeat(80));
+    console.log(`\n${"=".repeat(80)}`);
     console.log("🔍 DATABASE QUERY MONITORING REPORT");
     console.log("=".repeat(80));
 
     const analysis = this.analyzeQueries(queries);
 
-    console.log(`\n📊 Query Summary:`);
+    console.log("\n📊 Query Summary:");
     console.log(`   Total Queries: ${analysis.summary.totalQueries}`);
     console.log(`   SELECT Queries: ${analysis.summary.selectQueries}`);
     console.log(`   Write Queries: ${analysis.summary.writeQueries}`);
 
     if (analysis.summary.writeTypes.length > 0) {
-      console.log(`   Write Types: ${analysis.summary.writeTypes.join(', ')}`);
+      console.log(`   Write Types: ${analysis.summary.writeTypes.join(", ")}`);
     }
 
-    console.log(`\n🎯 Dry Run Compliance: ${analysis.isCompliant ? '✅ COMPLIANT' : '❌ VIOLATIONS DETECTED'}`);
+    console.log(
+      `\n🎯 Dry Run Compliance: ${analysis.isCompliant ? "✅ COMPLIANT" : "❌ VIOLATIONS DETECTED"}`
+    );
 
     if (analysis.violations.length > 0) {
       console.log(`\n⚠️  DATABASE WRITE VIOLATIONS (${analysis.violations.length}):`);
@@ -211,7 +183,7 @@ class DatabaseQueryMonitor {
       });
     }
 
-    console.log("\n" + "=".repeat(80));
+    console.log(`\n${"=".repeat(80)}`);
   }
 
   /**
@@ -254,7 +226,7 @@ class DatabaseQueryMonitor {
       console.log(`✅ Test completed: ${testName}`);
       console.log(`   Queries executed: ${queries.length}`);
       console.log(`   Write operations: ${analysis.summary.writeQueries}`);
-      console.log(`   Compliant: ${analysis.isCompliant ? 'Yes' : 'No'}`);
+      console.log(`   Compliant: ${analysis.isCompliant ? "Yes" : "No"}`);
 
       return { result, queries, analysis };
     } catch (error) {

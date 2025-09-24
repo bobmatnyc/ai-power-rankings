@@ -34,7 +34,7 @@ async function verifyCompanies() {
     // Count companies
     console.log("\n📊 Company Statistics:");
     const countResult = await client.query("SELECT COUNT(*) as count FROM companies");
-    const count = parseInt(countResult.rows[0].count);
+    const count = parseInt(countResult.rows[0].count, 10);
     console.log(`   Total companies: ${count}`);
 
     // List all companies

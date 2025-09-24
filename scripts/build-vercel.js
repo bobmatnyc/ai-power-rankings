@@ -4,7 +4,7 @@
  * based on the deployment environment
  */
 
-const { execSync } = require("child_process");
+const { execSync } = require("node:child_process");
 
 const vercelEnv = process.env.VERCEL_ENV || "development";
 const gitBranch = process.env.VERCEL_GIT_COMMIT_REF || "main";

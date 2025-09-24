@@ -1,4 +1,5 @@
 #!/usr/bin/env npx tsx
+
 /**
  * CORS and Cookie Configuration Debugging Script
  *
@@ -8,8 +9,8 @@
  * Run with: npx tsx scripts/debug-cors-cookies.ts
  */
 
+import { resolve } from "node:path";
 import { config } from "dotenv";
-import { resolve } from "path";
 
 // Load environment variables
 config({ path: resolve(process.cwd(), ".env.local") });
@@ -28,7 +29,7 @@ const colors = {
 };
 
 function section(title: string) {
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log(`${colors.cyan}${colors.bright}${title}${colors.reset}`);
   console.log("=".repeat(60));
 }
@@ -238,18 +239,18 @@ async function suggestFixes() {
   console.log(`${colors.bright}7. Quick Test Commands:${colors.reset}`);
   console.log("   Run these in production browser console:\n");
 
-  console.log(colors.cyan + "   // Check Clerk session");
-  console.log("   await Clerk.session" + colors.reset);
+  console.log(`${colors.cyan}   // Check Clerk session`);
+  console.log(`   await Clerk.session${colors.reset}`);
 
-  console.log(colors.cyan + "\n   // Check user metadata");
-  console.log("   Clerk.user.publicMetadata" + colors.reset);
+  console.log(`${colors.cyan}\n   // Check user metadata`);
+  console.log(`   Clerk.user.publicMetadata${colors.reset}`);
 
-  console.log(colors.cyan + "\n   // Test API directly");
+  console.log(`${colors.cyan}\n   // Test API directly`);
   console.log(
     `   fetch('/api/admin/articles?includeStats=true', {
      credentials: 'include',
      headers: { 'Accept': 'application/json' }
-   }).then(r => r.json()).then(console.log)` + colors.reset
+   }).then(r => r.json()).then(console.log)${colors.reset}`
   );
 }
 

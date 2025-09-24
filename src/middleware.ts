@@ -94,7 +94,7 @@ const isPublicRoute = createRouteMatcher([
   "/(.*)/news(.*)",
   "/(.*)/companies(.*)",
   "/(.*)/about(.*)",
-  "/(.*)db-test(.*)",  // Database test page
+  "/(.*)db-test(.*)", // Database test page
   // Public API routes
   "/api/news(.*)",
   "/api/rankings(.*)",
@@ -115,7 +115,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/debug",
   "/api/ai(.*)",
   "/api/proxy(.*)",
-  "/api/db-test(.*)",  // Database test API routes
+  "/api/db-test(.*)", // Database test API routes
 ]);
 
 export default clerkMiddleware(async (authFunc, req) => {

@@ -28,7 +28,7 @@ async function consolidateTools() {
   }
 
   // Sort tools by ID
-  tools.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+  tools.sort((a, b) => parseInt(a.id, 10) - parseInt(b.id, 10));
 
   // Create the consolidated data structure
   const toolsData = {

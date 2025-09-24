@@ -51,7 +51,7 @@ async function triggerErrors() {
   ];
 
   for (const endpoint of endpoints) {
-    console.log("\n" + "=".repeat(80));
+    console.log(`\n${"=".repeat(80)}`);
     console.log(`TESTING ENDPOINT: ${endpoint}`);
     console.log("=".repeat(80));
 
@@ -68,7 +68,7 @@ async function triggerErrors() {
     await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 
-  console.log("\n" + "=".repeat(80));
+  console.log(`\n${"=".repeat(80)}`);
   console.log("✅ Error triggering complete!");
   console.log("Check Vercel dashboard or use 'vercel logs [deployment-url]' to see the errors");
   console.log("=".repeat(80));

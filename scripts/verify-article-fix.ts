@@ -5,7 +5,7 @@
  * Run this after deployment to check if the fix is working
  */
 
-import * as readline from "readline";
+import * as readline from "node:readline";
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -30,7 +30,7 @@ async function verifyArticleFix() {
   console.log("4. Open the browser DevTools (F12) and go to the Console tab");
   console.log("5. Refresh the page and watch for any errors");
 
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("\n🔎 WHAT TO CHECK:\n");
 
   console.log("✅ SUCCESS INDICATORS:");
@@ -44,7 +44,7 @@ async function verifyArticleFix() {
   console.log("  - Or 'Failed to load articles'");
   console.log("  - Console shows 401 errors or authentication failures");
 
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("\n📊 AUTOMATED CHECK:\n");
 
   const answer = await question("Do you have a Clerk session token to test with? (y/n): ");
@@ -93,7 +93,7 @@ async function verifyArticleFix() {
     console.log("4. Copy its value and run this script again");
   }
 
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("\n📝 TROUBLESHOOTING NOTES:\n");
 
   console.log("The fix addressed:");

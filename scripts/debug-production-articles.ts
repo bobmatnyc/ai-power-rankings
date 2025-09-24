@@ -1,4 +1,5 @@
 #!/usr/bin/env npx tsx
+
 /**
  * Production Articles API Debugging Script
  *
@@ -11,9 +12,8 @@
  * Run with: npx tsx scripts/debug-production-articles.ts
  */
 
+import { resolve } from "node:path";
 import { config } from "dotenv";
-import { readFileSync } from "fs";
-import { resolve } from "path";
 
 // Load environment variables
 config({ path: resolve(process.cwd(), ".env.local") });
@@ -42,7 +42,7 @@ function log(message: string, color = colors.reset) {
 }
 
 function section(title: string) {
-  console.log("\n" + "=".repeat(80));
+  console.log(`\n${"=".repeat(80)}`);
   log(`${title}`, colors.bright + colors.cyan);
   console.log("=".repeat(80));
 }
@@ -387,7 +387,7 @@ async function checkClerkConfiguration() {
 async function generateCurlCommands() {
   section("9. CURL COMMANDS FOR MANUAL TESTING");
 
-  console.log("\n" + colors.bright + "Test without authentication:" + colors.reset);
+  console.log(`\n${colors.bright}Test without authentication:${colors.reset}`);
   console.log(
     colors.dim +
       `curl -X GET "${PRODUCTION_URL}/api/admin/articles?includeStats=true" \\
@@ -397,7 +397,7 @@ async function generateCurlCommands() {
   );
 
   if (CLERK_SESSION_COOKIE) {
-    console.log("\n" + colors.bright + "Test with session cookie:" + colors.reset);
+    console.log(`\n${colors.bright}Test with session cookie:${colors.reset}`);
     console.log(
       colors.dim +
         `curl -X GET "${PRODUCTION_URL}/api/admin/articles?includeStats=true" \\
@@ -409,7 +409,7 @@ async function generateCurlCommands() {
   }
 
   if (CLERK_SESSION_TOKEN) {
-    console.log("\n" + colors.bright + "Test with bearer token:" + colors.reset);
+    console.log(`\n${colors.bright}Test with bearer token:${colors.reset}`);
     console.log(
       colors.dim +
         `curl -X GET "${PRODUCTION_URL}/api/admin/articles?includeStats=true" \\
@@ -420,7 +420,7 @@ async function generateCurlCommands() {
     );
   }
 
-  console.log("\n" + colors.bright + "Test CORS preflight:" + colors.reset);
+  console.log(`\n${colors.bright}Test CORS preflight:${colors.reset}`);
   console.log(
     colors.dim +
       `curl -X OPTIONS "${PRODUCTION_URL}/api/admin/articles" \\
@@ -499,10 +499,10 @@ async function main() {
 
   log(`Production URL: ${colors.yellow}${PRODUCTION_URL}${colors.reset}`);
   log(
-    `Session Cookie: ${CLERK_SESSION_COOKIE ? colors.green + "✓ Provided" : colors.red + "✗ Not provided"}${colors.reset}`
+    `Session Cookie: ${CLERK_SESSION_COOKIE ? `${colors.green}✓ Provided` : `${colors.red}✗ Not provided`}${colors.reset}`
   );
   log(
-    `Session Token: ${CLERK_SESSION_TOKEN ? colors.green + "✓ Provided" : colors.red + "✗ Not provided"}${colors.reset}`
+    `Session Token: ${CLERK_SESSION_TOKEN ? `${colors.green}✓ Provided` : `${colors.red}✗ Not provided`}${colors.reset}`
   );
 
   const results: Record<string, boolean> = {};
@@ -531,14 +531,14 @@ async function main() {
     }
   });
 
-  console.log("\n" + "=".repeat(80));
+  console.log(`\n${"=".repeat(80)}`);
   info("For more detailed debugging:");
   info("1. Check browser DevTools > Network tab when loading /admin");
   info("2. Look for the /api/admin/articles request");
   info("3. Check Request Headers for Cookie or Authorization headers");
   info("4. Check Response Headers for any error details");
   info("5. Open Console and check for any JavaScript errors");
-  console.log("=".repeat(80) + "\n");
+  console.log(`${"=".repeat(80)}\n`);
 }
 
 // Run the script

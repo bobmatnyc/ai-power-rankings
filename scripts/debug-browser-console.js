@@ -17,7 +17,7 @@
     "%c🔍 PRODUCTION ARTICLES API DEBUGGER",
     "font-size: 20px; font-weight: bold; color: #4A90E2;"
   );
-  console.log("%c" + "=".repeat(60), "color: #888;");
+  console.log(`%c${"=".repeat(60)}`, "color: #888;");
 
   // Helper functions
   const log = (message, style = "") => console.log(`%c${message}`, style || "color: #333;");
@@ -26,9 +26,9 @@
   const warning = (message) => console.log(`%c⚠️ ${message}`, "color: #F39C12; font-weight: bold;");
   const info = (message) => console.log(`%cℹ️ ${message}`, "color: #3498DB;");
   const section = (title) => {
-    console.log("\n" + "%c" + "─".repeat(60), "color: #888;");
+    console.log(`\n%c${"─".repeat(60)}`, "color: #888;");
     console.log(`%c${title}`, "font-size: 14px; font-weight: bold; color: #2C3E50;");
-    console.log("%c" + "─".repeat(60), "color: #888;");
+    console.log(`%c${"─".repeat(60)}`, "color: #888;");
   };
 
   // Get current URL and paths
@@ -331,7 +331,7 @@
     info("4. Check middleware.ts for auth handling issues");
   }
 
-  console.log("\n%c" + "=".repeat(60), "color: #888;");
+  console.log(`\n%c${"=".repeat(60)}`, "color: #888;");
   success("Debugging complete! Check the analysis above.");
   info("If issues persist, share the console output with support.");
 })();

@@ -5,11 +5,11 @@
  * CAUTION: This will modify production data!
  */
 
-import * as dotenv from "dotenv";
 import { neon } from "@neondatabase/serverless";
+import * as dotenv from "dotenv";
+import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "../src/lib/db/schema";
-import { sql } from "drizzle-orm";
 
 // Load environment variables
 dotenv.config({ path: ".env.local" });
@@ -155,17 +155,11 @@ async function syncRankings() {
 }
 
 async function getStatistics(db: any, label: string) {
-  const newsCount = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(schema.news);
+  const newsCount = await db.select({ count: sql<number>`count(*)` }).from(schema.news);
 
-  const toolsCount = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(schema.tools);
+  const toolsCount = await db.select({ count: sql<number>`count(*)` }).from(schema.tools);
 
-  const rankingsCount = await db
-    .select({ count: sql<number>`count(*)` })
-    .from(schema.rankings);
+  const rankingsCount = await db.select({ count: sql<number>`count(*)` }).from(schema.rankings);
 
   console.log(`\n📊 ${label} Statistics:`);
   console.log(`   - News articles: ${newsCount[0]?.count || 0}`);
@@ -194,7 +188,7 @@ async function main() {
     // Ask for confirmation
     console.log("\n⚠️  WARNING: This will modify the production database!");
     console.log("Press Ctrl+C to cancel, or wait 5 seconds to continue...\n");
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     // Perform sync
     await syncNews();

@@ -124,7 +124,7 @@ async function importCompanies() {
     // Verify import
     console.log("\n🔍 Verifying import...");
     const result = await client.query("SELECT COUNT(*) as count FROM companies");
-    const count = parseInt(result.rows[0].count);
+    const count = parseInt(result.rows[0].count, 10);
     console.log(`✅ Database now contains ${count} companies`);
 
     // Show sample of imported companies

@@ -6,8 +6,8 @@
  * Development: ep-bold-sunset-adneqlo6
  */
 
-import { execSync } from "child_process";
-import { existsSync, unlinkSync, writeFileSync } from "fs";
+import { execSync } from "node:child_process";
+import { existsSync, unlinkSync, writeFileSync } from "node:fs";
 
 async function updateVercelDatabase() {
   console.log("🚀 Updating Vercel DATABASE_URL to correct primary database...\n");

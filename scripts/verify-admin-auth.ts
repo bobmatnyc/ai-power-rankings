@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+
 /**
  * Script to verify and configure admin authentication
  *
@@ -12,9 +13,9 @@
  *   pnpm tsx scripts/verify-admin-auth.ts
  */
 
-import { clerkClient, currentUser } from "@clerk/nextjs/server";
+import { resolve } from "node:path";
+import { clerkClient } from "@clerk/nextjs/server";
 import { config } from "dotenv";
-import { resolve } from "path";
 
 // Load environment variables
 config({ path: resolve(process.cwd(), ".env.local") });
@@ -172,7 +173,7 @@ async function verifyAdminAuth() {
   console.log("\nOr test directly with curl (after signing in):");
   console.log("   curl http://localhost:3001/api/admin/articles");
 
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("✅ Verification complete!");
 }
 

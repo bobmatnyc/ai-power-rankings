@@ -9,10 +9,10 @@
  * Usage: pnpm tsx scripts/check-database-config.ts
  */
 
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { neon } from "@neondatabase/serverless";
 import { config } from "dotenv";
-import * as fs from "fs";
-import * as path from "path";
 
 // Colors for terminal output
 const colors = {
@@ -31,21 +31,21 @@ function log(message: string, color: string = colors.reset) {
 }
 
 function logSection(title: string) {
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   log(title, colors.bright + colors.cyan);
   console.log("=".repeat(60));
 }
 
 function logSuccess(message: string) {
-  log("✅ " + message, colors.green);
+  log(`✅ ${message}`, colors.green);
 }
 
 function logWarning(message: string) {
-  log("⚠️  " + message, colors.yellow);
+  log(`⚠️  ${message}`, colors.yellow);
 }
 
 function logError(message: string) {
-  log("❌ " + message, colors.red);
+  log(`❌ ${message}`, colors.red);
 }
 
 function logInfo(key: string, value: string | undefined, sensitive = false) {
@@ -56,7 +56,7 @@ function logInfo(key: string, value: string | undefined, sensitive = false) {
 
   if (sensitive) {
     // Mask sensitive information
-    const masked = value.substring(0, 20) + "..." + value.substring(value.length - 10);
+    const masked = `${value.substring(0, 20)}...${value.substring(value.length - 10)}`;
     console.log(`${colors.blue}${key}:${colors.reset} ${masked}`);
   } else {
     console.log(`${colors.blue}${key}:${colors.reset} ${value}`);
@@ -65,7 +65,7 @@ function logInfo(key: string, value: string | undefined, sensitive = false) {
 
 async function testDatabaseConnection(
   url: string,
-  name: string
+  _name: string
 ): Promise<{ success: boolean; tables?: string[]; error?: string }> {
   try {
     const sql = neon(url);
@@ -233,7 +233,7 @@ async function main() {
   // Optionally test all configured databases
   const testAll = process.argv.includes("--all");
   if (testAll) {
-    console.log("\n" + colors.yellow + "Testing all configured databases..." + colors.reset);
+    console.log(`\n${colors.yellow}Testing all configured databases...${colors.reset}`);
 
     for (const [env, url] of Object.entries(urls)) {
       if (url && !url.includes("YOUR_PASSWORD") && url !== activeUrl) {

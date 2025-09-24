@@ -5,7 +5,7 @@
  * Updates DATABASE_URL to use the correct production database
  */
 
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
 
 async function updateVercelEnv() {
   console.log("🚀 Updating Vercel environment variables...\n");
@@ -49,7 +49,7 @@ async function updateVercelEnv() {
     console.log("\n📝 Adding correct DATABASE_URL for production...");
 
     // Create a temporary file with the DATABASE_URL value
-    const fs = require("fs");
+    const fs = require("node:fs");
     const tmpFile = "/tmp/vercel-db-url.txt";
     fs.writeFileSync(tmpFile, PRODUCTION_DATABASE_URL);
 

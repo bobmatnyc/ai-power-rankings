@@ -38,7 +38,7 @@ function info(msg: string) {
 }
 
 function section(title: string) {
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log(`${colors.cyan}${colors.bright}${title}${colors.reset}`);
   console.log("=".repeat(60));
 }
@@ -120,24 +120,24 @@ ${colors.reset}`);
   console.log(`${colors.bright}3. Verify Session in Browser Console:${colors.reset}`);
   console.log("   Open DevTools Console (F12) and run these commands:\n");
 
-  console.log(colors.cyan + "   // Check if Clerk is loaded");
-  console.log("   typeof Clerk" + colors.reset);
+  console.log(`${colors.cyan}   // Check if Clerk is loaded`);
+  console.log(`   typeof Clerk${colors.reset}`);
   console.log("   Expected: 'object'\n");
 
-  console.log(colors.cyan + "   // Check your session");
-  console.log("   await Clerk.session" + colors.reset);
+  console.log(`${colors.cyan}   // Check your session`);
+  console.log(`   await Clerk.session${colors.reset}`);
   console.log("   Expected: Session object with id, status, etc.\n");
 
-  console.log(colors.cyan + "   // Check your user metadata");
-  console.log("   Clerk.user?.publicMetadata" + colors.reset);
+  console.log(`${colors.cyan}   // Check your user metadata`);
+  console.log(`   Clerk.user?.publicMetadata${colors.reset}`);
   console.log("   Expected: { isAdmin: true }\n");
 
-  console.log(colors.cyan + "   // Test API directly from browser");
+  console.log(`${colors.cyan}   // Test API directly from browser`);
   console.log(
     `   fetch('/api/admin/articles?includeStats=true', {
      credentials: 'include',
      headers: { 'Accept': 'application/json' }
-   }).then(r => r.json()).then(console.log)` + colors.reset
+   }).then(r => r.json()).then(console.log)${colors.reset}`
   );
   console.log("   Expected: Array of articles or empty array\n");
 
@@ -181,7 +181,7 @@ ${colors.reset}`);
 
   console.log("If you need to manually test with curl:\n");
 
-  console.log(colors.cyan + "# Get your session token from browser");
+  console.log(`${colors.cyan}# Get your session token from browser`);
   console.log("# DevTools > Application > Cookies > __session");
   console.log('SESSION_TOKEN="your-session-token-here"\n');
 
@@ -189,10 +189,10 @@ ${colors.reset}`);
   console.log(
     `curl -H "Cookie: __session=$SESSION_TOKEN" \\
      -H "Accept: application/json" \\
-     ${PRODUCTION_URL}/api/admin/articles?includeStats=true | jq .` + colors.reset
+     ${PRODUCTION_URL}/api/admin/articles?includeStats=true | jq .${colors.reset}`
   );
 
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log(
     `${colors.green}${colors.bright}Script complete! Follow the browser steps above.${colors.reset}`
   );

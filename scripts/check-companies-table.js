@@ -81,7 +81,7 @@ async function checkTable() {
     console.log(`\n📈 Current row count: ${countResult.rows[0].count}`);
 
     // Show sample data if any exists
-    if (parseInt(countResult.rows[0].count) > 0) {
+    if (parseInt(countResult.rows[0].count, 10) > 0) {
       console.log("\n📋 Sample data (first 3 rows):");
       const sampleData = await client.query("SELECT id, name, slug FROM companies LIMIT 3");
       sampleData.rows.forEach((row) => {
