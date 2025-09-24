@@ -118,7 +118,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/db-test(.*)", // Database test API routes
 ]);
 
-export default clerkMiddleware(async (authFunc, req) => {
+export default clerkMiddleware(async (auth, req) => {
   const pathname = req.nextUrl.pathname;
 
   // Allow sitemap.xml to be accessed without locale prefix
@@ -171,7 +171,7 @@ export default clerkMiddleware(async (authFunc, req) => {
     // Protect admin API routes
     if (isProtectedRoute(req) && !isPublicRoute(req)) {
       // Check authentication WITHOUT redirecting (important for API routes)
-      const { userId } = await authFunc();
+      const { userId } = await auth();
 
       // If not authenticated, return JSON error (not redirect)
       if (!userId) {
@@ -233,24 +233,30 @@ export default clerkMiddleware(async (authFunc, req) => {
 
     // Protect routes based on authentication - but allow public routes
     if (isProtectedRoute(req) && !isPublicRoute(req)) {
-      // Use authFunc.protect() for protected routes
-      await authFunc.protect();
+      // Check if user is authenticated using auth()
+      const { userId } = await auth();
+
+      // If not authenticated, redirect to sign-in
+      if (!userId) {
+        const locale = pathname.split("/")[1] || "en";
+        const host = req.headers.get("host") || "localhost:3000";
+        const protocol = req.headers.get("x-forwarded-proto") || "http";
+        const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
+        return NextResponse.redirect(redirectUrl, { status: 303 });
+      }
 
       // For admin routes, check if user has admin metadata
       if (isAdminRoute(req)) {
-        const { userId } = await authFunc();
-        if (userId) {
-          const user = await currentUser();
-          const isAdminUser = user?.publicMetadata?.isAdmin === true;
+        const user = await currentUser();
+        const isAdminUser = user?.publicMetadata?.isAdmin === true;
 
-          if (!isAdminUser) {
-            // Redirect non-admin users to home page
-            const locale = pathname.split("/")[1] || "en";
-            const host = req.headers.get("host") || "localhost:3000";
-            const protocol = req.headers.get("x-forwarded-proto") || "http";
-            const redirectUrl = new URL(`/${locale}`, `${protocol}://${host}`);
-            return NextResponse.redirect(redirectUrl, { status: 303 });
-          }
+        if (!isAdminUser) {
+          // Redirect non-admin users to home page
+          const locale = pathname.split("/")[1] || "en";
+          const host = req.headers.get("host") || "localhost:3000";
+          const protocol = req.headers.get("x-forwarded-proto") || "http";
+          const redirectUrl = new URL(`/${locale}`, `${protocol}://${host}`);
+          return NextResponse.redirect(redirectUrl, { status: 303 });
         }
       }
     }
