@@ -3,6 +3,9 @@ import { getDb } from "@/lib/db/connection";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getAuth, isAdmin } from "@/lib/auth-helper";
 
+// Force Node.js runtime instead of Edge Runtime
+export const runtime = "nodejs";
+
 /**
  * GET /api/admin/articles
  * List all articles with filtering options
