@@ -1,5 +1,5 @@
 import { currentUser } from '@clerk/nextjs/server';
-import { DiagnosticsClient } from './diagnostics-client';
+import { DiagnosticsWrapper } from './diagnostics-wrapper';
 
 export default async function AdminDiagnosticsPage() {
   // Server-side authentication check
@@ -150,8 +150,8 @@ export default async function AdminDiagnosticsPage() {
         </div>
       </div>
 
-      {/* Client-side Diagnostics */}
-      <DiagnosticsClient />
+      {/* Client-side Components with Error Boundaries */}
+      <DiagnosticsWrapper />
     </div>
   );
 }
