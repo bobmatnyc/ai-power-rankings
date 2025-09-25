@@ -1,5 +1,5 @@
 import { clerkMiddleware, createRouteMatcher, currentUser } from "@clerk/nextjs/server";
-import type { NextRequest } from "next/server";
+import type { NextRequest, NextMiddleware } from "next/server";
 import { NextResponse } from "next/server";
 import { validateEnvironment } from "@/lib/startup-validation";
 import { i18n } from "./i18n/config";
@@ -133,15 +133,9 @@ async function safeCurrentUser(req: NextRequest) {
   }
 }
 
-export default clerkMiddleware(async (auth, req) => {
+// Create the Clerk middleware handler for non-API routes
+const clerkHandler = clerkMiddleware(async (auth, req) => {
   const pathname = req.nextUrl.pathname;
-
-  // CRITICAL: Bypass ALL API routes completely
-  // API routes handle their own authentication in Node.js runtime
-  // This avoids Edge Runtime conflicts with Clerk auth()
-  if (pathname.startsWith("/api")) {
-    return NextResponse.next();
-  }
 
   // Allow sitemap.xml to be accessed without locale prefix
   if (pathname === "/sitemap.xml") {
@@ -184,7 +178,6 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // For non-API routes, handle locale redirection and authentication
-  // API routes are completely bypassed at this point
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
@@ -270,9 +263,26 @@ export default clerkMiddleware(async (auth, req) => {
   return response;
 });
 
+// Main middleware function that bypasses API routes COMPLETELY
+export default function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  // CRITICAL: Bypass ALL API routes completely BEFORE Clerk middleware
+  // API routes handle their own authentication in Node.js runtime
+  // This avoids Edge Runtime conflicts with Clerk auth()
+  if (pathname.startsWith("/api")) {
+    // For API routes, just pass through without ANY authentication
+    return NextResponse.next();
+  }
+
+  // For all non-API routes, use the Clerk middleware
+  return clerkHandler(request);
+}
+
 export const config = {
   matcher: [
-    // Skip internal Next.js paths and static files
+    // Include ALL paths except static files
+    // This ensures middleware runs but bypasses API routes internally
     "/((?!_next/static|_next/image|assets|data|partytown|favicon.ico|crown.*|robots.txt|sitemap.xml).*)",
   ],
 };
