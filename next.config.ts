@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   // TurboPack is enabled automatically in Next.js 15+
   // Use --turbo flag for dev mode: next dev --turbo
+
+  // CRITICAL: Enable Node.js runtime for middleware to fix Clerk auth() issues
+  // This resolves the Edge Runtime vs Node.js runtime mismatch causing HTML errors in production
+  serverExternalPackages: ["@clerk/nextjs"],
+
   experimental: {
     // Keep existing optimizations
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons", "@next/font"],
@@ -25,9 +30,6 @@ const nextConfig: NextConfig = {
     workerThreads: false,
     // Disable all polyfills for modern browsers
     esmExternals: true,
-    // CRITICAL: Enable Node.js runtime for middleware to fix Clerk auth() issues
-    // This resolves the Edge Runtime vs Node.js runtime mismatch causing HTML errors in production
-    serverComponentsExternalPackages: ["@clerk/nextjs"],
     // Note: staticPageGenerationTimeout is not available in NextConfig
     // Instead we use force-dynamic on individual pages
   },

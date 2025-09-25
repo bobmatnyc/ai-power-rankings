@@ -1,6 +1,9 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { SimpleTestClient } from './simple-client';
 
+// Force dynamic rendering - this page requires authentication
+export const dynamic = 'force-dynamic';
+
 export default async function AdminSimpleTestPage() {
   // Server-side authentication check
   const user = await currentUser();

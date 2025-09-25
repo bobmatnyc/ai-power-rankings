@@ -7,6 +7,10 @@ import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { Button } from "@/components/ui/button";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 
+// Force dynamic rendering - this page may use authentication context
+export const dynamic = 'force-dynamic';
+
+
 export const metadata: Metadata = generateSEOMetadata({
   title: "Rankings Management - Admin",
   description: "View and manage AI tool rankings",

@@ -1,5 +1,8 @@
 import { currentUser } from "@clerk/nextjs/server";
 
+// Force dynamic rendering - this page requires authentication
+export const dynamic = 'force-dynamic';
+
 export default async function AdminTestPage() {
   const user = await currentUser();
   const isAdmin = user?.publicMetadata?.isAdmin === true;

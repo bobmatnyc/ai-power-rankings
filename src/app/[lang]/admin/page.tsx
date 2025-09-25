@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import UnifiedAdminDashboard from "@/components/admin/unified-admin-dashboard";
 import { getAuth } from "@/lib/auth-helper";
 
+// Force dynamic rendering - this page requires authentication
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
   params: Promise<{ lang: string }>;
 }

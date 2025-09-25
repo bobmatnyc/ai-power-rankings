@@ -3,6 +3,9 @@ import { ToolsManager } from "@/components/admin/tools-manager";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 
+// Force dynamic rendering - this page may use authentication context
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = generateSEOMetadata({
   title: "Tools Management - Admin",
   description: "Manage AI tools, rankings, and information in the admin panel.",
