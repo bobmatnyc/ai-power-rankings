@@ -1,5 +1,7 @@
-import { TypographyDemo } from "@/components/typography-demo";
 import type { Metadata } from "next";
+import { TypographyDemo } from "@/components/typography-demo";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Typography Demo - AI Power Rankings",

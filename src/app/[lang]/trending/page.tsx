@@ -28,6 +28,8 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { TrendingPageContent } from "./trending-content";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{
     lang: Locale;

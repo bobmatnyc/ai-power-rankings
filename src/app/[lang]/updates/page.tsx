@@ -9,6 +9,8 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { UpdatesGenerator } from "@/lib/updates-generator";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ lang: Locale }>;
 }

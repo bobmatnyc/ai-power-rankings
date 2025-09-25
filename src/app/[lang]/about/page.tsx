@@ -8,6 +8,8 @@ import { contentLoader } from "@/lib/content-loader";
 import { getUrl } from "@/lib/get-url";
 import { MarkdownAboutContent } from "./markdown-about-content";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ lang: Locale }>;
 }

@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import type { Locale } from "@/i18n/config";
 import { contentLoader } from "@/lib/content-loader";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ lang: Locale }>;
 }
