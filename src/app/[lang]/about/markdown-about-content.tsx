@@ -1,8 +1,8 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { NewsletterModal } from "@/components/ui/newsletter-modal";
+import { useEffect } from "react";
+// Newsletter modal removed - using Clerk authentication
 import type { Locale } from "@/i18n/config";
 import type { ContentData } from "@/lib/content-loader";
 
@@ -15,15 +15,8 @@ interface MarkdownAboutContentProps {
 function processMarkdownWithComponents(htmlContent: string, lang: Locale): string {
   let processedContent = htmlContent;
 
-  // Replace NewsletterButton
-  processedContent = processedContent.replace(
-    /<NewsletterButton\s*\/>/g,
-    `<div class="mt-6">
-      <button class="newsletter-button inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-        Subscribe to Updates
-      </button>
-    </div>`
-  );
+  // Remove NewsletterButton placeholders
+  processedContent = processedContent.replace(/<NewsletterButton\s*\/>/g, "");
 
   // Replace TechStackButton
   processedContent = processedContent.replace(
@@ -64,8 +57,9 @@ function processMarkdownWithComponents(htmlContent: string, lang: Locale): strin
     '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">$2</a>'
   );
 
-  // Remove NewsletterModal placeholder
+  // Remove any newsletter-related placeholders
   processedContent = processedContent.replace(/<NewsletterModal\s*\/>/g, "");
+  processedContent = processedContent.replace(/<Newsletter[^>]*\/>/g, "");
 
   return processedContent;
 }
@@ -75,13 +69,11 @@ export function MarkdownAboutContent({
   content,
 }: MarkdownAboutContentProps): React.JSX.Element {
   const searchParams = useSearchParams();
-  const [newsletterOpen, setNewsletterOpen] = useState(false);
+  // Newsletter functionality removed - using Clerk for authentication
 
   useEffect(() => {
-    // Check if we should open the newsletter modal
+    // Clean up any legacy subscribe params
     if (searchParams.get("subscribe") === "true") {
-      setNewsletterOpen(true);
-      // Clean up the URL
       const url = new URL(window.location.href);
       url.searchParams.delete("subscribe");
       window.history.replaceState({}, "", url.pathname);
@@ -90,12 +82,7 @@ export function MarkdownAboutContent({
 
   useEffect(() => {
     // Add event listeners for custom buttons after content loads
-    const newsletterButtons = document.querySelectorAll(".newsletter-button");
     const techStackButtons = document.querySelectorAll(".tech-stack-button");
-
-    newsletterButtons.forEach((button) => {
-      button.addEventListener("click", () => setNewsletterOpen(true));
-    });
 
     // For tech stack buttons, we'll need to handle them separately
     // This is a simplified version - you might want to implement a proper modal
@@ -106,9 +93,6 @@ export function MarkdownAboutContent({
     });
 
     return () => {
-      newsletterButtons.forEach((button) => {
-        button.removeEventListener("click", () => setNewsletterOpen(true));
-      });
       techStackButtons.forEach((button) => {
         button.removeEventListener("click", () => {});
       });
@@ -141,8 +125,6 @@ export function MarkdownAboutContent({
         // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe pre-processed markdown with component placeholders
         dangerouslySetInnerHTML={{ __html: processedContent }}
       />
-
-      <NewsletterModal open={newsletterOpen} onOpenChange={setNewsletterOpen} />
     </div>
   );
 }

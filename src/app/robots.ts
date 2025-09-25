@@ -8,14 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/api/",
-          "/admin/",
-          "/_next/",
-          "/register/",
-          "/newsletter/verify/",
-          "/newsletter/unsubscribe/",
-        ],
+        disallow: ["/api/", "/admin/", "/_next/", "/register/"],
       },
       // Allow AI crawlers to access our content
       {

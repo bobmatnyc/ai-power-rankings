@@ -2,20 +2,19 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { NewsletterModal } from "@/components/ui/newsletter-modal";
+
+// Newsletter modal removed - using Clerk authentication
 
 function AboutContent(): React.JSX.Element {
   const searchParams = useSearchParams();
-  const [newsletterOpen, setNewsletterOpen] = useState(false);
+  // Newsletter functionality removed - using Clerk for authentication
 
   useEffect(() => {
-    // Check if we should open the newsletter modal
+    // Clean up any legacy subscribe params
     if (searchParams.get("subscribe") === "true") {
-      setNewsletterOpen(true);
-      // Clean up the URL
       const url = new URL(window.location.href);
       url.searchParams.delete("subscribe");
       window.history.replaceState({}, "", url.pathname);
@@ -44,7 +43,9 @@ function AboutContent(): React.JSX.Element {
             clear, actionable insights based on real performance metrics and comprehensive analysis.
           </p>
           <div className="mt-6">
-            <Button onClick={() => setNewsletterOpen(true)}>Subscribe To Updates</Button>
+            <Button asChild>
+              <Link href="/sign-in">Sign In For Updates</Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -191,8 +192,6 @@ function AboutContent(): React.JSX.Element {
           </div>
         </CardContent>
       </Card>
-
-      <NewsletterModal open={newsletterOpen} onOpenChange={setNewsletterOpen} />
     </div>
   );
 }

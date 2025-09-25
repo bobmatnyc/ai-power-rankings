@@ -7,7 +7,6 @@ import {
   Database,
   History,
   Loader2,
-  Mail,
   Newspaper,
   TrendingUp,
   Upload,
@@ -16,7 +15,7 @@ import {
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { ArticleManagement } from "@/components/admin/article-management";
-import { SubscribersPage } from "@/components/admin/subscribers-page";
+// SubscribersPage removed - using Clerk for user management
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -672,10 +671,6 @@ export default function UnifiedAdminDashboard() {
             <History className="mr-2 h-4 w-4" />
             Version History
           </TabsTrigger>
-          <TabsTrigger value="subscribers">
-            <Mail className="mr-2 h-4 w-4" />
-            Subscribers
-          </TabsTrigger>
         </TabsList>
 
         {/* Removed News Upload tab content - Article Management now handles file uploads */}
@@ -1010,10 +1005,6 @@ export default function UnifiedAdminDashboard() {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="subscribers">
-          <SubscribersPage />
         </TabsContent>
       </Tabs>
     </div>

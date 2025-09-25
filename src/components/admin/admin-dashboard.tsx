@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Database,
-  FileText,
-  FileUp,
-  Globe,
-  Settings,
-  TrendingUp,
-  Trophy,
-  Users,
-} from "lucide-react";
+import { Database, FileText, FileUp, Globe, Settings, TrendingUp, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
@@ -49,14 +40,6 @@ export function AdminDashboard() {
       icon: FileText,
       href: "/dashboard/tools",
       color: "bg-green-500",
-      disabled: false,
-    },
-    {
-      title: "Subscribers",
-      description: "Manage newsletter subscribers and email lists",
-      icon: Users,
-      href: "/dashboard/subscribers",
-      color: "bg-indigo-500",
       disabled: false,
     },
     {
