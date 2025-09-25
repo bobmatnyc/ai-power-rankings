@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { NoAuthProvider } from "./no-auth-provider";
 
 interface AuthProviderWrapperProps {
@@ -35,20 +35,27 @@ const getAuthConfig = () => {
   return { isAuthDisabled, hasClerkKey, shouldUseClerk };
 };
 
-// Lazy load ClerkProvider to prevent SSR initialization
-const ClerkProviderLazy = lazy(async () => {
-  const { ClerkProvider } = await import("@clerk/nextjs");
-  return { default: ClerkProvider };
-});
-
 export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
   const [isMounted, setIsMounted] = useState(false);
   const [authConfig, setAuthConfig] = useState(() => getAuthConfig());
+  const [ClerkProvider, setClerkProvider] = useState<any>(null);
 
   useEffect(() => {
     setIsMounted(true);
     // Re-check config after mount to ensure we have the latest
-    setAuthConfig(getAuthConfig());
+    const config = getAuthConfig();
+    setAuthConfig(config);
+
+    // Dynamically import ClerkProvider only on client and when needed
+    if (config.shouldUseClerk) {
+      import("@clerk/nextjs")
+        .then((module) => {
+          setClerkProvider(() => module.ClerkProvider);
+        })
+        .catch((error) => {
+          console.error("[AuthProvider] Error loading Clerk:", error);
+        });
+    }
   }, []);
 
   // During SSG/SSR or before hydration, always use NoAuthProvider to avoid router issues
@@ -56,24 +63,22 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
     return <NoAuthProvider>{children}</NoAuthProvider>;
   }
 
-  // After hydration, if we should use Clerk, use it
-  if (authConfig.shouldUseClerk) {
+  // After hydration, if we should use Clerk and it's loaded, use it
+  if (authConfig.shouldUseClerk && ClerkProvider) {
     try {
       // Extract locale from pathname if available, otherwise default to "en"
       const locale = window.location.pathname.split("/")[1] || "en";
 
       return (
-        <Suspense fallback={<NoAuthProvider>{children}</NoAuthProvider>}>
-          <ClerkProviderLazy
-            publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
-            signInUrl={`/${locale}/sign-in`}
-            signUpUrl={`/${locale}/sign-up`}
-            afterSignInUrl={`/${locale}`}
-            afterSignUpUrl={`/${locale}`}
-          >
-            {children}
-          </ClerkProviderLazy>
-        </Suspense>
+        <ClerkProvider
+          publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
+          signInUrl={`/${locale}/sign-in`}
+          signUpUrl={`/${locale}/sign-up`}
+          afterSignInUrl={`/${locale}`}
+          afterSignUpUrl={`/${locale}`}
+        >
+          {children}
+        </ClerkProvider>
       );
     } catch (error) {
       console.error("[AuthProvider] Error initializing Clerk:", error);
@@ -82,6 +87,6 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
     }
   }
 
-  // Otherwise, use NoAuthProvider
+  // Otherwise, use NoAuthProvider (or while Clerk is loading)
   return <NoAuthProvider>{children}</NoAuthProvider>;
 }
