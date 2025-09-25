@@ -5,8 +5,8 @@ import { validateEnvironment } from "@/lib/startup-validation";
 import { i18n } from "./i18n/config";
 
 // Middleware ALWAYS runs in Edge Runtime on Vercel - cannot be changed
-// API routes are included in matcher but handled without auth checks
-// This allows Clerk to properly initialize while letting API routes handle their own auth
+// API routes are handled conditionally INSIDE middleware to avoid Clerk cookie validation
+// API routes return early with NextResponse.next() before Clerk processes them
 
 // Run startup validation once when middleware is first loaded
 // This ensures the application fails to start if required env vars are missing
@@ -125,13 +125,13 @@ function handleLocaleRedirection(req: NextRequest): NextResponse | null {
   return null;
 }
 
-// Modern Clerk middleware using 2024 patterns
+// Modern Clerk middleware using 2024 patterns with conditional API route bypass
 export default clerkMiddleware((auth, req) => {
   const pathname = req.nextUrl.pathname;
 
-  // CRITICAL: Skip authentication for ALL API routes
-  // API routes handle their own authentication in Node.js runtime
-  if (pathname.startsWith("/api")) {
+  // CRITICAL: Handle API routes FIRST, before any Clerk processing
+  // This prevents Clerk from validating cookies on API routes
+  if (pathname.startsWith('/api/') || pathname.startsWith('/trpc/')) {
     return NextResponse.next();
   }
 
@@ -171,9 +171,30 @@ export default clerkMiddleware((auth, req) => {
     return localeResponse;
   }
 
-  // Protect routes using the modern pattern
+  // Protect routes - check authentication for protected routes
+  // Only apply protection in production when auth is enabled
   if (isProtectedRoute(req) && !isPublicRoute(req)) {
-    auth().protect();
+    if (process.env["NODE_ENV"] === "production" && !isAuthDisabled) {
+      try {
+        const { userId } = auth();
+        if (!userId) {
+          // Redirect to sign-in if not authenticated
+          const locale = pathname.split("/")[1] || "en";
+          const host = req.headers.get("host") || "localhost:3000";
+          const protocol = req.headers.get("x-forwarded-proto") || "http";
+          const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
+          return NextResponse.redirect(redirectUrl, { status: 303 });
+        }
+      } catch (error) {
+        console.error('[Middleware] Auth check failed:', error);
+        // On error, redirect to sign-in
+        const locale = pathname.split("/")[1] || "en";
+        const host = req.headers.get("host") || "localhost:3000";
+        const protocol = req.headers.get("x-forwarded-proto") || "http";
+        const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
+        return NextResponse.redirect(redirectUrl, { status: 303 });
+      }
+    }
   }
 
   const response = NextResponse.next();
@@ -193,10 +214,9 @@ export default clerkMiddleware((auth, req) => {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and static files, but INCLUDE api routes
-    // This is required for Clerk to work properly on Vercel Edge Runtime
+    // Skip Next.js internals and static files, but INCLUDE api routes for conditional handling
     '/((?!_next/static|_next/image|assets|data|partytown|favicon.ico|crown.*|robots.txt|sitemap.xml).*)',
-    // Always run for API routes (required for Clerk Edge Runtime compatibility)
+    // Always include API routes but handle them conditionally inside the middleware
     '/(api|trpc)(.*)',
   ],
 };
