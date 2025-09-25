@@ -358,7 +358,7 @@ export function DiagnosticsClientFixed() {
                     <pre className="mt-2 bg-gray-100 p-3 rounded text-xs overflow-x-auto">
                       {typeof result.body === "object"
                         ? JSON.stringify(result.body, null, 2)
-                        : result.body}
+                        : String(result.body || "")}
                     </pre>
                   </details>
                 </>

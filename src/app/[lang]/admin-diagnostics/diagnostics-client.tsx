@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface TestResult {
   endpoint: string;
@@ -9,7 +9,7 @@ interface TestResult {
   status?: number;
   statusText?: string;
   headers?: Record<string, string>;
-  body?: unknown;
+  body: unknown;
   error?: string;
   requestConfig: string;
   duration: number;
@@ -21,19 +21,12 @@ interface ErrorLog {
   stack?: string;
 }
 
-// Lazy load Clerk status component to prevent SSR issues
-const ClerkStatus = lazy(() =>
-  import("./clerk-status").then((mod) => ({ default: mod.ClerkStatus }))
-);
-
-export function DiagnosticsClient() {
+export function DiagnosticsClientFixed() {
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [cookies, setCookies] = useState<string>("");
   const [errorLogs, setErrorLogs] = useState<ErrorLog[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [authToken, setAuthToken] = useState<string | null>(null);
-  const [authData, setAuthData] = useState<unknown>(null);
-  const [showClerkStatus, setShowClerkStatus] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Endpoints to test
   const endpoints = ["/api/auth-verify", "/api/admin/db-status", "/api/admin/articles"];
@@ -41,14 +34,15 @@ export function DiagnosticsClient() {
   // Credentials options to test
   const credentialsOptions: RequestCredentials[] = ["same-origin", "include", "omit"];
 
-  // Update cookies display
+  // Initialize once on mount
   useEffect(() => {
+    console.log("[DiagnosticsClient] Initializing...");
     setCookies(document.cookie || "No cookies found");
-  }, []);
+    setIsInitialized(true);
 
-  // Error handler
-  useEffect(() => {
+    // Setup error handlers
     const handleError = (event: ErrorEvent) => {
+      console.error("[DiagnosticsClient] Global error:", event);
       setErrorLogs((prev) => [
         ...prev,
         {
@@ -60,6 +54,7 @@ export function DiagnosticsClient() {
     };
 
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error("[DiagnosticsClient] Unhandled rejection:", event);
       setErrorLogs((prev) => [
         ...prev,
         {
@@ -73,28 +68,22 @@ export function DiagnosticsClient() {
     window.addEventListener("error", handleError);
     window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
+    console.log("[DiagnosticsClient] Initialized successfully");
+
     return () => {
+      console.log("[DiagnosticsClient] Cleaning up...");
       window.removeEventListener("error", handleError);
       window.removeEventListener("unhandledrejection", handleUnhandledRejection);
     };
+  }, []); // Empty dependency array - run once
+
+  const refreshCookies = useCallback(() => {
+    console.log("[DiagnosticsClient] Refreshing cookies...");
+    setCookies(document.cookie || "No cookies found");
   }, []);
 
-  // Handle auth data from Clerk component
-  const handleAuthData = (data: unknown) => {
-    setAuthData(data);
-    if (data?.authToken) {
-      setAuthToken(data.authToken);
-    }
-  };
-
-  // Check if we can load Clerk on mount
-  useEffect(() => {
-    // Delay showing Clerk status to prevent hydration issues
-    const timer = setTimeout(() => setShowClerkStatus(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const testEndpoint = async (endpoint: string, credentials: RequestCredentials) => {
+  const testEndpoint = useCallback(async (endpoint: string, credentials: RequestCredentials) => {
+    console.log(`[DiagnosticsClient] Testing ${endpoint} with credentials: ${credentials}`);
     const startTime = performance.now();
     const result: TestResult = {
       endpoint,
@@ -102,6 +91,7 @@ export function DiagnosticsClient() {
       timestamp: new Date().toISOString(),
       requestConfig: "",
       duration: 0,
+      body: null,
     };
 
     try {
@@ -113,19 +103,16 @@ export function DiagnosticsClient() {
         },
       };
 
-      // Add auth token if available and not using 'omit' credentials
-      if (authToken && credentials !== "omit") {
-        config.headers = {
-          ...config.headers,
-          Authorization: `Bearer ${authToken}`,
-        };
-      }
-
       result.requestConfig = JSON.stringify(config, null, 2);
+      console.log(`[DiagnosticsClient] Fetching ${endpoint}...`);
 
       const response = await fetch(endpoint, config);
       const endTime = performance.now();
       result.duration = Math.round(endTime - startTime);
+
+      console.log(
+        `[DiagnosticsClient] Response received: ${response.status} ${response.statusText}`
+      );
 
       result.status = response.status;
       result.statusText = response.statusText;
@@ -142,7 +129,8 @@ export function DiagnosticsClient() {
       if (contentType?.includes("application/json")) {
         try {
           result.body = await response.json();
-        } catch {
+        } catch (e) {
+          console.error("[DiagnosticsClient] Failed to parse JSON:", e);
           result.body = "Failed to parse JSON response";
         }
       } else {
@@ -152,12 +140,14 @@ export function DiagnosticsClient() {
       const endTime = performance.now();
       result.duration = Math.round(endTime - startTime);
       result.error = error instanceof Error ? error.message : String(error);
+      console.error("[DiagnosticsClient] Test failed:", error);
     }
 
     return result;
-  };
+  }, []);
 
-  const runAllTests = async () => {
+  const runAllTests = useCallback(async () => {
+    console.log("[DiagnosticsClient] Running all tests...");
     setIsRunning(true);
     setTestResults([]);
 
@@ -165,71 +155,51 @@ export function DiagnosticsClient() {
 
     for (const endpoint of endpoints) {
       for (const credentials of credentialsOptions) {
-        const result = await testEndpoint(endpoint, credentials);
-        results.push(result);
-        setTestResults([...results]);
-        // Small delay between tests
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        try {
+          const result = await testEndpoint(endpoint, credentials);
+          results.push(result);
+          setTestResults([...results]);
+          // Small delay between tests
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        } catch (error) {
+          console.error("[DiagnosticsClient] Test error:", error);
+        }
       }
     }
 
     setIsRunning(false);
-  };
+    console.log("[DiagnosticsClient] All tests completed");
+  }, [testEndpoint]);
 
-  const runSingleTest = async (endpoint: string, credentials: RequestCredentials) => {
-    const result = await testEndpoint(endpoint, credentials);
-    setTestResults((prev) => [...prev, result]);
-  };
+  const runSingleTest = useCallback(
+    async (endpoint: string, credentials: RequestCredentials) => {
+      console.log(`[DiagnosticsClient] Running single test: ${endpoint} with ${credentials}`);
+      try {
+        const result = await testEndpoint(endpoint, credentials);
+        setTestResults((prev) => [...prev, result]);
+      } catch (error) {
+        console.error("[DiagnosticsClient] Single test error:", error);
+      }
+    },
+    [testEndpoint]
+  );
 
-  const clearResults = () => {
+  const clearResults = useCallback(() => {
+    console.log("[DiagnosticsClient] Clearing results...");
     setTestResults([]);
     setErrorLogs([]);
-  };
+  }, []);
+
+  if (!isInitialized) {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-xl font-bold mb-4 text-gray-800">Initializing Diagnostics...</h2>
+      </div>
+    );
+  }
 
   return (
     <>
-      {/* Client-side Authentication Status */}
-      {showClerkStatus ? (
-        <Suspense
-          fallback={
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-              <h2 className="text-xl font-bold mb-4 text-gray-800">
-                Loading Clerk Authentication...
-              </h2>
-            </div>
-          }
-        >
-          <ClerkStatus onAuthData={handleAuthData} />
-        </Suspense>
-      ) : (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">
-            Initializing Authentication Check...
-          </h2>
-        </div>
-      )}
-
-      {/* Additional Auth Info */}
-      {authData && (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Auth Token Status</h2>
-          <div className="space-y-2">
-            <div className="text-sm text-gray-600">
-              <span className="font-semibold">Auth Token:</span>{" "}
-              {authToken ? (
-                <span className="font-mono text-xs bg-gray-100 px-1 rounded">
-                  {authToken.substring(0, 30)}...
-                </span>
-              ) : authData.tokenError ? (
-                <span className="text-red-600">Error: {authData.tokenError}</span>
-              ) : (
-                "Not available"
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Browser Cookies */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 className="text-xl font-bold mb-4 text-gray-800">Browser Cookies</h2>
@@ -238,7 +208,7 @@ export function DiagnosticsClient() {
         </div>
         <button
           type="button"
-          onClick={() => setCookies(document.cookie || "No cookies found")}
+          onClick={refreshCookies}
           className="mt-3 px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Refresh Cookies
@@ -254,7 +224,7 @@ export function DiagnosticsClient() {
             type="button"
             onClick={runAllTests}
             disabled={isRunning}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {isRunning ? "Running Tests..." : "Run All Tests"}
           </button>
@@ -279,7 +249,7 @@ export function DiagnosticsClient() {
                     key={creds}
                     onClick={() => runSingleTest(endpoint, creds)}
                     disabled={isRunning}
-                    className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300 disabled:bg-gray-100"
+                    className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     Test with "{creds}"
                   </button>
@@ -294,7 +264,7 @@ export function DiagnosticsClient() {
       {errorLogs.length > 0 && (
         <div className="bg-red-50 border border-red-200 rounded-lg shadow-md p-6 mb-6">
           <h2 className="text-xl font-bold mb-4 text-red-800">JavaScript Errors</h2>
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-96 overflow-y-auto">
             {errorLogs.map((log, index) => (
               <div
                 key={`error-${log.timestamp}-${index}`}
@@ -388,7 +358,7 @@ export function DiagnosticsClient() {
                     <pre className="mt-2 bg-gray-100 p-3 rounded text-xs overflow-x-auto">
                       {typeof result.body === "object"
                         ? JSON.stringify(result.body, null, 2)
-                        : result.body}
+                        : String(result.body || "")}
                     </pre>
                   </details>
                 </>

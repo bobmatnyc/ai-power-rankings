@@ -74,12 +74,15 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: unknown) {
     console.error("[auth-debug] Outer error:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorName = error instanceof Error ? error.name : "Unknown";
+
     return NextResponse.json(
       {
         success: false,
         error: {
-          message: error?.message || String(error),
-          name: error?.name || "Unknown",
+          message: errorMessage,
+          name: errorName,
         },
       },
       { status: 500 }
