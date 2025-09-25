@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertCircle, CheckCircle, Loader2, Send } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -85,6 +85,17 @@ export function ContactForm() {
     limit?: number;
     reset?: string;
   }>({});
+  const [isClientMounted, setIsClientMounted] = useState(false);
+
+  // Ensure component is properly hydrated before interacting with Clerk context
+  useEffect(() => {
+    setIsClientMounted(true);
+  }, []);
+
+  // Don't render interactive elements until client is mounted
+  if (!isClientMounted) {
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
