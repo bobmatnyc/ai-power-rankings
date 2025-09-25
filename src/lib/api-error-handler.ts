@@ -31,7 +31,7 @@ export interface APISuccessResponse<T = any> {
  */
 export function detectRuntime(): string {
   // Check if we're in Edge Runtime using the global EdgeRuntime variable
-  // @ts-ignore - EdgeRuntime is a global only available in Edge Runtime
+  // @ts-expect-error - EdgeRuntime is a global only available in Edge Runtime
   return typeof globalThis.EdgeRuntime !== 'undefined' ? 'edge' : 'nodejs';
 }
 

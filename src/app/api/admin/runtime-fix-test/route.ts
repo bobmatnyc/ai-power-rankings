@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
 // Force Node.js runtime to match middleware configuration
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     console.log("[RUNTIME-FIX-TEST] Request headers:", Object.fromEntries(request.headers.entries()));
 
     // Step 1: Runtime Detection
-    // @ts-ignore - EdgeRuntime is a global only available in Edge Runtime
+    // @ts-expect-error - EdgeRuntime is a global only available in Edge Runtime
     const isEdgeRuntime = typeof globalThis.EdgeRuntime !== 'undefined';
     const runtimeInfo = {
       runtime: isEdgeRuntime ? 'edge' : 'nodejs',
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
         stack: error instanceof Error ? error.stack : undefined
       },
       runtime: {
-        // @ts-ignore - EdgeRuntime is a global only available in Edge Runtime
+        // @ts-expect-error - EdgeRuntime is a global only available in Edge Runtime
         detected: typeof globalThis.EdgeRuntime !== 'undefined' ? 'edge' : 'nodejs',
         expected: 'nodejs'
       },
@@ -209,7 +209,7 @@ export async function GET(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         "X-Runtime-Test": "failed",
-        // @ts-ignore - EdgeRuntime is a global only available in Edge Runtime
+        // @ts-expect-error - EdgeRuntime is a global only available in Edge Runtime
         "X-Runtime-Type": typeof globalThis.EdgeRuntime !== 'undefined' ? "edge" : "nodejs"
       }
     });

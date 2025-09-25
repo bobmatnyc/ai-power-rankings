@@ -130,7 +130,7 @@ export function DiagnosticsClientFixed() {
         try {
           result.body = await response.json();
         } catch (e) {
-          console.error(`[DiagnosticsClient] Failed to parse JSON:`, e);
+          console.error("[DiagnosticsClient] Failed to parse JSON:", e);
           result.body = 'Failed to parse JSON response';
         }
       } else {
@@ -140,7 +140,7 @@ export function DiagnosticsClientFixed() {
       const endTime = performance.now();
       result.duration = Math.round(endTime - startTime);
       result.error = error instanceof Error ? error.message : String(error);
-      console.error(`[DiagnosticsClient] Test failed:`, error);
+      console.error("[DiagnosticsClient] Test failed:", error);
     }
 
     return result;
@@ -162,7 +162,7 @@ export function DiagnosticsClientFixed() {
           // Small delay between tests
           await new Promise(resolve => setTimeout(resolve, 100));
         } catch (error) {
-          console.error(`[DiagnosticsClient] Test error:`, error);
+          console.error("[DiagnosticsClient] Test error:", error);
         }
       }
     }
@@ -177,7 +177,7 @@ export function DiagnosticsClientFixed() {
       const result = await testEndpoint(endpoint, credentials);
       setTestResults(prev => [...prev, result]);
     } catch (error) {
-      console.error(`[DiagnosticsClient] Single test error:`, error);
+      console.error("[DiagnosticsClient] Single test error:", error);
     }
   }, [testEndpoint]);
 

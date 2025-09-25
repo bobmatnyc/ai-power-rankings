@@ -94,7 +94,7 @@ export default async function AdminTestPage() {
           <div className="space-y-2">
             <div className="bg-gray-50 p-3 rounded">
               <p className="font-mono text-sm">
-                <a href="/api/auth-verify" target="_blank" className="text-blue-600 hover:underline">
+                <a href="/api/auth-verify" target="_blank" className="text-blue-600 hover:underline" rel="noopener">
                   /api/auth-verify
                 </a>
                 {" - Check your authentication status"}
@@ -102,7 +102,7 @@ export default async function AdminTestPage() {
             </div>
             <div className="bg-gray-50 p-3 rounded">
               <p className="font-mono text-sm">
-                <a href="/api/admin/articles" target="_blank" className="text-blue-600 hover:underline">
+                <a href="/api/admin/articles" target="_blank" className="text-blue-600 hover:underline" rel="noopener">
                   /api/admin/articles
                 </a>
                 {" - Test admin articles access"}
