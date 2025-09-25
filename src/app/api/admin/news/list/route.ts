@@ -10,47 +10,60 @@ import { loggers } from "@/lib/logger";
  * Returns all news articles sorted by published date with statistics
  */
 export async function GET(_request: NextRequest) {
-  return withAuth(async (): Promise<NextResponse> => {
-    try {
-      // Try database first
-      const dbArticles = await newsRepository.getAll();
-      // biome-ignore lint/suspicious/noExplicitAny: Articles can be from database or JSON with different shapes
-      let articles: any[] = [];
-      let stats = null;
+  try {
+    // Wrap the entire function in try-catch for better error handling
+    return await withAuth(async (): Promise<NextResponse> => {
+      try {
+        // Try database first
+        const dbArticles = await newsRepository.getAll();
+        // biome-ignore lint/suspicious/noExplicitAny: Articles can be from database or JSON with different shapes
+        let articles: any[] = [];
+        let stats = null;
 
-      // If no articles in database, fallback to JSON
-      if (!dbArticles || dbArticles.length === 0) {
-        loggers.api.info("No articles in database, falling back to JSON");
-        const newsRepo = getNewsRepo();
-        const jsonArticles = await newsRepo.getAll();
+        // If no articles in database, fallback to JSON
+        if (!dbArticles || dbArticles.length === 0) {
+          loggers.api.info("No articles in database, falling back to JSON");
+          const newsRepo = getNewsRepo();
+          const jsonArticles = await newsRepo.getAll();
 
-        // Sort by published date (newest first)
-        articles = jsonArticles.sort((a, b) => {
-          const dateA = new Date(a.published_date || a.created_at);
-          const dateB = new Date(b.published_date || b.created_at);
-          return dateB.getTime() - dateA.getTime();
-        });
-      } else {
-        // Convert database articles to a consistent format
-        articles = dbArticles;
-        // Get statistics from database
-        stats = await newsRepository.getStatistics();
-      }
+          // Sort by published date (newest first)
+          articles = jsonArticles.sort((a, b) => {
+            const dateA = new Date(a.published_date || a.created_at);
+            const dateB = new Date(b.published_date || b.created_at);
+            return dateB.getTime() - dateA.getTime();
+          });
+        } else {
+          // Convert database articles to a consistent format
+          articles = dbArticles;
+          // Get statistics from database
+          stats = await newsRepository.getStatistics();
+        }
 
-      return NextResponse.json({
-        success: true,
-        articles: articles,
-        total: articles.length,
-        stats: stats || {
+        return NextResponse.json({
+          success: true,
+          articles: articles,
           total: articles.length,
-          currentMonth: 0,
-          lastMonth: 0,
-          averageToolMentions: 0,
-        },
-      });
-    } catch (error) {
-      loggers.api.error("Error in admin/news/list GET", { error });
-      return NextResponse.json({ error: "Failed to load articles" }, { status: 500 });
-    }
-  });
+          stats: stats || {
+            total: articles.length,
+            currentMonth: 0,
+            lastMonth: 0,
+            averageToolMentions: 0,
+          },
+        });
+      } catch (error) {
+        loggers.api.error("Error in admin/news/list GET", { error });
+        return NextResponse.json({ error: "Failed to load articles" }, { status: 500 });
+      }
+    });
+  } catch (error) {
+    // Catch any authentication errors
+    loggers.api.error("Authentication error in admin/news/list GET", { error });
+    return NextResponse.json(
+      {
+        error: "Authentication failed",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
 }

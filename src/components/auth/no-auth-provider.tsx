@@ -1,6 +1,14 @@
 "use client";
 
-import React, { createContext, type ReactNode, useContext } from "react";
+import React, {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 // Type definitions for the NoAuth context
 interface NoAuthContextType {
@@ -19,14 +27,19 @@ interface NoAuthProviderProps {
 }
 
 export function NoAuthProvider({ children }: NoAuthProviderProps) {
+  const [isSignedIn, setIsSignedIn] = useState(true); // Default to signed in for dev mode
+
+  const signOut = useCallback(async () => {
+    console.log("Sign out called in development mode");
+    setIsSignedIn(false);
+  }, []);
+
   const value: NoAuthContextType = {
     isLoaded: true,
-    isSignedIn: false, // Changed to false to simulate signed-out state
+    isSignedIn,
     user: null,
     session: null,
-    signOut: async () => {
-      console.log("Sign out called in development mode");
-    },
+    signOut,
   };
 
   return <NoAuthContext.Provider value={value}>{children}</NoAuthContext.Provider>;
@@ -119,16 +132,76 @@ export function SignInButton({ children }: { children: ReactNode }) {
   );
 }
 
-// Mock UserButton component
-export function UserButton() {
+// Mock UserButton component with admin link for development
+export function UserButton({ afterSignOutUrl }: { afterSignOutUrl?: string }) {
   const context = useNoAuthContext();
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Extract language from afterSignOutUrl or default to 'en'
+  const lang = afterSignOutUrl ? afterSignOutUrl.split("/")[1] || "en" : "en";
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
   if (!context.isSignedIn) return null;
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center hover:bg-gray-400 transition-colors"
+      >
         <span className="text-xs">DU</span>
-      </div>
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+          <div className="py-1">
+            <div className="px-4 py-2 text-sm text-gray-700 border-b">Dev User</div>
+            <a
+              href={`/${lang}/admin`}
+              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              onClick={() => setIsOpen(false)}
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <title>Admin Dashboard Icon</title>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+              Admin Dashboard
+            </a>
+            <button
+              type="button"
+              onClick={() => {
+                context.signOut();
+                setIsOpen(false);
+              }}
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

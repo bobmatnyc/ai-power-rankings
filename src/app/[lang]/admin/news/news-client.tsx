@@ -43,12 +43,21 @@ export default function NewsListPage() {
     setError(null);
     try {
       const response = await fetch("/api/admin/news/list");
-      if (!response.ok) {
-        throw new Error("Failed to load articles");
+
+      // Check for specific error responses
+      if (response.status === 401) {
+        throw new Error("Unauthorized - Please sign in to access this page");
       }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(errorData.error || errorData.message || "Failed to load articles");
+      }
+
       const data = await response.json();
       setArticles(data.articles || []);
     } catch (err) {
+      console.error("Error loading articles:", err);
       setError(err instanceof Error ? err.message : "Failed to load articles");
     } finally {
       setLoading(false);

@@ -18,6 +18,7 @@ import {
   useAuth as MockUseAuth,
   UserButton as MockUserButton,
 } from "./no-auth-provider";
+import { UserButtonWithAdmin } from "./user-button-with-admin";
 
 // Check if authentication should be disabled
 const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
@@ -95,7 +96,8 @@ export function SignedInWrapper({ children }: { children: React.ReactNode }) {
 export function UserButtonWrapper(props: Record<string, unknown>) {
   const [mounted, setMounted] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
-  const ButtonComponent = isAuthDisabled ? MockUserButton : ClerkUserButton;
+  // Use the UserButtonWithAdmin for Clerk auth, MockUserButton for disabled auth
+  const ButtonComponent = isAuthDisabled ? MockUserButton : UserButtonWithAdmin;
 
   useEffect(() => {
     setMounted(true);
