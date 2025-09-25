@@ -1,7 +1,7 @@
-"use client";
-
 // Force dynamic rendering to avoid Clerk SSG issues
 export const dynamic = "force-dynamic";
+
+("use client");
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
