@@ -1,47 +1,56 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+
+interface TestResult {
+  status?: number;
+  ok?: boolean;
+  data?: unknown;
+  error?: string;
+}
 
 export default function TestEndpointsPage() {
-  const [results, setResults] = useState<Record<string, any>>({});
+  const [results, setResults] = useState<Record<string, TestResult>>({});
 
   const testEndpoint = async (name: string, url: string) => {
     console.log(`Testing ${name}...`);
     try {
       const response = await fetch(url, {
-        method: 'GET',
-        credentials: 'same-origin',
+        method: "GET",
+        credentials: "same-origin",
         headers: {
-          'Content-Type': 'application/json',
-        }
+          "Content-Type": "application/json",
+        },
       });
 
       const data = await response.json();
-      setResults(prev => ({
+      setResults((prev) => ({
         ...prev,
         [name]: {
           status: response.status,
           ok: response.ok,
-          data
-        }
+          data,
+        },
       }));
     } catch (error) {
-      setResults(prev => ({
+      setResults((prev) => ({
         ...prev,
         [name]: {
-          error: error instanceof Error ? error.message : String(error)
-        }
+          error: error instanceof Error ? error.message : String(error),
+        },
       }));
     }
   };
 
   const runAllTests = async () => {
     setResults({});
-    await testEndpoint('test-basic', '/api/admin/test-basic');
-    await testEndpoint('test-auth', '/api/admin/test-auth');
-    await testEndpoint('test-user', '/api/admin/test-user');
-    await testEndpoint('db-status', '/api/admin/db-status');
-    await testEndpoint('articles', '/api/admin/articles');
+    await testEndpoint("test-basic", "/api/admin/test-basic");
+    await testEndpoint("test-auth", "/api/admin/test-auth");
+    await testEndpoint("test-user", "/api/admin/test-user");
+    await testEndpoint("db-status", "/api/admin/db-status");
+    await testEndpoint("articles", "/api/admin/articles");
+    await testEndpoint("db-status-v2", "/api/admin/db-status-v2");
+    await testEndpoint("articles-v2", "/api/admin/articles-v2");
   };
 
   return (
@@ -49,6 +58,7 @@ export default function TestEndpointsPage() {
       <h1 className="text-2xl font-bold mb-4">API Endpoint Tests</h1>
 
       <button
+        type="button"
         onClick={runAllTests}
         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mb-4"
       >
@@ -72,8 +82,10 @@ export default function TestEndpointsPage() {
           <li>test-basic: No auth, should always work</li>
           <li>test-auth: Only tests Clerk auth()</li>
           <li>test-user: Tests both auth() and currentUser()</li>
-          <li>db-status: Full admin endpoint</li>
-          <li>articles: Full admin endpoint</li>
+          <li>db-status: Full admin endpoint (uses auth-helper)</li>
+          <li>articles: Full admin endpoint (uses auth-helper)</li>
+          <li>db-status-v2: Direct Clerk auth (bypasses auth-helper)</li>
+          <li>articles-v2: Direct Clerk auth (bypasses auth-helper)</li>
         </ol>
         <p className="mt-2 text-sm">Check browser console for detailed logs</p>
       </div>
