@@ -8,6 +8,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+// Force dynamic rendering to prevent SSG issues with Clerk
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 const errorMessages: Record<string, string> = {
   Signin: "Try signing in with a different account.",
   OAuthSignin: "Try signing in with a different account.",
