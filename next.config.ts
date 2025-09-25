@@ -25,6 +25,9 @@ const nextConfig: NextConfig = {
     workerThreads: false,
     // Disable all polyfills for modern browsers
     esmExternals: true,
+    // CRITICAL: Enable Node.js runtime for middleware to fix Clerk auth() issues
+    // This resolves the Edge Runtime vs Node.js runtime mismatch causing HTML errors in production
+    serverComponentsExternalPackages: ["@clerk/nextjs"],
     // Note: staticPageGenerationTimeout is not available in NextConfig
     // Instead we use force-dynamic on individual pages
   },

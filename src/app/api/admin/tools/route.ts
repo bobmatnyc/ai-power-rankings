@@ -9,7 +9,7 @@
  */
 
 import { type NextRequest, NextResponse } from "next/server";
-import { withAuth } from "@/lib/clerk-auth";
+import { requireAdmin } from "@/lib/api-auth";
 import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
 import type { Tool } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
@@ -45,11 +45,15 @@ interface ExtendedTool extends Tool {
  * - status: filter by status for list action
  */
 export async function GET(request: NextRequest) {
-  return withAuth<
-    Record<string, ToolCheckResult> | { total: number; tools: unknown[] } | { error: string }
-  >(async () => {
-    try {
-      const { searchParams } = new URL(request.url);
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+  const { userId } = authResult;
+
+  try {
+    const { searchParams } = new URL(request.url);
       const action = searchParams.get("action") || "list";
       const toolsRepo = getToolsRepo();
 
@@ -117,10 +121,9 @@ export async function GET(request: NextRequest) {
       }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      loggers.api.error("Error in admin/tools GET", { error });
+      loggers.api.error("Error in admin/tools GET", { error, userId });
       return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
-  });
 }
 
 /**
@@ -133,8 +136,14 @@ export async function GET(request: NextRequest) {
  * - update-company: Update company data for a tool
  */
 export async function POST(request: NextRequest) {
-  return withAuth(async (): Promise<NextResponse> => {
-    try {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+  const { userId } = authResult;
+
+  try {
       const body = await request.json();
       const { action } = body;
       const toolsRepo = getToolsRepo();
@@ -312,10 +321,9 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
       }
     } catch (error) {
-      loggers.api.error("Error in admin/tools POST", { error });
+      loggers.api.error("Error in admin/tools POST", { error, userId });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-  });
 }
 
 /**
@@ -324,8 +332,14 @@ export async function POST(request: NextRequest) {
  * Delete a single tool by ID
  */
 export async function DELETE(request: NextRequest) {
-  return withAuth(async (): Promise<NextResponse> => {
-    try {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+  const { userId } = authResult;
+
+  try {
       const { searchParams } = new URL(request.url);
       const toolId = searchParams.get("id");
 
@@ -368,10 +382,9 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ error: "Failed to delete tool" }, { status: 500 });
       }
     } catch (error) {
-      loggers.api.error("Error in admin/tools DELETE", { error });
+      loggers.api.error("Error in admin/tools DELETE", { error, userId });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-  });
 }
 
 /**
@@ -380,8 +393,14 @@ export async function DELETE(request: NextRequest) {
  * Quick fix and update operations
  */
 export async function PUT(request: NextRequest) {
-  return withAuth<{ success: boolean; message: string } | { error: string }>(async () => {
-    try {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+  const { userId } = authResult;
+
+  try {
       const body = await request.json();
       const { action } = body;
       const toolsRepo = getToolsRepo();
@@ -459,8 +478,7 @@ export async function PUT(request: NextRequest) {
           return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
       }
     } catch (error) {
-      loggers.api.error("Error in admin/tools PUT", { error });
+      loggers.api.error("Error in admin/tools PUT", { error, userId });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-  });
 }

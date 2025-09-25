@@ -4,6 +4,9 @@ import { NextResponse } from "next/server";
 import { validateEnvironment } from "@/lib/startup-validation";
 import { i18n } from "./i18n/config";
 
+// Middleware ALWAYS runs in Edge Runtime on Vercel - cannot be changed
+// We bypass API routes to avoid Edge/Node runtime conflicts
+
 // Run startup validation once when middleware is first loaded
 // This ensures the application fails to start if required env vars are missing
 let startupValidationComplete = false;
@@ -80,11 +83,11 @@ function getLocale(request: NextRequest): string {
   return i18n.defaultLocale;
 }
 
-// Define admin routes (including API admin routes)
-const isAdminRoute = createRouteMatcher(["/(.*)admin(.*)", "/api/admin(.*)"]);
+// Define admin routes (only for page routes, not API)
+const isAdminRoute = createRouteMatcher(["/(.*)admin(.*)"]);
 
-// Define protected routes (including API admin routes)
-const isProtectedRoute = createRouteMatcher(["/admin(.*)", "/(.*)dashboard(.*)", "/api/admin(.*)"]);
+// Define protected routes (only for page routes, not API)
+const isProtectedRoute = createRouteMatcher(["/admin(.*)", "/(.*)dashboard(.*)"]);
 
 // Define public routes that should be accessible without authentication
 const isPublicRoute = createRouteMatcher([
@@ -100,35 +103,45 @@ const isPublicRoute = createRouteMatcher([
   "/(.*)admin-diagnostics(.*)", // Admin diagnostics pages
   "/(.*)admin-simple-test(.*)", // Simple test pages
   "/(.*)admin-basic-test(.*)", // Basic test pages
-  // Public API routes
-  "/api/news(.*)",
-  "/api/rankings(.*)",
-  "/api/companies(.*)",
-  "/api/tools(.*)",
-  "/api/newsletter(.*)",
-  "/api/contact(.*)",
-  "/api/changelog(.*)",
-  "/api/health",
-  "/api/seo(.*)",
-  "/api/cache(.*)",
-  "/api/updates(.*)",
-  "/api/favicon(.*)",
-  "/api/test-endpoint",
-  "/api/test-env",
-  "/api/test-static",
-  "/api/no-auth",
-  "/api/debug",
-  "/api/ai(.*)",
-  "/api/proxy(.*)",
-  "/api/db-test(.*)", // Database test API routes
-  "/api/auth-verify", // Auth verification endpoint
-  "/api/admin/test-basic", // Basic test endpoint (no auth needed)
-  "/api/admin/test-auth", // Auth test endpoint
-  "/api/admin/test-user", // User test endpoint
 ]);
+
+// Enhanced error handling wrapper for page routes only
+async function safeClerkAuth(auth: any, req: NextRequest, operation: string) {
+  try {
+    return await auth();
+  } catch (error) {
+    console.error(`[Middleware] Clerk ${operation} failed:`, {
+      error: error instanceof Error ? error.message : String(error),
+      path: req.nextUrl.pathname,
+      timestamp: new Date().toISOString()
+    });
+    throw error;
+  }
+}
+
+// Enhanced currentUser wrapper for page routes only
+async function safeCurrentUser(req: NextRequest) {
+  try {
+    return await currentUser();
+  } catch (error) {
+    console.error('[Middleware] currentUser() failed:', {
+      error: error instanceof Error ? error.message : String(error),
+      path: req.nextUrl.pathname,
+      timestamp: new Date().toISOString()
+    });
+    throw error;
+  }
+}
 
 export default clerkMiddleware(async (auth, req) => {
   const pathname = req.nextUrl.pathname;
+
+  // CRITICAL: Bypass ALL API routes completely
+  // API routes handle their own authentication in Node.js runtime
+  // This avoids Edge Runtime conflicts with Clerk auth()
+  if (pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
 
   // Allow sitemap.xml to be accessed without locale prefix
   if (pathname === "/sitemap.xml") {
@@ -140,11 +153,6 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Skip authentication in development mode or when auth is disabled
   if (process.env["NODE_ENV"] === "development" || isAuthDisabled) {
-    // API routes don't need locale redirection
-    if (pathname.startsWith("/api")) {
-      return NextResponse.next();
-    }
-
     // Only handle locale redirection for non-API routes
     const pathnameHasLocale = locales.some(
       (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
@@ -175,75 +183,28 @@ export default clerkMiddleware(async (auth, req) => {
     return response;
   }
 
-  // API routes don't need locale handling
-  if (pathname.startsWith("/api")) {
-    // Protect admin API routes
-    if (isProtectedRoute(req) && !isPublicRoute(req)) {
-      // Check authentication WITHOUT redirecting (important for API routes)
-      const { userId } = await auth();
+  // For non-API routes, handle locale redirection and authentication
+  // API routes are completely bypassed at this point
+  const pathnameHasLocale = locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  );
 
-      // If not authenticated, return JSON error (not redirect)
-      if (!userId) {
-        return NextResponse.json(
-          {
-            error: "Unauthorized",
-            message: "Authentication required. Please sign in to access this resource.",
-            code: "AUTH_REQUIRED",
-          },
-          {
-            status: 401,
-            headers: {
-              "Content-Type": "application/json",
-              "WWW-Authenticate": "Bearer",
-            },
-          }
-        );
-      }
+  // For paths without locale, add the locale prefix first
+  if (!pathnameHasLocale) {
+    const locale = getLocale(req);
+    // Use the host from the request headers to maintain the correct port
+    const host = req.headers.get("host") || "localhost:3000";
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
+    const redirectUrl = new URL(`/${locale}${pathname}`, `${protocol}://${host}`);
+    return NextResponse.redirect(redirectUrl, { status: 301 });
+  }
 
-      // For admin routes, check if user has admin metadata
-      if (isAdminRoute(req)) {
-        const user = await currentUser();
-        const isAdminUser = user?.publicMetadata?.isAdmin === true;
-
-        if (!isAdminUser) {
-          // Return forbidden response for non-admin users
-          return NextResponse.json(
-            {
-              error: "Forbidden",
-              message: "Admin access required. Your account does not have admin privileges.",
-              code: "ADMIN_REQUIRED",
-              help: "Please contact an administrator to grant admin access to your account.",
-            },
-            {
-              status: 403,
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-        }
-      }
-    }
-  } else {
-    // For non-API routes, handle locale redirection
-    const pathnameHasLocale = locales.some(
-      (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-    );
-
-    // For paths without locale, add the locale prefix first
-    if (!pathnameHasLocale) {
-      const locale = getLocale(req);
-      // Use the host from the request headers to maintain the correct port
-      const host = req.headers.get("host") || "localhost:3000";
-      const protocol = req.headers.get("x-forwarded-proto") || "http";
-      const redirectUrl = new URL(`/${locale}${pathname}`, `${protocol}://${host}`);
-      return NextResponse.redirect(redirectUrl, { status: 301 });
-    }
-
-    // Protect routes based on authentication - but allow public routes
-    if (isProtectedRoute(req) && !isPublicRoute(req)) {
-      // Check if user is authenticated using auth()
-      const { userId } = await auth();
+  // Protect routes based on authentication - but allow public routes
+  if (isProtectedRoute(req) && !isPublicRoute(req)) {
+    try {
+      // Check if user is authenticated using auth() with safe wrapper
+      const authResult = await safeClerkAuth(auth, req, 'auth() for page routes');
+      const { userId } = authResult || {};
 
       // If not authenticated, redirect to sign-in
       if (!userId) {
@@ -256,7 +217,17 @@ export default clerkMiddleware(async (auth, req) => {
 
       // For admin routes, check if user has admin metadata
       if (isAdminRoute(req)) {
-        const user = await currentUser();
+        const user = await safeCurrentUser(req);
+
+        // Handle currentUser failure - redirect to sign-in for page routes
+        if (user === null) {
+          const locale = pathname.split("/")[1] || "en";
+          const host = req.headers.get("host") || "localhost:3000";
+          const protocol = req.headers.get("x-forwarded-proto") || "http";
+          const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
+          return NextResponse.redirect(redirectUrl, { status: 303 });
+        }
+
         const isAdminUser = user?.publicMetadata?.isAdmin === true;
 
         if (!isAdminUser) {
@@ -268,6 +239,19 @@ export default clerkMiddleware(async (auth, req) => {
           return NextResponse.redirect(redirectUrl, { status: 303 });
         }
       }
+    } catch (error) {
+      // For page routes, log error and redirect to sign-in
+      console.error('[Middleware] Page route auth error:', {
+        error: error instanceof Error ? error.message : String(error),
+        path: pathname,
+        timestamp: new Date().toISOString()
+      });
+
+      const locale = pathname.split("/")[1] || "en";
+      const host = req.headers.get("host") || "localhost:3000";
+      const protocol = req.headers.get("x-forwarded-proto") || "http";
+      const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
+      return NextResponse.redirect(redirectUrl, { status: 303 });
     }
   }
 
@@ -288,11 +272,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    // Include ALL API routes explicitly - required for Clerk auth() to work
-    "/api/(.*)",
-    // Include admin API routes explicitly
-    "/api/admin/(.*)",
-    // Skip internal Next.js paths but include everything else
+    // Skip internal Next.js paths and static files
     "/((?!_next/static|_next/image|assets|data|partytown|favicon.ico|crown.*|robots.txt|sitemap.xml).*)",
   ],
 };

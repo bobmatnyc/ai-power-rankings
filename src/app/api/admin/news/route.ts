@@ -8,7 +8,7 @@
  */
 
 import { type NextRequest, NextResponse } from "next/server";
-import { withAuth } from "@/lib/clerk-auth";
+import { requireAdmin } from "@/lib/api-auth";
 import { getNewsRepo } from "@/lib/json-db";
 import type { NewsArticle } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
@@ -31,8 +31,14 @@ function generateNewsId(title: string): string {
  * - days: number of days for reports (default 30)
  */
 export async function GET(request: NextRequest) {
-  return withAuth(async (): Promise<NextResponse> => {
-    try {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+  const { userId } = authResult;
+
+  try {
       const { searchParams } = new URL(request.url);
       const action = searchParams.get("action") || "reports";
 
@@ -127,10 +133,9 @@ export async function GET(request: NextRequest) {
           return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
       }
     } catch (error) {
-      loggers.api.error("Error in admin/news GET", { error });
+      loggers.api.error("Error in admin/news GET", { error, userId });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-  });
 }
 
 /**
@@ -143,8 +148,14 @@ export async function GET(request: NextRequest) {
  * - update-metrics: Update news metrics
  */
 export async function POST(request: NextRequest) {
-  return withAuth(async (): Promise<NextResponse> => {
-    try {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+  const { userId } = authResult;
+
+  try {
       const body = await request.json();
       const { action } = body;
 
@@ -358,10 +369,9 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: `Unknown action: ${action}` }, { status: 400 });
       }
     } catch (error) {
-      loggers.api.error("Error in admin/news POST", { error });
+      loggers.api.error("Error in admin/news POST", { error, userId });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-  });
 }
 
 /**
@@ -370,70 +380,75 @@ export async function POST(request: NextRequest) {
  * Delete news article or batch
  */
 export async function DELETE(request: NextRequest) {
-  return withAuth(async (): Promise<NextResponse> => {
-    try {
-      const { searchParams } = new URL(request.url);
-      const id = searchParams.get("id");
-      const batch = searchParams.get("batch");
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+  const { userId } = authResult;
 
-      if (!id && !batch) {
-        return NextResponse.json(
-          { error: "Either id or batch parameter is required" },
-          { status: 400 }
-        );
-      }
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    const batch = searchParams.get("batch");
 
-      const newsRepo = getNewsRepo();
-
-      if (id) {
-        // Delete single article
-        const article = await newsRepo.getById(id);
-
-        if (!article) {
-          return NextResponse.json({ error: `Article ${id} not found` }, { status: 404 });
-        }
-
-        await newsRepo.delete(id);
-
-        return NextResponse.json({
-          success: true,
-          deleted: {
-            id: article.id,
-            title: article.title,
-          },
-        });
-      }
-
-      if (batch) {
-        // Delete batch of articles
-        type ArticleWithBatch = NewsArticle & { ingestion_batch?: string };
-        const allNews = await newsRepo.getAll();
-        const batchArticles = allNews.filter(
-          (article) => (article as ArticleWithBatch).ingestion_batch === batch
-        );
-
-        const deleted = [];
-        for (const article of batchArticles) {
-          await newsRepo.delete(article.id);
-          deleted.push({
-            id: article.id,
-            title: article.title,
-          });
-        }
-
-        return NextResponse.json({
-          success: true,
-          batch,
-          deleted_count: deleted.length,
-          deleted,
-        });
-      }
-    } catch (error) {
-      loggers.api.error("Error in admin/news DELETE", { error });
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    if (!id && !batch) {
+      return NextResponse.json(
+        { error: "Either id or batch parameter is required" },
+        { status: 400 }
+      );
     }
 
-    // Should not reach here
+    const newsRepo = getNewsRepo();
+
+    if (id) {
+      // Delete single article
+      const article = await newsRepo.getById(id);
+
+      if (!article) {
+        return NextResponse.json({ error: `Article ${id} not found` }, { status: 404 });
+      }
+
+      await newsRepo.delete(id);
+
+      return NextResponse.json({
+        success: true,
+        deleted: {
+          id: article.id,
+          title: article.title,
+        },
+      });
+    }
+
+    if (batch) {
+      // Delete batch of articles
+      type ArticleWithBatch = NewsArticle & { ingestion_batch?: string };
+      const allNews = await newsRepo.getAll();
+      const batchArticles = allNews.filter(
+        (article) => (article as ArticleWithBatch).ingestion_batch === batch
+      );
+
+      const deleted = [];
+      for (const article of batchArticles) {
+        await newsRepo.delete(article.id);
+        deleted.push({
+          id: article.id,
+          title: article.title,
+        });
+      }
+
+      return NextResponse.json({
+        success: true,
+        batch,
+        deleted_count: deleted.length,
+        deleted,
+      });
+    }
+
+    // Should not reach here if id or batch was provided
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-  });
+  } catch (error) {
+    loggers.api.error("Error in admin/news DELETE", { error, userId });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
