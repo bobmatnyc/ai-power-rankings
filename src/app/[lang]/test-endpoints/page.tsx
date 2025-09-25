@@ -45,6 +45,8 @@ export default function TestEndpointsPage() {
   const runAllTests = async () => {
     setResults({});
     await testEndpoint("test-basic", "/api/admin/test-basic");
+    await testEndpoint("test-minimal", "/api/admin/test-minimal");
+    await testEndpoint("test-import", "/api/admin/test-import");
     await testEndpoint("test-auth", "/api/admin/test-auth");
     await testEndpoint("test-user", "/api/admin/test-user");
     await testEndpoint("db-status", "/api/admin/db-status");
@@ -80,6 +82,8 @@ export default function TestEndpointsPage() {
         <h3 className="font-semibold mb-2">Test Sequence:</h3>
         <ol className="list-decimal list-inside space-y-1 text-sm">
           <li>test-basic: No auth, should always work</li>
+          <li>test-minimal: Minimal auth test with detailed error handling</li>
+          <li>test-import: Tests dynamic import of Clerk module</li>
           <li>test-auth: Only tests Clerk auth()</li>
           <li>test-user: Tests both auth() and currentUser()</li>
           <li>db-status: Full admin endpoint (uses auth-helper)</li>
