@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+// Force dynamic rendering to avoid Clerk SSG issues
+export const dynamic = "force-dynamic";
+
 interface EndpointTest {
   name: string;
   url: string;

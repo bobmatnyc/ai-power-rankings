@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+// Force dynamic rendering to avoid Clerk SSG issues
+export const dynamic = "force-dynamic";
+
 interface TestResult {
   name: string;
   status: "pending" | "success" | "error";
