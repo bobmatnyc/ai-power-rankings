@@ -10,6 +10,9 @@ import { locales } from "@/i18n/config";
 import { getCurrentYear } from "@/lib/get-current-year";
 import { getUrl } from "@/lib/get-url";
 
+// Force dynamic rendering to avoid Clerk SSG issues
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ lang: Locale }>;
 }

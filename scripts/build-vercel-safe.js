@@ -57,6 +57,8 @@ try {
       NODE_ENV: "production",
       // Skip problematic static generation
       NEXT_PRIVATE_SKIP_STATIC_GENERATION: "true",
+      // Skip debug pages during Vercel builds to prevent Clerk SSG issues
+      SKIP_DEBUG_PAGES: "true",
     },
   });
   console.log("✅ Next.js build completed successfully");
