@@ -1,15 +1,27 @@
 // Force dynamic rendering to avoid Clerk SSG issues
 export const dynamic = "force-dynamic";
 
-("use client");
-
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 
-function ErrorContent() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error") || "An authentication error occurred";
+interface AuthErrorPageProps {
+  searchParams: Promise<{ error?: string }>;
+  params: Promise<{ lang: string }>;
+}
+
+export default async function AuthErrorPage({ searchParams }: AuthErrorPageProps) {
+  // Await the searchParams promise to get the error parameter
+  const params = await searchParams;
+  const error = params.error || "An authentication error occurred";
+
+  // Determine the error message based on the error type
+  const errorMessage =
+    error === "AccessDenied"
+      ? "Access was denied. You may not have the necessary permissions."
+      : error === "Configuration"
+        ? "There is a configuration issue with the authentication system."
+        : error === "Verification"
+          ? "Email verification failed. Please try again."
+          : error;
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -35,15 +47,7 @@ function ErrorContent() {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Authentication Error</h1>
-          <p className="text-gray-600 mb-6">
-            {error === "AccessDenied"
-              ? "Access was denied. You may not have the necessary permissions."
-              : error === "Configuration"
-                ? "There is a configuration issue with the authentication system."
-                : error === "Verification"
-                  ? "Email verification failed. Please try again."
-                  : error}
-          </p>
+          <p className="text-gray-600 mb-6">{errorMessage}</p>
         </div>
 
         <div className="space-y-3">
@@ -63,21 +67,5 @@ function ErrorContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function AuthErrorPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-          <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
-            <div className="text-gray-600">Loading...</div>
-          </div>
-        </div>
-      }
-    >
-      <ErrorContent />
-    </Suspense>
   );
 }
