@@ -1,8 +1,8 @@
-"use client";
+export const dynamic = "force-dynamic";
+
+("use client");
 
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
-
-export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
