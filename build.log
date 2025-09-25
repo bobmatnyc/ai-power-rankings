@@ -1,0 +1,458 @@
+
+> ai-power-rankings@3.3.2 build /Users/masa/Projects/managed/ai-power-ranking
+> node scripts/build-production.js
+
+🚀 Starting production build with workarounds...
+📊 Attempting to generate cache data...
+
+> ai-power-rankings@3.3.2 cache:generate
+> npm run cache:rankings && npm run cache:tools && npm run cache:news
+
+
+> ai-power-rankings@3.3.2 cache:rankings
+> tsx scripts/generate-rankings-cache.ts
+
+📊 Generating rankings cache...
+
+📦 Found rankings for period: 2025-09
+📊 Total tools ranked: 31
+✅ Cache generated: /Users/masa/Projects/managed/ai-power-ranking/src/data/cache/rankings.json
+📊 Rankings period: 2025-09
+📊 Total rankings: 31
+
+📂 Tier breakdown:
+  - Unranked: 31 tools
+
+> ai-power-rankings@3.3.2 cache:tools
+> tsx scripts/generate-tools-cache.ts
+
+🔨 Generating tools cache...
+
+📦 Found 42 tools
+✅ Cache generated: /Users/masa/Projects/managed/ai-power-ranking/src/data/cache/tools.json
+📊 Total tools: 42
+
+📂 Categories:
+  - open-source-framework: 6 tools
+  - devops-assistant: 1 tools
+  - ide-assistant: 11 tools
+  - app-builder: 5 tools
+  - autonomous-agent: 9 tools
+  - code-review: 3 tools
+  - code-editor: 4 tools
+  - testing-tool: 2 tools
+  - proprietary-ide: 1 tools
+
+> ai-power-rankings@3.3.2 cache:news
+> tsx scripts/generate-news-cache.ts
+
+📰 Generating news cache...
+
+NEWS: Auto-detected by-month directory mode
+📦 Found 317 articles
+✅ Cache generated: /Users/masa/Projects/managed/ai-power-ranking/src/data/cache/news.json
+📊 Total articles: 317
+
+📅 Recent months:
+  - 2025-04: 5 articles
+  - 2025-05: 12 articles
+  - 2025-06: 115 articles
+  - 2025-07: 58 articles
+  - 2025-08: 27 articles
+  - 2025-09: 1 articles
+✅ Cache generation completed
+📊 Generating static rankings...
+🚀 Generating static rankings data...
+NEWS: Auto-detected by-month directory mode
+📊 Processing 31 tools...
+✅ Generated static rankings data: /Users/masa/Projects/managed/ai-power-ranking/src/data/cache/rankings-static.json
+📈 Tools processed: 31
+🏆 Top 3 tools:
+   1. Claude Code (95.5)
+   2. GitHub Copilot (93.0)
+   3. Cursor (91.5)
+📁 Also saved to public: /Users/masa/Projects/managed/ai-power-ranking/public/data/rankings.json
+📦 Copying partytown files...
+✅ Partytown files copied successfully to: /Users/masa/Projects/managed/ai-power-ranking/public/partytown
+🔨 Building Next.js application...
+   ▲ Next.js 15.3.3
+   - Environments: .env.local
+   - Experiments (use with caution):
+     ✓ optimizeCss
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 16.0s
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+ ⚠ Using edge runtime on a page currently disables static generation for that page
+   Generating static pages (0/241) ...
+   Generating static pages (60/241) 
+   Generating static pages (120/241) 
+   Generating static pages (180/241) 
+ ✓ Generating static pages (241/241)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                         Size  First Load JS
+┌ ○ /                                              446 B         102 kB
+├ ○ /_not-found                                    446 B         102 kB
+├ ● /[lang]                                      6.43 kB         204 kB
+├   ├ /en
+├   ├ /de
+├   └ /ja
+├ ● /[lang]/about                                1.63 kB         130 kB
+├   ├ /en/about
+├   ├ /de/about
+├   └ /ja/about
+├ ● /[lang]/admin                                15.5 kB         148 kB
+├   ├ /en/admin
+├   ├ /de/admin
+├   └ /ja/admin
+├ ● /[lang]/admin-basic-test                       576 B         103 kB
+├   ├ /en/admin-basic-test
+├   ├ /de/admin-basic-test
+├   └ /ja/admin-basic-test
+├ ● /[lang]/admin-diagnostics                    3.35 kB         132 kB
+├   ├ /en/admin-diagnostics
+├   ├ /de/admin-diagnostics
+├   └ /ja/admin-diagnostics
+├ ● /[lang]/admin-simple-test                    1.08 kB         103 kB
+├   ├ /en/admin-simple-test
+├   ├ /de/admin-simple-test
+├   └ /ja/admin-simple-test
+├ ● /[lang]/admin-test                             446 B         102 kB
+├   ├ /en/admin-test
+├   ├ /de/admin-test
+├   └ /ja/admin-test
+├ ● /[lang]/admin/auth/signin                      446 B         102 kB
+├   ├ /en/admin/auth/signin
+├   ├ /de/admin/auth/signin
+├   └ /ja/admin/auth/signin
+├ ● /[lang]/admin/news                           5.13 kB         118 kB
+├   ├ /en/admin/news
+├   ├ /de/admin/news
+├   └ /ja/admin/news
+├ ƒ /[lang]/admin/news/edit/[id]                 14.6 kB         135 kB
+├ ● /[lang]/best-ai-app-builders                 1.08 kB         120 kB
+├   ├ /en/best-ai-app-builders
+├   ├ /de/best-ai-app-builders
+├   └ /ja/best-ai-app-builders
+├ ● /[lang]/best-ai-code-editors                 1.08 kB         120 kB
+├   ├ /en/best-ai-code-editors
+├   ├ /de/best-ai-code-editors
+├   └ /ja/best-ai-code-editors
+├ ● /[lang]/best-ai-coding-tools                 1.08 kB         120 kB
+├   ├ /en/best-ai-coding-tools
+├   ├ /de/best-ai-coding-tools
+├   └ /ja/best-ai-coding-tools
+├ ● /[lang]/best-autonomous-agents               1.08 kB         120 kB
+├   ├ /en/best-autonomous-agents
+├   ├ /de/best-autonomous-agents
+├   └ /ja/best-autonomous-agents
+├ ● /[lang]/best-code-review-tools               1.08 kB         120 kB
+├   ├ /en/best-code-review-tools
+├   ├ /de/best-code-review-tools
+├   └ /ja/best-code-review-tools
+├ ● /[lang]/best-devops-assistants               1.08 kB         120 kB
+├   ├ /en/best-devops-assistants
+├   ├ /de/best-devops-assistants
+├   └ /ja/best-devops-assistants
+├ ● /[lang]/best-ide-assistants                  1.08 kB         120 kB
+├   ├ /en/best-ide-assistants
+├   ├ /de/best-ide-assistants
+├   └ /ja/best-ide-assistants
+├ ● /[lang]/best-open-source-frameworks          1.08 kB         120 kB
+├   ├ /en/best-open-source-frameworks
+├   ├ /de/best-open-source-frameworks
+├   └ /ja/best-open-source-frameworks
+├ ● /[lang]/best-testing-tools                   1.08 kB         120 kB
+├   ├ /en/best-testing-tools
+├   ├ /de/best-testing-tools
+├   └ /ja/best-testing-tools
+├ ● /[lang]/contact                              5.48 kB         143 kB
+├   ├ /en/contact
+├   ├ /de/contact
+├   └ /ja/contact
+├ ● /[lang]/dashboard                            5.82 kB         121 kB
+├   ├ /en/dashboard
+├   ├ /de/dashboard
+├   └ /ja/dashboard
+├ ● /[lang]/dashboard/auth/error                 3.88 kB         117 kB
+├   ├ /en/dashboard/auth/error
+├   ├ /de/dashboard/auth/error
+├   └ /ja/dashboard/auth/error
+├ ● /[lang]/dashboard/auth/signin                  446 B         102 kB
+├   ├ /en/dashboard/auth/signin
+├   ├ /de/dashboard/auth/signin
+├   └ /ja/dashboard/auth/signin
+├ ● /[lang]/dashboard/cache                      7.65 kB         131 kB
+├   ├ /en/dashboard/cache
+├   ├ /de/dashboard/cache
+├   └ /ja/dashboard/cache
+├ ● /[lang]/dashboard/dashboard                  2.15 kB         121 kB
+├   ├ /en/dashboard/dashboard
+├   ├ /de/dashboard/dashboard
+├   └ /ja/dashboard/dashboard
+├ ● /[lang]/dashboard/news-ingestion             10.4 kB         131 kB
+├   ├ /en/dashboard/news-ingestion
+├   ├ /de/dashboard/news-ingestion
+├   └ /ja/dashboard/news-ingestion
+├ ● /[lang]/dashboard/rankings                    7.5 kB         161 kB
+├   ├ /en/dashboard/rankings
+├   ├ /de/dashboard/rankings
+├   └ /ja/dashboard/rankings
+├ ƒ /[lang]/dashboard/rankings/[period]/changes  7.13 kB         129 kB
+├ ● /[lang]/dashboard/rankings/build             7.97 kB         161 kB
+├   ├ /en/dashboard/rankings/build
+├   ├ /de/dashboard/rankings/build
+├   └ /ja/dashboard/rankings/build
+├ ● /[lang]/dashboard/subscribers                4.23 kB         130 kB
+├   ├ /en/dashboard/subscribers
+├   ├ /de/dashboard/subscribers
+├   └ /ja/dashboard/subscribers
+├ ● /[lang]/dashboard/tools                      8.62 kB         122 kB
+├   ├ /en/dashboard/tools
+├   ├ /de/dashboard/tools
+├   └ /ja/dashboard/tools
+├ ƒ /[lang]/dashboard/tools/[slug]               6.78 kB         133 kB
+├ ● /[lang]/debug-api                              635 B         103 kB
+├   ├ /en/debug-api
+├   ├ /de/debug-api
+├   └ /ja/debug-api
+├ ● /[lang]/debug-endpoints                      1.03 kB         103 kB
+├   ├ /en/debug-endpoints
+├   ├ /de/debug-endpoints
+├   └ /ja/debug-endpoints
+├ ○ /[lang]/icon.png                                 0 B            0 B
+├ ● /[lang]/methodology                            446 B         102 kB
+├   ├ /en/methodology
+├   ├ /de/methodology
+├   └ /ja/methodology
+├ ● /[lang]/news                                 8.09 kB         148 kB
+├   ├ /en/news
+├   ├ /de/news
+├   └ /ja/news
+├ ƒ /[lang]/news/[slug]                          6.36 kB         146 kB
+├ ƒ /[lang]/news/rss.xml                           446 B         102 kB
+├ ● /[lang]/newsletter/unsubscribe               3.55 kB         117 kB
+├   ├ /en/newsletter/unsubscribe
+├   ├ /de/newsletter/unsubscribe
+├   └ /ja/newsletter/unsubscribe
+├ ● /[lang]/newsletter/verify                    3.66 kB         117 kB
+├   ├ /en/newsletter/verify
+├   ├ /de/newsletter/verify
+├   └ /ja/newsletter/verify
+├ ● /[lang]/privacy                                446 B         102 kB
+├   ├ /en/privacy
+├   ├ /de/privacy
+├   └ /ja/privacy
+├ ● /[lang]/rankings                             9.64 kB         171 kB
+├   ├ /en/rankings
+├   ├ /de/rankings
+├   └ /ja/rankings
+├ ƒ /[lang]/sign-in/[[...sign-in]]                 446 B         102 kB
+├ ƒ /[lang]/sign-up/[[...sign-up]]                 446 B         102 kB
+├ ● /[lang]/terms                                  446 B         102 kB
+├   ├ /en/terms
+├   ├ /de/terms
+├   └ /ja/terms
+├ ● /[lang]/test-endpoints                       2.39 kB         104 kB
+├   ├ /en/test-endpoints
+├   ├ /de/test-endpoints
+├   └ /ja/test-endpoints
+├ ● /[lang]/tools                                5.72 kB         152 kB
+├   ├ /en/tools
+├   ├ /de/tools
+├   └ /ja/tools
+├ ƒ /[lang]/tools/[slug]                         5.73 kB         135 kB
+├ ● /[lang]/trending                             8.43 kB         118 kB
+├   ├ /en/trending
+├   ├ /es/trending
+├   ├ /fr/trending
+├   └ [+3 more paths]
+├ ● /[lang]/typography-demo                      4.75 kB         115 kB
+├   ├ /en/typography-demo
+├   ├ /de/typography-demo
+├   └ /ja/typography-demo
+├ ● /[lang]/updates                                183 B         105 kB
+├   ├ /en/updates
+├   ├ /de/updates
+├   └ /ja/updates
+├ ○ /about                                        2.8 kB         135 kB
+├ ƒ /api/admin/articles                            446 B         102 kB
+├ ƒ /api/admin/articles-v2                         446 B         102 kB
+├ ƒ /api/admin/articles/[id]                       446 B         102 kB
+├ ƒ /api/admin/articles/[id]/recalculate           446 B         102 kB
+├ ƒ /api/admin/articles/ingest                     446 B         102 kB
+├ ƒ /api/admin/auth                                446 B         102 kB
+├ ƒ /api/admin/auth-debug                          446 B         102 kB
+├ ƒ /api/admin/bypass-test                         446 B         102 kB
+├ ƒ /api/admin/check-orphaned-metrics              446 B         102 kB
+├ ƒ /api/admin/check-ranking-periods               446 B         102 kB
+├ ƒ /api/admin/create-user                         446 B         102 kB
+├ ƒ /api/admin/db-direct-test                      446 B         102 kB
+├ ƒ /api/admin/db-simple-test                      446 B         102 kB
+├ ƒ /api/admin/db-status                           446 B         102 kB
+├ ƒ /api/admin/db-status-v2                        446 B         102 kB
+├ ƒ /api/admin/db-test                             446 B         102 kB
+├ ƒ /api/admin/debug-auth                          446 B         102 kB
+├ ƒ /api/admin/env-test                            446 B         102 kB
+├ ƒ /api/admin/fix-orphaned-data                   446 B         102 kB
+├ ƒ /api/admin/fix-orphaned-metrics                446 B         102 kB
+├ ƒ /api/admin/login                               446 B         102 kB
+├ ƒ /api/admin/logout                              446 B         102 kB
+├ ƒ /api/admin/news                                446 B         102 kB
+├ ƒ /api/admin/news/[id]                           446 B         102 kB
+├ ƒ /api/admin/news/analyze                        446 B         102 kB
+├ ƒ /api/admin/news/list                           446 B         102 kB
+├ ƒ /api/admin/no-auth-test                        446 B         102 kB
+├ ƒ /api/admin/preview-rankings-json               446 B         102 kB
+├ ƒ /api/admin/rankings                            446 B         102 kB
+├ ƒ /api/admin/rankings/[period]                   446 B         102 kB
+├ ƒ /api/admin/rankings/[period]/delete            446 B         102 kB
+├ ƒ /api/admin/rankings/all                        446 B         102 kB
+├ ƒ /api/admin/rankings/build                      446 B         102 kB
+├ ƒ /api/admin/rankings/commit                     446 B         102 kB
+├ ƒ /api/admin/rankings/periods                    446 B         102 kB
+├ ƒ /api/admin/rankings/preview                    446 B         102 kB
+├ ƒ /api/admin/rankings/rollback/[id]              446 B         102 kB
+├ ƒ /api/admin/rankings/set-current                446 B         102 kB
+├ ƒ /api/admin/rankings/versions                   446 B         102 kB
+├ ƒ /api/admin/rate-limit                          446 B         102 kB
+├ ƒ /api/admin/remove-data                         446 B         102 kB
+├ ƒ /api/admin/run-migrations                      446 B         102 kB
+├ ƒ /api/admin/runtime-fix-test                    446 B         102 kB
+├ ƒ /api/admin/seo/submit-sitemap                  446 B         102 kB
+├ ƒ /api/admin/subscribers                         446 B         102 kB
+├ ƒ /api/admin/subscribers/[id]/test-email         446 B         102 kB
+├ ƒ /api/admin/subscribers/export                  446 B         102 kB
+├ ƒ /api/admin/test                                446 B         102 kB
+├ ƒ /api/admin/test-auth                           446 B         102 kB
+├ ƒ /api/admin/test-basic                          446 B         102 kB
+├ ƒ /api/admin/test-import                         446 B         102 kB
+├ ƒ /api/admin/test-metrics                        446 B         102 kB
+├ ƒ /api/admin/test-minimal                        446 B         102 kB
+├ ƒ /api/admin/test-user                           446 B         102 kB
+├ ƒ /api/admin/tools                               446 B         102 kB
+├ ƒ /api/admin/update-missing-company-data         446 B         102 kB
+├ ƒ /api/admin/update-site-settings                446 B         102 kB
+├ ƒ /api/ai/analyze-news                           446 B         102 kB
+├ ƒ /api/auth-verify                               446 B         102 kB
+├ ƒ /api/cache/stats                               446 B         102 kB
+├ ƒ /api/changelog                                 446 B         102 kB
+├ ƒ /api/companies                                 446 B         102 kB
+├ ƒ /api/companies/[id]                            446 B         102 kB
+├ ƒ /api/companies/[id]/tools                      446 B         102 kB
+├ ƒ /api/companies/stats                           446 B         102 kB
+├ ƒ /api/contact                                   446 B         102 kB
+├ ƒ /api/contact/test                              446 B         102 kB
+├ ƒ /api/data/articles                             446 B         102 kB
+├ ƒ /api/data/db-status                            446 B         102 kB
+├ ƒ /api/data/test-auth                            446 B         102 kB
+├ ƒ /api/db-test/drizzle                           446 B         102 kB
+├ ƒ /api/db-test/environment                       446 B         102 kB
+├ ƒ /api/db-test/neon-direct                       446 B         102 kB
+├ ƒ /api/db-test/repository                        446 B         102 kB
+├ ƒ /api/debug                                     446 B         102 kB
+├ ƒ /api/debug/admin-errors                        446 B         102 kB
+├ ƒ /api/favicon                                   446 B         102 kB
+├ ƒ /api/health                                    446 B         102 kB
+├ ƒ /api/news                                      446 B         102 kB
+├ ƒ /api/news/[id]                                 446 B         102 kB
+├ ƒ /api/news/[id]/json                            446 B         102 kB
+├ ƒ /api/news/by-date                              446 B         102 kB
+├ ƒ /api/news/json                                 446 B         102 kB
+├ ƒ /api/news/recent                               446 B         102 kB
+├ ƒ /api/news/tags                                 446 B         102 kB
+├ ƒ /api/newsletter/signup                         446 B         102 kB
+├ ƒ /api/newsletter/subscribe                      446 B         102 kB
+├ ƒ /api/newsletter/unsubscribe                    446 B         102 kB
+├ ƒ /api/newsletter/verify/[token]                 446 B         102 kB
+├ ƒ /api/no-auth                                   446 B         102 kB
+├ ƒ /api/og                                        446 B         102 kB
+├ ƒ /api/og/ranking                                446 B         102 kB
+├ ƒ /api/og/tool                                   446 B         102 kB
+├ ƒ /api/proxy/[...path]                           446 B         102 kB
+├ ƒ /api/public-db-test                            446 B         102 kB
+├ ƒ /api/public/health-check                       446 B         102 kB
+├ ƒ /api/rankings                                  446 B         102 kB
+├ ƒ /api/rankings/current                          446 B         102 kB
+├ ƒ /api/rankings/json                             446 B         102 kB
+├ ƒ /api/rankings/trending                         446 B         102 kB
+├ ƒ /api/seo/metrics                               446 B         102 kB
+├ ƒ /api/test-basic                                446 B         102 kB
+├ ƒ /api/test-endpoint                             446 B         102 kB
+├ ƒ /api/test-env                                  446 B         102 kB
+├ ƒ /api/test-static                               446 B         102 kB
+├ ƒ /api/test/db-branch                            446 B         102 kB
+├ ƒ /api/tools                                     446 B         102 kB
+├ ƒ /api/tools/[slug]/json                         446 B         102 kB
+├ ƒ /api/tools/categories                          446 B         102 kB
+├ ƒ /api/tools/json                                446 B         102 kB
+├ ƒ /api/tools/stats                               446 B         102 kB
+├ ƒ /api/updates/latest                            446 B         102 kB
+├ ○ /apple-icon.png                                  0 B            0 B
+├ ƒ /auth-test                                     446 B         102 kB
+├ ○ /db-test                                     1.47 kB         103 kB
+├ ○ /icon.png                                        0 B            0 B
+├ ○ /methodology                                 1.65 kB         111 kB
+├ ○ /newsletter/unsubscribe                      3.79 kB         117 kB
+├ ○ /newsletter/verify                           3.86 kB         117 kB
+├ ○ /robots.txt                                    446 B         102 kB
+├ ƒ /rss.xml                                       446 B         102 kB
+├ ƒ /sign-in/[[...sign-in]]                        446 B         102 kB
+├ ƒ /sign-up/[[...sign-up]]                        446 B         102 kB
+├ ƒ /sitemap.xml                                   446 B         102 kB
+├ ○ /tools                                       5.33 kB         152 kB
+└ ƒ /tools/[slug]                                9.21 kB         147 kB
++ First Load JS shared by all                     102 kB
+  ├ chunks/2c9e1e15-476f9d0a1a13e99e.js          53.2 kB
+  ├ chunks/8099-5685e9c33236ca34.js              46.6 kB
+  └ other shared chunks (total)                  2.06 kB
+
+
+ƒ Middleware                                     81.3 kB
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
+🎨 Optimizing CSS...
+🎯 Starting AGGRESSIVE CSS optimization (target: <20KB)...
+
+📂 Found 3 CSS files:
+   de70bee13400563f.css (2.3 KB)
+   7351b6f87e579dc4.css (91.2 KB)
+   081a0afca5a9bd20.css (2.1 KB)
+   Total original: 95.6 KB
+
+
+🔧 Optimizing de70bee13400563f.css (2.3 KB)...
+   1️⃣ Applying AGGRESSIVE PurgeCSS...
+   📉 PurgeCSS: 0.0 KB (-100.0%)
+   2️⃣ Applying MAXIMUM cssnano minification...
+   ✅ Final: 0.0 KB (-100.0% total reduction)
+
+🔧 Optimizing 7351b6f87e579dc4.css (91.2 KB)...
+   1️⃣ Applying AGGRESSIVE PurgeCSS...
+   📉 PurgeCSS: 52.0 KB (-43.0%)
+   2️⃣ Applying MAXIMUM cssnano minification...
+   ✅ Final: 51.4 KB (-43.7% total reduction)
+
+🔧 Optimizing 081a0afca5a9bd20.css (2.1 KB)...
+   1️⃣ Applying AGGRESSIVE PurgeCSS...
+   📉 PurgeCSS: 0.0 KB (-100.0%)
+   2️⃣ Applying MAXIMUM cssnano minification...
+   ✅ Final: 0.0 KB (-100.0% total reduction)
+
+📊 Final optimization results:
+   ✅ de70bee13400563f.css: 0.0 KB
+   ❌ 7351b6f87e579dc4.css: 51.4 KB
+   ✅ 081a0afca5a9bd20.css: 0.0 KB
+
+📉 Reduction: 46.3%
+🎯 Total CSS size: 51.4 KB (Target: <20 KB) ❌
+⚠️  Consider removing Tailwind Typography plugin or further reducing components
+✅ Production build completed successfully!
+📌 Note: Error page warnings are a known Next.js 15.3.x issue and will work correctly on Vercel.

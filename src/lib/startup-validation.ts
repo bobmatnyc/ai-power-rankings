@@ -113,7 +113,28 @@ if (process.env["NODE_ENV"] === "production") {
     validateEnvironment();
   } catch (error) {
     console.error("[Startup] Fatal error during environment validation:", error);
-    // Exit the process with error code
-    process.exit(1);
+
+    // Check if we're in Edge Runtime (like middleware) where process.exit is not available
+    // Edge Runtime detection: check for absence of Node.js specific globals
+    const isEdgeRuntime =
+      typeof process === "undefined" ||
+      typeof process.exit !== "function" ||
+      (globalThis as any).EdgeRuntime !== undefined;
+
+    if (isEdgeRuntime) {
+      console.error(
+        "[Startup] Running in Edge Runtime, throwing error instead of calling process.exit"
+      );
+      throw error;
+    }
+
+    // In Node.js runtime, we can safely call process.exit
+    // Use dynamic reference to avoid webpack static analysis warnings
+    const nodeProcess = globalThis.process as any;
+    if (nodeProcess && typeof nodeProcess.exit === "function") {
+      nodeProcess.exit(1);
+    } else {
+      throw error;
+    }
   }
 }

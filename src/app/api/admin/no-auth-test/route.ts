@@ -8,10 +8,10 @@ export async function GET(request: NextRequest) {
     success: true,
     message: "This endpoint works without any Clerk imports",
     timestamp: new Date().toISOString(),
-    runtime: process.env.NEXT_RUNTIME || "nodejs",
-    cookies: request.cookies.getAll().map(c => ({
+    runtime: process.env["NEXT_RUNTIME"] || "nodejs",
+    cookies: request.cookies.getAll().map((c) => ({
       name: c.name,
-      hasValue: !!c.value
-    }))
+      hasValue: !!c.value,
+    })),
   });
 }

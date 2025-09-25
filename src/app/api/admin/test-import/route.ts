@@ -8,7 +8,7 @@ export async function GET() {
     console.log("[test-import] Starting import test");
 
     // Test different import methods
-    const results: Record<string, unknown> = {
+    const results: any = {
       timestamp: new Date().toISOString(),
       imports: {},
     };
@@ -36,15 +36,15 @@ export async function GET() {
         } catch (authError) {
           results.authCall = {
             success: false,
-            error: authError?.message || String(authError),
-            errorType: authError?.constructor?.name,
+            error: (authError as any)?.message || String(authError),
+            errorType: (authError as any)?.constructor?.name,
           };
         }
       }
     } catch (importError) {
       results.imports.dynamic = {
         success: false,
-        error: importError?.message || String(importError),
+        error: (importError as any)?.message || String(importError),
       };
     }
 

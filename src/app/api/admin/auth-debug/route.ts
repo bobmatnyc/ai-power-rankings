@@ -12,10 +12,10 @@ export async function GET(request: NextRequest) {
 
     // Check cookies
     const cookies = request.cookies.getAll();
-    const cookieInfo = cookies.map(c => ({
+    const cookieInfo = cookies.map((c) => ({
       name: c.name,
       hasValue: !!c.value,
-      length: c.value?.length || 0
+      length: c.value?.length || 0,
     }));
 
     // Try to import and use Clerk auth
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       authError = {
         message: err?.message || String(err),
         name: err?.name || "Unknown",
-        stack: err?.stack?.split('\n').slice(0, 5).join('\n')
+        stack: err?.stack?.split("\n").slice(0, 5).join("\n"),
       };
     }
 
@@ -49,37 +49,40 @@ export async function GET(request: NextRequest) {
       success: !authError,
       debug: {
         headers: {
-          hasAuthorization: !!headers.authorization,
-          hasCookie: !!headers.cookie,
-          contentType: headers['content-type'],
-          origin: headers.origin,
-          referer: headers.referer
+          hasAuthorization: !!headers["authorization"],
+          hasCookie: !!headers["cookie"],
+          contentType: headers["content-type"],
+          origin: headers["origin"],
+          referer: headers["referer"],
         },
         cookies: {
           count: cookies.length,
-          hasSessionCookie: cookies.some(c => c.name.includes('__session')),
-          hasClerkCookie: cookies.some(c => c.name.includes('__clerk')),
-          details: cookieInfo
+          hasSessionCookie: cookies.some((c) => c.name.includes("__session")),
+          hasClerkCookie: cookies.some((c) => c.name.includes("__clerk")),
+          details: cookieInfo,
         },
         environment: {
-          nodeEnv: process.env.NODE_ENV,
-          hasPublishableKey: !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-          hasSecretKey: !!process.env.CLERK_SECRET_KEY,
-          runtime: process.env.NEXT_RUNTIME || "nodejs"
+          nodeEnv: process.env["NODE_ENV"],
+          hasPublishableKey: !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"],
+          hasSecretKey: !!process.env["CLERK_SECRET_KEY"],
+          runtime: process.env["NEXT_RUNTIME"] || "nodejs",
         },
         authResult,
-        authError
+        authError,
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
     console.error("[auth-debug] Outer error:", error);
-    return NextResponse.json({
-      success: false,
-      error: {
-        message: error?.message || String(error),
-        name: error?.name || "Unknown"
-      }
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          message: error?.message || String(error),
+          name: error?.name || "Unknown",
+        },
+      },
+      { status: 500 }
+    );
   }
 }
