@@ -3,8 +3,7 @@ import { getDb } from "@/lib/db/connection";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getAuth, isAdmin } from "@/lib/auth-helper";
 
-// Force Node.js runtime instead of Edge Runtime
-export const runtime = "nodejs";
+// Let Next.js auto-detect runtime - avoid conflicts with middleware
 
 /**
  * GET /api/admin/articles

@@ -98,12 +98,9 @@ const isPublicRoute = createRouteMatcher([
   "/(.*)/news(.*)",
   "/(.*)/companies(.*)",
   "/(.*)/about(.*)",
-  "/(.*)db-test(.*)",
-  "/(.*)test-endpoints(.*)",
-  "/(.*)admin-test(.*)",
-  "/(.*)admin-diagnostics(.*)",
-  "/(.*)admin-simple-test(.*)",
-  "/(.*)admin-basic-test(.*)",
+  "/api/health(.*)",
+  "/api/public(.*)",
+  // Admin routes are explicitly protected - remove them from public
 ]);
 
 // Helper function for locale redirection
@@ -125,26 +122,20 @@ function handleLocaleRedirection(req: NextRequest): NextResponse | null {
   return null;
 }
 
-// Modern Clerk middleware using 2024 patterns with conditional API route bypass
-export default clerkMiddleware((auth, req) => {
+// Modern Clerk middleware using 2024 patterns - API routes MUST go through Clerk for auth context
+export default clerkMiddleware(async (auth, req) => {
   const pathname = req.nextUrl.pathname;
-
-  // CRITICAL: Handle API routes FIRST, before any Clerk processing
-  // This prevents Clerk from validating cookies on API routes
-  if (pathname.startsWith('/api/') || pathname.startsWith('/trpc/')) {
-    return NextResponse.next();
-  }
 
   // Allow sitemap.xml to be accessed without locale prefix
   if (pathname === "/sitemap.xml") {
     return NextResponse.next();
   }
 
-  // Check if auth is disabled
+  // Check if auth is disabled globally (for special development cases only)
   const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 
-  // Skip authentication in development mode or when auth is disabled
-  if (process.env["NODE_ENV"] === "development" || isAuthDisabled) {
+  // Handle public routes that don't need authentication (but still need Clerk context for API routes)
+  if (isPublicRoute(req) && !pathname.startsWith('/api/')) {
     const localeResponse = handleLocaleRedirection(req);
     if (localeResponse) {
       return localeResponse;
@@ -165,35 +156,48 @@ export default clerkMiddleware((auth, req) => {
     return response;
   }
 
-  // Handle locale redirection first
-  const localeResponse = handleLocaleRedirection(req);
-  if (localeResponse) {
-    return localeResponse;
+  // Handle locale redirection for non-API routes only
+  if (!pathname.startsWith('/api/')) {
+    const localeResponse = handleLocaleRedirection(req);
+    if (localeResponse) {
+      return localeResponse;
+    }
   }
 
   // Protect routes - check authentication for protected routes
-  // Only apply protection in production when auth is enabled
-  if (isProtectedRoute(req) && !isPublicRoute(req)) {
-    if (process.env["NODE_ENV"] === "production" && !isAuthDisabled) {
-      try {
-        const { userId } = auth();
-        if (!userId) {
-          // Redirect to sign-in if not authenticated
-          const locale = pathname.split("/")[1] || "en";
-          const host = req.headers.get("host") || "localhost:3000";
-          const protocol = req.headers.get("x-forwarded-proto") || "http";
-          const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
-          return NextResponse.redirect(redirectUrl, { status: 303 });
+  if (isProtectedRoute(req) && !isPublicRoute(req) && !isAuthDisabled) {
+    try {
+      const { userId } = await auth();
+      if (!userId) {
+        // For API routes, return 401 JSON response instead of redirect
+        if (pathname.startsWith('/api/')) {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
-      } catch (error) {
-        console.error('[Middleware] Auth check failed:', error);
-        // On error, redirect to sign-in
+
+        // For page routes, redirect to sign-in
         const locale = pathname.split("/")[1] || "en";
         const host = req.headers.get("host") || "localhost:3000";
         const protocol = req.headers.get("x-forwarded-proto") || "http";
         const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
         return NextResponse.redirect(redirectUrl, { status: 303 });
       }
+    } catch (error) {
+      console.error('[Middleware] Auth check failed:', error);
+
+      // For API routes, return 500 JSON response instead of redirect
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({
+          error: 'Authentication service error',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        }, { status: 500 });
+      }
+
+      // For page routes, redirect to sign-in
+      const locale = pathname.split("/")[1] || "en";
+      const host = req.headers.get("host") || "localhost:3000";
+      const protocol = req.headers.get("x-forwarded-proto") || "http";
+      const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
+      return NextResponse.redirect(redirectUrl, { status: 303 });
     }
   }
 

@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth-helper";
 import { getDb, testConnection } from "@/lib/db/connection";
 
-// Force Node.js runtime instead of Edge Runtime
-export const runtime = "nodejs";
+// Let Next.js auto-detect runtime - avoid conflicts with middleware
 
 /**
  * Parse database URL to extract safe connection info

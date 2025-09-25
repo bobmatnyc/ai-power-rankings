@@ -72,22 +72,15 @@ export async function getAuth() {
 
 /**
  * Check if user is authenticated
+ * Simplified version that relies on Clerk middleware setting up context properly
  */
 export async function isAuthenticated() {
   if (isAuthDisabled) {
     return true; // Always authenticated in dev mode
   }
 
-  try {
-    console.log("[auth-helper] isAuthenticated - checking auth...");
-    const authResult = await auth();
-    console.log("[auth-helper] isAuthenticated - userId:", authResult?.userId);
-    return !!authResult?.userId;
-  } catch (error) {
-    console.error("[auth-helper] Auth check error in isAuthenticated:", error);
-    console.error("[auth-helper] Error stack:", error instanceof Error ? error.stack : "No stack");
-    return false;
-  }
+  const { userId } = await auth();
+  return !!userId;
 }
 
 /**
