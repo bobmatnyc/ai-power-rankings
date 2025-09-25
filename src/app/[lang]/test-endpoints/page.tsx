@@ -44,6 +44,8 @@ export default function TestEndpointsPage() {
 
   const runAllTests = async () => {
     setResults({});
+    await testEndpoint("no-auth-test", "/api/admin/no-auth-test");
+    await testEndpoint("auth-debug", "/api/admin/auth-debug");
     await testEndpoint("test-basic", "/api/admin/test-basic");
     await testEndpoint("test-minimal", "/api/admin/test-minimal");
     await testEndpoint("test-import", "/api/admin/test-import");
@@ -81,6 +83,8 @@ export default function TestEndpointsPage() {
       <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded">
         <h3 className="font-semibold mb-2">Test Sequence:</h3>
         <ol className="list-decimal list-inside space-y-1 text-sm">
+          <li>no-auth-test: No Clerk imports at all - should ALWAYS work</li>
+          <li>auth-debug: Detailed auth debugging with cookies/headers</li>
           <li>test-basic: No auth, should always work</li>
           <li>test-minimal: Minimal auth test with detailed error handling</li>
           <li>test-import: Tests dynamic import of Clerk module</li>
