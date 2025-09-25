@@ -1,53 +1,59 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 export function SimpleTestClient() {
-  const [result, setResult] = useState<string>('Click the button to see results...');
+  const [result, setResult] = useState<string>("Click the button to see results...");
   const [isLoading, setIsLoading] = useState(false);
 
   const testApi = async () => {
-    console.log('Starting API test...');
+    console.log("Starting API test...");
     setIsLoading(true);
-    setResult('Testing...');
+    setResult("Testing...");
 
     try {
-      console.log('Fetching /api/admin/db-status...');
+      console.log("Fetching /api/admin/db-status...");
 
-      const response = await fetch('/api/admin/db-status', {
-        method: 'GET',
-        credentials: 'include',
+      const response = await fetch("/api/admin/db-status", {
+        method: "GET",
+        credentials: "include",
         headers: {
-          'Accept': 'application/json',
+          Accept: "application/json",
         },
       });
 
-      console.log('Response received:');
-      console.log('- Status:', response.status);
-      console.log('- Headers:', Object.fromEntries(response.headers.entries()));
+      console.log("Response received:");
+      console.log("- Status:", response.status);
+      console.log("- Headers:", Object.fromEntries(response.headers.entries()));
 
       const text = await response.text();
-      console.log('- Raw text:', text);
+      console.log("- Raw text:", text);
 
       try {
         const data = JSON.parse(text);
-        console.log('- Parsed JSON:', data);
+        console.log("- Parsed JSON:", data);
 
-        setResult(JSON.stringify({
-          status: response.status,
-          statusText: response.statusText,
-          data: data
-        }, null, 2));
+        setResult(
+          JSON.stringify(
+            {
+              status: response.status,
+              statusText: response.statusText,
+              data: data,
+            },
+            null,
+            2
+          )
+        );
       } catch (e) {
-        console.error('Failed to parse as JSON:', e);
+        console.error("Failed to parse as JSON:", e);
         setResult(`Status: ${response.status} ${response.statusText}\n\nResponse:\n${text}`);
       }
     } catch (error) {
-      console.error('Fetch error:', error);
-      setResult(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Fetch error:", error);
+      setResult(`Error: ${error instanceof Error ? error.message : "Unknown error"}`);
     } finally {
       setIsLoading(false);
-      console.log('API test completed');
+      console.log("API test completed");
     }
   };
 
@@ -57,17 +63,18 @@ export function SimpleTestClient() {
 
       <div className="mb-4">
         <p className="text-sm text-gray-600 mb-4">
-          Click the button below to test the /api/admin/db-status endpoint.
-          Check the browser console (F12) for detailed logs.
+          Click the button below to test the /api/admin/db-status endpoint. Check the browser
+          console (F12) for detailed logs.
         </p>
       </div>
 
       <button
+        type="button"
         onClick={testApi}
         disabled={isLoading}
         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Testing...' : 'Test /api/admin/db-status'}
+        {isLoading ? "Testing..." : "Test /api/admin/db-status"}
       </button>
 
       <div className="mt-6">

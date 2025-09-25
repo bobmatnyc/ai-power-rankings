@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 interface TestResult {
   endpoint: string;
@@ -9,7 +9,7 @@ interface TestResult {
   status?: number;
   statusText?: string;
   headers?: Record<string, string>;
-  body: any;
+  body: unknown;
   error?: string;
   requestConfig: string;
   duration: number;
@@ -23,65 +23,63 @@ interface ErrorLog {
 
 export function DiagnosticsClientFixed() {
   const [testResults, setTestResults] = useState<TestResult[]>([]);
-  const [cookies, setCookies] = useState<string>('');
+  const [cookies, setCookies] = useState<string>("");
   const [errorLogs, setErrorLogs] = useState<ErrorLog[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Endpoints to test
-  const endpoints = [
-    '/api/auth-verify',
-    '/api/admin/db-status',
-    '/api/admin/articles',
-  ];
+  const endpoints = ["/api/auth-verify", "/api/admin/db-status", "/api/admin/articles"];
 
   // Credentials options to test
-  const credentialsOptions: RequestCredentials[] = [
-    'same-origin',
-    'include',
-    'omit'
-  ];
+  const credentialsOptions: RequestCredentials[] = ["same-origin", "include", "omit"];
 
   // Initialize once on mount
   useEffect(() => {
-    console.log('[DiagnosticsClient] Initializing...');
-    setCookies(document.cookie || 'No cookies found');
+    console.log("[DiagnosticsClient] Initializing...");
+    setCookies(document.cookie || "No cookies found");
     setIsInitialized(true);
 
     // Setup error handlers
     const handleError = (event: ErrorEvent) => {
-      console.error('[DiagnosticsClient] Global error:', event);
-      setErrorLogs(prev => [...prev, {
-        timestamp: new Date().toISOString(),
-        message: event.message,
-        stack: event.error?.stack
-      }]);
+      console.error("[DiagnosticsClient] Global error:", event);
+      setErrorLogs((prev) => [
+        ...prev,
+        {
+          timestamp: new Date().toISOString(),
+          message: event.message,
+          stack: event.error?.stack,
+        },
+      ]);
     };
 
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      console.error('[DiagnosticsClient] Unhandled rejection:', event);
-      setErrorLogs(prev => [...prev, {
-        timestamp: new Date().toISOString(),
-        message: `Unhandled Promise Rejection: ${event.reason}`,
-        stack: event.reason?.stack
-      }]);
+      console.error("[DiagnosticsClient] Unhandled rejection:", event);
+      setErrorLogs((prev) => [
+        ...prev,
+        {
+          timestamp: new Date().toISOString(),
+          message: `Unhandled Promise Rejection: ${event.reason}`,
+          stack: event.reason?.stack,
+        },
+      ]);
     };
 
-    window.addEventListener('error', handleError);
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener("error", handleError);
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
-    console.log('[DiagnosticsClient] Initialized successfully');
+    console.log("[DiagnosticsClient] Initialized successfully");
 
     return () => {
-      console.log('[DiagnosticsClient] Cleaning up...');
-      window.removeEventListener('error', handleError);
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      console.log("[DiagnosticsClient] Cleaning up...");
+      window.removeEventListener("error", handleError);
+      window.removeEventListener("unhandledrejection", handleUnhandledRejection);
     };
   }, []); // Empty dependency array - run once
 
   const refreshCookies = useCallback(() => {
-    console.log('[DiagnosticsClient] Refreshing cookies...');
-    setCookies(document.cookie || 'No cookies found');
+    console.log("[DiagnosticsClient] Refreshing cookies...");
+    setCookies(document.cookie || "No cookies found");
   }, []);
 
   const testEndpoint = useCallback(async (endpoint: string, credentials: RequestCredentials) => {
@@ -91,17 +89,17 @@ export function DiagnosticsClientFixed() {
       endpoint,
       credentials,
       timestamp: new Date().toISOString(),
-      requestConfig: '',
+      requestConfig: "",
       duration: 0,
       body: null,
     };
 
     try {
       const config: RequestInit = {
-        method: 'GET',
+        method: "GET",
         credentials,
         headers: {
-          'Accept': 'application/json',
+          Accept: "application/json",
         },
       };
 
@@ -112,7 +110,9 @@ export function DiagnosticsClientFixed() {
       const endTime = performance.now();
       result.duration = Math.round(endTime - startTime);
 
-      console.log(`[DiagnosticsClient] Response received: ${response.status} ${response.statusText}`);
+      console.log(
+        `[DiagnosticsClient] Response received: ${response.status} ${response.statusText}`
+      );
 
       result.status = response.status;
       result.statusText = response.statusText;
@@ -125,13 +125,13 @@ export function DiagnosticsClientFixed() {
       result.headers = headers;
 
       // Get body
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
+      const contentType = response.headers.get("content-type");
+      if (contentType?.includes("application/json")) {
         try {
           result.body = await response.json();
         } catch (e) {
           console.error("[DiagnosticsClient] Failed to parse JSON:", e);
-          result.body = 'Failed to parse JSON response';
+          result.body = "Failed to parse JSON response";
         }
       } else {
         result.body = await response.text();
@@ -147,7 +147,7 @@ export function DiagnosticsClientFixed() {
   }, []);
 
   const runAllTests = useCallback(async () => {
-    console.log('[DiagnosticsClient] Running all tests...');
+    console.log("[DiagnosticsClient] Running all tests...");
     setIsRunning(true);
     setTestResults([]);
 
@@ -160,7 +160,7 @@ export function DiagnosticsClientFixed() {
           results.push(result);
           setTestResults([...results]);
           // Small delay between tests
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise((resolve) => setTimeout(resolve, 100));
         } catch (error) {
           console.error("[DiagnosticsClient] Test error:", error);
         }
@@ -168,21 +168,24 @@ export function DiagnosticsClientFixed() {
     }
 
     setIsRunning(false);
-    console.log('[DiagnosticsClient] All tests completed');
+    console.log("[DiagnosticsClient] All tests completed");
   }, [testEndpoint]);
 
-  const runSingleTest = useCallback(async (endpoint: string, credentials: RequestCredentials) => {
-    console.log(`[DiagnosticsClient] Running single test: ${endpoint} with ${credentials}`);
-    try {
-      const result = await testEndpoint(endpoint, credentials);
-      setTestResults(prev => [...prev, result]);
-    } catch (error) {
-      console.error("[DiagnosticsClient] Single test error:", error);
-    }
-  }, [testEndpoint]);
+  const runSingleTest = useCallback(
+    async (endpoint: string, credentials: RequestCredentials) => {
+      console.log(`[DiagnosticsClient] Running single test: ${endpoint} with ${credentials}`);
+      try {
+        const result = await testEndpoint(endpoint, credentials);
+        setTestResults((prev) => [...prev, result]);
+      } catch (error) {
+        console.error("[DiagnosticsClient] Single test error:", error);
+      }
+    },
+    [testEndpoint]
+  );
 
   const clearResults = useCallback(() => {
-    console.log('[DiagnosticsClient] Clearing results...');
+    console.log("[DiagnosticsClient] Clearing results...");
     setTestResults([]);
     setErrorLogs([]);
   }, []);
@@ -190,9 +193,7 @@ export function DiagnosticsClientFixed() {
   if (!isInitialized) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-bold mb-4 text-gray-800">
-          Initializing Diagnostics...
-        </h2>
+        <h2 className="text-xl font-bold mb-4 text-gray-800">Initializing Diagnostics...</h2>
       </div>
     );
   }
@@ -203,9 +204,10 @@ export function DiagnosticsClientFixed() {
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 className="text-xl font-bold mb-4 text-gray-800">Browser Cookies</h2>
         <div className="bg-gray-100 p-3 rounded text-xs font-mono break-all">
-          {cookies || 'No cookies found'}
+          {cookies || "No cookies found"}
         </div>
         <button
+          type="button"
           onClick={refreshCookies}
           className="mt-3 px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
         >
@@ -219,13 +221,15 @@ export function DiagnosticsClientFixed() {
 
         <div className="flex gap-3 mb-4">
           <button
+            type="button"
             onClick={runAllTests}
             disabled={isRunning}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {isRunning ? 'Running Tests...' : 'Run All Tests'}
+            {isRunning ? "Running Tests..." : "Run All Tests"}
           </button>
           <button
+            type="button"
             onClick={clearResults}
             className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
           >
@@ -235,12 +239,13 @@ export function DiagnosticsClientFixed() {
 
         {/* Individual Test Buttons */}
         <div className="space-y-4">
-          {endpoints.map(endpoint => (
+          {endpoints.map((endpoint) => (
             <div key={endpoint} className="border rounded p-3">
               <h3 className="font-semibold mb-2">{endpoint}</h3>
               <div className="flex gap-2 flex-wrap">
-                {credentialsOptions.map(creds => (
+                {credentialsOptions.map((creds) => (
                   <button
+                    type="button"
                     key={creds}
                     onClick={() => runSingleTest(endpoint, creds)}
                     disabled={isRunning}
@@ -261,13 +266,14 @@ export function DiagnosticsClientFixed() {
           <h2 className="text-xl font-bold mb-4 text-red-800">JavaScript Errors</h2>
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {errorLogs.map((log, index) => (
-              <div key={index} className="bg-white p-3 rounded border border-red-200">
+              <div
+                key={`error-${log.timestamp}-${index}`}
+                className="bg-white p-3 rounded border border-red-200"
+              >
                 <div className="text-xs text-gray-500">{log.timestamp}</div>
                 <div className="text-sm font-semibold text-red-700 mt-1">{log.message}</div>
                 {log.stack && (
-                  <pre className="mt-2 text-xs text-gray-600 overflow-x-auto">
-                    {log.stack}
-                  </pre>
+                  <pre className="mt-2 text-xs text-gray-600 overflow-x-auto">{log.stack}</pre>
                 )}
               </div>
             ))}
@@ -282,21 +288,19 @@ export function DiagnosticsClientFixed() {
 
           {testResults.map((result, index) => (
             <div
-              key={index}
+              key={`result-${result.endpoint}-${result.timestamp}-${index}`}
               className={`bg-white rounded-lg shadow-md p-6 border-l-4 ${
                 result.error
-                  ? 'border-red-500'
+                  ? "border-red-500"
                   : result.status && result.status >= 200 && result.status < 300
-                  ? 'border-green-500'
-                  : result.status && result.status >= 400
-                  ? 'border-red-500'
-                  : 'border-yellow-500'
+                    ? "border-green-500"
+                    : result.status && result.status >= 400
+                      ? "border-red-500"
+                      : "border-yellow-500"
               }`}
             >
               <div className="mb-4">
-                <h3 className="text-lg font-bold text-gray-800">
-                  {result.endpoint}
-                </h3>
+                <h3 className="text-lg font-bold text-gray-800">{result.endpoint}</h3>
                 <div className="flex gap-4 mt-2 text-sm">
                   <span className="font-semibold">Credentials:</span>
                   <span className="bg-gray-100 px-2 py-1 rounded">{result.credentials}</span>
@@ -324,12 +328,14 @@ export function DiagnosticsClientFixed() {
               ) : (
                 <>
                   <div className="mb-3">
-                    <span className="font-semibold">Status:</span>{' '}
-                    <span className={`px-2 py-1 rounded text-sm ${
-                      result.status && result.status >= 200 && result.status < 300
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span className="font-semibold">Status:</span>{" "}
+                    <span
+                      className={`px-2 py-1 rounded text-sm ${
+                        result.status && result.status >= 200 && result.status < 300
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
                       {result.status} {result.statusText}
                     </span>
                   </div>
@@ -350,7 +356,7 @@ export function DiagnosticsClientFixed() {
                       Response Body
                     </summary>
                     <pre className="mt-2 bg-gray-100 p-3 rounded text-xs overflow-x-auto">
-                      {typeof result.body === 'object'
+                      {typeof result.body === "object"
                         ? JSON.stringify(result.body, null, 2)
                         : result.body}
                     </pre>

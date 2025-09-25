@@ -36,12 +36,12 @@ export async function GET(request: NextRequest) {
         sessionId: authResponse?.sessionId || null,
         hasSession: !!authResponse?.sessionId,
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[auth-debug] Auth error:", err);
       authError = {
-        message: err?.message || String(err),
-        name: err?.name || "Unknown",
-        stack: err?.stack?.split("\n").slice(0, 5).join("\n"),
+        message: err instanceof Error ? err.message : String(err),
+        name: err instanceof Error ? err.name : "Unknown",
+        stack: err instanceof Error ? err.stack?.split("\n").slice(0, 5).join("\n") : undefined,
       };
     }
 
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       },
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("[auth-debug] Outer error:", error);
     return NextResponse.json(
       {
