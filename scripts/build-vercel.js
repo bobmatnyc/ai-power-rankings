@@ -17,7 +17,13 @@ if (vercelEnv === "staging" || gitBranch === "staging") {
   execSync("node scripts/build-staging.js", { stdio: "inherit" });
 } else {
   console.log("🚀 Using production build script (full features)...");
-  execSync("node scripts/build-production.js", { stdio: "inherit" });
+  try {
+    execSync("node scripts/build-production.js", { stdio: "inherit" });
+  } catch (error) {
+    console.warn("⚠️  Primary build script failed, trying safe fallback...");
+    console.log("🔄 Using Vercel-safe build script...");
+    execSync("node scripts/build-vercel-safe.js", { stdio: "inherit" });
+  }
 }
 
 console.log("✅ Vercel build wrapper completed successfully!");
