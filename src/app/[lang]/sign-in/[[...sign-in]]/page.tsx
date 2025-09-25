@@ -1,5 +1,8 @@
 import { SignIn } from "@clerk/nextjs";
 
+// Force dynamic rendering to prevent Clerk SSG issues
+export const dynamic = "force-dynamic";
+
 interface SignInPageProps {
   params: Promise<{
     lang: string;
