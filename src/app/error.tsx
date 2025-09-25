@@ -1,5 +1,8 @@
 "use client";
 
+// Force dynamic rendering to avoid Html import issue during build
+export const dynamic = "force-dynamic";
+
 import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";

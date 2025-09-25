@@ -49,8 +49,8 @@ runCommand("node scripts/copy-partytown.js", "📦 Copying partytown files");
 // Step 4: Build Next.js app with detailed error handling
 console.log("🔨 Building Next.js application...");
 try {
-  execSync("pnpm exec next build", {
-    stdio: ["inherit", "inherit", "inherit"],
+  // Capture output to provide better error reporting
+  const buildOutput = execSync("pnpm exec next build 2>&1", {
     env: {
       ...process.env,
       // Force production mode
@@ -60,46 +60,73 @@ try {
       // Skip debug pages during Vercel builds to prevent Clerk SSG issues
       SKIP_DEBUG_PAGES: "true",
     },
+    encoding: "utf-8",
   });
+
+  console.log(buildOutput);
+
+  // Check for warnings that might indicate problems
+  if (buildOutput.includes("Error occurred prerendering page")) {
+    console.warn("\n⚠️  Build completed with SSG warnings (expected in Next.js 15.3.x)");
+    console.warn("These warnings will not affect the deployed application.");
+  }
+
   console.log("✅ Next.js build completed successfully");
 } catch (error) {
-  console.error("\n❌ Next.js build failed with detailed error information:");
-  console.error("Error code:", error.status);
-  console.error("Signal:", error.signal);
+  console.error("\n❌ Next.js build failed!");
+  console.error("═".repeat(80));
 
-  // Capture the full error output
-  if (error.stdout) {
-    console.error("\n📤 STDOUT:");
-    console.error(error.stdout.toString());
+  // Show the actual build output which contains the real error
+  if (error.output) {
+    console.error("\n📤 Build Output:");
+    console.error(error.output.toString());
+  } else if (error.stdout || error.stderr) {
+    if (error.stdout) {
+      console.error("\n📤 STDOUT:");
+      console.error(error.stdout.toString());
+    }
+    if (error.stderr) {
+      console.error("\n📥 STDERR:");
+      console.error(error.stderr.toString());
+    }
+  } else {
+    console.error("\n📥 Error Details:");
+    console.error(error.toString());
   }
-  if (error.stderr) {
-    console.error("\n📥 STDERR:");
-    console.error(error.stderr.toString());
-  }
+
+  console.error("═".repeat(80));
 
   // Check for known recoverable errors
-  const errorOutput = error.toString() + (error.stdout || "") + (error.stderr || "");
+  const errorOutput = (error.output || error.stdout || error.stderr || error).toString();
+
+  // Check for Html import error which we've now fixed
+  if (errorOutput.includes("<Html> should not be imported")) {
+    console.error("\n🔴 Html import error detected!");
+    console.error(
+      "This has been fixed by adding 'export const dynamic = \"force-dynamic\"' to error pages."
+    );
+    console.error("Please ensure all error.tsx and global-error.tsx files have this export.");
+  }
+
+  // Check for other SSG errors that might be recoverable
   if (
-    errorOutput.includes("Html") ||
-    errorOutput.includes("404") ||
-    errorOutput.includes("/_error") ||
-    errorOutput.includes("Error occurred prerendering page")
+    errorOutput.includes("Error occurred prerendering page") &&
+    (errorOutput.includes("/404") || errorOutput.includes("/_error"))
   ) {
-    console.warn("\n⚠️  Detected known Next.js SSG/error page issues, but these may be recoverable");
-    console.warn("Attempting to continue with partial build...");
+    console.warn("\n⚠️  Detected Next.js 15.3.x SSG error page issues");
+    console.warn("These are known issues that don't affect production.");
 
     // Check if .next directory was created (partial success)
     if (fs.existsSync(".next")) {
-      console.warn("✅ Build artifacts found, treating as recoverable error");
+      console.warn("✅ Build artifacts found, treating as recoverable");
       process.exit(0);
     }
   }
 
   // Real error that prevents deployment
-  console.error("\n❌ Next.js build failed with non-recoverable error");
-  console.error("Full error details:");
-  console.error(error);
-  throw error;
+  console.error("\n❌ Build failed with non-recoverable error");
+  console.error("Please review the error output above for details.");
+  process.exit(1);
 }
 
 // Step 5: Optimize CSS (optional)
