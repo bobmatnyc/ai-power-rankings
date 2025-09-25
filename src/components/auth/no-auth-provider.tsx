@@ -11,23 +11,15 @@ interface NoAuthContextType {
   signOut: () => Promise<void>;
 }
 
-// Create contexts that mimic Clerk's structure
-const NoAuthContext = createContext<NoAuthContextType>({
-  isLoaded: true,
-  isSignedIn: false, // Simulate signed-out state
-  user: null,
-  session: null,
-  signOut: async () => {
-    console.log("Sign out called in development mode");
-  },
-});
+// Create contexts that mimic Clerk's structure with proper SSR handling
+const NoAuthContext = createContext<NoAuthContextType | null>(null);
 
 interface NoAuthProviderProps {
   children: ReactNode;
 }
 
 export function NoAuthProvider({ children }: NoAuthProviderProps) {
-  const value = {
+  const value: NoAuthContextType = {
     isLoaded: true,
     isSignedIn: false, // Changed to false to simulate signed-out state
     user: null,
@@ -40,9 +32,18 @@ export function NoAuthProvider({ children }: NoAuthProviderProps) {
   return <NoAuthContext.Provider value={value}>{children}</NoAuthContext.Provider>;
 }
 
-// Export hooks that mimic Clerk's API
-export function useAuth() {
+// Helper function to get context with proper null checks
+function useNoAuthContext(): NoAuthContextType {
   const context = useContext(NoAuthContext);
+  if (context === null) {
+    throw new Error("useNoAuthContext must be used within a NoAuthProvider");
+  }
+  return context;
+}
+
+// Export hooks that mimic Clerk's API with proper error handling
+export function useAuth() {
+  const context = useNoAuthContext();
   return {
     isLoaded: context.isLoaded,
     isSignedIn: context.isSignedIn,
@@ -55,7 +56,7 @@ export function useAuth() {
 }
 
 export function useUser() {
-  const context = useContext(NoAuthContext);
+  const context = useNoAuthContext();
   return {
     isLoaded: context.isLoaded,
     isSignedIn: context.isSignedIn,
@@ -64,7 +65,7 @@ export function useUser() {
 }
 
 export function useClerk() {
-  const context = useContext(NoAuthContext);
+  const context = useNoAuthContext();
   return {
     loaded: context.isLoaded,
     session: context.session,
@@ -74,7 +75,7 @@ export function useClerk() {
 }
 
 export function useSession() {
-  const context = useContext(NoAuthContext);
+  const context = useNoAuthContext();
   return {
     isLoaded: context.isLoaded,
     isSignedIn: context.isSignedIn,
@@ -84,13 +85,13 @@ export function useSession() {
 
 // Mock SignedIn and SignedOut components for development mode
 export function SignedIn({ children }: { children: ReactNode }) {
-  const context = useContext(NoAuthContext);
+  const context = useNoAuthContext();
   // Only render children if signed in
   return context.isSignedIn ? children : null;
 }
 
 export function SignedOut({ children }: { children: ReactNode }) {
-  const context = useContext(NoAuthContext);
+  const context = useNoAuthContext();
   // Only render children if signed out
   return !context.isSignedIn ? children : null;
 }
@@ -120,7 +121,7 @@ export function SignInButton({ children }: { children: ReactNode }) {
 
 // Mock UserButton component
 export function UserButton() {
-  const context = useContext(NoAuthContext);
+  const context = useNoAuthContext();
   if (!context.isSignedIn) return null;
 
   return (

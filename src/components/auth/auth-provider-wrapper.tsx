@@ -2,6 +2,7 @@
 
 import { ClerkProvider } from "@clerk/nextjs";
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { NoAuthProvider } from "./no-auth-provider";
 
 interface AuthProviderWrapperProps {
@@ -14,11 +15,21 @@ const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 const shouldUseClerk = !isAuthDisabled && hasClerkKey;
 
 export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
-  // If we should use Clerk, always use it (including during SSR)
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // During SSG/SSR or before hydration, always use NoAuthProvider to avoid router issues
+  if (!isMounted || typeof window === "undefined") {
+    return <NoAuthProvider>{children}</NoAuthProvider>;
+  }
+
+  // After hydration, if we should use Clerk, use it
   if (shouldUseClerk) {
     // Extract locale from pathname if available, otherwise default to "en"
-    const locale =
-      typeof window !== "undefined" ? window.location.pathname.split("/")[1] || "en" : "en";
+    const locale = window.location.pathname.split("/")[1] || "en";
 
     return (
       <ClerkProvider
@@ -33,6 +44,6 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
     );
   }
 
-  // Otherwise, always use NoAuthProvider
+  // Otherwise, use NoAuthProvider
   return <NoAuthProvider>{children}</NoAuthProvider>;
 }
