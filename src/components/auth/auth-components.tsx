@@ -4,8 +4,9 @@ import {
   SignedIn as ClerkSignedIn,
   SignedOut as ClerkSignedOut,
   SignInButton as ClerkSignInButton,
+  SignUpButton as ClerkSignUpButton,
+  useAuth as ClerkUseAuth,
   UserButton as ClerkUserButton,
-  useAuth,
 } from "@clerk/nextjs";
 import type React from "react";
 import { useEffect, useState } from "react";
@@ -14,17 +15,22 @@ import {
   SignedIn as MockSignedIn,
   SignedOut as MockSignedOut,
   SignInButton as MockSignInButton,
+  useAuth as MockUseAuth,
   UserButton as MockUserButton,
 } from "./no-auth-provider";
 
 // Check if authentication should be disabled
 const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 
+// Export the appropriate useAuth based on auth status
+const useAuth = isAuthDisabled ? MockUseAuth : ClerkUseAuth;
+
 // Export the appropriate components based on auth status
 export const SignedIn = isAuthDisabled ? MockSignedIn : ClerkSignedIn;
 export const SignedOut = isAuthDisabled ? MockSignedOut : ClerkSignedOut;
 // Use Clerk's SignInButton directly - it should handle custom children
 export const SignInButton = isAuthDisabled ? MockSignInButton : ClerkSignInButton;
+export const SignUpButton = isAuthDisabled ? MockSignInButton : ClerkSignUpButton;
 export const UserButton = isAuthDisabled ? MockUserButton : ClerkUserButton;
 
 // Wrapper component that handles SSR/hydration issues
@@ -40,8 +46,8 @@ export function SignInButtonWrapper({
   return <ButtonComponent {...props}>{children}</ButtonComponent>;
 }
 
-// Helper component for when Clerk is enabled
-function ClerkSignedOutWrapper({ children }: { children: React.ReactNode }) {
+// Wrapper for SignedOut that ensures content is visible during SSR
+export function SignedOutWrapper({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
 
@@ -63,19 +69,8 @@ function ClerkSignedOutWrapper({ children }: { children: React.ReactNode }) {
   return null;
 }
 
-// Wrapper for SignedOut that ensures content is visible during SSR
-export function SignedOutWrapper({ children }: { children: React.ReactNode }) {
-  // If auth is disabled, use mock component
-  if (isAuthDisabled) {
-    return <MockSignedOut>{children}</MockSignedOut>;
-  }
-
-  // Use the Clerk-aware wrapper
-  return <ClerkSignedOutWrapper>{children}</ClerkSignedOutWrapper>;
-}
-
-// Helper component for when Clerk is enabled
-function ClerkSignedInWrapper({ children }: { children: React.ReactNode }) {
+// Wrapper for SignedIn that handles SSR properly
+export function SignedInWrapper({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
 
@@ -96,21 +91,11 @@ function ClerkSignedInWrapper({ children }: { children: React.ReactNode }) {
   return null;
 }
 
-// Wrapper for SignedIn that handles SSR properly
-export function SignedInWrapper({ children }: { children: React.ReactNode }) {
-  // If auth is disabled, use mock component
-  if (isAuthDisabled) {
-    return <MockSignedIn>{children}</MockSignedIn>;
-  }
-
-  // Use the Clerk-aware wrapper
-  return <ClerkSignedInWrapper>{children}</ClerkSignedInWrapper>;
-}
-
-// Helper component for when Clerk is enabled
-function ClerkUserButtonWrapper(props: Record<string, unknown>) {
+// Wrapper for UserButton that handles SSR properly
+export function UserButtonWrapper(props: Record<string, unknown>) {
   const [mounted, setMounted] = useState(false);
   const { isSignedIn, isLoaded } = useAuth();
+  const ButtonComponent = isAuthDisabled ? MockUserButton : ClerkUserButton;
 
   useEffect(() => {
     setMounted(true);
@@ -123,34 +108,8 @@ function ClerkUserButtonWrapper(props: Record<string, unknown>) {
 
   // After mount and auth is loaded, only show if signed in
   if (isSignedIn === true) {
-    return <ClerkUserButton {...props} />;
+    return <ButtonComponent {...props} />;
   }
 
   return null;
-}
-
-// Helper component for mock UserButton
-function MockUserButtonWrapper(props: Record<string, unknown>) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
-  return <MockUserButton {...props} />;
-}
-
-// Wrapper for UserButton that handles SSR properly
-export function UserButtonWrapper(props: Record<string, unknown>) {
-  // If auth is disabled, use mock component
-  if (isAuthDisabled) {
-    return <MockUserButtonWrapper {...props} />;
-  }
-
-  // Use the Clerk-aware wrapper
-  return <ClerkUserButtonWrapper {...props} />;
 }

@@ -1,9 +1,15 @@
 "use client";
 
-import { SignedIn, SignedOut, SignUpButton, useUser } from "@clerk/nextjs";
+import { useUser as ClerkUseUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { SignedInWrapper, SignedOutWrapper, SignUpButton } from "./auth-components";
+import { useUser as MockUseUser } from "./no-auth-provider";
+
+// Check if authentication should be disabled
+const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+const useUser = isAuthDisabled ? MockUseUser : ClerkUseUser;
 
 interface SignupUpdatesButtonProps {
   className?: string;
@@ -85,18 +91,18 @@ export function SignupUpdatesButton({
 
   return (
     <>
-      <SignedOut>
+      <SignedOutWrapper>
         <SignUpButton mode="modal" forceRedirectUrl={redirectUrl}>
           <Button variant={variant} size={size} className={className}>
             {text}
           </Button>
         </SignUpButton>
-      </SignedOut>
-      <SignedIn>
+      </SignedOutWrapper>
+      <SignedInWrapper>
         <Button variant={variant} size={size} className={className} disabled>
           {isSubscribed ? "✓ Subscribed to updates" : "You're signed in!"}
         </Button>
-      </SignedIn>
+      </SignedInWrapper>
     </>
   );
 }
