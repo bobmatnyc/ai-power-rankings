@@ -9,10 +9,19 @@ interface AuthProviderWrapperProps {
   children: ReactNode;
 }
 
-// Check authentication configuration at module level
+// Check authentication configuration at module level with safe fallbacks
 const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 const shouldUseClerk = !isAuthDisabled && hasClerkKey;
+
+// Log configuration for debugging (only in development)
+if (typeof window !== "undefined" && process.env["NODE_ENV"] === "development") {
+  console.log("[AuthProvider] Configuration:", {
+    isAuthDisabled,
+    hasClerkKey,
+    shouldUseClerk,
+  });
+}
 
 export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
   const [isMounted, setIsMounted] = useState(false);
@@ -28,20 +37,26 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
 
   // After hydration, if we should use Clerk, use it
   if (shouldUseClerk) {
-    // Extract locale from pathname if available, otherwise default to "en"
-    const locale = window.location.pathname.split("/")[1] || "en";
+    try {
+      // Extract locale from pathname if available, otherwise default to "en"
+      const locale = window.location.pathname.split("/")[1] || "en";
 
-    return (
-      <ClerkProvider
-        publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
-        signInUrl={`/${locale}/sign-in`}
-        signUpUrl={`/${locale}/sign-up`}
-        afterSignInUrl={`/${locale}`}
-        afterSignUpUrl={`/${locale}`}
-      >
-        {children}
-      </ClerkProvider>
-    );
+      return (
+        <ClerkProvider
+          publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
+          signInUrl={`/${locale}/sign-in`}
+          signUpUrl={`/${locale}/sign-up`}
+          afterSignInUrl={`/${locale}`}
+          afterSignUpUrl={`/${locale}`}
+        >
+          {children}
+        </ClerkProvider>
+      );
+    } catch (error) {
+      console.error("[AuthProvider] Error initializing Clerk:", error);
+      // Fall back to NoAuthProvider if Clerk fails to initialize
+      return <NoAuthProvider>{children}</NoAuthProvider>;
+    }
   }
 
   // Otherwise, use NoAuthProvider

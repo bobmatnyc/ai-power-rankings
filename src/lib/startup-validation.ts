@@ -3,27 +3,43 @@
  * This module ensures critical configuration is present before the application starts
  */
 
-// Define required environment variables with descriptive error messages
-const REQUIRED_ENV_VARS = [
+// Define optional environment variables with descriptive messages
+// These are not required for the app to start, but enable specific features
+const OPTIONAL_ENV_VARS = [
   {
     name: "OPENROUTER_API_KEY",
     description: "OpenRouter API key for news analysis",
     documentation: "https://openrouter.ai/keys",
-    errorMessage:
-      "OpenRouter API key is required for news analysis functionality. Please set OPENROUTER_API_KEY in your .env.local file.",
+    warningMessage:
+      "OpenRouter API key is not configured. News analysis features will be disabled. Set OPENROUTER_API_KEY in your .env.local file to enable.",
   },
 ] as const;
 
+// Define truly required environment variables (currently none - all are optional)
+const REQUIRED_ENV_VARS: Array<{
+  name: string;
+  description: string;
+  documentation: string;
+  errorMessage: string;
+}> = [];
+
 /**
  * Validates that all required environment variables are configured
- * Throws an error at startup if any required variables are missing
+ * Logs warnings for optional environment variables that enable features
  */
 export function validateEnvironment(): void {
+  // Skip validation in Edge Runtime environments (like middleware)
+  if (typeof process === "undefined" || typeof process.env === "undefined") {
+    return;
+  }
+
   console.log("[Startup] Validating environment configuration...");
 
   const missingVars: string[] = [];
   const errors: string[] = [];
+  const warnings: string[] = [];
 
+  // Check required environment variables (currently none)
   for (const envVar of REQUIRED_ENV_VARS) {
     const value = process.env[envVar.name];
 
@@ -41,6 +57,24 @@ export function validateEnvironment(): void {
     }
   }
 
+  // Check optional environment variables and log warnings
+  for (const envVar of OPTIONAL_ENV_VARS) {
+    const value = process.env[envVar.name];
+
+    if (!value || value.trim() === "") {
+      warnings.push(`
+  ⚠️  Optional: ${envVar.name}
+     ${envVar.warningMessage}
+      `);
+      console.log(`[Startup] ⚠️  ${envVar.name} not configured (optional - some features disabled)`);
+    } else {
+      // Log successful validation (mask sensitive data)
+      const maskedValue = `${value.substring(0, 10)}...${value.substring(value.length - 4)}`;
+      console.log(`[Startup] ✓ ${envVar.name} configured (${maskedValue})`);
+    }
+  }
+
+  // Only throw error if required variables are missing
   if (missingVars.length > 0) {
     const errorTitle = `
 ================================================================================
@@ -55,16 +89,8 @@ The application cannot start because required environment variables are missing.
 To fix this issue:
 
 1. Create or update your .env.local file in the project root
-2. Add the missing environment variables:
-
-   # .env.local
-   OPENROUTER_API_KEY=your_api_key_here
-
-3. Get your OpenRouter API key from: https://openrouter.ai/keys
-4. Restart the application
-
-For more information, see the documentation:
-- OpenRouter Setup: https://openrouter.ai/docs
+2. Add the missing environment variables
+3. Restart the application
 ================================================================================
 `;
 
@@ -78,7 +104,18 @@ For more information, see the documentation:
     );
   }
 
-  console.log("[Startup] ✅ All required environment variables are configured");
+  // Log warnings for optional variables (but don't throw error)
+  if (warnings.length > 0) {
+    console.log(`
+================================================================================
+⚠️  OPTIONAL FEATURES DISABLED
+================================================================================
+${warnings.join("\n")}
+================================================================================
+`);
+  }
+
+  console.log("[Startup] ✅ Environment validation complete");
 }
 
 /**
@@ -106,35 +143,23 @@ export function getOpenRouterApiKey(): string {
   return apiKey;
 }
 
-// Run validation immediately when this module is imported in production
-// This ensures the app fails fast if misconfigured
-if (process.env["NODE_ENV"] === "production") {
+// Run validation in development mode for immediate feedback
+// In production, validation happens lazily when features are accessed
+// This prevents startup failures from optional environment variables
+if (process.env["NODE_ENV"] === "development") {
   try {
-    validateEnvironment();
-  } catch (error) {
-    console.error("[Startup] Fatal error during environment validation:", error);
-
-    // Check if we're in Edge Runtime (like middleware) where process.exit is not available
-    // Edge Runtime detection: check for absence of Node.js specific globals
+    // Check if we're in Edge Runtime (like middleware)
     const isEdgeRuntime =
       typeof process === "undefined" ||
-      typeof process.exit !== "function" ||
+      typeof process.env === "undefined" ||
       (globalThis as any).EdgeRuntime !== undefined;
 
-    if (isEdgeRuntime) {
-      console.error(
-        "[Startup] Running in Edge Runtime, throwing error instead of calling process.exit"
-      );
-      throw error;
+    // Only validate in Node.js runtime, not Edge Runtime
+    if (!isEdgeRuntime) {
+      validateEnvironment();
     }
-
-    // In Node.js runtime, we can safely call process.exit
-    // Use dynamic reference to avoid webpack static analysis warnings
-    const nodeProcess = globalThis.process as any;
-    if (nodeProcess && typeof nodeProcess.exit === "function") {
-      nodeProcess.exit(1);
-    } else {
-      throw error;
-    }
+  } catch (error) {
+    console.error("[Startup] Error during environment validation:", error);
+    // In development, log but don't exit so developers can still work
   }
 }

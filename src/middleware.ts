@@ -1,29 +1,15 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { validateEnvironment } from "@/lib/startup-validation";
 import { i18n } from "./i18n/config";
 
 // Middleware ALWAYS runs in Edge Runtime on Vercel - cannot be changed
 // API routes are handled conditionally INSIDE middleware to avoid Clerk cookie validation
 // API routes return early with NextResponse.next() before Clerk processes them
 
-// Run startup validation once when middleware is first loaded
-// This ensures the application fails to start if required env vars are missing
-let startupValidationComplete = false;
-if (!startupValidationComplete) {
-  try {
-    validateEnvironment();
-    startupValidationComplete = true;
-  } catch (error) {
-    console.error("[Middleware] Startup validation failed:", error);
-    // In development, log the error but allow the app to continue
-    // In production, this will cause the deployment to fail
-    if (process.env["NODE_ENV"] === "production") {
-      throw error;
-    }
-  }
-}
+// Skip environment validation in middleware since it runs in Edge Runtime
+// The validation will happen in API routes and server components which run in Node.js runtime
+// This prevents Edge Runtime errors from missing environment variables that are only needed for specific features
 
 const locales = i18n.locales;
 

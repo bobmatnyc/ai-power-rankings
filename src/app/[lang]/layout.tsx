@@ -17,11 +17,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export async function generateStaticParams() {
-  // Only generate static params for main pages to prevent Vercel timeout
-  // Other locales will be rendered dynamically on-demand
-  return [{ lang: "en" }, { lang: "de" }, { lang: "ja" }];
-}
+// Force dynamic rendering to ensure Clerk authentication works properly
+// Static generation causes issues with authentication context
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
