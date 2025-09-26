@@ -18,14 +18,31 @@ interface AuthErrorBoundaryProps {
  * Catches useContext and other React errors in auth components
  * Provides graceful fallback when Clerk components fail
  */
-export class AuthErrorBoundary extends React.Component<AuthErrorBoundaryProps, AuthErrorBoundaryState> {
+export class AuthErrorBoundary extends React.Component<
+  AuthErrorBoundaryProps,
+  AuthErrorBoundaryState
+> {
   constructor(props: AuthErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): AuthErrorBoundaryState {
-    // Update state so the next render will show the fallback UI
+    // Check if this is specifically a useContext error from Next.js 15 SSR
+    const isContextError =
+      error.message?.includes("useContext") ||
+      error.message?.includes("Cannot read properties of null") ||
+      error.stack?.includes("useContext") ||
+      error.stack?.includes("chunks/845.js") || // Next.js 15 specific chunk error
+      error.stack?.includes(".next/server/chunks/");
+
+    if (isContextError) {
+      console.error("[AuthErrorBoundary] Caught Next.js 15 useContext SSR error:", error.message);
+      return { hasError: true, error };
+    }
+
+    // For non-context errors, still catch them but log differently
+    console.warn("[AuthErrorBoundary] Caught non-context error:", error.message);
     return { hasError: true, error };
   }
 
@@ -36,7 +53,9 @@ export class AuthErrorBoundary extends React.Component<AuthErrorBoundaryProps, A
 
     // Check if it's a useContext error
     if (error.message.includes("useContext") || error.message.includes("createContext")) {
-      console.error("[AuthErrorBoundary] React Context error detected - likely server/client boundary issue");
+      console.error(
+        "[AuthErrorBoundary] React Context error detected - likely server/client boundary issue"
+      );
     }
 
     // In development, provide more detailed logging
@@ -54,11 +73,7 @@ export class AuthErrorBoundary extends React.Component<AuthErrorBoundaryProps, A
 
       // Default fallback - render children without auth context
       console.info("[AuthErrorBoundary] Rendering fallback due to auth error");
-      return (
-        <div suppressHydrationWarning>
-          {this.props.children}
-        </div>
-      );
+      return <div suppressHydrationWarning>{this.props.children}</div>;
     }
 
     return this.props.children;

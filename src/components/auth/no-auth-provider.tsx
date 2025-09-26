@@ -10,6 +10,37 @@ import React, {
   useState,
 } from "react";
 
+// Enhanced React validation to prevent SSR null reference errors
+// This prevents "Cannot read properties of null (reading 'useContext')" in Next.js 15
+const validateReactSSR = () => {
+  // Check if React is properly loaded
+  if (typeof React === "undefined" || React === null) {
+    console.error("[NoAuthProvider] React is null or undefined during SSR");
+    return false;
+  }
+
+  // Check if React.createContext is available
+  if (typeof React.createContext !== "function") {
+    console.error("[NoAuthProvider] React.createContext is not available during SSR");
+    return false;
+  }
+
+  // Check if React.useContext is available
+  if (typeof React.useContext !== "function") {
+    console.error("[NoAuthProvider] React.useContext is not available during SSR");
+    return false;
+  }
+
+  return true;
+};
+
+// Only proceed with context creation if React is properly loaded
+const isReactValid = validateReactSSR();
+if (!isReactValid) {
+  // In SSR environments where React might be null, we need to handle this gracefully
+  console.warn("[NoAuthProvider] React validation failed during SSR - using fallback mode");
+}
+
 // Type definitions for the NoAuth context
 interface NoAuthContextType {
   isLoaded: boolean;
@@ -20,7 +51,22 @@ interface NoAuthContextType {
 }
 
 // Create contexts that mimic Clerk's structure with proper SSR handling
-const NoAuthContext = createContext<NoAuthContextType | null>(null);
+// Use conditional creation to prevent SSR null reference errors
+let NoAuthContext: React.Context<NoAuthContextType | null>;
+
+if (isReactValid && typeof createContext === "function") {
+  NoAuthContext = createContext<NoAuthContextType | null>(null);
+} else {
+  // Fallback context for SSR scenarios where React might be null
+  // This prevents the "Cannot read properties of null (reading 'useContext')" error
+  NoAuthContext = {
+    Provider: ({ children }: { children: ReactNode }) => children,
+    Consumer: ({ children }: { children: (value: NoAuthContextType | null) => ReactNode }) =>
+      children(null),
+    displayName: "NoAuthContext",
+    // biome-ignore lint/suspicious/noExplicitAny: Fallback context type for SSR
+  } as any;
+}
 
 interface NoAuthProviderProps {
   children: ReactNode;
@@ -48,9 +94,34 @@ export function NoAuthProvider({ children }: NoAuthProviderProps) {
   return <NoAuthContext.Provider value={value}>{safeChildren}</NoAuthContext.Provider>;
 }
 
-// Helper function to get context with proper null checks
+// Helper function to get context with proper null checks and SSR safety
 export function useNoAuthContext(): NoAuthContextType | null {
-  const context = useContext(NoAuthContext);
+  // Always call useContext unconditionally (required by React hooks rules)
+  // This will either work normally or throw an error that we can catch
+  let context: NoAuthContextType | null = null;
+  let hasError = false;
+
+  try {
+    // biome-ignore lint/correctness/useHookAtTopLevel: useContext must be wrapped in try-catch for SSR safety
+    context = useContext(NoAuthContext);
+  } catch (error) {
+    console.error("[useNoAuthContext] Error accessing context:", error);
+    hasError = true;
+  }
+
+  // If there was an error or React validation failed, return fallback
+  if (hasError || !isReactValid || !context) {
+    return {
+      isLoaded: true,
+      isSignedIn: false,
+      user: null,
+      session: null,
+      signOut: async () => {
+        console.log("Fallback signOut called");
+      },
+    };
+  }
+
   return context;
 }
 
@@ -153,7 +224,7 @@ export function SignedIn({ children }: { children: ReactNode }) {
     return null;
   }
   // Only render children if signed in
-  return context.isSignedIn ? <>{safeChildren}</> : null;
+  return context.isSignedIn ? safeChildren : null;
 }
 
 export function SignedOut({ children }: { children: ReactNode }) {
@@ -162,10 +233,10 @@ export function SignedOut({ children }: { children: ReactNode }) {
 
   // If no context, assume signed out
   if (!context) {
-    return <>{safeChildren}</>;
+    return safeChildren;
   }
   // Only render children if signed out
-  return !context.isSignedIn ? <>{safeChildren}</> : null;
+  return !context.isSignedIn ? safeChildren : null;
 }
 
 // Mock SignInButton component
