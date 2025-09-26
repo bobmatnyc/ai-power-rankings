@@ -51,16 +51,14 @@ interface PageProps {
   params: Promise<{ lang: Locale }>;
 }
 
-// Dynamic import for T-031 performance optimization with error boundary
+// Dynamic import for T-031 performance optimization
 const ClientRankings = NextDynamic(() => import("./client-rankings-optimized"), {
   loading: () => <RankingsTableSkeleton />,
-  ssr: false, // Disable SSR for this component to prevent server-side errors
 });
 
 // Dynamic import for T-033 What's New modal
 const WhatsNewModalClient = NextDynamic(() => import("@/components/ui/whats-new-modal-client"), {
   loading: () => <div></div>,
-  ssr: false, // Disable SSR for this component to prevent server-side errors
 });
 
 // Force dynamic rendering to ensure API calls work at runtime
