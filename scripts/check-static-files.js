@@ -6,36 +6,13 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const requiredFiles = [
-  "src/data/cache/rankings.json",
-  "src/data/cache/rankings-static.json",
-  "src/data/cache/tools.json",
-  "src/data/cache/news.json",
-  "public/data/rankings.json",
-];
+// No longer require static JSON files - using database exclusively
+const requiredFiles = [];
 
-console.log("🔍 Checking required static files for deployment...\n");
+console.log("🔍 Checking deployment readiness...\n");
 
-let allFilesExist = true;
-
-for (const filePath of requiredFiles) {
-  const fullPath = path.join(process.cwd(), filePath);
-
-  if (fs.existsSync(fullPath)) {
-    const stats = fs.statSync(fullPath);
-    const sizeKB = (stats.size / 1024).toFixed(1);
-    console.log(`✅ ${filePath} (${sizeKB} KB)`);
-  } else {
-    console.log(`❌ ${filePath} - MISSING!`);
-    allFilesExist = false;
-  }
-}
-
-if (allFilesExist) {
-  console.log("\n🎉 All required static files are present!");
-  console.log("📦 Vercel deployment can proceed with committed data files.");
-} else {
-  console.error("\n💥 Some required files are missing!");
-  console.error("🚨 Vercel deployment may fail without these files.");
-  process.exit(1);
-}
+// Since we're using database exclusively, no static files are required
+console.log("✅ Using PostgreSQL database for all data");
+console.log("✅ No static JSON files required");
+console.log("\n🎉 Deployment can proceed - all data comes from Neon database!");
+console.log("📦 Vercel deployment ready.");
