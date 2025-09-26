@@ -11,6 +11,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { loggers } from "@/lib/logger";
+import type { Article } from "@/lib/db/article-schema";
 
 // import { NewsIngestor } from "@/lib/news-ingestor";
 // import { fetchGoogleDriveNews } from "@/lib/news-fetcher";
@@ -54,10 +55,23 @@ export async function GET(request: NextRequest) {
           );
 
           // Group by ingestion batch
-          const ingestionBatches = new Map();
+          interface BatchData {
+            batch_id: string;
+            articles: Array<{
+              id: string;
+              title: string;
+              slug: string | null;
+              published_date: Date | null;
+              tool_mentions: number;
+            }>;
+            ingested_at: Date;
+            source: string;
+          }
+          const ingestionBatches = new Map<string, BatchData>();
 
-          recentArticles.forEach((article: any) => {
-            const batchId = article.ingestionBatch || "manual";
+          recentArticles.forEach((article: Article) => {
+            // Using ingestionType as a proxy for batch ID
+            const batchId = article.ingestionType || "manual";
             if (!ingestionBatches.has(batchId)) {
               ingestionBatches.set(batchId, {
                 batch_id: batchId,
@@ -75,7 +89,8 @@ export async function GET(request: NextRequest) {
             });
           });
           const reports = Array.from(ingestionBatches.values()).sort(
-            (a: any, b: any) => new Date(b.ingested_at).getTime() - new Date(a.ingested_at).getTime()
+            (a: BatchData, b: BatchData) =>
+              new Date(b.ingested_at).getTime() - new Date(a.ingested_at).getTime()
           );
 
           return NextResponse.json({
@@ -196,7 +211,14 @@ export async function POST(request: NextRequest) {
           // });
 
           // Placeholder for now
-          const newsData: any[] = [];
+          interface NewsItem {
+            id: string;
+            title: string;
+            url: string;
+            publishedDate: Date;
+            toolMentions?: string[];
+          }
+          const newsData: NewsItem[] = [];
 
           if (dry_run) {
             return NextResponse.json({
@@ -314,7 +336,7 @@ export async function POST(request: NextRequest) {
         try {
           const allArticles = await articlesRepo.findAll();
           const batchArticles = allArticles.filter(
-            (article: any) => article.ingestionBatch === batch_id
+            (article: Article) => article.ingestionType === batch_id
           );
 
           if (batchArticles.length === 0) {
@@ -347,10 +369,7 @@ export async function POST(request: NextRequest) {
           });
         } catch (dbError) {
           loggers.api.error("Failed to rollback batch", { dbError });
-          return NextResponse.json(
-            { error: "Failed to rollback batch" },
-            { status: 500 }
-          );
+          return NextResponse.json({ error: "Failed to rollback batch" }, { status: 500 });
         }
       }
 
@@ -389,10 +408,7 @@ export async function POST(request: NextRequest) {
           });
         } catch (dbError) {
           loggers.api.error("Failed to update metrics", { dbError });
-          return NextResponse.json(
-            { error: "Failed to update metrics" },
-            { status: 500 }
-          );
+          return NextResponse.json({ error: "Failed to update metrics" }, { status: 500 });
         }
       }
 
@@ -452,10 +468,7 @@ export async function DELETE(request: NextRequest) {
         });
       } catch (dbError) {
         loggers.api.error("Failed to delete article", { dbError });
-        return NextResponse.json(
-          { error: "Failed to delete article" },
-          { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to delete article" }, { status: 500 });
       }
     }
 
@@ -464,7 +477,7 @@ export async function DELETE(request: NextRequest) {
       try {
         const allArticles = await articlesRepo.findAll();
         const batchArticles = allArticles.filter(
-          (article: any) => article.ingestionBatch === batch
+          (article: Article) => article.ingestionType === batch
         );
 
         const deleted = [];
@@ -484,10 +497,7 @@ export async function DELETE(request: NextRequest) {
         });
       } catch (dbError) {
         loggers.api.error("Failed to delete batch", { dbError });
-        return NextResponse.json(
-          { error: "Failed to delete batch" },
-          { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to delete batch" }, { status: 500 });
       }
     }
 

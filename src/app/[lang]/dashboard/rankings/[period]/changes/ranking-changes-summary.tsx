@@ -18,7 +18,13 @@ interface RankingPeriod {
   created_at: string;
   updated_at: string;
   published_at?: string;
-  rankings?: any[];
+  rankings?: Array<{
+    tool_id: string;
+    position: number;
+    score: number;
+    change?: number;
+    trend?: string;
+  }>;
 }
 
 interface RankingChangesSummaryProps {
@@ -124,8 +130,9 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
     const bigMoversDown = changes.filter(
       (c) => c.movement_direction === "down" && Math.abs(c.movement_change || 0) >= 3
     );
-    const topThreeChanges =
-      ((rankingsData?.rankings || []).slice(0, 3).filter((r) => r.movement?.direction !== "same"));
+    const topThreeChanges = (rankingsData?.rankings || [])
+      .slice(0, 3)
+      .filter((r) => r.movement?.direction !== "same");
 
     let narrative = `# AI Tool Rankings Update - ${formatPeriodDisplay(period)}\n\n`;
 

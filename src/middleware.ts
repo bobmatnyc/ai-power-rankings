@@ -3,7 +3,15 @@ import { NextResponse } from "next/server";
 import { i18n } from "./i18n/config";
 
 // Type definitions for Clerk functions when dynamically imported
-type ClerkMiddleware = (handler: (auth: any, req: NextRequest) => Promise<NextResponse>) => (req: NextRequest) => Promise<NextResponse>;
+type AuthObject = {
+  userId: string | null;
+  sessionId: string | null;
+  getToken: () => Promise<string | null>;
+};
+
+type ClerkMiddleware = (
+  handler: (auth: () => Promise<AuthObject>, req: NextRequest) => Promise<NextResponse>
+) => (req: NextRequest) => Promise<NextResponse>;
 type CreateRouteMatcher = (routes: string[]) => (req: NextRequest) => boolean;
 
 // Conditionally import Clerk based on environment
@@ -111,7 +119,8 @@ const isProtectedRoute = createRouteMatcher
   : (req: NextRequest) => {
       const pathname = req.nextUrl.pathname;
       return protectedRoutePatterns.some((pattern) => {
-        const regex = new RegExp("^" + pattern.replace(/\(.*\)/g, ".*") + "$");
+        const escapedPattern = pattern.replace(/\(.*\)/g, ".*");
+        const regex = new RegExp(`^${escapedPattern}$`);
         return regex.test(pathname);
       });
     };
@@ -121,7 +130,8 @@ const isPublicRoute = createRouteMatcher
   : (req: NextRequest) => {
       const pathname = req.nextUrl.pathname;
       return publicRoutePatterns.some((pattern) => {
-        const regex = new RegExp("^" + pattern.replace(/\(.*\)/g, ".*") + "$");
+        const escapedPattern = pattern.replace(/\(.*\)/g, ".*");
+        const regex = new RegExp(`^${escapedPattern}$`);
         return regex.test(pathname);
       });
     };
@@ -138,7 +148,9 @@ function handleLocaleRedirection(req: NextRequest): NextResponse | null {
     const locale = getLocale(req);
     const host = req.headers.get("host") || "localhost:3000";
     const protocol = req.headers.get("x-forwarded-proto") || "http";
-    const redirectUrl = new URL(`/${locale}${pathname}`, `${protocol}://${host}`);
+    const localePath = `/${locale}${pathname}`;
+    const baseUrl = `${protocol}://${host}`;
+    const redirectUrl = new URL(localePath, baseUrl);
     return NextResponse.redirect(redirectUrl, { status: 301 });
   }
 
@@ -153,7 +165,6 @@ async function middlewareHandler(req: NextRequest): Promise<NextResponse> {
   if (pathname === "/sitemap.xml") {
     return NextResponse.next();
   }
-
 
   // Handle public routes that don't need authentication (but still need Clerk context for API routes)
   if (isPublicRoute(req) && !pathname.startsWith("/api/")) {
@@ -210,7 +221,7 @@ async function middlewareHandler(req: NextRequest): Promise<NextResponse> {
 
 // Export middleware - use Clerk wrapper if available, otherwise direct handler
 export default clerkMiddleware && !isAuthDisabled
-  ? clerkMiddleware(async (auth: any, req: NextRequest) => {
+  ? clerkMiddleware(async (auth: () => Promise<AuthObject>, req: NextRequest) => {
       // When using Clerk, handle authentication for protected routes
       const pathname = req.nextUrl.pathname;
 
@@ -227,7 +238,9 @@ export default clerkMiddleware && !isAuthDisabled
             const locale = pathname.split("/")[1] || "en";
             const host = req.headers.get("host") || "localhost:3000";
             const protocol = req.headers.get("x-forwarded-proto") || "http";
-            const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
+            const signInPath = `/${locale}/sign-in`;
+            const baseUrl = `${protocol}://${host}`;
+            const redirectUrl = new URL(signInPath, baseUrl);
             return NextResponse.redirect(redirectUrl, { status: 303 });
           }
         } catch (error) {
@@ -248,7 +261,9 @@ export default clerkMiddleware && !isAuthDisabled
           const locale = pathname.split("/")[1] || "en";
           const host = req.headers.get("host") || "localhost:3000";
           const protocol = req.headers.get("x-forwarded-proto") || "http";
-          const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
+          const signInPath = `/${locale}/sign-in`;
+          const baseUrl = `${protocol}://${host}`;
+          const redirectUrl = new URL(signInPath, baseUrl);
           return NextResponse.redirect(redirectUrl, { status: 303 });
         }
       }

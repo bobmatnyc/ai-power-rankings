@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Database connection unavailable",
-          message: "The database service is currently unavailable. Please try again later."
+          message: "The database service is currently unavailable. Please try again later.",
         },
         { status: 503 }
       );
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         error: "Failed to fetch companies",
-        message: "An error occurred while fetching companies. Please try again later."
+        message: "An error occurred while fetching companies. Please try again later.",
       },
       { status: 500 }
     );
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Database connection unavailable",
-          message: "The database service is currently unavailable. Please try again later."
+          message: "The database service is currently unavailable. Please try again later.",
         },
         { status: 503 }
       );
@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: "Failed to create company",
-        message: "An error occurred while creating the company. Please try again later."
+        message: "An error occurred while creating the company. Please try again later.",
       },
       { status: 500 }
     );

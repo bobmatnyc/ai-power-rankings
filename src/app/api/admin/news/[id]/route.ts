@@ -51,31 +51,31 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Check if article exists
     const existingArticle = await articlesRepo.findById(id);
-      if (!existingArticle) {
-        return NextResponse.json({ error: "Article not found" }, { status: 404 });
-      }
-
-      // Validate required fields
-      if (!body.title && !existingArticle.title) {
-        return NextResponse.json({ error: "Title is required" }, { status: 400 });
-      }
-
-      // Update the article
-      const updatedArticle = await articlesRepo.updateArticle(id, {
-        ...body,
-        updatedAt: new Date(),
-      });
-
-      loggers.api.info("Article updated", { articleId: id });
-
-      return NextResponse.json({
-        success: true,
-        article: updatedArticle,
-      });
-    } catch (error) {
-      loggers.api.error("Error in admin/news/[id] PUT", { error });
-      return NextResponse.json({ error: "Failed to update article" }, { status: 500 });
+    if (!existingArticle) {
+      return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
+
+    // Validate required fields
+    if (!body.title && !existingArticle.title) {
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    }
+
+    // Update the article
+    const updatedArticle = await articlesRepo.updateArticle(id, {
+      ...body,
+      updatedAt: new Date(),
+    });
+
+    loggers.api.info("Article updated", { articleId: id });
+
+    return NextResponse.json({
+      success: true,
+      article: updatedArticle,
+    });
+  } catch (error) {
+    loggers.api.error("Error in admin/news/[id] PUT", { error });
+    return NextResponse.json({ error: "Failed to update article" }, { status: 500 });
+  }
 }
 
 /**
@@ -98,24 +98,24 @@ export async function DELETE(
 
     // Check if article exists
     const existingArticle = await articlesRepo.findById(id);
-      if (!existingArticle) {
-        return NextResponse.json({ error: "Article not found" }, { status: 404 });
-      }
-
-      // Delete the article
-      await articlesRepo.deleteArticle(id);
-
-      loggers.api.info("Article deleted", { articleId: id });
-
-      return NextResponse.json({
-        success: true,
-        deleted: {
-          id: existingArticle.id,
-          title: existingArticle.title,
-        },
-      });
-    } catch (error) {
-      loggers.api.error("Error in admin/news/[id] DELETE", { error });
-      return NextResponse.json({ error: "Failed to delete article" }, { status: 500 });
+    if (!existingArticle) {
+      return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
+
+    // Delete the article
+    await articlesRepo.deleteArticle(id);
+
+    loggers.api.info("Article deleted", { articleId: id });
+
+    return NextResponse.json({
+      success: true,
+      deleted: {
+        id: existingArticle.id,
+        title: existingArticle.title,
+      },
+    });
+  } catch (error) {
+    loggers.api.error("Error in admin/news/[id] DELETE", { error });
+    return NextResponse.json({ error: "Failed to delete article" }, { status: 500 });
+  }
 }

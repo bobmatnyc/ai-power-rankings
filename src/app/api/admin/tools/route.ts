@@ -13,11 +13,12 @@ import { requireAdmin } from "@/lib/api-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
+import type { Tool } from "@/lib/db/schema";
 
 interface ToolCheckResult {
   foundBySlug: boolean;
   foundByName: boolean;
-  tool: any | null;
+  tool: Tool | null;
 }
 
 // Extended Tool type with additional properties that may exist in the data

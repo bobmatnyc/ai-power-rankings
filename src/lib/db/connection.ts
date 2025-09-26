@@ -135,7 +135,9 @@ export function getDb() {
     }
 
     // Always throw error - no fallback to JSON
-    throw new Error(`Failed to establish database connection: ${error instanceof Error ? error.message : "Unknown error"}`);
+    throw new Error(
+      `Failed to establish database connection: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
   }
 }
 

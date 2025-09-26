@@ -54,8 +54,8 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({
       rankings: allRankings,
       total: allRankings.length,
-      periods: allPeriods.map(p => p.period),
-      current_period: allPeriods.find(p => p.is_current)?.period || null,
+      periods: allPeriods.map((p) => p.period),
+      current_period: allPeriods.find((p) => p.is_current)?.period || null,
     });
   } catch (error) {
     loggers.api.error("Get all rankings error", { error });

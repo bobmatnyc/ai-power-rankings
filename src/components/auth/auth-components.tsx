@@ -25,6 +25,7 @@ const clerkComponentsCache: {
   useAuth: ClerkHook | null;
   UserButton: ClerkComponent | null;
   loaded: boolean;
+  error: Error | null;
 } = {
   SignedIn: null,
   SignedOut: null,
@@ -33,9 +34,10 @@ const clerkComponentsCache: {
   useAuth: null,
   UserButton: null,
   loaded: false,
+  error: null,
 };
 
-// Load Clerk components dynamically
+// Load Clerk components dynamically with better error handling
 function loadClerkComponents() {
   if (clerkComponentsCache.loaded) {
     return clerkComponentsCache;
@@ -57,6 +59,7 @@ function loadClerkComponents() {
         clerkComponentsCache.loaded = true;
       } catch (error) {
         console.warn("[AuthComponents] Clerk module not available:", error);
+        clerkComponentsCache.error = error as Error;
         clerkComponentsCache.loaded = true; // Mark as loaded even on error to prevent retries
       }
     } else {
@@ -72,17 +75,37 @@ const getIsAuthDisabled = () => {
   return process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 };
 
-// Export functions that determine which implementation to use at runtime
-// This is not a React hook itself, but returns the appropriate hook
+// Create a safe wrapper for useAuth that checks context availability
+// This ensures we always have a valid auth implementation
 export const useAuth = () => {
   const isAuthDisabled = getIsAuthDisabled();
+  const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
   const components = loadClerkComponents();
 
-  // Determine which auth implementation to use
-  const authHook = isAuthDisabled || !components.useAuth ? MockUseAuth : components.useAuth;
+  // Always try to call the hook if it exists (to maintain hook order)
+  let clerkAuth = null;
+  if (components.useAuth && !components.error) {
+    try {
+      // This maintains hook call order - always called if available
+      clerkAuth = components.useAuth();
+    } catch {
+      // If it fails, we'll use mock
+      clerkAuth = null;
+    }
+  }
 
-  // Call the selected auth hook
-  return authHook();
+  // During SSR, always use mock to avoid context issues
+  if (typeof window === "undefined") {
+    return MockUseAuth();
+  }
+
+  // If auth is disabled, no Clerk key, or Clerk failed, use mock
+  if (isAuthDisabled || !hasClerkKey || !clerkAuth) {
+    return MockUseAuth();
+  }
+
+  // Use the Clerk auth result
+  return clerkAuth;
 };
 
 // Export wrapper components that choose implementation at runtime
@@ -150,6 +173,7 @@ export function SignInButtonWrapper({
 // Wrapper for SignedOut that ensures content is visible during SSR
 export function SignedOutWrapper({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
+  // Always call hooks at the top level - never conditionally
   const authData = useAuth();
 
   useEffect(() => {
@@ -173,6 +197,7 @@ export function SignedOutWrapper({ children }: { children: React.ReactNode }) {
 // Wrapper for SignedIn that handles SSR properly
 export function SignedInWrapper({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
+  // Always call hooks at the top level - never conditionally
   const authData = useAuth();
 
   useEffect(() => {
@@ -195,6 +220,7 @@ export function SignedInWrapper({ children }: { children: React.ReactNode }) {
 // Wrapper for UserButton that handles SSR properly
 export function UserButtonWrapper(props: Record<string, unknown>) {
   const [mounted, setMounted] = useState(false);
+  // Always call hooks at the top level - never conditionally
   const authData = useAuth();
   const isAuthDisabled = getIsAuthDisabled();
 

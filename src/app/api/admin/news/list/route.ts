@@ -35,12 +35,12 @@ export async function GET(_request: NextRequest) {
     const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
     const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
 
-    const currentMonthArticles = articles.filter(article => {
+    const currentMonthArticles = articles.filter((article) => {
       const date = new Date(article.publishedDate || article.createdAt);
       return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
     });
 
-    const lastMonthArticles = articles.filter(article => {
+    const lastMonthArticles = articles.filter((article) => {
       const date = new Date(article.publishedDate || article.createdAt);
       return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
     });
@@ -49,9 +49,7 @@ export async function GET(_request: NextRequest) {
       return sum + (Array.isArray(article.toolMentions) ? article.toolMentions.length : 0);
     }, 0);
 
-    const averageToolMentions = articles.length > 0
-      ? totalToolMentions / articles.length
-      : 0;
+    const averageToolMentions = articles.length > 0 ? totalToolMentions / articles.length : 0;
 
     return NextResponse.json({
       success: true,

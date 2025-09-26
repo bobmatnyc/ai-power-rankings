@@ -55,11 +55,14 @@ export const GET = withErrorBoundary(async () => {
 
   if (!authResult.success) {
     // Return the error response from safeClerkAuth
-    return authResult.error || createErrorResponse(
-      new Error("Auth failed without error details"),
-      "Authentication failed",
-      500,
-      "AUTH_FAILED"
+    return (
+      authResult.error ||
+      createErrorResponse(
+        new Error("Auth failed without error details"),
+        "Authentication failed",
+        500,
+        "AUTH_FAILED"
+      )
     );
   }
 

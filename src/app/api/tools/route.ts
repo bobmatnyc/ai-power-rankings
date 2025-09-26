@@ -16,7 +16,7 @@ export async function GET(): Promise<NextResponse> {
       return NextResponse.json(
         {
           error: "Database connection unavailable",
-          message: "The database service is currently unavailable. Please try again later."
+          message: "The database service is currently unavailable. Please try again later.",
         },
         { status: 503 }
       );
@@ -140,7 +140,7 @@ export async function GET(): Promise<NextResponse> {
     return NextResponse.json(
       {
         error: "Internal server error",
-        message: "An error occurred while fetching tools. Please try again later."
+        message: "An error occurred while fetching tools. Please try again later.",
       },
       { status: 500 }
     );

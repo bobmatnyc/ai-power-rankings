@@ -25,8 +25,14 @@ export async function GET() {
       console.log("[test-minimal] auth() returned:", JSON.stringify(authResult));
     } catch (authError) {
       console.error("[test-minimal] auth() threw error:", authError);
-      console.error("[test-minimal] Error name:", authError instanceof Error ? authError.constructor.name : typeof authError);
-      console.error("[test-minimal] Error stack:", authError instanceof Error ? authError.stack : undefined);
+      console.error(
+        "[test-minimal] Error name:",
+        authError instanceof Error ? authError.constructor.name : typeof authError
+      );
+      console.error(
+        "[test-minimal] Error stack:",
+        authError instanceof Error ? authError.stack : undefined
+      );
 
       // Return the error details as JSON
       return NextResponse.json({
@@ -34,7 +40,10 @@ export async function GET() {
         error: "auth_failed",
         errorType: authError instanceof Error ? authError.constructor.name : "Unknown",
         message: authError instanceof Error ? authError.message : String(authError),
-        stack: process.env["NODE_ENV"] === "development" && authError instanceof Error ? authError.stack : undefined,
+        stack:
+          process.env["NODE_ENV"] === "development" && authError instanceof Error
+            ? authError.stack
+            : undefined,
       });
     }
 

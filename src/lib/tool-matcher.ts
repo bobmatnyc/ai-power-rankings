@@ -9,78 +9,78 @@ const defaultToolMappings: ToolMapping[] = [
   {
     tool_slug: "github-copilot",
     tool_name: "GitHub Copilot",
-    search_terms: ["github copilot", "copilot", "gh copilot"]
+    search_terms: ["github copilot", "copilot", "gh copilot"],
   },
   {
     tool_slug: "cursor",
     tool_name: "Cursor",
-    search_terms: ["cursor", "cursor ai", "cursor ide"]
+    search_terms: ["cursor", "cursor ai", "cursor ide"],
   },
   {
     tool_slug: "codeium",
     tool_name: "Codeium",
-    search_terms: ["codeium"]
+    search_terms: ["codeium"],
   },
   {
     tool_slug: "tabnine",
     tool_name: "Tabnine",
-    search_terms: ["tabnine", "tab nine"]
+    search_terms: ["tabnine", "tab nine"],
   },
   {
     tool_slug: "amazon-codewhisperer",
     tool_name: "Amazon CodeWhisperer",
-    search_terms: ["codewhisperer", "code whisperer", "amazon codewhisperer", "aws codewhisperer"]
+    search_terms: ["codewhisperer", "code whisperer", "amazon codewhisperer", "aws codewhisperer"],
   },
   {
     tool_slug: "replit-ai",
     tool_name: "Replit AI",
-    search_terms: ["replit ai", "replit", "repl.it"]
+    search_terms: ["replit ai", "replit", "repl.it"],
   },
   {
     tool_slug: "cody",
     tool_name: "Cody",
-    search_terms: ["cody", "sourcegraph cody", "cody ai"]
+    search_terms: ["cody", "sourcegraph cody", "cody ai"],
   },
   {
     tool_slug: "claude",
     tool_name: "Claude",
-    search_terms: ["claude", "claude ai", "anthropic claude", "claude code"]
+    search_terms: ["claude", "claude ai", "anthropic claude", "claude code"],
   },
   {
     tool_slug: "chatgpt",
     tool_name: "ChatGPT",
-    search_terms: ["chatgpt", "chat gpt", "openai chatgpt", "gpt-4", "gpt-4o"]
+    search_terms: ["chatgpt", "chat gpt", "openai chatgpt", "gpt-4", "gpt-4o"],
   },
   {
     tool_slug: "gemini",
     tool_name: "Gemini",
-    search_terms: ["gemini", "google gemini", "gemini ai", "gemini code"]
+    search_terms: ["gemini", "google gemini", "gemini ai", "gemini code"],
   },
   {
     tool_slug: "v0",
     tool_name: "v0",
-    search_terms: ["v0", "v0.dev", "vercel v0"]
+    search_terms: ["v0", "v0.dev", "vercel v0"],
   },
   {
     tool_slug: "windsurf",
     tool_name: "Windsurf",
-    search_terms: ["windsurf", "windsurf ide", "windsurf editor"]
+    search_terms: ["windsurf", "windsurf ide", "windsurf editor"],
   },
   {
     tool_slug: "bolt",
     tool_name: "Bolt",
-    search_terms: ["bolt", "bolt.new", "stackblitz bolt"]
+    search_terms: ["bolt", "bolt.new", "stackblitz bolt"],
   },
   {
     tool_slug: "lovable",
     tool_name: "Lovable",
-    search_terms: ["lovable", "lovable.dev"]
+    search_terms: ["lovable", "lovable.dev"],
   },
   {
     tool_slug: "devin",
     tool_name: "Devin",
-    search_terms: ["devin", "cognition devin", "devin ai"]
-  }
+    search_terms: ["devin", "cognition devin", "devin ai"],
+  },
 ];
 
 // In-memory cache for tool mappings

@@ -41,6 +41,7 @@ import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 // import { NewsRepository } from "@/lib/db/repositories/news"; // Would be used with news-enhanced ranking
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
+import type { Tool } from "@/lib/db/schema";
 
 // import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
 // Commenting out missing module - these functions need to be implemented
@@ -88,11 +89,13 @@ function getCategoryBasedAgenticScore(category: string, toolName: string): numbe
 /**
  * Transform tool data to metrics format for ranking algorithm
  */
-function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetricsV6 {
-  const info = tool.info || {};
-  const technical = info.technical || {};
-  const businessMetrics = info.metrics || {};
-  const business = info.business || {};
+function transformToToolMetrics(tool: Tool, innovationScore?: number): ToolMetricsV6 {
+  // The tool data is stored in the 'data' field as JSONB
+  const toolData = (tool.data as Record<string, any>) || {};
+  const info = toolData["info"] || {};
+  const technical = info["technical"] || {};
+  const businessMetrics = info["metrics"] || {};
+  const business = info["business"] || {};
 
   const isAutonomous = tool.category === "autonomous-agent";
   const isOpenSource = tool.category === "open-source-framework";
@@ -242,7 +245,7 @@ export async function POST(request: NextRequest) {
 
     // Calculate scores for all tools
     const rankingEngine = new RankingEngineV6();
-    const toolScores: Array<{ tool: any; score: ToolScoreV6; overallScore: number }> = [];
+    const toolScores: Array<{ tool: Tool; score: ToolScoreV6; overallScore: number }> = [];
 
     for (const tool of tools) {
       // Get innovation score
@@ -311,15 +314,25 @@ export async function POST(request: NextRequest) {
     const allRankings = await rankingsRepo.findAll();
     const previousPeriod = allRankings.find((r) => r.period < period);
     const previousRankings = previousPeriod?.data?.rankings || [];
-    const previousMap = new Map(previousRankings.map((r: any) => [r.tool_id, r]));
+    interface PreviousRanking {
+      tool_id: string;
+      position: number;
+      score: number;
+    }
+    const previousMap = new Map(previousRankings.map((r: PreviousRanking) => [r.tool_id, r]));
 
     // Create final rankings with movement tracking
     const rankings = toolScores.map((item, index) => {
       const position = index + 1;
       const previousRanking = previousMap.get(item.tool.id);
-      const previousPosition = (previousRanking as any)?.position;
+      const previousPosition = previousRanking?.position;
 
-      let movement: any = {
+      interface Movement {
+        change: number;
+        direction: "new" | "up" | "down" | "same";
+        previousPosition?: number;
+      }
+      let movement: Movement = {
         change: 0,
         direction: "new" as const,
       };
@@ -329,7 +342,7 @@ export async function POST(request: NextRequest) {
         movement = {
           change: Math.abs(change),
           direction: change > 0 ? "up" : change < 0 ? "down" : "same",
-          previous_position: previousPosition,
+          previousPosition: previousPosition,
         };
       }
 
