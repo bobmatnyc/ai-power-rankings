@@ -1,6 +1,6 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { GoogleSearchConsole } from "@/lib/google-search-console";
+import { requireAuth } from "@/lib/api-auth";
 
 // Mock data for development - will be replaced with real API integrations
 const getMockSEOMetrics = () => {
@@ -132,10 +132,10 @@ function calculateSEOScore(_metrics: {
 
 export async function GET() {
   try {
-    // Check authentication using Clerk
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Check authentication
+    const authResult = await requireAuth();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     const [searchConsoleData] = await Promise.all([
@@ -160,10 +160,10 @@ export async function GET() {
 
 export async function POST() {
   try {
-    // Check authentication using Clerk
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Check authentication
+    const authResult = await requireAuth();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     // Force refresh of SEO data

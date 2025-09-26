@@ -1,11 +1,11 @@
 "use client";
 
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { SignedInWrapper, SignedOutWrapper, SignInButton, SignUpButton, UserButton } from "./auth-components";
 
 function ClerkHeader() {
   return (
     <header className="flex justify-end items-center p-4 gap-4 h-16 border-b">
-      <SignedOut>
+      <SignedOutWrapper>
         <SignInButton mode="modal">
           <button
             type="button"
@@ -22,10 +22,10 @@ function ClerkHeader() {
             Sign Up
           </button>
         </SignUpButton>
-      </SignedOut>
-      <SignedIn>
+      </SignedOutWrapper>
+      <SignedInWrapper>
         <UserButton afterSignOutUrl="/" />
-      </SignedIn>
+      </SignedInWrapper>
     </header>
   );
 }

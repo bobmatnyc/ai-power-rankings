@@ -3,6 +3,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClientAuthWrapper } from "@/components/auth/client-auth-wrapper";
+import { AuthErrorBoundary } from "@/components/auth/auth-error-boundary";
 import "./globals.css";
 
 const inter = Inter({
@@ -53,7 +54,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.variable}>
       <body className={inter.className}>
-        <ClientAuthWrapper>{children}</ClientAuthWrapper>
+        <AuthErrorBoundary
+          fallback={
+            <div suppressHydrationWarning>
+              {children}
+            </div>
+          }
+        >
+          <ClientAuthWrapper>{children}</ClientAuthWrapper>
+        </AuthErrorBoundary>
         <Analytics />
         <SpeedInsights />
       </body>

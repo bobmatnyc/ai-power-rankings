@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { currentUser } from "@clerk/nextjs/server";
 import { neon } from "@neondatabase/serverless";
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 
 interface MigrationResult {
   name: string;
@@ -22,12 +22,10 @@ export async function GET() {
   const startTime = Date.now();
 
   try {
-    // Check authentication
-    const user = await currentUser();
-    const isAdmin = user?.publicMetadata?.isAdmin === true;
-
-    if (!user || !isAdmin) {
-      return NextResponse.json({ error: "Unauthorized - Admin access required" }, { status: 401 });
+    // Check admin authentication
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     // Check if database is enabled
@@ -279,12 +277,10 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    // Check authentication
-    const user = await currentUser();
-    const isAdmin = user?.publicMetadata?.isAdmin === true;
-
-    if (!user || !isAdmin) {
-      return NextResponse.json({ error: "Unauthorized - Admin access required" }, { status: 401 });
+    // Check admin authentication
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     // Parse request body

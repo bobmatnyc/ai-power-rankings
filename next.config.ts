@@ -16,8 +16,9 @@ const nextConfig: NextConfig = {
   // TurboPack is enabled automatically in Next.js 15+
   // Use --turbo flag for dev mode: next dev --turbo
 
-  // CRITICAL: Enable Node.js runtime for middleware to fix Clerk auth() issues
-  // This resolves the Edge Runtime vs Node.js runtime mismatch causing HTML errors in production
+  // CRITICAL: Enable Node.js runtime for API routes to fix Clerk auth() issues
+  // This resolves the Edge Runtime vs Node.js runtime mismatch causing useContext errors in production
+  // Middleware runs in Edge Runtime, API routes run in Node.js runtime
   serverExternalPackages: ["@clerk/nextjs"],
 
   experimental: {
@@ -32,6 +33,12 @@ const nextConfig: NextConfig = {
     esmExternals: true,
     // Note: staticPageGenerationTimeout is not available in NextConfig
     // Instead we use force-dynamic on individual pages
+
+    // Next.js 15 specific optimizations for App Router
+    // Improve server component performance
+    serverComponentsExternalPackages: ["@clerk/nextjs"],
+    // Optimize server-side imports
+    serverSourceMaps: process.env["NODE_ENV"] === "development",
   },
   // Removed turbopack config - let Next.js handle defaults
   // to avoid module resolution conflicts

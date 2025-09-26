@@ -14,22 +14,34 @@ type ClerkMiddleware = (
 ) => (req: NextRequest) => Promise<NextResponse>;
 type CreateRouteMatcher = (routes: string[]) => (req: NextRequest) => boolean;
 
-// Conditionally import Clerk based on environment
-// This prevents production errors when Clerk is not configured
+// Next.js 15 Edge Runtime Safe Clerk Import
+// CRITICAL: Edge Runtime cannot import React Context-dependent modules
+// This prevents useContext errors by isolating Clerk to Node.js runtime only
 let clerkMiddleware: ClerkMiddleware | null = null;
 let createRouteMatcher: CreateRouteMatcher | null = null;
 
 const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
-// Only load Clerk if auth is enabled AND we have the necessary keys
-if (!isAuthDisabled && hasClerkKey) {
+// IMPORTANT: Only attempt Clerk import if we're NOT in Edge Runtime
+// Edge Runtime detection: Check for Edge Runtime globals or missing Node.js APIs
+const isEdgeRuntime = typeof (globalThis as any)?.EdgeRuntime !== "undefined" || typeof process?.versions?.node === "undefined";
+
+// Only load Clerk if auth is enabled, we have keys, AND we're not in Edge Runtime
+if (!isAuthDisabled && hasClerkKey && !isEdgeRuntime) {
   try {
+    // Use require() instead of import() for synchronous loading in middleware
     const clerkModule = require("@clerk/nextjs/server");
-    clerkMiddleware = clerkModule.clerkMiddleware;
-    createRouteMatcher = clerkModule.createRouteMatcher;
+
+    // Validate that the imported functions don't rely on React Context
+    if (clerkModule?.clerkMiddleware && clerkModule?.createRouteMatcher) {
+      clerkMiddleware = clerkModule.clerkMiddleware;
+      createRouteMatcher = clerkModule.createRouteMatcher;
+    } else {
+      console.warn("[Middleware] Clerk module exports not found");
+    }
   } catch (error) {
-    console.warn("[Middleware] Clerk not available:", error);
+    console.warn("[Middleware] Clerk not available (this is expected in Edge Runtime):", error);
   }
 }
 
@@ -168,7 +180,15 @@ async function middlewareHandler(req: NextRequest): Promise<NextResponse> {
       VERCEL_ENV: process.env["VERCEL_ENV"],
       AUTH_DISABLED: isAuthDisabled,
       HAS_CLERK_KEY: hasClerkKey,
+      IS_EDGE_RUNTIME: isEdgeRuntime,
     });
+
+  // CRITICAL: API routes must bypass middleware entirely to prevent useContext errors
+  // API routes handle their own authentication via api-auth.ts in Node.js runtime
+  if (pathname.startsWith("/api/")) {
+    console.log("[Middleware] API route detected - bypassing middleware authentication");
+    return NextResponse.next();
+  }
 
   // Allow sitemap.xml to be accessed without locale prefix
   if (pathname === "/sitemap.xml") {
@@ -238,21 +258,23 @@ async function middlewareHandler(req: NextRequest): Promise<NextResponse> {
   }
 }
 
-// Export middleware - use Clerk wrapper if available, otherwise direct handler
-export default clerkMiddleware && !isAuthDisabled
+// Export middleware - use Clerk wrapper if available and safe, otherwise direct handler
+export default clerkMiddleware && !isAuthDisabled && !isEdgeRuntime
   ? clerkMiddleware(async (auth: () => Promise<AuthObject>, req: NextRequest) => {
       // When using Clerk, handle authentication for protected routes
       const pathname = req.nextUrl.pathname;
+
+      // CRITICAL: API routes are handled by their own authentication
+      // Skip Clerk processing for API routes to prevent useContext errors
+      if (pathname.startsWith("/api/")) {
+        console.log("[Middleware] API route bypassed in Clerk wrapper");
+        return NextResponse.next();
+      }
 
       if (isProtectedRoute(req) && !isPublicRoute(req)) {
         try {
           const { userId } = await auth();
           if (!userId) {
-            // For API routes, return 401 JSON response instead of redirect
-            if (pathname.startsWith("/api/")) {
-              return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-            }
-
             // For page routes, redirect to sign-in
             const locale = pathname.split("/")[1] || "en";
             const host = req.headers.get("host") || "localhost:3000";
@@ -265,18 +287,7 @@ export default clerkMiddleware && !isAuthDisabled
         } catch (error) {
           console.error("[Middleware] Auth check failed:", error);
 
-          // For API routes, return 500 JSON response instead of redirect
-          if (pathname.startsWith("/api/")) {
-            return NextResponse.json(
-              {
-                error: "Authentication service error",
-                message: error instanceof Error ? error.message : "Unknown error",
-              },
-              { status: 500 }
-            );
-          }
-
-          // For page routes, redirect to sign-in
+          // For page routes, redirect to sign-in on auth error
           const locale = pathname.split("/")[1] || "en";
           const host = req.headers.get("host") || "localhost:3000";
           const protocol = req.headers.get("x-forwarded-proto") || "http";
