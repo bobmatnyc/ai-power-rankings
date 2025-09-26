@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { NoAuthProvider } from "./no-auth-provider";
 
 // Conditionally import ClerkProvider based on environment
 let ClerkProvider: React.ComponentType<{
@@ -33,17 +34,17 @@ interface AuthProviderWrapperProps {
 }
 
 /**
- * Wrapper that conditionally provides Clerk authentication.
- * - If auth is disabled or Clerk keys are missing, passes through children
+ * Wrapper that conditionally provides authentication context.
+ * - If auth is disabled or Clerk keys are missing, wraps with NoAuthProvider
  * - If Clerk is available, wraps with ClerkProvider
  * - Handles [lang] dynamic routes for i18n
  */
 export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
   const pathname = usePathname();
 
-  // If ClerkProvider wasn't loaded (auth disabled or no keys), just pass through
+  // If ClerkProvider wasn't loaded (auth disabled or no keys), use NoAuthProvider
   if (!ClerkProvider) {
-    return <>{children}</>;
+    return <NoAuthProvider>{children}</NoAuthProvider>;
   }
 
   // Extract locale from pathname for i18n support

@@ -46,7 +46,7 @@ export function NoAuthProvider({ children }: NoAuthProviderProps) {
 }
 
 // Helper function to get context with proper null checks
-function useNoAuthContext(): NoAuthContextType {
+export function useNoAuthContext(): NoAuthContextType {
   const context = useContext(NoAuthContext);
   if (context === null) {
     throw new Error("useNoAuthContext must be used within a NoAuthProvider");
