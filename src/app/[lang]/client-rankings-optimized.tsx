@@ -207,6 +207,19 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
    * the browser is idle, keeping each chunk under 5ms of processing time.
    */
   const processRankingsInChunks = useCallback((rankings: RankingData[]) => {
+    // Ensure this only runs on the client
+    if (typeof window === "undefined") {
+      // During SSR, just set the data directly without chunking
+      setTopRankings(rankings.slice(0, 3));
+      setTrendingTools(rankings.filter((r) => r.rankChange && r.rankChange > 0).slice(0, 3));
+      setTrendingUpCount(rankings.filter((r) => r.rankChange && r.rankChange > 0).length);
+      setTrendingDownCount(rankings.filter((r) => r.rankChange && r.rankChange < 0).length);
+      setRecentlyUpdated(rankings.slice(6, 10));
+      setTotalTools(rankings.length);
+      setLoading(false);
+      return;
+    }
+
     const CHUNK_SIZE = 10;
     let currentIndex = 0;
 
