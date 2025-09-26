@@ -83,25 +83,18 @@ function getDatabaseUrl(): string | undefined {
 
 /**
  * Get database connection
- * Returns null if database is disabled or not configured
+ * Returns null if database is not configured
+ * ALWAYS uses database - no JSON fallback
  */
 export function getDb() {
-  // Read environment variables at runtime, not build time
-  const USE_DATABASE = process.env["USE_DATABASE"] === "true";
-
-  // Return null if database is disabled
-  if (!USE_DATABASE) {
-    return null;
-  }
-
   // Get appropriate database URL based on environment
   const DATABASE_URL = getDatabaseUrl();
 
   // Check if database URL is configured
   if (!DATABASE_URL) {
-    console.warn("Database URL not configured for environment:", NODE_ENV);
-    console.warn("Using JSON file storage.");
-    return null;
+    console.error("❌ CRITICAL: Database URL not configured for environment:", NODE_ENV);
+    console.error("Database connection is REQUIRED - no JSON fallback available");
+    throw new Error(`Database connection required but not configured for environment: ${NODE_ENV}`);
   }
 
   // Return existing connection if available
@@ -135,14 +128,14 @@ export function getDb() {
       console.error("Production database connection failure details:", {
         hasUrl: !!DATABASE_URL,
         urlLength: DATABASE_URL?.length || 0,
-        useDatabase: USE_DATABASE,
         nodeEnv: NODE_ENV,
         errorMessage: error instanceof Error ? error.message : "Unknown error",
         errorStack: error instanceof Error ? error.stack?.substring(0, 500) : "No stack",
       });
     }
 
-    return null;
+    // Always throw error - no fallback to JSON
+    throw new Error(`Failed to establish database connection: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 }
 

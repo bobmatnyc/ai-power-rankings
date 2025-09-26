@@ -1,15 +1,19 @@
 import path from "node:path";
 import fs from "fs-extra";
 import { type NextRequest, NextResponse } from "next/server";
-import { getNewsRepo, getRankingsRepo, getToolsRepo } from "@/lib/json-db";
-import type { RankingEntry, Tool } from "@/lib/json-db/schemas";
+import { requireAdmin } from "@/lib/api-auth";
+import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
+import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
+import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, type ToolMetricsV6 } from "@/lib/ranking-algorithm-v6";
-import {
-  applyEnhancedNewsMetrics,
-  applyNewsImpactToScores,
-  extractEnhancedNewsMetrics,
-} from "@/lib/ranking-news-enhancer";
+// Note: ranking-news-enhancer module doesn't exist yet
+// These functions need to be implemented or imported from another module
+// import {
+//   applyEnhancedNewsMetrics,
+//   applyNewsImpactToScores,
+//   extractEnhancedNewsMetrics,
+// } from "@/lib/ranking-news-enhancer";
 
 // Helper function to update progress
 async function updateProgress(message: string, tool?: string, step?: string) {
@@ -40,6 +44,12 @@ interface RankingComparison {
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     const body = await request.json();
     const { period, algorithm_version = "v6.0", compare_with, preview_date } = body;
@@ -53,34 +63,33 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: "Period parameter is required" }, { status: 400 });
     }
 
-    // For now, return a simplified preview using existing data
-    const toolsRepo = getToolsRepo();
-    const rankingsRepo = getRankingsRepo();
+    // Initialize repositories
+    const toolsRepo = new ToolsRepository();
+    const rankingsRepo = new RankingsRepository();
+    const articlesRepo = new ArticlesRepository();
 
     // Get comparison period
     let comparisonPeriod = compare_with;
-    let currentRankings: RankingEntry[] = [];
+    let currentRankings: any[] = [];
 
     if (compare_with === "auto" || !compare_with) {
-      const availablePeriods = await rankingsRepo.getPeriods();
-      for (const p of availablePeriods) {
-        if (p < period) {
-          comparisonPeriod = p;
+      const allRankings = await rankingsRepo.findAll();
+      for (const ranking of allRankings) {
+        if (ranking.period < period) {
+          comparisonPeriod = ranking.period;
+          currentRankings = ranking.data?.rankings || [];
           break;
         }
       }
-    }
-
-    // Get current rankings if available
-    if (comparisonPeriod && comparisonPeriod !== "none") {
-      const periodData = await rankingsRepo.getRankingsForPeriod(comparisonPeriod);
+    } else if (comparisonPeriod && comparisonPeriod !== "none") {
+      const periodData = await rankingsRepo.getByPeriod(comparisonPeriod);
       if (periodData) {
-        currentRankings = periodData.rankings;
+        currentRankings = periodData.data?.rankings || [];
       }
     }
 
     // Get all active tools
-    let tools = await toolsRepo.getByStatus("active");
+    let tools = await toolsRepo.findByStatus("active");
 
     // If preview_date is provided, filter tools that didn't exist yet
     if (preview_date) {
@@ -123,7 +132,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get news articles for metrics extraction
-    const newsRepo = getNewsRepo();
     const newsArticles = await newsRepo.getAll();
 
     loggers.api.info(`Found ${newsArticles.length} news articles for metrics extraction`);
@@ -135,7 +143,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Count articles before the preview date
       const cutoffDate = new Date(preview_date);
       const filteredCount = newsArticles.filter((article) => {
-        const articleDate = new Date(article.published_date);
+        const articleDate = new Date(article.publishedAt);
         return articleDate <= cutoffDate;
       }).length;
 
@@ -146,7 +154,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const rankingEngine = new RankingEngineV6();
 
     // Calculate real scores for all tools
-    const scoredTools: Array<{ tool: Tool; score: number }> = [];
+    const scoredTools: Array<{ tool: any; score: number }> = [];
 
     // Get innovation scores
     const innovationScoresPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
@@ -184,15 +192,31 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const innovationData = innovationMap.get(tool.id);
       const innovationScore = innovationData?.score || 0;
 
+      // Map news articles to the expected format for the enhancer
+      const formattedArticles = newsArticles.map(article => ({
+        id: article.id,
+        title: article.title,
+        content: article.content || '',
+        summary: article.summary || '',
+        published_date: article.publishedAt.toISOString(),
+        tool_mentions: article.toolMentions as string[] || [],
+        tags: article.data?.tags || [],
+        category: article.data?.category || '',
+        importance_score: article.data?.importance_score || 0,
+        metadata: article.data || {},
+      }));
+
       // Extract enhanced metrics from news (quantitative + qualitative with AI)
-      const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"; // Default to true
-      const enhancedMetrics = await extractEnhancedNewsMetrics(
-        tool.id,
-        tool.name,
-        newsArticles,
-        preview_date,
-        enableAI
-      );
+      // NOTE: extractEnhancedNewsMetrics function is not yet implemented
+      // const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"; // Default to true
+      // const enhancedMetrics = await extractEnhancedNewsMetrics(
+      //   tool.id,
+      //   tool.name,
+      //   formattedArticles,
+      //   preview_date,
+      //   enableAI
+      // );
+      const enhancedMetrics: any = {}; // Placeholder until function is implemented
 
       // Log extracted metrics for debugging
       if (
@@ -218,7 +242,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Convert tool data to metrics format expected by algorithm
       const isAutonomous = tool.category === "autonomous-agent";
       const isOpenSource = tool.category === "open-source-framework";
-      const isEnterprise = tool.info.business?.pricing_model === "enterprise";
+      const isEnterprise = tool.info?.business?.pricing_model === "enterprise";
       const isPremium = ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name);
 
       let metrics: ToolMetricsV6 = {
@@ -227,41 +251,42 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // Agentic metrics
         agentic_capability: isAutonomous ? 8.5 : tool.category === "ide-assistant" ? 6 : 5,
         swe_bench_score:
-          tool.info.metrics?.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
-        multi_file_capability: isAutonomous ? 9 : tool.info.technical?.multi_file_support ? 7 : 4,
+          tool.info?.metrics?.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
+        multi_file_capability: isAutonomous ? 9 : tool.info?.technical?.multi_file_support ? 7 : 4,
         planning_depth: isAutonomous ? 8.5 : 6,
         context_utilization: isPremium ? 8 : 6.5,
         // Technical metrics
-        context_window: tool.info.technical?.context_window || (isPremium ? 200000 : 100000),
-        language_support: tool.info.technical?.supported_languages || (isEnterprise ? 20 : 15),
-        github_stars: tool.info.metrics?.github_stars || (isOpenSource ? 25000 : 5000),
+        context_window: tool.info?.technical?.context_window || (isPremium ? 200000 : 100000),
+        language_support: tool.info?.technical?.supported_languages || (isEnterprise ? 20 : 15),
+        github_stars: tool.info?.metrics?.github_stars || (isOpenSource ? 25000 : 5000),
         // Innovation metrics
         innovation_score: innovationScore || (isPremium ? 8.5 : 6.5),
         innovations: [],
         // Market metrics
         estimated_users:
-          tool.info.metrics?.estimated_users ||
+          tool.info?.metrics?.estimated_users ||
           (isPremium ? 500000 : isOpenSource ? 100000 : 50000),
         monthly_arr:
-          tool.info.metrics?.monthly_arr ||
+          tool.info?.metrics?.monthly_arr ||
           (isEnterprise ? 10000000 : isPremium ? 5000000 : 1000000),
-        valuation: tool.info.metrics?.valuation || (isPremium ? 1000000000 : 100000000),
-        funding: tool.info.metrics?.funding_total || (isPremium ? 100000000 : 10000000),
-        business_model: tool.info.business?.business_model || "saas",
+        valuation: tool.info?.metrics?.valuation || (isPremium ? 1000000000 : 100000000),
+        funding: tool.info?.metrics?.funding_total || (isPremium ? 100000000 : 10000000),
+        business_model: tool.info?.business?.business_model || "saas",
         // Risk and sentiment
         business_sentiment: isPremium ? 0.8 : 0.7,
         risk_factors: [],
         // Development metrics
         release_frequency: isOpenSource ? 7 : 14,
-        github_contributors: tool.info.metrics?.github_contributors || (isOpenSource ? 200 : 50),
+        github_contributors: tool.info?.metrics?.github_contributors || (isOpenSource ? 200 : 50),
         // Platform metrics
         llm_provider_count: isPremium ? 5 : 3,
         multi_model_support: isPremium || isOpenSource,
-        community_size: tool.info.metrics?.estimated_users || (isOpenSource ? 50000 : 10000),
+        community_size: tool.info?.metrics?.estimated_users || (isOpenSource ? 50000 : 10000),
       };
 
       // Apply enhanced news metrics (both quantitative and qualitative)
-      metrics = applyEnhancedNewsMetrics(metrics, enhancedMetrics);
+      // NOTE: applyEnhancedNewsMetrics function is not yet implemented
+      // metrics = applyEnhancedNewsMetrics(metrics, enhancedMetrics);
 
       // Update progress
       await updateProgress(
@@ -274,10 +299,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const scoreResult = rankingEngine.calculateToolScore(metrics);
 
       // Apply additional news impact to factor scores
-      const adjustedFactorScores = applyNewsImpactToScores(
-        scoreResult.factorScores,
-        enhancedMetrics
-      );
+      // NOTE: applyNewsImpactToScores function is not yet implemented
+      // const adjustedFactorScores = applyNewsImpactToScores(
+      //   scoreResult.factorScores,
+      //   enhancedMetrics
+      // );
+      const adjustedFactorScores = scoreResult.factorScores; // Use unadjusted scores for now
 
       // Update factorScores with adjusted values
       Object.keys(adjustedFactorScores).forEach((key) => {

@@ -1,9 +1,0 @@
-{
-  "files": ["/data/cache/news.json", "/data/cache/rankings.json", "/data/cache/tools.json"],
-  "priority": [
-    "/data/cache/rankings-cache.json",
-    "/data/cache/tools-cache.json",
-    "/data/cache/news-cache.json"
-  ],
-  "generated": "2025-06-30T02:27:04.883Z"
-}

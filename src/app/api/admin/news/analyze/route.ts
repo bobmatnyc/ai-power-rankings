@@ -1,8 +1,8 @@
-import crypto from "node:crypto";
+// crypto import removed - not used
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getNewsRepo } from "@/lib/json-db";
-import type { NewsArticle } from "@/lib/json-db/schemas";
+import { requireAdmin } from "@/lib/api-auth";
+import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 
 // Type definitions for OpenRouter API
@@ -576,15 +576,13 @@ export async function POST(request: NextRequest) {
   const requestStartTime = Date.now();
   console.log("[News Analysis] Received analysis request at", new Date().toISOString());
 
-  try {
-    // Check admin authentication
-    const { isAuthenticated } = await import("@/lib/clerk-auth");
-    const isAuth = await isAuthenticated();
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
 
-    if (!isAuth) {
-      console.log("[News Analysis] Unauthorized - admin authentication required");
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  try {
 
     const body = await request.json();
     const {
@@ -630,40 +628,41 @@ export async function POST(request: NextRequest) {
     const analysis = await analyzeWithOpenRouter(content, url, verbose);
 
     // Save as article if requested
-    let savedArticle: NewsArticle | null = null;
+    let savedArticle: any = null;
     if (saveAsArticle) {
-      const newsRepo = getNewsRepo();
-      const now = new Date().toISOString();
-      const articleId = crypto.randomUUID();
+      const articlesRepo = new ArticlesRepository();
+      const now = new Date();
 
       // Convert analysis to article format
-      const article: NewsArticle = {
-        id: articleId,
+      const article = await articlesRepo.createArticle({
+        title: analysis.title,
         slug: analysis.title
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-+|-+$/g, ""),
-        title: analysis.title,
         summary: analysis.summary,
         content: `<p>${analysis.summary}</p>\n\n<p>${content.substring(0, 5000)}...</p>`,
         author: "AI News Analyst",
-        published_date: analysis.published_date ? `${analysis.published_date}T00:00:00.000Z` : now,
-        source: analysis.source || "Unknown",
-        source_url: url || undefined,
+        publishedDate: analysis.published_date ? new Date(analysis.published_date) : now,
+        sourceName: analysis.source || "Unknown",
+        sourceUrl: url,
+        // url field doesn't exist in schema - use sourceUrl instead
         tags: analysis.key_topics || [],
-        tool_mentions: analysis.tool_mentions?.map((tm) => tm.tool) || [],
-        created_at: now,
-        updated_at: now,
+        toolMentions: analysis.tool_mentions?.map((tm) => tm.tool) || [],
         category: "AI News",
-        importance_score: analysis.importance_score || 5,
-        related_tools: analysis.tool_mentions?.map((tm) => tm.tool) || [],
-      };
+        importanceScore: analysis.importance_score || 5,
+        status: "active",
+        ingestionType: "url",
+        ingestedAt: now,
+        ingestedBy: "admin", // userId not available in this context
+        // Note: metadata field doesn't exist in the schema
+        // These values could be stored separately or schema needs to be extended
+      });
 
-      await newsRepo.upsert(article);
       savedArticle = article;
 
       if (verbose) {
-        console.log("[News Analysis] Article saved with ID:", articleId);
+        console.log("[News Analysis] Article saved with ID:", savedArticle.id);
       }
     }
 

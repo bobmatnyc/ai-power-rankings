@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getRankingsRepo } from "@/lib/json-db";
-import type { RankingPeriod } from "@/lib/json-db/schemas";
+import { requireAdmin } from "@/lib/api-auth";
+import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
 
 type Params = {
@@ -11,20 +11,30 @@ type Params = {
 
 // GET rankings for a specific period
 export async function GET(_request: NextRequest, { params }: Params) {
-  try {
-    // TODO: Add authentication check here
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
 
+  try {
     const { period } = await params;
-    const rankingsRepo = getRankingsRepo();
-    const periodData = await rankingsRepo.getRankingsForPeriod(period);
+    const rankingsRepo = new RankingsRepository();
+    const periodData = await rankingsRepo.getByPeriod(period);
 
     if (!periodData) {
       return NextResponse.json({ error: "Rankings not found for period" }, { status: 404 });
     }
 
     return NextResponse.json({
-      period: periodData,
-      _source: "json-db",
+      period: periodData.period,
+      algorithm_version: periodData.algorithm_version,
+      is_current: periodData.is_current,
+      published_at: periodData.published_at,
+      rankings: periodData.data?.rankings || [],
+      metadata: periodData.data?.metadata || {},
+      created_at: periodData.created_at,
+      updated_at: periodData.updated_at,
     });
   } catch (error) {
     const { period } = await params;
@@ -42,34 +52,63 @@ export async function GET(_request: NextRequest, { params }: Params) {
 
 // UPDATE rankings for a period (save/update)
 export async function PUT(request: NextRequest, { params }: Params) {
-  try {
-    // TODO: Add authentication check here
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
 
+  try {
     const { period } = await params;
     const body = await request.json();
-    const rankingsRepo = getRankingsRepo();
+    const rankingsRepo = new RankingsRepository();
 
-    const rankingPeriod: RankingPeriod = {
-      period: period,
-      algorithm_version: body.algorithm_version || "v6-news",
-      is_current: body.is_current || false,
-      created_at: body.created_at || new Date().toISOString(),
-      preview_date: body.preview_date,
-      rankings: body.rankings || [],
-    };
+    // Check if period exists
+    const existing = await rankingsRepo.getByPeriod(period);
 
-    await rankingsRepo.saveRankingsForPeriod(rankingPeriod);
+    if (existing) {
+      // Update existing rankings
+      const updated = await rankingsRepo.update(existing.id, {
+        algorithm_version: body.algorithm_version || existing.algorithm_version,
+        is_current: body.is_current !== undefined ? body.is_current : existing.is_current,
+        published_at: body.published_at ? new Date(body.published_at) : existing.published_at,
+        data: {
+          rankings: body.rankings || existing.data?.rankings || [],
+          metadata: body.metadata || existing.data?.metadata || {},
+          generated_at: new Date().toISOString(),
+        },
+      });
 
-    // If marking as current, update the current period
-    if (body.is_current) {
-      await rankingsRepo.setCurrentPeriod(period);
+      // If marking as current, use the setAsCurrent method
+      if (body.is_current && !existing.is_current) {
+        await rankingsRepo.setAsCurrent(existing.id);
+      }
+
+      return NextResponse.json({
+        success: true,
+        period: period,
+        message: "Rankings updated successfully",
+      });
+    } else {
+      // Create new rankings
+      const created = await rankingsRepo.create({
+        period: period,
+        algorithm_version: body.algorithm_version || "v6.0",
+        is_current: body.is_current || false,
+        published_at: body.published_at ? new Date(body.published_at) : null,
+        data: {
+          rankings: body.rankings || [],
+          metadata: body.metadata || {},
+          generated_at: new Date().toISOString(),
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        period: created.period,
+        message: "Rankings created successfully",
+      });
     }
-
-    return NextResponse.json({
-      success: true,
-      period: rankingPeriod,
-      message: "Rankings saved successfully",
-    });
   } catch (error) {
     const { period } = await params;
     loggers.api.error("Update rankings error", { error, period });
@@ -86,26 +125,31 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
 // DELETE rankings for a period
 export async function DELETE(_request: NextRequest, { params }: Params) {
-  try {
-    // TODO: Add authentication check here
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
 
+  try {
     const { period } = await params;
-    const rankingsRepo = getRankingsRepo();
+    const rankingsRepo = new RankingsRepository();
+
+    // Check if period exists
+    const existing = await rankingsRepo.getByPeriod(period);
+    if (!existing) {
+      return NextResponse.json({ error: "Ranking period not found" }, { status: 404 });
+    }
 
     // Don't allow deleting the current period
-    const currentPeriod = await rankingsRepo.getCurrentPeriod();
-    if (period === currentPeriod) {
+    if (existing.is_current) {
       return NextResponse.json(
         { error: "Cannot delete the current ranking period" },
         { status: 400 }
       );
     }
 
-    const success = await rankingsRepo.deletePeriod(period);
-
-    if (!success) {
-      return NextResponse.json({ error: "Failed to delete ranking period" }, { status: 500 });
-    }
+    await rankingsRepo.deleteByPeriod(period);
 
     return NextResponse.json({
       success: true,

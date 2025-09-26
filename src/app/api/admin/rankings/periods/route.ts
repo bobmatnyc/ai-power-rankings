@@ -1,42 +1,45 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getRankingsRepo } from "@/lib/json-db";
+import { requireAdmin } from "@/lib/api-auth";
+import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
 
 // GET all ranking periods
 export async function GET(_request: NextRequest) {
-  try {
-    // TODO: Add authentication check here
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
 
-    const rankingsRepo = getRankingsRepo();
-    const periods = await rankingsRepo.getAvailablePeriods();
-    const currentPeriod = await rankingsRepo.getCurrentPeriod();
+  try {
+    const rankingsRepo = new RankingsRepository();
+    const allRankings = await rankingsRepo.findAll();
+    const currentRanking = await rankingsRepo.getCurrentRankings();
 
     // Get detailed info for each period
-    const periodsWithDetails = await Promise.all(
-      periods.map(async (period) => {
-        const data = await rankingsRepo.getRankingsForPeriod(period);
+    const periodsWithDetails = allRankings.map((ranking) => {
+      const rankingsCount = ranking.data?.rankings?.length || 0;
 
-        return {
-          period,
-          display_name:
-            period.replace("-", " ").charAt(0).toUpperCase() + period.replace("-", " ").slice(1),
-          is_current: period === currentPeriod,
-          rankings_count: data?.rankings.length || 0,
-          algorithm_version: data?.algorithm_version,
-          created_at: data?.created_at,
-          preview_date: data?.preview_date,
-        };
-      })
-    );
+      return {
+        period: ranking.period,
+        display_name:
+          ranking.period.replace("-", " ").charAt(0).toUpperCase() +
+          ranking.period.replace("-", " ").slice(1),
+        is_current: ranking.is_current,
+        rankings_count: rankingsCount,
+        algorithm_version: ranking.algorithm_version,
+        created_at: ranking.created_at.toISOString(),
+        published_at: ranking.published_at?.toISOString() || null,
+        preview_date: ranking.data?.preview_date || null,
+      };
+    });
 
-    // Sort by period descending (newest first)
-    periodsWithDetails.sort((a, b) => b.period.localeCompare(a.period));
+    // Already sorted by period descending from the repository
 
     return NextResponse.json({
       periods: periodsWithDetails,
-      current: currentPeriod,
+      current: currentRanking?.period || null,
       total: periodsWithDetails.length,
-      _source: "json-db",
     });
   } catch (error) {
     loggers.api.error("Get ranking periods error", { error });

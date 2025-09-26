@@ -1,17 +1,24 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getRankingsRepo } from "@/lib/json-db";
+import { requireAdmin } from "@/lib/api-auth";
+import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
 
 export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ period: string }> }
 ) {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     const { period } = await params;
 
     loggers.api.debug("Deleting ranking period", { period });
 
-    const rankingsRepo = getRankingsRepo();
+    const rankingsRepo = new RankingsRepository();
 
     // Check if period exists
     const existingPeriod = await rankingsRepo.getByPeriod(period);

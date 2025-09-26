@@ -10,7 +10,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import type { RankingPeriod } from "@/lib/json-db/schemas";
+// Define RankingPeriod interface locally
+interface RankingPeriod {
+  period: string;
+  algorithm_version: string;
+  is_current: boolean;
+  created_at: string;
+  updated_at: string;
+  published_at?: string;
+  rankings?: any[];
+}
 
 interface RankingChangesSummaryProps {
   period: string;
@@ -84,7 +93,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
       return [];
     }
 
-    return rankingsData.rankings
+    return (rankingsData?.rankings || [])
       .filter(
         (entry) =>
           entry.movement &&
@@ -103,20 +112,20 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
         score_change: 0, // Score change is not available in the current data structure
         primary_reason: entry.change_analysis?.primary_reason,
       }))
-      .sort((a, b) => Math.abs(b.movement_change) - Math.abs(a.movement_change));
+      .sort((a, b) => Math.abs(b.movement_change || 0) - Math.abs(a.movement_change || 0));
   };
 
   const generateNarrative = () => {
     const changes = getSignificantChanges();
     const newEntries = changes.filter((c) => c.movement_direction === "new");
     const bigMoversUp = changes.filter(
-      (c) => c.movement_direction === "up" && c.movement_change >= 3
+      (c) => c.movement_direction === "up" && (c.movement_change || 0) >= 3
     );
     const bigMoversDown = changes.filter(
-      (c) => c.movement_direction === "down" && c.movement_change >= 3
+      (c) => c.movement_direction === "down" && Math.abs(c.movement_change || 0) >= 3
     );
     const topThreeChanges =
-      rankingsData?.rankings.slice(0, 3).filter((r) => r.movement?.direction !== "same") || [];
+      ((rankingsData?.rankings || []).slice(0, 3).filter((r) => r.movement?.direction !== "same"));
 
     let narrative = `# AI Tool Rankings Update - ${formatPeriodDisplay(period)}\n\n`;
 
@@ -126,7 +135,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
 
     // Executive Summary
     narrative += "## Executive Summary\n\n";
-    narrative += `This period saw ${changes.length} significant position changes among the ${rankingsData?.rankings.length || 0} ranked AI coding tools. `;
+    narrative += `This period saw ${changes.length} significant position changes among the ${(rankingsData?.rankings || []).length} ranked AI coding tools. `;
 
     if (newEntries.length > 0) {
       narrative += `${newEntries.length} new tool${newEntries.length > 1 ? "s" : ""} entered the rankings. `;
@@ -143,9 +152,11 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
       narrative += "## Changes in Top 3\n\n";
       topThreeChanges.forEach((entry) => {
         if (entry.movement?.direction === "up") {
-          narrative += `- **${entry.tool_name}** climbed to #${entry.position} (up ${entry.movement.change} position${entry.movement.change > 1 ? "s" : ""})\n`;
+          const change = entry.movement?.change || 0;
+          narrative += `- **${entry.tool_name}** climbed to #${entry.position} (up ${change} position${change > 1 ? "s" : ""})\n`;
         } else if (entry.movement?.direction === "down") {
-          narrative += `- **${entry.tool_name}** dropped to #${entry.position} (down ${Math.abs(entry.movement.change)} position${Math.abs(entry.movement.change) > 1 ? "s" : ""})\n`;
+          const change = Math.abs(entry.movement?.change || 0);
+          narrative += `- **${entry.tool_name}** dropped to #${entry.position} (down ${change} position${change > 1 ? "s" : ""})\n`;
         } else if (entry.movement?.direction === "new") {
           narrative += `- **${entry.tool_name}** entered the top 3 at #${entry.position}\n`;
         }
@@ -173,7 +184,8 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
     if (bigMoversUp.length > 0) {
       narrative += "## Biggest Gainers\n\n";
       bigMoversUp.slice(0, 5).forEach((entry) => {
-        narrative += `- **${entry.tool_name}** jumped ${entry.movement_change} position${entry.movement_change > 1 ? "s" : ""} to #${entry.position}`;
+        const change = entry.movement_change || 0;
+        narrative += `- **${entry.tool_name}** jumped ${change} position${change > 1 ? "s" : ""} to #${entry.position}`;
         if (entry.primary_reason) {
           narrative += ` - ${entry.primary_reason}`;
         }
@@ -186,7 +198,8 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
     if (bigMoversDown.length > 0) {
       narrative += "## Notable Declines\n\n";
       bigMoversDown.slice(0, 5).forEach((entry) => {
-        narrative += `- **${entry.tool_name}** fell ${Math.abs(entry.movement_change)} position${Math.abs(entry.movement_change) > 1 ? "s" : ""} to #${entry.position}`;
+        const change = Math.abs(entry.movement_change || 0);
+        narrative += `- **${entry.tool_name}** fell ${change} position${change > 1 ? "s" : ""} to #${entry.position}`;
         if (entry.primary_reason) {
           narrative += ` - ${entry.primary_reason}`;
         }
@@ -200,7 +213,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
 
     // Analyze patterns
     const autonomousAgents = changes.filter(
-      (c) => rankingsData?.rankings.find((r) => r.tool_id === c.tool_id)?.tier === "S"
+      (c) => (rankingsData?.rankings || []).find((r) => r.tool_id === c.tool_id)?.tier === "S"
     );
 
     if (autonomousAgents.length > 0) {
@@ -220,7 +233,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
     // Footer
     narrative += "---\n\n";
     narrative += `*Generated from AI Power Rankings data for ${formatPeriodDisplay(period)}*\n`;
-    narrative += `*Total tools ranked: ${rankingsData?.rankings.length || 0}*\n`;
+    narrative += `*Total tools ranked: ${(rankingsData?.rankings || []).length}*\n`;
     narrative += `*Algorithm version: ${rankingsData?.algorithm_version || "v6-news"}*`;
 
     return narrative;

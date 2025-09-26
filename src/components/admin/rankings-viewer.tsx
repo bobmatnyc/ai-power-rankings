@@ -28,7 +28,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import type { RankingPeriod } from "@/lib/json-db/schemas";
+// Define RankingPeriod interface locally
+interface RankingPeriod {
+  period: string;
+  algorithm_version: string;
+  is_current: boolean;
+  created_at: string;
+  updated_at: string;
+  published_at?: string;
+  rankings?: any[];
+}
 import { cn } from "@/lib/utils";
 
 interface RankingPeriodSummary {

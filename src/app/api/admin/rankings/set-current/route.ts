@@ -1,12 +1,17 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getRankingsRepo } from "@/lib/json-db";
+import { requireAdmin } from "@/lib/api-auth";
+import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
 
 // POST - Set a ranking period as current
 export async function POST(request: NextRequest) {
-  try {
-    // TODO: Add authentication check here
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
 
+  try {
     const body = await request.json();
     const { period } = body;
 
@@ -14,32 +19,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Period is required" }, { status: 400 });
     }
 
-    const rankingsRepo = getRankingsRepo();
+    const rankingsRepo = new RankingsRepository();
 
     // Check if period exists
-    const periodData = await rankingsRepo.getRankingsForPeriod(period);
+    const periodData = await rankingsRepo.getByPeriod(period);
     if (!periodData) {
       return NextResponse.json({ error: "Ranking period not found" }, { status: 404 });
     }
 
-    // Set as current period
-    await rankingsRepo.setCurrentPeriod(period);
+    // Set as current period (this will unset all others and set this one as current)
+    await rankingsRepo.setAsCurrent(periodData.id);
 
-    // Update the period data to mark it as current
-    periodData.is_current = true;
-    await rankingsRepo.saveRankingsForPeriod(periodData);
-
-    // Get all periods and mark others as not current
-    const allPeriods = await rankingsRepo.getAvailablePeriods();
-    for (const otherPeriod of allPeriods) {
-      if (otherPeriod !== period) {
-        const otherData = await rankingsRepo.getRankingsForPeriod(otherPeriod);
-        if (otherData?.is_current) {
-          otherData.is_current = false;
-          await rankingsRepo.saveRankingsForPeriod(otherData);
-        }
-      }
-    }
+    loggers.api.info("Successfully set current ranking period", { period });
 
     return NextResponse.json({
       success: true,

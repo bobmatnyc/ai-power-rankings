@@ -5,17 +5,17 @@
  *
  * ## Overview
  * The ranking generation process:
- * 1. Loads all active tools from the JSON database
+ * 1. Loads all active tools from the database
  * 2. Loads innovation scores from innovation-scores.json
  * 3. Transforms tool data into metrics format for the algorithm
  * 4. Calculates scores using RankingEngineV6 (returns 0-10 scale)
  * 5. Converts scores to 0-100 scale for consistency
  * 6. Compares with previous period for movement tracking
- * 7. Saves rankings to JSON file
+ * 7. Saves rankings to database
  *
  * ## Important Notes
  * - The algorithm returns scores on a 0-10 scale, which are multiplied by 10 for storage
- * - Agentic capability scores are derived from tool categories (not stored in tools.json)
+ * - Agentic capability scores are derived from tool categories
  * - Innovation scores come from a separate innovation-scores.json file
  * - Other metrics use reasonable defaults when not available
  *
@@ -35,8 +35,10 @@
 import path from "node:path";
 import fs from "fs-extra";
 import { type NextRequest, NextResponse } from "next/server";
-import { getNewsRepo, getRankingsRepo, getToolsRepo } from "@/lib/json-db";
-import type { RankingEntry, RankingPeriod, Tool } from "@/lib/json-db/schemas";
+import { requireAdmin } from "@/lib/api-auth";
+import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
+import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
+import { NewsRepository } from "@/lib/db/repositories/news";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
@@ -52,128 +54,89 @@ interface InnovationScore {
   updated_at: string;
 }
 
-// extractMetricsFromNews function removed - now handled by enhanced news extraction in ranking-news-enhancer.ts
-
 function calculateTier(position: number): "S" | "A" | "B" | "C" | "D" {
-  if (position <= 5) {
-    return "S";
-  }
-  if (position <= 15) {
-    return "A";
-  }
-  if (position <= 25) {
-    return "B";
-  }
-  if (position <= 35) {
-    return "C";
-  }
+  if (position <= 5) return "S";
+  if (position <= 15) return "A";
+  if (position <= 25) return "B";
+  if (position <= 35) return "C";
   return "D";
 }
 
 /**
  * Get default agentic capability score based on tool category and name
- *
- * Since agentic_capability is not stored in tools.json but is critical for rankings,
- * we use category-based defaults with special handling for premium tools.
- * These scores reflect the typical autonomy level of tools in each category.
- *
- * @param category - The tool category (e.g., "autonomous-agent", "ide-assistant")
- * @param toolName - The name of the tool for special cases
- * @returns Agentic capability score (0-10 scale)
  */
 function getCategoryBasedAgenticScore(category: string, toolName: string): number {
-  // Special handling for premium autonomous agents
   const premiumAgents = ["Devin", "Claude Code", "Google Jules"];
   if (premiumAgents.includes(toolName)) {
     return 8.5;
   }
 
   const categoryScores: Record<string, number> = {
-    "autonomous-agent": 8, // Default for other autonomous agents
-    "ide-assistant": 6, // Cursor, GitHub Copilot, etc. - Medium autonomy
-    "code-assistant": 5, // Cline, Continue, etc. - Moderate autonomy
-    "app-builder": 4, // Bolt, Lovable, etc. - Lower autonomy
-    "research-tool": 3, // Perplexity, etc. - Minimal coding autonomy
-    "general-assistant": 2, // ChatGPT, Claude.ai, etc. - Basic assistance
+    "autonomous-agent": 8,
+    "ide-assistant": 6,
+    "code-assistant": 5,
+    "app-builder": 4,
+    "research-tool": 3,
+    "general-assistant": 2,
   };
 
-  return categoryScores[category] || 5; // Default to 5 if category not found
+  return categoryScores[category] || 5;
 }
 
 /**
- * Transform tool data from JSON storage format to metrics format for ranking algorithm
- *
- * This function maps data from tools.json structure to the ToolMetricsV6 interface
- * expected by RankingEngineV6. It provides reasonable defaults for missing data,
- * with special handling for premium tools to match preview behavior.
- *
- * @param tool - Tool object from tools.json
- * @param innovationScore - Innovation score from innovation-scores.json (optional)
- * @returns ToolMetricsV6 object ready for scoring
+ * Transform tool data to metrics format for ranking algorithm
  */
-function transformToToolMetrics(tool: Tool, innovationScore?: number): ToolMetricsV6 {
-  // Extract metrics from tool.info structure (JSON format)
-  const info = tool["info"];
-  const technical = info?.technical || {};
-  const businessMetrics = info?.metrics || {};
-  const business = info?.business || {};
+function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetricsV6 {
+  const info = tool.info || {};
+  const technical = info.technical || {};
+  const businessMetrics = info.metrics || {};
+  const business = info.business || {};
 
-  // Determine tool characteristics for better defaults
-  const isAutonomous = tool["category"] === "autonomous-agent";
-  const isOpenSource = tool["category"] === "open-source-framework";
-  const isEnterprise = business["pricing_model"] === "enterprise";
-  const isPremium = ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool["name"]);
+  const isAutonomous = tool.category === "autonomous-agent";
+  const isOpenSource = tool.category === "open-source-framework";
+  const isEnterprise = business.pricing_model === "enterprise";
+  const isPremium = ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name);
 
   return {
-    tool_id: tool["id"],
-    status: tool["status"],
-
-    // Agentic capabilities - using category and name-based defaults
-    agentic_capability: getCategoryBasedAgenticScore(tool["category"], tool["name"]),
+    tool_id: tool.id,
+    status: tool.status,
+    agentic_capability: getCategoryBasedAgenticScore(tool.category, tool.name),
     swe_bench_score:
-      businessMetrics["swe_bench_score"] || (isPremium ? 45 : isAutonomous ? 35 : 20),
-    multi_file_capability: isAutonomous ? 9 : technical["multi_file_support"] ? 7 : 4,
+      businessMetrics.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
+    multi_file_capability: isAutonomous ? 9 : technical.multi_file_support ? 7 : 4,
     planning_depth: isAutonomous ? 8.5 : 6,
     context_utilization: isPremium ? 8 : 6.5,
-
-    // Technical metrics
-    context_window: technical["context_window"] || (isPremium ? 200000 : 100000),
-    language_support: technical["languages"]?.length || (isEnterprise ? 20 : 15),
-    github_stars: businessMetrics["github_stars"] || (isOpenSource ? 25000 : 5000),
-
-    // Innovation metrics
+    context_window: technical.context_window || (isPremium ? 200000 : 100000),
+    language_support: technical.supported_languages || (isEnterprise ? 20 : 15),
+    github_stars: businessMetrics.github_stars || (isOpenSource ? 25000 : 5000),
     innovation_score: innovationScore || (isPremium ? 8.5 : 6.5),
     innovations: [],
-
-    // Market metrics - with better defaults based on tool type
     estimated_users:
-      businessMetrics["estimated_users"] || (isPremium ? 500000 : isOpenSource ? 100000 : 50000),
+      businessMetrics.estimated_users || (isPremium ? 500000 : isOpenSource ? 100000 : 50000),
     monthly_arr:
-      businessMetrics["monthly_arr"] || (isEnterprise ? 10000000 : isPremium ? 5000000 : 1000000),
-    valuation: businessMetrics["valuation"] || (isPremium ? 1000000000 : 100000000),
-    funding: businessMetrics["funding_total"] || (isPremium ? 100000000 : 10000000),
-    business_model: business["business_model"] || "saas",
-
-    // Risk and sentiment (default values)
+      businessMetrics.monthly_arr || (isEnterprise ? 10000000 : isPremium ? 5000000 : 1000000),
+    valuation: businessMetrics.valuation || (isPremium ? 1000000000 : 100000000),
+    funding: businessMetrics.funding_total || (isPremium ? 100000000 : 10000000),
+    business_model: business.business_model || "saas",
     business_sentiment: isPremium ? 0.8 : 0.7,
     risk_factors: [],
-
-    // Development metrics
     release_frequency: isOpenSource ? 7 : 14,
-    github_contributors: businessMetrics["github_contributors"] || (isOpenSource ? 200 : 50),
-
-    // Platform metrics
+    github_contributors: businessMetrics.github_contributors || (isOpenSource ? 200 : 50),
     llm_provider_count: isPremium ? 5 : 3,
     multi_model_support: isPremium || isOpenSource,
-    community_size: businessMetrics["estimated_users"] || (isOpenSource ? 50000 : 10000),
+    community_size: businessMetrics.estimated_users || (isOpenSource ? 50000 : 10000),
   };
 }
 
 // POST - Build new rankings
 export async function POST(request: NextRequest) {
-  try {
-    // TODO: Add authentication check here
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
 
+  try {
     const body = await request.json();
     const { period, preview_date, rankings: providedRankings } = body;
 
@@ -184,86 +147,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // If rankings are provided (from preview), use them directly instead of regenerating
+    const rankingsRepo = new RankingsRepository();
+    const toolsRepo = new ToolsRepository();
+    const newsRepo = new NewsRepository();
+
+    // If rankings are provided (from preview), use them directly
     if (providedRankings && Array.isArray(providedRankings)) {
       loggers.api.info(`Using provided rankings data for period ${period}`, {
         rankingsCount: providedRankings.length,
-        sampleRanking: providedRankings[0], // Debug: log first ranking structure
       });
 
-      const rankingsRepo = getRankingsRepo();
-
       // Transform provided rankings to the expected format
-      let rankings: RankingEntry[];
-      try {
-        rankings = providedRankings.map((ranking, index) => ({
-          tool_id: ranking.tool_id,
-          tool_name: ranking.tool_name,
-          position: ranking.position || index + 1,
-          score: ranking.score,
-          tier: calculateTier(ranking.position || index + 1),
-          factor_scores: {
-            agentic_capability: ranking.factor_scores?.agentic_capability || 0,
-            innovation: ranking.factor_scores?.innovation || 0,
-            technical_performance: ranking.factor_scores?.technical_performance || 0,
-            developer_adoption: ranking.factor_scores?.developer_adoption || 0,
-            market_traction: ranking.factor_scores?.market_traction || 0,
-            business_sentiment: ranking.factor_scores?.business_sentiment || 0,
-            development_velocity: ranking.factor_scores?.development_velocity || 0,
-            platform_resilience: ranking.factor_scores?.platform_resilience || 0,
-          },
-          movement: ranking.movement
-            ? {
-                change: Math.abs(ranking.movement.position_change || 0),
-                direction: ranking.movement.direction as "up" | "down" | "same" | "new",
-                ...(ranking.movement.direction !== "new" && ranking.movement.current_position
-                  ? {
-                      previous_position: ranking.movement.current_position,
-                    }
-                  : {}),
-              }
-            : {
-                change: 0,
-                direction: "new" as const,
-              },
-          change_analysis: ranking.change_analysis,
-        }));
-      } catch (transformError) {
-        console.error("TRANSFORM ERROR:", transformError);
-        loggers.api.error(
-          "Error transforming rankings data - detailed",
-          JSON.stringify({
-            message:
-              transformError instanceof Error ? transformError.message : String(transformError),
-            stack: transformError instanceof Error ? transformError.stack : undefined,
-            sampleRanking: providedRankings[0],
-          })
-        );
-        throw transformError;
-      }
+      const rankings = providedRankings.map((ranking, index) => ({
+        tool_id: ranking.tool_id,
+        tool_name: ranking.tool_name,
+        position: ranking.position || index + 1,
+        score: ranking.score,
+        tier: calculateTier(ranking.position || index + 1),
+        factor_scores: ranking.factor_scores || {},
+        movement: ranking.movement || { change: 0, direction: "new" as const },
+        change_analysis: ranking.change_analysis,
+      }));
 
-      // Save the rankings
-      try {
-        await rankingsRepo.saveRankingsForPeriod({
+      // Save to database
+      const existingRanking = await rankingsRepo.getByPeriod(period);
+      if (existingRanking) {
+        await rankingsRepo.update(existingRanking.id, {
+          data: {
+            rankings,
+            generated_at: new Date().toISOString(),
+            algorithm_version: "v6.0",
+          },
+        });
+      } else {
+        await rankingsRepo.create({
           period,
           algorithm_version: "v6.0",
-          is_current: false, // Don't automatically make it current
-          created_at: new Date().toISOString(),
-          preview_date,
-          rankings,
+          is_current: false,
+          data: {
+            rankings,
+            generated_at: new Date().toISOString(),
+          },
         });
-        loggers.api.info("Rankings saved successfully", { period, count: rankings.length });
-      } catch (saveError) {
-        console.error("SAVE ERROR:", saveError);
-        loggers.api.error(
-          "Error saving rankings - detailed error",
-          JSON.stringify({
-            message: saveError instanceof Error ? saveError.message : String(saveError),
-            stack: saveError instanceof Error ? saveError.stack : undefined,
-            period,
-          })
-        );
-        throw saveError;
       }
 
       return NextResponse.json({
@@ -271,46 +196,28 @@ export async function POST(request: NextRequest) {
         period,
         rankings_count: rankings.length,
         algorithm_version: "v6.0",
-        stats: {
-          average_score: rankings.reduce((sum, r) => sum + r.score, 0) / rankings.length,
-          highest_score: Math.max(...rankings.map((r) => r.score)),
-          lowest_score: Math.min(...rankings.map((r) => r.score)),
-          new_entries: rankings.filter((r) => r.movement?.direction === "new").length,
-          tools_moved_up: rankings.filter((r) => r.movement?.direction === "up").length,
-          tools_moved_down: rankings.filter((r) => r.movement?.direction === "down").length,
-        },
-        message: `Rankings saved successfully for ${period} using provided preview data`,
+        message: "Rankings saved successfully from preview data",
       });
     }
 
-    const toolsRepo = getToolsRepo();
-    const rankingsRepo = getRankingsRepo();
+    // Generate new rankings
+    loggers.api.info(`Generating new rankings for period ${period}`);
 
     // Get all active tools
-    const allTools = await toolsRepo.getAll();
-    let activeTools = allTools.filter((tool) => tool["status"] === "active");
+    let tools = await toolsRepo.findByStatus("active");
 
-    // If preview_date is provided, filter tools that didn't exist yet
+    // Filter by preview date if provided
     if (preview_date) {
       const cutoffDate = new Date(preview_date);
-      const beforeFilter = activeTools.length;
-      activeTools = activeTools.filter((tool) => {
-        // Use launch_date if available, otherwise fall back to created_at
-        const toolDate = tool["launch_date"]
-          ? new Date(tool["launch_date"])
-          : new Date(tool["created_at"]);
+      tools = tools.filter((tool) => {
+        const toolDate = new Date(tool.launch_date || tool.created_at);
         return toolDate <= cutoffDate;
       });
-      const afterFilter = activeTools.length;
-
-      if (beforeFilter !== afterFilter) {
-        loggers.api.info(
-          `Filtered tools from ${beforeFilter} to ${afterFilter} based on launch/creation date (cutoff: ${preview_date})`
-        );
-      }
     }
 
-    // Get innovation scores
+    loggers.api.info(`Found ${tools.length} active tools for ranking`);
+
+    // Load innovation scores
     const innovationScoresPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
     let innovationScores: InnovationScore[] = [];
     try {
@@ -320,263 +227,199 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       loggers.api.warn("Failed to load innovation scores", { error });
     }
-    const innovationMap = new Map(innovationScores.map((s: InnovationScore) => [s.tool_id, s]));
+    const innovationMap = new Map(innovationScores.map((s) => [s.tool_id, s.score]));
 
-    // Get news articles for metrics extraction
-    const newsRepo = getNewsRepo();
+    // Get news articles for enhanced metrics
     const newsArticles = await newsRepo.getAll();
-    loggers.api.info(`Found ${newsArticles.length} news articles for metrics extraction`);
+    const formattedArticles = newsArticles.map(article => ({
+      id: article.id,
+      title: article.title,
+      content: article.content || '',
+      summary: article.summary || '',
+      published_date: article.publishedAt.toISOString(),
+      tool_mentions: article.toolMentions as string[] || [],
+      tags: article.data?.tags || [],
+      category: article.data?.category || '',
+      importance_score: article.data?.importance_score || 0,
+      metadata: article.data || {},
+    }));
 
-    // Initialize ranking engine and change analyzer
+    // Calculate scores for all tools
     const rankingEngine = new RankingEngineV6();
-    const changeAnalyzer = new RankingChangeAnalyzer();
-    const toolScores: ToolScoreV6[] = [];
+    const toolScores: Array<{ tool: any; score: ToolScoreV6; overallScore: number }> = [];
 
-    // Calculate scores for each tool using the v6 algorithm
-    for (const tool of activeTools) {
-      try {
-        // Get innovation score for this tool
-        const innovationData = innovationMap.get(tool["id"]);
-        const innovationScore = innovationData?.["score"] || 0;
+    for (const tool of tools) {
+      // Get innovation score
+      const innovationScore = innovationMap.get(tool.id);
 
-        // Extract enhanced metrics from news (quantitative + qualitative with AI)
-        const enableAI = process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"; // Default to true
-        const enhancedMetrics = await extractEnhancedNewsMetrics(
-          tool["id"],
-          tool["name"],
-          newsArticles,
-          preview_date,
-          enableAI
-        );
-
-        // Log extracted metrics for premium tools
-        if (
-          ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool["name"]) &&
-          (Object.keys(enhancedMetrics).length > 0 || enhancedMetrics["articlesProcessed"] > 0)
-        ) {
-          loggers.api.info(`Enhanced metrics for ${tool["name"]}:`, {
-            quantitative: {
-              swe_bench: enhancedMetrics["swe_bench_score"],
-              funding: enhancedMetrics["funding"],
-              users: enhancedMetrics["estimated_users"],
-            },
-            qualitative: {
-              innovation_boost: enhancedMetrics["innovationBoost"],
-              sentiment_adjust: enhancedMetrics["businessSentimentAdjust"],
-              velocity_boost: enhancedMetrics["developmentVelocityBoost"],
-            },
-            articles_processed: enhancedMetrics["articlesProcessed"],
-            significant_events: enhancedMetrics["significantEvents"],
-          });
-        }
-
-        // Transform tool data to metrics format
-        let toolMetrics = transformToToolMetrics(tool, innovationScore);
-
-        // Apply enhanced news metrics (both quantitative and qualitative)
-        toolMetrics = applyEnhancedNewsMetrics(toolMetrics, enhancedMetrics);
-
-        // Calculate score using v6 algorithm
-        const score = rankingEngine.calculateToolScore(
-          toolMetrics,
-          preview_date ? new Date(preview_date) : new Date(period)
-        );
-
-        // Apply additional news impact to factor scores
-        const adjustedFactorScores = applyNewsImpactToScores(
-          score["factorScores"],
-          enhancedMetrics
-        );
-
-        // Update the score's factor scores with the adjustments
-        score["factorScores"] = {
-          ...score["factorScores"],
-          technicalPerformance:
-            adjustedFactorScores["technicalPerformance"] ||
-            score["factorScores"]["technicalPerformance"],
-          marketTraction:
-            adjustedFactorScores["marketTraction"] || score["factorScores"]["marketTraction"],
-        };
-
-        // Recalculate overall score after news adjustments
-        const weights = RankingEngineV6.getAlgorithmInfo().weights;
-        score["overallScore"] = Object.entries(weights).reduce((total, [factor, weight]) => {
-          const factorScore =
-            score["factorScores"][factor as keyof (typeof score)["factorScores"]] || 0;
-          return total + factorScore * weight;
-        }, 0);
-        score["overallScore"] = Math.max(
-          0,
-          Math.min(10, Math.round(score["overallScore"] * 1000) / 1000)
-        );
-
-        toolScores.push(score);
-      } catch (error) {
-        loggers.api.error(`Error calculating score for tool ${tool["name"]}:`, error);
-      }
-    }
-
-    // Sort by overall score descending
-    toolScores.sort((a, b) => b.overallScore - a.overallScore);
-
-    // Get previous rankings - find the period before this one
-    const allPeriods = await rankingsRepo.getAvailablePeriods();
-    const currentPeriodIndex = allPeriods.indexOf(period);
-    let previousRankingsMap = new Map<string, number>();
-    let previousPeriod: RankingPeriod | null = null;
-
-    if (currentPeriodIndex >= 0 && currentPeriodIndex < allPeriods.length - 1) {
-      // Get the previous period (remember periods are sorted descending)
-      const previousPeriodKey = allPeriods[currentPeriodIndex + 1];
-      if (previousPeriodKey) {
-        previousPeriod = await rankingsRepo.getRankingsForPeriod(previousPeriodKey);
-
-        if (previousPeriod) {
-          previousRankingsMap = new Map(
-            previousPeriod.rankings.map((r: RankingEntry) => [r.tool_id, r.position ?? r.rank ?? 0])
-          );
-        }
-      }
-    }
-
-    // Create ranking entries
-    const rankings: RankingEntry[] = [];
-    const changeAnalyses = [];
-
-    for (let i = 0; i < toolScores.length; i++) {
-      const toolScore = toolScores[i];
-      const tool = activeTools.find((t) => t.id === toolScore?.toolId);
-
-      if (!tool || !toolScore) {
-        continue;
-      }
-
-      const position = i + 1;
-      const previousPosition = previousRankingsMap.get(tool["id"]);
-      const previousRanking = previousPosition
-        ? previousPeriod?.rankings.find((r: RankingEntry) => r.tool_id === tool["id"])
-        : null;
-
-      let movement: {
-        previous_position?: number;
-        change: number;
-        direction: "up" | "down" | "same" | "new";
-      };
-      if (previousPosition) {
-        const change = previousPosition - position;
-        movement = {
-          previous_position: previousPosition,
-          change: Math.abs(change),
-          direction: (change > 0 ? "up" : change < 0 ? "down" : "same") as "up" | "down" | "same",
-        };
-      } else {
-        movement = {
-          change: 0,
-          direction: "new" as const,
-        };
-      }
-
-      // Generate change analysis
-      const changeAnalysis = changeAnalyzer.analyzeRankingChange(
-        {
-          tool_id: tool["id"],
-          tool_name: tool["name"],
-          position,
-          score: toolScore.overallScore,
-          new_position: position,
-          new_score: toolScore.overallScore,
-        },
-        previousRanking && previousPosition !== undefined
-          ? {
-              tool_id: tool["id"],
-              tool_name: tool["name"],
-              position: previousPosition,
-              score: previousRanking.score,
-              current_position: previousPosition,
-              current_score: previousRanking.score,
-            }
-          : null,
-        toolScore.factorScores,
-        previousRanking?.factor_scores
-          ? {
-              agenticCapability: previousRanking.factor_scores["agentic_capability"] || 0,
-              innovation: previousRanking.factor_scores["innovation"] || 0,
-              technicalPerformance: previousRanking.factor_scores["technical_performance"] || 0,
-              developerAdoption: previousRanking.factor_scores["developer_adoption"] || 0,
-              marketTraction: previousRanking.factor_scores["market_traction"] || 0,
-              businessSentiment: previousRanking.factor_scores["business_sentiment"] || 0,
-              developmentVelocity: previousRanking.factor_scores["development_velocity"] || 0,
-              platformResilience: previousRanking.factor_scores["platform_resilience"] || 0,
-            }
-          : undefined
+      // Extract enhanced metrics from news
+      const enhancedMetrics = await extractEnhancedNewsMetrics(
+        tool.id,
+        tool.name,
+        formattedArticles,
+        preview_date,
+        process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"
       );
 
-      changeAnalyses.push(changeAnalysis);
+      // Transform to metrics format
+      let metrics = transformToToolMetrics(tool, innovationScore);
 
-      rankings.push({
-        tool_id: tool["id"],
-        tool_name: tool["name"],
-        position,
-        score: toolScore.overallScore * 10, // Convert from 0-10 to 0-100 scale
-        tier: calculateTier(position),
-        factor_scores: {
-          agentic_capability: toolScore["factorScores"]["agenticCapability"] || 0,
-          innovation: toolScore["factorScores"]["innovation"] || 0,
-          technical_performance: toolScore["factorScores"]["technicalPerformance"] || 0,
-          developer_adoption: toolScore["factorScores"]["developerAdoption"] || 0,
-          market_traction: toolScore["factorScores"]["marketTraction"] || 0,
-          business_sentiment: toolScore["factorScores"]["businessSentiment"] || 0,
-          development_velocity: toolScore["factorScores"]["developmentVelocity"] || 0,
-          platform_resilience: toolScore["factorScores"]["platformResilience"] || 0,
-        },
-        movement,
-        change_analysis:
-          (changeAnalysis["rankChange"] && Math.abs(changeAnalysis["rankChange"]) >= 3) ||
-          (changeAnalysis["primaryReason"] &&
-            changeAnalysis["primaryReason"] !== "No significant change")
-            ? {
-                primary_reason: changeAnalysis["primaryReason"],
-                narrative_explanation: changeAnalysis["narrativeExplanation"],
-              }
-            : undefined,
+      // Apply enhanced news metrics
+      metrics = applyEnhancedNewsMetrics(metrics, enhancedMetrics);
+
+      // Calculate score
+      const scoreResult = rankingEngine.calculateToolScore(
+        metrics,
+        preview_date ? new Date(preview_date) : new Date(period)
+      );
+
+      // Apply news impact to scores
+      const adjustedFactorScores = applyNewsImpactToScores(
+        scoreResult.factorScores,
+        enhancedMetrics
+      );
+
+      // Update factor scores
+      Object.keys(adjustedFactorScores).forEach((key) => {
+        if (key in scoreResult.factorScores) {
+          const adjustedValue = adjustedFactorScores[key];
+          if (adjustedValue !== undefined) {
+            (scoreResult.factorScores as Record<string, number>)[key] = adjustedValue;
+          }
+        }
+      });
+
+      // Recalculate overall score
+      const weights = RankingEngineV6.getAlgorithmInfo().weights;
+      scoreResult.overallScore = Object.entries(weights).reduce((total, [factor, weight]) => {
+        const factorScore =
+          scoreResult.factorScores[factor as keyof typeof scoreResult.factorScores] || 0;
+        return total + factorScore * weight;
+      }, 0);
+      scoreResult.overallScore = Math.max(
+        0,
+        Math.min(10, Math.round(scoreResult.overallScore * 1000) / 1000)
+      );
+
+      toolScores.push({
+        tool,
+        score: scoreResult,
+        overallScore: scoreResult.overallScore * 10, // Convert to 0-100 scale
       });
     }
 
-    // Save the rankings
-    await rankingsRepo.saveRankingsForPeriod({
-      period,
-      algorithm_version: "v6.0",
-      is_current: false, // Don't automatically make it current
-      created_at: new Date().toISOString(),
-      preview_date,
-      rankings,
+    // Sort by overall score
+    toolScores.sort((a, b) => b.overallScore - a.overallScore);
+
+    // Get previous period for comparison
+    const allRankings = await rankingsRepo.findAll();
+    const previousPeriod = allRankings.find(r => r.period < period);
+    const previousRankings = previousPeriod?.data?.rankings || [];
+    const previousMap = new Map(
+      previousRankings.map((r: any) => [r.tool_id, r])
+    );
+
+    // Create final rankings with movement tracking
+    const rankings = toolScores.map((item, index) => {
+      const position = index + 1;
+      const previousRanking = previousMap.get(item.tool.id);
+      const previousPosition = previousRanking?.position;
+
+      let movement: any = {
+        change: 0,
+        direction: "new" as const,
+      };
+
+      if (previousPosition) {
+        const change = previousPosition - position;
+        movement = {
+          change: Math.abs(change),
+          direction: change > 0 ? "up" : change < 0 ? "down" : "same",
+          previous_position: previousPosition,
+        };
+      }
+
+      return {
+        tool_id: item.tool.id,
+        tool_name: item.tool.name,
+        position,
+        score: Math.round(item.overallScore * 100) / 100,
+        tier: calculateTier(position),
+        factor_scores: item.score.factorScores,
+        movement,
+      };
     });
 
-    // Generate change report
-    const changeReport = changeAnalyzer.generateChangeReport(changeAnalyses);
+    // Save to database
+    const existingRanking = await rankingsRepo.getByPeriod(period);
+    if (existingRanking) {
+      await rankingsRepo.update(existingRanking.id, {
+        algorithm_version: "v6.0",
+        data: {
+          rankings,
+          generated_at: new Date().toISOString(),
+          tools_count: tools.length,
+          algorithm_info: RankingEngineV6.getAlgorithmInfo(),
+        },
+      });
+    } else {
+      await rankingsRepo.create({
+        period,
+        algorithm_version: "v6.0",
+        is_current: false,
+        data: {
+          rankings,
+          generated_at: new Date().toISOString(),
+          tools_count: tools.length,
+          algorithm_info: RankingEngineV6.getAlgorithmInfo(),
+        },
+      });
+    }
+
+    // Calculate statistics
+    const scores = rankings.map(r => r.score);
+    const stats = {
+      average_score: Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 100) / 100,
+      median_score: scores[Math.floor(scores.length / 2)] || 0,
+      highest_score: Math.max(...scores),
+      lowest_score: Math.min(...scores),
+      std_deviation: Math.round(
+        Math.sqrt(
+          scores.reduce((sq, n) => {
+            const diff = n - (scores.reduce((a, b) => a + b, 0) / scores.length);
+            return sq + diff * diff;
+          }, 0) / scores.length
+        ) * 100
+      ) / 100,
+    };
+
+    // Calculate change summary
+    const changeSummary = {
+      new_entries: rankings.filter(r => r.movement.direction === "new").length,
+      moved_up: rankings.filter(r => r.movement.direction === "up").length,
+      moved_down: rankings.filter(r => r.movement.direction === "down").length,
+      unchanged: rankings.filter(r => r.movement.direction === "same").length,
+      largest_gain: Math.max(...rankings.map(r => r.movement.direction === "up" ? r.movement.change : 0)),
+      largest_drop: Math.max(...rankings.map(r => r.movement.direction === "down" ? r.movement.change : 0)),
+    };
+
+    loggers.api.info(`Rankings generated successfully for period ${period}`, {
+      rankings_count: rankings.length,
+      stats,
+      changeSummary,
+    });
 
     return NextResponse.json({
       success: true,
       period,
       rankings_count: rankings.length,
       algorithm_version: "v6.0",
-      stats: {
-        average_score: rankings.reduce((sum, r) => sum + r.score, 0) / rankings.length,
-        highest_score: Math.max(...rankings.map((r) => r.score)),
-        lowest_score: Math.min(...rankings.map((r) => r.score)),
-        new_entries: rankings.filter((r) => r.movement?.direction === "new").length,
-        tools_moved_up: rankings.filter((r) => r.movement?.direction === "up").length,
-        tools_moved_down: rankings.filter((r) => r.movement?.direction === "down").length,
-      },
-      change_summary: changeReport,
-      message: `Rankings built successfully for ${period} using algorithm v6.0`,
+      stats,
+      change_summary: changeSummary,
+      message: "Rankings generated and saved successfully",
     });
   } catch (error) {
-    loggers.api.error("Build rankings error", {
-      error: error instanceof Error ? error.message : error,
-      stack: error instanceof Error ? error.stack : undefined,
-    });
-
+    loggers.api.error("Build rankings error", { error });
     return NextResponse.json(
       {
         error: "Failed to build rankings",

@@ -1,5 +1,3 @@
-import fs from "node:fs/promises";
-import path from "node:path";
 import { loggers } from "@/lib/logger";
 import type { CacheType } from "./blob-storage";
 import { CacheBlobStorage } from "./blob-storage";
@@ -19,23 +17,16 @@ export interface CacheInfo {
 }
 
 /**
- * Unified cache manager that handles both filesystem (dev) and blob storage (prod)
- *
- * Priority order:
- * 1. Blob storage (if available in production)
- * 2. Filesystem (src/data/cache/)
+ * Cache manager that handles blob storage in production
  */
 export class CacheManager {
   private blobStorage = new CacheBlobStorage();
-  private cacheDir = path.join(process.cwd(), "src/data/cache");
 
   /**
-   * Get cache data with fallback logic
-   * 1. Try blob storage first (if in production)
-   * 2. Fall back to filesystem
+   * Get cache data from blob storage
    */
   async get(type: CacheType): Promise<unknown | null> {
-    // Try blob storage first in production
+    // Try blob storage in production
     if (CacheBlobStorage.shouldUseBlob()) {
       const blobData = await this.blobStorage.get(type);
       if (blobData) {
@@ -43,43 +34,15 @@ export class CacheManager {
         return blobData;
       }
     }
-
-    // Fall back to filesystem
-    try {
-      const filePath = this.getFilePath(type);
-      const fileContent = await fs.readFile(filePath, "utf-8");
-      const data = JSON.parse(fileContent);
-
-      loggers.api.debug(`Using cache from filesystem: ${type}`);
-      return data;
-    } catch (error) {
-      loggers.api.error(`Failed to read cache from filesystem: ${type}`, { error });
-      return null;
-    }
+    return null;
   }
 
   /**
-   * Store cache data
-   * - In production: Store in blob storage only
-   * - In development: Store in filesystem only
+   * Store cache data in blob storage
    */
   async put(type: CacheType, data: unknown): Promise<void> {
     if (CacheBlobStorage.shouldUseBlob()) {
-      // Production: Use blob storage
       await this.blobStorage.put(type, data);
-    } else {
-      // Development: Use filesystem
-      const filePath = this.getFilePath(type);
-      const jsonData = JSON.stringify(data, null, 2);
-
-      // Ensure directory exists
-      await fs.mkdir(this.cacheDir, { recursive: true });
-
-      await fs.writeFile(filePath, jsonData, "utf-8");
-      loggers.api.debug(`Stored cache in filesystem: ${type}`, {
-        size: jsonData.length,
-        path: filePath,
-      });
     }
   }
 
@@ -92,7 +55,7 @@ export class CacheManager {
       exists: false,
     };
 
-    // Check blob storage first
+    // Check blob storage
     if (CacheBlobStorage.shouldUseBlob()) {
       const blobMetadata = await this.blobStorage.getMetadata(type);
       if (blobMetadata) {
@@ -109,21 +72,6 @@ export class CacheManager {
       }
     }
 
-    // Check filesystem
-    try {
-      const filePath = this.getFilePath(type);
-      const stats = await fs.stat(filePath);
-
-      return {
-        source: "filesystem",
-        exists: true,
-        size: stats.size,
-        lastModified: stats.mtime.toISOString(),
-      };
-    } catch {
-      // File doesn't exist
-    }
-
     return info;
   }
 
@@ -133,14 +81,6 @@ export class CacheManager {
   async delete(type: CacheType): Promise<void> {
     if (CacheBlobStorage.shouldUseBlob()) {
       await this.blobStorage.delete(type);
-    } else {
-      try {
-        const filePath = this.getFilePath(type);
-        await fs.unlink(filePath);
-        loggers.api.debug(`Deleted cache from filesystem: ${type}`);
-      } catch (error) {
-        loggers.api.error(`Failed to delete cache: ${type}`, { error });
-      }
     }
   }
 
@@ -156,13 +96,6 @@ export class CacheManager {
     }
 
     return result as Record<CacheType, CacheInfo>;
-  }
-
-  /**
-   * Get the filesystem path for a cache type
-   */
-  private getFilePath(type: CacheType): string {
-    return path.join(this.cacheDir, `${type}.json`);
   }
 
   /**

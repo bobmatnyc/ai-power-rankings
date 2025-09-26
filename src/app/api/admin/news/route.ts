@@ -9,18 +9,14 @@
 
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
-import { getNewsRepo } from "@/lib/json-db";
-import type { NewsArticle } from "@/lib/json-db/schemas";
+import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { loggers } from "@/lib/logger";
 
 // import { NewsIngestor } from "@/lib/news-ingestor";
 // import { fetchGoogleDriveNews } from "@/lib/news-fetcher";
 // import { generateNewsId } from "@/lib/utils/news";
 
-// Temporary helper until modules are available
-function generateNewsId(title: string): string {
-  return `news_${title.toLowerCase().replace(/[^a-z0-9]+/g, "_")}_${Date.now()}`;
-}
+// Removed unused generateNewsId function
 
 /**
  * GET /api/admin/news
@@ -46,48 +42,56 @@ export async function GET(request: NextRequest) {
       case "reports": {
         // Get ingestion reports (replaces ingestion-reports)
         const days = parseInt(searchParams.get("days") || "30", 10);
-        const newsRepo = getNewsRepo();
+        const articlesRepo = new ArticlesRepository();
 
         const cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() - days);
 
-        const allNews = await newsRepo.getAll();
-        const recentNews = allNews.filter(
-          (article) => new Date(article.published_date || article.created_at) >= cutoffDate
-        );
+        try {
+          const allArticles = await articlesRepo.findAll();
+          const recentArticles = allArticles.filter(
+            (article) => new Date(article.publishedDate || article.createdAt) >= cutoffDate
+          );
 
-        // Group by ingestion batch
-        const ingestionBatches = new Map();
+          // Group by ingestion batch
+          const ingestionBatches = new Map();
 
-        type ArticleWithBatch = NewsArticle & { ingestion_batch?: string };
-        recentNews.forEach((article) => {
-          const batchId = (article as ArticleWithBatch).ingestion_batch || "manual";
-          if (!ingestionBatches.has(batchId)) {
-            ingestionBatches.set(batchId, {
-              batch_id: batchId,
-              articles: [],
-              ingested_at: article.created_at,
-              source: article.source || "unknown",
+          recentArticles.forEach((article: any) => {
+            const batchId = article.ingestionBatch || "manual";
+            if (!ingestionBatches.has(batchId)) {
+              ingestionBatches.set(batchId, {
+                batch_id: batchId,
+                articles: [],
+                ingested_at: article.createdAt,
+                source: article.sourceName || "unknown",
+              });
+            }
+            ingestionBatches.get(batchId).articles.push({
+              id: article.id,
+              title: article.title,
+              slug: article.slug,
+              published_date: article.publishedDate,
+              tool_mentions: article.toolMentions?.length || 0,
             });
-          }
-          ingestionBatches.get(batchId).articles.push({
-            id: article.id,
-            title: article.title,
-            slug: article.slug,
-            published_date: article.published_date,
-            tool_mentions: article.tool_mentions?.length || 0,
           });
-        });
+          const reports = Array.from(ingestionBatches.values()).sort(
+            (a: any, b: any) => new Date(b.ingested_at).getTime() - new Date(a.ingested_at).getTime()
+          );
 
-        const reports = Array.from(ingestionBatches.values()).sort(
-          (a, b) => new Date(b.ingested_at).getTime() - new Date(a.ingested_at).getTime()
-        );
-
-        return NextResponse.json({
-          reports,
-          total_articles: recentNews.length,
-          period_days: days,
-        });
+          return NextResponse.json({
+            reports,
+            total_articles: recentArticles.length,
+            period_days: days,
+          });
+        } catch (dbError) {
+          loggers.api.warn("Could not fetch articles from database", { dbError });
+          return NextResponse.json({
+            reports: [],
+            total_articles: 0,
+            period_days: days,
+            error: "Database unavailable",
+          });
+        }
       }
 
       case "fetch-article": {
@@ -110,23 +114,34 @@ export async function GET(request: NextRequest) {
 
       case "status": {
         // Get ingestion status
-        const newsRepo = getNewsRepo();
-        const allNews = await newsRepo.getAll();
+        const articlesRepo = new ArticlesRepository();
 
-        const today = new Date();
-        const thisMonth = allNews.filter((article) => {
-          const articleDate = new Date(article.published_date || article.created_at);
-          return (
-            articleDate.getMonth() === today.getMonth() &&
-            articleDate.getFullYear() === today.getFullYear()
-          );
-        });
+        try {
+          const allArticles = await articlesRepo.findAll();
 
-        return NextResponse.json({
-          total_articles: allNews.length,
-          this_month: thisMonth.length,
-          last_ingestion: allNews[0]?.created_at || null,
-        });
+          const today = new Date();
+          const thisMonth = allArticles.filter((article) => {
+            const articleDate = new Date(article.publishedDate || article.createdAt);
+            return (
+              articleDate.getMonth() === today.getMonth() &&
+              articleDate.getFullYear() === today.getFullYear()
+            );
+          });
+
+          return NextResponse.json({
+            total_articles: allArticles.length,
+            this_month: thisMonth.length,
+            last_ingestion: allArticles[0]?.createdAt || null,
+          });
+        } catch (dbError) {
+          loggers.api.warn("Could not fetch status from database", { dbError });
+          return NextResponse.json({
+            total_articles: 0,
+            this_month: 0,
+            last_ingestion: null,
+            error: "Database unavailable",
+          });
+        }
       }
 
       default:
@@ -181,7 +196,7 @@ export async function POST(request: NextRequest) {
           // });
 
           // Placeholder for now
-          const newsData: NewsArticle[] = [];
+          const newsData: any[] = [];
 
           if (dry_run) {
             return NextResponse.json({
@@ -248,39 +263,42 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
         }
 
-        const newsRepo = getNewsRepo();
-        const now = new Date().toISOString();
+        const articlesRepo = new ArticlesRepository();
 
-        const article = {
-          id: generateNewsId(title),
-          slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-          title,
-          summary: summary || `${content.substring(0, 200)}...`,
-          content,
-          author,
-          url: url || source_url,
-          source,
-          source_url,
-          published_date: published_at || now,
-          created_at: now,
-          updated_at: now,
-          tool_mentions,
-          tags,
-          category,
-          importance_score,
-          // ingestion_batch: `manual-${Date.now()}`,
-        } as NewsArticle;
+        try {
+          const article = await articlesRepo.createArticle({
+            title,
+            slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+            summary: summary || `${content.substring(0, 200)}...`,
+            content,
+            author,
+            sourceUrl: url || source_url,
+            sourceName: source,
+            publishedDate: published_at ? new Date(published_at) : new Date(),
+            toolMentions: tool_mentions,
+            tags,
+            category,
+            importanceScore: importance_score,
+            status: "active",
+            ingestionType: "text",
+            ingestedBy: userId,
+          });
 
-        await newsRepo.upsert(article);
-
-        return NextResponse.json({
-          success: true,
-          article: {
-            id: article.id,
-            title: article.title,
-            slug: article.slug,
-          },
-        });
+          return NextResponse.json({
+            success: true,
+            article: {
+              id: article.id,
+              title: article.title,
+              slug: article.slug,
+            },
+          });
+        } catch (dbError) {
+          loggers.api.error("Failed to create article", { dbError });
+          return NextResponse.json(
+            { error: "Failed to create article", details: dbError },
+            { status: 500 }
+          );
+        }
       }
 
       case "rollback": {
@@ -291,41 +309,49 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: "batch_id is required" }, { status: 400 });
         }
 
-        const newsRepo = getNewsRepo();
-        type ArticleWithBatch = NewsArticle & { ingestion_batch?: string };
-        const allNews = await newsRepo.getAll();
-        const batchArticles = allNews.filter(
-          (article) => (article as ArticleWithBatch).ingestion_batch === batch_id
-        );
+        const articlesRepo = new ArticlesRepository();
 
-        if (batchArticles.length === 0) {
+        try {
+          const allArticles = await articlesRepo.findAll();
+          const batchArticles = allArticles.filter(
+            (article: any) => article.ingestionBatch === batch_id
+          );
+
+          if (batchArticles.length === 0) {
+            return NextResponse.json(
+              { error: `No articles found for batch ${batch_id}` },
+              { status: 404 }
+            );
+          }
+
+          const deletedIds = [];
+          const errors = [];
+
+          for (const article of batchArticles) {
+            try {
+              await articlesRepo.deleteArticle(article.id);
+              deletedIds.push(article.id);
+            } catch (error) {
+              errors.push({
+                id: article.id,
+                error: error instanceof Error ? error.message : "Unknown error",
+              });
+            }
+          }
+
+          return NextResponse.json({
+            success: true,
+            batch_id,
+            deleted: deletedIds.length,
+            errors,
+          });
+        } catch (dbError) {
+          loggers.api.error("Failed to rollback batch", { dbError });
           return NextResponse.json(
-            { error: `No articles found for batch ${batch_id}` },
-            { status: 404 }
+            { error: "Failed to rollback batch" },
+            { status: 500 }
           );
         }
-
-        const deletedIds = [];
-        const errors = [];
-
-        for (const article of batchArticles) {
-          try {
-            await newsRepo.delete(article.id);
-            deletedIds.push(article.id);
-          } catch (error) {
-            errors.push({
-              id: article.id,
-              error: error instanceof Error ? error.message : "Unknown error",
-            });
-          }
-        }
-
-        return NextResponse.json({
-          success: true,
-          batch_id,
-          deleted: deletedIds.length,
-          errors,
-        });
       }
 
       case "update-metrics": {
@@ -336,33 +362,38 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: "article_id is required" }, { status: 400 });
         }
 
-        const newsRepo = getNewsRepo();
-        const article = await newsRepo.getById(article_id);
+        const articlesRepo = new ArticlesRepository();
 
-        if (!article) {
-          return NextResponse.json({ error: `Article ${article_id} not found` }, { status: 404 });
+        try {
+          const article = await articlesRepo.findById(article_id);
+
+          if (!article) {
+            return NextResponse.json({ error: `Article ${article_id} not found` }, { status: 404 });
+          }
+
+          const updatedArticle = await articlesRepo.updateArticle(article_id, {
+            // Articles don't have a metadata field in the schema
+            // Store metrics data in a different way or extend schema if needed
+            importanceScore: metrics.importance_score || article.importanceScore,
+            sentimentScore: metrics.sentiment_score || article.sentimentScore,
+          });
+
+          return NextResponse.json({
+            success: true,
+            article: {
+              id: updatedArticle?.id,
+              title: updatedArticle?.title,
+              importanceScore: updatedArticle?.importanceScore,
+              sentimentScore: updatedArticle?.sentimentScore,
+            },
+          });
+        } catch (dbError) {
+          loggers.api.error("Failed to update metrics", { dbError });
+          return NextResponse.json(
+            { error: "Failed to update metrics" },
+            { status: 500 }
+          );
         }
-
-        type ArticleWithMetrics = NewsArticle & { metrics?: Record<string, unknown> };
-        const updatedArticle: ArticleWithMetrics = {
-          ...article,
-          metrics: {
-            ...(article as ArticleWithMetrics).metrics,
-            ...metrics,
-          },
-          updated_at: new Date().toISOString(),
-        };
-
-        await newsRepo.upsert(updatedArticle as NewsArticle);
-
-        return NextResponse.json({
-          success: true,
-          article: {
-            id: updatedArticle.id,
-            title: updatedArticle.title,
-            metrics: updatedArticle.metrics,
-          },
-        });
       }
 
       default:
@@ -399,50 +430,65 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const newsRepo = getNewsRepo();
+    const articlesRepo = new ArticlesRepository();
 
     if (id) {
       // Delete single article
-      const article = await newsRepo.getById(id);
+      try {
+        const article = await articlesRepo.findById(id);
 
-      if (!article) {
-        return NextResponse.json({ error: `Article ${id} not found` }, { status: 404 });
+        if (!article) {
+          return NextResponse.json({ error: `Article ${id} not found` }, { status: 404 });
+        }
+
+        await articlesRepo.deleteArticle(id);
+
+        return NextResponse.json({
+          success: true,
+          deleted: {
+            id: article.id,
+            title: article.title,
+          },
+        });
+      } catch (dbError) {
+        loggers.api.error("Failed to delete article", { dbError });
+        return NextResponse.json(
+          { error: "Failed to delete article" },
+          { status: 500 }
+        );
       }
-
-      await newsRepo.delete(id);
-
-      return NextResponse.json({
-        success: true,
-        deleted: {
-          id: article.id,
-          title: article.title,
-        },
-      });
     }
 
     if (batch) {
       // Delete batch of articles
-      type ArticleWithBatch = NewsArticle & { ingestion_batch?: string };
-      const allNews = await newsRepo.getAll();
-      const batchArticles = allNews.filter(
-        (article) => (article as ArticleWithBatch).ingestion_batch === batch
-      );
+      try {
+        const allArticles = await articlesRepo.findAll();
+        const batchArticles = allArticles.filter(
+          (article: any) => article.ingestionBatch === batch
+        );
 
-      const deleted = [];
-      for (const article of batchArticles) {
-        await newsRepo.delete(article.id);
-        deleted.push({
-          id: article.id,
-          title: article.title,
+        const deleted = [];
+        for (const article of batchArticles) {
+          await articlesRepo.deleteArticle(article.id);
+          deleted.push({
+            id: article.id,
+            title: article.title,
+          });
+        }
+
+        return NextResponse.json({
+          success: true,
+          batch,
+          deleted_count: deleted.length,
+          deleted,
         });
+      } catch (dbError) {
+        loggers.api.error("Failed to delete batch", { dbError });
+        return NextResponse.json(
+          { error: "Failed to delete batch" },
+          { status: 500 }
+        );
       }
-
-      return NextResponse.json({
-        success: true,
-        batch,
-        deleted_count: deleted.length,
-        deleted,
-      });
     }
 
     // Should not reach here if id or batch was provided

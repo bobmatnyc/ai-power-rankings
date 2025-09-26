@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { withAuth } from "@/lib/clerk-auth";
-import { newsRepository } from "@/lib/db/repositories/news";
-import { getNewsRepo } from "@/lib/json-db";
+import { requireAdmin } from "@/lib/api-auth";
+import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { loggers } from "@/lib/logger";
 
 /**
@@ -10,60 +9,63 @@ import { loggers } from "@/lib/logger";
  * Returns all news articles sorted by published date with statistics
  */
 export async function GET(_request: NextRequest) {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
-    // Wrap the entire function in try-catch for better error handling
-    return await withAuth(async (): Promise<NextResponse> => {
-      try {
-        // Try database first
-        const dbArticles = await newsRepository.getAll();
-        // biome-ignore lint/suspicious/noExplicitAny: Articles can be from database or JSON with different shapes
-        let articles: any[] = [];
-        let stats = null;
+    const articlesRepo = new ArticlesRepository();
 
-        // If no articles in database, fallback to JSON
-        if (!dbArticles || dbArticles.length === 0) {
-          loggers.api.info("No articles in database, falling back to JSON");
-          const newsRepo = getNewsRepo();
-          const jsonArticles = await newsRepo.getAll();
+    // Get all articles from database
+    const articles = await articlesRepo.findAll();
 
-          // Sort by published date (newest first)
-          articles = jsonArticles.sort((a, b) => {
-            const dateA = new Date(a.published_date || a.created_at);
-            const dateB = new Date(b.published_date || b.created_at);
-            return dateB.getTime() - dateA.getTime();
-          });
-        } else {
-          // Convert database articles to a consistent format
-          articles = dbArticles;
-          // Get statistics from database
-          stats = await newsRepository.getStatistics();
-        }
+    // Sort by published date (newest first)
+    const sortedArticles = articles.sort((a, b) => {
+      const dateA = new Date(a.publishedDate || a.createdAt);
+      const dateB = new Date(b.publishedDate || b.createdAt);
+      return dateB.getTime() - dateA.getTime();
+    });
 
-        return NextResponse.json({
-          success: true,
-          articles: articles,
-          total: articles.length,
-          stats: stats || {
-            total: articles.length,
-            currentMonth: 0,
-            lastMonth: 0,
-            averageToolMentions: 0,
-          },
-        });
-      } catch (error) {
-        loggers.api.error("Error in admin/news/list GET", { error });
-        return NextResponse.json({ error: "Failed to load articles" }, { status: 500 });
-      }
+    // Calculate statistics
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+    const currentMonthArticles = articles.filter(article => {
+      const date = new Date(article.publishedDate || article.createdAt);
+      return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+    });
+
+    const lastMonthArticles = articles.filter(article => {
+      const date = new Date(article.publishedDate || article.createdAt);
+      return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
+    });
+
+    const totalToolMentions = articles.reduce((sum, article) => {
+      return sum + (Array.isArray(article.toolMentions) ? article.toolMentions.length : 0);
+    }, 0);
+
+    const averageToolMentions = articles.length > 0
+      ? totalToolMentions / articles.length
+      : 0;
+
+    return NextResponse.json({
+      success: true,
+      articles: sortedArticles,
+      total: sortedArticles.length,
+      stats: {
+        total: articles.length,
+        currentMonth: currentMonthArticles.length,
+        lastMonth: lastMonthArticles.length,
+        averageToolMentions: Math.round(averageToolMentions * 100) / 100,
+      },
     });
   } catch (error) {
-    // Catch any authentication errors
-    loggers.api.error("Authentication error in admin/news/list GET", { error });
-    return NextResponse.json(
-      {
-        error: "Authentication failed",
-        message: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
-    );
+    loggers.api.error("Error in admin/news/list GET", { error });
+    return NextResponse.json({ error: "Failed to load articles" }, { status: 500 });
   }
 }

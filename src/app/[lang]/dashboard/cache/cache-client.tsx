@@ -415,7 +415,7 @@ export function CacheManagementClient() {
             <h4 className="font-medium">For Local Development:</h4>
             <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
               <li>Click &quot;Generate&quot; to create fresh cache data from the database</li>
-              <li>Cache files are automatically written to src/data/cache/</li>
+              <li>Cache data is stored in blob storage</li>
               <li>Commit the updated files to version control</li>
             </ol>
           </div>
@@ -445,7 +445,7 @@ export function CacheManagementClient() {
               <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
                 <li>Click &quot;Generate&quot; to create fresh cache data</li>
                 <li>Click &quot;Download&quot; to save each cache file</li>
-                <li>Replace the files in src/data/cache/ in your local repository</li>
+                <li>Cache will be automatically updated in blob storage</li>
                 <li>Commit and push the changes to trigger a new deployment</li>
               </ol>
             )}

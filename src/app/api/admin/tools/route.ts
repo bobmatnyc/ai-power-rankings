@@ -10,18 +10,25 @@
 
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
-import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
-import type { Tool } from "@/lib/json-db/schemas";
+import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
+import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
 
 interface ToolCheckResult {
   foundBySlug: boolean;
   foundByName: boolean;
-  tool: Tool | null;
+  tool: any | null;
 }
 
 // Extended Tool type with additional properties that may exist in the data
-interface ExtendedTool extends Tool {
+interface ExtendedTool {
+  id: string;
+  slug: string;
+  name: string;
+  category: string;
+  status: string;
+  created_at?: string;
+  updated_at?: string;
   display_name?: string;
   company_info?: {
     name?: string;
@@ -34,6 +41,8 @@ interface ExtendedTool extends Tool {
   };
   company?: string;
   website?: string;
+  company_id?: string;
+  tool_mentions?: string[];
 }
 
 /**
@@ -55,7 +64,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get("action") || "list";
-    const toolsRepo = getToolsRepo();
+    const toolsRepo = new ToolsRepository();
 
     switch (action) {
       case "check-exist": {
@@ -68,8 +77,8 @@ export async function GET(request: NextRequest) {
         const results: Record<string, ToolCheckResult> = {};
 
         for (const toolName of toolsToCheck) {
-          const bySlug = await toolsRepo.getBySlug(toolName);
-          const allTools = await toolsRepo.getAll();
+          const bySlug = await toolsRepo.findBySlug(toolName);
+          const allTools = await toolsRepo.findAll();
           const byName = allTools.find(
             (tool) => tool.name.toLowerCase() === toolName.toLowerCase()
           );
@@ -86,7 +95,7 @@ export async function GET(request: NextRequest) {
 
       case "cleanup-auto": {
         // Find and list auto-generated tools (replaces cleanup-auto-tools GET)
-        const tools = await toolsRepo.getAll();
+        const tools = await toolsRepo.findAll();
         const autoTools = tools.filter(
           (tool) =>
             tool.id.startsWith("auto_") ||
@@ -110,8 +119,8 @@ export async function GET(request: NextRequest) {
         // List tools with optional status filter
         const status = searchParams.get("status");
         const tools = status
-          ? await toolsRepo.getByStatus(status as "active" | "deprecated" | "inactive")
-          : await toolsRepo.getAll();
+          ? await toolsRepo.findByStatus(status as "active" | "deprecated" | "inactive")
+          : await toolsRepo.findAll();
 
         return NextResponse.json({
           total: tools.length,
@@ -146,8 +155,8 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { action } = body;
-    const toolsRepo = getToolsRepo();
-    const newsRepo = getNewsRepo();
+    const toolsRepo = new ToolsRepository();
+    const articlesRepo = new ArticlesRepository();
 
     switch (action) {
       case "delete": {
@@ -163,7 +172,7 @@ export async function POST(request: NextRequest) {
 
         for (const toolId of toolIds) {
           try {
-            const tool = await toolsRepo.getById(toolId);
+            const tool = await toolsRepo.findById(toolId);
 
             if (!tool) {
               errors.push(`Tool with ID ${toolId} not found`);
@@ -171,25 +180,24 @@ export async function POST(request: NextRequest) {
             }
 
             // Remove references from news articles
-            const newsWithTool = await newsRepo.getByToolMention(toolId);
-
-            for (const news of newsWithTool) {
-              const updatedToolMentions = news.tool_mentions?.filter((id) => id !== toolId) || [];
-
-              const updatedNews = {
-                ...news,
-                tool_mentions: updatedToolMentions,
-                updated_at: new Date().toISOString(),
-              };
-
-              await newsRepo.upsert(updatedNews);
+            try {
+              const articlesWithTool = await articlesRepo.findByToolMention(toolId);
+              for (const article of articlesWithTool) {
+                const updatedToolMentions = article.tool_mentions?.filter((id) => id !== toolId) || [];
+                await articlesRepo.updateArticle(article.id, {
+                  tool_mentions: updatedToolMentions,
+                });
+              }
+            } catch (dbError) {
+              // If database is unavailable, continue with tool deletion
+              loggers.api.warn("Could not update articles - database unavailable", { dbError });
             }
 
             loggers.api.warn(
               `Deleting tool ${tool.name} - rankings and metrics may need manual cleanup`
             );
 
-            const deleted = await toolsRepo.delete(toolId);
+            const deleted = await toolsRepo.deleteById(toolId);
 
             if (deleted) {
               deletedTools.push({
@@ -226,7 +234,7 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: "toolId is required" }, { status: 400 });
         }
 
-        const tool = await toolsRepo.getById(toolId);
+        const tool = await toolsRepo.findById(toolId);
         if (!tool) {
           return NextResponse.json({ error: `Tool ${toolId} not found` }, { status: 404 });
         }
@@ -239,7 +247,7 @@ export async function POST(request: NextRequest) {
           updated_at: new Date().toISOString(),
         };
 
-        await toolsRepo.upsert(updatedTool);
+        await toolsRepo.update(toolId, updatedTool);
 
         return NextResponse.json({
           success: true,
@@ -249,7 +257,7 @@ export async function POST(request: NextRequest) {
 
       case "cleanup-auto": {
         // Delete auto-generated tools (replaces cleanup-auto-tools POST)
-        const tools = await toolsRepo.getAll();
+        const tools = await toolsRepo.findAll();
         const autoTools = tools.filter(
           (tool) =>
             tool.id.startsWith("auto_") ||
@@ -262,7 +270,7 @@ export async function POST(request: NextRequest) {
 
         for (const tool of autoTools) {
           try {
-            const deleted = await toolsRepo.delete(tool.id);
+            const deleted = await toolsRepo.deleteById(tool.id);
             if (deleted) {
               deletedTools.push({
                 id: tool.id,
@@ -294,7 +302,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const tool = await toolsRepo.getById(toolId);
+        const tool = await toolsRepo.findById(toolId);
         if (!tool) {
           return NextResponse.json({ error: `Tool ${toolId} not found` }, { status: 404 });
         }
@@ -309,7 +317,7 @@ export async function POST(request: NextRequest) {
           updated_at: new Date().toISOString(),
         };
 
-        await toolsRepo.upsert(updatedTool);
+        await toolsRepo.update(toolId, updatedTool);
 
         return NextResponse.json({
           success: true,
@@ -347,8 +355,8 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Tool ID is required" }, { status: 400 });
     }
 
-    const toolsRepo = getToolsRepo();
-    const newsRepo = getNewsRepo();
+    const toolsRepo = new ToolsRepository();
+    const articlesRepo = new ArticlesRepository();
 
     const tool = await toolsRepo.getById(toolId);
     if (!tool) {
@@ -356,17 +364,20 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Remove from news articles
-    const newsWithTool = await newsRepo.getByToolMention(toolId);
-    for (const news of newsWithTool) {
-      const updatedNews = {
-        ...news,
-        tool_mentions: news.tool_mentions?.filter((id) => id !== toolId) || [],
-        updated_at: new Date().toISOString(),
-      };
-      await newsRepo.upsert(updatedNews);
+    try {
+      const articlesWithTool = await articlesRepo.findByToolMention(toolId);
+      for (const article of articlesWithTool) {
+        const updatedToolMentions = article.tool_mentions?.filter((id) => id !== toolId) || [];
+        await articlesRepo.updateArticle(article.id, {
+          tool_mentions: updatedToolMentions,
+        });
+      }
+    } catch (dbError) {
+      // If database is unavailable, continue with tool deletion
+      loggers.api.warn("Could not update articles - database unavailable", { dbError });
     }
 
-    const deleted = await toolsRepo.delete(toolId);
+    const deleted = await toolsRepo.deleteById(toolId);
 
     if (deleted) {
       return NextResponse.json({
@@ -403,12 +414,12 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
     const { action } = body;
-    const toolsRepo = getToolsRepo();
+    const toolsRepo = new ToolsRepository();
 
     switch (action) {
       case "quick-fix-display": {
         // Quick fix for tool display issues (replaces quick-fix-tool-display)
-        const tools = await toolsRepo.getAll();
+        const tools = await toolsRepo.findAll();
         const fixedTools = [];
 
         for (const tool of tools) {
@@ -419,7 +430,7 @@ export async function PUT(request: NextRequest) {
               display_name: tool.name,
               updated_at: new Date().toISOString(),
             };
-            await toolsRepo.upsert(updatedTool);
+            await toolsRepo.update(tool.id, updatedTool);
             fixedTools.push({
               id: tool.id,
               name: tool.name,
@@ -437,7 +448,7 @@ export async function PUT(request: NextRequest) {
 
       case "update-missing-company": {
         // Update missing company data (replaces update-missing-company-data)
-        const tools = await toolsRepo.getAll();
+        const tools = await toolsRepo.findAll();
         const updatedTools = [];
 
         for (const tool of tools) {
@@ -458,7 +469,7 @@ export async function PUT(request: NextRequest) {
               updated_at: new Date().toISOString(),
             };
 
-            await toolsRepo.upsert(updatedTool);
+            await toolsRepo.update(tool.id, updatedTool);
             updatedTools.push({
               id: tool.id,
               name: tool.name,

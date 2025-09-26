@@ -1,30 +1,47 @@
 import { NextResponse } from "next/server";
-import { getRankingsRepo } from "@/lib/json-db";
+import { requireAdmin } from "@/lib/api-auth";
+import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
+import { loggers } from "@/lib/logger";
 
 export async function GET() {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
-    const rankingsRepo = getRankingsRepo();
+    const rankingsRepo = new RankingsRepository();
 
-    // Get available periods from rankings repository
-    const availablePeriods = await rankingsRepo.getAvailablePeriods();
-    const currentPeriod = await rankingsRepo.getCurrentPeriod();
+    // Get all rankings from database
+    const allRankings = await rankingsRepo.findAll();
 
-    const periodData = availablePeriods.map((period) => {
+    // Find current ranking
+    const currentRanking = await rankingsRepo.getCurrentRankings();
+    const currentPeriod = currentRanking?.period || null;
+
+    // Map periods with their data
+    const periodData = allRankings.map((ranking) => {
+      const rankingsCount = ranking.data?.rankings?.length || 0;
+
       return {
-        period: period,
-        is_current: period === currentPeriod,
-        status: period === currentPeriod ? "current" : "archived",
-        display_name: period, // Using period as display name for now
-        calculation_date: null, // Would need ranking periods repository
-        ranking_count: 0, // Would need to count rankings per period
+        period: ranking.period,
+        is_current: ranking.is_current,
+        status: ranking.is_current ? "current" : "archived",
+        display_name: ranking.period,
+        calculation_date: ranking.data?.generated_at || ranking.created_at.toISOString(),
+        ranking_count: rankingsCount,
+        algorithm_version: ranking.algorithm_version,
       };
     });
 
     return NextResponse.json({
-      total: availablePeriods.length,
+      total: allRankings.length,
+      current_period: currentPeriod,
       periods: periodData,
     });
   } catch (error: unknown) {
+    loggers.api.error("Error checking ranking periods:", error);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }

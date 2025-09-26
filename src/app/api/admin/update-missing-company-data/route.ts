@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getCompaniesRepo } from "@/lib/json-db";
+import { requireAdmin } from "@/lib/api-auth";
+import { CompaniesRepository } from "@/lib/db/repositories/companies.repository";
 import { loggers } from "@/lib/logger";
 
 const companyUpdates = [
@@ -23,8 +24,14 @@ const companyUpdates = [
 ];
 
 export async function POST(_request: NextRequest) {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
-    const companiesRepo = getCompaniesRepo();
+    const companiesRepo = new CompaniesRepository();
     loggers.api.info("Updating missing company data...");
 
     const results = {
@@ -35,7 +42,7 @@ export async function POST(_request: NextRequest) {
     };
 
     // Get all companies
-    const allCompanies = await companiesRepo.getAll();
+    const allCompanies = await companiesRepo.findAll();
 
     for (const update of companyUpdates) {
       try {
@@ -50,22 +57,21 @@ export async function POST(_request: NextRequest) {
         }
 
         let needsUpdate = false;
-        const updatedCompany = { ...company };
+        const updatedData: any = {};
 
         // Only update if the field is missing
         if (!company.founded && update.founded) {
-          updatedCompany.founded = update.founded;
+          updatedData.founded = update.founded;
           needsUpdate = true;
         }
         if (!company.website && update.website) {
-          updatedCompany.website = update.website;
+          updatedData.website = update.website;
           needsUpdate = true;
         }
 
         // If there's something to update
         if (needsUpdate) {
-          updatedCompany.updated_at = new Date().toISOString();
-          await companiesRepo.upsert(updatedCompany);
+          await companiesRepo.update(company.id, updatedData);
           results.updated++;
           loggers.api.info(`Updated ${update.name}`);
         }
@@ -99,11 +105,17 @@ export async function POST(_request: NextRequest) {
 }
 
 export async function GET() {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
-    const companiesRepo = getCompaniesRepo();
+    const companiesRepo = new CompaniesRepository();
 
     // Get all companies and filter for missing data
-    const allCompanies = await companiesRepo.getAll();
+    const allCompanies = await companiesRepo.findAll();
 
     const companiesWithMissingData = allCompanies.filter(
       (company) => !company.founded || !company.website

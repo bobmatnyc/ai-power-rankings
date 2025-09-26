@@ -1,120 +1,102 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { cachedJsonResponse } from "@/lib/api-cache";
-import { getNewsRepo, getToolsRepo } from "@/lib/json-db";
-import type { NewsArticle, Tool } from "@/lib/json-db/schemas";
+import { getDb } from "@/lib/db/connection";
+import { NewsRepository } from "@/lib/db/repositories/news";
+import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
 import { findToolByText } from "@/lib/tool-matcher";
 
 export async function GET(request: NextRequest) {
   try {
+    // Ensure database connection is available
+    const db = getDb();
+    if (!db) {
+      loggers.api.error("Database connection not available");
+      return NextResponse.json(
+        {
+          error: "Database connection unavailable",
+          message: "The database service is currently unavailable. Please try again later."
+        },
+        { status: 503 }
+      );
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const limit = parseInt(searchParams.get("limit") || "20", 10);
     const offset = parseInt(searchParams.get("offset") || "0", 10);
     const filter = searchParams.get("filter") || "all";
 
-    loggers.api.debug("Getting news from JSON repository", { limit, offset, filter });
+    loggers.api.debug("Getting news from database", { limit, offset, filter });
 
-    const newsRepo = getNewsRepo();
-    const toolsRepo = getToolsRepo();
+    const newsRepo = new NewsRepository();
+    const toolsRepo = new ToolsRepository();
 
-    // Get all news articles
-    const allNews = await newsRepo.getAll();
+    // Get paginated news articles from database
+    const { articles: allNews, total, hasMore } = await newsRepo.getPaginated(limit * 3, 0); // Get more to filter
 
-    // Helper function to get the effective date (same logic as used for event_date)
-    const getEffectiveDate = (article: NewsArticle) => {
-      const articleWithExtra = article as NewsArticle & { published_at?: string };
+    // Helper function to get the effective date
+    const getEffectiveDate = (article: any) => {
       return (
-        article.published_date ||
-        articleWithExtra.published_at ||
+        article.published_at ||
+        article.publishedAt ||
         article.created_at ||
-        article.date ||
+        article.createdAt ||
         new Date().toISOString()
       );
     };
 
-    // Sort by effective date (newest first) - using the same date field that will be used for event_date
-    const sortedNews = allNews.sort((a, b) => {
-      const dateA = new Date(getEffectiveDate(a)).getTime();
-      const dateB = new Date(getEffectiveDate(b)).getTime();
-      return dateB - dateA;
-    });
-
     // Transform to expected format
     const transformedNews = await Promise.all(
-      sortedNews.map(async (article) => {
-        // Get tool info from tool_mentions or tool_ids
+      allNews.map(async (article) => {
+        // Parse the JSONB data field if it exists
+        const articleData = article.data || {};
+
+        // Get tool mentions from database or data field
+        const toolMentions = article.toolMentions || articleData.tool_mentions || [];
+
+        // Get tool info from tool_mentions or tool associations
         let toolNames = "Various Tools";
         let toolCategory = "ai-coding-tool";
         let toolWebsite = "";
         let primaryToolId = "unknown";
 
         // Try to extract tool from title using the term mapping
-        const tools = await toolsRepo.getAll();
-        let matchingTool: Tool | null = null;
-
-        // First, try to find tool using the term mapping
         const matchedSlug = findToolByText(article.title);
+        let matchingTool = null;
+
         if (matchedSlug) {
-          matchingTool = tools.find((t) => t.slug === matchedSlug) || null;
+          matchingTool = await toolsRepo.findBySlug(matchedSlug);
         }
 
         // If no match in title, check tool_mentions
-        if (!matchingTool && article.tool_mentions && article.tool_mentions.length > 0) {
-          // Try to find tools by name
-          const firstToolName = article.tool_mentions[0];
-          matchingTool =
-            tools.find(
-              (t) =>
-                t.name.toLowerCase() === firstToolName?.toLowerCase() ||
-                t.slug === firstToolName?.toLowerCase().replace(/\s+/g, "-")
-            ) || null;
+        if (!matchingTool && toolMentions.length > 0) {
+          const firstToolName = toolMentions[0];
+          // Try to find tool by slug or name
+          matchingTool = await toolsRepo.findBySlug(
+            firstToolName.toLowerCase().replace(/\s+/g, "-")
+          );
 
           if (!matchingTool) {
             // Use the tool mention as the name even if we don't find a match
-            toolNames = article.tool_mentions.join(", ");
+            toolNames = toolMentions.join(", ");
           }
         }
 
         if (matchingTool) {
+          const toolInfo = matchingTool.info || {};
           toolNames = matchingTool.name;
           toolCategory = matchingTool.category || "ai-coding-tool";
-          toolWebsite = matchingTool.info?.website || "";
+          toolWebsite = toolInfo.website || "";
           primaryToolId = matchingTool.slug || matchingTool.id;
-        } else if (
-          "tool_ids" in article &&
-          Array.isArray((article as NewsArticle & { tool_ids?: string[] }).tool_ids) &&
-          ((article as NewsArticle & { tool_ids?: string[] }).tool_ids?.length ?? 0) > 0
-        ) {
-          // Fallback to old format with tool_ids
-          const toolIds = (article as NewsArticle & { tool_ids?: string[] }).tool_ids;
-          const firstToolId = toolIds?.[0];
-          const tool = firstToolId ? await toolsRepo.getById(firstToolId) : null;
-
-          if (tool) {
-            toolNames = tool.name;
-            toolCategory = tool.category || "ai-coding-tool";
-            toolWebsite = tool.info?.website || "";
-            primaryToolId = tool.slug || tool.id;
-          }
-
-          // If multiple tools, get all names
-          if (toolIds && toolIds.length > 1) {
-            const tools = await Promise.all(
-              toolIds.map(async (id) => {
-                const t = await toolsRepo.getById(id);
-                return t?.name || id;
-              })
-            );
-            toolNames = tools.join(", ");
-          }
         }
 
-        // Map category to event_type based on tags or content
-        let eventType = "update";
+        // Map event type based on tags or content
+        let eventType = articleData.event_type || "update";
 
         // Check tags first for better categorization
-        if (article.tags && article.tags.length > 0) {
-          const tagStr = article.tags.join(" ").toLowerCase();
+        const tags = article.tags || articleData.tags || [];
+        if (tags.length > 0) {
+          const tagStr = tags.join(" ").toLowerCase();
           if (
             tagStr.includes("launch") ||
             tagStr.includes("beta") ||
@@ -132,6 +114,8 @@ export async function GET(request: NextRequest) {
             eventType = "feature";
           } else if (tagStr.includes("rebrand") || tagStr.includes("acquisition")) {
             eventType = "announcement";
+          } else if (tagStr.includes("partnership")) {
+            eventType = "partnership";
           }
         }
 
@@ -176,7 +160,7 @@ export async function GET(request: NextRequest) {
           const titleLower = title.toLowerCase();
 
           // Enhanced impact magnitude calculation for more varied scores
-          const baseMagnitude = Math.max(0.1, (importance - 4) / 5); // Better range: 0.1 to 1.2
+          const baseMagnitude = Math.max(0.1, (importance - 4) / 5);
 
           // Add bonus multipliers for high-impact keywords
           let multiplier = 1;
@@ -239,7 +223,7 @@ export async function GET(request: NextRequest) {
         };
 
         // Enhanced importance scoring based on content
-        let importance = article.importance_score || 5;
+        let importance = article.importance || articleData.importance_score || 5;
         const titleLower = article.title.toLowerCase();
 
         // Boost importance for high-impact keywords
@@ -273,17 +257,14 @@ export async function GET(request: NextRequest) {
           event_date: getEffectiveDate(article),
           event_type: eventType,
           title: article.title,
-          description: article.summary || article.content,
-          source_url: article.source_url,
-          source_name:
-            article.source ||
-            (article as NewsArticle & { source_name?: string }).source_name ||
-            "AI News",
+          description: article.summary || article.content || articleData.content,
+          source_url: article.sourceUrl || articleData.source_url,
+          source_name: article.source || articleData.source || "AI News",
           metrics: {
             importance_score: importance,
           },
           scoring_factors,
-          tags: article.tags || [],
+          tags: tags,
         };
       })
     );
@@ -294,22 +275,32 @@ export async function GET(request: NextRequest) {
       filteredNews = transformedNews.filter((item) => item.event_type === filter);
     }
 
-    // Apply pagination
+    // Apply pagination to the filtered results
     const paginatedNews = filteredNews.slice(offset, offset + limit);
-    const hasMore = offset + limit < filteredNews.length;
+    const hasMoreFiltered = offset + limit < filteredNews.length;
 
     return cachedJsonResponse(
       {
         news: paginatedNews,
         total: filteredNews.length,
-        hasMore,
-        _source: "json-db",
+        hasMore: hasMoreFiltered,
+        _source: "database",
         _timestamp: new Date().toISOString(),
       },
       "/api/news"
     );
   } catch (error) {
-    loggers.api.error("News API error", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    loggers.api.error("News API error", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+
+    return NextResponse.json(
+      {
+        error: "Internal server error",
+        message: "An error occurred while fetching news. Please try again later."
+      },
+      { status: 500 }
+    );
   }
 }

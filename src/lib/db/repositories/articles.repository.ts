@@ -261,6 +261,13 @@ export class ArticlesRepository {
   }
 
   /**
+   * Find article by ID (alias for getArticleById)
+   */
+  async findById(id: string): Promise<Article | null> {
+    return this.getArticleById(id);
+  }
+
+  /**
    * Get article by slug
    */
   async getArticleBySlug(slug: string): Promise<Article | null> {
@@ -299,6 +306,20 @@ export class ArticlesRepository {
 
     const result = await query;
     return result || [];
+  }
+
+  /**
+   * Find all articles (alias for getArticles without options)
+   */
+  async findAll(): Promise<Article[]> {
+    return this.getArticles();
+  }
+
+  /**
+   * Find articles by status
+   */
+  async findByStatus(status: string): Promise<Article[]> {
+    return this.getArticles({ status });
   }
 
   /**

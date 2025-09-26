@@ -1,40 +1,71 @@
 import { NextResponse } from "next/server";
 import { cachedJsonResponse } from "@/lib/api-cache";
-import { getCompaniesRepo, getToolsRepo } from "@/lib/json-db";
-import type { Tool } from "@/lib/json-db/schemas";
+import { getDb } from "@/lib/db/connection";
+import { companiesRepository } from "@/lib/db/repositories/companies.repository";
+import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
 import type { APITool, ToolInfo, ToolsResponse } from "@/lib/types/api";
 import { toCompanyId, toToolId } from "@/lib/types/branded";
 
 export async function GET(): Promise<NextResponse> {
   try {
-    loggers.api.debug("Getting tools from JSON repository");
+    // Ensure database connection is available
+    const db = getDb();
+    if (!db) {
+      loggers.api.error("Database connection not available");
+      return NextResponse.json(
+        {
+          error: "Database connection unavailable",
+          message: "The database service is currently unavailable. Please try again later."
+        },
+        { status: 503 }
+      );
+    }
 
-    const toolsRepo = getToolsRepo();
-    const companiesRepo = getCompaniesRepo();
+    loggers.api.debug("Getting tools from database");
 
-    // Get all active tools
-    const tools = await toolsRepo.getByStatus("active");
+    const toolsRepo = new ToolsRepository();
+
+    // Get all active tools from database
+    const tools = await toolsRepo.findByStatus("active");
+
+    if (!tools || tools.length === 0) {
+      loggers.api.info("No active tools found in database");
+      return cachedJsonResponse(
+        {
+          tools: [],
+          _source: "database",
+          _timestamp: new Date().toISOString(),
+        },
+        "/api/tools"
+      );
+    }
 
     // Transform tools to match expected format with company info
     const toolsWithInfo: APITool[] = await Promise.all(
-      tools.map(async (tool: Tool): Promise<APITool> => {
+      tools.map(async (tool): Promise<APITool> => {
         // Get company info if company_id exists
         let companyName = "";
         let companyId: ReturnType<typeof toCompanyId> | undefined;
 
         if (tool.company_id) {
           try {
-            const company = await companiesRepo.getById(tool.company_id);
-            companyName = company?.name || "";
-            companyId = company?.id ? toCompanyId(company.id) : undefined;
+            const company = await companiesRepository.findById(tool.company_id);
+            if (company) {
+              companyName = company.name || "";
+              companyId = toCompanyId(company.id);
+            }
           } catch (error) {
             loggers.api.warn("Failed to fetch company info", {
               toolId: tool.id,
               companyId: tool.company_id,
+              error: error instanceof Error ? error.message : "Unknown error",
             });
           }
         }
+
+        // Parse tool info from database (it's stored as JSONB)
+        const toolInfoData = tool.info || {};
 
         // Create properly typed tool info
         const toolInfo: ToolInfo = {
@@ -43,32 +74,32 @@ export async function GET(): Promise<NextResponse> {
             id: companyId,
           },
           product: {
-            description: tool.info.description || "",
-            tagline: tool.info.summary,
-            pricing_model: tool.info.business?.pricing_model,
-            license_type: "proprietary",
+            description: (toolInfoData["description"] as string) || "",
+            tagline: (toolInfoData["summary"] as string) || "",
+            pricing_model: (toolInfoData["business"] as any)?.pricing_model,
+            license_type: (toolInfoData["license_type"] as string) || "proprietary",
           },
           links: {
-            website: tool.info.website,
-            github: (tool.info.technical as { github_repo?: string })?.github_repo,
+            website: toolInfoData["website"] as string | undefined,
+            github: (toolInfoData["technical"] as any)?.github_repo,
           },
           technical: {
-            supported_languages: (tool.info.technical as { supported_languages?: string[] })?.supported_languages,
-            ide_integrations: (tool.info.technical as { ide_integrations?: string[] })?.ide_integrations,
-            api_available: (tool.info.technical as { api_available?: boolean })?.api_available,
+            supported_languages: (toolInfoData["technical"] as any)?.supported_languages,
+            ide_integrations: (toolInfoData["technical"] as any)?.ide_integrations,
+            api_available: (toolInfoData["technical"] as any)?.api_available,
           },
           business: {
-            pricing_model: tool.info.business?.pricing_model,
-            free_tier: (tool.info.business as { free_tier?: boolean })?.free_tier,
+            pricing_model: (toolInfoData["business"] as any)?.pricing_model,
+            free_tier: (toolInfoData["business"] as any)?.free_tier,
           },
           metrics: {
-            swe_bench: tool.info.metrics?.swe_bench,
-            github_stars: (tool.info.metrics as { github_stars?: number })?.github_stars,
-            user_count: (tool.info.metrics as { user_count?: number })?.user_count,
+            swe_bench: (toolInfoData["metrics"] as any)?.swe_bench,
+            github_stars: (toolInfoData["metrics"] as any)?.github_stars,
+            user_count: (toolInfoData["metrics"] as any)?.user_count,
           },
           metadata: {
-            logo_url: tool.info.website
-              ? `https://logo.clearbit.com/${new URL(tool.info.website).hostname}`
+            logo_url: toolInfoData["website"]
+              ? `https://logo.clearbit.com/${new URL(toolInfoData["website"] as string).hostname}`
               : undefined,
           },
         };
@@ -77,11 +108,11 @@ export async function GET(): Promise<NextResponse> {
           id: toToolId(tool.id),
           slug: tool.slug,
           name: tool.name,
-          description: tool.info.description || "", // Add top-level description for backward compatibility
+          description: (toolInfoData["description"] as string) || "", // Add top-level description for backward compatibility
           category: tool.category,
           status: tool.status as "active" | "inactive" | "deprecated",
-          created_at: tool.created_at,
-          updated_at: tool.updated_at,
+          created_at: tool.created_at || new Date().toISOString(),
+          updated_at: tool.updated_at || new Date().toISOString(),
           tags: tool.tags || [],
           info: toolInfo,
         } satisfies APITool;
@@ -90,18 +121,28 @@ export async function GET(): Promise<NextResponse> {
 
     const responseData: ToolsResponse["data"] = {
       tools: toolsWithInfo,
-      _source: "json-db",
+      _source: "database",
       _timestamp: new Date().toISOString(),
     };
 
-    loggers.api.info("Returning tools response", {
+    loggers.api.info("Returning tools response from database", {
       toolCount: toolsWithInfo.length,
       firstTool: toolsWithInfo[0]?.name,
     });
 
     return cachedJsonResponse(responseData, "/api/tools");
   } catch (error) {
-    loggers.api.error("Error in tools API", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    loggers.api.error("Error in tools API", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+
+    return NextResponse.json(
+      {
+        error: "Internal server error",
+        message: "An error occurred while fetching tools. Please try again later."
+      },
+      { status: 500 }
+    );
   }
 }

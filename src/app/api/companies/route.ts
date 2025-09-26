@@ -1,16 +1,48 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { cachedJsonResponse } from "@/lib/api-cache";
+import { getDb } from "@/lib/db/connection";
 import { companiesRepository } from "@/lib/db/repositories/companies.repository";
-import type { Company } from "@/lib/json-db/schemas";
 import { loggers } from "@/lib/logger";
+
+// Define Company interface for API responses
+interface Company {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string;
+  website?: string;
+  founded?: string;
+  headquarters?: string;
+  size?: string;
+  funding_total?: number;
+  last_funding_round?: string;
+  investors?: string[];
+  created_at: string;
+  updated_at: string;
+}
 
 export async function GET(request: NextRequest) {
   try {
+    // Ensure database connection is available
+    const db = getDb();
+    if (!db) {
+      loggers.api.error("Database connection not available");
+      return NextResponse.json(
+        {
+          error: "Database connection unavailable",
+          message: "The database service is currently unavailable. Please try again later."
+        },
+        { status: 503 }
+      );
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const limit = parseInt(searchParams.get("limit") || "50", 10);
     const page = parseInt(searchParams.get("page") || "1", 10);
     const search = searchParams.get("search");
     const size = searchParams.get("size");
+
+    loggers.api.debug("Getting companies from database", { limit, page, search, size });
 
     let companiesData: Awaited<ReturnType<typeof companiesRepository.findAll>>;
 
@@ -55,6 +87,12 @@ export async function GET(request: NextRequest) {
     const endIndex = startIndex + limit;
     const paginatedCompanies = companies.slice(startIndex, endIndex);
 
+    loggers.api.info("Returning companies response from database", {
+      companyCount: paginatedCompanies.length,
+      totalCompanies: companies.length,
+      page,
+    });
+
     return cachedJsonResponse(
       {
         companies: paginatedCompanies,
@@ -62,17 +100,21 @@ export async function GET(request: NextRequest) {
         page,
         totalPages: Math.ceil(companies.length / limit),
         hasMore: endIndex < companies.length,
-        _source: process.env["USE_DATABASE"] === "true" ? "postgresql" : "json-db",
+        _source: "database",
+        _timestamp: new Date().toISOString(),
       },
       "/api/companies"
     );
   } catch (error) {
-    loggers.api.error("Companies API error", { error });
+    loggers.api.error("Companies API error", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+    });
 
     return NextResponse.json(
       {
         error: "Failed to fetch companies",
-        message: error instanceof Error ? error.message : "Unknown error",
+        message: "An error occurred while fetching companies. Please try again later."
       },
       { status: 500 }
     );
@@ -82,6 +124,19 @@ export async function GET(request: NextRequest) {
 // Create new company
 export async function POST(request: NextRequest) {
   try {
+    // Ensure database connection is available
+    const db = getDb();
+    if (!db) {
+      loggers.api.error("Database connection not available");
+      return NextResponse.json(
+        {
+          error: "Database connection unavailable",
+          message: "The database service is currently unavailable. Please try again later."
+        },
+        { status: 503 }
+      );
+    }
+
     // TODO: Add authentication check here
 
     const body = (await request.json()) as Partial<Company>;
@@ -120,6 +175,7 @@ export async function POST(request: NextRequest) {
       last_funding_round: company.last_funding_round,
       investors: company.investors,
     };
+
     const createdCompanyData = await companiesRepository.create(companyData);
 
     // Convert back to Company format
@@ -146,17 +202,26 @@ export async function POST(request: NextRequest) {
       updated_at: createdCompanyData.updated_at || new Date().toISOString(),
     };
 
+    loggers.api.info("Created new company in database", {
+      companyId: createdCompany.id,
+      companyName: createdCompany.name,
+    });
+
     return NextResponse.json({
       success: true,
       company: createdCompany,
+      _source: "database",
     });
   } catch (error) {
-    loggers.api.error("Create company error", { error });
+    loggers.api.error("Create company error", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+    });
 
     return NextResponse.json(
       {
         error: "Failed to create company",
-        message: error instanceof Error ? error.message : "Unknown error",
+        message: "An error occurred while creating the company. Please try again later."
       },
       { status: 500 }
     );

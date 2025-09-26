@@ -17,6 +17,10 @@ interface ToolData {
   category: string;
   status: string;
   company_id?: string;
+  info?: Record<string, unknown>;
+  tags?: string[];
+  created_at?: string;
+  updated_at?: string;
   [key: string]: unknown; // Additional fields from JSON
 }
 
@@ -94,6 +98,28 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       return this.countInDb();
     }
     return this.countInJson();
+  }
+
+  /**
+   * Find tools by status
+   */
+  async findByStatus(status: string): Promise<ToolData[]> {
+    if (this.useDatabase) {
+      const db = getDb();
+      if (!db) throw new Error("Database not connected");
+
+      const result = await db
+        .select()
+        .from(tools)
+        .where(eq(tools.status, status))
+        .orderBy(desc(tools.createdAt));
+
+      return this.mapDbToolsToData(result);
+    }
+
+    // For JSON fallback, filter by status
+    const allTools = await this.findAllFromJson();
+    return allTools.filter((tool) => tool.status === status);
   }
 
   /**
@@ -452,6 +478,11 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   private mapDbToolToData(dbTool: Tool): ToolData {
     const toolData = dbTool.data as Record<string, unknown>;
+
+    // Extract specific fields from data JSONB
+    const info = toolData["info"] as Record<string, unknown> | undefined;
+    const tags = toolData["tags"] as string[] | undefined;
+
     return {
       id: (toolData["id"] as string) || dbTool.id,
       slug: dbTool.slug,
@@ -459,6 +490,10 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       category: dbTool.category,
       status: dbTool.status,
       company_id: dbTool.companyId || undefined,
+      info: info,
+      tags: tags || [],
+      created_at: dbTool.createdAt.toISOString(),
+      updated_at: dbTool.updatedAt.toISOString(),
       ...toolData,
     };
   }

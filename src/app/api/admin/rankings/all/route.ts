@@ -1,15 +1,19 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getRankingsRepo } from "@/lib/json-db";
-import type { RankingEntry } from "@/lib/json-db/schemas";
+import { requireAdmin } from "@/lib/api-auth";
+import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
 
 // GET all rankings for admin tools manager
 export async function GET(_request: NextRequest) {
-  try {
-    // TODO: Add authentication check here
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
 
-    const rankingsRepo = getRankingsRepo();
-    const periods = await rankingsRepo.getAvailablePeriods();
+  try {
+    const rankingsRepo = new RankingsRepository();
+    const allPeriods = await rankingsRepo.findAll();
 
     // Get all rankings from all periods
     const allRankings: Array<{
@@ -26,33 +30,32 @@ export async function GET(_request: NextRequest) {
       created_at?: string;
     }> = [];
 
-    for (const period of periods) {
-      const periodData = await rankingsRepo.getRankingsForPeriod(period);
-      if (periodData?.rankings) {
-        // Transform rankings to match the expected format
-        periodData.rankings.forEach((ranking: RankingEntry) => {
-          allRankings.push({
-            id: `${period}-${ranking.tool_id}`,
-            period: period,
-            tool_id: ranking.tool_id,
-            position: ranking.position ?? 0,
-            score: ranking.score ?? 0,
-            movement: ranking.movement?.direction || "same",
-            movement_positions: ranking.movement?.change || 0,
-            previous_position: ranking.movement?.previous_position,
-            score_breakdown: ranking.factor_scores || {},
-            algorithm_version: periodData.algorithm_version,
-            created_at: periodData.created_at,
-          });
+    for (const periodData of allPeriods) {
+      const rankings = periodData.data?.rankings || [];
+
+      // Transform rankings to match the expected format
+      rankings.forEach((ranking: any) => {
+        allRankings.push({
+          id: `${periodData.period}-${ranking.tool_id}`,
+          period: periodData.period,
+          tool_id: ranking.tool_id,
+          position: ranking.position ?? 0,
+          score: ranking.score ?? 0,
+          movement: ranking.movement?.direction || "same",
+          movement_positions: ranking.movement?.change || 0,
+          previous_position: ranking.movement?.previous_position,
+          score_breakdown: ranking.factor_scores || {},
+          algorithm_version: periodData.algorithm_version,
+          created_at: periodData.created_at.toISOString(),
         });
-      }
+      });
     }
 
     return NextResponse.json({
       rankings: allRankings,
       total: allRankings.length,
-      periods: periods,
-      _source: "json-db",
+      periods: allPeriods.map(p => p.period),
+      current_period: allPeriods.find(p => p.is_current)?.period || null,
     });
   } catch (error) {
     loggers.api.error("Get all rankings error", { error });
