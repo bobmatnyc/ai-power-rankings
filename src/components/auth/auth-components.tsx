@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 // Import mock components that are always safe
 import {
   SignedIn as MockSignedIn,
@@ -118,13 +118,15 @@ export const useAuth = () => {
     }
 
     // Async load Clerk components
-    loadClerkComponents().then((components) => {
-      if (components.useAuth && !components.error) {
-        setUseClerkAuth(true);
-      }
-    }).catch((error) => {
-      console.warn("[useAuth] Failed to load Clerk components:", error);
-    });
+    loadClerkComponents()
+      .then((components) => {
+        if (components.useAuth && !components.error) {
+          setUseClerkAuth(true);
+        }
+      })
+      .catch((error) => {
+        console.warn("[useAuth] Failed to load Clerk components:", error);
+      });
   }, []);
 
   // Create a ref to hold the Clerk useAuth hook instance
@@ -157,49 +159,75 @@ export const useAuth = () => {
   return clerkAuthResult && useClerkAuth ? clerkAuthResult : mockResult;
 };
 
+// Create a safe wrapper that handles optional children
+const SafeComponentWrapper = ({
+  component: Component,
+  children,
+  ...props
+}: {
+  component: ClerkComponent | null;
+  children?: React.ReactNode;
+  [key: string]: unknown;
+}) => {
+  if (!Component) {
+    return null;
+  }
+
+  // Safely pass children and props, handling cases where the component expects optional children
+  return <Component {...props}>{children}</Component>;
+};
+
 // Export wrapper components that choose implementation at runtime with async loading
 export const SignedIn = ({ children }: { children: React.ReactNode }) => {
-  const [Component, setComponent] = useState<ClerkComponent>(MockSignedIn);
+  const [Component, setComponent] = useState<ClerkComponent | null>(null);
 
   useEffect(() => {
     const isAuthDisabled = getIsAuthDisabled();
     if (isAuthDisabled) {
-      setComponent(MockSignedIn);
+      setComponent(() => MockSignedIn as ClerkComponent);
       return;
     }
 
-    loadClerkComponents().then((components) => {
-      if (components.SignedIn && !components.error) {
-        setComponent(() => components.SignedIn);
-      }
-    }).catch(() => {
-      setComponent(MockSignedIn);
-    });
+    loadClerkComponents()
+      .then((components) => {
+        if (components.SignedIn && !components.error) {
+          setComponent(() => components.SignedIn);
+        } else {
+          setComponent(() => MockSignedIn as ClerkComponent);
+        }
+      })
+      .catch(() => {
+        setComponent(() => MockSignedIn as ClerkComponent);
+      });
   }, []);
 
-  return <Component>{children}</Component>;
+  return <SafeComponentWrapper component={Component}>{children}</SafeComponentWrapper>;
 };
 
 export const SignedOut = ({ children }: { children: React.ReactNode }) => {
-  const [Component, setComponent] = useState<ClerkComponent>(MockSignedOut);
+  const [Component, setComponent] = useState<ClerkComponent | null>(null);
 
   useEffect(() => {
     const isAuthDisabled = getIsAuthDisabled();
     if (isAuthDisabled) {
-      setComponent(MockSignedOut);
+      setComponent(() => MockSignedOut as ClerkComponent);
       return;
     }
 
-    loadClerkComponents().then((components) => {
-      if (components.SignedOut && !components.error) {
-        setComponent(() => components.SignedOut);
-      }
-    }).catch(() => {
-      setComponent(MockSignedOut);
-    });
+    loadClerkComponents()
+      .then((components) => {
+        if (components.SignedOut && !components.error) {
+          setComponent(() => components.SignedOut);
+        } else {
+          setComponent(() => MockSignedOut as ClerkComponent);
+        }
+      })
+      .catch(() => {
+        setComponent(() => MockSignedOut as ClerkComponent);
+      });
   }, []);
 
-  return <Component>{children}</Component>;
+  return <SafeComponentWrapper component={Component}>{children}</SafeComponentWrapper>;
 };
 
 export const SignInButton = ({
@@ -209,25 +237,33 @@ export const SignInButton = ({
   children?: React.ReactNode;
   [key: string]: unknown;
 }) => {
-  const [Component, setComponent] = useState<ClerkComponent>(MockSignInButton);
+  const [Component, setComponent] = useState<ClerkComponent | null>(null);
 
   useEffect(() => {
     const isAuthDisabled = getIsAuthDisabled();
     if (isAuthDisabled) {
-      setComponent(MockSignInButton);
+      setComponent(() => MockSignInButton as ClerkComponent);
       return;
     }
 
-    loadClerkComponents().then((components) => {
-      if (components.SignInButton && !components.error) {
-        setComponent(() => components.SignInButton);
-      }
-    }).catch(() => {
-      setComponent(MockSignInButton);
-    });
+    loadClerkComponents()
+      .then((components) => {
+        if (components.SignInButton && !components.error) {
+          setComponent(() => components.SignInButton);
+        } else {
+          setComponent(() => MockSignInButton as ClerkComponent);
+        }
+      })
+      .catch(() => {
+        setComponent(() => MockSignInButton as ClerkComponent);
+      });
   }, []);
 
-  return <Component {...props}>{children}</Component>;
+  return (
+    <SafeComponentWrapper component={Component} {...props}>
+      {children}
+    </SafeComponentWrapper>
+  );
 };
 
 export const SignUpButton = ({
@@ -237,47 +273,59 @@ export const SignUpButton = ({
   children?: React.ReactNode;
   [key: string]: unknown;
 }) => {
-  const [Component, setComponent] = useState<ClerkComponent>(MockSignInButton);
+  const [Component, setComponent] = useState<ClerkComponent | null>(null);
 
   useEffect(() => {
     const isAuthDisabled = getIsAuthDisabled();
     if (isAuthDisabled) {
-      setComponent(MockSignInButton);
+      setComponent(() => MockSignInButton as ClerkComponent);
       return;
     }
 
-    loadClerkComponents().then((components) => {
-      if (components.SignUpButton && !components.error) {
-        setComponent(() => components.SignUpButton);
-      }
-    }).catch(() => {
-      setComponent(MockSignInButton);
-    });
+    loadClerkComponents()
+      .then((components) => {
+        if (components.SignUpButton && !components.error) {
+          setComponent(() => components.SignUpButton);
+        } else {
+          setComponent(() => MockSignInButton as ClerkComponent);
+        }
+      })
+      .catch(() => {
+        setComponent(() => MockSignInButton as ClerkComponent);
+      });
   }, []);
 
-  return <Component {...props}>{children}</Component>;
+  return (
+    <SafeComponentWrapper component={Component} {...props}>
+      {children}
+    </SafeComponentWrapper>
+  );
 };
 
 export const UserButton = (props: Record<string, unknown>) => {
-  const [Component, setComponent] = useState<ClerkComponent>(MockUserButton);
+  const [Component, setComponent] = useState<ClerkComponent | null>(null);
 
   useEffect(() => {
     const isAuthDisabled = getIsAuthDisabled();
     if (isAuthDisabled) {
-      setComponent(MockUserButton);
+      setComponent(() => MockUserButton as ClerkComponent);
       return;
     }
 
-    loadClerkComponents().then((components) => {
-      if (components.UserButton && !components.error) {
-        setComponent(() => components.UserButton);
-      }
-    }).catch(() => {
-      setComponent(MockUserButton);
-    });
+    loadClerkComponents()
+      .then((components) => {
+        if (components.UserButton && !components.error) {
+          setComponent(() => components.UserButton);
+        } else {
+          setComponent(() => MockUserButton as ClerkComponent);
+        }
+      })
+      .catch(() => {
+        setComponent(() => MockUserButton as ClerkComponent);
+      });
   }, []);
 
-  return <Component {...props} />;
+  return <SafeComponentWrapper component={Component} {...props} />;
 };
 
 // Wrapper component that handles SSR/hydration issues

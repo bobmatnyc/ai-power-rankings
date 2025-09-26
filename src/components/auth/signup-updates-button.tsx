@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SignedInWrapper, SignedOutWrapper, SignUpButton } from "./auth-components";
 import { useUser as MockUseUser } from "./no-auth-provider";
@@ -11,7 +11,8 @@ function useSafeAuth() {
   // Always call MockUseUser first - this ensures consistent hook order
   const mockUser = MockUseUser();
   const [useClerk, setUseClerk] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [, setIsLoaded] = useState(false);
+  // biome-ignore lint/suspicious/noExplicitAny: Dynamic Clerk hook loading requires flexible typing
   const clerkUserHookRef = useRef<any>(null);
 
   useEffect(() => {
@@ -30,15 +31,17 @@ function useSafeAuth() {
     }
 
     // Dynamically import and set up Clerk's useUser
-    import("@clerk/nextjs").then((clerkModule) => {
-      if (clerkModule?.useUser) {
-        clerkUserHookRef.current = clerkModule.useUser;
-        setUseClerk(true);
+    import("@clerk/nextjs")
+      .then((clerkModule) => {
+        if (clerkModule?.useUser) {
+          clerkUserHookRef.current = clerkModule.useUser;
+          setUseClerk(true);
+          setIsLoaded(true);
+        }
+      })
+      .catch(() => {
         setIsLoaded(true);
-      }
-    }).catch(() => {
-      setIsLoaded(true);
-    });
+      });
   }, []);
 
   // Call the Clerk hook if available, otherwise return mock
@@ -81,7 +84,7 @@ export function SignupUpdatesButton({
   afterSignUpUrl,
 }: SignupUpdatesButtonProps) {
   const pathname = usePathname();
-  const { user, isLoaded } = useSafeAuth();
+  const { user } = useSafeAuth();
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
@@ -92,7 +95,7 @@ export function SignupUpdatesButton({
   // Auto-subscribe when user is signed in and component mounts
   useEffect(() => {
     const subscribeUser = async () => {
-      if (!isLoaded || !user || isSubscribing || isSubscribed) {
+      if (!user || isSubscribing || isSubscribed) {
         return;
       }
 
@@ -136,7 +139,7 @@ export function SignupUpdatesButton({
     };
 
     subscribeUser();
-  }, [isLoaded, user, isSubscribing, isSubscribed]);
+  }, [user, isSubscribing, isSubscribed]);
 
   return (
     <>
