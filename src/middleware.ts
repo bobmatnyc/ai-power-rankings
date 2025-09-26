@@ -25,7 +25,7 @@ const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
 // IMPORTANT: Only attempt Clerk import if we're NOT in Edge Runtime
 // Edge Runtime detection: Check for Edge Runtime globals or missing Node.js APIs
-const isEdgeRuntime = typeof (globalThis as any)?.EdgeRuntime !== "undefined" || typeof process?.versions?.node === "undefined";
+const isEdgeRuntime = typeof (globalThis as any)?.EdgeRuntime !== "undefined" || (typeof process !== "undefined" && !process.versions);
 
 // Only load Clerk if auth is enabled, we have keys, AND we're not in Edge Runtime
 if (!isAuthDisabled && hasClerkKey && !isEdgeRuntime) {

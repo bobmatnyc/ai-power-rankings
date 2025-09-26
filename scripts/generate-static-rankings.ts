@@ -70,7 +70,7 @@ async function generateStaticRankings() {
     });
 
     // Get current rankings
-    const currentRankings = await rankingsRepo.getCurrent();
+    const currentRankings = await rankingsRepo.getCurrentRankings();
 
     if (!currentRankings) {
       throw new Error("No current rankings available");

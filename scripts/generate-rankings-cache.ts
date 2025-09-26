@@ -15,7 +15,7 @@ async function generateRankingsCache() {
     const rankingsRepository = new RankingsRepository();
 
     // Get the latest rankings
-    const latestRankings = await rankingsRepository.getCurrent();
+    const latestRankings = await rankingsRepository.getCurrentRankings();
 
     if (!latestRankings) {
       console.log("⚠️ No rankings found to cache");
