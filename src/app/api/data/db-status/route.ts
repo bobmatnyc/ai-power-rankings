@@ -21,7 +21,7 @@ export async function GET() {
           error: "Unauthorized",
           message: "Admin session required",
           authenticated: false,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         {
           status: 401,
@@ -114,7 +114,10 @@ export async function GET() {
       status: "error",
       timestamp: new Date().toISOString(),
       authMethod: "manual-cookie",
-      stack: process.env["NODE_ENV"] === "development" && error instanceof Error ? error.stack : undefined,
+      stack:
+        process.env["NODE_ENV"] === "development" && error instanceof Error
+          ? error.stack
+          : undefined,
     };
 
     return NextResponse.json(errorResponse, {

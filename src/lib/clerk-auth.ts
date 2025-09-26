@@ -59,7 +59,7 @@ export async function withAuth<T>(
     return NextResponse.json(
       {
         error: "Authentication check failed",
-        message: error instanceof Error ? error.message : "Unknown error"
+        message: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );

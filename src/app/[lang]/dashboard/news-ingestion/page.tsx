@@ -2,8 +2,7 @@ import { NewsIngestionTool } from "@/components/admin/news-ingestion-tool";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 
 // Force dynamic rendering - this page may use authentication context
-export const dynamic = 'force-dynamic';
-
+export const dynamic = "force-dynamic";
 
 export default function NewsIngestionPage() {
   return (

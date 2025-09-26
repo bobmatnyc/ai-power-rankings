@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useAuth, useUser } from '@clerk/nextjs';
-import { useEffect, useState } from 'react';
+import { useAuth, useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 
 export function ClerkStatusFixed() {
   const { isLoaded: authLoaded, isSignedIn, sessionId, userId, getToken } = useAuth();
@@ -13,28 +13,28 @@ export function ClerkStatusFixed() {
   // Fetch token only once when auth is loaded and user is signed in
   useEffect(() => {
     if (!authLoaded || !isSignedIn) {
-      console.log('[ClerkStatus] Auth not ready or user not signed in');
+      console.log("[ClerkStatus] Auth not ready or user not signed in");
       return;
     }
 
     if (isTokenLoading) {
-      console.log('[ClerkStatus] Token already loading, skipping...');
+      console.log("[ClerkStatus] Token already loading, skipping...");
       return;
     }
 
-    console.log('[ClerkStatus] Fetching auth token...');
+    console.log("[ClerkStatus] Fetching auth token...");
     setIsTokenLoading(true);
 
     // Use async function to fetch token
     const fetchToken = async () => {
       try {
         const token = await getToken();
-        console.log('[ClerkStatus] Token fetched successfully');
+        console.log("[ClerkStatus] Token fetched successfully");
         setAuthToken(token);
         setTokenError(null);
       } catch (err) {
-        console.error('[ClerkStatus] Failed to fetch token:', err);
-        setTokenError(err instanceof Error ? err.message : 'Unknown error');
+        console.error("[ClerkStatus] Failed to fetch token:", err);
+        setTokenError(err instanceof Error ? err.message : "Unknown error");
         setAuthToken(null);
       } finally {
         setIsTokenLoading(false);
@@ -52,33 +52,37 @@ export function ClerkStatusFixed() {
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <span className="font-semibold">Auth Loaded:</span>
-          <span className={`px-2 py-1 rounded text-sm ${
-            authLoaded ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-          }`}>
-            {authLoaded ? 'Yes' : 'Loading...'}
+          <span
+            className={`px-2 py-1 rounded text-sm ${
+              authLoaded ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+            }`}
+          >
+            {authLoaded ? "Yes" : "Loading..."}
           </span>
         </div>
 
         <div className="flex items-center gap-2">
           <span className="font-semibold">Signed In:</span>
-          <span className={`px-2 py-1 rounded text-sm ${
-            isSignedIn ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-          }`}>
-            {isSignedIn ? 'Yes' : 'No'}
+          <span
+            className={`px-2 py-1 rounded text-sm ${
+              isSignedIn ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            }`}
+          >
+            {isSignedIn ? "Yes" : "No"}
           </span>
         </div>
 
         {isSignedIn && (
           <>
             <div className="text-sm text-gray-600">
-              <span className="font-semibold">Session ID:</span> {sessionId || 'N/A'}
+              <span className="font-semibold">Session ID:</span> {sessionId || "N/A"}
             </div>
             <div className="text-sm text-gray-600">
-              <span className="font-semibold">User ID:</span> {userId || 'N/A'}
+              <span className="font-semibold">User ID:</span> {userId || "N/A"}
             </div>
 
             <div className="text-sm text-gray-600">
-              <span className="font-semibold">Auth Token:</span>{' '}
+              <span className="font-semibold">Auth Token:</span>{" "}
               {isTokenLoading ? (
                 <span className="text-yellow-600">Loading...</span>
               ) : authToken ? (
@@ -88,7 +92,7 @@ export function ClerkStatusFixed() {
               ) : tokenError ? (
                 <span className="text-red-600">Error: {tokenError}</span>
               ) : (
-                'Not available'
+                "Not available"
               )}
             </div>
           </>
@@ -97,7 +101,8 @@ export function ClerkStatusFixed() {
         {user && (
           <>
             <div className="text-sm text-gray-600">
-              <span className="font-semibold">User Email:</span> {user.emailAddresses?.[0]?.emailAddress}
+              <span className="font-semibold">User Email:</span>{" "}
+              {user.emailAddresses?.[0]?.emailAddress}
             </div>
             <div className="text-sm text-gray-600">
               <span className="font-semibold">Full Name:</span> {user.fullName}

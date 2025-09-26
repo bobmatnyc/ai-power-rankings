@@ -71,10 +71,7 @@ function getLocale(request: NextRequest): string {
 }
 
 // Define protected page routes (using modern createRouteMatcher pattern)
-const isProtectedRoute = createRouteMatcher([
-  "/(.*)admin(.*)",
-  "/(.*)dashboard(.*)"
-]);
+const isProtectedRoute = createRouteMatcher(["/(.*)admin(.*)", "/(.*)dashboard(.*)"]);
 
 // Define public routes that should be accessible without authentication
 const isPublicRoute = createRouteMatcher([
@@ -121,7 +118,7 @@ export default clerkMiddleware(async (auth, req) => {
   const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 
   // Handle public routes that don't need authentication (but still need Clerk context for API routes)
-  if (isPublicRoute(req) && !pathname.startsWith('/api/')) {
+  if (isPublicRoute(req) && !pathname.startsWith("/api/")) {
     const localeResponse = handleLocaleRedirection(req);
     if (localeResponse) {
       return localeResponse;
@@ -143,7 +140,7 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // Handle locale redirection for non-API routes only
-  if (!pathname.startsWith('/api/')) {
+  if (!pathname.startsWith("/api/")) {
     const localeResponse = handleLocaleRedirection(req);
     if (localeResponse) {
       return localeResponse;
@@ -156,8 +153,8 @@ export default clerkMiddleware(async (auth, req) => {
       const { userId } = await auth();
       if (!userId) {
         // For API routes, return 401 JSON response instead of redirect
-        if (pathname.startsWith('/api/')) {
-          return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        if (pathname.startsWith("/api/")) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         // For page routes, redirect to sign-in
@@ -168,14 +165,17 @@ export default clerkMiddleware(async (auth, req) => {
         return NextResponse.redirect(redirectUrl, { status: 303 });
       }
     } catch (error) {
-      console.error('[Middleware] Auth check failed:', error);
+      console.error("[Middleware] Auth check failed:", error);
 
       // For API routes, return 500 JSON response instead of redirect
-      if (pathname.startsWith('/api/')) {
-        return NextResponse.json({
-          error: 'Authentication service error',
-          message: error instanceof Error ? error.message : 'Unknown error'
-        }, { status: 500 });
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json(
+          {
+            error: "Authentication service error",
+            message: error instanceof Error ? error.message : "Unknown error",
+          },
+          { status: 500 }
+        );
       }
 
       // For page routes, redirect to sign-in
@@ -205,8 +205,8 @@ export default clerkMiddleware(async (auth, req) => {
 export const config = {
   matcher: [
     // Skip Next.js internals and static files, but INCLUDE api routes for conditional handling
-    '/((?!_next/static|_next/image|assets|data|partytown|favicon.ico|crown.*|robots.txt|sitemap.xml).*)',
+    "/((?!_next/static|_next/image|assets|data|partytown|favicon.ico|crown.*|robots.txt|sitemap.xml).*)",
     // Always include API routes but handle them conditionally inside the middleware
-    '/(api|trpc)(.*)',
+    "/(api|trpc)(.*)",
   ],
 };

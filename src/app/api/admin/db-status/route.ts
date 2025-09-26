@@ -114,15 +114,22 @@ export async function GET() {
       console.log("[db-status] Authentication result:", isAuth);
     } catch (authError) {
       console.error("[db-status] Authentication check failed:", authError);
-      console.error("[db-status] Auth error stack:", authError instanceof Error ? authError.stack : "No stack");
+      console.error(
+        "[db-status] Auth error stack:",
+        authError instanceof Error ? authError.stack : "No stack"
+      );
 
       // Return specific error for auth failures
       return NextResponse.json(
         {
           error: "Authentication check failed",
           message: authError instanceof Error ? authError.message : "Unknown authentication error",
-          details: process.env["NODE_ENV"] === "development" ?
-            (authError instanceof Error ? authError.stack : String(authError)) : undefined
+          details:
+            process.env["NODE_ENV"] === "development"
+              ? authError instanceof Error
+                ? authError.stack
+                : String(authError)
+              : undefined,
         },
         { status: 500 }
       );

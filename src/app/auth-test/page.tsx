@@ -1,7 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 
 // Force dynamic rendering - this page requires authentication
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function AuthTestPage() {
   const user = await currentUser();
@@ -18,9 +18,15 @@ export default async function AuthTestPage() {
             <div className="space-y-2">
               <p className="text-green-600 font-semibold">✅ You are signed in</p>
               <div className="bg-gray-50 p-4 rounded">
-                <p><strong>User ID:</strong> {user.id}</p>
-                <p><strong>Email:</strong> {user.emailAddresses[0]?.emailAddress}</p>
-                <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
+                <p>
+                  <strong>User ID:</strong> {user.id}
+                </p>
+                <p>
+                  <strong>Email:</strong> {user.emailAddresses[0]?.emailAddress}
+                </p>
+                <p>
+                  <strong>Name:</strong> {user.firstName} {user.lastName}
+                </p>
               </div>
             </div>
           ) : (
@@ -35,7 +41,11 @@ export default async function AuthTestPage() {
             <div className="space-y-2">
               <p>
                 <strong>isAdmin in publicMetadata:</strong>{" "}
-                <span className={user.publicMetadata?.isAdmin === true ? "text-green-600" : "text-red-600"}>
+                <span
+                  className={
+                    user.publicMetadata?.isAdmin === true ? "text-green-600" : "text-red-600"
+                  }
+                >
                   {String(user.publicMetadata?.isAdmin === true)}
                 </span>
               </p>
@@ -49,7 +59,8 @@ export default async function AuthTestPage() {
                 <div className="text-red-600">
                   <p className="font-semibold">❌ You do NOT have admin access</p>
                   <p className="text-sm mt-2">
-                    To fix: Go to Clerk Dashboard → Users → Your User → Edit → Public Metadata → Add: {"{ \"isAdmin\": true }"}
+                    To fix: Go to Clerk Dashboard → Users → Your User → Edit → Public Metadata →
+                    Add: {'{ "isAdmin": true }'}
                   </p>
                 </div>
               )}
@@ -64,7 +75,13 @@ export default async function AuthTestPage() {
           <div className="space-y-2">
             <p>
               <strong>NEXT_PUBLIC_DISABLE_AUTH:</strong>{" "}
-              <span className={process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true" ? "text-red-600" : "text-green-600"}>
+              <span
+                className={
+                  process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true"
+                    ? "text-red-600"
+                    : "text-green-600"
+                }
+              >
                 {process.env["NEXT_PUBLIC_DISABLE_AUTH"] || "not set (good)"}
               </span>
             </p>
@@ -82,7 +99,12 @@ export default async function AuthTestPage() {
           <h3 className="font-semibold mb-2">Next Steps:</h3>
           {!user ? (
             <div>
-              <p>1. <a href="/sign-in" className="text-blue-600 underline">Sign in here</a></p>
+              <p>
+                1.{" "}
+                <a href="/sign-in" className="text-blue-600 underline">
+                  Sign in here
+                </a>
+              </p>
               <p>2. Come back to this page to check your status</p>
             </div>
           ) : user.publicMetadata?.isAdmin !== true ? (
@@ -94,7 +116,12 @@ export default async function AuthTestPage() {
           ) : (
             <div>
               <p className="text-green-600">✅ Everything looks good!</p>
-              <p>Try accessing the <a href="/admin" className="text-blue-600 underline">admin panel</a></p>
+              <p>
+                Try accessing the{" "}
+                <a href="/admin" className="text-blue-600 underline">
+                  admin panel
+                </a>
+              </p>
             </div>
           )}
         </div>

@@ -24,18 +24,21 @@ export async function GET(request: NextRequest) {
   try {
     console.log("[RUNTIME-FIX-TEST] Starting comprehensive runtime test");
     console.log("[RUNTIME-FIX-TEST] Request URL:", request.url);
-    console.log("[RUNTIME-FIX-TEST] Request headers:", Object.fromEntries(request.headers.entries()));
+    console.log(
+      "[RUNTIME-FIX-TEST] Request headers:",
+      Object.fromEntries(request.headers.entries())
+    );
 
     // Step 1: Runtime Detection
     // @ts-expect-error - EdgeRuntime is a global only available in Edge Runtime
-    const isEdgeRuntime = typeof globalThis.EdgeRuntime !== 'undefined';
+    const isEdgeRuntime = typeof globalThis.EdgeRuntime !== "undefined";
     const runtimeInfo = {
-      runtime: isEdgeRuntime ? 'edge' : 'nodejs',
-      expectedRuntime: 'nodejs',
+      runtime: isEdgeRuntime ? "edge" : "nodejs",
+      expectedRuntime: "nodejs",
       isRuntimeCorrect: !isEdgeRuntime,
-      nodeVersion: process.version || 'unknown',
-      platform: process.platform || 'unknown',
-      arch: process.arch || 'unknown'
+      nodeVersion: process.version || "unknown",
+      platform: process.platform || "unknown",
+      arch: process.arch || "unknown",
     };
 
     console.log("[RUNTIME-FIX-TEST] Runtime detection:", runtimeInfo);
@@ -51,7 +54,7 @@ export async function GET(request: NextRequest) {
       clerkKeyLength: clerkKeyLength > 0 ? `${clerkKeyLength} chars` : 0,
       isAuthDisabled,
       nodeEnv,
-      vercelEnv: process.env["VERCEL_ENV"] || 'not-vercel'
+      vercelEnv: process.env["VERCEL_ENV"] || "not-vercel",
     };
 
     console.log("[RUNTIME-FIX-TEST] Environment check:", environmentInfo);
@@ -62,13 +65,13 @@ export async function GET(request: NextRequest) {
 
     if (isAuthDisabled) {
       authInfo = {
-        status: 'disabled',
-        message: 'Authentication is disabled via NEXT_PUBLIC_DISABLE_AUTH'
+        status: "disabled",
+        message: "Authentication is disabled via NEXT_PUBLIC_DISABLE_AUTH",
       };
     } else if (!hasClerkKey) {
       authError = {
-        error: 'Missing CLERK_SECRET_KEY environment variable',
-        stage: 'env_check'
+        error: "Missing CLERK_SECRET_KEY environment variable",
+        stage: "env_check",
       };
     } else {
       try {
@@ -78,17 +81,17 @@ export async function GET(request: NextRequest) {
         console.log("[RUNTIME-FIX-TEST] Auth result:", {
           hasUserId: !!authResult?.userId,
           hasSessionId: !!authResult?.sessionId,
-          keys: Object.keys(authResult || {})
+          keys: Object.keys(authResult || {}),
         });
 
         authInfo = {
-          status: 'success',
+          status: "success",
           hasUserId: !!authResult?.userId,
           hasSessionId: !!authResult?.sessionId,
           userId: authResult?.userId || null,
           authKeys: Object.keys(authResult || {}),
-          stage: 'auth_call',
-          currentUserTest: null as any // Will be populated if user is authenticated
+          stage: "auth_call",
+          currentUserTest: null as any, // Will be populated if user is authenticated
         };
 
         // Step 4: CurrentUser Test (if authenticated)
@@ -98,32 +101,31 @@ export async function GET(request: NextRequest) {
             const user = await currentUser();
 
             authInfo.currentUserTest = {
-              status: 'success',
+              status: "success",
               hasUser: !!user,
               isAdmin: user?.publicMetadata?.isAdmin === true,
               userKeys: user ? Object.keys(user) : [],
-              stage: 'current_user_call'
+              stage: "current_user_call",
             };
 
             console.log("[RUNTIME-FIX-TEST] CurrentUser result:", authInfo.currentUserTest);
           } catch (userError) {
             console.error("[RUNTIME-FIX-TEST] currentUser() failed:", userError);
             authInfo.currentUserTest = {
-              status: 'error',
+              status: "error",
               error: userError instanceof Error ? userError.message : String(userError),
-              stage: 'current_user_call'
+              stage: "current_user_call",
             };
           }
         }
-
       } catch (error) {
         console.error("[RUNTIME-FIX-TEST] Clerk auth() failed:", error);
         authError = {
           error: error instanceof Error ? error.message : String(error),
           type: typeof error,
-          constructor: error?.constructor?.name || 'unknown',
+          constructor: error?.constructor?.name || "unknown",
           stack: error instanceof Error ? error.stack : undefined,
-          stage: 'auth_call'
+          stage: "auth_call",
         } as any;
       }
     }
@@ -133,7 +135,7 @@ export async function GET(request: NextRequest) {
     const performanceInfo = {
       executionTimeMs: endTime - startTime,
       timestamp: new Date().toISOString(),
-      testDuration: `${endTime - startTime}ms`
+      testDuration: `${endTime - startTime}ms`,
     };
 
     // Step 6: Comprehensive Response
@@ -145,7 +147,7 @@ export async function GET(request: NextRequest) {
         environment: environmentInfo,
         authentication: authInfo,
         authError,
-        performance: performanceInfo
+        performance: performanceInfo,
       },
       fix: {
         applied: true,
@@ -154,16 +156,16 @@ export async function GET(request: NextRequest) {
           "Added 'export const runtime = \"nodejs\"' to middleware",
           "Added serverComponentsExternalPackages for @clerk/nextjs",
           "Enhanced error handling to ensure JSON responses",
-          "Added runtime compatibility checks"
-        ]
+          "Added runtime compatibility checks",
+        ],
       },
       validation: {
         middlewareRuntime: "nodejs",
         apiRouteRuntime: "nodejs",
         runtimeConsistency: true,
         errorHandling: "json-only",
-        productionReady: !isEdgeRuntime && hasClerkKey
-      }
+        productionReady: !isEdgeRuntime && hasClerkKey,
+      },
     };
 
     console.log("[RUNTIME-FIX-TEST] Test completed successfully");
@@ -174,10 +176,9 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
         "Cache-Control": "no-cache, no-store, must-revalidate",
         "X-Runtime-Test": "passed",
-        "X-Runtime-Type": isEdgeRuntime ? "edge" : "nodejs"
-      }
+        "X-Runtime-Type": isEdgeRuntime ? "edge" : "nodejs",
+      },
     });
-
   } catch (error) {
     // Critical: Ensure this endpoint NEVER returns HTML errors
     console.error("[RUNTIME-FIX-TEST] Outer error:", error);
@@ -188,20 +189,20 @@ export async function GET(request: NextRequest) {
       error: {
         message: error instanceof Error ? error.message : String(error),
         type: typeof error,
-        constructor: error?.constructor?.name || 'unknown',
-        stack: error instanceof Error ? error.stack : undefined
+        constructor: error?.constructor?.name || "unknown",
+        stack: error instanceof Error ? error.stack : undefined,
       },
       runtime: {
         // @ts-expect-error - EdgeRuntime is a global only available in Edge Runtime
-        detected: typeof globalThis.EdgeRuntime !== 'undefined' ? 'edge' : 'nodejs',
-        expected: 'nodejs'
+        detected: typeof globalThis.EdgeRuntime !== "undefined" ? "edge" : "nodejs",
+        expected: "nodejs",
       },
       fix: {
         applied: true,
-        description: "This error handler ensures JSON responses only"
+        description: "This error handler ensures JSON responses only",
       },
       timestamp: new Date().toISOString(),
-      executionTimeMs: Date.now() - startTime
+      executionTimeMs: Date.now() - startTime,
     };
 
     return NextResponse.json(errorResponse, {
@@ -210,8 +211,8 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
         "X-Runtime-Test": "failed",
         // @ts-expect-error - EdgeRuntime is a global only available in Edge Runtime
-        "X-Runtime-Type": typeof globalThis.EdgeRuntime !== 'undefined' ? "edge" : "nodejs"
-      }
+        "X-Runtime-Type": typeof globalThis.EdgeRuntime !== "undefined" ? "edge" : "nodejs",
+      },
     });
   }
 }

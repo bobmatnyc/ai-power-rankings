@@ -20,7 +20,7 @@ export async function GET() {
           error: "Unauthorized",
           message: "Admin session required for articles access",
           authenticated: false,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         {
           status: 401,
@@ -41,7 +41,7 @@ export async function GET() {
         excerpt: "Latest updates to our AI power rankings methodology",
         created_at: new Date().toISOString(),
         status: "published",
-        author: "System"
+        author: "System",
       },
       {
         id: 2,
@@ -49,8 +49,8 @@ export async function GET() {
         excerpt: "Comprehensive analysis of emerging AI tools",
         created_at: new Date().toISOString(),
         status: "draft",
-        author: "System"
-      }
+        author: "System",
+      },
     ];
 
     const response = {
@@ -59,7 +59,7 @@ export async function GET() {
       timestamp: new Date().toISOString(),
       authMethod: "manual-cookie",
       authenticated: true,
-      message: "Articles retrieved successfully"
+      message: "Articles retrieved successfully",
     };
 
     console.log("[articles-manual] Returning articles data");
@@ -79,7 +79,10 @@ export async function GET() {
       total: 0,
       timestamp: new Date().toISOString(),
       authMethod: "manual-cookie",
-      stack: process.env["NODE_ENV"] === "development" && error instanceof Error ? error.stack : undefined,
+      stack:
+        process.env["NODE_ENV"] === "development" && error instanceof Error
+          ? error.stack
+          : undefined,
     };
 
     return NextResponse.json(errorResponse, {

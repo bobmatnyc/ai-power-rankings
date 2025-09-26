@@ -139,10 +139,7 @@
           "Kotlin",
           "Swift"
         ],
-        "llm_providers": [
-          "Amazon Bedrock",
-          "Custom Amazon models"
-        ],
+        "llm_providers": ["Amazon Bedrock", "Custom Amazon models"],
         "subprocess_support": true,
         "tool_support": true,
         "aws_integration": true,
@@ -198,10 +195,7 @@
           "Ruby",
           "PHP"
         ],
-        "llm_providers": [
-          "Anthropic Claude Sonnet 3.7",
-          "OpenAI o1"
-        ],
+        "llm_providers": ["Anthropic Claude Sonnet 3.7", "OpenAI o1"],
         "subprocess_support": true,
         "tool_support": true,
         "codebase_understanding": true,
@@ -255,9 +249,7 @@
           "Python",
           "Node.js"
         ],
-        "llm_providers": [
-          "Anthropic Claude"
-        ],
+        "llm_providers": ["Anthropic Claude"],
         "subprocess_support": false,
         "tool_support": false,
         "execution_environment": "In-browser WebContainer"
@@ -318,10 +310,7 @@
           "JSON",
           "XML"
         ],
-        "llm_providers": [
-          "OpenAI GPT-4o",
-          "OpenAI o1"
-        ],
+        "llm_providers": ["OpenAI GPT-4o", "OpenAI o1"],
         "subprocess_support": false,
         "tool_capabilities": {
           "file_operations": false,
@@ -393,17 +382,11 @@
           "SVG",
           "Mermaid"
         ],
-        "llm_providers": [
-          "Anthropic Claude"
-        ],
+        "llm_providers": ["Anthropic Claude"],
         "subprocess_support": false,
         "tool_support": false,
         "execution_environment": "Browser sandbox",
-        "artifact_types": [
-          "code",
-          "diagrams",
-          "interactive-components"
-        ]
+        "artifact_types": ["code", "diagrams", "interactive-components"]
       },
       "business": {
         "pricing_model": "freemium"
@@ -492,38 +475,21 @@
           "Ada",
           "Assembly"
         ],
-        "llm_providers": [
-          "Claude Opus 4",
-          "Claude Sonnet 4"
-        ],
+        "llm_providers": ["Claude Opus 4", "Claude Sonnet 4"],
         "model_capabilities": {
           "opus_4": {
             "swe_bench_score": 72.5,
             "terminal_bench_score": 43.2,
-            "thinking_modes": [
-              "think",
-              "think hard",
-              "think harder",
-              "ultrathink"
-            ],
+            "thinking_modes": ["think", "think hard", "think harder", "ultrathink"],
             "continuous_work_hours": 7
           },
           "sonnet_4": {
             "swe_bench_score": 72.7,
-            "thinking_modes": [
-              "think",
-              "think hard",
-              "think harder",
-              "ultrathink"
-            ]
+            "thinking_modes": ["think", "think hard", "think harder", "ultrathink"]
           }
         },
         "integrations": {
-          "version_control": [
-            "Git",
-            "GitHub",
-            "GitLab"
-          ],
+          "version_control": ["Git", "GitHub", "GitLab"],
           "external_tools": "MCP (Model Context Protocol)",
           "file_systems": "Full filesystem access with permissions",
           "command_line": "Complete subprocess execution support",
@@ -693,10 +659,7 @@
           "Swift",
           "Kotlin"
         ],
-        "llm_providers": [
-          "OpenAI GPT-4",
-          "Anthropic Claude"
-        ],
+        "llm_providers": ["OpenAI GPT-4", "Anthropic Claude"],
         "subprocess_support": false,
         "tool_support": false,
         "ast_analysis": true,
@@ -744,13 +707,7 @@
           "Go",
           "Rust"
         ],
-        "llm_providers": [
-          "OpenAI",
-          "Anthropic",
-          "Google",
-          "Local models",
-          "Custom APIs"
-        ],
+        "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"],
         "subprocess_support": false,
         "tool_support": false,
         "ide_integration": "VS Code, JetBrains"
@@ -934,11 +891,7 @@
           "JSON",
           "XML"
         ],
-        "llm_providers": [
-          "OpenAI GPT-4",
-          "OpenAI GPT-4o",
-          "Proprietary Cognition models"
-        ],
+        "llm_providers": ["OpenAI GPT-4", "OpenAI GPT-4o", "Proprietary Cognition models"],
         "subprocess_support": true,
         "tool_capabilities": {
           "file_operations": true,
@@ -1001,14 +954,8 @@
       "technical": {
         "context_window": 50000,
         "multi_file_support": true,
-        "language_support": [
-          "Java",
-          "Kotlin"
-        ],
-        "llm_providers": [
-          "Reinforcement Learning",
-          "No LLMs"
-        ],
+        "language_support": ["Java", "Kotlin"],
+        "llm_providers": ["Reinforcement Learning", "No LLMs"],
         "subprocess_support": false,
         "tool_support": false,
         "test_generation": true,
@@ -1058,9 +1005,7 @@
           "Go",
           "Ruby"
         ],
-        "llm_providers": [
-          "Anthropic Claude 3.5 Sonnet"
-        ],
+        "llm_providers": ["Anthropic Claude 3.5 Sonnet"],
         "subprocess_support": true,
         "tool_support": true
       },
@@ -1110,9 +1055,7 @@
           "Go",
           "Rust"
         ],
-        "llm_providers": [
-          "Google Gemini"
-        ],
+        "llm_providers": ["Google Gemini"],
         "subprocess_support": false,
         "tool_support": false
       },
@@ -1266,9 +1209,7 @@
           "Swift",
           "Kotlin"
         ],
-        "llm_providers": [
-          "Google Gemini"
-        ],
+        "llm_providers": ["Google Gemini"],
         "subprocess_support": true,
         "tool_support": true,
         "cli_based": true
@@ -1311,9 +1252,7 @@
         "context_window": null,
         "multi_file_support": false,
         "language_support": [],
-        "llm_providers": [
-          "Google AI Models"
-        ],
+        "llm_providers": ["Google AI Models"],
         "subprocess_support": false,
         "tool_support": true,
         "execution_environment": "Google Cloud Platform",
@@ -1380,10 +1319,7 @@
           "Rust",
           "C++"
         ],
-        "llm_providers": [
-          "Multiple models",
-          "Local models supported"
-        ]
+        "llm_providers": ["Multiple models", "Local models supported"]
       },
       "business": {
         "pricing_model": "freemium",
@@ -1426,10 +1362,7 @@
           "Rust",
           "Ruby"
         ],
-        "llm_providers": [
-          "Google Gemini 2.5 Pro",
-          "Google Gemini 2.0 Flash"
-        ],
+        "llm_providers": ["Google Gemini 2.5 Pro", "Google Gemini 2.0 Flash"],
         "subprocess_support": true,
         "tool_support": true,
         "execution_environment": "Google Cloud VMs",
@@ -1491,9 +1424,7 @@
           "Go",
           "Rust"
         ],
-        "llm_providers": [
-          "Custom AI models"
-        ],
+        "llm_providers": ["Custom AI models"],
         "subprocess_support": false,
         "tool_support": false
       },
@@ -1558,11 +1489,7 @@
           "JSON",
           "Markdown"
         ],
-        "llm_providers": [
-          "Claude Sonnet 4.0",
-          "Claude Sonnet 3.7",
-          "AWS Bedrock"
-        ],
+        "llm_providers": ["Claude Sonnet 4.0", "Claude Sonnet 3.7", "AWS Bedrock"],
         "ide_integration": "Code OSS Fork (VS Code open-source foundation)",
         "subprocess_support": {
           "agent_hooks": true,
@@ -1672,17 +1599,8 @@
       "technical": {
         "context_window": 200000,
         "multi_file_support": true,
-        "language_support": [
-          "JavaScript",
-          "TypeScript",
-          "React",
-          "Node.js",
-          "Python"
-        ],
-        "llm_providers": [
-          "OpenAI GPT-4",
-          "Claude"
-        ],
+        "language_support": ["JavaScript", "TypeScript", "React", "Node.js", "Python"],
+        "llm_providers": ["OpenAI GPT-4", "Claude"],
         "subprocess_support": false,
         "tool_support": false,
         "execution_environment": "Browser-based IDE"
@@ -1724,18 +1642,8 @@
       "technical": {
         "context_window": 8192,
         "multi_file_support": true,
-        "language_support": [
-          "C#",
-          "JavaScript",
-          "TypeScript",
-          "Python",
-          "Java",
-          "C++",
-          "SQL"
-        ],
-        "llm_providers": [
-          "Microsoft ML models"
-        ],
+        "language_support": ["C#", "JavaScript", "TypeScript", "Python", "Java", "C++", "SQL"],
+        "llm_providers": ["Microsoft ML models"],
         "subprocess_support": false,
         "tool_support": false,
         "ide_integration": "Visual Studio, VS Code",
@@ -1775,10 +1683,7 @@
           "Rust",
           "Ruby"
         ],
-        "llm_providers": [
-          "OpenAI o3",
-          "OpenAI GPT-4"
-        ],
+        "llm_providers": ["OpenAI o3", "OpenAI GPT-4"],
         "subprocess_support": true,
         "tool_support": true,
         "cli_based": true
@@ -1825,9 +1730,7 @@
           "SQL",
           "Shell"
         ],
-        "llm_providers": [
-          "OpenAI Codex"
-        ],
+        "llm_providers": ["OpenAI Codex"],
         "subprocess_support": false,
         "tool_support": false
       },
@@ -1869,13 +1772,7 @@
           "Go",
           "Rust"
         ],
-        "llm_providers": [
-          "OpenAI",
-          "Anthropic",
-          "Google",
-          "Local models",
-          "Custom APIs"
-        ]
+        "llm_providers": ["OpenAI", "Anthropic", "Google", "Local models", "Custom APIs"]
       },
       "business": {
         "pricing_model": "free",
@@ -1923,9 +1820,7 @@
           "Go",
           "Rust"
         ],
-        "llm_providers": [
-          "Custom AI models"
-        ],
+        "llm_providers": ["Custom AI models"],
         "subprocess_support": false,
         "tool_support": false
       },
@@ -1955,19 +1850,8 @@
       "technical": {
         "context_window": 150000,
         "multi_file_support": true,
-        "language_support": [
-          "Python",
-          "JavaScript",
-          "TypeScript",
-          "Java",
-          "C++",
-          "C#"
-        ],
-        "llm_providers": [
-          "OpenAI GPT-4",
-          "Claude",
-          "Others"
-        ]
+        "language_support": ["Python", "JavaScript", "TypeScript", "Java", "C++", "C#"],
+        "llm_providers": ["OpenAI GPT-4", "Claude", "Others"]
       },
       "business": {
         "pricing_model": "freemium",
@@ -2022,17 +1906,10 @@
           "SQL",
           "Shell"
         ],
-        "llm_providers": [
-          "Qwen Code models"
-        ],
+        "llm_providers": ["Qwen Code models"],
         "subprocess_support": false,
         "tool_support": false,
-        "model_sizes": [
-          "7B",
-          "14B",
-          "32B",
-          "72B"
-        ]
+        "model_sizes": ["7B", "14B", "32B", "72B"]
       },
       "business": {
         "pricing_model": "free",
@@ -2079,10 +1956,7 @@
           "Ruby",
           "PHP"
         ],
-        "llm_providers": [
-          "Claude 4 Sonnet",
-          "Claude 3.7 Sonnet"
-        ],
+        "llm_providers": ["Claude 4 Sonnet", "Claude 3.7 Sonnet"],
         "subprocess_support": true,
         "tool_support": true,
         "methodology": "4-step strategy with extensive guardrails and debug tools"
@@ -2141,9 +2015,7 @@
           "Go",
           "Rust"
         ],
-        "llm_providers": [
-          "Custom AI models"
-        ]
+        "llm_providers": ["Custom AI models"]
       },
       "business": {
         "pricing_model": "subscription",
@@ -2193,9 +2065,7 @@
           "Ruby",
           "PHP"
         ],
-        "llm_providers": [
-          "Multiple AI models"
-        ],
+        "llm_providers": ["Multiple AI models"],
         "subprocess_support": false,
         "tool_support": false
       },
@@ -2239,9 +2109,7 @@
           "C++",
           "Rust"
         ],
-        "llm_providers": [
-          "Snyk AI Engine"
-        ],
+        "llm_providers": ["Snyk AI Engine"],
         "subprocess_support": false,
         "tool_support": false,
         "security_focus": true,
@@ -2291,11 +2159,7 @@
           "Swift",
           "Kotlin"
         ],
-        "llm_providers": [
-          "Anthropic Claude",
-          "OpenAI GPT-4",
-          "Google Gemini"
-        ],
+        "llm_providers": ["Anthropic Claude", "OpenAI GPT-4", "Google Gemini"],
         "subprocess_support": false,
         "tool_support": false,
         "codebase_indexing": true,
@@ -2332,12 +2196,8 @@
       "technical": {
         "context_window": 32768,
         "multi_file_support": true,
-        "language_support": [
-          "Python"
-        ],
-        "llm_providers": [
-          "Custom AI models"
-        ],
+        "language_support": ["Python"],
+        "llm_providers": ["Custom AI models"],
         "subprocess_support": false,
         "tool_support": false,
         "refactoring_focus": true,
@@ -2388,11 +2248,7 @@
           "Swift",
           "Kotlin"
         ],
-        "llm_providers": [
-          "Custom models",
-          "Local processing",
-          "Cloud models"
-        ],
+        "llm_providers": ["Custom models", "Local processing", "Cloud models"],
         "subprocess_support": false,
         "tool_support": false
       },
@@ -2444,9 +2300,7 @@
           "Go",
           "Rust"
         ],
-        "llm_providers": [
-          "Custom AI models"
-        ],
+        "llm_providers": ["Custom AI models"],
         "subprocess_support": false,
         "tool_support": false
       },
@@ -2476,16 +2330,8 @@
       "technical": {
         "context_window": 100000,
         "multi_file_support": true,
-        "language_support": [
-          "JavaScript",
-          "TypeScript",
-          "React",
-          "Tailwind CSS"
-        ],
-        "llm_providers": [
-          "OpenAI GPT-4",
-          "Custom models"
-        ],
+        "language_support": ["JavaScript", "TypeScript", "React", "Tailwind CSS"],
+        "llm_providers": ["OpenAI GPT-4", "Custom models"],
         "subprocess_support": false,
         "tool_support": false,
         "execution_environment": "Browser-based preview"
@@ -2541,9 +2387,7 @@
           "Ruby",
           "PHP"
         ],
-        "llm_providers": [
-          "Multiple LLMs"
-        ],
+        "llm_providers": ["Multiple LLMs"],
         "subprocess_support": true,
         "tool_support": true,
         "architecture": "Single-agent approach (explored but rejected multi-agent)"
@@ -2728,12 +2572,7 @@
           "Swift",
           "Kotlin"
         ],
-        "llm_providers": [
-          "OpenAI",
-          "Anthropic",
-          "Google",
-          "Custom APIs"
-        ],
+        "llm_providers": ["OpenAI", "Anthropic", "Google", "Custom APIs"],
         "subprocess_support": false,
         "tool_support": false,
         "multiplayer_editing": true,

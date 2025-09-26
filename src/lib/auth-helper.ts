@@ -39,7 +39,10 @@ export async function getAuth() {
         console.log("[auth-helper] Current user fetched:", user?.id);
       } catch (userError) {
         console.error("[auth-helper] Error fetching current user:", userError);
-        console.error("[auth-helper] User error stack:", userError instanceof Error ? userError.stack : "No stack");
+        console.error(
+          "[auth-helper] User error stack:",
+          userError instanceof Error ? userError.stack : "No stack"
+        );
         // Continue without user data rather than failing completely
         user = null;
       }

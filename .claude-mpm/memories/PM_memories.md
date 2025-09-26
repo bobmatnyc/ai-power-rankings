@@ -27,6 +27,14 @@
 - **Cache Generation**: `pnpm run cache:generate` (THE way to cache)
 - **Data Backup**: `pnpm run backup:create` (THE way to backup)
 
+## 🔴 CRITICAL Deployment Verification (MANDATORY)
+After EVERY deployment (staging or production), ALWAYS:
+1. Fetch the deployed site URL to verify it's accessible
+2. Check Vercel server logs for any runtime errors
+3. Test main routes (/en, /en/rankings, /en/news, /en/tools)
+4. Verify API health endpoint (/api/health)
+5. Report any errors found in logs or failed requests
+
 ## Active Priorities (By Priority Level)
 ### 🔴 CRITICAL
 1. Enforce single-path standards (ONE way to do anything)

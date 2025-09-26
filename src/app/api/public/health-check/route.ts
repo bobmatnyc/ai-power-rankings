@@ -14,7 +14,7 @@ export async function GET() {
       service: "AI Power Rankings API",
       version: "1.0.0",
       environment: process.env["NODE_ENV"] || "development",
-      message: "Service is healthy and responding"
+      message: "Service is healthy and responding",
     };
 
     console.log("[health-check] Returning successful health check");

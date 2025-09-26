@@ -1,7 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 
 // Force dynamic rendering - this page requires authentication
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function AdminTestPage() {
   const user = await currentUser();
@@ -34,9 +34,15 @@ export default async function AdminTestPage() {
             <div className="space-y-2">
               <p className="text-green-600 font-semibold">✅ You are signed in</p>
               <div className="bg-gray-50 p-4 rounded">
-                <p><strong>Email:</strong> {user.emailAddresses[0]?.emailAddress}</p>
-                <p><strong>User ID:</strong> {user.id}</p>
-                <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
+                <p>
+                  <strong>Email:</strong> {user.emailAddresses[0]?.emailAddress}
+                </p>
+                <p>
+                  <strong>User ID:</strong> {user.id}
+                </p>
+                <p>
+                  <strong>Name:</strong> {user.firstName} {user.lastName}
+                </p>
               </div>
             </div>
           ) : (
@@ -49,9 +55,9 @@ export default async function AdminTestPage() {
           <h2 className="text-xl font-semibold mb-4">Admin Access Status</h2>
           {user ? (
             <div className="space-y-4">
-              <div className={`p-4 rounded ${isAdmin ? 'bg-green-50' : 'bg-red-50'}`}>
-                <p className={`font-bold text-lg ${isAdmin ? 'text-green-700' : 'text-red-700'}`}>
-                  {isAdmin ? '✅ You have ADMIN access!' : '❌ You do NOT have admin access'}
+              <div className={`p-4 rounded ${isAdmin ? "bg-green-50" : "bg-red-50"}`}>
+                <p className={`font-bold text-lg ${isAdmin ? "text-green-700" : "text-red-700"}`}>
+                  {isAdmin ? "✅ You have ADMIN access!" : "❌ You do NOT have admin access"}
                 </p>
               </div>
 
@@ -63,9 +69,15 @@ export default async function AdminTestPage() {
               </div>
 
               <div className="text-sm">
-                <p><strong>isAdmin check:</strong> {String(user.publicMetadata?.isAdmin === true)}</p>
-                <p><strong>Raw isAdmin value:</strong> {String(user.publicMetadata?.isAdmin)}</p>
-                <p><strong>Type of isAdmin:</strong> {typeof user.publicMetadata?.isAdmin}</p>
+                <p>
+                  <strong>isAdmin check:</strong> {String(user.publicMetadata?.isAdmin === true)}
+                </p>
+                <p>
+                  <strong>Raw isAdmin value:</strong> {String(user.publicMetadata?.isAdmin)}
+                </p>
+                <p>
+                  <strong>Type of isAdmin:</strong> {typeof user.publicMetadata?.isAdmin}
+                </p>
               </div>
             </div>
           ) : (
@@ -97,7 +109,12 @@ export default async function AdminTestPage() {
           <div className="space-y-2">
             <div className="bg-gray-50 p-3 rounded">
               <p className="font-mono text-sm">
-                <a href="/api/auth-verify" target="_blank" className="text-blue-600 hover:underline" rel="noopener">
+                <a
+                  href="/api/auth-verify"
+                  target="_blank"
+                  className="text-blue-600 hover:underline"
+                  rel="noopener"
+                >
                   /api/auth-verify
                 </a>
                 {" - Check your authentication status"}
@@ -105,7 +122,12 @@ export default async function AdminTestPage() {
             </div>
             <div className="bg-gray-50 p-3 rounded">
               <p className="font-mono text-sm">
-                <a href="/api/admin/articles" target="_blank" className="text-blue-600 hover:underline" rel="noopener">
+                <a
+                  href="/api/admin/articles"
+                  target="_blank"
+                  className="text-blue-600 hover:underline"
+                  rel="noopener"
+                >
                   /api/admin/articles
                 </a>
                 {" - Test admin articles access"}
@@ -118,7 +140,9 @@ export default async function AdminTestPage() {
         {isAdmin && (
           <div className="bg-blue-50 rounded-lg p-6 shadow">
             <h2 className="text-xl font-semibold mb-4">Ready to Access Admin Panel</h2>
-            <p className="mb-4">Everything looks good! You should be able to access the admin panel now:</p>
+            <p className="mb-4">
+              Everything looks good! You should be able to access the admin panel now:
+            </p>
             <a
               href="/admin"
               className="inline-block bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition"
@@ -136,7 +160,10 @@ export default async function AdminTestPage() {
               <li>Go to your Clerk Dashboard</li>
               <li>Navigate to Users → Find your user (bob@matsuoka.com)</li>
               <li>Click Edit → Public Metadata</li>
-              <li>Set the value to: <code className="bg-white px-2 py-1 rounded">{`{"isAdmin": true}`}</code></li>
+              <li>
+                Set the value to:{" "}
+                <code className="bg-white px-2 py-1 rounded">{`{"isAdmin": true}`}</code>
+              </li>
               <li>Save the changes</li>
               <li>Sign out and sign back in</li>
               <li>Refresh this page</li>

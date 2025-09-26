@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { getDatabaseStatus, getArticles, testAuthentication } from "@/lib/server-actions/admin-actions";
+import {
+  getDatabaseStatus,
+  getArticles,
+  testAuthentication,
+} from "@/lib/server-actions/admin-actions";
 
 interface ServerActionResult {
   success?: boolean;
@@ -50,8 +54,8 @@ export default function ServerActionsTest() {
     <div className="mt-8 p-6 bg-purple-50 border border-purple-200 rounded">
       <h2 className="text-xl font-bold mb-4 text-purple-800">Server Actions Test</h2>
       <p className="text-sm text-purple-700 mb-4">
-        Server Actions run directly in the server context and completely bypass API routes and middleware.
-        This is another solution to avoid Clerk's interference.
+        Server Actions run directly in the server context and completely bypass API routes and
+        middleware. This is another solution to avoid Clerk's interference.
       </p>
 
       <button
@@ -69,10 +73,12 @@ export default function ServerActionsTest() {
             <h3 className="font-semibold mb-2 text-purple-800">Server Action: {name}</h3>
             <div className="text-xs">
               <div className="mb-2">
-                <span className={`inline-block px-2 py-1 rounded text-xs ${
-                  result.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
-                  {result.success ? 'SUCCESS' : 'FAILED'}
+                <span
+                  className={`inline-block px-2 py-1 rounded text-xs ${
+                    result.success ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {result.success ? "SUCCESS" : "FAILED"}
                 </span>
               </div>
               <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-40">

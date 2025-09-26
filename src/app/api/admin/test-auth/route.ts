@@ -4,7 +4,7 @@ import {
   safeClerkAuth,
   createSuccessResponse,
   createErrorResponse,
-  validateRuntime
+  validateRuntime,
 } from "@/lib/api-error-handler";
 
 // Force Node.js runtime to match middleware configuration
@@ -24,12 +24,15 @@ export const GET = withErrorBoundary(async () => {
   // Step 2: Check if auth is disabled
   const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
   if (isAuthDisabled) {
-    return createSuccessResponse({
-      authStatus: "disabled",
-      message: "Authentication is disabled via environment variable",
-      runtime: runtimeValidation,
-      test: "auth-disabled"
-    }, "Auth test completed (auth disabled)");
+    return createSuccessResponse(
+      {
+        authStatus: "disabled",
+        message: "Authentication is disabled via environment variable",
+        runtime: runtimeValidation,
+        test: "auth-disabled",
+      },
+      "Auth test completed (auth disabled)"
+    );
   }
 
   // Step 3: Check environment configuration
@@ -65,20 +68,20 @@ export const GET = withErrorBoundary(async () => {
       hasClerkKey: true,
       clerkKeyLength: `${clerkKeyLength} characters`,
       nodeEnv: process.env["NODE_ENV"],
-      vercelEnv: process.env["VERCEL_ENV"] || "not-vercel"
+      vercelEnv: process.env["VERCEL_ENV"] || "not-vercel",
     },
     authResult: {
       hasUserId: !!authData?.userId,
       hasSessionId: !!authData?.sessionId,
       userId: authData?.userId || null,
       authKeys: Object.keys(authData || {}),
-      isAuthenticated: !!authData?.userId
+      isAuthenticated: !!authData?.userId,
     },
     test: {
       endpoint: "test-auth",
       version: "v2-with-error-handling",
-      stage: "auth_success"
-    }
+      stage: "auth_success",
+    },
   };
 
   console.log("[TEST-AUTH-V2] Test completed successfully");

@@ -25,7 +25,7 @@ export async function GET() {
           error: "auth() failed",
           message: authError instanceof Error ? authError.message : String(authError),
           stage: "auth",
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         { status: 500 }
       );
@@ -36,7 +36,7 @@ export async function GET() {
       return NextResponse.json({
         status: "not_authenticated",
         message: "No userId from auth()",
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -52,8 +52,14 @@ export async function GET() {
       console.error("[CRITICAL] currentUser() failed:", userError);
       console.error("[CRITICAL] User error type:", typeof userError);
       console.error("[CRITICAL] User error constructor:", userError?.constructor?.name);
-      console.error("[CRITICAL] User error message:", userError instanceof Error ? userError.message : String(userError));
-      console.error("[CRITICAL] User error stack:", userError instanceof Error ? userError.stack : "No stack");
+      console.error(
+        "[CRITICAL] User error message:",
+        userError instanceof Error ? userError.message : String(userError)
+      );
+      console.error(
+        "[CRITICAL] User error stack:",
+        userError instanceof Error ? userError.stack : "No stack"
+      );
 
       return NextResponse.json(
         {
@@ -62,7 +68,7 @@ export async function GET() {
           authWorked: true,
           authUserId: authResult.userId,
           stage: "currentUser",
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         { status: 500 }
       );
@@ -76,14 +82,16 @@ export async function GET() {
       currentUserId: user?.id,
       email: user?.emailAddresses?.[0]?.emailAddress,
       publicMetadata: user?.publicMetadata,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error("[CRITICAL] test-user endpoint outer error:", error);
     console.error("[CRITICAL] Error type:", typeof error);
     console.error("[CRITICAL] Error constructor:", error?.constructor?.name);
-    console.error("[CRITICAL] Error message:", error instanceof Error ? error.message : String(error));
+    console.error(
+      "[CRITICAL] Error message:",
+      error instanceof Error ? error.message : String(error)
+    );
     console.error("[CRITICAL] Error stack:", error instanceof Error ? error.stack : "No stack");
 
     return NextResponse.json(
@@ -91,10 +99,10 @@ export async function GET() {
         error: "test-user endpoint failed",
         message: error instanceof Error ? error.message : String(error),
         stage: "outer",
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       {
-        status: 500
+        status: 500,
       }
     );
   }

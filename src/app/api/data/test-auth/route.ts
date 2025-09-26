@@ -50,7 +50,10 @@ export async function GET() {
       message: error instanceof Error ? error.message : "Unknown error",
       authenticated: false,
       timestamp: new Date().toISOString(),
-      stack: process.env["NODE_ENV"] === "development" && error instanceof Error ? error.stack : undefined,
+      stack:
+        process.env["NODE_ENV"] === "development" && error instanceof Error
+          ? error.stack
+          : undefined,
     };
 
     return NextResponse.json(errorResponse, {

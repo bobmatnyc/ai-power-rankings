@@ -26,7 +26,10 @@ export async function GET(request: NextRequest) {
         console.log("[API] Getting auth data using auth-helper...");
         const authData = await getAuth();
         console.log("[API] Auth data received - userId:", authData.userId);
-        console.log("[API] User data:", authData.user ? { id: authData.user.id, isAdmin: authData.user.isAdmin } : null);
+        console.log(
+          "[API] User data:",
+          authData.user ? { id: authData.user.id, isAdmin: authData.user.isAdmin } : null
+        );
 
         if (!authData.userId || !authData.user) {
           console.log("[API] No authenticated user found");
@@ -73,7 +76,10 @@ export async function GET(request: NextRequest) {
         console.log("[API] Authentication successful - user is admin");
       } catch (authError) {
         console.error("[API] Authentication error:", authError);
-        console.error("[API] Auth error stack:", authError instanceof Error ? authError.stack : "No stack");
+        console.error(
+          "[API] Auth error stack:",
+          authError instanceof Error ? authError.stack : "No stack"
+        );
         console.error("[API] Auth error type:", typeof authError);
         console.error("[API] Auth error constructor:", authError?.constructor?.name);
 
@@ -82,8 +88,12 @@ export async function GET(request: NextRequest) {
             error: "Authentication Error",
             message: "Failed to verify authentication status.",
             details: authError instanceof Error ? authError.message : "Unknown error",
-            stack: process.env["NODE_ENV"] === "development" ?
-              (authError instanceof Error ? authError.stack : String(authError)) : undefined
+            stack:
+              process.env["NODE_ENV"] === "development"
+                ? authError instanceof Error
+                  ? authError.stack
+                  : String(authError)
+                : undefined,
           },
           {
             status: 500,

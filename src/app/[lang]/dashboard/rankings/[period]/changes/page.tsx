@@ -3,8 +3,7 @@ import { getDictionary } from "@/i18n/get-dictionary";
 import { RankingChangesSummary } from "./ranking-changes-summary";
 
 // Force dynamic rendering - this page may use authentication context
-export const dynamic = 'force-dynamic';
-
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{

@@ -11,8 +11,8 @@ export function TypographyDemo() {
       <section className="text-center space-y-4 py-12">
         <h1 className="hero-title animate-fade-in-down">AI Power Rankings</h1>
         <p className="hero-subtitle animate-fade-in-up max-w-3xl mx-auto">
-          Discover the most powerful AI tools and frameworks shaping the future of technology.
-          Our comprehensive rankings help you make informed decisions.
+          Discover the most powerful AI tools and frameworks shaping the future of technology. Our
+          comprehensive rankings help you make informed decisions.
         </p>
         <div className="flex gap-4 justify-center animate-fade-in">
           <Button size="lg" className="hover-lift">
@@ -77,12 +77,12 @@ export function TypographyDemo() {
                 advanced reasoning capabilities
               </li>
               <li>
-                <strong>Code Assistants:</strong> GitHub Copilot and Cursor revolutionize
-                software development
+                <strong>Code Assistants:</strong> GitHub Copilot and Cursor revolutionize software
+                development
               </li>
               <li>
-                <strong>Creative Tools:</strong> Midjourney and DALL-E push the boundaries of
-                visual creativity
+                <strong>Creative Tools:</strong> Midjourney and DALL-E push the boundaries of visual
+                creativity
               </li>
             </ul>
             <blockquote>
@@ -90,9 +90,9 @@ export function TypographyDemo() {
               possibilities we never imagined before."
             </blockquote>
             <p>
-              As we look toward the future, the integration of AI into our daily workflows
-              becomes increasingly seamless. Tools are becoming more intuitive, more powerful,
-              and more accessible to users regardless of technical expertise.
+              As we look toward the future, the integration of AI into our daily workflows becomes
+              increasingly seamless. Tools are becoming more intuitive, more powerful, and more
+              accessible to users regardless of technical expertise.
             </p>
           </CardContent>
         </Card>
@@ -116,8 +116,7 @@ export function TypographyDemo() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                State-of-the-art language model with exceptional coding and analytical
-                capabilities.
+                State-of-the-art language model with exceptional coding and analytical capabilities.
               </p>
               <div className="flex gap-2 flex-wrap">
                 <Badge variant="outline">98% Score</Badge>
@@ -197,9 +196,8 @@ export function TypographyDemo() {
               <div className="prose">
                 <p>
                   Explore our comprehensive <a href="#">AI tool rankings</a> to find the perfect
-                  solution for your needs. Check out the latest{" "}
-                  <a href="#">industry updates</a> and <a href="#">expert insights</a> on our
-                  blog.
+                  solution for your needs. Check out the latest <a href="#">industry updates</a> and{" "}
+                  <a href="#">expert insights</a> on our blog.
                 </p>
               </div>
             </nav>

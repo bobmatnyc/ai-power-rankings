@@ -28,7 +28,7 @@ export async function GET() {
       environment: nodeEnv,
       hasClerkKey,
       hasNextAuth,
-      test: "This endpoint bypasses ALL authentication and external dependencies"
+      test: "This endpoint bypasses ALL authentication and external dependencies",
     };
 
     console.log("[CRITICAL] test-basic returning success response");
@@ -36,15 +36,17 @@ export async function GET() {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "no-cache"
-      }
+        "Cache-Control": "no-cache",
+      },
     });
-
   } catch (error) {
     console.error("[CRITICAL] test-basic endpoint error:", error);
     console.error("[CRITICAL] Error type:", typeof error);
     console.error("[CRITICAL] Error constructor:", error?.constructor?.name);
-    console.error("[CRITICAL] Error message:", error instanceof Error ? error.message : String(error));
+    console.error(
+      "[CRITICAL] Error message:",
+      error instanceof Error ? error.message : String(error)
+    );
     console.error("[CRITICAL] Error stack:", error instanceof Error ? error.stack : "No stack");
 
     return NextResponse.json(
@@ -54,13 +56,13 @@ export async function GET() {
         type: typeof error,
         constructor: error?.constructor?.name || "unknown",
         stack: error instanceof Error ? error.stack : undefined,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       {
         status: 500,
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       }
     );
   }

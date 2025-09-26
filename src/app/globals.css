@@ -188,25 +188,28 @@
     font-family:
       -apple-system,
       BlinkMacSystemFont,
-      'Segoe UI',
+      "Segoe UI",
       Roboto,
       Oxygen,
       Ubuntu,
       Cantarell,
-      'Fira Sans',
-      'Droid Sans',
-      'Helvetica Neue',
+      "Fira Sans",
+      "Droid Sans",
+      "Helvetica Neue",
       Arial,
       sans-serif,
-      'Apple Color Emoji',
-      'Segoe UI Emoji',
-      'Segoe UI Symbol';
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol";
 
     /* Optimize font rendering */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    font-feature-settings:
+      "kern" 1,
+      "liga" 1,
+      "calt" 1;
 
     /* Fluid base font size */
     font-size: clamp(16px, 1rem + 0.1vw, 18px);
@@ -224,7 +227,12 @@
   }
 
   /* Headings Typography */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-weight: var(--font-weight-bold);
     line-height: var(--line-height-tight);
     letter-spacing: var(--letter-spacing-tight);
@@ -304,11 +312,7 @@
       background-color var(--duration-fast) var(--ease-out);
 
     /* Underline animation preparation */
-    background-image: linear-gradient(
-      to right,
-      hsl(var(--primary)) 0%,
-      hsl(var(--primary)) 100%
-    );
+    background-image: linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%);
     background-size: 0% 2px;
     background-repeat: no-repeat;
     background-position: left bottom;
@@ -333,7 +337,8 @@
   }
 
   /* Lists */
-  ul, ol {
+  ul,
+  ol {
     margin-top: 0;
     margin-bottom: var(--space-4);
     padding-left: var(--space-6);
@@ -352,12 +357,14 @@
   }
 
   /* Strong & Emphasis */
-  strong, b {
+  strong,
+  b {
     font-weight: var(--font-weight-bold);
     color: hsl(var(--foreground));
   }
 
-  em, i {
+  em,
+  i {
     font-style: italic;
   }
 
@@ -369,13 +376,7 @@
 
   /* Code & Pre */
   code {
-    font-family:
-      'SF Mono',
-      Monaco,
-      Consolas,
-      'Liberation Mono',
-      'Courier New',
-      monospace;
+    font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.875em;
     background-color: hsl(var(--muted));
     color: hsl(var(--foreground));
@@ -385,13 +386,7 @@
   }
 
   pre {
-    font-family:
-      'SF Mono',
-      Monaco,
-      Consolas,
-      'Liberation Mono',
-      'Courier New',
-      monospace;
+    font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: var(--font-size-sm);
     background-color: hsl(var(--muted));
     color: hsl(var(--foreground));
@@ -557,7 +552,7 @@
   }
 
   nav a::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -2px;
     left: 0;
@@ -584,11 +579,7 @@
     font-weight: var(--font-weight-black);
     line-height: var(--line-height-tight);
     letter-spacing: var(--letter-spacing-tighter);
-    background: linear-gradient(
-      135deg,
-      hsl(var(--foreground)) 0%,
-      hsl(var(--primary)) 100%
-    );
+    background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--primary)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -624,11 +615,7 @@
 @layer utilities {
   /* Text gradient utility */
   .text-gradient {
-    background: linear-gradient(
-      135deg,
-      hsl(var(--primary)) 0%,
-      hsl(var(--primary-hover)) 100%
-    );
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-hover)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -814,8 +801,12 @@
 
   /* Animation utilities */
   @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   @keyframes fade-in-up {
@@ -863,8 +854,13 @@
   }
 
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
 
   .animate-fade-in {
@@ -922,7 +918,11 @@
   }
 
   .gradient-dark {
-    background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--muted-foreground)) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--foreground)) 0%,
+      hsl(var(--muted-foreground)) 100%
+    );
   }
 
   .gradient-light {
@@ -936,9 +936,15 @@
       line-height: 1.5;
     }
 
-    h1 { font-size: 24pt; }
-    h2 { font-size: 18pt; }
-    h3 { font-size: 14pt; }
+    h1 {
+      font-size: 24pt;
+    }
+    h2 {
+      font-size: 18pt;
+    }
+    h3 {
+      font-size: 14pt;
+    }
 
     a {
       text-decoration: underline;

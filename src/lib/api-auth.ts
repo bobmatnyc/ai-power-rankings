@@ -25,10 +25,10 @@ export async function requireAuth() {
           {
             error: "Unauthorized",
             message: "Authentication required",
-            code: "AUTH_REQUIRED"
+            code: "AUTH_REQUIRED",
           },
           { status: 401 }
-        )
+        ),
       };
     }
 
@@ -40,10 +40,10 @@ export async function requireAuth() {
         {
           error: "Authentication failed",
           message: error instanceof Error ? error.message : "Unknown error",
-          code: "AUTH_ERROR"
+          code: "AUTH_ERROR",
         },
         { status: 500 }
-      )
+      ),
     };
   }
 }
@@ -64,10 +64,10 @@ export async function requireAdmin() {
           {
             error: "Unauthorized",
             message: "Authentication required",
-            code: "AUTH_REQUIRED"
+            code: "AUTH_REQUIRED",
           },
           { status: 401 }
-        )
+        ),
       };
     }
 
@@ -79,10 +79,10 @@ export async function requireAdmin() {
           {
             error: "User not found",
             message: "Unable to retrieve user information",
-            code: "USER_NOT_FOUND"
+            code: "USER_NOT_FOUND",
           },
           { status: 404 }
-        )
+        ),
       };
     }
 
@@ -95,10 +95,10 @@ export async function requireAdmin() {
             error: "Forbidden",
             message: "Admin privileges required",
             code: "ADMIN_REQUIRED",
-            userId
+            userId,
           },
           { status: 403 }
-        )
+        ),
       };
     }
 
@@ -110,10 +110,10 @@ export async function requireAdmin() {
         {
           error: "Authentication failed",
           message: error instanceof Error ? error.message : "Unknown error",
-          code: "AUTH_ERROR"
+          code: "AUTH_ERROR",
         },
         { status: 500 }
-      )
+      ),
     };
   }
 }

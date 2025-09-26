@@ -14,6 +14,6 @@ export async function GET() {
     status: "healthy",
     timestamp: new Date().toISOString(),
     runtime: process.env["NEXT_RUNTIME"] || "nodejs",
-    message: "Health check successful - API is working"
+    message: "Health check successful - API is working",
   });
 }

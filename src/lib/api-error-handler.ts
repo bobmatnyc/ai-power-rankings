@@ -32,7 +32,7 @@ export interface APISuccessResponse<T = any> {
 export function detectRuntime(): string {
   // Check if we're in Edge Runtime using the global EdgeRuntime variable
   // @ts-expect-error - EdgeRuntime is a global only available in Edge Runtime
-  return typeof globalThis.EdgeRuntime !== 'undefined' ? 'edge' : 'nodejs';
+  return typeof globalThis.EdgeRuntime !== "undefined" ? "edge" : "nodejs";
 }
 
 /**
@@ -52,13 +52,13 @@ export function createErrorResponse(
     details: error instanceof Error ? error.message : String(error),
     timestamp: new Date().toISOString(),
     runtime: detectRuntime(),
-    ...(debug && { debug })
+    ...(debug && { debug }),
   };
 
   // Log error for monitoring
   console.error(`[API-ERROR-${status}]`, {
     ...errorResponse,
-    stack: error instanceof Error ? error.stack : undefined
+    stack: error instanceof Error ? error.stack : undefined,
   });
 
   return NextResponse.json(errorResponse, {
@@ -67,8 +67,8 @@ export function createErrorResponse(
       "Content-Type": "application/json",
       "Cache-Control": "no-cache",
       "X-Error-Handled": "true",
-      "X-Runtime": detectRuntime()
-    }
+      "X-Runtime": detectRuntime(),
+    },
   });
 }
 
@@ -85,7 +85,7 @@ export function createSuccessResponse<T>(
     data,
     message,
     timestamp: new Date().toISOString(),
-    runtime: detectRuntime()
+    runtime: detectRuntime(),
   };
 
   return NextResponse.json(successResponse, {
@@ -94,8 +94,8 @@ export function createSuccessResponse<T>(
       "Content-Type": "application/json",
       "Cache-Control": "no-cache",
       "X-Success": "true",
-      "X-Runtime": detectRuntime()
-    }
+      "X-Runtime": detectRuntime(),
+    },
   });
 }
 
@@ -103,23 +103,11 @@ export function createSuccessResponse<T>(
  * Authentication error responses
  */
 export function createAuthErrorResponse(message: string, code: string, debug?: any): NextResponse {
-  return createErrorResponse(
-    new Error("Authentication failed"),
-    message,
-    401,
-    code,
-    debug
-  );
+  return createErrorResponse(new Error("Authentication failed"), message, 401, code, debug);
 }
 
 export function createForbiddenResponse(message: string, code: string, debug?: any): NextResponse {
-  return createErrorResponse(
-    new Error("Access forbidden"),
-    message,
-    403,
-    code,
-    debug
-  );
+  return createErrorResponse(new Error("Access forbidden"), message, 403, code, debug);
 }
 
 export function createServiceUnavailableResponse(service: string, error: unknown): NextResponse {
@@ -162,12 +150,12 @@ export async function safeClerkAuth(
       error: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
       runtime: detectRuntime(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     return {
       success: false,
-      error: createServiceUnavailableResponse("Authentication", error)
+      error: createServiceUnavailableResponse("Authentication", error),
     };
   }
 }
@@ -175,9 +163,7 @@ export async function safeClerkAuth(
 /**
  * Enhanced error boundary for API routes
  */
-export function withErrorBoundary<T extends any[]>(
-  handler: (...args: T) => Promise<NextResponse>
-) {
+export function withErrorBoundary<T extends any[]>(handler: (...args: T) => Promise<NextResponse>) {
   return async (...args: T): Promise<NextResponse> => {
     try {
       return await handler(...args);
@@ -188,7 +174,7 @@ export function withErrorBoundary<T extends any[]>(
         stack: error instanceof Error ? error.stack : undefined,
         runtime: detectRuntime(),
         timestamp: new Date().toISOString(),
-        args: args.map(arg => typeof arg === 'object' ? '[object]' : String(arg))
+        args: args.map((arg) => (typeof arg === "object" ? "[object]" : String(arg))),
       });
 
       return createErrorResponse(

@@ -1,8 +1,8 @@
-import { currentUser } from '@clerk/nextjs/server';
-import { SimpleTestClient } from './simple-client';
+import { currentUser } from "@clerk/nextjs/server";
+import { SimpleTestClient } from "./simple-client";
 
 // Force dynamic rendering - this page requires authentication
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function AdminSimpleTestPage() {
   // Server-side authentication check
@@ -19,10 +19,12 @@ export default async function AdminSimpleTestPage() {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span className="font-semibold">Authenticated:</span>
-            <span className={`px-2 py-1 rounded text-sm ${
-              user ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-            }`}>
-              {user ? 'YES' : 'NO'}
+            <span
+              className={`px-2 py-1 rounded text-sm ${
+                user ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+              }`}
+            >
+              {user ? "YES" : "NO"}
             </span>
           </div>
 
@@ -32,7 +34,8 @@ export default async function AdminSimpleTestPage() {
                 <span className="font-semibold">User ID:</span> {user.id}
               </div>
               <div className="text-sm">
-                <span className="font-semibold">Email:</span> {user.emailAddresses?.[0]?.emailAddress}
+                <span className="font-semibold">Email:</span>{" "}
+                {user.emailAddresses?.[0]?.emailAddress}
               </div>
               <div className="text-sm">
                 <span className="font-semibold">Name:</span> {user.firstName} {user.lastName}
