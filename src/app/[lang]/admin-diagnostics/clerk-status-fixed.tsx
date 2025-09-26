@@ -42,7 +42,7 @@ export function ClerkStatusFixed() {
     };
 
     fetchToken();
-  }, [authLoaded, isSignedIn, getToken]); // Only re-run if these change
+  }, [authLoaded, isSignedIn, getToken, isTokenLoading]); // Only re-run if these change
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">

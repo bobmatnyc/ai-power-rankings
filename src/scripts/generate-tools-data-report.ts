@@ -197,7 +197,7 @@ async function generateToolsReport() {
     const sortedCategories = Array.from(byCategory.keys()).sort();
 
     for (const category of sortedCategories) {
-      const categoryTools = byCategory.get(category)!;
+      const categoryTools = byCategory.get(category) ?? [];
       console.log(
         `### ${category.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} (${categoryTools.length} tools)\n`
       );
@@ -392,7 +392,7 @@ async function generateReportContent() {
   const sortedCategories = Array.from(byCategory.keys()).sort();
 
   for (const category of sortedCategories) {
-    const categoryTools = byCategory.get(category)!;
+    const categoryTools = byCategory.get(category) ?? [];
     console.log(
       `### ${category.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} (${categoryTools.length} tools)\n`
     );

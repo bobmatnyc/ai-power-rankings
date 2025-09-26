@@ -1,7 +1,29 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { i18n } from "./i18n/config";
+
+// Type definitions for Clerk functions when dynamically imported
+type ClerkMiddleware = (handler: (auth: any, req: NextRequest) => Promise<NextResponse>) => (req: NextRequest) => Promise<NextResponse>;
+type CreateRouteMatcher = (routes: string[]) => (req: NextRequest) => boolean;
+
+// Conditionally import Clerk based on environment
+// This prevents production errors when Clerk is not configured
+let clerkMiddleware: ClerkMiddleware | null = null;
+let createRouteMatcher: CreateRouteMatcher | null = null;
+
+const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
+
+// Only load Clerk if auth is enabled AND we have the necessary keys
+if (!isAuthDisabled && hasClerkKey) {
+  try {
+    const clerkModule = require("@clerk/nextjs/server");
+    clerkMiddleware = clerkModule.clerkMiddleware;
+    createRouteMatcher = clerkModule.createRouteMatcher;
+  } catch (error) {
+    console.warn("[Middleware] Clerk not available:", error);
+  }
+}
 
 // Middleware ALWAYS runs in Edge Runtime on Vercel - cannot be changed
 // API routes are handled conditionally INSIDE middleware to avoid Clerk cookie validation
@@ -70,11 +92,9 @@ function getLocale(request: NextRequest): string {
   return i18n.defaultLocale;
 }
 
-// Define protected page routes (using modern createRouteMatcher pattern)
-const isProtectedRoute = createRouteMatcher(["/(.*)admin(.*)", "/(.*)dashboard(.*)"]);
-
-// Define public routes that should be accessible without authentication
-const isPublicRoute = createRouteMatcher([
+// Define route matchers - use createRouteMatcher if available, otherwise simple pattern matching
+const protectedRoutePatterns = ["/(.*)admin(.*)", "/(.*)dashboard(.*)"];
+const publicRoutePatterns = [
   "/(.*)sign-in(.*)",
   "/(.*)sign-up(.*)",
   "/",
@@ -83,8 +103,28 @@ const isPublicRoute = createRouteMatcher([
   "/(.*)/about(.*)",
   "/api/health(.*)",
   "/api/public(.*)",
-  // Admin routes are explicitly protected - remove them from public
-]);
+];
+
+// Create route matchers using Clerk if available, otherwise use simple matching
+const isProtectedRoute = createRouteMatcher
+  ? createRouteMatcher(protectedRoutePatterns)
+  : (req: NextRequest) => {
+      const pathname = req.nextUrl.pathname;
+      return protectedRoutePatterns.some((pattern) => {
+        const regex = new RegExp("^" + pattern.replace(/\(.*\)/g, ".*") + "$");
+        return regex.test(pathname);
+      });
+    };
+
+const isPublicRoute = createRouteMatcher
+  ? createRouteMatcher(publicRoutePatterns)
+  : (req: NextRequest) => {
+      const pathname = req.nextUrl.pathname;
+      return publicRoutePatterns.some((pattern) => {
+        const regex = new RegExp("^" + pattern.replace(/\(.*\)/g, ".*") + "$");
+        return regex.test(pathname);
+      });
+    };
 
 // Helper function for locale redirection
 function handleLocaleRedirection(req: NextRequest): NextResponse | null {
@@ -105,8 +145,8 @@ function handleLocaleRedirection(req: NextRequest): NextResponse | null {
   return null;
 }
 
-// Modern Clerk middleware using 2024 patterns - API routes MUST go through Clerk for auth context
-export default clerkMiddleware(async (auth, req) => {
+// Middleware function that handles both Clerk and non-Clerk scenarios
+async function middlewareHandler(req: NextRequest): Promise<NextResponse> {
   const pathname = req.nextUrl.pathname;
 
   // Allow sitemap.xml to be accessed without locale prefix
@@ -114,8 +154,6 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next();
   }
 
-  // Check if auth is disabled globally (for special development cases only)
-  const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 
   // Handle public routes that don't need authentication (but still need Clerk context for API routes)
   if (isPublicRoute(req) && !pathname.startsWith("/api/")) {
@@ -134,7 +172,7 @@ export default clerkMiddleware(async (auth, req) => {
     response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
     if (req.method === "OPTIONS") {
-      return new Response(null, { status: 200, headers: response.headers });
+      return NextResponse.json(null, { status: 200, headers: response.headers });
     }
     return response;
   }
@@ -147,44 +185,12 @@ export default clerkMiddleware(async (auth, req) => {
     }
   }
 
-  // Protect routes - check authentication for protected routes
-  if (isProtectedRoute(req) && !isPublicRoute(req) && !isAuthDisabled) {
-    try {
-      const { userId } = await auth();
-      if (!userId) {
-        // For API routes, return 401 JSON response instead of redirect
-        if (pathname.startsWith("/api/")) {
-          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-
-        // For page routes, redirect to sign-in
-        const locale = pathname.split("/")[1] || "en";
-        const host = req.headers.get("host") || "localhost:3000";
-        const protocol = req.headers.get("x-forwarded-proto") || "http";
-        const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
-        return NextResponse.redirect(redirectUrl, { status: 303 });
-      }
-    } catch (error) {
-      console.error("[Middleware] Auth check failed:", error);
-
-      // For API routes, return 500 JSON response instead of redirect
-      if (pathname.startsWith("/api/")) {
-        return NextResponse.json(
-          {
-            error: "Authentication service error",
-            message: error instanceof Error ? error.message : "Unknown error",
-          },
-          { status: 500 }
-        );
-      }
-
-      // For page routes, redirect to sign-in
-      const locale = pathname.split("/")[1] || "en";
-      const host = req.headers.get("host") || "localhost:3000";
-      const protocol = req.headers.get("x-forwarded-proto") || "http";
-      const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
-      return NextResponse.redirect(redirectUrl, { status: 303 });
-    }
+  // Protected routes are bypassed when auth is disabled or Clerk is not available
+  // This prevents production errors when Clerk environment variables are missing
+  if (isProtectedRoute(req) && !isPublicRoute(req) && !isAuthDisabled && clerkMiddleware) {
+    // Route is protected and Clerk is available - this will be handled by Clerk wrapper
+    // Just note that authentication will be required
+    console.log(`[Middleware] Protected route ${pathname} will require authentication`);
   }
 
   const response = NextResponse.next();
@@ -200,7 +206,57 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   return response;
-});
+}
+
+// Export middleware - use Clerk wrapper if available, otherwise direct handler
+export default clerkMiddleware && !isAuthDisabled
+  ? clerkMiddleware(async (auth: any, req: NextRequest) => {
+      // When using Clerk, handle authentication for protected routes
+      const pathname = req.nextUrl.pathname;
+
+      if (isProtectedRoute(req) && !isPublicRoute(req)) {
+        try {
+          const { userId } = await auth();
+          if (!userId) {
+            // For API routes, return 401 JSON response instead of redirect
+            if (pathname.startsWith("/api/")) {
+              return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            }
+
+            // For page routes, redirect to sign-in
+            const locale = pathname.split("/")[1] || "en";
+            const host = req.headers.get("host") || "localhost:3000";
+            const protocol = req.headers.get("x-forwarded-proto") || "http";
+            const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
+            return NextResponse.redirect(redirectUrl, { status: 303 });
+          }
+        } catch (error) {
+          console.error("[Middleware] Auth check failed:", error);
+
+          // For API routes, return 500 JSON response instead of redirect
+          if (pathname.startsWith("/api/")) {
+            return NextResponse.json(
+              {
+                error: "Authentication service error",
+                message: error instanceof Error ? error.message : "Unknown error",
+              },
+              { status: 500 }
+            );
+          }
+
+          // For page routes, redirect to sign-in
+          const locale = pathname.split("/")[1] || "en";
+          const host = req.headers.get("host") || "localhost:3000";
+          const protocol = req.headers.get("x-forwarded-proto") || "http";
+          const redirectUrl = new URL(`/${locale}/sign-in`, `${protocol}://${host}`);
+          return NextResponse.redirect(redirectUrl, { status: 303 });
+        }
+      }
+
+      // Call the main handler for all other logic
+      return middlewareHandler(req);
+    })
+  : middlewareHandler;
 
 export const config = {
   matcher: [

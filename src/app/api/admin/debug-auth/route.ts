@@ -18,6 +18,8 @@ import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 export async function GET() {
   console.log("[DEBUG-AUTH] Starting comprehensive authentication debug");
 
+  // Using a more flexible type for debug info that allows nested objects
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const debugInfo: Record<string, any> = {
     timestamp: new Date().toISOString(),
     environment: process.env["NODE_ENV"] || "unknown",

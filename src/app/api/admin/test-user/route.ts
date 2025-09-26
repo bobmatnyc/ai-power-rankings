@@ -14,7 +14,7 @@ export async function GET() {
 
     // Step 1: Test auth()
     console.log("[CRITICAL] Step 1: Testing auth()...");
-    let authResult;
+    let authResult: Awaited<ReturnType<typeof auth>> | undefined;
     try {
       authResult = await auth();
       console.log("[CRITICAL] auth() success - userId:", authResult?.userId);
@@ -42,7 +42,7 @@ export async function GET() {
 
     // Step 2: Test currentUser()
     console.log("[CRITICAL] Step 2: Testing currentUser()...");
-    let user;
+    let user: Awaited<ReturnType<typeof currentUser>> | undefined;
     try {
       user = await currentUser();
       console.log("[CRITICAL] currentUser() success - id:", user?.id);

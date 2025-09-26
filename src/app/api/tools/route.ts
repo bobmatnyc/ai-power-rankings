@@ -53,18 +53,18 @@ export async function GET(): Promise<NextResponse> {
             github: (tool.info.technical as { github_repo?: string })?.github_repo,
           },
           technical: {
-            supported_languages: (tool.info.technical as any)?.supported_languages,
-            ide_integrations: (tool.info.technical as any)?.ide_integrations,
-            api_available: (tool.info.technical as any)?.api_available,
+            supported_languages: (tool.info.technical as { supported_languages?: string[] })?.supported_languages,
+            ide_integrations: (tool.info.technical as { ide_integrations?: string[] })?.ide_integrations,
+            api_available: (tool.info.technical as { api_available?: boolean })?.api_available,
           },
           business: {
             pricing_model: tool.info.business?.pricing_model,
-            free_tier: (tool.info.business as any)?.free_tier,
+            free_tier: (tool.info.business as { free_tier?: boolean })?.free_tier,
           },
           metrics: {
             swe_bench: tool.info.metrics?.swe_bench,
-            github_stars: (tool.info.metrics as any)?.github_stars,
-            user_count: (tool.info.metrics as any)?.user_count,
+            github_stars: (tool.info.metrics as { github_stars?: number })?.github_stars,
+            user_count: (tool.info.metrics as { user_count?: number })?.user_count,
           },
           metadata: {
             logo_url: tool.info.website
