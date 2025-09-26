@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { NoAuthProvider } from "./no-auth-provider";
 
 // Conditionally import ClerkProvider based on environment
@@ -40,17 +40,31 @@ interface AuthProviderWrapperProps {
  * - Handles [lang] dynamic routes for i18n
  */
 export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
+  // Start with default locale during SSR
+  const [locale, setLocale] = useState("en");
+  const [mounted, setMounted] = useState(false);
+
+  // Always call the hook, but only use it when mounted
   const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    // Update locale after mounting on client
+    if (mounted && pathname) {
+      const lang = pathname.split("/")[1] || "en";
+      const validLangs = ["en", "ja", "zh", "ko", "es", "fr", "de", "pt", "it", "ru"];
+      const detectedLocale = validLangs.includes(lang) ? lang : "en";
+      setLocale(detectedLocale);
+    }
+  }, [mounted, pathname]);
 
   // If ClerkProvider wasn't loaded (auth disabled or no keys), use NoAuthProvider
   if (!ClerkProvider) {
     return <NoAuthProvider>{children}</NoAuthProvider>;
   }
-
-  // Extract locale from pathname for i18n support
-  const lang = pathname ? pathname.split("/")[1] || "en" : "en";
-  const validLangs = ["en", "ja", "zh", "ko", "es", "fr", "de", "pt", "it", "ru"];
-  const locale = validLangs.includes(lang) ? lang : "en";
 
   // Wrap with ClerkProvider using the proper locale
   return (
