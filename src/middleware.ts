@@ -161,6 +161,15 @@ function handleLocaleRedirection(req: NextRequest): NextResponse | null {
 async function middlewareHandler(req: NextRequest): Promise<NextResponse> {
   const pathname = req.nextUrl.pathname;
 
+  try {
+    console.log("[Middleware] Processing request for:", pathname);
+    console.log("[Middleware] Environment check:", {
+      NODE_ENV: process.env["NODE_ENV"],
+      VERCEL_ENV: process.env["VERCEL_ENV"],
+      AUTH_DISABLED: isAuthDisabled,
+      HAS_CLERK_KEY: hasClerkKey,
+    });
+
   // Allow sitemap.xml to be accessed without locale prefix
   if (pathname === "/sitemap.xml") {
     return NextResponse.next();
@@ -217,6 +226,16 @@ async function middlewareHandler(req: NextRequest): Promise<NextResponse> {
   }
 
   return response;
+  } catch (error) {
+    console.error("[Middleware] Critical error:", error);
+    console.error("[Middleware] Error stack:", error instanceof Error ? error.stack : "No stack");
+    console.error("[Middleware] Error for path:", pathname);
+
+    // Return a basic response to prevent complete failure
+    const response = NextResponse.next();
+    response.headers.set("X-Middleware-Error", "true");
+    return response;
+  }
 }
 
 // Export middleware - use Clerk wrapper if available, otherwise direct handler

@@ -21,9 +21,30 @@ const dictionaries = {
 type RawDictionary = typeof import("./dictionaries/en.json");
 
 export const getDictionary = async (locale: Locale): Promise<RawDictionary> => {
-  const dict = await (dictionaries[locale]?.() ?? dictionaries.en());
-  // Process the dictionary to ensure it's complete and serializable
-  return (await processDictionary(dict, locale)) as RawDictionary;
+  try {
+    console.log("[getDictionary] Loading dictionary for locale:", locale);
+    const dict = await (dictionaries[locale]?.() ?? dictionaries.en());
+    console.log("[getDictionary] Dictionary loaded successfully for locale:", locale);
+
+    // Process the dictionary to ensure it's complete and serializable
+    const processed = await processDictionary(dict, locale);
+    console.log("[getDictionary] Dictionary processed successfully for locale:", locale);
+
+    return processed as RawDictionary;
+  } catch (error) {
+    console.error("[getDictionary] Error loading dictionary for locale:", locale, error);
+    console.error("[getDictionary] Error stack:", error instanceof Error ? error.stack : "No stack");
+
+    // Try to fall back to English dictionary
+    try {
+      console.log("[getDictionary] Falling back to English dictionary");
+      const fallbackDict = await dictionaries.en();
+      return (await processDictionary(fallbackDict, "en")) as RawDictionary;
+    } catch (fallbackError) {
+      console.error("[getDictionary] Failed to load fallback dictionary:", fallbackError);
+      throw fallbackError;
+    }
+  }
 };
 
 export type Dictionary = RawDictionary;

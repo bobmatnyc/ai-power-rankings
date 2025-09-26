@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 // CRITICAL FIX: Explicit React import for jsx-dev-runtime stability
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { ErrorBoundary } from "@/components/error-boundary";
 import {
   SignedInWrapper,
   SignedOutWrapper,
@@ -122,10 +123,12 @@ export const ClientLayout = React.memo(function ClientLayout({
   dict: Dictionary;
 }) {
   return (
-    <I18nProvider dict={dict} lang={lang}>
-      <RankingChangesProvider>
-        <ClientLayoutContent>{children}</ClientLayoutContent>
-      </RankingChangesProvider>
-    </I18nProvider>
+    <ErrorBoundary>
+      <I18nProvider dict={dict} lang={lang}>
+        <RankingChangesProvider>
+          <ClientLayoutContent>{children}</ClientLayoutContent>
+        </RankingChangesProvider>
+      </I18nProvider>
+    </ErrorBoundary>
   );
 });

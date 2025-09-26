@@ -183,10 +183,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function Home({ params }: PageProps): Promise<React.JSX.Element> {
-  const resolvedParams = await params;
-  const lang = (resolvedParams?.lang || "en") as Locale;
-  const dict = await getDictionary(lang);
-  const baseUrl = getUrl();
+  try {
+    console.log("[Page] Home: Starting page render");
+    console.log("[Page] Home: Environment:", {
+      NODE_ENV: process.env["NODE_ENV"],
+      VERCEL_ENV: process.env["VERCEL_ENV"],
+      HAS_BASE_URL: !!process.env["NEXT_PUBLIC_BASE_URL"],
+      HAS_VERCEL_URL: !!process.env["VERCEL_URL"],
+    });
+
+    const resolvedParams = await params;
+    console.log("[Page] Home: Resolved params:", resolvedParams);
+
+    const lang = (resolvedParams?.lang || "en") as Locale;
+    console.log("[Page] Home: Language:", lang);
+
+    const dict = await getDictionary(lang);
+    console.log("[Page] Home: Dictionary loaded:", !!dict);
+
+    const baseUrl = getUrl();
+    console.log("[Page] Home: Base URL from getUrl:", baseUrl);
 
   // Provide server-side fallback data to prevent loading state
   // Hard-coded fallback for immediate display while debugging
@@ -272,17 +288,19 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       }
     : null;
 
-  return (
-    <div className="min-h-screen">
-      {structuredData && (
-        <script
-          type="application/ld+json"
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe JSON-LD structured data
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-      )}
-      {/* T-033 What's New Modal */}
-      <WhatsNewModalClient />
+    console.log("[Page] Home: Preparing to render components");
+
+    return (
+      <div className="min-h-screen">
+        {structuredData && (
+          <script
+            type="application/ld+json"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe JSON-LD structured data
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          />
+        )}
+        {/* T-033 What's New Modal */}
+        <WhatsNewModalClient />
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background gradient */}
@@ -579,4 +597,32 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       </section>
     </div>
   );
+  } catch (error) {
+    console.error("[Page] Home: Critical error rendering page:", error);
+    console.error("[Page] Home: Error stack:", error instanceof Error ? error.stack : "No stack");
+    console.error("[Page] Home: Error type:", error?.constructor?.name);
+    console.error("[Page] Home: Error details:", {
+      message: error instanceof Error ? error.message : String(error),
+      name: error instanceof Error ? error.name : "Unknown",
+    });
+
+    // Return a minimal error page
+    return (
+      <div className="min-h-screen p-8">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Page Rendering Error</h1>
+        <p className="text-gray-600 mb-2">An error occurred while rendering the home page.</p>
+        <details className="mt-4 p-4 bg-gray-100 rounded">
+          <summary className="cursor-pointer font-semibold">Error Details</summary>
+          <pre className="mt-2 whitespace-pre-wrap text-sm">
+            {error instanceof Error ? error.message : String(error)}
+            {"\n\n"}
+            Stack: {error instanceof Error ? error.stack : "No stack trace"}
+          </pre>
+        </details>
+        <div className="mt-8">
+          <a href="/" className="text-blue-600 hover:underline">Try refreshing the page</a>
+        </div>
+      </div>
+    );
+  }
 }
