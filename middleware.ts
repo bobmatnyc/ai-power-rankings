@@ -44,7 +44,8 @@ function localeMiddleware(req: NextRequest): NextResponse | undefined {
     pathname.startsWith("/api") ||
     pathname.includes(".") ||
     pathname.startsWith("/admin") ||
-    pathname.startsWith("/simple-test") // Allow simple test page without locale
+    pathname.startsWith("/simple-test") || // Allow simple test page without locale
+    pathname.startsWith("/minimal-test") // Allow minimal test page without locale
   ) {
     return undefined;
   }
