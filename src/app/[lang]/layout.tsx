@@ -26,7 +26,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ lang: Locale }>;
 }): Promise<Metadata> {
-  const { lang } = await params;
+  const resolvedParams = await params;
+  const lang = (resolvedParams?.lang || "en") as Locale;
   const dict = await getDictionary(lang);
   const baseUrl =
     process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
@@ -57,7 +58,8 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{ lang: Locale }>;
 }>) {
-  const { lang } = await params;
+  const resolvedParams = await params;
+  const lang = (resolvedParams?.lang || "en") as Locale;
   const dict = await getDictionary(lang);
 
   return (

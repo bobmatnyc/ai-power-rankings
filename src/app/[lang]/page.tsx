@@ -67,7 +67,8 @@ export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { lang } = await params;
+  const resolvedParams = await params;
+  const lang = (resolvedParams?.lang || "en") as Locale;
   const dict = await getDictionary(lang);
   const baseUrl = getUrl();
 
@@ -182,7 +183,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function Home({ params }: PageProps): Promise<React.JSX.Element> {
-  const { lang } = await params;
+  const resolvedParams = await params;
+  const lang = (resolvedParams?.lang || "en") as Locale;
   const dict = await getDictionary(lang);
   const baseUrl = getUrl();
 
