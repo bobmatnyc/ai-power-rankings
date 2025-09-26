@@ -1,15 +1,14 @@
-import fallbackNewsData from "@/data/cache/news.json";
-// Import fallback data from filesystem
-import fallbackRankingsData from "@/data/cache/rankings.json";
-import fallbackToolsData from "@/data/cache/tools.json";
+// Fallback data - these will be loaded dynamically if needed
+// The cache files no longer exist in the project structure
 import { loggers } from "@/lib/logger";
 import type { CacheType } from "./cache-manager";
 import { CacheManager } from "./cache-manager";
 
+// Empty fallback data since cache files no longer exist
 const fallbackData: Record<CacheType, unknown> = {
-  rankings: fallbackRankingsData,
-  tools: fallbackToolsData,
-  news: fallbackNewsData,
+  rankings: [],
+  tools: [],
+  news: [],
 };
 
 /**
@@ -32,7 +31,7 @@ export async function loadCacheWithFallback(type: CacheType): Promise<unknown> {
     loggers.api.error(`Failed to load ${type} from cache manager`, { error });
   }
 
-  // Fall back to imported JSON
-  loggers.api.debug(`Using fallback ${type} data from imported JSON`);
+  // Return empty fallback since cache files no longer exist
+  loggers.api.warn(`No cache available for ${type}, returning empty data`);
   return fallbackData[type];
 }

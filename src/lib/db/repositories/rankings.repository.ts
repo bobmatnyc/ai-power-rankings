@@ -30,17 +30,13 @@ export class RankingsRepository extends BaseRepository<RankingData> {
     }
 
     try {
-      const result = await db
-        .select()
-        .from(rankings)
-        .where(eq(rankings.isCurrent, true))
-        .limit(1);
+      const result = await db.select().from(rankings).where(eq(rankings.isCurrent, true)).limit(1);
 
       if (result.length === 0) {
         return null;
       }
 
-      return this.mapToRankingData(result[0]);
+      return this.mapToRankingData(result[0]!);
     } catch (error) {
       console.error("Error fetching current rankings:", error);
       throw error;
@@ -57,17 +53,13 @@ export class RankingsRepository extends BaseRepository<RankingData> {
     }
 
     try {
-      const result = await db
-        .select()
-        .from(rankings)
-        .where(eq(rankings.period, period))
-        .limit(1);
+      const result = await db.select().from(rankings).where(eq(rankings.period, period)).limit(1);
 
       if (result.length === 0) {
         return null;
       }
 
-      return this.mapToRankingData(result[0]);
+      return this.mapToRankingData(result[0]!);
     } catch (error) {
       console.error("Error fetching rankings by period:", error);
       throw error;
@@ -84,12 +76,9 @@ export class RankingsRepository extends BaseRepository<RankingData> {
     }
 
     try {
-      const result = await db
-        .select()
-        .from(rankings)
-        .orderBy(desc(rankings.period));
+      const result = await db.select().from(rankings).orderBy(desc(rankings.period));
 
-      return result.map(r => this.mapToRankingData(r));
+      return result.map((r) => this.mapToRankingData(r));
     } catch (error) {
       console.error("Error fetching all rankings:", error);
       throw error;
@@ -114,12 +103,9 @@ export class RankingsRepository extends BaseRepository<RankingData> {
         data: data.data || [],
       };
 
-      const result = await db
-        .insert(rankings)
-        .values(newRanking)
-        .returning();
+      const result = await db.insert(rankings).values(newRanking).returning();
 
-      return this.mapToRankingData(result[0]);
+      return this.mapToRankingData(result[0]!);
     } catch (error) {
       console.error("Error creating rankings:", error);
       throw error;
@@ -139,7 +125,8 @@ export class RankingsRepository extends BaseRepository<RankingData> {
       const updateData: Partial<NewRanking> = {};
 
       if (data.period !== undefined) updateData.period = data.period;
-      if (data.algorithm_version !== undefined) updateData.algorithmVersion = data.algorithm_version;
+      if (data.algorithm_version !== undefined)
+        updateData.algorithmVersion = data.algorithm_version;
       if (data.is_current !== undefined) updateData.isCurrent = data.is_current;
       if (data.published_at !== undefined) updateData.publishedAt = data.published_at;
       if (data.data !== undefined) updateData.data = data.data;
@@ -157,7 +144,7 @@ export class RankingsRepository extends BaseRepository<RankingData> {
         return null;
       }
 
-      return this.mapToRankingData(result[0]);
+      return this.mapToRankingData(result[0]!);
     } catch (error) {
       console.error("Error updating rankings:", error);
       throw error;
@@ -177,9 +164,7 @@ export class RankingsRepository extends BaseRepository<RankingData> {
       // Start a transaction
       await db.transaction(async (tx) => {
         // Unset all current flags
-        await tx
-          .update(rankings)
-          .set({ isCurrent: false });
+        await tx.update(rankings).set({ isCurrent: false });
 
         // Set the specified ranking as current
         await tx
@@ -209,9 +194,7 @@ export class RankingsRepository extends BaseRepository<RankingData> {
     }
 
     try {
-      const result = await db
-        .delete(rankings)
-        .where(eq(rankings.period, period));
+      await db.delete(rankings).where(eq(rankings.period, period));
 
       return true;
     } catch (error) {
@@ -230,13 +213,60 @@ export class RankingsRepository extends BaseRepository<RankingData> {
     }
 
     try {
-      const result = await db
-        .delete(rankings)
-        .where(eq(rankings.id, id));
+      await db.delete(rankings).where(eq(rankings.id, id));
 
       return true;
     } catch (error) {
       console.error("Error deleting rankings:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Find ranking by ID (required by BaseRepository)
+   */
+  async findById(id: string): Promise<RankingData | null> {
+    const db = getDb();
+    if (!db) {
+      throw new Error("Database connection not available");
+    }
+
+    try {
+      const result = await db.select().from(rankings).where(eq(rankings.id, id)).limit(1);
+
+      if (result.length === 0) {
+        return null;
+      }
+
+      return this.mapToRankingData(result[0]!);
+    } catch (error) {
+      console.error("Error finding ranking by id:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete ranking (required by BaseRepository)
+   */
+  async delete(id: string): Promise<boolean> {
+    return this.deleteById(id);
+  }
+
+  /**
+   * Count total number of rankings (required by BaseRepository)
+   */
+  async count(): Promise<number> {
+    const db = getDb();
+    if (!db) {
+      throw new Error("Database connection not available");
+    }
+
+    try {
+      const result = await db.select({ count: sql<number>`count(*)` }).from(rankings);
+
+      return result[0]?.count || 0;
+    } catch (error) {
+      console.error("Error counting rankings:", error);
       throw error;
     }
   }

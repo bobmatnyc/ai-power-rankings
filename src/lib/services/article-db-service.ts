@@ -790,33 +790,9 @@ export class ArticleDatabaseService {
       }
     }
 
-    // Fallback to static rankings file for dry runs or when DB is unavailable
-    console.log("[ArticleDatabaseService] Using static rankings file for current rankings");
-    try {
-      const staticRankings = await import("@/data/cache/rankings-static.json");
-      const mappedRankings: CurrentRanking[] = staticRankings.rankings.map(
-        (r: Record<string, any>, index: number) => ({
-          id: String(r["tool"]?.["id"] ?? `static_${index}`),
-          tool_id: String(r["tool"]?.["id"] ?? `static_${index}`),
-          tool_name: String(r["tool"]?.["name"] ?? "Unknown Tool"),
-          name: String(r["tool"]?.["name"] ?? "Unknown Tool"),
-          rank: typeof r["rank"] === "number" ? r["rank"] : index + 1,
-          score: typeof r["scores"]?.["overall"] === "number" ? r["scores"]["overall"] / 100 : 0,
-          metrics: (r["metrics"] as Record<string, unknown>) || {},
-        })
-      );
-      console.log(
-        `[ArticleDatabaseService] Found ${mappedRankings.length} rankings in static file`
-      );
-      console.log(
-        "[ArticleDatabaseService] Sample tool names:",
-        mappedRankings.slice(0, 5).map((r: CurrentRanking) => r.tool_name)
-      );
-      return mappedRankings;
-    } catch (error) {
-      console.error("[ArticleDatabaseService] Failed to load static rankings:", error);
-      return [];
-    }
+    // Return empty array when DB is unavailable and no static file exists
+    console.log("[ArticleDatabaseService] No rankings available, returning empty array");
+    return [];
   }
 
   /**
@@ -839,52 +815,41 @@ export class ArticleDatabaseService {
       }
     }
 
-    // Fallback to static rankings file for dry runs or when DB is unavailable
-    console.log("[ArticleDatabaseService] Using static rankings file for existing tools");
-    try {
-      const staticRankings = await import("@/data/cache/rankings-static.json");
-      const toolNames = staticRankings.rankings.map((r: Record<string, any>) =>
-        String(r["tool"]?.["name"] || "Unknown Tool")
-      );
-      console.log(`[ArticleDatabaseService] Found ${toolNames.length} tools in static rankings`);
-      return toolNames;
-    } catch (error) {
-      console.error("[ArticleDatabaseService] Failed to load static rankings:", error);
-      // Return known tools as a last resort
-      return [
-        "Claude Code",
-        "GitHub Copilot",
-        "Cursor",
-        "ChatGPT Canvas",
-        "v0",
-        "Kiro",
-        "Windsurf",
-        "Google Jules",
-        "Amazon Q Developer",
-        "Lovable",
-        "Aider",
-        "Tabnine",
-        "Bolt.new",
-        "Augment Code",
-        "Google Gemini Code Assist",
-        "Replit Agent",
-        "Zed",
-        "OpenAI Codex CLI",
-        "Devin",
-        "Continue",
-        "Claude Artifacts",
-        "Sourcegraph Cody",
-        "Cline",
-        "OpenHands",
-        "JetBrains AI Assistant",
-        "Qodo Gen",
-        "CodeRabbit",
-        "Snyk Code",
-        "Microsoft IntelliCode",
-        "Sourcery",
-        "Diffblue Cover",
-      ];
-    }
+    // Return known tools as a fallback when DB is unavailable
+    console.log("[ArticleDatabaseService] Using known tools list as fallback");
+    return [
+      "Claude Code",
+      "GitHub Copilot",
+      "Cursor",
+      "ChatGPT Canvas",
+      "v0",
+      "Kiro",
+      "Windsurf",
+      "Google Jules",
+      "Amazon Q Developer",
+      "Lovable",
+      "Aider",
+      "Tabnine",
+      "Bolt.new",
+      "Augment Code",
+      "Google Gemini Code Assist",
+      "Replit Agent",
+      "Zed",
+      "OpenAI Codex CLI",
+      "Devin",
+      "Continue",
+      "Claude Artifacts",
+      "Sourcegraph Cody",
+      "Cline",
+      "OpenHands",
+      "JetBrains AI Assistant",
+      "Qodo Gen",
+      "CodeRabbit",
+      "Snyk Code",
+      "Microsoft IntelliCode",
+      "Sourcery",
+      "Diffblue Cover",
+    ];
   }
 
   /**

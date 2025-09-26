@@ -2,11 +2,12 @@ import path from "node:path";
 import fs from "fs-extra";
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
+import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
-import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, type ToolMetricsV6 } from "@/lib/ranking-algorithm-v6";
+
 // Note: ranking-news-enhancer module doesn't exist yet
 // These functions need to be implemented or imported from another module
 // import {
@@ -102,23 +103,28 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Log a few tool dates for debugging
       const sampleTools = tools.slice(0, 5).map((t) => ({
         name: t.name,
-        launch_date: t.launch_date,
-        created_at: t.created_at,
-        effective_date: t.launch_date || t.created_at,
-        date: new Date(t.launch_date || t.created_at).toISOString(),
+        launch_date: t["launch_date"],
+        created_at: t["created_at"],
+        effective_date: t["launch_date"] || t["created_at"],
+        date:
+          t["launch_date"] || t["created_at"]
+            ? new Date(String(t["launch_date"] || t["created_at"])).toISOString()
+            : new Date().toISOString(),
       }));
       loggers.api.info("Sample tool dates:", { sampleTools });
 
       tools = tools.filter((tool) => {
         // Use launch_date if available, otherwise fall back to created_at
-        const toolDateStr = tool.launch_date || tool.created_at;
+        const toolDateStr = String(
+          tool["launch_date"] || tool["created_at"] || new Date().toISOString()
+        );
         const toolDate = new Date(toolDateStr);
         const shouldInclude = toolDate <= cutoffDate;
 
         // Log specific tools for debugging
         if (tool.name === "Google Jules" || tool.name === "Claude Code") {
           loggers.api.info(
-            `Tool ${tool.name}: ${tool.launch_date ? "launch" : "created"} ${toolDateStr}, cutoff ${preview_date}, include: ${shouldInclude}`
+            `Tool ${tool.name}: ${tool["launch_date"] ? "launch" : "created"} ${toolDateStr}, cutoff ${preview_date}, include: ${shouldInclude}`
           );
         }
 
@@ -132,7 +138,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get news articles for metrics extraction
-    const newsArticles = await newsRepo.getAll();
+    const newsArticles = await articlesRepo.getArticles({});
 
     loggers.api.info(`Found ${newsArticles.length} news articles for metrics extraction`);
 
@@ -143,7 +149,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Count articles before the preview date
       const cutoffDate = new Date(preview_date);
       const filteredCount = newsArticles.filter((article) => {
-        const articleDate = new Date(article.publishedAt);
+        const articleDate = article.publishedDate ? new Date(article.publishedDate) : new Date();
         return articleDate <= cutoffDate;
       }).length;
 
@@ -190,21 +196,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       // Get innovation score for this tool
       const innovationData = innovationMap.get(tool.id);
-      const innovationScore = innovationData?.score || 0;
+      const innovationScore = innovationData?.["score"] || 0;
 
       // Map news articles to the expected format for the enhancer
+      // Commented out as not currently used
+      /*
       const formattedArticles = newsArticles.map(article => ({
         id: article.id,
         title: article.title,
         content: article.content || '',
         summary: article.summary || '',
-        published_date: article.publishedAt.toISOString(),
-        tool_mentions: article.toolMentions as string[] || [],
-        tags: article.data?.tags || [],
-        category: article.data?.category || '',
-        importance_score: article.data?.importance_score || 0,
-        metadata: article.data || {},
+        published_date: article.publishedDate ? article.publishedDate.toISOString() : new Date().toISOString(),
+        tool_mentions: article.toolMentions || [],
+        tags: article.tags || [],
+        category: article.category || '',
+        importance_score: article.importanceScore || 0,
+        metadata: {},
       }));
+      */
 
       // Extract enhanced metrics from news (quantitative + qualitative with AI)
       // NOTE: extractEnhancedNewsMetrics function is not yet implemented
@@ -240,48 +249,49 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
 
       // Convert tool data to metrics format expected by algorithm
+      const toolInfo = tool.info as any;
       const isAutonomous = tool.category === "autonomous-agent";
       const isOpenSource = tool.category === "open-source-framework";
-      const isEnterprise = tool.info?.business?.pricing_model === "enterprise";
+      const isEnterprise = toolInfo?.business?.pricing_model === "enterprise";
       const isPremium = ["Devin", "Claude Code", "Google Jules", "Cursor"].includes(tool.name);
 
-      let metrics: ToolMetricsV6 = {
+      const metrics: ToolMetricsV6 = {
         tool_id: tool.id,
         status: tool.status,
         // Agentic metrics
         agentic_capability: isAutonomous ? 8.5 : tool.category === "ide-assistant" ? 6 : 5,
         swe_bench_score:
-          tool.info?.metrics?.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
-        multi_file_capability: isAutonomous ? 9 : tool.info?.technical?.multi_file_support ? 7 : 4,
+          toolInfo?.metrics?.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
+        multi_file_capability: isAutonomous ? 9 : toolInfo?.technical?.multi_file_support ? 7 : 4,
         planning_depth: isAutonomous ? 8.5 : 6,
         context_utilization: isPremium ? 8 : 6.5,
         // Technical metrics
-        context_window: tool.info?.technical?.context_window || (isPremium ? 200000 : 100000),
-        language_support: tool.info?.technical?.supported_languages || (isEnterprise ? 20 : 15),
-        github_stars: tool.info?.metrics?.github_stars || (isOpenSource ? 25000 : 5000),
+        context_window: toolInfo?.technical?.context_window || (isPremium ? 200000 : 100000),
+        language_support: toolInfo?.technical?.supported_languages || (isEnterprise ? 20 : 15),
+        github_stars: toolInfo?.metrics?.github_stars || (isOpenSource ? 25000 : 5000),
         // Innovation metrics
         innovation_score: innovationScore || (isPremium ? 8.5 : 6.5),
         innovations: [],
         // Market metrics
         estimated_users:
-          tool.info?.metrics?.estimated_users ||
+          toolInfo?.metrics?.estimated_users ||
           (isPremium ? 500000 : isOpenSource ? 100000 : 50000),
         monthly_arr:
-          tool.info?.metrics?.monthly_arr ||
+          toolInfo?.metrics?.monthly_arr ||
           (isEnterprise ? 10000000 : isPremium ? 5000000 : 1000000),
-        valuation: tool.info?.metrics?.valuation || (isPremium ? 1000000000 : 100000000),
-        funding: tool.info?.metrics?.funding_total || (isPremium ? 100000000 : 10000000),
-        business_model: tool.info?.business?.business_model || "saas",
+        valuation: toolInfo?.metrics?.valuation || (isPremium ? 1000000000 : 100000000),
+        funding: toolInfo?.metrics?.funding_total || (isPremium ? 100000000 : 10000000),
+        business_model: toolInfo?.business?.business_model || "saas",
         // Risk and sentiment
         business_sentiment: isPremium ? 0.8 : 0.7,
         risk_factors: [],
         // Development metrics
         release_frequency: isOpenSource ? 7 : 14,
-        github_contributors: tool.info?.metrics?.github_contributors || (isOpenSource ? 200 : 50),
+        github_contributors: toolInfo?.metrics?.github_contributors || (isOpenSource ? 200 : 50),
         // Platform metrics
         llm_provider_count: isPremium ? 5 : 3,
         multi_model_support: isPremium || isOpenSource,
-        community_size: tool.info?.metrics?.estimated_users || (isOpenSource ? 50000 : 10000),
+        community_size: toolInfo?.metrics?.estimated_users || (isOpenSource ? 50000 : 10000),
       };
 
       // Apply enhanced news metrics (both quantitative and qualitative)
@@ -309,9 +319,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // Update factorScores with adjusted values
       Object.keys(adjustedFactorScores).forEach((key) => {
         if (key in scoreResult.factorScores) {
-          const adjustedValue = adjustedFactorScores[key];
+          const adjustedValue = adjustedFactorScores[key as keyof typeof adjustedFactorScores];
           if (adjustedValue !== undefined) {
-            (scoreResult.factorScores as Record<string, number>)[key] = adjustedValue;
+            (scoreResult.factorScores as any)[key] = adjustedValue;
           }
         }
       });
@@ -348,9 +358,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const { tool, score } = item;
       const currentRanking = currentRankingsMap.get(tool.id);
       const newPosition = index + 1;
-      const currentPosition = currentRanking?.position;
+      const currentPosition = currentRanking?.["position"];
       const newScore = score;
-      const currentScore = currentRanking?.score;
+      const currentScore = currentRanking?.["score"];
 
       let positionChange = 0;
       let movement: RankingComparison["movement"] = "new";

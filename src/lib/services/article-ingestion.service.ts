@@ -970,38 +970,11 @@ export class ArticleIngestionService {
       // For dry runs or when database is unavailable, use static data
       console.log("[ArticleIngestionService] Loading static rankings data for analysis");
 
-      const staticRankings = await import("@/data/cache/rankings-static.json");
-
-      // Map static rankings to the expected format
-      // Using the actual Ranking type structure from the database
-      const currentRankings: Ranking[] = staticRankings.rankings.map((r: any, index: number) => ({
-        id: r.tool.id || `ranking-${index}`,
-        data: r, // The full ranking data goes in the data field
-        period: "2025-09",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        algorithmVersion: "v1.0",
-        isCurrent: true,
-        publishedAt: null,
-      }));
-
-      // Extract tool names from the static data
-      const existingTools: string[] = staticRankings.rankings
-        .map((r: any) => r.tool?.name || r.tool_name || "")
-        .filter(Boolean);
-
-      // For companies, we'll use an empty array for now since we don't have company data in static rankings
-      const existingCompanies: string[] = [];
-
-      console.log(
-        `[ArticleIngestionService] Loaded ${currentRankings.length} tools from static data`
-      );
-      console.log("[ArticleIngestionService] Sample tool names:", existingTools.slice(0, 5));
-
+      // Static rankings file no longer exists, return empty data
       return {
-        currentRankings,
-        existingTools,
-        existingCompanies,
+        currentRankings: [],
+        existingTools: [],
+        existingCompanies: [],
       };
     } catch (error) {
       console.error("[ArticleIngestionService] Failed to load static rankings:", error);

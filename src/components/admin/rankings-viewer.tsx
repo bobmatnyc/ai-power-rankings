@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 // Define RankingPeriod interface locally
 interface RankingPeriod {
   period: string;
@@ -38,6 +39,7 @@ interface RankingPeriod {
   published_at?: string;
   rankings?: any[];
 }
+
 import { cn } from "@/lib/utils";
 
 interface RankingPeriodSummary {
@@ -366,7 +368,7 @@ export function RankingsViewer() {
                 <CardDescription>
                   {rankingsData && (
                     <>
-                      {rankingsData.rankings.length} tools • Algorithm{" "}
+                      {rankingsData.rankings?.length || 0} tools • Algorithm{" "}
                       {rankingsData.algorithm_version}
                     </>
                   )}
@@ -389,7 +391,7 @@ export function RankingsViewer() {
               </div>
             ) : rankingsData ? (
               <div className="space-y-2">
-                {rankingsData.rankings
+                {(rankingsData.rankings || [])
                   .slice(0, expandedRankings ? undefined : 20)
                   .map((entry, index) => (
                     <Link
@@ -487,19 +489,19 @@ export function RankingsViewer() {
                     </Link>
                   ))}
 
-                {rankingsData.rankings.length > 20 && !expandedRankings && (
+                {(rankingsData.rankings?.length || 0) > 20 && !expandedRankings && (
                   <div className="text-center py-4">
                     <Button
                       variant="link"
                       onClick={() => setExpandedRankings(true)}
                       className="text-muted-foreground hover:text-foreground"
                     >
-                      ... and {rankingsData.rankings.length - 20} more tools →
+                      ... and {(rankingsData.rankings?.length || 0) - 20} more tools →
                     </Button>
                   </div>
                 )}
 
-                {expandedRankings && rankingsData.rankings.length > 20 && (
+                {expandedRankings && (rankingsData.rankings?.length || 0) > 20 && (
                   <div className="text-center py-4">
                     <Button
                       variant="link"
