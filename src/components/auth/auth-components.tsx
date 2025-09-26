@@ -16,26 +16,55 @@ import { UserButtonWithAdmin } from "./user-button-with-admin";
 type ClerkComponent = React.ComponentType<{ children?: React.ReactNode; [key: string]: unknown }>;
 type ClerkHook = () => Record<string, unknown>;
 
-let ClerkSignedIn: ClerkComponent | null = null;
-let ClerkSignedOut: ClerkComponent | null = null;
-let ClerkSignInButton: ClerkComponent | null = null;
-let ClerkSignUpButton: ClerkComponent | null = null;
-let ClerkUseAuth: ClerkHook | null = null;
-let ClerkUserButton: ClerkComponent | null = null;
+// Store clerk components in a ref to prevent re-loading
+const clerkComponentsCache: {
+  SignedIn: ClerkComponent | null;
+  SignedOut: ClerkComponent | null;
+  SignInButton: ClerkComponent | null;
+  SignUpButton: ClerkComponent | null;
+  useAuth: ClerkHook | null;
+  UserButton: ClerkComponent | null;
+  loaded: boolean;
+} = {
+  SignedIn: null,
+  SignedOut: null,
+  SignInButton: null,
+  SignUpButton: null,
+  useAuth: null,
+  UserButton: null,
+  loaded: false,
+};
 
-// Load Clerk components once on client side
-if (typeof window !== "undefined") {
-  try {
-    const clerkModule = require("@clerk/nextjs");
-    ClerkSignedIn = clerkModule.SignedIn;
-    ClerkSignedOut = clerkModule.SignedOut;
-    ClerkSignInButton = clerkModule.SignInButton;
-    ClerkSignUpButton = clerkModule.SignUpButton;
-    ClerkUseAuth = clerkModule.useAuth;
-    ClerkUserButton = clerkModule.UserButton;
-  } catch (error) {
-    console.warn("[AuthComponents] Clerk module not available:", error);
+// Load Clerk components dynamically
+function loadClerkComponents() {
+  if (clerkComponentsCache.loaded) {
+    return clerkComponentsCache;
   }
+
+  if (typeof window !== "undefined") {
+    const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+    const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
+
+    if (!isAuthDisabled && hasClerkKey) {
+      try {
+        const clerkModule = require("@clerk/nextjs");
+        clerkComponentsCache.SignedIn = clerkModule.SignedIn;
+        clerkComponentsCache.SignedOut = clerkModule.SignedOut;
+        clerkComponentsCache.SignInButton = clerkModule.SignInButton;
+        clerkComponentsCache.SignUpButton = clerkModule.SignUpButton;
+        clerkComponentsCache.useAuth = clerkModule.useAuth;
+        clerkComponentsCache.UserButton = clerkModule.UserButton;
+        clerkComponentsCache.loaded = true;
+      } catch (error) {
+        console.warn("[AuthComponents] Clerk module not available:", error);
+        clerkComponentsCache.loaded = true; // Mark as loaded even on error to prevent retries
+      }
+    } else {
+      clerkComponentsCache.loaded = true; // Mark as loaded when auth is disabled
+    }
+  }
+
+  return clerkComponentsCache;
 }
 
 // Check auth configuration
@@ -44,24 +73,30 @@ const getIsAuthDisabled = () => {
 };
 
 // Export functions that determine which implementation to use at runtime
+// This is not a React hook itself, but returns the appropriate hook
 export const useAuth = () => {
   const isAuthDisabled = getIsAuthDisabled();
-  if (isAuthDisabled || !ClerkUseAuth) {
-    return MockUseAuth();
-  }
-  return ClerkUseAuth();
+  const components = loadClerkComponents();
+
+  // Determine which auth implementation to use
+  const authHook = isAuthDisabled || !components.useAuth ? MockUseAuth : components.useAuth;
+
+  // Call the selected auth hook
+  return authHook();
 };
 
 // Export wrapper components that choose implementation at runtime
 export const SignedIn = ({ children }: { children: React.ReactNode }) => {
   const isAuthDisabled = getIsAuthDisabled();
-  const Component = isAuthDisabled || !ClerkSignedIn ? MockSignedIn : ClerkSignedIn;
+  const components = loadClerkComponents();
+  const Component = isAuthDisabled || !components.SignedIn ? MockSignedIn : components.SignedIn;
   return <Component>{children}</Component>;
 };
 
 export const SignedOut = ({ children }: { children: React.ReactNode }) => {
   const isAuthDisabled = getIsAuthDisabled();
-  const Component = isAuthDisabled || !ClerkSignedOut ? MockSignedOut : ClerkSignedOut;
+  const components = loadClerkComponents();
+  const Component = isAuthDisabled || !components.SignedOut ? MockSignedOut : components.SignedOut;
   return <Component>{children}</Component>;
 };
 
@@ -73,7 +108,9 @@ export const SignInButton = ({
   [key: string]: unknown;
 }) => {
   const isAuthDisabled = getIsAuthDisabled();
-  const Component = isAuthDisabled || !ClerkSignInButton ? MockSignInButton : ClerkSignInButton;
+  const components = loadClerkComponents();
+  const Component =
+    isAuthDisabled || !components.SignInButton ? MockSignInButton : components.SignInButton;
   return <Component {...props}>{children}</Component>;
 };
 
@@ -85,13 +122,17 @@ export const SignUpButton = ({
   [key: string]: unknown;
 }) => {
   const isAuthDisabled = getIsAuthDisabled();
-  const Component = isAuthDisabled || !ClerkSignUpButton ? MockSignInButton : ClerkSignUpButton;
+  const components = loadClerkComponents();
+  const Component =
+    isAuthDisabled || !components.SignUpButton ? MockSignInButton : components.SignUpButton;
   return <Component {...props}>{children}</Component>;
 };
 
 export const UserButton = (props: Record<string, unknown>) => {
   const isAuthDisabled = getIsAuthDisabled();
-  const Component = isAuthDisabled || !ClerkUserButton ? MockUserButton : ClerkUserButton;
+  const components = loadClerkComponents();
+  const Component =
+    isAuthDisabled || !components.UserButton ? MockUserButton : components.UserButton;
   return <Component {...props} />;
 };
 
