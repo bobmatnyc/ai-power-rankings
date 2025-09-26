@@ -4,66 +4,61 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { NoAuthProvider } from "./no-auth-provider";
 
+// Import Clerk at module level to maintain context chain
+// This is safe because the file is marked as "use client"
+let ClerkProvider: React.ComponentType<{
+  children: ReactNode;
+  publishableKey?: string;
+  signInUrl?: string;
+  signUpUrl?: string;
+  afterSignInUrl?: string;
+  afterSignUpUrl?: string;
+}> | null = null;
+if (typeof window !== "undefined") {
+  try {
+    const clerkModule = require("@clerk/nextjs");
+    ClerkProvider = clerkModule.ClerkProvider;
+  } catch (error) {
+    console.warn("[AuthProvider] Clerk module not available:", error);
+  }
+}
+
 interface AuthProviderWrapperProps {
   children: ReactNode;
 }
 
-// Only check configuration on the client side to prevent SSR issues
+// Check configuration - safe to call anywhere
 const getAuthConfig = () => {
-  if (typeof window === "undefined") {
-    // During SSR, return safe defaults
-    return {
-      isAuthDisabled: false,
-      hasClerkKey: false,
-      shouldUseClerk: false,
-    };
-  }
-
   const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
   const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
-  const shouldUseClerk = !isAuthDisabled && hasClerkKey;
-
-  // Log configuration for debugging (only in development)
-  if (process.env["NODE_ENV"] === "development") {
-    console.log("[AuthProvider] Configuration:", {
-      isAuthDisabled,
-      hasClerkKey,
-      shouldUseClerk,
-    });
-  }
+  const shouldUseClerk = !isAuthDisabled && hasClerkKey && !!ClerkProvider;
 
   return { isAuthDisabled, hasClerkKey, shouldUseClerk };
 };
 
 export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
   const [isMounted, setIsMounted] = useState(false);
-  const [authConfig, setAuthConfig] = useState(() => getAuthConfig());
-  const [ClerkProvider, setClerkProvider] = useState<any>(null);
+  const authConfig = getAuthConfig();
 
   useEffect(() => {
     setIsMounted(true);
-    // Re-check config after mount to ensure we have the latest
-    const config = getAuthConfig();
-    setAuthConfig(config);
 
-    // Dynamically import ClerkProvider only on client and when needed
-    if (config.shouldUseClerk) {
-      import("@clerk/nextjs")
-        .then((module) => {
-          setClerkProvider(() => module.ClerkProvider);
-        })
-        .catch((error) => {
-          console.error("[AuthProvider] Error loading Clerk:", error);
-        });
+    // Log configuration for debugging (only in development)
+    if (process.env["NODE_ENV"] === "development") {
+      const config = getAuthConfig();
+      console.log("[AuthProvider] Configuration:", {
+        ...config,
+        clerkLoaded: !!ClerkProvider,
+      });
     }
   }, []);
 
-  // During SSG/SSR or before hydration, always use NoAuthProvider to avoid router issues
-  if (!isMounted || typeof window === "undefined") {
+  // During SSR or before mount, use NoAuthProvider to avoid SSR issues
+  if (!isMounted) {
     return <NoAuthProvider>{children}</NoAuthProvider>;
   }
 
-  // After hydration, if we should use Clerk and it's loaded, use it
+  // After mount, if we should use Clerk and it's available, use it
   if (authConfig.shouldUseClerk && ClerkProvider) {
     try {
       // Extract locale from pathname if available, otherwise default to "en"
@@ -87,6 +82,6 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
     }
   }
 
-  // Otherwise, use NoAuthProvider (or while Clerk is loading)
+  // Otherwise, use NoAuthProvider
   return <NoAuthProvider>{children}</NoAuthProvider>;
 }

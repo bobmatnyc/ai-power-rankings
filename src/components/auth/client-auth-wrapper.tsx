@@ -1,21 +1,14 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
-
-// Dynamically import AuthProviderWrapper with SSR disabled
-// This ensures ClerkProvider is never imported during SSR
-const AuthProviderWrapper = dynamic(
-  () => import("./auth-provider-wrapper").then((mod) => ({ default: mod.AuthProviderWrapper })),
-  {
-    ssr: false,
-  }
-);
+import { AuthProviderWrapper } from "./auth-provider-wrapper";
 
 interface ClientAuthWrapperProps {
   children: ReactNode;
 }
 
+// Simple client wrapper that uses AuthProviderWrapper directly
+// The AuthProviderWrapper handles SSR/client detection internally
 export function ClientAuthWrapper({ children }: ClientAuthWrapperProps) {
   return <AuthProviderWrapper>{children}</AuthProviderWrapper>;
 }

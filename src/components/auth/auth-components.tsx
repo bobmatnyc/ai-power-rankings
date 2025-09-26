@@ -2,16 +2,6 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
-import { UserButtonWithAdmin } from "./user-button-with-admin";
-
-// Lazy load Clerk components to prevent SSR issues
-let ClerkSignedIn: typeof import("@clerk/nextjs").SignedIn;
-let ClerkSignedOut: typeof import("@clerk/nextjs").SignedOut;
-let ClerkSignInButton: typeof import("@clerk/nextjs").SignInButton;
-let ClerkSignUpButton: typeof import("@clerk/nextjs").SignUpButton;
-let ClerkUseAuth: typeof import("@clerk/nextjs").useAuth;
-let ClerkUserButton: typeof import("@clerk/nextjs").UserButton;
-
 // Import mock components that are always safe
 import {
   SignedIn as MockSignedIn,
@@ -20,25 +10,38 @@ import {
   useAuth as MockUseAuth,
   UserButton as MockUserButton,
 } from "./no-auth-provider";
+import { UserButtonWithAdmin } from "./user-button-with-admin";
 
-// Only check auth configuration on the client side
-const getIsAuthDisabled = () => {
-  if (typeof window === "undefined") {
-    return false; // Default to false during SSR
+// Initialize Clerk components at module level to preserve context
+type ClerkComponent = React.ComponentType<{ children?: React.ReactNode; [key: string]: unknown }>;
+type ClerkHook = () => Record<string, unknown>;
+
+let ClerkSignedIn: ClerkComponent | null = null;
+let ClerkSignedOut: ClerkComponent | null = null;
+let ClerkSignInButton: ClerkComponent | null = null;
+let ClerkSignUpButton: ClerkComponent | null = null;
+let ClerkUseAuth: ClerkHook | null = null;
+let ClerkUserButton: ClerkComponent | null = null;
+
+// Load Clerk components once on client side
+if (typeof window !== "undefined") {
+  try {
+    const clerkModule = require("@clerk/nextjs");
+    ClerkSignedIn = clerkModule.SignedIn;
+    ClerkSignedOut = clerkModule.SignedOut;
+    ClerkSignInButton = clerkModule.SignInButton;
+    ClerkSignUpButton = clerkModule.SignUpButton;
+    ClerkUseAuth = clerkModule.useAuth;
+    ClerkUserButton = clerkModule.UserButton;
+  } catch (error) {
+    console.warn("[AuthComponents] Clerk module not available:", error);
   }
+}
+
+// Check auth configuration
+const getIsAuthDisabled = () => {
   return process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 };
-
-// Initialize Clerk components only on the client side
-if (typeof window !== "undefined") {
-  const clerkModule = require("@clerk/nextjs");
-  ClerkSignedIn = clerkModule.SignedIn;
-  ClerkSignedOut = clerkModule.SignedOut;
-  ClerkSignInButton = clerkModule.SignInButton;
-  ClerkSignUpButton = clerkModule.SignUpButton;
-  ClerkUseAuth = clerkModule.useAuth;
-  ClerkUserButton = clerkModule.UserButton;
-}
 
 // Export functions that determine which implementation to use at runtime
 export const useAuth = () => {
