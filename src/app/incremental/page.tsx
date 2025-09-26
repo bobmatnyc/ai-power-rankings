@@ -23,7 +23,7 @@ async function Test2() {
 // Test 3: Can we load dictionaries?
 async function Test3() {
   try {
-    const { getDictionary } = await import("@/lib/i18n/dictionaries");
+    const { getDictionary } = await import("@/app/[lang]/dictionaries");
     const dict = await getDictionary("en");
     return (
       <div style={{ border: "1px solid green", padding: "10px", margin: "10px 0" }}>
@@ -83,7 +83,7 @@ async function Test4() {
 async function Test5() {
   try {
     // Just import, don't render
-    await import("@/components/Header");
+    await import("@/components/ui/Header");
     return (
       <div style={{ border: "1px solid green", padding: "10px", margin: "10px 0" }}>
         ✅ Test 5: Component imports work

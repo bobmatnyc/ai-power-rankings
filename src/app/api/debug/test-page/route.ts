@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     // Step 2: Test dictionary loading
     steps.push("Step 2: Testing dictionary loading");
     try {
-      const { getDictionary } = await import("@/lib/i18n/dictionaries");
+      const { getDictionary } = await import("@/app/[lang]/dictionaries");
       const dict = await getDictionary("en");
       steps.push(`Step 2: Dictionary loaded, has ${Object.keys(dict).length} keys`);
     } catch (dictError: unknown) {
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       steps.push("Step 4b: Next/Link imported successfully");
 
       // Test if we can import our components (without rendering)
-      await import("@/components/Header");
+      await import("@/components/ui/Header");
       steps.push("Step 4c: Header component imported successfully");
     } catch (importError: unknown) {
       const err = importError as Error;
