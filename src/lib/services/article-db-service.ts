@@ -15,6 +15,21 @@ import type {
 import { getDb } from "@/lib/db/connection";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { companies, rankings, tools } from "@/lib/db/schema";
+import type {
+  CurrentRanking,
+  RankingChange,
+  RankingsSnapshot,
+  ValidatedCompanyMention,
+  ValidatedToolMention,
+} from "@/lib/types/article-analysis";
+import {
+  cleanCompanyMentions,
+  cleanToolMentions,
+  ensureArray,
+  validateImportanceScore,
+  validatePublishedDate,
+  validateSentimentScore,
+} from "@/lib/types/article-analysis";
 import {
   AIAnalyzer,
   type ArticleIngestionInput,
@@ -59,7 +74,7 @@ export class ArticleDatabaseService {
       // Step 1: Extract content
       let content: string;
       let sourceUrl: string | undefined;
-      let analysis: any; // Will be assigned based on input type
+      let analysis: any; // Keep as any for compatibility with existing RankingsCalculator // Will be assigned based on input type
 
       // Handle preprocessed data (skip extraction and AI analysis)
       if (input.type === "preprocessed") {
@@ -183,59 +198,16 @@ export class ArticleDatabaseService {
         // Generate unique slug
         const slug = await this.articlesRepo.generateUniqueSlug(analysis.title);
 
-        // Helper function to safely convert to string
-        const safeToString = (value: any, defaultValue: string = "0"): string => {
-          if (value === null || value === undefined) return defaultValue;
-          return value.toString();
-        };
+        // Use imported helper functions for type safety
 
-        // Helper function to ensure array format
-        const ensureArray = (value: any): any[] => {
-          if (!value) return [];
-          if (Array.isArray(value)) return value;
-          if (typeof value === "string") {
-            try {
-              const parsed = JSON.parse(value);
-              return Array.isArray(parsed) ? parsed : [];
-            } catch {
-              console.warn("[ArticleDB] Failed to parse JSON string, treating as empty array");
-              return [];
-            }
-          }
-          return [];
-        };
+        // Validate and clean tool mentions using type-safe functions
+        const cleanedToolMentions: ValidatedToolMention[] = cleanToolMentions(
+          analysis.tool_mentions
+        );
 
-        // Validate and clean tool mentions
-        const cleanedToolMentions = ensureArray(analysis.tool_mentions).map((mention: any) => {
-          if (typeof mention === "string") {
-            // If it's just a string, convert to object format
-            return { name: mention, relevance: 0.5, sentiment: 0, context: "" };
-          }
-          // Ensure all properties exist with defaults
-          return {
-            name: mention.name || mention.tool_name || "Unknown",
-            relevance: mention.relevance ?? 0.5,
-            sentiment: mention.sentiment ?? 0,
-            context: mention.context || "",
-            ...mention, // Keep any additional properties
-          };
-        });
-
-        // Validate and clean company mentions
-        const cleanedCompanyMentions = ensureArray(analysis.company_mentions).map(
-          (mention: any) => {
-            if (typeof mention === "string") {
-              // If it's just a string, convert to object format
-              return { name: mention, relevance: 0.5, context: "" };
-            }
-            // Ensure all properties exist with defaults
-            return {
-              name: mention.name || mention.company_name || "Unknown",
-              relevance: mention.relevance ?? 0.5,
-              context: mention.context || "",
-              ...mention, // Keep any additional properties
-            };
-          }
+        // Validate and clean company mentions using type-safe functions
+        const cleanedCompanyMentions: ValidatedCompanyMention[] = cleanCompanyMentions(
+          analysis.company_mentions
         );
 
         // Create article with validated data
@@ -250,33 +222,20 @@ export class ArticleDatabaseService {
           sourceName: analysis.source ? analysis.source.substring(0, 255) : null,
           fileName: input.fileName ? input.fileName.substring(0, 255) : null,
           fileType: input.mimeType ? input.mimeType.substring(0, 50) : null,
-          tags: ensureArray(analysis.tags).filter((tag: any) => typeof tag === "string"),
+          tags: [
+            ...ensureArray(analysis.tags).filter(
+              (tag: unknown): tag is string => typeof tag === "string"
+            ),
+          ],
           category: analysis.category ? analysis.category.substring(0, 100) : null,
-          importanceScore: (() => {
-            const score = parseInt(safeToString(analysis.importance_score, "5"), 10);
-            if (Number.isNaN(score) || score < 1) return 5;
-            if (score > 10) return 10;
-            return score;
-          })(),
-          sentimentScore: (() => {
-            const score = parseFloat(safeToString(analysis.overall_sentiment, "0"));
-            if (Number.isNaN(score)) return "0.00";
-            if (score < -1) return "-1.00";
-            if (score > 1) return "1.00";
-            return score.toFixed(2);
-          })(),
+          importanceScore: validateImportanceScore(analysis.importance_score),
+          sentimentScore: validateSentimentScore(analysis.overall_sentiment),
           // Ensure JSON fields are properly formatted
           toolMentions: cleanedToolMentions,
           companyMentions: cleanedCompanyMentions,
           rankingsSnapshot: rankingsSnapshot || null,
           author: (input.metadata?.author || analysis.source || "Unknown").substring(0, 255),
-          publishedDate: (() => {
-            if (analysis.published_date) {
-              const date = new Date(analysis.published_date);
-              return Number.isNaN(date.getTime()) ? new Date() : date;
-            }
-            return new Date();
-          })(),
+          publishedDate: validatePublishedDate(analysis.published_date),
           ingestedBy: "admin",
           status: "active",
           isProcessed: false,
@@ -355,28 +314,28 @@ export class ArticleDatabaseService {
         }
 
         // Apply ranking changes
-        const rankingChanges: NewArticleRankingsChange[] = (predictedChanges as any[]).map(
-          (change: any) => ({
-            articleId: article.id,
-            toolId: change.toolId,
-            toolName: change.toolName,
-            metricChanges: change.metrics,
-            oldRank: change.currentRank,
-            newRank: change.predictedRank,
-            rankChange: change.rankChange,
-            oldScore: change.currentScore?.toString() || "0",
-            newScore: change.predictedScore?.toString() || "0",
-            scoreChange: change.scoreChange?.toString() || "0",
-            changeType:
-              (change.scoreChange || 0) > 0
-                ? "increase"
-                : (change.scoreChange || 0) < 0
-                  ? "decrease"
-                  : "no_change",
-            changeReason: `Article ingestion: ${analysis.title}`,
-            isApplied: true,
-          })
-        );
+        const rankingChanges: NewArticleRankingsChange[] = (
+          predictedChanges as RankingChange[]
+        ).map((change: RankingChange) => ({
+          articleId: article.id,
+          toolId: change.toolId,
+          toolName: change.toolName,
+          metricChanges: change.metrics,
+          oldRank: change.currentRank,
+          newRank: change.predictedRank,
+          rankChange: change.rankChange,
+          oldScore: change.currentScore?.toString() || "0",
+          newScore: change.predictedScore?.toString() || "0",
+          scoreChange: change.scoreChange?.toString() || "0",
+          changeType:
+            (change.scoreChange || 0) > 0
+              ? "increase"
+              : (change.scoreChange || 0) < 0
+                ? "decrease"
+                : "no_change",
+          changeReason: `Article ingestion: ${analysis.title}`,
+          isApplied: true,
+        }));
 
         if (rankingChanges.length > 0) {
           await this.articlesRepo.saveRankingChanges(rankingChanges);
@@ -397,7 +356,7 @@ export class ArticleDatabaseService {
             status: "completed",
             completedAt: new Date(),
             durationMs: Date.now() - startTime,
-            toolsAffected: (predictedChanges as any[]).length,
+            toolsAffected: (predictedChanges as RankingChange[]).length,
             companiesAffected: newCompanies?.length || 0,
             rankingsChanged: rankingChanges.length,
           });
@@ -559,7 +518,7 @@ export class ArticleDatabaseService {
 
     // IMPORTANT: Do NOT create processing log for dry runs
     // This prevents any database modifications during preview
-    let processingLog: any = null;
+    let processingLog: ArticleProcessingLog | null = null;
 
     try {
       // Get the article
@@ -569,7 +528,7 @@ export class ArticleDatabaseService {
         throw new Error("Article not found");
       }
 
-      let analysis: any;
+      let analysis: any; // Keep as any for compatibility with existing RankingsCalculator
 
       // Check if we should use cached analysis
       if (useCachedAnalysis) {
@@ -594,6 +553,11 @@ export class ArticleDatabaseService {
           analysis,
           timestamp: Date.now(),
         });
+      }
+
+      // Ensure analysis is available
+      if (!analysis) {
+        throw new Error("Failed to obtain article analysis");
       }
 
       // Get current rankings
@@ -777,7 +741,7 @@ export class ArticleDatabaseService {
   /**
    * Get current rankings from database
    */
-  private async getCurrentRankings(): Promise<any[]> {
+  private async getCurrentRankings(): Promise<CurrentRanking[]> {
     // First try to get from database
     if (this.db) {
       try {
@@ -790,27 +754,31 @@ export class ArticleDatabaseService {
 
         if (latestRanking?.data) {
           // Extract tools from rankings data
-          const rankingData = latestRanking.data as any[];
+          const rankingData = latestRanking.data as Record<string, unknown>[];
           console.log(
             "[ArticleDatabaseService] Sample raw ranking data:",
             JSON.stringify(rankingData[0])
           );
 
-          const mappedRankings = rankingData.map((item, index) => ({
-            id: item.tool_id || item.id,
-            tool_id: item.tool_id || item.id,
-            tool_name: item.tool_name || item.name || item.tool?.name, // Handle nested tool object
-            name: item.tool_name || item.name || item.tool?.name,
-            rank: item.rank || index + 1,
-            score: item.score || 0,
-            metrics: item.metrics || {},
+          const mappedRankings: CurrentRanking[] = rankingData.map((item, index) => ({
+            id: String((item["tool_id"] || item["id"]) ?? `unknown_${index}`),
+            tool_id: String((item["tool_id"] || item["id"]) ?? `unknown_${index}`),
+            tool_name: String(
+              item["tool_name"] || item["name"] || (item["tool"] as any)?.["name"] || "Unknown Tool"
+            ),
+            name: String(
+              item["tool_name"] || item["name"] || (item["tool"] as any)?.["name"] || "Unknown Tool"
+            ),
+            rank: typeof item["rank"] === "number" ? item["rank"] : index + 1,
+            score: typeof item["score"] === "number" ? item["score"] : 0,
+            metrics: (item["metrics"] as Record<string, unknown>) || {},
           }));
           console.log(
             `[ArticleDatabaseService] Found ${mappedRankings.length} rankings in database`
           );
           console.log(
             "[ArticleDatabaseService] Sample tool names from DB:",
-            mappedRankings.slice(0, 3).map((r: any) => r.tool_name)
+            mappedRankings.slice(0, 3).map((r: CurrentRanking) => r.tool_name)
           );
           return mappedRankings;
         }
@@ -826,21 +794,23 @@ export class ArticleDatabaseService {
     console.log("[ArticleDatabaseService] Using static rankings file for current rankings");
     try {
       const staticRankings = await import("@/data/cache/rankings-static.json");
-      const mappedRankings = staticRankings.rankings.map((r: any, index: number) => ({
-        id: r.tool.id,
-        tool_id: r.tool.id, // Add tool_id for compatibility
-        tool_name: r.tool.name, // This is the key field for matching
-        name: r.tool.name, // Also add name for compatibility
-        rank: r.rank || index + 1,
-        score: r.scores.overall / 100, // Convert percentage to decimal
-        metrics: r.metrics || {},
-      }));
+      const mappedRankings: CurrentRanking[] = staticRankings.rankings.map(
+        (r: Record<string, any>, index: number) => ({
+          id: String(r["tool"]?.["id"] ?? `static_${index}`),
+          tool_id: String(r["tool"]?.["id"] ?? `static_${index}`),
+          tool_name: String(r["tool"]?.["name"] ?? "Unknown Tool"),
+          name: String(r["tool"]?.["name"] ?? "Unknown Tool"),
+          rank: typeof r["rank"] === "number" ? r["rank"] : index + 1,
+          score: typeof r["scores"]?.["overall"] === "number" ? r["scores"]["overall"] / 100 : 0,
+          metrics: (r["metrics"] as Record<string, unknown>) || {},
+        })
+      );
       console.log(
         `[ArticleDatabaseService] Found ${mappedRankings.length} rankings in static file`
       );
       console.log(
         "[ArticleDatabaseService] Sample tool names:",
-        mappedRankings.slice(0, 5).map((r: any) => r.tool_name)
+        mappedRankings.slice(0, 5).map((r: CurrentRanking) => r.tool_name)
       );
       return mappedRankings;
     } catch (error) {
@@ -873,7 +843,9 @@ export class ArticleDatabaseService {
     console.log("[ArticleDatabaseService] Using static rankings file for existing tools");
     try {
       const staticRankings = await import("@/data/cache/rankings-static.json");
-      const toolNames = staticRankings.rankings.map((r: any) => r.tool.name);
+      const toolNames = staticRankings.rankings.map((r: Record<string, any>) =>
+        String(r["tool"]?.["name"] || "Unknown Tool")
+      );
       console.log(`[ArticleDatabaseService] Found ${toolNames.length} tools in static rankings`);
       return toolNames;
     } catch (error) {
@@ -970,7 +942,7 @@ export class ArticleDatabaseService {
   /**
    * Create a snapshot of current rankings
    */
-  private async createRankingsSnapshot(): Promise<any> {
+  private async createRankingsSnapshot(): Promise<RankingsSnapshot> {
     const currentRankings = await this.getCurrentRankings();
     return {
       timestamp: new Date().toISOString(),
