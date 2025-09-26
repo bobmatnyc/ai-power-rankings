@@ -80,12 +80,12 @@ export async function GET(request: NextRequest) {
                 source: article.sourceName || "unknown",
               });
             }
-            ingestionBatches.get(batchId).articles.push({
+            ingestionBatches.get(batchId)!.articles.push({
               id: article.id,
               title: article.title,
               slug: article.slug,
               published_date: article.publishedDate,
-              tool_mentions: article.toolMentions?.length || 0,
+              tool_mentions: Array.isArray(article.toolMentions) ? article.toolMentions.length : 0,
             });
           });
           const reports = Array.from(ingestionBatches.values()).sort(
@@ -216,6 +216,7 @@ export async function POST(request: NextRequest) {
             title: string;
             url: string;
             publishedDate: Date;
+            sourceName?: string;
             toolMentions?: string[];
           }
           const newsData: NewsItem[] = [];
@@ -227,8 +228,8 @@ export async function POST(request: NextRequest) {
               articles_found: newsData.length,
               sample: newsData.slice(0, 5).map((article) => ({
                 title: article.title,
-                published_date: article.published_date,
-                source: article.source,
+                published_date: article.publishedDate,
+                source: article.sourceName || "unknown",
               })),
             });
           }

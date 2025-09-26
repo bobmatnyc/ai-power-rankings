@@ -11,6 +11,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Dictionary } from "@/i18n/get-dictionary";
 // Define RankingPeriod interface locally
+interface RankingEntry {
+  tool_id: string;
+  tool_name?: string;
+  position: number;
+  rank?: number;
+  score: number;
+  change?: number;
+  trend?: string;
+  tier?: string;
+  movement?: {
+    direction: string;
+    change: number;
+    previous_position?: number;
+  };
+  change_analysis?: {
+    primary_reason?: string;
+  };
+}
+
 interface RankingPeriod {
   period: string;
   algorithm_version: string;
@@ -18,13 +37,7 @@ interface RankingPeriod {
   created_at: string;
   updated_at: string;
   published_at?: string;
-  rankings?: Array<{
-    tool_id: string;
-    position: number;
-    score: number;
-    change?: number;
-    trend?: string;
-  }>;
+  rankings?: RankingEntry[];
 }
 
 interface RankingChangesSummaryProps {
@@ -108,7 +121,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
             entry.movement.direction === "new")
       )
       .map((entry) => ({
-        tool_name: entry.tool_name,
+        tool_name: entry.tool_name || "",
         tool_id: entry.tool_id,
         position: entry.position ?? entry.rank ?? 0,
         previous_position: entry.movement?.previous_position,

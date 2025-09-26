@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
           results[toolName] = {
             foundBySlug: !!bySlug,
             foundByName: !!byName,
-            tool: bySlug || byName || null,
+            tool: (bySlug || byName || null) as any,
           };
         }
 
