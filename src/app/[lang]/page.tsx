@@ -52,16 +52,14 @@ interface PageProps {
 }
 
 // Dynamic import for T-031 performance optimization
-// Set ssr: false to prevent SSR issues with client-side only code
+// Note: Cannot use ssr: false in Server Components, rely on client component handling
 const ClientRankings = NextDynamic(() => import("./client-rankings-optimized"), {
   loading: () => <RankingsTableSkeleton />,
-  ssr: false, // Disable SSR for this component to avoid window/requestIdleCallback issues
 });
 
 // Dynamic import for T-033 What's New modal
 const WhatsNewModalClient = NextDynamic(() => import("@/components/ui/whats-new-modal-client"), {
   loading: () => <div></div>,
-  ssr: false, // Disable SSR for modal component
 });
 
 // Force dynamic rendering to ensure API calls work at runtime

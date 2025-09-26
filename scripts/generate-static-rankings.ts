@@ -7,7 +7,9 @@
 
 import path from "node:path";
 import fs from "fs-extra";
-import { getNewsRepo, getRankingsRepo, getToolsRepo } from "../src/lib/json-db";
+import { ArticlesRepository } from "../src/lib/db/repositories/articles.repository";
+import { RankingsRepository } from "../src/lib/db/repositories/rankings.repository";
+import { ToolsRepository } from "../src/lib/db/repositories/tools.repository";
 
 interface RankingData {
   rank: number;
@@ -40,15 +42,12 @@ async function generateStaticRankings() {
   try {
     console.log("🚀 Generating static rankings data...");
 
-    const rankingsRepo = getRankingsRepo();
-    const toolsRepo = getToolsRepo();
-    const newsRepo = getNewsRepo();
+    const rankingsRepo = new RankingsRepository();
+    const toolsRepo = new ToolsRepository();
+    const newsRepo = new ArticlesRepository();
 
-    // Force rebuild indices to ensure complete data
-    // await toolsRepo.forceRebuildIndices(); // Method doesn't exist
-
-    // Get tools using the repository (now fixed to return complete data)
-    const allTools = await toolsRepo.getAll();
+    // Get tools using the repository
+    const allTools = await toolsRepo.findAll();
     const toolsMap = new Map();
     const toolSlugToIdMap = new Map();
     allTools.forEach((tool) => {
@@ -57,12 +56,12 @@ async function generateStaticRankings() {
     });
 
     // Get all news articles to count mentions
-    const allNews = await newsRepo.getAll();
+    const allNews = await newsRepo.findAll();
     const newsCountByTool = new Map<string, number>();
 
     // Count news mentions for each tool
     allNews.forEach((article) => {
-      const mentions = article.tool_mentions || [];
+      const mentions = article.toolMentions || [];
       mentions.forEach((mention: string) => {
         // Convert slug to ID if necessary
         const toolId = toolSlugToIdMap.get(mention) || mention;
@@ -71,17 +70,20 @@ async function generateStaticRankings() {
     });
 
     // Get current rankings
-    const currentRankings = await rankingsRepo.getCurrentRankings();
+    const currentRankings = await rankingsRepo.getCurrent();
 
     if (!currentRankings) {
       throw new Error("No current rankings available");
     }
 
-    console.log(`📊 Processing ${currentRankings.rankings.length} tools...`);
+    const rankingsData = currentRankings.data as any;
+    const rankings = rankingsData?.rankings || [];
+
+    console.log(`📊 Processing ${rankings.length} tools...`);
 
     // Transform to expected format with tool details
     const formattedRankings = await Promise.all(
-      currentRankings.rankings.map(async (ranking) => {
+      rankings.map(async (ranking: any) => {
         const tool = toolsMap.get(ranking.tool_id);
 
         if (!tool) {
@@ -90,7 +92,9 @@ async function generateStaticRankings() {
         }
 
         // Extract actual SWE-bench score from tool data
-        const swe_bench_data = tool.info?.metrics?.swe_bench;
+        const toolData = (tool.data as any) || {};
+        const info = toolData.info || {};
+        const swe_bench_data = info.metrics?.swe_bench;
         const swe_bench_score =
           swe_bench_data?.verified ||
           swe_bench_data?.verified_basic ||
@@ -115,8 +119,8 @@ async function generateStaticRankings() {
             name: tool.name,
             category: tool.category,
             status: tool.status,
-            website_url: tool.info?.website || "",
-            description: tool.info?.description || "",
+            website_url: info?.website || "",
+            description: info?.description || "",
           },
           scores: {
             overall: ranking.score,
