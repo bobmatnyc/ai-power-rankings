@@ -183,9 +183,10 @@ export async function POST(request: NextRequest) {
             try {
               const articlesWithTool = await articlesRepo.findByToolMention(toolId);
               for (const article of articlesWithTool) {
-                const updatedToolMentions = article.tool_mentions?.filter((id) => id !== toolId) || [];
+                const updatedToolMentions =
+                  (article as any).toolMentions?.filter((id: string) => id !== toolId) || [];
                 await articlesRepo.updateArticle(article.id, {
-                  tool_mentions: updatedToolMentions,
+                  toolMentions: updatedToolMentions,
                 });
               }
             } catch (dbError) {
@@ -367,9 +368,10 @@ export async function DELETE(request: NextRequest) {
     try {
       const articlesWithTool = await articlesRepo.findByToolMention(toolId);
       for (const article of articlesWithTool) {
-        const updatedToolMentions = article.tool_mentions?.filter((id) => id !== toolId) || [];
+        const updatedToolMentions =
+          (article as any).toolMentions?.filter((id: string) => id !== toolId) || [];
         await articlesRepo.updateArticle(article.id, {
-          tool_mentions: updatedToolMentions,
+          toolMentions: updatedToolMentions,
         });
       }
     } catch (dbError) {

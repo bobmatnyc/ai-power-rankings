@@ -38,15 +38,17 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
-import { NewsRepository } from "@/lib/db/repositories/news";
+// import { NewsRepository } from "@/lib/db/repositories/news"; // Would be used with news-enhanced ranking
 import { loggers } from "@/lib/logger";
 import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
-import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
-import {
-  applyEnhancedNewsMetrics,
-  applyNewsImpactToScores,
-  extractEnhancedNewsMetrics,
-} from "@/lib/ranking-news-enhancer";
+
+// import { RankingChangeAnalyzer } from "@/lib/ranking-change-analyzer";
+// Commenting out missing module - these functions need to be implemented
+// import {
+//   applyEnhancedNewsMetrics,
+//   applyNewsImpactToScores,
+//   extractEnhancedNewsMetrics,
+// } from "@/lib/ranking-news-enhancer";
 
 interface InnovationScore {
   tool_id: string;
@@ -101,8 +103,7 @@ function transformToToolMetrics(tool: any, innovationScore?: number): ToolMetric
     tool_id: tool.id,
     status: tool.status,
     agentic_capability: getCategoryBasedAgenticScore(tool.category, tool.name),
-    swe_bench_score:
-      businessMetrics.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
+    swe_bench_score: businessMetrics.swe_bench_score || (isPremium ? 45 : isAutonomous ? 35 : 20),
     multi_file_capability: isAutonomous ? 9 : technical.multi_file_support ? 7 : 4,
     planning_depth: isAutonomous ? 8.5 : 6,
     context_utilization: isPremium ? 8 : 6.5,
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
 
     const rankingsRepo = new RankingsRepository();
     const toolsRepo = new ToolsRepository();
-    const newsRepo = new NewsRepository();
+    // const newsRepo = new NewsRepository(); // Would be used with news-enhanced ranking
 
     // If rankings are provided (from preview), use them directly
     if (providedRankings && Array.isArray(providedRankings)) {
@@ -210,7 +211,11 @@ export async function POST(request: NextRequest) {
     if (preview_date) {
       const cutoffDate = new Date(preview_date);
       tools = tools.filter((tool) => {
-        const toolDate = new Date(tool.launch_date || tool.created_at);
+        const launchDate = tool["launch_date"];
+        const createdAt = tool["created_at"];
+        const dateValue = launchDate || createdAt;
+        if (!dateValue) return false;
+        const toolDate = new Date(dateValue as string | number | Date);
         return toolDate <= cutoffDate;
       });
     }
@@ -230,19 +235,10 @@ export async function POST(request: NextRequest) {
     const innovationMap = new Map(innovationScores.map((s) => [s.tool_id, s.score]));
 
     // Get news articles for enhanced metrics
-    const newsArticles = await newsRepo.getAll();
-    const formattedArticles = newsArticles.map(article => ({
-      id: article.id,
-      title: article.title,
-      content: article.content || '',
-      summary: article.summary || '',
-      published_date: article.publishedAt.toISOString(),
-      tool_mentions: article.toolMentions as string[] || [],
-      tags: article.data?.tags || [],
-      category: article.data?.category || '',
-      importance_score: article.data?.importance_score || 0,
-      metadata: article.data || {},
-    }));
+    // Note: newsArticles would be used with extractEnhancedNewsMetrics
+    // which is currently disabled due to missing module
+    // const newsArticles = await newsRepo.getAll();
+    // const formattedArticles = newsArticles.map(article => ({...}))
 
     // Calculate scores for all tools
     const rankingEngine = new RankingEngineV6();
@@ -252,20 +248,20 @@ export async function POST(request: NextRequest) {
       // Get innovation score
       const innovationScore = innovationMap.get(tool.id);
 
-      // Extract enhanced metrics from news
-      const enhancedMetrics = await extractEnhancedNewsMetrics(
-        tool.id,
-        tool.name,
-        formattedArticles,
-        preview_date,
-        process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"
-      );
+      // Extract enhanced metrics from news - COMMENTED OUT: missing module
+      // const enhancedMetrics = await extractEnhancedNewsMetrics(
+      //   tool.id,
+      //   tool.name,
+      //   formattedArticles,
+      //   preview_date,
+      //   process.env["ENABLE_AI_NEWS_ANALYSIS"] !== "false"
+      // );
 
       // Transform to metrics format
-      let metrics = transformToToolMetrics(tool, innovationScore);
+      const metrics = transformToToolMetrics(tool, innovationScore);
 
-      // Apply enhanced news metrics
-      metrics = applyEnhancedNewsMetrics(metrics, enhancedMetrics);
+      // Apply enhanced news metrics - COMMENTED OUT: missing module
+      // metrics = applyEnhancedNewsMetrics(metrics, enhancedMetrics);
 
       // Calculate score
       const scoreResult = rankingEngine.calculateToolScore(
@@ -273,21 +269,21 @@ export async function POST(request: NextRequest) {
         preview_date ? new Date(preview_date) : new Date(period)
       );
 
-      // Apply news impact to scores
-      const adjustedFactorScores = applyNewsImpactToScores(
-        scoreResult.factorScores,
-        enhancedMetrics
-      );
+      // Apply news impact to scores - COMMENTED OUT: missing module
+      // const adjustedFactorScores = applyNewsImpactToScores(
+      //   scoreResult.factorScores,
+      //   enhancedMetrics
+      // );
 
-      // Update factor scores
-      Object.keys(adjustedFactorScores).forEach((key) => {
-        if (key in scoreResult.factorScores) {
-          const adjustedValue = adjustedFactorScores[key];
-          if (adjustedValue !== undefined) {
-            (scoreResult.factorScores as Record<string, number>)[key] = adjustedValue;
-          }
-        }
-      });
+      // Update factor scores - COMMENTED OUT: depends on missing module
+      // Object.keys(adjustedFactorScores).forEach((key) => {
+      //   if (key in scoreResult.factorScores) {
+      //     const adjustedValue = adjustedFactorScores[key];
+      //     if (adjustedValue !== undefined) {
+      //       (scoreResult.factorScores as Record<string, number>)[key] = adjustedValue;
+      //     }
+      //   }
+      // });
 
       // Recalculate overall score
       const weights = RankingEngineV6.getAlgorithmInfo().weights;
@@ -313,17 +309,15 @@ export async function POST(request: NextRequest) {
 
     // Get previous period for comparison
     const allRankings = await rankingsRepo.findAll();
-    const previousPeriod = allRankings.find(r => r.period < period);
+    const previousPeriod = allRankings.find((r) => r.period < period);
     const previousRankings = previousPeriod?.data?.rankings || [];
-    const previousMap = new Map(
-      previousRankings.map((r: any) => [r.tool_id, r])
-    );
+    const previousMap = new Map(previousRankings.map((r: any) => [r.tool_id, r]));
 
     // Create final rankings with movement tracking
     const rankings = toolScores.map((item, index) => {
       const position = index + 1;
       const previousRanking = previousMap.get(item.tool.id);
-      const previousPosition = previousRanking?.position;
+      const previousPosition = (previousRanking as any)?.position;
 
       let movement: any = {
         change: 0,
@@ -377,30 +371,35 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate statistics
-    const scores = rankings.map(r => r.score);
+    const scores = rankings.map((r) => r.score);
     const stats = {
       average_score: Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 100) / 100,
       median_score: scores[Math.floor(scores.length / 2)] || 0,
       highest_score: Math.max(...scores),
       lowest_score: Math.min(...scores),
-      std_deviation: Math.round(
-        Math.sqrt(
-          scores.reduce((sq, n) => {
-            const diff = n - (scores.reduce((a, b) => a + b, 0) / scores.length);
-            return sq + diff * diff;
-          }, 0) / scores.length
-        ) * 100
-      ) / 100,
+      std_deviation:
+        Math.round(
+          Math.sqrt(
+            scores.reduce((sq, n) => {
+              const diff = n - scores.reduce((a, b) => a + b, 0) / scores.length;
+              return sq + diff * diff;
+            }, 0) / scores.length
+          ) * 100
+        ) / 100,
     };
 
     // Calculate change summary
     const changeSummary = {
-      new_entries: rankings.filter(r => r.movement.direction === "new").length,
-      moved_up: rankings.filter(r => r.movement.direction === "up").length,
-      moved_down: rankings.filter(r => r.movement.direction === "down").length,
-      unchanged: rankings.filter(r => r.movement.direction === "same").length,
-      largest_gain: Math.max(...rankings.map(r => r.movement.direction === "up" ? r.movement.change : 0)),
-      largest_drop: Math.max(...rankings.map(r => r.movement.direction === "down" ? r.movement.change : 0)),
+      new_entries: rankings.filter((r) => r.movement.direction === "new").length,
+      moved_up: rankings.filter((r) => r.movement.direction === "up").length,
+      moved_down: rankings.filter((r) => r.movement.direction === "down").length,
+      unchanged: rankings.filter((r) => r.movement.direction === "same").length,
+      largest_gain: Math.max(
+        ...rankings.map((r) => (r.movement.direction === "up" ? r.movement.change : 0))
+      ),
+      largest_drop: Math.max(
+        ...rankings.map((r) => (r.movement.direction === "down" ? r.movement.change : 0))
+      ),
     };
 
     loggers.api.info(`Rankings generated successfully for period ${period}`, {

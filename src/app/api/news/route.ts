@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Database connection unavailable",
-          message: "The database service is currently unavailable. Please try again later."
+          message: "The database service is currently unavailable. Please try again later.",
         },
         { status: 503 }
       );
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     const toolsRepo = new ToolsRepository();
 
     // Get paginated news articles from database
-    const { articles: allNews, total, hasMore } = await newsRepo.getPaginated(limit * 3, 0); // Get more to filter
+    const { articles: allNews } = await newsRepo.getPaginated(limit * 3, 0); // Get more to filter
 
     // Helper function to get the effective date
     const getEffectiveDate = (article: any) => {
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
         const articleData = article.data || {};
 
         // Get tool mentions from database or data field
-        const toolMentions = article.toolMentions || articleData.tool_mentions || [];
+        const toolMentions = article.toolMentions || (articleData as any)?.tool_mentions || [];
 
         // Get tool info from tool_mentions or tool associations
         let toolNames = "Various Tools";
@@ -86,15 +86,15 @@ export async function GET(request: NextRequest) {
           const toolInfo = matchingTool.info || {};
           toolNames = matchingTool.name;
           toolCategory = matchingTool.category || "ai-coding-tool";
-          toolWebsite = toolInfo.website || "";
+          toolWebsite = (toolInfo["website"] as string) || "";
           primaryToolId = matchingTool.slug || matchingTool.id;
         }
 
         // Map event type based on tags or content
-        let eventType = articleData.event_type || "update";
+        let eventType = (articleData as any)?.event_type || "update";
 
         // Check tags first for better categorization
-        const tags = article.tags || articleData.tags || [];
+        const tags = (article as any).tags || (articleData as any)?.tags || [];
         if (tags.length > 0) {
           const tagStr = tags.join(" ").toLowerCase();
           if (
@@ -121,7 +121,8 @@ export async function GET(request: NextRequest) {
 
         // Fallback to content analysis
         if (eventType === "update") {
-          const text = `${article.title} ${article.summary || article.content || ""}`.toLowerCase();
+          const text =
+            `${article.title} ${article.summary || (articleData as any)?.content || ""}`.toLowerCase();
 
           if (
             text.includes("funding") ||
@@ -223,7 +224,7 @@ export async function GET(request: NextRequest) {
         };
 
         // Enhanced importance scoring based on content
-        let importance = article.importance || articleData.importance_score || 5;
+        let importance = (article as any).importance || (articleData as any)?.importance_score || 5;
         const titleLower = article.title.toLowerCase();
 
         // Boost importance for high-impact keywords
@@ -257,9 +258,9 @@ export async function GET(request: NextRequest) {
           event_date: getEffectiveDate(article),
           event_type: eventType,
           title: article.title,
-          description: article.summary || article.content || articleData.content,
-          source_url: article.sourceUrl || articleData.source_url,
-          source_name: article.source || articleData.source || "AI News",
+          description: article.summary || (article as any).content || (articleData as any)?.content,
+          source_url: article.sourceUrl || (articleData as any)?.source_url,
+          source_name: article.source || (articleData as any)?.source || "AI News",
           metrics: {
             importance_score: importance,
           },
@@ -298,7 +299,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         error: "Internal server error",
-        message: "An error occurred while fetching news. Please try again later."
+        message: "An error occurred while fetching news. Please try again later.",
       },
       { status: 500 }
     );

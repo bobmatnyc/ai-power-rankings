@@ -68,7 +68,7 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
     if (existing) {
       // Update existing rankings
-      const updated = await rankingsRepo.update(existing.id, {
+      await rankingsRepo.update(existing.id, {
         algorithm_version: body.algorithm_version || existing.algorithm_version,
         is_current: body.is_current !== undefined ? body.is_current : existing.is_current,
         published_at: body.published_at ? new Date(body.published_at) : existing.published_at,

@@ -91,6 +91,20 @@ export class ToolsRepository extends BaseRepository<ToolData> {
   }
 
   /**
+   * Delete tool by ID (alias for delete)
+   */
+  async deleteById(id: string): Promise<boolean> {
+    return this.delete(id);
+  }
+
+  /**
+   * Get tool by ID (alias for findById)
+   */
+  async getById(id: string): Promise<ToolData | null> {
+    return this.findById(id);
+  }
+
+  /**
    * Count tools
    */
   async count(): Promise<number> {

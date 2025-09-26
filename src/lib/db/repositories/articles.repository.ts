@@ -812,4 +812,20 @@ export class ArticlesRepository {
 
     return slug;
   }
+
+  /**
+   * Find articles that mention a specific tool
+   */
+  async findByToolMention(toolId: string): Promise<Article[]> {
+    this.ensureConnection();
+    if (!this.db) throw new Error("Database not connected");
+
+    const result = await this.db
+      .select()
+      .from(articles)
+      .where(sqlTag`${articles.toolMentions}::jsonb @> ${JSON.stringify([toolId])}::jsonb`)
+      .orderBy(desc(articles.publishedDate));
+
+    return result || [];
+  }
 }

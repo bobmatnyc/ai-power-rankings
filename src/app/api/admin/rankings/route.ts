@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
       case "periods": {
         // List all ranking periods
         const allRankings = await rankingsRepo.findAll();
-        const periodData = allRankings.map(ranking => ({
+        const periodData = allRankings.map((ranking) => ({
           period: ranking.period,
           tool_count: ranking.data?.rankings?.length || 0,
           algorithm_version: ranking.algorithm_version,
@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
 
         if (!period) {
           const allRankings = await rankingsRepo.findAll();
-          const allData = allRankings.map(ranking => ({
+          const allData = allRankings.map((ranking) => ({
             period: ranking.period,
             rankings: ranking.data?.rankings?.length || 0,
             has_scores: ranking.data?.rankings?.every((r: any) => r.score !== undefined) || false,
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
       case "all": {
         // Get all rankings data
         const allRankings = await rankingsRepo.findAll();
-        const formattedRankings = allRankings.map(ranking => ({
+        const formattedRankings = allRankings.map((ranking) => ({
           period: ranking.period,
           rankings: ranking.data?.rankings || [],
           metadata: {
@@ -228,9 +228,10 @@ export async function POST(request: NextRequest) {
         if (preview_date) {
           const cutoffDate = new Date(preview_date);
           tools = tools.filter((tool) => {
-            const toolDate = tool.launch_date
-              ? new Date(tool.launch_date)
-              : new Date(tool.created_at);
+            const launchDate = tool["launch_date"];
+            const createdAt = tool["created_at"];
+            const dateValue = launchDate || createdAt || new Date();
+            const toolDate = new Date(dateValue as string | number | Date);
             return toolDate <= cutoffDate;
           });
         }
@@ -240,12 +241,7 @@ export async function POST(request: NextRequest) {
         try {
           const fs = await import("fs-extra");
           const path = await import("node:path");
-          const innovationPath = path.join(
-            process.cwd(),
-            "data",
-            "json",
-            "innovation-scores.json"
-          );
+          const innovationPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
           if (await fs.pathExists(innovationPath)) {
             const innovationData = await fs.readJSON(innovationPath);
             innovationScores.push(...innovationData);
@@ -273,10 +269,14 @@ export async function POST(request: NextRequest) {
             // Recalculate overall score
             const weights = RankingEngineV6.getAlgorithmInfo().weights;
             score.overallScore = Object.entries(weights).reduce((total, [factor, weight]) => {
-              const factorScore = score.factorScores[factor as keyof typeof score.factorScores] || 0;
+              const factorScore =
+                score.factorScores[factor as keyof typeof score.factorScores] || 0;
               return total + factorScore * weight;
             }, 0);
-            score.overallScore = Math.max(0, Math.min(10, Math.round(score.overallScore * 1000) / 1000));
+            score.overallScore = Math.max(
+              0,
+              Math.min(10, Math.round(score.overallScore * 1000) / 1000)
+            );
 
             newScores.push(score);
           } catch (error) {
@@ -356,12 +356,7 @@ export async function POST(request: NextRequest) {
         try {
           const fs = await import("fs-extra");
           const path = await import("node:path");
-          const innovationPath = path.join(
-            process.cwd(),
-            "data",
-            "json",
-            "innovation-scores.json"
-          );
+          const innovationPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
           if (await fs.pathExists(innovationPath)) {
             const innovationData = await fs.readJSON(innovationPath);
             innovationScores.push(...innovationData);
@@ -565,41 +560,43 @@ export async function POST(request: NextRequest) {
           const allRankings = await rankingsRepo.findAll();
           if (allRankings.length > 0) {
             const latestRanking = allRankings[0];
-            await rankingsRepo.setAsCurrent(latestRanking.id);
+            if (latestRanking) {
+              await rankingsRepo.setAsCurrent(latestRanking.id);
 
-            // Update public files
-            const publicPath = join(process.cwd(), "public", "data", "rankings.json");
-            writeFileSync(
-              publicPath,
-              JSON.stringify(
-                {
-                  ...latestRanking.data,
-                  is_current: true,
-                },
-                null,
-                2
-              )
-            );
+              // Update public files
+              const publicPath = join(process.cwd(), "public", "data", "rankings.json");
+              writeFileSync(
+                publicPath,
+                JSON.stringify(
+                  {
+                    ...latestRanking?.data,
+                    is_current: true,
+                  },
+                  null,
+                  2
+                )
+              );
 
-            const cachePath = join(process.cwd(), "src", "data", "cache", "rankings-static.json");
-            writeFileSync(
-              cachePath,
-              JSON.stringify(
-                {
-                  ...latestRanking.data,
-                  is_current: true,
-                },
-                null,
-                2
-              )
-            );
+              const cachePath = join(process.cwd(), "src", "data", "cache", "rankings-static.json");
+              writeFileSync(
+                cachePath,
+                JSON.stringify(
+                  {
+                    ...latestRanking?.data,
+                    is_current: true,
+                  },
+                  null,
+                  2
+                )
+              );
 
-            return NextResponse.json({
-              success: true,
-              message: `Synced rankings from period ${latestRanking.period}`,
-              period: latestRanking.period,
-              rankings_count: latestRanking.data?.rankings?.length || 0,
-            });
+              return NextResponse.json({
+                success: true,
+                message: `Synced rankings from period ${latestRanking?.period}`,
+                period: latestRanking?.period,
+                rankings_count: latestRanking?.data?.rankings?.length || 0,
+              });
+            }
           }
           return NextResponse.json({ error: "No rankings data found" }, { status: 404 });
         }
@@ -674,10 +671,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (data.is_current) {
-      return NextResponse.json(
-        { error: "Cannot delete current ranking period" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Cannot delete current ranking period" }, { status: 400 });
     }
 
     // Delete from database
