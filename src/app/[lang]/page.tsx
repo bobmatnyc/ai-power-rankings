@@ -74,23 +74,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // Fetch all tools to include in keywords
   let toolNames: string[] = [];
   try {
-    const toolsUrl = `${baseUrl}/api/tools`;
-    const response = await fetch(toolsUrl, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
-    });
+    // Only fetch tools if we have a valid base URL
+    if (baseUrl) {
+      const toolsUrl = `${baseUrl}/api/tools`;
+      const response = await fetch(toolsUrl, {
+        next: { revalidate: 300 }, // Cache for 5 minutes
+      });
 
-    if (response.ok) {
-      const data = await response.json();
-      // Handle both direct array and object with tools property
-      // API returns { tools: [...], _source: "json-db", _timestamp: "..." }
-      const tools = Array.isArray(data) ? data : data.tools || [];
+      if (response.ok) {
+        const data = await response.json();
+        // Handle both direct array and object with tools property
+        // API returns { tools: [...], _source: "json-db", _timestamp: "..." }
+        const tools = Array.isArray(data) ? data : data.tools || [];
 
-      // Ensure tools is an array and get all active tool names
-      if (Array.isArray(tools)) {
-        toolNames = tools
-          .filter((tool: ToolData) => tool.status === "active")
-          .map((tool: ToolData) => tool.name)
-          .filter(Boolean); // Remove any null/undefined names
+        // Ensure tools is an array and get all active tool names
+        if (Array.isArray(tools)) {
+          toolNames = tools
+            .filter((tool: ToolData) => tool.status === "active")
+            .map((tool: ToolData) => tool.name)
+            .filter(Boolean); // Remove any null/undefined names
+        }
       }
     }
   } catch (error) {
@@ -124,6 +127,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     .filter((keyword) => typeof keyword === "string" && keyword.trim().length > 0) // Ensure valid strings
     .join(", ");
 
+  // Handle cases where baseUrl might be empty
+  const metadataUrl = baseUrl || "";
+
   return {
     title: dict.seo?.title || "AI Power Rankings",
     description:
@@ -135,39 +141,43 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
       type: "website",
       locale: lang,
-      url: `${baseUrl}/${lang}`,
+      ...(metadataUrl && { url: `${metadataUrl}/${lang}` }),
       siteName: dict.common?.appName || "AI Power Rankings",
-      images: [
-        {
-          url: `${baseUrl}/og-image.png`,
-          width: 1200,
-          height: 630,
-          alt: dict.common?.appName || "AI Power Rankings",
-        },
-      ],
+      ...(metadataUrl && {
+        images: [
+          {
+            url: `${metadataUrl}/og-image.png`,
+            width: 1200,
+            height: 630,
+            alt: dict.common?.appName || "AI Power Rankings",
+          },
+        ],
+      }),
     },
     twitter: {
       card: "summary_large_image",
       title: dict.seo?.title || "AI Power Rankings",
       description:
         dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
-      images: [`${baseUrl}/og-image.png`],
+      ...(metadataUrl && { images: [`${metadataUrl}/og-image.png`] }),
     },
-    alternates: {
-      canonical: `${baseUrl}/${lang}`,
-      languages: {
-        en: `${baseUrl}/en`,
-        de: `${baseUrl}/de`,
-        fr: `${baseUrl}/fr`,
-        it: `${baseUrl}/it`,
-        ja: `${baseUrl}/ja`,
-        ko: `${baseUrl}/ko`,
-        uk: `${baseUrl}/uk`,
-        hr: `${baseUrl}/hr`,
-        zh: `${baseUrl}/zh`,
-        es: `${baseUrl}/es`,
-      },
-    },
+    alternates: metadataUrl
+      ? {
+          canonical: `${metadataUrl}/${lang}`,
+          languages: {
+            en: `${metadataUrl}/en`,
+            de: `${metadataUrl}/de`,
+            fr: `${metadataUrl}/fr`,
+            it: `${metadataUrl}/it`,
+            ja: `${metadataUrl}/ja`,
+            ko: `${metadataUrl}/ko`,
+            uk: `${metadataUrl}/uk`,
+            hr: `${metadataUrl}/hr`,
+            zh: `${metadataUrl}/zh`,
+            es: `${metadataUrl}/es`,
+          },
+        }
+      : undefined,
   };
 }
 
@@ -241,30 +251,34 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     },
   ];
 
-  // Create structured data for SEO
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: dict.common.appName,
-    description: dict.seo.description,
-    url: `${baseUrl}/${lang}`,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${baseUrl}/${lang}/rankings?search={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
-  };
+  // Create structured data for SEO - handle case where baseUrl might be empty
+  const structuredData = baseUrl
+    ? {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: dict.common.appName,
+        description: dict.seo?.description || dict.home.methodology.algorithmDescription,
+        url: `${baseUrl}/${lang}`,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${baseUrl}/${lang}/rankings?search={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
+      }
+    : null;
 
   return (
     <div className="min-h-screen">
-      <script
-        type="application/ld+json"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe JSON-LD structured data
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
+      {structuredData && (
+        <script
+          type="application/ld+json"
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe JSON-LD structured data
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      )}
       {/* T-033 What's New Modal */}
       <WhatsNewModalClient />
       {/* Hero Section */}

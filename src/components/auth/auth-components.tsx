@@ -43,22 +43,16 @@ function loadClerkComponents() {
     return clerkComponentsCache;
   }
 
+  // Only attempt to load Clerk on the client side
   if (typeof window !== "undefined") {
     const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
     const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
     if (!isAuthDisabled && hasClerkKey) {
       try {
-        // First check if Clerk is available in window
-        // Using window indexing to avoid linting errors while checking Clerk availability
-        const windowWithClerk = window as Window & { __clerk?: unknown; Clerk?: unknown };
-        if (!windowWithClerk.__clerk && !windowWithClerk.Clerk) {
-          console.warn("[AuthComponents] Clerk not initialized in window");
-          clerkComponentsCache.error = new Error("Clerk not initialized");
-          clerkComponentsCache.loaded = true;
-          return clerkComponentsCache;
-        }
-
+        // Try to load Clerk module without checking window first
+        // This prevents issues during SSR where the module might be available
+        // but window checks fail
         const clerkModule = require("@clerk/nextjs");
         clerkComponentsCache.SignedIn = clerkModule.SignedIn;
         clerkComponentsCache.SignedOut = clerkModule.SignedOut;
@@ -75,6 +69,9 @@ function loadClerkComponents() {
     } else {
       clerkComponentsCache.loaded = true; // Mark as loaded when auth is disabled
     }
+  } else {
+    // Mark as loaded on server side to prevent issues
+    clerkComponentsCache.loaded = true;
   }
 
   return clerkComponentsCache;

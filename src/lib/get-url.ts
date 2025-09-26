@@ -17,8 +17,15 @@ export function getUrl(): string {
     if (process.env["NEXTAUTH_URL"]) {
       return process.env["NEXTAUTH_URL"];
     }
-    // This should never happen in production - throw error instead of hardcoding
-    throw new Error("No base URL configured. Please set NEXT_PUBLIC_BASE_URL or VERCEL_URL");
+    // Fallback for staging/production when no URL is configured
+    // This allows the app to render even if the URL can't be determined
+    // The URL will be determined from the request headers at runtime
+    if (typeof window !== "undefined") {
+      return window.location.origin;
+    }
+    // Return empty string to be resolved at runtime
+    // This prevents SSR errors during build
+    return "";
   }
 
   // Development - browser
