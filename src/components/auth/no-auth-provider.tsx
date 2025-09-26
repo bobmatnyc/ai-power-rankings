@@ -42,7 +42,10 @@ export function NoAuthProvider({ children }: NoAuthProviderProps) {
     signOut,
   };
 
-  return <NoAuthContext.Provider value={value}>{children}</NoAuthContext.Provider>;
+  // Ensure children is always defined
+  const safeChildren = children ?? null;
+
+  return <NoAuthContext.Provider value={value}>{safeChildren}</NoAuthContext.Provider>;
 }
 
 // Helper function to get context with proper null checks
@@ -143,22 +146,26 @@ export function useSession() {
 // Mock SignedIn and SignedOut components for development mode
 export function SignedIn({ children }: { children: ReactNode }) {
   const context = useNoAuthContext();
+  const safeChildren = children ?? null;
+
   // If no context, assume signed out
   if (!context) {
     return null;
   }
   // Only render children if signed in
-  return context.isSignedIn ? children : null;
+  return context.isSignedIn ? <>{safeChildren}</> : null;
 }
 
 export function SignedOut({ children }: { children: ReactNode }) {
   const context = useNoAuthContext();
+  const safeChildren = children ?? null;
+
   // If no context, assume signed out
   if (!context) {
-    return <>{children}</>;
+    return <>{safeChildren}</>;
   }
   // Only render children if signed out
-  return !context.isSignedIn ? children : null;
+  return !context.isSignedIn ? <>{safeChildren}</> : null;
 }
 
 // Mock SignInButton component

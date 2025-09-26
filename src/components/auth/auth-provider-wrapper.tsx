@@ -78,6 +78,9 @@ interface AuthProviderWrapperProps {
  * - Prevents useContext errors in production builds
  */
 export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
+  // Ensure children is always defined
+  const safeChildren = children ?? null;
+
   // Start with default locale during SSR
   const [locale, setLocale] = useState("en");
   const [mounted, setMounted] = useState(false);
@@ -114,15 +117,18 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
 
   // While not mounted, render with NoAuthProvider to prevent hydration issues
   if (!mounted) {
-    return <NoAuthProvider>{children}</NoAuthProvider>;
+    return <NoAuthProvider>{safeChildren}</NoAuthProvider>;
   }
 
   // If auth is disabled, no keys, or Clerk failed to load, use NoAuthProvider
   if (isAuthDisabled || !hasClerkKey || !clerkLoaded || !ClerkProviderComponent || clerkLoadError) {
     if (clerkLoadError) {
-      console.warn("[AuthProviderWrapper] Using NoAuthProvider due to Clerk error:", clerkLoadError.message);
+      console.warn(
+        "[AuthProviderWrapper] Using NoAuthProvider due to Clerk error:",
+        clerkLoadError.message
+      );
     }
-    return <NoAuthProvider>{children}</NoAuthProvider>;
+    return <NoAuthProvider>{safeChildren}</NoAuthProvider>;
   }
 
   // Use Clerk provider with proper locale and error boundary
@@ -139,16 +145,16 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
         // Add Next.js 15 specific props if available
         {...(process.env["NODE_ENV"] === "development" && {
           appearance: {
-            variables: { colorPrimary: "#000000" }
-          }
+            variables: { colorPrimary: "#000000" },
+          },
         })}
       >
-        {children}
+        {safeChildren}
       </ClerkProvider>
     );
   } catch (error) {
     console.error("[AuthProviderWrapper] ClerkProvider render error:", error);
     // Fallback to NoAuthProvider if ClerkProvider fails to render
-    return <NoAuthProvider>{children}</NoAuthProvider>;
+    return <NoAuthProvider>{safeChildren}</NoAuthProvider>;
   }
 }

@@ -9,12 +9,9 @@ interface ClientAuthWrapperProps {
 
 // Simple client wrapper that uses AuthProviderWrapper directly
 // The AuthProviderWrapper handles SSR/client detection internally
-// Temporarily removed error boundary to isolate the issue
 export function ClientAuthWrapper({ children }: ClientAuthWrapperProps) {
-  if (!children) {
-    console.error("[ClientAuthWrapper] No children provided!");
-    return null;
-  }
+  // Ensure children is always defined, even if null/undefined is passed
+  const safeChildren = children ?? null;
 
-  return <AuthProviderWrapper>{children}</AuthProviderWrapper>;
+  return <AuthProviderWrapper>{safeChildren}</AuthProviderWrapper>;
 }

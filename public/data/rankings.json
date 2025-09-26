@@ -1,0 +1,20 @@
+{
+  "rankings": [],
+  "algorithm": {
+    "version": "v1.0",
+    "name": "JSON-Based Rankings",
+    "date": "2025-09-11T19:31:20.486Z",
+    "weights": {
+      "newsImpact": 0.3,
+      "baseScore": 0.7
+    }
+  },
+  "stats": {
+    "total_tools": 0,
+    "tools_with_news": 0,
+    "avg_news_boost": 0,
+    "max_news_impact": null
+  },
+  "_source": "static-generation",
+  "_timestamp": "2025-09-26T21:37:12.325Z"
+}
