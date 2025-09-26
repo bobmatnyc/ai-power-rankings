@@ -87,27 +87,43 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       if (baseUrl && baseUrl.trim() !== "") {
         console.log("[Metadata] Attempting to fetch tools for SEO");
         const toolsUrl = `${baseUrl}/api/tools`;
-        const response = await fetch(toolsUrl, {
-          next: { revalidate: 300 }, // Cache for 5 minutes
-          signal: AbortSignal.timeout(5000), // 5 second timeout
-        });
 
-        if (response.ok) {
-          const data = await response.json();
-          // Handle both direct array and object with tools property
-          // API returns { tools: [...], _source: "json-db", _timestamp: "..." }
-          const tools = Array.isArray(data) ? data : data.tools || [];
+        // Enhanced fetch with more robust error handling
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
 
-          // Ensure tools is an array and get all active tool names
-          if (Array.isArray(tools)) {
-            toolNames = tools
-              .filter((tool: ToolData) => tool.status === "active")
-              .map((tool: ToolData) => tool.name)
-              .filter(Boolean); // Remove any null/undefined names
-            console.log("[Metadata] Fetched", toolNames.length, "tool names for SEO");
+        try {
+          const response = await fetch(toolsUrl, {
+            next: { revalidate: 300 }, // Cache for 5 minutes
+            signal: controller.signal,
+            headers: {
+              Accept: "application/json",
+              "User-Agent": "AI-Power-Rankings-Server/1.0",
+            },
+          });
+
+          clearTimeout(timeoutId);
+
+          if (response.ok) {
+            const data = await response.json();
+            // Handle both direct array and object with tools property
+            // API returns { tools: [...], _source: "json-db", _timestamp: "..." }
+            const tools = Array.isArray(data) ? data : data.tools || [];
+
+            // Ensure tools is an array and get all active tool names
+            if (Array.isArray(tools)) {
+              toolNames = tools
+                .filter((tool: ToolData) => tool.status === "active")
+                .map((tool: ToolData) => tool.name)
+                .filter(Boolean); // Remove any null/undefined names
+              console.log("[Metadata] Fetched", toolNames.length, "tool names for SEO");
+            }
+          } else {
+            console.warn("[Metadata] Tools API returned non-OK status:", response.status);
           }
-        } else {
-          console.warn("[Metadata] Tools API returned non-OK status:", response.status);
+        } catch (fetchError) {
+          clearTimeout(timeoutId);
+          console.warn("[Metadata] Fetch error for tools API:", fetchError);
         }
       } else {
         console.log("[Metadata] Skipping tools fetch - no valid base URL");
@@ -224,14 +240,45 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       HAS_VERCEL_URL: !!process.env["VERCEL_URL"],
     });
 
-    const resolvedParams = await params;
-    console.log("[Page] Home: Resolved params:", resolvedParams);
+    // Resolve params with better error handling
+    let resolvedParams: { lang: Locale };
+    try {
+      resolvedParams = await params;
+      console.log("[Page] Home: Resolved params:", resolvedParams);
+    } catch (paramsError) {
+      console.error("[Page] Home: Error resolving params:", paramsError);
+      resolvedParams = { lang: "en" as Locale };
+    }
 
     const lang = (resolvedParams?.lang || "en") as Locale;
     console.log("[Page] Home: Language:", lang);
 
-    const dict = await getDictionary(lang);
-    console.log("[Page] Home: Dictionary loaded:", !!dict);
+    // Load dictionary with enhanced error handling
+    let dict: Awaited<ReturnType<typeof getDictionary>>;
+    try {
+      dict = await getDictionary(lang);
+      console.log("[Page] Home: Dictionary loaded:", !!dict);
+    } catch (dictError) {
+      console.error("[Page] Home: Error loading dictionary:", dictError);
+      // Provide minimal fallback dictionary
+      dict = {
+        common: { appName: "AI Power Rankings", loading: "Loading..." },
+        home: {
+          hero: {
+            badge: "Updated Monthly",
+            description: "Comprehensive rankings of AI coding tools and assistants",
+            exploreButton: "Explore Rankings",
+            trendingButton: "View Trending",
+          },
+          categories: { title: "Categories" },
+          methodology: { title: "Methodology" },
+        },
+        seo: {
+          title: "AI Power Rankings",
+          description: "Comprehensive rankings of AI coding tools and assistants",
+        },
+      };
+    }
 
     const baseUrl = getUrl();
     console.log("[Page] Home: Base URL from getUrl:", baseUrl);

@@ -34,9 +34,6 @@ const nextConfig: NextConfig = {
     // Note: staticPageGenerationTimeout is not available in NextConfig
     // Instead we use force-dynamic on individual pages
 
-    // Next.js 15 specific optimizations for App Router
-    // Improve server component performance
-    serverComponentsExternalPackages: ["@clerk/nextjs"],
     // Optimize server-side imports
     serverSourceMaps: process.env["NODE_ENV"] === "development",
   },

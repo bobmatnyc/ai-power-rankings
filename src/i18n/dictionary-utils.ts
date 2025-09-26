@@ -124,6 +124,8 @@ function createFallbackStructure(
  */
 export async function processDictionary(dict: unknown, locale: string): Promise<Dictionary> {
   try {
+    console.log("[processDictionary] Processing dictionary for locale:", locale);
+
     // Start with the expected structure as our base
     const completeDict = deepMergeWithFallbacks(
       (dict || {}) as Record<string, unknown>,
@@ -133,10 +135,69 @@ export async function processDictionary(dict: unknown, locale: string): Promise<
     );
 
     // Ensure it's serializable (no functions, symbols, etc.)
-    return JSON.parse(JSON.stringify(completeDict));
+    const serialized = JSON.parse(JSON.stringify(completeDict));
+    console.log("[processDictionary] Successfully processed dictionary for locale:", locale);
+    return serialized;
   } catch (error) {
-    loggers.import.error("Error processing dictionary", { error, locale });
-    // Return the expected structure with all fallback values
-    return createFallbackStructure(EXPECTED_DICTIONARY_STRUCTURE, "", locale) as Dictionary;
+    console.error("[processDictionary] Error processing dictionary for locale:", locale, error);
+
+    // Provide a minimal safe fallback without complex logger dependencies
+    const minimalFallback = {
+      common: {
+        appName: "AI Power Rankings",
+        loading: "Loading...",
+        explore: "Explore",
+        learnMore: "Learn More",
+      },
+      home: {
+        hero: {
+          badge: "Updated Monthly",
+          description: "Comprehensive rankings of AI coding tools and assistants",
+          exploreButton: "Explore Rankings",
+          trendingButton: "View Trending",
+        },
+        categories: {
+          title: "Categories",
+          ideDescription: "IDE assistants and extensions",
+          editorDescription: "AI-powered code editors",
+          builderDescription: "No-code and low-code platforms",
+          agentDescription: "Autonomous coding agents",
+        },
+        methodology: {
+          title: "Methodology",
+          algorithmTitle: "Algorithm",
+          algorithmDescription: "Our ranking algorithm",
+          modifiersTitle: "Modifiers",
+          modifiersDescription: "Additional factors",
+          readMoreButton: "Read More",
+          factors: {
+            agentic: { name: "Agentic Capability", description: "Autonomous coding ability" },
+            innovation: { name: "Innovation", description: "Novel features and approaches" },
+            performance: { name: "Performance", description: "Speed and efficiency" },
+            traction: { name: "Traction", description: "User adoption and engagement" },
+          },
+          modifiers: {
+            decay: { name: "Decay", description: "Time-based relevance decay" },
+            risk: { name: "Risk", description: "Business and technical risks" },
+            revenue: { name: "Revenue", description: "Business model sustainability" },
+            validation: { name: "Validation", description: "Independent verification" },
+          },
+        },
+      },
+      seo: {
+        title: "AI Power Rankings",
+        description: "Comprehensive rankings of AI coding tools and assistants",
+        keywords: "AI tools, coding assistant, artificial intelligence, rankings",
+      },
+      categories: {
+        ideAssistant: "IDE Assistant",
+        codeEditor: "Code Editor",
+        appBuilder: "App Builder",
+        autonomousAgent: "Autonomous Agent",
+      },
+    };
+
+    console.log("[processDictionary] Using minimal fallback dictionary for locale:", locale);
+    return minimalFallback as Dictionary;
   }
 }
