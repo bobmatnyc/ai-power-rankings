@@ -2,28 +2,36 @@
 
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { NoAuthProvider } from "./no-auth-provider";
 
+// Check if auth is disabled at module level
+const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
+
 // Dynamic import of ClerkProvider with proper error handling
-const ClerkProviderDynamic = dynamic(
-  () =>
-    import("@clerk/nextjs")
-      .then((mod) => ({ default: mod.ClerkProvider }))
-      .catch((error) => {
-        console.warn("[AuthProviderWrapper] Failed to load Clerk:", error);
-        // Return NoAuthProvider as fallback
-        return { default: NoAuthProvider };
-      }),
-  {
-    ssr: false, // Disable SSR for Clerk to avoid hydration issues
-    loading: () => (
-      <NoAuthProvider>
-        <div />
-      </NoAuthProvider>
-    ), // Use NoAuthProvider while loading
-  }
-);
+// Only load if auth is enabled and we have the keys
+const ClerkProviderDynamic =
+  !isAuthDisabled && hasClerkKey
+    ? dynamic(
+        () =>
+          import("@clerk/nextjs")
+            .then((mod) => ({ default: mod.ClerkProvider }))
+            .catch((error) => {
+              console.warn("[AuthProviderWrapper] Failed to load Clerk:", error);
+              // Return NoAuthProvider as fallback
+              return { default: NoAuthProvider };
+            }),
+        {
+          ssr: false, // Disable SSR for Clerk to avoid hydration issues
+          loading: () => (
+            <NoAuthProvider>
+              <div />
+            </NoAuthProvider>
+          ), // Use NoAuthProvider while loading
+        }
+      )
+    : null;
 
 interface AuthProviderWrapperProps {
   children: ReactNode;
@@ -57,16 +65,8 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
     }
   }, [mounted, pathname]);
 
-  // Determine if we should use Clerk or NoAuth
-  const shouldUseClerk = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-    const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
-    return !isAuthDisabled && hasClerkKey;
-  }, []);
-
-  // If auth is disabled or no keys, use NoAuthProvider
-  if (!shouldUseClerk) {
+  // If auth is disabled or no keys, or ClerkProviderDynamic wasn't created, use NoAuthProvider
+  if (!ClerkProviderDynamic) {
     return <NoAuthProvider>{children}</NoAuthProvider>;
   }
 
