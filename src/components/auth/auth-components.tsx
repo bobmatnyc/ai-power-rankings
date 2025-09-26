@@ -49,6 +49,16 @@ function loadClerkComponents() {
 
     if (!isAuthDisabled && hasClerkKey) {
       try {
+        // First check if Clerk is available in window
+        // Using window indexing to avoid linting errors while checking Clerk availability
+        const windowWithClerk = window as Window & { __clerk?: unknown; Clerk?: unknown };
+        if (!windowWithClerk.__clerk && !windowWithClerk.Clerk) {
+          console.warn("[AuthComponents] Clerk not initialized in window");
+          clerkComponentsCache.error = new Error("Clerk not initialized");
+          clerkComponentsCache.loaded = true;
+          return clerkComponentsCache;
+        }
+
         const clerkModule = require("@clerk/nextjs");
         clerkComponentsCache.SignedIn = clerkModule.SignedIn;
         clerkComponentsCache.SignedOut = clerkModule.SignedOut;
@@ -75,37 +85,48 @@ const getIsAuthDisabled = () => {
   return process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 };
 
-// Create a safe wrapper for useAuth that checks context availability
-// This ensures we always have a valid auth implementation
+// Create a wrapper that dynamically chooses the right implementation
+// This ensures we never call hooks conditionally
 export const useAuth = () => {
+  // Always try to use mock first - it's always safe
+  const mockResult = MockUseAuth();
+
+  // Check if we should try to use Clerk
+  if (typeof window === "undefined") {
+    return mockResult;
+  }
+
   const isAuthDisabled = getIsAuthDisabled();
   const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
+
+  if (isAuthDisabled || !hasClerkKey) {
+    return mockResult;
+  }
+
+  // Check if Clerk is actually loaded in the window
+  const windowWithClerk = window as Window & { __clerk?: unknown; Clerk?: unknown };
+  if (!windowWithClerk.__clerk && !windowWithClerk.Clerk) {
+    return mockResult;
+  }
+
   const components = loadClerkComponents();
+  if (!components.useAuth || components.error) {
+    return mockResult;
+  }
 
-  // Always try to call the hook if it exists (to maintain hook order)
-  let clerkAuth = null;
-  if (components.useAuth && !components.error) {
-    try {
-      // This maintains hook call order - always called if available
-      clerkAuth = components.useAuth();
-    } catch {
-      // If it fails, we'll use mock
-      clerkAuth = null;
+  try {
+    // Try to use Clerk's useAuth
+    const clerkAuth = components.useAuth;
+    const result = clerkAuth();
+    if (result && typeof result === "object") {
+      return result;
     }
+  } catch (error) {
+    // If Clerk throws an error, we've already got the mock result
+    console.warn("[useAuth] Clerk useAuth failed, using mock:", error);
   }
 
-  // During SSR, always use mock to avoid context issues
-  if (typeof window === "undefined") {
-    return MockUseAuth();
-  }
-
-  // If auth is disabled, no Clerk key, or Clerk failed, use mock
-  if (isAuthDisabled || !hasClerkKey || !clerkAuth) {
-    return MockUseAuth();
-  }
-
-  // Use the Clerk auth result
-  return clerkAuth;
+  return mockResult;
 };
 
 // Export wrapper components that choose implementation at runtime

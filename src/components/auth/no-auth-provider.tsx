@@ -46,17 +46,31 @@ export function NoAuthProvider({ children }: NoAuthProviderProps) {
 }
 
 // Helper function to get context with proper null checks
-export function useNoAuthContext(): NoAuthContextType {
+export function useNoAuthContext(): NoAuthContextType | null {
   const context = useContext(NoAuthContext);
-  if (context === null) {
-    throw new Error("useNoAuthContext must be used within a NoAuthProvider");
-  }
   return context;
 }
 
 // Export hooks that mimic Clerk's API with proper error handling
 export function useAuth() {
   const context = useNoAuthContext();
+
+  // If not inside a NoAuthProvider, return a default mock state
+  // This happens when Clerk fails to load and we haven't wrapped with NoAuthProvider
+  if (!context) {
+    return {
+      isLoaded: true,
+      isSignedIn: false,
+      userId: null,
+      sessionId: null,
+      signOut: async () => {
+        console.log("Sign out called but no auth provider available");
+      },
+      getToken: async () => null,
+      has: () => false,
+    };
+  }
+
   return {
     isLoaded: context.isLoaded,
     isSignedIn: context.isSignedIn,
@@ -70,6 +84,15 @@ export function useAuth() {
 
 export function useUser() {
   const context = useNoAuthContext();
+
+  if (!context) {
+    return {
+      isLoaded: true,
+      isSignedIn: false,
+      user: null,
+    };
+  }
+
   return {
     isLoaded: context.isLoaded,
     isSignedIn: context.isSignedIn,
@@ -79,6 +102,18 @@ export function useUser() {
 
 export function useClerk() {
   const context = useNoAuthContext();
+
+  if (!context) {
+    return {
+      loaded: true,
+      session: null,
+      user: null,
+      signOut: async () => {
+        console.log("Sign out called but no auth provider available");
+      },
+    };
+  }
+
   return {
     loaded: context.isLoaded,
     session: context.session,
@@ -89,6 +124,15 @@ export function useClerk() {
 
 export function useSession() {
   const context = useNoAuthContext();
+
+  if (!context) {
+    return {
+      isLoaded: true,
+      isSignedIn: false,
+      session: null,
+    };
+  }
+
   return {
     isLoaded: context.isLoaded,
     isSignedIn: context.isSignedIn,
@@ -99,12 +143,20 @@ export function useSession() {
 // Mock SignedIn and SignedOut components for development mode
 export function SignedIn({ children }: { children: ReactNode }) {
   const context = useNoAuthContext();
+  // If no context, assume signed out
+  if (!context) {
+    return null;
+  }
   // Only render children if signed in
   return context.isSignedIn ? children : null;
 }
 
 export function SignedOut({ children }: { children: ReactNode }) {
   const context = useNoAuthContext();
+  // If no context, assume signed out
+  if (!context) {
+    return <>{children}</>;
+  }
   // Only render children if signed out
   return !context.isSignedIn ? children : null;
 }
@@ -157,7 +209,8 @@ export function UserButton({ afterSignOutUrl }: { afterSignOutUrl?: string }) {
     };
   }, [isOpen]);
 
-  if (!context.isSignedIn) return null;
+  // If no context or not signed in, don't render
+  if (!context || !context.isSignedIn) return null;
 
   return (
     <div className="relative" ref={dropdownRef}>

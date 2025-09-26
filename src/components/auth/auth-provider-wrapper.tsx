@@ -10,20 +10,35 @@ import { NoAuthProvider } from "./no-auth-provider";
 let ClerkProviderComponent: React.ComponentType<any> | null = null;
 let clerkLoadError: Error | null = null;
 
-// Try to load Clerk at module initialization
-if (typeof window !== "undefined") {
+// Try to load Clerk at module initialization with extra safety checks
+function tryLoadClerk() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
   const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
   const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
   if (!isAuthDisabled && hasClerkKey) {
     try {
+      // Check if Clerk is available before requiring
       const clerkModule = require("@clerk/nextjs");
-      ClerkProviderComponent = clerkModule.ClerkProvider;
+      if (clerkModule?.ClerkProvider) {
+        ClerkProviderComponent = clerkModule.ClerkProvider;
+      } else {
+        console.warn("[AuthProviderWrapper] ClerkProvider not found in module");
+        clerkLoadError = new Error("ClerkProvider not found");
+      }
     } catch (error) {
       console.warn("[AuthProviderWrapper] Clerk module not available:", error);
       clerkLoadError = error as Error;
     }
   }
+}
+
+// Load Clerk safely
+if (typeof window !== "undefined") {
+  tryLoadClerk();
 }
 
 interface AuthProviderWrapperProps {
@@ -46,6 +61,10 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
 
   useEffect(() => {
     setMounted(true);
+    // Try to load Clerk again after mounting if it wasn't loaded initially
+    if (!ClerkProviderComponent && !clerkLoadError) {
+      tryLoadClerk();
+    }
   }, []);
 
   useEffect(() => {
