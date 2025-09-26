@@ -260,24 +260,91 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       console.log("[Page] Home: Dictionary loaded:", !!dict);
     } catch (dictError) {
       console.error("[Page] Home: Error loading dictionary:", dictError);
-      // Provide minimal fallback dictionary
+      // Provide minimal fallback dictionary - cast to proper type for emergency fallback
       dict = {
-        common: { appName: "AI Power Rankings", loading: "Loading..." },
+        common: {
+          appName: "AI Power Rankings",
+          loading: "Loading...",
+          appDescription: "AI tool rankings",
+          error: "Error",
+          tryAgain: "Try Again",
+          backToHome: "Back to Home",
+          learnMore: "Learn More",
+          viewAll: "View All",
+          close: "Close",
+          cancel: "Cancel",
+          save: "Save",
+          search: "Search",
+          filter: "Filter",
+          sort: "Sort",
+          reset: "Reset",
+          apply: "Apply",
+          explore: "Explore",
+          back: "Back",
+        },
         home: {
           hero: {
             badge: "Updated Monthly",
+            title: "AI Power Rankings",
+            subtitle: "Developer Tool Intelligence",
             description: "Comprehensive rankings of AI coding tools and assistants",
+            exploreTools: "Explore Tools",
+            viewTrending: "View Trending",
             exploreButton: "Explore Rankings",
             trendingButton: "View Trending",
+            whatsNewButton: "What's New",
           },
-          categories: { title: "Categories" },
-          methodology: { title: "Methodology" },
+          categories: {
+            title: "Categories",
+            explore: "Explore",
+            ideAssistants: { name: "IDE Assistants", description: "IDE extensions" },
+            aiEditors: { name: "AI Editors", description: "AI-powered editors" },
+            appBuilders: { name: "App Builders", description: "No-code platforms" },
+            autonomousAgents: { name: "Autonomous Agents", description: "Autonomous coding" },
+            ideDescription: "IDE assistants and extensions",
+            editorDescription: "AI-powered code editors",
+            builderDescription: "No-code and low-code platforms",
+            agentDescription: "Autonomous coding agents",
+          },
+          methodology: {
+            title: "Methodology",
+            algorithmTitle: "Algorithm",
+            algorithmDescription: "Our ranking algorithm",
+            keyModifiersTitle: "Key Modifiers",
+            keyModifiersDescription: "Additional factors",
+            factors: {
+              agenticCapability: "Agentic Capability",
+              technicalPerformance: "Technical Performance",
+              innovationFactor: "Innovation",
+              marketTraction: "Market Traction",
+              agentic: { name: "Agentic Capability", description: "Autonomous coding ability" },
+              innovation: { name: "Innovation", description: "Novel features" },
+              performance: { name: "Performance", description: "Speed and efficiency" },
+              traction: { name: "Traction", description: "User adoption" },
+            },
+            modifiers: {
+              decay: { name: "Decay", description: "Time-based decay" },
+              risk: { name: "Risk", description: "Business risks" },
+              revenue: { name: "Revenue", description: "Business model" },
+              validation: { name: "Validation", description: "Independent verification" },
+            },
+            modifiersTitle: "Modifiers",
+            modifiersDescription: "Additional factors",
+            readMoreButton: "Read More",
+          },
         },
         seo: {
           title: "AI Power Rankings",
           description: "Comprehensive rankings of AI coding tools and assistants",
+          keywords: "AI tools, coding assistant, artificial intelligence, rankings",
         },
-      };
+        categories: {
+          ideAssistant: "IDE Assistant",
+          codeEditor: "Code Editor",
+          appBuilder: "App Builder",
+          autonomousAgent: "Autonomous Agent",
+        },
+      } as Awaited<ReturnType<typeof getDictionary>>;
     }
 
     const baseUrl = getUrl();
