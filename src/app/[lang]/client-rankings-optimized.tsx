@@ -287,7 +287,7 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
         const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased timeout to 10s
 
         // Fetch from API endpoint (database source)
-        const response = await fetch(`/api/rankings`, {
+        const response = await fetch("/api/rankings", {
           signal: controller.signal,
           cache: "no-cache",
           headers: {
