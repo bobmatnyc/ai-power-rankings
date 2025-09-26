@@ -286,14 +286,13 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased timeout to 10s
 
-        // Try static file first with cache-busting for immediate fixes
-        const cacheBuster = Date.now();
-        const response = await fetch(`/data/rankings.json?v=${cacheBuster}`, {
+        // Fetch from API endpoint (database source)
+        const response = await fetch(`/api/rankings`, {
           signal: controller.signal,
-          cache: "no-cache", // Ensure we get fresh data to debug
+          cache: "no-cache",
           headers: {
-            "Cache-Control": "no-cache", // Force fresh fetch
-            Pragma: "no-cache", // HTTP/1.0 caches
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
           },
         });
 
