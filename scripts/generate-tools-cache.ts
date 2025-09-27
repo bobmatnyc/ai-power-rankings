@@ -3,7 +3,7 @@
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import fs from "fs-extra";
-import { ToolsRepository } from "../src/lib/json-db/tools-repository.js";
+import { ToolsRepository } from "../src/lib/db/repositories/tools.repository";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
