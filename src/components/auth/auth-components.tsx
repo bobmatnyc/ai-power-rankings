@@ -31,6 +31,8 @@ let clerkComponents: {
   useAuth?: () => any;
   // biome-ignore lint/suspicious/noExplicitAny: Clerk useUser returns complex user object
   useUser?: () => any;
+  // biome-ignore lint/suspicious/noExplicitAny: Clerk useClerk returns complex clerk object
+  useClerk?: () => any;
   loaded: boolean;
 } = { loaded: false };
 
@@ -47,6 +49,7 @@ if (isClientSide && !getIsAuthDisabled() && getHasClerkKey() && !clerkComponents
           UserButton: clerk.UserButton,
           useAuth: clerk.useAuth,
           useUser: clerk.useUser,
+          useClerk: clerk.useClerk,
           loaded: true,
         };
         console.info("[AuthComponents] Clerk loaded successfully");
@@ -60,7 +63,7 @@ if (isClientSide && !getIsAuthDisabled() && getHasClerkKey() && !clerkComponents
 }
 
 /**
- * Simplified useAuth hook that avoids complex async patterns
+ * Safe useAuth hook that checks for ClerkProvider context before calling Clerk hooks
  */
 export const useAuth = () => {
   // Always call the mock hook first for consistent hook behavior
@@ -76,14 +79,24 @@ export const useAuth = () => {
     return mockAuth;
   }
 
-  // If Clerk is loaded and available, use it
+  // If Clerk is loaded and available, try to check if we're in provider context
   if (clerkComponents.useAuth && clerkComponents.loaded) {
     try {
-      // biome-ignore lint/correctness/useHookAtTopLevel: This is not a React hook, it's a dynamically loaded function
-      const clerkAuthResult = clerkComponents.useAuth();
-      return clerkAuthResult;
+      // First, try to detect if we're inside ClerkProvider using useClerk
+      if (clerkComponents.useClerk) {
+        // biome-ignore lint/correctness/useHookAtTopLevel: Not a React hook, it's a dynamically loaded function
+        const clerkInstance = clerkComponents.useClerk();
+        // If useClerk works and returns an object with 'loaded' property, we're in context
+        if (clerkInstance && typeof clerkInstance === "object" && "loaded" in clerkInstance) {
+          // Now it's safe to call useAuth
+          // biome-ignore lint/correctness/useHookAtTopLevel: Not a React hook, it's a dynamically loaded function
+          const clerkAuthResult = clerkComponents.useAuth();
+          return clerkAuthResult;
+        }
+      }
     } catch (error) {
-      console.warn("[useAuth] Clerk useAuth failed:", error);
+      // If any Clerk hook fails, it means we're not properly in ClerkProvider context
+      console.warn("[useAuth] Not in ClerkProvider context, using mock:", error);
       return mockAuth;
     }
   }
@@ -93,7 +106,7 @@ export const useAuth = () => {
 };
 
 /**
- * Safe useUser hook that follows React hook rules consistently
+ * Safe useUser hook that checks for ClerkProvider context before calling Clerk hooks
  */
 export const useUser = () => {
   // Always call the mock hooks first for consistent hook behavior
@@ -109,14 +122,24 @@ export const useUser = () => {
     return mockUser;
   }
 
-  // If Clerk is loaded and available, use it
+  // If Clerk is loaded and available, try to check if we're in provider context
   if (clerkComponents.useUser && clerkComponents.loaded) {
     try {
-      // biome-ignore lint/correctness/useHookAtTopLevel: This is not a React hook, it's a dynamically loaded function
-      const clerkUserResult = clerkComponents.useUser();
-      return clerkUserResult;
+      // First, try to detect if we're inside ClerkProvider using useClerk
+      if (clerkComponents.useClerk) {
+        // biome-ignore lint/correctness/useHookAtTopLevel: Not a React hook, it's a dynamically loaded function
+        const clerkInstance = clerkComponents.useClerk();
+        // If useClerk works and returns an object with 'loaded' property, we're in context
+        if (clerkInstance && typeof clerkInstance === "object" && "loaded" in clerkInstance) {
+          // Now it's safe to call useUser
+          // biome-ignore lint/correctness/useHookAtTopLevel: Not a React hook, it's a dynamically loaded function
+          const clerkUserResult = clerkComponents.useUser();
+          return clerkUserResult;
+        }
+      }
     } catch (error) {
-      console.warn("[useUser] Clerk useUser failed:", error);
+      // If any Clerk hook fails, it means we're not properly in ClerkProvider context
+      console.warn("[useUser] Not in ClerkProvider context, using mock:", error);
       return mockUser;
     }
   }
