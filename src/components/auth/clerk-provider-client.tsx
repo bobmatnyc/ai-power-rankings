@@ -1,6 +1,8 @@
 "use client";
 
+import { ClerkProvider } from "@clerk/nextjs";
 import type React from "react";
+import { useEffect, useState } from "react";
 
 interface ClerkProviderClientProps {
   children: React.ReactNode;
@@ -15,20 +17,26 @@ interface ClerkProviderClientProps {
  * simply renders children without loading Clerk at all.
  */
 export default function ClerkProviderClient({ children }: ClerkProviderClientProps) {
-  // Check if auth is disabled at build time
+  // Always call hooks at the top level - this is required by React
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Check if auth is disabled - these are constants so won't cause re-renders
   const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
   const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
-  // If auth is disabled or no key, don't load Clerk at all
-  if (isAuthDisabled || !hasClerkKey) {
+  // Determine whether to use Clerk based on all conditions
+  const shouldUseClerk = !isAuthDisabled && hasClerkKey && mounted;
+
+  // Always render something - either with or without ClerkProvider
+  if (!shouldUseClerk) {
     return <>{children}</>;
   }
 
-  // Dynamically import and use Clerk only when auth is enabled
-  // This import is cached by Next.js and won't cause issues
-  // We use require here to avoid async import issues
-  const { ClerkProvider } = require("@clerk/nextjs");
-
+  // Only wrap with ClerkProvider when all conditions are met
   return (
     <ClerkProvider
       publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
