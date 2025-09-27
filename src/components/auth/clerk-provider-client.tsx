@@ -1,42 +1,34 @@
 "use client";
 
-import { ClerkProvider } from "@clerk/nextjs";
 import type React from "react";
-import { useEffect, useState } from "react";
 
 interface ClerkProviderClientProps {
   children: React.ReactNode;
 }
 
 /**
- * Client-only wrapper for ClerkProvider to avoid SSR issues.
- * This component only renders ClerkProvider on the client side
- * to prevent useContext errors during static generation.
- *
- * When auth is disabled via NEXT_PUBLIC_DISABLE_AUTH, this component
- * simply renders children without loading Clerk at all.
+ * Wrapper that conditionally loads ClerkProvider based on environment.
+ * When NEXT_PUBLIC_DISABLE_AUTH is true, this component simply passes through children
+ * without loading any Clerk code at all.
  */
 export default function ClerkProviderClient({ children }: ClerkProviderClientProps) {
-  // Always call hooks at the top level - this is required by React
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Check if auth is disabled - these are constants so won't cause re-renders
+  // Check if auth is disabled - if so, don't load Clerk at all
   const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-  const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
-  // Determine whether to use Clerk based on all conditions
-  const shouldUseClerk = !isAuthDisabled && hasClerkKey && mounted;
-
-  // Always render something - either with or without ClerkProvider
-  if (!shouldUseClerk) {
+  // If auth is disabled, just render children without any Clerk involvement
+  if (isAuthDisabled) {
     return <>{children}</>;
   }
 
-  // Only wrap with ClerkProvider when all conditions are met
+  // If no Clerk key is provided, also skip Clerk
+  if (!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]) {
+    return <>{children}</>;
+  }
+
+  // Only when auth is enabled AND we have a key, load and use Clerk
+  // This prevents any Clerk code from running when auth is disabled
+  const { ClerkProvider } = require("@clerk/nextjs");
+
   return (
     <ClerkProvider
       publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
