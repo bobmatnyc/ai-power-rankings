@@ -5,10 +5,25 @@ import dynamic from "next/dynamic";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-// Dynamically import ClerkProvider to avoid SSR issues
-// Note: ssr: false not allowed in Server Components in Next.js 15
-// The component itself uses "use client" which handles client-only rendering
-const ClerkProviderClient = dynamic(() => import("@/components/auth/clerk-provider-client"));
+// Dynamically import the appropriate auth provider based on environment
+// When auth is disabled, use a no-op provider that just passes through children
+// When auth is enabled, use the real Clerk provider
+const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+
+const ClerkProviderClient = dynamic(
+  () => {
+    if (isAuthDisabled) {
+      // Use no-op provider when auth is disabled
+      return import("@/components/auth/clerk-provider-nossr");
+    }
+    // Use real Clerk provider when auth is enabled
+    return import("@/components/auth/clerk-provider-client");
+  },
+  {
+    // Loading component while the provider is being loaded
+    loading: () => null,
+  }
+);
 
 const inter = Inter({
   subsets: ["latin"],
