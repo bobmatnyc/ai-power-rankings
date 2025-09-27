@@ -6,9 +6,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 // Dynamically import ClerkProvider to avoid SSR issues
-const ClerkProviderClient = dynamic(() => import("@/components/auth/clerk-provider-client"), {
-  ssr: false,
-});
+// Note: ssr: false not allowed in Server Components in Next.js 15
+// The component itself uses "use client" which handles client-only rendering
+const ClerkProviderClient = dynamic(() => import("@/components/auth/clerk-provider-client"));
 
 const inter = Inter({
   subsets: ["latin"],
