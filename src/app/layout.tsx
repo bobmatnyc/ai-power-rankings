@@ -5,25 +5,12 @@ import dynamic from "next/dynamic";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-// Dynamically import the appropriate auth provider based on environment
-// When auth is disabled, use a no-op provider that just passes through children
-// When auth is enabled, use the real Clerk provider
-const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-
-const ClerkProviderClient = dynamic(
-  () => {
-    if (isAuthDisabled) {
-      // Use no-op provider when auth is disabled
-      return import("@/components/auth/clerk-provider-nossr");
-    }
-    // Use real Clerk provider when auth is enabled
-    return import("@/components/auth/clerk-provider-client");
-  },
-  {
-    // Loading component while the provider is being loaded
-    loading: () => null,
-  }
-);
+// Dynamically import ClerkProvider to avoid SSR issues
+// The ClerkProviderClient component handles client-side only rendering
+const ClerkProviderClient = dynamic(() => import("@/components/auth/clerk-provider-client"), {
+  // Don't render anything during loading to prevent hydration mismatches
+  loading: () => null,
+});
 
 const inter = Inter({
   subsets: ["latin"],
