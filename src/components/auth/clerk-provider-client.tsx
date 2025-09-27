@@ -31,6 +31,11 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
       publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
       signInFallbackRedirectUrl="/"
       signUpFallbackRedirectUrl="/"
+      appearance={{
+        variables: {
+          colorPrimary: "#000000",
+        },
+      }}
     >
       {children}
     </BaseClerkProvider>
