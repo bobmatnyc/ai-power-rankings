@@ -1,9 +1,14 @@
-import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { Inter } from "next/font/google";
 import "./globals.css";
+
+// Dynamically import ClerkProvider to avoid SSR issues
+const ClerkProviderClient = dynamic(() => import("@/components/auth/clerk-provider-client"), {
+  ssr: false,
+});
 
 const inter = Inter({
   subsets: ["latin"],
@@ -50,32 +55,15 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Skip ClerkProvider during build/prerendering to avoid SSR context errors
-  const isBuilding =
-    process.env["NODE_ENV"] === "production" && !process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
-
-  const content = (
-    <html lang="en" className={inter.variable}>
-      <body className={inter.className}>
-        {children}
-        <Analytics />
-        <SpeedInsights />
-      </body>
-    </html>
+  return (
+    <ClerkProviderClient>
+      <html lang="en" className={inter.variable}>
+        <body className={inter.className}>
+          {children}
+          <Analytics />
+          <SpeedInsights />
+        </body>
+      </html>
+    </ClerkProviderClient>
   );
-
-  // Only wrap with ClerkProvider if we have a publishable key and not building
-  if (!isBuilding && process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]) {
-    return (
-      <ClerkProvider
-        publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
-        signInFallbackRedirectUrl="/"
-        signUpFallbackRedirectUrl="/"
-      >
-        {content}
-      </ClerkProvider>
-    );
-  }
-
-  return content;
 }
