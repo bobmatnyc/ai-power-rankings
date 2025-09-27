@@ -50,19 +50,32 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <ClerkProvider
-      publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
-      signInFallbackRedirectUrl="/"
-      signUpFallbackRedirectUrl="/"
-    >
-      <html lang="en" className={inter.variable}>
-        <body className={inter.className}>
-          {children}
-          <Analytics />
-          <SpeedInsights />
-        </body>
-      </html>
-    </ClerkProvider>
+  // Skip ClerkProvider during build/prerendering to avoid SSR context errors
+  const isBuilding =
+    process.env["NODE_ENV"] === "production" && !process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
+
+  const content = (
+    <html lang="en" className={inter.variable}>
+      <body className={inter.className}>
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
   );
+
+  // Only wrap with ClerkProvider if we have a publishable key and not building
+  if (!isBuilding && process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]) {
+    return (
+      <ClerkProvider
+        publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
+        signInFallbackRedirectUrl="/"
+        signUpFallbackRedirectUrl="/"
+      >
+        {content}
+      </ClerkProvider>
+    );
+  }
+
+  return content;
 }

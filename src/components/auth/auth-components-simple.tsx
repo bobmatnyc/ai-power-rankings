@@ -1,36 +1,40 @@
 "use client";
 
 /**
- * Simple Clerk component re-exports for Next.js 15
+ * Safe Clerk component re-exports for Next.js 15
  *
  * This file provides a clean interface to Clerk components
- * with proper error handling but no overengineering.
+ * by re-exporting from our safe wrapper components that handle
+ * missing context gracefully.
  */
 
-// Re-export Clerk components directly
+// Re-export safe wrapped hooks and components from auth-components
 export {
-  useAuth,
-  useUser,
-  useClerk,
   SignedIn,
   SignedOut,
+  SignIn,
   SignInButton,
+  SignUp,
   SignUpButton,
   UserButton,
-  SignIn,
-  SignUp
-} from "@clerk/nextjs";
+  useAuth,
+  useClerk,
+  useUser,
+} from "./auth-components";
 
 // Simple wrapper components for consistent styling
 import type React from "react";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 export function SignedInWrapper({ children }: { children: React.ReactNode }) {
-  return <SignedIn>{children}</SignedIn>;
+  // Import SignedIn from our safe wrapper
+  const { SignedIn: SafeSignedIn } = require("./auth-components");
+  return <SafeSignedIn>{children}</SafeSignedIn>;
 }
 
 export function SignedOutWrapper({ children }: { children: React.ReactNode }) {
-  return <SignedOut>{children}</SignedOut>;
+  // Import SignedOut from our safe wrapper
+  const { SignedOut: SafeSignedOut } = require("./auth-components");
+  return <SafeSignedOut>{children}</SafeSignedOut>;
 }
 
 // Development mode helper (only used when auth is disabled)

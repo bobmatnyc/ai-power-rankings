@@ -91,8 +91,8 @@ export function AuthProviderWrapper({ children }: AuthProviderWrapperProps) {
           publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
           signInUrl={`/${locale}/sign-in`}
           signUpUrl={`/${locale}/sign-up`}
-          afterSignInUrl={`/${locale}`}
-          afterSignUpUrl={`/${locale}`}
+          signInFallbackRedirectUrl={`/${locale}`}
+          signUpFallbackRedirectUrl={`/${locale}`}
         >
           {safeChildren}
         </ClerkProvider>

@@ -25,6 +25,10 @@ let clerkComponents: {
   SignedOut?: React.ComponentType<{ children?: React.ReactNode }>;
   SignInButton?: React.ComponentType<{ children?: React.ReactNode }>;
   SignUpButton?: React.ComponentType<{ children?: React.ReactNode }>;
+  // biome-ignore lint/suspicious/noExplicitAny: Clerk SignIn has complex props
+  SignIn?: React.ComponentType<any>;
+  // biome-ignore lint/suspicious/noExplicitAny: Clerk SignUp has complex props
+  SignUp?: React.ComponentType<any>;
   // biome-ignore lint/suspicious/noExplicitAny: Clerk UserButton has complex props
   UserButton?: React.ComponentType<any>;
   // biome-ignore lint/suspicious/noExplicitAny: Clerk useAuth returns complex auth object
@@ -46,6 +50,8 @@ if (isClientSide && !getIsAuthDisabled() && getHasClerkKey() && !clerkComponents
           SignedOut: clerk.SignedOut,
           SignInButton: clerk.SignInButton,
           SignUpButton: clerk.SignUpButton,
+          SignIn: clerk.SignIn,
+          SignUp: clerk.SignUp,
           UserButton: clerk.UserButton,
           useAuth: clerk.useAuth,
           useUser: clerk.useUser,
@@ -356,3 +362,47 @@ export function UserButtonWrapper(props: Record<string, unknown>) {
 
   return null;
 }
+
+// Additional exports for compatibility
+export const useClerk = () => {
+  // Default return value for when Clerk is not available
+  const defaultClerk = {
+    loaded: false,
+    session: null,
+    user: null,
+    signOut: () => Promise.resolve(),
+    openSignIn: () => {},
+    openSignUp: () => {},
+  };
+
+  // Early return if no Clerk components
+  if (!clerkComponents || !clerkComponents.useClerk) {
+    return defaultClerk;
+  }
+
+  try {
+    // Call the hook unconditionally when it exists
+    // biome-ignore lint/correctness/useHookAtTopLevel: Safe wrapper for optional Clerk hook
+    const clerkResult = clerkComponents.useClerk();
+    return clerkResult;
+  } catch (error) {
+    console.warn("[useClerk] Failed to call hook:", error);
+    return defaultClerk;
+  }
+};
+
+export const SignIn = (props: Record<string, unknown>) => {
+  if (!clerkComponents || !clerkComponents.SignIn) {
+    return <div>Sign in unavailable</div>;
+  }
+  const SignInComponent = clerkComponents.SignIn;
+  return <SignInComponent {...props} />;
+};
+
+export const SignUp = (props: Record<string, unknown>) => {
+  if (!clerkComponents || !clerkComponents.SignUp) {
+    return <div>Sign up unavailable</div>;
+  }
+  const SignUpComponent = clerkComponents.SignUp;
+  return <SignUpComponent {...props} />;
+};
