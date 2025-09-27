@@ -196,6 +196,7 @@
     "@fullhuman/postcss-purgecss": "^7.0.2",
     "@neondatabase/serverless": "^1.0.1",
     "@next/bundle-analyzer": "^15.3.4",
+    "@playwright/test": "^1.55.1",
     "@tailwindcss/typography": "^0.5.18",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

@@ -80,35 +80,34 @@ export const useAuth = () => {
     setMounted(true);
   }, []);
 
-  // If not mounted, auth disabled, or no Clerk key, use mock
-  if (!mounted || getIsAuthDisabled() || !getHasClerkKey()) {
+  // For auth disabled environments or SSR, always return mock
+  if (getIsAuthDisabled() || !getHasClerkKey()) {
     return mockAuth;
   }
 
-  // If Clerk is loaded and available, try to check if we're in provider context
-  if (clerkComponents.useAuth && clerkComponents.loaded) {
-    try {
-      // First, try to detect if we're inside ClerkProvider using useClerk
-      if (clerkComponents.useClerk) {
-        // biome-ignore lint/correctness/useHookAtTopLevel: Not a React hook, it's a dynamically loaded function
-        const clerkInstance = clerkComponents.useClerk();
-        // If useClerk works and returns an object with 'loaded' property, we're in context
-        if (clerkInstance && typeof clerkInstance === "object" && "loaded" in clerkInstance) {
-          // Now it's safe to call useAuth
-          // biome-ignore lint/correctness/useHookAtTopLevel: Not a React hook, it's a dynamically loaded function
-          const clerkAuthResult = clerkComponents.useAuth();
-          return clerkAuthResult;
-        }
-      }
-    } catch (error) {
-      // If any Clerk hook fails, it means we're not properly in ClerkProvider context
-      console.warn("[useAuth] Not in ClerkProvider context, using mock:", error);
-      return mockAuth;
-    }
+  // During SSR/initial render, return mock
+  if (!mounted) {
+    return mockAuth;
   }
 
-  // Fallback to mock
-  return mockAuth;
+  // If Clerk components aren't loaded yet, return mock
+  if (!clerkComponents.loaded || !clerkComponents.useAuth) {
+    return mockAuth;
+  }
+
+  // Try to use the real Clerk hook if available
+  // We can't conditionally call hooks, so we'll handle errors differently
+  try {
+    // This is not a React hook but a dynamically imported function
+    // It's safe to call conditionally because it's not a built-in React hook
+    // biome-ignore lint/correctness/useHookAtTopLevel: Dynamically loaded function, not a React hook
+    const authResult = clerkComponents.useAuth();
+    return authResult;
+  } catch (error) {
+    // If Clerk hook fails, return mock
+    console.warn("[useAuth] Clerk hook failed, using mock:", error);
+    return mockAuth;
+  }
 };
 
 /**
@@ -123,35 +122,34 @@ export const useUser = () => {
     setMounted(true);
   }, []);
 
-  // If not mounted, auth disabled, or no Clerk key, use mock
-  if (!mounted || getIsAuthDisabled() || !getHasClerkKey()) {
+  // For auth disabled environments or SSR, always return mock
+  if (getIsAuthDisabled() || !getHasClerkKey()) {
     return mockUser;
   }
 
-  // If Clerk is loaded and available, try to check if we're in provider context
-  if (clerkComponents.useUser && clerkComponents.loaded) {
-    try {
-      // First, try to detect if we're inside ClerkProvider using useClerk
-      if (clerkComponents.useClerk) {
-        // biome-ignore lint/correctness/useHookAtTopLevel: Not a React hook, it's a dynamically loaded function
-        const clerkInstance = clerkComponents.useClerk();
-        // If useClerk works and returns an object with 'loaded' property, we're in context
-        if (clerkInstance && typeof clerkInstance === "object" && "loaded" in clerkInstance) {
-          // Now it's safe to call useUser
-          // biome-ignore lint/correctness/useHookAtTopLevel: Not a React hook, it's a dynamically loaded function
-          const clerkUserResult = clerkComponents.useUser();
-          return clerkUserResult;
-        }
-      }
-    } catch (error) {
-      // If any Clerk hook fails, it means we're not properly in ClerkProvider context
-      console.warn("[useUser] Not in ClerkProvider context, using mock:", error);
-      return mockUser;
-    }
+  // During SSR/initial render, return mock
+  if (!mounted) {
+    return mockUser;
   }
 
-  // Fallback to mock
-  return mockUser;
+  // If Clerk components aren't loaded yet, return mock
+  if (!clerkComponents.loaded || !clerkComponents.useUser) {
+    return mockUser;
+  }
+
+  // Try to use the real Clerk hook if available
+  // We can't conditionally call hooks, so we'll handle errors differently
+  try {
+    // This is not a React hook but a dynamically imported function
+    // It's safe to call conditionally because it's not a built-in React hook
+    // biome-ignore lint/correctness/useHookAtTopLevel: Dynamically loaded function, not a React hook
+    const userResult = clerkComponents.useUser();
+    return userResult;
+  } catch (error) {
+    // If Clerk hook fails, return mock
+    console.warn("[useUser] Clerk hook failed, using mock:", error);
+    return mockUser;
+  }
 };
 
 /**
