@@ -1,4 +1,4 @@
-import { SignUp } from "@clerk/nextjs";
+import { SignUp } from "@/components/auth/auth-components-simple";
 
 // Force dynamic rendering to prevent Clerk SSG issues
 export const dynamic = "force-dynamic";

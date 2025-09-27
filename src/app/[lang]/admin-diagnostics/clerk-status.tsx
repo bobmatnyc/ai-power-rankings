@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@/components/auth/auth-components";
 
 interface AuthData {
   authLoaded: boolean;

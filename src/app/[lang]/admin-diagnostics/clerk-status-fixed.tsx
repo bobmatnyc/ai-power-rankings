@@ -1,7 +1,7 @@
 "use client";
 
-import { useAuth, useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import { useAuth, useUser } from "@/components/auth/auth-components";
 
 export function ClerkStatusFixed() {
   const { isLoaded: authLoaded, isSignedIn, sessionId, userId, getToken } = useAuth();

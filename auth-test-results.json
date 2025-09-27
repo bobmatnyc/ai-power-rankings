@@ -1,0 +1,195 @@
+{
+  "timestamp": "2025-09-27T04:59:36.740Z",
+  "site": "https://staging.aipowerranking.com",
+  "summary": {
+    "totalConsoleMessages": 12,
+    "totalErrors": 3,
+    "totalWarnings": 9,
+    "pageErrors": 0,
+    "networkErrors": 6,
+    "clerkErrors": 2
+  },
+  "consoleLogs": [
+    {
+      "type": "error",
+      "text": "Error: useUser can only be used within the <ClerkProvider /> component.\n\nPossible fixes:\n1. Ensure that the <ClerkProvider /> is correctly wrapping your application where this component is used.\n2. Check for multiple versions of the `@clerk/shared` package in your project. Use a tool like `npm ls @clerk/shared` to identify multiple versions, and update your dependencies to only rely on one.\n\nLearn more: https://clerk.com/docs/components/clerk-provider\n    at x (https://staging.aipowerranking.com/_next/static/chunks/1780-750f9b57cbf503f0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:23:26249)\n    at ee (https://staging.aipowerranking.com/_next/static/chunks/1780-750f9b57cbf503f0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:29:6323)\n    at u (https://staging.aipowerranking.com/_next/static/chunks/9972-2f78b1779f3fcbf5.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:17332)\n    at l2 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:50099)\n    at ox (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:69890)\n    at oU (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:81085)\n    at ic (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:112390)\n    at https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:112235\n    at is (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:112243)\n    at u5 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:109326)\n    at iV (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:130104)\n    at iR (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:128323)\n    at ib (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:126016)\n    at ig (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:123768)\n    at u9 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:110516)\n    at u5 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:109869)\n    at iH (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:129983)\n    at MessagePort.w (https://staging.aipowerranking.com/_next/static/chunks/8099-c3f53b5c82cc13c0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:76049)",
+      "location": {
+        "url": "https://staging.aipowerranking.com/_next/static/chunks/8099-c3f53b5c82cc13c0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z",
+        "lineNumber": 0,
+        "columnNumber": 4044
+      },
+      "timestamp": "2025-09-27T04:59:28.416Z"
+    },
+    {
+      "type": "error",
+      "text": "Error: Minified React error #310; visit https://react.dev/errors/310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.\n    at ae (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:51385)\n    at aF (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:57863)\n    at Object.aM [as useEffect] (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:58088)\n    at t.useEffect (https://staging.aipowerranking.com/_next/static/chunks/8099-c3f53b5c82cc13c0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:165287)\n    at w (https://staging.aipowerranking.com/_next/static/chunks/9972-2f78b1779f3fcbf5.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:19210)\n    at l2 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:50099)\n    at ox (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:69890)\n    at oU (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:81085)\n    at ic (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:112390)\n    at https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:112235\n    at is (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:112243)\n    at u5 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:109326)\n    at iV (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:130104)\n    at iR (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:128323)\n    at ib (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:126016)\n    at ig (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:123768)\n    at u9 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:110516)\n    at u5 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:109869)\n    at iH (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:129983)\n    at MessagePort.w (https://staging.aipowerranking.com/_next/static/chunks/8099-c3f53b5c82cc13c0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:76049)",
+      "location": {
+        "url": "https://staging.aipowerranking.com/_next/static/chunks/8099-c3f53b5c82cc13c0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z",
+        "lineNumber": 0,
+        "columnNumber": 4044
+      },
+      "timestamp": "2025-09-27T04:59:28.463Z"
+    },
+    {
+      "type": "warning",
+      "text": "Clerk: The prop \"afterSignInUrl\" is deprecated and should be replaced with the new \"fallbackRedirectUrl\" or \"forceRedirectUrl\" props instead. Learn more: https://clerk.com/docs/guides/custom-redirects#redirect-url-props",
+      "location": {
+        "url": "https://clerk.aipowerranking.com/npm/@clerk/clerk-js@5/dist/clerk.browser.js",
+        "lineNumber": 15,
+        "columnNumber": 1279
+      },
+      "timestamp": "2025-09-27T04:59:28.630Z"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 400 ()",
+      "location": {
+        "url": "https://staging.aipowerranking.com/en",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "timestamp": "2025-09-27T04:59:29.141Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource https://staging.aipowerranking.com/_next/static/media/e4af272ccee01ff0-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "location": {
+        "url": "https://staging.aipowerranking.com/en",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "timestamp": "2025-09-27T04:59:33.211Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource https://staging.aipowerranking.com/_next/static/media/4cf2300e9c8272f7-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "location": {
+        "url": "https://staging.aipowerranking.com/en",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "timestamp": "2025-09-27T04:59:33.211Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource https://staging.aipowerranking.com/_next/static/media/93f479601ee12b01-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "location": {
+        "url": "https://staging.aipowerranking.com/en",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "timestamp": "2025-09-27T04:59:33.211Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource https://staging.aipowerranking.com/_next/static/media/e4af272ccee01ff0-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "location": {
+        "url": "https://staging.aipowerranking.com/en",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "timestamp": "2025-09-27T04:59:36.648Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource https://staging.aipowerranking.com/_next/static/media/4cf2300e9c8272f7-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "location": {
+        "url": "https://staging.aipowerranking.com/en",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "timestamp": "2025-09-27T04:59:36.648Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource https://staging.aipowerranking.com/_next/static/media/93f479601ee12b01-s.p.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "location": {
+        "url": "https://staging.aipowerranking.com/en",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "timestamp": "2025-09-27T04:59:36.648Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource https://www.googletagmanager.com/gtag/js?id=G-5YBL6NPWL6 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "location": {
+        "url": "https://staging.aipowerranking.com/en",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "timestamp": "2025-09-27T04:59:36.648Z"
+    },
+    {
+      "type": "warning",
+      "text": "The resource https://staging.aipowerranking.com/partytown/partytown.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+      "location": {
+        "url": "https://staging.aipowerranking.com/en",
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "timestamp": "2025-09-27T04:59:36.648Z"
+    }
+  ],
+  "pageErrors": [],
+  "networkErrors": [
+    {
+      "url": "https://staging.aipowerranking.com/",
+      "status": 301,
+      "statusText": "",
+      "timestamp": "2025-09-27T04:59:26.947Z"
+    },
+    {
+      "url": "https://staging.aipowerranking.com/en/",
+      "status": 308,
+      "statusText": "",
+      "timestamp": "2025-09-27T04:59:26.971Z"
+    },
+    {
+      "url": "https://clerk.aipowerranking.com/npm/@clerk/clerk-js@5/dist/clerk.browser.js",
+      "status": 307,
+      "statusText": "",
+      "timestamp": "2025-09-27T04:59:28.535Z"
+    },
+    {
+      "url": "https://staging.aipowerranking.com/",
+      "status": 301,
+      "statusText": "",
+      "timestamp": "2025-09-27T04:59:29.053Z"
+    },
+    {
+      "url": "https://staging.aipowerranking.com/en/",
+      "status": 308,
+      "statusText": "",
+      "timestamp": "2025-09-27T04:59:29.070Z"
+    },
+    {
+      "url": "https://staging.aipowerranking.com/en",
+      "status": 400,
+      "statusText": "",
+      "timestamp": "2025-09-27T04:59:29.141Z"
+    }
+  ],
+  "clerkErrors": [
+    {
+      "type": "error",
+      "text": "Error: useUser can only be used within the <ClerkProvider /> component.\n\nPossible fixes:\n1. Ensure that the <ClerkProvider /> is correctly wrapping your application where this component is used.\n2. Check for multiple versions of the `@clerk/shared` package in your project. Use a tool like `npm ls @clerk/shared` to identify multiple versions, and update your dependencies to only rely on one.\n\nLearn more: https://clerk.com/docs/components/clerk-provider\n    at x (https://staging.aipowerranking.com/_next/static/chunks/1780-750f9b57cbf503f0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:23:26249)\n    at ee (https://staging.aipowerranking.com/_next/static/chunks/1780-750f9b57cbf503f0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:29:6323)\n    at u (https://staging.aipowerranking.com/_next/static/chunks/9972-2f78b1779f3fcbf5.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:17332)\n    at l2 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:50099)\n    at ox (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:69890)\n    at oU (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:81085)\n    at ic (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:112390)\n    at https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:112235\n    at is (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:112243)\n    at u5 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:109326)\n    at iV (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:130104)\n    at iR (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:128323)\n    at ib (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:126016)\n    at ig (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:123768)\n    at u9 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:110516)\n    at u5 (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:109869)\n    at iH (https://staging.aipowerranking.com/_next/static/chunks/2c9e1e15-9c641219d8a9ca08.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:129983)\n    at MessagePort.w (https://staging.aipowerranking.com/_next/static/chunks/8099-c3f53b5c82cc13c0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z:1:76049)",
+      "location": {
+        "url": "https://staging.aipowerranking.com/_next/static/chunks/8099-c3f53b5c82cc13c0.js?dpl=dpl_BvNcyyUxCHw7nc8Mt9h2gTm5Mf3z",
+        "lineNumber": 0,
+        "columnNumber": 4044
+      },
+      "timestamp": "2025-09-27T04:59:28.416Z"
+    },
+    {
+      "type": "warning",
+      "text": "Clerk: The prop \"afterSignInUrl\" is deprecated and should be replaced with the new \"fallbackRedirectUrl\" or \"forceRedirectUrl\" props instead. Learn more: https://clerk.com/docs/guides/custom-redirects#redirect-url-props",
+      "location": {
+        "url": "https://clerk.aipowerranking.com/npm/@clerk/clerk-js@5/dist/clerk.browser.js",
+        "lineNumber": 15,
+        "columnNumber": 1279
+      },
+      "timestamp": "2025-09-27T04:59:28.630Z"
+    }
+  ]
+}
