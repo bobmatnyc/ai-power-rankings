@@ -29,6 +29,8 @@ let clerkComponents: {
   UserButton?: React.ComponentType<any>;
   // biome-ignore lint/suspicious/noExplicitAny: Clerk useAuth returns complex auth object
   useAuth?: () => any;
+  // biome-ignore lint/suspicious/noExplicitAny: Clerk useUser returns complex user object
+  useUser?: () => any;
   loaded: boolean;
 } = { loaded: false };
 
@@ -44,6 +46,7 @@ if (isClientSide && !getIsAuthDisabled() && getHasClerkKey() && !clerkComponents
           SignUpButton: clerk.SignUpButton,
           UserButton: clerk.UserButton,
           useAuth: clerk.useAuth,
+          useUser: clerk.useUser,
           loaded: true,
         };
         console.info("[AuthComponents] Clerk loaded successfully");
@@ -87,6 +90,39 @@ export const useAuth = () => {
 
   // Fallback to mock
   return mockAuth;
+};
+
+/**
+ * Safe useUser hook that follows React hook rules consistently
+ */
+export const useUser = () => {
+  // Always call the mock hooks first for consistent hook behavior
+  const mockUser = { user: null, isLoaded: true, isSignedIn: false };
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // If not mounted, auth disabled, or no Clerk key, use mock
+  if (!mounted || getIsAuthDisabled() || !getHasClerkKey()) {
+    return mockUser;
+  }
+
+  // If Clerk is loaded and available, use it
+  if (clerkComponents.useUser && clerkComponents.loaded) {
+    try {
+      // biome-ignore lint/correctness/useHookAtTopLevel: This is not a React hook, it's a dynamically loaded function
+      const clerkUserResult = clerkComponents.useUser();
+      return clerkUserResult;
+    } catch (error) {
+      console.warn("[useUser] Clerk useUser failed:", error);
+      return mockUser;
+    }
+  }
+
+  // Fallback to mock
+  return mockUser;
 };
 
 /**

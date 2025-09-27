@@ -1,67 +1,9 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { SignedInWrapper, SignedOutWrapper, SignUpButton } from "./auth-components";
-import { useUser as MockUseUser } from "./no-auth-provider";
-
-// Safe hook that always calls the same hooks in the same order
-function useSafeAuth() {
-  // Always call MockUseUser first - this ensures consistent hook order
-  const mockUser = MockUseUser();
-  const [useClerk, setUseClerk] = useState(false);
-  const [, setIsLoaded] = useState(false);
-  // biome-ignore lint/suspicious/noExplicitAny: Dynamic Clerk hook loading requires flexible typing
-  const clerkUserHookRef = useRef<any>(null);
-
-  useEffect(() => {
-    // Only attempt Clerk on client side
-    if (typeof window === "undefined") {
-      setIsLoaded(true);
-      return;
-    }
-
-    const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-    const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
-
-    if (isAuthDisabled || !hasClerkKey) {
-      setIsLoaded(true);
-      return;
-    }
-
-    // Dynamically import and set up Clerk's useUser
-    import("@clerk/nextjs")
-      .then((clerkModule) => {
-        if (clerkModule?.useUser) {
-          clerkUserHookRef.current = clerkModule.useUser;
-          setUseClerk(true);
-          setIsLoaded(true);
-        }
-      })
-      .catch(() => {
-        setIsLoaded(true);
-      });
-  }, []);
-
-  // Call the Clerk hook if available, otherwise return mock
-  let clerkResult = null;
-  if (useClerk && clerkUserHookRef.current) {
-    try {
-      clerkResult = clerkUserHookRef.current();
-    } catch (error) {
-      console.warn("[useSafeAuth] Clerk useUser failed:", error);
-      clerkResult = null;
-    }
-  }
-
-  // Return Clerk auth if available and loaded, otherwise mock
-  if (clerkResult && useClerk) {
-    return clerkResult;
-  }
-
-  return { user: mockUser.user, isLoaded: true };
-}
+import { SignedInWrapper, SignedOutWrapper, SignUpButton, useUser } from "./auth-components";
 
 interface SignupUpdatesButtonProps {
   className?: string;
@@ -84,7 +26,7 @@ export function SignupUpdatesButton({
   afterSignUpUrl,
 }: SignupUpdatesButtonProps) {
   const pathname = usePathname();
-  const { user } = useSafeAuth();
+  const { user, isLoaded } = useUser();
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
@@ -95,7 +37,7 @@ export function SignupUpdatesButton({
   // Auto-subscribe when user is signed in and component mounts
   useEffect(() => {
     const subscribeUser = async () => {
-      if (!user || isSubscribing || isSubscribed) {
+      if (!user || !isLoaded || isSubscribing || isSubscribed) {
         return;
       }
 
@@ -139,7 +81,7 @@ export function SignupUpdatesButton({
     };
 
     subscribeUser();
-  }, [user, isSubscribing, isSubscribed]);
+  }, [user, isLoaded, isSubscribing, isSubscribed]);
 
   return (
     <>
