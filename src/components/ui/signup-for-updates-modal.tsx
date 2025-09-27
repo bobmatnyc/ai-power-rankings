@@ -1,6 +1,8 @@
 "use client";
 
-import { SignIn, useAuth, useUser } from "@clerk/nextjs";
+// Use safe auth wrappers instead of direct Clerk imports
+import { useAuth, useUser } from "@/components/auth/auth-components";
+import { SignIn } from "@/components/auth/auth-components-simple";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";

@@ -1,18 +1,24 @@
 "use client";
 
-import { useAuth, useClerk } from "@clerk/nextjs";
+// Use safe auth wrappers - but this component is only for development
+import { useAuth } from "@/components/auth/auth-components";
+// useClerk is not available in our safe wrappers yet, so we'll check window.Clerk directly
 import { useEffect, useState } from "react";
 
 export function ClerkDebug() {
-  const clerk = useClerk();
+  // Get Clerk directly from window instead of using hook
   const auth = useAuth();
+  // biome-ignore lint/suspicious/noExplicitAny: Debug component
   const [debugInfo, setDebugInfo] = useState<any>({});
 
   useEffect(() => {
+    // biome-ignore lint/suspicious/noExplicitAny: Debug component
+    const clerk = typeof window !== "undefined" ? (window as any).Clerk : null;
     const info = {
       clerkLoaded: clerk?.loaded,
       authLoaded: auth?.isLoaded,
       isSignedIn: auth?.isSignedIn,
+      // biome-ignore lint/suspicious/noExplicitAny: Debug component
       hasClerkObject: typeof window !== "undefined" && !!(window as any).Clerk,
       clerkVersion: clerk?.version,
       publishableKey: process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"] ? "Set" : "Not set",
@@ -20,7 +26,7 @@ export function ClerkDebug() {
     };
     setDebugInfo(info);
     console.log("Clerk Debug Info:", info);
-  }, [clerk, auth]);
+  }, [auth]);
 
   if (process.env["NODE_ENV"] !== "development") {
     return null;

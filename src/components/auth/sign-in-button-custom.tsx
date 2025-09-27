@@ -1,6 +1,6 @@
 "use client";
 
-import { useClerk } from "@clerk/nextjs";
+// Don't use Clerk hooks directly - they fail if not in provider
 import React, { useCallback } from "react";
 
 interface SignInButtonCustomProps {
@@ -18,30 +18,36 @@ export function SignInButtonCustom({
   forceRedirectUrl,
   signUpForceRedirectUrl,
 }: SignInButtonCustomProps) {
-  const { openSignIn } = useClerk();
+  // Get Clerk from window instead of using hook to avoid provider errors
+  // biome-ignore lint/suspicious/noExplicitAny: Clerk instance
+  const getClerk = useCallback(() => typeof window !== "undefined" ? (window as any).Clerk : null, []);
 
   const handleClick = useCallback(() => {
-    console.log("SignInButtonCustom clicked", { mode, openSignIn });
+    const clerk = getClerk();
+    console.log("SignInButtonCustom clicked", { mode, clerk });
 
-    if (mode === "modal") {
+    if (mode === "modal" && clerk?.openSignIn) {
       try {
-        openSignIn({
+        clerk.openSignIn({
           redirectUrl: forceRedirectUrl || redirectUrl || window.location.href,
           signUpFallbackRedirectUrl:
             signUpForceRedirectUrl || forceRedirectUrl || redirectUrl || window.location.href,
         });
       } catch (error) {
         console.error("Error opening sign in modal:", error);
+        // Fallback to redirect if modal fails
+        window.location.href = "/sign-in";
       }
     } else {
-      // For redirect mode, navigate to the sign-in page
+      // For redirect mode or if Clerk not available, navigate to the sign-in page
       const signInUrl = forceRedirectUrl || redirectUrl || "/sign-in";
       window.location.href = signInUrl;
     }
-  }, [openSignIn, mode, redirectUrl, forceRedirectUrl, signUpForceRedirectUrl]);
+  }, [mode, redirectUrl, forceRedirectUrl, signUpForceRedirectUrl, getClerk]);
 
   // Clone the child element and add onClick handler
   if (React.isValidElement(children)) {
+    // biome-ignore lint/suspicious/noExplicitAny: React element props
     return React.cloneElement(children as React.ReactElement<any>, {
       onClick: (e: React.MouseEvent) => {
         console.log("Button onClick triggered");
