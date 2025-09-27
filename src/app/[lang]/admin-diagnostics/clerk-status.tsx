@@ -19,7 +19,7 @@ export function ClerkStatus({ onAuthData }: { onAuthData: (data: AuthData) => vo
   // Send auth data to parent component
   if (authLoaded) {
     getToken()
-      .then((token) => {
+      .then((token: string | null) => {
         onAuthData({
           authLoaded,
           isSignedIn,
@@ -29,7 +29,8 @@ export function ClerkStatus({ onAuthData }: { onAuthData: (data: AuthData) => vo
           authToken: token,
         });
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
+        const errorMessage = err instanceof Error ? err.message : "Failed to get token";
         onAuthData({
           authLoaded,
           isSignedIn,
@@ -37,7 +38,7 @@ export function ClerkStatus({ onAuthData }: { onAuthData: (data: AuthData) => vo
           userId,
           user,
           authToken: null,
-          tokenError: err.message,
+          tokenError: errorMessage,
         });
       });
   }
