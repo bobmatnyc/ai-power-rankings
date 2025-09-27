@@ -1,6 +1,5 @@
 "use client";
 
-import { ClerkProvider as BaseClerkProvider } from "@clerk/nextjs";
 import type React from "react";
 import { useEffect, useState } from "react";
 
@@ -15,19 +14,39 @@ interface ClerkProviderClientProps {
  */
 export default function ClerkProviderClient({ children }: ClerkProviderClientProps) {
   const [isClient, setIsClient] = useState(false);
+  const [ClerkProvider, setClerkProvider] = useState<React.ComponentType<any> | null>(null);
+
+  const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+  const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
 
-  // During SSR and initial client render, just render children without ClerkProvider
-  if (!isClient || !process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]) {
+    // Only load Clerk if auth is enabled and we have a key
+    if (!isAuthDisabled && hasClerkKey) {
+      import("@clerk/nextjs")
+        .then((clerk) => {
+          setClerkProvider(() => clerk.ClerkProvider);
+        })
+        .catch((error) => {
+          console.error("Failed to load Clerk:", error);
+        });
+    }
+  }, [isAuthDisabled, hasClerkKey]);
+
+  // If auth is disabled, or during SSR, just render children
+  if (isAuthDisabled || !isClient || !hasClerkKey) {
     return <>{children}</>;
   }
 
-  // On client with a valid key, wrap with ClerkProvider
+  // If Clerk isn't loaded yet, render children without provider
+  if (!ClerkProvider) {
+    return <>{children}</>;
+  }
+
+  // On client with Clerk loaded and auth enabled, wrap with ClerkProvider
   return (
-    <BaseClerkProvider
+    <ClerkProvider
       publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
       signInFallbackRedirectUrl="/"
       signUpFallbackRedirectUrl="/"
@@ -38,6 +57,6 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
       }}
     >
       {children}
-    </BaseClerkProvider>
+    </ClerkProvider>
   );
 }
