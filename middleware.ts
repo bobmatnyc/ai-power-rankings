@@ -1,9 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-// Check if authentication should be disabled - for staging, auth is disabled
-const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-
 // Supported locales
 const locales = ["en", "ja", "zh", "es", "fr", "de", "ko", "pt"];
 const defaultLocale = "en";
@@ -66,15 +63,9 @@ function localeMiddleware(req: NextRequest): NextResponse | undefined {
   return undefined;
 }
 
-// Export the middleware - simplified for staging where auth is disabled
+// Export the middleware - simplified version without Clerk
 export default function middleware(req: NextRequest) {
-  // For staging with auth disabled, only handle locale redirects
-  if (isAuthDisabled) {
-    return localeMiddleware(req) || NextResponse.next();
-  }
-
-  // For production with auth enabled, we would handle Clerk here
-  // But for now, staging uses simplified middleware
+  // Only handle locale redirects - Clerk is handled client-side
   return localeMiddleware(req) || NextResponse.next();
 }
 
