@@ -84,10 +84,16 @@ async function generateStaticRankings() {
     // Transform to expected format with tool details
     const formattedRankings = await Promise.all(
       rankings.map(async (ranking: any) => {
-        const tool = toolsMap.get(ranking.tool_id);
+        // Try to find tool by ID first, then by slug
+        let tool = toolsMap.get(ranking.tool_id);
+
+        if (!tool && ranking.tool_slug) {
+          // Find by slug
+          tool = allTools.find((t) => t.slug === ranking.tool_slug);
+        }
 
         if (!tool) {
-          console.warn(`⚠️  Tool not found: ${ranking.tool_id}`);
+          console.warn(`⚠️  Tool not found: ${ranking.tool_id} / ${ranking.tool_slug}`);
           return null;
         }
 

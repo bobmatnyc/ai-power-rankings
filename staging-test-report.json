@@ -1,0 +1,55 @@
+{
+  "testDate": "2025-09-28T18:11:31.886Z",
+  "url": "https://staging.aipowerranking.com/en",
+  "results": {
+    "pageLoad": {
+      "success": true,
+      "loadTime": 148,
+      "status": "PASS"
+    },
+    "content": {
+      "hasRankingContent": false,
+      "hasToolContent": true,
+      "hasNewsContent": false,
+      "rankedElements": 0,
+      "status": "PARTIAL"
+    },
+    "authentication": {
+      "elementsFound": 0,
+      "hasClerkElements": false,
+      "status": "FAIL"
+    },
+    "console": {
+      "totalMessages": 1,
+      "errors": 1,
+      "warnings": 0,
+      "status": "FAIL"
+    },
+    "network": {
+      "errors": 1,
+      "status": "FAIL"
+    }
+  },
+  "consoleMessages": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 ()",
+      "timestamp": "2025-09-28T18:11:28.492Z"
+    }
+  ],
+  "networkErrors": [
+    {
+      "url": "https://staging.aipowerranking.com/en",
+      "status": 500,
+      "statusText": ""
+    }
+  ],
+  "contentAnalysis": {
+    "hasRankings": false,
+    "hasTools": true,
+    "hasNews": false,
+    "hasScores": false,
+    "totalLength": 104,
+    "preview": "500: INTERNAL_SERVER_ERROR\nCode: MIDDLEWARE_INVOCATION_FAILED\nID: iad1::nptps-1759083088458-a2c0a92f3898"
+  }
+}

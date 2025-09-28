@@ -25,13 +25,28 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
     return <>{children}</>;
   }
 
-  // If no Clerk key is available, render without ClerkProvider
-  if (!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]) {
-    console.warn("ClerkProvider: No publishable key found");
+  // Check if auth is disabled via environment variable
+  const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+
+  // Check if we're on the production domain
+  const isProductionDomain =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "aipowerranking.com" ||
+      window.location.hostname === "www.aipowerranking.com");
+
+  // If auth is disabled, no Clerk key is available, or we're not on production domain, render without ClerkProvider
+  if (isAuthDisabled || !process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"] || !isProductionDomain) {
+    if (isAuthDisabled) {
+      console.info("ClerkProvider: Disabled via NEXT_PUBLIC_DISABLE_AUTH");
+    } else if (!isProductionDomain) {
+      console.info("ClerkProvider: Disabled for non-production domain");
+    } else {
+      console.warn("ClerkProvider: No publishable key found");
+    }
     return <>{children}</>;
   }
 
-  // Only render ClerkProvider on the client side with a valid key
+  // Only render ClerkProvider on the client side with a valid key on production domain
   return (
     <ClerkProvider
       publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
