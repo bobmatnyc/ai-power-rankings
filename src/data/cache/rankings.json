@@ -1,7 +1,73 @@
 {
   "period": "2025-09",
-  "rankings": [],
+  "rankings": [
+    {
+      "tier": "S",
+      "score": 95,
+      "tool_id": "94efe726-1223-49ba-9e96-1611feebb7a2",
+      "position": 1,
+      "tool_slug": "cursor",
+      "factor_scores": {
+        "innovation": 95,
+        "agentic_capability": 90,
+        "developer_adoption": 85,
+        "enterprise_readiness": 75
+      }
+    },
+    {
+      "tier": "S",
+      "score": 92,
+      "tool_id": "42efcc1a-61b9-4296-8553-0b2ae47993c8",
+      "position": 2,
+      "tool_slug": "windsurf",
+      "factor_scores": {
+        "innovation": 90,
+        "agentic_capability": 95,
+        "developer_adoption": 70,
+        "enterprise_readiness": 65
+      }
+    },
+    {
+      "tier": "A",
+      "score": 88,
+      "tool_id": "6dc51487-c94d-49dd-9428-dc9f900c55a0",
+      "position": 3,
+      "tool_slug": "github-copilot",
+      "factor_scores": {
+        "innovation": 80,
+        "agentic_capability": 75,
+        "developer_adoption": 95,
+        "enterprise_readiness": 90
+      }
+    },
+    {
+      "tier": "A",
+      "score": 85,
+      "tool_id": "69cd55aa-db81-4eda-9c13-cdfbbe16b888",
+      "position": 4,
+      "tool_slug": "claude-dev",
+      "factor_scores": {
+        "innovation": 85,
+        "agentic_capability": 88,
+        "developer_adoption": 65,
+        "enterprise_readiness": 55
+      }
+    },
+    {
+      "tier": "A",
+      "score": 82,
+      "tool_id": "f92a4e46-8f95-4903-9186-d8b06ed50b14",
+      "position": 5,
+      "tool_slug": "aider",
+      "factor_scores": {
+        "innovation": 78,
+        "agentic_capability": 85,
+        "developer_adoption": 60,
+        "enterprise_readiness": 50
+      }
+    }
+  ],
   "algorithm": {},
   "_source": "database",
-  "_timestamp": "2025-09-28T05:30:50.956Z"
+  "_timestamp": "2025-09-28T20:41:18.053Z"
 }

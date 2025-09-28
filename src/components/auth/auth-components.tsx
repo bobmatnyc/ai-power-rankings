@@ -19,6 +19,28 @@ const isClientSide = typeof window !== "undefined";
 const getIsAuthDisabled = () => process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 const getHasClerkKey = () => !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
+// CRITICAL: Check if we should even attempt to load Clerk
+const shouldLoadClerk = () => {
+  // Never load Clerk if auth is explicitly disabled
+  if (getIsAuthDisabled()) {
+    console.info("[AuthComponents] Clerk disabled via NEXT_PUBLIC_DISABLE_AUTH");
+    return false;
+  }
+
+  // Never load without a key
+  if (!getHasClerkKey()) {
+    console.info("[AuthComponents] Clerk disabled - no publishable key");
+    return false;
+  }
+
+  // Only load on client side
+  if (!isClientSide) {
+    return false;
+  }
+
+  return true;
+};
+
 // Simple Clerk component storage
 let clerkComponents: {
   SignedIn?: React.ComponentType<{ children?: React.ReactNode }>;
@@ -40,11 +62,17 @@ let clerkComponents: {
   loaded: boolean;
 } = { loaded: false };
 
-// Load Clerk components only once, only on client
-if (isClientSide && !getIsAuthDisabled() && getHasClerkKey() && !clerkComponents.loaded) {
+// Load Clerk components only if we should
+if (shouldLoadClerk() && !clerkComponents.loaded) {
   try {
     import("@clerk/nextjs")
       .then((clerk) => {
+        // Double-check we should still load after async import
+        if (!shouldLoadClerk()) {
+          clerkComponents.loaded = true;
+          return;
+        }
+
         clerkComponents = {
           SignedIn: clerk.SignedIn,
           SignedOut: clerk.SignedOut,
@@ -60,10 +88,12 @@ if (isClientSide && !getIsAuthDisabled() && getHasClerkKey() && !clerkComponents
         };
         console.info("[AuthComponents] Clerk loaded successfully");
       })
-      .catch(() => {
+      .catch((error) => {
+        console.warn("[AuthComponents] Failed to load Clerk:", error);
         clerkComponents.loaded = true; // Mark as loaded to prevent retries
       });
-  } catch {
+  } catch (error) {
+    console.warn("[AuthComponents] Failed to initiate Clerk import:", error);
     clerkComponents.loaded = true;
   }
 }
@@ -212,8 +242,14 @@ export const SignInButton = ({
     setMounted(true);
   }, []);
 
-  // Use mock during SSR or if auth is disabled
-  if (!mounted || getIsAuthDisabled() || !getHasClerkKey()) {
+  // CRITICAL: Always use mock if auth is disabled
+  // This prevents any attempt to use Clerk components
+  if (getIsAuthDisabled()) {
+    return <MockSignInButton {...props}>{children}</MockSignInButton>;
+  }
+
+  // Use mock during SSR or if no key
+  if (!mounted || !getHasClerkKey()) {
     return <MockSignInButton {...props}>{children}</MockSignInButton>;
   }
 

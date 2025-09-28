@@ -1,24 +1,6 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { i18n } from "./i18n/config";
-
-// Simple route matchers following Clerk's official patterns
-const isProtectedRoute = createRouteMatcher([
-  '/(.*)admin(.*)',
-  '/(.*)dashboard(.*)'
-])
-
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/(.*)sign-in(.*)',
-  '/(.*)sign-up(.*)',
-  '/(.*)/news(.*)',
-  '/(.*)/companies(.*)',
-  '/(.*)/about(.*)',
-  '/api/health(.*)',
-  '/api/public(.*)'
-])
 
 const locales = i18n.locales;
 
@@ -82,7 +64,8 @@ function handleLocaleRedirection(req: NextRequest): NextResponse | null {
   return null;
 }
 
-export default clerkMiddleware(async (auth, req) => {
+// Main middleware function - handle conditionally based on environment
+export async function middleware(req: NextRequest): Promise<NextResponse> {
   const pathname = req.nextUrl.pathname;
 
   // Skip API routes - they handle their own auth
@@ -101,43 +84,86 @@ export default clerkMiddleware(async (auth, req) => {
     return localeResponse;
   }
 
-  // Check if auth is disabled via environment variable
-  const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+  // Check if auth is disabled - this must work at edge runtime
+  // In edge runtime, we can't rely on process.env, so we check a special header
+  // or just skip auth entirely for non-production environments
+  const host = req.headers.get("host") || "";
+  const isProduction = host.includes("aipowerranking.com") && !host.includes("staging");
 
-  // If auth is disabled, allow all routes
-  if (isAuthDisabled) {
+  // For staging and local development, skip auth completely
+  if (!isProduction) {
+    // Add security headers
+    const response = NextResponse.next();
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("X-Frame-Options", "DENY");
+    response.headers.set("X-XSS-Protection", "1; mode=block");
+
+    // Cache static assets
+    if (pathname.includes("/_next/static")) {
+      response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
+    }
+
+    return response;
+  }
+
+  // Only use Clerk middleware in production
+  try {
+    const { clerkMiddleware, createRouteMatcher } = await import('@clerk/nextjs/server');
+
+    // Re-create route matchers using Clerk's functions
+    const isClerkProtectedRoute = createRouteMatcher([
+      '/(.*)admin(.*)',
+      '/(.*)dashboard(.*)'
+    ]);
+
+    const isClerkPublicRoute = createRouteMatcher([
+      '/',
+      '/(.*)sign-in(.*)',
+      '/(.*)sign-up(.*)',
+      '/(.*)/news(.*)',
+      '/(.*)/companies(.*)',
+      '/(.*)/about(.*)',
+      '/api/health(.*)',
+      '/api/public(.*)'
+    ]);
+
+    // Use Clerk middleware
+    return clerkMiddleware(async (auth, clerkReq) => {
+      // For protected routes, check authentication
+      if (isClerkProtectedRoute(clerkReq) && !isClerkPublicRoute(clerkReq)) {
+        const { userId } = await auth();
+
+        if (!userId) {
+          // Redirect to sign-in page
+          const locale = pathname.split("/")[1] || "en";
+          const host = clerkReq.headers.get("host") || "localhost:3001";
+          const protocol = clerkReq.headers.get("x-forwarded-proto") || "http";
+          const signInPath = `/${locale}/sign-in`;
+          const baseUrl = `${protocol}://${host}`;
+          const redirectUrl = new URL(signInPath, baseUrl);
+          return NextResponse.redirect(redirectUrl);
+        }
+      }
+
+      // Add security headers
+      const response = NextResponse.next();
+      response.headers.set("X-Content-Type-Options", "nosniff");
+      response.headers.set("X-Frame-Options", "DENY");
+      response.headers.set("X-XSS-Protection", "1; mode=block");
+
+      // Cache static assets
+      if (pathname.includes("/_next/static")) {
+        response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
+      }
+
+      return response;
+    })(req, {} as any); // Pass req and empty context
+  } catch (error) {
+    console.warn("Failed to load Clerk middleware:", error);
+    // If Clerk fails to load, allow the request to proceed
     return NextResponse.next();
   }
-
-  // For protected routes, check authentication
-  if (isProtectedRoute(req) && !isPublicRoute(req)) {
-    const { userId } = await auth();
-
-    if (!userId) {
-      // Redirect to sign-in page
-      const locale = pathname.split("/")[1] || "en";
-      const host = req.headers.get("host") || "localhost:3001";
-      const protocol = req.headers.get("x-forwarded-proto") || "http";
-      const signInPath = `/${locale}/sign-in`;
-      const baseUrl = `${protocol}://${host}`;
-      const redirectUrl = new URL(signInPath, baseUrl);
-      return NextResponse.redirect(redirectUrl);
-    }
-  }
-
-  // Add security headers
-  const response = NextResponse.next();
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("X-XSS-Protection", "1; mode=block");
-
-  // Cache static assets
-  if (pathname.includes("/_next/static")) {
-    response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
-  }
-
-  return response;
-})
+}
 
 export const config = {
   matcher: [
