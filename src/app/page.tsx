@@ -1,8 +1,9 @@
-// This page should not be reached as middleware handles locale redirects
-// But we need to export a component for Next.js
+import { redirect } from "next/navigation";
 
+// Since we removed middleware, handle locale redirect here
 export const dynamic = "force-dynamic";
 
 export default function RootPage() {
-  return null;
+  // Redirect to default locale
+  redirect("/en");
 }
