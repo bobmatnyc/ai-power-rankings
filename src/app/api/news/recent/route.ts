@@ -38,22 +38,12 @@ export async function GET(request: NextRequest) {
     // Filter for recent articles
     const recentNews = allNews
       .filter((article) => {
-        const articleDate = new Date(
-          article.published_at ||
-            article.publishedAt ||
-            article.created_at ||
-            article.createdAt ||
-            new Date()
-        );
+        const articleDate = new Date(article.publishedAt || article.createdAt || new Date());
         return articleDate >= dateThreshold;
       })
       .sort((a, b) => {
-        const dateA = new Date(
-          a.published_at || a.publishedAt || a.created_at || a.createdAt || new Date()
-        );
-        const dateB = new Date(
-          b.published_at || b.publishedAt || b.created_at || b.createdAt || new Date()
-        );
+        const dateA = new Date(a.publishedAt || a.createdAt || new Date());
+        const dateB = new Date(b.publishedAt || b.createdAt || new Date());
         return dateB.getTime() - dateA.getTime(); // Sort by newest first
       })
       .slice(0, limit);
@@ -67,7 +57,7 @@ export async function GET(request: NextRequest) {
         slug: article.slug,
         title: article.title,
         summary: article.summary || (articleData as any)?.content?.substring(0, 150) + "...",
-        published_at: article.published_at || article.publishedAt || article.created_at,
+        published_at: article.publishedAt || article.createdAt,
         source: article.source || (articleData as any)?.source || "AI News",
         source_url: article.sourceUrl || (articleData as any)?.source_url,
         tool_mentions: article.toolMentions || (articleData as any)?.tool_mentions || [],
