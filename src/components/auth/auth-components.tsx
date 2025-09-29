@@ -125,19 +125,11 @@ export const useAuth = () => {
     return mockAuth;
   }
 
-  // Try to use the real Clerk hook if available
-  // We can't conditionally call hooks, so we'll handle errors differently
-  try {
-    // This is not a React hook but a dynamically imported function
-    // It's safe to call conditionally because it's not a built-in React hook
-    // biome-ignore lint/correctness/useHookAtTopLevel: Dynamically loaded function, not a React hook
-    const authResult = clerkComponents.useAuth();
-    return authResult;
-  } catch (error) {
-    // If Clerk hook fails, return mock
-    console.warn("[useAuth] Clerk hook failed, using mock:", error);
-    return mockAuth;
-  }
+  // FIXED: Cannot call Clerk hooks conditionally
+  // Clerk hooks must be called within ClerkProvider context
+  // For now, return mock until we implement proper context wrapping
+  console.warn("[useAuth] Clerk hooks require ClerkProvider context - using mock");
+  return mockAuth;
 };
 
 /**
@@ -167,19 +159,11 @@ export const useUser = () => {
     return mockUser;
   }
 
-  // Try to use the real Clerk hook if available
-  // We can't conditionally call hooks, so we'll handle errors differently
-  try {
-    // This is not a React hook but a dynamically imported function
-    // It's safe to call conditionally because it's not a built-in React hook
-    // biome-ignore lint/correctness/useHookAtTopLevel: Dynamically loaded function, not a React hook
-    const userResult = clerkComponents.useUser();
-    return userResult;
-  } catch (error) {
-    // If Clerk hook fails, return mock
-    console.warn("[useUser] Clerk hook failed, using mock:", error);
-    return mockUser;
-  }
+  // FIXED: Cannot call Clerk hooks conditionally
+  // Clerk hooks must be called within ClerkProvider context
+  // For now, return mock until we implement proper context wrapping
+  console.warn("[useUser] Clerk hooks require ClerkProvider context - using mock");
+  return mockUser;
 };
 
 /**
@@ -409,20 +393,11 @@ export const useClerk = () => {
     openSignUp: () => {},
   };
 
-  // Early return if no Clerk components
-  if (!clerkComponents || !clerkComponents.useClerk) {
-    return defaultClerk;
-  }
-
-  try {
-    // Call the hook unconditionally when it exists
-    // biome-ignore lint/correctness/useHookAtTopLevel: Safe wrapper for optional Clerk hook
-    const clerkResult = clerkComponents.useClerk();
-    return clerkResult;
-  } catch (error) {
-    console.warn("[useClerk] Failed to call hook:", error);
-    return defaultClerk;
-  }
+  // FIXED: Cannot call Clerk hooks conditionally
+  // Clerk hooks must be called within ClerkProvider context
+  // Always return default for now until proper context is implemented
+  console.warn("[useClerk] Clerk hooks require ClerkProvider context - using default");
+  return defaultClerk;
 };
 
 export const SignIn = (props: Record<string, unknown>) => {

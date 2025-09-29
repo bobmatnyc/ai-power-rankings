@@ -96,21 +96,12 @@ export function NoAuthProvider({ children }: NoAuthProviderProps) {
 
 // Helper function to get context with proper null checks and SSR safety
 export function useNoAuthContext(): NoAuthContextType | null {
-  // Always call useContext unconditionally (required by React hooks rules)
-  // This will either work normally or throw an error that we can catch
-  let context: NoAuthContextType | null = null;
-  let hasError = false;
+  // FIXED: Always call useContext unconditionally (required by React hooks rules)
+  // We cannot wrap useContext in try-catch as it violates React hooks rules
+  const context = useContext(NoAuthContext);
 
-  try {
-    // biome-ignore lint/correctness/useHookAtTopLevel: useContext must be wrapped in try-catch for SSR safety
-    context = useContext(NoAuthContext);
-  } catch (error) {
-    console.error("[useNoAuthContext] Error accessing context:", error);
-    hasError = true;
-  }
-
-  // If there was an error or React validation failed, return fallback
-  if (hasError || !isReactValid || !context) {
+  // If React validation failed or no context, return fallback
+  if (!isReactValid || !context) {
     return {
       isLoaded: true,
       isSignedIn: false,
@@ -290,9 +281,12 @@ export function SignInButton({ children }: { children: ReactNode }) {
 
       {/* Button */}
       {React.isValidElement(children) ? (
-        React.cloneElement(children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>, {
-          onClick: handleClick,
-        })
+        React.cloneElement(
+          children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>,
+          {
+            onClick: handleClick,
+          }
+        )
       ) : (
         <button type="button" onClick={handleClick}>
           {children}
