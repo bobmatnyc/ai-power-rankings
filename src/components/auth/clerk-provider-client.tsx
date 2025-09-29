@@ -12,58 +12,64 @@ interface ClerkProviderClientProps {
  * Client-side ClerkProvider wrapper that prevents SSR issues.
  * This component ensures ClerkProvider only renders on the client side,
  * avoiding the useContext error during static generation.
+ *
+ * CRITICAL: All hooks must be called before any conditional logic
+ * to comply with React's Rules of Hooks and prevent Error #310.
  */
 export default function ClerkProviderClient({ children }: ClerkProviderClientProps) {
+  // CRITICAL: Call ALL hooks first, before ANY conditional returns
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // During SSR and before client hydration, render children without ClerkProvider
-  if (!isClient) {
-    return <>{children}</>;
-  }
-
-  // CRITICAL: Check if auth is disabled first - this takes precedence over everything
+  // Now calculate all conditions AFTER hooks are called
   const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 
-  // If auth is explicitly disabled, NEVER render ClerkProvider
-  if (isAuthDisabled) {
-    console.info("ClerkProvider: Disabled via NEXT_PUBLIC_DISABLE_AUTH");
-    return <>{children}</>;
-  }
-
-  // Check if we're on an allowed domain (production or staging)
   const isAllowedDomain =
+    isClient &&
     typeof window !== "undefined" &&
     (window.location.hostname === "aipowerranking.com" ||
       window.location.hostname === "www.aipowerranking.com" ||
       window.location.hostname === "staging.aipowerranking.com");
 
-  // If no Clerk key is available or we're not on an allowed domain, render without ClerkProvider
-  if (!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"] || !isAllowedDomain) {
-    if (!isAllowedDomain) {
-      console.info("ClerkProvider: Disabled for non-allowed domain");
-    } else {
-      console.warn("ClerkProvider: No publishable key found");
+  const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
+
+  // Determine whether to render ClerkProvider
+  const shouldRenderClerk = isClient && !isAuthDisabled && isAllowedDomain && hasClerkKey;
+
+  // Log the decision (only on client side)
+  useEffect(() => {
+    if (isClient) {
+      if (isAuthDisabled) {
+        console.info("ClerkProvider: Disabled via NEXT_PUBLIC_DISABLE_AUTH");
+      } else if (!isAllowedDomain) {
+        console.info("ClerkProvider: Disabled for non-allowed domain");
+      } else if (!hasClerkKey) {
+        console.warn("ClerkProvider: No publishable key found");
+      }
     }
-    return <>{children}</>;
+  }, [isClient, isAuthDisabled, isAllowedDomain, hasClerkKey]);
+
+  // SINGLE RETURN STATEMENT - ensures consistent hook execution
+  if (shouldRenderClerk) {
+    return (
+      <ClerkProvider
+        publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
+        signInFallbackRedirectUrl="/"
+        signUpFallbackRedirectUrl="/"
+        appearance={{
+          variables: {
+            colorPrimary: "#000000",
+          },
+        }}
+      >
+        {children}
+      </ClerkProvider>
+    );
   }
 
-  // Only render ClerkProvider on the client side with a valid key on allowed domain
-  return (
-    <ClerkProvider
-      publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
-      signInFallbackRedirectUrl="/"
-      signUpFallbackRedirectUrl="/"
-      appearance={{
-        variables: {
-          colorPrimary: "#000000",
-        },
-      }}
-    >
-      {children}
-    </ClerkProvider>
-  );
+  // biome-ignore lint/complexity/noUselessFragments: Fragment needed for consistent return type
+  return <>{children}</>;
 }
