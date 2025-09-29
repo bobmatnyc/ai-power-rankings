@@ -68,6 +68,19 @@ function handleLocaleRedirection(req: NextRequest): NextResponse | null {
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const pathname = req.nextUrl.pathname;
 
+  // Handle OPTIONS requests for CORS (prevents 400 errors from preflight requests)
+  if (req.method === "OPTIONS") {
+    return new NextResponse(null, {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Max-Age": "86400",
+      },
+    });
+  }
+
   // Skip API routes - they handle their own auth
   if (pathname.startsWith('/api/')) {
     return NextResponse.next();
@@ -128,7 +141,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     ]);
 
     // Use Clerk middleware
-    return clerkMiddleware(async (auth, clerkReq) => {
+    const middlewareResult = await clerkMiddleware(async (auth, clerkReq) => {
       // For protected routes, check authentication
       if (isClerkProtectedRoute(clerkReq) && !isClerkPublicRoute(clerkReq)) {
         const { userId } = await auth();
@@ -158,6 +171,12 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 
       return response;
     })(req, {} as any); // Pass req and empty context
+
+    // If middleware returns undefined or not a NextResponse, allow the request to proceed
+    if (!middlewareResult || !(middlewareResult instanceof NextResponse)) {
+      return NextResponse.next();
+    }
+    return middlewareResult;
   } catch (error) {
     console.warn("Failed to load Clerk middleware:", error);
     // If Clerk fails to load, allow the request to proceed

@@ -241,25 +241,67 @@ export function SignedOut({ children }: { children: ReactNode }) {
 
 // Mock SignInButton component
 export function SignInButton({ children }: { children: ReactNode }) {
-  const handleClick = () => {
-    // In development mode, just log the action
-    console.log("SignInButton clicked (development mode)");
-    console.log("Would redirect to: /sign-in");
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Show tooltip for 3 seconds when clicked
+    setShowTooltip(true);
+
+    // Clear any existing timeout
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+    }
+
+    // Hide tooltip after 3 seconds
+    tooltipTimeoutRef.current = setTimeout(() => {
+      setShowTooltip(false);
+    }, 3000);
+
+    console.log("SignInButton clicked (authentication disabled in staging)");
   };
 
-  // If children is a React element, clone it with onClick
-  if (React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<{ onClick?: () => void }>, {
-      onClick: handleClick,
-    });
-  }
+  useEffect(() => {
+    // Cleanup timeout on unmount
+    return () => {
+      if (tooltipTimeoutRef.current) {
+        clearTimeout(tooltipTimeoutRef.current);
+      }
+    };
+  }, []);
 
-  // Otherwise wrap in a button
-  return (
-    <button type="button" onClick={handleClick}>
-      {children}
-    </button>
+  // Wrapper div for positioning
+  const buttonWrapper = (
+    <div className="relative inline-block">
+      {/* Tooltip */}
+      {showTooltip && (
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50">
+          <div className="bg-gray-900 text-white text-sm rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+            Authentication is disabled in staging environment
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+              <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-900" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Button */}
+      {React.isValidElement(children) ? (
+        React.cloneElement(children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>, {
+          onClick: handleClick,
+        })
+      ) : (
+        <button type="button" onClick={handleClick}>
+          {children}
+        </button>
+      )}
+    </div>
   );
+
+  return buttonWrapper;
 }
 
 // Mock UserButton component with admin link for development
