@@ -1,0 +1,114 @@
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RankingChange } from "@/components/ui/ranking-change";
+import { ToolIcon } from "@/components/ui/tool-icon";
+import { extractTextFromRichText, type RichTextBlock } from "@/lib/richtext-utils";
+
+interface RankingData {
+  rank: number;
+  previousRank?: number;
+  rankChange?: number;
+  changeReason?: string;
+  tool: {
+    id: string;
+    slug?: string;
+    name: string;
+    category: string;
+    status: string;
+    website_url?: string;
+    description?: string | RichTextBlock[]; // Can be string or RichText array
+  };
+  scores: {
+    overall: number;
+    agentic_capability: number;
+    innovation: number;
+  };
+  metrics: {
+    users?: number;
+    monthly_arr?: number;
+    swe_bench_score?: number;
+  };
+}
+
+interface HeroCardProps {
+  ranking: RankingData;
+  index: number;
+  lang?: string;
+}
+
+export function HeroCard({ ranking, index, lang = "en" }: HeroCardProps) {
+  return (
+    <Link href={`/${lang}/tools/${ranking.tool.slug || ranking.tool.id}`} className="block h-full">
+      <Card
+        className={`relative group hover:shadow-xl transition-all duration-300 border-border/50 cursor-pointer ${
+          index === 0 ? "md:scale-105 border-primary/30 shadow-lg" : "hover:border-primary/20"
+        }`}
+      >
+        {index === 0 && (
+          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+            <Badge className="bg-gradient-primary border-0 shadow-lg text-primary-foreground">
+              🏆 #1 Ranked
+            </Badge>
+          </div>
+        )}
+
+        <CardHeader className="pb-3">
+          <div className="flex items-center space-x-3">
+            <div className="flex-shrink-0">
+              <ToolIcon name={ranking.tool.name} domain={ranking.tool.website_url} size={64} />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
+                  {ranking.tool.name}
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="bg-primary/10 text-primary">
+                    #{ranking.rank}
+                  </Badge>
+                  <RankingChange
+                    previousRank={ranking.previousRank}
+                    currentRank={ranking.rank}
+                    changeReason={ranking.changeReason}
+                    size="sm"
+                  />
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {ranking.tool.category.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          <div className="space-y-4">
+            {ranking.tool.description && (
+              <p className="text-sm text-muted-foreground line-clamp-3">
+                {extractTextFromRichText(ranking.tool.description)}
+              </p>
+            )}
+
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-muted-foreground">Score</span>
+                <div className="font-semibold text-lg text-primary">
+                  {ranking.scores?.overall?.toFixed(1) || "-"}
+                </div>
+              </div>
+              {ranking.metrics?.swe_bench_score && (
+                <div>
+                  <span className="text-muted-foreground">SWE-bench</span>
+                  <div className="font-semibold text-lg text-accent">
+                    {ranking.metrics.swe_bench_score.toFixed(1)}%
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}

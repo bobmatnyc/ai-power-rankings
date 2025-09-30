@@ -1,0 +1,15 @@
+
+> aipowerranking@0.1.0 dev
+> next dev --port 3011
+
+ ⨯ Failed to start server
+Error: listen EADDRINUSE: address already in use :::3011
+    at <unknown> (Error: listen EADDRINUSE: address already in use :::3011)
+    at new Promise (<anonymous>) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 3011
+}
+[?25h

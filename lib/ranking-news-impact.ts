@@ -1,0 +1,272 @@
+/**
+ * News Impact Integration for Ranking Algorithm
+ *
+ * Calculates how news articles affect tool rankings
+ * considering age decay and PR discounts
+ */
+
+import { logger } from "./logger";
+import { calculateEffectiveNewsImpact } from "./news-aging";
+
+export interface NewsArticle {
+  id: string;
+  published_date?: string;
+  date?: string;
+  type?: string;
+  source?: { name: string } | string;
+  tags?: string[];
+  tool_mentions?:
+    | string[]
+    | Array<{
+        tool_id: string;
+        relevance: "primary" | "secondary" | "mentioned";
+        sentiment?: "positive" | "neutral" | "negative" | "mixed";
+      }>;
+  impact_assessment?: {
+    importance?: "critical" | "high" | "medium" | "low";
+    market_impact?: "major" | "moderate" | "minor" | "none";
+    ranking_impact?: Array<{
+      tool_id: string;
+      impact_type: "positive" | "negative" | "neutral";
+      factors_affected?: string[];
+    }>;
+  };
+  metadata?: {
+    is_company_announcement?: boolean;
+    source_credibility?: number;
+  };
+}
+
+/**
+ * Calculate the base impact score for a news article
+ */
+export function calculateBaseNewsImpact(article: NewsArticle): number {
+  let baseImpact = 0;
+
+  // Importance factor - use defaults for now since we don't have impact_assessment
+  const importanceScores = {
+    critical: 10,
+    high: 7,
+    medium: 4,
+    low: 2,
+  };
+  const importance = article["impact_assessment"]?.["importance"] || "medium";
+  baseImpact += importanceScores[importance] || importanceScores["medium"];
+
+  // Market impact factor - use defaults for now
+  const marketImpactScores = {
+    major: 8,
+    moderate: 5,
+    minor: 2,
+    none: 0,
+  };
+  const marketImpact = article["impact_assessment"]?.["market_impact"] || "minor";
+  baseImpact += marketImpactScores[marketImpact] || marketImpactScores["minor"];
+
+  // News type factor - analyze from tags if type is not available
+  const typeImpactScores: Record<string, number> = {
+    funding: 8,
+    acquisition: 9,
+    product_launch: 7,
+    feature_update: 5,
+    benchmark_result: 8,
+    pricing_change: 6,
+    partnership: 4,
+    technical_milestone: 7,
+    security_incident: -5,
+    company_announcement: 3,
+    company_news: 3,
+    market_analysis: 4,
+    research_paper: 6,
+    community_news: 3,
+  };
+
+  // Use type if available, otherwise default based on tags
+  if (article["type"]) {
+    baseImpact += typeImpactScores[article["type"]] || 3;
+  } else {
+    // Default impact based on presence of article
+    baseImpact += 3;
+  }
+
+  // Normalize to 0-10 scale
+  return Math.min(10, Math.max(0, baseImpact / 2.5));
+}
+
+/**
+ * Calculate news sentiment impact for a specific tool
+ */
+export function calculateSentimentImpact(
+  toolMention:
+    | string
+    | {
+        tool_id: string;
+        relevance: "primary" | "secondary" | "mentioned";
+        sentiment?: "positive" | "neutral" | "negative" | "mixed";
+      }
+): number {
+  // Handle string format (no sentiment info)
+  if (typeof toolMention === "string") {
+    return 0; // Neutral sentiment for string mentions
+  }
+
+  const sentimentScores = {
+    positive: 1.0,
+    neutral: 0,
+    negative: -1.0,
+    mixed: 0.2,
+  };
+
+  const relevanceMultipliers = {
+    primary: 1.0,
+    secondary: 0.5,
+    mentioned: 0.2,
+  };
+
+  const sentiment = toolMention.sentiment || "neutral";
+  const sentimentScore = sentimentScores[sentiment];
+  const relevanceMultiplier = relevanceMultipliers[toolMention.relevance];
+
+  return sentimentScore * relevanceMultiplier;
+}
+
+/**
+ * Calculate aggregated news impact for a tool
+ */
+export function calculateToolNewsImpact(
+  toolId: string,
+  newsArticles: NewsArticle[],
+  referenceDate: Date = new Date()
+): {
+  totalImpact: number;
+  positiveImpact: number;
+  negativeImpact: number;
+  articleCount: number;
+  recentArticleCount: number;
+} {
+  let totalImpact = 0;
+  let positiveImpact = 0;
+  let negativeImpact = 0;
+  let articleCount = 0;
+  let recentArticleCount = 0;
+
+  const thirtyDaysAgo = new Date(referenceDate);
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  for (const article of newsArticles) {
+    // Find mentions of this tool
+    const mentions = article.tool_mentions || [];
+    let isToolMentioned = false;
+
+    // Handle both string array and object array formats
+    if (mentions.length > 0) {
+      if (typeof mentions[0] === "string") {
+        // Simple string array format - check if tool ID or slug matches
+        isToolMentioned = (mentions as string[]).includes(toolId);
+      } else {
+        // Object array format
+        isToolMentioned = (mentions as Array<{ tool_id: string }>).some(
+          (m) => m.tool_id === toolId
+        );
+      }
+    }
+
+    if (!isToolMentioned) {
+      continue;
+    }
+
+    articleCount++;
+
+    const articleDate = new Date(article.published_date || article.date || "");
+    if (articleDate >= thirtyDaysAgo) {
+      recentArticleCount++;
+    }
+
+    // Calculate base impact
+    const baseImpact = calculateBaseNewsImpact(article);
+
+    // Process each mention
+    // for (const mention of toolMentions) {
+    // Calculate sentiment-adjusted impact
+    // Since we only have tool IDs, use neutral sentiment for now
+    const sentimentModifier = 0; // Neutral sentiment
+    const sentimentAdjustedImpact = baseImpact * (1 + sentimentModifier);
+
+    // Apply aging decay and PR discount
+    const effectiveImpact = calculateEffectiveNewsImpact(
+      article,
+      sentimentAdjustedImpact,
+      referenceDate
+    );
+
+    totalImpact += effectiveImpact;
+
+    if (effectiveImpact > 0) {
+      positiveImpact += effectiveImpact;
+    } else {
+      negativeImpact += Math.abs(effectiveImpact);
+    }
+    // } // End of commented for loop
+  }
+
+  return {
+    totalImpact: Math.round(totalImpact * 100) / 100,
+    positiveImpact: Math.round(positiveImpact * 100) / 100,
+    negativeImpact: Math.round(negativeImpact * 100) / 100,
+    articleCount,
+    recentArticleCount,
+  };
+}
+
+/**
+ * Apply news impact to ranking factors
+ */
+export function applyNewsImpactToRanking(
+  baseScores: Record<string, number>,
+  newsImpact: ReturnType<typeof calculateToolNewsImpact>
+): Record<string, number> {
+  const adjustedScores = { ...baseScores };
+
+  // News primarily affects these factors
+  const impactDistribution = {
+    businessSentiment: 0.4,
+    marketTraction: 0.3,
+    developerAdoption: 0.2,
+    innovation: 0.1,
+  };
+
+  // Calculate impact modifier (capped between -2 and +2)
+  const impactModifier = Math.max(-2, Math.min(2, newsImpact["totalImpact"] / 10));
+
+  // Apply impact to relevant factors
+  for (const [factor, weight] of Object.entries(impactDistribution)) {
+    if (adjustedScores[factor] !== undefined) {
+      // Add weighted impact to the factor score
+      adjustedScores[factor] = Math.max(
+        0,
+        Math.min(10, adjustedScores[factor] + impactModifier * weight)
+      );
+    }
+  }
+
+  // Boost development velocity if there's high recent news activity
+  if (newsImpact["recentArticleCount"] > 5) {
+    adjustedScores["developmentVelocity"] = Math.min(
+      10,
+      (adjustedScores["developmentVelocity"] || 5) + 0.5
+    );
+  }
+
+  if (newsImpact.totalImpact > 0) {
+    logger.info("Applied news impact for tool:", {
+      newsImpact,
+      impactModifier,
+      adjustments: Object.entries(impactDistribution).map(([factor, weight]) => ({
+        factor,
+        adjustment: impactModifier * weight,
+      })),
+    });
+  }
+
+  return adjustedScores;
+}

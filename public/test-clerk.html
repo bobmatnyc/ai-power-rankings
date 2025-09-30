@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clerk Integration Test</title>
+    <script>
+        // Configuration for Clerk
+        window.__clerk_publishable_key = 'pk_test_ZmFpdGhmdWwtYmVldGxlLTE4LmNsZXJrLmFjY291bnRzLmRldiQ';
+        window.__clerk_frontend_api = 'https://clerk.aipowerranking.com';
+        window.__clerk_domain = 'clerk.aipowerranking.com';
+    </script>
+</head>
+<body>
+    <h1>Clerk Integration Test Page</h1>
+
+    <div id="clerk-status">Loading Clerk...</div>
+
+    <button id="test-signin" style="padding: 10px 20px; margin: 20px 0;">
+        Test Sign In
+    </button>
+
+    <div id="output" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; min-height: 100px;">
+        <h3>Debug Output:</h3>
+        <pre id="debug-log"></pre>
+    </div>
+
+    <script>
+        const log = (message) => {
+            const debugLog = document.getElementById('debug-log');
+            debugLog.textContent += `${new Date().toISOString()}: ${message}\n`;
+            console.log(message);
+        };
+
+        // Load Clerk script
+        const script = document.createElement('script');
+        script.src = 'https://clerk.aipowerranking.com/npm/@clerk/clerk-js@5.38.0/dist/clerk.browser.js';
+        script.crossOrigin = 'anonymous';
+        script.onload = async () => {
+            log('Clerk script loaded');
+
+            try {
+                // Initialize Clerk
+                const clerk = window.Clerk;
+                await clerk.load({
+                    publishableKey: window.__clerk_publishable_key,
+                    frontendApi: window.__clerk_frontend_api,
+                });
+
+                log('Clerk initialized successfully');
+                document.getElementById('clerk-status').textContent = 'Clerk Ready!';
+
+                // Check current auth status
+                log(`Is Loaded: ${clerk.loaded}`);
+                log(`Is Signed In: ${!!clerk.user}`);
+
+                // Set up sign in button
+                document.getElementById('test-signin').addEventListener('click', () => {
+                    log('Sign in button clicked');
+                    try {
+                        clerk.openSignIn({
+                            mode: 'modal',
+                            afterSignInUrl: window.location.href,
+                            afterSignUpUrl: window.location.href,
+                        });
+                        log('Sign in modal opened');
+                    } catch (error) {
+                        log(`Error opening sign in: ${error.message}`);
+                    }
+                });
+
+            } catch (error) {
+                log(`Error initializing Clerk: ${error.message}`);
+                document.getElementById('clerk-status').textContent = 'Clerk Failed to Load';
+            }
+        };
+
+        script.onerror = (error) => {
+            log(`Failed to load Clerk script: ${error}`);
+            document.getElementById('clerk-status').textContent = 'Script Load Failed';
+        };
+
+        document.head.appendChild(script);
+        log('Started loading Clerk script...');
+    </script>
+</body>
+</html>

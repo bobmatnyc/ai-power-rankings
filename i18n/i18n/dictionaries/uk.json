@@ -1,0 +1,811 @@
+{
+  "categories": {
+    "autonomousagent": "Автономний Агент",
+    "codeeditor": "Редактор Коду",
+    "ideassistant": "IDE Асистент",
+    "appbuilder": "Білдер Додатків",
+    "opensourceframework": "Open Source Фреймворк",
+    "testingtool": "Тул для Тестування",
+    "codereview": "Код Рев'ю",
+    "codeassistant": "Код Асистент",
+    "devopsassistant": "DevOps Асистент",
+    "autonomousAgent": "Автономний Агент",
+    "codeEditor": "Редактор Коду",
+    "ideAssistant": "IDE Асистент",
+    "appBuilder": "Білдер Додатків",
+    "codeReview": "Код Рев'ю",
+    "codeAssistant": "Код Асистент",
+    "devopsAssistant": "DevOps Асистент"
+  },
+  "common": {
+    "appName": "AI Power Rankings",
+    "appDescription": "Data-driven рейтинги AI coding тулів",
+    "loading": "Завантаження...",
+    "error": "Помилка",
+    "tryAgain": "Спробуй знову",
+    "backToHome": "Назад до головної",
+    "learnMore": "Дізнатись більше",
+    "viewAll": "Переглянути все",
+    "close": "Закрити",
+    "cancel": "Скасувати",
+    "save": "Зберегти",
+    "search": "Пошук",
+    "signupForUpdates": "Підписатися на оновлення →",
+    "filter": "Фільтр",
+    "sort": "Сортування",
+    "share": "Поділитись",
+    "explore": "Дослідити",
+    "notAvailable": "Н/Д",
+    "users": "Користувачі",
+    "back": "Назад"
+  },
+  "navigation": {
+    "home": "Головна",
+    "rankings": "Рейтинги",
+    "news": "Новини",
+    "tools": "Інструменти",
+    "methodology": "Методологія",
+    "about": "Про нас",
+    "subscribeToUpdates": "Підписатись на оновлення",
+    "signupForUpdates": "Signup For Updates",
+    "navigation": "Навігація",
+    "quickLinks": "Швидкі посилання",
+    "trending": "Трендінг",
+    "categories": "Категорії",
+    "features": "Функції",
+    "clearFilters": "Очистити фільтри",
+    "allCategories": "Всі категорії"
+  },
+  "home": {
+    "hero": {
+      "badge": "Оновлення щотижня",
+      "title": "AI Power Rankings",
+      "subtitle": "Відкрий та порівняй найпотужніші AI coding тули. Від автономних агентів до IDE асистентів, знайди ідеального AI компаньйона для свого dev workflow.",
+      "description": "Відкрий та порівняй найпотужніші AI coding тули. Від автономних агентів до IDE асистентів, знайди ідеального AI компаньйона для свого dev workflow.",
+      "exploreTools": "Досліджуй всі тули",
+      "viewTrending": "Дивись trending",
+      "exploreButton": "Досліджуй всі тули",
+      "trendingButton": "Дивись trending",
+      "whatsNewButton": "Що нового"
+    },
+    "stats": {
+      "toolsRanked": "AI тули ранжировані",
+      "trendingUp": "Трендінг вгору",
+      "updates": "Оновлення",
+      "freeAccess": "Вільний доступ",
+      "updateFrequency": "Щотижневі оновлення"
+    },
+    "trending": {
+      "title": "Трендінг цього тижня",
+      "subtitle": "AI тули що набирають momentum і піднімаються в рейтингах",
+      "description": "AI тули що набирають momentum і піднімаються в рейтингах",
+      "viewAll": "Переглянути весь trending",
+      "viewAllButton": "Переглянути весь trending"
+    },
+    "recentlyUpdated": {
+      "title": "Нещодавно оновлені",
+      "subtitle": "Останні апдейти та нові фічі від топових AI тулів",
+      "description": "Останні апдейти та нові фічі від топових AI тулів",
+      "viewAll": "Переглянути всі рейтинги",
+      "viewAllButton": "Переглянути всі рейтинги"
+    },
+    "recent": {
+      "title": "Недавні оновлення",
+      "description": "Останні розробки та релізи функцій від топових AI тулів",
+      "viewAllButton": "Переглянути всі недавні"
+    },
+    "categories": {
+      "title": "Досліджуй за категоріями",
+      "explore": "Дослідити →",
+      "ideAssistants": {
+        "name": "IDE Асистенти",
+        "description": "AI-powered code completion та suggestions"
+      },
+      "aiEditors": {
+        "name": "AI Редактори",
+        "description": "Smart редактори з AI інтеграцією"
+      },
+      "appBuilders": {
+        "name": "App Builders",
+        "description": "Будуй повноцінні апи з AI assistance"
+      },
+      "autonomousAgents": {
+        "name": "Автономні Агенти",
+        "description": "Повністю автономні AI software engineers"
+      },
+      "ideDescription": "AI-powered code completion та suggestions",
+      "editorDescription": "Smart редактори з AI інтеграцією",
+      "builderDescription": "Будуй повноцінні апи з AI assistance",
+      "agentDescription": "Повністю автономні AI software engineers"
+    },
+    "methodology": {
+      "title": "Наша методологія",
+      "algorithmTitle": "Алгоритм v7.0",
+      "algorithmDescription": "Наш просунутий ranking алгоритм враховує 8 ключових факторів з sophisticated modifiers:",
+      "keyModifiersTitle": "Ключові модифікатори",
+      "keyModifiersDescription": "Три sophisticated модифікатори забезпечують fair та accurate рейтинги:",
+      "factors": {
+        "agenticCapability": "Agentic здатність (30%) - Автономні coding можливості",
+        "innovation": {
+          "name": "Інновації",
+          "description": "Технічні breakthroughs та feature інновації"
+        },
+        "technicalPerformance": "Технічна performance (12.5%) - SWE-bench фокус",
+        "marketTraction": "Market traction (12.5%) - Revenue якість adjusted",
+        "agentic": {
+          "name": "Agentic здатність",
+          "description": "Автономні coding здібності та multi-step task completion"
+        },
+        "performance": {
+          "name": "Технічна Performance",
+          "description": "Якість коду, швидкість та benchmark результати"
+        },
+        "traction": {
+          "name": "Market Traction",
+          "description": "User adoption, growth rate та market presence"
+        }
+      },
+      "modifiers": {
+        "innovationDecay": "Innovation Decay - Свіжі інновації score вище",
+        "platformRisk": "Platform Risk - Independence бонуси, lock-in штрафи",
+        "revenueQuality": "Revenue Quality - Enterprise revenue weighted вище",
+        "dataValidation": "Data Validation - 80% completeness required",
+        "decay": {
+          "name": "Innovation Decay",
+          "description": "Свіжі інновації weighted більше"
+        },
+        "risk": {
+          "name": "Platform Risk",
+          "description": "Independence vs platform lock-in фактори"
+        },
+        "revenue": {
+          "name": "Revenue Quality",
+          "description": "Enterprise revenue weighted вище ніж consumer"
+        },
+        "validation": {
+          "name": "Data Validation",
+          "description": "Мінімум 80% data completeness required"
+        }
+      },
+      "modifiersTitle": "Динамічні модифікатори",
+      "modifiersDescription": "Три sophisticated модифікатори забезпечують fair та accurate рейтинги",
+      "readFull": "Читати повну методологію",
+      "readMoreButton": "Читати повну методологію"
+    },
+    "footer": {
+      "tagline": "Data-driven insights для AI революції",
+      "description": "Комплексні рейтинги AI інструментів кодування з алгоритмом v7.0, динамічним аналізом новин, покращеними можливостями інструментів та оцінкою швидкості.",
+      "quickLinks": "Швидкі посилання",
+      "categories": "Категорії",
+      "copyright": "© 2025 AI Power Rankings. All rights reserved."
+    }
+  },
+  "rankings": {
+    "title": "AI Power Rankings",
+    "subtitle": "Комплексні рейтинги AI інструментів кодування з алгоритмом v7.0",
+    "stats": {
+      "totalTools": "Всього тулів",
+      "categories": "Категорії",
+      "avgScore": "Середній score",
+      "lastUpdate": "Останній update",
+      "thisWeek": "Цього тижня"
+    },
+    "sortBy": "Сортувати за",
+    "activeFilters": "Активні фільтри",
+    "sort": {
+      "rank": "Ранк",
+      "trending": "Trending",
+      "score": "Score",
+      "name": "Ім'я"
+    },
+    "algorithm": {
+      "title": "Про алгоритм v7.0",
+      "subtitle": "Enhanced ranking система з innovation decay, platform risk modifiers та revenue quality adjustments",
+      "tabs": {
+        "factors": "Scoring фактори",
+        "modifiers": "Модифікатори",
+        "methodology": "Методологія"
+      },
+      "primaryFactors": "Primary фактори (67.5%)",
+      "secondaryFactors": "Secondary фактори (32.5%)",
+      "description": "Наш ranking алгоритм комбінує quantitative metrics з qualitative assessments для comprehensive view AI coding тулів. Ми оновлюємо рейтинги щотижня базуючись на новій data та continuously refine нашу методологію.",
+      "factors": {
+        "agentic": "Агентна здатність",
+        "innovation": "Інновації",
+        "performance": "Продуктивність",
+        "adoption": "Прийняття",
+        "traction": "Ринкова тяга",
+        "sentiment": "Бізнес-настрої",
+        "velocity": "Швидкість розробки",
+        "resilience": "Стійкість платформи"
+      },
+      "modifiers": {
+        "decay": "Спад інновацій",
+        "risk": "Ризик платформи",
+        "revenue": "Якість доходу"
+      },
+      "methodologyText": "На основі нашої прозорої",
+      "viewMethodology": "Переглянути методологію"
+    },
+    "tierLegend": {
+      "title": "Рівні Рейтингу",
+      "description": "Інструменти призначаються рівням на основі їх позиції в рейтингу",
+      "tiers": {
+        "S": {
+          "label": "Еліта",
+          "range": "Топ 5",
+          "description": "Найкращі інструменти кодування зі штучним інтелектом"
+        },
+        "A": {
+          "label": "Відмінно",
+          "range": "6-15",
+          "description": "Виняткові інструменти з високою продуктивністю"
+        },
+        "B": {
+          "label": "Добре",
+          "range": "16-25",
+          "description": "Надійні та стабільні інструменти"
+        },
+        "C": {
+          "label": "Середнє",
+          "range": "26-35",
+          "description": "Пристойні інструменти з конкретними випадками використання"
+        },
+        "D": {
+          "label": "Нижче Середнього",
+          "range": "36+",
+          "description": "Інструменти з обмеженими функціями або прийняттям"
+        }
+      }
+    }
+  },
+  "news": {
+    "title": "AI Tools News",
+    "subtitle": "Останні updates, milestones та announcements від AI coding тулів",
+    "filters": {
+      "all": "Всі новини",
+      "milestone": "Milestone",
+      "feature": "Feature",
+      "partnership": "Partnership",
+      "update": "Update",
+      "announcement": "Announcement"
+    },
+    "noItems": "Не знайдено news items.",
+    "loadingMore": "Loading більше news...",
+    "noMore": "Немає більше news для завантаження",
+    "viewTool": "Переглянути тул",
+    "metrics": {
+      "users": "користувачі",
+      "score": "score",
+      "rank": "rank"
+    },
+    "time": {
+      "justNow": "Щойно",
+      "hourAgo": "1 годину тому",
+      "hoursAgo": "{count} годин тому",
+      "dayAgo": "1 день тому",
+      "daysAgo": "{count} днів тому"
+    },
+    "viewSource": "Переглянути джерело"
+  },
+  "tools": {
+    "title": "AI Coding Тули",
+    "subtitle": "Досліджуй всі {count} AI coding тули в нашій базі",
+    "allCategories": "Всі категорії",
+    "filterByCategory": "Фільтрувати за категорією",
+    "sortBy": "Сортувати за",
+    "defaultDescription": "Відкривай та порівнюй AI coding тули",
+    "sort": {
+      "name": "Ім'я",
+      "category": "Категорія",
+      "status": "Статус"
+    },
+    "stats": {
+      "total": "Всього тулів",
+      "active": "Активні",
+      "categories": "Категорії",
+      "openSource": "Open Source"
+    },
+    "directory": {
+      "title": "AI Coding Тули Directory",
+      "subtitle": "Досліджуй всі {count} AI coding тули в нашій database",
+      "filterByCategory": "Фільтрувати за категорією",
+      "filterByStatus": "Фільтрувати за статусом",
+      "allCategories": "Всі категорії",
+      "allStatuses": "Всі статуси"
+    },
+    "detail": {
+      "loading": "Loading tool details...",
+      "notFound": "Тул не знайдено",
+      "backToTools": "Назад до тулів",
+      "visitWebsite": "Відвідати Website",
+      "viewGithub": "GitHub",
+      "viewOnGithub": "View на GitHub",
+      "overview": "Overview",
+      "description": "Опис",
+      "company": "Компанія",
+      "pricing": "Pricing",
+      "users": "Користувачі",
+      "githubStars": "GitHub Stars",
+      "tabs": {
+        "performance": "Performance",
+        "businessMetrics": "Business",
+        "scores": "Scores",
+        "history": "History",
+        "pricing": "Ціни"
+      },
+      "performance": {
+        "title": "Технічна продуктивність",
+        "subtitle": "Результати бенчмарків та технічні можливості",
+        "description": "Результати бенчмарків та технічні можливості включаючи SWE-bench оцінки та підтримку функцій",
+        "sweScore": "SWE-bench Очки",
+        "contextWindow": "Context Window",
+        "languageSupport": "Language Support",
+        "multiFileSupport": "Multi-file Support",
+        "llmProviders": "LLM Providers",
+        "tokens": "tokens",
+        "languages": "мови",
+        "yes": "Так",
+        "multiple": "Multiple"
+      },
+      "businessMetrics": {
+        "title": "Business Metrics",
+        "subtitle": "Financial та growth metrics",
+        "monthlyArr": "ARR (Monthly)",
+        "valuation": "Valuation",
+        "totalFunding": "Total Funding",
+        "employees": "Співробітники",
+        "totalUsers": "Total Users"
+      },
+      "rankingScores": {
+        "title": "Ranking Scores",
+        "subtitle": "Детальний breakdown ranking факторів",
+        "overallScore": "Overall Score",
+        "breakdown": "Score Breakdown",
+        "modifiers": "Applied Modifiers"
+      },
+      "metricHistory": {
+        "title": "Metric History",
+        "subtitle": "Recent metrics що впливають на ranking scores",
+        "noHistory": "Немає metric history для цього тула.",
+        "update": "Update",
+        "newMetrics": "Нові metrics reported для {tool}"
+      }
+    },
+    "status": {
+      "active": "Активний",
+      "beta": "Бета",
+      "deprecated": "Застарілий",
+      "discontinued": "Припинений",
+      "acquired": "Придбаний"
+    },
+    "categories": {
+      "autonomous-agent": "Автономний Агент",
+      "code-editor": "Редактор Коду",
+      "ide-assistant": "IDE Асистент",
+      "app-builder": "App Builder",
+      "open-source-framework": "Open Source Framework",
+      "testing-tool": "Testing Tool",
+      "code-review": "Code Review",
+      "code-generation": "Code Generation"
+    },
+    "notFound": "Інструмент не знайдено",
+    "backToTools": "Назад до інструментів"
+  },
+  "newsletter": {
+    "form": {
+      "firstName": "Ім'я",
+      "lastName": "Прізвище",
+      "email": "Email",
+      "subscribe": "Підписатись",
+      "subscribing": "Підписуємось...",
+      "privacyNote": "Ми поважаємо вашу privacy. Unsubscribe в будь-який час."
+    },
+    "modal": {
+      "title": "Stay Updated",
+      "subtitle": "Отримуй weekly updates про AI tool рейтинги, нові features та industry insights.",
+      "firstName": "Ім'я",
+      "lastName": "Прізвище",
+      "email": "Email",
+      "subscribe": "Підписатись",
+      "subscribing": "Підписуємось...",
+      "thankYou": "Дякуємо!",
+      "checkEmail": "Будь ласка check your email для verify вашу підписку",
+      "alreadySubscribed": "Ви вже підписані на наш newsletter!",
+      "resentEmail": "Ми resent verification email. Будь ласка check your inbox.",
+      "privacyNote": "Ми поважаємо вашу privacy. Unsubscribe в будь-який час.",
+      "errors": {
+        "captcha": "Будь ласка complete security check",
+        "failed": "Failed to subscribe. Будь ласка try again.",
+        "server": "Server configuration error",
+        "email": "Email service configuration error"
+      }
+    },
+    "verification": {
+      "title": "Email Verification",
+      "success": {
+        "title": "Email Verified!",
+        "message": "Ваш email було successfully verified. Ви почнете отримувати наш weekly newsletter з latest AI tool рейтингами та insights."
+      },
+      "alreadyVerified": {
+        "title": "Already Verified",
+        "message": "Цей email address вже verified. Ви готові отримувати наші newsletters!"
+      },
+      "errors": {
+        "missingToken": {
+          "title": "Missing Verification Token",
+          "message": "Verification link здається incomplete. Будь ласка check your email для correct link."
+        },
+        "invalidToken": {
+          "title": "Invalid Token",
+          "message": "Цей verification link invalid або expired. Будь ласка subscribe again для receive new verification email."
+        },
+        "failed": {
+          "title": "Verification Failed",
+          "message": "Ми couldn't verify ваш email зараз. Будь ласка try again later або contact support якщо problem persists."
+        },
+        "unexpected": {
+          "title": "Unexpected Error",
+          "message": "Unexpected error occurred. Будь ласка try again later."
+        }
+      },
+      "actions": {
+        "backToHome": "Назад до Home",
+        "subscribeAgain": "Subscribe Again"
+      }
+    },
+    "unsubscribe": {
+      "title": "Unsubscribe від Newsletter",
+      "processing": "Processing ваш request...",
+      "success": {
+        "title": "Successfully Unsubscribed",
+        "message": "Ви були unsubscribed від AI Power Rankings newsletter. Шкода що ви йдете!",
+        "description": "Ви були відписані від AI Power Rankings newsletter. Шкода, що ви йдете!"
+      },
+      "errors": {
+        "missingToken": {
+          "title": "Missing Token",
+          "message": "Unsubscribe link здається incomplete."
+        },
+        "invalidToken": {
+          "title": "Invalid Link",
+          "message": "Цей unsubscribe link invalid або expired."
+        },
+        "failed": {
+          "title": "Unsubscribe Failed",
+          "message": "Ми couldn't process ваш unsubscribe request. Будь ласка try again later."
+        },
+        "unexpected": {
+          "title": "Error",
+          "message": "Unexpected error occurred. Будь ласка try again."
+        },
+        "unsubscribeFailed": "Ми не змогли обробити ваш запит на відписку. Будь ласка спробуйте пізніше.",
+        "default": "Сталася неочікувана помилка. Будь ласка спробуйте знову."
+      },
+      "resubscribe": "Changed your mind? Ви можете subscribe again anytime.",
+      "subscribeAgain": "Subscribe Again",
+      "error": {
+        "title": "Помилка відписки"
+      }
+    },
+    "verify": {
+      "goToHomepage": "Перейти на головну",
+      "tryAgain": "Спробувати знову",
+      "success": {
+        "title": "Email підтверджено!",
+        "description": "Ваш email було успішно підтверджено. Ви почнете отримувати наш щотижневий newsletter."
+      },
+      "alreadyVerified": {
+        "title": "Вже підтверджено",
+        "description": "Цей email адрес вже підтверджено. Все готово!"
+      },
+      "error": {
+        "title": "Помилка підтвердження"
+      },
+      "errors": {
+        "default": "Сталася неочікувана помилка. Будь ласка спробуйте знову.",
+        "missingToken": "Посилання для підтвердження здається неповним.",
+        "invalidToken": "Це посилання для підтвердження невалідне або прострочене.",
+        "verificationFailed": "Ми не змогли підтвердити ваш email зараз. Будь ласка спробуйте пізніше."
+      }
+    }
+  },
+  "methodology": {
+    "title": "Наша методологія",
+    "subtitle": "Як ми ранкуємо AI coding тули",
+    "lastUpdated": "Last updated: Січень 2025",
+    "intro": "AI Power Rankings використовує вдосконалений алгоритм (v7.0) для оцінки та ранжування AI інструментів кодування на основі багатьох кількісних і якісних факторів, аналізу новин в реальному часі та комплексних можливостей інструментів. Наша методологія розроблена для надання розробникам об'єктивної оцінки ландшафту AI інструментів.",
+    "sections": {
+      "scoringFactors": {
+        "title": "Scoring Factors",
+        "intro": "Наш алгоритм evaluates тули across 8 key dimensions, кожен weighted according до importance для developers:"
+      },
+      "modifiers": {
+        "title": "Dynamic Modifiers",
+        "intro": "Щоб ensure рейтинги reflect current market realities, ми apply три sophisticated modifiers:"
+      },
+      "dataCollection": {
+        "title": "Data Collection",
+        "intro": "Ми gather data з multiple sources для ensure accuracy:",
+        "sources": [
+          "Direct API integrations з tool providers",
+          "Public repositories та developer statistics",
+          "Industry reports та verified news sources",
+          "User surveys та community feedback",
+          "Performance benchmarks (SWE-bench, HumanEval)"
+        ]
+      },
+      "updateFrequency": {
+        "title": "Update Frequency",
+        "content": "Рейтинги recalculated щотижня для reflect rapidly evolving AI landscape. Major methodology updates versioned та documented."
+      }
+    },
+    "algorithm": {
+      "title": "Алгоритм v6.0",
+      "description": "Наш найновіший ranking алгоритм включає реальні паттерни використання та ринкову динаміку",
+      "keyFeatures": "Ключові функції",
+      "features": {
+        "innovationDecay": "Моделювання спаду інновацій для відображення свіжості інструментів",
+        "platformRisk": "Оцінка ризиків платформи для залежностей від постачальників",
+        "revenueQuality": "Коригування якості доходу на основі бізнес-моделі",
+        "technicalWeighting": "Вагування технічних можливостей для різних випадків використання",
+        "dataValidation": "Багатоджерельна валідація та нормалізація даних",
+        "logarithmicScaling": "Логарифмічне масштабування для збалансованих порівнянь"
+      }
+    },
+    "factors": {
+      "title": "Фактори оцінювання",
+      "description": "Інструменти оцінюються за 8 ключовими параметрами зі специфічними вагами",
+      "primary": "Основні фактори (82.5%)",
+      "secondary": "Другорядні фактори (17.5%)",
+      "agentic": {
+        "details": "Вимірює автономні здібності, багатоетапне міркування та виконання складних завдань"
+      },
+      "innovation": {
+        "details": "Оцінює проривні функції, технічні досягнення та ринкову диференціацію"
+      },
+      "performance": {
+        "details": "Бенчмарки на SWE-bench, HumanEval та реальних завданнях кодування"
+      },
+      "adoption": {
+        "details": "Активні користувачі, темпи зростання та метрики проникнення на ринок"
+      },
+      "traction": {
+        "details": "Зростання доходів, раунди фінансування та індикатори бізнес-моментуму"
+      },
+      "sentiment": {
+        "details": "Задоволеність розробників, відгуки спільноти та рейтинги рекомендацій"
+      },
+      "velocity": {
+        "details": "Темп випуску функцій, частота оновлень та швидкість інновацій"
+      },
+      "resilience": {
+        "details": "Стабільність платформи, варіанти резервного копіювання та незалежність від постачальника"
+      }
+    },
+    "modifiers": {
+      "title": "Динамічні модифікатори",
+      "description": "Корекції в реальному часі, що відображають ринкові умови та зрілість інструментів",
+      "innovationDecay": {
+        "description": "Оцінки інновацій зменшуються з часом, щоб винагороджувати постійне вдосконалення та карати застій"
+      },
+      "platformRisk": {
+        "description": "Корекції на основі vendor lock-in, платформних залежностей та бізнес-ризиків",
+        "penalties": "Штрафи за ризики",
+        "penaltyList": {
+          "acquired": "Нещодавно придбано конкурентом",
+          "exclusive": "Ексклюзивність платформи (один LLM)",
+          "competitor": "Належить конкуруючій платформі",
+          "regulatory": "Проблеми з регуляторною відповідністю",
+          "funding": "Проблеми з фінансуванням або сталістю"
+        },
+        "bonuses": "Бонуси за зниження ризиків",
+        "bonusList": {
+          "multiLLM": "Підтримує декілька LLM провайдерів",
+          "openSource": "Доступність відкритого коду",
+          "selfHosted": "Варіанти самостійного хостингу"
+        }
+      },
+      "revenueQuality": {
+        "description": "Вагування доходів на основі сталості бізнес-моделі та потенціалу зростання",
+        "models": {
+          "enterpriseHigh": "Корпоративний (High-touch)",
+          "enterpriseStandard": "Корпоративний (Стандартний)",
+          "smbSaas": "SMB SaaS",
+          "consumerPremium": "Споживач Premium",
+          "freemium": "Freemium",
+          "openSource": "Відкритий код"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "Джерела даних та валідація",
+      "description": "Ми дотримуємося суворих стандартів збору та валідації даних",
+      "collection": {
+        "title": "Методи збору даних",
+        "sources": {
+          "api": "Прямі API інтеграції з постачальниками інструментів",
+          "research": "Галузеві дослідження та аналітичні дані",
+          "announcements": "Офіційні корпоративні оголошення та прес-релізи",
+          "community": "Опитування розробників та відгуки спільноти",
+          "benchmarks": "Стандартизовані бенчмарки продуктивності"
+        }
+      },
+      "validation": {
+        "title": "Вимоги до валідації",
+        "requirements": {
+          "completeness": "Всі необхідні метрики повинні бути присутні",
+          "reliability": "Перевірка з декількох джерел для ключових метрик",
+          "outlier": "Виявлення викидів та ручний розгляд",
+          "crossValidation": "Перехресна валідація з галузевими бенчмарками"
+        }
+      },
+      "updateFrequency": {
+        "title": "Графік оновлень",
+        "description": "Рейтинги перераховуються щотижня з постійним збором даних. Основні оновлення алгоритму версіонуються та документуються."
+      }
+    }
+  },
+  "about": {
+    "title": "Про AI Power Rankings",
+    "subtitle": "Empowering developers з data-driven AI tool insights",
+    "hero": {
+      "title": "Empowering developers з data-driven AI tool insights",
+      "subtitle": "Ми віримо що developers deserve transparent, objective рейтинги AI coding тулів для make informed decisions."
+    },
+    "mission": {
+      "title": "Наша місія",
+      "content": "Provide developer community з most comprehensive, unbiased та up-to-date рейтинги AI coding тулів, helping teams choose right тули для their needs.",
+      "description": "Provide developer community з most comprehensive, unbiased та up-to-date рейтинги AI coding тулів, helping teams choose right тули для their needs."
+    },
+    "whyWeBuiltThis": {
+      "title": "Чому ми це built",
+      "reasons": [
+        "AI tools landscape evolving rapidly, making it hard для keep track",
+        "Marketing claims often don't match real-world performance",
+        "Developers need objective data для justify tool adoption",
+        "There was no single source comparing всі major AI coding тули"
+      ]
+    },
+    "team": {
+      "title": "Команда",
+      "description": "AI Power Rankings підтримується командою розробників та data scientists, які захоплені перетином AI та розробки програмного забезпечення.",
+      "description1": "AI Power Rankings підтримується Бобом Матсуокою, технологічним керівником та fractional CTO, який відстежує agentic coding інструменти з березня 2025 року.",
+      "description2": "Я поєдную практичний досвід створення продакшн додатків із систематичною оцінкою AI інструментів розробки. Цей сайт надає кількісну основу для мого стратегічного аналізу в HyperDev, де я пишу про практичні реалії кодування з AI агентами.",
+      "description3": "Повна прозорість: це операція однієї людини, створена за два дні. Я випускаю та ітерую на основі реального використання, оскільки ландшафт інструментів розробника рухається занадто швидко для традиційних циклів аналізу.",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "Повідомити про проблему"
+    },
+    "contact": {
+      "title": "Get in Touch",
+      "description": "Have feedback або suggestions? Ми'd love для hear від you.",
+      "email": "Contact us at hello@aipowerranking.com"
+    },
+    "newsletter": {
+      "title": "Stay Updated",
+      "description": "Get weekly insights на AI tool рейтинги та industry trends.",
+      "subscribe": "Subscribe до Newsletter"
+    },
+    "whatWeDo": {
+      "title": "Що ми робимо",
+      "track": {
+        "title": "Track AI Tools",
+        "description": "Monitor та analyze latest AI coding тули"
+      },
+      "analyze": {
+        "title": "Analyze Performance",
+        "description": "Evaluate тули based на real-world metrics"
+      },
+      "rank": {
+        "title": "Rank Objectively",
+        "description": "Apply наш алгоритм для provide unbiased рейтинги"
+      },
+      "update": {
+        "title": "Update Weekly",
+        "description": "Keep рейтинги current з latest data"
+      },
+      "analysis": {
+        "title": "Deep Analysis",
+        "description": "Comprehensive evaluation AI coding тулів based на performance, features та user feedback"
+      },
+      "methodology": {
+        "title": "Transparent Methodology",
+        "description": "Наш ranking алгоритм fully documented та continuously refined based на community input"
+      },
+      "updates": {
+        "title": "Weekly Updates",
+        "description": "Рейтинги refreshed кожного тижня для reflect rapidly evolving AI tools landscape"
+      },
+      "community": {
+        "title": "Community-Driven",
+        "description": "Ми incorporate feedback від developers worldwide для improve наші рейтинги та methodology"
+      }
+    },
+    "whyItMatters": {
+      "title": "Чому це важливо",
+      "description": "In rapidly evolving AI landscape, developers need reliable data для make informed decisions.",
+      "points": [
+        "Save time evaluating тули",
+        "Make data-driven decisions",
+        "Stay ahead curve",
+        "Choose тули що fit your needs"
+      ],
+      "challenges": {
+        "paralysis": {
+          "title": "Параліч рішень",
+          "description": "З десятками AI інструментів, що запускаються кожного тижня, розробники стикаються з переважаючими варіантами вибору"
+        },
+        "marketing": {
+          "title": "Маркетинг проти реальності",
+          "description": "Сміливі заяви часто не відповідають реальній продуктивності та можливостям"
+        },
+        "change": {
+          "title": "Швидкі зміни",
+          "description": "Інструменти швидко розвиваються - те, що найкраще сьогодні, може бути застарілим завтра"
+        },
+        "risks": {
+          "title": "Приховані ризики",
+          "description": "Питання безпеки, конфіденційності та vendor lock-in часто ігноруються"
+        }
+      },
+      "conclusion": "Ось чому ми створили AI Power Rankings - щоб прорватися крізь шум та надати чіткі, засновані на даних insights."
+    },
+    "cta": {
+      "title": "Готові досліджувати?",
+      "description": "Зануртеся в наші рейтинги, щоб відкрити найкращі AI інструменти кодування для ваших потреб.",
+      "exploreButton": "Дослідити рейтинги",
+      "methodologyButton": "Вивчити нашу методологію"
+    }
+  },
+  "sidebar": {
+    "navigation": "Навігація",
+    "quickLinks": "Швидкі посилання",
+    "trending": "Trending",
+    "categories": "Категорії",
+    "features": "Features",
+    "clearFilters": "Очистити фільтри"
+  },
+  "features": {
+    "autocomplete": "Автодоповнення",
+    "chat": "Chat Interface",
+    "codeGeneration": "Code Generation",
+    "refactoring": "Рефакторинг",
+    "testing": "Тестування",
+    "documentation": "Документація"
+  },
+  "status": {
+    "active": "Активний",
+    "beta": "Бета",
+    "deprecated": "Застарілий",
+    "discontinued": "Припинений",
+    "acquired": "Придбаний"
+  },
+  "errors": {
+    "404": {
+      "title": "Сторінка не знайдена",
+      "message": "Сторінка яку ви шукаете не існує.",
+      "action": "Піти Home"
+    },
+    "500": {
+      "title": "Щось пішло не так",
+      "message": "Ми experiencing technical труднощі. Будь ласка try again later.",
+      "action": "Try Again"
+    },
+    "offline": {
+      "title": "Ви Offline",
+      "message": "Будь ласка check ваше internet connection та try again.",
+      "action": "Retry"
+    }
+  },
+  "seo": {
+    "title": "AI Power Rankings - Остаточний щомісячний рейтинг інструментів кодування AI",
+    "description": "Остаточний щомісячний рейтинг та аналіз агентських інструментів кодування AI. Порівняйте Cursor, GitHub Copilot, Claude та понад 50 AI-асистентів, яким довіряють розробники по всьому світу.",
+    "keywords": "інструменти кодування AI, агентська AI, автономне кодування, рейтинги інструментів розробників, порівняння AI-асистентів, бенчмарки AI кодування, результати SWE-bench, Claude проти Cursor проти GitHub Copilot"
+  },
+  "footer": {
+    "description": "Комплексні рейтинги AI coding інструментів з використанням Algorithm v6.0 з innovation decay, platform risk модифікаторами та revenue quality коригуваннями.",
+    "quickLinks": "Швидкі посилання",
+    "categories": "Категорії",
+    "copyright": "© 2025 AI Power Rankings. Всі права захищені."
+  }
+}

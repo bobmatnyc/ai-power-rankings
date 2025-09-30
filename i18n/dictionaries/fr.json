@@ -1,0 +1,805 @@
+{
+  "categories": {
+    "autonomousagent": "Agent Autonome",
+    "codeeditor": "Éditeur de Code",
+    "ideassistant": "Assistant IDE",
+    "appbuilder": "App Builder",
+    "opensourceframework": "Framework Open Source",
+    "testingtool": "Outil de Test",
+    "codereview": "Code Review",
+    "codeassistant": "Assistant Code",
+    "devopsassistant": "Assistant DevOps",
+    "autonomousAgent": "Agent Autonome",
+    "codeEditor": "Éditeur de Code",
+    "ideAssistant": "Assistant IDE",
+    "appBuilder": "App Builder",
+    "codeReview": "Code Review",
+    "codeAssistant": "Assistant Code",
+    "devopsAssistant": "Assistant DevOps"
+  },
+  "common": {
+    "appName": "Classement IA Power",
+    "appDescription": "Classement data-driven des outils de codage IA",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "tryAgain": "Réessayer",
+    "backToHome": "Retour à l'accueil",
+    "learnMore": "En savoir plus",
+    "viewAll": "Voir tout",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "signupForUpdates": "S'inscrire aux mises à jour →",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "share": "Partager",
+    "explore": "Explorer",
+    "notAvailable": "N/D",
+    "users": "Utilisateurs",
+    "back": "Retour"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "rankings": "Classements",
+    "news": "Actualités",
+    "tools": "Outils",
+    "methodology": "Méthodologie",
+    "about": "À propos",
+    "subscribeToUpdates": "S'abonner aux mises à jour",
+    "signupForUpdates": "Signup For Updates",
+    "navigation": "Navigation",
+    "quickLinks": "Liens rapides",
+    "trending": "Tendances",
+    "categories": "Catégories",
+    "features": "Fonctionnalités",
+    "clearFilters": "Effacer les filtres",
+    "allCategories": "Toutes les catégories"
+  },
+  "home": {
+    "hero": {
+      "badge": "Mis à jour chaque semaine",
+      "title": "Classement IA Power",
+      "subtitle": "Découvrez et comparez les outils de codage IA les plus puissants. Des agents autonomes aux assistants IDE, trouvez le compagnon IA parfait pour votre workflow de développement.",
+      "description": "Découvrez et comparez les outils de codage IA les plus puissants. Des agents autonomes aux assistants IDE, trouvez le compagnon IA parfait pour votre workflow de développement.",
+      "exploreTools": "Explorer tous les outils",
+      "viewTrending": "Voir les tendances",
+      "exploreButton": "Explorer tous les outils",
+      "trendingButton": "Voir les tendances",
+      "whatsNewButton": "Quoi de neuf"
+    },
+    "stats": {
+      "toolsRanked": "Outils IA classés",
+      "trendingUp": "En tendance",
+      "updates": "Mises à jour",
+      "freeAccess": "Accès gratuit",
+      "updateFrequency": "Mises à jour hebdomadaires"
+    },
+    "trending": {
+      "title": "Tendances cette semaine",
+      "subtitle": "Outils IA qui gagnent en popularité et grimpent dans les classements",
+      "description": "Outils IA qui gagnent en popularité et grimpent dans les classements",
+      "viewAll": "Voir toutes les tendances",
+      "viewAllButton": "Voir toutes les tendances"
+    },
+    "recentlyUpdated": {
+      "title": "Récemment mis à jour",
+      "subtitle": "Dernières mises à jour et nouvelles fonctionnalités des meilleurs outils IA",
+      "description": "Dernières mises à jour et nouvelles fonctionnalités des meilleurs outils IA",
+      "viewAll": "Voir tous les classements",
+      "viewAllButton": "Voir tous les classements"
+    },
+    "recent": {
+      "title": "Mises à jour récentes",
+      "description": "Derniers développements et sorties de fonctionnalités des meilleurs outils IA",
+      "viewAllButton": "Voir toutes les actualités"
+    },
+    "categories": {
+      "title": "Explorer par catégorie",
+      "explore": "Explorer →",
+      "ideAssistants": {
+        "name": "Assistants IDE",
+        "description": "Autocomplétion et suggestions de code alimentées par l'IA"
+      },
+      "aiEditors": {
+        "name": "Éditeurs IA",
+        "description": "Éditeurs intelligents avec intégration IA"
+      },
+      "appBuilders": {
+        "name": "Constructeurs d'app",
+        "description": "Construire des applications complètes avec assistance IA"
+      },
+      "autonomousAgents": {
+        "name": "Agents autonomes",
+        "description": "Ingénieurs logiciels IA entièrement autonomes"
+      },
+      "ideDescription": "Autocomplétion et suggestions de code alimentées par l'IA",
+      "editorDescription": "Éditeurs intelligents avec intégration IA",
+      "builderDescription": "Construire des applications complètes avec assistance IA",
+      "agentDescription": "Ingénieurs logiciels IA entièrement autonomes"
+    },
+    "methodology": {
+      "title": "Notre méthodologie",
+      "algorithmTitle": "Algorithme v7.0",
+      "algorithmDescription": "Notre algorithme de classement avancé considère 8 facteurs clés avec des modificateurs sophistiqués :",
+      "keyModifiersTitle": "Modificateurs clés",
+      "keyModifiersDescription": "Trois modificateurs sophistiqués garantissent des classements équitables et précis :",
+      "factors": {
+        "agenticCapability": "Capacité agentique (30%) - Capacités de codage autonome",
+        "technicalPerformance": "Performance technique (12,5%) - Focus sur SWE-bench",
+        "marketTraction": "Traction du marché (12,5%) - Ajusté pour la qualité des revenus",
+        "agentic": {
+          "name": "Capacité agentique",
+          "description": "Capacités de codage autonome et completion de tâches multi-étapes"
+        },
+        "innovation": {
+          "name": "Innovation",
+          "description": "Percées techniques et innovation de fonctionnalités"
+        },
+        "performance": {
+          "name": "Performance technique",
+          "description": "Qualité du code, vitesse et résultats de benchmarks"
+        },
+        "traction": {
+          "name": "Traction du marché",
+          "description": "Adoption utilisateur, taux de croissance et présence sur le marché"
+        }
+      },
+      "modifiers": {
+        "innovationDecay": "Déclin de l'innovation - Les innovations récentes obtiennent un score plus élevé",
+        "platformRisk": "Risque de plateforme - Bonus d'indépendance, pénalités de verrouillage",
+        "revenueQuality": "Qualité des revenus - Revenus d'entreprise pondérés plus haut",
+        "dataValidation": "Validation des données - 80% de complétude requise",
+        "decay": {
+          "name": "Déclin de l'innovation",
+          "description": "Innovations récentes pondérées plus fortement"
+        },
+        "risk": {
+          "name": "Risque de plateforme",
+          "description": "Facteurs d'indépendance vs. verrouillage de plateforme"
+        },
+        "revenue": {
+          "name": "Qualité des revenus",
+          "description": "Revenus d'entreprise pondérés plus haut que grand public"
+        },
+        "validation": {
+          "name": "Validation des données",
+          "description": "Minimum 80% de complétude des données requise"
+        }
+      },
+      "modifiersTitle": "Modificateurs dynamiques",
+      "modifiersDescription": "Trois modificateurs sophistiqués garantissent des classements équitables et précis",
+      "readFull": "Lire la méthodologie complète",
+      "readMoreButton": "Lire la méthodologie complète"
+    },
+    "footer": {
+      "tagline": "Insights data-driven pour la révolution IA",
+      "description": "Classements complets des outils de codage IA utilisant l'Algorithme v7.0 avec intelligence d'actualités dynamique, capacités d'outils améliorées et scoring de vélocité.",
+      "quickLinks": "Liens rapides",
+      "categories": "Catégories",
+      "copyright": "© 2025 Classement IA Power. Tous droits réservés."
+    }
+  },
+  "footer": {
+    "description": "Classements complets des outils de codage IA utilisant l'Algorithme v6.0 avec déclin de l'innovation, modificateurs de risque de plateforme et ajustements de qualité des revenus.",
+    "quickLinks": "Liens rapides",
+    "categories": "Catégories",
+    "copyright": "© 2025 Classement IA Power. Tous droits réservés."
+  },
+  "rankings": {
+    "title": "Classement IA Power",
+    "subtitle": "Classements complets des outils de codage IA utilisant l'Algorithme v7.0",
+    "stats": {
+      "totalTools": "Total outils",
+      "categories": "Catégories",
+      "avgScore": "Score moyen",
+      "lastUpdate": "Dernière mise à jour",
+      "thisWeek": "Cette semaine"
+    },
+    "sortBy": "Trier par",
+    "activeFilters": "Filtres actifs",
+    "sort": {
+      "rank": "Rang",
+      "trending": "Tendance",
+      "score": "Score",
+      "name": "Nom"
+    },
+    "tierLegend": {
+      "title": "Niveaux de classement",
+      "description": "Les outils sont assignés à des niveaux selon leur position de classement",
+      "tiers": {
+        "S": {
+          "label": "Élite",
+          "range": "Top 5",
+          "description": "Les meilleurs outils de codage IA"
+        },
+        "A": {
+          "label": "Excellent",
+          "range": "6-15",
+          "description": "Outils exceptionnels avec de fortes performances"
+        },
+        "B": {
+          "label": "Bon",
+          "range": "16-25",
+          "description": "Outils solides et fiables"
+        },
+        "C": {
+          "label": "Moyen",
+          "range": "26-35",
+          "description": "Outils corrects avec des cas d'usage spécifiques"
+        },
+        "D": {
+          "label": "En dessous de la moyenne",
+          "range": "36+",
+          "description": "Outils avec des fonctionnalités ou une adoption limitées"
+        }
+      }
+    },
+    "algorithm": {
+      "title": "À propos de l'Algorithme v7.0",
+      "subtitle": "Système de classement amélioré avec déclin de l'innovation, modificateurs de risque de plateforme et ajustements de qualité des revenus",
+      "tabs": {
+        "factors": "Facteurs de score",
+        "modifiers": "Modificateurs",
+        "methodology": "Méthodologie"
+      },
+      "primaryFactors": "Facteurs primaires (67,5%)",
+      "secondaryFactors": "Facteurs secondaires (32,5%)",
+      "description": "Notre algorithme de classement combine des métriques quantitatives avec des évaluations qualitatives pour fournir une vue complète des outils de codage IA. Nous mettons à jour les classements chaque semaine basés sur de nouvelles données et affinons continuellement notre méthodologie.",
+      "factors": {
+        "agentic": "Capacité agentique",
+        "innovation": "Innovation",
+        "performance": "Performance",
+        "adoption": "Adoption",
+        "traction": "Traction du marché",
+        "sentiment": "Sentiment commercial",
+        "velocity": "Vélocité de développement",
+        "resilience": "Résilience de la plateforme"
+      },
+      "modifiers": {
+        "decay": "Déclin de l'innovation (demi-vie de 6 mois) - Assure que les innovations récentes sont pondérées plus fortement",
+        "risk": "Modificateur de risque de plateforme - Ajuste les scores basés sur les dépendances de plateforme et le verrouillage",
+        "revenue": "Ajustement de qualité des revenus - Différencie entre revenus durables et ponctuels"
+      },
+      "methodologyText": "Notre méthodologie complète évalue les outils de codage IA à travers de multiples dimensions, garantissant des classements équitables et précis qui reflètent les performances et l'adoption du monde réel.",
+      "viewMethodology": "Voir la méthodologie complète"
+    }
+  },
+  "news": {
+    "title": "Actualités des outils IA",
+    "subtitle": "Dernières mises à jour, jalons et annonces des outils de codage IA",
+    "filters": {
+      "all": "Toutes les actualités",
+      "milestone": "Jalon",
+      "feature": "Fonctionnalité",
+      "partnership": "Partenariat",
+      "update": "Mise à jour",
+      "announcement": "Annonce"
+    },
+    "noItems": "Aucune actualité trouvée.",
+    "loadingMore": "Chargement d'autres actualités...",
+    "noMore": "Plus d'actualités à charger",
+    "viewTool": "Voir l'outil",
+    "metrics": {
+      "users": "utilisateurs",
+      "score": "score",
+      "rank": "rang"
+    },
+    "time": {
+      "justNow": "À l'instant",
+      "hourAgo": "Il y a 1 heure",
+      "hoursAgo": "Il y a {count} heures",
+      "dayAgo": "Il y a 1 jour",
+      "daysAgo": "Il y a {count} jours"
+    },
+    "viewSource": "Voir la source"
+  },
+  "tools": {
+    "title": "Outils de codage IA",
+    "subtitle": "Explorez tous les {count} outils de codage IA de notre base de données",
+    "allCategories": "Toutes les catégories",
+    "filterByCategory": "Filtrer par catégorie",
+    "sortBy": "Trier par",
+    "defaultDescription": "Découvrir et comparer les outils de codage IA",
+    "notFound": "Outil non trouvé",
+    "backToTools": "Retour aux outils",
+    "sort": {
+      "name": "Nom",
+      "category": "Catégorie",
+      "status": "Statut"
+    },
+    "stats": {
+      "total": "Total outils",
+      "active": "Actif",
+      "categories": "Catégories",
+      "openSource": "Open Source"
+    },
+    "directory": {
+      "title": "Répertoire des outils de codage IA",
+      "subtitle": "Explorez tous les {count} outils de codage IA de notre base de données",
+      "filterByCategory": "Filtrer par catégorie",
+      "filterByStatus": "Filtrer par statut",
+      "allCategories": "Toutes les catégories",
+      "allStatuses": "Tous les statuts"
+    },
+    "detail": {
+      "loading": "Chargement des détails de l'outil...",
+      "notFound": "Outil non trouvé",
+      "backToTools": "Retour aux outils",
+      "visitWebsite": "Visiter le site web",
+      "viewGithub": "GitHub",
+      "viewOnGithub": "Voir sur GitHub",
+      "overview": "Aperçu",
+      "description": "Description",
+      "company": "Entreprise",
+      "pricing": "Tarifs",
+      "users": "Utilisateurs",
+      "githubStars": "Étoiles GitHub",
+      "tabs": {
+        "performance": "Performance",
+        "pricing": "Tarifs",
+        "businessMetrics": "Business",
+        "scores": "Scores",
+        "history": "Historique"
+      },
+      "performance": {
+        "title": "Performance technique",
+        "subtitle": "Résultats de benchmark et capacités techniques",
+        "description": "Résultats de benchmark et capacités techniques incluant les scores SWE-bench et le support des fonctionnalités",
+        "sweScore": "Score SWE-bench",
+        "contextWindow": "Fenêtre de contexte",
+        "languageSupport": "Support des langages",
+        "multiFileSupport": "Support multi-fichiers",
+        "llmProviders": "Fournisseurs LLM",
+        "tokens": "tokens",
+        "languages": "langages",
+        "yes": "Oui",
+        "multiple": "Multiples"
+      },
+      "businessMetrics": {
+        "title": "Métriques business",
+        "subtitle": "Métriques financières et de croissance",
+        "monthlyArr": "ARR (Mensuel)",
+        "valuation": "Valorisation",
+        "totalFunding": "Financement total",
+        "employees": "Employés",
+        "totalUsers": "Total utilisateurs"
+      },
+      "rankingScores": {
+        "title": "Scores de classement",
+        "subtitle": "Répartition détaillée des facteurs de classement",
+        "overallScore": "Score global",
+        "breakdown": "Répartition du score",
+        "modifiers": "Modificateurs appliqués"
+      },
+      "metricHistory": {
+        "title": "Historique des métriques",
+        "subtitle": "Métriques récentes qui affectent les scores de classement",
+        "noHistory": "Aucun historique de métriques disponible pour cet outil.",
+        "update": "Mise à jour",
+        "newMetrics": "Nouvelles métriques rapportées pour {tool}"
+      }
+    },
+    "status": {
+      "active": "Actif",
+      "beta": "Bêta",
+      "deprecated": "Déprécié",
+      "discontinued": "Discontinué",
+      "acquired": "Acquis"
+    },
+    "categories": {
+      "autonomous-agent": "Agent autonome",
+      "code-editor": "Éditeur de code",
+      "ide-assistant": "Assistant IDE",
+      "app-builder": "Constructeur d'app",
+      "open-source-framework": "Framework open source",
+      "testing-tool": "Outil de test",
+      "code-review": "Revue de code",
+      "code-generation": "Génération de code"
+    }
+  },
+  "newsletter": {
+    "form": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "subscribe": "S'abonner",
+      "subscribing": "Abonnement...",
+      "privacyNote": "Nous respectons votre vie privée. Désabonnez-vous à tout moment."
+    },
+    "modal": {
+      "title": "Restez informé",
+      "subtitle": "Recevez des mises à jour hebdomadaires sur les classements d'outils IA, les nouvelles fonctionnalités et les insights de l'industrie.",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "subscribe": "S'abonner",
+      "subscribing": "Abonnement...",
+      "thankYou": "Merci !",
+      "checkEmail": "Veuillez vérifier votre email pour confirmer votre abonnement",
+      "alreadySubscribed": "Vous êtes déjà abonné à notre newsletter !",
+      "resentEmail": "Nous avons renvoyé l'email de vérification. Veuillez vérifier votre boîte de réception.",
+      "privacyNote": "Nous respectons votre vie privée. Désabonnez-vous à tout moment.",
+      "errors": {
+        "captcha": "Veuillez compléter la vérification de sécurité",
+        "failed": "Échec de l'abonnement. Veuillez réessayer.",
+        "server": "Erreur de configuration du serveur",
+        "email": "Erreur de configuration du service email"
+      }
+    },
+    "verification": {
+      "title": "Vérification email",
+      "success": {
+        "title": "Email vérifié !",
+        "message": "Votre email a été vérifié avec succès. Vous commencerez à recevoir notre newsletter hebdomadaire avec les derniers classements d'outils IA et insights."
+      },
+      "alreadyVerified": {
+        "title": "Déjà vérifié",
+        "message": "Cette adresse email a déjà été vérifiée. Vous êtes prêt à recevoir nos newsletters !"
+      },
+      "errors": {
+        "missingToken": {
+          "title": "Token de vérification manquant",
+          "message": "Le lien de vérification semble incomplet. Veuillez vérifier votre email pour le bon lien."
+        },
+        "invalidToken": {
+          "title": "Token invalide",
+          "message": "Ce lien de vérification est invalide ou a expiré. Veuillez vous abonner à nouveau pour recevoir un nouvel email de vérification."
+        },
+        "failed": {
+          "title": "Vérification échouée",
+          "message": "Nous n'avons pas pu vérifier votre email en ce moment. Veuillez réessayer plus tard ou contacter le support si le problème persiste."
+        },
+        "unexpected": {
+          "title": "Erreur inattendue",
+          "message": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard."
+        }
+      },
+      "actions": {
+        "backToHome": "Retour à l'accueil",
+        "subscribeAgain": "S'abonner à nouveau"
+      }
+    },
+    "verify": {
+      "goToHomepage": "Aller à la page d'accueil",
+      "tryAgain": "Réessayer",
+      "success": {
+        "title": "Email vérifié !",
+        "description": "Votre email a été vérifié avec succès. Vous commencerez à recevoir notre newsletter hebdomadaire."
+      },
+      "alreadyVerified": {
+        "title": "Déjà vérifié",
+        "description": "Cette adresse email a déjà été vérifiée. Vous êtes prêt !"
+      },
+      "error": {
+        "title": "Erreur de vérification"
+      },
+      "errors": {
+        "default": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+        "missingToken": "Le lien de vérification semble incomplet.",
+        "invalidToken": "Ce lien de vérification est invalide ou a expiré.",
+        "verificationFailed": "Nous n'avons pas pu vérifier votre email en ce moment. Veuillez réessayer plus tard."
+      }
+    },
+    "unsubscribe": {
+      "title": "Se désabonner de la newsletter",
+      "processing": "Traitement de votre demande...",
+      "success": {
+        "title": "Désabonnement réussi",
+        "message": "Vous avez été désabonné de la newsletter Classement IA Power. Nous sommes désolés de vous voir partir !",
+        "description": "Vous avez été désabonné de la newsletter Classement IA Power. Nous sommes désolés de vous voir partir !"
+      },
+      "error": {
+        "title": "Erreur de désabonnement"
+      },
+      "errors": {
+        "missingToken": "Le lien de désabonnement semble incomplet.",
+        "invalidToken": "Ce lien de désabonnement est invalide ou a expiré.",
+        "unsubscribeFailed": "Nous n'avons pas pu traiter votre demande de désabonnement. Veuillez réessayer plus tard.",
+        "default": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+        "failed": {
+          "title": "Désabonnement échoué",
+          "message": "Nous n'avons pas pu traiter votre demande de désabonnement. Veuillez réessayer plus tard."
+        },
+        "unexpected": {
+          "title": "Erreur",
+          "message": "Une erreur inattendue s'est produite. Veuillez réessayer."
+        }
+      },
+      "resubscribe": "Vous avez changé d'avis ? Vous pouvez vous réabonner à tout moment.",
+      "subscribeAgain": "Se réabonner"
+    }
+  },
+  "methodology": {
+    "title": "Notre méthodologie",
+    "subtitle": "Comment nous classons les outils de codage IA",
+    "lastUpdated": "Dernière mise à jour : Janvier 2025",
+    "intro": "Classement IA Power utilise un algorithme sophistiqué (v7.0) pour évaluer et classer les outils de codage IA basé sur de multiples facteurs quantitatifs et qualitatifs, l'analyse d'actualités en temps réel et les capacités complètes des outils. Notre méthodologie est conçue pour fournir aux développeurs une évaluation objective et data-driven du paysage des outils IA.",
+    "algorithm": {
+      "title": "Algorithme v7.0",
+      "description": "Notre dernier algorithme de classement intègre les patterns d'usage du monde réel et les dynamiques de marché",
+      "keyFeatures": "Fonctionnalités clés",
+      "features": {
+        "innovationDecay": "Modélisation du déclin de l'innovation pour refléter la fraîcheur des outils",
+        "platformRisk": "Évaluation du risque de plateforme pour les dépendances de fournisseur",
+        "revenueQuality": "Ajustements de qualité des revenus basés sur le modèle d'affaires",
+        "technicalWeighting": "Pondération des capacités techniques pour différents cas d'usage",
+        "dataValidation": "Validation des données multi-sources et normalisation",
+        "logarithmicScaling": "Mise à l'échelle logarithmique pour des comparaisons équilibrées"
+      }
+    },
+    "factors": {
+      "title": "Facteurs de notation",
+      "description": "Les outils sont évalués à travers 8 dimensions clés avec des pondérations spécifiques",
+      "primary": "Facteurs primaires (82,5%)",
+      "secondary": "Facteurs secondaires (17,5%)",
+      "agentic": {
+        "details": "Mesure les capacités autonomes, le raisonnement multi-étapes et la completion de tâches complexes"
+      },
+      "innovation": {
+        "details": "Évalue les fonctionnalités révolutionnaires, les avancées techniques et la différenciation de marché"
+      },
+      "performance": {
+        "details": "Benchmarks sur SWE-bench, HumanEval et tâches de codage du monde réel"
+      },
+      "adoption": {
+        "details": "Utilisateurs actifs, taux de croissance et métriques de pénétration de marché"
+      },
+      "traction": {
+        "details": "Croissance des revenus, tours de financement et indicateurs de momentum business"
+      },
+      "sentiment": {
+        "details": "Satisfaction des développeurs, feedback de la communauté et scores de recommandation"
+      },
+      "velocity": {
+        "details": "Cadence de sortie de fonctionnalités, fréquence de mise à jour et vitesse d'innovation"
+      },
+      "resilience": {
+        "details": "Stabilité de plateforme, options de sauvegarde et indépendance de fournisseur"
+      }
+    },
+    "modifiers": {
+      "title": "Modificateurs dynamiques",
+      "description": "Ajustements en temps réel qui reflètent les conditions de marché et la maturité des outils",
+      "innovationDecay": {
+        "description": "Les scores d'innovation se dégradent avec le temps pour récompenser l'amélioration continue et pénaliser la stagnation"
+      },
+      "platformRisk": {
+        "description": "Ajustements basés sur le verrouillage de fournisseur, les dépendances de plateforme et les risques business",
+        "penalties": "Pénalités de risque",
+        "penaltyList": {
+          "acquired": "Récemment acquis par un concurrent",
+          "exclusive": "Exclusif à une plateforme (LLM unique)",
+          "competitor": "Détenu par une plateforme concurrente",
+          "regulatory": "Problèmes de conformité réglementaire",
+          "funding": "Préoccupations de financement ou de durabilité"
+        },
+        "bonuses": "Bonus d'atténuation des risques",
+        "bonusList": {
+          "multiLLM": "Support de multiples fournisseurs LLM",
+          "openSource": "Disponibilité open source",
+          "selfHosted": "Options d'auto-hébergement"
+        }
+      },
+      "revenueQuality": {
+        "description": "Pondération des revenus basée sur la durabilité du modèle d'affaires et le potentiel de croissance",
+        "models": {
+          "enterpriseHigh": "Entreprise (Haut niveau)",
+          "enterpriseStandard": "Entreprise (Standard)",
+          "smbSaas": "PME SaaS",
+          "consumerPremium": "Grand public Premium",
+          "freemium": "Freemium",
+          "openSource": "Open Source"
+        }
+      }
+    },
+    "dataSources": {
+      "title": "Sources de données et validation",
+      "description": "Nous maintenons des standards rigoureux pour la collecte et validation des données",
+      "collection": {
+        "title": "Méthodes de collecte de données",
+        "sources": {
+          "api": "Intégrations API directes avec les fournisseurs d'outils",
+          "research": "Rapports de recherche industrielle et données d'analystes",
+          "announcements": "Annonces officielles d'entreprises et communiqués de presse",
+          "community": "Sondages de développeurs et feedback de la communauté",
+          "benchmarks": "Benchmarks de performance standardisés"
+        }
+      },
+      "validation": {
+        "title": "Exigences de validation",
+        "requirements": {
+          "completeness": "Toutes les métriques requises doivent être présentes",
+          "reliability": "Vérification de sources multiples pour les métriques clés",
+          "outlier": "Détection d'aberrations et révision manuelle",
+          "crossValidation": "Validation croisée avec les benchmarks de l'industrie"
+        }
+      },
+      "updateFrequency": {
+        "title": "Planning de mise à jour",
+        "description": "Les classements sont recalculés chaque semaine avec une collecte de données continue. Les mises à jour majeures d'algorithme sont versionnées et documentées."
+      }
+    },
+    "sections": {
+      "scoringFactors": {
+        "title": "Facteurs de notation",
+        "intro": "Notre algorithme évalue les outils à travers 8 dimensions clés, chacune pondérée selon son importance pour les développeurs :"
+      },
+      "modifiers": {
+        "title": "Modificateurs dynamiques",
+        "intro": "Pour garantir que les classements reflètent les réalités actuelles du marché, nous appliquons trois modificateurs sophistiqués :"
+      },
+      "dataCollection": {
+        "title": "Collecte de données",
+        "intro": "Nous rassemblons des données de sources multiples pour garantir la précision :",
+        "sources": [
+          "Intégrations API directes avec les fournisseurs d'outils",
+          "Dépôts publics et statistiques de développeurs",
+          "Rapports de l'industrie et sources d'actualités vérifiées",
+          "Sondages utilisateurs et feedback de la communauté",
+          "Benchmarks de performance (SWE-bench, HumanEval)"
+        ]
+      },
+      "updateFrequency": {
+        "title": "Fréquence de mise à jour",
+        "content": "Les classements sont recalculés chaque semaine pour refléter le paysage IA en évolution rapide. Les mises à jour majeures de méthodologie sont versionnées et documentées."
+      }
+    }
+  },
+  "about": {
+    "title": "À propos de Classement IA Power",
+    "subtitle": "Autonomiser les développeurs avec des insights d'outils IA data-driven",
+    "hero": {
+      "title": "Autonomiser les développeurs avec des insights d'outils IA data-driven",
+      "subtitle": "Nous croyons que les développeurs méritent des classements transparents et objectifs des outils de codage IA pour prendre des décisions éclairées."
+    },
+    "mission": {
+      "title": "Notre mission",
+      "content": "Fournir à la communauté des développeurs les classements les plus complets, impartiaux et à jour des outils de codage IA, aidant les équipes à choisir les bons outils pour leurs besoins.",
+      "description": "Fournir à la communauté des développeurs les classements les plus complets, impartiaux et à jour des outils de codage IA, aidant les équipes à choisir les bons outils pour leurs besoins."
+    },
+    "whyWeBuiltThis": {
+      "title": "Pourquoi nous avons construit ceci",
+      "reasons": [
+        "Le paysage des outils IA évolue rapidement, rendant difficile le suivi",
+        "Les affirmations marketing ne correspondent souvent pas aux performances du monde réel",
+        "Les développeurs ont besoin de données objectives pour justifier l'adoption d'outils",
+        "Il n'y avait pas de source unique comparant tous les principaux outils de codage IA"
+      ]
+    },
+    "team": {
+      "title": "L'équipe",
+      "description": "Classement IA Power est maintenu par Bob Matsuoka, un dirigeant technologique et CTO fractionnaire qui suit les outils de codage agentiques depuis mars 2025.",
+      "description1": "Classement IA Power est maintenu par Bob Matsuoka, un dirigeant technologique et CTO fractionnaire qui suit les outils de codage agentiques depuis mars 2025.",
+      "description2": "Je combine l'expérience pratique de construction d'applications de production avec l'évaluation systématique des outils de développement IA. Ce site fournit l'épine dorsale quantitative pour mon analyse stratégique chez HyperDev, où j'écris sur les réalités pratiques du codage avec des agents IA.",
+      "description3": "Transparence totale : c'est une opération d'une seule personne construite en deux jours. Je livre et itère basé sur l'usage réel parce que le paysage des outils de développement bouge trop vite pour les cycles d'analyse traditionnels.",
+      "hyperdevLink": "HyperDev",
+      "reportIssue": "Signaler un problème"
+    },
+    "contact": {
+      "title": "Nous contacter",
+      "description": "Vous avez des commentaires ou suggestions ? Nous aimerions avoir de vos nouvelles.",
+      "email": "Contactez-nous à hello@aipowerranking.com"
+    },
+    "newsletter": {
+      "title": "Restez informé",
+      "description": "Recevez des insights hebdomadaires sur les classements d'outils IA et les tendances de l'industrie.",
+      "subscribe": "S'abonner à la newsletter"
+    },
+    "cta": {
+      "title": "Prêt à explorer ?",
+      "description": "Plongez dans nos classements pour découvrir les meilleurs outils de codage IA pour vos besoins.",
+      "exploreButton": "Explorer les classements",
+      "methodologyButton": "Apprendre notre méthodologie"
+    },
+    "whatWeDo": {
+      "title": "Ce que nous faisons",
+      "track": {
+        "title": "Suivre les outils IA",
+        "description": "Surveiller et analyser les derniers outils de codage IA"
+      },
+      "analyze": {
+        "title": "Analyser les performances",
+        "description": "Évaluer les outils basés sur des métriques du monde réel"
+      },
+      "rank": {
+        "title": "Classer objectivement",
+        "description": "Appliquer notre algorithme pour fournir des classements impartiaux"
+      },
+      "update": {
+        "title": "Mettre à jour chaque semaine",
+        "description": "Maintenir les classements à jour avec les dernières données"
+      },
+      "analysis": {
+        "title": "Analyse approfondie",
+        "description": "Évaluation complète des outils de codage IA basée sur les performances, fonctionnalités et feedback utilisateur"
+      },
+      "methodology": {
+        "title": "Méthodologie transparente",
+        "description": "Notre algorithme de classement est entièrement documenté et continuellement affiné basé sur l'input de la communauté"
+      },
+      "updates": {
+        "title": "Mises à jour hebdomadaires",
+        "description": "Les classements sont rafraîchis chaque semaine pour refléter le paysage des outils IA en évolution rapide"
+      },
+      "community": {
+        "title": "Dirigé par la communauté",
+        "description": "Nous incorporons le feedback des développeurs du monde entier pour améliorer nos classements et méthodologie"
+      }
+    },
+    "whyItMatters": {
+      "title": "Pourquoi c'est important",
+      "description": "Dans le paysage IA en évolution rapide, les développeurs ont besoin de données fiables pour prendre des décisions éclairées.",
+      "points": [
+        "Économiser du temps pour évaluer les outils",
+        "Prendre des décisions data-driven",
+        "Rester en avance sur la courbe",
+        "Choisir des outils qui correspondent à vos besoins"
+      ],
+      "challenges": {
+        "paralysis": {
+          "title": "Paralysie de décision",
+          "description": "Avec des dizaines d'outils IA lancés chaque semaine, les développeurs font face à des choix accablants"
+        },
+        "marketing": {
+          "title": "Marketing vs réalité",
+          "description": "Les affirmations audacieuses ne correspondent souvent pas aux performances et capacités du monde réel"
+        },
+        "change": {
+          "title": "Changement rapide",
+          "description": "Les outils évoluent rapidement - ce qui est le meilleur aujourd'hui pourrait être obsolète demain"
+        },
+        "risks": {
+          "title": "Risques cachés",
+          "description": "Les préoccupations de sécurité, vie privée et verrouillage de fournisseur sont souvent négligées"
+        }
+      },
+      "conclusion": "C'est pourquoi nous avons construit Classement IA Power - pour percer à travers le bruit et fournir des insights clairs et data-driven."
+    }
+  },
+  "sidebar": {
+    "navigation": "Navigation",
+    "quickLinks": "Liens rapides",
+    "trending": "Tendances",
+    "categories": "Catégories",
+    "features": "Fonctionnalités",
+    "clearFilters": "Effacer les filtres"
+  },
+  "features": {
+    "autocomplete": "Autocomplétion",
+    "chat": "Interface chat",
+    "codeGeneration": "Génération de code",
+    "refactoring": "Refactoring",
+    "testing": "Tests",
+    "documentation": "Documentation"
+  },
+  "status": {
+    "active": "Actif",
+    "beta": "Bêta",
+    "deprecated": "Déprécié",
+    "discontinued": "Discontinué",
+    "acquired": "Acquis"
+  },
+  "errors": {
+    "404": {
+      "title": "Page non trouvée",
+      "message": "La page que vous cherchez n'existe pas.",
+      "action": "Retour à l'accueil"
+    },
+    "500": {
+      "title": "Une erreur s'est produite",
+      "message": "Nous rencontrons des difficultés techniques. Veuillez réessayer plus tard.",
+      "action": "Réessayer"
+    },
+    "offline": {
+      "title": "Vous êtes hors ligne",
+      "message": "Veuillez vérifier votre connexion internet et réessayer.",
+      "action": "Réessayer"
+    }
+  },
+  "seo": {
+    "title": "Classement IA Power - Le classement mensuel définitif des outils de codage IA",
+    "description": "Le classement mensuel définitif et l'analyse des outils de codage IA agentiques. Comparez Cursor, GitHub Copilot, Claude et plus de 50 assistants IA approuvés par les développeurs du monde entier.",
+    "keywords": "outils de codage IA, IA agentique, codage autonome, classements d'outils de développement, comparaison d'assistants IA, benchmarks IA de codage, résultats SWE-bench, Claude vs Cursor vs GitHub Copilot"
+  }
+}

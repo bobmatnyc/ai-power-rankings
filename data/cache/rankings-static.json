@@ -1,0 +1,161 @@
+{
+  "rankings": [
+    {
+      "rank": 1,
+      "previousRank": null,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "cursor",
+        "slug": "cursor",
+        "name": "Cursor",
+        "category": "code-editor",
+        "status": "active",
+        "website_url": "",
+        "description": ""
+      },
+      "scores": {
+        "overall": 95,
+        "agentic_capability": 9,
+        "innovation": 9.5
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 85000,
+        "swe_bench_score": null
+      },
+      "tier": "S"
+    },
+    {
+      "rank": 2,
+      "previousRank": null,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "windsurf",
+        "slug": "windsurf",
+        "name": "Windsurf",
+        "category": "code-editor",
+        "status": "active",
+        "website_url": "",
+        "description": ""
+      },
+      "scores": {
+        "overall": 92,
+        "agentic_capability": 9.5,
+        "innovation": 9
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 70000,
+        "swe_bench_score": null
+      },
+      "tier": "S"
+    },
+    {
+      "rank": 3,
+      "previousRank": null,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "github-copilot",
+        "slug": "github-copilot",
+        "name": "GitHub Copilot",
+        "category": "code-completion",
+        "status": "active",
+        "website_url": "",
+        "description": ""
+      },
+      "scores": {
+        "overall": 88,
+        "agentic_capability": 7.5,
+        "innovation": 8
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 95000,
+        "swe_bench_score": null
+      },
+      "tier": "A"
+    },
+    {
+      "rank": 4,
+      "previousRank": null,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "claude-dev",
+        "slug": "claude-dev",
+        "name": "Claude Dev",
+        "category": "code-assistant",
+        "status": "active",
+        "website_url": "",
+        "description": ""
+      },
+      "scores": {
+        "overall": 85,
+        "agentic_capability": 8.8,
+        "innovation": 8.5
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 65000,
+        "swe_bench_score": null
+      },
+      "tier": "A"
+    },
+    {
+      "rank": 5,
+      "previousRank": null,
+      "rankChange": 0,
+      "changeReason": "",
+      "tool": {
+        "id": "aider",
+        "slug": "aider",
+        "name": "Aider",
+        "category": "code-assistant",
+        "status": "active",
+        "website_url": "",
+        "description": ""
+      },
+      "scores": {
+        "overall": 82,
+        "agentic_capability": 8.5,
+        "innovation": 7.8
+      },
+      "metrics": {
+        "news_articles_count": 0,
+        "recent_funding_rounds": 0,
+        "recent_product_launches": 0,
+        "users": 60000,
+        "swe_bench_score": null
+      },
+      "tier": "A"
+    }
+  ],
+  "algorithm": {
+    "version": "v1.0",
+    "name": "JSON-Based Rankings",
+    "date": "2025-09-11T19:31:20.486Z",
+    "weights": {
+      "newsImpact": 0.3,
+      "baseScore": 0.7
+    }
+  },
+  "stats": {
+    "total_tools": 5,
+    "tools_with_news": 0,
+    "avg_news_boost": 0,
+    "max_news_impact": 0
+  },
+  "_source": "static-generation",
+  "_timestamp": "2025-09-29T03:47:14.705Z"
+}
