@@ -640,6 +640,16 @@ Return ONLY the JSON object above with actual data. No additional text or explan
       };
     } catch (error) {
       console.error("[AIAnalyzer] Analysis failed:", error);
+
+      // Provide clear error messages for missing API key
+      if (error instanceof Error) {
+        if (error.message.includes("OPENROUTER_API_KEY is not configured")) {
+          throw new Error(
+            "AI analysis unavailable. Please configure OPENROUTER_API_KEY in environment variables."
+          );
+        }
+      }
+
       throw new Error(
         `AI analysis failed: ${error instanceof Error ? error.message : "Unknown error"}`
       );

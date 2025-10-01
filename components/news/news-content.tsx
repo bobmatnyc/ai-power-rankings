@@ -14,7 +14,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,7 +69,12 @@ interface NewsContentProps {
 export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX.Element {
   const [newsItems, setNewsItems] = useState<MetricsHistory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<string>("all");
+  const searchParams = useSearchParams();
+
+  // Get category filter from URL params
+  const categoryFromUrl = searchParams.get("category") || "all";
+
+  const [filter, setFilter] = useState<string>(categoryFromUrl);
   const [page, setPage] = useState(1);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -102,6 +107,13 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
   useEffect(() => {
     fetchNews();
   }, [fetchNews]);
+
+  // Sync filter with URL changes
+  useEffect(() => {
+    const category = searchParams.get("category") || "all";
+    setFilter(category);
+    setPage(1); // Reset page when filter changes
+  }, [searchParams]);
 
   // Calculate totalPages early for use in effects
   const filteredItemsCount =
@@ -214,9 +226,16 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
     setPage(1);
   }, [filter]);
 
-  // Client-side filtering
+  // Client-side filtering (supports both event types and categories)
   const filteredNews =
-    filter === "all" ? newsItems : newsItems.filter((item) => item.event_type === filter);
+    filter === "all" ? newsItems : newsItems.filter((item) => {
+      // Check if filter is a category (matches tool_category)
+      if (item.tool_category && item.tool_category === filter) {
+        return true;
+      }
+      // Otherwise check if it's an event type
+      return item.event_type === filter;
+    });
 
   // Client-side pagination
   const startIndex = (page - 1) * itemsPerPage;

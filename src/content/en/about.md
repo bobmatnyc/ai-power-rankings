@@ -5,6 +5,8 @@ subtitle: "Independent AI Tool Analysis & Reviews"
 
 # About AI Power Rankings
 
+**Independent AI Tool Analysis & Reviews**
+
 Welcome to AI Power Rankings, your trusted source for independent, data-driven rankings of AI coding tools and platforms.
 
 ## Our Mission

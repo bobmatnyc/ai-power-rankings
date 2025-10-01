@@ -22,6 +22,7 @@ import { Sidebar, useSidebar } from "@/components/ui/sidebar";
 import { useRankingChanges } from "@/contexts/ranking-changes-context";
 import { useI18n } from "@/i18n/client";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { CategoryIcon } from "@/lib/category-icons";
 import { loggers } from "@/lib/logger-client";
 import { cn } from "@/lib/utils";
 
@@ -159,7 +160,23 @@ function SidebarContent(): React.JSX.Element {
     }
 
     const queryString = params.toString();
-    return `/${lang}/rankings${queryString ? `?${queryString}` : ""}`;
+
+    // Context-aware routing based on current page
+    const basePath = pathname.split('/').slice(0, 3).join('/'); // Gets /{lang}/{page}
+
+    if (basePath.endsWith('/tools')) {
+      // If on tools page, keep on tools page with filters
+      return `/${lang}/tools${queryString ? `?${queryString}` : ""}`;
+    } else if (basePath.endsWith('/rankings')) {
+      // If on rankings page, keep on rankings page with filters
+      return `/${lang}/rankings${queryString ? `?${queryString}` : ""}`;
+    } else if (basePath.endsWith('/news')) {
+      // If on news page, keep on news page with filters
+      return `/${lang}/news${queryString ? `?${queryString}` : ""}`;
+    } else {
+      // From other pages, navigate to rankings with filter
+      return `/${lang}/rankings${queryString ? `?${queryString}` : ""}`;
+    }
   };
 
   const tagFilters = [
@@ -295,24 +312,59 @@ function SidebarContent(): React.JSX.Element {
               {dict.sidebar.categories}
             </h3>
             <div className="space-y-1">
-              {categories.map((category) => (
-                <Link
-                  key={category.id}
-                  href={createFilterUrl("category", category.id)}
-                  onClick={handleNavClick}
-                  className={cn(
-                    "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors",
-                    currentCategory === category.id
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
-                >
-                  <span>{category.name}</span>
-                  <Badge variant="secondary" className="text-xs">
-                    {category.count}
-                  </Badge>
-                </Link>
-              ))}
+              {categories.map((category) => {
+                // Determine if this category is currently active
+                const isActive = currentCategory === category.id ||
+                  (category.id === "all" && currentCategory === "all");
+
+                return (
+                  <Link
+                    key={category.id}
+                    href={createFilterUrl("category", category.id)}
+                    onClick={handleNavClick}
+                    className={cn(
+                      "group flex items-center justify-between px-3 py-2 text-sm rounded-md transition-all duration-200",
+                      isActive
+                        ? "bg-primary/10 text-primary font-medium shadow-sm"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground hover:shadow-sm"
+                    )}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      {category.id !== "all" ? (
+                        <CategoryIcon
+                          category={category.id}
+                          className={cn(
+                            "transition-colors",
+                            isActive
+                              ? "text-primary"
+                              : "text-muted-foreground group-hover:text-foreground"
+                          )}
+                          size={16}
+                        />
+                      ) : (
+                        <List
+                          className={cn(
+                            "h-4 w-4 transition-colors",
+                            isActive
+                              ? "text-primary"
+                              : "text-muted-foreground group-hover:text-foreground"
+                          )}
+                        />
+                      )}
+                      <span className="transition-colors">{category.name}</span>
+                    </div>
+                    <Badge
+                      variant={isActive ? "default" : "secondary"}
+                      className={cn(
+                        "text-xs transition-all",
+                        isActive ? "bg-primary/20" : ""
+                      )}
+                    >
+                      {category.count}
+                    </Badge>
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
@@ -324,27 +376,37 @@ function SidebarContent(): React.JSX.Element {
               {dict.sidebar.features}
             </h3>
             <div className="space-y-1">
-              {tagFilters.map((tag) => (
-                <button
-                  type="button"
-                  key={tag.id}
-                  onClick={() => {
-                    window.location.href = createFilterUrl("tag", tag.id);
-                    handleNavClick();
-                  }}
-                  className={cn(
-                    "w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors text-left",
-                    currentTags.includes(tag.id)
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
-                >
-                  <span>{tag.name}</span>
-                  <Badge variant="outline" className="text-xs">
-                    {tag.count}
-                  </Badge>
-                </button>
-              ))}
+              {tagFilters.map((tag) => {
+                const isActive = currentTags.includes(tag.id);
+
+                return (
+                  <button
+                    type="button"
+                    key={tag.id}
+                    onClick={() => {
+                      window.location.href = createFilterUrl("tag", tag.id);
+                      handleNavClick();
+                    }}
+                    className={cn(
+                      "group w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-all duration-200 text-left",
+                      isActive
+                        ? "bg-primary/10 text-primary font-medium shadow-sm"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground hover:shadow-sm"
+                    )}
+                  >
+                    <span className="transition-colors">{tag.name}</span>
+                    <Badge
+                      variant={isActive ? "default" : "outline"}
+                      className={cn(
+                        "text-xs transition-all",
+                        isActive ? "bg-primary/20 border-primary/30" : ""
+                      )}
+                    >
+                      {tag.count}
+                    </Badge>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -353,7 +415,14 @@ function SidebarContent(): React.JSX.Element {
           {/* Clear Filters */}
           {(currentCategory !== "all" || currentTags.length > 0) && (
             <Button variant="outline" size="sm" className="w-full" asChild>
-              <Link href={`/${lang}/rankings`} onClick={handleNavClick}>
+              <Link
+                href={
+                  pathname.includes('/tools')
+                    ? `/${lang}/tools`
+                    : `/${lang}/rankings`
+                }
+                onClick={handleNavClick}
+              >
                 <Filter className="h-4 w-4 mr-2" />
                 {dict.sidebar.clearFilters}
               </Link>

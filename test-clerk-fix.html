@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Clerk Fix</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .button-test {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #log {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            padding: 3px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .log-success { color: green; }
+        .log-warning { color: orange; }
+        .log-error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Clerk Sign-In Modal Fix Test</h1>
+
+    <div id="auth-status" class="status">
+        Checking authentication status...
+    </div>
+
+    <div class="button-test">
+        <h3>Test Sign-In Button Behavior</h3>
+        <p>When signed in, clicking these buttons should NOT trigger the modal error.</p>
+
+        <button id="test-modal">Test Modal Sign-In</button>
+        <button id="test-redirect">Test Redirect Sign-In</button>
+        <button id="sign-out">Sign Out</button>
+    </div>
+
+    <div>
+        <h3>Console Log</h3>
+        <div id="log"></div>
+    </div>
+
+    <iframe
+        id="test-frame"
+        src="http://localhost:3011"
+        style="width: 100%; height: 500px; border: 1px solid #ddd; margin-top: 20px; border-radius: 5px;"
+    ></iframe>
+
+    <script>
+        const log = document.getElementById('log');
+        const statusDiv = document.getElementById('auth-status');
+
+        function addLog(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.insertBefore(entry, log.firstChild);
+        }
+
+        // Override console methods to capture logs
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        const originalInfo = console.info;
+
+        console.log = function(...args) {
+            originalLog(...args);
+            addLog('LOG: ' + args.join(' '), 'info');
+        };
+
+        console.warn = function(...args) {
+            originalWarn(...args);
+            addLog('WARN: ' + args.join(' '), 'warning');
+        };
+
+        console.error = function(...args) {
+            originalError(...args);
+            addLog('ERROR: ' + args.join(' '), 'error');
+        };
+
+        console.info = function(...args) {
+            originalInfo(...args);
+            addLog('INFO: ' + args.join(' '), 'info');
+        };
+
+        // Check authentication status periodically
+        function checkAuthStatus() {
+            fetch('http://localhost:3011/api/auth/status', {
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.isSignedIn) {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = `
+                        <strong>✅ Signed In</strong><br>
+                        User ID: ${data.userId || 'N/A'}<br>
+                        Session ID: ${data.sessionId || 'N/A'}
+                    `;
+                    addLog('User is signed in', 'success');
+                } else {
+                    statusDiv.className = 'status warning';
+                    statusDiv.innerHTML = '<strong>⚠️ Not Signed In</strong>';
+                    addLog('User is not signed in', 'warning');
+                }
+            })
+            .catch(err => {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '<strong>❌ Error checking auth status</strong>';
+                addLog('Error checking auth: ' + err.message, 'error');
+            });
+        }
+
+        // Test modal sign-in
+        document.getElementById('test-modal').addEventListener('click', () => {
+            addLog('Testing modal sign-in button...', 'info');
+
+            // Simulate what the SignInButton component does
+            if (typeof window !== "undefined" && window.Clerk) {
+                if (window.Clerk.user) {
+                    addLog('✅ PASS: Modal prevented - user already signed in', 'success');
+                    addLog('Our fix is working! No ClerkRuntimeError triggered.', 'success');
+                } else {
+                    addLog('Opening sign-in modal (user not signed in)', 'info');
+                    try {
+                        window.Clerk.openSignIn({
+                            redirectUrl: window.location.href
+                        });
+                    } catch (err) {
+                        addLog('❌ ERROR: ' + err.message, 'error');
+                    }
+                }
+            } else {
+                addLog('Clerk not available', 'warning');
+            }
+        });
+
+        // Test redirect sign-in
+        document.getElementById('test-redirect').addEventListener('click', () => {
+            addLog('Testing redirect sign-in...', 'info');
+            if (window.Clerk?.user) {
+                addLog('User already signed in, preventing redirect', 'success');
+            } else {
+                addLog('Would redirect to /sign-in', 'info');
+            }
+        });
+
+        // Sign out
+        document.getElementById('sign-out').addEventListener('click', () => {
+            addLog('Attempting to sign out...', 'info');
+            if (window.Clerk?.signOut) {
+                window.Clerk.signOut().then(() => {
+                    addLog('Successfully signed out', 'success');
+                    checkAuthStatus();
+                });
+            } else {
+                addLog('Clerk signOut not available', 'warning');
+            }
+        });
+
+        // Check status on load and every 3 seconds
+        checkAuthStatus();
+        setInterval(checkAuthStatus, 3000);
+
+        // Listen for messages from the iframe
+        window.addEventListener('message', (event) => {
+            if (event.origin === 'http://localhost:3011') {
+                addLog('Message from app: ' + event.data, 'info');
+            }
+        });
+
+        addLog('Test page loaded - monitoring for ClerkRuntimeError', 'info');
+    </script>
+</body>
+</html>

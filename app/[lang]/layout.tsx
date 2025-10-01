@@ -1,5 +1,3 @@
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
@@ -74,7 +72,7 @@ export async function generateMetadata({
   }
 }
 
-export default async function RootLayout({
+export default async function LanguageLayout({
   children,
   params,
 }: Readonly<{
@@ -82,68 +80,66 @@ export default async function RootLayout({
   params: Promise<{ lang: string }>;
 }>) {
   try {
-    console.log("[Layout] RootLayout: Starting layout render");
-    console.log("[Layout] RootLayout: Node environment:", process.env["NODE_ENV"]);
-    console.log("[Layout] RootLayout: Vercel environment:", process.env["VERCEL_ENV"]);
+    console.log("[Layout] LanguageLayout: Starting layout render");
+    console.log("[Layout] LanguageLayout: Node environment:", process.env["NODE_ENV"]);
+    console.log("[Layout] LanguageLayout: Vercel environment:", process.env["VERCEL_ENV"]);
 
     const resolvedParams = await params;
-    console.log("[Layout] RootLayout: Resolved params:", resolvedParams);
+    console.log("[Layout] LanguageLayout: Resolved params:", resolvedParams);
 
     const lang = (resolvedParams?.lang || "en") as Locale;
-    console.log("[Layout] RootLayout: Language:", lang);
+    console.log("[Layout] LanguageLayout: Language:", lang);
 
     const dict = await getDictionary(lang);
-    console.log("[Layout] RootLayout: Dictionary loaded:", !!dict);
-    console.log("[Layout] RootLayout: Dictionary keys:", dict ? Object.keys(dict) : "No dict");
+    console.log("[Layout] LanguageLayout: Dictionary loaded:", !!dict);
+    console.log("[Layout] LanguageLayout: Dictionary keys:", dict ? Object.keys(dict) : "No dict");
 
+    // IMPORTANT: Do NOT render <html> or <body> tags in nested layouts
+    // Only the root layout (/app/layout.tsx) should have these
     return (
-      <html lang={lang as Locale} suppressHydrationWarning>
-        <body
-          className={`antialiased`}
-          style={{
-            ["--font-geist-sans" as any]: geistSans.style.fontFamily,
-            ["--font-geist-mono" as any]: geistMono.style.fontFamily,
+      <>
+        {/* Set language dynamically on the document */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof document !== 'undefined') {
+                document.documentElement.lang = '${lang}';
+                // Also apply font variables to the body
+                document.body.style.setProperty('--font-geist-sans', '${geistSans.style.fontFamily}');
+                document.body.style.setProperty('--font-geist-mono', '${geistMono.style.fontFamily}');
+              }
+            `,
           }}
-        >
-          <ClientLayout lang={lang as Locale} dict={dict}>
-            {children}
-          </ClientLayout>
+        />
 
-          {/* Optimized analytics loading */}
-          <GoogleAnalytics />
-          <SpeedInsights />
-          <Analytics />
-        </body>
-      </html>
+        <ClientLayout lang={lang as Locale} dict={dict}>
+          {children}
+        </ClientLayout>
+
+        {/* Google Analytics only - other analytics are in root layout */}
+        <GoogleAnalytics />
+      </>
     );
   } catch (error) {
-    console.error("[Layout] RootLayout: Critical error in layout:", error);
-    console.error("[Layout] RootLayout: Error stack:", error instanceof Error ? error.stack : "No stack");
-    console.error("[Layout] RootLayout: Error type:", error?.constructor?.name);
+    console.error("[Layout] LanguageLayout: Critical error in layout:", error);
+    console.error("[Layout] LanguageLayout: Error stack:", error instanceof Error ? error.stack : "No stack");
+    console.error("[Layout] LanguageLayout: Error type:", error?.constructor?.name);
 
-    // Return a minimal error layout
+    // Return a minimal error layout without HTML/body tags
     return (
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className="min-h-screen p-8 antialiased"
-          style={{
-            ["--font-geist-sans" as any]: geistSans.style.fontFamily,
-            ["--font-geist-mono" as any]: geistMono.style.fontFamily,
-          }}
-        >
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Layout Error</h1>
-          <p className="text-gray-600 mb-2">An error occurred while rendering the layout.</p>
-          <details className="mt-4 p-4 bg-gray-100 rounded">
-            <summary className="cursor-pointer font-semibold">Error Details</summary>
-            <pre className="mt-2 whitespace-pre-wrap text-sm">
-              {error instanceof Error ? error.message : String(error)}
-            </pre>
-          </details>
-          <div className="mt-8">
-            {children}
-          </div>
-        </body>
-      </html>
+      <div className="min-h-screen p-8">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Layout Error</h1>
+        <p className="text-gray-600 mb-2">An error occurred while rendering the layout.</p>
+        <details className="mt-4 p-4 bg-gray-100 rounded">
+          <summary className="cursor-pointer font-semibold">Error Details</summary>
+          <pre className="mt-2 whitespace-pre-wrap text-sm">
+            {error instanceof Error ? error.message : String(error)}
+          </pre>
+        </details>
+        <div className="mt-8">
+          {children}
+        </div>
+      </div>
     );
   }
 }

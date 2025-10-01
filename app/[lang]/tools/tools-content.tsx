@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -16,6 +17,7 @@ import { ToolIcon } from "@/components/ui/tool-icon";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { getCategoryColor } from "@/lib/category-colors";
+import { CategoryIcon } from "@/lib/category-icons";
 import { extractTextFromRichText } from "@/lib/richtext-utils";
 
 interface RichTextElement {
@@ -54,8 +56,32 @@ interface ToolsContentProps {
 }
 
 export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Initialize category from URL params
+  const categoryFromUrl = searchParams.get("category") || "all";
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryFromUrl);
   const [sortBy, setSortBy] = useState<string>("name");
+
+  // Update state when URL changes
+  useEffect(() => {
+    const category = searchParams.get("category") || "all";
+    setSelectedCategory(category);
+  }, [searchParams]);
+
+  // Update URL when category changes
+  const handleCategoryChange = (newCategory: string) => {
+    setSelectedCategory(newCategory);
+    const params = new URLSearchParams(searchParams.toString());
+    if (newCategory === "all") {
+      params.delete("category");
+    } else {
+      params.set("category", newCategory);
+    }
+    const newUrl = params.toString() ? `/${lang}/tools?${params.toString()}` : `/${lang}/tools`;
+    router.push(newUrl);
+  };
 
   const categories = ["all", ...new Set(tools.map((t) => t.category))];
 
@@ -105,14 +131,17 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
 
       {/* Filters */}
       <div className="mb-6 flex flex-col sm:flex-row gap-4">
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+        <Select value={selectedCategory} onValueChange={handleCategoryChange}>
           <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue placeholder={dict.tools.filterByCategory} />
           </SelectTrigger>
           <SelectContent>
             {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>
-                {cat === "all" ? dict.tools.allCategories : getCategoryName(cat)}
+                <div className="flex items-center gap-2">
+                  {cat !== "all" && <CategoryIcon category={cat} size={16} />}
+                  <span>{cat === "all" ? dict.tools.allCategories : getCategoryName(cat)}</span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
@@ -169,9 +198,10 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
                     aria-label={`Filter by ${getCategoryName(tool.category)} category`}
                   >
                     <Badge
-                      className={`${getCategoryColor(tool.category)} cursor-pointer hover:opacity-80`}
+                      className={`${getCategoryColor(tool.category)} cursor-pointer hover:opacity-80 flex items-center gap-1.5`}
                     >
-                      {getCategoryName(tool.category)}
+                      <CategoryIcon category={tool.category} size={14} />
+                      <span>{getCategoryName(tool.category)}</span>
                     </Badge>
                   </button>
                 </CardDescription>

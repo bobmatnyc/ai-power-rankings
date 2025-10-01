@@ -15,6 +15,13 @@
       "when": 1758613697967,
       "tag": "0001_easy_mesmero",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1727803000000,
+      "tag": "0003_add_scoring_columns",
+      "breakpoints": true
     }
   ]
 }

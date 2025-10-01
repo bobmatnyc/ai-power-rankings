@@ -105,9 +105,40 @@ export const useAuth = () => {
   // Always call the mock hook first for consistent hook behavior
   const mockAuth = MockUseAuth();
   const [mounted, setMounted] = useState(false);
+  const [authState, setAuthState] = useState(mockAuth);
 
   useEffect(() => {
     setMounted(true);
+
+    // Try to get auth state from window.Clerk
+    if (typeof window !== "undefined" && (window as any).Clerk) {
+      const clerk = (window as any).Clerk;
+      const updateAuthState = () => {
+        setAuthState({
+          isLoaded: true,
+          isSignedIn: !!clerk.user,
+          userId: clerk.user?.id || null,
+          sessionId: clerk.session?.id || null,
+          has: () => false,
+          getToken: async () => null,
+          signOut: async () => {
+            if (clerk.signOut) {
+              await clerk.signOut();
+            }
+          },
+        });
+      };
+
+      // Initial update
+      updateAuthState();
+
+      // Listen for auth changes
+      clerk.addListener?.(updateAuthState);
+
+      return () => {
+        clerk.removeListener?.(updateAuthState);
+      };
+    }
   }, []);
 
   // For auth disabled environments or SSR, always return mock
@@ -120,16 +151,8 @@ export const useAuth = () => {
     return mockAuth;
   }
 
-  // If Clerk components aren't loaded yet, return mock
-  if (!clerkComponents.loaded || !clerkComponents.useAuth) {
-    return mockAuth;
-  }
-
-  // FIXED: Cannot call Clerk hooks conditionally
-  // Clerk hooks must be called within ClerkProvider context
-  // For now, return mock until we implement proper context wrapping
-  console.warn("[useAuth] Clerk hooks require ClerkProvider context - using mock");
-  return mockAuth;
+  // Return the actual auth state from Clerk
+  return authState;
 };
 
 /**
@@ -139,9 +162,32 @@ export const useUser = () => {
   // Always call the mock hooks first for consistent hook behavior
   const mockUser = { user: null, isLoaded: true, isSignedIn: false };
   const [mounted, setMounted] = useState(false);
+  const [userState, setUserState] = useState(mockUser);
 
   useEffect(() => {
     setMounted(true);
+
+    // Try to get user state from window.Clerk
+    if (typeof window !== "undefined" && (window as any).Clerk) {
+      const clerk = (window as any).Clerk;
+      const updateUserState = () => {
+        setUserState({
+          user: clerk.user || null,
+          isLoaded: true,
+          isSignedIn: !!clerk.user,
+        });
+      };
+
+      // Initial update
+      updateUserState();
+
+      // Listen for auth changes
+      clerk.addListener?.(updateUserState);
+
+      return () => {
+        clerk.removeListener?.(updateUserState);
+      };
+    }
   }, []);
 
   // For auth disabled environments or SSR, always return mock
@@ -154,16 +200,8 @@ export const useUser = () => {
     return mockUser;
   }
 
-  // If Clerk components aren't loaded yet, return mock
-  if (!clerkComponents.loaded || !clerkComponents.useUser) {
-    return mockUser;
-  }
-
-  // FIXED: Cannot call Clerk hooks conditionally
-  // Clerk hooks must be called within ClerkProvider context
-  // For now, return mock until we implement proper context wrapping
-  console.warn("[useUser] Clerk hooks require ClerkProvider context - using mock");
-  return mockUser;
+  // Return the actual user state from Clerk
+  return userState;
 };
 
 /**
@@ -221,9 +259,28 @@ export const SignInButton = ({
   [key: string]: unknown;
 }) => {
   const [mounted, setMounted] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+
+    // Check if user is signed in using Clerk from window
+    if (typeof window !== "undefined" && (window as any).Clerk) {
+      const clerk = (window as any).Clerk;
+      // Check if user is already signed in
+      if (clerk.user) {
+        setIsSignedIn(true);
+      }
+      // Also listen for auth changes
+      const updateListener = () => {
+        setIsSignedIn(!!clerk.user);
+      };
+      clerk.addListener?.(updateListener);
+
+      return () => {
+        clerk.removeListener?.(updateListener);
+      };
+    }
   }, []);
 
   // CRITICAL: Always use mock if auth is disabled
@@ -237,14 +294,54 @@ export const SignInButton = ({
     return <MockSignInButton {...props}>{children}</MockSignInButton>;
   }
 
+  // Only show SignInButton if user is NOT signed in
+  // Hide the button if user is already signed in to prevent ClerkRuntimeError
+  if (isSignedIn) {
+    console.info("[SignInButton] User is already signed in, hiding SignIn button");
+    return null;
+  }
+
+  // For modal mode, add an extra check to prevent opening modal if signed in
+  const enhancedProps = { ...props };
+  if (props.mode === 'modal') {
+    // Intercept the onClick to check auth state before allowing modal
+    const originalOnClick = (enhancedProps as any).onClick;
+    (enhancedProps as any).onClick = (e: React.MouseEvent) => {
+      // Double-check if user is signed in before allowing modal
+      if (typeof window !== "undefined" && (window as any).Clerk?.user) {
+        console.warn("[SignInButton] Preventing modal open - user is already signed in");
+        e.preventDefault();
+        e.stopPropagation();
+
+        // If there's a forceRedirectUrl, redirect there instead
+        const redirectUrl = (props as any).forceRedirectUrl || (props as any).redirectUrl;
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+        }
+        return;
+      }
+      // If not signed in, proceed with original click handler
+      if (originalOnClick) {
+        originalOnClick(e);
+      }
+    };
+  }
+
   // Use Clerk component if available
   if (clerkComponents.SignInButton && clerkComponents.loaded) {
+    // Final safety check before rendering Clerk component
+    // This prevents the modal error even if the wrapper fails
+    if (typeof window !== "undefined" && (window as any).Clerk?.user) {
+      console.warn("[SignInButton] Preventing Clerk SignInButton render - user is already signed in");
+      return null;
+    }
+
     const ClerkSignInButton = clerkComponents.SignInButton;
-    return <ClerkSignInButton {...props}>{children}</ClerkSignInButton>;
+    return <ClerkSignInButton {...enhancedProps}>{children}</ClerkSignInButton>;
   }
 
   // Fallback to mock
-  return <MockSignInButton {...props}>{children}</MockSignInButton>;
+  return <MockSignInButton {...enhancedProps}>{children}</MockSignInButton>;
 };
 
 export const SignUpButton = ({
@@ -255,9 +352,28 @@ export const SignUpButton = ({
   [key: string]: unknown;
 }) => {
   const [mounted, setMounted] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+
+    // Check if user is signed in using Clerk from window
+    if (typeof window !== "undefined" && (window as any).Clerk) {
+      const clerk = (window as any).Clerk;
+      // Check if user is already signed in
+      if (clerk.user) {
+        setIsSignedIn(true);
+      }
+      // Also listen for auth changes
+      const updateListener = () => {
+        setIsSignedIn(!!clerk.user);
+      };
+      clerk.addListener?.(updateListener);
+
+      return () => {
+        clerk.removeListener?.(updateListener);
+      };
+    }
   }, []);
 
   // Use mock during SSR or if auth is disabled
@@ -265,14 +381,54 @@ export const SignUpButton = ({
     return <MockSignInButton {...props}>{children}</MockSignInButton>;
   }
 
+  // IMPORTANT: Don't render SignUpButton if user is already signed in
+  // This prevents the ClerkRuntimeError about SignUp modal not rendering when user is signed in
+  if (isSignedIn) {
+    console.info("[SignUpButton] User is already signed in, not rendering SignUp button");
+    return null;
+  }
+
+  // For modal mode, add an extra check to prevent opening modal if signed in
+  const enhancedProps = { ...props };
+  if (props.mode === 'modal') {
+    // Intercept the onClick to check auth state before allowing modal
+    const originalOnClick = (enhancedProps as any).onClick;
+    (enhancedProps as any).onClick = (e: React.MouseEvent) => {
+      // Double-check if user is signed in before allowing modal
+      if (typeof window !== "undefined" && (window as any).Clerk?.user) {
+        console.warn("[SignUpButton] Preventing modal open - user is already signed in");
+        e.preventDefault();
+        e.stopPropagation();
+
+        // If there's a forceRedirectUrl, redirect there instead
+        const redirectUrl = (props as any).forceRedirectUrl || (props as any).redirectUrl;
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+        }
+        return;
+      }
+      // If not signed in, proceed with original click handler
+      if (originalOnClick) {
+        originalOnClick(e);
+      }
+    };
+  }
+
   // Use Clerk component if available
   if (clerkComponents.SignUpButton && clerkComponents.loaded) {
+    // Final safety check before rendering Clerk component
+    // This prevents the modal error even if the wrapper fails
+    if (typeof window !== "undefined" && (window as any).Clerk?.user) {
+      console.warn("[SignUpButton] Preventing Clerk SignUpButton render - user is already signed in");
+      return null;
+    }
+
     const ClerkSignUpButton = clerkComponents.SignUpButton;
-    return <ClerkSignUpButton {...props}>{children}</ClerkSignUpButton>;
+    return <ClerkSignUpButton {...enhancedProps}>{children}</ClerkSignUpButton>;
   }
 
   // Fallback to mock
-  return <MockSignInButton {...props}>{children}</MockSignInButton>;
+  return <MockSignInButton {...enhancedProps}>{children}</MockSignInButton>;
 };
 
 export const UserButton = (props: Record<string, unknown>) => {
@@ -311,16 +467,54 @@ export function SignInButtonWrapper({
 // Wrapper for SignedOut that ensures content is visible during SSR
 export function SignedOutWrapper({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
+  const [clerkUser, setClerkUser] = useState<any>(null);
   // Always call hooks at the top level - never conditionally
   const authData = useAuth();
 
   useEffect(() => {
     setMounted(true);
+
+    // Also check Clerk directly to avoid race conditions
+    if (typeof window !== "undefined" && (window as any).Clerk) {
+      const clerk = (window as any).Clerk;
+      setClerkUser(clerk.user);
+
+      // Listen for auth state changes
+      const updateListener = () => {
+        setClerkUser(clerk.user);
+      };
+      clerk.addListener?.(updateListener);
+
+      return () => {
+        clerk.removeListener?.(updateListener);
+      };
+    }
   }, []);
 
-  // During SSR and initial render, always show the content
-  // This ensures the Sign In button is visible on page load
-  if (!mounted || !authData.isLoaded) {
+  // During SSR, show content
+  if (!mounted) {
+    return <>{children}</>;
+  }
+
+  // Once mounted, check both auth sources to be extra safe
+  // If Clerk user exists directly, hide the sign-out content immediately
+  if (clerkUser) {
+    return null;
+  }
+
+  // If auth data is loaded and user is signed in, hide
+  if (authData.isLoaded && authData.isSignedIn) {
+    return null;
+  }
+
+  // If auth is still loading but we don't have a Clerk user, show cautiously
+  // This prevents the modal error during the brief loading period
+  if (!authData.isLoaded) {
+    // Double-check Clerk directly one more time
+    if (typeof window !== "undefined" && (window as any).Clerk?.user) {
+      return null;
+    }
+    // Only show if we're really sure there's no user
     return <>{children}</>;
   }
 
@@ -383,21 +577,36 @@ export function UserButtonWrapper(props: Record<string, unknown>) {
 
 // Additional exports for compatibility
 export const useClerk = () => {
-  // Default return value for when Clerk is not available
-  const defaultClerk = {
-    loaded: false,
-    session: null,
-    user: null,
-    signOut: () => Promise.resolve(),
-    openSignIn: () => {},
-    openSignUp: () => {},
-  };
+  const [clerk, setClerk] = useState<any>(null);
 
-  // FIXED: Cannot call Clerk hooks conditionally
-  // Clerk hooks must be called within ClerkProvider context
-  // Always return default for now until proper context is implemented
-  console.warn("[useClerk] Clerk hooks require ClerkProvider context - using default");
-  return defaultClerk;
+  useEffect(() => {
+    // Get Clerk instance from window
+    if (typeof window !== "undefined" && (window as any).Clerk) {
+      setClerk((window as any).Clerk);
+    }
+  }, []);
+
+  // Default return value for when Clerk is not available
+  if (!clerk) {
+    return {
+      loaded: false,
+      session: null,
+      user: null,
+      signOut: () => Promise.resolve(),
+      openSignIn: () => {},
+      openSignUp: () => {},
+    };
+  }
+
+  // Return actual Clerk instance with proper methods
+  return {
+    loaded: true,
+    session: clerk.session,
+    user: clerk.user,
+    signOut: () => clerk.signOut?.() || Promise.resolve(),
+    openSignIn: (options?: any) => clerk.openSignIn?.(options),
+    openSignUp: (options?: any) => clerk.openSignUp?.(options),
+  };
 };
 
 export const SignIn = (props: Record<string, unknown>) => {

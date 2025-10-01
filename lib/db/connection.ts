@@ -38,8 +38,8 @@ neonConfig.poolQueryViaFetch = true;
 
 // Connection pool for better performance
 let pool: Pool | null = null;
-// Singleton pattern for database connection
-let db: ReturnType<typeof drizzle> | null = null;
+// Singleton pattern for database connection - union type of both drizzle instances
+let db: ReturnType<typeof drizzle> | ReturnType<typeof drizzlePool> | null = null;
 let sql: ReturnType<typeof neon> | null = null;
 
 /**
@@ -91,17 +91,34 @@ function getDatabaseUrl(): string | undefined {
 
 /**
  * Get database connection with connection pooling
- * Returns null if database is not configured
- * ALWAYS uses database - no JSON fallback
+ * Throws an error if database is not configured (except in test environment)
  */
-export function getDb() {
+export function getDb(): typeof db {
   // Get appropriate database URL based on environment
   const DATABASE_URL = getDatabaseUrl();
 
   // Check if database URL is configured
   if (!DATABASE_URL) {
+    // Database is REQUIRED for all environments except test
+    if (NODE_ENV === "test") {
+      // Only allow null database in test environment
+      return null;
+    }
+
+    // For development, show helpful error but don't allow fallback
+    if (NODE_ENV === "development") {
+      console.error("❌ Database connection REQUIRED for development");
+      console.error("Please configure your database:");
+      console.error("1. Copy .env.example to .env.local");
+      console.error("2. Set DATABASE_URL with your database connection string");
+      console.error("3. Visit https://neon.tech to create a free PostgreSQL database");
+      console.error("");
+      console.error("Development cannot proceed without a database connection.");
+      throw new Error("Database connection required for development. See instructions above.");
+    }
+
     console.error("❌ CRITICAL: Database URL not configured for environment:", NODE_ENV);
-    console.error("Database connection is REQUIRED - no JSON fallback available");
+    console.error("Database connection is REQUIRED in production/staging environments");
     throw new Error(`Database connection required but not configured for environment: ${NODE_ENV}`);
   }
 
@@ -112,7 +129,7 @@ export function getDb() {
 
   try {
     // Use connection pooling in production for better performance
-    const usePool = NODE_ENV === "production" || NODE_ENV === "staging";
+    const usePool = NODE_ENV === "production" || (NODE_ENV as string) === "staging";
 
     if (usePool) {
       // Create connection pool for production/staging
@@ -122,7 +139,6 @@ export function getDb() {
           // Connection pool configuration for optimal performance
           max: 10, // Maximum number of connections in the pool
           maxUses: 1000, // Max number of times a connection can be reused
-          idleTimeout: 20, // Seconds a connection can be idle before being closed
           connectionTimeoutMillis: 10000, // 10 seconds connection timeout
         });
       }
@@ -172,7 +188,7 @@ export function getDb() {
       });
     }
 
-    // Always throw error - no fallback to JSON
+    // Always throw error - no fallbacks allowed except in test environment
     throw new Error(
       `Failed to establish database connection: ${error instanceof Error ? error.message : "Unknown error"}`
     );
@@ -186,8 +202,13 @@ export async function testConnection(): Promise<boolean> {
   const database = getDb();
 
   if (!database) {
-    console.log("Database is disabled or not configured");
-    return false;
+    // Only allowed in test environment
+    if (NODE_ENV === "test") {
+      console.log("Test environment - database connection skipped");
+      return false;
+    }
+    // Should never reach here as getDb() throws for non-test environments
+    throw new Error("Database connection required");
   }
 
   try {

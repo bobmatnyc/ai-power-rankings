@@ -18,15 +18,15 @@ interface NewsArticle {
   summary?: string;
   content: string;
   author?: string;
-  published_date: string;
-  source?: string;
-  source_url?: string;
+  publishedDate: string;
+  sourceName?: string;
+  sourceUrl?: string;
   tags?: string[];
-  tool_mentions?: string[];
-  created_at: string;
-  updated_at: string;
+  toolMentions?: string[];
+  createdAt: string;
+  updatedAt: string;
   category?: string;
-  importance_score?: number;
+  importanceScore?: number;
 }
 
 export default function NewsListPage() {
@@ -97,9 +97,9 @@ export default function NewsListPage() {
     return (
       article.title.toLowerCase().includes(query) ||
       article.summary?.toLowerCase().includes(query) ||
-      article.source?.toLowerCase().includes(query) ||
+      article.sourceName?.toLowerCase().includes(query) ||
       article.tags?.some((tag) => tag.toLowerCase().includes(query)) ||
-      article.tool_mentions?.some((tool) => tool.toLowerCase().includes(query))
+      article.toolMentions?.some((tool) => tool.toLowerCase().includes(query))
     );
   });
 
@@ -168,21 +168,21 @@ export default function NewsListPage() {
                           <p className="text-sm text-muted-foreground mb-3">{article.summary}</p>
                         )}
                         <div className="flex flex-wrap gap-2 mb-3">
-                          {article.source && <Badge variant="outline">{article.source}</Badge>}
+                          {article.sourceName && <Badge variant="outline">{article.sourceName}</Badge>}
                           {article.category && (
                             <Badge variant="secondary">{article.category}</Badge>
                           )}
-                          {article.importance_score && (
-                            <Badge>Score: {article.importance_score}</Badge>
+                          {article.importanceScore && (
+                            <Badge>Score: {article.importanceScore}</Badge>
                           )}
-                          {article.tool_mentions?.map((tool) => (
+                          {article.toolMentions?.map((tool) => (
                             <Badge key={tool} variant="default">
                               {tool}
                             </Badge>
                           ))}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          Published: {new Date(article.published_date).toLocaleDateString()}
+                          Published: {new Date(article.publishedDate).toLocaleDateString()}
                           {article.author && ` • By ${article.author}`}
                         </div>
                       </div>
