@@ -41,8 +41,11 @@ export function SignupUpdatesButton({
         return;
       }
 
+      // Type guard to check if user has the expected properties
+      const typedUser = user as any;
+
       // Check if user just signed up (within the last 30 seconds)
-      const signUpTime = user.createdAt;
+      const signUpTime = typedUser?.createdAt;
       if (!signUpTime) {
         return; // User doesn't have a creation time
       }
@@ -63,10 +66,10 @@ export function SignupUpdatesButton({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            userId: user.id,
-            email: user.primaryEmailAddress?.emailAddress || "",
-            firstName: user.firstName || "",
-            lastName: user.lastName || "",
+            userId: typedUser.id,
+            email: typedUser.primaryEmailAddress?.emailAddress || "",
+            firstName: typedUser.firstName || "",
+            lastName: typedUser.lastName || "",
           }),
         });
 

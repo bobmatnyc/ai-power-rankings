@@ -195,6 +195,13 @@ export const migrations = pgTable(
   })
 );
 
+/**
+ * User Preferences
+ * NOTE: User preferences are now stored in Clerk's privateMetadata
+ * instead of a separate database table for simplified architecture.
+ * See /app/api/user/preferences/route.ts for implementation.
+ */
+
 // Type exports for TypeScript
 export type Tool = typeof tools.$inferSelect;
 export type NewTool = typeof tools.$inferInsert;
@@ -214,6 +221,8 @@ export type {
   NewArticle,
   NewArticleProcessingLog,
   NewArticleRankingsChange,
+  NewRankingVersion,
+  RankingVersion,
 } from "./article-schema";
 // Export article tables from article-schema.ts
 export {
@@ -221,4 +230,5 @@ export {
   articleRankingsChanges,
   articleStatusEnum,
   articles,
+  rankingVersions,
 } from "./article-schema";

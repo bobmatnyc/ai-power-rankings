@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { RankingChange } from "@/components/ui/ranking-change";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { getCategoryColor } from "@/lib/category-colors";
+import { CategoryIcon } from "@/lib/category-icons";
 import { calculateTier, getTierColor } from "@/lib/ranking-utils";
 import { extractTextFromRichText, type RichTextBlock } from "@/lib/richtext-utils";
 
@@ -114,9 +115,18 @@ export function RankingCard({
 
               {/* Top section - Badges */}
               <div className="flex flex-wrap gap-2 mb-3">
-                <Badge className={getCategoryColor(ranking.tool.category)}>
-                  {ranking.tool.category.replace(/-/g, " ")}
-                </Badge>
+                <Link
+                  href={`/${lang}/tools?category=${ranking.tool.category}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-block"
+                >
+                  <Badge
+                    className={`${getCategoryColor(ranking.tool.category)} cursor-pointer hover:opacity-80 flex items-center gap-1.5`}
+                  >
+                    <CategoryIcon category={ranking.tool.category} size={14} />
+                    <span>{ranking.tool.category.replace(/-/g, " ")}</span>
+                  </Badge>
+                </Link>
                 {ranking.scores?.overall && (
                   <Badge variant="outline">Score: {ranking.scores.overall.toFixed(1)}</Badge>
                 )}

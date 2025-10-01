@@ -1,15 +1,50 @@
 /**
  * News Database Repository
  * Handles all database operations for news articles
+ * Now queries the articles table which contains the actual data
  */
 
 import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { db } from "../index";
-import { type NewNewsArticle, news } from "../schema";
+import { articles, type Article } from "../article-schema";
+
+// Type for the news article format expected by the frontend
+interface NewsArticle {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string | null;
+  source: string | null;
+  sourceUrl: string | null;
+  publishedAt: Date;
+  toolMentions?: any;
+  importanceScore?: number | null;
+  tags?: string[] | null;
+  category?: string | null;
+}
 
 export class NewsRepository {
   /**
-   * Get all news articles
+   * Map article from articles table to news format
+   */
+  private mapArticleToNews(article: Article): NewsArticle {
+    return {
+      id: article.id,
+      slug: article.slug,
+      title: article.title,
+      summary: article.summary,
+      source: article.sourceName,
+      sourceUrl: article.sourceUrl,
+      publishedAt: article.publishedDate || article.createdAt,
+      toolMentions: article.toolMentions,
+      importanceScore: article.importanceScore,
+      tags: article.tags,
+      category: article.category,
+    };
+  }
+
+  /**
+   * Get all active news articles
    */
   async getAll() {
     if (!db) {
@@ -18,9 +53,13 @@ export class NewsRepository {
     }
 
     try {
-      const articles = await db.select().from(news).orderBy(desc(news.publishedAt));
+      const results = await db
+        .select()
+        .from(articles)
+        .where(eq(articles.status, "active"))
+        .orderBy(desc(articles.publishedDate));
 
-      return articles;
+      return results.map((article) => this.mapArticleToNews(article));
     } catch (error) {
       console.error("Error fetching news articles:", error);
       return [];
@@ -37,20 +76,28 @@ export class NewsRepository {
 
     try {
       // Get paginated articles
-      const articles = await db
+      const results = await db
         .select()
-        .from(news)
-        .orderBy(desc(news.publishedAt))
+        .from(articles)
+        .where(eq(articles.status, "active"))
+        .orderBy(desc(articles.publishedDate))
         .limit(limit)
         .offset(offset);
 
-      // Get total count
-      const countResult = await db.select({ count: sql<number>`count(*)` }).from(news);
+      // Get total count of active articles
+      const countResult = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(articles)
+        .where(eq(articles.status, "active"));
 
       const total = Number(countResult[0]?.count || 0);
       const hasMore = offset + limit < total;
 
-      return { articles, total, hasMore };
+      return {
+        articles: results.map((article) => this.mapArticleToNews(article)),
+        total,
+        hasMore
+      };
     } catch (error) {
       console.error("Error fetching paginated news:", error);
       return { articles: [], total: 0, hasMore: false };
@@ -64,9 +111,16 @@ export class NewsRepository {
     if (!db) return null;
 
     try {
-      const results = await db.select().from(news).where(eq(news.slug, slug)).limit(1);
+      const results = await db
+        .select()
+        .from(articles)
+        .where(and(
+          eq(articles.slug, slug),
+          eq(articles.status, "active")
+        ))
+        .limit(1);
 
-      return results[0] || null;
+      return results[0] ? this.mapArticleToNews(results[0]) : null;
     } catch (error) {
       console.error("Error fetching news by slug:", error);
       return null;
@@ -80,13 +134,17 @@ export class NewsRepository {
     if (!db) return [];
 
     try {
-      const articles = await db
+      const results = await db
         .select()
-        .from(news)
-        .where(and(gte(news.publishedAt, startDate), lte(news.publishedAt, endDate)))
-        .orderBy(desc(news.publishedAt));
+        .from(articles)
+        .where(and(
+          eq(articles.status, "active"),
+          gte(articles.publishedDate, startDate),
+          lte(articles.publishedDate, endDate)
+        ))
+        .orderBy(desc(articles.publishedDate));
 
-      return articles;
+      return results.map(this.mapArticleToNews);
     } catch (error) {
       console.error("Error fetching news by date range:", error);
       return [];
@@ -116,6 +174,27 @@ export class NewsRepository {
   }
 
   /**
+   * Get recent active articles
+   */
+  async getRecent(limit: number = 10) {
+    if (!db) return [];
+
+    try {
+      const results = await db
+        .select()
+        .from(articles)
+        .where(eq(articles.status, "active"))
+        .orderBy(desc(articles.publishedDate))
+        .limit(limit);
+
+      return results.map(this.mapArticleToNews);
+    } catch (error) {
+      console.error("Error fetching recent news:", error);
+      return [];
+    }
+  }
+
+  /**
    * Calculate average tool mentions per article
    */
   async getAverageToolMentions() {
@@ -125,7 +204,7 @@ export class NewsRepository {
 
     const totalMentions = allArticles.reduce((sum, article) => {
       const mentions = Array.isArray(article.toolMentions)
-        ? (article.toolMentions as string[]).length
+        ? (article.toolMentions as any[]).length
         : 0;
       return sum + mentions;
     }, 0);
@@ -152,86 +231,9 @@ export class NewsRepository {
     };
   }
 
-  /**
-   * Create a new article
-   */
-  async create(articleData: NewNewsArticle) {
-    if (!db) {
-      throw new Error("Database not configured");
-    }
-
-    try {
-      const result = await db
-        .insert(news)
-        .values({
-          ...articleData,
-          slug: articleData.slug || this.generateSlug(articleData.title),
-          publishedAt: articleData.publishedAt || new Date(),
-          data: articleData.data || {},
-          toolMentions: articleData.toolMentions || [],
-        })
-        .returning();
-
-      return result[0];
-    } catch (error) {
-      console.error("Error creating news article:", error);
-      throw error;
-    }
-  }
-
-  /**
-   * Update an article
-   */
-  async update(slug: string, updates: Partial<NewNewsArticle>) {
-    if (!db) {
-      throw new Error("Database not configured");
-    }
-
-    try {
-      const result = await db
-        .update(news)
-        .set({
-          ...updates,
-          updatedAt: new Date(),
-        })
-        .where(eq(news.slug, slug))
-        .returning();
-
-      return result[0];
-    } catch (error) {
-      console.error("Error updating news article:", error);
-      throw error;
-    }
-  }
-
-  /**
-   * Delete an article
-   */
-  async delete(slug: string) {
-    if (!db) {
-      throw new Error("Database not configured");
-    }
-
-    try {
-      const result = await db.delete(news).where(eq(news.slug, slug)).returning();
-
-      return result[0];
-    } catch (error) {
-      console.error("Error deleting news article:", error);
-      throw error;
-    }
-  }
-
-  /**
-   * Generate slug from title
-   */
-  private generateSlug(title: string): string {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .substring(0, 100);
-  }
+  // Note: Create, update, and delete operations should be performed
+  // through the articles table directly, not through this news repository
+  // which is designed for read-only access to active articles
 }
 
 // Export singleton instance

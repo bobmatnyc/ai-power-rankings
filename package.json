@@ -6,7 +6,11 @@
     "dev": "next dev --port 3011",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate:prod-to-dev": "tsx scripts/migrate-prod-to-dev.ts",
+    "db:compare": "tsx scripts/compare-db-schemas.ts",
+    "db:verify-tools": "tsx scripts/verify-tools-schema.ts",
+    "db:apply-scoring": "tsx scripts/apply-scoring-migration.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.33.0",
@@ -23,6 +27,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@supabase/supabase-js": "^2.58.0",
     "@tailwindcss/typography": "^0.5.19",
     "@types/uuid": "^10.0.0",
     "@upstash/ratelimit": "^2.0.6",
@@ -32,6 +37,7 @@
     "@vercel/speed-insights": "^1.2.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
+    "chalk": "^5.6.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

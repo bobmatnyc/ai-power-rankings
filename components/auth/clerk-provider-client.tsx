@@ -22,6 +22,48 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
 
   useEffect(() => {
     setIsClient(true);
+
+    // Prevent Clerk from auto-opening modals on hydration
+    // This must be set up BEFORE Clerk loads
+    if (typeof window !== "undefined") {
+      // Set up a getter/setter trap for window.Clerk
+      let clerkInstance: any = null;
+
+      Object.defineProperty(window, 'Clerk', {
+        get() {
+          return clerkInstance;
+        },
+        set(value) {
+          if (value && !clerkInstance) {
+            // Clerk is being initialized - wrap the methods immediately
+            const originalOpenSignIn = value.openSignIn?.bind(value);
+            const originalOpenSignUp = value.openSignUp?.bind(value);
+
+            if (originalOpenSignIn) {
+              value.openSignIn = function(...args: any[]) {
+                if (value.user) {
+                  console.warn('[ClerkProvider] Prevented openSignIn - user already signed in');
+                  return Promise.resolve();
+                }
+                return originalOpenSignIn(...args);
+              };
+            }
+
+            if (originalOpenSignUp) {
+              value.openSignUp = function(...args: any[]) {
+                if (value.user) {
+                  console.warn('[ClerkProvider] Prevented openSignUp - user already signed in');
+                  return Promise.resolve();
+                }
+                return originalOpenSignUp(...args);
+              };
+            }
+          }
+          clerkInstance = value;
+        },
+        configurable: true
+      });
+    }
   }, []);
 
   // Now calculate all conditions AFTER hooks are called
@@ -32,7 +74,9 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
     typeof window !== "undefined" &&
     (window.location.hostname === "aipowerranking.com" ||
       window.location.hostname === "www.aipowerranking.com" ||
-      window.location.hostname === "staging.aipowerranking.com");
+      window.location.hostname === "staging.aipowerranking.com" ||
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1");
 
   const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
@@ -57,13 +101,30 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
     return (
       <ClerkProvider
         publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
-        signInFallbackRedirectUrl="/"
-        signUpFallbackRedirectUrl="/"
+        signInUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_IN_URL"] || "/en/sign-in"}
+        signUpUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_UP_URL"] || "/en/sign-up"}
+        signInFallbackRedirectUrl={process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL"] || "/en/admin"}
+        signUpFallbackRedirectUrl={process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL"] || "/en/admin"}
         appearance={{
           variables: {
             colorPrimary: "#000000",
           },
+          elements: {
+            formButtonPrimary: 'bg-primary hover:bg-primary-hover text-white',
+            card: 'shadow-none',
+          },
         }}
+        allowedRedirectOrigins={[
+          "http://localhost:3000",
+          "http://localhost:3008",
+          "http://localhost:3011",
+          "http://127.0.0.1:3000",
+          "http://127.0.0.1:3008",
+          "http://127.0.0.1:3011",
+        ]}
+        // Prevent automatic modal opening when user is already signed in
+        signInForceRedirectUrl={undefined}
+        signUpForceRedirectUrl={undefined}
       >
         {children}
       </ClerkProvider>

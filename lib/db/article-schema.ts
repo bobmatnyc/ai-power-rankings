@@ -194,6 +194,48 @@ export const articleProcessingLogs = pgTable(
   })
 );
 
+/**
+ * Ranking Versions table - Complete snapshot versioning for rollback capability
+ * Each version represents a complete state of rankings at a point in time
+ */
+export const rankingVersions = pgTable(
+  "ranking_versions",
+  {
+    // Primary identifiers
+    id: uuid("id").defaultRandom().primaryKey(),
+    version: varchar("version", { length: 50 }).notNull().unique(), // e.g., "1.0.0", "1.0.1"
+
+    // Article association (optional - versions can be created for various reasons)
+    articleId: uuid("article_id").references(() => articles.id, { onDelete: "set null" }),
+
+    // Complete rankings snapshot at this version
+    rankingsSnapshot: jsonb("rankings_snapshot").notNull(),
+
+    // Version metadata
+    changesSummary: text("changes_summary"),
+    newsItemsCount: integer("news_items_count").default(0),
+    toolsAffected: integer("tools_affected").default(0),
+
+    // Version lineage - self-reference requires explicit type
+    previousVersionId: uuid("previous_version_id"),
+
+    // User tracking
+    createdBy: varchar("created_by", { length: 255 }).default("system"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+
+    // Rollback tracking
+    isRollback: boolean("is_rollback").default(false),
+    rolledBackFromId: uuid("rolled_back_from_id"),
+  },
+  (table) => ({
+    // Indexes
+    versionIdx: uniqueIndex("idx_ranking_versions_version").on(table.version),
+    articleIdIdx: index("idx_ranking_versions_article_id").on(table.articleId),
+    createdAtIdx: index("idx_ranking_versions_created_at").on(table.createdAt),
+    previousVersionIdx: index("idx_ranking_versions_previous").on(table.previousVersionId),
+  })
+);
+
 // Type exports for TypeScript
 export type Article = typeof articles.$inferSelect;
 export type NewArticle = typeof articles.$inferInsert;
@@ -201,6 +243,8 @@ export type ArticleRankingsChange = typeof articleRankingsChanges.$inferSelect;
 export type NewArticleRankingsChange = typeof articleRankingsChanges.$inferInsert;
 export type ArticleProcessingLog = typeof articleProcessingLogs.$inferSelect;
 export type NewArticleProcessingLog = typeof articleProcessingLogs.$inferInsert;
+export type RankingVersion = typeof rankingVersions.$inferSelect;
+export type NewRankingVersion = typeof rankingVersions.$inferInsert;
 
 // Extended types for API responses
 export interface ArticleWithImpact extends Article {

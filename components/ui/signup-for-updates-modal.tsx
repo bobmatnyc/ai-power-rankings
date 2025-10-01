@@ -67,7 +67,7 @@ export function SignupForUpdatesModal({
                 {dict.newsletter?.modal?.thankYou || "Welcome!"}
               </p>
               <p className="text-sm text-muted-foreground">
-                Signed in as {user?.primaryEmailAddress?.emailAddress}
+                Signed in as {(user as any)?.primaryEmailAddress?.emailAddress}
               </p>
             </div>
           ) : isSignedIn ? (
@@ -75,9 +75,11 @@ export function SignupForUpdatesModal({
             <div className="space-y-4">
               <div className="bg-muted/50 rounded-lg p-4">
                 <p className="text-sm font-medium mb-1">Signed in as:</p>
-                <p className="text-sm text-muted-foreground">{user?.fullName || user?.username}</p>
                 <p className="text-sm text-muted-foreground">
-                  {user?.primaryEmailAddress?.emailAddress}
+                  {(user as any)?.fullName || (user as any)?.username}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {(user as any)?.primaryEmailAddress?.emailAddress}
                 </p>
               </div>
 

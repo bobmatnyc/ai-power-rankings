@@ -62,32 +62,22 @@ export async function GET(request: NextRequest) {
 
         // Try to extract tool from title using the term mapping
         const matchedSlug = findToolByText(article.title);
-        let matchingTool = null;
 
-        if (matchedSlug) {
-          matchingTool = await toolsRepo.findBySlug(matchedSlug);
-        }
+        // Extract tool names from tool_mentions
+        if (toolMentions && toolMentions.length > 0) {
+          // Handle both string array and object array formats
+          const toolNamesList = toolMentions.map((mention: any) =>
+            typeof mention === 'string' ? mention : mention?.tool
+          ).filter(Boolean);
 
-        // If no match in title, check tool_mentions
-        if (!matchingTool && toolMentions.length > 0) {
-          const firstToolName = toolMentions[0];
-          // Try to find tool by slug or name
-          matchingTool = await toolsRepo.findBySlug(
-            firstToolName.toLowerCase().replace(/\s+/g, "-")
-          );
-
-          if (!matchingTool) {
-            // Use the tool mention as the name even if we don't find a match
-            toolNames = toolMentions.join(", ");
+          if (toolNamesList.length > 0) {
+            toolNames = toolNamesList.join(", ");
+            primaryToolId = matchedSlug || toolNamesList[0].toLowerCase().replace(/\s+/g, "-");
           }
-        }
-
-        if (matchingTool) {
-          const toolInfo = matchingTool.info || {};
-          toolNames = matchingTool.name;
-          toolCategory = matchingTool.category || "ai-coding-tool";
-          toolWebsite = (toolInfo["website"] as string) || "";
-          primaryToolId = matchingTool.slug || matchingTool.id;
+        } else if (matchedSlug) {
+          // If no tool mentions but we matched from title, use that
+          toolNames = matchedSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          primaryToolId = matchedSlug;
         }
 
         // Map event type based on tags or content

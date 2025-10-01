@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/api-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
+import { ToolMapper } from "@/lib/services/tool-mapper.service";
 
 // Type definitions for OpenRouter API
 interface OpenRouterMessage {
@@ -54,13 +55,26 @@ interface ExtendedError extends Error {
 }
 
 const AnalyzeRequestSchema = z.object({
-  input: z.string().min(1),
-  type: z.enum(["url", "text", "file"]),
+  input: z.string().min(1).optional(),
+  type: z.enum(["url", "text", "file", "preprocessed"]),
   filename: z.string().optional(),
   mimeType: z.string().optional(),
   verbose: z.boolean().optional(),
   saveAsArticle: z.boolean().optional(),
-});
+  preprocessedData: z.any().optional(), // For reusing preview data
+}).refine(
+  (data) => {
+    // If type is preprocessed, we need preprocessedData
+    if (data.type === "preprocessed") {
+      return !!data.preprocessedData;
+    }
+    // Otherwise, we need input
+    return !!data.input;
+  },
+  {
+    message: "Either input or preprocessedData is required based on type",
+  }
+);
 
 const OpenRouterResponseSchema = z.object({
   title: z.string(),
@@ -463,9 +477,13 @@ Return ONLY a valid JSON object with this EXACT structure:
       }
     }
 
+    // Normalize tool names using ToolMapper
+    const normalizedToolMentions = ToolMapper.processToolMentions(validated.tool_mentions);
+
     // Add the model name to the response
     return {
       ...validated,
+      tool_mentions: normalizedToolMentions,
       model: modelName,
     };
   } catch (error) {
@@ -591,46 +609,66 @@ export async function POST(request: NextRequest) {
       mimeType,
       verbose = false,
       saveAsArticle = false,
+      preprocessedData,
     } = AnalyzeRequestSchema.parse(body);
 
     if (verbose) {
       console.log("[News Analysis] Request details:", {
         type,
-        inputLength: input.length,
+        inputLength: input?.length,
         filename,
         mimeType,
+        hasPreprocessedData: !!preprocessedData,
       });
     }
 
-    let content: string;
-    let url: string | undefined;
+    let analysis: any;
 
-    if (type === "url") {
-      url = input;
-      content = await fetchArticleContent(url);
-    } else if (type === "file") {
-      // Extract text from uploaded file
-      if (!mimeType || !filename) {
-        throw new Error("File upload requires mimeType and filename");
-      }
-      content = await extractTextFromFile(input, mimeType, filename);
+    // Handle preprocessed mode - reuse previous AI analysis
+    if (type === "preprocessed" && preprocessedData) {
+      console.log("[News Analysis] Using preprocessed data, skipping AI analysis");
 
-      if (verbose) {
-        console.log("[News Analysis] Extracted text length:", content.length);
-        console.log("[News Analysis] Text preview:", content.substring(0, 200));
-      }
+      // Validate and normalize the preprocessed data
+      analysis = {
+        ...preprocessedData,
+        // Ensure tool names are normalized even in preprocessed data
+        tool_mentions: ToolMapper.processToolMentions(preprocessedData.tool_mentions || []),
+      };
     } else {
-      content = input;
-    }
+      // Normal processing path - extract content and analyze
+      let content: string;
+      let url: string | undefined;
 
-    // Analyze with OpenRouter (no fallback)
-    const analysis = await analyzeWithOpenRouter(content, url, verbose);
+      if (type === "url") {
+        url = input!;
+        content = await fetchArticleContent(url);
+      } else if (type === "file") {
+        // Extract text from uploaded file
+        if (!mimeType || !filename) {
+          throw new Error("File upload requires mimeType and filename");
+        }
+        content = await extractTextFromFile(input!, mimeType, filename);
+
+        if (verbose) {
+          console.log("[News Analysis] Extracted text length:", content.length);
+          console.log("[News Analysis] Text preview:", content.substring(0, 200));
+        }
+      } else {
+        content = input!;
+      }
+
+      // Analyze with OpenRouter (no fallback)
+      analysis = await analyzeWithOpenRouter(content, url, verbose);
+    }
 
     // Save as article if requested
     let savedArticle: any = null;
     if (saveAsArticle) {
       const articlesRepo = new ArticlesRepository();
       const now = new Date();
+
+      // Determine source URL - could come from analysis or from input
+      const sourceUrl = analysis.url || (type === "url" ? input : undefined);
 
       // Convert analysis to article format
       const article = await articlesRepo.createArticle({
@@ -640,22 +678,19 @@ export async function POST(request: NextRequest) {
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-+|-+$/g, ""),
         summary: analysis.summary,
-        content: `<p>${analysis.summary}</p>\n\n<p>${content.substring(0, 5000)}...</p>`,
+        content: analysis.rewritten_content || analysis.summary,
         author: "AI News Analyst",
         publishedDate: analysis.published_date ? new Date(analysis.published_date) : now,
         sourceName: analysis.source || "Unknown",
-        sourceUrl: url,
-        // url field doesn't exist in schema - use sourceUrl instead
+        sourceUrl,
         tags: analysis.key_topics || [],
-        toolMentions: analysis.tool_mentions?.map((tm) => tm.tool) || [],
+        toolMentions: analysis.tool_mentions?.map((tm: any) => tm.tool) || [],
         category: "AI News",
         importanceScore: analysis.importance_score || 5,
         status: "active",
-        ingestionType: "url",
+        ingestionType: type === "preprocessed" ? "text" : type,
         ingestedAt: now,
         ingestedBy: "admin", // userId not available in this context
-        // Note: metadata field doesn't exist in the schema
-        // These values could be stored separately or schema needs to be extended
       });
 
       savedArticle = article;

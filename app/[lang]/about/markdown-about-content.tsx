@@ -103,11 +103,6 @@ export function MarkdownAboutContent({
 
   return (
     <div className="container mx-auto p-4 md:p-8 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">{content.title}</h1>
-        {content.subtitle && <p className="text-muted-foreground text-lg">{content.subtitle}</p>}
-      </div>
-
       <div
         className="prose prose-lg dark:prose-invert max-w-none
           prose-headings:font-bold prose-headings:tracking-tight

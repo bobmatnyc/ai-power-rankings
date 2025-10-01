@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCategoryColor } from "@/lib/category-colors";
+import { CategoryIcon } from "@/lib/category-icons";
 import { loggers } from "@/lib/logger-client";
 
 interface RankingData {
@@ -198,9 +199,14 @@ function RankingsContentInner(): React.JSX.Element {
           <SelectContent>
             {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>
-                {cat === "all"
-                  ? "All Categories"
-                  : cat.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+                <div className="flex items-center gap-2">
+                  {cat !== "all" && <CategoryIcon category={cat} size={16} />}
+                  <span>
+                    {cat === "all"
+                      ? "All Categories"
+                      : cat.replace("-", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+                  </span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
@@ -262,10 +268,11 @@ function RankingsContentInner(): React.JSX.Element {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        className={`${getCategoryColor(ranking.tool.category)} cursor-pointer hover:opacity-80`}
+                        className={`${getCategoryColor(ranking.tool.category)} cursor-pointer hover:opacity-80 flex items-center gap-1.5 w-fit`}
                         onClick={() => setSelectedCategory(ranking.tool.category)}
                       >
-                        {ranking.tool.category.replace("-", " ")}
+                        <CategoryIcon category={ranking.tool.category} size={14} />
+                        <span>{ranking.tool.category.replace("-", " ")}</span>
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">

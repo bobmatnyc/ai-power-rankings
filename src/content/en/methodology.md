@@ -5,6 +5,8 @@ subtitle: "How We Rank AI Tools"
 
 # Our Ranking Methodology
 
+**How We Rank AI Tools**
+
 Our ranking system is designed to provide objective, comprehensive evaluations of AI coding tools based on real-world usage and measurable criteria.
 
 ## Core Evaluation Criteria

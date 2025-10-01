@@ -26,6 +26,17 @@ export function SignInButtonCustom({
     const clerk = getClerk();
     console.log("SignInButtonCustom clicked", { mode, clerk });
 
+    // Only proceed if user is NOT signed in
+    // If user is already signed in, redirect to the intended page instead
+    if (clerk?.user) {
+      console.info("[SignInButtonCustom] User is already signed in, redirecting to target URL");
+      const targetUrl = forceRedirectUrl || redirectUrl || "/en/admin";
+      if (targetUrl !== window.location.href) {
+        window.location.href = targetUrl;
+      }
+      return;
+    }
+
     if (mode === "modal" && clerk?.openSignIn) {
       try {
         clerk.openSignIn({
