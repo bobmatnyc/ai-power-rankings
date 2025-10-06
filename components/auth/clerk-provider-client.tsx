@@ -23,9 +23,12 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
   useEffect(() => {
     setIsClient(true);
 
-    // Prevent Clerk from auto-opening modals on hydration
-    // This must be set up BEFORE Clerk loads
+    // Set a global flag indicating whether ClerkProvider is available
+    // This MUST be set before any auth components try to render
     if (typeof window !== "undefined") {
+      // Initialize the flag as false - will be set to true only if ClerkProvider renders
+      (window as any).__clerkProviderAvailable = false;
+
       // Set up a getter/setter trap for window.Clerk
       let clerkInstance: any = null;
 
@@ -76,7 +79,9 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
       window.location.hostname === "www.aipowerranking.com" ||
       window.location.hostname === "staging.aipowerranking.com" ||
       window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1");
+      window.location.hostname === "127.0.0.1" ||
+      // Allow all Vercel preview/staging deployments
+      window.location.hostname.endsWith(".vercel.app"));
 
   const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
@@ -95,6 +100,14 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
       }
     }
   }, [isClient, isAuthDisabled, isAllowedDomain, hasClerkKey]);
+
+  // Set the global flag based on whether we're rendering ClerkProvider
+  useEffect(() => {
+    if (isClient && typeof window !== "undefined") {
+      (window as any).__clerkProviderAvailable = shouldRenderClerk;
+      console.info(`[ClerkProvider] Provider availability: ${shouldRenderClerk}`);
+    }
+  }, [isClient, shouldRenderClerk]);
 
   // SINGLE RETURN STATEMENT - ensures consistent hook execution
   if (shouldRenderClerk) {

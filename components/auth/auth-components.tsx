@@ -19,6 +19,13 @@ const isClientSide = typeof window !== "undefined";
 const getIsAuthDisabled = () => process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
 const getHasClerkKey = () => !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
 
+// CRITICAL: Check if ClerkProvider is available
+// This checks the global flag set by ClerkProviderClient
+const isClerkProviderAvailable = () => {
+  if (!isClientSide) return false;
+  return !!(window as any).__clerkProviderAvailable;
+};
+
 // CRITICAL: Check if we should even attempt to load Clerk
 const shouldLoadClerk = () => {
   // Never load Clerk if auth is explicitly disabled
@@ -35,6 +42,13 @@ const shouldLoadClerk = () => {
 
   // Only load on client side
   if (!isClientSide) {
+    return false;
+  }
+
+  // CRITICAL: Only load if ClerkProvider is available
+  // This prevents the "SignInButton outside ClerkProvider" error
+  if (!isClerkProviderAvailable()) {
+    console.info("[AuthComponents] Clerk disabled - ClerkProvider not available");
     return false;
   }
 
@@ -219,6 +233,11 @@ export const SignedIn = ({ children }: { children: React.ReactNode }) => {
     return <MockSignedIn>{children}</MockSignedIn>;
   }
 
+  // CRITICAL: Use mock if ClerkProvider is not available
+  if (!isClerkProviderAvailable()) {
+    return <MockSignedIn>{children}</MockSignedIn>;
+  }
+
   // Use Clerk component if available
   if (clerkComponents.SignedIn && clerkComponents.loaded) {
     const ClerkSignedIn = clerkComponents.SignedIn;
@@ -238,6 +257,11 @@ export const SignedOut = ({ children }: { children: React.ReactNode }) => {
 
   // Use mock during SSR or if auth is disabled
   if (!mounted || getIsAuthDisabled() || !getHasClerkKey()) {
+    return <MockSignedOut>{children}</MockSignedOut>;
+  }
+
+  // CRITICAL: Use mock if ClerkProvider is not available
+  if (!isClerkProviderAvailable()) {
     return <MockSignedOut>{children}</MockSignedOut>;
   }
 
@@ -286,6 +310,12 @@ export const SignInButton = ({
   // CRITICAL: Always use mock if auth is disabled
   // This prevents any attempt to use Clerk components
   if (getIsAuthDisabled()) {
+    return <MockSignInButton {...props}>{children}</MockSignInButton>;
+  }
+
+  // CRITICAL: Use mock if ClerkProvider is not available
+  // This prevents the "SignInButton outside ClerkProvider" error
+  if (!isClerkProviderAvailable()) {
     return <MockSignInButton {...props}>{children}</MockSignInButton>;
   }
 
@@ -440,6 +470,11 @@ export const UserButton = (props: Record<string, unknown>) => {
 
   // Use mock during SSR or if auth is disabled
   if (!mounted || getIsAuthDisabled() || !getHasClerkKey()) {
+    return <MockUserButton {...props} />;
+  }
+
+  // CRITICAL: Use mock if ClerkProvider is not available
+  if (!isClerkProviderAvailable()) {
     return <MockUserButton {...props} />;
   }
 
