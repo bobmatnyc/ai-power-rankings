@@ -1,0 +1,53 @@
+# Logs
+logs/
+*.log
+
+# Testing artifacts
+uat-screenshots/
+test-results/
+playwright-report/
+playwright/.cache/
+tests/
+*.test.js
+*.spec.js
+*.spec.ts
+*.webm
+trace.zip
+
+# Documentation and reports
+*.md
+QA_*.md
+HYDRATION_*.md
+TEST_*.txt
+BEFORE_AFTER_*.md
+
+# Scripts (not needed in production)
+scripts/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Memory and cache
+kuzu-memories/
+.claude/
+.claude-mpm/
+.mcp-vector-search/
+.kuzu-memory/
+
+# Data files - only exclude backups
+data/deleted-articles-backup-*.json
+data/extracted-rankings/
+data/uuid-mappings.json
+
+# Large images
+*.png
+*.jpg
+*.jpeg
+
+# Misc
+.gitignore.test
+cleanup-audit.json
+parse-test-results.js
+verify-*.js
+check-*.js
+test-*.js

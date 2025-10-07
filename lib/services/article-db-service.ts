@@ -3,7 +3,7 @@
  * Enhanced service that integrates with the database for full article management
  */
 
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import type {
   Article,
   ArticleProcessingLog,
@@ -117,7 +117,8 @@ export class ArticleDatabaseService {
       }
 
       // Step 3: Get current state from database
-      const currentRankings = await this.getCurrentRankings();
+      const allTools = await this.getAllTools(); // Get ALL tools for matching (54+)
+      const currentRankings = await this.getCurrentRankings(); // Get ranked tools for rank lookup (5)
       const existingTools = await this.getExistingToolNames();
       const existingCompanies = await this.getExistingCompanyNames();
 
@@ -136,9 +137,10 @@ export class ArticleDatabaseService {
         newTools = (input.preprocessedData.newTools || []) as DryRunResult["newTools"];
         newCompanies = (input.preprocessedData.newCompanies || []) as DryRunResult["newCompanies"];
       } else {
-        // Calculate changes
+        // Calculate changes using ALL tools for matching, rankings for rank info
         predictedChanges = this.rankingsCalculator.calculateRankingChanges(
           analysis,
+          allTools,
           currentRankings
         );
 
@@ -173,7 +175,9 @@ export class ArticleDatabaseService {
             toolMentions: analysis.tool_mentions,
             companyMentions: analysis.company_mentions,
             author: input.metadata?.author,
-            publishedDate: analysis.published_date ? new Date(analysis.published_date) : undefined,
+            publishedDate: input.metadata?.publishedDate
+              ? new Date(input.metadata.publishedDate)
+              : (analysis.published_date ? new Date(analysis.published_date) : undefined),
           },
           predictedChanges,
           newTools,
@@ -205,6 +209,45 @@ export class ArticleDatabaseService {
           analysis.tool_mentions
         );
 
+        // Extract tool IDs from predictedChanges to ensure proper tool count display
+        // This maps tool names to their database IDs for accurate tracking
+        const toolIdsFromChanges = predictedChanges
+          .filter((change) => change.toolId && change.toolName)
+          .map((change) => ({
+            id: change.toolId,
+            name: change.toolName,
+          }));
+
+        // Enhance toolMentions with tool IDs from predictedChanges
+        // This ensures the tool count displays correctly even if AI analysis
+        // doesn't provide complete tool mention data
+        const enhancedToolMentions = cleanedToolMentions.map((mention) => {
+          const matchingTool = toolIdsFromChanges.find(
+            (tool) =>
+              tool.name.toLowerCase() === mention.name.toLowerCase() ||
+              mention.name.toLowerCase().includes(tool.name.toLowerCase()) ||
+              tool.name.toLowerCase().includes(mention.name.toLowerCase())
+          );
+          return matchingTool ? { ...mention, toolId: matchingTool.id } : mention;
+        });
+
+        // Add any tools from predictedChanges that weren't in the AI analysis
+        const mentionedToolNames = new Set(
+          cleanedToolMentions.map((m) => m.name.toLowerCase())
+        );
+        const additionalTools = toolIdsFromChanges.filter(
+          (tool) => !mentionedToolNames.has(tool.name.toLowerCase())
+        );
+        const additionalMentions = additionalTools.map((tool) => ({
+          name: tool.name,
+          relevance: 0.5,
+          sentiment: 0,
+          context: "Detected from ranking changes",
+          toolId: tool.id,
+        }));
+
+        const finalToolMentions = [...enhancedToolMentions, ...additionalMentions];
+
         // Validate and clean company mentions using type-safe functions
         const cleanedCompanyMentions: ValidatedCompanyMention[] = cleanCompanyMentions(
           analysis.company_mentions
@@ -231,11 +274,16 @@ export class ArticleDatabaseService {
           importanceScore: validateImportanceScore(analysis.importance_score),
           sentimentScore: validateSentimentScore(analysis.overall_sentiment),
           // Ensure JSON fields are properly formatted
-          toolMentions: cleanedToolMentions,
+          toolMentions: finalToolMentions,
           companyMentions: cleanedCompanyMentions,
           rankingsSnapshot: rankingsSnapshot || null,
-          author: (input.metadata?.author || analysis.source || "Unknown").substring(0, 255),
-          publishedDate: validatePublishedDate(analysis.published_date),
+          author: (
+            input.metadata?.author ||
+            (analysis.source && analysis.source !== "Unknown" ? analysis.source : "APR Team")
+          ).substring(0, 255),
+          publishedDate: validatePublishedDate(
+            input.metadata?.publishedDate || analysis.published_date
+          ),
           ingestedBy: "admin",
           status: "active",
           isProcessed: false,
@@ -248,11 +296,15 @@ export class ArticleDatabaseService {
           toolMentionsCount: Array.isArray(newArticle.toolMentions)
             ? newArticle.toolMentions.length
             : 0,
+          toolMentionsWithIds: Array.isArray(newArticle.toolMentions)
+            ? newArticle.toolMentions.filter((m: any) => m.toolId).length
+            : 0,
           companyMentionsCount: Array.isArray(newArticle.companyMentions)
             ? newArticle.companyMentions.length
             : 0,
           importanceScore: newArticle.importanceScore,
           sentimentScore: newArticle.sentimentScore,
+          author: newArticle.author,
         });
 
         const article = await this.articlesRepo.createArticle(newArticle);
@@ -320,6 +372,7 @@ export class ArticleDatabaseService {
           articleId: article.id,
           toolId: change.toolId,
           toolName: change.toolName,
+          articleUrl: article.sourceUrl || null,
           metricChanges: change.metrics,
           oldRank: change.currentRank,
           newRank: change.predictedRank,
@@ -421,12 +474,14 @@ export class ArticleDatabaseService {
         author: article.author || undefined,
       });
 
-      // Get current rankings
+      // Get all tools and current rankings
+      const allTools = await this.getAllTools();
       const currentRankings = await this.getCurrentRankings();
 
       // Calculate new changes
       const predictedChanges = this.rankingsCalculator.calculateRankingChanges(
         analysis,
+        allTools,
         currentRankings
       );
 
@@ -438,6 +493,7 @@ export class ArticleDatabaseService {
         articleId,
         toolId: change.toolId,
         toolName: change.toolName,
+        articleUrl: article.sourceUrl || null,
         metricChanges: change.metrics,
         oldRank: change.currentRank,
         newRank: change.predictedRank,
@@ -560,14 +616,16 @@ export class ArticleDatabaseService {
         throw new Error("Failed to obtain article analysis");
       }
 
-      // Get current rankings
-      progressCallback?.(50, "Loading current rankings...");
+      // Get all tools and current rankings
+      progressCallback?.(50, "Loading all tools and rankings...");
+      const allTools = await this.getAllTools();
       const currentRankings = await this.getCurrentRankings();
 
       // Calculate new changes
       progressCallback?.(60, "Calculating ranking changes...");
       const predictedChanges = this.rankingsCalculator.calculateRankingChanges(
         analysis,
+        allTools,
         currentRankings
       );
 
@@ -614,6 +672,7 @@ export class ArticleDatabaseService {
         articleId,
         toolId: change.toolId,
         toolName: change.toolName,
+        articleUrl: article.sourceUrl || null,
         metricChanges: change.metrics,
         oldRank: change.currentRank,
         newRank: change.predictedRank,
@@ -739,6 +798,57 @@ export class ArticleDatabaseService {
   }
 
   /**
+   * Get all tools from database for matching purposes
+   * Returns ALL tools (54+), not just ranked ones (5)
+   */
+  private async getAllTools(): Promise<CurrentRanking[]> {
+    if (!this.db) {
+      console.log("[ArticleDatabaseService] No database connection, returning empty array");
+      return [];
+    }
+
+    try {
+      // Get all active tools from the tools table
+      const allTools = await this.db
+        .select({
+          id: tools.id,
+          name: tools.name,
+          slug: tools.slug,
+          baselineScore: tools.baselineScore,
+          deltaScore: tools.deltaScore,
+        })
+        .from(tools)
+        .where(eq(tools.status, "active"));
+
+      const mappedTools: CurrentRanking[] = allTools.map((tool) => {
+        // Calculate current score from baseline + delta
+        // Both baselineScore and deltaScore are JSONB objects with structure: { overallScore: number, ... }
+        const baselineScore = (tool.baselineScore as any)?.overallScore ?? 0;
+        const deltaScore = (tool.deltaScore as any)?.overallScore ?? 0;
+        const currentScore = baselineScore + deltaScore;
+
+        return {
+          id: tool.id,
+          tool_id: tool.id,
+          tool_name: tool.name,
+          name: tool.name,
+          rank: 999, // Default rank for unranked tools
+          score: currentScore,
+          metrics: {},
+        };
+      });
+
+      console.log(
+        `[ArticleDatabaseService] Loaded ${mappedTools.length} tools from database for matching`
+      );
+      return mappedTools;
+    } catch (error) {
+      console.error("[ArticleDatabaseService] Failed to load all tools:", error);
+      return [];
+    }
+  }
+
+  /**
    * Get current rankings from database
    */
   private async getCurrentRankings(): Promise<CurrentRanking[]> {
@@ -753,26 +863,41 @@ export class ArticleDatabaseService {
           .limit(1);
 
         if (latestRanking?.data) {
-          // Extract tools from rankings data
-          const rankingData = latestRanking.data as Record<string, unknown>[];
+          // Fix Bug 1: Access correct data structure (object with rankings array)
+          const dataObj = latestRanking.data as { rankings: any[] };
+          const rankingArray = dataObj.rankings || [];
+
           console.log(
             "[ArticleDatabaseService] Sample raw ranking data:",
-            JSON.stringify(rankingData[0])
+            JSON.stringify(rankingArray[0])
           );
 
-          const mappedRankings: CurrentRanking[] = rankingData.map((item, index) => ({
-            id: String((item["tool_id"] || item["id"]) ?? `unknown_${index}`),
-            tool_id: String((item["tool_id"] || item["id"]) ?? `unknown_${index}`),
-            tool_name: String(
-              item["tool_name"] || item["name"] || (item["tool"] as any)?.["name"] || "Unknown Tool"
-            ),
-            name: String(
-              item["tool_name"] || item["name"] || (item["tool"] as any)?.["name"] || "Unknown Tool"
-            ),
-            rank: typeof item["rank"] === "number" ? item["rank"] : index + 1,
-            score: typeof item["score"] === "number" ? item["score"] : 0,
-            metrics: (item["metrics"] as Record<string, unknown>) || {},
+          // Fix Bug 2: Get tool names from database using JOIN
+          const toolIds = rankingArray.map((r) => r.tool_id).filter(Boolean);
+
+          let toolMap = new Map<string, string>();
+          if (toolIds.length > 0) {
+            const toolsData = await this.db!
+              .select()
+              .from(tools)
+              .where(inArray(tools.id, toolIds));
+
+            toolMap = new Map(toolsData.map((t) => [t.id, t.name]));
+            console.log(
+              `[ArticleDatabaseService] Fetched ${toolsData.length} tool names from database`
+            );
+          }
+
+          const mappedRankings: CurrentRanking[] = rankingArray.map((item, index) => ({
+            id: String(item.tool_id ?? `unknown_${index}`),
+            tool_id: String(item.tool_id ?? `unknown_${index}`),
+            tool_name: toolMap.get(item.tool_id) || item.tool_slug || "Unknown Tool",
+            name: toolMap.get(item.tool_id) || item.tool_slug || "Unknown Tool",
+            rank: typeof item.position === "number" ? item.position : index + 1,
+            score: typeof item.score === "number" ? item.score : 0,
+            metrics: item.factor_scores || {},
           }));
+
           console.log(
             `[ArticleDatabaseService] Found ${mappedRankings.length} rankings in database`
           );

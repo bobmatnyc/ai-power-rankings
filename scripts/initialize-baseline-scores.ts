@@ -5,7 +5,7 @@
  * This is a one-time migration to populate baseline scores
  */
 
-import { initDb, closeDb } from "@/lib/db/connection";
+import { closeDb, getDb } from "@/lib/db/connection";
 import { toolScoringService } from "@/lib/services/tool-scoring.service";
 import { loggers } from "@/lib/logger";
 
@@ -14,7 +14,10 @@ async function initializeBaselineScores() {
     console.log("🚀 Starting baseline score initialization...");
 
     // Initialize database connection
-    await initDb();
+    const db = getDb();
+    if (!db) {
+      throw new Error("Failed to get database connection");
+    }
     console.log("✅ Database connected");
 
     // Initialize baseline scores from current data

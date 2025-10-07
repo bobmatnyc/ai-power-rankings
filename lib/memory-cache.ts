@@ -146,6 +146,7 @@ export const CACHE_TTL = {
   companies: 600000, // 10 minutes
   toolDetail: 120000, // 2 minutes
   scoring: 60000, // 1 minute
+  trending: 3600000, // 1 hour (60 minutes)
 } as const;
 
 /**

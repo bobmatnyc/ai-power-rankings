@@ -3,25 +3,24 @@
  *
  * WHY: This endpoint processes historical ranking data to provide trending
  * analysis for chart visualization. It reads all available ranking periods
- * and analyzes them to show how tools have moved in and out of the top 10.
+ * from the database and analyzes them to show how tools have moved in and out of the top 10.
  *
- * DESIGN DECISION: We read files directly instead of using a database because:
- * - All historical data is stored as JSON files in the repository
- * - This is a read-only operation with acceptable performance
- * - No complex queries needed, just file reading and processing
- * - Maintains consistency with the existing JSON storage architecture
+ * DESIGN DECISION: We use PostgreSQL database instead of JSON files because:
+ * - All historical data is now stored in the database for consistency
+ * - This is a read-only operation with caching for performance
+ * - Database provides better scalability and reliability
+ * - Maintains consistency with the new database-first architecture
  *
  * PERFORMANCE CONSIDERATIONS:
- * - Reads ~8 JSON files (one per month of historical data)
+ * - Reads all ranking periods from database (~8 months of data)
  * - Processing takes ~50ms for full dataset
- * - Results should be cached at CDN level for production
+ * - Results are cached in-memory for 1 hour to reduce database load
+ * - Cache headers set for CDN-level caching
  * - Supports time range filtering to reduce payload size
  *
  * @fileoverview API endpoint for trending analysis of historical rankings
  */
 
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
 import {
@@ -29,46 +28,82 @@ import {
   filterTrendingDataByTimeRange,
   type RankingPeriod,
 } from "@/lib/trending-analyzer";
+import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
+import cacheInstance, { CACHE_TTL } from "@/lib/memory-cache";
 
 /**
- * Reads all historical ranking period files from the data directory.
+ * Reads all historical ranking periods from the database.
  *
- * IMPLEMENTATION NOTE: We scan the periods directory to find all available
- * historical data files. This is more reliable than maintaining a hardcoded
- * list since new periods may be added over time.
+ * IMPLEMENTATION NOTE: We fetch all rankings from PostgreSQL and transform
+ * them to the RankingPeriod format expected by the trending analyzer.
+ * The database stores rankings in JSONB format with the structure:
+ * { period: "2025-09", data: { rankings: [...] } }
  */
 async function readHistoricalRankings(): Promise<RankingPeriod[]> {
-  const periodsDir = path.join(process.cwd(), "data", "json", "rankings", "periods");
-  const periods: RankingPeriod[] = [];
-
   try {
-    // Read all files in the periods directory
-    const files = await fs.readdir(periodsDir);
-    const jsonFiles = files.filter((file) => file.endsWith(".json"));
+    // Fetch all rankings from database
+    const allRankings = await rankingsRepository.findAll();
 
-    // Read each period file
-    for (const file of jsonFiles) {
-      try {
-        const filePath = path.join(periodsDir, file);
-        const fileContent = await fs.readFile(filePath, "utf-8");
-        const periodData = JSON.parse(fileContent) as RankingPeriod;
-
-        // Validate that this is a proper ranking period
-        if (periodData.period && Array.isArray(periodData.rankings)) {
-          periods.push(periodData);
-        } else {
-          loggers.api.warn("Invalid ranking period format", {
-            file,
-            missingFields: !periodData.period ? "period" : "rankings",
-          });
-        }
-      } catch (fileError) {
-        loggers.api.error("Failed to read ranking period file", { file, error: fileError });
-        // Continue processing other files even if one fails
-      }
+    if (!allRankings || allRankings.length === 0) {
+      loggers.api.warn("No rankings found in database");
+      return [];
     }
 
-    loggers.api.info("Successfully loaded historical rankings", {
+    // Transform database format to RankingPeriod format
+    const periods: RankingPeriod[] = allRankings
+      .map((ranking) => {
+        try {
+          // Extract rankings array from JSONB data
+          // The data structure can be either:
+          // 1. { rankings: [...] } - nested structure
+          // 2. [...] - direct array
+          // 3. { period: "...", rankings: [...] } - full structure
+          let rankings;
+          if (Array.isArray(ranking.data)) {
+            rankings = ranking.data;
+          } else if (ranking.data && Array.isArray(ranking.data.rankings)) {
+            rankings = ranking.data.rankings;
+          } else {
+            loggers.api.warn("Invalid ranking data structure", {
+              period: ranking.period,
+              dataType: typeof ranking.data,
+            });
+            return null;
+          }
+
+          // Validate that rankings is a proper array
+          if (!Array.isArray(rankings) || rankings.length === 0) {
+            loggers.api.warn("No rankings array found", { period: ranking.period });
+            return null;
+          }
+
+          // Transform rankings to ensure tool_name is present
+          // Database stores tool_slug, but trending analyzer expects tool_name
+          const transformedRankings = rankings.map((entry: any) => {
+            return {
+              ...entry,
+              tool_name: entry.tool_name || entry.tool_slug || entry.tool_id,
+              position: entry.position || entry.rank,
+            };
+          });
+
+          return {
+            period: ranking.period,
+            date: ranking.period, // Use period as date
+            rankings: transformedRankings,
+            algorithm_version: ranking.algorithm_version,
+          } as RankingPeriod;
+        } catch (error) {
+          loggers.api.error("Failed to transform ranking data", {
+            period: ranking.period,
+            error,
+          });
+          return null;
+        }
+      })
+      .filter((p): p is RankingPeriod => p !== null);
+
+    loggers.api.info("Successfully loaded historical rankings from database", {
       periodsCount: periods.length,
       dateRange:
         periods.length > 0
@@ -81,7 +116,7 @@ async function readHistoricalRankings(): Promise<RankingPeriod[]> {
 
     return periods;
   } catch (error) {
-    loggers.api.error("Failed to read historical rankings directory", { error });
+    loggers.api.error("Failed to read historical rankings from database", { error });
     throw new Error("Unable to load historical ranking data");
   }
 }
@@ -140,13 +175,53 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       }
     }
 
-    // Load historical ranking data
-    const periods = await readHistoricalRankings();
+    // Create cache key based on time range
+    const cacheKey = `trending:${timeRange}`;
 
-    if (periods.length === 0) {
+    // Check cache first
+    const cachedData = cacheInstance.get(cacheKey);
+    if (cachedData) {
+      const processingTime = Date.now() - startTime;
+      loggers.api.info("Trending analysis served from cache", {
+        timeRange,
+        processingTimeMs: processingTime,
+      });
+
+      // Set cache headers for performance
+      const headers = new Headers({
+        "Content-Type": "application/json",
+        // Cache for 1 hour since historical data doesn't change frequently
+        "Cache-Control": "public, max-age=3600, s-maxage=3600",
+        // Add cache status header
+        "X-Cache-Status": "HIT",
+        // Add ETag for better cache validation
+        ETag: `"trending-${(cachedData as any).metadata.total_periods}-${timeRange}"`,
+      });
+
+      return new NextResponse(JSON.stringify(cachedData), {
+        status: 200,
+        headers,
+      });
+    }
+
+    // Load historical ranking data
+    let periods;
+    try {
+      periods = await readHistoricalRankings();
+    } catch (readError) {
+      loggers.api.error("Failed to read historical rankings", {
+        error: readError instanceof Error ? readError.message : "Unknown error",
+        stack: readError instanceof Error ? readError.stack : undefined,
+      });
+
+      // Return empty result instead of error
+      const processingTime = Date.now() - startTime;
+      loggers.api.warn("Returning empty trending data due to read error", {
+        processingTimeMs: processingTime,
+      });
+
       return NextResponse.json(
         {
-          error: "No historical ranking data available",
           periods: [],
           tools: [],
           chart_data: [],
@@ -155,6 +230,26 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
             date_range: { start: "", end: "" },
             top_tools_count: 0,
           },
+          warning: "No historical ranking data available",
+        },
+        { status: 200 }
+      );
+    }
+
+    if (periods.length === 0) {
+      loggers.api.warn("No historical rankings found in database");
+
+      return NextResponse.json(
+        {
+          periods: [],
+          tools: [],
+          chart_data: [],
+          metadata: {
+            total_periods: 0,
+            date_range: { start: "", end: "" },
+            top_tools_count: 0,
+          },
+          warning: "No historical ranking data available",
         },
         { status: 200 }
       );
@@ -167,6 +262,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const finalData =
       timeRange === "all" ? trendingData : filterTrendingDataByTimeRange(trendingData, timeRange);
 
+    // Store in cache (1 hour TTL)
+    cacheInstance.set(cacheKey, finalData, 3600000); // 1 hour in milliseconds
+
     const processingTime = Date.now() - startTime;
 
     loggers.api.info("Trending analysis completed", {
@@ -175,6 +273,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       toolsFound: finalData.tools.length,
       chartDataPoints: finalData.chart_data.length,
       processingTimeMs: processingTime,
+      cached: true,
     });
 
     // Set cache headers for performance
@@ -182,6 +281,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       "Content-Type": "application/json",
       // Cache for 1 hour since historical data doesn't change frequently
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      // Add cache status header
+      "X-Cache-Status": "MISS",
       // Add ETag for better cache validation
       ETag: `"trending-${finalData.metadata.total_periods}-${timeRange}"`,
     });

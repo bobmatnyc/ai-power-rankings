@@ -46,7 +46,7 @@ export type ArticleIngestionInput = z.infer<typeof ArticleIngestionSchema>;
 const AIAnalysisSchema = z.object({
   title: z.string(),
   summary: z.string(),
-  rewritten_excerpt: z.string().optional(),
+  rewritten_content: z.string().optional(),
   source: z.string().optional(),
   url: z.string().optional().nullable(),
   published_date: z.string().optional(),
@@ -287,7 +287,7 @@ export class ContentExtractor {
   /**
    * Extract content from URL
    */
-  async extractFromUrl(url: string): Promise<string> {
+  async extractFromUrl(url: string): Promise<{ content: string; links: Array<{ href: string; text: string }> }> {
     console.log(`[ContentExtractor] Fetching content from URL: ${url}`);
 
     try {
@@ -305,11 +305,18 @@ export class ContentExtractor {
 
       const html = await response.text();
 
+      // Extract links BEFORE stripping HTML
+      const links = this.extractLinksFromHtml(html);
+      console.log(`[ContentExtractor] Extracted ${links.length} links from HTML`);
+
       // Enhanced HTML content extraction
       const content = this.extractTextFromHtml(html);
 
       // Limit content length for processing
-      return content.substring(0, 15000);
+      return {
+        content: content.substring(0, 15000),
+        links: links.slice(0, 50) // Limit to 50 most important links
+      };
     } catch (error) {
       console.error(`[ContentExtractor] Error fetching URL: ${error}`);
       throw new Error(
@@ -345,6 +352,30 @@ export class ContentExtractor {
     } else {
       throw new Error(`Unsupported file type: ${mimeType}`);
     }
+  }
+
+  /**
+   * Extract links from HTML content
+   */
+  private extractLinksFromHtml(html: string): Array<{ href: string; text: string }> {
+    const links: Array<{ href: string; text: string }> = [];
+    const linkRegex = /<a\s+(?:[^>]*?\s+)?href=["']([^"']*)["'][^>]*>(.*?)<\/a>/gi;
+
+    let match;
+    while ((match = linkRegex.exec(html)) !== null) {
+      const href = match[1];
+      const rawText = match[2];
+
+      // Clean the link text from HTML tags
+      const text = rawText?.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() || "";
+
+      // Filter out empty links, anchors, and javascript links
+      if (href && !href.startsWith("#") && !href.startsWith("javascript:") && text) {
+        links.push({ href, text });
+      }
+    }
+
+    return links;
   }
 
   /**
@@ -463,6 +494,7 @@ export class AIAnalyzer {
       url?: string;
       fileName?: string;
       author?: string;
+      links?: Array<{ href: string; text: string }>;
     }
   ): Promise<AIAnalysisResult & { model: string }> {
     console.log("[AIAnalyzer] Starting content analysis");
@@ -483,22 +515,38 @@ Focus on:
 3. Identifying companies behind the tools
 4. Predicting potential ranking impacts based on the news
 5. Extracting key insights and trends
+6. Creating COMPREHENSIVE content:
+   - Summary: Concise 2-3 sentences capturing the key point (aim for 200-300 characters)
+   - Rewritten content: Approximately 1500 words (7500-9000 characters) covering ALL important points in depth
+   - Include detailed analysis, context, and implications
+   - Preserve ALL important links from the source article at the end
+   - Be thorough and informative - provide value to readers
 
 Be thorough and precise. Extract the exact tool names as mentioned, we'll handle normalization.
 
 IMPORTANT: You MUST return ONLY a valid JSON object. Do not include any explanatory text before or after the JSON.`;
 
+    // Format links for AI if available
+    let linksContext = "";
+    if (metadata?.links && metadata.links.length > 0) {
+      linksContext = "\n\nIMPORTANT LINKS FROM SOURCE (preserve these in your rewritten content):\n";
+      metadata.links.slice(0, 20).forEach(link => {
+        linksContext += `- [${link.text}](${link.href})\n`;
+      });
+    }
+
     const userPrompt = `Analyze this article and extract comprehensive information:
 
-${content.substring(0, 10000)}
+${content.substring(0, 15000)}
 
 ${metadata?.url ? `Source URL: ${metadata.url}` : ""}
-${metadata?.fileName ? `File: ${metadata.fileName}` : ""}
+${metadata?.fileName ? `File: ${metadata.fileName}` : ""}${linksContext}
 
 Return a detailed JSON analysis with this structure:
 {
   "title": "Article title",
-  "summary": "2-3 sentence summary",
+  "summary": "A concise 2-3 sentence summary (200-300 characters) that captures the key point and significance of the article.",
+  "rewritten_content": "A comprehensive article of approximately 1500 words (7500-9000 characters) that:\n- Covers ALL important points from the source in depth\n- Provides detailed context and analysis\n- Explains implications for the AI industry\n- Maintains journalistic quality\n- Includes important source links at the end in markdown format:\n\n**Related Links:**\n- [Link Title](url)\n- [Another Link](url)",
   "source": "Publication or domain",
   "url": "Source URL if available",
   "published_date": "YYYY-MM-DD format",
@@ -532,6 +580,13 @@ Return a detailed JSON analysis with this structure:
   }
 }
 
+CRITICAL REQUIREMENTS:
+- "summary" field: 200-300 characters - concise but informative
+- "rewritten_content" field: Approximately 1500 words (7500-9000 characters) - be thorough and comprehensive
+- ALL important links from the source MUST be preserved in markdown format at the end of rewritten_content
+- Provide in-depth analysis and context
+- Write in a professional, journalistic style
+
 Return ONLY the JSON object above with actual data. No additional text or explanation.`;
 
     // Using Claude 4 Sonnet model for enhanced analysis capabilities
@@ -554,7 +609,7 @@ Return ONLY the JSON object above with actual data. No additional text or explan
             { role: "user", content: userPrompt },
           ],
           temperature: 0.2, // Lower temperature for more consistent, focused analysis with Claude 4
-          max_tokens: 8000, // Increased for Claude 4 Sonnet's enhanced capabilities and detailed analysis
+          max_tokens: 16000, // Increased to accommodate 1500-word articles (~7500-9000 chars) plus metadata
         }),
       });
 
@@ -663,48 +718,51 @@ Return ONLY the JSON object above with actual data. No additional text or explan
 export class RankingsCalculator {
   /**
    * Calculate predicted ranking changes based on article analysis
+   * @param analysis - AI analysis result containing tool mentions
+   * @param allTools - ALL tools from database (for matching)
+   * @param currentRankings - Current ranked tools from rankings snapshot (for rank lookup)
    */
   calculateRankingChanges(
     analysis: AIAnalysisResult,
-    currentRankings: any[] // Current rankings from DB or static file
+    allTools: any[], // All tools for matching (54+)
+    currentRankings?: any[] // Optional: ranked tools for rank info (5)
   ): DryRunResult["predictedChanges"] {
     const changes: DryRunResult["predictedChanges"] = [];
 
     console.log(`[RankingsCalculator] Processing ${analysis.tool_mentions.length} tool mentions`);
-    console.log(`[RankingsCalculator] Current rankings count: ${currentRankings.length}`);
+    console.log(`[RankingsCalculator] All tools available for matching: ${allTools.length}`);
+    console.log(`[RankingsCalculator] Current rankings count: ${currentRankings?.length || 0}`);
+
+    // Create a lookup map for ranked tools (to get their rank)
+    const rankedToolsMap = new Map<string, any>();
+    if (currentRankings && currentRankings.length > 0) {
+      // Handle both database format (with data field) and direct array format
+      let rankingData: any[];
+      if (currentRankings[0].data) {
+        rankingData = currentRankings[0].data as any[];
+      } else {
+        rankingData = currentRankings;
+      }
+
+      rankingData.forEach((tool: any) => {
+        const toolName = tool.tool_name || tool.name;
+        if (toolName) {
+          rankedToolsMap.set(toolName, tool);
+        }
+      });
+      console.log(`[RankingsCalculator] Built rank lookup map with ${rankedToolsMap.size} entries`);
+    }
 
     // Process each tool mention
     for (const mention of analysis.tool_mentions) {
-      // Handle both database format (with data field) and direct array format
-      let rankingData: any[];
-
-      // Check if this is database format with a data field or direct array
-      if (currentRankings.length > 0 && currentRankings[0].data) {
-        // Database format - extract from data field
-        rankingData = currentRankings[0].data as any[];
-        console.log(
-          `[RankingsCalculator] Using database format, found ${rankingData?.length || 0} tools`
-        );
-      } else {
-        // Direct array format (from our fallback)
-        rankingData = currentRankings;
-        console.log(
-          `[RankingsCalculator] Using direct format, found ${rankingData?.length || 0} tools`
-        );
-      }
-
-      if (!rankingData || rankingData.length === 0) {
-        console.log("[RankingsCalculator] No ranking data available");
-        continue;
-      }
-
       // Normalize the tool name before searching
       const normalizedToolName = ToolMapper.normalizeTool(mention.tool);
       console.log(
         `[RankingsCalculator] Looking for tool: "${mention.tool}" -> normalized: "${normalizedToolName}"`
       );
 
-      const currentTool = rankingData.find((r: any) => {
+      // Search in ALL tools (not just ranked ones)
+      const currentTool = allTools.find((r: any) => {
         // Debug log to see what we're comparing
         if (mention.tool === "Claude Code" || mention.tool === "GitHub Copilot") {
           console.log(
@@ -722,8 +780,12 @@ export class RankingsCalculator {
       });
 
       if (currentTool) {
+        // Check if this tool is in the rankings to get actual rank
+        const rankedTool = rankedToolsMap.get(normalizedToolName) || rankedToolsMap.get(currentTool.tool_name);
+        const currentRank = rankedTool ? (rankedTool.rank ?? rankedTool.position ?? 999) : 999;
+
         console.log(
-          `[RankingsCalculator] Processing tool: ${normalizedToolName} with rank ${currentTool.rank}`
+          `[RankingsCalculator] Processing tool: ${normalizedToolName} with rank ${currentRank} ${rankedTool ? '(ranked)' : '(unranked)'}`
         );
         console.log(
           `[RankingsCalculator] Mention sentiment: ${mention.sentiment}, relevance: ${mention.relevance}`
@@ -853,9 +915,6 @@ export class RankingsCalculator {
           `[RankingsCalculator] Calculated impact: scoreChangePoints=${scoreChangePoints.toFixed(2)}, scoreChange=${scoreChange.toFixed(4)}, rankChange=${rankChange}`
         );
 
-        // Use rank or position field (rank is the newer field)
-        const currentRank = currentTool.rank ?? currentTool.position ?? 0;
-
         // Extract tool ID - handle both flat and nested structures
         let toolId = currentTool.tool_id || currentTool.id;
         if (!toolId && currentTool.tool) {
@@ -878,7 +937,7 @@ export class RankingsCalculator {
           },
         });
       } else {
-        console.log(`[RankingsCalculator] Tool not found in rankings: ${normalizedToolName}`);
+        console.log(`[RankingsCalculator] Tool not found in all tools: ${normalizedToolName}`);
       }
     }
 
@@ -1006,6 +1065,7 @@ export class ArticleIngestionService {
       // Step 1: Extract content
       let content: string = "";
       let sourceUrl: string | undefined;
+      let extractedLinks: Array<{ href: string; text: string }> = [];
 
       switch (input.type) {
         case "url":
@@ -1013,7 +1073,9 @@ export class ArticleIngestionService {
             throw new Error("URL input is required for URL type");
           }
           sourceUrl = input.input;
-          content = await this.contentExtractor.extractFromUrl(input.input);
+          const urlResult = await this.contentExtractor.extractFromUrl(input.input);
+          content = urlResult.content;
+          extractedLinks = urlResult.links;
           break;
         case "file":
           if (!input.mimeType || !input.fileName || !input.input) {
@@ -1038,6 +1100,7 @@ export class ArticleIngestionService {
         url: sourceUrl,
         fileName: input.fileName,
         author: input.metadata?.author,
+        links: extractedLinks,
       });
 
       // Step 3: Get current state for comparison
@@ -1064,7 +1127,7 @@ export class ArticleIngestionService {
           article: {
             title: analysis.title,
             summary: analysis.summary,
-            content: `${content.substring(0, 1000)}...`,
+            content: analysis.rewritten_content || `${content.substring(0, 750)}...`,
             ingestionType: input.type,
             sourceUrl,
             sourceName: analysis.source,

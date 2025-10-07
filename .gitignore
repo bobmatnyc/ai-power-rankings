@@ -66,6 +66,10 @@ ecosystem.config.js
 # Testing artifacts
 uat-screenshots/
 test-results/
+playwright-report/
+playwright/.cache/
+/tests/test-results/
+/tests/playwright-report/
 *.test.js
 *.spec.js
 QA_*.md
@@ -75,6 +79,21 @@ BEFORE_AFTER_*.md
 check-*.js
 test-*.js
 test-results.json
+*.webm
+trace.zip
+
+# Screenshots (unless in docs/screenshots)
+/*.png
+/*.jpg
+/*.jpeg
+/*.gif
+
+# Temporary files in root
+/*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!.mcp.json
 
 # Added by Claude MPM /mpm-init
 $RECYCLE.BIN/

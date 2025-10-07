@@ -96,22 +96,10 @@ export default async function LanguageLayout({
 
     // IMPORTANT: Do NOT render <html> or <body> tags in nested layouts
     // Only the root layout (/app/layout.tsx) should have these
+    // The lang attribute should be set server-side in the root layout
+    // Font variables are already set in the root layout with inline styles
     return (
       <>
-        {/* Set language dynamically on the document */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if (typeof document !== 'undefined') {
-                document.documentElement.lang = '${lang}';
-                // Also apply font variables to the body
-                document.body.style.setProperty('--font-geist-sans', '${geistSans.style.fontFamily}');
-                document.body.style.setProperty('--font-geist-mono', '${geistMono.style.fontFamily}');
-              }
-            `,
-          }}
-        />
-
         <ClientLayout lang={lang as Locale} dict={dict}>
           {children}
         </ClientLayout>

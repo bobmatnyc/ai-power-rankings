@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Article {
   id: string;
@@ -146,6 +147,7 @@ export function ArticleManagement() {
     tags: "",
     fileName: "",
     fileType: "",
+    publishedDate: "",
   });
   const [preview, setPreview] = useState<IngestionPreview | null>(null);
   const [savedPreviewData, setSavedPreviewData] = useState<IngestionPreview | null>(null);
@@ -160,6 +162,10 @@ export function ArticleManagement() {
     content: "",
     summary: "",
   });
+
+  // Delete Confirmation State
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState<string | null>(null);
 
   const loadArticles = useCallback(async () => {
     setLoading(true);
@@ -317,6 +323,7 @@ export function ArticleManagement() {
             tags: metadata.tags ? metadata.tags.split(",").map((t) => t.trim()) : undefined,
             fileName: metadata.fileName || undefined,
             fileType: metadata.fileType || undefined,
+            publishedDate: metadata.publishedDate || undefined,
           },
         }),
       });
@@ -409,6 +416,7 @@ export function ArticleManagement() {
             tags: metadata.tags ? metadata.tags.split(",").map((t) => t.trim()) : undefined,
             fileName: metadata.fileName || undefined,
             fileType: metadata.fileType || undefined,
+            publishedDate: metadata.publishedDate || undefined,
           },
         };
 
@@ -450,6 +458,7 @@ export function ArticleManagement() {
               tags: metadata.tags ? metadata.tags.split(",").map((t) => t.trim()) : undefined,
               fileName: metadata.fileName || undefined,
               fileType: metadata.fileType || undefined,
+              publishedDate: metadata.publishedDate || undefined,
             },
           }),
         });
@@ -794,20 +803,19 @@ export function ArticleManagement() {
     }
   }, [recalcPreviewData, loadArticles]);
 
-  const handleDelete = async (articleId: string) => {
-    if (
-      !confirm(
-        "Are you sure? This will delete the article and automatically rollback any ranking changes it made."
-      )
-    ) {
-      return;
-    }
+  const handleDeleteClick = (articleId: string) => {
+    setArticleToDelete(articleId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!articleToDelete) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`/api/admin/articles/${articleId}`, {
+      const response = await fetch(`/api/admin/articles/${articleToDelete}`, {
         method: "DELETE",
         credentials: "same-origin",
         headers: {
@@ -832,7 +840,7 @@ export function ArticleManagement() {
   const resetAddForm = () => {
     setInputContent("");
     setSelectedFile(null);
-    setMetadata({ author: "", category: "", tags: "", fileName: "", fileType: "" });
+    setMetadata({ author: "", category: "", tags: "", fileName: "", fileType: "", publishedDate: "" });
     setPreview(null);
     setSavedPreviewData(null);
     setWorkflowStep("input");
@@ -1092,7 +1100,7 @@ export function ArticleManagement() {
                   </div>
 
                   {/* Metadata */}
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Author (Optional)</Label>
                       <Input
@@ -1116,6 +1124,19 @@ export function ArticleManagement() {
                         value={metadata.tags}
                         onChange={(e) => setMetadata({ ...metadata, tags: e.target.value })}
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="publishedDate">Published Date</Label>
+                      <Input
+                        id="publishedDate"
+                        type="date"
+                        value={metadata.publishedDate}
+                        onChange={(e) => setMetadata({ ...metadata, publishedDate: e.target.value })}
+                        max={new Date().toISOString().split('T')[0]}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Leave empty to use current date
+                      </p>
                     </div>
                   </div>
 
@@ -1239,36 +1260,138 @@ export function ArticleManagement() {
                           </div>
                         </div>
 
-                        {/* Impacted Tools List */}
-                        {preview?.impactedTools && preview.impactedTools.length > 0 && (
-                          <div className="space-y-2">
-                            <Label>Tool Score Changes (Preview)</Label>
-                            <div className="space-y-1 max-h-40 overflow-y-auto border rounded-lg p-2">
-                              {preview?.impactedTools?.map((tool, index) => (
-                                <div
-                                  key={`${tool.tool}-${index}`}
-                                  className="flex items-center justify-between text-sm py-1"
-                                >
-                                  <span className="font-medium">{tool.tool}</span>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-muted-foreground">
-                                      {tool.currentScore}
+                        {/* Article Details */}
+                        {preview?.article && (
+                          <div className="space-y-2 mb-4">
+                            <Label>Article Details</Label>
+                            <div className="max-h-64 overflow-y-auto border rounded-lg p-3 space-y-3 bg-muted/30">
+                              <div>
+                                <h4 className="font-semibold text-sm mb-1">
+                                  {preview.article.title || "Untitled Article"}
+                                </h4>
+                                {preview.article.summary && (
+                                  <p className="text-xs text-muted-foreground line-clamp-3">
+                                    {preview.article.summary}
+                                  </p>
+                                )}
+                              </div>
+
+                              <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                                {preview.article.publishedDate && (
+                                  <div className="flex items-center gap-1">
+                                    <Clock className="h-3 w-3" />
+                                    <span>
+                                      {new Date(preview.article.publishedDate).toLocaleDateString()}
                                     </span>
-                                    <ArrowRight className="h-3 w-3" />
-                                    <span className="font-medium">{tool.newScore}</span>
-                                    <Badge
-                                      variant={tool.change > 0 ? "default" : "secondary"}
-                                      className="ml-2"
+                                  </div>
+                                )}
+                                {preview.article.author && (
+                                  <div className="flex items-center gap-1">
+                                    <FileText className="h-3 w-3" />
+                                    <span>{preview.article.author}</span>
+                                  </div>
+                                )}
+                                {preview.article.sourceName && (
+                                  <div className="flex items-center gap-1">
+                                    <Newspaper className="h-3 w-3" />
+                                    <span>{preview.article.sourceName}</span>
+                                  </div>
+                                )}
+                                {preview.article.sourceUrl && (
+                                  <div className="flex items-center gap-1">
+                                    <Link className="h-3 w-3" />
+                                    <a
+                                      href={preview.article.sourceUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="hover:underline text-primary"
                                     >
-                                      {tool.change > 0 ? "+" : ""}
-                                      {tool.change?.toFixed(1) ?? "0.0"}
+                                      Source
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+
+                              {preview.article.tags && preview.article.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1">
+                                  {preview.article.tags.map((tag, idx) => (
+                                    <Badge key={`tag-${idx}`} variant="secondary" className="text-xs">
+                                      {tag}
                                     </Badge>
+                                  ))}
+                                </div>
+                              )}
+
+                              {preview.article.toolMentions && Array.isArray(preview.article.toolMentions) && preview.article.toolMentions.length > 0 && (
+                                <div>
+                                  <p className="text-xs font-medium mb-1">Tool Mentions:</p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {preview.article.toolMentions
+                                      .filter((mention): mention is { tool: string; relevance: number; sentiment: number; context: string } =>
+                                        typeof mention === 'object' && mention !== null && 'tool' in mention
+                                      )
+                                      .map((mention, idx) => (
+                                        <Badge key={`mention-${idx}`} variant="outline" className="text-xs">
+                                          {mention.tool}
+                                        </Badge>
+                                      ))}
                                   </div>
                                 </div>
-                              ))}
+                              )}
                             </div>
                           </div>
                         )}
+
+                        {/* Impacted Tools List */}
+                        {preview?.impactedTools && preview.impactedTools.length > 0 && (() => {
+                          // Deduplicate by toolName, keeping the entry with largest absolute score change
+                          const uniqueChanges = preview.impactedTools.reduce((acc, change) => {
+                            const existing = acc.find(c => c.tool === change.tool);
+                            if (!existing || Math.abs(change.change) > Math.abs(existing.change)) {
+                              return [...acc.filter(c => c.tool !== change.tool), change];
+                            }
+                            return acc;
+                          }, [] as typeof preview.impactedTools);
+
+                          // Filter out tools with zero changes
+                          const filteredChanges = uniqueChanges.filter(change => change.change !== 0);
+
+                          return (
+                            <div className="space-y-2">
+                              <Label>Tool Score Changes (Preview)</Label>
+                              <div className="space-y-1 max-h-80 overflow-y-auto border rounded-lg p-2">
+                                {filteredChanges.length === 0 ? (
+                                  <p className="text-sm text-muted-foreground text-center py-4">
+                                    No significant score changes predicted
+                                  </p>
+                                ) : (
+                                  filteredChanges.map((tool, index) => (
+                                    <div
+                                      key={`${tool.tool}-${index}`}
+                                      className="flex items-center justify-between text-sm py-1"
+                                    >
+                                      <span className="font-medium">{tool.tool}</span>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-muted-foreground">
+                                          {tool.currentScore.toFixed(2)}
+                                        </span>
+                                        <ArrowRight className="h-3 w-3" />
+                                        <span className="font-medium">{tool.newScore.toFixed(2)}</span>
+                                        <Badge
+                                          variant={tool.change > 0 ? "default" : "secondary"}
+                                          className="ml-2"
+                                        >
+                                          {tool.change > 0 ? "+" : ""}
+                                          {tool.change?.toFixed(1) ?? "0.0"}
+                                        </Badge>
+                                      </div>
+                                    </div>
+                                  ))
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()}
 
                         {/* New Tools */}
                         {preview?.newTools && preview.newTools.length > 0 && (
@@ -1404,7 +1527,7 @@ export function ArticleManagement() {
                                 <Badge variant="outline" className="font-normal">
                                   <Clock className="mr-1 h-3 w-3" />
                                   {(() => {
-                                    const dateToUse = article.ingestedAt || article.createdAt;
+                                    const dateToUse = article.publishedDate || article.ingestedAt || article.createdAt;
                                     if (
                                       dateToUse &&
                                       typeof dateToUse === "string" &&
@@ -1478,7 +1601,7 @@ export function ArticleManagement() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => handleDelete(article.id)}
+                                onClick={() => handleDeleteClick(article.id)}
                                 disabled={loading}
                                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                 title="Delete article and rollback ranking changes"
@@ -1791,6 +1914,17 @@ export function ArticleManagement() {
           </Card>
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Article"
+        description="Are you sure? This will delete the article and automatically rollback any ranking changes it made."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }

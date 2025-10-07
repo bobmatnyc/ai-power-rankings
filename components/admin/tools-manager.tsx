@@ -1,4 +1,3 @@
-/* eslint-disable no-alert */
 "use client";
 
 import {
@@ -27,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { usePayload } from "@/hooks/use-payload";
 import type { Tool } from "@/types/database";
 
@@ -45,6 +45,9 @@ export function ToolsManager() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [, setSelectedTool] = useState<Tool | null>(null);
   const [, setIsEditModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [toolToDelete, setToolToDelete] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchTools();
@@ -86,23 +89,32 @@ export function ToolsManager() {
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteTool = async (toolId: string) => {
-    if (!confirm("Are you sure you want to delete this tool?")) {
-      return;
-    }
+  const handleDeleteClick = (toolId: string) => {
+    setToolToDelete(toolId);
+    setDeleteDialogOpen(true);
+  };
 
+  const handleDeleteConfirm = async () => {
+    if (!toolToDelete) return;
+
+    setDeleteError(null);
     try {
-      await deleteTool(toolId);
-      // No need to refresh, the hook updates the local state
+      await deleteTool(toolToDelete);
     } catch (error) {
       console.error("Error deleting tool:", error);
-      // TODO: Use toast notification instead of alert
-      alert("Failed to delete tool. Please try again.");
+      setDeleteError("Failed to delete tool. Please try again.");
+      throw error;
     }
   };
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {deleteError && (
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded relative">
+          {deleteError}
+        </div>
+      )}
+
       {/* Actions */}
       <div className="flex justify-end gap-2">
         <Button variant="outline" size="sm">
@@ -307,7 +319,7 @@ export function ToolsManager() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => handleDeleteTool(tool.id)}
+                            onClick={() => handleDeleteClick(tool.id)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -324,6 +336,17 @@ export function ToolsManager() {
           </Table>
         </Card>
       </div>
+
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Tool"
+        description="Are you sure you want to delete this tool? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }

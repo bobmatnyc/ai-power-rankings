@@ -11,6 +11,10 @@ const isPublicRoute = createRouteMatcher([
   "/(.*)/sign-up(.*)",
   "/api/public(.*)",
   "/api/health(.*)",
+  "/api/rankings(.*)",
+  "/api/tools(.*)",
+  "/api/news(.*)",
+  "/api/og(.*)",
   "/(.*)/news(.*)",
   "/(.*)/rankings(.*)",
   "/(.*)/tools(.*)",
@@ -30,6 +34,16 @@ const isProtectedRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware((auth, req: NextRequest) => {
+  // Check if auth is disabled for development/testing
+  if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
+    return NextResponse.next();
+  }
+
+  // Allow public routes without authentication check
+  if (isPublicRoute(req)) {
+    return NextResponse.next();
+  }
+
   const { userId } = auth();
 
   // Check if the route is protected and user is not authenticated

@@ -127,14 +127,29 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
             card: 'shadow-none',
           },
         }}
-        allowedRedirectOrigins={[
-          "http://localhost:3000",
-          "http://localhost:3008",
-          "http://localhost:3011",
-          "http://127.0.0.1:3000",
-          "http://127.0.0.1:3008",
-          "http://127.0.0.1:3011",
-        ]}
+        allowedRedirectOrigins={(() => {
+          const origins = [
+            // Production domains
+            "https://aipowerranking.com",
+            "https://www.aipowerranking.com",
+            // Staging domains
+            "https://staging.aipowerranking.com",
+            // Local development
+            "http://localhost:3000",
+            "http://localhost:3008",
+            "http://localhost:3011",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:3008",
+            "http://127.0.0.1:3011",
+          ];
+
+          // Add Vercel preview deployments dynamically (client-side only)
+          if (typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app")) {
+            origins.push(`https://${window.location.hostname}`);
+          }
+
+          return origins;
+        })()}
         // Prevent automatic modal opening when user is already signed in
         signInForceRedirectUrl={undefined}
         signUpForceRedirectUrl={undefined}

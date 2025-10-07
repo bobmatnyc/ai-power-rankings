@@ -38,6 +38,8 @@ export class ToolMapper {
     "claude code": "Claude Code",
     "claude 4": "Claude Code",
     "claude 4 sonnet": "Claude Code",
+    "claude opus 4": "Claude Code",
+    "claude opus 4.1": "Claude Code",
     "anthropic": "Claude Code",
 
     // Google variations
@@ -47,6 +49,8 @@ export class ToolMapper {
     "gemini code": "Google Gemini Code Assist",
     "gemini 1.5": "Google Gemini Code Assist",
     "gemini 2.0": "Google Gemini Code Assist",
+    "gemini 2.5": "Google Gemini Code Assist",
+    "gemini 2.5 pro": "Google Gemini Code Assist",
     "gemini code assist": "Google Gemini Code Assist",
     jules: "Google Jules",
     "google jules": "Google Jules",
@@ -75,6 +79,8 @@ export class ToolMapper {
     "replit agent": "Replit Agent",
     "replit ai": "Replit Agent",
     ghostwriter: "Replit Agent", // Replit's AI feature
+    "agent 3": "Replit Agent",
+    "replit agent 3": "Replit Agent",
 
     // Devin variations
     cognition: "Devin",

@@ -1,6 +1,6 @@
 /**
  * Base Repository Pattern
- * Provides abstraction layer for data access (JSON or PostgreSQL)
+ * Provides abstraction layer for data access from PostgreSQL database
  */
 
 export interface QueryOptions {
@@ -21,14 +21,8 @@ export interface Repository<T> {
 }
 
 export abstract class BaseRepository<T> implements Repository<T> {
-  protected useDatabase: boolean;
-
   constructor() {
-    // Use database if either USE_DATABASE is true or DATABASE_URL is present
-    // This ensures we prioritize database over JSON when a database connection is available
-    this.useDatabase =
-      process.env["USE_DATABASE"] === "true" ||
-      Boolean(process.env["DATABASE_URL"]);
+    // All repositories now use PostgreSQL database exclusively
   }
 
   abstract findAll(options?: QueryOptions): Promise<T[]>;

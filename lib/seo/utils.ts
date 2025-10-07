@@ -92,21 +92,29 @@ export function generateToolMetadata(tool: Tool): Metadata {
   const keywords = [
     tool.name,
     tool.category,
-    ...(tool.info.features?.languages_supported || []),
-    ...(tool.info.features?.ide_support || []),
+    ...(tool.info?.features?.languages_supported || []),
+    ...(tool.info?.features?.ide_support || []),
     "AI coding assistant",
     "developer tools",
   ];
 
   const title = `${tool.name} - AI Coding Tool Review & Rankings`;
-  const description = `${tool.info.product.description || tool.info.product.tagline || ""} Compare ${tool.name} with other AI coding tools. Features, pricing, performance benchmarks, and user reviews.`;
+
+  // Safely access nested description with fallbacks to flat structure
+  const toolDescription =
+    tool.info?.product?.description ||
+    tool.info?.product?.tagline ||
+    tool.description ||
+    "";
+
+  const description = `${toolDescription} Compare ${tool.name} with other AI coding tools. Features, pricing, performance benchmarks, and user reviews.`;
 
   return generateMetadata({
     title,
     description,
     path: `/tools/${tool.slug}`,
     keywords,
-    ogImage: `/api/og?title=${encodeURIComponent(tool.name)}&subtitle=${encodeURIComponent(tool.category)}&logo=${encodeURIComponent(tool.info.metadata?.logo_url || "")}`,
+    ogImage: `/api/og?title=${encodeURIComponent(tool.name)}&subtitle=${encodeURIComponent(tool.category)}&logo=${encodeURIComponent(tool.info?.metadata?.logo_url || "")}`,
   });
 }
 

@@ -314,8 +314,10 @@ export function TrendingChart({
                   height={60}
                 />
                 <YAxis
-                  // Inverted domain so rank 1 appears at top
-                  domain={[10, 1]}
+                  // Domain set so rank 1 appears at top of chart (best position)
+                  // Using 'dataMin' to accommodate rankings beyond 10
+                  domain={[1, 'dataMax']}
+                  reversed={true}
                   tick={{ fontSize: 12 }}
                   tickFormatter={(value: number) => `#${value}`}
                   label={{ value: "Ranking Position", angle: -90, position: "insideLeft" }}

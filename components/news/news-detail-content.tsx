@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
@@ -29,8 +30,8 @@ interface NewsArticle {
   id: string;
   slug: string;
   title: string;
-  content: string;
-  summary?: string;
+  content: string; // Full content (up to 750 chars) with source links
+  summary?: string; // Short summary (250 chars) for list view
   published_date: string;
   source?: string;
   source_url?: string;
@@ -271,6 +272,24 @@ export default function NewsDetailContent({
   };
 
   const metrics = extractMetrics(article.content);
+
+  // Extract external links from markdown content
+  const extractExternalLinks = (content: string): Array<{ text: string; url: string }> => {
+    const links: Array<{ text: string; url: string }> = [];
+    const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+    let match;
+
+    while ((match = linkPattern.exec(content)) !== null) {
+      links.push({
+        text: match[1],
+        url: match[2],
+      });
+    }
+
+    return links;
+  };
+
+  const externalLinks = extractExternalLinks(article.content);
 
   // Generate scoring factors for detail view (similar to API logic)
   const generateDetailScoringFactors = (article: NewsArticle) => {
@@ -562,23 +581,53 @@ export default function NewsDetailContent({
         </CardHeader>
 
         <CardContent>
-          {/* Summary - show only if different from content */}
-          {article.summary &&
-            article.summary !== article.content &&
-            !article.content.includes(article.summary.substring(0, 50)) && (
-              <>
-                <CardDescription className="text-lg mb-6">{article.summary}</CardDescription>
-                <Separator className="my-6" />
-              </>
+          {/* Main Content - Display full content with proper markdown rendering */}
+          <div className="prose prose-lg dark:prose-invert max-w-none mb-6">
+            {article.content && article.content.length > 0 ? (
+              <ReactMarkdown
+                components={{
+                  a: ({ node, ...props }) => (
+                    <a
+                      {...props}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    />
+                  ),
+                }}
+              >
+                {article.content}
+              </ReactMarkdown>
+            ) : (
+              <p className="text-muted-foreground">
+                {article.summary || "No content available"}
+              </p>
             )}
+          </div>
 
-          {/* Main Content - if no summary or summary is same as content */}
-          {(!article.summary ||
-            article.summary === article.content ||
-            article.content.includes(article.summary.substring(0, 50))) && (
-            <div className="prose prose-lg dark:prose-invert max-w-none mb-6">
-              <p className="whitespace-pre-wrap">{article.content}</p>
-            </div>
+          {/* External Links Section */}
+          {externalLinks.length > 0 && (
+            <>
+              <Separator className="my-6" />
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold">Referenced Links:</h3>
+                <ul className="space-y-2">
+                  {externalLinks.map((link, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <ExternalLink className="h-4 w-4 mt-1 flex-shrink-0 text-muted-foreground" />
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline break-all"
+                      >
+                        {link.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
           )}
 
           {/* Ranking Impact Scoring */}

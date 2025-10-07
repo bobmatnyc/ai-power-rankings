@@ -48,24 +48,8 @@ function parseDatabaseUrl(url: string | undefined) {
     // Extract database name from pathname
     const database = urlObj.pathname.slice(1).split("?")[0] || "default";
 
-    // Create masked hostname for security
+    // Use full hostname (no masking)
     let maskedHost = hostname;
-    if (hostname && hostname !== "localhost" && hostname !== "127.0.0.1") {
-      // For Neon hosts like ep-bold-sunset-123456.aws.neon.tech
-      const parts = hostname.split(".");
-      if (parts.length >= 3 && parts[0]) {
-        const firstPart = parts[0].split("-");
-        if (firstPart.length >= 3 && firstPart[0] && firstPart[1]) {
-          // Mask the identifier part but keep the descriptive prefix
-          maskedHost = `${firstPart[0]}-${firstPart[1]}-******.${parts.slice(1).join(".")}`;
-        } else {
-          // For other formats, mask after first segment
-          maskedHost = `${parts[0].substring(0, 10)}******.${parts.slice(1).join(".")}`;
-        }
-      } else if (hostname.length > 8) {
-        maskedHost = `${hostname.substring(0, 8)}******`;
-      }
-    }
 
     // Detect provider from hostname
     let provider = "postgresql";
@@ -144,7 +128,6 @@ export async function GET() {
 
     // Get database configuration
     const databaseUrl = process.env["DATABASE_URL"];
-    const useDatabase = process.env["USE_DATABASE"] === "true";
     const nodeEnv = process.env["NODE_ENV"] || "development";
 
     // Parse database URL for safe info
@@ -161,7 +144,7 @@ export async function GET() {
     const status = {
       // Connection status
       connected: isConnected,
-      enabled: useDatabase,
+      enabled: true, // Always using database now
       configured: Boolean(databaseUrl && !databaseUrl.includes("YOUR_PASSWORD")),
       hasActiveInstance,
 
@@ -181,15 +164,13 @@ export async function GET() {
       // Status summary
       status: isConnected
         ? "connected"
-        : !useDatabase
-          ? "disabled"
-          : !databaseUrl
-            ? "not_configured"
-            : "disconnected",
+        : !databaseUrl
+          ? "not_configured"
+          : "disconnected",
 
       // Display type for UI
-      type: !useDatabase ? "json" : "postgresql",
-      displayEnvironment: !useDatabase ? "local" : dbInfo.environment,
+      type: "postgresql",
+      displayEnvironment: dbInfo.environment,
     };
 
     console.log("[db-status] Returning status response");

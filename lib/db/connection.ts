@@ -94,6 +94,14 @@ function getDatabaseUrl(): string | undefined {
  * Throws an error if database is not configured (except in test environment)
  */
 export function getDb(): typeof db {
+  // Skip database initialization during Next.js build phase
+  // Environment variables are not fully available during build time
+  const isNextJsBuild = process.env["NEXT_PHASE"] === "phase-production-build";
+  if (isNextJsBuild) {
+    console.log("⏭️  Skipping database connection during Next.js build phase");
+    return null;
+  }
+
   // Get appropriate database URL based on environment
   const DATABASE_URL = getDatabaseUrl();
 
@@ -170,7 +178,10 @@ export function getDb(): typeof db {
     }
 
     console.log("📍 Environment:", NODE_ENV);
-    console.log("🔗 Database host:", DATABASE_URL.split("@")[1]?.split("/")[0] || "unknown");
+    // Extract just the endpoint ID (e.g., "ep-dark-firefly-adp1p3v8") from the full host
+    const fullHost = DATABASE_URL.split("@")[1]?.split("/")[0] || "unknown";
+    const endpointId = fullHost.split("-pooler")[0] || fullHost;
+    console.log("🔗 Database endpoint:", endpointId);
     console.log("⚡ Connection mode:", usePool ? "Pooled" : "HTTP");
 
     return db;

@@ -14,6 +14,7 @@ interface NewsArticle {
   slug: string;
   title: string;
   summary: string | null;
+  content: string;
   source: string | null;
   sourceUrl: string | null;
   publishedAt: Date;
@@ -33,6 +34,7 @@ export class NewsRepository {
       slug: article.slug,
       title: article.title,
       summary: article.summary,
+      content: article.content,
       source: article.sourceName,
       sourceUrl: article.sourceUrl,
       publishedAt: article.publishedDate || article.createdAt,
@@ -210,6 +212,35 @@ export class NewsRepository {
     }, 0);
 
     return totalMentions / allArticles.length;
+  }
+
+  /**
+   * Search news articles by tool name
+   */
+  async searchByToolName(toolName: string, limit: number = 10) {
+    if (!db) return [];
+
+    try {
+      // Search in toolMentions JSONB array for the tool name
+      const results = await db
+        .select()
+        .from(articles)
+        .where(
+          and(
+            eq(articles.status, "active"),
+            sql`${articles.toolMentions}::jsonb @> ${JSON.stringify([{ name: toolName }])}::jsonb OR
+                ${articles.toolMentions}::jsonb @> ${JSON.stringify([toolName])}::jsonb OR
+                ${articles.title} ILIKE ${`%${toolName}%`}`
+          )
+        )
+        .orderBy(desc(articles.publishedDate))
+        .limit(limit);
+
+      return results.map((article) => this.mapArticleToNews(article));
+    } catch (error) {
+      console.error("Error searching news by tool name:", error);
+      return [];
+    }
   }
 
   /**

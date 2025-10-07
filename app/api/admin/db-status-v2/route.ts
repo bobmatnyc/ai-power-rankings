@@ -32,7 +32,6 @@ export async function GET() {
 
     // Get database status
     const databaseUrl = process.env["DATABASE_URL"];
-    const useDatabase = process.env["USE_DATABASE"] === "true";
 
     // Test connection
     const isConnected = await testConnection();
@@ -41,7 +40,7 @@ export async function GET() {
     return NextResponse.json({
       status: "ok",
       connected: isConnected,
-      enabled: useDatabase,
+      enabled: true, // Always using database now
       configured: Boolean(databaseUrl && !databaseUrl.includes("YOUR_PASSWORD")),
       hasActiveInstance: db !== null,
       timestamp: new Date().toISOString(),

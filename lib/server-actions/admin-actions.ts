@@ -31,7 +31,6 @@ export async function getDatabaseStatus() {
 
     // Get database configuration
     const databaseUrl = process.env["DATABASE_URL"];
-    const useDatabase = process.env["USE_DATABASE"] === "true";
     const nodeEnv = process.env["NODE_ENV"] || "development";
 
     // Test connection
@@ -56,7 +55,7 @@ export async function getDatabaseStatus() {
       success: true,
       data: {
         connected: isConnected,
-        enabled: useDatabase,
+        enabled: true, // Always using database now
         configured: Boolean(databaseUrl && !databaseUrl.includes("YOUR_PASSWORD")),
         hasActiveInstance,
         connectionError,
@@ -64,7 +63,7 @@ export async function getDatabaseStatus() {
         nodeEnv,
         timestamp: new Date().toISOString(),
         status: isConnected ? "connected" : "disconnected",
-        type: useDatabase ? "postgresql" : "json",
+        type: "postgresql",
         authMethod: "server-action",
       },
     };

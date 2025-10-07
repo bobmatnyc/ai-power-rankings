@@ -194,20 +194,18 @@ function SidebarContent(): React.JSX.Element {
         <Link
           href={`/${lang}`}
           onClick={handleNavClick}
-          className="flex items-center space-x-3 mb-6"
+          className="flex items-center gap-3 mb-6"
         >
           <Image
             src="/crown-of-technology.webp"
             alt="AI Power Ranking"
             width={36}
             height={36}
-            className="w-9 h-9 object-contain"
+            className="w-9 h-9 object-contain flex-shrink-0"
             loading="eager"
             priority
           />
-          <div>
-            <h1 className="text-2xl font-bold text-gradient">APR</h1>
-          </div>
+          <h1 className="text-2xl font-bold text-gradient leading-none flex items-center h-9">APR</h1>
         </Link>
 
         <div className="space-y-6">
