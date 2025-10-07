@@ -541,7 +541,7 @@
       }
     },
     "algorithm": {
-      "title": "Algoritmo v6.0",
+      "title": "Algoritmo v7.1",
       "description": "Il nostro ultimo algoritmo di ranking incorpora pattern di utilizzo del mondo reale e dinamiche di mercato",
       "keyFeatures": "Caratteristiche Chiave",
       "features": {
@@ -803,7 +803,7 @@
     "keywords": "strumenti di codifica AI, AI agentici, codifica autonoma, classifiche strumenti sviluppatori, confronto assistenti AI, benchmark AI di codifica, risultati SWE-bench, Claude vs Cursor vs GitHub Copilot"
   },
   "footer": {
-    "description": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v6.0 con decadimento dell'innovazione, modificatori di rischio piattaforma e aggiustamenti della qualità dei ricavi.",
+    "description": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.1 con decadimento dell'innovazione, modificatori di rischio piattaforma e aggiustamenti della qualità dei ricavi.",
     "quickLinks": "Link Rapidi",
     "categories": "Categorie",
     "copyright": "© 2025 AI Power Ranking. Tutti i diritti riservati."

@@ -541,7 +541,7 @@
       }
     },
     "algorithm": {
-      "title": "Algoritam v6.0",
+      "title": "Algoritam v7.1",
       "description": "Naš najnoviji algoritam za rangiranje uključuje obrasce korištenja u stvarnom svijetu i tržišnu dinamiku",
       "keyFeatures": "Ključne funkcionalnosti",
       "features": {
@@ -803,7 +803,7 @@
     "keywords": "AI alati za kodiranje, agentska AI, autonomno kodiranje, rangiranje alata za developere, usporedba AI asistenata, benchmarkovi AI kodiranja, SWE-bench rezultati, Claude vs Cursor vs GitHub Copilot"
   },
   "footer": {
-    "description": "Sveobuhvatna rangiranja AI alata za kodiranje koristeći Algorithm v6.0 s propadanjem inovacije, modifikatorima rizika platforme i prilagodbama kvalitete prihoda.",
+    "description": "Sveobuhvatna rangiranja AI alata za kodiranje koristeći Algorithm v7.1 s propadanjem inovacije, modifikatorima rizika platforme i prilagodbama kvalitete prihoda.",
     "quickLinks": "Brzi linkovi",
     "categories": "Kategorije",
     "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."

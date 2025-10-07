@@ -22,7 +22,7 @@ export const generalFAQs: FAQItem[] = [
     id: "how-are-rankings-calculated",
     question: "How are AI tool rankings calculated?",
     answer:
-      "Our rankings use Algorithm v6.0, which evaluates 8 key factors: <strong>Agentic Capability</strong>, <strong>Innovation</strong>, <strong>Technical Performance</strong>, <strong>Developer Adoption</strong>, <strong>Market Traction</strong>, <strong>Business Sentiment</strong>, <strong>Development Velocity</strong>, and <strong>Platform Resilience</strong>. Each factor is weighted based on its importance to developers and businesses.",
+      "Our rankings use Algorithm v7.1, which evaluates 8 key factors: <strong>Agentic Capability</strong>, <strong>Innovation</strong>, <strong>Technical Performance</strong>, <strong>Developer Adoption</strong>, <strong>Market Traction</strong>, <strong>Business Sentiment</strong>, <strong>Development Velocity</strong>, and <strong>Platform Resilience</strong>. Each factor is weighted based on its importance to developers and businesses.",
     category: "methodology",
   },
   {

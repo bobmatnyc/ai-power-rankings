@@ -169,7 +169,7 @@
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
-      "description": "Comprehensive rankings of AI coding tools using Algorithm v6.0 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.1 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
@@ -514,7 +514,7 @@
     "title": "Unsere Methodik",
     "subtitle": "Wie wir KI-Coding-Tools ranken",
     "lastUpdated": "Zuletzt aktualisiert: Januar 2025",
-    "intro": "AI Power Rankings nutzt einen sophistizierten Algorithmus (v6.0) zur Bewertung und zum Ranking von KI-Coding-Tools basierend auf mehreren quantitativen und qualitativen Faktoren. Unsere Methodik ist darauf ausgelegt, Developern eine objektive, datengetriebene Bewertung der KI-Tools-Landschaft zu bieten.",
+    "intro": "AI Power Rankings nutzt einen sophistizierten Algorithmus (v7.1) zur Bewertung und zum Ranking von KI-Coding-Tools basierend auf mehreren quantitativen und qualitativen Faktoren. Unsere Methodik ist darauf ausgelegt, Developern eine objektive, datengetriebene Bewertung der KI-Tools-Landschaft zu bieten.",
     "sections": {
       "scoringFactors": {
         "title": "Scoring Factors",
@@ -803,7 +803,7 @@
     "keywords": "AI-Coding-Tools, agentische AI, autonomes Coding, Entwickler-Tools-Rankings, AI-Assistenten-Vergleich, Coding-AI-Benchmarks, SWE-Bench-Ergebnisse, Claude vs Cursor vs GitHub Copilot"
   },
   "footer": {
-    "description": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v6.0 einschließlich Innovationsverfall, Plattformrisiko-Modifikatoren und Umsatzqualitäts-Anpassungen.",
+    "description": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v7.1 einschließlich Innovationsverfall, Plattformrisiko-Modifikatoren und Umsatzqualitäts-Anpassungen.",
     "quickLinks": "Schnelllinks",
     "categories": "Kategorien",
     "copyright": "© 2025 AI Power Rankings. Alle Rechte vorbehalten."

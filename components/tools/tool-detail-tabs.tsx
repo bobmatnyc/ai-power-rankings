@@ -394,8 +394,8 @@ export function ToolDetailTabs({
           {ranking ? (
             <Card>
               <CardHeader>
-                <CardTitle>Algorithm v6.0 Scores</CardTitle>
-                <CardDescription>Detailed scoring breakdown across all factors</CardDescription>
+                <CardTitle>Algorithm v7.1 Scores</CardTitle>
+                <CardDescription>Detailed scoring breakdown across all factors (v7.1-september-update)</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
