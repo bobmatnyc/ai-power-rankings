@@ -1,0 +1,272 @@
+[
+  {
+    "oldId": "claude-opus-4-1-launch-2025-08-05",
+    "newId": "d3cd5b96-47b4-426f-aac8-bb117f251253",
+    "slug": "anthropic-releases-claude-opus-4-1-improved-coding-accuracy",
+    "title": "Anthropic Releases Claude Opus 4.1 with 74.5% Software Engineering Accuracy"
+  },
+  {
+    "oldId": "cerebras-code-launch-2025-08-01",
+    "newId": "da3fb94a-9b9b-442f-a9f1-dfb3b0dcb48f",
+    "slug": "cerebras-introduces-cerebras-code-ultra-fast-ai-coding-assistant",
+    "title": "Cerebras Introduces Cerebras Code: Ultra-Fast AI Coding Assistant with 2,000 Tokens/Second"
+  },
+  {
+    "oldId": "197bf322839-c7463995-45c3458d",
+    "newId": "737d11dc-d515-43cc-b012-1affe2cd834a",
+    "slug": "disney-enterprises-and-universal-city-studios-have-sued-midjourney-over-claims-of-copyright-infringe",
+    "title": "Disney Enterprises and Universal City Studios have sued Midjourney over claims of copyright infringe..."
+  },
+  {
+    "oldId": "197bf3f57a0-1e24f892-0323ad69",
+    "newId": "f443fb3d-f51f-4fcf-9c3d-d7ec92961033",
+    "slug": "claude-artifacts-gains-interactive-ai-capabilities",
+    "title": "Claude Artifacts Gains Interactive AI Capabilities"
+  },
+  {
+    "oldId": "sample-1751078155793-v0olo0emc",
+    "newId": "e2297c49-c28f-471f-99b7-9f706a688a2b",
+    "slug": "google-rolls-out-scheduled-actions-on-gemini",
+    "title": "Google rolls out 'Scheduled Actions' on Gemini"
+  },
+  {
+    "oldId": "sample-1751078155794-j0wj8ub4v",
+    "newId": "4a30f1d4-64bf-488f-a284-6165517ec66f",
+    "slug": "chatgpt-o3-pro-the-latest-model-by-openai",
+    "title": "ChatGPT o3-pro: the latest model by OpenAI"
+  },
+  {
+    "oldId": "sample-1751078155795-1eptecluh",
+    "newId": "3c71ee14-e283-4686-8e93-9bf4fa6eef39",
+    "slug": "top-3-updates-for-android-developer-productivity-from-google-io-25",
+    "title": "Top 3 Updates for Android Developer Productivity from Google I/O 25"
+  },
+  {
+    "oldId": "sample-1751078155796-pit7wahaa",
+    "newId": "c4300f35-7989-4653-b343-b39162158232",
+    "slug": "apple-reportedly-in-talks-to-acquire-perplexity-ai-to-supercharge-its-artificial-intelligence-ambitions",
+    "title": "Apple Reportedly in Talks to Acquire Perplexity AI to Supercharge Its Artificial Intelligence Ambitions"
+  },
+  {
+    "oldId": "sample-1751078155797-1bk7nwuht",
+    "newId": "7822d52c-125e-45a9-9136-ca3556cc3c7d",
+    "slug": "github-copilot-plans-to-deprecate-key-ai-models-by-summer-2025",
+    "title": "GitHub Copilot Plans to Deprecate Key AI Models by Summer 2025"
+  },
+  {
+    "oldId": "sample-1751078155798-qt3gpl1wq",
+    "newId": "9dde8864-c72e-429f-a80f-86f435eb1333",
+    "slug": "elon-musk-aims-to-redefine-the-future-of-ai-with-the-new-grok",
+    "title": "Elon Musk aims to redefine the future of AI with the new Grok"
+  },
+  {
+    "oldId": "sample-1751078155799-mgaaixqwj",
+    "newId": "1d5548f7-2ee2-4e7f-82b2-70d5c3c8eb6d",
+    "slug": "metas-llama-31-model-memorised-42-per-cent-of-harry-potter-book-new-study-finds",
+    "title": "Meta's Llama 3.1 model 'memorised' 42 per cent of Harry Potter book, new study finds"
+  },
+  {
+    "oldId": "sample-1751078155799-hiz26olo8",
+    "newId": "61dfc57a-f4ca-4139-9fe9-47b18caec358",
+    "slug": "open-ai-codex-vs-github-copilot-vs-claude-testing-benchmarks",
+    "title": "Open AI Codex vs GitHub Copilot vs Claude | Testing & Benchmarks"
+  },
+  {
+    "oldId": "197bf3f57a0-601785d2-81e31075",
+    "newId": "e7934e59-e122-4dd2-a21f-135590308322",
+    "slug": "github-copilot-introduces-pro-tier-with-exclusive-model-access",
+    "title": "GitHub Copilot Introduces Pro+ Tier with Exclusive Model Access"
+  },
+  {
+    "oldId": "197bf3f57a0-0b7b3938-228057af",
+    "newId": "52bb03dd-28ea-480e-8f7e-059c9bc8eb95",
+    "slug": "github-copilot-coding-agent-for-autonomous-issue-resolution",
+    "title": "GitHub Copilot Coding Agent for Autonomous Issue Resolution"
+  },
+  {
+    "oldId": "197bf3f57a0-692ff711-fe49462d",
+    "newId": "ec1b7ca8-d2eb-49bf-8b9c-3bbf1bf87d3e",
+    "slug": "github-copilot-adds-multi-model-support",
+    "title": "GitHub Copilot Adds Multi-Model Support"
+  },
+  {
+    "oldId": "197bf3f57a0-2575d056-dda2b0aa",
+    "newId": "684a46ba-a373-47c9-ba8e-8984434a4f14",
+    "slug": "bolt-new-integrates-with-figma-for-one-click-design-to-code",
+    "title": "Bolt.new Integrates with Figma for One-Click Design to Code"
+  },
+  {
+    "oldId": "197bf3f57a0-ed45d3ac-323634dc",
+    "newId": "783cff7f-519c-4992-8fc3-dd2acc24fd23",
+    "slug": "bolt-new-hits-40m-arr-with-25-000-daily-apps-built",
+    "title": "Bolt.new Hits $40M ARR with 25,000 Daily Apps Built"
+  },
+  {
+    "oldId": "197bf3f57a0-a3b20aa4-adc051a0",
+    "newId": "ddcd56a5-7335-4922-b77d-1cc8acaa9f14",
+    "slug": "bolt-new-enables-mobile-app-development-without-code",
+    "title": "Bolt.new Enables Mobile App Development Without Code"
+  },
+  {
+    "oldId": "197bf3f57a0-2fa35465-de708fe5",
+    "newId": "e8a7348a-4387-41ff-875d-148d09e4bc4d",
+    "slug": "windsurf-adds-mcp-support-for-custom-tool-integration",
+    "title": "Windsurf Adds MCP Support for Custom Tool Integration"
+  },
+  {
+    "oldId": "197bf3f57a0-8a3f635b-b1380603",
+    "newId": "f024be75-22b4-4a9b-a1f4-1f832d354d9a",
+    "slug": "claude-opus-4-sets-new-swe-bench-record-at-72-5",
+    "title": "Claude Opus 4 Sets New SWE-bench Record at 72.5%"
+  },
+  {
+    "oldId": "197bf3f57a0-fe9c39ae-a9d2daeb",
+    "newId": "03c0d9a0-2f63-4aa2-9504-a0361b5142f8",
+    "slug": "cursor-fusion-tab-model-enhances-multi-file-editing",
+    "title": "Cursor Fusion Tab Model Enhances Multi-File Editing"
+  },
+  {
+    "oldId": "197bf3f57a0-1d719bcb-3ae2c9f4",
+    "newId": "c0aa9fe2-d498-4771-ac37-beb2e847fd76",
+    "slug": "cursor-reaches-100m-arr-fastest-saas-growth",
+    "title": "Cursor Reaches $100M ARR, Fastest SaaS Growth"
+  },
+  {
+    "oldId": "197bf3f57a0-ef76483b-39a86a3a",
+    "newId": "113a87fc-351a-45af-8c0b-cbf3674efe6a",
+    "slug": "google-jules-public-beta-launches-with-52-2-swe-bench-score",
+    "title": "Google Jules Public Beta Launches with 52.2% SWE-bench Score"
+  },
+  {
+    "oldId": "197bf3f57a0-39257e5d-cbd44fad",
+    "newId": "187dadea-151e-4031-b66a-4fb35cb1a579",
+    "slug": "lovable-achieves-5-56m-arr-with-140-000-users",
+    "title": "Lovable Achieves £5.56M ARR with 140,000 Users"
+  },
+  {
+    "oldId": "197bf3f57a0-c51dd5b9-91d3dc4c",
+    "newId": "dcc7caa7-f996-4f20-9217-a9ab176fa83b",
+    "slug": "chatgpt-canvas-full-release",
+    "title": "ChatGPT Canvas Full Release"
+  },
+  {
+    "oldId": "197bf3f57a0-e0219969-f463170b",
+    "newId": "2a835324-7b3e-4fdd-9799-bed7af914241",
+    "slug": "openai-releases-codex-cli-tool",
+    "title": "OpenAI Releases Codex CLI Tool"
+  },
+  {
+    "oldId": "197bf3f57a0-1bf7e9ca-7641aa34",
+    "newId": "db7d7677-a8a6-4839-86f4-048dfaa71d14",
+    "slug": "opendevin-rebrands-to-openhands",
+    "title": "OpenDevin Rebrands to OpenHands"
+  },
+  {
+    "oldId": "197bf3f57a0-6b466789-72eb880a",
+    "newId": "281e6f8a-a4cb-4657-9e4e-9cc224d677ec",
+    "slug": "openai-launches-chatgpt-canvas-in-beta",
+    "title": "OpenAI Launches ChatGPT Canvas in Beta"
+  },
+  {
+    "oldId": "197bf3f57a0-379f54b4-455c3809",
+    "newId": "cc46cbb8-22bb-4f50-b112-29a6aff16f48",
+    "slug": "anthropic-launches-claude-artifacts",
+    "title": "Anthropic Launches Claude Artifacts"
+  },
+  {
+    "oldId": "197bf3f57a0-8b4f717d-444b5bc5",
+    "newId": "af363843-a980-4343-b201-5d9340b0b07f",
+    "slug": "amazon-q-developer-reaches-general-availability",
+    "title": "Amazon Q Developer Reaches General Availability"
+  },
+  {
+    "oldId": "197bf3f57a0-8651e7ae-51a99e23",
+    "newId": "f3310107-97d0-4bb6-b138-4cbd53e15f03",
+    "slug": "coderabbit-relaunches-with-enhanced-features",
+    "title": "CodeRabbit Relaunches with Enhanced Features"
+  },
+  {
+    "oldId": "197bf3f57a0-8935f994-77e5401f",
+    "newId": "b7e504e3-c318-41cd-b3a1-d1931d4405bb",
+    "slug": "opendevin-launches-as-open-source-ai-software-engineer",
+    "title": "OpenDevin Launches as Open-Source AI Software Engineer"
+  },
+  {
+    "oldId": "197bf3f57a0-e63c9ab8-8464ae59",
+    "newId": "b2e91de3-bf27-40d8-9f8b-66aff5b3f062",
+    "slug": "sourcegraph-cody-v1-0-general-availability",
+    "title": "Sourcegraph Cody v1.0 General Availability"
+  },
+  {
+    "oldId": "197bf3f57a0-7d58c612-54f7c589",
+    "newId": "8ca4c55c-a0e6-463d-b31a-d7abd9922ece",
+    "slug": "jetbrains-ai-assistant-reaches-general-availability",
+    "title": "JetBrains AI Assistant Reaches General Availability"
+  },
+  {
+    "oldId": "197bf3f579f-1844625c-2d8e4769",
+    "newId": "1e52c9d3-2ce6-409d-83d7-3daa8aa19ccb",
+    "slug": "amazon-q-developer-launches-in-preview-at-aws-re-invent",
+    "title": "Amazon Q Developer Launches in Preview at AWS re:Invent"
+  },
+  {
+    "oldId": "197bf3f57a0-9740e906-c667fb4a",
+    "newId": "4069920d-b696-4e8a-bdb3-e4460e8ee579",
+    "slug": "coderabbit-launches-ai-powered-code-review",
+    "title": "CodeRabbit Launches AI-Powered Code Review"
+  },
+  {
+    "oldId": "197bf3f57a0-991ddcac-ed714460",
+    "newId": "af768356-a0c9-4d11-b28a-47341d1630ee",
+    "slug": "jetbrains-introduces-ai-assistant-in-2023-2-eap",
+    "title": "JetBrains Introduces AI Assistant in 2023.2 EAP"
+  },
+  {
+    "oldId": "197bf3f57a0-f4a17d9c-4edff5c1",
+    "newId": "76df5d63-1785-4ed8-87ff-a897733810c9",
+    "slug": "sourcegraph-launches-cody-ai-coding-assistant",
+    "title": "Sourcegraph Launches Cody AI Coding Assistant"
+  },
+  {
+    "oldId": "197bf3f57a0-b27d6538-f115d4c7",
+    "newId": "dd74a853-948e-4ac6-8434-1c8e4336f6ef",
+    "slug": "aider-open-source-ai-pair-programming-tool-launches",
+    "title": "Aider Open-Source AI Pair Programming Tool Launches"
+  },
+  {
+    "oldId": "197bf3f57a0-0eecc42f-20b1e749",
+    "newId": "ece5fac8-3b1f-46ad-8586-8ac2d0de153a",
+    "slug": "sourcery-2-0-expands-language-support",
+    "title": "Sourcery 2.0 Expands Language Support"
+  },
+  {
+    "oldId": "197bf3f57a0-6ffcc770-c10931fe",
+    "newId": "07b384c6-d103-4dc8-84a7-043845e75ba6",
+    "slug": "snyk-launches-snyk-code-for-security-analysis",
+    "title": "Snyk Launches Snyk Code for Security Analysis"
+  },
+  {
+    "oldId": "197bf3f57a0-b37371a2-1cc5dc57",
+    "newId": "6f34fb4c-bb14-4540-aa60-f6e2e762cb66",
+    "slug": "tabnine-rebrands-from-codota-expands-ai-capabilities",
+    "title": "Tabnine Rebrands from Codota, Expands AI Capabilities"
+  },
+  {
+    "oldId": "197bf3f57a0-527e2641-db5cf798",
+    "newId": "9d1581fc-fb0a-4b87-a681-a313ac87bf72",
+    "slug": "diffblue-cover-community-edition-released",
+    "title": "Diffblue Cover Community Edition Released"
+  },
+  {
+    "oldId": "197bf3f57a0-93c7947a-8af7cdb0",
+    "newId": "7aebb1ff-99af-4ba0-8e6f-828926a8c573",
+    "slug": "sourcery-launches-automated-python-refactoring",
+    "title": "Sourcery Launches Automated Python Refactoring"
+  },
+  {
+    "oldId": "197bf3f57a0-604c5293-5af3dadc",
+    "newId": "225dd074-be1a-467b-a2aa-98f2dc6168e2",
+    "slug": "microsoft-announces-intellicode-at-build-2018",
+    "title": "Microsoft Announces IntelliCode at Build 2018"
+  }
+]

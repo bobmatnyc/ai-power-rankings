@@ -60,11 +60,22 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     // If no match in title, check tool_mentions
     if (!matchingTool && toolMentions.length > 0) {
-      const firstToolName = toolMentions[0];
-      // Try to find tool by slug or name
-      matchingTool = await toolsRepo.findBySlug(
-        firstToolName.toLowerCase().replace(/\s+/g, "-")
-      );
+      const firstToolMention = toolMentions[0];
+      // Tool mentions can be either strings or objects with a 'name' property
+      let toolName: string | undefined;
+
+      if (typeof firstToolMention === 'string') {
+        toolName = firstToolMention;
+      } else if (typeof firstToolMention === 'object' && firstToolMention !== null && 'name' in firstToolMention) {
+        toolName = (firstToolMention as any).name;
+      }
+
+      // Try to find tool by slug or name - ensure it's a valid string
+      if (toolName && typeof toolName === 'string' && toolName.trim()) {
+        matchingTool = await toolsRepo.findBySlug(
+          toolName.toLowerCase().replace(/\s+/g, "-")
+        );
+      }
     }
 
     // Transform to the format expected by the frontend
@@ -72,7 +83,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       id: article.id,
       slug: article.slug,
       title: article.title,
-      content: (articleData as any)?.content || article.summary || "",
+      content: article.content || article.summary || "",
       summary: article.summary,
       published_date: article.publishedAt || article.createdAt || new Date().toISOString(),
       source: article.source || (articleData as any)?.source || "AI News",

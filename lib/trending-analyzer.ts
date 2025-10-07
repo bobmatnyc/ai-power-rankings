@@ -108,10 +108,14 @@ function formatPeriodDate(period: string): string {
  * Analyzes historical ranking data to extract trending insights.
  *
  * ALGORITHM:
- * 1. Extract top 10 tools from each period
- * 2. Track all tools that have appeared in top 10
- * 3. Create time series data for chart visualization
- * 4. Handle tools entering/leaving top 10 (null values for missing periods)
+ * 1. Identify current period's top 10 tools (these are the focus)
+ * 2. Extract top 10 tools from each period PLUS track current top 10 historically
+ * 3. Track all tools that have appeared in top 10 OR are currently in top 10
+ * 4. Create time series data showing positions across all periods (including >10 for rise stories)
+ * 5. Handle tools entering/leaving top 10 (null values for missing periods)
+ *
+ * This approach ensures chart lines connect by showing how current top tools
+ * have risen from lower positions in earlier periods.
  *
  * @param periods Array of ranking periods to analyze
  * @returns Structured trending analysis data for chart consumption
@@ -135,21 +139,37 @@ export function analyzeTrendingData(periods: RankingPeriod[]): TrendingAnalysisR
     (a, b) => new Date(a.period).getTime() - new Date(b.period).getTime()
   );
 
-  // Track all tools that have appeared in top 10
+  // STEP 1: Get current period's top 10 tool IDs to track historically
+  const latestPeriod = sortedPeriods[sortedPeriods.length - 1];
+  const currentTop10ToolIds = new Set<string>(
+    latestPeriod!.rankings
+      .filter((entry) => {
+        const position = getRankingPosition(entry);
+        return position > 0 && position <= 10;
+      })
+      .sort((a, b) => getRankingPosition(a) - getRankingPosition(b))
+      .slice(0, 10)
+      .map((entry) => entry.tool_id)
+  );
+
+  // Track all tools that have appeared in top 10 OR are in current top 10
   const allToolsMap = new Map<string, TrendingTool>();
 
   // Process each period to extract top 10 tools
   const chartData: TrendingDataPoint[] = [];
 
   sortedPeriods.forEach((period) => {
-    // Extract top 10 tools from this period
-    const top10Tools = period.rankings
+    // Extract top 10 tools PLUS any tools that are in current top 10
+    // This ensures current top tools are tracked across all historical periods
+    const relevantTools = period.rankings
       .filter((entry) => {
         const position = getRankingPosition(entry);
-        return position > 0 && position <= 10;
+        // Include if: in top 10 this period OR in current top 10 (to show their rise)
+        return (
+          (position > 0 && position <= 10) || currentTop10ToolIds.has(entry.tool_id)
+        );
       })
-      .sort((a, b) => getRankingPosition(a) - getRankingPosition(b))
-      .slice(0, 10);
+      .sort((a, b) => getRankingPosition(a) - getRankingPosition(b));
 
     // Initialize chart data point for this period
     const dataPoint: TrendingDataPoint = {
@@ -157,21 +177,24 @@ export function analyzeTrendingData(periods: RankingPeriod[]): TrendingAnalysisR
       date: formatPeriodDate(period.period),
     };
 
-    // Process each tool in top 10
-    top10Tools.forEach((entry) => {
+    // Process each relevant tool (top 10 + current top 10)
+    relevantTools.forEach((entry) => {
       const position = getRankingPosition(entry);
       const toolId = entry.tool_id;
       const toolName = entry.tool_name;
 
-      // Add position to chart data (inverted: 1 = best, 10 = worst)
+      // Add position to chart data - include ALL positions (even >10) to show rise
       dataPoint[toolId] = position;
+
+      // Track if this tool was in top 10 this period
+      const isInTop10ThisPeriod = position > 0 && position <= 10;
 
       // Update or create tool tracking
       if (!allToolsMap.has(toolId)) {
         allToolsMap.set(toolId, {
           tool_id: toolId,
           tool_name: toolName,
-          periods_in_top10: 0,
+          periods_in_top10: isInTop10ThisPeriod ? 1 : 0,
           first_appearance: period.period,
           last_appearance: period.period,
           best_position: position,
@@ -181,7 +204,10 @@ export function analyzeTrendingData(periods: RankingPeriod[]): TrendingAnalysisR
 
       const toolData = allToolsMap.get(toolId);
       if (toolData) {
-        toolData.periods_in_top10++;
+        // Only increment top10 count if actually in top 10
+        if (isInTop10ThisPeriod) {
+          toolData.periods_in_top10++;
+        }
         toolData.last_appearance = period.period;
         toolData.best_position = Math.min(toolData.best_position, position);
         toolData.worst_position = Math.max(toolData.worst_position, position);

@@ -38,7 +38,7 @@ interface MetricsHistory {
   event_date: string;
   event_type: string;
   title: string;
-  description: string;
+  description: string; // 250-char summary for list view
   source_url?: string;
   source_name?: string;
   metrics?: {
@@ -355,7 +355,12 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                         <CardTitle className="text-lg mb-1 hover:text-primary transition-colors">
                           {item.title}
                         </CardTitle>
-                        <CardDescription>{item.description}</CardDescription>
+                        <CardDescription>
+                          {/* Display 250-char summary for list view */}
+                          {item.description && item.description.length > 250
+                            ? `${item.description.substring(0, 250)}...`
+                            : item.description}
+                        </CardDescription>
 
                         {/* Tool mentions after summary */}
                         {item.tool_name && item.tool_name !== "Various Tools" && (

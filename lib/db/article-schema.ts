@@ -118,6 +118,9 @@ export const articleRankingsChanges = pgTable(
     toolId: varchar("tool_id", { length: 50 }).notNull(),
     toolName: varchar("tool_name", { length: 255 }).notNull(),
 
+    // Article source tracking for deduplication
+    articleUrl: varchar("article_url", { length: 1000 }),
+
     // Ranking changes
     metricChanges: jsonb("metric_changes").notNull(),
     oldRank: integer("old_rank"),
@@ -147,6 +150,7 @@ export const articleRankingsChanges = pgTable(
     toolIdIdx: index("idx_article_rankings_tool_id").on(table.toolId),
     appliedIdx: index("idx_article_rankings_applied").on(table.isApplied),
     changeTypeIdx: index("idx_article_rankings_change_type").on(table.changeType),
+    articleUrlIdx: index("idx_article_rankings_article_url").on(table.articleUrl),
   })
 );
 

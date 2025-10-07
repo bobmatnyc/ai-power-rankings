@@ -7,26 +7,18 @@ function WhatsNewModalClient(): React.JSX.Element {
   const [showWhatsNew, setShowWhatsNew] = useState(false);
 
   useEffect(() => {
-    // Check if modal should be shown
+    // Check if modal should be shown - use sessionStorage for one-time-per-session behavior
     const shouldShowModal = () => {
-      // Check if user has dismissed the modal recently (within 7 days)
-      const dismissedAt = localStorage.getItem("whatsNewDismissed");
-      if (dismissedAt) {
-        const dismissTime = parseInt(dismissedAt, 10);
-        const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-        if (dismissTime > sevenDaysAgo) {
-          return false; // Don't show if dismissed within last 7 days
-        }
+      // Check if already shown in this session
+      const shownThisSession = sessionStorage.getItem("whatsNewShownThisSession");
+      if (shownThisSession === "true") {
+        return false;
       }
 
-      // Check if user has seen modal today
-      const lastShown = localStorage.getItem("whatsNewLastShown");
-      if (lastShown) {
-        const lastShownDate = new Date(parseInt(lastShown, 10));
-        const today = new Date();
-        if (lastShownDate.toDateString() === today.toDateString()) {
-          return false; // Don't show if already shown today
-        }
+      // Check if user permanently disabled auto-show
+      const autoShowDisabled = localStorage.getItem("autoShowDisabled");
+      if (autoShowDisabled === "true") {
+        return false;
       }
 
       return true;
@@ -36,10 +28,10 @@ function WhatsNewModalClient(): React.JSX.Element {
     const timer = setTimeout(() => {
       if (shouldShowModal()) {
         setShowWhatsNew(true);
-        // Mark as shown today
-        localStorage.setItem("whatsNewLastShown", Date.now().toString());
+        // Mark as shown this session (will reset when browser tab closes)
+        sessionStorage.setItem("whatsNewShownThisSession", "true");
       }
-    }, 2000); // 2 second delay
+    }, 1500); // 1.5 second delay
 
     return () => clearTimeout(timer);
   }, []);

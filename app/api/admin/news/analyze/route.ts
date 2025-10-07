@@ -85,10 +85,15 @@ const OpenRouterResponseSchema = z.object({
   published_date: z.string(),
   tool_mentions: z.array(
     z.object({
-      tool: z.string(),
+      tool: z.string().optional(),
+      name: z.string().optional(),
       context: z.string(),
       sentiment: z.number().min(-1).max(1),
-    })
+      relevance: z.number().min(0).max(1).optional(),
+    }).refine(
+      (data) => data.tool || data.name,
+      { message: "Either 'tool' or 'name' must be provided" }
+    )
   ),
   overall_sentiment: z.number().min(-1).max(1),
   key_topics: z.array(z.string()),
@@ -189,7 +194,12 @@ You MUST be EXHAUSTIVE in extracting ALL information:
 4. Note competitive relationships (X competitor to Y, X vs Y)
 5. Extract performance claims and benchmarks
 
-Be THOROUGH - if a tool, company, or metric is mentioned even once, include it.`;
+Be THOROUGH - if a tool, company, or metric is mentioned even once, include it.
+
+CRITICAL JSON FIELD NAME REQUIREMENT:
+- You MUST use "tool" as the field name for tool names in tool_mentions array
+- DO NOT use "name" or any other field name
+- The exact field name must be "tool" (not "name", "tool_name", etc.)`;
 
   const userPrompt = `STEP 1 - REWRITE THE ARTICLE:
 First, rewrite the following content in professional news style:
@@ -210,12 +220,14 @@ Then analyze the rewritten article and extract the following information:
    - Include ALL AI tools: Codeium, Magic, Nvidia NIM, SWE-agent, Copilot, GPT models, Claude, etc.
    - Include ALL platforms: GitHub, Reddit, YouTube, Twitter, Product Hunt, etc.
    - Include ALL services: OpenAI API, Anthropic API, OpenRouter, etc.
+   - CRITICAL: Use "tool" field name (NOT "name")
    - For each tool provide:
-     * exact tool name as mentioned
-     * context of mention
-     * sentiment (-1 to 1)
-     * any metrics mentioned (funding, valuation, performance, adoption %)
+     * "tool": exact tool name as mentioned (REQUIRED FIELD NAME)
+     * "context": context of mention (REQUIRED)
+     * "sentiment": -1 to 1 (REQUIRED)
+     * "relevance": 0 to 1 (OPTIONAL)
    - If a tool is compared to another (e.g., "Codeium, a Copilot competitor"), list BOTH tools
+   - Example: {"tool": "GitHub Copilot", "context": "mentioned as market leader", "sentiment": 0.8}
 6. Overall sentiment about AI/tech (-1 to 1)
 7. Key topics (5-10 keywords)
 8. Importance score (0-10, based on impact and relevance)
@@ -235,7 +247,7 @@ ${content.substring(0, 8000)}
 
 ${url ? `Article URL: ${url}` : ""}
 
-Return ONLY a valid JSON object with this EXACT structure:
+Return ONLY a valid JSON object with this EXACT structure (CRITICAL: use "tool" field name):
 {
   "title": "professional news headline",
   "summary": "2-3 sentence summary in news style",
@@ -246,7 +258,14 @@ Return ONLY a valid JSON object with this EXACT structure:
     {
       "tool": "exact tool name (e.g., 'GPT-5', 'Claude 3.5', 'Copilot')",
       "context": "brief description of how it's mentioned",
-      "sentiment": 0.8
+      "sentiment": 0.8,
+      "relevance": 0.9
+    },
+    {
+      "tool": "Another Tool Name",
+      "context": "how this tool is discussed",
+      "sentiment": 0.6,
+      "relevance": 0.7
     }
   ],
   "overall_sentiment": 0.9,
@@ -258,7 +277,9 @@ Return ONLY a valid JSON object with this EXACT structure:
     "development_velocity": 4,
     "market_traction": 3
   }
-}`;
+}
+
+REMINDER: The field name MUST be "tool" (not "name", "tool_name", or anything else).`;
 
   const requestBody: OpenRouterRequest = {
     model: modelName,
@@ -448,13 +469,26 @@ Return ONLY a valid JSON object with this EXACT structure:
       url: processedUrl,
       published_date: parsedObj["published_date"],
       tool_mentions: Array.isArray(parsedObj["tool_mentions"])
-        ? (parsedObj["tool_mentions"] as Array<unknown>).filter(
-            (tm): tm is { tool: string } =>
-              typeof tm === "object" &&
-              tm !== null &&
-              "tool" in tm &&
-              typeof (tm as Record<string, unknown>)["tool"] === "string"
-          )
+        ? (parsedObj["tool_mentions"] as Array<unknown>)
+            .filter(
+              (tm): tm is { tool?: string; name?: string; context: string; sentiment: number } =>
+                typeof tm === "object" &&
+                tm !== null &&
+                (("tool" in tm && typeof (tm as Record<string, unknown>)["tool"] === "string") ||
+                 ("name" in tm && typeof (tm as Record<string, unknown>)["name"] === "string"))
+            )
+            .map((tm): { tool: string; context: string; sentiment: number } => {
+              const toolMention = tm as Record<string, unknown>;
+              // Normalize to "tool" field if AI used "name" instead
+              const toolName = ("tool" in toolMention && toolMention["tool"])
+                ? String(toolMention["tool"])
+                : String(toolMention["name"]);
+
+              return {
+                ...toolMention,
+                tool: toolName,
+              } as { tool: string; context: string; sentiment: number };
+            })
         : [],
       overall_sentiment: parsedObj["overall_sentiment"],
       key_topics: parsedObj["key_topics"],
@@ -524,8 +558,7 @@ async function extractTextFromPdf(base64Content: string): Promise<string> {
 
   try {
     // Dynamic import to avoid issues with server-side rendering
-    // @ts-expect-error - pdf-parse doesn't have proper TypeScript definitions
-    const pdfParse = (await import("pdf-parse")).default;
+    const pdfParse = (await import("pdf-parse")).default as (buffer: Buffer) => Promise<{ text: string; numpages: number }>;
 
     const buffer = Buffer.from(base64Content, "base64");
     const data = await pdfParse(buffer);

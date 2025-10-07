@@ -57,19 +57,17 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Note: Language will be set by the [lang] layout on the specific pages
-  // The root layout provides the base HTML structure
+  // Note: The lang attribute defaults to "en" but will be updated by locale-specific routes
+  // The suppressHydrationWarning is necessary because the lang attribute may differ
+  // between server and client rendering in internationalized routes
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <head>
-        {/* Clerk Modal Guard - Must load BEFORE Clerk initializes */}
-        <script src="/clerk-modal-guard.js" />
-      </head>
       <body
         className="antialiased"
         style={{
           ["--font-inter" as any]: inter.style.fontFamily,
         }}
+        suppressHydrationWarning
       >
         <ClerkProviderClient>
           {children}

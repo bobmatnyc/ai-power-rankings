@@ -110,10 +110,16 @@ export interface RankingsSnapshot {
 
 // ==================== Processing Context Types ====================
 
+export interface ExtractedLink {
+  readonly href: string;
+  readonly text: string;
+}
+
 export interface ArticleProcessingContext {
   readonly url?: string;
   readonly fileName?: string;
   readonly author?: string;
+  readonly links?: readonly ExtractedLink[];
 }
 
 export interface ArticleIngestionMetadata {
@@ -127,6 +133,7 @@ export interface ValidatedToolMention {
   readonly relevance: number;
   readonly sentiment: number;
   readonly context: string;
+  readonly toolId?: string; // Optional tool ID from database
 }
 
 export interface ValidatedCompanyMention {

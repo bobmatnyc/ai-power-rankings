@@ -1,10 +1,22 @@
-import { readFile } from "node:fs/promises";
+import { readFile, access } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
+import { constants } from "node:fs";
 
 export async function GET() {
   try {
     const changelogPath = path.join(process.cwd(), "CHANGELOG.md");
+
+    // Check if the changelog file exists
+    try {
+      await access(changelogPath, constants.F_OK);
+    } catch {
+      // File doesn't exist - return empty array with 200 status
+      console.info("CHANGELOG.md not found, returning empty changelog");
+      return NextResponse.json([], { status: 200 });
+    }
+
+    // Read and parse the changelog content
     const changelogContent = await readFile(changelogPath, "utf-8");
 
     // Parse the changelog content
@@ -28,8 +40,9 @@ export async function GET() {
 
     return NextResponse.json(changelogData);
   } catch (error) {
-    console.error("Error reading changelog:", error);
-    return NextResponse.json([]);
+    console.error("Error processing changelog:", error);
+    // Return empty array with 200 status to prevent application-wide errors
+    return NextResponse.json([], { status: 200 });
   }
 }
 
