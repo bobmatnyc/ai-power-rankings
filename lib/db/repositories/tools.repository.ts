@@ -3,7 +3,7 @@
  * Handles data access for AI tools from PostgreSQL database
  */
 
-import { asc, desc, eq, sql } from "drizzle-orm";
+import { asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "../connection";
 import { type NewTool, type Tool, tools } from "../schema";
 import { BaseRepository, type QueryOptions } from "./base.repository";
@@ -50,6 +50,42 @@ export class ToolsRepository extends BaseRepository<ToolData> {
    */
   override async findBySlug(slug: string): Promise<ToolData | null> {
     return this.findBySlugFromDb(slug);
+  }
+
+  /**
+   * Find multiple tools by IDs efficiently (single query)
+   * Used to avoid N+1 query problems
+   */
+  async findByIds(ids: string[]): Promise<ToolData[]> {
+    if (ids.length === 0) return [];
+
+    const db = getDb();
+    if (!db) throw new Error("Database connection not available");
+
+    try {
+      // Try to find by database UUID first
+      const results = await db.select().from(tools).where(inArray(tools.id, ids));
+
+      // For any IDs not found by UUID, try finding by data.id
+      const foundIds = new Set(results.map((r) => r.id));
+      const missingIds = ids.filter((id) => !foundIds.has(id));
+
+      if (missingIds.length > 0) {
+        // Use OR conditions for legacy data.id lookups
+        const legacyResults = await db
+          .select()
+          .from(tools)
+          .where(
+            sql`${tools.data}->>'id' IN (${sql.raw(missingIds.map((id) => `'${id}'`).join(","))})`
+          );
+        results.push(...legacyResults);
+      }
+
+      return this.mapDbToolsToData(results);
+    } catch (error) {
+      console.error("Error in findByIds:", error);
+      throw error;
+    }
   }
 
   /**

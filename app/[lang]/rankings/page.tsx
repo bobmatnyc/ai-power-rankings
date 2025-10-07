@@ -188,7 +188,7 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
         {/* Quick Answer about rankings */}
         <QuickAnswerBox
           question="How are AI tool rankings determined?"
-          answer="Our AI tool rankings use <strong>Algorithm v6.0</strong> which evaluates tools across 8 key factors: Agentic Capability, Innovation, Technical Performance, Developer Adoption, Market Traction, Business Sentiment, Development Velocity, and Platform Resilience. Rankings are updated weekly with fresh data from multiple sources."
+          answer="Our AI tool rankings use <strong>Algorithm v7.1</strong> which evaluates tools across 8 key factors: Agentic Capability, Innovation, Technical Performance, Developer Adoption, Market Traction, Business Sentiment, Development Velocity, and Platform Resilience. Rankings are updated weekly with fresh data from multiple sources."
           type="definition"
         />
 

@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+import { invalidateCachePattern } from "@/lib/memory-cache";
 
 interface Tool {
   name: string;
@@ -223,6 +224,10 @@ export async function POST(request: NextRequest) {
         )
       );
     }
+
+    // Invalidate rankings cache to force refresh
+    const invalidatedCount = invalidateCachePattern("^api:rankings:");
+    console.log(`Invalidated ${invalidatedCount} rankings cache entries after commit`);
 
     return NextResponse.json({
       success: true,

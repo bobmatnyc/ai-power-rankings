@@ -541,7 +541,7 @@
       }
     },
     "algorithm": {
-      "title": "Алгоритм v6.0",
+      "title": "Алгоритм v7.1",
       "description": "Наш найновіший ranking алгоритм включає реальні паттерни використання та ринкову динаміку",
       "keyFeatures": "Ключові функції",
       "features": {
@@ -803,7 +803,7 @@
     "keywords": "інструменти кодування AI, агентська AI, автономне кодування, рейтинги інструментів розробників, порівняння AI-асистентів, бенчмарки AI кодування, результати SWE-bench, Claude проти Cursor проти GitHub Copilot"
   },
   "footer": {
-    "description": "Комплексні рейтинги AI coding інструментів з використанням Algorithm v6.0 з innovation decay, platform risk модифікаторами та revenue quality коригуваннями.",
+    "description": "Комплексні рейтинги AI coding інструментів з використанням Algorithm v7.1 з innovation decay, platform risk модифікаторами та revenue quality коригуваннями.",
     "quickLinks": "Швидкі посилання",
     "categories": "Категорії",
     "copyright": "© 2025 AI Power Rankings. Всі права захищені."
