@@ -8,7 +8,7 @@ export const seoConfig = {
     return getBaseUrl();
   },
   siteName: "AI Power Rankings",
-  twitterHandle: "@aipowerrankings",
+  twitterHandle: "https://hyperdev.matsuoka.com/",
   author: "AI Power Rankings Team",
 };
 

@@ -374,34 +374,34 @@ export function ContactForm() {
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
               <a
-                href="https://twitter.com/aipowerrankings"
+                href="https://hyperdev.matsuoka.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm hover:text-primary transition-colors"
               >
-                <strong>Twitter/X:</strong> @aipowerrankings
+                <strong>Twitter/X:</strong> HyperDev
               </a>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
               <a
-                href="https://linkedin.com/company/aipowerrankings"
+                href="https://hyperdev.matsuoka.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm hover:text-primary transition-colors"
               >
-                <strong>LinkedIn:</strong> AI Power Rankings
+                <strong>LinkedIn:</strong> HyperDev
               </a>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-gray-800 rounded-full"></div>
               <a
-                href="https://github.com/aipowerrankings"
+                href="https://hyperdev.matsuoka.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm hover:text-primary transition-colors"
               >
-                <strong>GitHub:</strong> @aipowerrankings
+                <strong>GitHub:</strong> HyperDev
               </a>
             </div>
           </CardContent>

@@ -105,8 +105,8 @@ export function generateOrganizationSchema(org: OrganizationSchemaData) {
       description: org.description,
     }),
     sameAs: [
-      "https://twitter.com/aipowerrankings",
-      "https://github.com/bobmatnyc/ai-power-rankings",
+      "https://hyperdev.matsuoka.com/",
+      "https://hyperdev.matsuoka.com/",
     ],
     contactPoint: {
       "@type": "ContactPoint",

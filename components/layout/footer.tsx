@@ -21,7 +21,7 @@ export function Footer() {
             </p>
             <div className="flex space-x-4">
               <a
-                href="https://twitter.com/aipowerrankings"
+                href="https://hyperdev.matsuoka.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white transition-colors"
@@ -33,7 +33,7 @@ export function Footer() {
                 </svg>
               </a>
               <a
-                href="https://github.com/aipowerrankings"
+                href="https://hyperdev.matsuoka.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white transition-colors"
@@ -49,7 +49,7 @@ export function Footer() {
                 </svg>
               </a>
               <a
-                href="https://linkedin.com/company/aipowerrankings"
+                href="https://hyperdev.matsuoka.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white transition-colors"
