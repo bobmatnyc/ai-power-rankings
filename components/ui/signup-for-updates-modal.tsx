@@ -2,7 +2,7 @@
 
 // Use safe auth wrappers instead of direct Clerk imports
 import { useAuth, useUser } from "@/components/auth/auth-components";
-import { SignIn } from "@/components/auth/auth-components-simple";
+import { SignUp } from "@/components/auth/auth-components";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -90,9 +90,9 @@ export function SignupForUpdatesModal({
               </div>
             </div>
           ) : (
-            // Not signed in - show Clerk SignIn component
+            // Not signed in - show Clerk SignUp component
             <div className="space-y-4">
-              <SignIn
+              <SignUp
                 appearance={{
                   elements: {
                     rootBox: "w-full",
@@ -114,8 +114,8 @@ export function SignupForUpdatesModal({
                     socialButtonsVariant: "blockButton",
                   },
                 }}
-                redirectUrl={window.location.pathname}
-                signUpUrl={window.location.pathname}
+                redirectUrl={typeof window !== "undefined" ? window.location.pathname : "/"}
+                signInUrl={typeof window !== "undefined" ? window.location.pathname : "/"}
               />
 
               <p className="text-xs text-muted-foreground text-center">
