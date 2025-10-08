@@ -15,7 +15,10 @@ tests/
 trace.zip
 
 # Documentation and reports
-*.md
+# Root-level markdown files (docs/reports)
+/*.md
+/docs/*.md
+/scripts/*.md
 QA_*.md
 HYDRATION_*.md
 TEST_*.txt
