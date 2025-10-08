@@ -47,9 +47,9 @@ We strive to respond to all inquiries within 48 hours during business days. For 
 
 Follow us for the latest updates:
 
-- **Twitter/X**: [@aipowerrankings](https://twitter.com/aipowerrankings)
-- **LinkedIn**: [AI Power Rankings](https://linkedin.com/company/aipowerrankings)
-- **GitHub**: [@aipowerrankings](https://github.com/aipowerrankings)
+- **Twitter/X**: [HyperDev](https://hyperdev.matsuoka.com/)
+- **LinkedIn**: [HyperDev](https://hyperdev.matsuoka.com/)
+- **GitHub**: [HyperDev](https://hyperdev.matsuoka.com/)
 
 ---
 
