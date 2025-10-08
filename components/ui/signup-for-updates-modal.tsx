@@ -114,8 +114,8 @@ export function SignupForUpdatesModal({
                     socialButtonsVariant: "blockButton",
                   },
                 }}
-                redirectUrl={typeof window !== "undefined" ? window.location.pathname : "/"}
-                signInUrl={typeof window !== "undefined" ? window.location.pathname : "/"}
+                fallbackRedirectUrl={typeof window !== "undefined" ? window.location.pathname : "/"}
+                signInFallbackRedirectUrl={typeof window !== "undefined" ? window.location.pathname : "/"}
               />
 
               <p className="text-xs text-muted-foreground text-center">

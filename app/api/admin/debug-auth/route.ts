@@ -93,10 +93,10 @@ export async function GET() {
         NEXT_PUBLIC_DISABLE_AUTH: process.env["NEXT_PUBLIC_DISABLE_AUTH"] || "not set",
         NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env["NEXT_PUBLIC_CLERK_SIGN_IN_URL"] || "/sign-in",
         NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env["NEXT_PUBLIC_CLERK_SIGN_UP_URL"] || "/sign-up",
-        NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL:
-          process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL"] || "/",
-        NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
-          process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL"] || "/",
+        NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL:
+          process.env["NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL"] || "/",
+        NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL:
+          process.env["NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL"] || "/",
       },
       database: {
         USE_DATABASE: process.env["USE_DATABASE"] || "not set",
