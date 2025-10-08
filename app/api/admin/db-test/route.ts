@@ -7,6 +7,14 @@ import { NextResponse } from "next/server";
  * Test database connection directly
  */
 export async function GET() {
+  // Disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Endpoint not available in production' },
+      { status: 404 }
+    );
+  }
+
   try {
     // Check authentication
     const user = await currentUser();

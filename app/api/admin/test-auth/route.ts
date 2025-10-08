@@ -15,6 +15,16 @@ export const runtime = "nodejs";
  * Tests Clerk auth() function with comprehensive runtime validation
  */
 export const GET = withErrorBoundary(async () => {
+  // Disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return createErrorResponse(
+      new Error('Endpoint not available in production'),
+      'Endpoint not available in production',
+      404,
+      'NOT_AVAILABLE'
+    );
+  }
+
   console.log("[TEST-AUTH-V2] Starting enhanced auth test");
 
   // Step 1: Validate runtime environment

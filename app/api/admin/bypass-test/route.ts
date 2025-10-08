@@ -11,6 +11,14 @@ import { requireAdmin, requireAuth, optionalAuth } from "@/lib/api-auth";
  * Test the bypass authentication mechanism
  */
 export async function GET(request: NextRequest) {
+  // Disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Endpoint not available in production' },
+      { status: 404 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const mode = searchParams.get("mode") || "admin";
 
@@ -112,6 +120,14 @@ export async function GET(request: NextRequest) {
  * Test POST requests with authentication
  */
 export async function POST(request: NextRequest) {
+  // Disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Endpoint not available in production' },
+      { status: 404 }
+    );
+  }
+
   // Check admin authentication
   const authResult = await requireAdmin();
   if (authResult.error) {
