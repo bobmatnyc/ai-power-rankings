@@ -74,10 +74,12 @@ const RankingCard = memo(
     tool,
     lang,
     showRankChange = false,
+    showScore = true,
   }: {
     tool: RankingData;
     lang: string;
     showRankChange?: boolean;
+    showScore?: boolean;
   }) => {
     return (
       <Link
@@ -94,7 +96,12 @@ const RankingCard = memo(
           <div className="bg-card border rounded-lg p-4 h-full hover:shadow-lg transition-shadow cursor-pointer">
             <h3 className="font-semibold text-lg">{tool.tool.name}</h3>
             <p className="text-sm text-muted-foreground">{tool.tool.category}</p>
-            <div className="mt-2 text-sm">Score: {tool.scores.overall.toFixed(1)}</div>
+            {showScore && tool.scores.overall > 0 && (
+              <div className="mt-2 text-sm">Score: {tool.scores.overall.toFixed(1)}</div>
+            )}
+            {tool.tool.description && (
+              <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{tool.tool.description}</p>
+            )}
             {showRankChange && tool.changeReason && (
               <p className="mt-2 text-xs text-muted-foreground">{tool.changeReason}</p>
             )}
@@ -109,7 +116,8 @@ const RankingCard = memo(
       prevProps.tool.tool.id === nextProps.tool.tool.id &&
       prevProps.tool.rank === nextProps.tool.rank &&
       prevProps.tool.rankChange === nextProps.tool.rankChange &&
-      prevProps.tool.scores.overall === nextProps.tool.scores.overall
+      prevProps.tool.scores.overall === nextProps.tool.scores.overall &&
+      prevProps.showScore === nextProps.showScore
     );
   }
 );
@@ -203,6 +211,7 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
   const [topRankings, setTopRankings] = useState<RankingData[]>(initialRankings);
   const [trendingTools, setTrendingTools] = useState<RankingData[]>([]);
   const [recentlyUpdated, setRecentlyUpdated] = useState<RankingData[]>([]);
+  const [recentUpdatesLoading, setRecentUpdatesLoading] = useState(true);
   const [loading, setLoading] = useState(initialRankings.length === 0);
   const [totalTools, setTotalTools] = useState(0);
   const [categoriesCount, setCategoriesCount] = useState(0);
@@ -211,6 +220,54 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
 
   // Use transition API to mark updates as non-urgent
   const [, startTransition] = useTransition();
+
+  /**
+   * Fetch recently updated tools from the API.
+   *
+   * WHY: The "Recently Updated" section was incorrectly using rankings.slice(6, 10),
+   * which failed when rankings had fewer items. This fetches actual recently updated
+   * tools based on their updatedAt timestamp.
+   */
+  const fetchRecentUpdates = useCallback(async (): Promise<void> => {
+    try {
+      setRecentUpdatesLoading(true);
+      const response = await fetch('/api/tools/recent-updates');
+
+      if (response.ok) {
+        const data = await response.json();
+        const recentTools = data.tools || [];
+
+        // Transform API response to RankingData format
+        const transformedTools: RankingData[] = recentTools.map((tool: any, index: number) => ({
+          rank: index + 1, // Not a real rank, just for display purposes
+          tool: {
+            id: tool.id,
+            slug: tool.slug,
+            name: tool.name,
+            category: tool.category,
+            status: 'active',
+            description: tool.description,
+          },
+          scores: {
+            overall: 0, // Not applicable for recently updated
+            agentic_capability: 0,
+            innovation: 0,
+          },
+          metrics: {},
+        }));
+
+        startTransition(() => {
+          setRecentlyUpdated(transformedTools);
+        });
+      } else {
+        console.warn('Failed to fetch recent updates:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Failed to fetch recent updates:', error);
+    } finally {
+      setRecentUpdatesLoading(false);
+    }
+  }, []);
 
   /**
    * Fetch tools statistics from the API for accurate counts and averages
@@ -285,7 +342,7 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
       // During SSR, just set the data directly without chunking
       setTopRankings(rankings.slice(0, 3));
       setTrendingTools(rankings.filter((r) => r.rankChange && r.rankChange > 0).slice(0, 3));
-      setRecentlyUpdated(rankings.slice(6, 10));
+      // Recently updated is now fetched separately from the API
       setLoading(false);
       return;
     }
@@ -325,7 +382,6 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
       } else {
         // Final updates
         startTransition(() => {
-          setRecentlyUpdated(rankings.slice(6, 10));
           setLoading(false);
         });
       }
@@ -346,6 +402,11 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
       );
     }
   }, []);
+
+  // Fetch recent updates separately on component mount
+  useEffect(() => {
+    fetchRecentUpdates();
+  }, [fetchRecentUpdates]);
 
   useEffect(() => {
     // Skip client-side fetch if we already have server-side data
@@ -623,11 +684,35 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-3 md:gap-6">
-            {recentlyUpdated.map((tool) => (
-              <RankingCard key={tool.tool.id} tool={tool} lang={lang as Locale} showRankChange={false} />
-            ))}
-          </div>
+          {recentUpdatesLoading ? (
+            <div className="grid md:grid-cols-2 gap-3 md:gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-card border rounded-lg p-4 h-32">
+                  <div className="animate-pulse space-y-3">
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-full"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : recentlyUpdated.length > 0 ? (
+            <div className="grid md:grid-cols-2 gap-3 md:gap-6">
+              {recentlyUpdated.map((tool) => (
+                <RankingCard
+                  key={tool.tool.id}
+                  tool={tool}
+                  lang={lang as Locale}
+                  showRankChange={false}
+                  showScore={false}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No recently updated tools found.</p>
+            </div>
+          )}
         </div>
       </section>
     </>
