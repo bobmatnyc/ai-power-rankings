@@ -194,7 +194,7 @@ function SidebarContent(): React.JSX.Element {
         <Link
           href={`/${lang}`}
           onClick={handleNavClick}
-          className="flex items-center gap-3 mb-6"
+          className="flex items-end gap-3 mb-6"
         >
           <Image
             src="/crown-of-technology.webp"

@@ -1,8 +1,7 @@
 "use client";
 
 // Use safe auth wrappers instead of direct Clerk imports
-import { useAuth, useUser } from "@/components/auth/auth-components";
-import { SignUp } from "@/components/auth/auth-components";
+import { useAuth, useUser, useClerk } from "@/components/auth/auth-components";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,7 @@ export function SignupForUpdatesModal({
   const { dict } = useI18n();
   const { isSignedIn } = useAuth();
   const { user } = useUser();
+  const clerk = useClerk();
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   // Auto-close when user signs in and modal is open
@@ -43,6 +43,21 @@ export function SignupForUpdatesModal({
       }, 2000);
     }
   }, [isSignedIn, user, open, onOpenChange, isSubscribed]);
+
+  // Handle opening Clerk's native modal
+  const handleSignUpClick = () => {
+    // Close our dialog first
+    onOpenChange(false);
+
+    // Open Clerk's native sign-up modal
+    // This ensures Clerk renders at the correct z-index without conflicts
+    if (clerk?.openSignUp) {
+      clerk.openSignUp({
+        afterSignInUrl: typeof window !== "undefined" ? window.location.pathname : "/",
+        afterSignUpUrl: typeof window !== "undefined" ? window.location.pathname : "/",
+      });
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -90,33 +105,38 @@ export function SignupForUpdatesModal({
               </div>
             </div>
           ) : (
-            // Not signed in - show Clerk SignUp component
+            // Not signed in - show sign up CTA that opens Clerk's native modal
             <div className="space-y-4">
-              <SignUp
-                appearance={{
-                  elements: {
-                    rootBox: "w-full",
-                    card: "shadow-none p-0 bg-transparent",
-                    headerTitle: "hidden",
-                    headerSubtitle: "hidden",
-                    socialButtonsBlockButton:
-                      "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-                    socialButtonsBlockButtonText: "font-normal",
-                    dividerLine: "bg-border",
-                    dividerText: "text-muted-foreground",
-                    formFieldLabel: "text-foreground",
-                    formFieldInput:
-                      "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm",
-                    footerActionLink: "text-primary hover:text-primary/80",
-                  },
-                  layout: {
-                    socialButtonsPlacement: "top",
-                    socialButtonsVariant: "blockButton",
-                  },
-                }}
-                fallbackRedirectUrl={typeof window !== "undefined" ? window.location.pathname : "/"}
-                signInFallbackRedirectUrl={typeof window !== "undefined" ? window.location.pathname : "/"}
-              />
+              <div className="text-center space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Create an account to access AI Power Rankings and receive weekly updates
+                </p>
+
+                <Button
+                  onClick={handleSignUpClick}
+                  className="w-full"
+                  size="lg"
+                >
+                  Sign Up
+                </Button>
+
+                <p className="text-xs text-muted-foreground">
+                  Already have an account?{" "}
+                  <button
+                    onClick={() => {
+                      onOpenChange(false);
+                      if (clerk?.openSignIn) {
+                        clerk.openSignIn({
+                          afterSignInUrl: typeof window !== "undefined" ? window.location.pathname : "/",
+                        });
+                      }
+                    }}
+                    className="text-primary hover:text-primary/80 underline"
+                  >
+                    Sign In
+                  </button>
+                </p>
+              </div>
 
               <p className="text-xs text-muted-foreground text-center">
                 {dict.newsletter?.modal?.privacyNote || "We respect your privacy."}
