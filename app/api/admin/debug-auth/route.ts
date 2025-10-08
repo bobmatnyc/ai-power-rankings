@@ -16,6 +16,14 @@ import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
  * IMPORTANT: This endpoint should be removed or secured in production
  */
 export async function GET() {
+  // Disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Endpoint not available in production' },
+      { status: 404 }
+    );
+  }
+
   console.log("[DEBUG-AUTH] Starting comprehensive authentication debug");
 
   // Using a more flexible type for debug info that allows nested objects
@@ -328,6 +336,14 @@ export async function GET() {
  * Handle preflight requests
  */
 export async function OPTIONS() {
+  // Disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Endpoint not available in production' },
+      { status: 404 }
+    );
+  }
+
   return new NextResponse(null, {
     status: 200,
     headers: {

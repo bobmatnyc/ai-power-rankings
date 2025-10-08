@@ -19,6 +19,14 @@ export const runtime = "nodejs";
  * - Never returns HTML error pages in production
  */
 export async function GET(request: NextRequest) {
+  // Disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Endpoint not available in production' },
+      { status: 404 }
+    );
+  }
+
   const startTime = Date.now();
 
   try {
