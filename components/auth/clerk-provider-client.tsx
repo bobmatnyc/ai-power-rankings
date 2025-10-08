@@ -116,8 +116,8 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
         publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
         signInUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_IN_URL"] || "/en/sign-in"}
         signUpUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_UP_URL"] || "/en/sign-up"}
-        signInFallbackRedirectUrl={process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL"] || "/en/admin"}
-        signUpFallbackRedirectUrl={process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL"] || "/en/admin"}
+        signInFallbackRedirectUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL"] || "/en/admin"}
+        signUpFallbackRedirectUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL"] || "/en/admin"}
         appearance={{
           variables: {
             colorPrimary: "#000000",

@@ -69,8 +69,9 @@ CLERK_SECRET_KEY=your_secret_key
 # Clerk Redirect URLs
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/en/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/en/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/en/admin
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/en/admin
+# Use new fallback redirect URLs (replaces deprecated AFTER_SIGN_X_URL)
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/en/admin
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/en/admin
 ```
 
 ## Common Scenarios
