@@ -1,91 +1,212 @@
 "use client";
 
-import { AlertCircle, CheckCircle, Loader2, Send } from "lucide-react";
+import { AlertCircle, CheckCircle, Loader2, Mail, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-// import { Textarea } from "@/components/ui/textarea"; // TODO: Add textarea component
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useAuth, useUser } from "@/components/auth/auth-components";
+import { SignupForUpdatesModal } from "@/components/ui/signup-for-updates-modal";
 
-interface FormData {
-  name: string;
-  email: string;
-  subject: string;
-  category: string;
-  message: string;
+// Component for non-logged-in users to sign up
+function SignupCTA({ onOpenModal }: { onOpenModal: () => void }) {
+  return (
+    <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-900">
+      <CardHeader className="text-center">
+        <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4">
+          <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+        </div>
+        <CardTitle className="text-2xl">Stay Updated with AI Power Rankings</CardTitle>
+        <CardDescription className="text-base">
+          Sign up to receive weekly AI tool updates, rankings, and exclusive insights
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-3">
+          <div className="flex items-start gap-3">
+            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-medium">Weekly Rankings & Updates</p>
+              <p className="text-sm text-muted-foreground">
+                Get the latest AI tool rankings delivered to your inbox every week
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-medium">Exclusive Insights</p>
+              <p className="text-sm text-muted-foreground">
+                Deep dives into AI tool trends and analysis
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-medium">Early Access</p>
+              <p className="text-sm text-muted-foreground">
+                Be the first to know about new tools and features
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <Button
+          onClick={onOpenModal}
+          className="w-full h-12 text-base"
+          size="lg"
+        >
+          <Mail className="h-5 w-5 mr-2" />
+          Sign Up for Updates
+        </Button>
+
+        <p className="text-xs text-center text-muted-foreground">
+          Free forever. No spam. Unsubscribe anytime.
+        </p>
+      </CardContent>
+    </Card>
+  );
 }
 
-const contactCategories = [
-  {
-    value: "general",
-    label: "General Inquiry",
-    description: "General questions about AI Power Rankings",
-  },
-  {
-    value: "press",
-    label: "Press & Media",
-    description: "Press inquiries, interviews, and media kit requests",
-  },
-  {
-    value: "partnership",
-    label: "Partnership & Business",
-    description: "Partnership opportunities, advertising, and sponsorships",
-  },
-  {
-    value: "technical",
-    label: "Technical Support",
-    description: "Website issues and technical support",
-  },
-  {
-    value: "methodology",
-    label: "Ranking Methodology",
-    description: "Questions about our ranking methodology",
-  },
-  {
-    value: "tool-submission",
-    label: "Tool Submission",
-    description: "Submit a new AI coding tool for inclusion",
-  },
-  {
-    value: "issue-report",
-    label: "Report an Issue",
-    description: "Report errors or inaccuracies in rankings or content",
-  },
-  {
-    value: "legal",
-    label: "Legal Matters",
-    description: "Legal inquiries, DMCA requests, and privacy concerns",
-  },
-];
+// Component for logged-in users to manage preferences
+function UserPreferences({ user }: { user: any }) {
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // Load current subscription status
+  useEffect(() => {
+    if (user) {
+      const subscribed = user.unsafeMetadata?.newsletter_subscribed === true;
+      setIsSubscribed(subscribed);
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  const handleToggleSubscription = async (checked: boolean) => {
+    setIsSaving(true);
+    setSaveStatus("idle");
+    setErrorMessage("");
+
+    try {
+      // Update user metadata via Clerk
+      await user.update({
+        unsafeMetadata: {
+          ...user.unsafeMetadata,
+          newsletter_subscribed: checked,
+        },
+      });
+
+      setIsSubscribed(checked);
+      setSaveStatus("success");
+
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSaveStatus("idle");
+      }, 3000);
+    } catch (error) {
+      setSaveStatus("error");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to update preferences. Please try again."
+      );
+      // Revert the checkbox state
+      setIsSubscribed(!checked);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Bell className="h-5 w-5" />
+          Newsletter Preferences
+        </CardTitle>
+        <CardDescription>
+          Manage your email subscription preferences
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="flex items-start space-x-3 space-y-0 rounded-lg border p-4">
+          <Checkbox
+            id="newsletter"
+            checked={isSubscribed}
+            onCheckedChange={handleToggleSubscription}
+            disabled={isSaving}
+          />
+          <div className="flex-1 space-y-1 leading-none">
+            <Label
+              htmlFor="newsletter"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+            >
+              Subscribe to weekly AI tool updates
+            </Label>
+            <p className="text-sm text-muted-foreground">
+              Receive weekly rankings, insights, and exclusive AI tool analysis
+            </p>
+          </div>
+        </div>
+
+        {saveStatus === "success" && (
+          <Alert className="border-green-200 bg-green-50 dark:bg-green-950/20">
+            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <AlertDescription className="text-green-800 dark:text-green-200">
+              Your preferences have been updated successfully!
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {saveStatus === "error" && (
+          <Alert className="border-red-200 bg-red-50 dark:bg-red-950/20">
+            <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+            <AlertDescription className="text-red-800 dark:text-red-200">
+              {errorMessage}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <div className="rounded-lg bg-muted/50 p-4">
+          <p className="text-sm font-medium mb-2">Current Status</p>
+          <div className="flex items-center gap-2">
+            <div
+              className={`w-2 h-2 rounded-full ${
+                isSubscribed ? "bg-green-500" : "bg-gray-400"
+              }`}
+            />
+            <p className="text-sm text-muted-foreground">
+              {isSubscribed ? "Subscribed to updates" : "Not subscribed"}
+            </p>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            Email: {user?.primaryEmailAddress?.emailAddress || "No email"}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export function ContactForm() {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    subject: "",
-    category: "",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error" | "rate-limited">(
-    "idle"
-  );
-  const [errorMessage, setErrorMessage] = useState("");
-  const [rateLimitInfo, setRateLimitInfo] = useState<{
-    retryAfter?: number;
-    limit?: number;
-    reset?: string;
-  }>({});
+  const { isSignedIn } = useAuth();
+  const { user } = useUser();
   const [isClientMounted, setIsClientMounted] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
 
   // Ensure component is properly hydrated before interacting with Clerk context
   useEffect(() => {
@@ -97,342 +218,106 @@ export function ContactForm() {
     return null;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!formData.name || !formData.email || !formData.category || !formData.message) {
-      setSubmitStatus("error");
-      setErrorMessage("Please fill in all required fields.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setSubmitStatus("idle");
-    setErrorMessage("");
-
-    try {
-      // Send form data to API
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        // Handle rate limiting specifically
-        if (response.status === 429) {
-          setSubmitStatus("rate-limited");
-          setRateLimitInfo({
-            retryAfter: data.retryAfter,
-            limit: data.limit,
-            reset: data.reset,
-          });
-          setErrorMessage(
-            data.message ||
-              `Too many requests. Please try again in ${Math.ceil((data.retryAfter || 3600) / 60)} minutes.`
-          );
-          return;
-        }
-        throw new Error(data.error || "Failed to send message");
-      }
-
-      // Show success message
-      setSubmitStatus("success");
-
-      // Reset form after a delay
-      setTimeout(() => {
-        setFormData({
-          name: "",
-          email: "",
-          subject: "",
-          category: "",
-          message: "",
-        });
-        setSubmitStatus("idle");
-      }, 5000);
-    } catch (error) {
-      setSubmitStatus("error");
-      setErrorMessage(
-        error instanceof Error ? error.message : "Failed to send message. Please try again."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (submitStatus === "error" || submitStatus === "rate-limited") {
-      setSubmitStatus("idle");
-      setErrorMessage("");
-      setRateLimitInfo({});
-    }
-  };
-
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      {/* Contact Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Send className="h-5 w-5" />
-            Send us a Message
-          </CardTitle>
-          <CardDescription>
-            Fill out the form below and we&apos;ll get back to you within 48 hours during business
-            days.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name and Email */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name *</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Your full name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  required
-                />
+    <>
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Show signup CTA for non-logged-in users, preferences for logged-in users */}
+        {!isSignedIn ? (
+          <SignupCTA onOpenModal={() => setShowSignupModal(true)} />
+        ) : (
+          <UserPreferences user={user} />
+        )}
+
+        {/* Additional Information */}
+        <div className="space-y-6">
+          {/* Why Sign Up */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Why Sign Up?</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Join thousands of developers staying ahead with:
+              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  Weekly curated rankings of top AI tools
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  Expert analysis and trend insights
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary">•</span>
+                  Early access to new features and tools
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          {/* Social Media */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Follow Us</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <a
+                  href="https://hyperdev.matsuoka.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm hover:text-primary transition-colors"
+                >
+                  <strong>Twitter/X:</strong> HyperDev
+                </a>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="your.email@example.com"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  required
-                />
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <a
+                  href="https://hyperdev.matsuoka.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm hover:text-primary transition-colors"
+                >
+                  <strong>LinkedIn:</strong> HyperDev
+                </a>
               </div>
-            </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-gray-800 rounded-full"></div>
+                <a
+                  href="https://hyperdev.matsuoka.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm hover:text-primary transition-colors"
+                >
+                  <strong>GitHub:</strong> HyperDev
+                </a>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Category */}
-            <div className="space-y-2">
-              <Label htmlFor="category">Category *</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => handleInputChange("category", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select inquiry type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {contactCategories.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      <div className="flex flex-col">
-                        <span>{category.label}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {category.description}
-                        </span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Subject */}
-            <div className="space-y-2">
-              <Label htmlFor="subject">Subject</Label>
-              <Input
-                id="subject"
-                type="text"
-                placeholder="Brief description of your inquiry (optional)"
-                value={formData.subject}
-                onChange={(e) => handleInputChange("subject", e.target.value)}
-              />
-            </div>
-
-            {/* Message */}
-            <div className="space-y-2">
-              <Label htmlFor="message">Message *</Label>
-              <textarea
-                id="message"
-                placeholder="Please provide details about your inquiry..."
-                value={formData.message}
-                onChange={(e) => handleInputChange("message", e.target.value)}
-                className="min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                required
-              />
-            </div>
-
-            {/* Tool Submission Helper */}
-            {formData.category === "tool-submission" && (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  <strong>For tool submissions, please include:</strong>
-                  <ul className="mt-2 ml-4 list-disc text-sm">
-                    <li>Tool name and website URL</li>
-                    <li>Brief description (100-200 words)</li>
-                    <li>Key features and capabilities</li>
-                    <li>Pricing information</li>
-                    <li>Target audience</li>
-                  </ul>
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Status Messages */}
-            {submitStatus === "success" && (
-              <Alert className="border-green-200 bg-green-50">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
-                  Your message has been sent successfully! We&apos;ll get back to you within 48
-                  hours during business days.
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {submitStatus === "error" && (
-              <Alert className="border-red-200 bg-red-50">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-800">{errorMessage}</AlertDescription>
-              </Alert>
-            )}
-
-            {submitStatus === "rate-limited" && (
-              <Alert className="border-orange-200 bg-orange-50">
-                <AlertCircle className="h-4 w-4 text-orange-600" />
-                <AlertDescription className="text-orange-800">
-                  <div className="space-y-2">
-                    <p className="font-medium">Rate limit exceeded</p>
-                    <p>{errorMessage}</p>
-                    {rateLimitInfo.retryAfter && (
-                      <p className="text-sm">
-                        You can submit another message in{" "}
-                        <span className="font-medium">
-                          {Math.ceil(rateLimitInfo.retryAfter / 60)} minutes
-                        </span>
-                        .
-                      </p>
-                    )}
-                    <p className="text-xs text-orange-600">
-                      This helps us prevent spam and ensure all messages receive proper attention.
-                    </p>
-                  </div>
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isSubmitting || submitStatus === "rate-limited"}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <Send className="h-4 w-4 mr-2" />
-                  Send Message
-                </>
-              )}
-            </Button>
-
-            <p className="text-xs text-muted-foreground text-center">
-              * Required fields. By submitting this form, you agree to our privacy policy.
-            </p>
-          </form>
-        </CardContent>
-      </Card>
-
-      {/* Additional Information */}
-      <div className="space-y-6">
-        {/* Response Time */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Response Time</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              We strive to respond to all inquiries within <strong>48 hours</strong> during business
-              days. For urgent matters, please indicate so in your subject line.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Social Media */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Follow Us</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <a
-                href="https://hyperdev.matsuoka.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm hover:text-primary transition-colors"
-              >
-                <strong>Twitter/X:</strong> HyperDev
-              </a>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-              <a
-                href="https://hyperdev.matsuoka.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm hover:text-primary transition-colors"
-              >
-                <strong>LinkedIn:</strong> HyperDev
-              </a>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-gray-800 rounded-full"></div>
-              <a
-                href="https://hyperdev.matsuoka.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm hover:text-primary transition-colors"
-              >
-                <strong>GitHub:</strong> HyperDev
-              </a>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Additional Support */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Need Immediate Help?</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">
-              For urgent matters or technical issues, you can:
-            </p>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="flex items-start gap-2">
-                <span className="text-primary">•</span>
-                Check our FAQ section for common questions
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary">•</span>
-                Follow us on social media for real-time updates
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary">•</span>
-                Visit our GitHub for technical documentation
-              </li>
-            </ul>
-          </CardContent>
-        </Card>
+          {/* Privacy Note */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Privacy Matters</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                We respect your privacy and will never share your email with third parties.
+                You can unsubscribe at any time with a single click.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+
+      {/* Signup Modal */}
+      <SignupForUpdatesModal
+        open={showSignupModal}
+        onOpenChange={setShowSignupModal}
+      />
+    </>
   );
 }
