@@ -111,13 +111,24 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
 
   // SINGLE RETURN STATEMENT - ensures consistent hook execution
   if (shouldRenderClerk) {
+    // Support both Core 2 (FALLBACK_REDIRECT_URL) and legacy (AFTER_SIGN_X_URL) naming
+    const signInFallbackUrl =
+      process.env["NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL"] ||
+      process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL"] ||
+      "/en/admin";
+
+    const signUpFallbackUrl =
+      process.env["NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL"] ||
+      process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL"] ||
+      "/en/admin";
+
     return (
       <ClerkProvider
         publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
         signInUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_IN_URL"] || "/en/sign-in"}
         signUpUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_UP_URL"] || "/en/sign-up"}
-        signInFallbackRedirectUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL"] || "/en/admin"}
-        signUpFallbackRedirectUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL"] || "/en/admin"}
+        signInFallbackRedirectUrl={signInFallbackUrl}
+        signUpFallbackRedirectUrl={signUpFallbackUrl}
         appearance={{
           variables: {
             colorPrimary: "#000000",
