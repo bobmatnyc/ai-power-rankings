@@ -127,21 +127,23 @@ export default async function NewsArticlePage({ params }: PageProps): Promise<Re
   const { article, tool } = await fetchArticle(slug);
 
   return (
-    <div className="px-3 md:px-6 py-8 max-w-7xl mx-auto">
-      <Suspense
-        fallback={
-          <div className="flex items-center justify-center h-64">
-            <p className="text-muted-foreground">{dict.common.loading}</p>
-          </div>
-        }
-      >
-        <NewsDetailContent
-          article={article}
-          tool={tool}
-          dict={dict}
-          lang={lang as Locale}
-        />
-      </Suspense>
-    </div>
+    <main className="px-3 md:px-6 py-8 max-w-7xl mx-auto">
+      <article>
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-64">
+              <p className="text-muted-foreground">{dict.common.loading}</p>
+            </div>
+          }
+        >
+          <NewsDetailContent
+            article={article}
+            tool={tool}
+            dict={dict}
+            lang={lang as Locale}
+          />
+        </Suspense>
+      </article>
+    </main>
   );
 }

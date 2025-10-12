@@ -64,8 +64,8 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-4xl">
-      <div
+    <main className="container mx-auto p-4 md:p-8 max-w-4xl">
+      <article
         className="prose prose-lg dark:prose-invert max-w-none
           prose-headings:font-bold prose-headings:tracking-tight
           prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-4
@@ -82,7 +82,7 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
         // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe pre-processed markdown content
         dangerouslySetInnerHTML={{ __html: content.htmlContent }}
       />
-    </div>
+    </main>
   );
 }
 

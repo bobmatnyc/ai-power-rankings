@@ -26,6 +26,7 @@ import type { Dictionary } from "@/i18n/get-dictionary";
 import { loggers } from "@/lib/logger-client";
 import ArticleScoringImpact from "./article-scoring-impact";
 import ScoringMetrics from "./scoring-metrics";
+import StateOfUnion from "./state-of-union";
 
 interface MetricsHistory {
   id: string;
@@ -272,6 +273,9 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
           </Link>
         </div>
       </div>
+
+      {/* State of Union Summary */}
+      <StateOfUnion lang={lang} />
 
       {/* Scoring Metrics */}
       <ScoringMetrics />

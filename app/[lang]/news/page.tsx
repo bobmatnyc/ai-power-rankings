@@ -59,7 +59,7 @@ export default async function NewsPage({ params }: PageProps): Promise<React.JSX
   const { lang } = await params;
   const dict = await getDictionary(lang as Locale);
   return (
-    <div className="px-3 md:px-6 py-8 max-w-7xl mx-auto">
+    <main className="px-3 md:px-6 py-8 max-w-7xl mx-auto">
       <Suspense
         fallback={
           <div className="flex items-center justify-center h-64">
@@ -69,6 +69,6 @@ export default async function NewsPage({ params }: PageProps): Promise<React.JSX
       >
         <NewsContent lang={lang as Locale} dict={dict} />
       </Suspense>
-    </div>
+    </main>
   );
 }
