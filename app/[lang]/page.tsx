@@ -370,7 +370,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     console.log("[Page] Home: Preparing to render components");
 
     return (
-      <div className="min-h-screen">
+      <>
         {structuredData && (
           <script
             type="application/ld+json"
@@ -380,6 +380,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
         )}
         {/* T-033 What's New Modal */}
         <WhatsNewModalClient />
+        <main className="min-h-screen">
         {/* Hero Section */}
         <section className="relative overflow-hidden">
           {/* Background gradient */}
@@ -674,7 +675,8 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             </div>
           </div>
         </section>
-      </div>
+        </main>
+      </>
     );
   } catch (error) {
     console.error("[Page] Home: Critical error rendering page:", error);

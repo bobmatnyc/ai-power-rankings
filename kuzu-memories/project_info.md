@@ -5,72 +5,102 @@ This file contains structured information about the project that helps KuzuMemor
 ## 🏗️ Project Overview
 
 **Project Name**: aipowerranking
-**Type**: [Web App / API / Library / CLI Tool / etc.]
-**Language**: [Python / JavaScript / Rust / etc.]
-**Framework**: [FastAPI / React / Django / etc.]
+**Type**: Web Application
+**Language**: TypeScript
+**Framework**: Next.js 14 (App Router)
+**Version**: 0.1.1
 
 ## 🎯 Project Purpose
 
-[Describe what this project does and why it exists]
+AI Power Ranking is a comprehensive web application that ranks and tracks AI tools and technologies. It provides users with data-driven insights into the AI tool landscape through systematic evaluation and scoring, industry news aggregation, and detailed methodology documentation.
 
 ## 🏛️ Architecture
 
 ### Tech Stack
-- **Backend**: [Framework/Language]
-- **Database**: [PostgreSQL / MongoDB / etc.]
-- **Cache**: [Redis / Memcached / etc.]
-- **Frontend**: [React / Vue / etc.]
-- **Deployment**: [Docker / Kubernetes / etc.]
+- **Backend**: Next.js 14 API Routes (TypeScript)
+- **Database**: PostgreSQL with Drizzle ORM
+- **Cache**: Not implemented
+- **Frontend**: React 18 with Next.js App Router
+- **Deployment**: Vercel
+- **Authentication**: Clerk
+- **Styling**: Tailwind CSS
 
 ### Key Components
-- **[Component 1]**: [Description]
-- **[Component 2]**: [Description]
-- **[Component 3]**: [Description]
+- **Rankings System**: AI tool evaluation and scoring engine with baseline derivation
+- **News Ingestion**: Article processing service for AI industry news
+- **Authentication Layer**: Clerk-based user management with Core 2 integration
+- **Internationalization**: Multi-language routing via `[lang]` parameter
+- **Repository Pattern**: Database access via repositories in `lib/db/repositories/`
 
 ## 📏 Conventions & Standards
 
 ### Code Style
-- [Formatting rules, linting, etc.]
+- TypeScript with strict type checking
+- ESLint for code quality
+- Component-based architecture (React)
+- Server/Client component separation (Next.js App Router)
 
 ### API Design
-- [REST conventions, response formats, etc.]
+- RESTful API routes in `app/api/`
+- Admin endpoints require `NODE_ENV` checks
+- No test/debug endpoints in production
+- Proper authentication guards on protected routes
 
 ### Database
-- [Naming conventions, migration patterns, etc.]
+- Drizzle ORM for type-safe queries
+- Migration-based schema changes (no direct schema modifications)
+- Repository pattern for data access
+- Schema definitions in `lib/schema.ts`
 
 ### Testing
-- [Testing framework, coverage requirements, etc.]
+- Test documentation in `/tests/` directory
+- Security-focused: all test endpoints removed from production
+- UAT reports track known issues and resolutions
 
 ## 🚀 Development Workflow
 
 ### Getting Started
-1. [Setup steps]
-2. [Installation commands]
-3. [First run instructions]
+1. Clone repository and install dependencies: `npm install`
+2. Configure environment variables (Clerk, DATABASE_URL)
+3. Run database migrations: `npm run db:migrate`
+4. Start development server: `npm run dev`
 
 ### Common Tasks
-- **Run tests**: `[command]`
-- **Start dev server**: `[command]`
-- **Build for production**: `[command]`
-- **Deploy**: `[command]`
+- **Run tests**: `npm test`
+- **Start dev server**: `npm run dev`
+- **Build for production**: `npm run build`
+- **Database operations**: `npm run db:push`, `npm run db:studio`
+- **Type checking**: `npm run type-check`
+- **Linting**: `npm run lint`
 
 ## 🤝 Team Preferences
 
 ### Development
-- [Preferred tools, IDEs, extensions]
+- Primary developer: Robert (Masa) Matsuoka
+- Iterative development approach with phased rollouts
+- Security-first mindset (multi-phase test endpoint removal)
+- Production stability prioritized over rapid feature deployment
 
 ### Communication
-- [How decisions are made, documentation standards]
+- Detailed commit messages with conventional commits (feat/fix/chore)
+- Comprehensive documentation in `/docs/` directory
+- UAT reports for tracking issues and resolutions
+- Version tracking with semantic versioning
 
 ### Code Review
-- [Review process, requirements, standards]
+- Type safety enforcement with TypeScript
+- Security review for admin endpoints (NODE_ENV guards)
+- Authentication flow validation required
+- Migration-based database changes only
 
 ## 📚 Important Resources
 
-- **Documentation**: [Link or location]
-- **API Docs**: [Link or location]
-- **Design System**: [Link or location]
-- **Deployment Guide**: [Link or location]
+- **Documentation**: `/docs/` directory (CONTRIBUTING, AUTHENTICATION-CONFIG, baseline-scoring-usage)
+- **API Docs**: API routes in `app/api/` with inline documentation
+- **Testing Guide**: `/tests/README.md`, `/tests/QUICK_START.md`
+- **Deployment Guide**: Vercel-based deployment (see UAT reports)
+- **Scripts & Tools**: `/scripts/` directory (database migrations, cleanup utilities)
+- **UAT Reports**: `/uat-screenshots/EXECUTIVE-SUMMARY.md`
 
 ---
 

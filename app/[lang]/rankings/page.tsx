@@ -155,7 +155,7 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
   );
 
   return (
-    <div className="px-3 md:px-6 py-8 max-w-7xl mx-auto">
+    <>
       <Script
         id="faq-schema"
         type="application/ld+json"
@@ -173,32 +173,34 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
         }}
       />
 
-      <Suspense
-        fallback={
-          <div className="flex items-center justify-center h-64">
-            <p className="text-muted-foreground">{dict.common.loading}</p>
-          </div>
-        }
-      >
-        <RankingsGrid lang={lang as Locale} dict={dict} initialRankings={initialRankings} />
-      </Suspense>
+      <main className="px-3 md:px-6 py-8 max-w-7xl mx-auto">
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-64">
+              <p className="text-muted-foreground">{dict.common.loading}</p>
+            </div>
+          }
+        >
+          <RankingsGrid lang={lang as Locale} dict={dict} initialRankings={initialRankings} />
+        </Suspense>
 
-      {/* SEO-Optimized Content Sections */}
-      <div className="mt-12 space-y-8">
-        {/* Quick Answer about rankings */}
-        <QuickAnswerBox
-          question="How are AI tool rankings determined?"
-          answer="Our AI tool rankings use <strong>Algorithm v7.1</strong> which evaluates tools across 8 key factors: Agentic Capability, Innovation, Technical Performance, Developer Adoption, Market Traction, Business Sentiment, Development Velocity, and Platform Resilience. Rankings are updated weekly with fresh data from multiple sources."
-          type="definition"
-        />
+        {/* SEO-Optimized Content Sections */}
+        <aside className="mt-12 space-y-8" aria-label="Additional information">
+          {/* Quick Answer about rankings */}
+          <QuickAnswerBox
+            question="How are AI tool rankings determined?"
+            answer="Our AI tool rankings use <strong>Algorithm v7.1</strong> which evaluates tools across 8 key factors: Agentic Capability, Innovation, Technical Performance, Developer Adoption, Market Traction, Business Sentiment, Development Velocity, and Platform Resilience. Rankings are updated weekly with fresh data from multiple sources."
+            type="definition"
+          />
 
-        {/* FAQ Section */}
-        <FAQSection
-          title="AI Tool Rankings FAQ"
-          faqs={generalFAQs}
-          defaultOpen={["what-are-ai-tool-rankings", "how-are-rankings-calculated"]}
-        />
-      </div>
-    </div>
+          {/* FAQ Section */}
+          <FAQSection
+            title="AI Tool Rankings FAQ"
+            faqs={generalFAQs}
+            defaultOpen={["what-are-ai-tool-rankings", "how-are-rankings-calculated"]}
+          />
+        </aside>
+      </main>
+    </>
   );
 }

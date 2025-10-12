@@ -60,7 +60,7 @@ export default async function ToolsPage({ params }: PageProps): Promise<React.JS
   const dict = await getDictionary(lang as Locale);
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-7xl">
+    <main className="container mx-auto p-4 md:p-8 max-w-7xl">
       <Suspense
         fallback={
           <div className="flex items-center justify-center h-64">
@@ -70,6 +70,6 @@ export default async function ToolsPage({ params }: PageProps): Promise<React.JS
       >
         <ToolsClient lang={lang as Locale} dict={dict} />
       </Suspense>
-    </div>
+    </main>
   );
 }
