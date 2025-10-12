@@ -2,14 +2,43 @@
 
 **Project**: aipowerranking
 **Version**: 0.1.1
-**Last Updated**: 2025-10-08
+**Last Updated**: 2025-10-12
 **Primary Developer**: Robert (Masa) Matsuoka
+
+---
+
+## 🎯 Priority Index
+
+### 🔴 CRITICAL Instructions
+- **Security**: Admin endpoints MUST have `NODE_ENV` guards (see line 221)
+- **Database**: NEVER modify schema directly - use Drizzle migrations (see line 223)
+- **Authentication**: All protected routes require Clerk configuration (see line 155)
+- **Type Safety**: TypeScript errors MUST be resolved before commits (see line 224)
+
+### 🟡 IMPORTANT Instructions
+- **Testing**: Reference `/tests/` documentation for testing patterns (see line 209)
+- **Documentation**: Check `/docs/` before making changes (see line 204)
+- **Deployment**: Follow Vercel deployment patterns for authentication (see line 145)
+- **Components**: Follow App Router conventions in `app/[lang]/` (see line 212)
+
+### 🟢 STANDARD Instructions
+- **Code Style**: Follow existing patterns in active files (see line 205)
+- **Content**: Use markdown for static pages (see line 217)
+- **API Routes**: Use `app/api/` with proper authentication (see line 216)
+- **Business Logic**: Add to `lib/services/` or `lib/db/repositories/` (see line 215)
+
+### ⚪ OPTIONAL
+- **Optimization**: Performance improvements guided by Lighthouse scores
+- **Internationalization**: Multi-language support via `[lang]` parameter (see line 152)
+- **Future**: CMS migration and admin dashboard enhancements
+
+---
 
 ## 📊 Quick Project Status
 
 **Current Phase**: Production stabilization and content development
 **Active Branch**: main
-**Recent Focus**: Security hardening, test cleanup, authentication improvements
+**Recent Focus**: State of Union feature, semantic HTML improvements, content development
 
 ---
 
@@ -88,50 +117,64 @@ npm test                       # Run test suite
 ## 📈 Recent Activity Report (Last 30 Days)
 
 ### Commit Summary
-- **Total Commits**: 19
+- **Total Commits**: 20 (as of 2025-10-12)
 - **Primary Contributor**: Robert (Masa) Matsuoka (100%)
 - **Commit Type Breakdown**:
-  - Fixes: 10 commits (53%)
-  - Features: 3 commits (16%)
-  - Chores: 3 commits (16%)
+  - Fixes: 10 commits (50%)
+  - Features: 4 commits (20%)
+  - Chores: 3 commits (15%)
   - Other: 3 commits (15%)
 
-### Recent Major Changes (Last 8 Hours)
+### Latest Changes (Last 4 Hours) 🟢
 
-#### Security & Cleanup (Phases 2-3)
+#### State of Union Feature (Just Committed)
+- **✅ New Component**: Created `StateOfUnion` component for October 2025 market overview
+  - Features trust crisis analysis (84% usage vs 33-46% trust)
+  - Highlights Replit's $150M ARR milestone
+  - Links to Claude Sonnet 4.5 agentic capabilities
+  - Addresses GitHub Copilot failure rates and market competition
+- **✅ Integration**: Added State of Union to news content page
+- **✅ Semantic HTML**: Improved structure with proper `<main>` tags across pages
+  - Homepage structure enhancement
+  - Methodology, about, rankings, tools pages updated
+- **✅ Documentation**: Added CLAUDE.md with AI-optimized project guide
+- **✅ Version Management**: Created docs archive directory structure
+
+#### Recent Major Changes (Last 4 Days)
+
+##### Security & Cleanup (Phases 2-3)
 - **v0.1.1 Release**: Version bump following security hardening
 - **Test Endpoint Removal**: Removed 25+ test/debug endpoints for production security
 - **Admin Endpoint Protection**: Added `NODE_ENV` guards to 5 admin debug endpoints
 - **Test Page Cleanup**: Removed all test pages and typography demo
 - **Score Calculation Fix**: Added baseline score derivation for incomplete tool scores
 
-#### Recent Work (Last 30 Hours)
+##### Earlier Work (Last 30 Days)
 - **Documentation Organization**: Consolidated project documentation structure
 - **Authentication Updates**: Upgraded Clerk to Core 2 naming, enabled authentication
 - **UI Improvements**: Fixed logo alignment and Clerk modal visibility issues
 - **Social Media Updates**: Updated all social links to HyperDev branding
 - **Newsletter Integration**: Replaced contact form with newsletter signup CTA
 - **Performance Optimizations**: Data updates and algorithm version corrections
-
-#### Earlier Activity (Last 9 Days)
 - **Database Schema Fixes**: Authentication improvements and comprehensive tooling
 - **Vercel Deployment**: Fixed Clerk authentication for preview environments
-- **Initial Deployment**: Source code committed and deployed
 
 ### Development Patterns Observed
 
-1. **Iterative Security Hardening**: Multi-phase approach to removing test endpoints
-2. **Production Readiness Focus**: Emphasis on deployment, authentication, and data quality
-3. **UI/UX Refinement**: Ongoing improvements to user interface and experience
-4. **Content Development**: Active work on markdown content and static pages
-5. **Continuous Integration**: Regular version bumps and incremental improvements
+1. **Content-Driven Development**: Focus on editorial components like State of Union
+2. **Iterative Security Hardening**: Multi-phase approach to removing test endpoints
+3. **Production Readiness Focus**: Emphasis on deployment, authentication, and data quality
+4. **Semantic Web Standards**: Improving HTML structure and accessibility
+5. **Documentation Excellence**: Comprehensive guides and version management
+6. **UI/UX Refinement**: Ongoing improvements to user interface and experience
 
 ### Active Development Areas
 
-- **Content Pages**: Currently modifying page.tsx files for various sections
-- **News System**: New state-of-union component being developed
-- **Authentication**: Ongoing Clerk integration refinements
-- **UI Components**: Modal and signup flow improvements
+- **✅ State of Union**: Completed and integrated into news section
+- **Content Pages**: Semantic HTML improvements across all major pages
+- **News System**: Enhanced with market overview and analysis features
+- **Authentication**: Stable Clerk integration with Core 2 naming
+- **Documentation**: CLAUDE.md established for AI agent guidance
 
 ---
 
@@ -184,16 +227,18 @@ npm test                       # Run test suite
 
 ## 🎯 Current Work Context
 
-### Uncommitted Changes
-- Multiple page.tsx files modified across different sections
-- New state-of-union component in development
-- Content and UI refinements in progress
+### ✅ Recently Completed (2025-10-12)
+- ✅ State of Union component created and integrated
+- ✅ Semantic HTML improvements across all major pages
+- ✅ CLAUDE.md documentation established with priority markers
+- ✅ All changes committed to main branch
 
-### Next Steps (Inferred)
-1. Complete current page modifications
-2. Integrate new news component
-3. Continue content development
-4. Maintain production stability
+### Next Steps (Recommended)
+1. 🟡 Monitor State of Union component performance and user engagement
+2. 🟢 Continue content development for news and analysis sections
+3. 🟢 Consider additional editorial features for market insights
+4. ⚪ Explore internationalization for State of Union content
+5. 🔴 Maintain security standards for all new features
 
 ---
 
@@ -201,28 +246,28 @@ npm test                       # Run test suite
 
 ### When Working on This Project
 
-1. **Check Documentation First**: Extensive docs in `/docs/` and `/scripts/`
-2. **Follow Existing Patterns**: Look at active files for current coding standards
-3. **Security Awareness**: Admin endpoints require `NODE_ENV` guards
-4. **Database Changes**: Use Drizzle migrations, don't modify schema directly
-5. **Authentication**: Test with Clerk configuration in mind
-6. **Testing**: Reference `/tests/` documentation for testing patterns
+1. 🟡 **Check Documentation First**: Extensive docs in `/docs/` and `/scripts/`
+2. 🟢 **Follow Existing Patterns**: Look at active files for current coding standards
+3. 🔴 **Security Awareness**: Admin endpoints require `NODE_ENV` guards
+4. 🔴 **Database Changes**: Use Drizzle migrations, don't modify schema directly
+5. 🟡 **Authentication**: Test with Clerk configuration in mind
+6. 🟡 **Testing**: Reference `/tests/` documentation for testing patterns
 
 ### File Modification Guidelines
 
-- **Page Components**: Follow App Router conventions in `app/[lang]/`
-- **Reusable Components**: Place in appropriate `components/` subdirectory
-- **Business Logic**: Add to `lib/services/` or `lib/db/repositories/`
-- **API Routes**: Use `app/api/` with proper authentication checks
-- **Content**: Markdown content files for static pages
+- 🟡 **Page Components**: Follow App Router conventions in `app/[lang]/`
+- 🟢 **Reusable Components**: Place in appropriate `components/` subdirectory
+- 🟢 **Business Logic**: Add to `lib/services/` or `lib/db/repositories/`
+- 🟡 **API Routes**: Use `app/api/` with proper authentication checks
+- 🟢 **Content**: Markdown content files for static pages
 
 ### Common Pitfalls to Avoid
 
-1. Don't create test/debug endpoints without `NODE_ENV` guards
-2. Don't bypass authentication on admin routes
-3. Don't modify database schema without migrations
-4. Don't ignore TypeScript type errors
-5. Don't commit without testing authentication flows
+1. 🔴 Don't create test/debug endpoints without `NODE_ENV` guards
+2. 🔴 Don't bypass authentication on admin routes
+3. 🔴 Don't modify database schema without migrations
+4. 🔴 Don't ignore TypeScript type errors
+5. 🟡 Don't commit without testing authentication flows
 
 ---
 
@@ -252,6 +297,11 @@ This project has comprehensive documentation. When stuck:
 
 ---
 
-**Last Activity Snapshot**: 2025-10-08 (8 hours ago)
-**Project Health**: Active development, production-ready
-**Documentation Status**: Comprehensive, well-maintained
+## 📊 Project Metrics
+
+**Last Activity Snapshot**: 2025-10-12 (just now)
+**Project Health**: 🟢 Active development, production-ready
+**Documentation Status**: 🟢 Comprehensive, well-maintained with priority markers
+**Recent Velocity**: 🟢 20 commits in 30 days, consistent development pace
+**Code Quality**: 🟡 TypeScript strict mode, comprehensive testing suite
+**Security Posture**: 🟢 Admin endpoints protected, test endpoints removed
