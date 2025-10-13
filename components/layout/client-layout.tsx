@@ -48,7 +48,8 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
 
   // Check if on home page on mobile to hide header until scroll
   const isHomePage = pathname === `/${lang}`;
-  const shouldHideHeader = isHomePage && !hasScrolled;
+  // Disabled header hiding to keep sign-in button always accessible
+  const shouldHideHeader = false; // was: isHomePage && !hasScrolled
 
   return (
     <SidebarProvider>
