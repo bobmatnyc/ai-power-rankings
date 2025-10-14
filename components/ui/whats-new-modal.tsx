@@ -67,40 +67,23 @@ export function WhatsNewModal({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [open]);
 
-  // Fetch all data from three endpoints (past 7 days)
+  // Fetch all data from single optimized endpoint (past 7 days)
   useEffect(() => {
     const fetchAllUpdates = async () => {
       try {
         setLoading(true);
 
-        // Fetch all three endpoints in parallel
-        const [toolsResponse, newsResponse, changelogResponse] = await Promise.all([
-          fetch("/api/tools/recent-updates?days=7"),
-          fetch("/api/news/recent?days=7"),
-          fetch("/api/changelog"),
-        ]);
+        // Fetch from single combined endpoint for better performance
+        const response = await fetch("/api/whats-new?days=7");
 
-        // Process tools updates
-        if (toolsResponse.ok) {
-          const toolsData = await toolsResponse.json();
-          setToolUpdates(toolsData.tools || []);
+        if (response.ok) {
+          const data = await response.json();
+          setToolUpdates(data.tools || []);
+          setNewsArticles(data.news || []);
+          setChangelogItems(data.changelog || []);
         } else {
           setToolUpdates([]);
-        }
-
-        // Process news articles
-        if (newsResponse.ok) {
-          const newsData = await newsResponse.json();
-          setNewsArticles(newsData.news || []);
-        } else {
           setNewsArticles([]);
-        }
-
-        // Process changelog items
-        if (changelogResponse.ok) {
-          const changelogData = await changelogResponse.json();
-          setChangelogItems(changelogData.slice(0, 10) || []);
-        } else {
           setChangelogItems([]);
         }
       } catch (error) {
