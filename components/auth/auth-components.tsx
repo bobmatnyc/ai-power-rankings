@@ -284,6 +284,7 @@ export const SignInButton = ({
 }) => {
   const [mounted, setMounted] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [ClerkSignInButton, setClerkSignInButton] = useState<React.ComponentType<any> | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -300,6 +301,18 @@ export const SignInButton = ({
         setIsSignedIn(!!clerk.user);
       };
       clerk.addListener?.(updateListener);
+
+      // Load Clerk SignInButton component dynamically
+      import("@clerk/nextjs")
+        .then((clerkModule) => {
+          if (clerkModule.SignInButton) {
+            setClerkSignInButton(() => clerkModule.SignInButton);
+            console.info("[SignInButton] Clerk SignInButton component loaded");
+          }
+        })
+        .catch((error) => {
+          console.warn("[SignInButton] Failed to load Clerk SignInButton:", error);
+        });
 
       return () => {
         clerk.removeListener?.(updateListener);
@@ -357,8 +370,8 @@ export const SignInButton = ({
     };
   }
 
-  // Use Clerk component if available
-  if (clerkComponents.SignInButton && clerkComponents.loaded) {
+  // Use Clerk component if loaded via useEffect
+  if (ClerkSignInButton) {
     // Final safety check before rendering Clerk component
     // This prevents the modal error even if the wrapper fails
     if (typeof window !== "undefined" && (window as any).Clerk?.user) {
@@ -366,8 +379,14 @@ export const SignInButton = ({
       return null;
     }
 
-    const ClerkSignInButton = clerkComponents.SignInButton;
     return <ClerkSignInButton {...enhancedProps}>{children}</ClerkSignInButton>;
+  }
+
+  // While loading Clerk component, show a loading state instead of mock
+  // This prevents the "authentication disabled" message from showing
+  if (mounted && isClerkProviderAvailable() && !isSignedIn) {
+    // Clerk is available but component hasn't loaded yet - show loading
+    return <>{children}</>;
   }
 
   // Fallback to mock

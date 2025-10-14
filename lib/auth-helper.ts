@@ -93,6 +93,13 @@ export async function isAdmin() {
   try {
     console.log("[auth-helper] Checking admin status...");
     const authData = await getAuth();
+
+    // In development mode, grant admin access to all authenticated users
+    if (process.env["NODE_ENV"] === "development" && authData.userId) {
+      console.log("[auth-helper] Development mode: granting admin access to authenticated user");
+      return true;
+    }
+
     const adminStatus = authData.user?.isAdmin === true;
     console.log("[auth-helper] Admin status:", adminStatus);
     return adminStatus;

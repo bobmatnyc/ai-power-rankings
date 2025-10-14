@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clerk Diagnostics</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .diagnostic-box {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+    }
+    h2 {
+      color: #666;
+      font-size: 18px;
+      margin-top: 0;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status.warning {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    code {
+      background: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px 10px 0;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #console-output {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Clerk Authentication Diagnostics</h1>
+
+  <div class="diagnostic-box">
+    <h2>1. Environment Variables</h2>
+    <div id="env-check"></div>
+  </div>
+
+  <div class="diagnostic-box">
+    <h2>2. Browser Environment</h2>
+    <div id="browser-check"></div>
+  </div>
+
+  <div class="diagnostic-box">
+    <h2>3. Clerk Provider Status</h2>
+    <div id="clerk-provider-check"></div>
+  </div>
+
+  <div class="diagnostic-box">
+    <h2>4. Domain Validation</h2>
+    <div id="domain-check"></div>
+  </div>
+
+  <div class="diagnostic-box">
+    <h2>5. Quick Actions</h2>
+    <button onclick="navigateToApp()">Open Main App</button>
+    <button onclick="runFullDiagnostic()">Run Full Diagnostic</button>
+    <button onclick="clearLogs()">Clear Logs</button>
+  </div>
+
+  <div class="diagnostic-box">
+    <h2>Console Output</h2>
+    <div id="console-output">Waiting for diagnostics...</div>
+  </div>
+
+  <script>
+    let logBuffer = [];
+
+    function log(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const prefix = type === 'error' ? '❌' : type === 'warn' ? '⚠️' : type === 'success' ? '✅' : 'ℹ️';
+      const logLine = `[${timestamp}] ${prefix} ${message}`;
+      logBuffer.push(logLine);
+      updateConsole();
+      console.log(logLine);
+    }
+
+    function updateConsole() {
+      document.getElementById('console-output').textContent = logBuffer.join('\n');
+    }
+
+    function clearLogs() {
+      logBuffer = [];
+      updateConsole();
+      log('Logs cleared');
+    }
+
+    function showStatus(elementId, message, type) {
+      const el = document.getElementById(elementId);
+      el.innerHTML += `<div class="status ${type}">${message}</div>`;
+    }
+
+    function navigateToApp() {
+      window.location.href = '/en';
+    }
+
+    function checkEnvironment() {
+      log('Checking environment variables...');
+
+      // These are public env vars that should be exposed to the browser
+      const hostname = window.location.hostname;
+      const protocol = window.location.protocol;
+      const port = window.location.port;
+
+      showStatus('env-check', `<strong>Hostname:</strong> <code>${hostname}</code>`, 'success');
+      showStatus('env-check', `<strong>Protocol:</strong> <code>${protocol}</code>`, 'success');
+      showStatus('env-check', `<strong>Port:</strong> <code>${port}</code>`, 'success');
+      showStatus('env-check', `<strong>Full URL:</strong> <code>${window.location.href}</code>`, 'success');
+
+      log(`Hostname: ${hostname}, Protocol: ${protocol}, Port: ${port}`);
+    }
+
+    function checkBrowser() {
+      log('Checking browser environment...');
+
+      const checks = {
+        'Window object': typeof window !== 'undefined',
+        'Document object': typeof document !== 'undefined',
+        'LocalStorage': typeof localStorage !== 'undefined',
+        'SessionStorage': typeof sessionStorage !== 'undefined',
+        'Cookies enabled': navigator.cookieEnabled
+      };
+
+      for (const [check, result] of Object.entries(checks)) {
+        const status = result ? 'success' : 'error';
+        showStatus('browser-check', `<strong>${check}:</strong> ${result ? '✅ Available' : '❌ Not Available'}`, status);
+        log(`${check}: ${result}`, result ? 'success' : 'error');
+      }
+    }
+
+    function checkClerkProvider() {
+      log('Checking Clerk provider status...');
+
+      setTimeout(() => {
+        const clerkAvailable = window.__clerkProviderAvailable;
+        const clerkInstance = window.Clerk;
+
+        if (clerkAvailable) {
+          showStatus('clerk-provider-check', '✅ ClerkProvider is enabled', 'success');
+          log('ClerkProvider is enabled', 'success');
+        } else {
+          showStatus('clerk-provider-check', '❌ ClerkProvider is NOT enabled', 'error');
+          log('ClerkProvider is NOT enabled - check environment variables and domain', 'error');
+        }
+
+        if (clerkInstance) {
+          showStatus('clerk-provider-check', '✅ Clerk instance loaded', 'success');
+          log('Clerk instance loaded', 'success');
+        } else {
+          showStatus('clerk-provider-check', '⚠️ Clerk instance NOT loaded', 'warning');
+          log('Clerk instance not loaded - scripts may not have loaded yet', 'warn');
+        }
+
+        // Check for auth components
+        const signInButtons = Array.from(document.querySelectorAll('button')).filter(btn =>
+          btn.textContent?.includes('Sign In')
+        );
+
+        if (signInButtons.length > 0) {
+          showStatus('clerk-provider-check', `✅ Found ${signInButtons.length} sign-in button(s)`, 'success');
+          log(`Found ${signInButtons.length} sign-in button(s)`, 'success');
+        }
+      }, 2000);
+    }
+
+    function checkDomain() {
+      log('Checking domain validation...');
+
+      const hostname = window.location.hostname;
+      const allowedDomains = [
+        'aipowerranking.com',
+        'www.aipowerranking.com',
+        'staging.aipowerranking.com',
+        'localhost',
+        '127.0.0.1'
+      ];
+
+      const isAllowed = allowedDomains.includes(hostname) || hostname.endsWith('.vercel.app');
+
+      if (isAllowed) {
+        showStatus('domain-check', `✅ Domain <code>${hostname}</code> is in allowed list`, 'success');
+        log(`Domain ${hostname} is allowed`, 'success');
+      } else {
+        showStatus('domain-check', `❌ Domain <code>${hostname}</code> is NOT in allowed list`, 'error');
+        log(`Domain ${hostname} is NOT allowed - ClerkProvider will not render`, 'error');
+        showStatus('domain-check', '<strong>Allowed domains:</strong> ' + allowedDomains.join(', '), 'warning');
+      }
+    }
+
+    function runFullDiagnostic() {
+      log('=== Running full diagnostic ===', 'success');
+      clearLogs();
+
+      // Clear previous results
+      ['env-check', 'browser-check', 'clerk-provider-check', 'domain-check'].forEach(id => {
+        document.getElementById(id).innerHTML = '';
+      });
+
+      checkEnvironment();
+      checkBrowser();
+      checkDomain();
+      checkClerkProvider();
+
+      log('=== Diagnostic complete ===', 'success');
+      log('If ClerkProvider is not enabled, check:');
+      log('1. NEXT_PUBLIC_DISABLE_AUTH should be commented out in .env.local');
+      log('2. NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY should be set');
+      log('3. Domain should be in allowed list');
+      log('4. Restart dev server after changing .env.local');
+    }
+
+    // Run diagnostics on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      log('Page loaded, starting diagnostics...');
+      runFullDiagnostic();
+    });
+  </script>
+</body>
+</html>

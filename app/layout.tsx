@@ -1,16 +1,9 @@
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
-// Dynamically import ClerkProvider to avoid SSR issues
-// The ClerkProviderClient component handles client-side only rendering
-const ClerkProviderClient = dynamic(() => import("@/components/auth/clerk-provider-client"), {
-  // Don't render anything during loading to prevent hydration mismatches
-  loading: () => null,
-});
+import ClerkProviderClient from "@/components/auth/clerk-provider-client";
 
 const inter = Inter({
   subsets: ["latin"],

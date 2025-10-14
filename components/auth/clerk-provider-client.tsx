@@ -56,7 +56,9 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
       } else if (!isAllowedDomain) {
         console.info("ClerkProvider: Disabled for non-allowed domain");
       } else if (!hasClerkKey) {
-        console.warn("ClerkProvider: No publishable key found");
+        console.warn("ClerkProvider: No publishable key found. Key value:", process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]);
+      } else {
+        console.info("ClerkProvider: All checks passed, Clerk enabled");
       }
     }
   }, [isClient, isAuthDisabled, isAllowedDomain, hasClerkKey]);
