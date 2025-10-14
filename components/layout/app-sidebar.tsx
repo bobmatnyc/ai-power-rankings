@@ -195,7 +195,7 @@ function SidebarContent(): React.JSX.Element {
         <Link
           href={`/${lang}`}
           onClick={handleNavClick}
-          className="flex items-center gap-3 mb-6"
+          className="flex items-end gap-3 mb-6"
         >
           <Image
             src="/crown-of-technology.webp"
@@ -206,7 +206,7 @@ function SidebarContent(): React.JSX.Element {
             loading="eager"
             priority
           />
-          <h1 className="text-2xl font-bold text-gradient leading-none -mb-1">APR</h1>
+          <h1 className="text-2xl font-bold text-gradient leading-none">APR</h1>
         </Link>
 
         <div className="space-y-6">
