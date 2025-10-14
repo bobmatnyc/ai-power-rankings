@@ -434,15 +434,5 @@ function SidebarContent(): React.JSX.Element {
 }
 
 export function AppSidebar(): React.JSX.Element {
-  return (
-    <Suspense
-      fallback={
-        <Sidebar>
-          <div className="p-6">Loading...</div>
-        </Sidebar>
-      }
-    >
-      <SidebarContent />
-    </Suspense>
-  );
+  return <SidebarContent />;
 }
