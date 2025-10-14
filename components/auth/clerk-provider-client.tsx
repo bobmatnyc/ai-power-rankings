@@ -24,48 +24,8 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
     setIsClient(true);
 
     // Set a global flag indicating whether ClerkProvider is available
-    // This MUST be set before any auth components try to render
     if (typeof window !== "undefined") {
-      // Initialize the flag as false - will be set to true only if ClerkProvider renders
       (window as any).__clerkProviderAvailable = false;
-
-      // Set up a getter/setter trap for window.Clerk
-      let clerkInstance: any = null;
-
-      Object.defineProperty(window, 'Clerk', {
-        get() {
-          return clerkInstance;
-        },
-        set(value) {
-          if (value && !clerkInstance) {
-            // Clerk is being initialized - wrap the methods immediately
-            const originalOpenSignIn = value.openSignIn?.bind(value);
-            const originalOpenSignUp = value.openSignUp?.bind(value);
-
-            if (originalOpenSignIn) {
-              value.openSignIn = function(...args: any[]) {
-                if (value.user) {
-                  console.warn('[ClerkProvider] Prevented openSignIn - user already signed in');
-                  return Promise.resolve();
-                }
-                return originalOpenSignIn(...args);
-              };
-            }
-
-            if (originalOpenSignUp) {
-              value.openSignUp = function(...args: any[]) {
-                if (value.user) {
-                  console.warn('[ClerkProvider] Prevented openSignUp - user already signed in');
-                  return Promise.resolve();
-                }
-                return originalOpenSignUp(...args);
-              };
-            }
-          }
-          clerkInstance = value;
-        },
-        configurable: true
-      });
     }
   }, []);
 
@@ -106,70 +66,68 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
     if (isClient && typeof window !== "undefined") {
       (window as any).__clerkProviderAvailable = shouldRenderClerk;
       console.info(`[ClerkProvider] Provider availability: ${shouldRenderClerk}`);
+      console.info(`[ClerkProvider] Conditions: isClient=${isClient}, isAuthDisabled=${isAuthDisabled}, isAllowedDomain=${isAllowedDomain}, hasClerkKey=${hasClerkKey}`);
     }
-  }, [isClient, shouldRenderClerk]);
+  }, [isClient, shouldRenderClerk, isAuthDisabled, isAllowedDomain, hasClerkKey]);
 
-  // SINGLE RETURN STATEMENT - ensures consistent hook execution
-  if (shouldRenderClerk) {
-    // Support both Core 2 (FALLBACK_REDIRECT_URL) and legacy (AFTER_SIGN_X_URL) naming
-    const signInFallbackUrl =
-      process.env["NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL"] ||
-      process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL"] ||
-      "/en/admin";
+  // Support both Core 2 (FALLBACK_REDIRECT_URL) and legacy (AFTER_SIGN_X_URL) naming
+  const signInFallbackUrl =
+    process.env["NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL"] ||
+    process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL"] ||
+    "/en/admin";
 
-    const signUpFallbackUrl =
-      process.env["NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL"] ||
-      process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL"] ||
-      "/en/admin";
+  const signUpFallbackUrl =
+    process.env["NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL"] ||
+    process.env["NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL"] ||
+    "/en/admin";
 
-    return (
-      <ClerkProvider
-        publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
-        signInUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_IN_URL"] || "/en/sign-in"}
-        signUpUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_UP_URL"] || "/en/sign-up"}
-        signInFallbackRedirectUrl={signInFallbackUrl}
-        signUpFallbackRedirectUrl={signUpFallbackUrl}
-        appearance={{
-          variables: {
-            colorPrimary: "#000000",
-          },
-          elements: {
-            formButtonPrimary: 'bg-primary hover:bg-primary-hover text-white',
-            card: 'shadow-none',
-          },
-        }}
-        allowedRedirectOrigins={(() => {
-          const origins = [
-            // Production domains
-            "https://aipowerranking.com",
-            "https://www.aipowerranking.com",
-            // Staging domains
-            "https://staging.aipowerranking.com",
-            // Local development
-            "http://localhost:3000",
-            "http://localhost:3008",
-            "http://localhost:3011",
-            "http://127.0.0.1:3000",
-            "http://127.0.0.1:3008",
-            "http://127.0.0.1:3011",
-          ];
+  // CRITICAL FIX: Always render ClerkProvider wrapper to provide React Context
+  // The provider itself is lightweight and only activates when configured
+  // This prevents "useSession can only be used within ClerkProvider" errors
+  return (
+    <ClerkProvider
+      publishableKey={process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"]}
+      signInUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_IN_URL"] || "/en/sign-in"}
+      signUpUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_UP_URL"] || "/en/sign-up"}
+      signInFallbackRedirectUrl={signInFallbackUrl}
+      signUpFallbackRedirectUrl={signUpFallbackUrl}
+      appearance={{
+        variables: {
+          colorPrimary: "#000000",
+        },
+        elements: {
+          formButtonPrimary: 'bg-primary hover:bg-primary-hover text-white',
+          card: 'shadow-none',
+        },
+      }}
+      allowedRedirectOrigins={(() => {
+        const origins = [
+          // Production domains
+          "https://aipowerranking.com",
+          "https://www.aipowerranking.com",
+          // Staging domains
+          "https://staging.aipowerranking.com",
+          // Local development
+          "http://localhost:3000",
+          "http://localhost:3008",
+          "http://localhost:3011",
+          "http://127.0.0.1:3000",
+          "http://127.0.0.1:3008",
+          "http://127.0.0.1:3011",
+        ];
 
-          // Add Vercel preview deployments dynamically (client-side only)
-          if (typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app")) {
-            origins.push(`https://${window.location.hostname}`);
-          }
+        // Add Vercel preview deployments dynamically (client-side only)
+        if (typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app")) {
+          origins.push(`https://${window.location.hostname}`);
+        }
 
-          return origins;
-        })()}
-        // Prevent automatic modal opening when user is already signed in
-        signInForceRedirectUrl={undefined}
-        signUpForceRedirectUrl={undefined}
-      >
-        {children}
-      </ClerkProvider>
-    );
-  }
-
-  // biome-ignore lint/complexity/noUselessFragments: Fragment needed for consistent return type
-  return <>{children}</>;
+        return origins;
+      })()}
+      // Prevent automatic modal opening when user is already signed in
+      signInForceRedirectUrl={undefined}
+      signUpForceRedirectUrl={undefined}
+    >
+      {children}
+    </ClerkProvider>
+  );
 }

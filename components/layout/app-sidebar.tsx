@@ -93,14 +93,15 @@ function SidebarContent(): React.JSX.Element {
 
   const fetchCategories = useCallback(async (): Promise<void> => {
     try {
-      const response = await fetch("/api/tools");
+      const response = await fetch("/api/rankings");
       const data = await response.json();
 
-      // Extract categories from tools
+      // Extract categories from rankings (only tools with ranking data)
       const categoryMap: Record<string, number> = {};
-      data.tools?.forEach((tool: { category?: string }) => {
-        if (tool.category) {
-          categoryMap[tool.category] = (categoryMap[tool.category] || 0) + 1;
+      data.rankings?.forEach((ranking: any) => {
+        const category = ranking.tool?.category;
+        if (category) {
+          categoryMap[category] = (categoryMap[category] || 0) + 1;
         }
       });
 
@@ -111,8 +112,8 @@ function SidebarContent(): React.JSX.Element {
         count: count as number,
       }));
 
-      // Calculate total
-      const total = data.tools?.length || 0;
+      // Calculate total from rankings
+      const total = data.rankings?.length || 0;
 
       // Add "All Categories" at the beginning
       const allCategories = [
