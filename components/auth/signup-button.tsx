@@ -27,7 +27,7 @@ function SignupForUpdatesButton({
   return (
     <>
       <SignedOut>
-        <SignInButton mode="modal" forceRedirectUrl={redirectUrl}>
+        <SignInButton mode="redirect" forceRedirectUrl={redirectUrl}>
           <Button variant={variant} size={size} className={className}>
             {text || "Sign In For Updates →"}
           </Button>

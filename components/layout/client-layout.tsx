@@ -6,11 +6,11 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { ErrorBoundary } from "@/components/error-boundary";
 import {
-  SignedInWrapper,
-  SignedOutWrapper,
-  SignInButton,
-  UserButtonWrapper,
-} from "@/components/auth/auth-components";
+  SignInButtonDirect,
+  SignedOutDirect,
+  SignedInDirect,
+  UserButtonDirect,
+} from "@/components/auth/clerk-direct-components";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { BuildTimeBadge } from "@/components/layout/build-time-badge";
 import { Footer } from "@/components/layout/footer";
@@ -81,18 +81,18 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
                 {/* Language selector */}
                 <LanguageSelector />
 
-                {/* Auth buttons - using wrappers that handle SSR properly */}
-                <SignedOutWrapper>
-                  <SignInButton mode="modal" forceRedirectUrl={`/${lang}`}>
+                {/* Auth buttons - using direct Clerk components */}
+                <SignedOutDirect>
+                  <SignInButtonDirect mode="redirect" forceRedirectUrl={`/${lang}`}>
                     <Button size="sm" variant="outline">
                       Sign In For Updates
                     </Button>
-                  </SignInButton>
-                </SignedOutWrapper>
+                  </SignInButtonDirect>
+                </SignedOutDirect>
 
-                <SignedInWrapper>
-                  <UserButtonWrapper afterSignOutUrl={`/${lang}`} />
-                </SignedInWrapper>
+                <SignedInDirect>
+                  <UserButtonDirect afterSignOutUrl={`/${lang}`} />
+                </SignedInDirect>
               </div>
             </div>
           </div>
