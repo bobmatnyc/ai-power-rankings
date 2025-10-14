@@ -33,32 +33,53 @@ const isProtectedRoute = createRouteMatcher([
   "/api/admin(.*)",
 ]);
 
-export default clerkMiddleware((auth, req: NextRequest) => {
+export default clerkMiddleware(async (auth, req: NextRequest) => {
   // Check if auth is disabled for development/testing
   if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
+    console.log("[middleware] Auth disabled, skipping checks");
     return NextResponse.next();
   }
+
+  const pathname = req.nextUrl.pathname;
+  console.log("[middleware] Processing request:", pathname);
 
   // Allow public routes without authentication check
   if (isPublicRoute(req)) {
+    console.log("[middleware] Public route, allowing access:", pathname);
     return NextResponse.next();
   }
 
-  const { userId } = auth();
+  // Use await with auth() to properly read the session
+  const authData = await auth();
+  const { userId, sessionId } = authData;
 
-  // Check if the route is protected and user is not authenticated
-  if (isProtectedRoute(req) && !userId) {
-    // Get the locale from the URL
-    const pathname = req.nextUrl.pathname;
-    const locale = pathname.split("/")[1] || "en";
+  console.log("[middleware] Auth data:", {
+    pathname,
+    userId: userId || "null",
+    sessionId: sessionId || "null",
+    isProtectedRoute: isProtectedRoute(req),
+    headers: {
+      cookie: req.headers.get("cookie")?.substring(0, 50) + "...",
+    }
+  });
 
-    // Build the sign-in URL
-    const signInUrl = new URL(`/${locale}/sign-in`, req.url);
-    signInUrl.searchParams.set("redirect_url", pathname);
+  // For protected routes, use Clerk's protect() method which handles auth automatically
+  if (isProtectedRoute(req)) {
+    if (!userId) {
+      console.log("[middleware] Protected route without userId, redirecting to sign-in");
+      // Get the locale from the URL
+      const locale = pathname.split("/")[1] || "en";
 
-    return NextResponse.redirect(signInUrl);
+      // Build the sign-in URL
+      const signInUrl = new URL(`/${locale}/sign-in`, req.url);
+      signInUrl.searchParams.set("redirect_url", pathname);
+
+      return NextResponse.redirect(signInUrl);
+    }
+    console.log("[middleware] Protected route with valid userId, allowing access");
   }
 
+  console.log("[middleware] Allowing access to:", pathname);
   // For all other routes, continue normally
   return NextResponse.next();
 });

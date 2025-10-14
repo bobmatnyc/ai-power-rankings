@@ -23,6 +23,16 @@ const nextConfig = {
   async headers() {
     return []
   },
+  // Image configuration for Next.js 16 compatibility
+  images: {
+    qualities: [75, 90, 100],
+    localPatterns: [
+      {
+        pathname: '/**',
+        search: '',
+      },
+    ],
+  },
 }
 
 module.exports = nextConfig
