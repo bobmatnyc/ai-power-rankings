@@ -206,7 +206,7 @@ function SidebarContent(): React.JSX.Element {
             loading="eager"
             priority
           />
-          <h1 className="text-2xl font-bold text-gradient leading-none">APR</h1>
+          <h1 className="text-2xl font-bold text-gradient leading-none -mb-1">APR</h1>
         </Link>
 
         <div className="space-y-6">
