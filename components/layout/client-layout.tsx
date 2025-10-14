@@ -65,9 +65,9 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
               <div className="flex items-center gap-3">
                 <SidebarTrigger className="hover:bg-muted" />
                 {/* Mobile logo */}
-                <div className="flex items-center gap-2 md:hidden">
+                <div className="flex items-end gap-2 md:hidden">
                   <CrownIcon size="sm" className="w-6 h-6" />
-                  <span className="font-bold text-sm">{dict.common.appName}</span>
+                  <span className="font-bold text-sm leading-none">{dict.common.appName}</span>
                 </div>
               </div>
 
