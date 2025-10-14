@@ -53,6 +53,9 @@ export const tools = pgTable(
     categoryIdx: index("tools_category_idx").on(table.category),
     statusIdx: index("tools_status_idx").on(table.status),
     nameIdx: index("tools_name_idx").on(table.name),
+    // Timestamp indexes for sorting and filtering recent updates
+    updatedAtIdx: index("tools_updated_at_idx").on(table.updatedAt),
+    createdAtIdx: index("tools_created_at_idx").on(table.createdAt),
     // GIN index for JSONB queries
     dataIdx: index("tools_data_gin_idx").using("gin", table.data),
   })
@@ -134,6 +137,7 @@ export const news = pgTable(
     slugIdx: uniqueIndex("news_slug_idx").on(table.slug),
     articleIdIdx: uniqueIndex("news_article_id_idx").on(table.articleId),
     publishedIdx: index("news_published_idx").on(table.publishedAt),
+    createdAtIdx: index("news_created_at_idx").on(table.createdAt),
     categoryIdx: index("news_category_idx").on(table.category),
     sourceIdx: index("news_source_idx").on(table.source),
     importanceIdx: index("news_importance_idx").on(table.importanceScore),
