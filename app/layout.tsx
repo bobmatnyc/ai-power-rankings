@@ -66,18 +66,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           as="image"
           type="image/webp"
         />
-
-        {/* Prefetch critical dynamic chunks for faster loading */}
-        <link
-          rel="prefetch"
-          href="/_next/static/chunks/client-rankings-optimized.js"
-          as="script"
-        />
-        <link
-          rel="prefetch"
-          href="/_next/static/chunks/whats-new-modal-client.js"
-          as="script"
-        />
       </head>
       <body
         className="antialiased"
