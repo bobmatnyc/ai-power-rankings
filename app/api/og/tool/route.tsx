@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 
-export const runtime = "edge";
+// Edge runtime is automatically used by ImageResponse - no need to declare explicitly
 
 interface ToolOGParams {
   name: string;

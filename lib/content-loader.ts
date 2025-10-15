@@ -1,4 +1,5 @@
 import path from "node:path";
+import { unstable_cache } from "next/cache";
 import fs from "fs-extra";
 import matter from "gray-matter";
 import { remark } from "remark";
@@ -25,51 +26,54 @@ export class ContentLoader {
   }
 
   async loadContent(locale: Locale, slug: string): Promise<ContentData | null> {
-    const cacheKey = `${locale}/${slug}`;
+    // Use Next.js unstable_cache for persistent caching across requests
+    // Static content rarely changes, so use 1 hour revalidation
+    const loadContentCached = unstable_cache(
+      async (loc: Locale, sl: string) => {
+        try {
+          // Try locale-specific content first
+          const localePath = path.join(process.cwd(), "src", "content", loc, `${sl}.md`);
+          let filePath = localePath;
 
-    // Check cache first
-    if (this.contentCache.has(cacheKey)) {
-      return this.contentCache.get(cacheKey)!;
-    }
+          // Fall back to English if locale-specific doesn't exist
+          if (!(await fs.pathExists(localePath))) {
+            filePath = path.join(process.cwd(), "src", "content", "en", `${sl}.md`);
 
-    try {
-      // Try locale-specific content first
-      const localePath = path.join(process.cwd(), "src", "content", locale, `${slug}.md`);
-      let filePath = localePath;
+            if (!(await fs.pathExists(filePath))) {
+              return null;
+            }
+          }
 
-      // Fall back to English if locale-specific doesn't exist
-      if (!(await fs.pathExists(localePath))) {
-        filePath = path.join(process.cwd(), "src", "content", "en", `${slug}.md`);
+          // Read and parse the markdown file
+          const fileContent = await fs.readFile(filePath, "utf-8");
+          const { data: frontmatter, content } = matter(fileContent);
 
-        if (!(await fs.pathExists(filePath))) {
+          // Convert markdown to HTML
+          const processedContent = await remark().use(html).process(content);
+          const htmlContent = processedContent.toString();
+
+          const contentData: ContentData = {
+            title: frontmatter["title"] || sl,
+            subtitle: frontmatter["subtitle"],
+            content,
+            htmlContent,
+            metadata: frontmatter,
+          };
+
+          return contentData;
+        } catch (error) {
+          console.error(`Error loading content ${sl} for locale ${loc}:`, error);
           return null;
         }
+      },
+      [`content-${locale}-${slug}`],
+      {
+        revalidate: 3600, // 1 hour cache
+        tags: [`content`, `content-${locale}`, `content-${slug}`]
       }
+    );
 
-      // Read and parse the markdown file
-      const fileContent = await fs.readFile(filePath, "utf-8");
-      const { data: frontmatter, content } = matter(fileContent);
-
-      // Convert markdown to HTML
-      const processedContent = await remark().use(html).process(content);
-      const htmlContent = processedContent.toString();
-
-      const contentData: ContentData = {
-        title: frontmatter["title"] || slug,
-        subtitle: frontmatter["subtitle"],
-        content,
-        htmlContent,
-        metadata: frontmatter,
-      };
-
-      // Cache the result
-      this.contentCache.set(cacheKey, contentData);
-
-      return contentData;
-    } catch (error) {
-      console.error(`Error loading content ${slug} for locale ${locale}:`, error);
-      return null;
-    }
+    return loadContentCached(locale, slug);
   }
 
   async listContent(locale: Locale): Promise<string[]> {
