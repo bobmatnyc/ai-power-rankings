@@ -68,9 +68,17 @@ const nextConfig = {
         ...config.optimization,
         splitChunks: {
           chunks: 'all',
-          maxInitialRequests: 25,
+          maxInitialRequests: 30,
           minSize: 20000,
           cacheGroups: {
+            // Handle Next.js framework separately
+            nextFramework: {
+              test: /[\\/]node_modules[\\/]next[\\/]/,
+              name: 'framework.next',
+              priority: 40,
+              reuseExistingChunk: true,
+              enforce: true,
+            },
             // Split Clerk into smaller chunks
             clerkCore: {
               test: /[\\/]node_modules[\\/]@clerk[\\/]clerk-js[\\/]/,
@@ -98,9 +106,9 @@ const nextConfig = {
               priority: 15,
               reuseExistingChunk: true,
             },
-            // Other vendors
+            // Other vendors (exclude Next.js)
             vendor: {
-              test: /[\\/]node_modules[\\/]/,
+              test: /[\\/]node_modules[\\/](?!next[\\/])/,
               name(module) {
                 // Get the package name
                 const match = module.context && module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/);

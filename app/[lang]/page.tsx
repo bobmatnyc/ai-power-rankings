@@ -69,6 +69,7 @@ const WhatsNewModalClient = NextDynamic(() => import("@/components/ui/whats-new-
 
 // Enable ISR with 5-minute revalidation for optimal performance
 // Homepage provides static fallback data, so we can use ISR for edge caching
+// With static categories, layout is now static and ISR works automatically
 export const revalidate = 300; // Revalidate every 5 minutes
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
