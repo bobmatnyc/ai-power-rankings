@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 /**
  * Lighthouse Performance: Defer analytics to reduce main-thread work
  * These components are loaded after hydration to avoid blocking the main thread
+ * Only loads in production to avoid 404 errors in development
  */
 
 const Analytics = dynamic(
@@ -18,6 +19,11 @@ const SpeedInsights = dynamic(
 );
 
 export function DeferredAnalytics() {
+  // Only load analytics in production
+  if (process.env.NODE_ENV !== "production") {
+    return null;
+  }
+
   return (
     <>
       <Analytics />
