@@ -37,6 +37,11 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
   const currentTags = searchParams.get("tags")?.split(",") || [];
   const { dict, lang } = useI18n();
 
+  // Debug: Log current category for troubleshooting
+  if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+    console.log("[Sidebar] currentCategory:", currentCategory, "from URL:", searchParams.get("category"));
+  }
+
   const navigationItems = [
     {
       title: dict.navigation.home,
@@ -251,11 +256,13 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
             <div className="space-y-1">
               {categories.map((category) => {
                 // Determine if this category is currently active
+                // When no category param: currentCategory = "all"
+                // When ?category=X: currentCategory = X
                 const isActive = currentCategory === category.id;
 
                 return (
                   <Link
-                    key={category.id}
+                    key={`${category.id}-${currentCategory}`}
                     href={createFilterUrl("category", category.id)}
                     onClick={handleNavClick}
                     className={cn(
