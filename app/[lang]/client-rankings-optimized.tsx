@@ -403,9 +403,14 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
     }
   }, []);
 
-  // Fetch recent updates separately on component mount
+  // Defer recent updates fetch for better initial performance
+  // Wait 2 seconds after mount to fetch non-critical data
   useEffect(() => {
-    fetchRecentUpdates();
+    const timer = setTimeout(() => {
+      fetchRecentUpdates();
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, [fetchRecentUpdates]);
 
   useEffect(() => {
@@ -421,8 +426,10 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
       setCategoriesCount(uniqueCats.size);
       setAvgScore(avgScoreVal);
 
-      // Still fetch tools API for more accurate baseline scores
-      fetchToolsStatistics();
+      // Defer tools statistics fetch for better initial performance
+      setTimeout(() => {
+        fetchToolsStatistics();
+      }, 1500);
       return;
     }
 

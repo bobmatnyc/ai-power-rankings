@@ -149,9 +149,11 @@ export function CrownIcon({ size = "md", className, priority = false }: CrownIco
 }
 
 /**
- * Responsive Crown Icon - Optimized for T-031
+ * Responsive Crown Icon - Optimized for T-031 (Server-Side)
  *
- * Uses different sizes based on screen size for optimal performance.
+ * CRITICAL MOBILE OPTIMIZATION: Removed client-side rendering to fix LCP.
+ * This is now a pure server component without useState or client-side logic.
+ * Renders immediately on server, improving LCP from 7.1s to target <2.5s.
  */
 interface ResponsiveCrownIconProps {
   className?: string;
@@ -159,8 +161,9 @@ interface ResponsiveCrownIconProps {
 }
 
 export function ResponsiveCrownIcon({ className, priority = false }: ResponsiveCrownIconProps) {
+  // Server-side only - no client state needed
   return (
-    <OptimizedImage
+    <Image
       src="/crown-of-technology.webp"
       alt="AI Power Ranking Icon"
       width={64}
