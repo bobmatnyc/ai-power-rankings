@@ -22,14 +22,14 @@ export interface RankingWeightsV7 {
 }
 
 export const ALGORITHM_V7_WEIGHTS: RankingWeightsV7 = {
-  agenticCapability: 0.25,
-  innovation: 0.125,
-  technicalPerformance: 0.125,
+  agenticCapability: 0.35, // Increased from 0.25 to emphasize SWE-bench scoring
+  innovation: 0.10, // Reduced from 0.125
+  technicalPerformance: 0.10, // Reduced from 0.125
   developerAdoption: 0.125,
   marketTraction: 0.125,
-  businessSentiment: 0.15,
+  businessSentiment: 0.125, // Reduced from 0.15
   developmentVelocity: 0.05,
-  platformResilience: 0.05,
+  platformResilience: 0.025, // Reduced from 0.05
 };
 
 export interface ToolMetricsV7 {
