@@ -14,48 +14,27 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sidebar, useSidebar } from "@/components/ui/sidebar";
 import { useRankingChanges } from "@/contexts/ranking-changes-context";
 import { useI18n } from "@/i18n/client";
-import type { Dictionary } from "@/i18n/get-dictionary";
+import type { Category } from "@/lib/db/repositories/categories";
 import { CategoryIcon } from "@/lib/category-icons";
-import { loggers } from "@/lib/logger-client";
 import { cn } from "@/lib/utils";
 
 // Navigation items will be built dynamically with i18n
 
-// Helper function to get category name from dictionary
-function getCategoryName(categoryId: string, categories: Dictionary["categories"]): string {
-  const categoryKey = categoryId.replace(/-/g, "") as keyof typeof categories;
-  return (
-    categories[categoryKey] ||
-    categoryId
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ")
-  );
-}
-
-interface Category {
-  id: string;
-  name: string;
-  count: number;
-}
-
 // Tag filters will be built dynamically with i18n
 
-function SidebarContent(): React.JSX.Element {
+function SidebarContent({ categories }: { categories: Category[] }): React.JSX.Element {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { isMobile, setOpenMobile } = useSidebar();
   const { changes } = useRankingChanges();
   const currentCategory = searchParams.get("category") || "all";
   const currentTags = searchParams.get("tags")?.split(",") || [];
-  const [categories, setCategories] = useState<Category[]>([]);
   const { dict, lang } = useI18n();
 
   const navigationItems = [
@@ -90,48 +69,6 @@ function SidebarContent(): React.JSX.Element {
       icon: Info,
     },
   ];
-
-  const fetchCategories = useCallback(async (): Promise<void> => {
-    try {
-      const response = await fetch("/api/rankings");
-      const data = await response.json();
-
-      // Extract categories from rankings (only tools with ranking data)
-      const categoryMap: Record<string, number> = {};
-      data.rankings?.forEach((ranking: any) => {
-        const category = ranking.tool?.category;
-        if (category) {
-          categoryMap[category] = (categoryMap[category] || 0) + 1;
-        }
-      });
-
-      // Convert the object to array format
-      const categoryArray: Category[] = Object.entries(categoryMap).map(([id, count]) => ({
-        id,
-        name: getCategoryName(id, dict.categories),
-        count: count as number,
-      }));
-
-      // Calculate total from rankings
-      const total = data.rankings?.length || 0;
-
-      // Add "All Categories" at the beginning
-      const allCategories = [
-        { id: "all", name: "All Categories", count: total },
-        ...categoryArray.sort((a, b) => b.count - a.count),
-      ];
-
-      setCategories(allCategories);
-    } catch (error) {
-      loggers.tools.error("Failed to fetch categories", { error });
-      // Fallback to some default categories
-      setCategories([{ id: "all", name: "All Categories", count: 0 }]);
-    }
-  }, [dict.categories]);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
 
   const handleNavClick = (): void => {
     if (isMobile) {
@@ -433,6 +370,6 @@ function SidebarContent(): React.JSX.Element {
   );
 }
 
-export function AppSidebar(): React.JSX.Element {
-  return <SidebarContent />;
+export function AppSidebar({ categories }: { categories: Category[] }): React.JSX.Element {
+  return <SidebarContent categories={categories} />;
 }

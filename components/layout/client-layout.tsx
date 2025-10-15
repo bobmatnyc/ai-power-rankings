@@ -22,12 +22,15 @@ import { RankingChangesProvider } from "@/contexts/ranking-changes-context";
 import { I18nProvider, useI18n } from "@/i18n/client";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import type { Category } from "@/lib/db/repositories/categories";
 
 // CRITICAL FIX: Stabilize component for HMR
 const ClientLayoutContent = React.memo(function ClientLayoutContent({
   children,
+  categories,
 }: {
   children: React.ReactNode;
+  categories: Category[];
 }) {
   const pathname = usePathname();
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -54,7 +57,7 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
+        <AppSidebar categories={categories} />
         <main className="flex-1 flex flex-col overflow-hidden relative">
           <div
             className={`fixed top-0 left-0 right-0 md:left-auto md:relative z-20 bg-background/95 backdrop-blur-sm border-b border-border/50 transition-transform duration-300 md:translate-y-0 ${
@@ -118,16 +121,18 @@ export const ClientLayout = React.memo(function ClientLayout({
   children,
   lang,
   dict,
+  categories,
 }: {
   children: React.ReactNode;
   lang: Locale;
   dict: Dictionary;
+  categories: Category[];
 }) {
   return (
     <ErrorBoundary>
       <I18nProvider dict={dict} lang={lang}>
         <RankingChangesProvider>
-          <ClientLayoutContent>{children}</ClientLayoutContent>
+          <ClientLayoutContent categories={categories}>{children}</ClientLayoutContent>
         </RankingChangesProvider>
       </I18nProvider>
     </ErrorBoundary>

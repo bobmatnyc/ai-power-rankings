@@ -1,6 +1,6 @@
 {
   "name": "aipowerranking",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3000",
@@ -84,6 +84,7 @@
     "@types/react": "^19.1.15",
     "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.0.1",
+    "critters": "^0.0.23",
     "drizzle-kit": "^0.31.5",
     "postcss": "^8",
     "puppeteer": "^24.22.3",
