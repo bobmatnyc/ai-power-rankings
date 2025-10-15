@@ -4,7 +4,7 @@ import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { ClientLayout } from "@/components/layout/client-layout";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { getCategoriesWithCounts } from "@/lib/db/repositories/categories";
+import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
 
 // Self-hosted fonts for optimal performance
 // Eliminates external DNS lookups and reduces FCP by 400-800ms
@@ -108,10 +108,10 @@ export default async function LanguageLayout({
     console.log("[Layout] LanguageLayout: Dictionary loaded:", !!dict);
     console.log("[Layout] LanguageLayout: Dictionary keys:", dict ? Object.keys(dict) : "No dict");
 
-    // Fetch categories server-side to eliminate client-side API waterfall
-    // This improves FCP by 300-800ms by preventing sequential data fetching
-    const categories = await getCategoriesWithCounts();
-    console.log("[Layout] LanguageLayout: Categories fetched:", categories.length);
+    // Use static categories generated at build time
+    // This eliminates the 1000-1500ms database query and enables ISR
+    const categories = STATIC_CATEGORIES;
+    console.log("[Layout] LanguageLayout: Static categories loaded:", categories.length);
 
     // IMPORTANT: Do NOT render <html> or <body> tags in nested layouts
     // Only the root layout (/app/layout.tsx) should have these

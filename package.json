@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3000",
-    "build": "next build",
+    "build": "npm run generate-categories && next build",
+    "build:next": "next build",
     "start": "next start",
     "lint": "next lint",
+    "generate-categories": "npx tsx scripts/generate-static-categories.ts",
     "migrate:prod-to-dev": "tsx scripts/migrate-prod-to-dev.ts",
     "db:compare": "tsx scripts/compare-db-schemas.ts",
     "db:verify-tools": "tsx scripts/verify-tools-schema.ts",
