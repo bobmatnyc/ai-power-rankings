@@ -1,7 +1,21 @@
-# Modern browsers only - targets ES6+ capable browsers
-# This reduces bundle size by avoiding unnecessary transpilation
-> 0.5%
-last 2 versions
+# Target only modern browsers to eliminate legacy JavaScript polyfills
+# This removes support for Array.prototype.at, Array.prototype.flat, etc. polyfills
+# Targeting browsers from 2020 onwards (last 4 years)
+
+# Modern evergreen browsers
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Safari versions
+last 2 Edge versions
+
+# Exclude old browsers that would require polyfills
+not IE 11
 not dead
-not ie 11
 not op_mini all
+
+# Minimum market share to avoid edge cases
+> 0.2%
+
+# Explicitly support ES2020+ features (includes flat, flatMap, Object.fromEntries, etc.)
+supports es6-module
+supports es6-module-dynamic-import
