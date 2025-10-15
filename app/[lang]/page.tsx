@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LazySection } from "@/components/ui/lazy-section";
-import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
+import { ResponsiveCrownIcon } from "@/components/ui/crown-icon-server";
 import { RankingsTableSkeleton } from "@/components/ui/skeleton";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
