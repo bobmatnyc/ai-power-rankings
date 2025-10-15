@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RankingChange } from "@/components/ui/ranking-change";
@@ -47,6 +50,8 @@ export function RankingCard({
   showDetails = true,
   lang = "en",
 }: RankingCardProps): React.JSX.Element {
+  const router = useRouter();
+
   const getMedal = (rank: number): string => {
     switch (rank) {
       case 1:
@@ -115,18 +120,17 @@ export function RankingCard({
 
               {/* Top section - Badges */}
               <div className="flex flex-wrap gap-2 mb-3">
-                <Link
-                  href={`/${lang}/tools?category=${ranking.tool.category}`}
-                  onClick={(e) => e.stopPropagation()}
-                  className="inline-block"
+                <Badge
+                  className={`${getCategoryColor(ranking.tool.category)} cursor-pointer hover:opacity-80 flex items-center gap-1.5`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    router.push(`/${lang}/tools?category=${ranking.tool.category}`);
+                  }}
                 >
-                  <Badge
-                    className={`${getCategoryColor(ranking.tool.category)} cursor-pointer hover:opacity-80 flex items-center gap-1.5`}
-                  >
-                    <CategoryIcon category={ranking.tool.category} size={14} />
-                    <span>{ranking.tool.category.replace(/-/g, " ")}</span>
-                  </Badge>
-                </Link>
+                  <CategoryIcon category={ranking.tool.category} size={14} />
+                  <span>{ranking.tool.category.replace(/-/g, " ")}</span>
+                </Badge>
                 {ranking.scores?.overall && (
                   <Badge variant="outline">Score: {ranking.scores.overall.toFixed(1)}</Badge>
                 )}
