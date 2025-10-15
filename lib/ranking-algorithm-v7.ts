@@ -1,11 +1,12 @@
 /**
- * Algorithm v7.0: Smart Defaults & Proxy Metrics
+ * Algorithm v7.2: Smart Defaults & Proxy Metrics with Enhanced SWE-bench Weight
  *
  * Key improvements:
  * - Works with available data (news mentions, pricing, features, context window)
  * - Produces 0-100 scores with good distribution
  * - Uses smart defaults and proxy metrics for missing data
  * - Ensures major tools rank appropriately
+ * - v7.2: Increased agenticCapability weight from 0.25 to 0.35 to emphasize SWE-bench scoring
  */
 
 import { calculateToolNewsImpact, type NewsArticle } from "./ranking-news-impact";
@@ -448,7 +449,7 @@ export class RankingEngineV7 {
               newsImpact: newsImpact.totalImpact,
             }
           : undefined,
-      algorithm_version: "v7.0",
+      algorithm_version: "v7.2",
     };
   }
 
@@ -478,9 +479,9 @@ export class RankingEngineV7 {
    */
   static getAlgorithmInfo() {
     return {
-      version: "v7.0",
-      name: "Smart Defaults & Proxy Metrics",
-      description: "Algorithm that works with available data and produces 0-100 scores",
+      version: "v7.2",
+      name: "Smart Defaults & Proxy Metrics with Enhanced SWE-bench Weight",
+      description: "Algorithm that works with available data and produces 0-100 scores with increased emphasis on SWE-bench scoring",
       weights: ALGORITHM_V7_WEIGHTS,
       features: [
         "Works with available data (news mentions, pricing, features)",
@@ -490,8 +491,9 @@ export class RankingEngineV7 {
         "Pricing tier as market position proxy",
         "Category-based scoring adjustments",
         "Ensures major tools rank appropriately",
+        "Enhanced SWE-bench weight (35% vs 25% in v7.0) for better agentic capability assessment",
       ],
-      updatedAt: "2025-07-22",
+      updatedAt: "2025-10-15",
     };
   }
 }
