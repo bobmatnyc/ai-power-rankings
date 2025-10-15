@@ -63,11 +63,16 @@ export function SignupForUpdatesModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle>{dict.newsletter?.modal?.title || "Sign In"}</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            {dict.newsletter?.modal?.title || "Sign In"}
+            <span className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/30 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:text-blue-400">
+              Coming Soon
+            </span>
+          </DialogTitle>
           <DialogDescription>
             {isSignedIn
               ? "You're signed in! Welcome to AI Power Rankings."
-              : "Sign in to access AI Power Rankings"}
+              : "Sign in to access AI Power Rankings (authentication coming soon)"}
           </DialogDescription>
         </DialogHeader>
 
