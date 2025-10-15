@@ -152,8 +152,9 @@ export async function GET() {
             toolSlug = ranking["tool_slug"]; // fallback to ranking data
           }
 
-          const category = tool?.category || "unknown";
-          const status = tool?.status || "active";
+          // Prefer category from rankings data (more up-to-date), then fall back to tool lookup
+          const category = ranking["category"] || tool?.category || "unknown";
+          const status = ranking["status"] || tool?.status || "active";
           const overallScore = ranking["score"] || ranking["total_score"] || 0;
           const partialFactorScores = ranking["factor_scores"] || {};
 
