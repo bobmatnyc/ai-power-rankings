@@ -33,7 +33,6 @@ import { articleProcessingLogs, articleRankingsChanges, articles } from "./artic
 import * as schema from "./schema";
 
 // Configure Neon for optimal performance
-neonConfig.fetchConnectionCache = true;
 neonConfig.poolQueryViaFetch = true;
 
 // Connection pool for better performance
