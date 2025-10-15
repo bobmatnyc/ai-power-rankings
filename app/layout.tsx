@@ -56,10 +56,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         {/* Phase 2 FCP Optimizations - DNS Prefetch & Preconnect */}
-        <link rel="dns-prefetch" href="https://clerk.com" />
-        <link rel="dns-prefetch" href="https://api.clerk.com" />
-        <link rel="preconnect" href="https://clerk.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://api.clerk.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://easy-salmon-30.clerk.accounts.dev" />
+        <link rel="preconnect" href="https://easy-salmon-30.clerk.accounts.dev" crossOrigin="anonymous" />
 
         {/* Lighthouse Performance: Preload LCP image for faster rendering */}
         <link
