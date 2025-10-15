@@ -2,6 +2,9 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// Quick Win #4: Only log in development to save 10-30ms TTFB in production
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 // Define public routes that don't require authentication
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -36,16 +39,22 @@ const isProtectedRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   // Check if auth is disabled for development/testing
   if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
-    console.log("[middleware] Auth disabled, skipping checks");
+    if (isDevelopment) {
+      console.log("[middleware] Auth disabled, skipping checks");
+    }
     return NextResponse.next();
   }
 
   const pathname = req.nextUrl.pathname;
-  console.log("[middleware] Processing request:", pathname);
+  if (isDevelopment) {
+    console.log("[middleware] Processing request:", pathname);
+  }
 
   // Allow public routes without authentication check
   if (isPublicRoute(req)) {
-    console.log("[middleware] Public route, allowing access:", pathname);
+    if (isDevelopment) {
+      console.log("[middleware] Public route, allowing access:", pathname);
+    }
     return NextResponse.next();
   }
 
@@ -53,20 +62,24 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   const authData = await auth();
   const { userId, sessionId } = authData;
 
-  console.log("[middleware] Auth data:", {
-    pathname,
-    userId: userId || "null",
-    sessionId: sessionId || "null",
-    isProtectedRoute: isProtectedRoute(req),
-    headers: {
-      cookie: req.headers.get("cookie")?.substring(0, 50) + "...",
-    }
-  });
+  if (isDevelopment) {
+    console.log("[middleware] Auth data:", {
+      pathname,
+      userId: userId || "null",
+      sessionId: sessionId || "null",
+      isProtectedRoute: isProtectedRoute(req),
+      headers: {
+        cookie: req.headers.get("cookie")?.substring(0, 50) + "...",
+      }
+    });
+  }
 
   // For protected routes, use Clerk's protect() method which handles auth automatically
   if (isProtectedRoute(req)) {
     if (!userId) {
-      console.log("[middleware] Protected route without userId, redirecting to sign-in");
+      if (isDevelopment) {
+        console.log("[middleware] Protected route without userId, redirecting to sign-in");
+      }
       // Get the locale from the URL
       const locale = pathname.split("/")[1] || "en";
 
@@ -76,10 +89,14 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
       return NextResponse.redirect(signInUrl);
     }
-    console.log("[middleware] Protected route with valid userId, allowing access");
+    if (isDevelopment) {
+      console.log("[middleware] Protected route with valid userId, allowing access");
+    }
   }
 
-  console.log("[middleware] Allowing access to:", pathname);
+  if (isDevelopment) {
+    console.log("[middleware] Allowing access to:", pathname);
+  }
   // For all other routes, continue normally
   return NextResponse.next();
 });

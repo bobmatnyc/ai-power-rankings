@@ -11,6 +11,7 @@ import { RankingsTableSkeleton } from "@/components/ui/skeleton";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
+import { getAllKeywords } from "@/lib/metadata/static-keywords";
 
 interface ToolData {
   id: string;
@@ -52,20 +53,22 @@ interface PageProps {
 }
 
 // Dynamic import for T-031 performance optimization
-// Note: Cannot use ssr: false in Server Components, rely on client component handling
+// Phase 2 FCP: Dynamic imports are prefetched via layout.tsx for faster loading
+// Note: ssr: false not supported in Server Components - these components handle client-only logic internally
 const ClientRankings = NextDynamic(() => import("./client-rankings-optimized"), {
   loading: () => <RankingsTableSkeleton />,
 });
 
 // Dynamic import for T-033 What's New modal
+// Phase 2 FCP: Prefetched in layout.tsx for faster loading
+// Note: Already optimized with dynamic import, ssr:false not applicable in Server Components
 const WhatsNewModalClient = NextDynamic(() => import("@/components/ui/whats-new-modal-client"), {
-  loading: () => <div></div>,
+  loading: () => null, // No loading state needed for modal
 });
 
-// Force dynamic rendering to ensure API calls work at runtime
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-export const fetchCache = "force-no-store";
+// Enable ISR with 5-minute revalidation for optimal performance
+// Homepage provides static fallback data, so we can use ISR for edge caching
+export const revalidate = 300; // Revalidate every 5 minutes
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
@@ -80,84 +83,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const baseUrl = getUrl();
     console.log("[Metadata] Base URL from getUrl:", baseUrl);
 
-    // Fetch all tools to include in keywords - with enhanced error handling
-    let toolNames: string[] = [];
-    try {
-      // Only fetch tools if we have a valid base URL
-      if (baseUrl && baseUrl.trim() !== "") {
-        console.log("[Metadata] Attempting to fetch tools for SEO");
-        const toolsUrl = `${baseUrl}/api/tools`;
-
-        // Enhanced fetch with more robust error handling
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
-
-        try {
-          const response = await fetch(toolsUrl, {
-            next: { revalidate: 300 }, // Cache for 5 minutes
-            signal: controller.signal,
-            headers: {
-              Accept: "application/json",
-              "User-Agent": "AI-Power-Rankings-Server/1.0",
-            },
-          });
-
-          clearTimeout(timeoutId);
-
-          if (response.ok) {
-            const data = await response.json();
-            // Handle both direct array and object with tools property
-            // API returns { tools: [...], _source: "json-db", _timestamp: "..." }
-            const tools = Array.isArray(data) ? data : data.tools || [];
-
-            // Ensure tools is an array and get all active tool names
-            if (Array.isArray(tools)) {
-              toolNames = tools
-                .filter((tool: ToolData) => tool.status === "active")
-                .map((tool: ToolData) => tool.name)
-                .filter(Boolean); // Remove any null/undefined names
-              console.log("[Metadata] Fetched", toolNames.length, "tool names for SEO");
-            }
-          } else {
-            console.warn("[Metadata] Tools API returned non-OK status:", response.status);
-          }
-        } catch (fetchError) {
-          clearTimeout(timeoutId);
-          console.warn("[Metadata] Fetch error for tools API:", fetchError);
-        }
-      } else {
-        console.log("[Metadata] Skipping tools fetch - no valid base URL");
-      }
-    } catch (error) {
-      console.error("[Metadata] Error fetching tools for SEO:", error);
-      // Continue with empty toolNames array for graceful degradation
-    }
-
-    // Get existing keywords from dictionary
+    // Use pre-generated static keywords (no API fetch needed)
+    // This eliminates 300-3000ms metadata generation delay
     const baseKeywords = dict.seo?.keywords || "";
+    const allKeywords = getAllKeywords(baseKeywords);
 
-    // Add all tool names to keywords
-    const allKeywords = [
-      baseKeywords,
-      ...toolNames,
-      // Add tool comparison keywords (only for tools with valid names)
-      ...toolNames
-        .slice(0, 5)
-        .filter(Boolean)
-        .map((tool) => `${tool} AI`),
-      ...toolNames
-        .slice(0, 5)
-        .filter(Boolean)
-        .map((tool) => `${tool} ranking`),
-      // Add category keywords
-      "AI coding assistant",
-      "AI code editor",
-      "autonomous coding agent",
-      "AI app builder",
-    ]
-      .filter(Boolean) // Remove any null/undefined/empty values
-      .filter((keyword) => typeof keyword === "string" && keyword.trim().length > 0) // Ensure valid strings
-      .join(", ");
+    console.log("[Metadata] Using static keywords (no API fetch required)");
 
     // Handle cases where baseUrl might be empty
     const metadataUrl = baseUrl || "";
@@ -212,7 +143,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         : undefined,
     };
 
-    console.log("[Metadata] Successfully generated metadata");
+    console.log("[Metadata] Successfully generated metadata (static keywords)");
     return metadata;
   } catch (error) {
     console.error("[Metadata] Critical error generating metadata:", error);

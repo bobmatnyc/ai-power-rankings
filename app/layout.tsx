@@ -55,6 +55,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // between server and client rendering in internationalized routes
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        {/* Phase 2 FCP Optimizations - DNS Prefetch & Preconnect */}
+        <link rel="dns-prefetch" href="https://clerk.com" />
+        <link rel="dns-prefetch" href="https://api.clerk.com" />
+        <link rel="preconnect" href="https://clerk.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://api.clerk.com" crossOrigin="anonymous" />
+
+        {/* Prefetch critical dynamic chunks for faster loading */}
+        <link
+          rel="prefetch"
+          href="/_next/static/chunks/client-rankings-optimized.js"
+          as="script"
+        />
+        <link
+          rel="prefetch"
+          href="/_next/static/chunks/whats-new-modal-client.js"
+          as="script"
+        />
+      </head>
       <body
         className="antialiased"
         style={{

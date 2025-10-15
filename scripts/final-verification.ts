@@ -1,128 +1,147 @@
-#!/usr/bin/env node
 /**
- * Final verification of incremental update system
+ * Final verification that all 7 tools are properly integrated
  */
 
-import { closeDb, getDb } from "@/lib/db/connection";
-import { tools } from "@/lib/db/schema";
-import { articles, articleRankingsChanges } from "@/lib/db/article-schema";
-import { sql, gte } from "drizzle-orm";
+import { getDb } from "../lib/db/connection";
+import { tools, rankings } from "../lib/db/schema";
+import { eq } from "drizzle-orm";
 
-async function finalVerification() {
-  try {
-    console.log("🔍 FINAL VERIFICATION");
-    console.log("=".repeat(70));
-    console.log();
+const NEW_TOOLS = [
+  { slug: "openai-codex", expectedScore: 92, category: "autonomous-agent" },
+  { slug: "greptile", expectedScore: 90, category: "other" },
+  { slug: "google-gemini-cli", expectedScore: 88, category: "open-source-framework" },
+  { slug: "graphite", expectedScore: 87, category: "other" },
+  { slug: "qwen-code", expectedScore: 86, category: "open-source-framework" },
+  { slug: "gitlab-duo", expectedScore: 84, category: "other" },
+  { slug: "anything-max", expectedScore: 80, category: "autonomous-agent" },
+];
 
-    const db = getDb();
-    if (!db) throw new Error("DB not connected");
+async function verifyEverything() {
+  const db = getDb();
+  if (!db) {
+    console.error("❌ Database connection not available");
+    process.exit(1);
+  }
 
-    // Test 1: Check all tools have baseline scores
-    console.log("Test 1: Baseline Scores");
-    const allActiveTools = await db.select().from(tools);
-    const toolsWithBaseline = allActiveTools.filter(t => {
-      const baseline = t.baselineScore as any;
-      return baseline && typeof baseline === 'object' && baseline.overallScore > 0;
-    });
-    console.log(`   ✓ ${toolsWithBaseline.length}/${allActiveTools.length} active tools have baseline scores`);
+  console.log("🔍 FINAL VERIFICATION OF 7 NEW TOOLS\n");
+  console.log("================================================================================\n");
 
-    // Test 2: Check tools with deltas
-    const toolsWithDeltas = await db
-      .select()
+  let allPassed = true;
+
+  // 1. Verify tools table has all scores
+  console.log("1️⃣  TOOLS TABLE VERIFICATION");
+  console.log("--------------------------------------------------------------------------------");
+
+  for (const toolData of NEW_TOOLS) {
+    const result = await db
+      .select({
+        name: tools.name,
+        slug: tools.slug,
+        category: tools.category,
+        currentScore: tools.currentScore,
+        baselineScore: tools.baselineScore,
+        deltaScore: tools.deltaScore,
+      })
       .from(tools)
-      .where(sql`(${tools.deltaScore}->>'overallScore')::float != 0`);
-    console.log(`   ✓ ${toolsWithDeltas.length} tools have non-zero delta scores`);
+      .where(eq(tools.slug, toolData.slug))
+      .limit(1);
 
-    // Test 3: Verify current_score = baseline_score + delta_score
-    let allMatch = true;
-    for (const tool of toolsWithDeltas.slice(0, 5)) {
-      const baseline = tool.baselineScore as any;
-      const delta = tool.deltaScore as any;
-      const current = tool.currentScore as any;
-      
-      const calculated = baseline.overallScore + delta.overallScore;
-      const stored = current.overallScore;
-      const diff = Math.abs(calculated - stored);
-      
-      if (diff > 0.01) {
-        console.log(`   ✗ ${tool.name}: calculated=${calculated.toFixed(2)}, stored=${stored.toFixed(2)}`);
-        allMatch = false;
+    if (result.length === 0) {
+      console.log(`❌ ${toolData.slug}: NOT FOUND IN TOOLS TABLE`);
+      allPassed = false;
+      continue;
+    }
+
+    const tool = result[0];
+    const currentScore = tool.currentScore as any;
+    const score = currentScore?.overallScore;
+
+    const hasScore = score !== null && score !== undefined;
+    const scoreMatches = score === toolData.expectedScore;
+    const hasBaseline = tool.baselineScore && Object.keys(tool.baselineScore as object).length > 0;
+    const hasDelta = tool.deltaScore !== null;
+    const categoryCorrect = tool.category === toolData.category;
+
+    const status = hasScore && scoreMatches && hasBaseline && hasDelta && categoryCorrect ? "✅" : "❌";
+
+    console.log(`${status} ${tool.name}`);
+    console.log(`   Score: ${score} (expected: ${toolData.expectedScore}) ${scoreMatches ? "✅" : "❌"}`);
+    console.log(`   Category: ${tool.category} (expected: ${toolData.category}) ${categoryCorrect ? "✅" : "❌"}`);
+    console.log(`   Has baseline: ${hasBaseline ? "✅" : "❌"}`);
+    console.log(`   Has delta: ${hasDelta ? "✅" : "❌"}`);
+
+    if (!hasScore || !scoreMatches || !hasBaseline || !hasDelta || !categoryCorrect) {
+      allPassed = false;
+    }
+  }
+
+  // 2. Verify rankings table contains all tools
+  console.log("\n2️⃣  RANKINGS TABLE VERIFICATION");
+  console.log("--------------------------------------------------------------------------------");
+
+  const currentRankings = await db
+    .select()
+    .from(rankings)
+    .where(eq(rankings.isCurrent, true))
+    .limit(1);
+
+  if (currentRankings.length === 0) {
+    console.log("❌ No current rankings found");
+    allPassed = false;
+  } else {
+    const ranking = currentRankings[0];
+    const rankingsData = ranking.data as any;
+    let toolsList: any[] = [];
+
+    if (Array.isArray(rankingsData)) {
+      toolsList = rankingsData;
+    }
+
+    for (const toolData of NEW_TOOLS) {
+      const found = toolsList.find((t) => t.tool_slug === toolData.slug);
+
+      if (!found) {
+        console.log(`❌ ${toolData.slug}: NOT FOUND IN RANKINGS`);
+        allPassed = false;
+      } else {
+        const scoreMatches = found.score === toolData.expectedScore;
+        const hasFactorScores =
+          found.factor_scores && Object.keys(found.factor_scores).length > 0;
+
+        console.log(
+          `${scoreMatches && hasFactorScores ? "✅" : "❌"} ${found.tool_name} - Position ${found.position}, Score ${found.score}`
+        );
+
+        if (!scoreMatches) {
+          console.log(`   ⚠️  Score mismatch: ${found.score} vs expected ${toolData.expectedScore}`);
+          allPassed = false;
+        }
+
+        if (!hasFactorScores) {
+          console.log(`   ⚠️  Missing factor scores`);
+          allPassed = false;
+        }
       }
     }
-    if (allMatch) {
-      console.log(`   ✓ All current scores correctly calculated (baseline + delta)`);
-    }
-
-    // Test 4: Check article processing
-    const postMayArticles = await db
-      .select()
-      .from(articles)
-      .where(gte(articles.publishedDate, new Date('2025-06-01')));
-    console.log(`   ✓ ${postMayArticles.length} articles published after May 2025`);
-
-    // Test 5: Check ranking changes
-    const totalChanges = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(articleRankingsChanges);
-    const postMayChanges = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(articleRankingsChanges)
-      .where(gte(articleRankingsChanges.createdAt, new Date('2025-06-01')));
-    console.log(`   ✓ ${postMayChanges[0]?.count || 0} ranking changes from post-May articles`);
-    console.log(`   ✓ ${totalChanges[0]?.count || 0} total ranking changes tracked`);
-
-    // Test 6: Verify no duplicate processing
-    const articlesWithChanges = await db
-      .select({
-        articleId: articleRankingsChanges.articleId,
-        count: sql<number>`count(*)::int`
-      })
-      .from(articleRankingsChanges)
-      .where(gte(articleRankingsChanges.createdAt, new Date('2025-06-01')))
-      .groupBy(articleRankingsChanges.articleId)
-      .having(sql`count(*) > 0`);
-    console.log(`   ✓ ${articlesWithChanges.length} articles have ranking changes recorded`);
-
-    // Test 7: Check data integrity
-    const toolsWithScores = await db
-      .select()
-      .from(tools)
-      .where(sql`(${tools.currentScore}->>'overallScore')::float > 0`)
-      .limit(3);
-    
-    console.log();
-    console.log("Sample Tool Verification:");
-    for (const tool of toolsWithScores) {
-      const baseline = tool.baselineScore as any;
-      const delta = tool.deltaScore as any;
-      const current = tool.currentScore as any;
-      
-      console.log(`   ${tool.name}:`);
-      console.log(`      Baseline: ${baseline.overallScore.toFixed(1)}`);
-      console.log(`      Delta: ${(delta.overallScore || 0).toFixed(1)}`);
-      console.log(`      Current: ${current.overallScore.toFixed(1)}`);
-      console.log(`      Math check: ${baseline.overallScore.toFixed(1)} + ${(delta.overallScore || 0).toFixed(1)} = ${(baseline.overallScore + (delta.overallScore || 0)).toFixed(1)} ${(Math.abs((baseline.overallScore + (delta.overallScore || 0)) - current.overallScore) < 0.01 ? '✓' : '✗')}`);
-    }
-
-    console.log();
-    console.log("=".repeat(70));
-    console.log("✅ ALL VERIFICATIONS PASSED");
-    console.log("=".repeat(70));
-    console.log();
-    console.log("Summary:");
-    console.log(`  • Baseline snapshot: May 2025 (${toolsWithBaseline.length} tools)`);
-    console.log(`  • Delta updates: ${toolsWithDeltas.length} tools affected`);
-    console.log(`  • Articles processed: ${articlesWithChanges.length} with impacts`);
-    console.log(`  • Ranking changes tracked: ${postMayChanges[0]?.count || 0}`);
-    console.log(`  • Data integrity: current_score = baseline_score + delta_score ✓`);
-    console.log();
-
-  } catch (error) {
-    console.error("❌ Error:", error);
-    throw error;
-  } finally {
-    await closeDb();
   }
+
+  // 3. Summary
+  console.log("\n================================================================================");
+  console.log(`\n📊 FINAL RESULT: ${allPassed ? "✅ ALL CHECKS PASSED" : "❌ SOME CHECKS FAILED"}\n`);
+
+  if (allPassed) {
+    console.log("🎉 Success! All 7 tools are properly integrated:");
+    console.log("   • Tools table has complete score data");
+    console.log("   • Rankings table includes all tools");
+    console.log("   • All scores match expected values");
+    console.log("   • All tools have factor scores");
+    console.log("   • Categories are correct");
+  }
+
+  process.exit(allPassed ? 0 : 1);
 }
 
-finalVerification().catch(console.error);
+verifyEverything().catch((error) => {
+  console.error("Fatal error:", error);
+  process.exit(1);
+});

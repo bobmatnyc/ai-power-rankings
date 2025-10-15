@@ -33,6 +33,17 @@ const nextConfig = {
       },
     ],
   },
+  // Phase 2 FCP Optimizations
+  experimental: {
+    optimizeCss: true, // Enable critical CSS extraction and route-specific CSS splitting
+    optimizePackageImports: ['lucide-react'], // Tree-shake icon imports
+  },
+  // Remove console logs in production except errors/warnings
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
 }
 
 module.exports = nextConfig
