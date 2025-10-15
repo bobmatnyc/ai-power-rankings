@@ -1,0 +1,7 @@
+# Modern browsers only - targets ES6+ capable browsers
+# This reduces bundle size by avoiding unnecessary transpilation
+> 0.5%
+last 2 versions
+not dead
+not ie 11
+not op_mini all

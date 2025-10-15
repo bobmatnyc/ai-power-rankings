@@ -37,15 +37,26 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
   const { dict, lang } = useI18n();
 
   useEffect(() => {
+    // Lighthouse Performance: Throttle scroll handler to reduce main-thread work
+    let ticking = false;
+
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      setHasScrolled(scrollY > 10);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          // Read layout property once per animation frame
+          const scrollY = window.scrollY;
+          setHasScrolled(scrollY > 10);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     // Check initial scroll position
     handleScroll();
 
-    window.addEventListener("scroll", handleScroll);
+    // Use passive listener for better scroll performance
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 

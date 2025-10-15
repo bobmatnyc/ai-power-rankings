@@ -1,9 +1,8 @@
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ClerkProviderClient from "@/components/auth/clerk-provider-client";
+import { DeferredAnalytics } from "@/components/analytics/deferred-analytics";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -62,6 +61,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://clerk.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://api.clerk.com" crossOrigin="anonymous" />
 
+        {/* Lighthouse Performance: Preload LCP image for faster rendering */}
+        <link
+          rel="preload"
+          href="/crown-of-technology.webp"
+          as="image"
+          type="image/webp"
+        />
+
         {/* Prefetch critical dynamic chunks for faster loading */}
         <link
           rel="prefetch"
@@ -83,8 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       >
         <ClerkProviderClient>
           {children}
-          <Analytics />
-          <SpeedInsights />
+          <DeferredAnalytics />
         </ClerkProviderClient>
       </body>
     </html>

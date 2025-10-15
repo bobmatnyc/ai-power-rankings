@@ -6,6 +6,7 @@ import { SignupUpdatesButton } from "@/components/auth/signup-updates-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LazySection } from "@/components/ui/lazy-section";
 import { ResponsiveCrownIcon } from "@/components/ui/optimized-image";
 import { RankingsTableSkeleton } from "@/components/ui/skeleton";
 import type { Locale } from "@/i18n/config";
@@ -377,12 +378,13 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
           </div>
         </section>
 
-        {/* Categories Overview */}
-        <section className="px-3 md:px-6 py-12 bg-muted/30">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
-              {dict.home.categories.title}
-            </h2>
+        {/* Categories Overview - Lazy loaded for better initial performance */}
+        <LazySection fallbackHeight="600px">
+          <section className="px-3 md:px-6 py-12 bg-muted/30">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-3xl font-bold text-foreground mb-8 text-center">
+                {dict.home.categories.title}
+              </h2>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
               <Link href={`/${lang}/rankings?category=ide-assistant`} className="block h-full">
@@ -463,10 +465,12 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             </div>
           </div>
         </section>
+        </LazySection>
 
-        {/* Trust Signals for T-042 SEO */}
-        <section className="px-3 md:px-6 py-12 bg-background">
-          <div className="max-w-7xl mx-auto">
+        {/* Trust Signals for T-042 SEO - Lazy loaded */}
+        <LazySection fallbackHeight="500px">
+          <section className="px-3 md:px-6 py-12 bg-background">
+            <div className="max-w-7xl mx-auto">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-foreground mb-4">
                 Trusted by Developers Worldwide
@@ -521,9 +525,11 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             </div>
           </div>
         </section>
+        </LazySection>
 
-        {/* Methodology Brief */}
-        <section id="methodology" className="container mx-auto px-2 md:px-4 py-16">
+        {/* Methodology Brief - Lazy loaded */}
+        <LazySection fallbackHeight="700px">
+          <section id="methodology" className="container mx-auto px-2 md:px-4 py-16">
           <div className="mx-auto max-w-4xl">
             <h2 className="mb-8 text-center text-3xl font-bold">{dict.home.methodology.title}</h2>
 
@@ -606,6 +612,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             </div>
           </div>
         </section>
+        </LazySection>
         </main>
       </>
     );
