@@ -251,8 +251,7 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
             <div className="space-y-1">
               {categories.map((category) => {
                 // Determine if this category is currently active
-                const isActive = currentCategory === category.id ||
-                  (category.id === "all" && currentCategory === "all");
+                const isActive = currentCategory === category.id;
 
                 return (
                   <Link
