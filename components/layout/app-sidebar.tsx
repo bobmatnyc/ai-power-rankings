@@ -86,9 +86,10 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
         params.set("category", value);
       }
     } else if (type === "tag") {
+      // Single-select behavior: only one tag at a time
       const tags = currentTags.includes(value)
-        ? currentTags.filter((t) => t !== value)
-        : [...currentTags, value];
+        ? []              // Deselect if clicking same tag
+        : [value];        // Replace with new tag (single selection)
 
       if (tags.length === 0) {
         params.delete("tags");
