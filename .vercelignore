@@ -25,7 +25,9 @@ TEST_*.txt
 BEFORE_AFTER_*.md
 
 # Scripts (not needed in production)
-scripts/
+# Note: Keep generate-static-categories.ts for build process
+scripts/*
+!scripts/generate-static-categories.ts
 
 # TypeScript build info
 *.tsbuildinfo
