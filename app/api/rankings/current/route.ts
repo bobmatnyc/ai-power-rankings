@@ -158,6 +158,12 @@ export async function GET() {
           const overallScore = ranking["score"] || ranking["total_score"] || 0;
           const partialFactorScores = ranking["factor_scores"] || {};
 
+          // Extract description and website from tool data (JSONB field)
+          const toolData = tool?.data as Record<string, any> | undefined;
+          const description = toolData?.summary || toolData?.description || undefined;
+          const websiteUrl = toolData?.website || toolData?.website_url || undefined;
+          const logo = toolData?.logo || undefined;
+
           // Derive complete factor scores, ensuring all 9 dimensions are present
           const completeFactorScores = deriveCompleteScores(partialFactorScores, overallScore);
 
@@ -165,6 +171,9 @@ export async function GET() {
             tool_id: toolId,
             tool_name: toolName,
             tool_slug: toolSlug,
+            description, // Add short description for UI
+            website_url: websiteUrl, // Add website URL
+            logo, // Add logo URL
             position: ranking["rank"] || ranking["position"] || 1,
             score: overallScore,
             tier: ranking["tier"] || "standard",
