@@ -495,7 +495,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <CardContent className="pt-0">
                   <div className="text-2xl md:text-3xl font-bold text-secondary mb-2">8</div>
                   <div className="text-sm text-muted-foreground">Ranking Factors</div>
-                  <div className="text-xs text-muted-foreground mt-1">Algorithm v7.0</div>
+                  <div className="text-xs text-muted-foreground mt-1">Algorithm v7.2</div>
                 </CardContent>
               </Card>
 
