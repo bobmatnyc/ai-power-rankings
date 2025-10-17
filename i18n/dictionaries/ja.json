@@ -221,7 +221,7 @@
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
-      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.1 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.2 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
@@ -313,14 +313,14 @@
       "title": "データ主導のランキング",
       "subtitle": "私たちの方法論は透明で公正、継続的に改善されています",
       "methodology": "方法論を見る",
-      "algorithmVersion": "Algorithm v7.0",
+      "algorithmVersion": "Algorithm v7.2",
       "lastUpdated": "最終更新"
     },
     "faq": {
       "title": "よくある質問",
       "subtitle": "AIコーディングツールとランキングに関する一般的な質問",
       "question1": "ツールはどのようにランク付けされますか？",
-      "answer1": "私たちのAlgorithm v7.1を使用して、イノベーション、機能、使いやすさ、コミュニティフィードバックを評価します。",
+      "answer1": "私たちのAlgorithm v7.2を使用して、イノベーション、機能、使いやすさ、コミュニティフィードバックを評価します。",
       "question2": "ランキングはどのくらいの頻度で更新されますか？",
       "answer2": "新しいツール、機能更新、ユーザーフィードバックを反映して毎週更新されます。",
       "viewAll": "すべてのFAQを見る"
@@ -387,7 +387,7 @@
     }
   },
   "footer": {
-    "description": "Comprehensive rankings of AI coding tools using Algorithm v7.1 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+    "description": "Comprehensive rankings of AI coding tools using Algorithm v7.2 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
     "quickLinks": "Quick Links",
     "categories": "Categories",
     "copyright": "© 2025 AI Power Ranking. All rights reserved."

@@ -120,7 +120,7 @@
     },
     "methodology": {
       "title": "Our Methodology",
-      "algorithmTitle": "Algorithm v7.1",
+      "algorithmTitle": "Algorithm v7.2",
       "algorithmDescription": "Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
@@ -174,21 +174,21 @@
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
-      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.1 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.2 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
     }
   },
   "footer": {
-    "description": "Comprehensive rankings of AI coding tools using Algorithm v7.1 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+    "description": "Comprehensive rankings of AI coding tools using Algorithm v7.2 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
     "quickLinks": "Quick Links",
     "categories": "Categories",
     "copyright": "© 2025 AI Power Ranking. All rights reserved."
   },
   "rankings": {
     "title": "AI Power Ranking",
-    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v7.1",
+    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v7.2",
     "stats": {
       "totalTools": "Total Tools",
       "categories": "Categories",
@@ -236,7 +236,7 @@
       }
     },
     "algorithm": {
-      "title": "About Algorithm v7.1",
+      "title": "About Algorithm v7.2",
       "subtitle": "Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
       "tabs": {
         "factors": "Scoring Factors",
@@ -516,7 +516,7 @@
     "lastUpdated": "Last updated: January 2025",
     "intro": "AI Power Ranking uses a sophisticated algorithm (v7.1) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
     "algorithm": {
-      "title": "Algorithm v7.1",
+      "title": "Algorithm v7.2",
       "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
       "keyFeatures": "Key Features",
       "features": {
