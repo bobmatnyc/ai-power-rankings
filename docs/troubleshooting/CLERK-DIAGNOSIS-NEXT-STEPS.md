@@ -9,8 +9,10 @@
 
 ### 1. Secret Key is Valid and Working ✅
 ```bash
-curl -H 'Authorization: Bearer sk_test_KH011firfoq27FTw0MRav4msOlpxwQtngrf0VlvpsC' \
+curl -H 'Authorization: Bearer sk_test_YOUR_TEST_SECRET_KEY_HERE' \
   'https://api.clerk.com/v1/users?limit=1'
+
+<!-- Keys sanitized for security -->
 ```
 
 **Result**: SUCCESS - Retrieved user data:
@@ -30,8 +32,10 @@ Decodes to: easy-salmon-30.clerk.accounts.dev
 `.env.local` contains:
 ```
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_ZWFzeS1zYWxtb24tMzAuY2xlcmsuYWNjb3VudHMuZGV2JA
-CLERK_SECRET_KEY=sk_test_KH011firfoq27FTw0MRav4msOlpxwQtngrf0VlvpsC
+CLERK_SECRET_KEY=sk_test_YOUR_TEST_SECRET_KEY_HERE
 ```
+
+<!-- Keys sanitized for security -->
 
 ---
 

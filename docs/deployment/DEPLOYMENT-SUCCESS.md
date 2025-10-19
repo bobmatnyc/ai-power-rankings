@@ -43,7 +43,9 @@
 **Root Cause:** Build created BEFORE Clerk environment variables were added
 **Fix:** New deployment bakes in environment variables:
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_Y2xlcmsuYWlwb3dlcnJhbmtpbmcuY29tJA`
-- `CLERK_SECRET_KEY=sk_live_ckkPNjau1etDPUFu9ugPORqBSDBCOPY2aVKsj4z2xK`
+- `CLERK_SECRET_KEY=sk_live_YOUR_PRODUCTION_SECRET_KEY_HERE`
+
+<!-- Keys sanitized for security -->
 **Result:** ✅ Clerk should initialize properly (verify in browser console)
 
 ### 6. Category Count Mismatches

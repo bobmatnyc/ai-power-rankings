@@ -349,7 +349,7 @@ export class ArticlesRepository {
 
     if (hard) {
       const result = await this.db.delete(articles).where(eq(articles.id, id));
-      return result && "rowCount" in result ? result.rowCount > 0 : false;
+      return result && "rowCount" in result && result.rowCount !== null ? result.rowCount > 0 : false;
     } else {
       const result = await this.db
         .update(articles)
@@ -472,7 +472,7 @@ export class ArticlesRepository {
         )
       );
 
-    return result && "rowCount" in result ? result.rowCount : 0;
+    return result && "rowCount" in result && result.rowCount !== null ? result.rowCount : 0;
   }
 
   /**

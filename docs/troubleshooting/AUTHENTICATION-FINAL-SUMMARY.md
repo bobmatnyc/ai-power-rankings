@@ -104,11 +104,13 @@ Terminal (middleware logs):
 **Publishable Key**: `pk_test_ZWFzeS1zYWxtb24tMzAuY2xlcmsuYWNjb3VudHMuZGV2JA`
 - Decodes to: `easy-salmon-30.clerk.accounts.dev`
 
-**Secret Key**: `sk_test_KH011firfoq27FTw0MRav4msOlpxwQtngrf0VlvpsC`
+**Secret Key**: `sk_test_YOUR_TEST_SECRET_KEY_HERE`
 - **Verified Working**: Successfully retrieved your user data from Clerk API
 - User ID: `user_333blWt6oHpn2tQdwjtT0GjHpdm`
 - Email: bob@matsuoka.com
 - Admin status: `isAdmin: "true"` in private_metadata
+
+<!-- Keys sanitized for security -->
 
 ---
 

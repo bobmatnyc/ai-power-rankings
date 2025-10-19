@@ -112,6 +112,11 @@ export async function generateStaticKeywords(): Promise<string> {
       const { tools } = await import('@/lib/db/schema');
       const { eq } = await import('drizzle-orm');
 
+      if (!db) {
+        console.warn('[Static Keywords] Database not available, using static fallback');
+        return '';
+      }
+
       const activeTools = await db
         .select({ name: tools.name })
         .from(tools)

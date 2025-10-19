@@ -42,25 +42,24 @@ export async function GET(request: NextRequest) {
 
         const recentNews = allNews
           .filter((article) => {
-            const articleDate = new Date(article.publishedAt || article.createdAt || new Date());
+            const articleDate = new Date(article.publishedAt);
             return articleDate >= dateThreshold;
           })
           .sort((a, b) => {
-            const dateA = new Date(a.publishedAt || a.createdAt || new Date());
-            const dateB = new Date(b.publishedAt || b.createdAt || new Date());
+            const dateA = new Date(a.publishedAt);
+            const dateB = new Date(b.publishedAt);
             return dateB.getTime() - dateA.getTime();
           })
           .slice(0, 10)
           .map((article) => {
-            const articleData = article.data || {};
             return {
               id: article.id,
               slug: article.slug,
               title: article.title,
-              summary: article.summary || (articleData as any)?.content?.substring(0, 150) + "...",
-              published_at: article.publishedAt || article.createdAt,
-              source: article.source || (articleData as any)?.source || "AI News",
-              source_url: article.sourceUrl || (articleData as any)?.source_url,
+              summary: article.summary || article.content.substring(0, 150) + "...",
+              published_at: article.publishedAt,
+              source: article.source || "AI News",
+              source_url: article.sourceUrl,
             };
           });
 
@@ -70,16 +69,17 @@ export async function GET(request: NextRequest) {
       // Fetch recent tool updates
       (async () => {
         const toolsRepo = new ToolsRepository();
-        const allTools = await toolsRepo.getAllTools();
+        const allTools = await toolsRepo.findAll();
 
         const recentTools = allTools
-          .filter((tool) => {
-            const toolDate = new Date(tool.updatedAt || tool.createdAt || new Date());
-            return toolDate >= dateThreshold;
+          .filter((tool): tool is typeof tool & { updated_at: string } => {
+            if (!tool.updated_at) return false;
+            const toolDate = new Date(tool.updated_at);
+            return !isNaN(toolDate.getTime()) && toolDate >= dateThreshold;
           })
           .sort((a, b) => {
-            const dateA = new Date(a.updatedAt || a.createdAt || new Date());
-            const dateB = new Date(b.updatedAt || b.createdAt || new Date());
+            const dateA = new Date(a.updated_at);
+            const dateB = new Date(b.updated_at);
             return dateB.getTime() - dateA.getTime();
           })
           .slice(0, 10)
@@ -87,9 +87,9 @@ export async function GET(request: NextRequest) {
             id: tool.id,
             name: tool.name,
             slug: tool.slug,
-            description: tool.description || "",
-            updatedAt: tool.updatedAt || tool.createdAt,
-            category: tool.category || "uncategorized",
+            description: (tool as any).description || "",
+            updatedAt: tool.updated_at,
+            category: tool.category,
           }));
 
         return recentTools;

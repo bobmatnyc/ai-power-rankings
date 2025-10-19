@@ -512,7 +512,12 @@ REMINDER: The field name MUST be "tool" (not "name", "tool_name", or anything el
     }
 
     // Normalize tool names using ToolMapper
-    const normalizedToolMentions = ToolMapper.processToolMentions(validated.tool_mentions);
+    // Filter out mentions without a tool property
+    const validToolMentions = validated.tool_mentions.filter(
+      (mention): mention is typeof mention & { tool: string } =>
+        typeof mention.tool === 'string' && mention.tool.length > 0
+    );
+    const normalizedToolMentions = ToolMapper.processToolMentions(validToolMentions);
 
     // Add the model name to the response
     return {

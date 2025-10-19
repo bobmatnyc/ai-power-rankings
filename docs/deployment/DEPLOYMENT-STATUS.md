@@ -60,7 +60,9 @@
 
 **Environment Variables Added:**
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_Y2xlcmsuYWlwb3dlcnJhbmtpbmcuY29tJA`
-- `CLERK_SECRET_KEY=sk_live_ckkPNjau1etDPUFu9ugPORqBSDBCOPY2aVKsj4z2xK`
+- `CLERK_SECRET_KEY=sk_live_YOUR_PRODUCTION_SECRET_KEY_HERE`
+
+<!-- Keys sanitized for security -->
 
 ### 4. ✅ Category Page Tool Counts
 **Problem:** Sidebar showing different counts than rankings page

@@ -111,12 +111,12 @@ export function createSoftwareApplicationSchema(
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: tool.name,
-    description: tool.info.product.description || "",
-    url: tool.info.links.website || "",
+    description: tool.info?.product?.description || "",
+    url: tool.info?.links?.website || "",
     applicationCategory: "DeveloperApplication",
     applicationSubCategory: tool.category,
     operatingSystem: "Windows, macOS, Linux",
-    offers: tool.info.product.pricing_model
+    offers: tool.info?.product?.pricing_model
       ? {
           "@type": "Offer",
           price: "0",
@@ -127,22 +127,22 @@ export function createSoftwareApplicationSchema(
           availability: "https://schema.org/InStock",
           seller: {
             "@type": "Organization",
-            name: tool.info.company.name || tool.name,
+            name: tool.info?.company?.name || tool.name,
           },
         }
       : undefined,
     ...(aggregateRating && { aggregateRating }),
     creator: {
       "@type": "Organization",
-      name: tool.info.company.name || tool.name,
-      url: tool.info.company.website || tool.info.links.website || "",
+      name: tool.info?.company?.name || tool.name,
+      url: tool.info?.company?.website || tool.info?.links?.website || "",
     },
     datePublished: tool.created_at,
     dateModified: tool.updated_at,
     ...(ranking && {
       award: `#${ranking.position} in AI Power Rankings ${ranking.period}`,
     }),
-    screenshot: tool.info.metadata?.logo_url
+    screenshot: tool.info?.metadata?.logo_url
       ? {
           "@type": "ImageObject",
           url: tool.info.metadata.logo_url,
@@ -150,10 +150,10 @@ export function createSoftwareApplicationSchema(
         }
       : undefined,
     featureList: [
-      ...(tool.info.features?.key_features || []),
+      ...(tool.info?.features?.key_features || []),
       `Category: ${tool.category}`,
-      ...(tool.info.features?.languages_supported || []).map((lang: string) => `Supports ${lang}`),
-      ...(tool.info.features?.ide_support || []).map((ide: string) => `${ide} integration`),
+      ...(tool.info?.features?.languages_supported || []).map((lang: string) => `Supports ${lang}`),
+      ...(tool.info?.features?.ide_support || []).map((ide: string) => `${ide} integration`),
     ],
   };
 }
@@ -270,7 +270,7 @@ export function createComparisonSchema(
           item: {
             "@type": "SoftwareApplication",
             name: tool1.name,
-            url: tool1.info.links.website || "",
+            url: tool1.info?.links?.website || "",
             applicationCategory: "DeveloperApplication",
           },
         },
@@ -280,7 +280,7 @@ export function createComparisonSchema(
           item: {
             "@type": "SoftwareApplication",
             name: tool2.name,
-            url: tool2.info.links.website || "",
+            url: tool2.info?.links?.website || "",
             applicationCategory: "DeveloperApplication",
           },
         },

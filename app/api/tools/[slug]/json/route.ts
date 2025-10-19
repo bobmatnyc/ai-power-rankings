@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { eq, desc, and, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
-import { NewsRepository } from "@/lib/db/repositories/news.ts";
+import { NewsRepository } from "@/lib/db/repositories/news";
 import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
 import { articles, rankingVersions } from "@/lib/db/schema";

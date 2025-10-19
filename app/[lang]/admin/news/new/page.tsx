@@ -88,7 +88,7 @@ export default function NewArticlePage() {
     setError(null);
 
     try {
-      let input: string;
+      let input: string | undefined;
       let type: "url" | "text" | "file" | "preprocessed";
       let filename: string | undefined;
       let mimeType: string | undefined;
@@ -99,6 +99,7 @@ export default function NewArticlePage() {
         // Reuse existing analysis when committing
         type = "preprocessed";
         preprocessedData = analysis;
+        input = undefined; // Not needed when using preprocessed data
       } else if (inputType === "url") {
         if (!urlInput.trim()) {
           throw new Error("Please enter a URL");
