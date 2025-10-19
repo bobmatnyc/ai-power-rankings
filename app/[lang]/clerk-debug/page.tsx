@@ -4,8 +4,8 @@ import { useClerk, useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 
 export default function ClerkDebugPage() {
-  const { loaded, isLoaded } = useClerk();
-  const { user, isSignedIn } = useUser();
+  const { loaded } = useClerk();
+  const { user, isSignedIn, isLoaded } = useUser();
   const [mounted, setMounted] = useState(false);
   const [debugInfo, setDebugInfo] = useState<any>({});
 
@@ -16,12 +16,12 @@ export default function ClerkDebugPage() {
     const interval = setInterval(() => {
       setDebugInfo({
         timestamp: new Date().toISOString(),
-        loaded,
-        isLoaded,
+        clerkLoaded: loaded,
+        userLoaded: isLoaded,
         isSignedIn,
         userId: user?.id || null,
         hasWindowClerk: typeof window.Clerk !== 'undefined',
-        clerkLoaded: (window as any).Clerk?.loaded || false,
+        windowClerkLoaded: (window as any).Clerk?.loaded || false,
         cookies: document.cookie.split(';').filter(c => c.includes('clerk')).length,
       });
     }, 500);

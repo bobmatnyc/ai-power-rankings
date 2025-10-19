@@ -48,11 +48,8 @@ export async function GET(request: NextRequest) {
     // Transform to expected format
     const transformedNews = await Promise.all(
       allNews.map(async (article) => {
-        // Parse the JSONB data field if it exists
-        const articleData = article.data || {};
-
-        // Get tool mentions from database or data field
-        const toolMentions = article.toolMentions || (articleData as any)?.tool_mentions || [];
+        // Get tool mentions from database
+        const toolMentions = article.toolMentions || [];
 
         // Get tool info from tool_mentions or tool associations
         let toolNames = "Various Tools";
@@ -81,10 +78,10 @@ export async function GET(request: NextRequest) {
         }
 
         // Map event type based on tags or content
-        let eventType = (articleData as any)?.event_type || "update";
+        let eventType = "update";
 
         // Check tags first for better categorization
-        const tags = (article as any).tags || (articleData as any)?.tags || [];
+        const tags = article.tags || [];
         if (tags.length > 0) {
           const tagStr = tags.join(" ").toLowerCase();
           if (
@@ -112,7 +109,7 @@ export async function GET(request: NextRequest) {
         // Fallback to content analysis
         if (eventType === "update") {
           const text =
-            `${article.title} ${article.summary || (articleData as any)?.content || ""}`.toLowerCase();
+            `${article.title} ${article.summary || article.content || ""}`.toLowerCase();
 
           if (
             text.includes("funding") ||
@@ -214,7 +211,7 @@ export async function GET(request: NextRequest) {
         };
 
         // Enhanced importance scoring based on content
-        let importance = (article as any).importance || (articleData as any)?.importance_score || 5;
+        let importance = article.importanceScore || 5;
         const titleLower = article.title.toLowerCase();
 
         // Boost importance for high-impact keywords
@@ -248,9 +245,9 @@ export async function GET(request: NextRequest) {
           event_date: getEffectiveDate(article),
           event_type: eventType,
           title: article.title,
-          description: article.summary || (article as any).content || (articleData as any)?.content,
-          source_url: article.sourceUrl || (articleData as any)?.source_url,
-          source_name: article.source || (articleData as any)?.source || "AI News",
+          description: article.summary || article.content,
+          source_url: article.sourceUrl,
+          source_name: article.source || "AI News",
           metrics: {
             importance_score: importance,
           },

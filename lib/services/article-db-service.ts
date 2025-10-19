@@ -91,7 +91,8 @@ export class ArticleDatabaseService {
         switch (input.type) {
           case "url":
             sourceUrl = input.input;
-            content = await this.contentExtractor.extractFromUrl(input.input!);
+            const urlResult = await this.contentExtractor.extractFromUrl(input.input!);
+            content = typeof urlResult === 'string' ? urlResult : urlResult.content;
             break;
           case "file":
             if (!input.mimeType || !input.fileName) {

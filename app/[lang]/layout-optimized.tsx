@@ -6,6 +6,7 @@ import { ClientLayout } from "@/components/layout/client-layout";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
+import { getCategoriesWithCounts } from "@/lib/db/repositories/categories";
 import "@/globals.css";
 
 /**
@@ -92,6 +93,7 @@ export default async function RootLayoutOptimized({
 }: RootLayoutProps): Promise<React.JSX.Element> {
   const { lang } = await params;
   const dict = await getDictionary(lang as Locale);
+  const categories = await getCategoriesWithCounts();
 
   return (
     <html lang={lang as Locale} suppressHydrationWarning>
@@ -121,7 +123,7 @@ export default async function RootLayoutOptimized({
           scrollbarGutter: "stable",
         }}
       >
-        <ClientLayout lang={lang as Locale} dict={dict}>
+        <ClientLayout lang={lang as Locale} dict={dict} categories={categories}>
           {children}
         </ClientLayout>
 

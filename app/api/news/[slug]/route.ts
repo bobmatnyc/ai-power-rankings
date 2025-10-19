@@ -44,11 +44,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Parse the JSONB data field if it exists
-    const articleData = article.data || {};
-
-    // Get tool mentions from database or data field
-    const toolMentions = article.toolMentions || (articleData as any)?.tool_mentions || [];
+    // Get tool mentions from database
+    const toolMentions = article.toolMentions || [];
 
     // Try to extract tool from title using the term mapping
     const matchedSlug = findToolByText(article.title);
@@ -85,13 +82,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       title: article.title,
       content: article.content || article.summary || "",
       summary: article.summary,
-      published_date: article.publishedAt || article.createdAt || new Date().toISOString(),
-      source: article.source || (articleData as any)?.source || "AI News",
-      source_url: article.sourceUrl || (articleData as any)?.source_url,
-      tags: (articleData as any)?.tags || [],
+      published_date: article.publishedAt.toISOString(),
+      source: article.source || "AI News",
+      source_url: article.sourceUrl,
+      tags: article.tags || [],
       tool_mentions: toolMentions,
-      created_at: article.createdAt,
-      updated_at: article.updatedAt,
+      created_at: article.publishedAt.toISOString(),
+      updated_at: article.publishedAt.toISOString(),
     };
 
     // Include matched tool if found
