@@ -9,9 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.1.4] - 2025-10-19
+
+### Fixed
+- TypeScript type errors across components and API routes
+- Security hardening for admin and API endpoints
+
+### Changed
+- Documentation structure reorganization
+- Added project essentials (README.md, CHANGELOG.md, PROJECT_ORGANIZATION.md)
+- Updated i18n dictionaries to Algorithm v7.2
+- Updated homepage tagline to Algorithm v7.2
+
 ### Added
-- Project organization standard (PROJECT_ORGANIZATION.md)
-- README.md and CHANGELOG.md at root level
+- Algorithm v7.2 with October 2025 rankings
+- News article for Algorithm v7.2 release
+- Enhanced rankings API response (description, website_url, logo fields)
+
+### Performance
+- Eliminated 3.3s TTFB delay
+- Optimized vendor chunk splitting
+- Updated Clerk DNS prefetch to production domain
 
 ---
 
