@@ -18,7 +18,7 @@ export async function GET() {
   try {
     // Check authentication
     const user = await currentUser();
-    const isAdmin = user?.publicMetadata?.isAdmin === true;
+    const isAdmin = user?.privateMetadata?.isAdmin === true;
 
     if (!user || !isAdmin) {
       return NextResponse.json({ error: "Unauthorized - Admin access required" }, { status: 401 });

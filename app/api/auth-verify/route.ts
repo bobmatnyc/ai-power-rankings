@@ -56,7 +56,7 @@ export async function GET() {
       });
 
       // Check admin status
-      const isAdmin = user.publicMetadata?.isAdmin === true;
+      const isAdmin = user.privateMetadata?.isAdmin === true;
 
       return NextResponse.json({
         authenticated: true,
@@ -68,8 +68,8 @@ export async function GET() {
         },
         admin: {
           hasAccess: isAdmin,
-          publicMetadata: user.publicMetadata,
-          checkResult: `publicMetadata.isAdmin === true: ${isAdmin}`,
+          privateMetadata: user.privateMetadata,
+          checkResult: `privateMetadata.isAdmin === true: ${isAdmin}`,
         },
         timestamp: new Date().toISOString(),
         message: isAdmin ? "✅ You have admin access" : "❌ You do NOT have admin access",

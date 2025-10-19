@@ -177,7 +177,7 @@ export async function requireAdmin() {
         userId: "mock-admin-id",
         user: {
           id: "mock-admin-id",
-          publicMetadata: { isAdmin: true },
+          privateMetadata: { isAdmin: true },
           emailAddresses: [{ emailAddress: "admin@mock.local" }],
           firstName: "Mock",
           lastName: "Admin",
@@ -244,7 +244,7 @@ export async function requireAdmin() {
       };
     }
 
-    const isAdmin = user.publicMetadata?.isAdmin === true;
+    const isAdmin = user.privateMetadata?.isAdmin === true;
     const userId = authResult.userId;
 
     if (!isAdmin) {
@@ -278,7 +278,7 @@ export async function requireAdmin() {
           userId: "mock-admin-id",
           user: {
             id: "mock-admin-id",
-            publicMetadata: { isAdmin: true },
+            privateMetadata: { isAdmin: true },
             emailAddresses: [{ emailAddress: "admin@mock.local" }],
             firstName: "Mock",
             lastName: "Admin",
@@ -306,7 +306,7 @@ export async function requireAdmin() {
           userId: "mock-admin-id",
           user: {
             id: "mock-admin-id",
-            publicMetadata: { isAdmin: true },
+            privateMetadata: { isAdmin: true },
             emailAddresses: [{ emailAddress: "admin@mock.local" }],
             firstName: "Mock",
             lastName: "Admin",

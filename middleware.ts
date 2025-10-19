@@ -39,8 +39,17 @@ const isProtectedRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   // Check if auth is disabled for development/testing
   if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
+    // SECURITY: Prevent auth bypass in production
+    if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+      console.error("[SECURITY] Auth bypass attempted in production environment - BLOCKING");
+      return NextResponse.json(
+        { error: "Security violation: Authentication cannot be disabled in production" },
+        { status: 403 }
+      );
+    }
+
     if (isDevelopment) {
-      console.log("[middleware] Auth disabled, skipping checks");
+      console.log("[middleware] Auth disabled in development, skipping checks");
     }
     return NextResponse.next();
   }
@@ -85,7 +94,14 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
       // Build the sign-in URL
       const signInUrl = new URL(`/${locale}/sign-in`, req.url);
-      signInUrl.searchParams.set("redirect_url", pathname);
+
+      // SECURITY: Validate redirect URL is internal only (prevent open redirect)
+      // Allow: /en/admin, /en/dashboard
+      // Block: //evil.com, https://evil.com, /\evil.com
+      const isInternalPath = pathname.startsWith('/') && !pathname.startsWith('//') && !pathname.startsWith('/\\');
+      const safeRedirect = isInternalPath ? pathname : `/${locale}/admin`;
+
+      signInUrl.searchParams.set("redirect_url", safeRedirect);
 
       return NextResponse.redirect(signInUrl);
     }

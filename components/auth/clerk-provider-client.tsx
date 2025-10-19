@@ -33,6 +33,14 @@ export default function ClerkProviderClient({ children }: ClerkProviderClientPro
       appearance={{
         variables: { colorPrimary: "#000000" },
       }}
+      // Explicit cookie security configuration
+      // While Clerk uses secure defaults (HttpOnly, Secure, SameSite=Lax),
+      // explicit URL configuration makes authentication flows more predictable
+      // and provides better security through defense-in-depth
+      signInUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_IN_URL"]}
+      signUpUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_UP_URL"]}
+      signInFallbackRedirectUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL"]}
+      signUpFallbackRedirectUrl={process.env["NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL"]}
     >
       {children}
     </ClerkProvider>

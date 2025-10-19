@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
             authInfo.currentUserTest = {
               status: "success",
               hasUser: !!user,
-              isAdmin: user?.publicMetadata?.isAdmin === true,
+              isAdmin: user?.privateMetadata?.isAdmin === true,
               userKeys: user ? Object.keys(user) : [],
               stage: "current_user_call",
             };

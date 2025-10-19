@@ -1,8 +1,8 @@
 # 🤖 Claude Code - AI Power Ranking Project Guide
 
 **Project**: aipowerranking
-**Version**: 0.1.1
-**Last Updated**: 2025-10-12
+**Version**: 0.1.3
+**Last Updated**: 2025-10-15
 **Primary Developer**: Robert (Masa) Matsuoka
 
 ---
@@ -74,9 +74,17 @@ AI Power Ranking is a Next.js web application that ranks and tracks AI tools and
   - `services/` - Article ingestion and processing services
   - `schema.ts` - Database schema definitions
 
-- **`docs/`** - Technical documentation
+- **`docs/`** - [**📖 Complete Documentation Index**](docs/README.md)
+  - `deployment/` - Deployment guides and verification
+  - `development/` - Contributing guides and implementation docs
+  - `performance/` - Performance optimization reports
+  - `reference/` - Technical references and configuration
+    - [PROJECT_ORGANIZATION.md](docs/reference/PROJECT_ORGANIZATION.md) - **Organization standard and file placement rules**
+  - `security/` - Security audits and authentication docs
+  - `troubleshooting/` - Debugging and issue resolution
 - **`scripts/`** - Database migrations and utility scripts
 - **`tests/`** - Test suites and testing documentation
+- **`tmp/`** - Temporary files and backups (gitignored)
 
 ### Most Active Files (Last 30 Days)
 
@@ -203,25 +211,36 @@ npm test                       # Run test suite
 
 ## 📚 Documentation Resources
 
-### Primary Documentation
-- **Authentication**: `/docs/AUTHENTICATION-CONFIG.md`
-- **Contributing**: `/docs/CONTRIBUTING.md`
-- **Baseline Scoring**: `/docs/baseline-scoring-usage.md`
+**📖 [COMPLETE DOCUMENTATION INDEX](docs/README.md)** - Start here for all documentation
 
-### Testing Documentation
-- **Test Summary**: `/tests/TEST_SUMMARY.md`
-- **Quick Start**: `/tests/QUICK_START.md`
-- **Test README**: `/tests/README.md`
+### Quick Links by Topic
 
-### Scripts & Tools
-- **Database Scripts**: `/scripts/README-database-scripts.md`
-- **Migration Guide**: `/scripts/MIGRATION-QUICK-START.md`
-- **Cleanup Scripts**: `/scripts/CLEANUP-SCRIPTS-USAGE.md`
-- **Test Scripts**: `/scripts/README-test-scripts.md`
+**🚢 Deployment & Operations**
+- [Deployment Checklist](docs/deployment/DEPLOYMENT-CHECKLIST.md) - Pre-deployment verification
+- [Latest Deployment](docs/deployment/VERCEL-DEPLOYMENT-v0.1.3-VERIFIED.md) - v0.1.3 verification
 
-### Project Reports
-- **UAT Summary**: `/uat-screenshots/EXECUTIVE-SUMMARY.md`
-- **Comprehensive UAT**: `/uat-screenshots/COMPREHENSIVE-UAT-REPORT.md`
+**🔧 Development & Contributing**
+- [Contributing Guide](docs/development/CONTRIBUTING.md) - Setup and guidelines
+- [Development Guides](docs/development/guides/) - Implementation guides
+- [Next Steps](docs/development/NEXT-STEPS-RECOMMENDATIONS.md) - Roadmap
+
+**⚡ Performance**
+- [Lighthouse Optimizations](docs/performance/LIGHTHOUSE-OPTIMIZATIONS.md) - Performance guide
+- [ISR Configuration](docs/performance/ISR-OPTIMIZATION-REPORT.md) - Static regeneration
+
+**📖 Reference & Configuration**
+- [Authentication Config](docs/reference/AUTHENTICATION-CONFIG.md) - Clerk setup
+- [Baseline Scoring](docs/reference/baseline-scoring-usage.md) - Scoring system
+- [Analysis Reports](docs/reference/reports/analysis/) - Technical analysis
+
+**🔍 Troubleshooting**
+- [Clerk Auth Issues](docs/troubleshooting/CLERK-AUTHENTICATION-FIX.md) - Auth debugging
+- [Authentication Summary](docs/troubleshooting/AUTHENTICATION-FINAL-SUMMARY.md) - Auth troubleshooting
+
+### External Documentation
+- **Testing**: [/tests/README.md](tests/README.md) - Test suite documentation
+- **Scripts**: [/scripts/README-database-scripts.md](scripts/README-database-scripts.md) - Database tools
+- **API Docs**: See `/app/api/*/README.md` for endpoint-specific documentation
 
 ---
 
@@ -255,10 +274,14 @@ npm test                       # Run test suite
 
 ### File Modification Guidelines
 
+**📋 See [PROJECT_ORGANIZATION.md](docs/reference/PROJECT_ORGANIZATION.md) for complete organization rules**
+
 - 🟡 **Page Components**: Follow App Router conventions in `app/[lang]/`
 - 🟢 **Reusable Components**: Place in appropriate `components/` subdirectory
 - 🟢 **Business Logic**: Add to `lib/services/` or `lib/db/repositories/`
 - 🟡 **API Routes**: Use `app/api/` with proper authentication checks
+- 🟢 **Documentation**: Place in appropriate `/docs/` subdirectory (deployment, development, performance, reference, security, troubleshooting)
+- 🔴 **Root Level**: Only CLAUDE.md, README.md, CHANGELOG.md, and LICENSE allowed at project root
 - 🟢 **Content**: Markdown content files for static pages
 
 ### Common Pitfalls to Avoid

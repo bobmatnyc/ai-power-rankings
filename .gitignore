@@ -82,6 +82,9 @@ test-results.json
 *.webm
 trace.zip
 
+# Clerk test files with hardcoded keys
+test-clerk-keys.js
+
 # Screenshots (unless in docs/screenshots)
 /*.png
 /*.jpg
