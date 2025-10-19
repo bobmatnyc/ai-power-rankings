@@ -59,7 +59,7 @@ export async function getAuth() {
             lastName: user.lastName || null,
             fullName: `${user.firstName || ""} ${user.lastName || ""}`.trim() || "Unknown",
             username: user.username || null,
-            isAdmin: user.publicMetadata?.isAdmin === true, // Check public metadata for admin flag
+            isAdmin: user.privateMetadata?.isAdmin === true, // Check private metadata for admin flag
           }
         : null,
     };

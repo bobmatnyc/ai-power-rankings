@@ -73,13 +73,13 @@ export async function GET() {
         : null;
 
       // Check admin status
-      const isAdmin = user?.publicMetadata?.isAdmin === true;
+      const isAdmin = user?.privateMetadata?.isAdmin === true;
       debugInfo["authentication"]["isAdmin"] = isAdmin;
       debugInfo["authentication"]["adminCheckDetails"] = {
         hasUser: !!user,
-        hasPublicMetadata: !!user?.publicMetadata,
-        isAdminValue: user?.publicMetadata?.isAdmin,
-        isAdminType: typeof user?.publicMetadata?.isAdmin,
+        hasPrivateMetadata: !!user?.privateMetadata,
+        isAdminValue: user?.privateMetadata?.isAdmin,
+        isAdminType: typeof user?.privateMetadata?.isAdmin,
         evaluatesToTrue: isAdmin,
       };
     } catch (authError) {
@@ -240,11 +240,11 @@ export async function GET() {
         debugInfo["adminEndpointSimulation"]["details"]["wouldReturn"] = "401 Unauthorized";
       } else {
         debugInfo["adminEndpointSimulation"]["wouldAuthenticate"] = true;
-        const isAdmin = user.publicMetadata?.isAdmin === true;
+        const isAdmin = user.privateMetadata?.isAdmin === true;
         if (!isAdmin) {
           debugInfo["adminEndpointSimulation"]["details"]["reason"] = "User is not admin";
           debugInfo["adminEndpointSimulation"]["details"]["wouldReturn"] = "403 Forbidden";
-          debugInfo["adminEndpointSimulation"]["details"]["userMetadata"] = user.publicMetadata;
+          debugInfo["adminEndpointSimulation"]["details"]["userPrivateMetadata"] = user.privateMetadata;
         } else {
           debugInfo["adminEndpointSimulation"]["wouldAuthorize"] = true;
           debugInfo["adminEndpointSimulation"]["wouldFetchArticles"] =
