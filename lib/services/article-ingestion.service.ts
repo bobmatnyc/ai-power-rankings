@@ -517,11 +517,12 @@ Focus on:
 4. Predicting potential ranking impacts based on the news
 5. Extracting key insights and trends
 6. Creating COMPREHENSIVE content:
-   - Summary: Concise 2-3 sentences capturing the key point (aim for 200-300 characters)
-   - Rewritten content: Approximately 1500 words (7500-9000 characters) covering ALL important points in depth
+   - Summary: **750-1000 words** - This is the MAIN content readers will see. Must be comprehensive with clear introduction, body, and conclusion
+   - Rewritten content: Approximately 1500 words (7500-9000 characters) - Optional extended version for archival/reference
    - Include detailed analysis, context, and implications
    - Preserve ALL important links from the source article at the end
    - Be thorough and informative - provide value to readers
+   - CRITICAL: Never truncate mid-sentence. Always complete your thoughts and end with proper conclusion
 
 Be thorough and precise. Extract the exact tool names as mentioned, we'll handle normalization.
 
@@ -546,8 +547,8 @@ ${metadata?.fileName ? `File: ${metadata.fileName}` : ""}${linksContext}
 Return a detailed JSON analysis with this structure:
 {
   "title": "Article title",
-  "summary": "A concise 2-3 sentence summary (200-300 characters) that captures the key point and significance of the article.",
-  "rewritten_content": "A comprehensive article of approximately 1500 words (7500-9000 characters) that:\n- Covers ALL important points from the source in depth\n- Provides detailed context and analysis\n- Explains implications for the AI industry\n- Maintains journalistic quality\n- Includes important source links at the end in markdown format:\n\n**Related Links:**\n- [Link Title](url)\n- [Another Link](url)",
+  "summary": "A comprehensive 750-1000 word summary that serves as the main article content. This should:\n- Have a clear introduction that hooks the reader\n- Cover ALL key points from the source in detail\n- Provide context and analysis\n- Include specific examples and data points\n- End with a strong conclusion\n- Maintain logical flow throughout\n- Be self-contained and informative",
+  "rewritten_content": "Optional extended version of approximately 1500 words (7500-9000 characters) with additional details and supplementary information that:\n- Covers ALL important points from the source in depth\n- Provides detailed context and analysis\n- Explains implications for the AI industry\n- Maintains journalistic quality\n- Includes important source links at the end in markdown format:\n\n**Related Links:**\n- [Link Title](url)\n- [Another Link](url)",
   "source": "Publication or domain",
   "url": "Source URL if available",
   "published_date": "YYYY-MM-DD format",
@@ -582,11 +583,13 @@ Return a detailed JSON analysis with this structure:
 }
 
 CRITICAL REQUIREMENTS:
-- "summary" field: 200-300 characters - concise but informative
-- "rewritten_content" field: Approximately 1500 words (7500-9000 characters) - be thorough and comprehensive
+- "summary" field: **750-1000 words** - This is the MAIN article content. Must have clear beginning, middle, and end with logical flow
+- "rewritten_content" field: Approximately 1500 words (7500-9000 characters) - Optional extended archival version
 - ALL important links from the source MUST be preserved in markdown format at the end of rewritten_content
 - Provide in-depth analysis and context
 - Write in a professional, journalistic style
+- CRITICAL: Never truncate mid-sentence. Always complete your thoughts and end with proper conclusion
+- Ensure the summary field is 750-1000 words with logical flow from start to finish
 
 Return ONLY the JSON object above with actual data. No additional text or explanation.`;
 
@@ -610,7 +613,7 @@ Return ONLY the JSON object above with actual data. No additional text or explan
             { role: "user", content: userPrompt },
           ],
           temperature: 0.2, // Lower temperature for more consistent, focused analysis with Claude 4
-          max_tokens: 16000, // Increased to accommodate 1500-word articles (~7500-9000 chars) plus metadata
+          max_tokens: 32000, // Increased to 32k to accommodate 750-1000 word summaries (~5000-7000 chars) plus 1500-word rewritten content (~7500-9000 chars) plus metadata. Claude 4 supports up to 200k tokens, so 32k is safe.
         }),
       });
 
