@@ -155,7 +155,8 @@ export async function GET(request: NextRequest) {
         _timestamp: new Date().toISOString(),
       },
       "/api/whats-new",
-      60 // Cache for 1 minute
+      200, // HTTP 200 OK
+      { maxAge: 60, sMaxAge: 60 } // Cache for 1 minute
     );
   } catch (error) {
     loggers.api.error("What's New API error", {
