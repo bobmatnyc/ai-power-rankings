@@ -1,5 +1,3 @@
-import axios, { type AxiosError } from "axios";
-
 interface PageSpeedResult {
   lighthouseResult: {
     audits: {
@@ -33,17 +31,25 @@ export class PageSpeedInsights {
     }
 
     try {
-      const response = await axios.get<PageSpeedResult>(this.baseUrl, {
-        params: {
-          url,
-          key: this.apiKey,
-          strategy,
-          category: ["performance", "accessibility", "best-practices", "seo"],
-        },
+      const params = new URLSearchParams({
+        url,
+        key: this.apiKey,
+        strategy,
+      });
+      // Add multiple category parameters
+      ["performance", "accessibility", "best-practices", "seo"].forEach(cat => {
+        params.append("category", cat);
       });
 
-      const audits = response.data.lighthouseResult.audits;
-      const categories = response.data.lighthouseResult.categories;
+      const response = await fetch(`${this.baseUrl}?${params.toString()}`);
+
+      if (!response.ok) {
+        throw new Error(`PageSpeed API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json() as PageSpeedResult;
+      const audits = data.lighthouseResult.audits;
+      const categories = data.lighthouseResult.categories;
 
       return {
         coreWebVitals: {
@@ -62,10 +68,9 @@ export class PageSpeedInsights {
         },
       };
     } catch (error) {
-      const axiosError = error as AxiosError;
       console.error(
         "PageSpeed Insights API error:",
-        axiosError.response?.data || axiosError.message
+        error instanceof Error ? error.message : String(error)
       );
       throw error;
     }

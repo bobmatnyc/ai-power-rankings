@@ -1,6 +1,9 @@
 // Database types that are used across the application
 // These types represent data structures from database queries
 
+// Re-export types from rankings module
+export type { ToolCapabilities, ToolMetrics } from "./rankings";
+
 export interface MetricHistory {
   id?: string;
   tool_id?: string;
@@ -25,7 +28,7 @@ export interface Tool {
   name: string;
   description?: string;
   category: string;
-  status: "active" | "inactive" | "deprecated";
+  status: "active" | "inactive" | "deprecated" | "discontinued";
   created_at: string;
   updated_at: string;
   tags?: string[];

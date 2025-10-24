@@ -9,11 +9,12 @@ interface CacheMetadata {
 }
 
 // Dynamic imports for @vercel/blob to avoid build errors in non-Vercel environments
+// Type assertions are used because @vercel/blob is optional and only loaded in production
 let blobAPI: {
-  put: typeof import("@vercel/blob").put;
-  head: typeof import("@vercel/blob").head;
-  del: typeof import("@vercel/blob").del;
-  list: typeof import("@vercel/blob").list;
+  put: any; // typeof import("@vercel/blob").put
+  head: any; // typeof import("@vercel/blob").head
+  del: any; // typeof import("@vercel/blob").del
+  list: any; // typeof import("@vercel/blob").list
 } | null = null;
 
 // Only import @vercel/blob if we're in a Vercel environment
@@ -24,6 +25,7 @@ async function getBlobAPI() {
 
   if (process.env["BLOB_READ_WRITE_TOKEN"]) {
     try {
+      // @ts-ignore - @vercel/blob is optionally installed in production only
       const blob = await import("@vercel/blob");
       blobAPI = {
         put: blob.put,
@@ -235,8 +237,8 @@ export class CacheBlobStorage {
       });
 
       return blobs
-        .filter((blob) => blob.pathname.endsWith(".json"))
-        .map((blob) => {
+        .filter((blob: any) => blob.pathname.endsWith(".json"))
+        .map((blob: any) => {
           const type = blob.pathname.split("/").pop()?.replace(".json", "") as CacheType;
           return {
             type,

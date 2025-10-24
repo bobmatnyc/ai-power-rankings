@@ -1332,7 +1332,7 @@ export function ArticleManagement() {
                                       )
                                       .map((mention, idx) => (
                                         <Badge key={`mention-${idx}`} variant="outline" className="text-xs">
-                                          {mention.tool}
+                                          {String(mention.tool)}
                                         </Badge>
                                       ))}
                                   </div>

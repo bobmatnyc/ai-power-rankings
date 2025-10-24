@@ -49,9 +49,9 @@ export class RankingEngine {
    * Calculate market traction score based on funding and valuation
    */
   private calculateMarketTractionScore(metrics: ToolMetrics): number {
-    const fundingScore = this.normalizeScore(metrics.funding_total, 0, 1000000000); // 0 to $1B
-    const valuationScore = this.normalizeScore(metrics.valuation_latest, 0, 10000000000); // 0 to $10B
-    const userScore = this.normalizeScore(metrics.estimated_users, 0, 1000000); // 0 to 1M users
+    const fundingScore = this.normalizeScore(metrics.funding_total || 0, 0, 1000000000); // 0 to $1B
+    const valuationScore = this.normalizeScore(metrics.valuation_latest || 0, 0, 10000000000); // 0 to $10B
+    const userScore = this.normalizeScore(metrics.estimated_users || 0, 0, 1000000); // 0 to 1M users
 
     return (fundingScore * 0.3 + valuationScore * 0.4 + userScore * 0.3) * 100;
   }
@@ -72,10 +72,10 @@ export class RankingEngine {
    * Calculate developer adoption score based on GitHub metrics
    */
   private calculateDeveloperAdoptionScore(metrics: ToolMetrics): number {
-    const starsScore = this.normalizeScore(metrics.github_stars, 0, 100000) * 40;
-    const forksScore = this.normalizeScore(metrics.github_forks, 0, 10000) * 20;
-    const contributorsScore = this.normalizeScore(metrics.github_contributors, 0, 1000) * 20;
-    const communityScore = this.normalizeScore(metrics.community_size, 0, 50000) * 20;
+    const starsScore = this.normalizeScore(metrics.github_stars || 0, 0, 100000) * 40;
+    const forksScore = this.normalizeScore(metrics.github_forks || 0, 0, 10000) * 20;
+    const contributorsScore = this.normalizeScore(metrics.github_contributors || 0, 0, 1000) * 20;
+    const communityScore = this.normalizeScore(metrics.community_size || 0, 0, 50000) * 20;
 
     return starsScore + forksScore + contributorsScore + communityScore;
   }
