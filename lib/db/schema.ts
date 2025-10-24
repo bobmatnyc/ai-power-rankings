@@ -200,6 +200,29 @@ export const migrations = pgTable(
 );
 
 /**
+ * Monthly Summaries table
+ * Stores LLM-generated "What's New" monthly summaries
+ */
+export const monthlySummaries = pgTable(
+  "monthly_summaries",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    period: text("period").notNull().unique(), // Format: YYYY-MM
+    content: text("content").notNull(), // LLM-generated markdown content
+    dataHash: text("data_hash").notNull(), // SHA-256 hash for change detection
+    metadata: jsonb("metadata").default("{}"), // article_count, tool_count, model_used, etc.
+    generatedAt: timestamp("generated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    periodIdx: uniqueIndex("monthly_summaries_period_idx").on(table.period),
+    generatedAtIdx: index("monthly_summaries_generated_at_idx").on(table.generatedAt),
+    metadataIdx: index("monthly_summaries_metadata_idx").using("gin", table.metadata),
+  })
+);
+
+/**
  * User Preferences
  * NOTE: User preferences are now stored in Clerk's privateMetadata
  * instead of a separate database table for simplified architecture.
@@ -217,6 +240,8 @@ export type Company = typeof companies.$inferSelect;
 export type NewCompany = typeof companies.$inferInsert;
 export type Migration = typeof migrations.$inferSelect;
 export type NewMigration = typeof migrations.$inferInsert;
+export type MonthlySummary = typeof monthlySummaries.$inferSelect;
+export type NewMonthlySummary = typeof monthlySummaries.$inferInsert;
 
 export type {
   Article,

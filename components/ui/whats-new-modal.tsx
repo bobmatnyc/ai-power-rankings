@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Clock, Newspaper, Sparkles, TrendingUp, Wrench, X } from "lucide-react";
+import { Calendar, Clock, FileText, Newspaper, Sparkles, TrendingUp, Wrench, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -8,11 +8,25 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface WhatsNewModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   autoShow?: boolean;
+}
+
+interface MonthlySummary {
+  period: string;
+  content: string;
+  generatedAt: string;
+  metadata: {
+    model?: string;
+    article_count?: number;
+    ranking_change_count?: number;
+    new_tool_count?: number;
+    site_change_count?: number;
+  };
 }
 
 interface ToolUpdate {
@@ -53,7 +67,10 @@ export function WhatsNewModal({
   const [toolUpdates, setToolUpdates] = useState<ToolUpdate[]>([]);
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
   const [changelogItems, setChangelogItems] = useState<ChangelogItem[]>([]);
+  const [monthlySummary, setMonthlySummary] = useState<MonthlySummary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("recent");
 
   // ESC key handler to dismiss modal
   useEffect(() => {
@@ -100,6 +117,33 @@ export function WhatsNewModal({
       fetchAllUpdates();
     }
   }, [open]);
+
+  // Fetch monthly summary when switching to summary tab
+  useEffect(() => {
+    const fetchMonthlySummary = async () => {
+      if (activeTab !== "summary" || monthlySummary) return;
+
+      try {
+        setSummaryLoading(true);
+        const response = await fetch("/api/whats-new/summary");
+
+        if (response.ok) {
+          const data = await response.json();
+          setMonthlySummary(data.summary);
+        } else {
+          console.error("Failed to fetch monthly summary:", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching monthly summary:", error);
+      } finally {
+        setSummaryLoading(false);
+      }
+    };
+
+    if (open && activeTab === "summary") {
+      fetchMonthlySummary();
+    }
+  }, [open, activeTab, monthlySummary]);
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -179,20 +223,28 @@ export function WhatsNewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
             What's New
           </DialogTitle>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Clock className="h-4 w-4" />
-            Updates from the past week
-          </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto scroll-smooth px-1">
-          <div className="space-y-6 py-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="recent" className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Recent (7 Days)
+            </TabsTrigger>
+            <TabsTrigger value="summary" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Monthly Summary
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="recent" className="flex-1 overflow-y-auto scroll-smooth px-1 mt-4">
+            <div className="space-y-6 py-2">
             {toolUpdates.length === 0 && newsArticles.length === 0 && changelogItems.length === 0 ? (
               <div className="text-center py-8">
                 <Newspaper className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
@@ -335,10 +387,110 @@ export function WhatsNewModal({
                 )}
               </>
             )}
-          </div>
-        </div>
+            </div>
+          </TabsContent>
 
-        <div className="flex-shrink-0 flex items-center justify-between pt-4 border-t">
+          <TabsContent value="summary" className="flex-1 overflow-y-auto scroll-smooth px-1 mt-4">
+            <div className="space-y-4 py-2">
+              {summaryLoading ? (
+                <div className="animate-pulse space-y-4">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                  <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+                </div>
+              ) : monthlySummary ? (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="font-semibold text-lg">
+                        {new Date(monthlySummary.period + "-01").toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                        })}
+                      </h3>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                        <Calendar className="h-3 w-3" />
+                        <span>
+                          Generated {new Date(monthlySummary.generatedAt).toLocaleDateString()}
+                        </span>
+                        {monthlySummary.metadata.article_count !== undefined && (
+                          <>
+                            <span>•</span>
+                            <span>{monthlySummary.metadata.article_count} articles analyzed</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div
+                    className="prose prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-a:text-primary hover:prose-a:underline prose-p:leading-relaxed"
+                    dangerouslySetInnerHTML={{
+                      __html: monthlySummary.content
+                        .replace(/\n\n/g, "</p><p>")
+                        .replace(/\n/g, "<br/>")
+                        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+                        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+                        .replace(/^(.+)$/, "<p>$1</p>"),
+                    }}
+                  />
+
+                  {monthlySummary.metadata && (
+                    <div className="mt-6 pt-4 border-t">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        {monthlySummary.metadata.article_count !== undefined && (
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-primary">
+                              {monthlySummary.metadata.article_count}
+                            </div>
+                            <div className="text-xs text-muted-foreground">Articles</div>
+                          </div>
+                        )}
+                        {monthlySummary.metadata.new_tool_count !== undefined && (
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-primary">
+                              {monthlySummary.metadata.new_tool_count}
+                            </div>
+                            <div className="text-xs text-muted-foreground">New Tools</div>
+                          </div>
+                        )}
+                        {monthlySummary.metadata.ranking_change_count !== undefined && (
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-primary">
+                              {monthlySummary.metadata.ranking_change_count}
+                            </div>
+                            <div className="text-xs text-muted-foreground">Ranking Updates</div>
+                          </div>
+                        )}
+                        {monthlySummary.metadata.site_change_count !== undefined && (
+                          <div className="text-center">
+                            <div className="text-2xl font-bold text-primary">
+                              {monthlySummary.metadata.site_change_count}
+                            </div>
+                            <div className="text-xs text-muted-foreground">Site Updates</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                  <p className="text-muted-foreground">No monthly summary available</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Summary will be generated automatically based on recent activity
+                  </p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <div className="flex-shrink-0 flex items-center justify-between pt-4 border-t mt-4">
           <div className="text-sm text-muted-foreground">
             Stay updated with the latest AI tool rankings and platform improvements
           </div>
