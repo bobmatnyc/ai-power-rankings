@@ -3,6 +3,11 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import ClerkProviderClient from "@/components/auth/clerk-provider-client";
 import { DeferredAnalytics } from "@/components/analytics/deferred-analytics";
+import {
+  generateOrganizationSchema,
+  generateWebsiteSchema,
+  createJsonLdScript,
+} from "@/lib/schema";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -52,6 +57,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // Note: The lang attribute defaults to "en" but will be updated by locale-specific routes
   // The suppressHydrationWarning is necessary because the lang attribute may differ
   // between server and client rendering in internationalized routes
+
+  // Get base URL for schema markup
+  const baseUrl =
+    process.env["NEXT_PUBLIC_BASE_URL"] ||
+    (process.env["VERCEL_URL"] ? `https://${process.env["VERCEL_URL"]}` : "https://aipowerranking.com");
+
+  // Generate site-wide schema markup
+  const organizationSchema = generateOrganizationSchema({
+    name: "AI Power Rankings",
+    url: baseUrl,
+    logo: `${baseUrl}/logo.png`,
+    description: "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by developers worldwide.",
+  });
+
+  const websiteSchema = generateWebsiteSchema(baseUrl);
+
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
@@ -65,6 +86,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="/crown-of-technology.webp"
           as="image"
           type="image/webp"
+        />
+
+        {/* Schema.org markup for SEO - Organization */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: createJsonLdScript(organizationSchema) }}
+        />
+
+        {/* Schema.org markup for SEO - Website */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: createJsonLdScript(websiteSchema) }}
         />
       </head>
       <body
