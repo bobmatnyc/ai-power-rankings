@@ -13,7 +13,7 @@ interface ToolData {
   slug: string;
   name: string;
   category: string;
-  status: string;
+  status: "active" | "inactive" | "deprecated" | "discontinued" | string;
   company_id?: string;
   info?: Record<string, unknown>;
   tags?: string[];

@@ -1,13 +1,26 @@
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import newsItemSchema from "../../schemas/news-item.schema.json";
+// TODO: Create schemas/news-item.schema.json or remove this validator if not needed
+// import newsItemSchema from "../../schemas/news-item.schema.json";
 import { logger } from "./logger";
 
 const ajv = new Ajv({ allErrors: true, verbose: true });
 addFormats(ajv);
 
 // Compile the schema
-const validateNewsItemSchema = ajv.compile(newsItemSchema);
+// TODO: Re-enable schema validation once news-item.schema.json is created
+const validateNewsItemSchema = ajv.compile({
+  type: "object",
+  properties: {
+    id: { type: "string" },
+    title: { type: "string" },
+    source: { type: "object" },
+    published_date: { type: "string" },
+    type: { type: "string" },
+    tools_mentioned: { type: "array" }
+  },
+  required: ["id", "title", "source", "published_date", "type"]
+});
 
 export interface NewsItem {
   id: string;

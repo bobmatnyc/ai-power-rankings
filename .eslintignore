@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+dist
+build
+.vercel
+*.config.js
+*.config.ts
+next-env.d.ts
+public
