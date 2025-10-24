@@ -7,6 +7,7 @@ import { z } from "zod";
 import type { Article, DryRunResult } from "@/lib/db/article-schema";
 import type { Ranking } from "@/lib/db/schema";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
+import { WhatsNewSummaryService } from "./whats-new-summary.service";
 
 // Validation schemas
 export const ArticleIngestionSchema = z
@@ -1028,6 +1029,21 @@ export class ArticleIngestionService {
   }
 
   /**
+   * Invalidate monthly summary cache (called after article publication)
+   */
+  private async invalidateMonthlySummaryCache(): Promise<void> {
+    try {
+      const summaryService = new WhatsNewSummaryService();
+      const currentPeriod = new Date().toISOString().slice(0, 7); // YYYY-MM
+      await summaryService.invalidateSummary(currentPeriod);
+      console.log(`[ArticleIngestion] Invalidated monthly summary cache for ${currentPeriod}`);
+    } catch (error) {
+      // Non-critical error - log but don't fail article ingestion
+      console.error("[ArticleIngestion] Failed to invalidate summary cache:", error);
+    }
+  }
+
+  /**
    * Get current system state (rankings, tools, companies) for analysis
    */
   private async getCurrentState(_isDryRun: boolean): Promise<{
@@ -1166,7 +1182,11 @@ export class ArticleIngestionService {
         // 2. Create new tools/companies if needed
         // 3. Apply ranking changes
         // 4. Log the processing
-        // 5. Return the saved article
+        // 5. Invalidate monthly summary cache
+        // 6. Return the saved article
+
+        // When full ingestion is implemented, call:
+        // await this.invalidateMonthlySummaryCache();
 
         throw new Error("Full ingestion not yet implemented");
       }
