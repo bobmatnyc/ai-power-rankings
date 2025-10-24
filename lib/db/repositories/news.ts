@@ -5,7 +5,7 @@
  */
 
 import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
-import { db } from "../index";
+import { getDb } from "../connection";
 import { articles, type Article } from "../article-schema";
 
 // Type for the news article format expected by the frontend
@@ -49,6 +49,7 @@ export class NewsRepository {
    * Get all active news articles
    */
   async getAll() {
+    const db = getDb();
     if (!db) {
       console.warn("Database not configured, returning empty array");
       return [];
@@ -72,6 +73,7 @@ export class NewsRepository {
    * Get news articles with pagination
    */
   async getPaginated(limit: number = 20, offset: number = 0) {
+    const db = getDb();
     if (!db) {
       return { articles: [], total: 0, hasMore: false };
     }
@@ -110,6 +112,7 @@ export class NewsRepository {
    * Get news article by slug
    */
   async getBySlug(slug: string) {
+    const db = getDb();
     if (!db) return null;
 
     try {
@@ -133,6 +136,7 @@ export class NewsRepository {
    * Get news articles by date range
    */
   async getByDateRange(startDate: Date, endDate: Date) {
+    const db = getDb();
     if (!db) return [];
 
     try {
@@ -179,6 +183,7 @@ export class NewsRepository {
    * Get recent active articles
    */
   async getRecent(limit: number = 10) {
+    const db = getDb();
     if (!db) return [];
 
     try {
@@ -218,6 +223,7 @@ export class NewsRepository {
    * Search news articles by tool name
    */
   async searchByToolName(toolName: string, limit: number = 10) {
+    const db = getDb();
     if (!db) return [];
 
     try {
