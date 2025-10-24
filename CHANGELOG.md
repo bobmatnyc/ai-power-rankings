@@ -11,6 +11,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2025-10-24
+
+### Added
+- **Monthly Summaries Feature**: LLM-generated monthly AI landscape reports
+  - New database table `monthly_summaries` with 8 optimized indexes
+  - What's New API endpoint (`/api/whats-new/summary`) for programmatic access
+  - Database migration `0007_add_monthly_summaries.sql`
+  - npm scripts: `db:verify-summaries` and `db:apply-summaries`
+- **New AI Development Tools**: 3 cutting-edge tools added to rankings (October 2025)
+  - **ClackyAI** (Rank #8, Score 85/100) - Agentic cloud development environment with autonomous coding
+  - **Flint** (Rank #6, Score 87/100) - Autonomous website development platform with AI-powered design
+  - **DFINITY Caffeine** (Rank #4, Score 88/100) - AI full-stack application platform on Internet Computer blockchain
+  - All tools scored using Algorithm v7.2 baseline methodology
+- **Database Migration Tooling**: 14 new utility scripts for database operations
+  - Tools management: `add-new-tools-october-2025.ts`, `update-october-2025-tools.ts`, `verify-october-2025-tools.ts`
+  - Summaries management: `apply-monthly-summaries-migration.ts`, `verify-monthly-summaries.ts`
+  - API verification: `check-tools-in-api.ts`, `query-gitlab-duo.ts`, `show-gitlab-duo-comparison.ts`
+  - Enhancement scripts: `enhance-gitlab-duo-agent-platform.ts`, `verify-gitlab-duo-enhancement.ts`
+  - Reporting: `final-october-2025-report.ts`
+
+### Changed
+- **GitLab Duo Enhancement**: Updated with Agent Platform details and July-October 2025 capabilities
+  - Added agentic workflow automation features
+  - Updated tool description with latest platform features
+- **Documentation**: Enhanced `scripts/README-database-scripts.md` with monthly summaries section
+  - Added verification and migration workflows
+  - Documented new database scripts and their usage
+
+### Database
+- New table: `monthly_summaries` (month, year, summary, created_at, updated_at)
+- Indexes: Primary key, unique month-year, year-month composite, and timestamp indexes
+- Total active tools: 10 tools with complete scoring data
+- Algorithm v7.2 baseline scoring applied to all new entries
+
+### Documentation
+- New implementation evidence: `docs/reference/OCTOBER-2025-TOOL-ADDITIONS.md`
+- New migration success report: `docs/deployment/MONTHLY-SUMMARIES-MIGRATION-SUCCESS.md`
+- New migration evidence: `docs/reference/OCTOBER-2025-MIGRATION-EVIDENCE.md`
+
+---
+
 ## [0.2.0] - 2025-10-24
 
 ### Added

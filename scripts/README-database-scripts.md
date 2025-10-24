@@ -11,8 +11,14 @@ npm run db:compare
 # Verify tools table has scoring columns
 npm run db:verify-tools
 
+# Verify monthly_summaries table and data
+npm run db:verify-summaries
+
 # Apply scoring columns migration to current DB
 npm run db:apply-scoring
+
+# Apply monthly_summaries table migration
+npm run db:apply-summaries
 
 # Copy all data from production to development
 npm run migrate:prod-to-dev
@@ -366,11 +372,15 @@ npm run db:apply-scoring  # if needed
 ```
 lib/db/migrations/
 ├── meta/
-│   └── _journal.json              # Migration tracking
-├── 0000_oval_manta.sql            # Base schema
-├── 0001_easy_mesmero.sql          # Article management
-├── 0002_add_user_preferences.sql  # User prefs (deprecated)
-└── 0003_add_scoring_columns.sql   # Scoring system (NEW)
+│   └── _journal.json                  # Migration tracking
+├── 0000_oval_manta.sql                # Base schema
+├── 0001_easy_mesmero.sql              # Article management
+├── 0002_add_user_preferences.sql      # User prefs (deprecated)
+├── 0003_add_scoring_columns.sql       # Scoring system
+├── 0004_ranking_versions.sql          # Ranking versions
+├── 0005_add_article_url_to_rankings_changes.sql
+├── 0006_add_timestamp_indexes.sql     # Performance indexes
+└── 0007_add_monthly_summaries.sql     # What's New summaries (NEW)
 ```
 
 ## Schema File Locations
