@@ -1,0 +1,38 @@
+Phase,Priority,Tool Name,Slug,Category,Current %,Missing,Effort,Business Value,Status,Notes
+7A,1,Claude Code,claude-code,Autonomous Agent,80%,Use Cases,15-20 min,⭐⭐⭐,Pending,Anthropic official tool
+7A,1,ChatGPT Canvas,chatgpt-canvas,Autonomous Agent,80%,Use Cases,15-20 min,⭐⭐⭐,Pending,OpenAI coding interface
+7A,1,Claude Artifacts,claude-artifacts,App Builder,80%,Use Cases,15-20 min,⭐⭐⭐,Pending,Anthropic app builder
+7A,1,CodeRabbit,coderabbit,Code Review,80%,Use Cases,15-20 min,⭐⭐⭐,Pending,Fast-growing PR review
+7A,1,Snyk Code,snyk-code,Code Review,80%,Use Cases,15-20 min,⭐⭐⭐,Pending,Enterprise security leader
+7A,1,Warp,warp,Autonomous Agent,80%,Use Cases,15-20 min,⭐⭐,Pending,AI-powered terminal
+7A,1,Zed,zed,Code Editor,80%,Use Cases,15-20 min,⭐⭐,Pending,High-performance editor
+7A,1,v0,v0-vercel,App Builder,80%,Use Cases,15-20 min,⭐⭐,Pending,Vercel UI generator
+7A,1,Refact.ai,refact-ai,Autonomous Agent,80%,Use Cases,15-20 min,⭐,Pending,Self-hosted assistant
+7A,2,Google Jules,google-jules,Autonomous Agent,80%,Use Cases,15-20 min,⭐⭐⭐,Pending,Google coding agent
+7A,2,Google Gemini CLI,google-gemini-cli,Open Source Framework,80%,Use Cases,15-20 min,⭐⭐,Pending,CLI for Gemini
+7A,2,Google Gemini Code Assist,gemini-code-assist,IDE Assistant,80%,Use Cases,15-20 min,⭐⭐⭐,Pending,Enterprise IDE assistant
+7A,3,JetBrains AI Assistant,jetbrains-ai-assistant,IDE Assistant,80%,Use Cases,15-20 min,⭐⭐⭐,Pending,Official JetBrains AI
+7A,3,Microsoft IntelliCode,microsoft-intellicode,IDE Assistant,80%,Use Cases,15-20 min,⭐⭐⭐,Pending,VS Code integration
+7A,3,GitLab Duo,gitlab-duo,Other,80%,Use Cases,15-20 min,⭐⭐,Pending,DevOps platform suite
+7A,3,Diffblue Cover,diffblue-cover,Testing Tool,80%,Use Cases,15-20 min,⭐⭐,Pending,Java test generation
+7A,3,Qodo Gen,qodo-gen,Testing Tool,80%,Use Cases,15-20 min,⭐⭐,Pending,Test generation tool
+7A,3,Sourcery,sourcery,Code Review,80%,Use Cases,15-20 min,⭐,Pending,Python code quality
+7A,4,Cerebras Code,cerebras-code,Code Assistant,80%,Use Cases,15-20 min,⭐⭐,Pending,Fast inference assistant
+7A,4,Qwen Code,qwen-code,Open Source Framework,80%,Use Cases,15-20 min,⭐,Pending,Chinese OSS LLM
+7A,4,Graphite,graphite,Other,80%,Use Cases,15-20 min,⭐,Pending,Git workflow tool
+7B,5,EPAM AI/Run,epam-ai-run,Autonomous Agent,40%,"Pricing, Use Cases, Integrations",40-50 min,⭐⭐,Pending,Enterprise consulting tool
+7B,5,KiloCode,kilocode,IDE Assistant,40%,"Pricing, Use Cases, Integrations",40-50 min,⭐,Pending,IDE assistant
+7B,5,Kiro,kiro,Proprietary IDE,40%,"Pricing, Use Cases, Integrations",40-50 min,⭐,Pending,Proprietary IDE
+7B,5,RooCode,roocode,IDE Assistant,40%,"Pricing, Use Cases, Integrations",40-50 min,⭐,Pending,VSCode extension
+7B,5,Trae AI,trae-ai,IDE Assistant,40%,"Pricing, Use Cases, Integrations",40-50 min,⭐,Pending,IDE assistant
+7B,6,OpenAI Codex,openai-codex,Autonomous Agent,40%,"Pricing, Use Cases, Integrations",50-70 min,⭐,Pending,Likely deprecated
+7B,6,Qoder,qoder,Code Editor,40%,"Pricing, Use Cases, Integrations",50-70 min,⭐,Pending,Limited information
+7B,6,Caffeine,dfinity-caffeine,Other,40%,"Pricing, Use Cases, Integrations",50-70 min,⭐,Pending,DFINITY blockchain tool
+7B,6,ClackyAI,clacky-ai,Other,40%,"Pricing, Use Cases, Integrations",50-70 min,⭐,Pending,Limited information
+7B,6,Flint,flint,Other,40%,"Pricing, Use Cases, Integrations",50-70 min,⭐,Pending,Limited information
+7C,7,GitLab Duo Agent Platform,gitlab-duo-agent-platform,Other,0%,Everything,N/A,N/A,Cleanup,Merge into gitlab-duo
+7C,7,Anything Max,anything-max,Autonomous Agent,20%,Most fields,N/A,N/A,Defer,Auto-created - unclear
+7C,7,OpenAI Codex CLI,openai-codex-cli,Autonomous Agent,20%,Most fields,N/A,N/A,Defer/Deprecate,Likely discontinued
+7C,7,OpenHands,openhands,Open Source Framework,20%,Most fields,N/A,N/A,Defer,Early stage - minimal info
+DUPLICATE,N/A,Continue,continue-dev,Open Source Framework,80%,N/A,N/A,N/A,Remove,Duplicate of continue (Phase 2)
+DUPLICATE,N/A,JetBrains AI,jetbrains-ai,IDE Assistant,80%,N/A,N/A,N/A,Remove,Duplicate of jetbrains-ai-assistant

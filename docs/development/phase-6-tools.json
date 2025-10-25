@@ -1,0 +1,365 @@
+{
+  "phase": 6,
+  "theme": "Enterprise & Platform Leaders",
+  "totalTools": 8,
+  "estimatedDuration": "8-11 days (2 weeks)",
+  "completionTarget": "95%+",
+  "tools": [
+    {
+      "priority": "CRITICAL",
+      "rank": 1,
+      "name": "Devin",
+      "slug": "devin",
+      "category": "autonomous-agent",
+      "currentCompleteness": 80,
+      "targetCompleteness": 95,
+      "researchEffort": "HIGH",
+      "marketContext": {
+        "userBase": "Enterprise customers + individual developers",
+        "pricing2025": "Reduced from $500/mo to $20/mo (96% price cut)",
+        "funding": "Cognition Labs - Founders Fund, Khosla Ventures",
+        "keyMetric": "Market-defining autonomous AI software engineer",
+        "recentUpdates": "Devin 2.0 with parallel workspaces (2025)"
+      },
+      "contentGaps": [
+        "Use cases: Enterprise workflows, parallel development scenarios",
+        "Integration deep-dive: GitHub, cloud environments, IDE connections",
+        "2025 pricing tiers and ROI analysis",
+        "Devin 1.2 vs 2.0 evolution and feature comparison"
+      ],
+      "strategicValue": "Market leader defining autonomous agent category, critical benchmark for all competitors"
+    },
+    {
+      "priority": "CRITICAL",
+      "rank": 2,
+      "name": "Google Jules",
+      "slug": "jules",
+      "category": "autonomous-agent",
+      "currentCompleteness": 20,
+      "targetCompleteness": 95,
+      "researchEffort": "MEDIUM",
+      "marketContext": {
+        "userBase": "Thousands of developers (beta), expanding post-GA",
+        "pricing2025": "Free tier + paid plans, Gemini 2.5 Pro powered",
+        "funding": "Google (Alphabet) internal project",
+        "keyMetric": "140,000+ code improvements during beta phase",
+        "recentUpdates": "Aug 2025 public launch, Oct 2025 CLI tools release"
+      },
+      "contentGaps": [
+        "Features: Detailed async workflow, GitHub integration mechanics",
+        "Pricing: Free vs paid tiers, compute unit pricing",
+        "Use cases: Best scenarios for asynchronous development",
+        "Integrations: Google Cloud, GitHub, supported languages",
+        "Competitive positioning vs Devin and OpenAI Codex"
+      ],
+      "strategicValue": "Google's flagship AI coding agent, represents asynchronous agent-based approach"
+    },
+    {
+      "priority": "CRITICAL",
+      "rank": 3,
+      "name": "JetBrains AI Assistant",
+      "slug": "jetbrains-ai",
+      "category": "ide-assistant",
+      "currentCompleteness": 80,
+      "targetCompleteness": 95,
+      "researchEffort": "MEDIUM",
+      "marketContext": {
+        "userBase": "25+ million JetBrains IDE users worldwide",
+        "pricing2025": "Free tier (2025.1+), Pro tier, Enterprise tier",
+        "funding": "JetBrains (established IDE platform company)",
+        "keyMetric": "2025 Gartner Magic Quadrant for AI Code Assistants",
+        "recentUpdates": "Free tier with unlimited completions (2025.1 release)"
+      },
+      "contentGaps": [
+        "Use cases: Enterprise compliance scenarios, offline development",
+        "Pricing: Free vs Pro vs Enterprise tier details",
+        "Integrations: All supported JetBrains IDEs, local model integration",
+        "Enterprise features: Admin controls, data governance, SSO configuration"
+      ],
+      "strategicValue": "Largest IDE platform AI integration, critical enterprise tool with strong privacy guarantees"
+    },
+    {
+      "priority": "CRITICAL",
+      "rank": 4,
+      "name": "Microsoft IntelliCode",
+      "slug": "microsoft-intellicode",
+      "category": "ide-assistant",
+      "currentCompleteness": 20,
+      "targetCompleteness": 95,
+      "researchEffort": "MEDIUM",
+      "marketContext": {
+        "userBase": "10+ million Visual Studio 2022 users (enabled by default)",
+        "pricing2025": "100% free for all Visual Studio users",
+        "funding": "Microsoft (internal product)",
+        "keyMetric": "Universal adoption - default in VS 2022",
+        "recentUpdates": "Influenced GitHub Copilot UX, ongoing VS integration"
+      },
+      "contentGaps": [
+        "Features: Whole-line completions, context-aware suggestions, team models",
+        "Use cases: C# development, enterprise Visual Studio workflows",
+        "Integrations: Visual Studio vs VS Code differences",
+        "Competitive context: Relationship to GitHub Copilot, Microsoft AI strategy"
+      ],
+      "strategicValue": "Largest built-in AI assistant user base, Microsoft's original AI coding innovation"
+    },
+    {
+      "priority": "HIGH",
+      "rank": 5,
+      "name": "Warp",
+      "slug": "warp",
+      "category": "autonomous-agent",
+      "currentCompleteness": 80,
+      "targetCompleteness": 95,
+      "researchEffort": "MEDIUM",
+      "marketContext": {
+        "userBase": "500,000+ engineers, 16,000+ engineering teams",
+        "pricing2025": "Team and enterprise tiers",
+        "funding": "$73.6M total ($50M Series B - Sequoia, GV, Sam Altman)",
+        "keyMetric": "Adding $1M ARR every 10 days",
+        "recentUpdates": "Windows release (Feb 2025), multi-model AI approach"
+      },
+      "contentGaps": [
+        "Use cases: Terminal workflow transformation, agent mode scenarios",
+        "Pricing: Team vs enterprise tiers",
+        "Integrations: Shell environments, CI/CD, development workflows",
+        "AI features: Agent mode capabilities, command generation"
+      ],
+      "strategicValue": "Revolutionary AI terminal with exceptional growth, represents terminal transformation category"
+    },
+    {
+      "priority": "HIGH",
+      "rank": 6,
+      "name": "CodeRabbit",
+      "slug": "coderabbit",
+      "category": "code-review",
+      "currentCompleteness": 80,
+      "targetCompleteness": 95,
+      "researchEffort": "MEDIUM",
+      "marketContext": {
+        "userBase": "8,000+ paying customers (Chegg, Groupon, Life360, Mercury)",
+        "pricing2025": "Free tier in IDEs, paid GitHub integration, enterprise tier",
+        "funding": "$88M total ($60M Series B, Sep 2025)",
+        "keyMetric": "#1 most installed AI app on GitHub Marketplace",
+        "recentUpdates": "30-40% monthly growth, free in VS Code/Cursor/Windsurf (May 2025)"
+      },
+      "contentGaps": [
+        "Use cases: PR review automation, team code quality workflows",
+        "Pricing: Free tier, team tier, enterprise pricing",
+        "Integrations: GitHub Apps, GitLab integration, IDE extensions",
+        "Enterprise features: Custom review instructions, JIRA/Linear integration"
+      ],
+      "strategicValue": "Market leader in AI code review, addresses 'vibe coding' quality concerns"
+    },
+    {
+      "priority": "HIGH",
+      "rank": 7,
+      "name": "Snyk Code",
+      "slug": "snyk-code",
+      "category": "code-review",
+      "currentCompleteness": 80,
+      "targetCompleteness": 95,
+      "researchEffort": "MEDIUM",
+      "marketContext": {
+        "userBase": "Developer security platform with broad enterprise adoption",
+        "pricing2025": "Platform pricing with code security module",
+        "funding": "Snyk (total funding $500M+)",
+        "keyMetric": "84% MTTR reduction, 4,600 dev hours saved",
+        "recentUpdates": "'Evo by Snyk' agentic security (DevSecCon 2025)"
+      },
+      "contentGaps": [
+        "Use cases: AI code security, vulnerability remediation, enterprise compliance",
+        "Pricing: Platform pricing with code security module",
+        "Integrations: CI/CD pipelines, GitHub, GitLab, IDE support",
+        "AI features: DeepCode AI Fix, Evo agentic security"
+      ],
+      "strategicValue": "Critical security category for AI-generated code era, unique security-as-code-review positioning"
+    },
+    {
+      "priority": "HIGH",
+      "rank": 8,
+      "name": "Zed",
+      "slug": "zed",
+      "category": "code-editor",
+      "currentCompleteness": 20,
+      "targetCompleteness": 95,
+      "researchEffort": "MEDIUM",
+      "marketContext": {
+        "userBase": "Growing open-source community, early enterprise adopters",
+        "pricing2025": "Free/open-source + enterprise/cloud offering",
+        "funding": "Zed Industries (Atom & Tree-sitter creators)",
+        "keyMetric": "2x faster AI completions, 58ms editing response time",
+        "recentUpdates": "Windows release (2025), Baseten partnership for AI speed"
+      },
+      "contentGaps": [
+        "Features: Multiplayer workflows, AI integration, performance benchmarks",
+        "Use cases: Remote collaboration, high-performance development",
+        "Pricing: Free/open-source vs enterprise/cloud offering",
+        "Integrations: Language servers, AI models, extensions",
+        "Competitive positioning: vs VS Code, Cursor, JetBrains"
+      ],
+      "strategicValue": "Next-generation AI-native editor from proven team, represents Rust+GPU performance innovation"
+    }
+  ],
+  "deferredTools": [
+    {
+      "name": "OpenHands",
+      "slug": "openhands",
+      "completeness": 20,
+      "deferReason": "Emerging tool, covered by Devin analysis",
+      "phase": 7
+    },
+    {
+      "name": "Gemini Code Assist",
+      "slug": "gemini-code-assist",
+      "completeness": 80,
+      "deferReason": "Jules provides comprehensive Google AI coding coverage",
+      "phase": 7
+    },
+    {
+      "name": "Claude Code",
+      "slug": "claude-code",
+      "completeness": 80,
+      "deferReason": "Claude Sonnet 4.5 already covered in Phase 2",
+      "phase": 7
+    },
+    {
+      "name": "ChatGPT Canvas",
+      "slug": "chatgpt-canvas",
+      "completeness": 80,
+      "deferReason": "Feature-level tool, not primary coding assistant",
+      "phase": 7
+    },
+    {
+      "name": "Claude Artifacts",
+      "slug": "claude-artifacts",
+      "completeness": 80,
+      "deferReason": "Feature-level tool, not standalone product",
+      "phase": 7
+    },
+    {
+      "name": "Diffblue Cover",
+      "slug": "diffblue-cover",
+      "completeness": 80,
+      "deferReason": "Very niche (Java-only testing)",
+      "phase": 7
+    },
+    {
+      "name": "Qodo Gen",
+      "slug": "qodo-gen",
+      "completeness": 80,
+      "deferReason": "Niche testing category",
+      "phase": 7
+    },
+    {
+      "name": "Sourcery",
+      "slug": "sourcery",
+      "completeness": 80,
+      "deferReason": "Single-language focus (Python), limited market",
+      "phase": 7
+    },
+    {
+      "name": "Refact.ai",
+      "slug": "refact-ai",
+      "completeness": 80,
+      "deferReason": "Limited differentiation, unclear market position",
+      "phase": 7
+    },
+    {
+      "name": "Graphite",
+      "slug": "graphite",
+      "completeness": 80,
+      "deferReason": "Workflow tool, not AI coding assistant core",
+      "phase": 8
+    }
+  ],
+  "metrics": {
+    "totalToolsInDatabase": 50,
+    "phases1to5Completed": 33,
+    "phase6Target": 8,
+    "afterPhase6Coverage": 41,
+    "coveragePercentage": 82,
+    "remainingAfterPhase6": 9,
+    "estimatedResearchHours": "18-24 hours",
+    "targetContentElements": {
+      "useCases": "24-40 (3-5 per tool)",
+      "integrations": "40+ total",
+      "pricingBreakdowns": "8 comprehensive",
+      "competitiveComparisons": "16+ direct comparisons"
+    }
+  },
+  "strategicThemes": {
+    "majorPlatforms": ["Google (Jules)", "Microsoft (IntelliCode)", "JetBrains (AI Assistant)"],
+    "criticalCategories": [
+      "Autonomous Agents (Devin, Jules)",
+      "IDE Assistants (JetBrains, IntelliCode)",
+      "Code Review (CodeRabbit, Snyk Code)",
+      "Developer Infrastructure (Warp, Zed)"
+    ],
+    "marketTrends2025": [
+      "Price democratization (Devin $500 → $20)",
+      "Free tier expansion (JetBrains, CodeRabbit)",
+      "AI code security emergence (Snyk)",
+      "Performance innovation (Zed Rust+GPU, Warp multi-model)"
+    ]
+  },
+  "successCriteria": {
+    "quantitative": [
+      "Complete 8 tools to 95%+ content completeness",
+      "Add 24-40 detailed use cases",
+      "Document 40+ integrations",
+      "Create 8 comprehensive pricing breakdowns",
+      "Add 16+ competitive comparisons"
+    ],
+    "qualitative": [
+      "Establish 'Enterprise & Platform Leaders' authoritative coverage",
+      "Provide 2025-current market context for all tools",
+      "Enable cross-tool comparison for enterprise buyers",
+      "Document AI coding market trends through tool evolution"
+    ]
+  },
+  "timeline": {
+    "week1": {
+      "days": "1-5",
+      "focus": "Research & Drafting",
+      "deliverables": [
+        "Deep research on all 8 tools (parallel)",
+        "Draft core content (descriptions, features, pricing)",
+        "Draft use cases and integrations"
+      ]
+    },
+    "week2": {
+      "days": "6-11",
+      "focus": "Polish & Review",
+      "deliverables": [
+        "Competitive analysis and positioning",
+        "Content review, fact-checking, consistency",
+        "Final QA and publish"
+      ]
+    }
+  },
+  "researchClusters": [
+    {
+      "cluster": 1,
+      "name": "Autonomous Agents",
+      "tools": ["devin", "jules"]
+    },
+    {
+      "cluster": 2,
+      "name": "IDE Assistants",
+      "tools": ["jetbrains-ai", "microsoft-intellicode"]
+    },
+    {
+      "cluster": 3,
+      "name": "Code Quality",
+      "tools": ["coderabbit", "snyk-code"]
+    },
+    {
+      "cluster": 4,
+      "name": "Infrastructure",
+      "tools": ["warp", "zed"]
+    }
+  ],
+  "generatedBy": "Research Agent (Claude Code)",
+  "generatedDate": "2025-10-25",
+  "documentVersion": "1.0"
+}

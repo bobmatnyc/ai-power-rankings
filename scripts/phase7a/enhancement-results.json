@@ -1,0 +1,122 @@
+{
+  "timestamp": "2025-10-25T17:16:08.690Z",
+  "totalDuration": 26321,
+  "results": [
+    {
+      "tool": "Claude Code",
+      "success": true,
+      "duration": 981
+    },
+    {
+      "tool": "ChatGPT Canvas",
+      "success": true,
+      "duration": 682
+    },
+    {
+      "tool": "Claude Artifacts",
+      "success": true,
+      "duration": 644
+    },
+    {
+      "tool": "CodeRabbit",
+      "success": true,
+      "duration": 724
+    },
+    {
+      "tool": "Snyk Code",
+      "success": true,
+      "duration": 703
+    },
+    {
+      "tool": "Warp",
+      "success": true,
+      "duration": 655
+    },
+    {
+      "tool": "Zed",
+      "success": true,
+      "duration": 712
+    },
+    {
+      "tool": "v0",
+      "success": true,
+      "duration": 651
+    },
+    {
+      "tool": "Refact.ai",
+      "success": true,
+      "duration": 624
+    },
+    {
+      "tool": "Google Jules",
+      "success": true,
+      "duration": 708
+    },
+    {
+      "tool": "Google Gemini CLI",
+      "success": true,
+      "duration": 709
+    },
+    {
+      "tool": "Gemini Code Assist",
+      "success": true,
+      "duration": 664
+    },
+    {
+      "tool": "JetBrains AI Assistant",
+      "success": true,
+      "duration": 764
+    },
+    {
+      "tool": "Microsoft IntelliCode",
+      "success": true,
+      "duration": 753
+    },
+    {
+      "tool": "GitLab Duo",
+      "success": true,
+      "duration": 695
+    },
+    {
+      "tool": "Diffblue Cover",
+      "success": true,
+      "duration": 696
+    },
+    {
+      "tool": "Qodo Gen",
+      "success": true,
+      "duration": 683
+    },
+    {
+      "tool": "Sourcery",
+      "success": true,
+      "duration": 660
+    },
+    {
+      "tool": "Cerebras Code",
+      "success": true,
+      "duration": 629
+    },
+    {
+      "tool": "Qwen Code",
+      "success": true,
+      "duration": 662
+    },
+    {
+      "tool": "Graphite",
+      "success": true,
+      "duration": 641
+    },
+    {
+      "tool": "Continue",
+      "success": true,
+      "duration": 657
+    }
+  ],
+  "summary": {
+    "total": 22,
+    "successful": 22,
+    "failed": 0,
+    "successRate": "100.00%"
+  }
+}
