@@ -1,0 +1,11 @@
+Rank,Tool Name,Slug,Category,Priority,Current Content,Effort,Missing Content,Market Impact
+1,Bolt.new,bolt-new,app-builder,CRITICAL,0%,High,"company, overview, pricing, features, keyFeatures","StackBlitz's viral app builder, 1M+ projects"
+2,ChatGPT Canvas,chatgpt-canvas,autonomous-agent,CRITICAL,0%,High,"company, overview, pricing, features, keyFeatures","OpenAI's code editor, massive ChatGPT user base"
+3,Claude Artifacts,claude-artifacts,app-builder,CRITICAL,0%,High,"company, overview, pricing, features, keyFeatures","Anthropic's interactive coding, core Claude capability"
+4,Cline,cline,open-source-framework,CRITICAL,0%,High,"company, overview, pricing, features, keyFeatures","Top VS Code extension, 500K+ installs"
+5,Continue,continue-dev,open-source-framework,CRITICAL,0%,High,"company, overview, pricing, features, keyFeatures","Leading open-source IDE assistant, 100K+ stars"
+6,Lovable,lovable,app-builder,CRITICAL,0%,High,"company, overview, pricing, features, keyFeatures","GPT Engineer rebrand, popular app builder"
+7,v0,v0-vercel,app-builder,CRITICAL,60%,Low,"company, keyFeatures","Vercel's AI UI generator, Next.js ecosystem"
+8,Refact.ai,refact-ai,autonomous-agent,HIGH,20%,Medium,"company, overview, pricing, keyFeatures","Self-hosted code assistant, privacy-focused"
+9,Warp,warp,autonomous-agent,HIGH,20%,Medium,"company, overview, pricing, keyFeatures","Modern AI-powered terminal, developer favorite"
+10,Augment Code*,augment-code,ide-assistant,HIGH,0%,High,"company, overview, pricing, features, keyFeatures","Well-funded ($227M), enterprise focus"
