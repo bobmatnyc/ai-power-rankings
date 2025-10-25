@@ -96,8 +96,9 @@ export async function GET(): Promise<NextResponse> {
           // Get scoring data from batch loaded data
           const scoringData = allScoringData.get(tool.id);
 
-          // Parse tool info from database (it's stored as JSONB)
-          const toolInfoData = tool.info || {};
+          // Repository spreads all JSONB data fields to top level
+          // Extract info object (contains structured metadata)
+          const toolInfoData = (tool as any).info || {};
 
           // Create properly typed tool info
           const toolInfo: ToolInfo = {
@@ -162,9 +163,10 @@ export async function GET(): Promise<NextResponse> {
             status: tool.status as "active" | "inactive" | "deprecated",
             created_at: tool.created_at || new Date().toISOString(),
             updated_at: tool.updated_at || new Date().toISOString(),
-            tags: tool.tags || [],
+            tags: ((tool as any).tags as string[]) || [],
             info: toolInfo,
             scoring: scoring,
+            use_cases: ((tool as any).use_cases as string[]) || [],
           } satisfies APITool;
         });
 

@@ -90,6 +90,7 @@ export interface APITool {
   readonly tags: readonly string[];
   readonly info: ToolInfo;
   readonly scoring?: ToolScoring;
+  readonly use_cases?: readonly string[];
 }
 
 export interface ToolsResponse extends APIResponse<{ tools: readonly APITool[] }> {
