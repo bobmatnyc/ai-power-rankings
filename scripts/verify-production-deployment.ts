@@ -1,14 +1,18 @@
 /**
  * Production Deployment Verification Script
- * Verifies Phase 1-3 content updates in production
+ * Verifies Phase 4-7A content updates in production
+ *
+ * Commit: 88ea466b - feat: Add comprehensive content for 48 AI tools (Phases 4-7A)
+ * Verification Date: 2025-10-25
  */
 
 const PRODUCTION_URL = 'https://aipowerranking.com';
 
 // Sample tools from each phase
-const PHASE_1_TOOLS = ['github-copilot', 'cursor', 'windsurf'];
-const PHASE_2_TOOLS = ['amazon-q-developer', 'jetbrains-ai-assistant', 'google-gemini-code-assist'];
-const PHASE_3_TOOLS = ['aider', 'continue', 'open-interpreter'];
+const PHASE_4_TOOLS = ['coderabbit', 'snyk-code', 'gitlab-duo'];
+const PHASE_5_TOOLS = ['bolt-new', 'chatgpt-canvas', 'claude-artifacts'];
+const PHASE_6_TOOLS = ['devin', 'google-jules', 'jetbrains-ai'];
+const PHASE_7A_TOOLS = ['cursor', 'claude-code', 'github-copilot'];
 
 interface ToolData {
   id: string;
@@ -56,34 +60,43 @@ async function verifyTool(toolId: string, phase: string): Promise<boolean> {
 
 async function main() {
   console.log('=== Production Deployment Verification ===');
+  console.log('Commit: 88ea466b - Phase 4-7A Content Updates');
   console.log(`Target: ${PRODUCTION_URL}`);
   console.log(`Time: ${new Date().toISOString()}\n`);
 
   const results: Record<string, boolean[]> = {
-    'Phase 1': [],
-    'Phase 2': [],
-    'Phase 3': [],
+    'Phase 4': [],
+    'Phase 5': [],
+    'Phase 6': [],
+    'Phase 7A': [],
   };
 
-  // Test Phase 1 tools
-  console.log('\n━━━ PHASE 1: Popular Developer Tools ━━━');
-  for (const toolId of PHASE_1_TOOLS) {
-    const passed = await verifyTool(toolId, 'Phase 1');
-    results['Phase 1'].push(passed);
+  // Test Phase 4 tools
+  console.log('\n━━━ PHASE 4: Specialized Tools (9 tools) ━━━');
+  for (const toolId of PHASE_4_TOOLS) {
+    const passed = await verifyTool(toolId, 'Phase 4');
+    results['Phase 4'].push(passed);
   }
 
-  // Test Phase 2 tools
-  console.log('\n━━━ PHASE 2: Enterprise AI Tools ━━━');
-  for (const toolId of PHASE_2_TOOLS) {
-    const passed = await verifyTool(toolId, 'Phase 2');
-    results['Phase 2'].push(passed);
+  // Test Phase 5 tools
+  console.log('\n━━━ PHASE 5: Critical Market Players (10 tools) ━━━');
+  for (const toolId of PHASE_5_TOOLS) {
+    const passed = await verifyTool(toolId, 'Phase 5');
+    results['Phase 5'].push(passed);
   }
 
-  // Test Phase 3 tools
-  console.log('\n━━━ PHASE 3: Open Source Tools ━━━');
-  for (const toolId of PHASE_3_TOOLS) {
-    const passed = await verifyTool(toolId, 'Phase 3');
-    results['Phase 3'].push(passed);
+  // Test Phase 6 tools
+  console.log('\n━━━ PHASE 6: Enterprise & Platform Leaders (7 tools + 2 NEW) ━━━');
+  for (const toolId of PHASE_6_TOOLS) {
+    const passed = await verifyTool(toolId, 'Phase 6');
+    results['Phase 6'].push(passed);
+  }
+
+  // Test Phase 7A tools
+  console.log('\n━━━ PHASE 7A: Use Case Enhancement (22 tools with 90 use cases) ━━━');
+  for (const toolId of PHASE_7A_TOOLS) {
+    const passed = await verifyTool(toolId, 'Phase 7A');
+    results['Phase 7A'].push(passed);
   }
 
   // Summary
