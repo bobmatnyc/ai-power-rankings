@@ -1,0 +1,40 @@
+{
+  "phase": "Phase 4: Specialized Tools",
+  "description": "Code review, security analysis, and specialized AI development tools",
+  "tools": [
+    {
+      "slug": "coderabbit",
+      "data": {
+        "id": "coderabbit",
+        "name": "CodeRabbit",
+        "company": "CodeRabbit Inc.",
+        "tagline": "AI-powered code review platform that delivers context-aware pull request reviews at enterprise scale",
+        "description": "CodeRabbit is the most-installed AI code review app on GitHub and GitLab, delivering automated, context-aware pull request reviews at enterprise scale. With over 2 million repositories and 13 million pull requests reviewed, CodeRabbit combines advanced language models with AST (Abstract Syntax Tree) analysis to provide inline code suggestions, detect bugs and security vulnerabilities, and enforce coding standards.",
+        "overview": "CodeRabbit revolutionizes code review by combining AI-powered automation with deep codebase understanding to deliver context-aware pull request reviews that help teams ship higher quality code faster. As the most-installed AI app on both GitHub and GitLab, CodeRabbit has processed over 13 million pull requests across 2 million repositories.",
+        "website": "https://www.coderabbit.ai/",
+        "website_url": "https://www.coderabbit.ai/",
+        "launch_year": 2023,
+        "updated_2025": true,
+        "category": "code-review",
+        "pricing_model": "freemium",
+        "features": [
+          "Automated pull request reviews for GitHub, GitLab, and Azure DevOps",
+          "Line-by-line code analysis with inline suggestions",
+          "Bug detection and security vulnerability identification",
+          "Coding standards enforcement",
+          "Auto-generated PR summaries and sequence diagrams",
+          "Jira and Linear issue validation",
+          "Conversational AI chat for multi-step code tasks",
+          "SOC2 Type II certified with end-to-end encryption"
+        ],
+        "use_cases": [
+          "Automated pull request review and quality assurance",
+          "Security vulnerability detection before production",
+          "Coding standards enforcement across teams",
+          "Onboarding new developers with consistent feedback",
+          "Reducing code review bottlenecks"
+        ]
+      }
+    }
+  ]
+}
