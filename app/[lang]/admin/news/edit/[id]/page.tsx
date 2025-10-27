@@ -135,6 +135,7 @@ export default function EditNewsPage() {
   const summaryId = useId();
   const contentId = useId();
   const authorId = useId();
+  const publishedDateId = useId();
   const sourceId = useId();
   const sourceUrlId = useId();
   const categoryId = useId();
@@ -154,6 +155,7 @@ export default function EditNewsPage() {
   const [content, setContent] = useState("");
   const [summary, setSummary] = useState("");
   const [author, setAuthor] = useState("");
+  const [publishedDate, setPublishedDate] = useState("");
   const [source, setSource] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
   const [category, setCategory] = useState("");
@@ -178,6 +180,11 @@ export default function EditNewsPage() {
       setContent(article.content || "");
       setSummary(article.summary || "");
       setAuthor(article.author || "");
+      // Format published_date for date input (YYYY-MM-DD)
+      const publishedDateValue = article.published_date
+        ? new Date(article.published_date).toISOString().split('T')[0]
+        : "";
+      setPublishedDate(publishedDateValue);
       setSource(article.source || "");
       setSourceUrl(article.source_url || "");
       setCategory(article.category || "");
@@ -198,6 +205,7 @@ export default function EditNewsPage() {
       // New article - set defaults including author
       setLoading(false);
       const now = new Date().toISOString();
+      const todayDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
       setArticle({
         id: "",
         slug: "",
@@ -207,8 +215,9 @@ export default function EditNewsPage() {
         created_at: now,
         updated_at: now,
       });
-      // Set default author for new articles
+      // Set default author and published date for new articles
       setAuthor("Robert Matsuoka");
+      setPublishedDate(todayDate);
     }
   }, [id, loadArticle]);
 
@@ -327,6 +336,7 @@ export default function EditNewsPage() {
         content,
         summary,
         author,
+        published_date: publishedDate ? new Date(publishedDate).toISOString() : new Date().toISOString(),
         source,
         source_url: sourceUrl || null,
         category,
@@ -516,6 +526,18 @@ export default function EditNewsPage() {
               </div>
 
               <div>
+                <Label htmlFor={publishedDateId}>Published Date</Label>
+                <Input
+                  id={publishedDateId}
+                  type="date"
+                  value={publishedDate}
+                  onChange={(e) => setPublishedDate(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
                 <Label htmlFor={sourceId}>Source</Label>
                 <Input
                   id={sourceId}
@@ -524,17 +546,17 @@ export default function EditNewsPage() {
                   placeholder="Publication source"
                 />
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor={sourceUrlId}>Source URL</Label>
-              <Input
-                id={sourceUrlId}
-                type="url"
-                value={sourceUrl}
-                onChange={(e) => setSourceUrl(e.target.value)}
-                placeholder="https://example.com/article"
-              />
+              <div>
+                <Label htmlFor={sourceUrlId}>Source URL</Label>
+                <Input
+                  id={sourceUrlId}
+                  type="url"
+                  value={sourceUrl}
+                  onChange={(e) => setSourceUrl(e.target.value)}
+                  placeholder="https://example.com/article"
+                />
+              </div>
             </div>
 
             <div>
