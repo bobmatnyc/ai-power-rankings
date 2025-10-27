@@ -8,6 +8,7 @@
  */
 
 import { type NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/api-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { loggers } from "@/lib/logger";
@@ -246,6 +247,12 @@ export async function POST(request: NextRequest) {
             batch_id: `batch-${Date.now()}`,
           };
 
+          // Invalidate cache for news feeds after successful batch ingestion
+          if (result.ingested > 0) {
+            revalidatePath('/api/whats-new', 'layout');
+            revalidatePath('/api/news', 'layout');
+          }
+
           return NextResponse.json({
             success: true,
             ingested: result.ingested,
@@ -306,6 +313,10 @@ export async function POST(request: NextRequest) {
             ingestionType: "text",
             ingestedBy: userId,
           });
+
+          // Invalidate cache for news feeds after successful manual ingestion
+          revalidatePath('/api/whats-new', 'layout');
+          revalidatePath('/api/news', 'layout');
 
           return NextResponse.json({
             success: true,

@@ -3,6 +3,7 @@
  * Handles all database operations for articles and rankings management
  */
 
+import { revalidatePath } from "next/cache";
 import { and, desc, eq, sql as sqlTag } from "drizzle-orm";
 import {
   type Article,
@@ -199,6 +200,14 @@ export class ArticlesRepository {
       }
 
       console.log(`[ArticlesRepo] Successfully created article with ID: ${createdArticle.id}`);
+
+      // Invalidate cache for news feeds when a published article is created
+      if (createdArticle.status === "active" && createdArticle.publishedDate) {
+        revalidatePath('/api/whats-new', 'layout');
+        revalidatePath('/api/news', 'layout');
+        console.log(`[ArticlesRepo] Cache invalidated for article: ${createdArticle.id}`);
+      }
+
       return createdArticle;
     } catch (error) {
       console.error("[ArticlesRepo] Error creating article:", error);

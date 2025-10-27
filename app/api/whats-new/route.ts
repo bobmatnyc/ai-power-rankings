@@ -6,8 +6,44 @@ import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
 
 /**
+ * Unified feed item type
+ */
+type UnifiedFeedItem =
+  | {
+      type: "news";
+      date: string;
+      id: string;
+      slug: string;
+      title: string;
+      summary: string;
+      published_at: string;
+      source: string;
+      source_url?: string;
+    }
+  | {
+      type: "tool";
+      date: string;
+      id: string;
+      name: string;
+      slug: string;
+      description: string;
+      updatedAt: string;
+      category: string;
+    }
+  | {
+      type: "platform";
+      date: string;
+      id: string;
+      title: string;
+      description: string;
+      category: string;
+      changeType: "feature" | "improvement" | "fix" | "news";
+      version: string;
+    };
+
+/**
  * Combined endpoint for "What's New" modal
- * Fetches tools, news, and changelog in a single optimized query
+ * Returns a unified feed sorted by recency
  */
 export async function GET(request: NextRequest) {
   try {
@@ -45,21 +81,18 @@ export async function GET(request: NextRequest) {
             const articleDate = new Date(article.publishedAt);
             return articleDate >= dateThreshold;
           })
-          .sort((a, b) => {
-            const dateA = new Date(a.publishedAt);
-            const dateB = new Date(b.publishedAt);
-            return dateB.getTime() - dateA.getTime();
-          })
-          .slice(0, 10)
           .map((article) => {
+            const publishedAtStr = article.publishedAt instanceof Date
+              ? article.publishedAt.toISOString()
+              : String(article.publishedAt);
             return {
               id: article.id,
               slug: article.slug,
               title: article.title,
               summary: article.summary || article.content.substring(0, 150) + "...",
-              published_at: article.publishedAt,
+              published_at: publishedAtStr,
               source: article.source || "AI News",
-              source_url: article.sourceUrl,
+              source_url: article.sourceUrl || undefined,
             };
           });
 
@@ -77,12 +110,6 @@ export async function GET(request: NextRequest) {
             const toolDate = new Date(tool.updated_at);
             return !isNaN(toolDate.getTime()) && toolDate >= dateThreshold;
           })
-          .sort((a, b) => {
-            const dateA = new Date(a.updated_at);
-            const dateB = new Date(b.updated_at);
-            return dateB.getTime() - dateA.getTime();
-          })
-          .slice(0, 10)
           .map((tool) => ({
             id: tool.id,
             name: tool.name,
@@ -145,11 +172,45 @@ export async function GET(request: NextRequest) {
       },
     ];
 
+    // Filter changelog items by date threshold
+    const recentChangelog = changelogItems.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= dateThreshold;
+    });
+
+    // Create unified feed with type discrimination
+    const unifiedFeed: UnifiedFeedItem[] = [
+      ...newsResult.map((item) => ({
+          ...item,
+          type: "news" as const,
+          date: item.published_at,
+        } as UnifiedFeedItem)
+      ),
+      ...toolsResult.map((item) => ({
+          ...item,
+          type: "tool" as const,
+          date: item.updatedAt,
+        } as UnifiedFeedItem)
+      ),
+      ...recentChangelog.map(
+        (item): UnifiedFeedItem => ({
+          type: "platform" as const,
+          date: item.date,
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          category: item.category,
+          changeType: item.type,
+          version: item.version,
+        })
+      ),
+    ]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 20);
+
     return cachedJsonResponse(
       {
-        news: newsResult,
-        tools: toolsResult,
-        changelog: changelogItems,
+        feed: unifiedFeed,
         days,
         _source: "database",
         _timestamp: new Date().toISOString(),

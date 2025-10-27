@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { isAuthenticated } from "@/lib/clerk-auth";
 import { getDb } from "@/lib/db/connection";
@@ -47,6 +48,10 @@ export async function POST(request: NextRequest) {
         message: "Dry run completed successfully. No changes were saved.",
       });
     } else {
+      // Invalidate cache for news feeds after successful article ingestion
+      revalidatePath('/api/whats-new', 'layout');
+      revalidatePath('/api/news', 'layout');
+
       return NextResponse.json({
         success: true,
         mode: "complete",

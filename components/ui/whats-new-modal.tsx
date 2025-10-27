@@ -29,33 +29,38 @@ interface MonthlySummary {
   };
 }
 
-interface ToolUpdate {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  updatedAt: string;
-  category: string;
-}
-
-interface NewsArticle {
-  id: string;
-  slug: string;
-  title: string;
-  summary: string;
-  published_at: string;
-  source: string;
-}
-
-interface ChangelogItem {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  category: string;
-  type: "feature" | "improvement" | "fix" | "news";
-  version: string;
-}
+type UnifiedFeedItem =
+  | {
+      type: "news";
+      date: string;
+      id: string;
+      slug: string;
+      title: string;
+      summary: string;
+      published_at: string;
+      source: string;
+      source_url?: string;
+    }
+  | {
+      type: "tool";
+      date: string;
+      id: string;
+      name: string;
+      slug: string;
+      description: string;
+      updatedAt: string;
+      category: string;
+    }
+  | {
+      type: "platform";
+      date: string;
+      id: string;
+      title: string;
+      description: string;
+      category: string;
+      changeType: "feature" | "improvement" | "fix" | "news";
+      version: string;
+    }
 
 export function WhatsNewModal({
   open,
@@ -64,9 +69,7 @@ export function WhatsNewModal({
 }: WhatsNewModalProps): React.JSX.Element {
   const params = useParams();
   const lang = (params?.lang as string) || "en";
-  const [toolUpdates, setToolUpdates] = useState<ToolUpdate[]>([]);
-  const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
-  const [changelogItems, setChangelogItems] = useState<ChangelogItem[]>([]);
+  const [feedItems, setFeedItems] = useState<UnifiedFeedItem[]>([]);
   const [monthlySummary, setMonthlySummary] = useState<MonthlySummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [summaryLoading, setSummaryLoading] = useState(false);
@@ -84,7 +87,7 @@ export function WhatsNewModal({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [open]);
 
-  // Fetch all data from single optimized endpoint (past 7 days)
+  // Fetch unified feed from API (past 7 days)
   useEffect(() => {
     const fetchAllUpdates = async () => {
       try {
@@ -95,19 +98,13 @@ export function WhatsNewModal({
 
         if (response.ok) {
           const data = await response.json();
-          setToolUpdates(data.tools || []);
-          setNewsArticles(data.news || []);
-          setChangelogItems(data.changelog || []);
+          setFeedItems(data.feed || []);
         } else {
-          setToolUpdates([]);
-          setNewsArticles([]);
-          setChangelogItems([]);
+          setFeedItems([]);
         }
       } catch (error) {
         console.error("Error fetching updates:", error);
-        setToolUpdates([]);
-        setNewsArticles([]);
-        setChangelogItems([]);
+        setFeedItems([]);
       } finally {
         setLoading(false);
       }
@@ -145,33 +142,54 @@ export function WhatsNewModal({
     }
   }, [open, activeTab, monthlySummary]);
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case "feature":
-        return <Sparkles className="h-4 w-4" />;
-      case "improvement":
-        return <TrendingUp className="h-4 w-4" />;
-      case "fix":
-        return <Calendar className="h-4 w-4" />;
-      case "news":
-        return <Newspaper className="h-4 w-4" />;
-      default:
-        return <Clock className="h-4 w-4" />;
+  const getItemTypeIcon = (item: UnifiedFeedItem) => {
+    if (item.type === "news") {
+      return <Newspaper className="h-4 w-4 text-purple-600" />;
+    } else if (item.type === "tool") {
+      return <Wrench className="h-4 w-4 text-blue-600" />;
+    } else {
+      // Platform updates
+      switch (item.changeType) {
+        case "feature":
+          return <Sparkles className="h-4 w-4 text-green-600" />;
+        case "improvement":
+          return <TrendingUp className="h-4 w-4 text-blue-600" />;
+        case "fix":
+          return <Wrench className="h-4 w-4 text-orange-600" />;
+        case "news":
+          return <Newspaper className="h-4 w-4 text-purple-600" />;
+        default:
+          return <Clock className="h-4 w-4" />;
+      }
     }
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "feature":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "improvement":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "fix":
-        return "bg-orange-100 text-orange-800 border-orange-200";
-      case "news":
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+  const getItemTypeBadge = (item: UnifiedFeedItem) => {
+    if (item.type === "news") {
+      return (
+        <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200">
+          News
+        </Badge>
+      );
+    } else if (item.type === "tool") {
+      return (
+        <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">
+          Tool Update
+        </Badge>
+      );
+    } else {
+      // Platform updates
+      const typeColors = {
+        feature: "bg-green-100 text-green-800 border-green-200",
+        improvement: "bg-blue-100 text-blue-800 border-blue-200",
+        fix: "bg-orange-100 text-orange-800 border-orange-200",
+        news: "bg-purple-100 text-purple-800 border-purple-200",
+      };
+      return (
+        <Badge variant="secondary" className={typeColors[item.changeType]}>
+          Platform: {item.changeType}
+        </Badge>
+      );
     }
   };
 
@@ -244,8 +262,8 @@ export function WhatsNewModal({
           </TabsList>
 
           <TabsContent value="recent" className="flex-1 overflow-y-auto scroll-smooth px-1 mt-4">
-            <div className="space-y-6 py-2">
-            {toolUpdates.length === 0 && newsArticles.length === 0 && changelogItems.length === 0 ? (
+            <div className="space-y-3 py-2">
+            {feedItems.length === 0 ? (
               <div className="text-center py-8">
                 <Newspaper className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
                 <p className="text-muted-foreground">No recent updates to show</p>
@@ -254,138 +272,107 @@ export function WhatsNewModal({
                 </p>
               </div>
             ) : (
-              <>
-                {/* Section 1: Tools Updated This Week */}
-                {toolUpdates.length > 0 && (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Wrench className="h-5 w-5 text-primary" />
-                      <h3 className="font-semibold">Tools Updated This Week</h3>
-                    </div>
-                    <div className="space-y-3">
-                      {toolUpdates.map((tool) => (
-                        <Link
-                          key={tool.id}
-                          href={`/${lang}/tools/${tool.slug}`}
-                          className="block"
-                          onClick={handleDismiss}
-                        >
-                          <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
-                            <Wrench className="h-4 w-4 mt-1 text-muted-foreground flex-shrink-0" />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                <h4 className="font-medium text-sm hover:text-primary transition-colors">{tool.name}</h4>
-                                <Badge variant="secondary" className="text-xs">
-                                  {tool.category}
-                                </Badge>
-                              </div>
-                              {tool.description && (
-                                <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                                  {tool.description}
-                                </p>
-                              )}
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Calendar className="h-3 w-3" />
-                                <span>{formatDate(tool.updatedAt)}</span>
-                              </div>
-                            </div>
+              feedItems.map((item) => {
+                if (item.type === "news") {
+                  return (
+                    <Link
+                      key={item.id}
+                      href={`/${lang}/news/${item.slug}`}
+                      className="block"
+                      onClick={handleDismiss}
+                    >
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
+                        <div className="flex-shrink-0 mt-1">
+                          {getItemTypeIcon(item)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <h4 className="font-medium text-sm hover:text-primary transition-colors">{item.title}</h4>
+                            {getItemTypeBadge(item)}
                           </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Section 2: Recent News & Articles */}
-                {newsArticles.length > 0 && (
-                  <>
-                    {toolUpdates.length > 0 && <Separator />}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Newspaper className="h-5 w-5 text-primary" />
-                        <h3 className="font-semibold">Recent News & Articles</h3>
-                      </div>
-                      <div className="space-y-3">
-                        {newsArticles.map((article) => (
-                          <Link
-                            key={article.id}
-                            href={`/${lang}/news/${article.slug}`}
-                            className="block"
-                            onClick={handleDismiss}
-                          >
-                            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
-                              <Newspaper className="h-4 w-4 mt-1 text-muted-foreground flex-shrink-0" />
-                              <div className="flex-1 min-w-0">
-                                <h4 className="font-medium text-sm mb-1 hover:text-primary transition-colors">{article.title}</h4>
-                                {article.summary && (
-                                  <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                                    {article.summary}
-                                  </p>
-                                )}
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                  <Calendar className="h-3 w-3" />
-                                  <span>{formatDate(article.published_at)}</span>
-                                  {article.source && (
-                                    <>
-                                      <span>•</span>
-                                      <span>{article.source}</span>
-                                    </>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* Section 3: Platform Updates (Changelog) */}
-                {changelogItems.length > 0 && (
-                  <>
-                    {(toolUpdates.length > 0 || newsArticles.length > 0) && <Separator />}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Sparkles className="h-5 w-5 text-primary" />
-                        <h3 className="font-semibold">Platform Updates</h3>
-                      </div>
-                      <div className="space-y-3">
-                        {changelogItems.map((item) => (
-                          <div key={item.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                            <div className="flex-shrink-0 mt-1">
-                              {getTypeIcon(item.type)}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                <h4 className="font-medium text-sm">{item.title}</h4>
-                                <Badge
-                                  variant="secondary"
-                                  className={`text-xs ${getTypeColor(item.type)}`}
-                                >
-                                  {item.type}
-                                </Badge>
-                                {item.version && (
-                                  <Badge variant="outline" className="text-xs">
-                                    v{item.version}
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="text-sm text-muted-foreground mb-2">
-                                {item.description}
-                              </p>
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Calendar className="h-3 w-3" />
-                                <span>{formatDate(item.date)}</span>
-                              </div>
-                            </div>
+                          {item.summary && (
+                            <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                              {item.summary}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <Calendar className="h-3 w-3" />
+                            <span>{formatDate(item.date)}</span>
+                            {item.source && (
+                              <>
+                                <span>•</span>
+                                <span>{item.source}</span>
+                              </>
+                            )}
                           </div>
-                        ))}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                } else if (item.type === "tool") {
+                  return (
+                    <Link
+                      key={item.id}
+                      href={`/${lang}/tools/${item.slug}`}
+                      className="block"
+                      onClick={handleDismiss}
+                    >
+                      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer">
+                        <div className="flex-shrink-0 mt-1">
+                          {getItemTypeIcon(item)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <h4 className="font-medium text-sm hover:text-primary transition-colors">{item.name}</h4>
+                            {getItemTypeBadge(item)}
+                            <Badge variant="secondary" className="text-xs">
+                              {item.category}
+                            </Badge>
+                          </div>
+                          {item.description && (
+                            <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                              {item.description}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <Calendar className="h-3 w-3" />
+                            <span>{formatDate(item.date)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                } else {
+                  // Platform update
+                  return (
+                    <div key={item.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                      <div className="flex-shrink-0 mt-1">
+                        {getItemTypeIcon(item)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <h4 className="font-medium text-sm">{item.title}</h4>
+                          {getItemTypeBadge(item)}
+                          {item.version && (
+                            <Badge variant="outline" className="text-xs">
+                              v{item.version}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {item.description}
+                        </p>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Calendar className="h-3 w-3" />
+                          <span>{formatDate(item.date)}</span>
+                          <span>•</span>
+                          <span>{item.category}</span>
+                        </div>
                       </div>
                     </div>
-                  </>
-                )}
-              </>
+                  );
+                }
+              })
             )}
             </div>
           </TabsContent>
