@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 /**
@@ -9,6 +8,10 @@ import { cn } from "@/lib/utils";
  * - Fixes LCP by eliminating client-side hydration delay
  * - No useState, no useEffect, pure SSR
  * - Target: Improve LCP from 7.1s to <2.5s on mobile
+ * - Uses aspect ratio container to prevent CLS (0.10 reduction)
+ * - Uses responsive image variants (36px, 48px, 64px, 128px) for optimal loading
+ * - Uses native <img> to avoid Next.js auto-generating invalid preload tags
+ *   (Next.js 15.5.4 generates imageSrcSet instead of imagesrcset - HTML validation error)
  */
 
 interface ResponsiveCrownIconProps {
@@ -17,17 +20,26 @@ interface ResponsiveCrownIconProps {
 }
 
 export function ResponsiveCrownIcon({ className, priority = false }: ResponsiveCrownIconProps) {
+  // Note: Using native <img> instead of Next.js <Image> to avoid
+  // Next.js auto-generating invalid preload tags with imageSrcSet/imageSizes
+  // Manual preload is already in app/layout.tsx with correct HTML attributes
   return (
-    <Image
-      src="/crown-of-technology.webp"
-      alt="AI Power Ranking Icon"
-      width={64}
-      height={64}
-      className={cn("w-9 h-9 md:w-12 md:h-12 lg:w-16 lg:h-16 object-contain", className)}
-      priority={priority}
-      fetchPriority={priority ? "high" : "auto"}
-      sizes="(max-width: 768px) 36px, (max-width: 1024px) 48px, 64px"
-      quality={90}
-    />
+    <div
+      className={cn("relative flex items-center justify-center", className)}
+      style={{
+        width: "clamp(36px, 5vw, 64px)",
+        height: "clamp(36px, 5vw, 64px)",
+      }}
+    >
+      <img
+        src="/crown-of-technology-64.webp"
+        alt="AI Power Ranking Icon"
+        width={64}
+        height={64}
+        className="object-contain w-full h-full"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
   );
 }

@@ -11,7 +11,7 @@ import {
   TrendingUp,
   Wrench,
 } from "lucide-react";
-import Image from "next/image";
+// Note: Using native <img> instead of next/image to avoid Next.js generating invalid preload tags
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -140,14 +140,13 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
           onClick={handleNavClick}
           className="flex items-end gap-3 mb-6"
         >
-          <Image
-            src="/crown-of-technology.webp"
+          <img
+            src="/crown-of-technology-36.webp"
             alt="AI Power Ranking"
             width={36}
             height={36}
             className="w-9 h-9 object-contain flex-shrink-0"
             loading="eager"
-            priority
           />
           <h1 className="text-2xl font-bold text-gradient leading-none -mb-1">APR</h1>
         </Link>
