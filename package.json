@@ -1,9 +1,9 @@
 {
   "name": "aipowerranking",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000",
+    "dev": "next dev --port 3007",
     "build": "npm run generate-categories && next build",
     "build:next": "next build",
     "start": "next start",
