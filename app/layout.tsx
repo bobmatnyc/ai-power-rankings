@@ -1,19 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import ClerkProviderClient from "@/components/auth/clerk-provider-client";
 import { DeferredAnalytics } from "@/components/analytics/deferred-analytics";
 import {
   generateOrganizationSchema,
   generateWebsiteSchema,
   createJsonLdScript,
 } from "@/lib/schema";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -74,18 +66,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const websiteSchema = generateWebsiteSchema(baseUrl);
 
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Phase 2 FCP Optimizations - DNS Prefetch & Preconnect */}
-        <link rel="dns-prefetch" href="https://clerk.aipowerranking.com" />
-        <link rel="preconnect" href="https://clerk.aipowerranking.com" crossOrigin="anonymous" />
-
-        {/* Lighthouse Performance: Preload LCP image for faster rendering */}
+        {/* Lighthouse Performance: Preload LCP image - single size to avoid attribute issues */}
         <link
           rel="preload"
-          href="/crown-of-technology.webp"
           as="image"
           type="image/webp"
+          href="/crown-of-technology-64.webp"
+          fetchpriority="high"
         />
 
         {/* Schema.org markup for SEO - Organization */}
@@ -100,17 +89,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: createJsonLdScript(websiteSchema) }}
         />
       </head>
-      <body
-        className="antialiased"
-        style={{
-          ["--font-inter" as any]: inter.style.fontFamily,
-        }}
-        suppressHydrationWarning
-      >
-        <ClerkProviderClient>
-          {children}
-          <DeferredAnalytics />
-        </ClerkProviderClient>
+      <body className="antialiased" suppressHydrationWarning>
+        {children}
+        <DeferredAnalytics />
       </body>
     </html>
   );
