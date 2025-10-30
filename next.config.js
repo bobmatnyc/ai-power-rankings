@@ -23,9 +23,15 @@ const nextConfig = {
   async headers() {
     return []
   },
-  // Image configuration for Next.js 16 compatibility
+  // Image configuration for optimal performance (Phase 2C)
   images: {
+    formats: ['image/webp', 'image/avif'], // AVIF for better compression, fallback to WebP
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], // Responsive breakpoints
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Icon and small image sizes
+    minimumCacheTTL: 60, // Cache images for 60 seconds minimum
     qualities: [75, 90, 100],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     localPatterns: [
       {
         pathname: '/**',
@@ -35,7 +41,7 @@ const nextConfig = {
   },
   // Phase 2 FCP Optimizations + Lighthouse Performance Optimizations
   experimental: {
-    optimizeCss: true, // Enable critical CSS extraction and route-specific CSS splitting
+    optimizeCss: false, // Disabled due to Next.js 15 bug causing CSS to load as script tags
     optimizePackageImports: [
       'lucide-react',
       '@radix-ui/react-dialog',
@@ -74,7 +80,7 @@ const nextConfig = {
             // Handle Next.js framework separately
             nextFramework: {
               test: /[\\/]node_modules[\\/]next[\\/]/,
-              name: 'framework.next',
+              name: 'framework-next',
               priority: 40,
               reuseExistingChunk: true,
               enforce: true,
