@@ -113,77 +113,12 @@ export function OptimizedImage({
 }
 
 /**
- * Crown Icon Component - Optimized for T-031
+ * DEPRECATED: Crown icon components moved to crown-icon-server.tsx
  *
- * Pre-configured component for the crown icon with
- * responsive sizes and WebP optimization.
- */
-interface CrownIconProps {
-  size?: "sm" | "md" | "lg" | "xl";
-  className?: string;
-  priority?: boolean;
-}
-
-export function CrownIcon({ size = "md", className, priority = false }: CrownIconProps) {
-  const sizeConfig = {
-    sm: { width: 24, height: 24, className: "w-6 h-6" },
-    md: { width: 48, height: 48, className: "w-12 h-12" },
-    lg: { width: 64, height: 64, className: "w-16 h-16" },
-    xl: { width: 128, height: 128, className: "w-32 h-32" },
-  };
-
-  const config = sizeConfig[size];
-
-  // Map size to optimized variant
-  const getOptimizedCrownSrc = () => {
-    if (size === 'sm') return '/crown-of-technology-36.webp';
-    if (size === 'md') return '/crown-of-technology-48.webp';
-    if (size === 'lg') return '/crown-of-technology-64.webp';
-    return '/crown-of-technology-128.webp'; // xl
-  };
-
-  // Note: priority is intentionally set to false to prevent Next.js from
-  // generating invalid preload tags. Manual preload exists in app/layout.tsx
-  return (
-    <OptimizedImage
-      src={getOptimizedCrownSrc()}
-      alt="AI Power Ranking Icon"
-      width={config.width}
-      height={config.height}
-      className={cn(config.className, "object-contain", className)}
-      priority={false}
-      quality={90}
-    />
-  );
-}
-
-/**
- * Responsive Crown Icon - Optimized for T-031 (Server-Side)
+ * DO NOT ADD NEW CROWN ICON COMPONENTS HERE.
+ * Use @/components/ui/crown-icon-server instead.
  *
- * CRITICAL MOBILE OPTIMIZATION: Removed client-side rendering to fix LCP.
- * This is now a pure server component without useState or client-side logic.
- * Renders immediately on server, improving LCP from 7.1s to target <2.5s.
+ * Reason: Next.js auto-generates invalid preload tags (imageSrcSet/imageSizes)
+ * when <Image> components are used, even with priority=false.
+ * This causes HTML validation errors and breaks authentication in production.
  */
-interface ResponsiveCrownIconProps {
-  className?: string;
-  priority?: boolean;
-}
-
-export function ResponsiveCrownIcon({ className, priority = false }: ResponsiveCrownIconProps) {
-  // Server-side only - no client state needed
-  // Note: Using native <img> instead of Next.js <Image> to avoid
-  // Next.js auto-generating invalid preload tags with imageSrcSet/imageSizes
-  // (Next.js 15.5.4 bug generates camelCase React props instead of lowercase HTML attributes)
-  // Manual preload is already in app/layout.tsx with correct HTML attributes
-  return (
-    <img
-      src="/crown-of-technology-64.webp"
-      alt="AI Power Ranking Icon"
-      width={64}
-      height={64}
-      className={cn("w-9 h-9 md:w-12 md:h-12 lg:w-16 lg:h-16 object-contain", className)}
-      loading="eager"
-      fetchpriority="high"
-    />
-  );
-}

@@ -43,3 +43,38 @@ export function ResponsiveCrownIcon({ className, priority = false }: ResponsiveC
     </div>
   );
 }
+
+/**
+ * Crown Icon Component with Size Variants
+ *
+ * Uses native <img> to avoid Next.js generating invalid preload tags.
+ * Provides predefined size options for consistent icon display.
+ */
+interface CrownIconProps {
+  size?: "sm" | "md" | "lg" | "xl";
+  className?: string;
+  priority?: boolean;
+}
+
+export function CrownIcon({ size = "md", className, priority = false }: CrownIconProps) {
+  const sizeConfig = {
+    sm: { width: 36, height: 36, src: "/crown-of-technology-36.webp" },
+    md: { width: 48, height: 48, src: "/crown-of-technology-48.webp" },
+    lg: { width: 64, height: 64, src: "/crown-of-technology-64.webp" },
+    xl: { width: 128, height: 128, src: "/crown-of-technology-128.webp" },
+  };
+
+  const config = sizeConfig[size];
+
+  return (
+    <img
+      src={config.src}
+      alt="AI Power Ranking Icon"
+      width={config.width}
+      height={config.height}
+      className={cn("object-contain", className)}
+      loading="eager"
+      fetchpriority={priority ? "high" : "auto"}
+    />
+  );
+}

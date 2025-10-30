@@ -16,7 +16,7 @@ import { BuildTimeBadge } from "@/components/layout/build-time-badge";
 import { Footer } from "@/components/layout/footer";
 import { LanguageSelector } from "@/components/layout/language-selector";
 import { Button } from "@/components/ui/button";
-import { CrownIcon } from "@/components/ui/optimized-image";
+import { CrownIcon } from "@/components/ui/crown-icon-server";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { RankingChangesProvider } from "@/contexts/ranking-changes-context";
 import { I18nProvider, useI18n } from "@/i18n/client";
@@ -112,9 +112,7 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
           </div>
 
           <div
-            className={`flex-1 overflow-auto transition-all duration-300 ${
-              shouldHideHeader ? "pt-0 md:pt-0" : "pt-[73px] md:pt-0"
-            }`}
+            className="flex-1 overflow-auto transition-all duration-300 pt-[71px] md:pt-0"
           >
             <div className="min-h-full flex flex-col">
               <div className="flex-1">{children}</div>

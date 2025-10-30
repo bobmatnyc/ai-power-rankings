@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CrownIcon } from "@/components/ui/optimized-image";
+import { CrownIcon } from "@/components/ui/crown-icon-server";
 import { cn } from "@/lib/utils";
 
 const navItems = [
