@@ -134,15 +134,24 @@ export function CrownIcon({ size = "md", className, priority = false }: CrownIco
 
   const config = sizeConfig[size];
 
+  // Map size to optimized variant
+  const getOptimizedCrownSrc = () => {
+    if (size === 'sm') return '/crown-of-technology-36.webp';
+    if (size === 'md') return '/crown-of-technology-48.webp';
+    if (size === 'lg') return '/crown-of-technology-64.webp';
+    return '/crown-of-technology-128.webp'; // xl
+  };
+
+  // Note: priority is intentionally set to false to prevent Next.js from
+  // generating invalid preload tags. Manual preload exists in app/layout.tsx
   return (
     <OptimizedImage
-      src="/crown-of-technology.webp"
+      src={getOptimizedCrownSrc()}
       alt="AI Power Ranking Icon"
       width={config.width}
       height={config.height}
       className={cn(config.className, "object-contain", className)}
-      priority={priority}
-      sizes={`${config.width}px`}
+      priority={false}
       quality={90}
     />
   );
@@ -162,16 +171,19 @@ interface ResponsiveCrownIconProps {
 
 export function ResponsiveCrownIcon({ className, priority = false }: ResponsiveCrownIconProps) {
   // Server-side only - no client state needed
+  // Note: Using native <img> instead of Next.js <Image> to avoid
+  // Next.js auto-generating invalid preload tags with imageSrcSet/imageSizes
+  // (Next.js 15.5.4 bug generates camelCase React props instead of lowercase HTML attributes)
+  // Manual preload is already in app/layout.tsx with correct HTML attributes
   return (
-    <Image
-      src="/crown-of-technology.webp"
+    <img
+      src="/crown-of-technology-64.webp"
       alt="AI Power Ranking Icon"
       width={64}
       height={64}
       className={cn("w-9 h-9 md:w-12 md:h-12 lg:w-16 lg:h-16 object-contain", className)}
-      priority={priority}
-      sizes="(max-width: 768px) 36px, (max-width: 1024px) 48px, 64px"
-      quality={90}
+      loading="eager"
+      fetchpriority="high"
     />
   );
 }
