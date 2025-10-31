@@ -44,10 +44,10 @@ data/deleted-articles-backup-*.json
 data/extracted-rankings/
 data/uuid-mappings.json
 
-# Large images
-*.png
-*.jpg
-*.jpeg
+# Large test images and screenshots (exclude these)
+test-screenshots/
+lighthouse-*.png
+lighthouse-*.jpg
 
 # Misc
 .gitignore.test
