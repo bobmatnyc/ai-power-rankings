@@ -14,7 +14,7 @@
       "pricing_model": "freemium",
       "license_type": "proprietary",
       "status": "active",
-      "logo_url": "/api/tool-icons/cursor.png"
+      "logo_url": "/tool-icons/cursor.png"
     },
     {
       "id": "github-copilot",
@@ -30,7 +30,7 @@
       "pricing_model": "paid",
       "license_type": "proprietary",
       "status": "active",
-      "logo_url": "/api/tool-icons/github-copilot.png"
+      "logo_url": "/tool-icons/github-copilot.png"
     },
     {
       "id": "windsurf",
@@ -46,7 +46,7 @@
       "pricing_model": "freemium",
       "license_type": "proprietary",
       "status": "active",
-      "logo_url": "/api/tool-icons/windsurf.png"
+      "logo_url": "/tool-icons/windsurf.png"
     },
     {
       "id": "claude-dev",
@@ -62,7 +62,7 @@
       "pricing_model": "free",
       "license_type": "open-source",
       "status": "active",
-      "logo_url": "/api/tool-icons/claude-dev.png"
+      "logo_url": "/tool-icons/claude-dev.png"
     },
     {
       "id": "aider",
@@ -78,7 +78,7 @@
       "pricing_model": "free",
       "license_type": "open-source",
       "status": "active",
-      "logo_url": "/api/tool-icons/aider.png"
+      "logo_url": "/tool-icons/aider.png"
     }
   ]
 }
