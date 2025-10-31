@@ -18,7 +18,7 @@ async function findNewTools() {
 
   if (currentRankings[0]) {
     const data = currentRankings[0].data as any;
-    let rankingsArray = Array.isArray(data) ? data : (data.rankings || data.data || []);
+    const rankingsArray = Array.isArray(data) ? data : (data.rankings || data.data || []);
     // Rankings use tool_id (UUID), not slug
     const rankedIds = new Set(rankingsArray.map((r: any) => r.tool_id).filter(Boolean));
 

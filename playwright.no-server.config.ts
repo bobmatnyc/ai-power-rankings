@@ -6,7 +6,7 @@ export default defineConfig({
   timeout: 30000,
 
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3007',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },

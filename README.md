@@ -47,7 +47,7 @@ npm run db:migrate
 npm run dev
 ```
 
-Visit `http://localhost:3000` to see the application.
+Visit `http://localhost:3007` to see the application.
 
 ---
 

@@ -5,7 +5,7 @@
  * DO NOT EDIT MANUALLY
  * Run 'npm run generate-categories' to update this file
  *
- * Generated: 2025-10-25T19:30:46.047Z
+ * Generated: 2025-10-31T02:59:01.004Z
  */
 
 export interface Category {
@@ -18,7 +18,12 @@ export const STATIC_CATEGORIES: Category[] = [
   {
     "id": "all",
     "name": "All Categories",
-    "count": 46
+    "count": 54
+  },
+  {
+    "id": "autonomous-agent",
+    "name": "Autonomous Agent",
+    "count": 11
   },
   {
     "id": "ide-assistant",
@@ -26,9 +31,9 @@ export const STATIC_CATEGORIES: Category[] = [
     "count": 11
   },
   {
-    "id": "autonomous-agent",
-    "name": "Autonomous Agent",
-    "count": 10
+    "id": "other",
+    "name": "Other",
+    "count": 8
   },
   {
     "id": "open-source-framework",
@@ -46,13 +51,13 @@ export const STATIC_CATEGORIES: Category[] = [
     "count": 4
   },
   {
-    "id": "other",
-    "name": "Other",
+    "id": "code-review",
+    "name": "Code Review",
     "count": 3
   },
   {
-    "id": "code-review",
-    "name": "Code Review",
+    "id": "code-assistant",
+    "name": "Code Assistant",
     "count": 3
   },
   {
@@ -61,18 +66,13 @@ export const STATIC_CATEGORIES: Category[] = [
     "count": 2
   },
   {
-    "id": "proprietary-ide",
-    "name": "Proprietary Ide",
-    "count": 1
-  },
-  {
-    "id": "code-assistant",
-    "name": "Code Assistant",
-    "count": 1
-  },
-  {
     "id": "devops-assistant",
     "name": "Devops Assistant",
+    "count": 1
+  },
+  {
+    "id": "proprietary-ide",
+    "name": "Proprietary Ide",
     "count": 1
   }
 ];

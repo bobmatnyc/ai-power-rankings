@@ -29,6 +29,7 @@ type UnifiedFeedItem =
       description: string;
       updatedAt: string;
       category: string;
+      logo_url?: string;
     }
   | {
       type: "platform";
@@ -110,14 +111,18 @@ export async function GET(request: NextRequest) {
             const toolDate = new Date(tool.updated_at);
             return !isNaN(toolDate.getTime()) && toolDate >= dateThreshold;
           })
-          .map((tool) => ({
-            id: tool.id,
-            name: tool.name,
-            slug: tool.slug,
-            description: (tool as any).description || "",
-            updatedAt: tool.updated_at,
-            category: tool.category,
-          }));
+          .map((tool) => {
+            const toolData = tool.info || {};
+            return {
+              id: tool.id,
+              name: tool.name,
+              slug: tool.slug,
+              description: (tool as any).description || "",
+              updatedAt: tool.updated_at,
+              category: tool.category,
+              logo_url: (toolData as any).logo_url || (toolData as any).metadata?.logo_url || (tool as any).logo_url || null,
+            };
+          });
 
         return recentTools;
       })(),

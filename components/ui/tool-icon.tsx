@@ -105,6 +105,7 @@ export function ToolIcon({
         height={size}
         className={cn("rounded-lg", className)}
         onError={() => setImageError(true)}
+        quality={85}
         unoptimized
       />
     </div>

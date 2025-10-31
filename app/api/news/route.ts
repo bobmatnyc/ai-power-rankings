@@ -53,8 +53,8 @@ export async function GET(request: NextRequest) {
 
         // Get tool info from tool_mentions or tool associations
         let toolNames = "Various Tools";
-        let toolCategory = "ai-coding-tool";
-        let toolWebsite = "";
+        const toolCategory = "ai-coding-tool";
+        const toolWebsite = "";
         let primaryToolId = "unknown";
 
         // Try to extract tool from title using the term mapping

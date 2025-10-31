@@ -8,6 +8,7 @@ import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
 
 // Self-hosted fonts for optimal performance
 // Eliminates external DNS lookups and reduces FCP by 400-800ms
+// Using display: "optional" to prevent layout shifts (CLS optimization)
 const geistSans = localFont({
   src: [
     {
@@ -27,15 +28,17 @@ const geistSans = localFont({
     },
   ],
   variable: "--font-geist-sans",
-  display: "swap",
+  display: "optional",
   preload: true,
+  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Arial", "sans-serif"],
 });
 
 const geistMono = localFont({
   src: "../../public/fonts/JetBrainsMono-Regular.woff2",
   variable: "--font-geist-mono",
-  display: "swap",
+  display: "optional",
   preload: true,
+  fallback: ["Consolas", "Monaco", "Courier New", "monospace"],
 });
 
 export async function generateMetadata({

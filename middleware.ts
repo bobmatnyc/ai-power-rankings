@@ -30,9 +30,11 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 // Define protected routes that require authentication
+// These routes are now under the (authenticated) route group
+// Note: sign-in and sign-up are in isPublicRoute, not here
 const isProtectedRoute = createRouteMatcher([
-  "/(.*)/admin(.*)",
-  "/(.*)/dashboard(.*)",
+  "/:locale/admin(.*)",
+  "/:locale/dashboard(.*)",
   "/api/admin(.*)",
 ]);
 
