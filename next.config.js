@@ -41,7 +41,7 @@ const nextConfig = {
   },
   // Phase 2 FCP Optimizations + Lighthouse Performance Optimizations
   experimental: {
-    optimizeCss: false, // Disabled due to Next.js 15 bug causing CSS to load as script tags
+    optimizeCss: false, // Still broken in Next.js 15.5.6 - CSS loads as script tags causing SyntaxError
     optimizePackageImports: [
       'lucide-react',
       '@radix-ui/react-dialog',
