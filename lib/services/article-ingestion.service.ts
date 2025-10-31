@@ -604,7 +604,7 @@ Return ONLY the JSON object above with actual data. No additional text or explan
         headers: {
           Authorization: `Bearer ${this.apiKey}`,
           "Content-Type": "application/json",
-          Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000",
+          Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3007",
         },
         body: JSON.stringify({
           model: modelName,

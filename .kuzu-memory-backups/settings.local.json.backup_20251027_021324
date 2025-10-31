@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__kuzu-memory__kuzu_learn",
+      "mcp__kuzu-memory__kuzu_stats"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "github",
+    "filesystem",
+    "sqlite",
+    "web-search",
+    "zen",
+    "kuzu-memory"
+  ],
+  "outputStyle": "Claude MPM",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/masa/.local/pipx/venvs/kuzu-memory/bin/python /Users/masa/Projects/aipowerranking/.claude/hooks/kuzu_enhance.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/masa/.local/pipx/venvs/kuzu-memory/bin/python /Users/masa/Projects/aipowerranking/.claude/hooks/kuzu_learn.py"
+          }
+        ]
+      }
+    ]
+  }
+}

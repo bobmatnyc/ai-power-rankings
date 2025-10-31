@@ -89,6 +89,26 @@ export class ToolsRepository extends BaseRepository<ToolData> {
   }
 
   /**
+   * Find multiple tools by slugs efficiently (single query)
+   * Used to avoid N+1 query problems when looking up by slug
+   */
+  async findBySlugs(slugs: string[]): Promise<ToolData[]> {
+    if (slugs.length === 0) return [];
+
+    const db = getDb();
+    if (!db) throw new Error("Database connection not available");
+
+    try {
+      const results = await db.select().from(tools).where(inArray(tools.slug, slugs));
+
+      return this.mapDbToolsToData(results);
+    } catch (error) {
+      console.error("Error in findBySlugs:", error);
+      throw error;
+    }
+  }
+
+  /**
    * Create new tool
    */
   async create(data: Partial<ToolData>): Promise<ToolData> {

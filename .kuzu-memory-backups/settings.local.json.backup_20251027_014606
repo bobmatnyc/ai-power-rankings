@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__kuzu-memory__kuzu_learn",
+      "mcp__kuzu-memory__kuzu_stats"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "github",
+    "filesystem",
+    "sqlite",
+    "web-search",
+    "zen",
+    "kuzu-memory"
+  ],
+  "outputStyle": "Claude MPM"
+}

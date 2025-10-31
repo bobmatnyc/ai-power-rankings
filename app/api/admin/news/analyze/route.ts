@@ -296,9 +296,9 @@ REMINDER: The field name MUST be "tool" (not "name", "tool_name", or anything el
     Authorization: `Bearer ${openRouterKey}`,
     "Content-Type": "application/json",
     // OpenRouter expects "Referer" not "HTTP-Referer"
-    Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000",
+    Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3007",
     // Also include HTTP-Referer for compatibility
-    "HTTP-Referer": process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000",
+    "HTTP-Referer": process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3007",
     "X-Title": "AI Power Rankings Admin",
   };
 

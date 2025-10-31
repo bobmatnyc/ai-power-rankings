@@ -121,7 +121,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     // Get rankings history for the last 30 days from ranking_versions table
-    let rankingsHistory: Array<{
+    const rankingsHistory: Array<{
       position: number;
       score: number;
       period: string;
@@ -184,7 +184,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     // Get metric history from articles that mention this tool
-    let metricHistory: Array<{
+    const metricHistory: Array<{
       metric_date: string;
       source_name: string;
       source_url: string;
@@ -209,7 +209,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         const toolMentions = article.toolMentions as any[];
 
         // Find the specific tool mention data
-        let toolMention = toolMentions?.find((m: any) => {
+        const toolMention = toolMentions?.find((m: any) => {
           if (typeof m === 'string') return m.toLowerCase() === tool.name.toLowerCase();
           return m?.name?.toLowerCase() === tool.name.toLowerCase();
         });

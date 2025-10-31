@@ -220,7 +220,7 @@ Generate the summary now:`;
         headers: {
           Authorization: `Bearer ${this.apiKey}`,
           "Content-Type": "application/json",
-          Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3000",
+          Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3007",
         },
         body: JSON.stringify({
           model: "anthropic/claude-sonnet-4",

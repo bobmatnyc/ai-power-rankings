@@ -166,7 +166,7 @@ function parseDatabaseUrl(url: string | undefined) {
     const database = urlObj.pathname.slice(1).split("?")[0] || "default";
 
     // Use full hostname (no masking)
-    let maskedHost = hostname;
+    const maskedHost = hostname;
 
     // Detect provider from hostname
     let provider = "postgresql";

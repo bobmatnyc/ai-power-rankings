@@ -109,22 +109,17 @@ export async function GET() {
         );
 
         if (toolsNotFoundByIds.length > 0) {
-          // Batch fetch by slug for remaining tools
-          const slugsToFetch = toolsNotFoundByIds
-            .map((r: any) => r["tool_slug"])
-            .filter((slug): slug is string => Boolean(slug));
-
-          // Fetch tools by slug (this would require a findBySlugs method for full optimization)
-          // For now, we'll fetch them individually but only for tools not found by ID
-          const slugResults = await Promise.all(
-            slugsToFetch.map(async (slug) => {
-              try {
-                return await toolsRepo.findBySlug(slug);
-              } catch {
-                return null;
-              }
-            })
+          // Batch fetch by slug for remaining tools using the new findBySlugs method
+          const slugsToFetch = Array.from(
+            new Set(
+              toolsNotFoundByIds
+                .map((r: any) => r["tool_slug"])
+                .filter((slug): slug is string => Boolean(slug))
+            )
           );
+
+          // Batch fetch all tools by slug in a single query
+          const slugResults = await toolsRepo.findBySlugs(slugsToFetch);
 
           // Add slug-based results to the map
           slugResults.forEach((tool) => {

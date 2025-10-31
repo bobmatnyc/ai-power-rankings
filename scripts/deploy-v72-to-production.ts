@@ -73,7 +73,7 @@ async function deployV72ToProduction() {
       .where(eq(rankings.isCurrent, true))
       .limit(1);
 
-    let previousRankMap: Map<string, number> = new Map();
+    const previousRankMap: Map<string, number> = new Map();
 
     if (prevRankingsResult.length > 0) {
       const prevData = prevRankingsResult[0].data as any;

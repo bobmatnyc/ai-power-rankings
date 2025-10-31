@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "mcp-vector-search": {
+      "type": "stdio",
+      "command": "/Users/masa/.local/pipx/venvs/mcp-vector-search/bin/python",
+      "args": [
+        "-m",
+        "mcp_vector_search.mcp.server",
+        "/Users/masa/Projects/managed/aipowerranking"
+      ],
+      "env": {}
+    }
+  }
+}

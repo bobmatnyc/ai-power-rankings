@@ -362,7 +362,7 @@ async function applyIncrementalUpdates(options: {
     };
 
     // Get articles from June 2025 onwards
-    let query = db
+    const query = db
       .select()
       .from(articles)
       .where(

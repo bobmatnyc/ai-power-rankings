@@ -1,14 +1,16 @@
 {
   "mcpServers": {
-    "mcp-vector-search": {
+    "kuzu-memory": {
       "type": "stdio",
-      "command": "/Users/masa/.local/pipx/venvs/mcp-vector-search/bin/python",
+      "command": "/opt/homebrew/opt/python@3.13/bin/python3.13",
       "args": [
         "-m",
-        "mcp_vector_search.mcp.server",
-        "/Users/masa/Projects/managed/aipowerranking"
+        "kuzu_memory.integrations.mcp_server"
       ],
-      "env": {}
+      "env": {
+        "KUZU_MEMORY_PROJECT_ROOT": "/Users/masa/Projects/aipowerranking",
+        "KUZU_MEMORY_DB": "/Users/masa/Projects/aipowerranking/kuzu-memories"
+      }
     }
   }
 }
