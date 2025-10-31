@@ -2,12 +2,14 @@
 
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function ClerkDebugPage() {
   const { loaded } = useClerk();
   const { user, isSignedIn, isLoaded } = useUser();
   const [mounted, setMounted] = useState(false);
   const [debugInfo, setDebugInfo] = useState<any>({});
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -29,6 +31,46 @@ export default function ClerkDebugPage() {
     return () => clearInterval(interval);
   }, [loaded, isLoaded, isSignedIn, user]);
 
+  const copyAllDebugInfo = async () => {
+    const debugText = `CLERK DEBUG INFORMATION
+Generated: ${new Date().toISOString()}
+
+=== REAL-TIME STATUS ===
+${JSON.stringify(debugInfo, null, 2)}
+
+=== LOADING STATES ===
+useClerk().loaded: ${loaded}
+useClerk().isLoaded: ${isLoaded}
+User Signed In: ${isSignedIn}
+
+=== ENVIRONMENT VARIABLES ===
+Publishable Key: ${process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.substring(0, 20)}...
+
+=== USER INFORMATION ===
+${user ? JSON.stringify({
+  id: user.id,
+  email: user.primaryEmailAddress?.emailAddress,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  organizationMemberships: user.organizationMemberships?.length || 0,
+}, null, 2) : 'No user signed in'}
+
+=== DIAGNOSIS ===
+${!loaded ? "⏳ Clerk SDK is still loading..." :
+  loaded && !isSignedIn ? "✅ Clerk loaded but you're not signed in" :
+  "✅ Clerk loaded and you're signed in!"}
+`;
+
+    try {
+      await navigator.clipboard.writeText(debugText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      alert('Failed to copy to clipboard');
+    }
+  };
+
   if (!mounted) {
     return <div className="p-8">Mounting...</div>;
   }
@@ -36,7 +78,17 @@ export default function ClerkDebugPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Clerk Debug Information</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Clerk Debug Information</h1>
+          <Button
+            onClick={copyAllDebugInfo}
+            size="sm"
+            variant={copied ? "default" : "outline"}
+            className={copied ? "bg-green-600 hover:bg-green-700" : ""}
+          >
+            {copied ? "✓ Copied!" : "Copy All"}
+          </Button>
+        </div>
 
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">Real-Time Status</h2>
