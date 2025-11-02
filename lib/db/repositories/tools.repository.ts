@@ -10,6 +10,7 @@ import { BaseRepository, type QueryOptions } from "./base.repository";
 
 interface ToolData {
   id: string;
+  db_id?: string; // Database UUID for reliable lookups (may differ from JSONB id)
   slug: string;
   name: string;
   category: string;
@@ -432,6 +433,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     return {
       id: (toolData["id"] as string) || dbTool.id.toString(),
+      db_id: dbTool.id, // Add database UUID for reliable lookups
       slug: dbTool.slug,
       name: dbTool.name,
       category: dbTool.category,

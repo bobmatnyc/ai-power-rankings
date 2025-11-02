@@ -5,7 +5,7 @@
  * DO NOT EDIT MANUALLY
  * Run 'npm run generate-categories' to update this file
  *
- * Generated: 2025-10-31T02:59:01.004Z
+ * Generated: 2025-11-02T16:31:16.228Z
  */
 
 export interface Category {
@@ -18,12 +18,7 @@ export const STATIC_CATEGORIES: Category[] = [
   {
     "id": "all",
     "name": "All Categories",
-    "count": 54
-  },
-  {
-    "id": "autonomous-agent",
-    "name": "Autonomous Agent",
-    "count": 11
+    "count": 51
   },
   {
     "id": "ide-assistant",
@@ -31,9 +26,14 @@ export const STATIC_CATEGORIES: Category[] = [
     "count": 11
   },
   {
+    "id": "autonomous-agent",
+    "name": "Autonomous Agent",
+    "count": 10
+  },
+  {
     "id": "other",
     "name": "Other",
-    "count": 8
+    "count": 7
   },
   {
     "id": "open-source-framework",
@@ -56,13 +56,13 @@ export const STATIC_CATEGORIES: Category[] = [
     "count": 3
   },
   {
-    "id": "code-assistant",
-    "name": "Code Assistant",
-    "count": 3
-  },
-  {
     "id": "testing-tool",
     "name": "Testing Tool",
+    "count": 2
+  },
+  {
+    "id": "code-assistant",
+    "name": "Code Assistant",
     "count": 2
   },
   {
