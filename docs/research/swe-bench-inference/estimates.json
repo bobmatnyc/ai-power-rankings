@@ -1,0 +1,130 @@
+[
+  {
+    "tool_id": "cursor",
+    "tool_name": "Cursor",
+    "estimated_score": 46.6,
+    "confidence_level": "low",
+    "range": {
+      "lower": 39.6,
+      "upper": 53.5
+    },
+    "reasoning": {
+      "base_model": "claude-3.5-sonnet-20241022",
+      "base_score": 49,
+      "architecture": "ide_agentic",
+      "architecture_multiplier": 0.8,
+      "feature_bonus_percent": 35,
+      "feature_details": [
+        "Execution: +10%",
+        "Codebase: +20%",
+        "Planning: +10%",
+        "Workflow: +13%",
+        "(Capped from 53% to 35%)"
+      ],
+      "calculation": "49.0 × 0.8 × 1.35 = 52.9 → 46.5",
+      "calibrations_applied": [
+        "IDE ceiling: capped at 95% of base (46.5%)"
+      ]
+    },
+    "metadata": {
+      "generated_at": "2025-11-01T15:58:36.851Z",
+      "model_version": "1.0"
+    }
+  },
+  {
+    "tool_id": "windsurf",
+    "tool_name": "Windsurf",
+    "estimated_score": 51.3,
+    "confidence_level": "very_low",
+    "range": {
+      "lower": 41,
+      "upper": 61.6
+    },
+    "reasoning": {
+      "base_model": "swe-1.5",
+      "base_score": 60,
+      "architecture": "ide_agentic",
+      "architecture_multiplier": 0.8,
+      "feature_bonus_percent": 35,
+      "feature_details": [
+        "Execution: +10%",
+        "Codebase: +20%",
+        "Planning: +10%",
+        "Workflow: +15%",
+        "(Capped from 55% to 35%)"
+      ],
+      "calculation": "60.0 × 0.8 × 1.35 = 64.8 → 51.3",
+      "calibrations_applied": [
+        "IDE ceiling: capped at 95% of base (57.0%)",
+        "Marketing claims discount: -10%"
+      ]
+    },
+    "metadata": {
+      "generated_at": "2025-11-01T15:58:36.851Z",
+      "model_version": "1.0"
+    }
+  },
+  {
+    "tool_id": "copilot",
+    "tool_name": "GitHub Copilot",
+    "estimated_score": 31.1,
+    "confidence_level": "low",
+    "range": {
+      "lower": 26.4,
+      "upper": 35.7
+    },
+    "reasoning": {
+      "base_model": "gpt-4.1",
+      "base_score": 54,
+      "architecture": "ide_completion",
+      "architecture_multiplier": 0.5,
+      "feature_bonus_percent": 15,
+      "feature_details": [
+        "Codebase: +20%",
+        "Quality: +5%",
+        "(Capped from 25% to 15%)"
+      ],
+      "calculation": "54.0 × 0.5 × 1.15 = 31.0",
+      "calibrations_applied": []
+    },
+    "metadata": {
+      "generated_at": "2025-11-01T15:58:36.851Z",
+      "model_version": "1.0"
+    }
+  },
+  {
+    "tool_id": "aider",
+    "tool_name": "Aider",
+    "estimated_score": 51,
+    "confidence_level": "medium",
+    "range": {
+      "lower": 45.9,
+      "upper": 56.1
+    },
+    "reasoning": {
+      "base_model": "gpt-4.1",
+      "base_score": 54,
+      "architecture": "cli_tool",
+      "architecture_multiplier": 0.7,
+      "feature_bonus_percent": 35,
+      "feature_details": [
+        "Execution: +10%",
+        "Codebase: +8%",
+        "Planning: +10%",
+        "Workflow: +15%",
+        "(Capped from 43% to 35%)"
+      ],
+      "calculation": "54.0 × 0.7 × 1.35 = 51.0",
+      "calibrations_applied": []
+    },
+    "metadata": {
+      "generated_at": "2025-11-01T15:58:36.851Z",
+      "model_version": "1.0"
+    },
+    "validation": {
+      "known_score": 26.3,
+      "error": 24.7,
+      "error_percentage": 93.9
+    }
+  }
+]
