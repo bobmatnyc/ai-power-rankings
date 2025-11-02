@@ -99,6 +99,14 @@ export async function GET(): Promise<NextResponse> {
           // Repository spreads all JSONB data fields to top level
           // Extract info object (contains structured metadata)
           const toolInfoData = (tool as any).info || {};
+          const toolAsAny = tool as Record<string, any>;
+
+          // Extract website_url and logo_url for root-level access (for icon display)
+          // Website: try info.website, website, website_url
+          const websiteUrl = toolInfoData["website"] || toolAsAny.website || toolAsAny.website_url || undefined;
+
+          // Logo: try logo_url, logo
+          const logoUrl = toolAsAny.logo_url || toolAsAny.logo || undefined;
 
           // Create properly typed tool info
           const toolInfo: ToolInfo = {
@@ -167,6 +175,8 @@ export async function GET(): Promise<NextResponse> {
             info: toolInfo,
             scoring: scoring,
             use_cases: ((tool as any).use_cases as string[]) || [],
+            website_url: websiteUrl, // Add website URL at root level for icon display
+            logo_url: logoUrl, // Add logo URL at root level for icon display
           } satisfies APITool;
         });
 

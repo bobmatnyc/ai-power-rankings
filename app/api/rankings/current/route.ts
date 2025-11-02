@@ -101,7 +101,9 @@ export async function GET() {
 
         // Batch fetch all tools in a single query
         const toolsData = await toolsRepo.findByIds(uniqueToolIds);
-        const toolMap = new Map(toolsData.map((t) => [t.id, t]));
+
+        // Use db_id (database UUID) for map key, since ranking tool_id uses UUIDs
+        const toolMap = new Map(toolsData.map((t) => [(t as any).db_id || t.id, t]));
 
         // Also need to handle slug-based lookups for tools not found by ID
         const toolsNotFoundByIds = rankings.filter(
@@ -153,11 +155,18 @@ export async function GET() {
           const overallScore = ranking["score"] || ranking["total_score"] || 0;
           const partialFactorScores = ranking["factor_scores"] || {};
 
-          // Extract description and website from tool data (JSONB field)
-          const toolData = tool?.data as Record<string, any> | undefined;
-          const description = toolData?.summary || toolData?.description || undefined;
-          const websiteUrl = toolData?.website || toolData?.website_url || undefined;
-          const logo = toolData?.logo || undefined;
+          // Extract description and website from tool data
+          // The repository spreads JSONB data fields directly onto the tool object
+          const toolAsAny = tool as Record<string, any> | undefined;
+
+          // Description: try info.description, description, info.summary
+          const description = toolAsAny?.info?.description || toolAsAny?.description || toolAsAny?.info?.summary || undefined;
+
+          // Website: try info.website, website, website_url
+          const websiteUrl = toolAsAny?.info?.website || toolAsAny?.website || toolAsAny?.website_url || undefined;
+
+          // Logo: try logo_url, logo
+          const logo = toolAsAny?.logo_url || toolAsAny?.logo || undefined;
 
           // Derive complete factor scores, ensuring all 9 dimensions are present
           const completeFactorScores = deriveCompleteScores(partialFactorScores, overallScore);

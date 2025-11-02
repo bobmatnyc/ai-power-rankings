@@ -91,6 +91,8 @@ export interface APITool {
   readonly info: ToolInfo;
   readonly scoring?: ToolScoring;
   readonly use_cases?: readonly string[];
+  readonly website_url?: string; // Root-level website URL for icon display
+  readonly logo_url?: string; // Root-level logo URL for icon display
 }
 
 export interface ToolsResponse extends APIResponse<{ tools: readonly APITool[] }> {

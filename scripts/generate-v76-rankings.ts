@@ -213,7 +213,7 @@ async function generateV76Rankings() {
   console.log("\n\n💾 Inserting rankings into database...");
 
   const period = "2025-11";
-  const algorithmVersion = "7.4";
+  const algorithmVersion = "7.6";
 
   try {
     // First, unset all current rankings
