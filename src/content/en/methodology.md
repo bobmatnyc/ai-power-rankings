@@ -5,65 +5,160 @@ subtitle: "How We Rank AI Tools"
 
 # Our Ranking Methodology
 
-**How We Rank AI Tools**
+**Algorithm Version 7.6 - Market-Validated Scoring**
 
-Our ranking system is designed to provide objective, comprehensive evaluations of AI coding tools based on real-world usage and measurable criteria.
+Our ranking system combines real-world adoption metrics with technical capabilities to provide objective evaluations of AI coding tools. We prioritize measurable data over theoretical assessments.
 
-## Core Evaluation Criteria
+## Ranking Algorithm v7.6
 
-### 1. Code Quality (30%)
-- **Accuracy**: How often does the tool generate correct code?
-- **Best Practices**: Does the code follow industry standards?
-- **Security**: Are security vulnerabilities avoided?
-- **Maintainability**: Is the generated code easy to read and modify?
+Our algorithm evaluates tools across 8 dimensions with market-validated weights that emphasize real-world adoption and proven results:
 
-### 2. Performance (25%)
-- **Speed**: How quickly does the tool generate responses?
-- **Resource Usage**: Memory and computational efficiency
-- **Scalability**: Performance with large codebases
-- **Reliability**: Consistency of results
+### 1. Developer Adoption (18%)
+**Real users and active engagement**
+- GitHub Stars (open source tools)
+- VS Code Extension installs
+- npm/PyPI download volumes
+- Active user communities
+- Developer testimonials
 
-### 3. Usability (20%)
-- **Learning Curve**: How easy is it for new users?
-- **Interface Design**: Quality of user experience
-- **Integration**: How well does it work with existing tools?
-- **Documentation**: Quality of help resources
+### 2. Technical Performance (18%)
+**Objective benchmarks and capabilities**
+- SWE-bench verified scores
+- Code quality metrics
+- Response speed and latency
+- Context window size
+- Multi-file editing support
 
-### 4. Features (15%)
-- **Breadth**: Range of supported languages and frameworks
-- **Depth**: Sophistication of capabilities
-- **Innovation**: Unique or cutting-edge features
-- **Customization**: Ability to tailor to specific needs
+### 3. Agentic Capability (12%)
+**Autonomous coding abilities**
+- Task planning sophistication
+- Multi-step problem solving
+- Self-correction abilities
+- Tool/API integration
+- Autonomous iteration
 
-### 5. Value (10%)
-- **Pricing**: Cost relative to benefits provided
-- **Free Tier**: Quality of free offerings
-- **ROI**: Return on investment for teams
-- **Support**: Quality of customer service
+### 4. Market Traction (12%)
+**Business validation and growth**
+- Enterprise customer adoption
+- Annual Recurring Revenue (ARR)
+- Funding rounds and valuation
+- Market penetration
+- Customer retention
 
-## Testing Process
+### 5. Business Sentiment (12%)
+**Industry perception and trust**
+- News coverage quality
+- Industry analyst reports
+- Customer satisfaction scores
+- Brand recognition
+- Market positioning
 
-1. **Setup**: Install and configure each tool in a standardized environment
-2. **Benchmark Tasks**: Run through a series of coding challenges
-3. **Real-world Scenarios**: Test with actual project requirements
-4. **Performance Measurement**: Collect quantitative metrics
-5. **User Testing**: Gather feedback from developer volunteers
-6. **Scoring**: Apply our weighted criteria to generate final scores
+### 6. Development Velocity (12%)
+**Active development and innovation**
+- Release frequency
+- Feature velocity
+- Bug fix responsiveness
+- Roadmap execution
+- Community engagement
+
+### 7. Innovation (10%)
+**Novel approaches and breakthroughs**
+- Unique technical capabilities
+- Patent applications
+- Research publications
+- Industry firsts
+- Technical differentiation
+
+### 8. Platform Resilience (8%)
+**Stability and reliability**
+- Uptime and availability
+- Error rate metrics
+- Recovery time
+- Security posture
+- Infrastructure quality
+
+## Data Sources
+
+We collect metrics from multiple authoritative sources:
+
+- **GitHub**: Stars, forks, contributors, commit activity
+- **Package Registries**: npm, PyPI, VS Code Marketplace download stats
+- **Benchmarks**: SWE-bench verified scores, HumanEval results
+- **Company Data**: Funding announcements, ARR, customer counts
+- **News Analysis**: Coverage from tech media and industry publications
+- **Developer Surveys**: Community feedback and satisfaction ratings
+
+## Data Quality & Missing Data
+
+### Missing Data Handling
+Tools are penalized for incomplete data using a confidence multiplier (0.7-1.0):
+- **Complete data** (7-8 dimensions): 1.0× (no penalty)
+- **Mostly complete** (5-6 dimensions): 0.9× multiplier
+- **Partial data** (3-4 dimensions): 0.8× multiplier
+- **Limited data** (1-2 dimensions): 0.7× multiplier
+
+### Data Verification
+- Cross-reference metrics from multiple sources
+- Validate company-provided data against public records
+- Remove outliers and incorrect mappings
+- Regular audits for data quality
+
+## Scoring Methodology
+
+### Individual Factor Scores
+Each dimension receives a 0-100 score based on:
+1. **Normalization**: Scale raw metrics to 0-100 range
+2. **Benchmarking**: Compare against category leaders
+3. **Weighting**: Apply market-validated weights
+4. **Confidence**: Multiply by data completeness factor
+
+### Overall Score Calculation
+```
+Overall Score = Σ (Factor Score × Weight × Confidence)
+```
+
+### Tiebreaker Logic
+When scores are identical, we use:
+1. Developer Adoption metrics (primary)
+2. Technical Performance scores (secondary)
+3. Most recent data timestamp (tertiary)
 
 ## Transparency Commitment
 
-We believe in complete transparency about our methodology:
-- All test cases are documented
-- Scoring criteria are publicly available
-- Results are reproducible
-- We update rankings monthly with new data
+We believe in complete transparency:
+- **Open Weights**: All weights publicly documented
+- **Data Sources**: Attribution for all metrics
+- **Reproducible**: Scoring logic available in our codebase
+- **Monthly Updates**: Rankings refreshed with latest data
+- **Version History**: Algorithm changes tracked and documented
+
+## Algorithm Evolution
+
+### Version 7.6 (Current - November 2025)
+**Focus: Market-Validated Scoring**
+- Increased Developer Adoption weight to 18% (from 15%)
+- Increased Technical Performance to 18% (from 10%)
+- Balanced other factors to emphasize proven results
+- Added missing data penalty system
+
+### Previous Versions
+- **v7.5**: Initial market-validated approach
+- **v7.3**: Innovation-focused weights
+- **Earlier**: Experimental scoring methods
 
 ## Continuous Improvement
 
 Our methodology evolves based on:
-- Community feedback
-- Industry changes
-- New evaluation techniques
-- Tool updates and improvements
+- **Community Feedback**: Developer input and suggestions
+- **Industry Changes**: New tools, capabilities, and metrics
+- **Data Availability**: Access to additional data sources
+- **Algorithm Testing**: A/B testing against market reality
 
-*Last updated: September 2025*
+## Transparency & Feedback
+
+Questions about our methodology?
+- View our [open-source algorithm code](https://github.com/yourusername/aipowerranking)
+- Review [ranking change history](/en/rankings)
+- Submit feedback through our [GitHub issues](https://github.com/yourusername/aipowerranking/issues)
+
+*Last updated: November 2025 - Algorithm v7.6*

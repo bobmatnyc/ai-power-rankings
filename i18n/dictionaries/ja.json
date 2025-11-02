@@ -166,7 +166,7 @@
     },
     "methodology": {
       "title": "私たちの手法",
-      "algorithmTitle": "アルゴリズム v7.0",
+      "algorithmTitle": "アルゴリズム v7.6",
       "algorithmDescription": "高度なランキングアルゴリズムが8つの主要因子と高度な修正器を考慮：",
       "keyModifiersTitle": "主要な修正器",
       "keyModifiersDescription": "三つの高度な修正器が公平で正確なランキングを保証：",
@@ -221,7 +221,7 @@
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
-      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.2 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.6 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
@@ -313,14 +313,14 @@
       "title": "データ主導のランキング",
       "subtitle": "私たちの方法論は透明で公正、継続的に改善されています",
       "methodology": "方法論を見る",
-      "algorithmVersion": "Algorithm v7.2",
+      "algorithmVersion": "Algorithm v7.6",
       "lastUpdated": "最終更新"
     },
     "faq": {
       "title": "よくある質問",
       "subtitle": "AIコーディングツールとランキングに関する一般的な質問",
       "question1": "ツールはどのようにランク付けされますか？",
-      "answer1": "私たちのAlgorithm v7.2を使用して、イノベーション、機能、使いやすさ、コミュニティフィードバックを評価します。",
+      "answer1": "私たちのAlgorithm v7.6を使用して、イノベーション、機能、使いやすさ、コミュニティフィードバックを評価します。",
       "question2": "ランキングはどのくらいの頻度で更新されますか？",
       "answer2": "新しいツール、機能更新、ユーザーフィードバックを反映して毎週更新されます。",
       "viewAll": "すべてのFAQを見る"
@@ -387,14 +387,14 @@
     }
   },
   "footer": {
-    "description": "Comprehensive rankings of AI coding tools using Algorithm v7.2 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+    "description": "Comprehensive rankings of AI coding tools using Algorithm v7.6 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
     "quickLinks": "Quick Links",
     "categories": "Categories",
     "copyright": "© 2025 AI Power Ranking. All rights reserved."
   },
   "rankings": {
     "title": "AI パワーランキング",
-    "subtitle": "アルゴリズム v7.1を使用したAIコーディングツールの包括的ランキング",
+    "subtitle": "アルゴリズム v7.6を使用したAIコーディングツールの包括的ランキング",
     "stats": {
       "totalTools": "総ツール数",
       "categories": "カテゴリー",
@@ -412,7 +412,7 @@
       "category": "カテゴリ"
     },
     "algorithm": {
-      "title": "アルゴリズム v7.1について",
+      "title": "アルゴリズム v7.6について",
       "subtitle": "イノベーション減衰、プラットフォームリスク修正器、収益品質調整を備えた強化ランキングシステム",
       "tabs": {
         "factors": "スコアリング要素",
@@ -792,9 +792,9 @@
     "title": "Our Methodology",
     "subtitle": "How we rank AI coding tools",
     "lastUpdated": "Last updated: January 2025",
-    "intro": "AI Power Ranking uses a sophisticated algorithm (v7.1) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "intro": "AI Power Ranking uses a sophisticated algorithm (v7.6) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
     "algorithm": {
-      "title": "アルゴリズム v7.0",
+      "title": "アルゴリズム v7.6",
       "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
       "keyFeatures": "Key Features",
       "features": {

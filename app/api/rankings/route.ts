@@ -102,6 +102,13 @@ export async function GET(): Promise<NextResponse> {
 
         // Parse tool info from database
         const toolInfo = (tool.info || {}) as any;
+        const toolAsAny = tool as Record<string, any> | undefined;
+
+        // Extract logo and fix path if needed (database has /tools/ but files are in /tool-icons/)
+        let logoPath = toolAsAny?.logo_url || toolAsAny?.logo || toolInfo?.logo || null;
+        if (logoPath && logoPath.startsWith('/tools/')) {
+          logoPath = logoPath.replace('/tools/', '/tool-icons/');
+        }
 
         return {
           rank: ranking["rank"] || ranking["position"] || 1,
@@ -117,6 +124,7 @@ export async function GET(): Promise<NextResponse> {
             category: tool.category,
             status: tool.status,
             website_url: toolInfo?.website || "",
+            logo: logoPath,
             description: toolInfo?.description || "",
           },
           total_score: ranking["score"] || ranking["total_score"] || 0,

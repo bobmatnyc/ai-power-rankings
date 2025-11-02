@@ -28,6 +28,10 @@ interface RankingData {
     name: string;
     category: string;
     status: string;
+    website_url?: string;  // Used by ToolIcon for favicons
+    logo?: string;         // Local PNG path (preferred over favicon API)
+    description?: string;  // Used by RankingCard
+    slug?: string;         // Tool slug for routing
   };
   scores: {
     overall: number;

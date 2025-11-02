@@ -1,0 +1,134 @@
+{
+  "version": "7.6",
+  "name": "Market-Validated Scoring",
+  "releaseDate": "2025-11-01",
+  "description": "Market-validated scoring that combines real-world adoption metrics with technical capabilities for objective evaluations",
+  "fullDescription": "Our ranking system combines real-world adoption metrics with technical capabilities to provide objective evaluations of AI coding tools. We prioritize measurable data over theoretical assessments.",
+
+  "factors": [
+    {
+      "id": "developer_adoption",
+      "name": "Developer Adoption",
+      "weight": 18,
+      "description": "Real users and active engagement",
+      "details": "GitHub Stars (open source tools), VS Code Extension installs, npm/PyPI download volumes, Active user communities, Developer testimonials"
+    },
+    {
+      "id": "technical_performance",
+      "name": "Technical Performance",
+      "weight": 18,
+      "description": "Objective benchmarks and capabilities",
+      "details": "SWE-bench verified scores, Code quality metrics, Response speed and latency, Context window size, Multi-file editing support"
+    },
+    {
+      "id": "agentic_capability",
+      "name": "Agentic Capability",
+      "weight": 12,
+      "description": "Autonomous coding abilities",
+      "details": "Task planning sophistication, Multi-step problem solving, Self-correction abilities, Tool/API integration, Autonomous iteration"
+    },
+    {
+      "id": "market_traction",
+      "name": "Market Traction",
+      "weight": 12,
+      "description": "Business validation and growth",
+      "details": "Enterprise customer adoption, Annual Recurring Revenue (ARR), Funding rounds and valuation, Market penetration, Customer retention"
+    },
+    {
+      "id": "business_sentiment",
+      "name": "Business Sentiment",
+      "weight": 12,
+      "description": "Industry perception and trust",
+      "details": "News coverage quality, Industry analyst reports, Customer satisfaction scores, Brand recognition, Market positioning"
+    },
+    {
+      "id": "development_velocity",
+      "name": "Development Velocity",
+      "weight": 12,
+      "description": "Active development and innovation",
+      "details": "Release frequency, Feature velocity, Bug fix responsiveness, Roadmap execution, Community engagement"
+    },
+    {
+      "id": "innovation",
+      "name": "Innovation",
+      "weight": 10,
+      "description": "Novel approaches and breakthroughs",
+      "details": "Unique technical capabilities, Patent applications, Research publications, Industry firsts, Technical differentiation"
+    },
+    {
+      "id": "platform_resilience",
+      "name": "Platform Resilience",
+      "weight": 8,
+      "description": "Stability and reliability",
+      "details": "Uptime and availability, Error rate metrics, Recovery time, Security posture, Infrastructure quality"
+    }
+  ],
+
+  "dataQuality": {
+    "missingDataPenalties": {
+      "complete": { "dimensions": "7-8", "multiplier": 1.0, "description": "No penalty" },
+      "mostlyComplete": { "dimensions": "5-6", "multiplier": 0.9, "description": "10% penalty" },
+      "partial": { "dimensions": "3-4", "multiplier": 0.8, "description": "20% penalty" },
+      "limited": { "dimensions": "1-2", "multiplier": 0.7, "description": "30% penalty" }
+    },
+    "verificationStandards": [
+      "Cross-reference metrics from multiple sources",
+      "Validate company-provided data against public records",
+      "Remove outliers and incorrect mappings",
+      "Regular audits for data quality"
+    ]
+  },
+
+  "dataSources": [
+    "GitHub: Stars, forks, contributors, commit activity",
+    "Package Registries: npm, PyPI, VS Code Marketplace download stats",
+    "Benchmarks: SWE-bench verified scores, HumanEval results",
+    "Company Data: Funding announcements, ARR, customer counts",
+    "News Analysis: Coverage from tech media and industry publications",
+    "Developer Surveys: Community feedback and satisfaction ratings"
+  ],
+
+  "scoringMethodology": {
+    "calculation": "Overall Score = Σ (Factor Score × Weight × Confidence)",
+    "steps": [
+      "Normalization: Scale raw metrics to 0-100 range",
+      "Benchmarking: Compare against category leaders",
+      "Weighting: Apply market-validated weights",
+      "Confidence: Multiply by data completeness factor"
+    ],
+    "tiebreakers": [
+      "Developer Adoption metrics (primary)",
+      "Technical Performance scores (secondary)",
+      "Most recent data timestamp (tertiary)"
+    ]
+  },
+
+  "updateSchedule": {
+    "rankingRefresh": "Monthly",
+    "dataCollection": "Continuous",
+    "algorithmUpdates": "As needed with version tracking"
+  },
+
+  "changelog": {
+    "v7.6": {
+      "date": "2025-11-01",
+      "focus": "Market-Validated Scoring",
+      "changes": [
+        "Increased Developer Adoption weight to 18% (from 15%)",
+        "Increased Technical Performance to 18% (from 10%)",
+        "Balanced other factors to emphasize proven results",
+        "Added missing data penalty system"
+      ]
+    },
+    "v7.5": {
+      "date": "2025-10-01",
+      "focus": "Initial market-validated approach",
+      "changes": []
+    },
+    "v7.3": {
+      "date": "2025-09-01",
+      "focus": "Innovation-focused weights",
+      "changes": []
+    }
+  }
+}

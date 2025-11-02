@@ -29,13 +29,13 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], // Responsive breakpoints
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Icon and small image sizes
     minimumCacheTTL: 60, // Cache images for 60 seconds minimum
-    qualities: [75, 90, 100],
+    qualities: [75, 85, 90, 100],
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     localPatterns: [
       {
         pathname: '/**',
-        search: '',
+        // Allow query strings for API routes like /api/favicon
       },
     ],
   },

@@ -173,7 +173,7 @@
     },
     "methodology": {
       "title": "[TRANSLATE] Our Methodology",
-      "algorithmTitle": "算法 v7.0",
+      "algorithmTitle": "算法 v7.6",
       "algorithmDescription": "[TRANSLATE] Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
       "keyModifiersTitle": "[TRANSLATE] Key Modifiers",
       "keyModifiersDescription": "[TRANSLATE] Three sophisticated modifiers ensure fair and accurate rankings:",
@@ -235,7 +235,7 @@
     },
     "footer": {
       "tagline": "[TRANSLATE] Data-driven insights for the AI revolution",
-      "description": "使用算法 v7.0 的 AI 编程工具综合排名，包括动态新闻智能、增强工具能力和速度评分。",
+      "description": "使用算法 v7.6 的 AI 编程工具综合排名，包括动态新闻智能、增强工具能力和速度评分。",
       "quickLinks": "[TRANSLATE] Quick Links",
       "categories": "[TRANSLATE] Categories",
       "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved."
@@ -354,14 +354,14 @@
       "title": "数据驱动排名",
       "subtitle": "我们的方法论透明、公正且持续改进",
       "methodology": "查看方法论",
-      "algorithmVersion": "算法 v7.0",
+      "algorithmVersion": "算法 v7.6",
       "lastUpdated": "最后更新"
     },
     "faq": {
       "title": "常见问题",
       "subtitle": "关于AI编码工具和排名的常见问题",
       "question1": "工具是如何排名的？",
-      "answer1": "我们使用算法 v7.0 评估创新、功能、可用性、新闻动态和社区反馈。",
+      "answer1": "我们使用算法 v7.6 评估创新、功能、可用性、新闻动态和社区反馈。",
       "question2": "排名多久更新一次？",
       "answer2": "每周更新，反映新工具、功能更新和用户反馈。",
       "viewAll": "查看所有FAQ"
@@ -415,7 +415,7 @@
     }
   },
   "footer": {
-    "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v7.2 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+    "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v7.6 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
     "quickLinks": "[TRANSLATE] Quick Links",
     "categories": "[TRANSLATE] Categories",
     "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved.",
@@ -443,7 +443,7 @@
   },
   "rankings": {
     "title": "AI 实力排行榜",
-    "subtitle": "使用算法v7.1的AI编码工具综合排名",
+    "subtitle": "使用算法v7.6的AI编码工具综合排名",
     "stats": {
       "totalTools": "工具总数",
       "categories": "分类",
@@ -461,7 +461,7 @@
       "category": "分类"
     },
     "algorithm": {
-      "title": "[TRANSLATE] About Algorithm v7.2",
+      "title": "[TRANSLATE] About Algorithm v7.6",
       "subtitle": "[TRANSLATE] Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
       "tabs": {
         "factors": "[TRANSLATE] Scoring Factors",
@@ -1137,9 +1137,9 @@
     "title": "[TRANSLATE] Our Methodology",
     "subtitle": "[TRANSLATE] How we rank AI coding tools",
     "lastUpdated": "[TRANSLATE] Last updated: January 2025",
-    "intro": "[TRANSLATE] AI Power Ranking uses a sophisticated algorithm (v7.1) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "intro": "[TRANSLATE] AI Power Ranking uses a sophisticated algorithm (v7.6) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
     "algorithm": {
-      "title": "[TRANSLATE] Algorithm v7.2",
+      "title": "[TRANSLATE] Algorithm v7.6",
       "description": "[TRANSLATE] Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
       "keyFeatures": "[TRANSLATE] Key Features",
       "features": {
