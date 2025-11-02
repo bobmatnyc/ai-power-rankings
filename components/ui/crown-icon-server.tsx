@@ -74,7 +74,7 @@ export function CrownIcon({ size = "md", className, priority = false }: CrownIco
       height={config.height}
       className={cn("object-contain", className)}
       loading="eager"
-      fetchpriority={priority ? "high" : "auto"}
+      fetchPriority={priority ? "high" : "auto"}
     />
   );
 }

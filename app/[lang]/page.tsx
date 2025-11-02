@@ -35,6 +35,7 @@ interface RankingData {
     category: string;
     status: string;
     website_url?: string;
+    logo?: string;  // Local PNG path (preferred over favicon API)
     description?: string;
   };
   scores: {
@@ -208,10 +209,31 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     console.log("[Page] Home: Base URL from getUrl:", baseUrl);
 
     // Provide server-side fallback data to prevent loading state
-    // Hard-coded fallback for immediate display while debugging
+    // Updated with Algorithm v7.6 rankings (November 2025)
     const serverRankings: RankingData[] = [
       {
         rank: 1,
+        tool: {
+          id: "2",
+          slug: "github-copilot",
+          name: "GitHub Copilot",
+          category: "ide-assistant",
+          status: "active",
+          website_url: "https://github.com/features/copilot",
+          description:
+            "AI pair programmer with autocomplete, chat, and autonomous coding agent capabilities. Can execute multi-step tasks, run terminal commands, and self-heal errors",
+        },
+        scores: {
+          overall: 68.2,
+          agentic_capability: 61.4,
+          innovation: 87.0,
+        },
+        metrics: {
+          swe_bench_score: 56,
+        },
+      },
+      {
+        rank: 2,
         tool: {
           id: "4",
           slug: "claude-code",
@@ -223,50 +245,30 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             "Terminal-based coding agent with deep codebase understanding and multi-file editing",
         },
         scores: {
-          overall: 92.5,
-          agentic_capability: 5,
-          innovation: 9.5,
+          overall: 55.1,
+          agentic_capability: 49.6,
+          innovation: 90.0,
         },
         metrics: {
           swe_bench_score: 80.2,
         },
       },
       {
-        rank: 2,
-        tool: {
-          id: "2",
-          slug: "github-copilot",
-          name: "GitHub Copilot",
-          category: "ide-assistant",
-          status: "active",
-          website_url: "https://github.com/features/copilot",
-          description:
-            "AI pair programmer with autocomplete, chat, and autonomous coding agent capabilities",
-        },
-        scores: {
-          overall: 91.0,
-          agentic_capability: 5,
-          innovation: 9.5,
-        },
-        metrics: {
-          swe_bench_score: 56,
-        },
-      },
-      {
         rank: 3,
         tool: {
-          id: "1",
-          slug: "cursor",
-          name: "Cursor",
-          category: "code-editor",
+          id: "cline",
+          slug: "cline",
+          name: "Cline",
+          category: "open-source-framework",
           status: "active",
-          website_url: "https://cursor.com",
-          description: "AI-powered code editor with $500M ARR and 360K+ paying developers",
+          website_url: "https://cline.bot/",
+          description:
+            "Cline is a free, open-source autonomous coding agent for VS Code that leverages Claude Sonnet's agentic capabilities to handle complex software development tasks",
         },
         scores: {
-          overall: 89.5,
-          agentic_capability: 5,
-          innovation: 8.5,
+          overall: 55.0,
+          agentic_capability: 49.5,
+          innovation: 100.0,
         },
         metrics: {},
       },
@@ -495,7 +497,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <CardContent className="pt-0">
                   <div className="text-2xl md:text-3xl font-bold text-secondary mb-2">8</div>
                   <div className="text-sm text-muted-foreground">Ranking Factors</div>
-                  <div className="text-xs text-muted-foreground mt-1">Algorithm v7.2</div>
+                  <div className="text-xs text-muted-foreground mt-1">Algorithm v7.6</div>
                 </CardContent>
               </Card>
 

@@ -120,7 +120,7 @@
     },
     "methodology": {
       "title": "Наша методологія",
-      "algorithmTitle": "Алгоритм v7.0",
+      "algorithmTitle": "Алгоритм v7.6",
       "algorithmDescription": "Наш просунутий ranking алгоритм враховує 8 ключових факторів з sophisticated modifiers:",
       "keyModifiersTitle": "Ключові модифікатори",
       "keyModifiersDescription": "Три sophisticated модифікатори забезпечують fair та accurate рейтинги:",
@@ -174,7 +174,7 @@
     },
     "footer": {
       "tagline": "Data-driven insights для AI революції",
-      "description": "Комплексні рейтинги AI інструментів кодування з алгоритмом v7.0, динамічним аналізом новин, покращеними можливостями інструментів та оцінкою швидкості.",
+      "description": "Комплексні рейтинги AI інструментів кодування з алгоритмом v7.6, динамічним аналізом новин, покращеними можливостями інструментів та оцінкою швидкості.",
       "quickLinks": "Швидкі посилання",
       "categories": "Категорії",
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
@@ -182,7 +182,7 @@
   },
   "rankings": {
     "title": "AI Power Rankings",
-    "subtitle": "Комплексні рейтинги AI інструментів кодування з алгоритмом v7.0",
+    "subtitle": "Комплексні рейтинги AI інструментів кодування з алгоритмом v7.6",
     "stats": {
       "totalTools": "Всього тулів",
       "categories": "Категорії",
@@ -199,7 +199,7 @@
       "name": "Ім'я"
     },
     "algorithm": {
-      "title": "Про алгоритм v7.0",
+      "title": "Про алгоритм v7.6",
       "subtitle": "Enhanced ranking система з innovation decay, platform risk modifiers та revenue quality adjustments",
       "tabs": {
         "factors": "Scoring фактори",
@@ -514,7 +514,7 @@
     "title": "Наша методологія",
     "subtitle": "Як ми ранкуємо AI coding тули",
     "lastUpdated": "Last updated: Січень 2025",
-    "intro": "AI Power Rankings використовує вдосконалений алгоритм (v7.0) для оцінки та ранжування AI інструментів кодування на основі багатьох кількісних і якісних факторів, аналізу новин в реальному часі та комплексних можливостей інструментів. Наша методологія розроблена для надання розробникам об'єктивної оцінки ландшафту AI інструментів.",
+    "intro": "AI Power Rankings використовує вдосконалений алгоритм (v7.6) для оцінки та ранжування AI інструментів кодування на основі багатьох кількісних і якісних факторів, аналізу новин в реальному часі та комплексних можливостей інструментів. Наша методологія розроблена для надання розробникам об'єктивної оцінки ландшафту AI інструментів.",
     "sections": {
       "scoringFactors": {
         "title": "Scoring Factors",
@@ -541,7 +541,7 @@
       }
     },
     "algorithm": {
-      "title": "Алгоритм v7.1",
+      "title": "Алгоритм v7.6",
       "description": "Наш найновіший ranking алгоритм включає реальні паттерни використання та ринкову динаміку",
       "keyFeatures": "Ключові функції",
       "features": {
@@ -803,7 +803,7 @@
     "keywords": "інструменти кодування AI, агентська AI, автономне кодування, рейтинги інструментів розробників, порівняння AI-асистентів, бенчмарки AI кодування, результати SWE-bench, Claude проти Cursor проти GitHub Copilot"
   },
   "footer": {
-    "description": "Комплексні рейтинги AI coding інструментів з використанням Algorithm v7.1 з innovation decay, platform risk модифікаторами та revenue quality коригуваннями.",
+    "description": "Комплексні рейтинги AI coding інструментів з використанням Algorithm v7.6 з innovation decay, platform risk модифікаторами та revenue quality коригуваннями.",
     "quickLinks": "Швидкі посилання",
     "categories": "Категорії",
     "copyright": "© 2025 AI Power Rankings. Всі права захищені."

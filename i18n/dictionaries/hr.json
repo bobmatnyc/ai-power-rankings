@@ -120,7 +120,7 @@
     },
     "methodology": {
       "title": "Naša metodologija",
-      "algorithmTitle": "Algoritam v7.0",
+      "algorithmTitle": "Algoritam v7.6",
       "algorithmDescription": "Naš napredni ranking algoritam uzima u obzir 8 ključnih faktora s sophisticated modifierima:",
       "keyModifiersTitle": "Ključni modifieri",
       "keyModifiersDescription": "Tri sophisticated modifiera osiguravaju fer i točna rangiranja:",
@@ -174,7 +174,7 @@
     },
     "footer": {
       "tagline": "Data-driven insights za AI revoluciju",
-      "description": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom v7.0, dinamičkom inteligencijom vijesti, poboljšanim mogućnostima alata i bodovanjem brzine.",
+      "description": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom v7.6, dinamičkom inteligencijom vijesti, poboljšanim mogućnostima alata i bodovanjem brzine.",
       "quickLinks": "Brzi linkovi",
       "categories": "Kategorije",
       "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."
@@ -182,7 +182,7 @@
   },
   "rankings": {
     "title": "AI Power Rankings",
-    "subtitle": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom v7.0",
+    "subtitle": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom v7.6",
     "stats": {
       "totalTools": "Ukupno alata",
       "categories": "Kategorije",
@@ -199,7 +199,7 @@
       "name": "Ime"
     },
     "algorithm": {
-      "title": "O algoritmu v7.0",
+      "title": "O algoritmu v7.6",
       "subtitle": "Enhanced ranking sustav s innovation decay, platform risk modifierima i revenue quality adjustmentima",
       "tabs": {
         "factors": "Scoring faktori",
@@ -514,7 +514,7 @@
     "title": "Naša metodologija",
     "subtitle": "Kako rangiramo AI coding alate",
     "lastUpdated": "Zadnje ažuriranje: siječanj 2025",
-    "intro": "AI Power Rankings koristi napredni algoritam (v7.0) za evaluaciju i rangiranje AI alata za kodiranje na temelju višestrukih kvantitativnih i kvalitativnih faktora, analize vijesti u stvarnom vremenu i sveobuhvatnih mogućnosti alata. Naša metodologija je dizajnirana da pruži programerima objektivnu procjenu pejzaža AI alata zasnovanu na podacima.",
+    "intro": "AI Power Rankings koristi napredni algoritam (v7.6) za evaluaciju i rangiranje AI alata za kodiranje na temelju višestrukih kvantitativnih i kvalitativnih faktora, analize vijesti u stvarnom vremenu i sveobuhvatnih mogućnosti alata. Naša metodologija je dizajnirana da pruži programerima objektivnu procjenu pejzaža AI alata zasnovanu na podacima.",
     "sections": {
       "scoringFactors": {
         "title": "Scoring Faktori",
@@ -541,7 +541,7 @@
       }
     },
     "algorithm": {
-      "title": "Algoritam v7.1",
+      "title": "Algoritam v7.6",
       "description": "Naš najnoviji algoritam za rangiranje uključuje obrasce korištenja u stvarnom svijetu i tržišnu dinamiku",
       "keyFeatures": "Ključne funkcionalnosti",
       "features": {
@@ -803,7 +803,7 @@
     "keywords": "AI alati za kodiranje, agentska AI, autonomno kodiranje, rangiranje alata za developere, usporedba AI asistenata, benchmarkovi AI kodiranja, SWE-bench rezultati, Claude vs Cursor vs GitHub Copilot"
   },
   "footer": {
-    "description": "Sveobuhvatna rangiranja AI alata za kodiranje koristeći Algorithm v7.1 s propadanjem inovacije, modifikatorima rizika platforme i prilagodbama kvalitete prihoda.",
+    "description": "Sveobuhvatna rangiranja AI alata za kodiranje koristeći Algorithm v7.6 s propadanjem inovacije, modifikatorima rizika platforme i prilagodbama kvalitete prihoda.",
     "quickLinks": "Brzi linkovi",
     "categories": "Kategorije",
     "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."

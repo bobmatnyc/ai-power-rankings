@@ -433,7 +433,6 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     return {
       id: (toolData["id"] as string) || dbTool.id.toString(),
-      db_id: dbTool.id, // Add database UUID for reliable lookups
       slug: dbTool.slug,
       name: dbTool.name,
       category: dbTool.category,
@@ -443,7 +442,8 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       tags: tags || [],
       created_at: dbTool.createdAt.toISOString(),
       updated_at: dbTool.updatedAt.toISOString(),
-      ...toolData,
+      ...toolData, // Spread JSONB data first
+      db_id: dbTool.id, // Then override with authoritative database UUID to prevent overwriting
     };
   }
 

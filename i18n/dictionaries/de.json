@@ -115,7 +115,7 @@
     },
     "methodology": {
       "title": "Our Methodology",
-      "algorithmTitle": "Algorithmus v7.0",
+      "algorithmTitle": "Algorithmus v7.6",
       "algorithmDescription": "Unser fortgeschrittener Ranking-Algorithmus berücksichtigt 8 Schlüsselfaktoren mit sophistizierten Modifikatoren:",
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Drei sophistizierte Modifikatoren gewährleisten faire und präzise Rankings:",
@@ -169,7 +169,7 @@
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
-      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.2 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
+      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.6 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
@@ -182,7 +182,7 @@
   },
   "rankings": {
     "title": "KI Power Rankings",
-    "subtitle": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v7.0",
+    "subtitle": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v7.6",
     "stats": {
       "totalTools": "Total Tools",
       "categories": "Kategorien",
@@ -199,7 +199,7 @@
       "name": "Name"
     },
     "algorithm": {
-      "title": "Über Algorithmus v7.0",
+      "title": "Über Algorithmus v7.6",
       "subtitle": "Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
       "tabs": {
         "factors": "Scoring Factors",
@@ -514,7 +514,7 @@
     "title": "Unsere Methodik",
     "subtitle": "Wie wir KI-Coding-Tools ranken",
     "lastUpdated": "Zuletzt aktualisiert: Januar 2025",
-    "intro": "AI Power Rankings nutzt einen sophistizierten Algorithmus (v7.1) zur Bewertung und zum Ranking von KI-Coding-Tools basierend auf mehreren quantitativen und qualitativen Faktoren. Unsere Methodik ist darauf ausgelegt, Developern eine objektive, datengetriebene Bewertung der KI-Tools-Landschaft zu bieten.",
+    "intro": "AI Power Rankings nutzt einen sophistizierten Algorithmus (v7.6) zur Bewertung und zum Ranking von KI-Coding-Tools basierend auf mehreren quantitativen und qualitativen Faktoren. Unsere Methodik ist darauf ausgelegt, Developern eine objektive, datengetriebene Bewertung der KI-Tools-Landschaft zu bieten.",
     "sections": {
       "scoringFactors": {
         "title": "Scoring Factors",
@@ -541,7 +541,7 @@
       }
     },
     "algorithm": {
-      "title": "Algorithmus v7.0",
+      "title": "Algorithmus v7.6",
       "description": "Unser neuester Ranking-Algorithmus berücksichtigt reale Nutzungsmuster und Marktdynamiken",
       "keyFeatures": "Hauptmerkmale",
       "features": {
@@ -803,7 +803,7 @@
     "keywords": "AI-Coding-Tools, agentische AI, autonomes Coding, Entwickler-Tools-Rankings, AI-Assistenten-Vergleich, Coding-AI-Benchmarks, SWE-Bench-Ergebnisse, Claude vs Cursor vs GitHub Copilot"
   },
   "footer": {
-    "description": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v7.1 einschließlich Innovationsverfall, Plattformrisiko-Modifikatoren und Umsatzqualitäts-Anpassungen.",
+    "description": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v7.6 einschließlich Innovationsverfall, Plattformrisiko-Modifikatoren und Umsatzqualitäts-Anpassungen.",
     "quickLinks": "Schnelllinks",
     "categories": "Kategorien",
     "copyright": "© 2025 AI Power Rankings. Alle Rechte vorbehalten."

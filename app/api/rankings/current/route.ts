@@ -196,6 +196,7 @@ export async function GET() {
             },
             category,
             status,
+            tool: tool || null, // Include full tool object for detailed information
           };
         });
 

@@ -120,61 +120,61 @@
     },
     "methodology": {
       "title": "Our Methodology",
-      "algorithmTitle": "Algorithm v7.0",
-      "algorithmDescription": "Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
-      "keyModifiersTitle": "Key Modifiers",
-      "keyModifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings:",
+      "algorithmTitle": "Algorithm v7.6",
+      "algorithmDescription": "Market-validated scoring that combines real-world adoption metrics with technical capabilities for objective evaluations:",
+      "keyModifiersTitle": "Data Quality & Scoring",
+      "keyModifiersDescription": "Transparent methodology with confidence multipliers for incomplete data:",
       "factors": {
-        "agenticCapability": "Agentic Capability (30%) - Autonomous coding abilities",
-        "technicalPerformance": "Technical Performance (12.5%) - SWE-bench focus",
-        "marketTraction": "Market Traction (12.5%) - Revenue quality adjusted",
+        "agenticCapability": "Agentic Capability (12%) - Autonomous coding abilities",
+        "technicalPerformance": "Technical Performance (18%) - SWE-bench verified scores",
+        "marketTraction": "Market Traction (12%) - Enterprise customer adoption",
         "agentic": {
           "name": "Agentic Capability",
           "description": "Autonomous coding abilities and multi-step task completion"
         },
         "innovation": {
           "name": "Innovation",
-          "description": "Technical breakthroughs and feature innovation"
+          "description": "Novel approaches, patents, and technical differentiation"
         },
         "performance": {
           "name": "Technical Performance",
-          "description": "Code quality, speed, and benchmark results"
+          "description": "SWE-bench scores, response speed, and context window size"
         },
         "traction": {
           "name": "Market Traction",
-          "description": "User adoption, growth rate, and market presence"
+          "description": "Enterprise adoption, ARR, and customer retention"
         }
       },
       "modifiers": {
-        "innovationDecay": "Innovation Decay - Recent innovations score higher",
-        "platformRisk": "Platform Risk - Independence bonuses, lock-in penalties",
-        "revenueQuality": "Revenue Quality - Enterprise revenue weighted higher",
-        "dataValidation": "Data Validation - 80% completeness required",
+        "innovationDecay": "Developer Adoption (18%) - GitHub stars, VS Code installs, npm/PyPI downloads",
+        "platformRisk": "Business Sentiment (12%) - News coverage, analyst reports, satisfaction scores",
+        "revenueQuality": "Development Velocity (12%) - Release frequency and feature velocity",
+        "dataValidation": "Platform Resilience (8%) - Uptime, error rates, and security posture",
         "decay": {
-          "name": "Innovation Decay",
-          "description": "Recent innovations weighted more heavily"
+          "name": "Developer Adoption",
+          "description": "Real users and active engagement"
         },
         "risk": {
-          "name": "Platform Risk",
-          "description": "Independence vs. platform lock-in factors"
+          "name": "Business Sentiment",
+          "description": "Industry perception and trust"
         },
         "revenue": {
-          "name": "Revenue Quality",
-          "description": "Enterprise revenue weighted higher than consumer"
+          "name": "Development Velocity",
+          "description": "Active development and innovation"
         },
         "validation": {
-          "name": "Data Validation",
-          "description": "Minimum 80% data completeness required"
+          "name": "Platform Resilience",
+          "description": "Stability and reliability"
         }
       },
-      "modifiersTitle": "Dynamic Modifiers",
-      "modifiersDescription": "Three sophisticated modifiers ensure fair and accurate rankings",
+      "modifiersTitle": "Additional Factors",
+      "modifiersDescription": "Comprehensive evaluation across all dimensions of tool quality",
       "readFull": "Read Full Methodology",
       "readMoreButton": "Read Full Methodology"
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
-      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.2 with enhanced agentic capabilities, SWE-bench scoring, and autonomous task completion.",
+      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.6 with market-validated scoring that combines real-world adoption metrics with technical capabilities.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
@@ -187,14 +187,14 @@
     "aboutDescription": "This chart shows how AI tools have moved in and out of the top 10 rankings over time. Tools that appear higher on the chart (closer to #1) are performing better."
   },
   "footer": {
-    "description": "Comprehensive rankings of AI coding tools using Algorithm v7.2 with enhanced agentic capabilities, SWE-bench scoring, and autonomous task completion.",
+    "description": "Comprehensive rankings of AI coding tools using Algorithm v7.6 with market-validated scoring that combines real-world adoption metrics with technical capabilities.",
     "quickLinks": "Quick Links",
     "categories": "Categories",
     "copyright": "© 2025 AI Power Ranking. All rights reserved."
   },
   "rankings": {
     "title": "AI Power Ranking",
-    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v7.2",
+    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v7.6 - Market-validated scoring",
     "stats": {
       "totalTools": "Total Tools",
       "categories": "Categories",
@@ -242,8 +242,8 @@
       }
     },
     "algorithm": {
-      "title": "About Algorithm v7.0",
-      "subtitle": "Enhanced ranking system with dynamic news intelligence, subprocess management, and real-time velocity scoring",
+      "title": "About Algorithm v7.6",
+      "subtitle": "Market-validated scoring combining real-world adoption metrics with technical capabilities for objective evaluations",
       "tabs": {
         "factors": "Scoring Factors",
         "modifiers": "Modifiers",
@@ -520,10 +520,10 @@
     "title": "Our Methodology",
     "subtitle": "How we rank AI coding tools",
     "lastUpdated": "Last updated: January 2025",
-    "intro": "AI Power Ranking uses a sophisticated algorithm (v7.0) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors, real-time news analysis, and comprehensive tool capabilities. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
+    "intro": "AI Power Ranking uses Algorithm v7.6, a market-validated scoring system that combines real-world adoption metrics with technical capabilities to provide objective evaluations of AI coding tools based on 8 key dimensions with emphasis on proven results and developer adoption.",
     "algorithm": {
-      "title": "Algorithm v7.0",
-      "description": "Our latest ranking algorithm incorporates real-time news intelligence, enhanced tool capabilities, and dynamic velocity scoring",
+      "title": "Algorithm v7.6",
+      "description": "Market-validated scoring system combining real-world adoption metrics (GitHub stars, VS Code installs, npm/PyPI downloads) with technical performance (SWE-bench scores, context windows) and market validation (ARR, enterprise adoption)",
       "keyFeatures": "Key Features",
       "features": {
         "innovationDecay": "Innovation decay modeling to reflect tool freshness",

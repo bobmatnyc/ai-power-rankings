@@ -34,6 +34,8 @@ interface RankingData {
     name: string;
     category: string;
     status: string;
+    website_url?: string;
+    logo?: string;  // Local PNG path (preferred over favicon API)
   };
   scores: {
     overall: number;

@@ -22,9 +22,12 @@ export function ToolIcon({
 }: ToolIconProps) {
   const [imageError, setImageError] = useState(false);
 
+  // Detect if this is a local path (starts with '/')
+  const isLocalPath = domain?.startsWith('/');
+
   // Debug log to understand what's happening
   if (process.env["NODE_ENV"] === "development") {
-    console.log("ToolIcon:", { name, domain, imageError });
+    console.log("ToolIcon:", { name, domain, isLocalPath, imageError });
   }
 
   // Generate a consistent color based on the tool name
@@ -99,14 +102,17 @@ export function ToolIcon({
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <Image
-        src={`/api/favicon?domain=${encodeURIComponent(domain)}&size=${size}`}
+        src={isLocalPath
+          ? domain  // Use local path directly
+          : `/api/favicon?domain=${encodeURIComponent(domain)}&size=${size}`
+        }
         alt={`${name} icon`}
         width={size}
         height={size}
         className={cn("rounded-lg", className)}
         onError={() => setImageError(true)}
         quality={85}
-        unoptimized
+        unoptimized={isLocalPath}  // Don't optimize local PNGs, they're already optimized
       />
     </div>
   );
