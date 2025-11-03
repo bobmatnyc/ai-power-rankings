@@ -29,11 +29,11 @@ export default function StateOfUnion({ lang }: StateOfUnionProps): React.JSX.Ele
             gap between usage and confidence.
           </p>
           <p>
-            Market dynamics are reshaping rapidly. Replit's{" "}
+            Market dynamics are reshaping rapidly. Replit&apos;s{" "}
             <Link href="/en/news/replit-150m-arr" className="text-primary hover:underline">
               $150M ARR at $3B valuation
             </Link>{" "}
-            demonstrates strong revenue potential, while Anthropic's Claude Sonnet 4.5 leads in{" "}
+            demonstrates strong revenue potential, while Anthropic&apos;s Claude Sonnet 4.5 leads in{" "}
             <Link href="/en/tools/claude-sonnet-4-5" className="text-primary hover:underline">
               agentic capability scores
             </Link>
@@ -41,7 +41,7 @@ export default function StateOfUnion({ lang }: StateOfUnionProps): React.JSX.Ele
             how developers interact with AI.
           </p>
           <p>
-            However, significant challenges persist. GitHub Copilot's{" "}
+            However, significant challenges persist. GitHub Copilot&apos;s{" "}
             <Link href="/en/news/copilot-failure-rates" className="text-primary hover:underline">
               36% failure rates on complex tasks
             </Link>{" "}
@@ -53,7 +53,7 @@ export default function StateOfUnion({ lang }: StateOfUnionProps): React.JSX.Ele
           </p>
           <p>
             Looking ahead, the industry is moving toward multi-model support, self-hosting options, and platform
-            independence—addressing developers' primary concerns about vendor lock-in and service disruptions. Tools
+            independence—addressing developers&apos; primary concerns about vendor lock-in and service disruptions. Tools
             that successfully balance powerful autonomous capabilities with transparency and reliability will likely
             emerge as long-term winners in this evolving landscape.
           </p>

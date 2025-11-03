@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Verify Monthly Summaries Table
  * Checks that the table exists and contains data

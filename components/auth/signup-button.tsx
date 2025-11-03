@@ -35,7 +35,7 @@ function SignupForUpdatesButton({
       </SignedOut>
       <SignedIn>
         <Button variant={variant} size={size} className={className} disabled>
-          You're signed in!
+          You&apos;re signed in!
         </Button>
       </SignedIn>
     </>

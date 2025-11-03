@@ -24,16 +24,15 @@ export {
 
 // Simple wrapper components for consistent styling
 import type React from "react";
+import { SignedIn as SafeSignedIn, SignedOut as SafeSignedOut } from "./auth-components";
 
 export function SignedInWrapper({ children }: { children: React.ReactNode }) {
   // Import SignedIn from our safe wrapper
-  const { SignedIn: SafeSignedIn } = require("./auth-components");
   return <SafeSignedIn>{children}</SafeSignedIn>;
 }
 
 export function SignedOutWrapper({ children }: { children: React.ReactNode }) {
   // Import SignedOut from our safe wrapper
-  const { SignedOut: SafeSignedOut } = require("./auth-components");
   return <SafeSignedOut>{children}</SafeSignedOut>;
 }
 

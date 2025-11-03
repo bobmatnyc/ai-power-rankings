@@ -25,7 +25,7 @@ async function getBlobAPI() {
 
   if (process.env["BLOB_READ_WRITE_TOKEN"]) {
     try {
-      // @ts-ignore - @vercel/blob is optionally installed in production only
+      // @ts-expect-error - @vercel/blob is optionally installed in production only
       const blob = await import("@vercel/blob");
       blobAPI = {
         put: blob.put,

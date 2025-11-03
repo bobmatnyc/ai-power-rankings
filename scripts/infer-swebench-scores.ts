@@ -279,7 +279,7 @@ function calculateTotalFeatureBonus(
   const qualityBonus = calculateQualityBonus(features);
   const workflowBonus = calculateWorkflowBonus(features);
 
-  let totalBonus =
+  const totalBonus =
     executionBonus + codebaseBonus + planningBonus + qualityBonus + workflowBonus;
 
   // Apply architecture-specific cap

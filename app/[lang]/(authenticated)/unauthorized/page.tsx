@@ -28,7 +28,7 @@ export default async function UnauthorizedPage({ params }: PageProps) {
 
         {/* Description */}
         <p className="text-gray-600 dark:text-gray-400 mb-2">
-          You don't have permission to access this page.
+          You don&apos;t have permission to access this page.
         </p>
         <p className="text-sm text-gray-500 dark:text-gray-500 mb-8">
           This area is restricted to administrators only. If you believe you should have access, please contact support.

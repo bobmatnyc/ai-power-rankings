@@ -225,7 +225,7 @@ export function WhatsNewModal({
           <DialogHeader className="flex-shrink-0">
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5" />
-              What's New
+              What&apos;s New
             </DialogTitle>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto space-y-4 py-4 scroll-smooth">
@@ -245,7 +245,7 @@ export function WhatsNewModal({
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
-            What's New
+            What&apos;s New
           </DialogTitle>
         </DialogHeader>
 
@@ -484,7 +484,7 @@ export function WhatsNewModal({
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleDontShowAgain}>
               <X className="h-4 w-4 mr-1" />
-              Don't show again
+              Don&apos;t show again
             </Button>
             <Button size="sm" onClick={handleDismiss}>
               Close

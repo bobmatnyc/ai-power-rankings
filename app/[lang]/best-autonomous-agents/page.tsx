@@ -304,7 +304,7 @@ export default async function BestAutonomousAgentsPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                The world's first fully autonomous AI software engineer, capable of planning,
+                The world&apos;s first fully autonomous AI software engineer, capable of planning,
                 coding, testing, and deploying complete applications.
               </p>
               <div className="flex items-center gap-2 text-sm">

@@ -29,13 +29,13 @@ type ClerkUserButtonType = React.ComponentType<{
 let ClerkUserButton: ClerkUserButtonType | null = null;
 
 // Load Clerk UserButton component conditionally
-if (typeof window !== "undefined") {
-  try {
-    const clerkModule = require("@clerk/nextjs");
-    ClerkUserButton = clerkModule.UserButton;
-  } catch (error) {
-    console.warn("[UserButtonWithAdmin] Clerk module not available:", error);
-  }
+// Note: This is a client component, so we can safely import Clerk
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const clerkModule = typeof window !== "undefined" ? require("@clerk/nextjs") : null;
+  ClerkUserButton = clerkModule?.UserButton ?? null;
+} catch (error) {
+  console.warn("[UserButtonWithAdmin] Clerk module not available:", error);
 }
 
 interface UserButtonWithAdminProps {
