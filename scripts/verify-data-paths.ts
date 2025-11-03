@@ -49,7 +49,7 @@ async function main() {
   console.log(`\n📊 Total tools in database: ${allTools.length}\n`);
 
   // Count metrics in actual location (data.metrics.*)
-  let actualCounts = {
+  const actualCounts = {
     vscode: 0,
     github: 0,
     npm: 0,
@@ -58,7 +58,7 @@ async function main() {
   };
 
   // Count metrics in v7.4 expected location (data.info.*)
-  let v74Counts = {
+  const v74Counts = {
     vscode_installs: 0,
     github_stats: 0,
     npm_downloads: 0,

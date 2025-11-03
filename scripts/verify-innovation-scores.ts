@@ -26,7 +26,7 @@ async function verifyInnovationScores() {
   console.log('📊 Innovation Score Analysis:\n');
 
   let maxInnovation = 0;
-  let toolsWithHighInnovation: Array<{name: string, score: number}> = [];
+  const toolsWithHighInnovation: Array<{name: string, score: number}> = [];
 
   for (const tool of toolsData) {
     const factorScores = tool.factor_scores || {};

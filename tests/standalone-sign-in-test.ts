@@ -235,7 +235,7 @@ async function testSignInPage(environmentName: string, baseUrl: string): Promise
 
     // Test 9: Try to interact with the form (if present)
     console.log('\n[TEST 9] Testing form interactivity...');
-    let interactivityTest = {
+    const interactivityTest = {
       emailInputWorks: false,
       error: undefined as string | undefined
     };

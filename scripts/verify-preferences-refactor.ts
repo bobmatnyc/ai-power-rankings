@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Verification Script for User Preferences Refactoring
  * Tests the Clerk privateMetadata-based preferences system

@@ -398,7 +398,6 @@ export function ArticleManagement() {
 
     try {
       let response: Response;
-      let data: { success?: boolean; message?: string; error?: string; result?: unknown };
 
       // Check if we have preprocessed data from preview
       if (savedPreviewData) {
@@ -472,7 +471,7 @@ export function ArticleManagement() {
         throw new Error(errorData.error || "Failed to save article");
       }
 
-      data = await response.json();
+      const data: { success?: boolean; message?: string; error?: string; result?: unknown } = await response.json();
 
       setProcessingProgress(85);
       setProcessingStep("Finalizing...");
@@ -1499,7 +1498,7 @@ export function ArticleManagement() {
                 <div className="text-center py-8 text-muted-foreground">
                   <Newspaper className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>No articles found</p>
-                  <p className="text-sm">Add your first article in the "Add News Article" tab</p>
+                  <p className="text-sm">Add your first article in the &quot;Add News Article&quot; tab</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -1711,7 +1710,7 @@ export function ArticleManagement() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    No ranking changes detected. The article's current impact on rankings is
+                    No ranking changes detected. The article&apos;s current impact on rankings is
                     accurate.
                   </AlertDescription>
                 </Alert>
@@ -1721,7 +1720,7 @@ export function ArticleManagement() {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  The AI analysis has been cached. Clicking "Apply Changes" will use this cached
+                  The AI analysis has been cached. Clicking &quot;Apply Changes&quot; will use this cached
                   analysis for faster processing.
                 </AlertDescription>
               </Alert>
@@ -1841,7 +1840,7 @@ export function ArticleManagement() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    No ranking changes detected after recalculation. The article's impact remains
+                    No ranking changes detected after recalculation. The article&apos;s impact remains
                     the same.
                   </AlertDescription>
                 </Alert>
@@ -1871,7 +1870,7 @@ export function ArticleManagement() {
               <CardTitle>Edit Article</CardTitle>
               <CardDescription>
                 Update article text. Note: This will NOT recalculate rankings automatically. Use the
-                "Recalc" button after saving if you want to update rankings.
+                &quot;Recalc&quot; button after saving if you want to update rankings.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1 overflow-y-auto space-y-4">

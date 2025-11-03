@@ -152,7 +152,7 @@ test.describe('[QA] Phase 2 FCP Optimization Verification', () => {
     // Get Web Vitals metrics
     const metrics = await page.evaluate(() => {
       return new Promise((resolve) => {
-        // @ts-ignore - PerformanceObserver is available
+        // @ts-expect-error - PerformanceObserver types not fully available in this context
         const observer = new PerformanceObserver((list) => {
           const entries = list.getEntries();
           const paintEntries = entries.filter(entry => entry.entryType === 'paint');

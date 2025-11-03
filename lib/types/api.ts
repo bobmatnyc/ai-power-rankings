@@ -240,9 +240,9 @@ export interface ArticleRequest {
   readonly metadata?: Partial<ArticleMetadata>;
 }
 
-export interface UpdateToolRequest extends Partial<ToolRequest> {}
+export type UpdateToolRequest = Partial<ToolRequest>;
 
-export interface UpdateArticleRequest extends Partial<ArticleRequest> {}
+export type UpdateArticleRequest = Partial<ArticleRequest>;
 
 // ==================== Search and Filter Types ====================
 

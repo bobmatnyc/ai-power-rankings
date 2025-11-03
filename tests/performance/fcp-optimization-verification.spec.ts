@@ -218,7 +218,7 @@ test.describe('FCP Optimization Verification', () => {
     // Check for font-display setting (should be swap or optional for self-hosted)
     const fontFaces = await page.evaluate(() => {
       const fonts: any[] = [];
-      // @ts-ignore
+      // @ts-expect-error - CSSStyleSheet.cssRules type inference issue
       for (const rule of document.styleSheets[0]?.cssRules || []) {
         if (rule instanceof CSSFontFaceRule) {
           fonts.push({

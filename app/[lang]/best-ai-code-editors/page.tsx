@@ -128,7 +128,7 @@ export default async function BestAICodeEditorsPage({ params }: PageProps) {
                 <li className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
                   <div>
-                    <strong>Built-in Intelligence:</strong> AI is core to the editor's architecture
+                    <strong>Built-in Intelligence:</strong> AI is core to the editor&apos;s architecture
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -270,7 +270,7 @@ export default async function BestAICodeEditorsPage({ params }: PageProps) {
                 <li className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
                   <div>
-                    <strong>Intent Prediction:</strong> Anticipates what you're trying to accomplish
+                    <strong>Intent Prediction:</strong> Anticipates what you&apos;re trying to accomplish
                   </div>
                 </li>
               </ul>

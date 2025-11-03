@@ -109,9 +109,9 @@ export interface ToolScoreV7 {
 }
 
 // For backwards compatibility with existing imports
-export interface RankingWeightsV6 extends RankingWeightsV7 {}
-export interface ToolMetricsV6 extends ToolMetricsV7 {}
-export interface ToolScoreV6 extends ToolScoreV7 {}
+export type RankingWeightsV6 = RankingWeightsV7;
+export type ToolMetricsV6 = ToolMetricsV7;
+export type ToolScoreV6 = ToolScoreV7;
 export interface CrisisDetection {
   isInCrisis: boolean;
   severityScore: number;

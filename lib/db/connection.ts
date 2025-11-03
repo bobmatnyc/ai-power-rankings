@@ -15,6 +15,8 @@ const NODE_ENV = process.env["NODE_ENV"] || "development";
 if (NODE_ENV === "development") {
   // Load environment variables from .env files in development only
   try {
+    // Dynamic require for optional dotenv loading
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const dotenv = require("dotenv");
     dotenv.config({ path: ".env.local" });
     dotenv.config({ path: ".env" });

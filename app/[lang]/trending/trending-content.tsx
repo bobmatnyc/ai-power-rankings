@@ -540,7 +540,7 @@ export function TrendingPageContent({ lang, initialTimeRange }: TrendingPageCont
                 <li>• Lower positions (#1-3) indicate better performance</li>
                 <li>• Lines going up on the chart mean declining rank</li>
                 <li>• Lines going down mean improving rank</li>
-                <li>• Missing points mean the tool wasn't in top 10</li>
+                <li>• Missing points mean the tool wasn&apos;t in top 10</li>
               </ul>
             </div>
             <div>

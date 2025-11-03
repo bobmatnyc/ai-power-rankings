@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Apply Monthly Summaries Migration
  * Creates the monthly_summaries table for the What's New feature

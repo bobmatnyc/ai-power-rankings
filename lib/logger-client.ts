@@ -19,7 +19,7 @@ class ClientLogger {
     this.context = context;
   }
 
-  private log(level: LogLevel, msg: string | any, obj?: any) {
+  private log(level: LogLevel, ...args: any[]) {
     if (!this.isDev && level !== "error" && level !== "fatal") {
       return; // Only log errors in production
     }
@@ -27,10 +27,12 @@ class ClientLogger {
     const timestamp = new Date().toISOString();
     const prefix = `[${timestamp}] [${this.context}] [${level.toUpperCase()}]`;
 
+    const [msg, obj] = args;
+
     // Handle different argument patterns
     if (typeof msg === "object" && obj === undefined) {
       // Object first pattern: logger.info({data}, "message")
-      const actualMsg = arguments[2] || "Log";
+      const actualMsg = args[1] || "Log";
       console.log(prefix, actualMsg, msg);
     } else if (obj) {
       // Message with object pattern: logger.info("message", {data})
