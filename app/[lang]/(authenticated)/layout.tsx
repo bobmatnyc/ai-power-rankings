@@ -2,7 +2,8 @@
 
 import { ClerkProvider } from '@clerk/nextjs';
 import { useParams } from 'next/navigation';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
+import { ClerkAvailableProvider } from '@/contexts/clerk-context';
 
 /**
  * Authenticated Route Group Layout
@@ -14,6 +15,9 @@ import { ReactNode, useEffect } from 'react';
  * on public pages (95%+ of traffic).
  *
  * Impact: -517 KB JavaScript on public pages
+ *
+ * Uses ClerkAvailableProvider context to signal Clerk availability
+ * to child components without global window flags.
  */
 export default function AuthenticatedLayout({ children }: { children: ReactNode }) {
   const params = useParams();
@@ -21,19 +25,6 @@ export default function AuthenticatedLayout({ children }: { children: ReactNode 
 
   // Map locale codes to Clerk localization
   const clerkLocale = locale === 'de' ? 'de-DE' : 'en-US';
-
-  // Set global flag for clerk-direct-components to know Clerk is available
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      (window as any).__clerkProviderAvailable = true;
-    }
-
-    return () => {
-      if (typeof window !== "undefined") {
-        delete (window as any).__clerkProviderAvailable;
-      }
-    };
-  }, []);
 
   return (
     <ClerkProvider
@@ -52,7 +43,9 @@ export default function AuthenticatedLayout({ children }: { children: ReactNode 
       signInFallbackRedirectUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL}
       signUpFallbackRedirectUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL}
     >
-      {children}
+      <ClerkAvailableProvider>
+        {children}
+      </ClerkAvailableProvider>
     </ClerkProvider>
   );
 }
