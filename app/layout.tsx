@@ -74,7 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           as="image"
           type="image/webp"
           href="/crown-of-technology-64.webp"
-          fetchpriority="high"
+          fetchPriority="high"
         />
 
         {/* Schema.org markup for SEO - Organization */}

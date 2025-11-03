@@ -104,10 +104,10 @@ export function ThirdPartyScriptOptimizer() {
       const highPriorityScripts = document.querySelectorAll('script[data-priority="high"]');
       const lowPriorityScripts = document.querySelectorAll('script[data-priority="low"]');
 
-      // Ensure high priority scripts have fetchpriority="high"
+      // Ensure high priority scripts have fetchPriority="high"
       highPriorityScripts.forEach((script) => {
         if (script instanceof HTMLScriptElement) {
-          script.setAttribute("fetchpriority", "high");
+          script.setAttribute("fetchPriority", "high");
         }
       });
 
@@ -115,7 +115,7 @@ export function ThirdPartyScriptOptimizer() {
       lowPriorityScripts.forEach((script) => {
         if (script instanceof HTMLScriptElement) {
           script.defer = true;
-          script.setAttribute("fetchpriority", "low");
+          script.setAttribute("fetchPriority", "low");
         }
       });
     };

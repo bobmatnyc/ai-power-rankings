@@ -38,7 +38,7 @@ export function ResponsiveCrownIcon({ className, priority = false }: ResponsiveC
         height={64}
         className="object-contain w-full h-full"
         loading="eager"
-        fetchpriority="high"
+        fetchPriority="high"
       />
     </div>
   );
