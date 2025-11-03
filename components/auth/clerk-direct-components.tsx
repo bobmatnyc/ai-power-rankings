@@ -6,7 +6,7 @@
  * Falls back to rendering children/nothing when not available
  */
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
 // Check if ClerkProvider is available
@@ -56,9 +56,41 @@ export function SignInButtonDirect({
     return <>{children}</>;
   }
 
-  // If Clerk is not available, just render the button without Clerk wrapper
+  // If Clerk is not available, add fallback navigation to sign-in page
   if (!isAvailable) {
-    return <>{children}</>;
+    const handleClick = (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Get the sign-in URL from env or use default
+      const signInUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || '/en/sign-in';
+
+      // Navigate to sign-in page with redirect back to current page or forceRedirectUrl
+      const redirectUrl = forceRedirectUrl || (typeof window !== 'undefined' ? window.location.pathname : '/');
+      window.location.href = `${signInUrl}?redirect_url=${encodeURIComponent(redirectUrl)}`;
+    };
+
+    // If children is a React element, clone it with onClick handler
+    if (React.isValidElement(children)) {
+      return React.cloneElement(children as React.ReactElement<any>, {
+        onClick: handleClick,
+        style: {
+          cursor: 'pointer',
+          ...((children.props as any)?.style || {})
+        }
+      });
+    }
+
+    // Otherwise wrap in a clickable button
+    return (
+      <button
+        type="button"
+        onClick={handleClick}
+        style={{ cursor: 'pointer', border: 'none', background: 'none', padding: 0 }}
+      >
+        {children}
+      </button>
+    );
   }
 
   // If Clerk component loaded, use it with explicit modal mode
