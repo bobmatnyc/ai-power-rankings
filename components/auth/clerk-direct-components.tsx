@@ -8,17 +8,22 @@
 
 import React, { useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import { useClerkAvailable as useClerkContext } from "@/contexts/clerk-context";
 
-// Check if ClerkProvider is available
+/**
+ * Custom hook that combines Clerk context availability with SSR-safe mounting state
+ *
+ * This wrapper ensures:
+ * 1. We use React Context to detect ClerkProvider (no global window flags)
+ * 2. We track client-side mounting for SSR safety
+ * 3. Components wait for hydration before rendering Clerk-dependent UI
+ */
 function useClerkAvailable() {
-  const [isAvailable, setIsAvailable] = useState(false);
+  const { isAvailable } = useClerkContext();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== "undefined") {
-      setIsAvailable(!!(window as any).__clerkProviderAvailable);
-    }
   }, []);
 
   return { isAvailable, mounted };
@@ -35,9 +40,11 @@ export function SignInButtonDirect({
   forceRedirectUrl?: string;
   [key: string]: unknown;
 }) {
+  // CRITICAL: ALL HOOKS MUST BE AT TOP LEVEL - CALLED UNCONDITIONALLY
   const { isAvailable, mounted } = useClerkAvailable();
   const [ClerkSignInButton, setClerkSignInButton] = useState<any>(null);
 
+  // HOOK 3: Always called, condition is inside the effect
   useEffect(() => {
     if (isAvailable && mounted) {
       import("@clerk/nextjs")
@@ -51,6 +58,7 @@ export function SignInButtonDirect({
     }
   }, [isAvailable, mounted]);
 
+  // ALL HOOKS ABOVE - ALL CONDITIONAL LOGIC BELOW
   // During SSR or before mount, just render children
   if (!mounted) {
     return <>{children}</>;
@@ -135,9 +143,35 @@ export function SignInButtonDirect({
 }
 
 export function SignedOutDirect({ children }: { children: ReactNode }) {
+  // CRITICAL: ALL HOOKS MUST BE AT TOP LEVEL - CALLED UNCONDITIONALLY
   const { isAvailable, mounted } = useClerkAvailable();
   const [ClerkSignedOut, setClerkSignedOut] = useState<any>(null);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
+  // Check actual auth state from window.Clerk.user
+  // HOOK 4: Always called, condition is inside the effect
+  useEffect(() => {
+    if (typeof window !== "undefined" && (window as any).Clerk) {
+      const clerk = (window as any).Clerk;
+
+      const updateAuthState = () => {
+        setIsSignedIn(!!clerk.user);
+      };
+
+      // Initial check
+      updateAuthState();
+
+      // Listen for auth changes
+      clerk.addListener?.(updateAuthState);
+
+      return () => {
+        clerk.removeListener?.(updateAuthState);
+      };
+    }
+  }, []);
+
+  // Load Clerk component if provider is available
+  // HOOK 5: Always called, condition is inside the effect
   useEffect(() => {
     if (isAvailable && mounted) {
       import("@clerk/nextjs")
@@ -150,29 +184,59 @@ export function SignedOutDirect({ children }: { children: ReactNode }) {
     }
   }, [isAvailable, mounted]);
 
-  // During SSR, show children
+  // ALL HOOKS ABOVE - ALL CONDITIONAL LOGIC BELOW
+  // Don't render during SSR (assume signed out, show children)
   if (!mounted) {
     return <>{children}</>;
   }
 
-  // If Clerk not available, show children (assumes signed out)
-  if (!isAvailable) {
-    return <>{children}</>;
+  // If user IS signed in, don't show children
+  if (isSignedIn) {
+    return null;
   }
 
-  // If Clerk component loaded, use it
-  if (ClerkSignedOut) {
+  // User is NOT signed in:
+
+  // If ClerkProvider is available AND Clerk component loaded, use Clerk's component
+  if (isAvailable && ClerkSignedOut) {
     return <ClerkSignedOut>{children}</ClerkSignedOut>;
   }
 
-  // While loading, show children
+  // If ClerkProvider is NOT available OR Clerk component not loaded yet,
+  // but user is signed out, just render children directly
   return <>{children}</>;
 }
 
 export function SignedInDirect({ children }: { children: ReactNode }) {
+  // CRITICAL: ALL HOOKS MUST BE AT TOP LEVEL - CALLED UNCONDITIONALLY
   const { isAvailable, mounted } = useClerkAvailable();
   const [ClerkSignedIn, setClerkSignedIn] = useState<any>(null);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
+  // Check actual auth state from window.Clerk.user
+  // HOOK 4: Always called, condition is inside the effect
+  useEffect(() => {
+    if (typeof window !== "undefined" && (window as any).Clerk) {
+      const clerk = (window as any).Clerk;
+
+      const updateAuthState = () => {
+        setIsSignedIn(!!clerk.user);
+      };
+
+      // Initial check
+      updateAuthState();
+
+      // Listen for auth changes
+      clerk.addListener?.(updateAuthState);
+
+      return () => {
+        clerk.removeListener?.(updateAuthState);
+      };
+    }
+  }, []);
+
+  // Load Clerk component if provider is available
+  // HOOK 5: Always called, condition is inside the effect
   useEffect(() => {
     if (isAvailable && mounted) {
       import("@clerk/nextjs")
@@ -185,29 +249,57 @@ export function SignedInDirect({ children }: { children: ReactNode }) {
     }
   }, [isAvailable, mounted]);
 
-  // During SSR, don't show signed-in content
+  // ALL HOOKS ABOVE - ALL CONDITIONAL LOGIC BELOW
+  // Don't render during SSR
   if (!mounted) {
     return null;
   }
 
-  // If Clerk not available, don't show (assumes not signed in)
-  if (!isAvailable) {
+  // If user is NOT signed in, don't show children
+  if (!isSignedIn) {
     return null;
   }
 
-  // If Clerk component loaded, use it
-  if (ClerkSignedIn) {
+  // User IS signed in:
+
+  // If ClerkProvider is available AND Clerk component loaded, use Clerk's component
+  if (isAvailable && ClerkSignedIn) {
     return <ClerkSignedIn>{children}</ClerkSignedIn>;
   }
 
-  // While loading, don't show
-  return null;
+  // If ClerkProvider is NOT available OR Clerk component not loaded yet,
+  // but user is signed in, just render children directly
+  return <>{children}</>;
 }
 
 export function UserButtonDirect({ afterSignOutUrl, ...props }: { afterSignOutUrl?: string; [key: string]: unknown }) {
+  // CRITICAL: ALL HOOKS MUST BE AT TOP LEVEL - CALLED UNCONDITIONALLY
+  // This prevents "Rendered more hooks than during the previous render" error
   const { isAvailable, mounted } = useClerkAvailable();
+  const [userData, setUserData] = useState<any>(null);
   const [ClerkUserButton, setClerkUserButton] = useState<any>(null);
 
+  // Check for user data from window.Clerk
+  // HOOK 4: Always called, condition is inside the effect
+  useEffect(() => {
+    if (typeof window !== "undefined" && (window as any).Clerk) {
+      const clerk = (window as any).Clerk;
+
+      const updateUserData = () => {
+        setUserData(clerk.user);
+      };
+
+      updateUserData();
+      clerk.addListener?.(updateUserData);
+
+      return () => {
+        clerk.removeListener?.(updateUserData);
+      };
+    }
+  }, []);
+
+  // ONLY load Clerk component when on authenticated pages (ClerkProvider available)
+  // HOOK 5: Always called, condition is inside the effect
   useEffect(() => {
     if (isAvailable && mounted) {
       import("@clerk/nextjs")
@@ -220,21 +312,43 @@ export function UserButtonDirect({ afterSignOutUrl, ...props }: { afterSignOutUr
     }
   }, [isAvailable, mounted]);
 
-  // During SSR, don't show
+  // ALL HOOKS ABOVE - ALL CONDITIONAL LOGIC BELOW
+  // Don't render during SSR
   if (!mounted) {
     return null;
   }
 
-  // If Clerk not available, don't show
-  if (!isAvailable) {
+  // If no user data, don't render
+  if (!userData) {
     return null;
   }
 
-  // If Clerk component loaded, use it
+  // CRITICAL: On public pages (no ClerkProvider), ALWAYS use fallback
+  // Don't even CHECK if ClerkUserButton is loaded
+  if (!isAvailable) {
+    return (
+      <a
+        href="/sign-in"
+        className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        title={userData?.emailAddresses?.[0]?.emailAddress || "Account"}
+      >
+        <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+          {userData?.firstName?.[0]?.toUpperCase() ||
+           userData?.emailAddresses?.[0]?.emailAddress?.[0]?.toUpperCase() ||
+           'U'}
+        </div>
+        <span className="text-sm font-medium hidden sm:block">
+          {userData?.firstName || 'Account'}
+        </span>
+      </a>
+    );
+  }
+
+  // On authenticated pages: use Clerk's UserButton if loaded, otherwise show nothing
   if (ClerkUserButton) {
     return <ClerkUserButton afterSignOutUrl={afterSignOutUrl} {...props} />;
   }
 
-  // While loading, don't show
+  // While loading Clerk component, show nothing
   return null;
 }
