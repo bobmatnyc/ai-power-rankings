@@ -11,6 +11,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.9] - 2025-11-11
+
+### Changed
+- **Documentation Organization**: Restructured 69 documentation files into categorized hierarchy
+  - Organized docs into structured subdirectories for improved navigation
+  - Updated CLAUDE.md with new organization structure
+  - Enhanced project documentation accessibility and maintainability
+
+### Added
+- **Development Scripts**: Tracked 4 utility scripts in git for team collaboration
+  - `check-table-structure.ts` - Database schema verification
+  - `check-v76-article-details.ts` - Article data validation
+  - `migrate-v76-to-articles-simple.ts` - Simplified migration utility
+  - `migrate-v76-to-articles-table.ts` - Full migration script
+
+### Fixed
+- **Build Configuration**: Updated .gitignore for test reports
+  - Added playwright-report-chunk-verification/ to ignore patterns
+  - Added qa-reports/ directory to ignore patterns
+  - Improved repository cleanliness for test artifacts
+
+### Documentation
+- New structure improves discoverability and organization
+- CLAUDE.md updated with hierarchy information
+- Project structure improvements for better maintainability
+
+---
+
 ## [0.3.0] - 2025-10-24
 
 ### Added
