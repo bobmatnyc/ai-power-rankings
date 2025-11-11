@@ -28,6 +28,34 @@ When interacting with Claude Desktop, the following MCP tools are available:
 
 
 
+## Project Organization
+
+This project follows the [Project Organization Standard](docs/reference/PROJECT_ORGANIZATION.md) for consistent file placement and structure.
+
+### Key Directory Structure
+- **docs/** - All documentation organized by category
+  - **algorithms/** - Algorithm documentation and implementation details
+  - **api/** - API documentation and design considerations
+  - **architecture/** - Architecture decisions and guides
+  - **deployment/** - Deployment guides and verification reports
+  - **development/** - Development guides and implementation summaries
+  - **performance/** - Performance optimization reports
+  - **qa/** - QA reports and test results
+  - **reference/** - General reference documentation
+  - **research/** - Research reports and investigations
+  - **security/** - Security documentation and hardening guides
+  - **troubleshooting/** - Bug fixes and troubleshooting guides
+- **tests/** - Test files and utilities
+- **scripts/** - Utility scripts and migrations
+- **src/** - Source code following Next.js conventions
+- **tmp/** - Temporary files (gitignored)
+
+### Documentation Guidelines
+- Keep all markdown documentation in organized subdirectories under docs/
+- Use descriptive filenames that indicate content purpose
+- Link related documentation together
+- Update the organization standard when establishing new patterns
+
 ## Key Technologies
 - Node.js
 - React
