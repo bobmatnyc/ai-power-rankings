@@ -67,6 +67,8 @@ ecosystem.config.js
 uat-screenshots/
 test-results/
 playwright-report/
+playwright-report-*/
+qa-reports/
 playwright/.cache/
 /tests/test-results/
 /tests/playwright-report/
