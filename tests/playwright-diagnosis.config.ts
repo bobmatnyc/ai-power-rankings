@@ -1,14 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests',
-  testMatch: '**/debug-signin-loading.spec.ts',
+  testDir: '.',
+  testMatch: '**/signin-button-diagnosis.spec.ts',
   timeout: 60000,
 
   use: {
-    baseURL: 'http://localhost:3007',
+    baseURL: 'http://localhost:3000',
+    viewport: { width: 1280, height: 720 },
     screenshot: 'on',
-    trace: 'on',
+    video: 'on',
   },
 
   projects: [
@@ -18,5 +19,6 @@ export default defineConfig({
     },
   ],
 
-  // No webServer - expect server to already be running
+  // No web server - use existing one
+  webServer: undefined,
 });

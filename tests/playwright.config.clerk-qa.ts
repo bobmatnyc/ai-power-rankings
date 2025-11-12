@@ -13,7 +13,7 @@ import { defineConfig, devices } from '@playwright/test';
 const BASE_URL = 'http://localhost:3007';
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './e2e',
   testMatch: '**/clerk-context-*.spec.ts',
 
   timeout: 45000, // 45s per test (longer for navigation testing)

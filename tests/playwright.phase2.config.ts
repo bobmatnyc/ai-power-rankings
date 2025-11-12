@@ -6,7 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  * Uses the production server already running on port 3001
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: '.',
   testMatch: '**/phase2-fcp-verification.spec.ts',
   fullyParallel: false,
   forbidOnly: !!process.env['CI'],
