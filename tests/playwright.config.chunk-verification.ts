@@ -6,7 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  * Optimized for testing clean rebuild resolution of HMR cache corruption
  */
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './e2e',
   testMatch: '**/chunk-load-error-verification.spec.ts',
 
   // Run tests in sequence for clearer output

@@ -13,7 +13,7 @@ const CI = !!process.env.CI;
 
 export default defineConfig({
   // Test directory
-  testDir: './tests/e2e',
+  testDir: './e2e',
 
   // Test file pattern
   testMatch: '**/*.spec.ts',

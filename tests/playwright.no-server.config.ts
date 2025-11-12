@@ -1,18 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests',
-  testMatch: '**/uat-ui-snapshot.spec.ts',
-  fullyParallel: false,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: 1,
-  reporter: 'list',
+  testDir: '.',
+  testMatch: '**/*.spec.ts',
+  timeout: 30000,
 
   use: {
     baseURL: 'http://localhost:3007',
-    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
 
   projects: [
@@ -22,5 +18,5 @@ export default defineConfig({
     },
   ],
 
-  // Don't start a web server - use existing one on port 3001
+  // No webServer - assumes server is already running
 });

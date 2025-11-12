@@ -5,7 +5,7 @@ const { defineConfig, devices } = require('@playwright/test');
  * Assumes server is already running on port 3007
  */
 module.exports = defineConfig({
-  testDir: './tests',
+  testDir: '.',
   testMatch: '**/uat-sign-in-verification.spec.js',
   timeout: 60000,
   expect: {

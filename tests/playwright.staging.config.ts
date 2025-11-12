@@ -10,7 +10,7 @@ import { defineConfig, devices } from '@playwright/test';
 const STAGING_URL = 'https://ai-power-ranking-e60cz4c4d-1-m.vercel.app';
 
 export default defineConfig({
-  testDir: './tests',
+  testDir: '.',
   testMatch: '**/staging-modal-api-verification.spec.ts',
 
   timeout: 60000, // 60s per test
