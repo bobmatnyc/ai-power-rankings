@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/api-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { ToolMapper } from "@/lib/services/tool-mapper.service";
+import { jinaReaderService, type JinaReaderMetadata } from "@/lib/services/jina-reader.service";
 
 // Type definitions for OpenRouter API
 interface OpenRouterMessage {
@@ -108,11 +109,44 @@ const OpenRouterResponseSchema = z.object({
     .optional(),
 });
 
-async function fetchArticleContent(url: string): Promise<string> {
+/**
+ * Fetch article content with Jina.ai Reader API (with fallback to basic HTML fetch)
+ *
+ * @param url - URL to fetch content from
+ * @returns Object containing content and metadata
+ */
+async function fetchArticleContent(
+  url: string
+): Promise<{ content: string; metadata: JinaReaderMetadata }> {
   console.log("[News Analysis] Fetching article content from:", url);
 
+  // Try Jina.ai Reader API first if available
+  if (jinaReaderService.isAvailable()) {
+    try {
+      console.log("[News Analysis] Using Jina.ai Reader API");
+      const result = await jinaReaderService.fetchArticle(url);
+
+      console.log("[News Analysis] Jina.ai fetch successful:", {
+        contentLength: result.content.length,
+        hasTitle: !!result.metadata.title,
+        hasAuthor: !!result.metadata.author,
+        hasDate: !!result.metadata.publishedDate,
+      });
+
+      return result;
+    } catch (error) {
+      console.warn(
+        "[News Analysis] Jina.ai fetch failed, falling back to basic HTML:",
+        error instanceof Error ? error.message : "Unknown error"
+      );
+      // Fall through to basic HTML fetch
+    }
+  } else {
+    console.log("[News Analysis] Jina.ai not available, using basic HTML fetch");
+  }
+
+  // Fallback: Basic HTML fetch and parsing
   try {
-    // Try to fetch the article content
     const response = await fetch(url, {
       headers: {
         "User-Agent": "Mozilla/5.0 (compatible; AINewsBot/1.0)",
@@ -128,7 +162,7 @@ async function fetchArticleContent(url: string): Promise<string> {
 
     const html = await response.text();
 
-    // Simple HTML to text extraction (in production, use a proper HTML parser)
+    // Simple HTML to text extraction
     const text = html
       .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
       .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
@@ -136,7 +170,24 @@ async function fetchArticleContent(url: string): Promise<string> {
       .replace(/\s+/g, " ")
       .trim();
 
-    return text.substring(0, 10000); // Limit to 10k chars
+    const content = text.substring(0, 10000); // Limit to 10k chars
+
+    // Extract basic metadata from URL
+    let source = "Unknown";
+    try {
+      const urlObj = new URL(url);
+      source = urlObj.hostname.replace("www.", "");
+    } catch {
+      // Keep default
+    }
+
+    return {
+      content,
+      metadata: {
+        url,
+        source,
+      },
+    };
   } catch (error) {
     throw new Error(
       `Failed to fetch article: ${error instanceof Error ? error.message : "Unknown error"}`
@@ -676,10 +727,17 @@ export async function POST(request: NextRequest) {
       // Normal processing path - extract content and analyze
       let content: string;
       let url: string | undefined;
+      let articleMetadata: JinaReaderMetadata | undefined;
 
       if (type === "url") {
         url = input!;
-        content = await fetchArticleContent(url);
+        const fetchResult = await fetchArticleContent(url);
+        content = fetchResult.content;
+        articleMetadata = fetchResult.metadata;
+
+        if (verbose) {
+          console.log("[News Analysis] Fetched article metadata:", articleMetadata);
+        }
       } else if (type === "file") {
         // Extract text from uploaded file
         if (!mimeType || !filename) {
@@ -697,6 +755,31 @@ export async function POST(request: NextRequest) {
 
       // Analyze with OpenRouter (no fallback)
       analysis = await analyzeWithOpenRouter(content, url, verbose);
+
+      // Merge Jina.ai metadata with AI analysis results
+      // Prefer Jina metadata if available, but allow AI to override with better data
+      if (articleMetadata) {
+        // Use Jina metadata if AI didn't extract it
+        if (articleMetadata.title && !analysis.title) {
+          analysis.title = articleMetadata.title;
+        }
+        if (articleMetadata.source && !analysis.source) {
+          analysis.source = articleMetadata.source;
+        }
+        if (articleMetadata.publishedDate && !analysis.published_date) {
+          analysis.published_date = articleMetadata.publishedDate;
+        }
+        if (articleMetadata.author && !analysis.author) {
+          analysis.author = articleMetadata.author;
+        }
+        if (articleMetadata.description && !analysis.description) {
+          analysis.description = articleMetadata.description;
+        }
+
+        if (verbose) {
+          console.log("[News Analysis] Merged metadata from Jina.ai into analysis");
+        }
+      }
     }
 
     // Save as article if requested
