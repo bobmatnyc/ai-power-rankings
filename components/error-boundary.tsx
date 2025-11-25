@@ -26,18 +26,21 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Enhanced error logging for debugging
-    console.error("[ErrorBoundary] Caught error:", error);
-    console.error("[ErrorBoundary] Error message:", error.message);
-    console.error("[ErrorBoundary] Error stack:", error.stack);
-    console.error("[ErrorBoundary] Component stack:", errorInfo.componentStack);
-    console.error("[ErrorBoundary] Environment:", {
-      NODE_ENV: process.env["NODE_ENV"],
-      VERCEL_ENV: process.env["VERCEL_ENV"],
-      URL: typeof window !== "undefined" ? window.location.href : "SSR",
-    });
+    // Only log if there's an actual error (not empty objects)
+    if (error && error.message) {
+      // Enhanced error logging for debugging
+      console.error("[ErrorBoundary] Caught error:", error);
+      console.error("[ErrorBoundary] Error message:", error.message);
+      console.error("[ErrorBoundary] Error stack:", error.stack);
+      console.error("[ErrorBoundary] Component stack:", errorInfo.componentStack);
+      console.error("[ErrorBoundary] Environment:", {
+        NODE_ENV: process.env["NODE_ENV"],
+        VERCEL_ENV: process.env["VERCEL_ENV"],
+        URL: typeof window !== "undefined" ? window.location.href : "SSR",
+      });
 
-    logger.error("Error boundary caught error", { error, errorInfo });
+      logger.error("Error boundary caught error", { error, errorInfo });
+    }
   }
 
   override render() {
