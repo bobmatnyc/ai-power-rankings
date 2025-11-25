@@ -55,6 +55,8 @@ export const articles = pgTable(
     title: varchar("title", { length: 500 }).notNull(),
     summary: text("summary"),
     content: text("content").notNull(),
+    // Full article body stored as markdown for long-form content
+    contentMarkdown: text("content_markdown"),
 
     // Ingestion metadata
     ingestionType: varchar("ingestion_type", { length: 20 }).notNull(),

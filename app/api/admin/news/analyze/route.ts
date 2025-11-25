@@ -712,6 +712,7 @@ export async function POST(request: NextRequest) {
     }
 
     let analysis: any;
+    let originalContent: string | undefined;
 
     // Handle preprocessed mode - reuse previous AI analysis
     if (type === "preprocessed" && preprocessedData) {
@@ -753,6 +754,8 @@ export async function POST(request: NextRequest) {
         content = input!;
       }
 
+      originalContent = content;
+
       // Analyze with OpenRouter (no fallback)
       analysis = await analyzeWithOpenRouter(content, url, verbose);
 
@@ -792,6 +795,8 @@ export async function POST(request: NextRequest) {
       const sourceUrl = analysis.url || (type === "url" ? input : undefined);
 
       // Convert analysis to article format
+      const markdownBody =
+        analysis.rewritten_content || analysis.summary || analysis.content || originalContent || "";
       const article = await articlesRepo.createArticle({
         title: analysis.title,
         slug: analysis.title
@@ -799,7 +804,8 @@ export async function POST(request: NextRequest) {
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-+|-+$/g, ""),
         summary: analysis.summary,
-        content: analysis.rewritten_content || analysis.summary,
+        content: markdownBody,
+        contentMarkdown: markdownBody,
         author: "AI News Analyst",
         publishedDate: analysis.published_date ? new Date(analysis.published_date) : now,
         sourceName: analysis.source || "Unknown",
