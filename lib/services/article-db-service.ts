@@ -1047,16 +1047,84 @@ export class ArticleDatabaseService {
   private async applyRankingChanges(
     changes: (ArticleRankingsChange | NewArticleRankingsChange)[]
   ): Promise<void> {
-    // This is a simplified implementation
-    // In production, you'd update the actual rankings table
-    console.log(`[ArticleDatabaseService] Applying ${changes.length} ranking changes`);
+    if (!this.db) {
+      console.log("[ArticleDatabaseService] No database connection for applying changes");
+      return;
+    }
 
-    // TODO: Implement actual ranking updates
-    // This would involve:
-    // 1. Loading current rankings
-    // 2. Applying the changes
-    // 3. Recalculating positions
-    // 4. Saving updated rankings
+    console.log(`[ArticleDatabaseService] Applying ${changes.length} ranking changes to tools table`);
+
+    // Group changes by tool_id for batch processing
+    const changesByToolId = new Map<string, (ArticleRankingsChange | NewArticleRankingsChange)[]>();
+    for (const change of changes) {
+      const toolId = change.toolId;
+      if (!toolId) continue;
+
+      if (!changesByToolId.has(toolId)) {
+        changesByToolId.set(toolId, []);
+      }
+      changesByToolId.get(toolId)!.push(change);
+    }
+
+    // Apply changes to each tool
+    for (const [toolId, toolChanges] of changesByToolId.entries()) {
+      try {
+        // Get the current tool data
+        const [currentTool] = await this.db
+          .select({
+            id: tools.id,
+            baselineScore: tools.baselineScore,
+            deltaScore: tools.deltaScore,
+          })
+          .from(tools)
+          .where(eq(tools.id, toolId))
+          .limit(1);
+
+        if (!currentTool) {
+          console.warn(`[ArticleDatabaseService] Tool not found: ${toolId}`);
+          continue;
+        }
+
+        // Get the latest change (they should all have the same new score)
+        const latestChange = toolChanges[toolChanges.length - 1]!;
+        const newScore = parseFloat(latestChange.newScore);
+
+        // Calculate what the delta should be to achieve the new score
+        const baselineScore = (currentTool.baselineScore as any)?.overallScore ?? 0;
+        const requiredDelta = newScore - baselineScore;
+
+        // Update the tool's deltaScore
+        const updatedDeltaScore = {
+          ...(currentTool.deltaScore as object || {}),
+          overallScore: requiredDelta,
+        };
+
+        // Also update currentScore for caching
+        const updatedCurrentScore = {
+          ...(currentTool.deltaScore as object || {}),
+          overallScore: newScore,
+        };
+
+        await this.db
+          .update(tools)
+          .set({
+            deltaScore: updatedDeltaScore,
+            currentScore: updatedCurrentScore,
+            scoreUpdatedAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .where(eq(tools.id, toolId));
+
+        console.log(
+          `[ArticleDatabaseService] Updated tool ${toolId}: baseline=${baselineScore}, delta=${requiredDelta}, new=${newScore}`
+        );
+      } catch (error) {
+        console.error(`[ArticleDatabaseService] Error updating tool ${toolId}:`, error);
+        // Continue with other tools even if one fails
+      }
+    }
+
+    console.log(`[ArticleDatabaseService] Successfully applied changes to ${changesByToolId.size} tools`);
   }
 
   /**
