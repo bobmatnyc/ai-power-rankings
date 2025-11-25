@@ -19,6 +19,7 @@ import {
 } from "@/lib/db/article-schema";
 import { getDb } from "@/lib/db/connection";
 import { companies, tools } from "@/lib/db/schema";
+import { generateExcerpt } from "@/lib/validation/markdown-validator";
 
 export class ArticlesRepository {
   private db: ReturnType<typeof getDb>;
@@ -68,6 +69,16 @@ export class ArticlesRepository {
       article.ingestionType = "text";
     }
 
+    // Normalize markdown/content fields
+    // Strategy: contentMarkdown stores full markdown, content stores auto-generated excerpt
+    const normalizedMarkdown =
+      typeof article.contentMarkdown === "string"
+        ? article.contentMarkdown
+        : article.content || "";
+
+    // Generate plain text excerpt from markdown (500 chars max)
+    const generatedExcerpt = generateExcerpt(normalizedMarkdown, 500);
+
     // Ensure JSON fields are properly formatted
     const articleData = {
       ...article,
@@ -75,7 +86,10 @@ export class ArticlesRepository {
       slug: validateAndSanitize(article.slug, "slug", 255),
       title: validateAndSanitize(article.title || "Untitled", "title", 500),
       summary: validateAndSanitize(article.summary || "", "summary", undefined), // text field, no limit
-      content: validateAndSanitize(article.content || "", "content", undefined), // text field, no limit
+      // content: Auto-generated excerpt for search/preview (no duplication with contentMarkdown)
+      content: validateAndSanitize(generatedExcerpt, "content", undefined),
+      // contentMarkdown: Full markdown source (user input)
+      contentMarkdown: validateAndSanitize(normalizedMarkdown, "contentMarkdown", undefined),
 
       // Ingestion metadata
       ingestionType: validateAndSanitize(article.ingestionType, "ingestionType", 20),
@@ -179,13 +193,14 @@ export class ArticlesRepository {
     };
 
     // Log the data being inserted for debugging
-    console.log("[ArticlesRepo] Creating article with data:", {
-      slug: articleData.slug,
-      title: `${articleData.title?.substring(0, 50)}...`,
-      contentLength: articleData.content?.length,
-      toolMentionsCount: articleData.toolMentions?.length,
-      companyMentionsCount: articleData.companyMentions?.length,
-      importanceScore: articleData.importanceScore,
+      console.log("[ArticlesRepo] Creating article with data:", {
+        slug: articleData.slug,
+        title: `${articleData.title?.substring(0, 50)}...`,
+        contentLength: articleData.content?.length,
+        markdownLength: articleData.contentMarkdown?.length,
+        toolMentionsCount: articleData.toolMentions?.length,
+        companyMentionsCount: articleData.companyMentions?.length,
+        importanceScore: articleData.importanceScore,
       sentimentScore: articleData.sentimentScore,
     });
 
@@ -333,12 +348,22 @@ export class ArticlesRepository {
 
   /**
    * Update an article
+   *
+   * Auto-generates excerpt when contentMarkdown is updated.
+   * No longer keeps content/contentMarkdown in sync - they serve different purposes.
    */
   async updateArticle(id: string, updates: Partial<Article>): Promise<Article | null> {
+    const normalizedUpdates: Partial<Article> = { ...updates };
+
+    // If markdown updated, regenerate excerpt
+    if (updates.contentMarkdown) {
+      normalizedUpdates.content = generateExcerpt(updates.contentMarkdown, 500);
+    }
+
     const result = await this.db
       ?.update(articles)
       .set({
-        ...updates,
+        ...normalizedUpdates,
         updatedAt: new Date(),
       })
       .where(eq(articles.id, id))

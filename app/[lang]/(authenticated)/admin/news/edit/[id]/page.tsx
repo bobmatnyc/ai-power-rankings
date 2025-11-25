@@ -1,10 +1,10 @@
 "use client";
 
-import DOMPurify from "dompurify";
 import { ArrowLeft, Eye, EyeOff, Loader2, Save, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,100 +29,7 @@ interface NewsArticle {
   updated_at: string;
   category?: string;
   importance_score?: number;
-}
-
-// Safe markdown to HTML converter for preview
-function markdownToHtml(markdown: string): string {
-  let html = markdown;
-
-  // Escape HTML first to prevent XSS
-  html = html
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-
-  // Headers
-  html = html.replace(/^### (.*$)/gim, "<h3>$1</h3>");
-  html = html.replace(/^## (.*$)/gim, "<h2>$1</h2>");
-  html = html.replace(/^# (.*$)/gim, "<h1>$1</h1>");
-
-  // Bold
-  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-  html = html.replace(/__(.+?)__/g, "<strong>$1</strong>");
-
-  // Italic
-  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
-  html = html.replace(/_(.+?)_/g, "<em>$1</em>");
-
-  // Links - unescape the URL part
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, url) => {
-    const unescapedUrl = url
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&amp;/g, "&");
-    return `<a href="${unescapedUrl}" target="_blank" rel="noopener">${text}</a>`;
-  });
-
-  // Line breaks
-  html = html.replace(/\n\n/g, "</p><p>");
-  html = `<p>${html}</p>`;
-
-  // Lists
-  html = html.replace(/^\* (.+)$/gim, "<li>$1</li>");
-  html = html.replace(/(<li>[\s\S]*?<\/li>)/, "<ul>$1</ul>");
-
-  // Code blocks - unescape code content
-  html = html.replace(/```([^`]+)```/g, (_match, code) => {
-    const unescapedCode = code
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&amp;/g, "&");
-    return `<pre><code>${unescapedCode}</code></pre>`;
-  });
-  html = html.replace(/`([^`]+)`/g, (_match, code) => {
-    const unescapedCode = code
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&amp;/g, "&");
-    return `<code>${unescapedCode}</code>`;
-  });
-
-  // Sanitize the final HTML
-  if (typeof window !== "undefined") {
-    return DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: [
-        "h1",
-        "h2",
-        "h3",
-        "h4",
-        "h5",
-        "h6",
-        "p",
-        "a",
-        "ul",
-        "ol",
-        "li",
-        "strong",
-        "em",
-        "code",
-        "pre",
-        "blockquote",
-        "br",
-      ],
-      ALLOWED_ATTR: ["href", "target", "rel"],
-      ALLOW_DATA_ATTR: false,
-    });
-  }
-
-  return html;
+  contentMarkdown?: string;
 }
 
 export default function EditNewsPage() {
@@ -163,6 +70,40 @@ export default function EditNewsPage() {
   const [toolMentions, setToolMentions] = useState("");
   const [importanceScore, setImportanceScore] = useState(5);
   const [analyzing, setAnalyzing] = useState(false);
+  const [contentError, setContentError] = useState<string | null>(null);
+
+  // Client-side markdown validation
+  const validateMarkdown = (value: string): boolean => {
+    const MAX_SIZE = 50 * 1024; // 50KB
+    const MIN_SIZE = 10;
+
+    if (!value || value.length < MIN_SIZE) {
+      setContentError(`Article must be at least ${MIN_SIZE} characters`);
+      return false;
+    }
+
+    if (value.length > MAX_SIZE) {
+      setContentError(`Article too large (max ${MAX_SIZE / 1024}KB)`);
+      return false;
+    }
+
+    // Check for unclosed code blocks
+    const codeBlockCount = (value.match(/```/g) || []).length;
+    if (codeBlockCount % 2 !== 0) {
+      setContentError("Invalid markdown: unclosed code block (```). Make sure all code blocks are closed.");
+      return false;
+    }
+
+    // Check for malformed headers
+    const malformedHeaders = /#{1,6}[a-zA-Z]/g;
+    if (malformedHeaders.test(value)) {
+      setContentError("Invalid markdown: headers should have a space after # (e.g., '# Header' not '#Header')");
+      return false;
+    }
+
+    setContentError(null);
+    return true;
+  };
 
   const loadArticle = useCallback(async () => {
     setLoading(true);
@@ -177,7 +118,7 @@ export default function EditNewsPage() {
 
       setArticle(article);
       setTitle(article.title || "");
-      setContent(article.content || "");
+      setContent(article.contentMarkdown || article.content || "");
       setSummary(article.summary || "");
       setAuthor(article.author || "");
       // Format published_date for date input (YYYY-MM-DD)
@@ -211,6 +152,7 @@ export default function EditNewsPage() {
         slug: "",
         title: "",
         content: "",
+        contentMarkdown: "",
         published_date: now,
         created_at: now,
         updated_at: now,
@@ -329,11 +271,19 @@ export default function EditNewsPage() {
     setError(null);
     setSuccess(false);
 
+    // Validate content before saving
+    if (!validateMarkdown(content)) {
+      setSaving(false);
+      setError("Please fix validation errors before saving");
+      return;
+    }
+
     try {
       const updatedArticle = {
         ...article,
         title,
         content,
+        contentMarkdown: content,
         summary,
         author,
         published_date: publishedDate ? new Date(publishedDate).toISOString() : new Date().toISOString(),
@@ -487,12 +437,31 @@ export default function EditNewsPage() {
                   <Textarea
                     id={contentId}
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setContent(value);
+                      // Validate on change (debounced by user typing)
+                      if (value.length > 10) {
+                        validateMarkdown(value);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      // Validate on blur (when user leaves field)
+                      validateMarkdown(e.target.value);
+                    }}
                     placeholder="Article content in markdown format..."
                     rows={20}
-                    className="font-mono text-sm"
+                    className={`font-mono text-sm ${contentError ? "border-red-500" : ""}`}
                     required
                   />
+                  {contentError && (
+                    <p className="text-red-500 text-sm mt-1">{contentError}</p>
+                  )}
+                  {!contentError && content.length > 0 && (
+                    <p className="text-green-600 text-sm mt-1">
+                      ✓ Valid markdown ({content.length} chars, {Math.round(content.length / 1024)}KB)
+                    </p>
+                  )}
                   <p className="text-xs text-muted-foreground mt-2">
                     Supports markdown: **bold**, *italic*, [links](url), # headers, etc.
                   </p>
@@ -500,8 +469,20 @@ export default function EditNewsPage() {
               </TabsContent>
               <TabsContent value="preview">
                 <div className="border rounded-md p-4 min-h-[400px] prose prose-sm max-w-none">
-                  {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Content is sanitized with DOMPurify in markdownToHtml function */}
-                  <div dangerouslySetInnerHTML={{ __html: markdownToHtml(content) }} />
+                  <ReactMarkdown
+                    components={{
+                      a: ({ node, ...props }) => (
+                        <a
+                          {...props}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        />
+                      ),
+                    }}
+                  >
+                    {content || "Nothing to preview yet."}
+                  </ReactMarkdown>
                 </div>
               </TabsContent>
             </Tabs>
@@ -648,8 +629,20 @@ export default function EditNewsPage() {
             <article className="prose prose-lg max-w-none">
               <h1>{title || "Untitled Article"}</h1>
               {summary && <p className="lead">{summary}</p>}
-              {/* biome-ignore lint/security/noDangerouslySetInnerHtml: Content is sanitized with DOMPurify in markdownToHtml function */}
-              <div dangerouslySetInnerHTML={{ __html: markdownToHtml(content) }} />
+              <ReactMarkdown
+                components={{
+                  a: ({ node, ...props }) => (
+                    <a
+                      {...props}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    />
+                  ),
+                }}
+              >
+                {content || "Nothing to preview yet."}
+              </ReactMarkdown>
             </article>
           </CardContent>
         </Card>
