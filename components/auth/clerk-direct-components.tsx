@@ -66,38 +66,30 @@ export function SignInButtonDirect({
 
   // If Clerk is not available, add fallback navigation to sign-in page
   if (!isAvailable) {
-    const handleClick = (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
+    // Get the sign-in URL from env or use default
+    const signInUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || '/en/sign-in';
+    const redirectUrl = forceRedirectUrl || '/';
 
-      // Get the sign-in URL from env or use default
-      const signInUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL || '/en/sign-in';
+    // Use a link instead of button with onClick to avoid SSR serialization issues
+    const href = `${signInUrl}?redirect_url=${encodeURIComponent(redirectUrl)}`;
 
-      // Navigate to sign-in page with redirect back to current page or forceRedirectUrl
-      const redirectUrl = forceRedirectUrl || (typeof window !== 'undefined' ? window.location.pathname : '/');
-      window.location.href = `${signInUrl}?redirect_url=${encodeURIComponent(redirectUrl)}`;
-    };
-
-    // If children is a React element, clone it with onClick handler
+    // If children is a React element, wrap it in a link
     if (React.isValidElement(children)) {
-      return React.cloneElement(children as React.ReactElement<any>, {
-        onClick: handleClick,
-        style: {
-          cursor: 'pointer',
-          ...((children.props as any)?.style || {})
-        }
-      });
+      return (
+        <a href={href} style={{ textDecoration: 'none', color: 'inherit' }}>
+          {children}
+        </a>
+      );
     }
 
-    // Otherwise wrap in a clickable button
+    // Otherwise wrap in a link styled as button
     return (
-      <button
-        type="button"
-        onClick={handleClick}
-        style={{ cursor: 'pointer', border: 'none', background: 'none', padding: 0 }}
+      <a
+        href={href}
+        style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
       >
         {children}
-      </button>
+      </a>
     );
   }
 
@@ -105,29 +97,34 @@ export function SignInButtonDirect({
   if (ClerkSignInButton) {
     // Use openSignIn directly for modal mode to bypass routing
     if (mode === "modal") {
-      const handleClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+      // Create a wrapper component for the onClick handler
+      const ModalTrigger = () => {
+        const handleClick = (e: React.MouseEvent) => {
+          e.preventDefault();
+          e.stopPropagation();
 
-        // Open Clerk modal directly
-        if (typeof window !== "undefined" && (window as any).Clerk) {
-          const clerk = (window as any).Clerk;
-          if (clerk.openSignIn) {
-            clerk.openSignIn({
-              redirectUrl: forceRedirectUrl,
-            });
-          } else {
-            console.error("[SignInButtonDirect] Clerk.openSignIn not available");
+          // Open Clerk modal directly
+          if (typeof window !== "undefined" && (window as any).Clerk) {
+            const clerk = (window as any).Clerk;
+            if (clerk.openSignIn) {
+              clerk.openSignIn({
+                redirectUrl: forceRedirectUrl,
+              });
+            } else {
+              console.error("[SignInButtonDirect] Clerk.openSignIn not available");
+            }
           }
+        };
+
+        // Clone children and add onClick handler
+        if (children && typeof children === 'object' && 'props' in children) {
+          return <span onClick={handleClick} style={{ cursor: 'pointer' }}>{children}</span>;
         }
+
+        return <button type="button" onClick={handleClick}>{children}</button>;
       };
 
-      // Clone children and add onClick handler
-      if (children && typeof children === 'object' && 'props' in children) {
-        return <span onClick={handleClick}>{children}</span>;
-      }
-
-      return <button type="button" onClick={handleClick}>{children}</button>;
+      return <ModalTrigger />;
     }
 
     // For redirect mode, use Clerk's SignInButton component
