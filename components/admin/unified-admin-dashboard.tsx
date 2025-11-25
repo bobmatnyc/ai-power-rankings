@@ -6,6 +6,7 @@ import {
   History,
   Loader2,
   Newspaper,
+  Sparkles,
   Wrench,
   X,
 } from "lucide-react";
@@ -280,6 +281,18 @@ export default function UnifiedAdminDashboard() {
               <span>DB Status</span>
             </Button>
           )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              window.location.href = `/${lang}/admin/whats-new-summary`;
+            }}
+            className="flex items-center gap-2"
+            title="Manage monthly summaries"
+          >
+            <Sparkles className="h-4 w-4" />
+            <span>What's New</span>
+          </Button>
           <Button
             variant="outline"
             onClick={() => {
