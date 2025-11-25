@@ -54,6 +54,10 @@ ecosystem.config.js
 *.pem
 .vercel
 
+# Uploaded images (news articles)
+/public/uploads/news/*
+!/public/uploads/news/.gitkeep
+
 # TypeScript
 *.tsbuildinfo
 
@@ -183,3 +187,4 @@ venv.bak/
 venv/
 virtualenv/
 wheels/
+.mcp-ticketer/
