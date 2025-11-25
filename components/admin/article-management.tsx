@@ -727,75 +727,33 @@ export function ArticleManagement() {
     const articleId = recalcPreviewData.articleId;
 
     try {
-      // Check if we're in the browser and EventSource is available
-      if (typeof window === "undefined" || !window.EventSource) {
-        // Fallback to regular POST without SSE
-        const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
-          method: "POST",
-          credentials: "same-origin",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ dryRun: false, useCachedAnalysis: true }),
-        });
+      console.log("[Apply] Submitting changes for article:", articleId);
 
-        if (!response.ok) {
-          throw new Error("Failed to apply changes");
-        }
+      const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dryRun: false, useCachedAnalysis: true }),
+      });
 
-        await response.json();
-        setShowRecalcPreviewModal(false);
-        setRecalcPreviewData(null);
-        setSuccess("Rankings updated successfully!");
-        await loadArticles();
-        return;
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to apply changes");
       }
 
-      // Use EventSource for real-time progress updates with cached analysis
-      const eventSource = new EventSource(
-        `/api/admin/articles/${articleId}/recalculate?stream=true&dryRun=false&useCachedAnalysis=true`,
-        { withCredentials: true } as EventSourceInit
-      );
+      const result = await response.json();
+      console.log("[Apply] Success:", result);
 
-      eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
+      // Close modal and show success
+      setShowRecalcPreviewModal(false);
+      setRecalcPreviewData(null);
+      setSuccess("Rankings updated successfully!");
 
-        if (data.type === "complete") {
-          // Application complete
-          setShowRecalcPreviewModal(false);
-          setRecalcPreviewData(null);
-          setSuccess("Rankings updated successfully!");
-          eventSource.close();
-          loadArticles();
-        } else if (data.type === "error") {
-          throw new Error(data.message || "Failed to apply changes");
-        }
-      };
-
-      eventSource.onerror = (error) => {
-        console.error("EventSource error:", error);
-        eventSource.close();
-
-        // Fallback to regular POST if SSE fails
-        fetch(`/api/admin/articles/${articleId}/recalculate`, {
-          method: "POST",
-          credentials: "same-origin",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ dryRun: false, useCachedAnalysis: true }),
-        })
-          .then(async (response) => {
-            if (!response.ok) {
-              throw new Error("Failed to apply changes");
-            }
-            setShowRecalcPreviewModal(false);
-            setRecalcPreviewData(null);
-            setSuccess("Rankings updated successfully!");
-            await loadArticles();
-          })
-          .catch((err) => {
-            throw err;
-          });
-      };
+      // Reload articles list
+      await loadArticles();
     } catch (err) {
       const error = err as Error;
+      console.error("[Apply] Error:", error);
       setError(error.message);
     } finally {
       setIsApplying(false);
