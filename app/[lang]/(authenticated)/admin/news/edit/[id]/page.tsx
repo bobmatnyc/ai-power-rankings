@@ -1,10 +1,11 @@
 "use client";
 
-import { ArrowLeft, CheckCircle2, Loader2, Save, Sparkles, Clock } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Loader2, Save, Sparkles, Clock, BarChart, AlertCircle, ArrowRight, X } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,21 @@ interface NewsArticle {
   importance_score?: number;
 }
 
+interface RankingPreviewData {
+  articleId: string;
+  toolChanges: Array<{
+    tool: string;
+    oldScore: number;
+    newScore: number;
+    change: number;
+  }>;
+  summary: {
+    totalToolsAffected: number;
+    averageScoreChange: number;
+  };
+  isPreview?: boolean;
+}
+
 export default function EditNewsPage() {
   const params = useParams();
   const router = useRouter();
@@ -63,6 +79,14 @@ export default function EditNewsPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
+
+  // Ranking preview state
+  const [recalculating, setRecalculating] = useState(false);
+  const [applying, setApplying] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewData, setPreviewData] = useState<RankingPreviewData | null>(null);
+  const [recalculationProgress, setRecalculationProgress] = useState<string>("");
+  const eventSourceRef = useRef<EventSource | null>(null);
 
   // Form fields
   const [title, setTitle] = useState("");
@@ -357,6 +381,161 @@ export default function EditNewsPage() {
     }
   };
 
+  const handleRecalculateRankings = useCallback(async (
+    articleId: string,
+    dryRun: boolean = false,
+    useCachedAnalysis: boolean = false
+  ) => {
+    if (dryRun) {
+      setRecalculating(true);
+    } else {
+      setApplying(true);
+    }
+
+    setRecalculationProgress("");
+    setError(null);
+
+    // Close any existing EventSource
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+    }
+
+    try {
+      // Check if EventSource is available
+      if (typeof window === "undefined" || !window.EventSource) {
+        // Fallback to regular POST without SSE
+        const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dryRun, useCachedAnalysis }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || "Failed to calculate rankings");
+        }
+
+        const data = await response.json();
+
+        if (dryRun) {
+          setPreviewData({
+            articleId,
+            toolChanges: data.changes || [],
+            summary: data.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
+            isPreview: true,
+          });
+          setShowPreviewModal(true);
+          setRecalculating(false);
+        } else {
+          setApplying(false);
+          setSuccess(true);
+          setTimeout(() => setSuccess(false), 3000);
+        }
+        return;
+      }
+
+      // Use EventSource for real-time progress updates
+      const eventSource = new EventSource(
+        `/api/admin/articles/${articleId}/recalculate?stream=true&dryRun=${dryRun}&useCachedAnalysis=${useCachedAnalysis}`,
+        { withCredentials: true } as EventSourceInit
+      );
+
+      eventSourceRef.current = eventSource;
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "progress") {
+          setRecalculationProgress(data.step || data.progress || "");
+        } else if (data.type === "complete" || data.type === "preview") {
+          if (dryRun) {
+            // Preview complete, show modal
+            setPreviewData({
+              articleId,
+              toolChanges: data.changes || [],
+              summary: data.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
+              isPreview: true,
+            });
+            setShowPreviewModal(true);
+            setRecalculating(false);
+          } else {
+            // Application complete
+            setApplying(false);
+            setSuccess(true);
+            setTimeout(() => setSuccess(false), 3000);
+          }
+
+          eventSource.close();
+          eventSourceRef.current = null;
+        } else if (data.type === "error") {
+          throw new Error(data.message || "Failed to calculate rankings");
+        }
+      };
+
+      eventSource.onerror = () => {
+        console.error("EventSource error");
+        eventSource.close();
+        eventSourceRef.current = null;
+
+        // Fallback to regular POST if SSE fails
+        fetch(`/api/admin/articles/${articleId}/recalculate`, {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dryRun, useCachedAnalysis }),
+        })
+          .then(async (response) => {
+            if (!response.ok) {
+              const data = await response.json();
+              throw new Error(data.error || "Failed to calculate rankings");
+            }
+            const data = await response.json();
+
+            if (dryRun) {
+              setPreviewData({
+                articleId,
+                toolChanges: data.changes || [],
+                summary: data.summary || { totalToolsAffected: 0, averageScoreChange: 0 },
+                isPreview: true,
+              });
+              setShowPreviewModal(true);
+              setRecalculating(false);
+            } else {
+              setApplying(false);
+              setSuccess(true);
+              setTimeout(() => setSuccess(false), 3000);
+            }
+          })
+          .catch((err) => {
+            setError(err instanceof Error ? err.message : "Connection error during ranking calculation");
+            setRecalculating(false);
+            setApplying(false);
+          });
+      };
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to calculate rankings");
+      setRecalculating(false);
+      setApplying(false);
+
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+    }
+  }, []);
+
+  // Cleanup EventSource on unmount
+  useEffect(() => {
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+    };
+  }, []);
+
   // Handle image insertion from uploader
   const handleImageInsert = useCallback((markdown: string) => {
     const textarea = contentTextareaRef.current;
@@ -423,6 +602,28 @@ export default function EditNewsPage() {
               ) : null}
             </div>
           )}
+
+          {/* Preview Ranking Impact button */}
+          {id !== "new" && article?.id && (
+            <Button
+              onClick={() => handleRecalculateRankings(article.id, true)}
+              disabled={recalculating || !article.id}
+              variant="outline"
+            >
+              {recalculating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {recalculationProgress || "Calculating..."}
+                </>
+              ) : (
+                <>
+                  <BarChart className="mr-2 h-4 w-4" />
+                  Preview Impact
+                </>
+              )}
+            </Button>
+          )}
+
           <Button onClick={handleSave} disabled={saving}>
             {saving ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -676,6 +877,141 @@ export default function EditNewsPage() {
           </Card>
         </div>
       </div>
+
+      {/* Ranking Preview Modal */}
+      {showPreviewModal && previewData && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <CardHeader>
+              <CardTitle>Preview Ranking Changes</CardTitle>
+              <CardDescription>
+                These are the predicted changes to tool rankings if this article affects global scoring.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="flex-1 overflow-y-auto space-y-4">
+              {/* Summary */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base">Impact Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Tools Affected</p>
+                      <p className="text-2xl font-bold">
+                        {previewData.summary.totalToolsAffected}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Avg Score Change</p>
+                      <p className="text-2xl font-bold">
+                        {previewData.summary.averageScoreChange > 0 ? "+" : ""}
+                        {previewData.summary.averageScoreChange.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Tool Changes */}
+              {previewData.toolChanges.length > 0 && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Proposed Tool Score Changes</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {previewData.toolChanges.map((change, index) => (
+                        <div
+                          key={`${change.tool}-${index}`}
+                          className="flex items-center justify-between py-2 border-b last:border-0"
+                        >
+                          <span className="font-medium">{change.tool}</span>
+                          <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-2 text-sm">
+                              <span className="text-muted-foreground">
+                                Score: {change.oldScore.toFixed(1)}
+                              </span>
+                              <ArrowRight className="h-3 w-3" />
+                              <span className="font-medium">{change.newScore.toFixed(1)}</span>
+                            </div>
+                            <Badge
+                              variant={
+                                change.change > 0
+                                  ? "default"
+                                  : change.change < 0
+                                    ? "destructive"
+                                    : "secondary"
+                              }
+                            >
+                              {change.change > 0 ? "+" : ""}
+                              {change.change.toFixed(2)}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* No Changes */}
+              {previewData.toolChanges.length === 0 && (
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    No ranking changes detected. The article&apos;s current impact on rankings is accurate.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Info about caching */}
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  The AI analysis has been cached. Clicking &quot;Apply Changes&quot; will use this cached analysis for faster processing.
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+
+            <div className="p-6 border-t flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowPreviewModal(false);
+                  setPreviewData(null);
+                }}
+                disabled={applying}
+              >
+                <X className="mr-2 h-4 w-4" />
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  if (previewData?.articleId) {
+                    handleRecalculateRankings(previewData.articleId, false, true);
+                    setShowPreviewModal(false);
+                  }
+                }}
+                disabled={applying || previewData.toolChanges.length === 0}
+              >
+                {applying ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Applying...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                    Apply Changes
+                  </>
+                )}
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
