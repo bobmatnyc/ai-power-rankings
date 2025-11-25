@@ -29,12 +29,13 @@ export class NewsRepository {
    * Map article from articles table to news format
    */
   private mapArticleToNews(article: Article): NewsArticle {
+    const content = article.contentMarkdown || article.content || "";
     return {
       id: article.id,
       slug: article.slug,
       title: article.title,
       summary: article.summary,
-      content: article.content,
+      content,
       source: article.sourceName,
       sourceUrl: article.sourceUrl,
       publishedAt: article.publishedDate || article.createdAt,

@@ -75,20 +75,25 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       }
     }
 
+    const content = article.contentMarkdown || article.content || article.summary || "";
+    const publishedAt = article.publishedAt instanceof Date
+      ? article.publishedAt
+      : new Date(article.publishedAt || Date.now());
+
     // Transform to the format expected by the frontend
     const transformedArticle = {
       id: article.id,
       slug: article.slug,
       title: article.title,
-      content: article.content || article.summary || "",
+      content,
       summary: article.summary,
-      published_date: article.publishedAt.toISOString(),
+      published_date: publishedAt.toISOString(),
       source: article.source || "AI News",
       source_url: article.sourceUrl,
       tags: article.tags || [],
       tool_mentions: toolMentions,
-      created_at: article.publishedAt.toISOString(),
-      updated_at: article.publishedAt.toISOString(),
+      created_at: publishedAt.toISOString(),
+      updated_at: publishedAt.toISOString(),
     };
 
     // Include matched tool if found

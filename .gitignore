@@ -183,3 +183,6 @@ venv.bak/
 venv/
 virtualenv/
 wheels/
+
+# MCP Ticketer
+.mcp-ticketer/

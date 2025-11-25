@@ -2,6 +2,8 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { loggers } from "@/lib/logger";
+import { PartialMarkdownArticleSchema, formatValidationErrors } from "@/lib/validation/markdown-validator";
+import { z } from "zod";
 
 /**
  * GET /api/admin/news/[id]
@@ -55,23 +57,34 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
-    // Validate required fields
-    if (!body.title && !existingArticle.title) {
-      return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    // Validate updates using partial schema
+    try {
+      const validated = PartialMarkdownArticleSchema.parse(body);
+
+      // Update the article (repository will auto-generate excerpt if contentMarkdown changed)
+      const updatedArticle = await articlesRepo.updateArticle(id, {
+        ...validated,
+        updatedAt: new Date(),
+      });
+
+      loggers.api.info("Article updated", { articleId: id });
+
+      return NextResponse.json({
+        success: true,
+        article: updatedArticle,
+      });
+    } catch (validationError) {
+      if (validationError instanceof z.ZodError) {
+        return NextResponse.json(
+          {
+            error: "Validation failed",
+            details: formatValidationErrors(validationError)
+          },
+          { status: 400 }
+        );
+      }
+      throw validationError; // Re-throw non-validation errors
     }
-
-    // Update the article
-    const updatedArticle = await articlesRepo.updateArticle(id, {
-      ...body,
-      updatedAt: new Date(),
-    });
-
-    loggers.api.info("Article updated", { articleId: id });
-
-    return NextResponse.json({
-      success: true,
-      article: updatedArticle,
-    });
   } catch (error) {
     loggers.api.error("Error in admin/news/[id] PUT", { error });
     return NextResponse.json({ error: "Failed to update article" }, { status: 500 });
