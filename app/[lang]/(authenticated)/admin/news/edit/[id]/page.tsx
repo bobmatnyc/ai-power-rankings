@@ -988,9 +988,10 @@ export default function EditNewsPage() {
                 Cancel
               </Button>
               <Button
-                onClick={() => {
+                onClick={async () => {
                   if (previewData?.articleId) {
-                    handleRecalculateRankings(previewData.articleId, false, true);
+                    await handleRecalculateRankings(previewData.articleId, false, true);
+                    // Close modal after successful application
                     setShowPreviewModal(false);
                   }
                 }}
