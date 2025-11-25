@@ -17,8 +17,8 @@ interface MonthlySummary {
 
 async function getMonthlySummary(): Promise<MonthlySummary | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/whats-new/summary`, {
+    // Use relative URL for internal API calls - works in both development and production
+    const response = await fetch('/api/whats-new/summary', {
       cache: 'no-store', // Always fetch fresh data
     });
 
