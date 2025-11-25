@@ -13,6 +13,8 @@ import { requireAdmin } from "@/lib/api-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { loggers } from "@/lib/logger";
 import type { Article } from "@/lib/db/article-schema";
+import { MarkdownArticleSchema, formatValidationErrors } from "@/lib/validation/markdown-validator";
+import { z } from "zod";
 
 // import { NewsIngestor } from "@/lib/news-ingestor";
 // import { fetchGoogleDriveNews } from "@/lib/news-fetcher";
@@ -273,10 +275,12 @@ export async function POST(request: NextRequest) {
       }
 
       case "manual-ingest": {
-        // Manually add news article (replaces manual-ingest)
+        // Manually add news article with validation
         const {
           title,
           content,
+          content_markdown,
+          contentMarkdown,
           author,
           summary,
           url,
@@ -289,28 +293,52 @@ export async function POST(request: NextRequest) {
           importance_score,
         } = body;
 
-        if (!title || !content) {
+        const bodyContent = content_markdown || contentMarkdown || content;
+
+        if (!title || !bodyContent) {
           return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
         }
 
-        const articlesRepo = new ArticlesRepository();
-
+        // Validate markdown content
         try {
-          const article = await articlesRepo.createArticle({
+          const validationData = {
+            contentMarkdown: bodyContent,
             title,
-            slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-            summary: summary || `${content.substring(0, 200)}...`,
-            content,
+            summary,
             author,
             sourceUrl: url || source_url,
             sourceName: source,
-            publishedDate: published_at ? new Date(published_at) : new Date(),
-            toolMentions: tool_mentions,
-            tags,
             category,
+            tags: Array.isArray(tags) ? tags : [],
+            toolMentions: Array.isArray(tool_mentions) ? tool_mentions : [],
             importanceScore: importance_score,
+            publishedDate: published_at ? new Date(published_at) : new Date(),
+            ingestionType: "text" as const,
+          };
+
+          const validated = MarkdownArticleSchema.parse(validationData);
+
+          const articlesRepo = new ArticlesRepository();
+
+          const article = await articlesRepo.createArticle({
+            title: validated.title,
+            slug: validated.title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+            summary: validated.summary || `${bodyContent.substring(0, 200)}...`,
+            contentMarkdown: validated.contentMarkdown,
+            // content will be auto-generated from contentMarkdown in repository
+            content: validated.contentMarkdown, // Repository will replace with excerpt
+            author: validated.author,
+            sourceUrl: validated.sourceUrl,
+            sourceName: validated.sourceName,
+            publishedDate: validated.publishedDate instanceof Date
+              ? validated.publishedDate
+              : new Date(validated.publishedDate || Date.now()),
+            toolMentions: validated.toolMentions || [],
+            tags: validated.tags || [],
+            category: validated.category,
+            importanceScore: validated.importanceScore,
             status: "active",
-            ingestionType: "text",
+            ingestionType: validated.ingestionType || "text",
             ingestedBy: userId,
           });
 
@@ -326,10 +354,19 @@ export async function POST(request: NextRequest) {
               slug: article.slug,
             },
           });
-        } catch (dbError) {
-          loggers.api.error("Failed to create article", { dbError });
+        } catch (validationError) {
+          if (validationError instanceof z.ZodError) {
+            return NextResponse.json(
+              {
+                error: "Validation failed",
+                details: formatValidationErrors(validationError)
+              },
+              { status: 400 }
+            );
+          }
+          loggers.api.error("Failed to create article", { error: validationError });
           return NextResponse.json(
-            { error: "Failed to create article", details: dbError },
+            { error: "Failed to create article", details: validationError },
             { status: 500 }
           );
         }
