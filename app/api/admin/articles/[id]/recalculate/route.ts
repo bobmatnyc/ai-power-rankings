@@ -71,6 +71,8 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
               : "Analyzing article content with AI..."
           );
 
+          console.log(`[API] About to call recalculateArticleRankingsWithProgress for article ${id}, dryRun=${dryRun}, useCachedAnalysis=${useCachedAnalysis}`);
+
           // Perform the recalculation with progress callback
           const result = await articleService.recalculateArticleRankingsWithProgress(
             id,
@@ -79,6 +81,11 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
             },
             { dryRun, useCachedAnalysis }
           );
+
+          console.log(`[API] recalculateArticleRankingsWithProgress completed. Result:`, {
+            changesCount: result.changes?.length,
+            summaryToolsAffected: result.summary?.totalToolsAffected
+          });
 
           sendProgress(90, dryRun ? "Preparing preview..." : "Finalizing changes...");
 
