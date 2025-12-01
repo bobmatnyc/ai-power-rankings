@@ -720,29 +720,47 @@ export function ArticleManagement() {
   }, []);
 
   const handleApplyRecalculation = useCallback(async () => {
-    if (!recalcPreviewData) return;
+    if (!recalcPreviewData) {
+      console.warn("[Apply] No preview data available");
+      return;
+    }
+
+    console.log("[Apply] Starting apply process", {
+      hasPreviewData: !!recalcPreviewData,
+      articleId: recalcPreviewData.articleId,
+      toolChangesCount: recalcPreviewData.toolChanges?.length,
+    });
 
     setIsApplying(true);
     setError(null);
     const articleId = recalcPreviewData.articleId;
 
     try {
-      console.log("[Apply] Submitting changes for article:", articleId);
+      console.log("[Apply] Initiating fetch request to:", `/api/admin/articles/${articleId}/recalculate`);
+
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
 
       const response = await fetch(`/api/admin/articles/${articleId}/recalculate`, {
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ dryRun: false, useCachedAnalysis: true }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
+      console.log("[Apply] Response received:", response.status, response.statusText);
 
       if (!response.ok) {
         const data = await response.json();
+        console.error("[Apply] Error response:", data);
         throw new Error(data.error || "Failed to apply changes");
       }
 
       const result = await response.json();
-      console.log("[Apply] Success:", result);
+      console.log("[Apply] Success result:", result);
 
       // Close modal and show success
       setShowRecalcPreviewModal(false);
@@ -750,12 +768,24 @@ export function ArticleManagement() {
       setSuccess("Rankings updated successfully!");
 
       // Reload articles list
+      console.log("[Apply] Reloading articles list...");
       await loadArticles();
+      console.log("[Apply] Articles reloaded");
     } catch (err) {
       const error = err as Error;
-      console.error("[Apply] Error:", error);
-      setError(error.message);
+      console.error("[Apply] Caught error:", {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      });
+
+      if (error.name === "AbortError") {
+        setError("Request timed out. Please try again.");
+      } else {
+        setError(error.message || "An unexpected error occurred");
+      }
     } finally {
+      console.log("[Apply] Finally block - setting isApplying to false");
       setIsApplying(false);
     }
   }, [recalcPreviewData, loadArticles]);

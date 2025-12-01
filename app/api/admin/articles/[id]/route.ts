@@ -4,6 +4,7 @@ import { isAuthenticated } from "@/lib/clerk-auth";
 import { getDb } from "@/lib/db/connection";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { ArticleDatabaseService } from "@/lib/services/article-db-service";
+import { invalidateArticleCache } from "@/lib/cache/invalidation.service";
 
 const UpdateArticleSchema = z.object({
   title: z.string().optional(),
@@ -86,6 +87,12 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     const articleService = new ArticleDatabaseService();
     const article = await articleService.updateArticle(id, updates);
 
+    // Invalidate caches after successful update
+    // Run asynchronously to not block response
+    invalidateArticleCache().catch((error) => {
+      console.error("[API] Failed to invalidate cache after article update:", error);
+    });
+
     return NextResponse.json({
       success: true,
       article,
@@ -130,6 +137,12 @@ export async function DELETE(_request: NextRequest, context: { params: Promise<{
 
     const articleService = new ArticleDatabaseService();
     await articleService.deleteArticle(id);
+
+    // Invalidate caches after successful deletion
+    // Run asynchronously to not block response
+    invalidateArticleCache().catch((error) => {
+      console.error("[API] Failed to invalidate cache after article deletion:", error);
+    });
 
     return NextResponse.json({
       success: true,

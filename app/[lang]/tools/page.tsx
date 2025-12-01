@@ -7,8 +7,9 @@ import { getCurrentYear } from "@/lib/get-current-year";
 import { getUrl } from "@/lib/get-url";
 import ToolsClient from "./tools-client";
 
-// Force dynamic rendering to prevent build timeout
-export const dynamic = "force-dynamic";
+// Enable ISR with 1-hour revalidation
+// Tools page updates when new articles affect rankings
+export const revalidate = 3600; // 1 hour
 
 interface PageProps {
   params: Promise<{ lang: string }>;

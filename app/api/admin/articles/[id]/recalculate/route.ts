@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { isAuthenticated as checkAuth } from "@/lib/clerk-auth";
 import { getDb } from "@/lib/db/connection";
 import { ArticleDatabaseService } from "@/lib/services/article-db-service";
+import { invalidateArticleCache } from "@/lib/cache/invalidation.service";
 
 /**
  * GET /api/admin/articles/[id]/recalculate?stream=true&dryRun=true
@@ -173,6 +174,14 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       dryRun,
       useCachedAnalysis,
     });
+
+    // Only invalidate cache if not a dry run (actual changes were made)
+    if (!dryRun) {
+      // Run asynchronously to not block response
+      invalidateArticleCache().catch((error) => {
+        console.error("[API] Failed to invalidate cache after article recalculation:", error);
+      });
+    }
 
     return NextResponse.json({
       success: true,
