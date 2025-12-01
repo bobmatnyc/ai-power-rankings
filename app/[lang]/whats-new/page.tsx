@@ -19,7 +19,7 @@ async function getMonthlySummary(): Promise<MonthlySummary | null> {
   try {
     // Use relative URL for internal API calls - works in both development and production
     const response = await fetch('/api/whats-new/summary', {
-      cache: 'no-store', // Always fetch fresh data
+      next: { revalidate: 1800, tags: ['whats-new'] }, // Revalidate every 30 minutes
     });
 
     if (!response.ok) {

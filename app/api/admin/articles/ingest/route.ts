@@ -1,10 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { isAuthenticated } from "@/lib/clerk-auth";
 import { getDb } from "@/lib/db/connection";
 import { ArticleDatabaseService } from "@/lib/services/article-db-service";
 import { ArticleIngestionSchema } from "@/lib/services/article-ingestion.service";
+import { invalidateArticleCache } from "@/lib/cache/invalidation.service";
 
 /**
  * POST /api/admin/articles/ingest
@@ -48,9 +48,11 @@ export async function POST(request: NextRequest) {
         message: "Dry run completed successfully. No changes were saved.",
       });
     } else {
-      // Invalidate cache for news feeds after successful article ingestion
-      revalidatePath('/api/whats-new', 'layout');
-      revalidatePath('/api/news', 'layout');
+      // Invalidate all article-related caches after successful ingestion
+      // Run asynchronously to not block response
+      invalidateArticleCache().catch((error) => {
+        console.error("[API] Failed to invalidate cache after article ingestion:", error);
+      });
 
       return NextResponse.json({
         success: true,
