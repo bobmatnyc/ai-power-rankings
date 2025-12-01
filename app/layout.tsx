@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { DeferredAnalytics } from "@/components/analytics/deferred-analytics";
 import {
@@ -75,6 +76,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="image/webp"
           href="/crown-of-technology-64.webp"
           fetchPriority="high"
+        />
+
+        {/* Google Tag Manager */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-5YBL6NPWL6"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-5YBL6NPWL6');
+            `,
+          }}
         />
 
         {/* Schema.org markup for SEO - Organization */}
