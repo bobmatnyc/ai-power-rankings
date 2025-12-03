@@ -29,12 +29,9 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     // 1. Require admin authentication
-    const adminCheck = await requireAdmin(req);
+    const adminCheck = await requireAdmin();
     if (adminCheck.error) {
-      return NextResponse.json(
-        { error: adminCheck.error },
-        { status: adminCheck.status }
-      );
+      return adminCheck.error;
     }
 
     const userId = adminCheck.userId!;

@@ -192,7 +192,7 @@ export default function StateOfAiClient() {
             <h1 className="text-3xl font-bold tracking-tight">State of AI Editorial</h1>
           </div>
           <p className="text-muted-foreground">
-            Generate monthly "State of AI" editorial summaries using Claude Sonnet 4
+            Generate monthly &quot;State of AI&quot; editorial summaries using Claude Sonnet 4
           </p>
         </div>
       </div>
@@ -355,7 +355,7 @@ export default function StateOfAiClient() {
                 <AlertDescription className="text-sm">
                   <strong>Next Steps:</strong> This editorial is now stored and will be displayed on the{" "}
                   <Link href={`/${lang}/whats-new`} className="text-primary hover:underline">
-                    What's New
+                    What&apos;s New
                   </Link>{" "}
                   page. The StateOfUnion component will automatically fetch and display it.
                 </AlertDescription>

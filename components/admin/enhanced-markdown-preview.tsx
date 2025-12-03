@@ -60,12 +60,14 @@ export function EnhancedMarkdownPreview({
         remarkPlugins={[remarkGfm]}
         components={{
           // Custom code block renderer with syntax highlighting
-          code({ node, inline, className, children, ...props }) {
+          code({ node, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
             const language = match ? match[1] : "";
+            const inline = !match;
 
             return !inline && language ? (
               <SyntaxHighlighter
+                // @ts-expect-error - vscDarkPlus type incompatibility with react-syntax-highlighter
                 style={vscDarkPlus}
                 language={language}
                 PreTag="div"

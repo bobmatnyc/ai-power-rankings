@@ -176,11 +176,11 @@ export function validateLLMAnalysis(content: string): LLMAnalysis {
  * @returns Formatted error string
  */
 export function formatValidationErrors(errors: z.ZodError): string {
-  if (!errors.errors || errors.errors.length === 0) {
+  if (!errors.issues || errors.issues.length === 0) {
     return errors.message || 'Validation failed';
   }
 
-  return errors.errors
-    .map(err => `${err.path.join('.')}: ${err.message}`)
+  return errors.issues
+    .map((err) => `${err.path.join('.')}: ${err.message}`)
     .join('; ');
 }

@@ -151,7 +151,7 @@ export default function WhatsNewSummaryClient() {
           <h1 className="text-3xl font-bold">Monthly Summary Management</h1>
         </div>
         <p className="text-muted-foreground">
-          Generate or regenerate monthly "What's New" summaries for any month
+          Generate or regenerate monthly &quot;What&apos;s New&quot; summaries for any month
         </p>
       </div>
 
@@ -371,7 +371,7 @@ export default function WhatsNewSummaryClient() {
             • Summaries are cached for performance but can be regenerated anytime
           </p>
           <p>
-            • The generated summary appears on the public "What's New" page
+            • The generated summary appears on the public &quot;What&apos;s New&quot; page
           </p>
         </CardContent>
       </Card>
