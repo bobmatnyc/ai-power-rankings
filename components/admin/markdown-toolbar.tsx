@@ -47,7 +47,7 @@ import {
 import { RefObject, useCallback, useEffect } from "react";
 
 interface MarkdownToolbarProps {
-  textareaRef: RefObject<HTMLTextAreaElement>;
+  textareaRef: RefObject<HTMLTextAreaElement | null>;
   onInsert?: (newText: string) => void;
 }
 

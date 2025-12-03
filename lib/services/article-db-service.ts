@@ -1087,7 +1087,7 @@ export class ArticleDatabaseService {
 
         // Get the latest change (they should all have the same new score)
         const latestChange = toolChanges[toolChanges.length - 1]!;
-        const newScore = parseFloat(latestChange.newScore);
+        const newScore = parseFloat(latestChange.newScore ?? '0');
 
         // Calculate what the delta should be to achieve the new score
         const baselineScore = (currentTool.baselineScore as any)?.overallScore ?? 0;
