@@ -13,8 +13,9 @@ import {
   type ToolSchemaData,
 } from "@/lib/schema";
 
-// Force dynamic rendering to prevent build timeout
-export const dynamic = "force-dynamic";
+// Enable ISR: Semi-static tool pages that update occasionally
+// Revalidate every 30 minutes - tool details update when rankings change or data is refreshed
+export const revalidate = 1800; // 30 minutes
 
 interface PageProps {
   params: Promise<{ lang: Locale; slug: string }>;
