@@ -1,0 +1,116 @@
+SITEMAP.XML ROUTING ISSUE - VISUAL DIAGRAM
+==========================================
+
+Current (BROKEN) Flow:
+----------------------
+
+Request: GET /sitemap.xml
+    ↓
+Middleware processes (not excluded)
+    ↓
+Next.js Route Matching
+    ↓
+├─ Check: app/sitemap.ts? ❌ NOT FOUND
+├─ Check: app/sitemap.xml/route.ts? ❌ NOT FOUND
+├─ Check: public/sitemap.xml? ❌ NOT FOUND
+    ↓
+Fall through to dynamic routes
+    ↓
+Match: app/[lang]/page.tsx ✓ MATCHED!
+    ↓
+Params: { lang: "sitemap.xml" }
+    ↓
+Render: Homepage with lang="sitemap.xml"
+    ↓
+Response: 
+    - Content-Type: text/html ❌
+    - Body: Full HTML page
+    - All links: /sitemap.xml/rankings, etc.
+    ↓
+Google: "Sitemap is HTML" ERROR ❌
+
+
+Expected (CORRECT) Flow:
+-------------------------
+
+Request: GET /sitemap.xml
+    ↓
+Middleware processes (should exclude)
+    ↓
+Next.js Route Matching
+    ↓
+Match: app/sitemap.ts ✓ FOUND!
+    ↓
+Execute: sitemap() function
+    ↓
+Query database for dynamic URLs
+    ↓
+Generate XML with all pages
+    ↓
+Response:
+    - Content-Type: application/xml ✓
+    - Body: Valid XML sitemap
+    ↓
+Google: Successfully indexed ✓
+
+
+Route Priority in Next.js App Router:
+--------------------------------------
+
+1. Special files (sitemap.ts, robots.ts, etc.)
+2. Static routes (page.tsx)
+3. Dynamic routes ([param])
+4. Catch-all routes ([...param])
+5. Middleware fallback
+
+Current issue: No special file exists, so falls through to #3 (dynamic route)
+
+
+File Structure Comparison:
+--------------------------
+
+CURRENT:                          EXPECTED:
+app/                             app/
+├── robots.ts ✓                  ├── robots.ts ✓
+├── sitemap.ts ❌ MISSING!       ├── sitemap.ts ✓ CREATE THIS!
+├── page.tsx                     ├── page.tsx
+└── [lang]/                      └── [lang]/
+    ├── page.tsx                     ├── page.tsx
+    └── ...                          └── ...
+
+
+Why [lang] matches sitemap.xml:
+--------------------------------
+
+Dynamic route: [lang]
+Matches ANY path segment:
+  - /en ✓
+  - /ja ✓
+  - /es ✓
+  - /sitemap.xml ✓ (BUG!)
+  - /robots.txt ✗ (excluded by robots.ts)
+  - /anything-else ✓
+
+
+HTTP Response Headers Comparison:
+----------------------------------
+
+CURRENT (BROKEN):                EXPECTED (CORRECT):
+HTTP/2 200                       HTTP/2 200
+content-type: text/html ❌       content-type: application/xml ✓
+x-matched-path: /[lang] ❌       x-matched-path: /sitemap ✓
+link: </_next/static/...>        (no link headers)
+cache-control: private...        cache-control: public, max-age=3600
+
+
+robots.txt Reference:
+---------------------
+
+File: app/robots.ts
+Content:
+  return {
+    rules: [...],
+    sitemap: `${baseUrl}/sitemap.xml`  ← Points to non-existent file!
+  }
+
+This creates a promise that's broken!
