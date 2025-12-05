@@ -1,0 +1,152 @@
+# GitHub Actions Deployment Workflow Example
+#
+# This file shows how to integrate the deploy.sh script with GitHub Actions
+# for automated deployments triggered by workflow dispatch.
+#
+# Usage:
+#   1. Copy this file to .github/workflows/deploy.yml
+#   2. Update the configuration as needed
+#   3. Configure required secrets in GitHub repository settings
+#   4. Trigger from GitHub Actions tab: "Run workflow"
+
+name: Deploy Release
+
+on:
+  # Manual trigger from GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version type (patch, minor, major)'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: 'patch'
+
+      changelog_message:
+        description: 'Changelog message (optional, auto-generated if empty)'
+        required: false
+        type: string
+
+      skip_deploy:
+        description: 'Skip Vercel deployment'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ github.event.inputs.version_type }} Release
+    runs-on: ubuntu-latest
+
+    # Only allow deployments from main branch
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for git operations
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Make deploy script executable
+        run: chmod +x scripts/deploy.sh
+
+      - name: Run deployment script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event.inputs.skip_deploy }}" = "true" ]; then
+            SKIP_FLAG="--skip-deploy"
+          else
+            SKIP_FLAG=""
+          fi
+
+          if [ -n "${{ github.event.inputs.changelog_message }}" ]; then
+            ./scripts/deploy.sh $SKIP_FLAG ${{ github.event.inputs.version_type }} "${{ github.event.inputs.changelog_message }}"
+          else
+            ./scripts/deploy.sh $SKIP_FLAG ${{ github.event.inputs.version_type }}
+          fi
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          release_name: Release v${{ steps.version.outputs.version }}
+          body: |
+            Release v${{ steps.version.outputs.version }}
+
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details.
+          draft: false
+          prerelease: false
+
+      - name: Notify on Success
+        if: success()
+        run: |
+          echo "✅ Successfully deployed version ${{ steps.version.outputs.version }}"
+          echo "🏷️  Tag: v${{ steps.version.outputs.version }}"
+          echo "📦 Release: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.version }}"
+          if [ "${{ github.event.inputs.skip_deploy }}" != "true" ]; then
+            echo "🚀 Vercel deployment triggered automatically"
+          fi
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Check the logs above for details."
+
+# Alternative: Automated deployment on tag push
+# Uncomment to enable automatic deployments when tags are pushed
+#
+# on:
+#   push:
+#     tags:
+#       - 'v*.*.*'
+#
+# jobs:
+#   deploy:
+#     name: Deploy Release
+#     runs-on: ubuntu-latest
+#     steps:
+#       # ... same steps as above ...
+
+# Alternative: Scheduled releases (e.g., weekly)
+# Uncomment to enable scheduled releases
+#
+# on:
+#   schedule:
+#     # Run every Monday at 9:00 AM UTC
+#     - cron: '0 9 * * 1'
+#
+# jobs:
+#   deploy:
+#     name: Weekly Patch Release
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Run deployment
+#         run: ./scripts/deploy.sh patch "Weekly maintenance release"

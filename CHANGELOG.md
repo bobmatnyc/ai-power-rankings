@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.13] - 2025-12-01
+
+### Added
+- Sitemap verification and Google Search Console integration
+- ISR optimization for tool pages
+
+### Fixed
+- XML sitemap format to resolve Google Search Console errors
+- TypeScript and ESLint errors for production deployment
+
 ## [0.3.10] - 2025-11-12
 
 ### Added
