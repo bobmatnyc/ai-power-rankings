@@ -5,7 +5,7 @@
  * DO NOT EDIT MANUALLY
  * Run 'npm run generate-categories' to update this file
  *
- * Generated: 2025-12-03T04:53:32.157Z
+ * Generated: 2025-12-05T07:39:02.357Z
  */
 
 export interface Category {
