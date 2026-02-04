@@ -18,6 +18,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { automatedIngestionRuns } from "./schema";
 
 // Enums
 export const ingestionTypeEnum = pgEnum("ingestion_type", ["url", "text", "file"]);
@@ -87,6 +88,13 @@ export const articles = pgTable(
     isProcessed: boolean("is_processed").default(false),
     processedAt: timestamp("processed_at"),
 
+    // Automated ingestion tracking
+    ingestionRunId: uuid("ingestion_run_id").references(() => automatedIngestionRuns.id, {
+      onDelete: "set null",
+    }),
+    isAutoIngested: boolean("is_auto_ingested").default(false),
+    discoverySource: varchar("discovery_source", { length: 50 }).default("manual"),
+
     // Timestamps
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -101,6 +109,10 @@ export const articles = pgTable(
     tagsIdx: index("idx_articles_tags").using("gin", table.tags),
     toolMentionsIdx: index("idx_articles_tool_mentions").using("gin", table.toolMentions),
     companyMentionsIdx: index("idx_articles_company_mentions").using("gin", table.companyMentions),
+    // Automated ingestion indexes
+    ingestionRunIdIdx: index("idx_articles_ingestion_run_id").on(table.ingestionRunId),
+    isAutoIngestedIdx: index("idx_articles_is_auto_ingested").on(table.isAutoIngested),
+    discoverySourceIdx: index("idx_articles_discovery_source").on(table.discoverySource),
   })
 );
 

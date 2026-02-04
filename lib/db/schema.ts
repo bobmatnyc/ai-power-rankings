@@ -6,6 +6,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  decimal,
   index,
   integer,
   jsonb,
@@ -14,6 +15,7 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -254,6 +256,46 @@ export const stateOfAiSummaries = pgTable(
  * See /app/api/user/preferences/route.ts for implementation.
  */
 
+/**
+ * Automated Ingestion Runs table
+ * Tracks automated AI news ingestion runs and metrics
+ */
+export const automatedIngestionRuns = pgTable(
+  "automated_ingestion_runs",
+  {
+    // Primary identifier
+    id: uuid("id").defaultRandom().primaryKey(),
+
+    // Run details
+    runType: varchar("run_type", { length: 50 }).notNull(), // 'daily_news', 'monthly_summary', 'manual'
+    status: varchar("status", { length: 20 }).notNull().default("running"), // 'running', 'completed', 'failed'
+
+    // Metrics
+    articlesDiscovered: integer("articles_discovered").default(0),
+    articlesPassedQuality: integer("articles_passed_quality").default(0),
+    articlesIngested: integer("articles_ingested").default(0),
+    articlesSkipped: integer("articles_skipped").default(0),
+    rankingChanges: integer("ranking_changes").default(0),
+
+    // Timing and details
+    startedAt: timestamp("started_at").defaultNow(),
+    completedAt: timestamp("completed_at"),
+    searchQuery: text("search_query"),
+    errorLog: jsonb("error_log").default("[]"),
+    ingestedArticleIds: jsonb("ingested_article_ids").default("[]"),
+    estimatedCostUsd: decimal("estimated_cost_usd", { precision: 10, scale: 4 }).default("0"),
+
+    // Timestamps
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    // Indexes
+    statusIdx: index("idx_automated_ingestion_runs_status").on(table.status),
+    runTypeIdx: index("idx_automated_ingestion_runs_run_type").on(table.runType),
+    createdAtIdx: index("idx_automated_ingestion_runs_created_at").on(table.createdAt),
+  })
+);
+
 // Type exports for TypeScript
 export type Tool = typeof tools.$inferSelect;
 export type NewTool = typeof tools.$inferInsert;
@@ -269,6 +311,13 @@ export type MonthlySummary = typeof monthlySummaries.$inferSelect;
 export type NewMonthlySummary = typeof monthlySummaries.$inferInsert;
 export type StateOfAiSummary = typeof stateOfAiSummaries.$inferSelect;
 export type NewStateOfAiSummary = typeof stateOfAiSummaries.$inferInsert;
+export type AutomatedIngestionRun = typeof automatedIngestionRuns.$inferSelect;
+export type NewAutomatedIngestionRun = typeof automatedIngestionRuns.$inferInsert;
+
+// Enum types for type safety
+export type AutomatedIngestionRunStatus = "running" | "completed" | "failed";
+export type IngestionRunType = "daily_news" | "monthly_summary" | "manual";
+export type DiscoverySource = "manual" | "brave_search" | "rss_feed";
 
 export type {
   Article,
