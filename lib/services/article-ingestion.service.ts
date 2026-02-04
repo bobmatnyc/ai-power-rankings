@@ -1021,14 +1021,36 @@ export class RankingsCalculator {
  * Main Article Ingestion Service
  */
 export class ArticleIngestionService {
-  private contentExtractor: ContentExtractor;
-  private aiAnalyzer: AIAnalyzer;
-  private rankingsCalculator: RankingsCalculator;
+  // Lazy-initialized backing fields (null until first use)
+  private _contentExtractor: ContentExtractor | null = null;
+  private _aiAnalyzer: AIAnalyzer | null = null;
+  private _rankingsCalculator: RankingsCalculator | null = null;
 
+  // Lazy getters - services are created on first use, not at import time
+  private get contentExtractor(): ContentExtractor {
+    if (!this._contentExtractor) {
+      this._contentExtractor = new ContentExtractor();
+    }
+    return this._contentExtractor;
+  }
+
+  private get aiAnalyzer(): AIAnalyzer {
+    if (!this._aiAnalyzer) {
+      this._aiAnalyzer = new AIAnalyzer();
+    }
+    return this._aiAnalyzer;
+  }
+
+  private get rankingsCalculator(): RankingsCalculator {
+    if (!this._rankingsCalculator) {
+      this._rankingsCalculator = new RankingsCalculator();
+    }
+    return this._rankingsCalculator;
+  }
+
+  // Empty constructor - no eager initialization
   constructor() {
-    this.contentExtractor = new ContentExtractor();
-    this.aiAnalyzer = new AIAnalyzer();
-    this.rankingsCalculator = new RankingsCalculator();
+    // Services are lazily initialized via getters when first accessed
   }
 
   /**
@@ -1179,19 +1201,44 @@ export class ArticleIngestionService {
 
         return dryRunResult;
       } else {
-        // TODO: Implement full ingestion with database saves
-        // This would:
-        // 1. Save article to database
-        // 2. Create new tools/companies if needed
-        // 3. Apply ranking changes
-        // 4. Log the processing
-        // 5. Invalidate monthly summary cache
-        // 6. Return the saved article
+        // Full ingestion: delegate to ArticleDatabaseService
+        // This service handles all database operations, transactions, and error handling
+        const { ArticleDatabaseService } = await import("./article-db-service");
+        const dbService = new ArticleDatabaseService();
 
-        // When full ingestion is implemented, call:
-        // await this.invalidateMonthlySummaryCache();
+        // Convert the current analysis to preprocessed format that ArticleDatabaseService expects
+        const preprocessedInput: ArticleIngestionInput = {
+          type: "preprocessed",
+          preprocessedData: {
+            article: {
+              title: analysis.title,
+              summary: analysis.summary,
+              content: analysis.rewritten_content || content,
+              sourceUrl,
+              source: analysis.source,
+              tags: analysis.tags,
+              category: analysis.category,
+              importance_score: analysis.importance_score,
+              overall_sentiment: analysis.overall_sentiment,
+              tool_mentions: analysis.tool_mentions,
+              company_mentions: analysis.company_mentions,
+              published_date: analysis.published_date,
+            },
+            predictedChanges,
+            newTools,
+            newCompanies,
+          },
+          dryRun: false,
+          metadata: input.metadata,
+        };
 
-        throw new Error("Full ingestion not yet implemented");
+        // Let ArticleDatabaseService handle all database operations
+        const savedArticle = await dbService.ingestArticle(preprocessedInput);
+
+        // Invalidate monthly summary cache after successful save
+        await this.invalidateMonthlySummaryCache();
+
+        return savedArticle as Article;
       }
     } catch (error) {
       console.error("[ArticleIngestion] Error:", error);

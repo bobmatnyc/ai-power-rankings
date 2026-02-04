@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { TrendingUp, Loader2, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import ReactMarkdown from "react-markdown";
 import type { Locale } from "@/i18n/config";
 
 interface StateOfUnionProps {
@@ -38,52 +39,61 @@ const formatMonthName = (month: number): string => {
 };
 
 /**
- * Parse markdown content to JSX with link support
- * Simple parser for inline markdown links: [text](url)
+ * Strip the first H1 header from content to avoid duplication with card header
  */
-const parseMarkdownContent = (content: string): React.JSX.Element[] => {
-  const paragraphs = content.split("\n\n").filter((p) => p.trim());
+const stripFirstH1 = (content: string): string => {
+  return content.replace(/^#\s+[^\n]+\n+/, "");
+};
 
-  return paragraphs.map((paragraph, idx) => {
-    // Parse inline markdown links: [text](url)
-    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-    const parts: (string | React.JSX.Element)[] = [];
-    let lastIndex = 0;
-    let match;
-
-    while ((match = linkRegex.exec(paragraph)) !== null) {
-      // Add text before the link
-      if (match.index > lastIndex) {
-        parts.push(paragraph.substring(lastIndex, match.index));
-      }
-
-      // Add the link
-      parts.push(
-        <a
-          key={`link-${idx}-${match.index}`}
-          href={match[2]}
-          className="text-primary hover:underline"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {match[1]}
-        </a>
-      );
-
-      lastIndex = match.index + match[0].length;
-    }
-
-    // Add remaining text after last link
-    if (lastIndex < paragraph.length) {
-      parts.push(paragraph.substring(lastIndex));
-    }
-
-    return (
-      <p key={`paragraph-${idx}`}>
-        {parts.length > 0 ? parts : paragraph}
-      </p>
-    );
-  });
+/**
+ * Custom components for ReactMarkdown to apply Tailwind styling
+ */
+const markdownComponents = {
+  h1: ({ children }: { children?: React.ReactNode }) => (
+    <h1 className="text-2xl font-bold text-foreground mb-4">{children}</h1>
+  ),
+  h2: ({ children }: { children?: React.ReactNode }) => (
+    <h2 className="text-xl font-semibold text-foreground mt-6 mb-3">{children}</h2>
+  ),
+  h3: ({ children }: { children?: React.ReactNode }) => (
+    <h3 className="text-lg font-medium text-foreground mt-4 mb-2">{children}</h3>
+  ),
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <p className="text-muted-foreground mb-4 leading-relaxed">{children}</p>
+  ),
+  ul: ({ children }: { children?: React.ReactNode }) => (
+    <ul className="list-disc ml-6 space-y-3 my-4">{children}</ul>
+  ),
+  ol: ({ children }: { children?: React.ReactNode }) => (
+    <ol className="list-decimal ml-6 space-y-3 my-4">{children}</ol>
+  ),
+  li: ({ children }: { children?: React.ReactNode }) => (
+    <li className="text-muted-foreground">{children}</li>
+  ),
+  strong: ({ children }: { children?: React.ReactNode }) => (
+    <strong className="font-semibold text-foreground">{children}</strong>
+  ),
+  em: ({ children }: { children?: React.ReactNode }) => (
+    <em className="italic">{children}</em>
+  ),
+  a: ({ href, children }: { href?: string; children?: React.ReactNode }) => (
+    <a
+      href={href}
+      className="text-primary hover:underline"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {children}
+    </a>
+  ),
+  blockquote: ({ children }: { children?: React.ReactNode }) => (
+    <blockquote className="border-l-4 border-primary/30 pl-4 italic text-muted-foreground my-4">
+      {children}
+    </blockquote>
+  ),
+  code: ({ children }: { children?: React.ReactNode }) => (
+    <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono">{children}</code>
+  ),
 };
 
 export default function StateOfUnion({ lang }: StateOfUnionProps): React.JSX.Element {
@@ -187,8 +197,10 @@ export default function StateOfUnion({ lang }: StateOfUnionProps): React.JSX.Ele
         </h2>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4 text-muted-foreground">
-          {parseMarkdownContent(data.content)}
+        <div className="prose-container">
+          <ReactMarkdown components={markdownComponents}>
+            {stripFirstH1(data.content)}
+          </ReactMarkdown>
         </div>
       </CardContent>
     </Card>

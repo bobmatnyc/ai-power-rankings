@@ -30,6 +30,17 @@ export class WhatsNewSummaryService {
   }
 
   /**
+   * Parse period string (YYYY-MM) into month and year numbers
+   */
+  private parsePeriod(period: string): { month: number; year: number } {
+    const [yearStr, monthStr] = period.split("-");
+    return {
+      year: parseInt(yearStr, 10),
+      month: parseInt(monthStr, 10),
+    };
+  }
+
+  /**
    * Format aggregated data into LLM prompt
    */
   private formatDataForPrompt(data: MonthlyDataSources): string {
@@ -151,7 +162,8 @@ export class WhatsNewSummaryService {
         const generationTimeMs = Date.now() - startTime;
 
         // Check if data has changed
-        const aggregatedData = await this.aggregationService.getMonthlyData(targetPeriod);
+        const { month, year } = this.parsePeriod(targetPeriod);
+        const aggregatedData = await this.aggregationService.getMonthlyData(month, year);
         const currentHash = this.aggregationService.calculateDataHash(aggregatedData);
 
         if (currentHash === summary.dataHash) {
@@ -172,7 +184,8 @@ export class WhatsNewSummaryService {
     }
 
     // 2. Aggregate data from all sources
-    const aggregatedData = await this.aggregationService.getMonthlyData(targetPeriod);
+    const { month, year } = this.parsePeriod(targetPeriod);
+    const aggregatedData = await this.aggregationService.getMonthlyData(month, year);
     const dataHash = this.aggregationService.calculateDataHash(aggregatedData);
 
     // 3. Format data for LLM prompt

@@ -5,8 +5,9 @@
 
 import { createHash } from "crypto";
 import { getDb } from "@/lib/db/connection";
-import { news, rankings, tools } from "@/lib/db/schema";
-import { desc, gte, sql } from "drizzle-orm";
+import { articles } from "@/lib/db/article-schema";
+import { rankings, tools } from "@/lib/db/schema";
+import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { loggers } from "@/lib/logger";
 import * as fs from "fs/promises";
 import * as path from "path";
@@ -66,9 +67,19 @@ export class WhatsNewAggregationService {
   }
 
   /**
-   * Get date range for the last 30 days
+   * Get date range for filtering data
+   * If month/year provided, returns the first and last day of that calendar month
+   * Otherwise, returns a rolling 30-day window from now
    */
-  private getDateRange(): { startDate: Date; endDate: Date } {
+  private getDateRange(month?: number, year?: number): { startDate: Date; endDate: Date } {
+    if (month && year) {
+      // Filter by specific calendar month
+      const startDate = new Date(year, month - 1, 1); // First day of month
+      const endDate = new Date(year, month, 0, 23, 59, 59); // Last day of month
+      return { startDate, endDate };
+    }
+
+    // Default: rolling 30-day window
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 30);
@@ -167,15 +178,19 @@ export class WhatsNewAggregationService {
 
   /**
    * Aggregate all data sources for monthly summary
+   * @param month Optional month (1-12) to filter by specific calendar month
+   * @param year Optional year to filter by specific calendar month
    */
-  async getMonthlyData(period?: string): Promise<MonthlyDataSources> {
+  async getMonthlyData(month?: number, year?: number): Promise<MonthlyDataSources> {
     const db = getDb();
     if (!db) {
       throw new Error("Database connection not available");
     }
 
-    const targetPeriod = period || this.getCurrentPeriod();
-    const { startDate, endDate } = this.getDateRange();
+    const targetPeriod = month && year
+      ? `${year}-${String(month).padStart(2, "0")}`
+      : this.getCurrentPeriod();
+    const { startDate, endDate } = this.getDateRange(month, year);
 
     loggers.api.info(`Aggregating monthly data for period: ${targetPeriod}`, {
       startDate: startDate.toISOString(),
@@ -185,21 +200,27 @@ export class WhatsNewAggregationService {
     try {
       // Fetch all data sources in parallel
       const [newsArticles, rankingChanges, newTools, siteChanges] = await Promise.all([
-        // 1. News Articles (last 30 days, ordered by importance)
+        // 1. News Articles from ingested articles table (filtered by date range and status)
         db
           .select({
-            id: news.id,
-            title: news.title,
-            summary: news.summary,
-            publishedAt: news.publishedAt,
-            importanceScore: news.importanceScore,
-            toolMentions: news.toolMentions,
-            source: news.source,
-            sourceUrl: news.sourceUrl,
+            id: articles.id,
+            title: articles.title,
+            summary: articles.summary,
+            publishedAt: articles.publishedDate,
+            importanceScore: articles.importanceScore,
+            toolMentions: articles.toolMentions,
+            source: articles.sourceName,
+            sourceUrl: articles.sourceUrl,
           })
-          .from(news)
-          .where(gte(news.publishedAt, startDate))
-          .orderBy(desc(news.importanceScore), desc(news.publishedAt))
+          .from(articles)
+          .where(
+            and(
+              eq(articles.status, "active"),
+              gte(articles.publishedDate, startDate),
+              lte(articles.publishedDate, endDate)
+            )
+          )
+          .orderBy(desc(articles.importanceScore), desc(articles.publishedDate))
           .limit(50),
 
         // 2. Ranking Changes (last 30 days)
@@ -297,8 +318,8 @@ export class WhatsNewAggregationService {
   /**
    * Check if data has changed since last summary generation
    */
-  async hasDataChanged(period: string, previousHash: string): Promise<boolean> {
-    const currentData = await this.getMonthlyData(period);
+  async hasDataChanged(month: number, year: number, previousHash: string): Promise<boolean> {
+    const currentData = await this.getMonthlyData(month, year);
     const currentHash = this.calculateDataHash(currentData);
     return currentHash !== previousHash;
   }

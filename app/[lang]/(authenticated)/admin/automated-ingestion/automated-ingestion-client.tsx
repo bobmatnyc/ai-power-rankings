@@ -55,25 +55,23 @@ import {
   ExternalLink,
 } from "lucide-react";
 
-// Types for ingestion runs
-interface IngestionRunMetrics {
-  articlesDiscovered: number;
-  articlesPassed: number;
-  articlesIngested: number;
-  estimatedCostUsd: number;
-}
-
+// Types for ingestion runs (matches database schema)
 interface IngestionRun {
   id: string;
-  type: "daily_news" | "monthly_summary" | "manual";
+  runType: "daily_news" | "monthly_summary" | "manual";
   status: "running" | "completed" | "failed";
-  metrics: IngestionRunMetrics;
+  articlesDiscovered: number;
+  articlesPassedQuality: number;
+  articlesIngested: number;
+  articlesSkipped: number;
+  rankingChanges: number;
+  estimatedCostUsd: string | number;
   startedAt: string;
   completedAt?: string;
-  duration?: number;
-  error?: string;
   searchQuery?: string;
+  errorLog?: string[];
   ingestedArticleIds?: string[];
+  createdAt: string;
 }
 
 interface BraveSearchResult {
@@ -137,7 +135,7 @@ function truncateId(id: string): string {
 }
 
 // Run type display
-function RunTypeLabel({ type }: { type: IngestionRun["type"] }) {
+function RunTypeLabel({ type }: { type: IngestionRun["runType"] }) {
   switch (type) {
     case "daily_news":
       return (
@@ -207,7 +205,7 @@ export default function AutomatedIngestionClient() {
       }
 
       const data = await response.json();
-      setRuns(data.runs || []);
+      setRuns(data.data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {
@@ -235,7 +233,7 @@ export default function AutomatedIngestionClient() {
       }
 
       const data = await response.json();
-      setSelectedRun(data.run);
+      setSelectedRun(data.data || data.run);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load run details");
     } finally {
@@ -263,10 +261,11 @@ export default function AutomatedIngestionClient() {
       }
 
       const data = await response.json();
+      const result = data.data; // API returns { success: true, data: {...} }
       setTriggerSuccess(
         dryRun
-          ? `Dry run completed: ${data.metrics?.articlesDiscovered || 0} articles discovered`
-          : `Ingestion started: Run ID ${data.runId}`
+          ? `Dry run completed: ${result?.articlesDiscovered || 0} articles discovered, ${result?.articlesPassedQuality || 0} passed quality filter`
+          : `Ingestion completed: ${result?.articlesIngested || 0} articles ingested (Run ID: ${result?.runId?.substring(0, 8) || 'unknown'})`
       );
 
       // Refresh the list
@@ -470,31 +469,33 @@ export default function AutomatedIngestionClient() {
                       {truncateId(run.id)}
                     </TableCell>
                     <TableCell>
-                      <RunTypeLabel type={run.type} />
+                      <RunTypeLabel type={run.runType} />
                     </TableCell>
                     <TableCell>
                       <StatusBadge status={run.status} />
                     </TableCell>
                     <TableCell className="text-center">
-                      {run.metrics.articlesDiscovered}
+                      {run.articlesDiscovered ?? 0}
                     </TableCell>
                     <TableCell className="text-center">
-                      {run.metrics.articlesPassed}
+                      {run.articlesPassedQuality ?? 0}
                     </TableCell>
                     <TableCell className="text-center font-medium">
-                      {run.metrics.articlesIngested}
+                      {run.articlesIngested ?? 0}
                     </TableCell>
                     <TableCell className="text-right">
                       <span className="flex items-center justify-end gap-1">
                         <DollarSign className="h-3 w-3 text-muted-foreground" />
-                        {run.metrics.estimatedCostUsd.toFixed(3)}
+                        {Number(run.estimatedCostUsd || 0).toFixed(3)}
                       </span>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {formatDateTime(run.startedAt)}
+                      {run.startedAt ? formatDateTime(run.startedAt) : "-"}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {run.duration ? formatDuration(run.duration) : "-"}
+                      {run.completedAt && run.startedAt
+                        ? formatDuration(new Date(run.completedAt).getTime() - new Date(run.startedAt).getTime())
+                        : "-"}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -614,25 +615,25 @@ export default function AutomatedIngestionClient() {
                 <div className="p-3 bg-muted/50 rounded-lg">
                   <div className="text-xs text-muted-foreground">Discovered</div>
                   <div className="text-2xl font-semibold">
-                    {selectedRun.metrics.articlesDiscovered}
+                    {selectedRun.articlesDiscovered ?? 0}
                   </div>
                 </div>
                 <div className="p-3 bg-muted/50 rounded-lg">
                   <div className="text-xs text-muted-foreground">Passed Filter</div>
                   <div className="text-2xl font-semibold">
-                    {selectedRun.metrics.articlesPassed}
+                    {selectedRun.articlesPassedQuality ?? 0}
                   </div>
                 </div>
                 <div className="p-3 bg-muted/50 rounded-lg">
                   <div className="text-xs text-muted-foreground">Ingested</div>
                   <div className="text-2xl font-semibold text-primary">
-                    {selectedRun.metrics.articlesIngested}
+                    {selectedRun.articlesIngested ?? 0}
                   </div>
                 </div>
                 <div className="p-3 bg-muted/50 rounded-lg">
                   <div className="text-xs text-muted-foreground">Est. Cost</div>
                   <div className="text-2xl font-semibold">
-                    ${selectedRun.metrics.estimatedCostUsd.toFixed(3)}
+                    ${Number(selectedRun.estimatedCostUsd || 0).toFixed(3)}
                   </div>
                 </div>
               </div>
@@ -643,7 +644,7 @@ export default function AutomatedIngestionClient() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Started:</span>{" "}
-                    {formatDateTime(selectedRun.startedAt)}
+                    {selectedRun.startedAt ? formatDateTime(selectedRun.startedAt) : "-"}
                   </div>
                   {selectedRun.completedAt && (
                     <div>
@@ -651,10 +652,10 @@ export default function AutomatedIngestionClient() {
                       {formatDateTime(selectedRun.completedAt)}
                     </div>
                   )}
-                  {selectedRun.duration && (
+                  {selectedRun.completedAt && selectedRun.startedAt && (
                     <div>
                       <span className="text-muted-foreground">Duration:</span>{" "}
-                      {formatDuration(selectedRun.duration)}
+                      {formatDuration(new Date(selectedRun.completedAt).getTime() - new Date(selectedRun.startedAt).getTime())}
                     </div>
                   )}
                 </div>
@@ -671,14 +672,16 @@ export default function AutomatedIngestionClient() {
               )}
 
               {/* Error Log */}
-              {selectedRun.error && (
+              {selectedRun.errorLog && selectedRun.errorLog.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-semibold text-destructive">Error</h4>
+                  <h4 className="text-sm font-semibold text-destructive">Errors</h4>
                   <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
                       <pre className="text-xs whitespace-pre-wrap">
-                        {selectedRun.error}
+                        {Array.isArray(selectedRun.errorLog)
+                          ? selectedRun.errorLog.join("\n")
+                          : selectedRun.errorLog}
                       </pre>
                     </AlertDescription>
                   </Alert>
