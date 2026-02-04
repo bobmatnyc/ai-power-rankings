@@ -204,8 +204,9 @@ Example: "Here's what changed on AI Power Rankings in ${monthName} ${targetYear}
 
 **New Additions** (bullet list)
 List new tools added with one-line context on why they matter.
-Format each as: - **[Tool Name]** — Brief description of category/positioning. Why it earned inclusion.
+Format each as: - **Tool Name** — Brief description of category/positioning. Why it earned inclusion.
 Keep to 4-6 additions maximum. If more were added, group by category.
+IMPORTANT: Do NOT create links to /tools/ pages - just use bold text for tool names.
 
 **Ranking Movement** (optional section - only include if significant)
 Only include if movements are significant enough to warrant attention:
@@ -254,7 +255,7 @@ NEVER use these words/phrases:
 - Specific counts: "4 new tools" not "several additions"
 - Specific dates: "added ${monthName} 15" not "recently added"
 - Specific metrics: "200K context window" not "large context"
-- 2-4 links to aipowerranking.com tool pages and newsletter
+- Only link to newsletter (https://aipowerranking.com/newsletter) and main site (https://aipowerranking.com) - do NOT link to /tools/ pages
 - Valid markdown format
 
 Generate only the update content in markdown format.`;
@@ -263,7 +264,7 @@ Generate only the update content in markdown format.`;
 
 ${dataPrompt}
 
-Write the monthly update now (4-5 sections, 400-600 words, markdown format with inline links to aipowerranking.com):`;
+Write the monthly update now (4-5 sections, 400-600 words, markdown format - only link to newsletter and main site, NOT to /tools/ pages):`;
 
     try {
       const llmStartTime = Date.now();

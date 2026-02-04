@@ -1,16 +1,35 @@
 {
   "mcpServers": {
+    "tavily": {
+      "type": "sse",
+      "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=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"
+    },
     "kuzu-memory": {
       "type": "stdio",
-      "command": "/opt/homebrew/opt/python@3.13/bin/python3.13",
+      "command": "kuzu-memory",
       "args": [
-        "-m",
-        "kuzu_memory.integrations.mcp_server"
+        "mcp"
+      ]
+    },
+    "mcp-vector-search": {
+      "type": "stdio",
+      "command": "mcp-vector-search",
+      "args": [
+        "mcp"
       ],
       "env": {
-        "KUZU_MEMORY_PROJECT_ROOT": "/Users/masa/Projects/aipowerranking",
-        "KUZU_MEMORY_DB": "/Users/masa/Projects/aipowerranking/kuzu-memories"
+        "MCP_ENABLE_FILE_WATCHING": "true"
       }
+    },
+    "mcp-ticketer": {
+      "type": "stdio",
+      "command": "mcp-ticketer",
+      "args": [
+        "mcp",
+        "--path",
+        "/Users/masa/Projects/aipowerranking"
+      ],
+      "env": {}
     }
   }
 }
