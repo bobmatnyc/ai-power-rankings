@@ -183,59 +183,87 @@ export class StateOfAiSummaryService {
       }
     }
 
-    // 2. Aggregate data from last 4 weeks
-    const aggregatedData = await this.aggregationService.getMonthlyData();
+    // 2. Aggregate data for the target month
+    const aggregatedData = await this.aggregationService.getMonthlyData(targetMonth, targetYear);
 
     // 3. Format data for LLM prompt
     const dataPrompt = this.formatDataForPrompt(aggregatedData, targetMonth, targetYear);
 
-    // 4. Generate editorial using Claude Sonnet 4
-    const systemPrompt = `You are crafting the "State of AI" editorial for ${monthName} ${targetYear}.
+    // 4. Generate monthly update using Claude Sonnet 4
+    const systemPrompt = `You are writing the monthly "AI Power Rankings: ${monthName} ${targetYear} Update" for aipowerranking.com.
 
-Analyze the last 4 weeks of AI news, tool rankings, and developments from AI Power Rankings.
-Write a compelling 400-500 word editorial in 4 paragraphs:
+This is a brief monthly update announcing changes to the platform—new tools added, ranking shifts, methodology improvements, and notable market movements. This is NOT deep strategic analysis (save that for the weekly newsletter).
 
-1. **Opening: Major Theme** (100-125 words)
-   - Identify the single biggest trend or development of the month
-   - Set the editorial tone with a strong, opinionated opening
+## Output Structure (4-5 sections, 400-600 words total)
 
-2. **Key Developments** (100-125 words)
-   - Highlight 2-3 significant events, product launches, or funding announcements
-   - Include specific tool names, companies, and numbers where relevant
-   - Use inline markdown links: [tool name](url) or [article title](url)
+**Title:** AI Power Rankings: ${monthName} ${targetYear} Update
 
-3. **Market Shifts** (100-125 words)
-   - Analyze changes in tool rankings or competitive landscape
-   - Discuss new tools entering the market
-   - Identify winners and losers from the data
+**Opening** (2-3 sentences)
+State what this is and the time period covered. No throat-clearing.
+Example: "Here's what changed on AI Power Rankings in ${monthName} ${targetYear}. Four new tools, one methodology update, and a notable shift in the enterprise tier."
 
-4. **Forward Looking** (100-125 words)
-   - Explain what these developments mean for developers and the industry
-   - Make a bold prediction or observation about where things are heading
-   - End with actionable insight or thought-provoking question
+**New Additions** (bullet list)
+List new tools added with one-line context on why they matter.
+Format each as: - **[Tool Name]** — Brief description of category/positioning. Why it earned inclusion.
+Keep to 4-6 additions maximum. If more were added, group by category.
 
-Guidelines:
-- Tone: Bold, editorial, opinionated but grounded in data
-- Style: Journalist covering tech industry, not marketing copy
-- Format: Clean markdown with inline links to sources
-- Audience: AI professionals, developers, and industry observers
-- Length: Exactly 4 paragraphs, 400-500 words total
-- Links: Include at least 3-4 inline markdown links to relevant articles/tools
+**Ranking Movement** (optional section - only include if significant)
+Only include if movements are significant enough to warrant attention:
+- A tool moved 5+ positions
+- A major vendor entered or exited a tier
+- A methodology change caused systematic repositioning
+Format: "[Tool] moved from [position] to [position] following [specific reason]."
+If no significant movements, omit this section entirely.
 
-Do NOT:
-- Use generic platitudes or buzzwords
-- Write in first person ("we", "I")
-- Create lists or bullet points
-- Include a conclusion section or sign-off
-- Exceed 500 words
+**Methodology Update** (when applicable)
+Brief explanation of what changed and why it improves the rankings.
+Example: "Security weighting increased from 10% to 15% of total score following Q1 CVE disclosures."
+If no methodology changes, omit this section.
 
-Generate only the editorial content in markdown format.`;
+**What's Next** (1-2 sentences, optional)
+Preview of next month's focus areas. Creates continuity.
+Example: "February will add multi-agent orchestration tools as that category matures."
 
-    const userPrompt = `Based on this ${monthName} ${targetYear} data, write the State of AI editorial:
+**Closing** (always include)
+Attribution and pointer to the full newsletter:
+"For strategic analysis of what these developments mean for your organization, subscribe to the [AI Power Rankings newsletter](https://aipowerranking.com/newsletter). Full methodology and tool evaluations at [aipowerranking.com](https://aipowerranking.com)."
+
+## Voice and Tone
+
+- **Informational, not advisory**: Lead with what changed. Strategic implications are supporting context, not the main event.
+- **Efficient but warm**: Brief doesn't mean cold. Use first person where natural ("I added..." or "We updated...").
+- **Platform-proud without selling**: Let quality show without marketing language.
+- **Signal the work**: Each update should make clear that research and evaluation are ongoing.
+
+Good: "The rankings now cover 47 tools across 6 categories—the most comprehensive evaluation I'm aware of in this space."
+Avoid: "AI Power Rankings continues to be the definitive resource for..."
+
+## Prohibited Language (Death List)
+
+NEVER use these words/phrases:
+- "delve", "robust", "landscape" (except explicit competitive context)
+- "The AI coding tools market continues to evolve rapidly" (or similar filler)
+- Generic platitudes or buzzwords
+- Apologies for brevity or promises of deeper analysis later
+
+## Format Requirements
+
+- 400-600 words total (under 1,000 max)
+- 4-5 sections maximum with clear **bold headers**
+- Bullet lists for tool additions
+- Specific counts: "4 new tools" not "several additions"
+- Specific dates: "added ${monthName} 15" not "recently added"
+- Specific metrics: "200K context window" not "large context"
+- 2-4 links to aipowerranking.com tool pages and newsletter
+- Valid markdown format
+
+Generate only the update content in markdown format.`;
+
+    const userPrompt = `Based on this ${monthName} ${targetYear} data, write the AI Power Rankings monthly update:
 
 ${dataPrompt}
 
-Write the editorial now (4 paragraphs, 400-500 words, markdown format with inline links):`;
+Write the monthly update now (4-5 sections, 400-600 words, markdown format with inline links to aipowerranking.com):`;
 
     try {
       const llmStartTime = Date.now();

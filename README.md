@@ -1,7 +1,7 @@
 # AI Power Ranking
 
-**Version**: 0.1.3
-**Framework**: Next.js 14 (App Router)
+**Version**: 0.4.0
+**Framework**: Next.js 15 (App Router)
 **Status**: Production
 
 ---
@@ -113,6 +113,8 @@ aipowerranking/
 
 ### News & Analysis
 - AI industry news and updates
+- Automated AI news ingestion with Tavily search
+- Monthly "State of Agentic Coding" reports
 - Market insights and analysis
 - State of the Union reports
 - Expert commentary and perspectives
@@ -177,7 +179,7 @@ See [Test Documentation](tests/README.md) for detailed testing guides.
 
 **Developer**: Robert (Masa) Matsuoka
 **Project**: AI Power Ranking
-**Version**: 0.1.3
+**Version**: 0.4.0
 
 For issues and feature requests, please use the issue tracker.
 

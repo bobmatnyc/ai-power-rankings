@@ -19,12 +19,16 @@ import {
 } from "@/lib/db/schema";
 import { ArticleIngestionService } from "./article-ingestion.service";
 import { BraveSearchService, type BraveSearchResult } from "./brave-search.service";
+import { TavilySearchService, type TavilySearchResult } from "./tavily-search.service";
 import {
   ArticleQualityService,
   type QualityAssessment,
   type ArticleToAssess,
 } from "./article-quality.service";
 import { loggers } from "@/lib/logger";
+
+// Unified search result type
+type SearchResult = BraveSearchResult | TavilySearchResult;
 
 // Re-export types for consumers
 export type { IngestionRunType } from "@/lib/db/schema";
@@ -53,6 +57,7 @@ export interface DailyDiscoveryOptions {
   dryRun?: boolean;
   maxArticles?: number;
   qualityThreshold?: number;
+  skipQualityCheck?: boolean; // Skip LLM quality assessment for faster testing
 }
 
 /**
@@ -72,14 +77,44 @@ interface SearchResultWithContent {
  * Coordinates the daily news ingestion pipeline
  */
 export class AutomatedIngestionService {
-  private braveSearchService: BraveSearchService;
-  private articleQualityService: ArticleQualityService;
-  private articleIngestionService: ArticleIngestionService;
+  // Lazy-initialized service backing fields (null until first use)
+  private _tavilySearchService: TavilySearchService | null = null;
+  private _braveSearchService: BraveSearchService | null = null;
+  private _articleQualityService: ArticleQualityService | null = null;
+  private _articleIngestionService: ArticleIngestionService | null = null;
 
+  // Lazy getters - services are created on first use, not at import time
+  private get tavilySearchService(): TavilySearchService {
+    if (!this._tavilySearchService) {
+      this._tavilySearchService = new TavilySearchService();
+    }
+    return this._tavilySearchService;
+  }
+
+  private get braveSearchService(): BraveSearchService {
+    if (!this._braveSearchService) {
+      this._braveSearchService = new BraveSearchService();
+    }
+    return this._braveSearchService;
+  }
+
+  private get articleQualityService(): ArticleQualityService {
+    if (!this._articleQualityService) {
+      this._articleQualityService = new ArticleQualityService();
+    }
+    return this._articleQualityService;
+  }
+
+  private get articleIngestionService(): ArticleIngestionService {
+    if (!this._articleIngestionService) {
+      this._articleIngestionService = new ArticleIngestionService();
+    }
+    return this._articleIngestionService;
+  }
+
+  // Empty constructor - no eager initialization
   constructor() {
-    this.braveSearchService = new BraveSearchService();
-    this.articleQualityService = new ArticleQualityService();
-    this.articleIngestionService = new ArticleIngestionService();
+    // Services are lazily initialized via getters when first accessed
   }
 
   /**
@@ -159,9 +194,12 @@ export class AutomatedIngestionService {
         loggers.api.info("[AutomatedIngestion] Dry run mode - no database record created");
       }
 
-      // Check if Brave Search is available
-      if (!this.braveSearchService.isAvailable()) {
-        const errorMsg = "Brave Search API not configured - cannot discover articles";
+      // Check if search service is available (prefer Tavily, fallback to Brave)
+      const useTavily = this.tavilySearchService.isConfigured();
+      const useBrave = this.braveSearchService.isAvailable();
+
+      if (!useTavily && !useBrave) {
+        const errorMsg = "No search API configured (Tavily or Brave) - cannot discover articles";
         loggers.api.error("[AutomatedIngestion] " + errorMsg);
         errors.push(errorMsg);
 
@@ -186,11 +224,27 @@ export class AutomatedIngestionService {
         return result;
       }
 
-      // Step 2: Search for AI news articles using Brave Search
-      loggers.api.info("[AutomatedIngestion] Searching for AI news articles...");
-      const searchResults: BraveSearchResult[] = await this.braveSearchService.searchAINews("pd");
+      // Step 2: Search for AI news articles (Tavily preferred, Brave fallback)
+      loggers.api.info("[AutomatedIngestion] Searching for AI news articles...", {
+        searchEngine: useTavily ? "Tavily" : "Brave",
+      });
+
+      let searchResults: SearchResult[];
+      if (useTavily) {
+        searchResults = await this.tavilySearchService.searchAINews({
+          maxResults: 20,
+          searchDepth: "advanced",
+          topic: "news",
+        });
+      } else {
+        searchResults = await this.braveSearchService.searchAINews("pd");
+      }
+
       articlesDiscovered = searchResults.length;
-      loggers.api.info("[AutomatedIngestion] Discovered articles", { count: articlesDiscovered });
+      loggers.api.info("[AutomatedIngestion] Discovered articles", {
+        count: articlesDiscovered,
+        searchEngine: useTavily ? "Tavily" : "Brave",
+      });
 
       if (articlesDiscovered === 0) {
         loggers.api.info("[AutomatedIngestion] No articles discovered, completing run");
@@ -248,26 +302,44 @@ export class AutomatedIngestionService {
         return result;
       }
 
-      // Step 4: Fetch content and assess article quality
-      loggers.api.info("[AutomatedIngestion] Fetching article content for quality assessment...");
+      // Step 4: Prepare articles with content for quality assessment
+      // Tavily results already include content, so we can skip fetching for those
+      loggers.api.info("[AutomatedIngestion] Preparing article content for quality assessment...");
       const articlesWithContent: SearchResultWithContent[] = [];
 
       for (const article of newArticles.slice(0, maxArticles * 2)) {
-        const content = await this.fetchArticleContent(article.url);
-        if (content) {
+        // Check if article already has content (from Tavily)
+        const tavilyContent = (article as TavilySearchResult).content;
+
+        if (tavilyContent && tavilyContent.length > 100) {
+          // Use Tavily's pre-fetched content
           articlesWithContent.push({
             url: article.url,
             title: article.title,
             description: article.description,
             source: article.source,
             publishedDate: article.publishedDate,
-            content,
+            content: tavilyContent,
           });
+        } else {
+          // Fallback: fetch content for Brave Search results
+          const content = await this.fetchArticleContent(article.url);
+          if (content) {
+            articlesWithContent.push({
+              url: article.url,
+              title: article.title,
+              description: article.description,
+              source: article.source,
+              publishedDate: article.publishedDate,
+              content,
+            });
+          }
         }
       }
 
-      loggers.api.info("[AutomatedIngestion] Fetched content for articles", {
+      loggers.api.info("[AutomatedIngestion] Prepared content for articles", {
         count: articlesWithContent.length,
+        usedTavilyContent: useTavily,
       });
 
       if (articlesWithContent.length === 0) {
@@ -293,33 +365,45 @@ export class AutomatedIngestionService {
         return result;
       }
 
-      // Convert to ArticleToAssess format for quality service
-      const articlesToAssess: ArticleToAssess[] = articlesWithContent.map((a) => ({
-        title: a.title,
-        content: a.content,
-        source: a.source,
-        url: a.url,
-        publishedAt: a.publishedDate ? new Date(a.publishedDate) : undefined,
-      }));
+      // Step 5: Quality assessment (can be skipped for testing)
+      let passingArticles: SearchResultWithContent[];
 
-      loggers.api.info("[AutomatedIngestion] Assessing article quality...");
-      const qualityResults: QualityAssessment[] = await this.articleQualityService.batchAssess(
-        articlesToAssess
-      );
+      if (options.skipQualityCheck) {
+        // Skip LLM quality check - accept all articles (for testing)
+        loggers.api.info("[AutomatedIngestion] Skipping quality assessment (skipQualityCheck=true)");
+        passingArticles = articlesWithContent;
+        articlesPassedQuality = articlesWithContent.length;
+      } else {
+        // Convert to ArticleToAssess format for quality service
+        const articlesToAssess: ArticleToAssess[] = articlesWithContent.map((a) => ({
+          title: a.title,
+          content: a.content,
+          source: a.source,
+          url: a.url,
+          publishedAt: a.publishedDate ? new Date(a.publishedDate) : undefined,
+        }));
 
-      // Sum up quality assessment costs
-      estimatedCostUsd += qualityResults.reduce((sum, r) => sum + r.estimatedCost, 0);
+        loggers.api.info("[AutomatedIngestion] Assessing article quality...", {
+          articleCount: articlesToAssess.length,
+        });
+        const qualityResults: QualityAssessment[] = await this.articleQualityService.batchAssess(
+          articlesToAssess
+        );
 
-      // Filter to passing articles
-      const passingArticles = articlesWithContent.filter((_, index) => {
-        return qualityResults[index]?.shouldIngest === true;
-      });
-      articlesPassedQuality = passingArticles.length;
+        // Sum up quality assessment costs
+        estimatedCostUsd += qualityResults.reduce((sum, r) => sum + r.estimatedCost, 0);
 
-      loggers.api.info("[AutomatedIngestion] Quality assessment complete", {
-        passed: articlesPassedQuality,
-        rejected: articlesWithContent.length - articlesPassedQuality,
-      });
+        // Filter to passing articles
+        passingArticles = articlesWithContent.filter((_, index) => {
+          return qualityResults[index]?.shouldIngest === true;
+        });
+        articlesPassedQuality = passingArticles.length;
+
+        loggers.api.info("[AutomatedIngestion] Quality assessment complete", {
+          passed: articlesPassedQuality,
+          rejected: articlesWithContent.length - articlesPassedQuality,
+        });
+      }
 
       // Limit to maxArticles
       const articlesToIngest = passingArticles.slice(0, maxArticles);
@@ -621,5 +705,17 @@ export class AutomatedIngestionService {
   }
 }
 
-// Export singleton instance for convenience
-export const automatedIngestionService = new AutomatedIngestionService();
+// Singleton instance - lazily created on first access
+let _automatedIngestionServiceInstance: AutomatedIngestionService | null = null;
+
+/**
+ * Get or create AutomatedIngestionService singleton instance
+ * Uses lazy initialization to avoid build-time API key validation
+ * @returns Singleton AutomatedIngestionService instance
+ */
+export function getAutomatedIngestionService(): AutomatedIngestionService {
+  if (!_automatedIngestionServiceInstance) {
+    _automatedIngestionServiceInstance = new AutomatedIngestionService();
+  }
+  return _automatedIngestionServiceInstance;
+}

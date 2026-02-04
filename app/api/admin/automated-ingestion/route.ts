@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse request body
-    let body: { dryRun?: boolean } = {};
+    let body: { dryRun?: boolean; skipQualityCheck?: boolean; maxArticles?: number } = {};
     try {
       body = await request.json();
     } catch {
@@ -110,15 +110,23 @@ export async function POST(request: NextRequest) {
     }
 
     const dryRun = body.dryRun ?? false;
+    const skipQualityCheck = body.skipQualityCheck ?? false;
+    const maxArticles = body.maxArticles ?? 10;
 
     loggers.api.info("[AutomatedIngestion] Manual ingestion triggered", {
       userId,
       dryRun,
+      skipQualityCheck,
+      maxArticles,
     });
 
     // Use the AutomatedIngestionService to run daily discovery
     const ingestionService = new AutomatedIngestionService();
-    const result = await ingestionService.runDailyDiscovery({ dryRun });
+    const result = await ingestionService.runDailyDiscovery({
+      dryRun,
+      skipQualityCheck,
+      maxArticles,
+    });
 
     loggers.api.info("[AutomatedIngestion] Ingestion completed", {
       runId: result.runId,
