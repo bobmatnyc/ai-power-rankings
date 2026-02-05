@@ -368,7 +368,7 @@ export class AutomatedIngestionService {
       // Step 5: Quality assessment (can be skipped for testing)
       let passingArticles: SearchResultWithContent[];
 
-      if (options.skipQualityCheck) {
+      if (options?.skipQualityCheck) {
         // Skip LLM quality check - accept all articles (for testing)
         loggers.api.info("[AutomatedIngestion] Skipping quality assessment (skipQualityCheck=true)");
         passingArticles = articlesWithContent;
@@ -416,12 +416,18 @@ export class AutomatedIngestionService {
 
       for (const article of articlesToIngest) {
         try {
+          // Determine the search source used for this run
+          const searchSource = useTavily ? "tavily" : "brave_search";
+
           const ingestionResult = await this.articleIngestionService.ingestArticle({
             type: "url",
             input: article.url,
             dryRun: isDryRun,
             metadata: {
               publishedDate: article.publishedDate || undefined,
+              isAutoIngested: true,
+              ingestionRunId: runId,
+              discoverySource: searchSource,
             },
           });
 
