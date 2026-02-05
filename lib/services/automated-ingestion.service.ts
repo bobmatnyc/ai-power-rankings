@@ -9,7 +9,7 @@
  * 6. Updates run record with metrics
  */
 
-import { desc, eq, inArray } from "drizzle-orm";
+import { desc, eq, gte, inArray } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import {
   automatedIngestionRuns,
@@ -43,6 +43,7 @@ export interface IngestionResult {
   articlesPassedQuality: number;
   articlesIngested: number;
   articlesSkipped: number;
+  articlesSkippedSemantic: number;
   rankingChanges: number;
   estimatedCostUsd: number;
   errors: string[];
@@ -180,6 +181,7 @@ export class AutomatedIngestionService {
     let articlesPassedQuality = 0;
     let articlesIngested = 0;
     let articlesSkipped = 0;
+    let articlesSkippedSemantic = 0;
     let rankingChanges = 0;
     let estimatedCostUsd = 0;
     let runId = "";
@@ -210,6 +212,7 @@ export class AutomatedIngestionService {
           articlesPassedQuality: 0,
           articlesIngested: 0,
           articlesSkipped: 0,
+          articlesSkippedSemantic: 0,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors,
@@ -255,6 +258,7 @@ export class AutomatedIngestionService {
           articlesPassedQuality: 0,
           articlesIngested: 0,
           articlesSkipped: 0,
+          articlesSkippedSemantic: 0,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors: [],
@@ -269,14 +273,31 @@ export class AutomatedIngestionService {
         return result;
       }
 
-      // Step 3: Filter duplicates
+      // Step 3: Filter URL duplicates
       const urls = searchResults.map((r) => r.url);
       const existingUrls = await this.checkDuplicates(urls);
-      const newArticles = searchResults.filter((r) => !existingUrls.has(r.url));
-      articlesSkipped = searchResults.length - newArticles.length;
-      loggers.api.info("[AutomatedIngestion] Filtered duplicates", {
-        duplicates: articlesSkipped,
-        newArticles: newArticles.length,
+      const articlesWithoutUrlDuplicates = searchResults.filter((r) => !existingUrls.has(r.url));
+      const urlDuplicatesCount = searchResults.length - articlesWithoutUrlDuplicates.length;
+      loggers.api.info("[AutomatedIngestion] Filtered URL duplicates", {
+        duplicates: urlDuplicatesCount,
+        remaining: articlesWithoutUrlDuplicates.length,
+      });
+
+      // Step 3b: Filter semantic duplicates (same story, different source)
+      // "First wins" - keep only the first article per topic
+      const recentArticles = await this.getRecentArticleTitles(7); // Last 7 days
+      const newArticles = await this.filterSemanticDuplicates(
+        articlesWithoutUrlDuplicates,
+        recentArticles
+      );
+      articlesSkippedSemantic = articlesWithoutUrlDuplicates.length - newArticles.length;
+      articlesSkipped = urlDuplicatesCount + articlesSkippedSemantic;
+
+      loggers.api.info("[AutomatedIngestion] Filtered all duplicates", {
+        urlDuplicates: urlDuplicatesCount,
+        semanticDuplicates: articlesSkippedSemantic,
+        totalDuplicates: articlesSkipped,
+        remaining: newArticles.length,
       });
 
       if (newArticles.length === 0) {
@@ -288,6 +309,7 @@ export class AutomatedIngestionService {
           articlesPassedQuality: 0,
           articlesIngested: 0,
           articlesSkipped,
+          articlesSkippedSemantic,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors: [],
@@ -351,6 +373,7 @@ export class AutomatedIngestionService {
           articlesPassedQuality: 0,
           articlesIngested: 0,
           articlesSkipped: articlesSkipped + newArticles.length,
+          articlesSkippedSemantic,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors: ["Could not fetch content for any discovered articles"],
@@ -483,6 +506,7 @@ export class AutomatedIngestionService {
         articlesPassedQuality,
         articlesIngested,
         articlesSkipped,
+        articlesSkippedSemantic,
         rankingChanges,
         estimatedCostUsd,
         errors,
@@ -498,6 +522,7 @@ export class AutomatedIngestionService {
       loggers.api.info("[AutomatedIngestion] Daily discovery completed", {
         articlesIngested,
         articlesSkipped,
+        articlesSkippedSemantic,
         errors: errors.length,
         durationMs: result.durationMs,
       });
@@ -515,6 +540,7 @@ export class AutomatedIngestionService {
         articlesPassedQuality,
         articlesIngested,
         articlesSkipped,
+        articlesSkippedSemantic,
         rankingChanges,
         estimatedCostUsd,
         errors,
@@ -534,6 +560,211 @@ export class AutomatedIngestionService {
       }
 
       return result;
+    }
+  }
+
+  /**
+   * Normalize a title for similarity comparison
+   * - Lowercase
+   * - Remove punctuation
+   * - Remove common stop words
+   * - Trim and normalize whitespace
+   * - Extract key entities (companies, products)
+   */
+  private normalizeTitle(title: string): string {
+    const stopWords = new Set([
+      "the", "a", "an", "in", "on", "at", "to", "for", "of", "with", "by",
+      "is", "are", "was", "were", "be", "been", "being", "has", "have", "had",
+      "do", "does", "did", "will", "would", "should", "could", "may", "might",
+      "and", "or", "but", "if", "then", "than", "as", "from", "into", "about",
+    ]);
+
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s]/g, '') // Remove punctuation
+      .split(/\s+/)
+      .filter(word => word.length > 2 && !stopWords.has(word)) // Remove short words and stop words
+      .join(' ')
+      .trim();
+  }
+
+  /**
+   * Extract key semantic features from title (companies, products, topics)
+   * These are weighted more heavily in similarity calculation
+   */
+  private extractKeyFeatures(title: string): Set<string> {
+    const normalized = this.normalizeTitle(title);
+    const words = normalized.split(' ');
+
+    // Known entities that should be weighted heavily
+    const keyEntities = new Set([
+      'openai', 'anthropic', 'google', 'microsoft', 'apple', 'amazon', 'meta',
+      'claude', 'chatgpt', 'gemini', 'copilot', 'xcode', 'cursor', 'devin',
+      'github', 'agent', 'coding', 'assistant', 'model', 'release', 'launch',
+      'announces', 'unveils', 'funding', 'acquisition', 'partnership',
+    ]);
+
+    return new Set(words.filter(w => keyEntities.has(w)));
+  }
+
+  /**
+   * Calculate weighted similarity between two titles
+   * Uses both standard Jaccard and key feature matching
+   * Returns a value between 0 and 1, where 1 means identical
+   */
+  private calculateTitleSimilarity(title1: string, title2: string): number {
+    const normalized1 = this.normalizeTitle(title1);
+    const normalized2 = this.normalizeTitle(title2);
+
+    if (!normalized1 || !normalized2) {
+      return 0;
+    }
+
+    const words1 = new Set(normalized1.split(' '));
+    const words2 = new Set(normalized2.split(' '));
+
+    // Calculate standard Jaccard similarity
+    const intersection = new Set([...words1].filter(w => words2.has(w)));
+    const union = new Set([...words1, ...words2]);
+    const jaccardSimilarity = union.size > 0 ? intersection.size / union.size : 0;
+
+    // Extract key features (companies, products, topics)
+    const features1 = this.extractKeyFeatures(title1);
+    const features2 = this.extractKeyFeatures(title2);
+
+    // If both titles have key features, check overlap
+    if (features1.size > 0 && features2.size > 0) {
+      const featureIntersection = new Set([...features1].filter(f => features2.has(f)));
+      const featureUnion = new Set([...features1, ...features2]);
+      const featureSimilarity = featureUnion.size > 0 ? featureIntersection.size / featureUnion.size : 0;
+
+      // Weighted combination: 40% standard similarity + 60% feature similarity
+      // Features matter more for detecting same story
+      return jaccardSimilarity * 0.4 + featureSimilarity * 0.6;
+    }
+
+    // Fallback to standard Jaccard if no key features detected
+    return jaccardSimilarity;
+  }
+
+  /**
+   * Filter semantic duplicates using "first wins" approach
+   * Removes articles with similar titles to already-ingested articles or earlier articles in the batch
+   *
+   * @param articles - Articles to check for duplicates
+   * @param existingArticles - Recently published articles from DB (last 7 days)
+   * @returns Filtered list with semantic duplicates removed
+   */
+  private async filterSemanticDuplicates(
+    articles: SearchResult[],
+    existingArticles: { title: string }[]
+  ): Promise<SearchResult[]> {
+    const similarityThreshold = 0.35; // 35% weighted similarity triggers duplicate detection
+    // Note: Uses weighted algorithm (40% word overlap + 60% key feature overlap)
+    // A 35% threshold catches articles with matching key entities (apple+xcode+agent)
+    const uniqueArticles: SearchResult[] = [];
+    const seenTitles: string[] = [];
+
+    loggers.api.info("[AutomatedIngestion] Starting semantic duplicate detection", {
+      articleCount: articles.length,
+      existingArticleCount: existingArticles.length,
+      threshold: similarityThreshold,
+    });
+
+    // Build list of existing article titles for comparison
+    const existingTitles = existingArticles.map(a => a.title);
+
+    for (const article of articles) {
+      let isDuplicate = false;
+
+      // Check against existing DB articles
+      for (const existingTitle of existingTitles) {
+        const similarity = this.calculateTitleSimilarity(article.title, existingTitle);
+
+        if (similarity >= similarityThreshold) {
+          isDuplicate = true;
+          loggers.api.info("[AutomatedIngestion] Semantic duplicate detected (vs DB)", {
+            newTitle: article.title.substring(0, 80),
+            existingTitle: existingTitle.substring(0, 80),
+            similarity: similarity.toFixed(2),
+            url: article.url.substring(0, 100),
+          });
+          break;
+        }
+      }
+
+      // Check against earlier articles in current batch (first wins)
+      if (!isDuplicate) {
+        for (const seenTitle of seenTitles) {
+          const similarity = this.calculateTitleSimilarity(article.title, seenTitle);
+
+          if (similarity >= similarityThreshold) {
+            isDuplicate = true;
+            loggers.api.info("[AutomatedIngestion] Semantic duplicate detected (within batch)", {
+              newTitle: article.title.substring(0, 80),
+              firstTitle: seenTitle.substring(0, 80),
+              similarity: similarity.toFixed(2),
+              url: article.url.substring(0, 100),
+            });
+            break;
+          }
+        }
+      }
+
+      if (!isDuplicate) {
+        uniqueArticles.push(article);
+        seenTitles.push(article.title);
+      }
+    }
+
+    const removedCount = articles.length - uniqueArticles.length;
+    loggers.api.info("[AutomatedIngestion] Semantic duplicate detection complete", {
+      originalCount: articles.length,
+      uniqueCount: uniqueArticles.length,
+      duplicatesRemoved: removedCount,
+    });
+
+    return uniqueArticles;
+  }
+
+  /**
+   * Get recent article titles from the database for semantic duplicate detection
+   * @param daysBack - Number of days to look back (default: 7)
+   * @returns Array of article titles
+   */
+  async getRecentArticleTitles(daysBack: number = 7): Promise<{ title: string }[]> {
+    const db = getDb();
+    if (!db) {
+      loggers.api.warn("[AutomatedIngestion] Database not available, no recent articles for comparison");
+      return [];
+    }
+
+    try {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - daysBack);
+
+      loggers.api.info("[AutomatedIngestion] Fetching recent article titles", {
+        daysBack,
+        cutoffDate: cutoffDate.toISOString(),
+      });
+
+      // Query articles published in the last N days
+      const recentArticles = await db
+        .select({ title: articles.title })
+        .from(articles)
+        .where(gte(articles.publishedDate, cutoffDate))
+        .orderBy(desc(articles.publishedDate));
+
+      loggers.api.info("[AutomatedIngestion] Fetched recent articles", {
+        count: recentArticles.length,
+      });
+
+      return recentArticles.filter((a): a is { title: string } => a.title !== null);
+    } catch (error) {
+      loggers.api.error("[AutomatedIngestion] Error fetching recent articles", {
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      return [];
     }
   }
 
