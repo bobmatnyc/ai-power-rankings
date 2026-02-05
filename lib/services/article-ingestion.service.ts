@@ -519,12 +519,12 @@ Focus on:
 3. Identifying companies behind the tools
 4. Predicting potential ranking impacts based on the news
 5. Extracting key insights and trends
-6. Creating COMPREHENSIVE content:
-   - Summary: **750-1000 words** - This is the MAIN content readers will see. Must be comprehensive with clear introduction, body, and conclusion
-   - Rewritten content: Approximately 1500 words (7500-9000 characters) - Optional extended version for archival/reference
-   - Include detailed analysis, context, and implications
+6. Creating CONCISE content:
+   - Summary: **400-500 words** - This is the MAIN content readers will see. Must be concise with clear introduction, body, and conclusion
+   - Rewritten content: Approximately 800-1000 words - Optional extended version for archival/reference
+   - Include key analysis and context (be concise, not verbose)
    - Preserve ALL important links from the source article at the end
-   - Be thorough and informative - provide value to readers
+   - Be focused and informative - provide value without padding
    - CRITICAL: Never truncate mid-sentence. Always complete your thoughts and end with proper conclusion
 
 Be thorough and precise. Extract the exact tool names as mentioned, we'll handle normalization.
@@ -550,8 +550,8 @@ ${metadata?.fileName ? `File: ${metadata.fileName}` : ""}${linksContext}
 Return a detailed JSON analysis with this structure:
 {
   "title": "Article title",
-  "summary": "A comprehensive 750-1000 word summary that serves as the main article content. This should:\n- Have a clear introduction that hooks the reader\n- Cover ALL key points from the source in detail\n- Provide context and analysis\n- Include specific examples and data points\n- End with a strong conclusion\n- Maintain logical flow throughout\n- Be self-contained and informative",
-  "rewritten_content": "Optional extended version of approximately 1500 words (7500-9000 characters) with additional details and supplementary information that:\n- Covers ALL important points from the source in depth\n- Provides detailed context and analysis\n- Explains implications for the AI industry\n- Maintains journalistic quality\n- Includes important source links at the end in markdown format:\n\n**Related Links:**\n- [Link Title](url)\n- [Another Link](url)",
+  "summary": "A concise 400-500 word summary that serves as the main article content. This should:\n- Have a clear introduction that hooks the reader\n- Cover the key points from the source concisely\n- Provide essential context and analysis\n- Include the most important examples and data points\n- End with a strong conclusion\n- Maintain logical flow throughout\n- Be self-contained and informative",
+  "rewritten_content": "Optional extended version of approximately 800-1000 words with additional details that:\n- Covers important points from the source in more depth\n- Provides additional context and analysis\n- Explains implications for the AI industry\n- Maintains journalistic quality\n- Includes important source links at the end in markdown format:\n\n**Related Links:**\n- [Link Title](url)\n- [Another Link](url)",
   "source": "Publication or domain",
   "url": "Source URL if available",
   "published_date": "YYYY-MM-DD format",
@@ -586,13 +586,13 @@ Return a detailed JSON analysis with this structure:
 }
 
 CRITICAL REQUIREMENTS:
-- "summary" field: **750-1000 words** - This is the MAIN article content. Must have clear beginning, middle, and end with logical flow
-- "rewritten_content" field: Approximately 1500 words (7500-9000 characters) - Optional extended archival version
+- "summary" field: **400-500 words** - This is the MAIN article content. Must be CONCISE with clear beginning, middle, and end
+- "rewritten_content" field: Approximately 800-1000 words - Optional extended archival version
 - ALL important links from the source MUST be preserved in markdown format at the end of rewritten_content
-- Provide in-depth analysis and context
+- Be concise but informative - no padding or filler content
 - Write in a professional, journalistic style
 - CRITICAL: Never truncate mid-sentence. Always complete your thoughts and end with proper conclusion
-- Ensure the summary field is 750-1000 words with logical flow from start to finish
+- Ensure the summary field is 400-500 words with logical flow from start to finish
 
 Return ONLY the JSON object above with actual data. No additional text or explanation.`;
 
@@ -616,7 +616,7 @@ Return ONLY the JSON object above with actual data. No additional text or explan
             { role: "user", content: userPrompt },
           ],
           temperature: 0.2, // Lower temperature for more consistent, focused analysis with Claude 4
-          max_tokens: 32000, // Increased to 32k to accommodate 750-1000 word summaries (~5000-7000 chars) plus 1500-word rewritten content (~7500-9000 chars) plus metadata. Claude 4 supports up to 200k tokens, so 32k is safe.
+          max_tokens: 16000, // 16k to accommodate 400-500 word summaries (~2500-3500 chars) plus 800-1000 word rewritten content (~5000-6000 chars) plus metadata.
         }),
       });
 
