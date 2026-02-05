@@ -288,6 +288,10 @@ export class ArticleDatabaseService {
           ingestedBy: "admin",
           status: "active",
           isProcessed: false,
+          // Automated ingestion metadata
+          isAutoIngested: input.metadata?.isAutoIngested ?? false,
+          ingestionRunId: input.metadata?.ingestionRunId ?? null,
+          discoverySource: input.metadata?.discoverySource ?? "manual",
         };
 
         console.log("[ArticleDB] Prepared article for database insert:", {

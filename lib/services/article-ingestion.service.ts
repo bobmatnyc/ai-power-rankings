@@ -24,6 +24,9 @@ export const ArticleIngestionSchema = z
         publishedDate: z.string().optional(),
         category: z.string().optional(),
         tags: z.array(z.string()).optional(),
+        isAutoIngested: z.boolean().optional(),
+        ingestionRunId: z.string().optional(),
+        discoverySource: z.string().optional(),
       })
       .optional(),
   })
