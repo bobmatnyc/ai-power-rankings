@@ -275,6 +275,7 @@ export const automatedIngestionRuns = pgTable(
     articlesPassedQuality: integer("articles_passed_quality").default(0),
     articlesIngested: integer("articles_ingested").default(0),
     articlesSkipped: integer("articles_skipped").default(0),
+    articlesSkippedSemantic: integer("articles_skipped_semantic").default(0),
     rankingChanges: integer("ranking_changes").default(0),
 
     // Timing and details

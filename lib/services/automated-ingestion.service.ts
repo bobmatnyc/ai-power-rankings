@@ -824,6 +824,7 @@ export class AutomatedIngestionService {
         articlesPassedQuality: 0,
         articlesIngested: 0,
         articlesSkipped: 0,
+        articlesSkippedSemantic: 0,
         rankingChanges: 0,
         startedAt: new Date(),
         errorLog: [],
@@ -869,6 +870,9 @@ export class AutomatedIngestionService {
       }
       if (updates.articlesSkipped !== undefined) {
         updateData.articlesSkipped = updates.articlesSkipped;
+      }
+      if (updates.articlesSkippedSemantic !== undefined) {
+        updateData.articlesSkippedSemantic = updates.articlesSkippedSemantic;
       }
       if (updates.rankingChanges !== undefined) {
         updateData.rankingChanges = updates.rankingChanges;
