@@ -136,6 +136,28 @@ export class WhatsNewSummaryService {
   }
 
   /**
+   * Fast-path: Get cached summary without hash validation
+   * Returns cached summary instantly if it exists, null otherwise
+   * Use this for quick reads where stale data is acceptable
+   */
+  async getCachedSummary(period?: string): Promise<MonthlySummary | null> {
+    const db = getDb();
+    if (!db) {
+      throw new Error("Database connection not available");
+    }
+
+    const targetPeriod = period || new Date().toISOString().slice(0, 7);
+
+    const existing = await db
+      .select()
+      .from(monthlySummaries)
+      .where(eq(monthlySummaries.period, targetPeriod))
+      .limit(1);
+
+    return existing.length > 0 ? existing[0] : null;
+  }
+
+  /**
    * Generate monthly summary using Claude Sonnet 4.5
    */
   async generateMonthlySummary(period?: string, forceRegenerate = false): Promise<SummaryGenerationResult> {

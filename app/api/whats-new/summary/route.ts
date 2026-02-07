@@ -10,9 +10,17 @@ import { cachedJsonResponse } from "@/lib/api-cache";
 import { WhatsNewSummaryService } from "@/lib/services/whats-new-summary.service";
 import { loggers } from "@/lib/logger";
 
+// Runtime configuration for Vercel
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 60; // Allow 60 seconds for LLM regeneration
+
 /**
  * GET /api/whats-new/summary
  * Retrieve monthly summary (cached or generate)
+ *
+ * Fast-path: Returns cached summary instantly without hash validation
+ * Full generation only runs if no cache exists
  */
 export async function GET(request: NextRequest) {
   try {
@@ -22,6 +30,36 @@ export async function GET(request: NextRequest) {
     loggers.api.info("Fetching monthly summary", { period: period || "current" });
 
     const summaryService = new WhatsNewSummaryService();
+
+    // Fast-path: Try to get cached summary first (no hash validation)
+    const cachedSummary = await summaryService.getCachedSummary(period);
+
+    if (cachedSummary) {
+      loggers.api.info("Returning cached summary (fast-path)", {
+        period: cachedSummary.period,
+        generatedAt: cachedSummary.generatedAt
+      });
+
+      return cachedJsonResponse(
+        {
+          summary: {
+            period: cachedSummary.period,
+            content: cachedSummary.content,
+            generatedAt: cachedSummary.generatedAt,
+            metadata: cachedSummary.metadata,
+          },
+          isNew: false,
+          generationTimeMs: 0,
+          _timestamp: new Date().toISOString(),
+          _cached: true,
+        },
+        `/api/whats-new/summary?period=${period || "current"}`,
+        300 // Cache for 5 minutes
+      );
+    }
+
+    // No cache exists - run full generation
+    loggers.api.info("No cached summary found, generating new", { period: period || "current" });
     const result = await summaryService.generateMonthlySummary(period, false);
 
     return cachedJsonResponse(
