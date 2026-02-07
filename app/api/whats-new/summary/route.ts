@@ -54,7 +54,8 @@ export async function GET(request: NextRequest) {
           _cached: true,
         },
         `/api/whats-new/summary?period=${period || "current"}`,
-        300 // Cache for 5 minutes
+        200, // HTTP status code
+        { maxAge: 300, sMaxAge: 300 } // Cache for 5 minutes
       );
     }
 
@@ -75,7 +76,8 @@ export async function GET(request: NextRequest) {
         _timestamp: new Date().toISOString(),
       },
       `/api/whats-new/summary?period=${period || "current"}`,
-      result.isNew ? 3600 : 300 // Cache for 1 hour if new, 5 minutes if cached
+      200, // HTTP status code
+      { maxAge: result.isNew ? 3600 : 300, sMaxAge: result.isNew ? 3600 : 300 } // Cache for 1 hour if new, 5 minutes if cached
     );
   } catch (error) {
     loggers.api.error("Monthly summary API error", {
