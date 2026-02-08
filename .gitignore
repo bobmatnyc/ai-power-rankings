@@ -188,3 +188,4 @@ venv/
 virtualenv/
 wheels/
 .mcp-ticketer/
+.env*.local

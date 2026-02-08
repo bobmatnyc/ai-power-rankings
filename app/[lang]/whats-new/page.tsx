@@ -1,6 +1,8 @@
 import { Calendar, FileText } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface MonthlySummary {
   period: string;
@@ -91,17 +93,11 @@ export default async function WhatsNewPage() {
       <Separator />
 
       {/* Summary Content */}
-      <div
-        className="prose prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-a:text-primary hover:prose-a:underline prose-p:leading-relaxed prose-li:my-1"
-        dangerouslySetInnerHTML={{
-          __html: summary.content
-            .replace(/\n\n/g, '</p><p>')
-            .replace(/\n/g, '<br/>')
-            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-            .replace(/^(.+)$/, '<p>$1</p>'),
-        }}
-      />
+      <div className="prose prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-a:text-primary hover:prose-a:underline prose-p:leading-relaxed prose-li:my-1">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {summary.content}
+        </ReactMarkdown>
+      </div>
 
       {/* Statistics */}
       {summary.metadata && (
