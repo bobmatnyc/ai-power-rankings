@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { DeferredAnalytics } from "@/components/analytics/deferred-analytics";
 import {
   generateOrganizationSchema,
@@ -110,6 +111,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased" suppressHydrationWarning>
         {children}
+        <SpeedInsights />
         <DeferredAnalytics />
       </body>
     </html>
