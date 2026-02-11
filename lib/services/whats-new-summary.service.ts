@@ -55,7 +55,7 @@ export class WhatsNewSummaryService {
           prompt += `   Summary: ${article.summary}\n`;
         }
         prompt += `   Importance: ${article.importanceScore || 0}/10\n`;
-        prompt += `   Published: ${new Date(article.publishedAt).toLocaleDateString()}\n`;
+        prompt += `   Published: ${article.publishedAt ? new Date(article.publishedAt).toLocaleDateString() : 'Unknown'}\n`;
         if (article.source) {
           prompt += `   Source: ${article.source}\n`;
         }

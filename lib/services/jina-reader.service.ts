@@ -26,6 +26,7 @@ export interface JinaReaderMetadata {
 export interface JinaReaderResponse {
   content: string;
   metadata: JinaReaderMetadata;
+  isPartialContent?: boolean; // Flag for when we had to use fallback content
 }
 
 export interface JinaReaderError {
@@ -55,15 +56,16 @@ export class JinaReaderService {
    * Fetch article content and metadata from a URL
    *
    * @param url - The URL to fetch content from
+   * @param retryCount - Internal retry counter (default: 0)
    * @returns Promise resolving to content and metadata
    * @throws Error if fetch fails or API returns error
    */
-  async fetchArticle(url: string): Promise<JinaReaderResponse> {
+  async fetchArticle(url: string, retryCount = 0): Promise<JinaReaderResponse> {
     if (!this.apiKey) {
       throw new Error("Jina.ai API key is not configured");
     }
 
-    console.log("[JinaReader] Fetching article from:", url);
+    console.log("[JinaReader] Fetching article from:", url, retryCount > 0 ? `(retry ${retryCount})` : "");
 
     try {
       // Construct Jina Reader URL
@@ -85,6 +87,24 @@ export class JinaReaderService {
         });
 
         clearTimeout(timeoutId);
+
+        // Handle 401/403 errors with retry logic
+        if (response.status === 401 || response.status === 403) {
+          const errorText = await response.text();
+          console.error(`[JinaReader] API blocked (${response.status}):`, errorText);
+
+          // Retry up to 2 times with exponential backoff
+          if (retryCount < 2) {
+            const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s
+            console.log(`[JinaReader] Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return this.fetchArticle(url, retryCount + 1);
+          }
+
+          throw new Error(
+            `Jina.ai blocked by source (${response.status}): ${response.statusText}`
+          );
+        }
 
         if (!response.ok) {
           const errorText = await response.text();

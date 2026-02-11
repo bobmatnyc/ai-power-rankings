@@ -25,6 +25,9 @@ import {
   type QualityAssessment,
   type ArticleToAssess,
 } from "./article-quality.service";
+import { jinaReaderService } from "./jina-reader.service";
+import { tavilyExtractService } from "./tavily-extract.service";
+import { isDomainBlocked, addBlockedDomain } from "./blocked-domains.config";
 import { loggers } from "@/lib/logger";
 
 // Unified search result type
@@ -120,10 +123,78 @@ export class AutomatedIngestionService {
 
   /**
    * Fetch article content from URL for quality assessment
-   * Returns null if content cannot be fetched
+   * Extraction chain: Tavily Extract → Jina Reader → Basic HTML fetch
+   * Returns null if all methods fail (graceful degradation)
    */
-  private async fetchArticleContent(url: string): Promise<string | null> {
+  private async fetchArticleContent(
+    url: string,
+    extractionStats?: { tavilySuccess: number; jinaSuccess: number; basicSuccess: number; allFailed: number }
+  ): Promise<string | null> {
+    // Method 1: Try Tavily Extract first (optimized for news content)
+    if (tavilyExtractService.isAvailable()) {
+      try {
+        loggers.api.info("[AutomatedIngestion] Attempting Tavily Extract for:", {
+          url: url.substring(0, 100),
+        });
+
+        const content = await tavilyExtractService.extractContent(url, {
+          extract_depth: 'basic',
+          format: 'markdown',
+          timeout: 10,
+          chunks_per_source: 5,
+        });
+
+        if (content && content.length > 100) {
+          loggers.api.info("[AutomatedIngestion] Tavily Extract success", {
+            url: url.substring(0, 100),
+            contentLength: content.length,
+            method: "tavily_extract",
+          });
+          if (extractionStats) extractionStats.tavilySuccess++;
+          return content;
+        }
+      } catch (error) {
+        loggers.api.warn("[AutomatedIngestion] Tavily Extract failed, trying Jina Reader", {
+          url: url.substring(0, 100),
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+        // Fall through to Jina Reader
+      }
+    }
+
+    // Method 2: Try Jina Reader as second fallback
+    if (jinaReaderService.isAvailable()) {
+      try {
+        loggers.api.info("[AutomatedIngestion] Attempting Jina Reader for:", {
+          url: url.substring(0, 100),
+        });
+
+        const result = await jinaReaderService.fetchArticle(url);
+
+        if (result.content && result.content.length > 100) {
+          loggers.api.info("[AutomatedIngestion] Jina Reader success", {
+            url: url.substring(0, 100),
+            contentLength: result.content.length,
+            method: "jina_reader",
+          });
+          if (extractionStats) extractionStats.jinaSuccess++;
+          return result.content;
+        }
+      } catch (error) {
+        loggers.api.warn("[AutomatedIngestion] Jina Reader failed, trying basic HTML fetch", {
+          url: url.substring(0, 100),
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+        // Fall through to basic fetch
+      }
+    }
+
+    // Method 3: Fallback to basic HTML fetch
     try {
+      loggers.api.info("[AutomatedIngestion] Using basic HTML fetch for:", {
+        url: url.substring(0, 100),
+      });
+
       const response = await fetch(url, {
         headers: {
           "User-Agent": "Mozilla/5.0 (compatible; AINewsBot/1.0)",
@@ -136,13 +207,13 @@ export class AutomatedIngestionService {
           url: url.substring(0, 100),
           status: response.status,
         });
+        if (extractionStats) extractionStats.allFailed++;
         return null;
       }
 
       const html = await response.text();
 
       // Basic content extraction - strip HTML tags and get text
-      // In production, consider using a proper HTML parser like cheerio
       const textContent = html
         .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
         .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
@@ -151,12 +222,25 @@ export class AutomatedIngestionService {
         .trim()
         .substring(0, 8000); // Limit content length
 
-      return textContent || null;
+      if (textContent && textContent.length > 100) {
+        loggers.api.info("[AutomatedIngestion] Basic HTML fetch success", {
+          url: url.substring(0, 100),
+          contentLength: textContent.length,
+          method: "basic_html",
+        });
+        if (extractionStats) extractionStats.basicSuccess++;
+        return textContent;
+      }
+
+      if (extractionStats) extractionStats.allFailed++;
+      return null;
     } catch (error) {
-      loggers.api.warn("[AutomatedIngestion] Error fetching article content", {
+      loggers.api.warn("[AutomatedIngestion] All extraction methods failed", {
         url: url.substring(0, 100),
         error: error instanceof Error ? error.message : "Unknown error",
+        method: "all_failed",
       });
+      if (extractionStats) extractionStats.allFailed++;
       return null;
     }
   }
@@ -328,13 +412,34 @@ export class AutomatedIngestionService {
       // Tavily results already include content, so we can skip fetching for those
       loggers.api.info("[AutomatedIngestion] Preparing article content for quality assessment...");
       const articlesWithContent: SearchResultWithContent[] = [];
+      const failedFetches: Array<{ url: string; reason: string }> = [];
+
+      // Track extraction method statistics
+      const extractionStats = {
+        tavilySuccess: 0,
+        jinaSuccess: 0,
+        basicSuccess: 0,
+        allFailed: 0,
+        usedTavilySearchContent: 0,
+      };
 
       for (const article of newArticles.slice(0, maxArticles * 2)) {
-        // Check if article already has content (from Tavily)
+        // Check if domain is known to block scrapers
+        if (isDomainBlocked(article.url)) {
+          loggers.api.warn("[AutomatedIngestion] Skipping blocked domain:", {
+            url: article.url.substring(0, 100),
+            source: article.source,
+          });
+          failedFetches.push({ url: article.url, reason: "blocked_domain" });
+          continue;
+        }
+
+        // Check if article already has content (from Tavily Search)
         const tavilyContent = (article as TavilySearchResult).content;
 
         if (tavilyContent && tavilyContent.length > 100) {
-          // Use Tavily's pre-fetched content
+          // Use Tavily's pre-fetched content from search results
+          extractionStats.usedTavilySearchContent++;
           articlesWithContent.push({
             url: article.url,
             title: article.title,
@@ -344,24 +449,67 @@ export class AutomatedIngestionService {
             content: tavilyContent,
           });
         } else {
-          // Fallback: fetch content for Brave Search results
-          const content = await this.fetchArticleContent(article.url);
-          if (content) {
-            articlesWithContent.push({
-              url: article.url,
-              title: article.title,
-              description: article.description,
-              source: article.source,
-              publishedDate: article.publishedDate,
-              content,
+          // Fallback: fetch content using extraction chain (Tavily Extract → Jina Reader → Basic HTML)
+          // Individual failures are gracefully handled and logged, never blocking the batch
+          try {
+            const content = await this.fetchArticleContent(article.url, extractionStats);
+            if (content) {
+              articlesWithContent.push({
+                url: article.url,
+                title: article.title,
+                description: article.description,
+                source: article.source,
+                publishedDate: article.publishedDate,
+                content,
+              });
+            } else {
+              // Content extraction returned null - all methods failed gracefully
+              failedFetches.push({ url: article.url, reason: "all_extraction_methods_failed" });
+            }
+          } catch (error) {
+            // This catch should rarely be hit since fetchArticleContent handles errors gracefully
+            const errorMsg = error instanceof Error ? error.message : "Unknown error";
+            loggers.api.warn("[AutomatedIngestion] Unexpected error during content fetch (not blocking batch)", {
+              url: article.url.substring(0, 100),
+              error: errorMsg,
             });
+
+            // If error mentions 401/403/blocked, add domain to blocked list
+            if (errorMsg.includes("401") || errorMsg.includes("403") || errorMsg.toLowerCase().includes("blocked")) {
+              try {
+                const urlObj = new URL(article.url);
+                const domain = urlObj.hostname.replace(/^www\./, "");
+                addBlockedDomain(domain);
+                loggers.api.warn("[AutomatedIngestion] Auto-blocked domain:", { domain });
+              } catch {
+                // Ignore URL parsing errors
+              }
+            }
+
+            failedFetches.push({ url: article.url, reason: errorMsg.substring(0, 100) });
+            // Continue to next article - don't let one failure stop the batch
           }
         }
       }
 
+      // Log failed fetches for monitoring
+      if (failedFetches.length > 0) {
+        loggers.api.warn("[AutomatedIngestion] Failed to fetch some articles", {
+          count: failedFetches.length,
+          samples: failedFetches.slice(0, 3),
+        });
+      }
+
+      // Log extraction statistics
       loggers.api.info("[AutomatedIngestion] Prepared content for articles", {
         count: articlesWithContent.length,
-        usedTavilyContent: useTavily,
+        extractionStats: {
+          tavilySearchContent: extractionStats.usedTavilySearchContent,
+          tavilyExtract: extractionStats.tavilySuccess,
+          jinaReader: extractionStats.jinaSuccess,
+          basicHtml: extractionStats.basicSuccess,
+          allFailed: extractionStats.allFailed,
+        },
       });
 
       if (articlesWithContent.length === 0) {
