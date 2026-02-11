@@ -17,7 +17,7 @@ export interface MonthlyDataSources {
     id: string;
     title: string;
     summary: string | null;
-    publishedAt: Date;
+    publishedAt: Date | null;
     importanceScore: number | null;
     toolMentions: any;
     source: string | null;

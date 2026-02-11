@@ -8,6 +8,7 @@ import type { Article, DryRunResult } from "@/lib/db/article-schema";
 import type { Ranking } from "@/lib/db/schema";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { WhatsNewSummaryService } from "./whats-new-summary.service";
+import { jinaReaderService } from "./jina-reader.service";
 
 // Validation schemas
 export const ArticleIngestionSchema = z
@@ -290,12 +291,41 @@ export class ToolMapper {
 export class ContentExtractor {
   /**
    * Extract content from URL
+   * Uses Jina Reader API with fallback to basic HTML fetch
    */
   async extractFromUrl(url: string): Promise<{ content: string; links: Array<{ href: string; text: string }> }> {
     console.log(`[ContentExtractor] Fetching content from URL: ${url}`);
 
+    // Try Jina Reader first if available
+    if (jinaReaderService.isAvailable()) {
+      try {
+        console.log("[ContentExtractor] Attempting Jina Reader API");
+        const result = await jinaReaderService.fetchArticle(url);
+
+        if (result.content && result.content.length > 100) {
+          console.log("[ContentExtractor] Jina Reader success:", {
+            contentLength: result.content.length,
+            title: result.metadata.title,
+          });
+
+          // Jina returns markdown content without HTML, so no links to extract
+          return {
+            content: result.content.substring(0, 15000),
+            links: [],
+          };
+        }
+      } catch (error) {
+        console.warn(
+          "[ContentExtractor] Jina Reader failed, falling back to HTML fetch:",
+          error instanceof Error ? error.message : "Unknown error"
+        );
+        // Fall through to basic fetch
+      }
+    }
+
+    // Fallback: Basic HTML fetch
     try {
-      // Use a more sophisticated extraction approach
+      console.log("[ContentExtractor] Using basic HTML fetch");
       const response = await fetch(url, {
         headers: {
           "User-Agent": "Mozilla/5.0 (compatible; AINewsBot/1.0; +https://ai-power-ranking.com)",
