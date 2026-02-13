@@ -5,6 +5,7 @@
  * - Runs daily at 6 AM UTC (configured in vercel.json)
  * - Discovers and ingests relevant AI coding tools news
  * - Requires CRON_SECRET authentication via Bearer token
+ * - Invalidates news/homepage caches after successful ingestion
  */
 
 import { NextResponse } from "next/server";
@@ -12,6 +13,7 @@ import {
   AutomatedIngestionService,
   type IngestionResult,
 } from "@/lib/services/automated-ingestion.service";
+import { invalidateArticleCache } from "@/lib/cache/invalidation.service";
 import { loggers } from "@/lib/logger";
 
 export const runtime = "nodejs";
@@ -76,7 +78,26 @@ export async function GET(request: Request) {
       durationMs: duration,
     });
 
-    // 3. Return success response
+    // 3. Invalidate caches if any articles were ingested
+    // This ensures the News page and Homepage show new content immediately
+    if (result.articlesIngested > 0) {
+      try {
+        const cacheResult = await invalidateArticleCache();
+        loggers.api.info("Cron: Cache invalidation complete", {
+          pathsRevalidated: cacheResult.pathsRevalidated.length,
+          tagsRevalidated: cacheResult.tagsRevalidated.length,
+          memoryCacheCleared: cacheResult.memoryCacheCleared.length,
+          success: cacheResult.success,
+        });
+      } catch (cacheError) {
+        // Log but don't fail the cron job if cache invalidation fails
+        loggers.api.error("Cron: Cache invalidation failed", {
+          error: cacheError instanceof Error ? cacheError.message : "Unknown error",
+        });
+      }
+    }
+
+    // 4. Return success response
     return NextResponse.json(
       {
         success: true,
