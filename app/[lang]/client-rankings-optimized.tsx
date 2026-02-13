@@ -4,6 +4,7 @@ import Link from "next/link";
 import { memo, useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import type { Locale } from "@/i18n/config";
 import { HomeContent } from "./home-content";
+import { NewsUpdateCard } from "@/components/news/news-update-card";
 
 interface RankingData {
   rank: number;
@@ -643,6 +644,11 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
         loadingText={loadingText}
         lang={lang as Locale}
       />
+
+      {/* News Update Card - Shows latest AI news headlines */}
+      <div className="px-3 md:px-6 max-w-7xl mx-auto">
+        <NewsUpdateCard lang={lang} limit={5} />
+      </div>
 
       {/* Optimized Stats Section */}
       <StatsSection
