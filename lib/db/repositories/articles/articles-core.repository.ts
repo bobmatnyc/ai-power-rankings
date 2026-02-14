@@ -184,10 +184,19 @@ export class ArticlesCoreRepository {
       console.log(`[ArticlesRepo] Successfully created article with ID: ${createdArticle.id}`);
 
       // Invalidate cache for news feeds when a published article is created
+      // Note: revalidatePath requires Next.js request context - wrap in try-catch
+      // to prevent failures during cron jobs which don't have this context
       if (createdArticle.status === "active" && createdArticle.publishedDate) {
-        revalidatePath('/api/whats-new', 'layout');
-        revalidatePath('/api/news', 'layout');
-        console.log(`[ArticlesRepo] Cache invalidated for article: ${createdArticle.id}`);
+        try {
+          revalidatePath('/api/whats-new', 'layout');
+          revalidatePath('/api/news', 'layout');
+          console.log(`[ArticlesRepo] Cache invalidated for article: ${createdArticle.id}`);
+        } catch (cacheError) {
+          // Non-blocking: cache invalidation failure shouldn't fail article creation
+          // Cron jobs handle their own cache invalidation at the route handler level
+          console.warn(`[ArticlesRepo] Cache invalidation skipped (likely cron context):`,
+            cacheError instanceof Error ? cacheError.message : cacheError);
+        }
       }
 
       return createdArticle;
