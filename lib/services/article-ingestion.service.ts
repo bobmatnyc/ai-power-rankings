@@ -557,6 +557,15 @@ Focus on:
    - Be focused and informative - provide value without padding
    - CRITICAL: Never truncate mid-sentence. Always complete your thoughts and end with proper conclusion
 
+CRITICAL COPYRIGHT & PARAPHRASING REQUIREMENTS:
+- You MUST write all summaries and content in YOUR OWN ORIGINAL LANGUAGE
+- NEVER copy sentences, phrases, or unique expressions verbatim from the source article
+- Focus on extracting and reporting FACTS (factual information is not copyrightable)
+- Avoid reproducing the author's creative expression, metaphors, unique phrasing, or editorial voice
+- Paraphrase ALL information while maintaining accuracy - this is legal paraphrasing, not copying
+- Add your own analytical perspective and industry context to make the content TRANSFORMATIVE
+- The goal is to CREATE NEW VALUE through expert analysis, not merely condense the original
+
 Be thorough and precise. Extract the exact tool names as mentioned, we'll handle normalization.
 
 IMPORTANT: You MUST return ONLY a valid JSON object. Do not include any explanatory text before or after the JSON.`;
@@ -623,6 +632,13 @@ CRITICAL REQUIREMENTS:
 - Write in a professional, journalistic style
 - CRITICAL: Never truncate mid-sentence. Always complete your thoughts and end with proper conclusion
 - Ensure the summary field is 400-500 words with logical flow from start to finish
+
+COPYRIGHT COMPLIANCE (MANDATORY):
+- Write ENTIRELY in your own words - NO verbatim copying from the source
+- Paraphrase all factual information - do not lift sentences or phrases
+- Focus on FACTS and DATA (not copyrightable) rather than the author's creative expression
+- Add original analysis and AI industry context to make content transformative
+- Attribute insights to the source publication (e.g., "According to TechCrunch...")
 
 Return ONLY the JSON object above with actual data. No additional text or explanation.`;
 
