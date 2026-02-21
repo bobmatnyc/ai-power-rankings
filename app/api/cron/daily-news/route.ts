@@ -18,7 +18,7 @@ import { loggers } from "@/lib/logger";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 300; // 5 minutes - pipeline can take 3-4 minutes
+export const maxDuration = 800; // ~13 minutes - pipeline can take 10+ minutes with large article sets
 
 /**
  * GET /api/cron/daily-news
