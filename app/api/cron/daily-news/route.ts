@@ -18,7 +18,7 @@ import { loggers } from "@/lib/logger";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60; // Allow up to 60 seconds for news discovery and ingestion
+export const maxDuration = 300; // 5 minutes - pipeline can take 3-4 minutes
 
 /**
  * GET /api/cron/daily-news
