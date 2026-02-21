@@ -62,6 +62,7 @@ export interface DailyDiscoveryOptions {
   maxArticles?: number;
   qualityThreshold?: number;
   skipQualityCheck?: boolean; // Skip LLM quality assessment for faster testing
+  days?: number; // Number of days to look back for articles (Tavily only)
 }
 
 /**
@@ -322,6 +323,7 @@ export class AutomatedIngestionService {
           maxResults: 20,
           searchDepth: "advanced",
           topic: "news",
+          days: options?.days,
         });
       } else {
         searchResults = await this.braveSearchService.searchAINews("pd");

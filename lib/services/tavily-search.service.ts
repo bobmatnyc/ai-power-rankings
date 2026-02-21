@@ -80,6 +80,7 @@ export class TavilySearchService {
     searchDepth?: 'basic' | 'advanced';
     includeDomains?: string[];
     topic?: 'general' | 'news';
+    days?: number;
   } = {}): Promise<TavilySearchResult[]> {
     if (!this.apiKey) {
       loggers.api.warn('[TavilySearch] API key not configured, returning empty results');
@@ -91,6 +92,7 @@ export class TavilySearchService {
       searchDepth = 'advanced',
       includeDomains = [],
       topic = 'news',
+      days,
     } = options;
 
     const results: TavilySearchResult[] = [];
@@ -103,6 +105,7 @@ export class TavilySearchService {
         searchDepth,
         includeDomains,
         topic,
+        days,
       });
       results.push(...primaryResults);
 
@@ -114,6 +117,7 @@ export class TavilySearchService {
           searchDepth: 'basic',
           includeDomains,
           topic,
+          days,
         });
         results.push(...supplementaryResults);
       }
@@ -152,9 +156,10 @@ export class TavilySearchService {
       searchDepth: 'basic' | 'advanced';
       includeDomains?: string[];
       topic?: 'general' | 'news';
+      days?: number;
     }
   ): Promise<TavilySearchResult[]> {
-    const { maxResults, searchDepth, includeDomains = [], topic = 'news' } = options;
+    const { maxResults, searchDepth, includeDomains = [], topic = 'news', days } = options;
 
     const requestBody: Record<string, unknown> = {
       api_key: this.apiKey,
@@ -171,11 +176,17 @@ export class TavilySearchService {
       requestBody.include_domains = includeDomains;
     }
 
+    // Add days lookback if specified
+    if (days !== undefined) {
+      requestBody.days = days;
+    }
+
     loggers.api.debug('[TavilySearch] Executing search', {
       query: query.substring(0, 100) + '...',
       maxResults,
       searchDepth,
       topic,
+      days,
     });
 
     const response = await fetch(this.baseUrl, {
