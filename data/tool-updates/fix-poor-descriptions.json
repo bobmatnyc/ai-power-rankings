@@ -1,0 +1,326 @@
+{
+  "phase": "Fix poor descriptions and categories",
+  "description": "Update 10 tools with empty descriptions and wrong categories",
+  "tools": [
+    {
+      "slug": "infosys-topaz",
+      "category": "code-assistant",
+      "data": {
+        "id": "infosys-topaz",
+        "name": "Infosys Topaz",
+        "company": "Infosys",
+        "tagline": "Enterprise AI for intelligent software engineering",
+        "description": "Infosys Topaz is an enterprise AI-first platform for software engineering, offering AI-assisted code generation, IT modernization, and intelligent automation across the full development lifecycle",
+        "website": "https://www.infosys.com/iki/topaz.html",
+        "website_url": "https://www.infosys.com/iki/topaz.html",
+        "pricing_model": "paid",
+        "info": {
+          "company": {
+            "name": "Infosys"
+          },
+          "product": {
+            "description": "Infosys Topaz is an enterprise AI-first platform for software engineering, offering AI-assisted code generation, IT modernization, and intelligent automation across the full development lifecycle",
+            "tagline": "Enterprise AI for intelligent software engineering",
+            "pricing_model": "paid",
+            "license_type": "proprietary"
+          },
+          "links": {
+            "website": "https://www.infosys.com/iki/topaz.html"
+          },
+          "business": {
+            "pricing_model": "paid",
+            "free_tier": false
+          }
+        }
+      }
+    },
+    {
+      "slug": "anything",
+      "category": "open-source-framework",
+      "data": {
+        "id": "anything",
+        "name": "AnythingLLM",
+        "company": "Mintplex Labs",
+        "tagline": "The all-in-one AI app you were looking for",
+        "description": "AnythingLLM is an open-source all-in-one AI desktop application for running local LLMs, building RAG pipelines, creating AI agents, and managing private documents without code",
+        "website": "https://anythingllm.com",
+        "website_url": "https://anythingllm.com",
+        "pricing_model": "freemium",
+        "info": {
+          "company": {
+            "name": "Mintplex Labs"
+          },
+          "product": {
+            "description": "AnythingLLM is an open-source all-in-one AI desktop application for running local LLMs, building RAG pipelines, creating AI agents, and managing private documents without code",
+            "tagline": "The all-in-one AI app you were looking for",
+            "pricing_model": "freemium",
+            "license_type": "open-source"
+          },
+          "links": {
+            "website": "https://anythingllm.com"
+          },
+          "business": {
+            "pricing_model": "freemium",
+            "free_tier": true
+          }
+        }
+      }
+    },
+    {
+      "slug": "wabi",
+      "category": "app-builder",
+      "data": {
+        "id": "wabi",
+        "name": "Wabi",
+        "company": "Wabi",
+        "tagline": "Build mobile apps with AI, no code needed",
+        "description": "Wabi is an AI-powered mobile app builder that lets non-technical founders create and ship iOS and Android apps through a conversational interface, no coding required",
+        "website": "https://wabi.ai",
+        "website_url": "https://wabi.ai",
+        "pricing_model": "subscription",
+        "info": {
+          "company": {
+            "name": "Wabi"
+          },
+          "product": {
+            "description": "Wabi is an AI-powered mobile app builder that lets non-technical founders create and ship iOS and Android apps through a conversational interface, no coding required",
+            "tagline": "Build mobile apps with AI, no code needed",
+            "pricing_model": "subscription",
+            "license_type": "proprietary"
+          },
+          "links": {
+            "website": "https://wabi.ai"
+          },
+          "business": {
+            "pricing_model": "subscription",
+            "free_tier": false
+          }
+        }
+      }
+    },
+    {
+      "slug": "rocket-new",
+      "category": "app-builder",
+      "data": {
+        "id": "rocket-new",
+        "name": "Rocket.new",
+        "company": "Rocket.new",
+        "tagline": "Ship full-stack apps from a single prompt",
+        "description": "Rocket.new is an AI-powered full-stack app builder that generates production-ready web applications from natural language prompts, including backend APIs, frontend UI, and database setup",
+        "website": "https://rocket.new",
+        "website_url": "https://rocket.new",
+        "pricing_model": "freemium",
+        "info": {
+          "company": {
+            "name": "Rocket.new"
+          },
+          "product": {
+            "description": "Rocket.new is an AI-powered full-stack app builder that generates production-ready web applications from natural language prompts, including backend APIs, frontend UI, and database setup",
+            "tagline": "Ship full-stack apps from a single prompt",
+            "pricing_model": "freemium",
+            "license_type": "proprietary"
+          },
+          "links": {
+            "website": "https://rocket.new"
+          },
+          "business": {
+            "pricing_model": "freemium",
+            "free_tier": true
+          }
+        }
+      }
+    },
+    {
+      "slug": "clawdbot",
+      "category": "code-assistant",
+      "data": {
+        "id": "clawdbot",
+        "name": "Clawdbot",
+        "company": "Clawdbot",
+        "tagline": "Claude-powered coding assistant",
+        "description": "Clawdbot is an AI coding assistant and chatbot powered by Claude, providing intelligent code generation, debugging help, and technical Q&A through a conversational interface",
+        "website": "https://clawdbot.com",
+        "website_url": "https://clawdbot.com",
+        "pricing_model": "freemium",
+        "info": {
+          "company": {
+            "name": "Clawdbot"
+          },
+          "product": {
+            "description": "Clawdbot is an AI coding assistant and chatbot powered by Claude, providing intelligent code generation, debugging help, and technical Q&A through a conversational interface",
+            "tagline": "Claude-powered coding assistant",
+            "pricing_model": "freemium",
+            "license_type": "proprietary"
+          },
+          "links": {
+            "website": "https://clawdbot.com"
+          },
+          "business": {
+            "pricing_model": "freemium",
+            "free_tier": true
+          }
+        }
+      }
+    },
+    {
+      "slug": "openrouter",
+      "category": "other",
+      "data": {
+        "id": "openrouter",
+        "name": "OpenRouter",
+        "company": "OpenRouter",
+        "tagline": "One API for every AI model",
+        "description": "OpenRouter is a unified API gateway providing access to 200+ large language models from OpenAI, Anthropic, Google, Meta, and others through a single standardized interface with automatic cost optimization and routing",
+        "website": "https://openrouter.ai",
+        "website_url": "https://openrouter.ai",
+        "pricing_model": "freemium",
+        "info": {
+          "company": {
+            "name": "OpenRouter"
+          },
+          "product": {
+            "description": "OpenRouter is a unified API gateway providing access to 200+ large language models from OpenAI, Anthropic, Google, Meta, and others through a single standardized interface with automatic cost optimization and routing",
+            "tagline": "One API for every AI model",
+            "pricing_model": "freemium",
+            "license_type": "proprietary"
+          },
+          "links": {
+            "website": "https://openrouter.ai"
+          },
+          "business": {
+            "pricing_model": "freemium",
+            "free_tier": true
+          }
+        }
+      }
+    },
+    {
+      "slug": "perplexity",
+      "category": "code-assistant",
+      "data": {
+        "id": "perplexity",
+        "name": "Perplexity",
+        "company": "Perplexity AI",
+        "tagline": "AI search for developers and researchers",
+        "description": "Perplexity is an AI-powered search engine and conversational assistant that provides real-time, cited answers for coding research, documentation lookup, debugging, and technical problem-solving",
+        "website": "https://perplexity.ai",
+        "website_url": "https://perplexity.ai",
+        "pricing_model": "freemium",
+        "info": {
+          "company": {
+            "name": "Perplexity AI"
+          },
+          "product": {
+            "description": "Perplexity is an AI-powered search engine and conversational assistant that provides real-time, cited answers for coding research, documentation lookup, debugging, and technical problem-solving",
+            "tagline": "AI search for developers and researchers",
+            "pricing_model": "freemium",
+            "license_type": "proprietary"
+          },
+          "links": {
+            "website": "https://perplexity.ai"
+          },
+          "business": {
+            "pricing_model": "freemium",
+            "free_tier": true
+          }
+        }
+      }
+    },
+    {
+      "slug": "harvey-ai",
+      "category": "other",
+      "data": {
+        "id": "harvey-ai",
+        "name": "Harvey AI",
+        "company": "Harvey",
+        "tagline": "AI for the world's leading law firms",
+        "description": "Harvey AI is an enterprise AI platform purpose-built for legal professionals, automating contract analysis, legal research, due diligence, and document drafting with matter-specific context",
+        "website": "https://harvey.ai",
+        "website_url": "https://harvey.ai",
+        "pricing_model": "paid",
+        "info": {
+          "company": {
+            "name": "Harvey"
+          },
+          "product": {
+            "description": "Harvey AI is an enterprise AI platform purpose-built for legal professionals, automating contract analysis, legal research, due diligence, and document drafting with matter-specific context",
+            "tagline": "AI for the world's leading law firms",
+            "pricing_model": "paid",
+            "license_type": "proprietary"
+          },
+          "links": {
+            "website": "https://harvey.ai"
+          },
+          "business": {
+            "pricing_model": "paid",
+            "free_tier": false
+          }
+        }
+      }
+    },
+    {
+      "slug": "openclaw",
+      "category": "autonomous-agent",
+      "data": {
+        "id": "openclaw",
+        "name": "OpenClaw",
+        "company": "OpenClaw (OpenAI)",
+        "tagline": "Autonomous coding agent for complex software tasks",
+        "description": "OpenClaw is an AI-powered coding agent that autonomously writes, debugs, and refactors code, built by the team behind PSPDFKit and acquired by OpenAI to advance agentic software development",
+        "website": "https://openclaw.dev",
+        "website_url": "https://openclaw.dev",
+        "pricing_model": "subscription",
+        "info": {
+          "company": {
+            "name": "OpenClaw (OpenAI)"
+          },
+          "product": {
+            "description": "OpenClaw is an AI-powered coding agent that autonomously writes, debugs, and refactors code, built by the team behind PSPDFKit and acquired by OpenAI to advance agentic software development",
+            "tagline": "Autonomous coding agent for complex software tasks",
+            "pricing_model": "subscription",
+            "license_type": "proprietary"
+          },
+          "links": {
+            "website": "https://openclaw.dev"
+          },
+          "business": {
+            "pricing_model": "subscription",
+            "free_tier": false
+          }
+        }
+      }
+    },
+    {
+      "slug": "claude-desktop-extensions",
+      "category": "autonomous-agent",
+      "data": {
+        "id": "claude-desktop-extensions",
+        "name": "Claude Desktop with Extensions",
+        "company": "Anthropic",
+        "tagline": "Claude connected to your entire desktop environment",
+        "description": "Claude Desktop with Extensions connects Claude to local tools, files, and data sources via the Model Context Protocol (MCP), transforming the desktop app into a customizable AI workstation that can read, write, and act on your machine",
+        "website": "https://anthropic.com/claude",
+        "website_url": "https://anthropic.com/claude",
+        "pricing_model": "subscription",
+        "info": {
+          "company": {
+            "name": "Anthropic"
+          },
+          "product": {
+            "description": "Claude Desktop with Extensions connects Claude to local tools, files, and data sources via the Model Context Protocol (MCP), transforming the desktop app into a customizable AI workstation that can read, write, and act on your machine",
+            "tagline": "Claude connected to your entire desktop environment",
+            "pricing_model": "subscription",
+            "license_type": "proprietary"
+          },
+          "links": {
+            "website": "https://anthropic.com/claude"
+          },
+          "business": {
+            "pricing_model": "subscription",
+            "free_tier": false
+          }
+        }
+      }
+    }
+  ]
+}
