@@ -1,72 +1,46 @@
+#!/usr/bin/env npx tsx
 /**
- * Quick script to check automated ingestion runs status
- * Usage: npx tsx scripts/check-ingestion-runs.ts
+ * Check Recent Ingestion Runs
+ *
+ * Queries the database for recent automated ingestion run records.
  */
 
-import * as dotenv from 'dotenv';
+import { getDb } from "../lib/db/connection";
+import { automatedIngestionRuns } from "../lib/db/schema";
+import { desc } from "drizzle-orm";
 
-// Load environment variables BEFORE any imports that might use them
-dotenv.config({ path: '.env.production.local' });
-dotenv.config({ path: '.env.local' });
-
-// Override to production to use DATABASE_URL from production config
-process.env.NODE_ENV = 'production';
-
-import { desc } from 'drizzle-orm';
-import { getDb } from '../lib/db/connection';
-import { automatedIngestionRuns } from '../lib/db/schema';
-
-async function checkIngestionRuns() {
-  console.log('=== Checking Automated Ingestion Runs ===\n');
-
+async function main() {
   const db = getDb();
   if (!db) {
-    console.error('Database not available');
-    process.exit(1);
+    console.error("No database connection");
+    return;
   }
 
-  try {
-    // Get last 10 runs
-    const runs = await db
-      .select()
-      .from(automatedIngestionRuns)
-      .orderBy(desc(automatedIngestionRuns.createdAt))
-      .limit(10);
+  const runs = await db
+    .select()
+    .from(automatedIngestionRuns)
+    .orderBy(desc(automatedIngestionRuns.createdAt))
+    .limit(10);
 
-    if (runs.length === 0) {
-      console.log('No ingestion runs found in the database.');
-      console.log('This suggests the cron job has never executed successfully.');
-      return;
+  console.log("Recent Ingestion Runs:");
+  console.log("=".repeat(80));
+
+  for (const run of runs) {
+    console.log(`Run ID: ${run.id}`);
+    console.log(`  Created: ${run.createdAt}`);
+    console.log(`  Status: ${run.status}`);
+    console.log(`  Type: ${run.runType}`);
+    console.log(`  Discovered: ${run.articlesDiscovered}`);
+    console.log(`  Passed Quality: ${run.articlesPassedQuality}`);
+    console.log(`  Ingested: ${run.articlesIngested}`);
+    console.log(`  Skipped: ${run.articlesSkipped}`);
+    console.log(`  Semantic Skipped: ${run.articlesSkippedSemantic}`);
+    console.log(`  Errors: ${run.errorLog?.length || 0}`);
+    if (run.errorLog && run.errorLog.length > 0) {
+      console.log(`  Error details: ${JSON.stringify(run.errorLog).substring(0, 200)}`);
     }
-
-    console.log(`Found ${runs.length} recent runs:\n`);
-
-    for (const run of runs) {
-      console.log(`Run ID: ${run.id}`);
-      console.log(`  Type: ${run.runType}`);
-      console.log(`  Status: ${run.status}`);
-      console.log(`  Started: ${run.startedAt?.toISOString() ?? 'N/A'}`);
-      console.log(`  Completed: ${run.completedAt?.toISOString() ?? 'N/A'}`);
-      console.log(`  Articles Discovered: ${run.articlesDiscovered}`);
-      console.log(`  Articles Passed Quality: ${run.articlesPassedQuality}`);
-      console.log(`  Articles Ingested: ${run.articlesIngested}`);
-      console.log(`  Articles Skipped: ${run.articlesSkipped}`);
-      console.log(`  Articles Skipped (Semantic): ${run.articlesSkippedSemantic}`);
-      console.log(`  Ranking Changes: ${run.rankingChanges}`);
-      console.log(`  Estimated Cost: $${run.estimatedCostUsd}`);
-
-      const errorLog = run.errorLog as string[] | null;
-      if (errorLog && errorLog.length > 0) {
-        console.log(`  Errors: ${JSON.stringify(errorLog)}`);
-      }
-
-      console.log('');
-    }
-  } catch (error) {
-    console.error('Error querying database:', error);
+    console.log("-".repeat(80));
   }
-
-  process.exit(0);
 }
 
-checkIngestionRuns();
+main().catch(console.error);
