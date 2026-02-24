@@ -4,7 +4,7 @@
  * GET /api/cron/daily-news
  * - Runs daily at 6 AM UTC (configured in vercel.json)
  * - Discovers and ingests relevant AI coding tools news
- * - Requires CRON_SECRET authentication via Bearer token
+ * - Requires CRON_SECRET authentication via Bearer token OR Vercel cron authentication
  * - Invalidates news/homepage caches after successful ingestion
  */
 
@@ -21,6 +21,40 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 800; // ~13 minutes - pipeline can take 10+ minutes with large article sets
 
 /**
+ * Verify if request is authorized for cron execution
+ */
+function isAuthorizedCronRequest(request: Request): boolean {
+  // Method 1: Check for Bearer token (manual testing)
+  const authHeader = request.headers.get("Authorization");
+  const cronSecret = process.env["CRON_SECRET"];
+
+  if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
+    loggers.api.info("Cron: Authorized via Bearer token");
+    return true;
+  }
+
+  // Method 2: Check for Vercel cron headers (automatic scheduling)
+  const vercelCronHeader = request.headers.get("x-vercel-cron");
+  const userAgent = request.headers.get("user-agent");
+
+  if (vercelCronHeader === "1" || userAgent?.includes("vercel-cron")) {
+    loggers.api.info("Cron: Authorized via Vercel cron scheduler");
+    return true;
+  }
+
+  // Method 3: Check if running in Vercel environment with internal request
+  const isVercelEnvironment = process.env.VERCEL === "1";
+  const vercelRegion = request.headers.get("x-vercel-deployment-url");
+
+  if (isVercelEnvironment && vercelRegion) {
+    loggers.api.info("Cron: Authorized via Vercel internal request");
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * GET /api/cron/daily-news
  * Vercel Cron endpoint for daily AI news discovery and ingestion
  */
@@ -28,27 +62,18 @@ export async function GET(request: Request) {
   const startTime = Date.now();
 
   try {
-    // 1. Verify CRON_SECRET authentication
-    const authHeader = request.headers.get("Authorization");
-    const cronSecret = process.env["CRON_SECRET"];
+    // 1. Verify cron authentication
+    if (!isAuthorizedCronRequest(request)) {
+      const authHeader = request.headers.get("Authorization");
+      const vercelCronHeader = request.headers.get("x-vercel-cron");
 
-    if (!cronSecret) {
-      loggers.api.error("CRON_SECRET environment variable not configured");
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Cron endpoint not configured",
-        },
-        { status: 500 }
-      );
-    }
-
-    const expectedToken = `Bearer ${cronSecret}`;
-    if (authHeader !== expectedToken) {
       loggers.api.warn("Unauthorized cron request", {
         hasAuthHeader: !!authHeader,
+        hasVercelCronHeader: !!vercelCronHeader,
+        userAgent: request.headers.get("user-agent"),
         endpoint: "/api/cron/daily-news",
       });
+
       return NextResponse.json(
         {
           success: false,
