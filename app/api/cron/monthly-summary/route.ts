@@ -16,33 +16,28 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60; // Allow up to 60 seconds for LLM generation
 
 /**
- * Verify if request is authorized for cron execution
+ * Verify if request is authorized for cron execution.
+ *
+ * Uses ONLY the Bearer token check per Vercel's official cron documentation.
+ * Vercel's cron scheduler automatically sends `Authorization: Bearer <CRON_SECRET>`.
+ *
+ * Previous methods removed due to security vulnerabilities:
+ * - x-vercel-cron header: Not sent by Vercel, was dead code
+ * - User-agent check: Trivially spoofable by any HTTP client
+ * - Vercel environment check: VERCEL=1 and x-vercel-deployment-url are present
+ *   on ALL requests, not just cron — this bypassed auth entirely
  */
 function isAuthorizedCronRequest(request: Request): boolean {
-  // Method 1: Check for Bearer token (manual testing)
-  const authHeader = request.headers.get("Authorization");
+  const authHeader = request.headers.get("authorization");
   const cronSecret = process.env["CRON_SECRET"];
 
-  if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
+  if (!cronSecret) {
+    loggers.api.error("Cron: CRON_SECRET environment variable not configured");
+    return false;
+  }
+
+  if (authHeader === `Bearer ${cronSecret}`) {
     loggers.api.info("Cron: Authorized via Bearer token");
-    return true;
-  }
-
-  // Method 2: Check for Vercel cron headers (automatic scheduling)
-  const vercelCronHeader = request.headers.get("x-vercel-cron");
-  const userAgent = request.headers.get("user-agent");
-
-  if (vercelCronHeader === "1" || userAgent?.includes("vercel-cron")) {
-    loggers.api.info("Cron: Authorized via Vercel cron scheduler");
-    return true;
-  }
-
-  // Method 3: Check if running in Vercel environment with internal request
-  const isVercelEnvironment = process.env.VERCEL === "1";
-  const vercelRegion = request.headers.get("x-vercel-deployment-url");
-
-  if (isVercelEnvironment && vercelRegion) {
-    loggers.api.info("Cron: Authorized via Vercel internal request");
     return true;
   }
 
@@ -59,12 +54,8 @@ export async function GET(request: Request) {
   try {
     // 1. Verify cron authentication
     if (!isAuthorizedCronRequest(request)) {
-      const authHeader = request.headers.get("Authorization");
-      const vercelCronHeader = request.headers.get("x-vercel-cron");
-
       loggers.api.warn("Unauthorized cron request", {
-        hasAuthHeader: !!authHeader,
-        hasVercelCronHeader: !!vercelCronHeader,
+        hasAuthHeader: !!request.headers.get("authorization"),
         userAgent: request.headers.get("user-agent"),
         endpoint: "/api/cron/monthly-summary",
       });
