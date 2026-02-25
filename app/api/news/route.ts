@@ -25,6 +25,8 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20", 10);
     const offset = parseInt(searchParams.get("offset") || "0", 10);
     const filter = searchParams.get("filter") || "all";
+    const debug = searchParams.get("debug") === "true";
+    const cacheKey = searchParams.get("cb"); // Cache-busting key
 
     loggers.api.debug("Getting news from database", { limit, offset, filter });
 
@@ -267,16 +269,29 @@ export async function GET(request: NextRequest) {
     const paginatedNews = filteredNews.slice(offset, offset + limit);
     const hasMoreFiltered = offset + limit < filteredNews.length;
 
-    return cachedJsonResponse(
-      {
-        news: paginatedNews,
-        total: filteredNews.length,
-        hasMore: hasMoreFiltered,
-        _source: "database",
-        _timestamp: new Date().toISOString(),
-      },
-      "/api/news"
-    );
+    const responseData = {
+      news: paginatedNews,
+      total: filteredNews.length,
+      hasMore: hasMoreFiltered,
+      _source: "database",
+      _timestamp: new Date().toISOString(),
+      ...(debug && {
+        _debug: {
+          cache_key: cacheKey,
+          user_agent: request.headers.get("User-Agent")?.substring(0, 100),
+          request_time: new Date().toISOString(),
+          mobile_ua: request.headers.get("User-Agent")?.toLowerCase().includes("mobile"),
+          query_params: {
+            limit,
+            offset,
+            filter,
+            cache_buster: cacheKey
+          }
+        }
+      })
+    };
+
+    return cachedJsonResponse(responseData, "/api/news", 200, undefined, request);
   } catch (error) {
     loggers.api.error("News API error", {
       error: error instanceof Error ? error.message : "Unknown error",

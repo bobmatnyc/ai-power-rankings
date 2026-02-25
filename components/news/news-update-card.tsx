@@ -4,6 +4,7 @@ import { ArrowRight, Newspaper } from "lucide-react";
 import Link from "next/link";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cacheBustFetch } from "@/lib/api/cache-busting";
 
 interface NewsArticle {
   id: string;
@@ -64,7 +65,10 @@ export const NewsUpdateCard = memo(function NewsUpdateCard({
 
   const fetchNews = useCallback(async () => {
     try {
-      const response = await fetch(`/api/news/recent?limit=${limit}&days=14`);
+      const response = await cacheBustFetch(`/api/news/recent?limit=${limit}&days=14`, {}, {
+        timestamp: true,
+        userAgent: true
+      });
       if (response.ok) {
         const data = await response.json();
         setNews(data.news || []);

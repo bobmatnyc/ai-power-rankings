@@ -71,7 +71,10 @@ export async function GET(request: NextRequest) {
         _source: "database",
         _timestamp: new Date().toISOString(),
       },
-      "/api/news/recent"
+      "/api/news/recent",
+      200,
+      undefined,
+      request
     );
   } catch (error) {
     loggers.api.error("Recent news API error", {

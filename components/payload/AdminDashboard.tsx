@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { cacheBustFetch } from "@/lib/api/cache-busting";
 
 interface DashboardStats {
   totalTools: number;
@@ -28,7 +29,7 @@ export const AdminDashboard: React.FC = () => {
       const [toolsRes, rankingsRes, newsRes, subscribersRes] = await Promise.all([
         fetch("/api/tools?limit=1"),
         fetch("/api/rankings?limit=1"),
-        fetch("/api/news?limit=1"),
+        cacheBustFetch("/api/news?limit=1", {}, { timestamp: true }),
         fetch("/api/admin/subscribers"),
       ]);
 
