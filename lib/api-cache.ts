@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { getMobileCacheHeaders, isMobileUserAgent } from "@/lib/api/cache-busting";
 
 interface CacheConfig {
   maxAge?: number; // seconds
@@ -27,9 +28,10 @@ const DEFAULT_CACHE_CONFIG: Record<string, CacheConfig> = {
     mustRevalidate: true, // Force revalidation
   },
   "/api/news": {
-    maxAge: 300,
-    sMaxAge: 1800, // 30 minutes CDN
-    staleWhileRevalidate: 43200, // 12 hours
+    maxAge: 0, // No browser cache for mobile compatibility
+    sMaxAge: 300, // 5 minutes CDN cache (reduced for fresh content)
+    staleWhileRevalidate: 1800, // 30 minutes stale (reduced from 12 hours)
+    mustRevalidate: true, // Force revalidation on mobile
   },
   "/api/companies": {
     maxAge: 600, // 10 minutes
@@ -47,7 +49,8 @@ const DEFAULT_CACHE_CONFIG: Record<string, CacheConfig> = {
 export function setCacheHeaders(
   response: NextResponse,
   pathname: string,
-  customConfig?: CacheConfig
+  customConfig?: CacheConfig,
+  request?: Request
 ): NextResponse {
   // Find matching config
   let config = customConfig;
@@ -100,6 +103,25 @@ export function setCacheHeaders(
     directives.push("must-revalidate");
   }
 
+  // Enhanced mobile-specific cache prevention for news endpoint
+  if (pathname.startsWith("/api/news")) {
+    const userAgent = request?.headers.get("User-Agent") || "";
+    const isMobile = isMobileUserAgent(userAgent);
+
+    if (isMobile) {
+      // Very aggressive cache prevention for mobile
+      directives.push("no-cache", "no-store", "private");
+      response.headers.set("Pragma", "no-cache");
+      response.headers.set("Expires", "0");
+      response.headers.set("X-Mobile-Cache", "disabled");
+    } else {
+      // Less aggressive for desktop but still prevent stale data
+      directives.push("no-cache");
+    }
+
+    response.headers.set("Vary", "User-Agent");
+  }
+
   // Set headers
   response.headers.set("Cache-Control", directives.join(", "));
 
@@ -120,6 +142,7 @@ export function setCacheHeaders(
 
   // Add timestamp header for debugging
   response.headers.set("X-Response-Time", new Date().toISOString());
+  response.headers.set("X-Last-Modified", new Date().toUTCString());
 
   return response;
 }
@@ -152,10 +175,11 @@ export function cachedJsonResponse(
   data: unknown,
   pathname: string,
   status: number = 200,
-  customConfig?: CacheConfig
+  customConfig?: CacheConfig,
+  request?: Request
 ): NextResponse {
   const response = NextResponse.json(data, { status });
-  return setCacheHeaders(response, pathname, customConfig);
+  return setCacheHeaders(response, pathname, customConfig, request);
 }
 
 /**
