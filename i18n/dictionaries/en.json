@@ -402,6 +402,24 @@
       "testing-tool": "Testing Tool",
       "code-review": "Code Review",
       "code-generation": "Code Generation"
+    },
+    "descriptions": {
+      "cursor": "AI-first code editor with inline chat, tab completion, and multi-file edits",
+      "github-copilot": "AI pair programmer baked into VS Code, JetBrains, and Neovim",
+      "windsurf": "Agentic IDE that flows with your codebase — edits, runs, and iterates autonomously",
+      "claude-dev": "Autonomous coding agent that reads, edits, and runs code directly in your IDE",
+      "aider": "Terminal-based AI pair programmer that commits changes to git automatically",
+      "infosys-topaz": "Enterprise AI platform for code generation, IT modernization, and full-lifecycle automation",
+      "anything": "All-in-one desktop app for running local LLMs, building RAG pipelines, and managing private docs",
+      "wabi": "Chat-driven mobile app builder — ship iOS and Android apps without writing a line of code",
+      "rocket-new": "Full-stack app builder that generates backend, frontend, and DB from a single natural language prompt",
+      "clawdbot": "Claude-powered coding chatbot for code gen, debugging, and technical Q&A",
+      "openrouter": "Unified API gateway to 200+ LLMs — OpenAI, Anthropic, Google, Meta — with cost-optimized routing",
+      "perplexity": "AI search engine with real-time cited answers for coding research, docs lookup, and debugging",
+      "harvey-ai": "Enterprise AI for legal teams — automates contract analysis, due diligence, and document drafting",
+      "openclaw": "Autonomous coding agent that writes, debugs, and refactors code without human hand-holding",
+      "claude-desktop-extensions": "Claude Desktop connected to your local files and tools via MCP — a fully customizable AI workstation",
+      "coderabbit": "AI code reviewer that posts inline PR suggestions, catches bugs, and enforces standards on GitHub and GitLab"
     }
   },
   "newsletter": {

@@ -1,18 +1,18 @@
 {
   "categories": {
     "autonomousagent": "Autonomni Agent",
-    "codeeditor": "Code Editor",
+    "codeeditor": "Uređivač koda",
     "ideassistant": "IDE Asistent",
-    "appbuilder": "App Builder",
+    "appbuilder": "Graditelj aplikacija",
     "opensourceframework": "Open Source Framework",
-    "testingtool": "Testing Tool",
+    "testingtool": "Alat za testiranje",
     "codereview": "Code Review",
     "codeassistant": "Code Asistent",
     "devopsassistant": "DevOps Asistent",
     "autonomousAgent": "Autonomni Agent",
-    "codeEditor": "Code Editor",
+    "codeEditor": "Uređivač koda",
     "ideAssistant": "IDE Asistent",
-    "appBuilder": "App Builder",
+    "appBuilder": "Graditelj aplikacija",
     "codeReview": "Code Review",
     "codeAssistant": "Code Asistent",
     "devopsAssistant": "DevOps Asistent"
@@ -20,7 +20,7 @@
   "common": {
     "appName": "AI Power Rankings",
     "appDescription": "Data-driven ranking AI coding alata",
-    "loading": "Loading...",
+    "loading": "Učitavam...",
     "error": "Greška",
     "tryAgain": "Pokušaj ponovno",
     "backToHome": "Natrag na početnu",
@@ -47,12 +47,12 @@
     "methodology": "Metodologija",
     "about": "O nama",
     "subscribeToUpdates": "Pretplati se na updates",
-    "signupForUpdates": "Signup For Updates",
+    "signupForUpdates": "Prijavi se za ažuriranja",
     "navigation": "Navigacija",
     "quickLinks": "Brzi linkovi",
-    "trending": "Trending",
+    "trending": "U trendu",
     "categories": "Kategorije",
-    "features": "Features",
+    "features": "Funkcionalnosti",
     "clearFilters": "Očisti filtere",
     "allCategories": "Sve kategorije"
   },
@@ -63,9 +63,9 @@
       "subtitle": "Otkrij i usporedi najmoćnije AI coding alate. Od autonomnih agenata do IDE asistenata, pronađi savršenog AI partnera za svoj dev workflow.",
       "description": "Otkrij i usporedi najmoćnije AI coding alate. Od autonomnih agenata do IDE asistenata, pronađi savršenog AI partnera za svoj dev workflow.",
       "exploreTools": "Istraži sve alate",
-      "viewTrending": "Vidi trending",
+      "viewTrending": "Vidi što je u trendu",
       "exploreButton": "Istraži sve alate",
-      "trendingButton": "Vidi trending",
+      "trendingButton": "Vidi što je u trendu",
       "whatsNewButton": "Što je novo"
     },
     "stats": {
@@ -76,11 +76,11 @@
       "updateFrequency": "Tjedno ažuriranje"
     },
     "trending": {
-      "title": "Trending ovaj tjedan",
+      "title": "U trendu ovaj tjedan",
       "subtitle": "AI alati koji dobivaju momentum i penju se u rankingima",
       "description": "AI alati koji dobivaju momentum i penju se u rankingima",
-      "viewAll": "Vidi sve trending",
-      "viewAllButton": "Vidi sve trending"
+      "viewAll": "Vidi sve što je u trendu",
+      "viewAllButton": "Vidi sve što je u trendu"
     },
     "recentlyUpdated": {
       "title": "Nedavno ažurirani",
@@ -106,7 +106,7 @@
         "description": "Pametni editori s AI integracijom"
       },
       "appBuilders": {
-        "name": "App Builderi",
+        "name": "Graditelji aplikacija",
         "description": "Gradi kompletne appove s AI assistance"
       },
       "autonomousAgents": {
@@ -180,29 +180,41 @@
       "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."
     }
   },
+  "trending": {
+    "title": "Povijesna rangiranja AI alata",
+    "description": "Istraži kako su AI alati performirali kroz vrijeme. Prati zvijezde u usponu, etablirane lidere i pomake na tržištu u brzo razvijajućem AI landscapeu.",
+    "aboutTitle": "O Povijesnim Trendovima",
+    "aboutDescription": "Ovaj grafikon pokazuje kako su AI alati ulazili i izlazili iz top 10 rangiranja kroz vrijeme. Alati koji se pojavljuju više na grafikonu (bliže #1) performiraju bolje."
+  },
+  "footer": {
+    "description": "Sveobuhvatna rangiranja AI alata za kodiranje koristeći Algorithm v7.6 s propadanjem inovacije, modifikatorima rizika platforme i prilagodbama kvalitete prihoda.",
+    "quickLinks": "Brzi linkovi",
+    "categories": "Kategorije",
+    "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."
+  },
   "rankings": {
     "title": "AI Power Rankings",
     "subtitle": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom v7.6",
     "stats": {
       "totalTools": "Ukupno alata",
       "categories": "Kategorije",
-      "avgScore": "Prosjek score",
-      "lastUpdate": "Zadnji update",
+      "avgScore": "Prosjek rezultata",
+      "lastUpdate": "Zadnje ažuriranje",
       "thisWeek": "Ovaj tjedan"
     },
     "sortBy": "Sortiraj po",
     "activeFilters": "Aktivni filteri",
     "sort": {
-      "rank": "Rank",
-      "trending": "Trending",
-      "score": "Score",
+      "rank": "Rang",
+      "trending": "U trendu",
+      "score": "Rezultat",
       "name": "Ime"
     },
     "algorithm": {
       "title": "O algoritmu v7.6",
       "subtitle": "Enhanced ranking sustav s innovation decay, platform risk modifierima i revenue quality adjustmentima",
       "tabs": {
-        "factors": "Scoring faktori",
+        "factors": "Faktori bodovanja",
         "modifiers": "Modifieri",
         "methodology": "Metodologija"
       },
@@ -232,7 +244,7 @@
       "description": "Alati se dodjeljuju razinama na temelju njihove pozicije rangiranja",
       "tiers": {
         "S": {
-          "label": "Elita",
+          "label": "Elite",
           "range": "Top 5",
           "description": "Apsolutno najbolji AI alati za kodiranje"
         },
@@ -260,7 +272,7 @@
     }
   },
   "news": {
-    "title": "AI Alati Vijesti",
+    "title": "Vijesti o AI Alatima",
     "subtitle": "Najnoviji updates, milestones i objave od AI coding alata",
     "filters": {
       "all": "Sve vijesti",
@@ -270,14 +282,14 @@
       "update": "Update",
       "announcement": "Objava"
     },
-    "noItems": "Nema pronađenih news stavki.",
-    "loadingMore": "Loading više vijesti...",
+    "noItems": "Nema pronađenih vijesti.",
+    "loadingMore": "Učitavam više vijesti...",
     "noMore": "Nema više vijesti za učitati",
     "viewTool": "Pogledaj alat",
     "metrics": {
       "users": "korisnici",
-      "score": "score",
-      "rank": "rank"
+      "score": "rezultat",
+      "rank": "rang"
     },
     "time": {
       "justNow": "Upravo sada",
@@ -295,6 +307,8 @@
     "filterByCategory": "Filtriraj po kategoriji",
     "sortBy": "Sortiraj po",
     "defaultDescription": "Otkrij i usporedi AI coding alate",
+    "notFound": "Alat nije pronađen",
+    "backToTools": "Natrag na alate",
     "sort": {
       "name": "Ime",
       "category": "Kategorija",
@@ -315,7 +329,7 @@
       "allStatuses": "Svi statusi"
     },
     "detail": {
-      "loading": "Loading detalje alata...",
+      "loading": "Učitavam detalje alata...",
       "notFound": "Alat nije pronađen",
       "backToTools": "Natrag na alate",
       "visitWebsite": "Posjeti website",
@@ -324,14 +338,14 @@
       "overview": "Pregled",
       "description": "Opis",
       "company": "Tvrtka",
-      "pricing": "Pricing",
+      "pricing": "Cijene",
       "users": "Korisnici",
       "githubStars": "GitHub Stars",
       "tabs": {
-        "performance": "Performance",
-        "businessMetrics": "Business",
-        "scores": "Scores",
-        "history": "History",
+        "performance": "Performanse",
+        "businessMetrics": "Poslovne metrike",
+        "scores": "Rezultati",
+        "history": "Povijest",
         "pricing": "Cijene"
       },
       "performance": {
@@ -339,37 +353,37 @@
         "subtitle": "Rezultati benchmarkova i tehničke sposobnosti",
         "description": "Rezultati benchmarkova i tehničke sposobnosti uključujući SWE-bench rezultate i podršku funkcionalnosti",
         "sweScore": "SWE-bench rezultat",
-        "contextWindow": "Context Window",
-        "languageSupport": "Language Support",
-        "multiFileSupport": "Multi-file Support",
-        "llmProviders": "LLM Providers",
+        "contextWindow": "Kontekstni prozor",
+        "languageSupport": "Podrška za jezike",
+        "multiFileSupport": "Podrška za više datoteka",
+        "llmProviders": "LLM Provideri",
         "tokens": "tokeni",
         "languages": "jezici",
         "yes": "Da",
         "multiple": "Više"
       },
       "businessMetrics": {
-        "title": "Business Metriky",
+        "title": "Poslovne metrike",
         "subtitle": "Financijski i growth metriky",
         "monthlyArr": "ARR (Mjesečni)",
-        "valuation": "Valuation",
+        "valuation": "Vrijednost",
         "totalFunding": "Ukupno financiranje",
         "employees": "Zaposlenici",
         "totalUsers": "Ukupno korisnika"
       },
       "rankingScores": {
-        "title": "Ranking Scores",
+        "title": "Rezultati rangiranja",
         "subtitle": "Detaljni breakdown ranking faktora",
-        "overallScore": "Ukupni Score",
-        "breakdown": "Score Breakdown",
-        "modifiers": "Primijenjeni Modifieri"
+        "overallScore": "Ukupni rezultat",
+        "breakdown": "Razrada rezultata",
+        "modifiers": "Primijenjeni modifieri"
       },
       "metricHistory": {
-        "title": "Metric History",
-        "subtitle": "Nedavni metriky koji utječu na ranking scores",
-        "noHistory": "Nema metric history za ovaj alat.",
-        "update": "Update",
-        "newMetrics": "Novi metriky prijavljeni za {tool}"
+        "title": "Povijest metrika",
+        "subtitle": "Nedavne metrike koje utječu na ranking scores",
+        "noHistory": "Nema povijesti metrika za ovaj alat.",
+        "update": "Ažuriranje",
+        "newMetrics": "Nove metrike prijavljene za {tool}"
       }
     },
     "status": {
@@ -381,16 +395,32 @@
     },
     "categories": {
       "autonomous-agent": "Autonomni Agent",
-      "code-editor": "Code Editor",
+      "code-editor": "Uređivač koda",
       "ide-assistant": "IDE Asistent",
-      "app-builder": "App Builder",
+      "app-builder": "Graditelj aplikacija",
       "open-source-framework": "Open Source Framework",
-      "testing-tool": "Testing Tool",
+      "testing-tool": "Alat za testiranje",
       "code-review": "Code Review",
-      "code-generation": "Code Generation"
+      "code-generation": "Generiranje koda"
     },
-    "notFound": "Alat nije pronađen",
-    "backToTools": "Natrag na alate"
+    "descriptions": {
+      "cursor": "AI-first code editor s inline chatom, tab dopunjavanjem i uređivanjem više datoteka",
+      "github-copilot": "AI pair programmer ugrađen u VS Code, JetBrains i Neovim",
+      "windsurf": "Agentski IDE koji prati tvoj codebase — autonomno uređuje, izvršava i iterira",
+      "claude-dev": "Autonomni coding agent koji čita, uređuje i pokreće kod izravno u tvom IDE-u",
+      "aider": "AI pair programmer u terminalu koji automatski committa promjene u git",
+      "infosys-topaz": "Enterprise AI platforma za generiranje koda, IT modernizaciju i automatizaciju cijelog razvojnog ciklusa",
+      "anything": "Sveobuhvatna desktop aplikacija za pokretanje lokalnih LLM-ova, izgradnju RAG pipeline-ova i upravljanje privatnim dokumentima",
+      "wabi": "Chat-vođen builder mobilnih aplikacija — objavi iOS i Android app bez pisanja koda",
+      "rocket-new": "Full-stack app builder koji generira backend, frontend i bazu podataka iz jednog prirodno-jezičnog prompta",
+      "clawdbot": "Coding chatbot temeljen na Claudeu za generiranje koda, debugging i tehnička pitanja",
+      "openrouter": "Jedinstveni API gateway prema 200+ LLM-ova — OpenAI, Anthropic, Google, Meta — s optimiziranim routingom troškova",
+      "perplexity": "AI tražilica s citiranim odgovorima u stvarnom vremenu za istraživanje koda, pretragu dokumentacije i debugging",
+      "harvey-ai": "Enterprise AI za pravne timove — automatizira analizu ugovora, due diligence i izradu dokumenata",
+      "openclaw": "Autonomni coding agent koji piše, debugira i refaktorizira kod bez ljudske intervencije",
+      "claude-desktop-extensions": "Claude Desktop spojen na lokalne datoteke i alate putem MCP-a — potpuno prilagodljiva AI radna stanica",
+      "coderabbit": "AI code reviewer koji objavljuje inline prijedloge za PR-ove, otkriva bugove i provodi standarde na GitHub-u i GitLab-u"
+    }
   },
   "newsletter": {
     "form": {
@@ -402,7 +432,7 @@
       "privacyNote": "Poštujemo vašu privatnost. Odjavite se kad god želite."
     },
     "modal": {
-      "title": "Ostani updated",
+      "title": "Ostani u toku",
       "subtitle": "Dobivaj tjedno updates o AI alat rangiranjima, novim features i industry insights.",
       "firstName": "Ime",
       "lastName": "Prezime",
@@ -415,14 +445,14 @@
       "resentEmail": "Poslali smo ponovno verification email. Molimo provjeri inbox.",
       "privacyNote": "Poštujemo vašu privatnost. Odjavite se kad god želite.",
       "errors": {
-        "captcha": "Molimo završi security provjeru",
-        "failed": "Neuspjeh pretplate. Molimo pokušaj ponovno.",
+        "captcha": "Molimo završi sigurnosnu provjeru",
+        "failed": "Pretplata nije uspjela. Molimo pokušaj ponovno.",
         "server": "Greška konfiguracije servera",
         "email": "Greška konfiguracije email servisa"
       }
     },
     "verification": {
-      "title": "Email Verification",
+      "title": "Verifikacija emaila",
       "success": {
         "title": "Email potvrđen!",
         "message": "Vaš email je uspješno potvrđen. Počet ćete primati naš tjedno newsletter s najnovijim AI alat rangiranjima i insights."
@@ -433,15 +463,15 @@
       },
       "errors": {
         "missingToken": {
-          "title": "Nedostaje Verification Token",
-          "message": "Verification link izgleda nepotpun. Molimo provjeri svoj email za ispravni link."
+          "title": "Nedostaje token za verifikaciju",
+          "message": "Verifikacijski link izgleda nepotpun. Molimo provjeri svoj email za ispravni link."
         },
         "invalidToken": {
-          "title": "Neispravni Token",
-          "message": "Ovaj verification link je neispravan ili istekao. Molimo pretplati se ponovno za novi verification email."
+          "title": "Neispravan token",
+          "message": "Ovaj verifikacijski link je neispravan ili istekao. Molimo pretplati se ponovno za novi verifikacijski email."
         },
         "failed": {
-          "title": "Verification neuspješan",
+          "title": "Verifikacija neuspješna",
           "message": "Nismo mogli potvrditi vaš email trenutno. Molimo pokušaj kasnije ili kontaktiraj support ako problem perzistira."
         },
         "unexpected": {
@@ -464,11 +494,11 @@
       },
       "errors": {
         "missingToken": {
-          "title": "Nedostaje Token",
+          "title": "Nedostaje token",
           "message": "Unsubscribe link izgleda nepotpun."
         },
         "invalidToken": {
-          "title": "Neispravan Link",
+          "title": "Neispravan link",
           "message": "Ovaj unsubscribe link je neispravan ili istekao."
         },
         "failed": {
@@ -517,27 +547,27 @@
     "intro": "AI Power Rankings koristi napredni algoritam (v7.6) za evaluaciju i rangiranje AI alata za kodiranje na temelju višestrukih kvantitativnih i kvalitativnih faktora, analize vijesti u stvarnom vremenu i sveobuhvatnih mogućnosti alata. Naša metodologija je dizajnirana da pruži programerima objektivnu procjenu pejzaža AI alata zasnovanu na podacima.",
     "sections": {
       "scoringFactors": {
-        "title": "Scoring Faktori",
-        "intro": "Naš algoritam evaluira alate kroz 8 ključnih dimenzija, svaku weighted prema važnosti za developere:"
+        "title": "Faktori bodovanja",
+        "intro": "Naš algoritam evaluira alate kroz 8 ključnih dimenzija, svaku ponderiranu prema važnosti za developere:"
       },
       "modifiers": {
-        "title": "Dinamički Modifieri",
-        "intro": "Da osiguramo da rangiranja reflektiraju trenutne market realnosti, primjenjujemo tri sophisticated modifiera:"
+        "title": "Dinamički modifieri",
+        "intro": "Da osiguramo da rangiranja reflektiraju trenutne tržišne realnosti, primjenjujemo tri napredna modifiera:"
       },
       "dataCollection": {
-        "title": "Data Collection",
-        "intro": "Prikupljamo data iz multiple izvora za osiguravanje točnosti:",
+        "title": "Prikupljanje podataka",
+        "intro": "Prikupljamo podatke iz više izvora za osiguravanje točnosti:",
         "sources": [
           "Direktne API integracije s tool providerima",
           "Javni repositoriji i developer statistike",
           "Industry reporti i verificirani news izvori",
-          "User ankete i community feedback",
+          "Korisničke ankete i community feedback",
           "Performance benchmarki (SWE-bench, HumanEval)"
         ]
       },
       "updateFrequency": {
-        "title": "Update Učestalost",
-        "content": "Rangiranja se prepočunavaju tjedno da reflektiraju brzo razvijajući AI landscape. Velika metodologija updates su verzionirana i dokumentirana."
+        "title": "Učestalost ažuriranja",
+        "content": "Rangiranja se prepočunavaju tjedno da reflektiraju brzo razvijajući AI landscape. Velika ažuriranja metodologije su verzionirana i dokumentirana."
       }
     },
     "algorithm": {
@@ -550,7 +580,9 @@
         "revenueQuality": "Prilagodbe kvalitete prihoda na osnovu poslovnog modela",
         "technicalWeighting": "Ponderiranje tehničkih sposobnosti za različite slučajeve upotrebe",
         "dataValidation": "Višeizvorska validacija i normalizacija podataka",
-        "logarithmicScaling": "Logaritamsko skaliranje za uravnotežene usporedbe"
+        "logarithmicScaling": "Logaritamsko skaliranje za uravnotežene usporedbe",
+        "newsIntelligence": "Dinamično velocity bodovanje iz analize vijesti u stvarnom vremenu",
+        "toolCapabilities": "Poboljšana procjena subprocesa i ekosustava alata"
       }
     },
     "factors": {
@@ -682,7 +714,7 @@
       "email": "Kontaktirajte nas na hello@aipowerranking.com"
     },
     "newsletter": {
-      "title": "Ostani updated",
+      "title": "Ostani u toku",
       "description": "Dobivaj tjedno insights o AI alat rangiranjima i industry trendovima.",
       "subscribe": "Pretplati se na Newsletter"
     },
@@ -752,7 +784,7 @@
     },
     "cta": {
       "title": "Spreman za istraživanje?",
-      "description": "Zaro nite u naša rangiranja da otkrijete najbolje AI alate za kodiranje za vaše potrebe.",
+      "description": "Zaroni u naša rangiranja da otkriješ najbolje AI alate za kodiranje za svoje potrebe.",
       "exploreButton": "Istraži rangiranja",
       "methodologyButton": "Nauči našu metodologiju"
     }
@@ -760,17 +792,18 @@
   "sidebar": {
     "navigation": "Navigacija",
     "quickLinks": "Brzi linkovi",
-    "trending": "Trending",
+    "trending": "U trendu",
+    "historicalTrends": "Povijesni trendovi",
     "categories": "Kategorije",
-    "features": "Features",
+    "features": "Funkcionalnosti",
     "clearFilters": "Očisti filtere"
   },
   "features": {
-    "autocomplete": "Autocomplete",
-    "chat": "Chat Interface",
-    "codeGeneration": "Code Generation",
+    "autocomplete": "Automatsko dovršavanje",
+    "chat": "Sučelje za chat",
+    "codeGeneration": "Generiranje koda",
     "refactoring": "Refactoring",
-    "testing": "Testing",
+    "testing": "Testiranje",
     "documentation": "Dokumentacija"
   },
   "status": {
@@ -794,18 +827,12 @@
     "offline": {
       "title": "Offline ste",
       "message": "Molimo provjerite internetsku vezu i pokušajte ponovno.",
-      "action": "Retry"
+      "action": "Pokušaj ponovno"
     }
   },
   "seo": {
     "title": "AI Power Rankings - Konačno mjesečno rangiranje AI alata za kodiranje",
     "description": "Konačno mjesečno rangiranje i analiza agentskih AI alata za kodiranje. Usporedite Cursor, GitHub Copilot, Claude i preko 50 AI asistenata kojima vjeruju developeri diljem svijeta.",
     "keywords": "AI alati za kodiranje, agentska AI, autonomno kodiranje, rangiranje alata za developere, usporedba AI asistenata, benchmarkovi AI kodiranja, SWE-bench rezultati, Claude vs Cursor vs GitHub Copilot"
-  },
-  "footer": {
-    "description": "Sveobuhvatna rangiranja AI alata za kodiranje koristeći Algorithm v7.6 s propadanjem inovacije, modifikatorima rizika platforme i prilagodbama kvalitete prihoda.",
-    "quickLinks": "Brzi linkovi",
-    "categories": "Kategorije",
-    "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."
   }
 }
