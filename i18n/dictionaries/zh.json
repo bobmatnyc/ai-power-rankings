@@ -56,7 +56,7 @@
     "methodology": "方法论",
     "about": "关于",
     "subscribeToUpdates": "订阅更新",
-    "signupForUpdates": "Signup For Updates",
+    "signupForUpdates": "订阅更新",
     "navigation": "导航",
     "quickLinks": "快速链接",
     "trending": "热门",
@@ -946,6 +946,24 @@
       "recommendations": "推荐建议",
       "bestFor": "最适合",
       "notIdealFor": "不适合"
+    },
+    "descriptions": {
+      "cursor": "内置内联对话、Tab补全和多文件编辑的AI原生代码编辑器",
+      "github-copilot": "深度集成于VS Code、JetBrains和Neovim的AI结对编程工具",
+      "windsurf": "与代码库同步流动，能自主编辑、运行和迭代的Agentic IDE",
+      "claude-dev": "直接在IDE中读写和运行代码的自主编码代理",
+      "aider": "在终端运行、自动提交代码到git的AI结对编程工具",
+      "infosys-topaz": "覆盖全开发生命周期的代码生成、IT现代化与智能自动化企业AI平台",
+      "anything": "一体化桌面应用，用于运行本地LLM、构建RAG流水线和管理私有文档",
+      "wabi": "无需写代码，通过对话即可发布iOS和Android应用的AI移动应用构建工具",
+      "rocket-new": "用一句自然语言生成后端、前端和数据库的全栈应用构建工具",
+      "clawdbot": "基于Claude的编程聊天机器人，支持代码生成、调试和技术问答",
+      "openrouter": "统一API网关，接入200+个LLM（OpenAI、Anthropic、Google、Meta），带自动成本优化路由",
+      "perplexity": "提供实时引用答案的AI搜索引擎，适用于代码研究、文档查询和调试",
+      "harvey-ai": "专为法律团队打造的企业AI，自动化合同分析、尽职调查和文件起草",
+      "openclaw": "无需人工干预即可自主编写、调试和重构代码的编码代理",
+      "claude-desktop-extensions": "通过MCP连接本地文件和工具的Claude Desktop，打造全定制化AI工作站",
+      "coderabbit": "在GitHub和GitLab上自动发布PR内联建议、检测Bug并执行编码规范的AI代码审查工具"
     }
   },
   "newsletter": {

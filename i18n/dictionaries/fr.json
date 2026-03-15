@@ -3,17 +3,17 @@
     "autonomousagent": "Agent Autonome",
     "codeeditor": "Éditeur de Code",
     "ideassistant": "Assistant IDE",
-    "appbuilder": "App Builder",
+    "appbuilder": "Constructeur d'apps",
     "opensourceframework": "Framework Open Source",
     "testingtool": "Outil de Test",
-    "codereview": "Code Review",
+    "codereview": "Revue de code",
     "codeassistant": "Assistant Code",
     "devopsassistant": "Assistant DevOps",
     "autonomousAgent": "Agent Autonome",
     "codeEditor": "Éditeur de Code",
     "ideAssistant": "Assistant IDE",
-    "appBuilder": "App Builder",
-    "codeReview": "Code Review",
+    "appBuilder": "Constructeur d'apps",
+    "codeReview": "Revue de code",
     "codeAssistant": "Assistant Code",
     "devopsAssistant": "Assistant DevOps"
   },
@@ -47,7 +47,7 @@
     "methodology": "Méthodologie",
     "about": "À propos",
     "subscribeToUpdates": "S'abonner aux mises à jour",
-    "signupForUpdates": "Signup For Updates",
+    "signupForUpdates": "S'abonner aux mises à jour",
     "navigation": "Navigation",
     "quickLinks": "Liens rapides",
     "trending": "Tendances",
@@ -106,7 +106,7 @@
         "description": "Éditeurs intelligents avec intégration IA"
       },
       "appBuilders": {
-        "name": "Constructeurs d'app",
+        "name": "Constructeurs d'apps",
         "description": "Construire des applications complètes avec assistance IA"
       },
       "autonomousAgents": {
@@ -120,14 +120,14 @@
     },
     "methodology": {
       "title": "Notre méthodologie",
-      "algorithmTitle": "Algorithme v7.0",
-      "algorithmDescription": "Notre algorithme de classement avancé considère 8 facteurs clés avec des modificateurs sophistiqués :",
-      "keyModifiersTitle": "Modificateurs clés",
-      "keyModifiersDescription": "Trois modificateurs sophistiqués garantissent des classements équitables et précis :",
+      "algorithmTitle": "Algorithme v7.6",
+      "algorithmDescription": "Scoring validé par le marché combinant métriques d'adoption réelles et capacités techniques pour des évaluations objectives :",
+      "keyModifiersTitle": "Qualité des données et scoring",
+      "keyModifiersDescription": "Méthodologie transparente avec multiplicateurs de confiance pour les données incomplètes :",
       "factors": {
-        "agenticCapability": "Capacité agentique (30%) - Capacités de codage autonome",
-        "technicalPerformance": "Performance technique (12,5%) - Focus sur SWE-bench",
-        "marketTraction": "Traction du marché (12,5%) - Ajusté pour la qualité des revenus",
+        "agenticCapability": "Capacité agentique (12%) - Capacités de codage autonome",
+        "technicalPerformance": "Performance technique (18%) - Scores SWE-bench vérifiés",
+        "marketTraction": "Traction du marché (12%) - Adoption par les entreprises",
         "agentic": {
           "name": "Capacité agentique",
           "description": "Capacités de codage autonome et completion de tâches multi-étapes"
@@ -146,49 +146,55 @@
         }
       },
       "modifiers": {
-        "innovationDecay": "Déclin de l'innovation - Les innovations récentes obtiennent un score plus élevé",
-        "platformRisk": "Risque de plateforme - Bonus d'indépendance, pénalités de verrouillage",
-        "revenueQuality": "Qualité des revenus - Revenus d'entreprise pondérés plus haut",
-        "dataValidation": "Validation des données - 80% de complétude requise",
+        "innovationDecay": "Adoption développeurs (18%) - GitHub stars, installs VS Code, téléchargements npm/PyPI",
+        "platformRisk": "Sentiment business (12%) - Couverture presse, rapports analystes, scores de satisfaction",
+        "revenueQuality": "Vélocité de développement (12%) - Fréquence des releases et vélocité des fonctionnalités",
+        "dataValidation": "Résilience de plateforme (8%) - Uptime, taux d'erreur et posture sécurité",
         "decay": {
-          "name": "Déclin de l'innovation",
-          "description": "Innovations récentes pondérées plus fortement"
+          "name": "Adoption développeurs",
+          "description": "Utilisateurs réels et engagement actif"
         },
         "risk": {
-          "name": "Risque de plateforme",
-          "description": "Facteurs d'indépendance vs. verrouillage de plateforme"
+          "name": "Sentiment business",
+          "description": "Perception de l'industrie et confiance"
         },
         "revenue": {
-          "name": "Qualité des revenus",
-          "description": "Revenus d'entreprise pondérés plus haut que grand public"
+          "name": "Vélocité de développement",
+          "description": "Développement actif et innovation"
         },
         "validation": {
-          "name": "Validation des données",
-          "description": "Minimum 80% de complétude des données requise"
+          "name": "Résilience de plateforme",
+          "description": "Stabilité et fiabilité"
         }
       },
-      "modifiersTitle": "Modificateurs dynamiques",
-      "modifiersDescription": "Trois modificateurs sophistiqués garantissent des classements équitables et précis",
+      "modifiersTitle": "Facteurs additionnels",
+      "modifiersDescription": "Évaluation complète à travers toutes les dimensions de qualité des outils",
       "readFull": "Lire la méthodologie complète",
       "readMoreButton": "Lire la méthodologie complète"
     },
     "footer": {
       "tagline": "Insights data-driven pour la révolution IA",
-      "description": "Classements complets des outils de codage IA utilisant l'Algorithme v7.0 avec intelligence d'actualités dynamique, capacités d'outils améliorées et scoring de vélocité.",
+      "description": "Classements complets des outils de codage IA utilisant l'Algorithme v7.6 avec scoring validé par le marché combinant métriques d'adoption réelles et capacités techniques.",
       "quickLinks": "Liens rapides",
       "categories": "Catégories",
       "copyright": "© 2025 Classement IA Power. Tous droits réservés."
     }
   },
+  "trending": {
+    "title": "Historique des classements des outils IA",
+    "description": "Découvrez comment les outils IA ont évolué dans le temps. Suivez les étoiles montantes, les leaders établis et les évolutions du marché dans le paysage IA en rapide évolution.",
+    "aboutTitle": "À propos des tendances historiques",
+    "aboutDescription": "Ce graphique montre comment les outils IA sont entrés et sortis du top 10 au fil du temps. Les outils apparaissant plus haut sur le graphique (plus proches du #1) performent mieux."
+  },
   "footer": {
-    "description": "Classements complets des outils de codage IA utilisant l'Algorithme v7.1 avec déclin de l'innovation, modificateurs de risque de plateforme et ajustements de qualité des revenus.",
+    "description": "Classements complets des outils de codage IA utilisant l'Algorithme v7.6 avec déclin de l'innovation, modificateurs de risque de plateforme et ajustements de qualité des revenus.",
     "quickLinks": "Liens rapides",
     "categories": "Catégories",
     "copyright": "© 2025 Classement IA Power. Tous droits réservés."
   },
   "rankings": {
     "title": "Classement IA Power",
-    "subtitle": "Classements complets des outils de codage IA utilisant l'Algorithme v7.0",
+    "subtitle": "Classements complets des outils de codage IA utilisant l'Algorithme v7.6 - Scoring validé par le marché",
     "stats": {
       "totalTools": "Total outils",
       "categories": "Catégories",
@@ -236,8 +242,8 @@
       }
     },
     "algorithm": {
-      "title": "À propos de l'Algorithme v7.0",
-      "subtitle": "Système de classement amélioré avec déclin de l'innovation, modificateurs de risque de plateforme et ajustements de qualité des revenus",
+      "title": "À propos de l'Algorithme v7.6",
+      "subtitle": "Scoring validé par le marché combinant métriques d'adoption réelles et capacités techniques pour des évaluations objectives",
       "tabs": {
         "factors": "Facteurs de score",
         "modifiers": "Modificateurs",
@@ -396,6 +402,24 @@
       "testing-tool": "Outil de test",
       "code-review": "Revue de code",
       "code-generation": "Génération de code"
+    },
+    "descriptions": {
+      "cursor": "Éditeur de code AI-first avec chat inline, complétion par tabulation et édition multi-fichiers",
+      "github-copilot": "Programmeur IA en binôme intégré nativement dans VS Code, JetBrains et Neovim",
+      "windsurf": "IDE agentique qui s'adapte à ta codebase — édite, exécute et itère de façon autonome",
+      "claude-dev": "Agent de codage autonome qui lit, modifie et exécute du code directement dans ton IDE",
+      "aider": "Programmeur IA en binôme dans le terminal qui pousse les changements en git automatiquement",
+      "infosys-topaz": "Plateforme IA d'entreprise pour la génération de code, la modernisation IT et l'automatisation du cycle de vie complet",
+      "anything": "Application de bureau tout-en-un pour faire tourner des LLMs locaux, construire des pipelines RAG et gérer des docs privés",
+      "wabi": "Constructeur d'applis mobiles par chat — publie des applis iOS et Android sans écrire une ligne de code",
+      "rocket-new": "Constructeur d'apps full-stack qui génère backend, frontend et BD depuis un seul prompt en langage naturel",
+      "clawdbot": "Chatbot de codage basé sur Claude pour la génération de code, le debugging et les questions techniques",
+      "openrouter": "Passerelle API unifiée vers 200+ LLMs — OpenAI, Anthropic, Google, Meta — avec routage optimisé en coût",
+      "perplexity": "Moteur de recherche IA avec réponses citées en temps réel pour la recherche de code, la doc et le debugging",
+      "harvey-ai": "IA d'entreprise pour les équipes juridiques — automatise l'analyse de contrats, la due diligence et la rédaction de documents",
+      "openclaw": "Agent de codage autonome qui écrit, débogue et refactorise du code sans intervention humaine",
+      "claude-desktop-extensions": "Claude Desktop connecté à tes fichiers et outils locaux via MCP — une station de travail IA entièrement personnalisable",
+      "coderabbit": "Reviewer de code IA qui poste des suggestions inline dans les PRs, détecte les bugs et applique les standards sur GitHub et GitLab"
     }
   },
   "newsletter": {
@@ -514,10 +538,10 @@
     "title": "Notre méthodologie",
     "subtitle": "Comment nous classons les outils de codage IA",
     "lastUpdated": "Dernière mise à jour : Janvier 2025",
-    "intro": "Classement IA Power utilise un algorithme sophistiqué (v7.0) pour évaluer et classer les outils de codage IA basé sur de multiples facteurs quantitatifs et qualitatifs, l'analyse d'actualités en temps réel et les capacités complètes des outils. Notre méthodologie est conçue pour fournir aux développeurs une évaluation objective et data-driven du paysage des outils IA.",
+    "intro": "Classement IA Power utilise l'Algorithme v7.6, un système de scoring validé par le marché qui combine métriques d'adoption réelles (GitHub stars, installs VS Code, téléchargements npm/PyPI) avec la performance technique (scores SWE-bench, fenêtres de contexte) et la validation marché (ARR, adoption enterprise) pour des évaluations objectives basées sur 8 dimensions clés.",
     "algorithm": {
-      "title": "Algorithme v7.0",
-      "description": "Notre dernier algorithme de classement intègre les patterns d'usage du monde réel et les dynamiques de marché",
+      "title": "Algorithme v7.6",
+      "description": "Système de scoring validé par le marché combinant métriques d'adoption réelles (GitHub stars, installs VS Code, téléchargements npm/PyPI) avec la performance technique (scores SWE-bench, fenêtres de contexte) et la validation marché (ARR, adoption enterprise)",
       "keyFeatures": "Fonctionnalités clés",
       "features": {
         "innovationDecay": "Modélisation du déclin de l'innovation pour refléter la fraîcheur des outils",
@@ -525,7 +549,9 @@
         "revenueQuality": "Ajustements de qualité des revenus basés sur le modèle d'affaires",
         "technicalWeighting": "Pondération des capacités techniques pour différents cas d'usage",
         "dataValidation": "Validation des données multi-sources et normalisation",
-        "logarithmicScaling": "Mise à l'échelle logarithmique pour des comparaisons équilibrées"
+        "logarithmicScaling": "Mise à l'échelle logarithmique pour des comparaisons équilibrées",
+        "newsIntelligence": "Scoring de vélocité dynamique depuis l'analyse d'actualités en temps réel",
+        "toolCapabilities": "Évaluation des sous-processus et de l'écosystème d'outils améliorée"
       }
     },
     "factors": {
@@ -584,8 +610,8 @@
       "revenueQuality": {
         "description": "Pondération des revenus basée sur la durabilité du modèle d'affaires et le potentiel de croissance",
         "models": {
-          "enterpriseHigh": "Entreprise (Haut niveau)",
-          "enterpriseStandard": "Entreprise (Standard)",
+          "enterpriseHigh": "Enterprise (Haut niveau)",
+          "enterpriseStandard": "Enterprise (Standard)",
           "smbSaas": "PME SaaS",
           "consumerPremium": "Grand public Premium",
           "freemium": "Freemium",
@@ -761,6 +787,7 @@
     "navigation": "Navigation",
     "quickLinks": "Liens rapides",
     "trending": "Tendances",
+    "historicalTrends": "Tendances historiques",
     "categories": "Catégories",
     "features": "Fonctionnalités",
     "clearFilters": "Effacer les filtres"

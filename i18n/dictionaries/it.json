@@ -3,7 +3,7 @@
     "autonomousagent": "Agente Autonomo",
     "codeeditor": "Editor di Codice",
     "ideassistant": "Assistente IDE",
-    "appbuilder": "App Builder",
+    "appbuilder": "Costruttore di app",
     "opensourceframework": "Framework Open Source",
     "testingtool": "Tool di Testing",
     "codereview": "Code Review",
@@ -12,7 +12,7 @@
     "autonomousAgent": "Agente Autonomo",
     "codeEditor": "Editor di Codice",
     "ideAssistant": "Assistente IDE",
-    "appBuilder": "App Builder",
+    "appBuilder": "Costruttore di app",
     "codeReview": "Code Review",
     "codeAssistant": "Assistente Codice",
     "devopsAssistant": "Assistente DevOps"
@@ -20,7 +20,7 @@
   "common": {
     "appName": "Ranking AI",
     "appDescription": "Ranking data-driven di tool di coding AI",
-    "loading": "Loading...",
+    "loading": "Caricamento...",
     "error": "Errore",
     "tryAgain": "Riprova",
     "backToHome": "Torna alla Home",
@@ -47,12 +47,12 @@
     "methodology": "Metodologia",
     "about": "Chi siamo",
     "subscribeToUpdates": "Iscriviti agli aggiornamenti",
-    "signupForUpdates": "Signup For Updates",
+    "signupForUpdates": "Iscriviti agli aggiornamenti",
     "navigation": "Navigazione",
     "quickLinks": "Link rapidi",
-    "trending": "Trending",
+    "trending": "In tendenza",
     "categories": "Categorie",
-    "features": "Features",
+    "features": "Funzionalità",
     "clearFilters": "Cancella filtri",
     "allCategories": "Tutte le categorie"
   },
@@ -106,7 +106,7 @@
         "description": "Editor intelligenti con integrazione AI"
       },
       "appBuilders": {
-        "name": "App Builder",
+        "name": "Costruttori di app",
         "description": "Costruisci applicazioni complete con assistenza AI"
       },
       "autonomousAgents": {
@@ -120,21 +120,21 @@
     },
     "methodology": {
       "title": "La Nostra Metodologia",
-      "algorithmTitle": "Algoritmo v7.0",
-      "algorithmDescription": "Il nostro algoritmo di ranking avanzato considera 8 fattori chiave con modificatori sofisticati:",
-      "keyModifiersTitle": "Modificatori Chiave",
-      "keyModifiersDescription": "Tre modificatori sofisticati garantiscono classifiche eque e accurate:",
+      "algorithmTitle": "Algoritmo v7.6",
+      "algorithmDescription": "Scoring validato dal mercato che combina metriche di adozione reali con capacità tecniche per valutazioni obiettive:",
+      "keyModifiersTitle": "Qualità dei Dati e Scoring",
+      "keyModifiersDescription": "Metodologia trasparente con moltiplicatori di confidenza per dati incompleti:",
       "factors": {
-        "agenticCapability": "Capacità Agentiche (30%) - Abilità di codifica autonoma",
-        "innovation": {
-          "name": "Innovazione",
-          "description": "Breakthrough tecnologici e innovazione delle funzionalità"
-        },
-        "technicalPerformance": "Prestazioni Tecniche (12.5%) - Focus su SWE-bench",
-        "marketTraction": "Trazione di Mercato (12.5%) - Qualità dei ricavi aggiustata",
+        "agenticCapability": "Capacità Agentiche (12%) - Abilità di codifica autonoma",
+        "technicalPerformance": "Prestazioni Tecniche (18%) - Punteggi SWE-bench verificati",
+        "marketTraction": "Trazione di Mercato (12%) - Adozione enterprise",
         "agentic": {
           "name": "Capacità Agentiche",
           "description": "Abilità di codifica autonoma e completamento di attività multi-step"
+        },
+        "innovation": {
+          "name": "Innovazione",
+          "description": "Breakthrough tecnologici e innovazione delle funzionalità"
         },
         "performance": {
           "name": "Prestazioni Tecniche",
@@ -146,25 +146,25 @@
         }
       },
       "modifiers": {
-        "innovationDecay": "Decadimento Innovazione - Le innovazioni recenti ottengono punteggi più alti",
-        "platformRisk": "Rischio Piattaforma - Bonus di indipendenza, penalità per lock-in",
-        "revenueQuality": "Qualità Ricavi - Ricavi enterprise pesati di più",
-        "dataValidation": "Validazione Dati - 80% di completezza richiesta",
+        "innovationDecay": "Adozione Sviluppatori (18%) - GitHub stars, installazioni VS Code, download npm/PyPI",
+        "platformRisk": "Sentiment Aziendale (12%) - Copertura stampa, report analisti, punteggi soddisfazione",
+        "revenueQuality": "Velocità di Sviluppo (12%) - Frequenza release e velocità funzionalità",
+        "dataValidation": "Resilienza Piattaforma (8%) - Uptime, tassi di errore e postura sicurezza",
         "decay": {
-          "name": "Decadimento Innovazione",
-          "description": "Le innovazioni recenti sono pesate maggiormente"
+          "name": "Adozione Sviluppatori",
+          "description": "Utenti reali e coinvolgimento attivo"
         },
         "risk": {
-          "name": "Rischio Piattaforma",
-          "description": "Fattori di indipendenza vs. lock-in della piattaforma"
+          "name": "Sentiment Aziendale",
+          "description": "Percezione del settore e fiducia"
         },
         "revenue": {
-          "name": "Qualità Ricavi",
-          "description": "Ricavi enterprise pesati maggiormente rispetto ai consumer"
+          "name": "Velocità di Sviluppo",
+          "description": "Sviluppo attivo e innovazione"
         },
         "validation": {
-          "name": "Validazione Dati",
-          "description": "Minimo 80% di completezza dei dati richiesta"
+          "name": "Resilienza Piattaforma",
+          "description": "Stabilità e affidabilità"
         }
       },
       "modifiersTitle": "Modificatori Dinamici",
@@ -174,15 +174,27 @@
     },
     "footer": {
       "tagline": "Insights data-driven per la rivoluzione AI",
-      "description": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.0 con intelligenza delle notizie dinamica, capacità degli strumenti migliorate e punteggio di velocità.",
+      "description": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.6 con scoring validato dal mercato che combina metriche di adozione reali con capacità tecniche.",
       "quickLinks": "Link Rapidi",
       "categories": "Categorie",
       "copyright": "© 2025 AI Power Ranking. Tutti i diritti riservati."
     }
   },
+  "trending": {
+    "title": "Storico delle classifiche degli strumenti AI",
+    "description": "Esplora come gli strumenti AI hanno performato nel tempo. Segui le stelle nascenti, i leader affermati e i cambiamenti di mercato nel panorama AI in rapida evoluzione.",
+    "aboutTitle": "Informazioni sui trend storici",
+    "aboutDescription": "Questo grafico mostra come gli strumenti AI sono entrati e usciti dalla top 10 nel tempo. Gli strumenti che appaiono più in alto nel grafico (più vicini al #1) stanno performando meglio."
+  },
+  "footer": {
+    "description": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.6 con decadimento dell'innovazione, modificatori di rischio piattaforma e aggiustamenti della qualità dei ricavi.",
+    "quickLinks": "Link Rapidi",
+    "categories": "Categorie",
+    "copyright": "© 2025 AI Power Ranking. Tutti i diritti riservati."
+  },
   "rankings": {
     "title": "Classifiche AI Power",
-    "subtitle": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.0",
+    "subtitle": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.6 - Scoring validato dal mercato",
     "stats": {
       "totalTools": "Strumenti Totali",
       "categories": "Categorie",
@@ -194,13 +206,13 @@
     "activeFilters": "Filtri attivi",
     "sort": {
       "rank": "Classifica",
-      "trending": "Trending",
+      "trending": "In tendenza",
       "score": "Punteggio",
       "name": "Nome"
     },
     "algorithm": {
-      "title": "Informazioni sull'Algoritmo v7.0",
-      "subtitle": "Sistema di ranking migliorato con decadimento dell'innovazione, modificatori di rischio piattaforma e aggiustamenti della qualità dei ricavi",
+      "title": "Informazioni sull'Algoritmo v7.6",
+      "subtitle": "Scoring validato dal mercato che combina metriche di adozione reali con capacità tecniche per valutazioni obiettive",
       "tabs": {
         "factors": "Fattori di Punteggio",
         "modifiers": "Modificatori",
@@ -264,7 +276,7 @@
     "subtitle": "Ultimi aggiornamenti, milestone e annunci degli strumenti di codifica AI",
     "filters": {
       "all": "Tutte le Notizie",
-      "milestone": "Milestone",
+      "milestone": "Traguardo",
       "feature": "Funzionalità",
       "partnership": "Partnership",
       "update": "Aggiornamento",
@@ -295,6 +307,8 @@
     "filterByCategory": "Filtra per categoria",
     "sortBy": "Ordina per",
     "defaultDescription": "Scopri e confronta tool di coding AI",
+    "notFound": "Strumento non trovato",
+    "backToTools": "Torna agli strumenti",
     "sort": {
       "name": "Nome",
       "category": "Categoria",
@@ -383,14 +397,30 @@
       "autonomous-agent": "Agente Autonomo",
       "code-editor": "Editor di Codice",
       "ide-assistant": "Assistente IDE",
-      "app-builder": "App Builder",
+      "app-builder": "Costruttore di app",
       "open-source-framework": "Framework Open Source",
       "testing-tool": "Tool di Testing",
       "code-review": "Code Review",
       "code-generation": "Generazione Codice"
     },
-    "notFound": "Strumento non trovato",
-    "backToTools": "Torna agli strumenti"
+    "descriptions": {
+      "cursor": "Editor di codice AI-first con chat inline, tab completion e modifiche multi-file",
+      "github-copilot": "Programmatore IA in coppia integrato nativamente in VS Code, JetBrains e Neovim",
+      "windsurf": "IDE agenttico che scorre con il tuo codebase — modifica, esegue e itera in modo autonomo",
+      "claude-dev": "Agente di codifica autonomo che legge, modifica ed esegue codice direttamente nel tuo IDE",
+      "aider": "Programmatore IA in coppia nel terminale che fa commit su git automaticamente",
+      "infosys-topaz": "Piattaforma AI enterprise per generazione di codice, modernizzazione IT e automazione dell'intero ciclo di vita",
+      "anything": "App desktop all-in-one per eseguire LLM locali, costruire pipeline RAG e gestire documenti privati",
+      "wabi": "Builder di app mobile via chat — pubblica app iOS e Android senza scrivere una riga di codice",
+      "rocket-new": "Builder di app full-stack che genera backend, frontend e DB da un singolo prompt in linguaggio naturale",
+      "clawdbot": "Chatbot di codifica basato su Claude per generazione di codice, debugging e domande tecniche",
+      "openrouter": "Gateway API unificato per 200+ LLM — OpenAI, Anthropic, Google, Meta — con routing ottimizzato per i costi",
+      "perplexity": "Motore di ricerca AI con risposte citate in tempo reale per ricerca di codice, documentazione e debugging",
+      "harvey-ai": "AI enterprise per team legali — automatizza analisi contratti, due diligence e redazione documenti",
+      "openclaw": "Agente di codifica autonomo che scrive, debugga e refactorizza codice senza intervento umano",
+      "claude-desktop-extensions": "Claude Desktop connesso ai tuoi file e strumenti locali via MCP — una workstation AI completamente personalizzabile",
+      "coderabbit": "Reviewer di codice AI che pubblica suggerimenti inline nelle PR, rileva bug e applica standard su GitHub e GitLab"
+    }
   },
   "newsletter": {
     "form": {
@@ -514,7 +544,7 @@
     "title": "La Nostra Metodologia",
     "subtitle": "Come classifichiamo gli strumenti di codifica AI",
     "lastUpdated": "Ultimo aggiornamento: Gennaio 2025",
-    "intro": "AI Power Ranking utilizza un algoritmo sofisticato (v7.0) per valutare e classificare gli strumenti di codifica AI basandosi su molteplici fattori quantitativi e qualitativi, analisi delle notizie in tempo reale e capacità complete degli strumenti. La nostra metodologia è progettata per fornire agli sviluppatori una valutazione obiettiva e data-driven del panorama degli strumenti AI.",
+    "intro": "AI Power Ranking utilizza l'Algoritmo v7.6, un sistema di scoring validato dal mercato che combina metriche di adozione reali (GitHub stars, installazioni VS Code, download npm/PyPI) con prestazioni tecniche (punteggi SWE-bench, finestre di contesto) e validazione di mercato (ARR, adozione enterprise) per valutazioni obiettive basate su 8 dimensioni chiave.",
     "sections": {
       "scoringFactors": {
         "title": "Fattori di Punteggio",
@@ -541,8 +571,8 @@
       }
     },
     "algorithm": {
-      "title": "Algoritmo v7.1",
-      "description": "Il nostro ultimo algoritmo di ranking incorpora pattern di utilizzo del mondo reale e dinamiche di mercato",
+      "title": "Algoritmo v7.6",
+      "description": "Sistema di scoring validato dal mercato che combina metriche di adozione reali (GitHub stars, installazioni VS Code, download npm/PyPI) con prestazioni tecniche (punteggi SWE-bench, finestre di contesto) e validazione di mercato (ARR, adozione enterprise)",
       "keyFeatures": "Caratteristiche Chiave",
       "features": {
         "innovationDecay": "Modellazione del decadimento dell'innovazione per riflettere la freschezza degli strumenti",
@@ -550,7 +580,9 @@
         "revenueQuality": "Aggiustamenti della qualità dei ricavi basati sul modello di business",
         "technicalWeighting": "Pesatura delle capacità tecniche per diversi casi d'uso",
         "dataValidation": "Validazione e normalizzazione dei dati multi-fonte",
-        "logarithmicScaling": "Scaling logaritmico per confronti bilanciati"
+        "logarithmicScaling": "Scaling logaritmico per confronti bilanciati",
+        "newsIntelligence": "Scoring di velocità dinamico dall'analisi delle notizie in tempo reale",
+        "toolCapabilities": "Valutazione avanzata dei sottoprocessi e dell'ecosistema di strumenti"
       }
     },
     "factors": {
@@ -609,7 +641,7 @@
       "revenueQuality": {
         "description": "Pesatura dei ricavi basata sulla sostenibilità del modello di business e potenziale di crescita",
         "models": {
-          "enterpriseHigh": "Enterprise (High-touch)",
+          "enterpriseHigh": "Enterprise (Alto coinvolgimento)",
           "enterpriseStandard": "Enterprise (Standard)",
           "smbSaas": "PMI SaaS",
           "consumerPremium": "Consumer Premium",
@@ -668,8 +700,8 @@
       }
     },
     "team": {
-      "title": "The Team",
-      "description": "AI Power Rankings is maintained by a team of developers and data scientists passionate about the intersection of AI and software development.",
+      "title": "Il team",
+      "description": "AI Power Ranking è mantenuto da Bob Matsuoka, un dirigente tecnologico e CTO frazionario che sta tracciando gli strumenti di codifica agentici dal marzo 2025.",
       "description1": "AI Power Ranking è mantenuto da Bob Matsuoka, un dirigente tecnologico e CTO frazionario che sta tracciando gli strumenti di codifica agentici dal marzo 2025.",
       "description2": "Combino esperienza pratica nella costruzione di applicazioni di produzione con valutazione sistematica di strumenti di sviluppo AI. Questo sito fornisce la base quantitativa per la mia analisi strategica su HyperDev, dove scrivo delle realtà pratiche della codifica con agenti AI.",
       "description3": "Piena trasparenza: questa è un'operazione di una sola persona costruita in due giorni. Sto rilasciando e iterando basandomi sull'uso reale perché il panorama degli strumenti per sviluppatori si muove troppo velocemente per i cicli di analisi tradizionali.",
@@ -760,7 +792,8 @@
   "sidebar": {
     "navigation": "Navigazione",
     "quickLinks": "Link Rapidi",
-    "trending": "Trending",
+    "trending": "In tendenza",
+    "historicalTrends": "Tendenze storiche",
     "categories": "Categorie",
     "features": "Funzionalità",
     "clearFilters": "Cancella Filtri"
@@ -801,11 +834,5 @@
     "title": "AI Power Rankings - La classifica mensile definitiva degli strumenti di codifica AI",
     "description": "La classifica mensile definitiva e l'analisi degli strumenti di codifica AI agentici. Confronta Cursor, GitHub Copilot, Claude e oltre 50 assistenti AI di cui si fidano gli sviluppatori di tutto il mondo.",
     "keywords": "strumenti di codifica AI, AI agentici, codifica autonoma, classifiche strumenti sviluppatori, confronto assistenti AI, benchmark AI di codifica, risultati SWE-bench, Claude vs Cursor vs GitHub Copilot"
-  },
-  "footer": {
-    "description": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.1 con decadimento dell'innovazione, modificatori di rischio piattaforma e aggiustamenti della qualità dei ricavi.",
-    "quickLinks": "Link Rapidi",
-    "categories": "Categorie",
-    "copyright": "© 2025 AI Power Ranking. Tutti i diritti riservati."
   }
 }
