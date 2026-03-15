@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.4] - 2026-03-15
+
+### Changed
+- docs: add research notes from i18n and tools cleanup session
+- chore: add pnpm release scripts + release.sh
+- chore: gitignore kuzu-memories directory
+- feat(ingestion): harden auto-tool creation against bad tool ingestion
+- fix(i18n): localize left rail category names in sidebar
+- i18n: complete translation pass across all 9 language files + tool descriptions
+- fix(security): remove insecure cron auth methods — endpoint was open to public
+- fix(mobile): implement comprehensive mobile cache-busting for articles
+- fix(cron): enable Vercel cron scheduler authentication
+- feat: add tool update data for 10 tools with poor descriptions
+
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
