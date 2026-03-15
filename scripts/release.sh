@@ -76,6 +76,11 @@ git tag "v$NEW_VERSION" -m "Release v$NEW_VERSION"
 git push && git push --tags
 
 echo ""
+echo ""
+echo "🔍  Running post-deployment verification..."
+echo ""
+bash "$(dirname "$0")/verify-deployment.sh"
+echo ""
 echo "✅  Released v$NEW_VERSION"
 echo "    Tag: v$NEW_VERSION"
 echo "    Vercel will deploy automatically from main."
