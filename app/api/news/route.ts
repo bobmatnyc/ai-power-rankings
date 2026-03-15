@@ -87,24 +87,32 @@ export async function GET(request: NextRequest) {
         if (tags.length > 0) {
           const tagStr = tags.join(" ").toLowerCase();
           if (
-            tagStr.includes("launch") ||
-            tagStr.includes("beta") ||
-            tagStr.includes("general-availability")
-          ) {
-            eventType = "feature";
-          } else if (
             tagStr.includes("milestone") ||
             tagStr.includes("revenue") ||
             tagStr.includes("funding") ||
-            tagStr.includes("growth")
+            tagStr.includes("growth") ||
+            tagStr.includes("valuation") ||
+            tagStr.includes("series") ||
+            tagStr.includes("unicorn")
           ) {
             eventType = "milestone";
-          } else if (tagStr.includes("benchmark") || tagStr.includes("performance")) {
+          } else if (
+            tagStr.includes("launch") ||
+            tagStr.includes("beta") ||
+            tagStr.includes("general-availability") ||
+            tagStr.includes("benchmark") ||
+            tagStr.includes("performance") ||
+            tagStr.includes("release")
+          ) {
             eventType = "feature";
+          } else if (
+            tagStr.includes("partnership") ||
+            tagStr.includes("integration") ||
+            tagStr.includes("collaboration")
+          ) {
+            eventType = "partnership";
           } else if (tagStr.includes("rebrand") || tagStr.includes("acquisition")) {
             eventType = "announcement";
-          } else if (tagStr.includes("partnership")) {
-            eventType = "partnership";
           }
         }
 
@@ -118,27 +126,51 @@ export async function GET(request: NextRequest) {
             text.includes("raised") ||
             text.includes("investment") ||
             text.includes("valuation") ||
-            text.includes("arr")
+            text.includes("arr") ||
+            text.includes("unicorn") ||
+            text.includes("series") ||
+            text.includes("customers") ||
+            text.includes("revenue") ||
+            text.includes("growth") ||
+            text.includes("users")
           ) {
             eventType = "milestone";
           } else if (
             text.includes("launch") ||
             text.includes("released") ||
             text.includes("feature") ||
-            text.includes("introduces")
+            text.includes("introduces") ||
+            text.includes("announces") ||
+            text.includes("unveils") ||
+            text.includes("debuts") ||
+            text.includes("new model") ||
+            text.includes("introducing") ||
+            text.includes("rolls out") ||
+            text.includes("ships") ||
+            text.includes("releases")
           ) {
             eventType = "feature";
           } else if (
             text.includes("partnership") ||
             text.includes("acquired") ||
-            text.includes("acquisition")
+            text.includes("acquisition") ||
+            text.includes("integrates") ||
+            text.includes("collaboration") ||
+            text.includes("joins") ||
+            text.includes("integrating") ||
+            text.includes("integrated with") ||
+            text.includes("teams up")
           ) {
             eventType = "partnership";
           } else if (
-            text.includes("hiring") ||
-            text.includes("ceo") ||
-            text.includes("leadership") ||
-            text.includes("rebrand")
+            text.includes("rebrand") ||
+            text.includes("stepping down") ||
+            text.includes("appointed") ||
+            text.includes("new ceo") ||
+            text.includes("new chief") ||
+            text.includes("rebranding") ||
+            text.includes("spin-off") ||
+            text.includes("merger")
           ) {
             eventType = "announcement";
           }
