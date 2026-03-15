@@ -189,3 +189,4 @@ virtualenv/
 wheels/
 .mcp-ticketer/
 .env*.local
+kuzu-memories/
