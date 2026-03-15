@@ -401,7 +401,9 @@
       "open-source-framework": "Framework open source",
       "testing-tool": "Outil de test",
       "code-review": "Revue de code",
-      "code-generation": "Génération de code"
+      "code-generation": "Génération de code",
+      "code-assistant": "Assistant Code",
+      "devops-assistant": "Assistant DevOps"
     },
     "descriptions": {
       "cursor": "Éditeur de code AI-first avec chat inline, complétion par tabulation et édition multi-fichiers",

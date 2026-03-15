@@ -649,7 +649,9 @@
       "mobile": "モバイル",
       "monitoring": "モニタリング",
       "productivity": "生産性",
-      "security": "セキュリティ"
+      "security": "セキュリティ",
+      "code-assistant": "コードアシスタント",
+      "devops-assistant": "DevOpsアシスタント"
     },
     "filters": {
       "all": "すべて",

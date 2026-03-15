@@ -393,7 +393,9 @@
       "open-source-framework": "Open-Source-Framework",
       "testing-tool": "Testing-Tool",
       "code-review": "Code Review",
-      "code-generation": "Code-Generierung"
+      "code-generation": "Code-Generierung",
+      "code-assistant": "Code-Assistent",
+      "devops-assistant": "DevOps-Assistent"
     },
     "notFound": "Tool nicht gefunden",
     "backToTools": "Zurück zu Tools",
