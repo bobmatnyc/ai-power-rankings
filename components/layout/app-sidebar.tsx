@@ -293,7 +293,11 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
                           )}
                         />
                       )}
-                      <span className="transition-colors">{category.name}</span>
+                      <span className="transition-colors">
+                        {category.id === "all"
+                          ? (dict.navigation?.allCategories ?? category.name)
+                          : (dict.tools?.categories?.[category.id as keyof typeof dict.tools.categories] ?? category.name)}
+                      </span>
                     </div>
                     <Badge
                       variant={isActive ? "default" : "secondary"}
