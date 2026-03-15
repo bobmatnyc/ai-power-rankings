@@ -401,7 +401,9 @@
       "open-source-framework": "Open Source Framework",
       "testing-tool": "Testing Tool",
       "code-review": "Code Review",
-      "code-generation": "Code Generation"
+      "code-generation": "Code Generation",
+      "code-assistant": "Code Assistant",
+      "devops-assistant": "DevOps Assistant"
     },
     "descriptions": {
       "cursor": "AI-first code editor with inline chat, tab completion, and multi-file edits",

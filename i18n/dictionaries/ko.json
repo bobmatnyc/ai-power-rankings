@@ -393,7 +393,9 @@
       "open-source-framework": "오픈 소스 프레임워크",
       "testing-tool": "테스팅 툴",
       "code-review": "코드 리뷰",
-      "code-generation": "코드 생성"
+      "code-generation": "코드 생성",
+      "code-assistant": "코드 어시스턴트",
+      "devops-assistant": "DevOps 어시스턴트"
     },
     "notFound": "도구를 찾을 수 없습니다",
     "backToTools": "도구 목록으로 돌아가기",

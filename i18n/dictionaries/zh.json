@@ -849,14 +849,16 @@
       "coming-soon": "即将推出"
     },
     "categories": {
-      "autonomous-agent": "[TRANSLATE] Autonomous Agent",
-      "code-editor": "[TRANSLATE] Code Editor",
-      "ide-assistant": "[TRANSLATE] IDE Assistant",
-      "app-builder": "[TRANSLATE] App Builder",
-      "open-source-framework": "[TRANSLATE] Open Source Framework",
-      "testing-tool": "[TRANSLATE] Testing Tool",
-      "code-review": "[TRANSLATE] Code Review",
-      "code-generation": "[TRANSLATE] Code Generation"
+      "autonomous-agent": "自主代理",
+      "code-editor": "代码编辑器",
+      "ide-assistant": "IDE助手",
+      "app-builder": "应用构建器",
+      "open-source-framework": "开源框架",
+      "testing-tool": "测试工具",
+      "code-review": "代码审查",
+      "code-generation": "代码生成",
+      "code-assistant": "代码助手",
+      "devops-assistant": "DevOps助手"
     },
     "category": "分类",
     "filters": {
