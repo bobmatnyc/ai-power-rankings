@@ -24,7 +24,12 @@
     "test:api": "playwright test tests/e2e/api.spec.ts",
     "test:ui": "playwright test --grep-invert 'api.spec.ts'",
     "test:report": "playwright show-report test-results/html",
-    "test:install": "playwright install --with-deps"
+    "test:install": "playwright install --with-deps",
+    "release": "bash scripts/release.sh patch",
+    "release:patch": "bash scripts/release.sh patch",
+    "release:minor": "bash scripts/release.sh minor",
+    "release:major": "bash scripts/release.sh major",
+    "version:check": "node -p \"require(\"./package.json\").version\""
   },
   "dependencies": {
     "@clerk/nextjs": "^6.33.0",
