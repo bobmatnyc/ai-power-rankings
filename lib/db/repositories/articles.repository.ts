@@ -271,12 +271,13 @@ export class ArticlesRepository {
   // ============================================
 
   /**
-   * Create a new tool (auto-created from article)
+   * Create a new tool (auto-created from article).
+   * Returns null if the tool is filtered by category allowlist or slug blocklist.
    */
   async createAutoTool(
     toolData: AutoToolInput,
     articleId: string
-  ): Promise<AutoToolResult> {
+  ): Promise<AutoToolResult | null> {
     return this.entitiesService.createAutoTool(toolData, articleId);
   }
 
