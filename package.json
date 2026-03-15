@@ -1,6 +1,6 @@
 {
   "name": "aipowerranking",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3007",
