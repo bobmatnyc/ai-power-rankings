@@ -331,6 +331,7 @@ export class ContentExtractor {
           "User-Agent": "Mozilla/5.0 (compatible; AINewsBot/1.0; +https://ai-power-ranking.com)",
           Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         },
+        signal: AbortSignal.timeout(15_000),
       });
 
       if (!response.ok) {
@@ -648,23 +649,32 @@ Return ONLY the JSON object above with actual data. No additional text or explan
     const modelName = "anthropic/claude-sonnet-4";
 
     try {
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${this.apiKey}`,
-          "Content-Type": "application/json",
-          Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3007",
-        },
-        body: JSON.stringify({
-          model: modelName,
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt },
-          ],
-          temperature: 0.2, // Lower temperature for more consistent, focused analysis with Claude 4
-          max_tokens: 16000, // 16k to accommodate 400-500 word summaries (~2500-3500 chars) plus 800-1000 word rewritten content (~5000-6000 chars) plus metadata.
-        }),
-      });
+      let response: Response;
+      try {
+        response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.apiKey}`,
+            "Content-Type": "application/json",
+            Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3007",
+          },
+          body: JSON.stringify({
+            model: modelName,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt },
+            ],
+            temperature: 0.2, // Lower temperature for more consistent, focused analysis with Claude 4
+            max_tokens: 4000, // ~2000-2500 tokens needed; 4k provides headroom without bloating completion time
+          }),
+          signal: AbortSignal.timeout(120_000),
+        });
+      } catch (fetchError) {
+        if (fetchError instanceof Error && fetchError.name === "TimeoutError") {
+          throw new Error("OpenRouter request timed out after 120 seconds — skipping article");
+        }
+        throw fetchError;
+      }
 
       if (!response.ok) {
         const errorText = await response.text();
