@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveCrownIcon } from "@/components/ui/crown-icon-server";
-import type { Locale } from "@/i18n/config";
 import { locales } from "@/i18n/config";
 import { getCurrentYear } from "@/lib/get-current-year";
 

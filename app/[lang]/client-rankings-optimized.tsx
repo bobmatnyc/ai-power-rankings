@@ -43,6 +43,23 @@ interface AlgorithmData {
   };
 }
 
+interface RecentTool {
+  id: string;
+  slug?: string;
+  name: string;
+  category: string;
+  description?: string;
+}
+
+interface ToolForStats {
+  category: string;
+  baseline_score?: number;
+  score?: number;
+  scores?: {
+    overall?: number;
+  };
+}
+
 interface RankingsResponse {
   rankings?: RankingData[];
   algorithm?: AlgorithmData;
@@ -240,7 +257,7 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
         const recentTools = data.tools || [];
 
         // Transform API response to RankingData format
-        const transformedTools: RankingData[] = recentTools.map((tool: any, index: number) => ({
+        const transformedTools: RankingData[] = recentTools.map((tool: RecentTool, index: number) => ({
           rank: index + 1, // Not a real rank, just for display purposes
           tool: {
             id: tool.id,
@@ -285,14 +302,14 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
         const totalCount = tools.length;
 
         // Calculate unique categories
-        const uniqueCategories = new Set(tools.map((t: any) => t.category).filter(Boolean));
+        const uniqueCategories = new Set(tools.map((t: ToolForStats) => t.category).filter(Boolean));
         const categoriesNum = uniqueCategories.size;
 
         // Calculate average baseline score
         // First try baseline_score, then score field, then look for scores.overall
         const scoresArray = tools
-          .map((t: any) => t.baseline_score || t.score || t.scores?.overall)
-          .filter((s: any) => typeof s === 'number' && s > 0);
+          .map((t: ToolForStats) => t.baseline_score || t.score || t.scores?.overall)
+          .filter((s: unknown): s is number => typeof s === 'number' && s > 0);
 
         let avgScoreValue = 0;
         if (scoresArray.length > 0) {
@@ -629,7 +646,7 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
     // Fetch rankings and tools statistics in parallel
     fetchRankings();
     fetchToolsStatistics();
-  }, [processRankingsInChunks, fetchToolsStatistics, initialRankings.length]);
+  }, [processRankingsInChunks, fetchToolsStatistics, initialRankings]);
 
   // Memoize trending tools display to prevent re-computation
   const trendingDisplay = useMemo(() => {

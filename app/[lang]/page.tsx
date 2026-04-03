@@ -14,14 +14,6 @@ import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
 import { getAllKeywords } from "@/lib/metadata/static-keywords";
 
-interface ToolData {
-  id: string;
-  name: string;
-  status: string;
-  slug?: string;
-  description?: string;
-  category?: string;
-}
 
 interface RankingData {
   rank: number;
