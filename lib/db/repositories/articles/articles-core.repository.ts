@@ -4,7 +4,7 @@
  */
 
 import { revalidatePath } from "next/cache";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import {
   type Article,
   type NewArticle,
@@ -66,6 +66,33 @@ function ensureJsonObject(value: unknown, fieldName: string): object | null {
   return null;
 }
 
+/**
+ * Canonicalizes URL to handle slight variations that should be treated as duplicates
+ */
+function canonicalizeUrl(url: string): string {
+  try {
+    const urlObj = new URL(url);
+
+    // Remove trailing slash
+    if (urlObj.pathname.endsWith('/')) {
+      urlObj.pathname = urlObj.pathname.slice(0, -1);
+    }
+
+    // Sort query parameters for consistency
+    urlObj.searchParams.sort();
+
+    // Remove common tracking parameters
+    const trackingParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'fbclid', 'gclid'];
+    trackingParams.forEach(param => urlObj.searchParams.delete(param));
+
+    // Convert to lowercase for consistency
+    return urlObj.toString().toLowerCase();
+  } catch {
+    // If URL parsing fails, return lowercase original
+    return url.toLowerCase();
+  }
+}
+
 export class ArticlesCoreRepository {
   private db: DbInstance;
 
@@ -89,6 +116,32 @@ export class ArticlesCoreRepository {
     this.ensureConnection();
 
     if (!this.db) throw new Error("Database not connected");
+
+    // Check for duplicate source URL before insertion
+    if (article.sourceUrl) {
+      const canonicalUrl = canonicalizeUrl(article.sourceUrl);
+
+      // Check both original and canonical URL for duplicates
+      const existingArticle = await this.db
+        .select()
+        .from(articles)
+        .where(sql`LOWER(${articles.sourceUrl}) = ${canonicalUrl.toLowerCase()} OR ${articles.sourceUrl} = ${article.sourceUrl}`)
+        .limit(1);
+
+      if (existingArticle.length > 0) {
+        const existing = existingArticle[0];
+        console.log(`[ArticlesRepo] Duplicate source URL detected: ${article.sourceUrl}`);
+        console.log(`[ArticlesRepo] Canonical URL: ${canonicalUrl}`);
+        console.log(`[ArticlesRepo] Existing article: ID=${existing.id}, Title=${existing.title?.slice(0, 50)}...`);
+        throw new Error(
+          `Article with source URL "${article.sourceUrl}" already exists (ID: ${existing.id}). ` +
+          "Duplicate prevention enforced."
+        );
+      }
+
+      // Store the canonical URL to ensure consistency
+      article.sourceUrl = canonicalUrl;
+    }
 
     // Validate ingestion type against allowed values
     const validIngestionTypes = ["url", "text", "file"];
