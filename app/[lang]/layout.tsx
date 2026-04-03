@@ -1,45 +1,9 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { ClientLayout } from "@/components/layout/client-layout";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
-
-// Self-hosted fonts for optimal performance
-// Eliminates external DNS lookups and reduces FCP by 400-800ms
-// Using display: "optional" to prevent layout shifts (CLS optimization)
-const geistSans = localFont({
-  src: [
-    {
-      path: "../../public/fonts/Inter-Regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/Inter-SemiBold.woff2",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/Inter-Bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-geist-sans",
-  display: "optional",
-  preload: true,
-  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Arial", "sans-serif"],
-});
-
-const geistMono = localFont({
-  src: "../../public/fonts/JetBrainsMono-Regular.woff2",
-  variable: "--font-geist-mono",
-  display: "optional",
-  preload: true,
-  fallback: ["Consolas", "Monaco", "Courier New", "monospace"],
-});
 
 export async function generateMetadata({
   params,

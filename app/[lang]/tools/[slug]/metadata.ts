@@ -3,6 +3,13 @@ import type { Tool } from "@/types/database";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { generateToolMetadata as generateMetadataFromTool } from "@/lib/seo/utils";
 
+interface ToolInfo {
+  product?: {
+    description?: string;
+  };
+  [key: string]: unknown;
+}
+
 export async function generateToolMetadata(slug: string): Promise<Metadata> {
   try {
     const toolsRepo = new ToolsRepository();
@@ -20,13 +27,13 @@ export async function generateToolMetadata(slug: string): Promise<Metadata> {
       id: toolData.id,
       slug: toolData.slug,
       name: toolData.name,
-      description: (toolData.info as any)?.product?.description as string | undefined,
+      description: (toolData.info as ToolInfo)?.product?.description,
       category: toolData.category,
       status: toolData.status as "active" | "inactive" | "deprecated" | "discontinued",
       created_at: toolData.created_at || new Date().toISOString(),
       updated_at: toolData.updated_at || new Date().toISOString(),
       tags: toolData.tags,
-      info: toolData.info as any,
+      info: toolData.info as ToolInfo,
     };
 
     return generateMetadataFromTool(tool);

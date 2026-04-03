@@ -109,7 +109,7 @@ export default function EditNewsPage() {
   useUnsavedChangesWarning(hasUnsavedChanges);
 
   // Auto-save hook
-  const { lastSaved, saving: autoSaving, error: autoSaveError, manualSave } = useAutoSave({
+  const { lastSaved, saving: autoSaving, error: autoSaveError } = useAutoSave({
     interval: 30000, // 30 seconds
     enabled: id !== "new" && hasUnsavedChanges,
     data: article ? {

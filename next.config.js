@@ -4,16 +4,10 @@ const path = require('path')
 const nextConfig = {
   reactStrictMode: true,
   typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
+    // TypeScript error checking enabled for build safety
   },
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
+    // ESLint validation enabled for code quality assurance
   },
   // Moved from experimental to top-level in Next.js 15
   skipTrailingSlashRedirect: true,

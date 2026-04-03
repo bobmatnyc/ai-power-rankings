@@ -8,7 +8,16 @@ export default function ClerkDebugPage() {
   const { loaded } = useClerk();
   const { user, isSignedIn, isLoaded } = useUser();
   const [mounted, setMounted] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<any>({});
+  const [debugInfo, setDebugInfo] = useState<{
+    timestamp?: string;
+    clerkLoaded?: boolean;
+    userLoaded?: boolean;
+    isSignedIn?: boolean;
+    userId?: string | null;
+    hasWindowClerk?: boolean;
+    windowClerkLoaded?: boolean;
+    cookies?: number;
+  }>({});
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -23,7 +32,7 @@ export default function ClerkDebugPage() {
         isSignedIn,
         userId: user?.id || null,
         hasWindowClerk: typeof window.Clerk !== 'undefined',
-        windowClerkLoaded: (window as any).Clerk?.loaded || false,
+        windowClerkLoaded: (window as unknown as { Clerk?: { loaded?: boolean } }).Clerk?.loaded || false,
         cookies: document.cookie.split(';').filter(c => c.includes('clerk')).length,
       });
     }, 500);
