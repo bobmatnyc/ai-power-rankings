@@ -11,16 +11,6 @@
         "mcp"
       ]
     },
-    "mcp-vector-search": {
-      "type": "stdio",
-      "command": "mcp-vector-search",
-      "args": [
-        "mcp"
-      ],
-      "env": {
-        "MCP_ENABLE_FILE_WATCHING": "true"
-      }
-    },
     "mcp-ticketer": {
       "type": "stdio",
       "command": "mcp-ticketer",
@@ -30,6 +20,21 @@
         "/Users/masa/Projects/aipowerranking"
       ],
       "env": {}
+    },
+    "mcp-vector-search": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/Users/masa/Projects/aipowerranking",
+        "mcp-vector-search",
+        "mcp"
+      ],
+      "env": {
+        "PROJECT_ROOT": "/Users/masa/Projects/aipowerranking",
+        "MCP_PROJECT_ROOT": "/Users/masa/Projects/aipowerranking"
+      }
     }
   }
 }
