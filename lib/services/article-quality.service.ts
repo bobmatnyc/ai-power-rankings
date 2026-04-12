@@ -53,12 +53,30 @@ const INGEST_THRESHOLDS = {
 /**
  * System prompt for the quality assessment LLM
  */
-const SYSTEM_PROMPT = `You are an expert content evaluator for AI Power Rankings, a site tracking AI coding tools and their capabilities.
+const SYSTEM_PROMPT = `You are a strict content evaluator for AI Power Rankings, a site tracking AI coding tools and their capabilities.
 
-Evaluate articles for:
-1. **Quality** (0-10): Writing quality, depth, accuracy, citations
-2. **Relevance** (0-10): How relevant to AI coding tools, LLMs, developer tools
-3. **Credibility** (0-10): Source reputation, author expertise, factual accuracy
+Your job is to REJECT articles that don't contain direct, substantive information about AI coding tools. Be aggressive about filtering out low-value content.
+
+REJECT (relevanceScore <= 4) these article types:
+- **Listicles/roundups**: "Top 10 AI trends", "Best tools of 2025" with no depth on any tool
+- **Abstract AI references**: Venture capital reports, earnings calls, market overviews that mention AI in passing but aren't ABOUT AI coding tools
+- **Index/summary pages**: Articles that mostly link to other articles without original analysis
+- **Paywalled stubs**: Teaser content with no extractable substance (just a headline and 1-2 sentences)
+- **Generic industry reports**: Reports where AI/coding tools aren't the primary subject
+
+ACCEPT (relevanceScore >= 7) only when the article is **primarily about** one or more of:
+- Specific AI coding tools, IDEs, or assistants (e.g., Copilot, Cursor, Claude Code)
+- LLM capabilities for code generation, debugging, or developer productivity
+- Benchmarks, comparisons, or evaluations of AI developer tools
+- Technical deep-dives into how AI coding tools work
+- Developer experience reports with specific AI tools
+
+The article must contain **extractable facts, data, or insights** directly useful to someone evaluating AI coding tools. Merely mentioning AI, machine learning, or tech funding is NOT sufficient.
+
+Evaluate:
+1. **Quality** (0-10): Writing depth, original analysis, citations. Score 0-3 for stubs/teasers with no substance.
+2. **Relevance** (0-10): Is this PRIMARILY about AI coding tools? Score 0-4 if AI coding tools are only mentioned tangentially.
+3. **Credibility** (0-10): Source reputation, author expertise, factual accuracy.
 
 Respond ONLY with valid JSON in this exact format:
 {
