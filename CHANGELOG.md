@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.5] - 2026-04-12
+
+### Changed
+- docs: add final QA verification reports for duplicate prevention system
+- docs: add comprehensive duplicate prevention system documentation
+- feat(utils): add duplicate investigation and cleanup verification tools
+- test: add E2E accessibility verification tests
+- feat(scripts): add comprehensive database management and duplicate prevention utilities
+- feat(quality): enhance article quality assessment with stricter filtering
+- fix: resolve auto article scraping failure by fixing Vercel environment variables
+- feat(db): add comprehensive duplicate prevention system
+- fix(build): restore build quality checks and resolve ESLint violations
+- feat(scripts): add backfill-day.ts for targeted date-range article ingestion
+- fix(ingestion): add AbortSignal timeouts to prevent cron hang
+- fix(news): tighten article event_type keyword classification
+- fix(i18n): replace [TRANSLATE] placeholders in tools.categories + add missing keys
+- chore: add post-deployment verification to release pipeline
+
+
 ## [0.4.4] - 2026-03-15
 
 ### Changed
