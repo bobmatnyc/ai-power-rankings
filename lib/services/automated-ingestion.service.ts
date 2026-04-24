@@ -666,7 +666,22 @@ export class AutomatedIngestionService {
 
       // Step 6: Update run record with final metrics
       if (!isDryRun) {
-        await this.updateRun(runId, result);
+        try {
+          await this.updateRun(runId, result);
+          loggers.api.info("[AutomatedIngestion] Successfully updated run status", {
+            runId,
+            status: result.status,
+          });
+        } catch (updateError) {
+          // Log the error but don't fail the entire operation since articles were successfully ingested
+          loggers.api.error("[AutomatedIngestion] Failed to update run status (ingestion succeeded)", {
+            runId,
+            error: updateError instanceof Error ? updateError.message : "Unknown error",
+            articlesIngested: result.articlesIngested,
+          });
+          // Add this error to the result but don't change overall status
+          result.errors.push(`Status update failed: ${updateError instanceof Error ? updateError.message : "Unknown error"}`);
+        }
       }
 
       loggers.api.info("[AutomatedIngestion] Daily discovery completed", {
@@ -1037,23 +1052,32 @@ export class AutomatedIngestionService {
         updateData.ingestedArticleIds = updates.ingestedArticleIds;
       }
 
-      // Set completedAt if status is not running
-      if (updates.status && updates.status !== "completed") {
-        updateData.completedAt = new Date();
-      }
-      if (updates.status === "completed" || updates.status === "failed") {
+      // Set completedAt when status changes from running to completed/failed
+      if (updates.status && (updates.status === "completed" || updates.status === "failed")) {
         updateData.completedAt = new Date();
       }
 
-      await db
+      const updateResult = await db
         .update(automatedIngestionRuns)
         .set(updateData)
-        .where(eq(automatedIngestionRuns.id, runId));
+        .where(eq(automatedIngestionRuns.id, runId))
+        .returning({ id: automatedIngestionRuns.id });
 
-      console.log(`[AutomatedIngestion] Run ${runId} updated successfully`);
+      if (updateResult.length === 0) {
+        throw new Error(`No ingestion run found with ID: ${runId}`);
+      }
+
+      loggers.api.info(`[AutomatedIngestion] Run ${runId} updated successfully`, {
+        status: updates.status,
+        articlesIngested: updates.articlesIngested,
+      });
     } catch (error) {
-      console.error(`[AutomatedIngestion] Failed to update run ${runId}:`, error);
-      throw error;
+      const errorMsg = error instanceof Error ? error.message : "Unknown database error";
+      loggers.api.error(`[AutomatedIngestion] Failed to update run ${runId}`, {
+        error: errorMsg,
+        updateData: updates.status ? { status: updates.status } : undefined,
+      });
+      throw new Error(`Database update failed: ${errorMsg}`);
     }
   }
 
