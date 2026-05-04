@@ -118,8 +118,8 @@ export class ArticleQualityService {
           max_tokens: 1000,
         },
         {
-          maxAttempts: 3,
-          timeoutMs: 30000,
+          maxAttempts: 2,
+          timeoutMs: 15000,
         }
       );
 
@@ -151,18 +151,81 @@ export class ArticleQualityService {
   }
 
   /**
-   * Assess multiple articles in batch
+   * Assess multiple articles in batch (parallel processing)
+   *
+   * Processes articles in concurrent batches of BATCH_SIZE to avoid
+   * sequential OpenRouter timeouts that can hang the entire pipeline.
+   *
+   * Includes a circuit breaker: if more than 30% of assessments fail,
+   * remaining articles are accepted with a default "ingest" assessment
+   * to prevent total pipeline failure.
+   *
    * @param articles - Array of articles to assess
    * @returns Array of quality assessments in same order as input
    */
   async batchAssess(articles: ArticleToAssess[]): Promise<QualityAssessment[]> {
+    const BATCH_SIZE = 5; // Process 5 articles concurrently
+    const FAILURE_THRESHOLD = Math.floor(articles.length * 0.3);
+
     const assessments: QualityAssessment[] = [];
     let totalCost = 0;
+    let qualityFailures = 0;
+    let circuitBreakerTripped = false;
 
-    for (const article of articles) {
-      const assessment = await this.assessArticle(article);
-      assessments.push(assessment);
-      totalCost += assessment.estimatedCost;
+    for (let i = 0; i < articles.length; i += BATCH_SIZE) {
+      const batch = articles.slice(i, i + BATCH_SIZE);
+
+      // Circuit breaker: if too many failures, accept remaining articles
+      if (!circuitBreakerTripped && qualityFailures > FAILURE_THRESHOLD) {
+        loggers.api.warn(
+          `Too many quality failures (${qualityFailures}/${articles.length}), accepting remaining articles`,
+          { failureThreshold: FAILURE_THRESHOLD, remaining: articles.length - i }
+        );
+        circuitBreakerTripped = true;
+      }
+
+      if (circuitBreakerTripped) {
+        // Accept remaining articles with default-ingest assessment
+        for (const _article of batch) {
+          assessments.push({
+            qualityScore: 7,
+            relevanceScore: 7,
+            credibilityScore: 7,
+            reasoning: 'Circuit breaker accepted: too many quality assessment failures',
+            suggestedCategories: [],
+            shouldIngest: true,
+            estimatedCost: 0,
+          });
+        }
+        continue;
+      }
+
+      // Process batch in parallel; per-article errors are caught here so
+      // one failure cannot reject the entire Promise.all
+      const batchResults = await Promise.all(
+        batch.map((article) =>
+          this.assessArticle(article).catch((error) => {
+            qualityFailures++;
+            loggers.api.error('Quality assessment threw in batch', {
+              title: article.title.substring(0, 50),
+              error: error instanceof Error ? error.message : String(error),
+            });
+            return {
+              ...DEFAULT_ASSESSMENT,
+              estimatedCost: 0,
+            } as QualityAssessment;
+          })
+        )
+      );
+
+      // Track failures from assessArticle's internal error handler (returns DEFAULT_ASSESSMENT)
+      for (const result of batchResults) {
+        if (result.reasoning === DEFAULT_ASSESSMENT.reasoning) {
+          qualityFailures++;
+        }
+        assessments.push(result);
+        totalCost += result.estimatedCost;
+      }
     }
 
     const ingestCount = assessments.filter((a) => a.shouldIngest).length;
@@ -171,6 +234,8 @@ export class ArticleQualityService {
       totalArticles: articles.length,
       articlesToIngest: ingestCount,
       rejectedArticles: articles.length - ingestCount,
+      qualityFailures,
+      circuitBreakerTripped,
       totalCost: totalCost.toFixed(4),
     });
 

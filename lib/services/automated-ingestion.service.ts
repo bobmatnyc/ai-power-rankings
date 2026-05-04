@@ -247,11 +247,90 @@ export class AutomatedIngestionService {
   }
 
   /**
-   * Run daily discovery pipeline
-   * Main orchestration method that coordinates the entire ingestion flow
+   * Pipeline-level timeout for the entire daily discovery run.
+   * Prevents indefinite hangs (e.g., when downstream services like
+   * OpenRouter stall on individual requests).
+   */
+  private static readonly PIPELINE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+
+  /**
+   * Run daily discovery pipeline with overall timeout guard.
+   *
+   * Wraps the core pipeline in a Promise.race against a 10-minute timeout.
+   * On timeout, the in-flight run record is marked as "failed" with a
+   * timeout error so the database does not leave stale "running" rows.
    */
   async runDailyDiscovery(options?: DailyDiscoveryOptions): Promise<IngestionResult> {
     const startTime = Date.now();
+    const isDryRun = options?.dryRun ?? false;
+
+    // Track the run id created inside executeDailyDiscovery so the
+    // timeout handler can mark it failed in the DB.
+    const runIdRef: { current: string } = { current: "" };
+
+    try {
+      return await Promise.race([
+        this.executeDailyDiscovery(options, startTime, runIdRef),
+        new Promise<IngestionResult>((_, reject) =>
+          setTimeout(
+            () =>
+              reject(
+                new Error(
+                  `Pipeline timeout: exceeded ${AutomatedIngestionService.PIPELINE_TIMEOUT_MS / 1000}s`
+                )
+              ),
+            AutomatedIngestionService.PIPELINE_TIMEOUT_MS
+          )
+        ),
+      ]);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : "Unknown pipeline error";
+      loggers.api.error("[AutomatedIngestion] Pipeline failed (top-level)", {
+        error: errorMsg,
+        runId: runIdRef.current,
+      });
+
+      // Best-effort: mark the run as failed so it doesn't stay "running"
+      if (!isDryRun && runIdRef.current && !runIdRef.current.startsWith("dry-run")) {
+        try {
+          await this.updateRun(runIdRef.current, {
+            status: "failed",
+            errors: [errorMsg],
+          });
+        } catch (updateError) {
+          loggers.api.error("[AutomatedIngestion] Failed to mark timed-out run as failed", {
+            runId: runIdRef.current,
+            error: updateError instanceof Error ? updateError.message : "Unknown error",
+          });
+        }
+      }
+
+      return {
+        runId: runIdRef.current,
+        status: "failed",
+        articlesDiscovered: 0,
+        articlesPassedQuality: 0,
+        articlesIngested: 0,
+        articlesSkipped: 0,
+        articlesSkippedSemantic: 0,
+        rankingChanges: 0,
+        estimatedCostUsd: 0,
+        errors: [errorMsg],
+        ingestedArticleIds: [],
+        durationMs: Date.now() - startTime,
+      };
+    }
+  }
+
+  /**
+   * Core daily discovery pipeline implementation.
+   * Extracted from runDailyDiscovery so a Promise.race timeout can wrap it.
+   */
+  private async executeDailyDiscovery(
+    options: DailyDiscoveryOptions | undefined,
+    startTime: number,
+    runIdRef: { current: string }
+  ): Promise<IngestionResult> {
     const isDryRun = options?.dryRun ?? false;
     const maxArticles = options?.maxArticles ?? 20;
 
@@ -280,6 +359,7 @@ export class AutomatedIngestionService {
         runId = `dry-run-${Date.now()}`;
         loggers.api.info("[AutomatedIngestion] Dry run mode - no database record created");
       }
+      runIdRef.current = runId;
 
       // Check if search service is available (prefer Tavily, fallback to Brave)
       const useTavily = this.tavilySearchService.isConfigured();
