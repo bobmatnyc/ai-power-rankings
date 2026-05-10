@@ -16,6 +16,38 @@ import {
 import { invalidateArticleCache } from "@/lib/cache/invalidation.service";
 import { loggers } from "@/lib/logger";
 
+/**
+ * Send a failure alert via webhook when the cron route encounters an error.
+ *
+ * Uses ALERT_WEBHOOK_URL env var (e.g. a Slack incoming webhook or similar).
+ * Silently no-ops if the env var is not set — set it in Vercel dashboard to
+ * enable alerting.
+ */
+async function sendCronAlert(
+  route: string,
+  errorMessage: string,
+  details: Record<string, unknown>
+): Promise<void> {
+  const webhookUrl = process.env["ALERT_WEBHOOK_URL"];
+  if (!webhookUrl) return;
+
+  try {
+    await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: `[CRON FAILURE] ${route}`,
+        error: errorMessage,
+        ...details,
+        timestamp: new Date().toISOString(),
+      }),
+    });
+  } catch {
+    // Never throw from the alert path — logging is sufficient fallback
+    loggers.api.error("Cron: Failed to send alert webhook", { route });
+  }
+}
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 800; // ~13 minutes - pipeline can take 10+ minutes with large article sets
@@ -63,6 +95,12 @@ export async function GET(request: Request) {
         hasAuthHeader: !!request.headers.get("authorization"),
         userAgent: request.headers.get("user-agent"),
         endpoint: "/api/cron/daily-news",
+      });
+
+      // Alert: 401 means CRON_SECRET is misconfigured — daily ingestion is silently broken
+      await sendCronAlert("/api/cron/daily-news", "401 Unauthorized — CRON_SECRET mismatch or not set", {
+        hasAuthHeader: !!request.headers.get("authorization"),
+        impact: "Daily article ingestion is not running — articles will fall behind",
       });
 
       return NextResponse.json(
@@ -135,17 +173,25 @@ export async function GET(request: Request) {
     );
   } catch (error) {
     const duration = Date.now() - startTime;
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
     loggers.api.error("Cron: Failed to run daily news discovery", {
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: errorMessage,
       stack: error instanceof Error ? error.stack : undefined,
       durationMs: duration,
+    });
+
+    // Alert on failure so outages are caught immediately rather than discovered days later
+    await sendCronAlert("/api/cron/daily-news", errorMessage, {
+      durationMs: duration,
+      stack: error instanceof Error ? error.stack?.split("\n").slice(0, 5).join(" | ") : undefined,
+      impact: "Daily article ingestion failed — run the backfill script if this persists: npx tsx scripts/trigger-ingestion.ts --max-articles=20 --days=1",
     });
 
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to run daily news discovery",
+        error: errorMessage,
       },
       { status: 500 }
     );
