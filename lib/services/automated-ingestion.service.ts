@@ -1141,7 +1141,7 @@ export class AutomatedIngestionService {
         .update(automatedIngestionRuns)
         .set(updateData)
         .where(eq(automatedIngestionRuns.id, runId))
-        .returning({ id: automatedIngestionRuns.id });
+        .returning();
 
       if (updateResult.length === 0) {
         throw new Error(`No ingestion run found with ID: ${runId}`);

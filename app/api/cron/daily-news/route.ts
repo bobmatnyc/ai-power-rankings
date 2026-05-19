@@ -50,7 +50,7 @@ async function sendCronAlert(
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 800; // ~13 minutes - pipeline can take 10+ minutes with large article sets
+export const maxDuration = 300; // 5 minutes - Vercel max for the configured plan
 
 /**
  * Verify if request is authorized for cron execution.
