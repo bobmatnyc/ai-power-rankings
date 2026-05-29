@@ -4,8 +4,11 @@
  */
 
 import { z } from "zod";
+import { eq } from "drizzle-orm";
 import type { Article, DryRunResult } from "@/lib/db/article-schema";
 import type { Ranking } from "@/lib/db/schema";
+import { rankings } from "@/lib/db/schema";
+import { getDb } from "@/lib/db/connection";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { WhatsNewSummaryService } from "./whats-new-summary.service";
 import { jinaReaderService } from "./jina-reader.service";
@@ -1136,17 +1139,66 @@ export class ArticleIngestionService {
     existingCompanies: string[];
   }> {
     try {
-      // For dry runs or when database is unavailable, use static data
-      console.log("[ArticleIngestionService] Loading static rankings data for analysis");
+      console.log("[ArticleIngestionService] Loading current rankings data from database");
 
-      // Static rankings file no longer exists, return empty data
+      // Try to load from database first
+      const db = getDb();
+      if (db) {
+        try {
+          // Get the current rankings period
+          const [currentRankingsPeriod] = await db
+            .select()
+            .from(rankings)
+            .where(eq(rankings.isCurrent, true))
+            .limit(1);
+
+          if (currentRankingsPeriod?.data) {
+            const rankingsData = currentRankingsPeriod.data as any[];
+
+            // Convert to expected format for RankingsCalculator
+            const currentRankings: Ranking[] = rankingsData.map((item) => ({
+              id: item.tool_id,
+              name: item.tool_name,
+              slug: item.tool_slug,
+              rank: item.rank,
+              score: item.score,
+              tier: item.tier,
+              category: item.category,
+              status: item.status,
+              movement: item.movement,
+              factorScores: item.factor_scores,
+            }));
+
+            const existingTools = rankingsData.map((item) => item.tool_name);
+
+            // For now, we don't have company data in rankings, so return empty array
+            const existingCompanies: string[] = [];
+
+            console.log("[ArticleIngestionService] Loaded rankings from database", {
+              rankingsCount: currentRankings.length,
+              toolsCount: existingTools.length,
+            });
+
+            return {
+              currentRankings,
+              existingTools,
+              existingCompanies,
+            };
+          }
+        } catch (dbError) {
+          console.error("[ArticleIngestionService] Database query failed:", dbError);
+        }
+      }
+
+      // Fallback: return empty data if database is unavailable
+      console.warn("[ArticleIngestionService] Database unavailable, returning empty rankings data");
       return {
         currentRankings: [],
         existingTools: [],
         existingCompanies: [],
       };
     } catch (error) {
-      console.error("[ArticleIngestionService] Failed to load static rankings:", error);
+      console.error("[ArticleIngestionService] Failed to load rankings:", error);
       return {
         currentRankings: [],
         existingTools: [],
