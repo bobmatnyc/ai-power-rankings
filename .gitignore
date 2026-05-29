@@ -66,6 +66,9 @@ ecosystem.config.js
 .claude-mpm/
 .mcp-vector-search/
 .mcp.json
+.open-mpm/
+.fastembed_cache/
+.trusty-mpm/
 
 # Testing artifacts
 uat-screenshots/
