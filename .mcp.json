@@ -1,40 +1,42 @@
 {
   "mcpServers": {
-    "tavily": {
-      "type": "sse",
-      "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=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"
-    },
-    "kuzu-memory": {
-      "type": "stdio",
-      "command": "kuzu-memory",
-      "args": [
-        "mcp"
-      ]
-    },
     "mcp-ticketer": {
-      "type": "stdio",
-      "command": "mcp-ticketer",
       "args": [
         "mcp",
         "--path",
         "/Users/masa/Projects/aipowerranking"
       ],
-      "env": {}
+      "command": "mcp-ticketer",
+      "env": {},
+      "type": "stdio"
     },
     "mcp-vector-search": {
-      "type": "stdio",
-      "command": "uv",
+      "args": [],
+      "command": "mcp-vector-search",
+      "env": {},
+      "type": "stdio"
+    },
+    "tavily": {
+      "type": "sse",
+      "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=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"
+    },
+    "trusty-memory": {
       "args": [
-        "run",
-        "--directory",
-        "/Users/masa/Projects/aipowerranking",
-        "mcp-vector-search",
-        "mcp"
+        "mcp",
+        "serve"
       ],
+      "command": "trusty-memory",
+      "type": "stdio"
+    },
+    "trusty-search": {
+      "args": [
+        "serve"
+      ],
+      "command": "trusty-search",
       "env": {
-        "PROJECT_ROOT": "/Users/masa/Projects/aipowerranking",
-        "MCP_PROJECT_ROOT": "/Users/masa/Projects/aipowerranking"
-      }
+        "TRUSTY_INDEX": "aipowerranking"
+      },
+      "type": "stdio"
     }
   }
 }

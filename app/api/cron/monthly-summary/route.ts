@@ -11,23 +11,6 @@ import { NextResponse } from "next/server";
 import { StateOfAiSummaryService } from "@/lib/services/state-of-ai-summary.service";
 import { loggers } from "@/lib/logger";
 
-// ---------------------------------------------------------------------------
-// TODO (P0): Manually trigger the missing March 2026 State of Agentic AI report.
-//
-// The April 1 cron returned 401 (CRON_SECRET broken at the time), so March 2026
-// was never generated and will never auto-backfill — the cron only targets the
-// previous month.
-//
-// Run this once against production (replace <HOST> and <CRON_SECRET>):
-//
-//   curl -X POST https://<HOST>/api/admin/state-of-ai/generate \
-//     -H "Content-Type: application/json" \
-//     -H "Authorization: Bearer <ADMIN_SESSION_TOKEN>" \
-//     -d '{"month": 3, "year": 2026, "forceRegenerate": true}'
-//
-// Verify first that March 2026 is actually missing:
-//   npx tsx scripts/check-summaries.ts
-// ---------------------------------------------------------------------------
 
 /**
  * Send a failure alert via webhook when the cron route encounters an error.
