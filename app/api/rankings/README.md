@@ -52,18 +52,8 @@ Manage specific ranking periods.
 
 ### Build New Rankings
 
-**POST** `/api/admin/rankings/build`
-
-Request body:
-
-```json
-{
-  "period": "2025-07",
-  "preview_date": "2025-07-01" // Optional
-}
-```
-
-Builds rankings using the v6-news algorithm.
+Rankings are now generated via the CLI scripts (`scripts/generate-v7*-rankings.ts`).
+The browser-based `POST /api/admin/rankings/build` endpoint has been retired.
 
 ### Set Current Period
 
