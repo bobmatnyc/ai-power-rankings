@@ -6,7 +6,6 @@
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import type { Article, DryRunResult } from "@/lib/db/article-schema";
-import type { Ranking } from "@/lib/db/schema";
 import { rankings } from "@/lib/db/schema";
 import { getDb } from "@/lib/db/connection";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
@@ -1134,7 +1133,9 @@ export class ArticleIngestionService {
    * Get current system state (rankings, tools, companies) for analysis
    */
   private async getCurrentState(_isDryRun: boolean): Promise<{
-    currentRankings: Ranking[];
+    // Snapshot of ranked tools (tool-shaped objects, NOT raw `Ranking` DB rows).
+    // Consumed by calculateRankingChanges, whose params are typed `any[]`.
+    currentRankings: Array<Record<string, unknown>>;
     existingTools: string[];
     existingCompanies: string[];
   }> {
@@ -1155,8 +1156,8 @@ export class ArticleIngestionService {
           if (currentRankingsPeriod?.data) {
             const rankingsData = currentRankingsPeriod.data as any[];
 
-            // Convert to expected format for RankingsCalculator
-            const currentRankings: Ranking[] = rankingsData.map((item) => ({
+            // Convert to expected format for RankingsCalculator (tool-shaped, not Ranking rows)
+            const currentRankings: Array<Record<string, unknown>> = rankingsData.map((item) => ({
               id: item.tool_id,
               name: item.tool_name,
               slug: item.tool_slug,
@@ -1260,9 +1261,14 @@ export class ArticleIngestionService {
         input.dryRun
       );
 
-      // Step 4: Calculate predicted changes
+      // Step 4: Calculate predicted changes (preview only).
+      // The ranked snapshot from getCurrentState serves as both the matching universe
+      // (allTools) and the rank-lookup source (currentRankings) for the preview.
+      // For full ingestion, ArticleDatabaseService recomputes these against the
+      // complete tools table (getAllTools, 54+) — see Step 5 below.
       const predictedChanges = this.rankingsCalculator.calculateRankingChanges(
         analysis,
+        currentRankings,
         currentRankings
       );
 
@@ -1335,9 +1341,11 @@ export class ArticleIngestionService {
               company_mentions: analysis.company_mentions,
               published_date: analysis.published_date,
             },
-            predictedChanges,
-            newTools,
-            newCompanies,
+            // Intentionally omit predictedChanges/newTools/newCompanies here.
+            // ArticleDatabaseService recomputes them against the FULL tools table
+            // (getAllTools, 54+) and current rankings, which is the correct matching
+            // universe. The preview-path values above only see the ranked snapshot
+            // and would understate ranking impact (root of the long-standing rc=0).
           },
           dryRun: false,
           metadata: input.metadata,
