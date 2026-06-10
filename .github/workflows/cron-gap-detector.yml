@@ -1,0 +1,36 @@
+name: Ingestion gap detector
+
+# Why: The scraper cron has gone silent for ~12 days three times (CRON_SECRET misconfig)
+# with no alert, because a failed cron still returns 2xx. This job queries the production
+# DB once a day and FAILS (red ❌) if automated_ingestion_runs has no row in the last 25h —
+# independent of the failure cause. A failed job triggers GitHub's built-in failed-workflow
+# email to the maintainer (no webhook/Slack wired by design).
+on:
+  schedule:
+    # 09:00 UTC — 3h after the 06:00 UTC daily-news cron, so a missed daily run is caught
+    # the same morning.
+    - cron: '0 9 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  check-ingestion-gap:
+    name: Check last ingestion run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Fails the job (non-zero exit) if no ingestion run was recorded in the last 25h.
+      - name: Check ingestion gap
+        run: node scripts/check-ingestion-gap.mjs
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
