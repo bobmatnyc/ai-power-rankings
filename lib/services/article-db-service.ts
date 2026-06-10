@@ -9,6 +9,7 @@ import type {
   ArticleProcessingLog,
   ArticleRankingsChange,
   DryRunResult,
+  IngestedArticle,
   NewArticle,
   NewArticleRankingsChange,
 } from "@/lib/db/article-schema";
@@ -63,7 +64,7 @@ export class ArticleDatabaseService {
   /**
    * Complete article ingestion with database operations
    */
-  async ingestArticle(input: ArticleIngestionInput): Promise<DryRunResult | Article> {
+  async ingestArticle(input: ArticleIngestionInput): Promise<DryRunResult | IngestedArticle> {
     const startTime = Date.now();
 
     // For dry runs, we don't need to create a processing log with articleId
@@ -406,6 +407,15 @@ export class ArticleDatabaseService {
         await this.articlesRepo.updateArticle(article.id, {
           isProcessed: true,
           processedAt: new Date(),
+        });
+
+        // Expose the number of ranking changes actually applied so callers
+        // (e.g. AutomatedIngestionService) can record an accurate
+        // rankingChanges metric for live runs instead of always logging 0.
+        // Non-enumerable to avoid altering the persisted/serialized Article shape.
+        Object.defineProperty(article, "rankingChangesApplied", {
+          value: rankingChanges.length,
+          enumerable: false,
         });
 
         // Update processing log

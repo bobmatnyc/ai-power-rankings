@@ -5,7 +5,7 @@
 
 import { z } from "zod";
 import { eq } from "drizzle-orm";
-import type { Article, DryRunResult } from "@/lib/db/article-schema";
+import type { Article, DryRunResult, IngestedArticle } from "@/lib/db/article-schema";
 import { rankings } from "@/lib/db/schema";
 import { getDb } from "@/lib/db/connection";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
@@ -1211,7 +1211,7 @@ export class ArticleIngestionService {
   /**
    * Process article ingestion (dry run or complete)
    */
-  async ingestArticle(input: ArticleIngestionInput): Promise<DryRunResult | Article> {
+  async ingestArticle(input: ArticleIngestionInput): Promise<DryRunResult | IngestedArticle> {
     console.log(`[ArticleIngestion] Starting ${input.dryRun ? "dry run" : "full ingestion"}`);
 
     try {
@@ -1351,13 +1351,16 @@ export class ArticleIngestionService {
           metadata: input.metadata,
         };
 
-        // Let ArticleDatabaseService handle all database operations
+        // Let ArticleDatabaseService handle all database operations.
+        // The returned article carries rankingChangesApplied (count of ranking
+        // changes actually written to the tools table) so callers can record an
+        // accurate metric; we pass it straight through.
         const savedArticle = await dbService.ingestArticle(preprocessedInput);
 
         // Invalidate monthly summary cache after successful save
         await this.invalidateMonthlySummaryCache();
 
-        return savedArticle as Article;
+        return savedArticle as IngestedArticle;
       }
     } catch (error) {
       console.error("[ArticleIngestion] Error:", error);

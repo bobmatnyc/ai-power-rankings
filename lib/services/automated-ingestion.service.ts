@@ -691,11 +691,19 @@ export class AutomatedIngestionService {
             };
             rankingChanges += dryResult.predictedChanges?.length ?? 0;
           } else {
-            // In full ingestion, we get an Article with id
-            const fullResult = ingestionResult as { id: string };
+            // In full ingestion, we get an IngestedArticle: a saved Article
+            // augmented with rankingChangesApplied (count of ranking changes
+            // actually written to the tools table for this article).
+            const fullResult = ingestionResult as {
+              id: string;
+              rankingChangesApplied?: number;
+            };
             if (fullResult.id) {
               ingestedArticleIds.push(fullResult.id);
               articlesIngested++;
+              // Record the ACTUAL ranking changes applied, not 0. This fixes the
+              // long-standing rankingChanges=0 telemetry defect on live runs.
+              rankingChanges += fullResult.rankingChangesApplied ?? 0;
             }
           }
 
