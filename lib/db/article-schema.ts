@@ -275,6 +275,15 @@ export interface ArticleWithImpact extends Article {
   };
 }
 
+/**
+ * Article returned from a live (non-dry-run) ingestion, augmented with the
+ * count of ranking changes actually applied to the tools table during that
+ * ingestion. The field is optional/non-enumerable so it never affects the
+ * persisted or serialized Article shape; it exists purely so callers can
+ * report an accurate rankingChanges metric for live runs.
+ */
+export type IngestedArticle = Article & { rankingChangesApplied?: number };
+
 export interface DryRunResult {
   article: Partial<Article>;
   predictedChanges: {
