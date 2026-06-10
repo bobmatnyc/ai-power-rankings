@@ -193,3 +193,4 @@ wheels/
 .mcp-ticketer/
 .env*.local
 kuzu-memories/
+.trusty-search/
