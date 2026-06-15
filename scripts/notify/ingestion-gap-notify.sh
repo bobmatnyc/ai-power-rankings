@@ -49,7 +49,12 @@ notify() {
   if command -v terminal-notifier >/dev/null 2>&1; then
     terminal-notifier -title "${title}" -message "${message}" -sound Sosumi || true
   else
-    osascript -e "display notification \"${message}\" with title \"${title}\" sound name \"Sosumi\"" || true
+    # Sanitize before interpolating into the AppleScript string: escape backslashes
+    # first, then double-quotes, so the literals can't break out of or inject into the
+    # osascript expression (defense-in-depth even though these are static literals today).
+    local safe_msg=${message//\\/\\\\}; safe_msg=${safe_msg//\"/\\\"}
+    local safe_title=${title//\\/\\\\}; safe_title=${safe_title//\"/\\\"}
+    osascript -e "display notification \"${safe_msg}\" with title \"${safe_title}\" sound name \"Sosumi\"" || true
   fi
 }
 

@@ -7,9 +7,10 @@
        the 09:00 UTC server cron window. This is the awake-only complement to the
        always-on GitHub-issue alert.
 
-  EDIT ME: If your clone of this repo lives somewhere other than
-  /Users/masa/Projects/aipowerranking, update the absolute path in ProgramArguments
-  (and the StandardOutPath/StandardErrorPath if you prefer different log locations).
+  PORTABILITY: ProgramArguments uses the %%REPO_ROOT%% placeholder token. The install
+  command in scripts/notify/README.md substitutes it with your repo root at copy time
+  (sed "s|%%REPO_ROOT%%|$(pwd)|g"), so this template stays clone-location agnostic.
+  Adjust StandardOutPath/StandardErrorPath too if you prefer different log locations.
 
   Install/test/uninstall steps are in scripts/notify/README.md.
 -->
@@ -21,7 +22,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/masa/Projects/aipowerranking/scripts/notify/ingestion-gap-notify.sh</string>
+        <string>%%REPO_ROOT%%/scripts/notify/ingestion-gap-notify.sh</string>
     </array>
 
     <!-- Daily at 09:15 local time — just after the server-side 09:00 UTC cron window. -->

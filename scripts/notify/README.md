@@ -49,13 +49,15 @@ With a healthy DB this logs an `OK:` line and shows no notification. Logs are wr
 
 ### Install the launchd job
 
+Run from the repo root. The `sed` substitutes the `%%REPO_ROOT%%` placeholder in the
+plist template with your current repo path at copy time, so the installed agent points
+at this clone regardless of where it lives:
+
 ```bash
-cp scripts/launchd/com.aipowerranking.ingestion-gap.plist ~/Library/LaunchAgents/
+sed "s|%%REPO_ROOT%%|$(pwd)|g" scripts/launchd/com.aipowerranking.ingestion-gap.plist \
+  > ~/Library/LaunchAgents/com.aipowerranking.ingestion-gap.plist
 launchctl load ~/Library/LaunchAgents/com.aipowerranking.ingestion-gap.plist
 ```
-
-> If your clone lives somewhere other than `/Users/masa/Projects/aipowerranking`, edit
-> the absolute path in the plist's `ProgramArguments` before copying it.
 
 It runs daily at **09:15 local time** — just after the 09:00 UTC server cron window.
 
@@ -65,7 +67,16 @@ It runs daily at **09:15 local time** — just after the 09:00 UTC server cron w
 launchctl start com.aipowerranking.ingestion-gap
 ```
 
-Then inspect output:
+Then inspect output. There are **two distinct log destinations** — check both when
+debugging a missed notification:
+
+- **`tmp/aipr-ingestion-gap.log`** (repo-relative, gitignored) — the script's own
+  `log()` output: the timestamped `OK:`/`ALERT:` lines and the captured check output.
+  Falls back to `/tmp/aipr-ingestion-gap.log` if the repo `tmp/` dir can't be created.
+- **`/tmp/aipr-ingestion-gap.out`** and **`/tmp/aipr-ingestion-gap.err`** — launchd's
+  captured stdout/stderr for the agent process (set via `StandardOutPath` /
+  `StandardErrorPath` in the plist). Look here for launchd-level failures such as a bad
+  `ProgramArguments` path or the agent never starting.
 
 ```bash
 cat /tmp/aipr-ingestion-gap.out /tmp/aipr-ingestion-gap.err

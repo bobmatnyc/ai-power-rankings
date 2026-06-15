@@ -60,6 +60,33 @@ jobs:
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const ts = new Date().toISOString();
             try {
+              // Ensure the ingestion-alert label exists before we rely on it for dedup and
+              // labeled creation. If it is missing (404), create it; ignore any create race
+              // or permission hiccup so this never aborts the alert path.
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: LABEL,
+                });
+              } catch (getLabelErr) {
+                if (getLabelErr.status === 404) {
+                  try {
+                    await github.rest.issues.createLabel({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      name: LABEL,
+                      color: 'B60205',
+                    });
+                    core.info(`Created missing '${LABEL}' label.`);
+                  } catch (createLabelErr) {
+                    core.warning(`Could not create '${LABEL}' label: ${createLabelErr.message}`);
+                  }
+                } else {
+                  core.warning(`Could not look up '${LABEL}' label: ${getLabelErr.message}`);
+                }
+              }
+
               // Find an existing OPEN issue carrying the ingestion-alert label so repeated
               // failures comment on one thread instead of spamming new issues.
               const existing = await github.rest.issues.listForRepo({
@@ -70,8 +97,22 @@ jobs:
                 per_page: 1,
               });
 
-              if (existing.data.length > 0) {
-                const issueNumber = existing.data[0].number;
+              // Fallback dedup by title: if the label search returns nothing (e.g. the label
+              // was just created, or a prior issue lost its label), search open issues by
+              // title so we still comment on an existing thread instead of opening a duplicate.
+              let dedupNumber = existing.data.length > 0 ? existing.data[0].number : null;
+              if (dedupNumber === null) {
+                const byTitle = await github.rest.search.issuesAndPullRequests({
+                  q: `repo:${context.repo.owner}/${context.repo.repo} is:issue is:open "Ingestion gap detected" in:title`,
+                  per_page: 1,
+                });
+                if (byTitle.data.total_count > 0) {
+                  dedupNumber = byTitle.data.items[0].number;
+                }
+              }
+
+              if (dedupNumber !== null) {
+                const issueNumber = dedupNumber;
                 await github.rest.issues.createComment({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
