@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  launchd template for the local macOS ingestion-gap notifier.
+
+  Why: Runs the desktop notifier daily so a silent scraper surfaces locally, just after
+       the 09:00 UTC server cron window. This is the awake-only complement to the
+       always-on GitHub-issue alert.
+
+  PORTABILITY: ProgramArguments uses the %%REPO_ROOT%% placeholder token. The install
+  command in scripts/notify/README.md substitutes it with your repo root at copy time
+  (sed "s|%%REPO_ROOT%%|$(pwd)|g"), so this template stays clone-location agnostic.
+  Adjust StandardOutPath/StandardErrorPath too if you prefer different log locations.
+
+  Install/test/uninstall steps are in scripts/notify/README.md.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.aipowerranking.ingestion-gap</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>%%REPO_ROOT%%/scripts/notify/ingestion-gap-notify.sh</string>
+    </array>
+
+    <!-- Daily at 09:15 local time — just after the server-side 09:00 UTC cron window. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>15</integer>
+    </dict>
+
+    <!-- Do not run on load; only on the scheduled interval (or manual `launchctl start`). -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/aipr-ingestion-gap.out</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/aipr-ingestion-gap.err</string>
+</dict>
+</plist>
