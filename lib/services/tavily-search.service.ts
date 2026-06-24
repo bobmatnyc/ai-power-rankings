@@ -89,7 +89,12 @@ export class TavilySearchService {
 
     const {
       maxResults = 20,
-      searchDepth = 'advanced',
+      // Cost reduction: default to "basic" depth (1 Tavily credit/call) rather
+      // than "advanced" (2 credits/call). Callers can still opt into "advanced".
+      // The ingestion pipeline only uses title/url/description/content and
+      // re-extracts full content downstream, so advanced depth added cost
+      // without materially improving results.
+      searchDepth = 'basic',
       includeDomains = [],
       topic = 'news',
       days,

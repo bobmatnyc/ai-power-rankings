@@ -33,6 +33,9 @@ import { loggers } from "@/lib/logger";
 // Unified search result type
 type SearchResult = BraveSearchResult | TavilySearchResult;
 
+// Identifies which search provider produced a given result set.
+type SearchProvider = "tavily" | "brave";
+
 // Re-export types for consumers
 export type { IngestionRunType } from "@/lib/db/schema";
 
@@ -361,7 +364,7 @@ export class AutomatedIngestionService {
       }
       runIdRef.current = runId;
 
-      // Check if search service is available (prefer Tavily, fallback to Brave)
+      // Check that at least one search provider is configured.
       const useTavily = this.tavilySearchService.isConfigured();
       const useBrave = this.braveSearchService.isAvailable();
 
@@ -392,27 +395,19 @@ export class AutomatedIngestionService {
         return result;
       }
 
-      // Step 2: Search for AI news articles (Tavily preferred, Brave fallback)
-      loggers.api.info("[AutomatedIngestion] Searching for AI news articles...", {
-        searchEngine: useTavily ? "Tavily" : "Brave",
-      });
-
-      let searchResults: SearchResult[];
-      if (useTavily) {
-        searchResults = await this.tavilySearchService.searchAINews({
-          maxResults: 20,
-          searchDepth: "advanced",
-          topic: "news",
-          days: options?.days,
-        });
-      } else {
-        searchResults = await this.braveSearchService.searchAINews("pd");
-      }
+      // Step 2: Discover articles with resilient provider fallback.
+      // Tries Tavily first (when configured); on a RUNTIME provider failure
+      // (402/401/403/429/5xx/network/timeout) it automatically fails over to
+      // Brave within the same run instead of failing the whole pipeline.
+      // `usedProvider` reflects the provider that actually returned results, so
+      // downstream discoverySource metadata stays accurate.
+      const { results: searchResults, provider: usedProvider } =
+        await this.discoverArticles(options);
 
       articlesDiscovered = searchResults.length;
       loggers.api.info("[AutomatedIngestion] Discovered articles", {
         count: articlesDiscovered,
-        searchEngine: useTavily ? "Tavily" : "Brave",
+        searchEngine: usedProvider,
       });
 
       if (articlesDiscovered === 0) {
@@ -669,8 +664,10 @@ export class AutomatedIngestionService {
 
       for (const article of articlesToIngest) {
         try {
-          // Determine the search source used for this run
-          const searchSource = useTavily ? "tavily" : "brave_search";
+          // Determine the search source used for this run. Reflects the
+          // provider that actually produced results (post-fallback), so a
+          // Tavily->Brave failover records "brave_search" correctly.
+          const searchSource = usedProvider === "tavily" ? "tavily" : "brave_search";
 
           const ingestionResult = await this.articleIngestionService.ingestArticle({
             type: "url",
@@ -814,6 +811,89 @@ export class AutomatedIngestionService {
 
       return result;
     }
+  }
+
+  /**
+   * Discover articles with resilient, ordered provider fallback.
+   *
+   * Why: Previously the pipeline picked a provider by KEY PRESENCE and a single
+   * runtime failure from the primary (e.g. Tavily HTTP 402 billing-suspended)
+   * failed the ENTIRE run even though a healthy Brave key was configured. This
+   * fails over to the next configured provider on a provider-level runtime error
+   * so a single provider outage no longer takes down ingestion.
+   *
+   * What: Tries providers in order [Tavily, Brave] (only those configured). On a
+   * thrown error from one provider it logs a clear warning and tries the next.
+   * Returns the first provider's results plus which provider produced them. If
+   * every configured provider throws, it throws an aggregated error and the run
+   * fails (same terminal behavior as before, but only after exhausting fallbacks).
+   *
+   * Test: Mock Tavily.searchAINews to throw "Tavily API error: 402 ..." and Brave
+   * to return one result; assert the returned provider is "brave" and results
+   * length is 1. With both throwing, assert this rejects with an aggregated error.
+   *
+   * @param options - Daily discovery options (days lookback is passed to Tavily)
+   * @returns Results and the provider that produced them
+   */
+  private async discoverArticles(
+    options: DailyDiscoveryOptions | undefined
+  ): Promise<{ results: SearchResult[]; provider: SearchProvider }> {
+    // Ordered list of configured providers. Tavily is primary when healthy;
+    // Brave is the fallback. Order is preserved; only configured providers run.
+    const providers: Array<{
+      name: SearchProvider;
+      run: () => Promise<SearchResult[]>;
+    }> = [];
+
+    if (this.tavilySearchService.isConfigured()) {
+      providers.push({
+        name: "tavily",
+        run: () =>
+          this.tavilySearchService.searchAINews({
+            // Cost reduction: "basic" depth (1 Tavily credit) instead of
+            // "advanced" (2 credits). The pipeline only consumes title/url/
+            // description/content fields and re-extracts full content later via
+            // Tavily Extract/Jina, so advanced-depth extraction was redundant.
+            maxResults: 15,
+            searchDepth: "basic",
+            topic: "news",
+            days: options?.days,
+          }),
+      });
+    }
+
+    if (this.braveSearchService.isAvailable()) {
+      providers.push({
+        name: "brave",
+        run: () => this.braveSearchService.searchAINews("pd"),
+      });
+    }
+
+    const failures: string[] = [];
+
+    for (const provider of providers) {
+      try {
+        loggers.api.info("[AutomatedIngestion] Searching for AI news articles...", {
+          searchEngine: provider.name,
+        });
+        const results = await provider.run();
+        return { results, provider: provider.name };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unknown error";
+        failures.push(`${provider.name}: ${message}`);
+        // Clear, actionable warning so ops can see WHY we failed over.
+        loggers.api.warn(
+          `[AutomatedIngestion] ${provider.name} search failed (${message}), falling back to next provider`,
+          { provider: provider.name, error: message }
+        );
+        // Continue to the next configured provider.
+      }
+    }
+
+    // Every configured provider threw - fail the run with an aggregated error.
+    throw new Error(
+      `All search providers failed: ${failures.join(" | ") || "no providers configured"}`
+    );
   }
 
   /**
