@@ -262,12 +262,14 @@ AI developer tools announcement OR agentic coding 2026`.replace(/\s+/g, ' ').tri
       'Claude Anthropic developer tools API update',
     ];
 
-    // Return 2 queries based on day of week
+    // Cost reduction: issue ONE rotated supplementary query per run instead of
+    // two. This trims ~1 Tavily search credit per ingestion run while keeping
+    // daily coverage variety — the chosen query still advances by one slot each
+    // day (startIndex = dayOfWeek), so across a week the full topic list is
+    // still swept. The primary discovery query is unchanged. Reverting is a
+    // one-line change (re-add the (startIndex + 1) entry below).
     const startIndex = dayOfWeek % allQueries.length;
-    return [
-      allQueries[startIndex],
-      allQueries[(startIndex + 1) % allQueries.length],
-    ];
+    return [allQueries[startIndex]];
   }
 
   /**
