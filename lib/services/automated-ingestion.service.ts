@@ -850,11 +850,16 @@ export class AutomatedIngestionService {
         name: "tavily",
         run: () =>
           this.tavilySearchService.searchAINews({
+            // 15 covers typical daily AI-news volume while trimming ~25% of
+            // result-page cost vs the prior 20; supplementary queries add more
+            // candidates downstream, so coverage is not materially reduced.
+            maxResults: 15,
             // Cost reduction: "basic" depth (1 Tavily credit) instead of
             // "advanced" (2 credits). The pipeline only consumes title/url/
             // description/content fields and re-extracts full content later via
             // Tavily Extract/Jina, so advanced-depth extraction was redundant.
-            maxResults: 15,
+            // Scoped here (not at the service default) so other searchAINews
+            // callers keep advanced depth.
             searchDepth: "basic",
             topic: "news",
             days: options?.days,
@@ -867,6 +872,15 @@ export class AutomatedIngestionService {
         name: "brave",
         run: () => this.braveSearchService.searchAINews("pd"),
       });
+    }
+
+    // Distinguish a zero-provider misconfiguration from an all-providers-failed
+    // runtime error: if nothing is configured, fail fast with an actionable
+    // message instead of falling through to the aggregated runtime error below.
+    if (providers.length === 0) {
+      throw new Error(
+        "No search providers are configured (set TAVILY_API_KEY or BRAVE_API_KEY)"
+      );
     }
 
     const failures: string[] = [];
