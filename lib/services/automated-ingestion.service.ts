@@ -514,6 +514,14 @@ export class AutomatedIngestionService {
         // Check if article already has content (from Tavily Search)
         const tavilyContent = (article as TavilySearchResult).content;
 
+        // Cost reduction: when the Tavily Search result already carries a
+        // content snippet at/above the sufficiency threshold (> 100 chars — the
+        // SAME bar reused across the extraction chain, see fetchArticleContent),
+        // reuse that snippet and SKIP the per-article Tavily Extract call below.
+        // Tavily Extract is only invoked in the `else` fallback (when the
+        // snippet is missing or below threshold), preserving the original
+        // Tavily Extract → Jina → Basic HTML fallback chain and downstream
+        // quality gates unchanged.
         if (tavilyContent && tavilyContent.length > 100) {
           // Use Tavily's pre-fetched content from search results
           extractionStats.usedTavilySearchContent++;
