@@ -102,6 +102,8 @@ test-clerk-keys.js
 
 # Temporary files in root
 /*.json
+# vercel.json must be tracked so GitHub deploys register cron schedules (see issue #71)
+!vercel.json
 !package.json
 !package-lock.json
 !tsconfig.json
