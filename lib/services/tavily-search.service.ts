@@ -89,6 +89,10 @@ export class TavilySearchService {
 
     const {
       maxResults = 20,
+      // Default to "advanced" depth to preserve historical behavior for all
+      // callers of searchAINews. Cost-sensitive callers (e.g. the automated
+      // ingestion pipeline) opt into "basic" depth explicitly at the call site,
+      // so the cost reduction is scoped to ingestion rather than applied globally.
       searchDepth = 'advanced',
       includeDomains = [],
       topic = 'news',
