@@ -36,3 +36,25 @@ jobs:
       # The required gate: fails the job (non-zero exit) on any type error.
       - name: Type check
         run: npx tsc --noEmit
+
+  unit-tests:
+    name: Unit tests (vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      # npm ci installs exactly from package-lock.json for reproducible builds.
+      - name: Install dependencies
+        run: npm ci
+
+      # Runs the vitest unit suite (vitest run) and fails the job on any failure.
+      # Playwright e2e specs are excluded by vitest.config.ts.
+      - name: Unit tests
+        run: npm run test:unit

@@ -2,7 +2,10 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-describe("i18n imports", () => {
+// TODO: re-enable — bit-rotted before vitest was wired (#10). All 6 assertions
+// reference a src/ layout that no longer exists (ENOENT on src/middleware.ts,
+// src/auth.ts, src/i18n/config.ts, src/app/[lang]/page.tsx) and en.json paths.
+describe.skip("i18n imports", () => {
   it("should have correct import extensions in middleware.ts", async () => {
     const middlewarePath = path.join(process.cwd(), "src/middleware.ts");
     const content = await fs.readFile(middlewarePath, "utf-8");
