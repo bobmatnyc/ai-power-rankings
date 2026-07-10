@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `Best AI IDE Assistants ${currentYear} - Top Code Completion Tools`,
-    description: `Discover the best AI IDE assistants of ${currentYear}. Compare GitHub Copilot, Cursor, Tabnine, and other top AI code completion tools. Updated weekly with rankings.`,
+    description: `Discover the best AI IDE assistants of ${currentYear}. Compare GitHub Copilot, Cursor, Tabnine, and other top AI code completion tools. Updated monthly with rankings.`,
     keywords: [
       "best AI IDE assistants",
       "AI code completion tools",

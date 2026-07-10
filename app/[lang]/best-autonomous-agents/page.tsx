@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `Best AI Autonomous Coding Agents ${currentYear} - Self-Coding AI Tools`,
-    description: `Discover the best autonomous AI coding agents of ${currentYear}. Compare Devin, SWE-Agent, and other self-coding AI tools. Updated weekly with rankings.`,
+    description: `Discover the best autonomous AI coding agents of ${currentYear}. Compare Devin, SWE-Agent, and other self-coding AI tools. Updated monthly with rankings.`,
     keywords: [
       "best autonomous coding agents",
       "AI software engineers",

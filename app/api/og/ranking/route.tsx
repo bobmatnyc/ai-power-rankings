@@ -194,7 +194,7 @@ export async function GET(request: NextRequest) {
               fontWeight: "500",
             }}
           >
-            Algorithm v6.0
+            Algorithm v7.6
           </div>
         </div>
       </div>,

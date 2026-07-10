@@ -24,6 +24,7 @@ const staticPages = [
   { path: "rankings", changeFrequency: "daily" as const, priority: 0.9 },
   { path: "tools", changeFrequency: "daily" as const, priority: 0.9 },
   { path: "news", changeFrequency: "daily" as const, priority: 0.9 },
+  { path: "trending", changeFrequency: "daily" as const, priority: 0.9 },
   { path: "methodology", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "about", changeFrequency: "monthly" as const, priority: 0.7 },
   { path: "privacy", changeFrequency: "yearly" as const, priority: 0.3 },

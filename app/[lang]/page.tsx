@@ -13,6 +13,11 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
 import { getAllKeywords } from "@/lib/metadata/static-keywords";
+import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
+
+// Source homepage category counts from generated data so they never drift.
+const categoryCount = (id: string): number =>
+  STATIC_CATEGORIES.find((c) => c.id === id)?.count ?? 0;
 
 
 interface RankingData {
@@ -387,7 +392,9 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center justify-between">
                       {dict.categories.ideAssistant}
-                      <Badge className="bg-primary/10 text-primary">7</Badge>
+                      <Badge className="bg-primary/10 text-primary">
+                        {categoryCount("ide-assistant")}
+                      </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -406,7 +413,9 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center justify-between">
                       {dict.categories.codeEditor}
-                      <Badge className="bg-secondary/10 text-secondary">3</Badge>
+                      <Badge className="bg-secondary/10 text-secondary">
+                        {categoryCount("code-editor")}
+                      </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -425,7 +434,9 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center justify-between">
                       {dict.categories.appBuilder}
-                      <Badge className="bg-accent/10 text-accent">4</Badge>
+                      <Badge className="bg-accent/10 text-accent">
+                        {categoryCount("app-builder")}
+                      </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -444,7 +455,9 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center justify-between">
                       {dict.categories.autonomousAgent}
-                      <Badge className="bg-destructive/10 text-destructive">6</Badge>
+                      <Badge className="bg-destructive/10 text-destructive">
+                        {categoryCount("autonomous-agent")}
+                      </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -481,7 +494,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 <CardContent className="pt-0">
                   <div className="text-2xl md:text-3xl font-bold text-primary mb-2">50+</div>
                   <div className="text-sm text-muted-foreground">AI Tools Analyzed</div>
-                  <div className="text-xs text-muted-foreground mt-1">Updated Weekly</div>
+                  <div className="text-xs text-muted-foreground mt-1">Updated Monthly</div>
                 </CardContent>
               </Card>
 

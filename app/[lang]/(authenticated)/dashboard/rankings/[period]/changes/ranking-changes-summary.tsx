@@ -254,7 +254,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
     narrative += "---\n\n";
     narrative += `*Generated from AI Power Rankings data for ${formatPeriodDisplay(period)}*\n`;
     narrative += `*Total tools ranked: ${(rankingsData?.rankings || []).length}*\n`;
-    narrative += `*Algorithm version: ${rankingsData?.algorithm_version || "v6-news"}*`;
+    narrative += `*Algorithm version: ${rankingsData?.algorithm_version || "v7.6"}*`;
 
     return narrative;
   };

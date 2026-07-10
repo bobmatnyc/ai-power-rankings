@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `Best AI Code Editors ${currentYear} - Smart Programming Environments`,
-    description: `Discover the best AI-powered code editors of ${currentYear}. Compare Cursor, Windsurf, and other intelligent programming environments. Updated weekly.`,
+    description: `Discover the best AI-powered code editors of ${currentYear}. Compare Cursor, Windsurf, and other intelligent programming environments. Updated monthly.`,
     keywords: [
       "best AI code editors",
       "smart code editors",
