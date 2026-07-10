@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `Best Open Source AI Frameworks ${currentYear} - Developer Tools & Libraries`,
-    description: `Discover the best open source AI frameworks of ${currentYear}. Compare top machine learning libraries, AI development tools, and open source platforms. Updated weekly.`,
+    description: `Discover the best open source AI frameworks of ${currentYear}. Compare top machine learning libraries, AI development tools, and open source platforms. Updated monthly.`,
     keywords: [
       "best open source AI frameworks",
       "machine learning libraries",

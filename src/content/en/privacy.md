@@ -1,8 +1,10 @@
 ---
 title: "Privacy Policy"
 subtitle: "How we collect, use, and protect your personal information"
-lastUpdated: "June 2025"
+lastUpdated: "2025-10-07"
 ---
+
+*Last updated: 2025-10-07*
 
 ## Introduction
 
