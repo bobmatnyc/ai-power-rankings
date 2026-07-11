@@ -73,6 +73,9 @@ function RankingsGridContent({
   const [loading, setLoading] = useState(initialRankings.length === 0);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [lastUpdateDate, setLastUpdateDate] = useState<string>("");
+  // Honest "Rankings as of <date>" marker sourced from the current snapshot's
+  // published_at, so a frozen snapshot is never presented as fresh silently.
+  const [publishedDate, setPublishedDate] = useState<string>("");
   const [totalTools, setTotalTools] = useState<number>(0);
   const [categoriesCount, setCategoriesCount] = useState<number>(0);
   const [avgScore, setAvgScore] = useState<number>(0);
@@ -125,6 +128,15 @@ function RankingsGridContent({
           });
           setLastUpdateDate(formattedDate);
         }
+        if (data.published_at) {
+          setPublishedDate(
+            new Date(data.published_at).toLocaleDateString(lang, {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })
+          );
+        }
       }
     } catch {
       // Silently fail, will use fallback
@@ -161,6 +173,17 @@ function RankingsGridContent({
 
           const avgScoreValue = data.rankings.reduce((acc: number, r: RankingData) => acc + (r.scores?.overall || 0), 0) / data.rankings.length;
           setAvgScore(avgScoreValue);
+        }
+
+        // Set the "Rankings as of" marker from the snapshot's published_at
+        if (data.published_at) {
+          setPublishedDate(
+            new Date(data.published_at).toLocaleDateString(lang, {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })
+          );
         }
 
         // Set last update date from algorithm date
@@ -259,6 +282,11 @@ function RankingsGridContent({
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">{dict.common.appName}</h1>
         <p className="text-muted-foreground text-lg">{dict.rankings.subtitle}</p>
+        {publishedDate && (
+          <p className="text-sm text-muted-foreground mt-2">
+            {dict.rankings.asOf.replace("{date}", publishedDate)}
+          </p>
+        )}
       </div>
 
       {/* Stats Cards - Optimized for T-031 & T-040 CLS fix */}

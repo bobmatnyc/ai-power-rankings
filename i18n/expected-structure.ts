@@ -182,6 +182,7 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
     copyright: "",
   },
   rankings: {
+    asOf: "",
     title: "",
     subtitle: "",
     stats: {

@@ -393,6 +393,7 @@
     "copyright": "© 2025 AI Power Ranking. All rights reserved."
   },
   "rankings": {
+    "asOf": "{date} 時点のランキング",
     "title": "AI パワーランキング",
     "subtitle": "アルゴリズム v7.6を使用したAIコーディングツールの包括的ランキング",
     "stats": {

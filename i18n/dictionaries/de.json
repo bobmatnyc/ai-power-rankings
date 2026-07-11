@@ -187,6 +187,7 @@
     "aboutDescription": "Diese Grafik zeigt, wie KI-Tools im Laufe der Zeit in die Top-10-Rankings ein- und ausgestiegen sind. Tools weiter oben in der Grafik (näher an #1) schneiden besser ab."
   },
   "rankings": {
+    "asOf": "Rankings vom {date}",
     "title": "KI Power Rankings",
     "subtitle": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v7.6",
     "stats": {
