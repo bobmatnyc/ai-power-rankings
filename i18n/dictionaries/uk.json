@@ -193,6 +193,7 @@
     "copyright": "© 2025 AI Power Rankings. Всі права захищені."
   },
   "rankings": {
+    "asOf": "Рейтинг станом на {date}",
     "title": "AI Power Rankings",
     "subtitle": "Комплексні рейтинги AI інструментів кодування з алгоритмом v7.6",
     "stats": {

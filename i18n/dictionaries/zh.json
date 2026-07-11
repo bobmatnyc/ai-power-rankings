@@ -442,6 +442,7 @@
     }
   },
   "rankings": {
+    "asOf": "截至 {date} 的排名",
     "title": "AI 实力排行榜",
     "subtitle": "使用算法v7.6的AI编码工具综合排名",
     "stats": {

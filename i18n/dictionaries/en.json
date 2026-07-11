@@ -193,6 +193,7 @@
     "copyright": "© 2025 AI Power Ranking. All rights reserved."
   },
   "rankings": {
+    "asOf": "Rankings as of {date}",
     "title": "AI Power Ranking",
     "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v7.6 - Market-validated scoring",
     "stats": {

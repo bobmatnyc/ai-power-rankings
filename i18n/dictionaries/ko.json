@@ -187,6 +187,7 @@
     "copyright": "© 2025 AI Power Ranking. 모든 권리 보유."
   },
   "rankings": {
+    "asOf": "{date} 기준 순위",
     "title": "AI 파워 랭킹",
     "subtitle": "알고리즘 v7.0을 사용한 AI 코딩 도구의 종합적인 랭킹",
     "stats": {
