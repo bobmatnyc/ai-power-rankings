@@ -1,8 +1,10 @@
 ---
 title: "Terms of Use"
 subtitle: "Terms and conditions for using AI Power Rankings"
-lastUpdated: "June 2025"
+lastUpdated: "2025-10-07"
 ---
+
+*Last updated: 2025-10-07*
 
 ## 1. Acceptance of Terms
 

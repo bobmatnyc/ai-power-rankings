@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: "%s | AI Power Rankings",
   },
   description:
-    "Monthly rankings of 50+ AI coding tools. Compare Cursor, GitHub Copilot, Claude & top AI assistants trusted by developers. Updated weekly.",
+    "Monthly rankings of 50+ AI coding tools. Compare Cursor, GitHub Copilot, Claude & top AI assistants trusted by developers. Updated monthly.",
   keywords: [
     "AI coding tools",
     "developer tools rankings",

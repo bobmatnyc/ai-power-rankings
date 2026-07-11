@@ -195,7 +195,7 @@ export function generateRankingFAQSchema() {
         name: "How are AI tools ranked?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "AI tools are ranked using our proprietary Algorithm v7.1, which evaluates 8 key factors: Agentic Capability, Innovation, Technical Performance, Developer Adoption, Market Traction, Business Sentiment, Development Velocity, and Platform Resilience.",
+          text: "AI tools are ranked using our proprietary Algorithm v7.6, which evaluates 8 key factors: Agentic Capability, Innovation, Technical Performance, Developer Adoption, Market Traction, Business Sentiment, Development Velocity, and Platform Resilience.",
         },
       },
       {
@@ -203,7 +203,7 @@ export function generateRankingFAQSchema() {
         name: "How often are rankings updated?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Rankings are updated weekly with fresh data from multiple sources including GitHub statistics, user metrics, funding announcements, and technical benchmarks.",
+          text: "Rankings are updated monthly with fresh data from multiple sources including GitHub statistics, user metrics, funding announcements, and technical benchmarks.",
         },
       },
       {
@@ -244,7 +244,7 @@ export function generateToolReviewSchema(tool: ToolSchemaData, baseUrl: string) 
       bestRating: 10,
       worstRating: 0,
     },
-    reviewBody: `${tool.name} ranks #${tool.rank} in our comprehensive AI tool rankings, with a score of ${tool.score}/100 based on our Algorithm v7.1 evaluation.`,
+    reviewBody: `${tool.name} ranks #${tool.rank} in our comprehensive AI tool rankings, with a score of ${tool.score}/100 based on our Algorithm v7.6 evaluation.`,
   };
 }
 

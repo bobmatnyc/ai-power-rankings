@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `Best AI Coding Tools ${currentYear} - Top 50+ Developer AI Assistants`,
-    description: `Discover the best AI coding tools of ${currentYear}. Compare Cursor, GitHub Copilot, Claude, and 50+ top AI assistants. Updated weekly with rankings and reviews.`,
+    description: `Discover the best AI coding tools of ${currentYear}. Compare Cursor, GitHub Copilot, Claude, and 50+ top AI assistants. Updated monthly with rankings and reviews.`,
     keywords: [
       "best AI coding tools",
       "top AI coding assistants",
@@ -100,7 +100,7 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
           </div>
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-green-500" />
-            <span>Updated Weekly</span>
+            <span>Updated Monthly</span>
           </div>
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-blue-500" />

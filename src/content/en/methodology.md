@@ -157,8 +157,8 @@ Our methodology evolves based on:
 ## Transparency & Feedback
 
 Questions about our methodology?
-- View our [open-source algorithm code](https://github.com/yourusername/aipowerranking)
+- View our [open-source algorithm code](https://github.com/bobmatnyc/ai-power-rankings)
 - Review [ranking change history](/en/rankings)
-- Submit feedback through our [GitHub issues](https://github.com/yourusername/aipowerranking/issues)
+- Submit feedback through our [GitHub issues](https://github.com/bobmatnyc/ai-power-rankings/issues)
 
 *Last updated: November 2025 - Algorithm v7.6*

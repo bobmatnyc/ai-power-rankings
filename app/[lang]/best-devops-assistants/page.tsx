@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `Best AI DevOps Assistants ${currentYear} - Infrastructure Automation Tools`,
-    description: `Discover the best AI-powered DevOps assistants of ${currentYear}. Compare intelligent infrastructure automation, deployment pipelines, and monitoring tools. Updated weekly.`,
+    description: `Discover the best AI-powered DevOps assistants of ${currentYear}. Compare intelligent infrastructure automation, deployment pipelines, and monitoring tools. Updated monthly.`,
     keywords: [
       "best AI DevOps assistants",
       "infrastructure automation tools",
