@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `Best AI Code Review Tools ${currentYear} - Automated Code Analysis`,
-    description: `Discover the best AI-powered code review tools of ${currentYear}. Compare automated code analysis platforms that enhance code quality, security, and team collaboration. Updated weekly.`,
+    description: `Discover the best AI-powered code review tools of ${currentYear}. Compare automated code analysis platforms that enhance code quality, security, and team collaboration. Updated monthly.`,
     keywords: [
       "best AI code review tools",
       "automated code analysis",

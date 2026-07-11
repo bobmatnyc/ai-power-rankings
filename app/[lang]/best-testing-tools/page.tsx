@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `Best AI Testing Tools ${currentYear} - Automated Test Generation & QA`,
-    description: `Discover the best AI-powered testing tools of ${currentYear}. Compare intelligent test automation, automated test generation, and QA platforms. Updated weekly.`,
+    description: `Discover the best AI-powered testing tools of ${currentYear}. Compare intelligent test automation, automated test generation, and QA platforms. Updated monthly.`,
     keywords: [
       "best AI testing tools",
       "automated test generation",
