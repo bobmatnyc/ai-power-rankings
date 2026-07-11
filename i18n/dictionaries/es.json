@@ -193,6 +193,7 @@
     "copyright": "© 2025 AI Power Ranking. Todos los derechos reservados."
   },
   "rankings": {
+    "asOf": "Clasificación al {date}",
     "title": "AI Power Ranking",
     "subtitle": "Clasificaciones exhaustivas de herramientas de codificación IA usando Algorithm v7.6",
     "stats": {

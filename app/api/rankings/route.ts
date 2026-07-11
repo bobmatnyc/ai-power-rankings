@@ -188,6 +188,11 @@ export async function GET(): Promise<NextResponse> {
     return cachedJsonResponse(
       {
         rankings: validRankings,
+        // published_at reflects when the current snapshot was actually published,
+        // so the public UI can surface an honest "Rankings as of <date>" marker
+        // (falls back to created_at for legacy rows that predate published_at).
+        published_at: (currentRankings.published_at ?? currentRankings.created_at).toISOString(),
+        period: currentRankings.period,
         algorithm: {
           version: currentRankings.algorithm_version || "v1.0",
           name: "Database Rankings",

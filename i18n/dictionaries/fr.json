@@ -193,6 +193,7 @@
     "copyright": "© 2025 Classement IA Power. Tous droits réservés."
   },
   "rankings": {
+    "asOf": "Classement au {date}",
     "title": "Classement IA Power",
     "subtitle": "Classements complets des outils de codage IA utilisant l'Algorithme v7.6 - Scoring validé par le marché",
     "stats": {
