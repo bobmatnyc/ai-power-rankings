@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/monthly-summary",
       "schedule": "0 8 1 * *"
+    },
+    {
+      "path": "/api/cron/regenerate-rankings",
+      "schedule": "0 9 1 * *"
     }
   ]
 }

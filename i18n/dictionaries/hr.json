@@ -193,6 +193,7 @@
     "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."
   },
   "rankings": {
+    "asOf": "Poredak od {date}",
     "title": "AI Power Rankings",
     "subtitle": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom v7.6",
     "stats": {
