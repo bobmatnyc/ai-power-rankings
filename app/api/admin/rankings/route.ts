@@ -12,9 +12,16 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
+import { writeRankingsStaticCache } from "@/lib/cache/rankings-static-cache";
 import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
+// NOTE: The build/preview actions below still use the legacy RankingEngineV6.
+// The canonical regeneration path is now `regenerateRankings()` in
+// `@/lib/services/ranking-generation.service` (algorithm v7.6, see #86).
+// Consolidating onto it is deferred (#83 secondary) because the admin build
+// action is tightly coupled to V6's ToolMetricsV6/ToolScoreV6 score/weight
+// output contract; migrating it is a larger change than this ENOENT fix.
 import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
 
 // Helper function for category-based agentic scores
@@ -577,18 +584,10 @@ export async function POST(request: NextRequest) {
                 )
               );
 
-              const cachePath = join(process.cwd(), "src", "data", "cache", "rankings-static.json");
-              writeFileSync(
-                cachePath,
-                JSON.stringify(
-                  {
-                    ...latestRanking?.data,
-                    is_current: true,
-                  },
-                  null,
-                  2
-                )
-              );
+              writeRankingsStaticCache({
+                ...latestRanking?.data,
+                is_current: true,
+              });
 
               return NextResponse.json({
                 success: true,
@@ -615,18 +614,10 @@ export async function POST(request: NextRequest) {
           )
         );
 
-        const cachePath = join(process.cwd(), "src", "data", "cache", "rankings-static.json");
-        writeFileSync(
-          cachePath,
-          JSON.stringify(
-            {
-              ...currentData.data,
-              is_current: true,
-            },
-            null,
-            2
-          )
-        );
+        writeRankingsStaticCache({
+          ...currentData.data,
+          is_current: true,
+        });
 
         return NextResponse.json({
           success: true,
