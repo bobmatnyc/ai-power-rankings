@@ -108,6 +108,8 @@ test-clerk-keys.js
 !package-lock.json
 !tsconfig.json
 !.mcp.json
+# .eslintrc.json is the lint config — must be tracked or the lint gate breaks (see issue #82)
+!.eslintrc.json
 
 # Added by Claude MPM /mpm-init
 $RECYCLE.BIN/
