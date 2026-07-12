@@ -12,22 +12,13 @@
  * `rankingChangesApplied` contract that ArticleDatabaseService attaches to the
  * returned Article so it never alters the serialized article shape.
  *
- * Test: Run with `npx tsx tests/unit/ranking-changes-counter.test.ts`. It prints
- * PASS/FAIL per assertion and exits non-zero on any failure. It performs NO
- * database access and mutates no production state — it only mirrors the exact
- * counter arithmetic in lib/services/automated-ingestion.service.ts and the
- * defineProperty contract in lib/services/article-db-service.ts.
+ * Test: Runs under `npm run test:unit`. It performs NO database access and
+ * mutates no production state — it only mirrors the exact counter arithmetic in
+ * lib/services/automated-ingestion.service.ts and the defineProperty contract
+ * in lib/services/article-db-service.ts.
  */
 
-let failures = 0;
-function assert(cond: boolean, name: string): void {
-  if (cond) {
-    console.log(`PASS: ${name}`);
-  } else {
-    failures++;
-    console.error(`FAIL: ${name}`);
-  }
-}
+import { describe, expect, it } from "vitest";
 
 // ---------------------------------------------------------------------------
 // (1) Live-run path: counter must sum rankingChangesApplied across articles.
@@ -50,29 +41,6 @@ function liveRunCounter(results: IngestedArticleLike[]): {
   return { articlesIngested, rankingChanges };
 }
 
-{
-  // Two articles applying 3 and 2 ranking changes => counter must be 5, not 0.
-  const out = liveRunCounter([
-    { id: "a1", rankingChangesApplied: 3 },
-    { id: "a2", rankingChangesApplied: 2 },
-  ]);
-  assert(out.articlesIngested === 2, "live: counts both ingested articles");
-  assert(out.rankingChanges === 5, "live: rankingChanges reflects applied count (5), not 0");
-}
-
-{
-  // Missing rankingChangesApplied (e.g. older payload) must default to 0, not NaN.
-  const out = liveRunCounter([{ id: "a1" }]);
-  assert(out.rankingChanges === 0, "live: missing rankingChangesApplied defaults to 0");
-  assert(!Number.isNaN(out.rankingChanges), "live: counter is never NaN");
-}
-
-{
-  // An article that applied zero changes contributes zero but still ingests.
-  const out = liveRunCounter([{ id: "a1", rankingChangesApplied: 0 }]);
-  assert(out.articlesIngested === 1 && out.rankingChanges === 0, "live: zero-change article ingests with 0 delta");
-}
-
 // ---------------------------------------------------------------------------
 // (2) Dry-run path: counter sums predictedChanges.length (unchanged behavior).
 // Mirrors the `isDryRun` branch in AutomatedIngestionService.
@@ -85,44 +53,67 @@ function dryRunCounter(results: { predictedChanges?: unknown[] }[]): number {
   return rankingChanges;
 }
 
-{
-  const total = dryRunCounter([
-    { predictedChanges: [{}, {}] },
-    { predictedChanges: [{}] },
-  ]);
-  assert(total === 3, "dry-run: sums predictedChanges length across articles");
-}
+describe("rankingChanges counter contract", () => {
+  describe("live-run path", () => {
+    it("sums rankingChangesApplied across ingested articles (not 0)", () => {
+      // Two articles applying 3 and 2 ranking changes => counter must be 5.
+      const out = liveRunCounter([
+        { id: "a1", rankingChangesApplied: 3 },
+        { id: "a2", rankingChangesApplied: 2 },
+      ]);
+      expect(out.articlesIngested).toBe(2);
+      expect(out.rankingChanges).toBe(5);
+    });
 
-// ---------------------------------------------------------------------------
-// (3) ArticleDatabaseService contract: rankingChangesApplied is attached as a
-// NON-enumerable property equal to the applied changes count, so it never
-// leaks into JSON serialization of the persisted Article.
-// Mirrors the Object.defineProperty call in article-db-service.ts.
-// ---------------------------------------------------------------------------
-{
-  const appliedCount = 4;
-  const article: Record<string, unknown> = { id: "art-1", title: "X" };
-  Object.defineProperty(article, "rankingChangesApplied", {
-    value: appliedCount,
-    enumerable: false,
+    it("defaults a missing rankingChangesApplied to 0 (never NaN)", () => {
+      const out = liveRunCounter([{ id: "a1" }]);
+      expect(out.rankingChanges).toBe(0);
+      expect(Number.isNaN(out.rankingChanges)).toBe(false);
+    });
+
+    it("ingests a zero-change article with a 0 delta", () => {
+      const out = liveRunCounter([{ id: "a1", rankingChangesApplied: 0 }]);
+      expect(out.articlesIngested).toBe(1);
+      expect(out.rankingChanges).toBe(0);
+    });
   });
 
-  assert(
-    (article as { rankingChangesApplied?: number }).rankingChangesApplied === appliedCount,
-    "db: rankingChangesApplied readable and equals applied count"
-  );
-  assert(
-    !Object.keys(article).includes("rankingChangesApplied"),
-    "db: rankingChangesApplied is non-enumerable (absent from Object.keys)"
-  );
-  assert(
-    !("rankingChangesApplied" in JSON.parse(JSON.stringify(article))),
-    "db: rankingChangesApplied does not leak into JSON serialization"
-  );
-}
+  describe("dry-run path", () => {
+    it("sums predictedChanges length across articles", () => {
+      const total = dryRunCounter([
+        { predictedChanges: [{}, {}] },
+        { predictedChanges: [{}] },
+      ]);
+      expect(total).toBe(3);
+    });
 
-if (failures > 0) {
-  console.error(`\n${failures} assertion(s) failed.`);
-  process.exit(1);
-}
-console.log("\nAll ranking-changes-counter assertions passed.");
+    it("treats a missing predictedChanges array as 0", () => {
+      expect(dryRunCounter([{}])).toBe(0);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // (3) ArticleDatabaseService contract: rankingChangesApplied is attached as a
+  // NON-enumerable property equal to the applied changes count, so it never
+  // leaks into JSON serialization of the persisted Article.
+  // Mirrors the Object.defineProperty call in article-db-service.ts.
+  // -------------------------------------------------------------------------
+  describe("non-enumerable rankingChangesApplied contract", () => {
+    it("is readable, absent from Object.keys, and never serialized", () => {
+      const appliedCount = 4;
+      const article: Record<string, unknown> = { id: "art-1", title: "X" };
+      Object.defineProperty(article, "rankingChangesApplied", {
+        value: appliedCount,
+        enumerable: false,
+      });
+
+      expect(
+        (article as { rankingChangesApplied?: number }).rankingChangesApplied
+      ).toBe(appliedCount);
+      expect(Object.keys(article)).not.toContain("rankingChangesApplied");
+      expect(
+        "rankingChangesApplied" in JSON.parse(JSON.stringify(article))
+      ).toBe(false);
+    });
+  });
+});

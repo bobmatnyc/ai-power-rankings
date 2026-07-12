@@ -20,10 +20,11 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: false,
-    // Only the directories that actually contain vitest unit tests. The
-    // top-level tests/ dir holds Playwright .spec.ts files plus standalone
-    // tsx scripts, so it is intentionally NOT globbed here.
-    include: ["lib/**/*.test.ts", "i18n/**/*.test.ts"],
+    // Vitest unit tests live under lib/**, i18n/**, and tests/** (the latter
+    // holds hand-written unit specs such as ranking-changes-counter and
+    // semantic-duplicate-detection). The Playwright suite stays separate via
+    // the *.spec.ts + tests/e2e exclusions below, so only *.test.ts runs here.
+    include: ["lib/**/*.test.ts", "i18n/**/*.test.ts", "tests/**/*.test.ts"],
     exclude: [
       "**/node_modules/**",
       "**/.next/**",
