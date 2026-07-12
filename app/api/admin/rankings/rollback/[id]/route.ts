@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
+import { writeRankingsStaticCache } from "@/lib/cache/rankings-static-cache";
 
 interface Tool {
   name: string;
@@ -55,9 +56,8 @@ async function saveRankingsData(data: RankingsData) {
   const rankingsPath = path.join(process.cwd(), "public", "data", "rankings.json");
   await fs.writeFile(rankingsPath, JSON.stringify(data, null, 2));
 
-  // Also update the static cache
-  const cachePath = path.join(process.cwd(), "src", "data", "cache", "rankings-static.json");
-  await fs.writeFile(cachePath, JSON.stringify(data, null, 2));
+  // Also update the static cache (real dir is data/cache/; helper creates it if missing)
+  writeRankingsStaticCache(data);
 }
 
 async function loadVersionHistory(): Promise<RankingVersion[]> {
