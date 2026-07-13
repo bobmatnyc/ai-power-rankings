@@ -16,11 +16,41 @@
  * 1. npm data quality fix (removed 15 incorrect mappings, 22.9M bogus downloads)
  * 2. Market-validated weights (40% adoption focus)
  * 3. Missing data penalty (confidence multiplier 0.7-1.0 based on completeness)
+ *
+ * NODE_ENV requirement: `regenerateRankings()` persists the snapshot inside a
+ * transaction, which needs the pooled Neon driver. See the fail-fast guard below.
  */
 
-import { closeDb } from "@/lib/db/connection";
-import { ALGORITHM_V76_WEIGHTS } from "@/lib/ranking-algorithm-v76";
-import { regenerateRankings } from "@/lib/services/ranking-generation.service";
+// ---------------------------------------------------------------------------
+// Fail-fast environment guard — MUST run before any DB module is loaded.
+//
+// The DB-touching imports below are deliberately DYNAMIC (inside main() and the
+// exit handlers) rather than static: static ES imports are hoisted above this
+// block and would load lib/db/connection before the guard could fire.
+//
+// Why the guard exists: regenerateRankings() -> saveSnapshot() persists the
+// ranking snapshot inside a transaction, and lib/db/connection only selects the
+// transaction-capable pooled Neon driver when NODE_ENV is "production" or
+// "staging". A plain local run (`npx tsx scripts/generate-v76-rankings.ts`)
+// picks the default neon-http driver and fails deep in execution with the
+// cryptic "Error: No transactions support in neon-http driver". Fail fast here
+// with an actionable message instead. This does NOT affect the Vercel monthly
+// cron, which runs the API route with NODE_ENV=production.
+// ---------------------------------------------------------------------------
+const NODE_ENV = process.env.NODE_ENV;
+if (NODE_ENV !== "production" && NODE_ENV !== "staging") {
+  console.error(
+    `\n❌ Refusing to run: NODE_ENV is "${NODE_ENV ?? "unset"}" (expected "production" or "staging").\n\n` +
+      "This script writes a ranking snapshot in a transaction, which requires the\n" +
+      "pooled Neon driver (enabled only when NODE_ENV=production|staging). The\n" +
+      "default neon-http driver used locally cannot run transactions and fails with:\n" +
+      '  "Error: No transactions support in neon-http driver"\n\n' +
+      "Re-run via the repo convention:\n" +
+      "  ./scripts/run-with-prod-env.sh npx tsx scripts/generate-v76-rankings.ts\n\n" +
+      "(or set NODE_ENV=production with a valid DATABASE_URL).\n"
+  );
+  process.exit(1);
+}
 
 function parsePeriodArg(): string | undefined {
   const arg = process.argv.find((a) => a.startsWith("--period="));
@@ -28,6 +58,11 @@ function parsePeriodArg(): string | undefined {
 }
 
 async function main() {
+  // Dynamic imports keep DB-touching modules out of the module top-level so the
+  // NODE_ENV guard above always runs first (see note there).
+  const { ALGORITHM_V76_WEIGHTS } = await import("@/lib/ranking-algorithm-v76");
+  const { regenerateRankings } = await import("@/lib/services/ranking-generation.service");
+
   const period = parsePeriodArg();
 
   console.log("\n🚀 Generating Rankings with Algorithm v7.6 (Market-Validated + npm Fix)\n");
@@ -70,12 +105,14 @@ async function main() {
 
 main()
   .then(async () => {
+    const { closeDb } = await import("@/lib/db/connection");
     await closeDb();
     console.log("\n✨ Done! Rankings are now live with Algorithm v7.6.\n");
     process.exit(0);
   })
   .catch(async (error) => {
     console.error("\n💥 Fatal Error:", error);
+    const { closeDb } = await import("@/lib/db/connection");
     await closeDb();
     process.exit(1);
   });
