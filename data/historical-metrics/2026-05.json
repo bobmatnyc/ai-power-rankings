@@ -1,0 +1,529 @@
+{
+  "$schema": "historical-metrics-override/v1",
+  "period": "2026-05",
+  "reconstructed": true,
+  "generated_at": "2026-07-16T05:22:35.520Z",
+  "methodology_version": "1.0",
+  "notes": "Research-augmented historical backfill for the v7.6 ranking engine. Every leaf carries fidelity/source/as_of provenance; the loader (applyHistoricalMetricsOverride) extracts `.value` into tools.data.metrics.* and threads provenance into the persisted ranking row. reconstructed=true flags this as a synthetic period.",
+  "fidelity_levels": {
+    "real": "Directly retrieved from an external time-series API for this exact calendar month.",
+    "interpolated": "Linear interpolation between two real dated anchor points (news/launch events + current snapshot).",
+    "held_flat": "No time-series source exists; the last known real value is carried forward, explicitly flagged. Never a real monthly reading.",
+    "not_applicable": "No value exists or is recoverable for this tool/metric/month."
+  },
+  "tools": {
+    "claude-code": {
+      "display_name": "Claude Code",
+      "metrics": {
+        "npm": {
+          "downloads_last_month": {
+            "value": 34562178,
+            "fidelity": "real",
+            "source": "https://api.npmjs.org/downloads/range/2025-12-01:2026-06-30/@anthropic-ai/claude-code",
+            "as_of": "2026-05",
+            "recovery_note": "Sum of daily npm downloads for calendar month 2026-05, retrieved live from the npm range API for @anthropic-ai/claude-code."
+          }
+        },
+        "monthly_arr": {
+          "value": 8000000000,
+          "fidelity": "held_flat",
+          "source": "Claude Code ~$8B annualized run-rate by May 2026 (Sacra/Anthropic)",
+          "as_of": "2026-05",
+          "recovery_note": "No time-series API for ARR; held flat at the nearest dated anchor (2026-05). Not a real 2026-05 reading."
+        },
+        "swe_bench": {
+          "verified": {
+            "value": 74.5,
+            "fidelity": "held_flat",
+            "source": "Claude Opus 4.1 SWE-bench Verified 74.5% (uuid-mappings: anthropic-releases-claude-opus-4-1)",
+            "as_of": "2025-08",
+            "recovery_note": "No time-series API for SWE-bench Verified; held flat at the nearest dated anchor (2025-08). Not a real 2026-05 reading."
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "github-copilot": {
+      "display_name": "GitHub Copilot",
+      "metrics": {
+        "users": {
+          "value": 1800000,
+          "fidelity": "held_flat",
+          "source": "GitHub Copilot ~1.8M users (algorithm baseline)",
+          "as_of": "2025-09",
+          "recovery_note": "No time-series API for user count; held flat at the nearest dated anchor (2025-09). Not a real 2026-05 reading."
+        },
+        "monthly_arr": {
+          "value": 400000000,
+          "fidelity": "held_flat",
+          "source": "GitHub Copilot ~$400M ARR (algorithm baseline)",
+          "as_of": "2025-09",
+          "recovery_note": "No time-series API for ARR; held flat at the nearest dated anchor (2025-09). Not a real 2026-05 reading."
+        }
+      },
+      "provenance": {
+        "overall_confidence": "low",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "cursor": {
+      "display_name": "Cursor",
+      "metrics": {
+        "users": {
+          "value": 897802,
+          "fidelity": "interpolated",
+          "source": "Linear interpolation between dated anchors 2025-12 (Cursor ~360-400K paid users late 2025 (algorithm baseline)) and 2026-06 (Cursor ~1M users mid-2026 (estimate))",
+          "as_of": "estimated for 2026-05",
+          "recovery_note": "user count has no monthly-history API; value linearly interpolated between two dated news anchors. Flagged interpolated so it can be down-weighted if stricter provenance is required."
+        },
+        "monthly_arr": {
+          "value": 3483333333,
+          "fidelity": "interpolated",
+          "source": "Linear interpolation between dated anchors 2026-02 (Anysphere >$2B annualized run-rate by Feb 2026 (TechCrunch)) and 2026-06 (Cursor ~$4B annualized revenue by Jun 2026 (multiple))",
+          "as_of": "estimated for 2026-05",
+          "recovery_note": "ARR has no monthly-history API; value linearly interpolated between two dated news anchors. Flagged interpolated so it can be down-weighted if stricter provenance is required."
+        },
+        "valuation": {
+          "value": 54770879121,
+          "fidelity": "interpolated",
+          "source": "Linear interpolation between dated anchors 2025-12 (Anysphere ~$29.3B valuation (2025 round)) and 2026-06 (Cursor $60B valuation, SpaceX acquisition announced 2026-06-16)",
+          "as_of": "estimated for 2026-05",
+          "recovery_note": "valuation has no monthly-history API; value linearly interpolated between two dated news anchors. Flagged interpolated so it can be down-weighted if stricter provenance is required."
+        },
+        "employees": {
+          "value": 300,
+          "fidelity": "held_flat",
+          "source": "Anysphere ~300 employees 2026 (jobsbyculture)",
+          "as_of": "2026-06",
+          "recovery_note": "No time-series API for employee count; held flat at the nearest dated anchor (2026-06). Not a real 2026-05 reading."
+        }
+      },
+      "provenance": {
+        "overall_confidence": "low-medium",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "chatgpt-canvas": {
+      "display_name": "ChatGPT Canvas",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "v0": {
+      "display_name": "v0",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "kiro": {
+      "display_name": "Kiro",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "windsurf": {
+      "display_name": "Windsurf",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "google-jules": {
+      "display_name": "Google Jules",
+      "metrics": {
+        "swe_bench": {
+          "verified": {
+            "value": 52.2,
+            "fidelity": "held_flat",
+            "source": "Google Jules 52.2% SWE-bench (uuid-mappings: google-jules-public-beta)",
+            "as_of": "2025-06",
+            "recovery_note": "No time-series API for SWE-bench Verified; held flat at the nearest dated anchor (2025-06). Not a real 2026-05 reading."
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "low",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "amazon-q-developer": {
+      "display_name": "Amazon Q Developer",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "lovable": {
+      "display_name": "Lovable",
+      "metrics": {
+        "users": {
+          "value": 7107473,
+          "fidelity": "interpolated",
+          "source": "Linear interpolation between dated anchors 2025-09 (Lovable 140K users (uuid-mappings: lovable-achieves-5-56m-arr)) and 2026-06 (Lovable ~8M users 2026 (getpanto))",
+          "as_of": "estimated for 2026-05",
+          "recovery_note": "user count has no monthly-history API; value linearly interpolated between two dated news anchors. Flagged interpolated so it can be down-weighted if stricter provenance is required."
+        },
+        "monthly_arr": {
+          "value": 474166667,
+          "fidelity": "interpolated",
+          "source": "Linear interpolation between dated anchors 2026-02 (Lovable $400M ARR Feb 2026 (Bloomberg)) and 2026-06 (Lovable $500M annualized Jun 2026 (TechCrunch))",
+          "as_of": "estimated for 2026-05",
+          "recovery_note": "ARR has no monthly-history API; value linearly interpolated between two dated news anchors. Flagged interpolated so it can be down-weighted if stricter provenance is required."
+        },
+        "employees": {
+          "value": 146,
+          "fidelity": "held_flat",
+          "source": "Lovable 146 employees (TechCrunch)",
+          "as_of": "2026-03",
+          "recovery_note": "No time-series API for employee count; held flat at the nearest dated anchor (2026-03). Not a real 2026-05 reading."
+        }
+      },
+      "provenance": {
+        "overall_confidence": "low-medium",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "aider": {
+      "display_name": "Aider",
+      "metrics": {
+        "pypi": {
+          "downloads_last_month": {
+            "value": 942009,
+            "fidelity": "real",
+            "source": "https://pypistats.org/api/packages/aider-chat/overall",
+            "as_of": "2026-05",
+            "recovery_note": "Sum of daily PyPI downloads for 2026-05 from the pypistats overall series (mirrors excluded)."
+          }
+        },
+        "github": {
+          "stars": {
+            "value": 44916,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/Aider-AI/aider (current stargazers_count=47416) linearly interpolated from repo creation 2023-05 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-05",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "tabnine": {
+      "display_name": "Tabnine",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "bolt-new": {
+      "display_name": "Bolt.new",
+      "metrics": {
+        "github": {
+          "stars": {
+            "value": 14957,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/stackblitz/bolt.new (current stargazers_count=16460) linearly interpolated from repo creation 2024-09 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-05",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "monthly_arr": {
+          "value": 40000000,
+          "fidelity": "held_flat",
+          "source": "Bolt.new $40M ARR (uuid-mappings: bolt-new-hits-40m-arr)",
+          "as_of": "2025-08",
+          "recovery_note": "No time-series API for ARR; held flat at the nearest dated anchor (2025-08). Not a real 2026-05 reading."
+        }
+      },
+      "provenance": {
+        "overall_confidence": "low-medium",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "augment-code": {
+      "display_name": "Augment Code",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "google-gemini-code-assist": {
+      "display_name": "Google Gemini Code Assist",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "replit-agent": {
+      "display_name": "Replit Agent",
+      "metrics": {
+        "users": {
+          "value": 50000000,
+          "fidelity": "held_flat",
+          "source": "Replit 50M+ users Mar 2026 (Sacra)",
+          "as_of": "2026-03",
+          "recovery_note": "No time-series API for user count; held flat at the nearest dated anchor (2026-03). Not a real 2026-05 reading."
+        },
+        "monthly_arr": {
+          "value": 525000000,
+          "fidelity": "held_flat",
+          "source": "Replit $525M annualized Apr 2026 (Forbes/Sacra)",
+          "as_of": "2026-04",
+          "recovery_note": "No time-series API for ARR; held flat at the nearest dated anchor (2026-04). Not a real 2026-05 reading."
+        },
+        "valuation": {
+          "value": 9000000000,
+          "fidelity": "held_flat",
+          "source": "Replit $9B valuation Mar 2026 (TechCrunch)",
+          "as_of": "2026-03",
+          "recovery_note": "No time-series API for valuation; held flat at the nearest dated anchor (2026-03). Not a real 2026-05 reading."
+        }
+      },
+      "provenance": {
+        "overall_confidence": "low",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "zed": {
+      "display_name": "Zed",
+      "metrics": {
+        "github": {
+          "stars": {
+            "value": 84367,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/zed-industries/zed (current stargazers_count=87054) linearly interpolated from repo creation 2021-02 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-05",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "low-medium",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "openai-codex-cli": {
+      "display_name": "OpenAI Codex CLI",
+      "metrics": {
+        "npm": {
+          "downloads_last_month": {
+            "value": 239381470,
+            "fidelity": "real",
+            "source": "https://api.npmjs.org/downloads/range/2025-12-01:2026-06-30/@openai/codex",
+            "as_of": "2026-05",
+            "recovery_note": "Sum of daily npm downloads for calendar month 2026-05, retrieved live from the npm range API for @openai/codex."
+          }
+        },
+        "github": {
+          "stars": {
+            "value": 85388,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/openai/codex (current stargazers_count=98574) linearly interpolated from repo creation 2025-04 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-05",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "devin": {
+      "display_name": "Devin",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "continue": {
+      "display_name": "Continue",
+      "metrics": {
+        "github": {
+          "stars": {
+            "value": 33067,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/continuedev/continue (current stargazers_count=34907) linearly interpolated from repo creation 2023-05 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-05",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "vscode": {
+          "installs": {
+            "value": null,
+            "fidelity": "held_flat",
+            "source": "https://marketplace.visualstudio.com/items?itemName=Continue.continue",
+            "as_of": null,
+            "recovery_note": "The VS Code Marketplace exposes only a single current cumulative install counter with no dated history. Left null rather than mislabeling today's total as a 2026-05 reading."
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "low-medium",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "claude-artifacts": {
+      "display_name": "Claude Artifacts",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "sourcegraph-cody": {
+      "display_name": "Sourcegraph Cody",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "cline": {
+      "display_name": "Cline",
+      "metrics": {
+        "github": {
+          "stars": {
+            "value": 59302,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/cline/cline (current stargazers_count=64709) linearly interpolated from repo creation 2024-07 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-05",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "vscode": {
+          "installs": {
+            "value": null,
+            "fidelity": "held_flat",
+            "source": "https://marketplace.visualstudio.com/items?itemName=saoudrizwan.claude-dev",
+            "as_of": null,
+            "recovery_note": "The VS Code Marketplace exposes only a single current cumulative install counter with no dated history. Left null rather than mislabeling today's total as a 2026-05 reading."
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "low-medium",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "openhands": {
+      "display_name": "OpenHands",
+      "metrics": {
+        "pypi": {
+          "downloads_last_month": {
+            "value": 1005825,
+            "fidelity": "real",
+            "source": "https://pypistats.org/api/packages/openhands-ai/overall",
+            "as_of": "2026-05",
+            "recovery_note": "Sum of daily PyPI downloads for 2026-05 from the pypistats overall series (mirrors excluded)."
+          }
+        },
+        "github": {
+          "stars": {
+            "value": 75138,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/All-Hands-AI/OpenHands (current stargazers_count=80932) linearly interpolated from repo creation 2024-03 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-05",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "jetbrains-ai-assistant": {
+      "display_name": "JetBrains AI Assistant",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "qodo-gen": {
+      "display_name": "Qodo Gen",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "coderabbit": {
+      "display_name": "CodeRabbit",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "snyk-code": {
+      "display_name": "Snyk Code",
+      "metrics": {
+        "npm": {
+          "downloads_last_month": {
+            "value": 2559663,
+            "fidelity": "real",
+            "source": "https://api.npmjs.org/downloads/range/2025-12-01:2026-06-30/snyk",
+            "as_of": "2026-05",
+            "recovery_note": "Sum of daily npm downloads for calendar month 2026-05, retrieved live from the npm range API for snyk."
+          }
+        },
+        "github": {
+          "stars": {
+            "value": 5526,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/snyk/cli (current stargazers_count=5613) linearly interpolated from repo creation 2015-10 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-05",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "microsoft-intellicode": {
+      "display_name": "Microsoft IntelliCode",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "sourcery": {
+      "display_name": "Sourcery",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "diffblue-cover": {
+      "display_name": "Diffblue Cover",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    }
+  }
+}
