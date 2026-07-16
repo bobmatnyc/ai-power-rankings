@@ -38,6 +38,7 @@ import {
   businessLeavesForPeriod,
   indexRecoveryByLiveSlug,
   loadRecoveryDataset,
+  parentNote,
 } from "@/lib/historical-metrics/business-metrics";
 import { resolveLiveSlug, slugify } from "@/lib/historical-metrics/slugify";
 import {
@@ -263,6 +264,7 @@ async function buildCaches(): Promise<FetchCaches> {
 }
 
 function buildToolMetrics(
+  liveSlug: string,
   src: ToolSource | undefined,
   businessRecord: Record<string, unknown> | undefined,
   period: string,
@@ -270,7 +272,7 @@ function buildToolMetrics(
   counts: FidelityCounts
 ): Record<string, unknown> {
   const metrics: Record<string, unknown> = {};
-  if (!src) return addBusinessLeaves(metrics, businessRecord, period, counts);
+  if (!src) return addBusinessLeaves(metrics, liveSlug, businessRecord, period, counts);
 
   // npm downloads (REAL)
   if (src.npm) {
@@ -342,22 +344,24 @@ function buildToolMetrics(
     bump(counts, "vscode.installs", "held_flat");
   }
 
-  return addBusinessLeaves(metrics, businessRecord, period, counts);
+  return addBusinessLeaves(metrics, liveSlug, businessRecord, period, counts);
 }
 
 /**
  * Merge the sourced business leaves (ARR/users/SWE-bench/valuation/funding/
  * employees) for this tool-month. Values and fidelity come straight from the
- * recovery dataset; anything it could not substantiate emits nothing, so the
- * live `tools.data` value survives untouched.
+ * recovery dataset; anything it could not substantiate — or that fails the
+ * semantic / source-integrity audits in business-metrics.ts — emits nothing, so
+ * the live `tools.data` value survives untouched.
  */
 function addBusinessLeaves(
   metrics: Record<string, unknown>,
+  liveSlug: string,
   businessRecord: Record<string, unknown> | undefined,
   period: string,
   counts: FidelityCounts
 ): Record<string, unknown> {
-  for (const { path, leaf } of businessLeavesForPeriod(businessRecord, period)) {
+  for (const { path, leaf } of businessLeavesForPeriod(liveSlug, businessRecord, period)) {
     setLeaf(metrics, path, leaf);
     bump(counts, path.join("."), leaf.fidelity);
   }
@@ -415,7 +419,18 @@ async function main() {
     for (const entry of roster) {
       const src = SOURCES[entry.slug];
       const businessRecord = business.get(entry.overrideKey);
-      const metrics = buildToolMetrics(src, businessRecord, period, caches, counts);
+      const metrics = buildToolMetrics(
+        entry.overrideKey,
+        src,
+        businessRecord,
+        period,
+        caches,
+        counts
+      );
+      // Preserved so parent-attributed financials stay auditable: this tool is a
+      // feature/subsidiary and some leaves below are its PARENT's figures.
+      const parent = parentNote(businessRecord);
+
       if (Object.keys(metrics).length === 0) {
         // No substantiated data for this tool this month: emit an empty metrics
         // block so the file documents the full roster, but the loader will merge
@@ -426,6 +441,7 @@ async function main() {
           provenance: {
             overall_confidence: "none",
             notes: "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production.",
+            ...(parent ? { parent_note: parent } : {}),
           },
         };
         continue;
@@ -436,6 +452,7 @@ async function main() {
         provenance: {
           overall_confidence: overallConfidence(metrics),
           notes: "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+          ...(parent ? { parent_note: parent } : {}),
         },
       };
     }
@@ -445,9 +462,19 @@ async function main() {
       period,
       reconstructed: true,
       generated_at: generatedAt,
-      methodology_version: "2.0",
+      methodology_version: "2.1",
       notes:
         "Research-augmented historical backfill for the v7.7 ranking engine. Every leaf carries fidelity/source/as_of provenance; the loader (applyHistoricalMetricsOverride) extracts `.value` into tools.data.metrics.* and threads provenance into the persisted ranking row. reconstructed=true flags this as a synthetic period. Business metrics (users/monthly_arr/valuation/funding/employees/swe_bench.verified) are carried verbatim — value AND fidelity — from the sourced recovery dataset at data/historical-metrics/sources/business-metrics-recovery.json; fidelity is never upgraded, and any field/month that research could not substantiate is omitted so the live tools.data value is retained.",
+      conventions: {
+        parent_attribution:
+          "ALLOWED, by explicit owner decision. A tool that is a feature of a larger product MAY carry its parent's FINANCIALS (valuation / funding / monthly_arr) — e.g. OpenAI's valuation and ChatGPT's ARR flow to ChatGPT Canvas, Anthropic's valuation flows to Claude Code and Claude Artifacts. This mirrors the engine's existing calculateCompanyBacking concept. Each such leaf keeps the dataset's own note (e.g. 'Anthropic Series E post-money (parent company)') as its recovery_note so the attribution stays auditable rather than implicit.",
+        users_semantics:
+          "A parent's USER COUNT is NOT covered by parent_attribution and is never emitted as a sub-feature's `users`: that is a factual mislabel, not a valuation judgement. More broadly, `users` is emitted ONLY where the dataset's number is a sourced, definitionally consistent count of THIS tool's users. Series holding a parent/platform count, an installs/stars/downloads proxy, a quota, a percentage, a customer/business count, or a mid-flight definition change are omitted entirely — see USERS_SEMANTIC_EXCLUSIONS in lib/historical-metrics/business-metrics.ts, which records a per-tool reason citing the dataset's own inline note. Omitted means the live tools.data value is retained; it does not zero the tool's adoption score.",
+        cursor_users_recovery_note:
+          "Cursor's `users` is omitted for every month. The dataset splices two definitions the research pass itself calls distinct — 360,000 paying customers (2024-12-19, sourced) and 50,000 enterprise business customers (2025-11-13, unsourced) — so holding the latter flat misreads a definition change as a ~7x decline. Per the single-definition rule the sourced 'paying customers' definition was preferred, but its only anchor predates this window by ~12 months and no sourced anchor under that definition falls inside Dec-2025..Jun-2026, so no month is genuinely covered and none is emitted. The enterprise anchor independently fails source_integrity.",
+        source_integrity:
+          "No leaf is emitted unless the anchors its value derives from carry a source URL. A `real` month must cite a source directly. An `interpolated` month legitimately has no source of its own (it is derived), but BOTH bracketing anchors must be sourced; a `held_flat` month requires its governing anchor to be sourced. This drops values that interpolate toward, or hold flat from, an unsourced claim.",
+      },
       fidelity_levels: {
         real: "Directly retrieved from an external time-series API for this exact calendar month, or a dated primary-source disclosure (funding round, benchmark result, announced ARR) effective for this month.",
         interpolated: "Linear interpolation between two real dated anchor points (news/launch events + current snapshot).",
