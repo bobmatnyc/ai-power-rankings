@@ -1,0 +1,937 @@
+{
+  "$schema": "historical-metrics-override/v1",
+  "period": "2026-01",
+  "reconstructed": true,
+  "generated_at": "2026-07-16T18:52:07.052Z",
+  "methodology_version": "2.1",
+  "notes": "Research-augmented historical backfill for the v7.7 ranking engine. Every leaf carries fidelity/source/as_of provenance; the loader (applyHistoricalMetricsOverride) extracts `.value` into tools.data.metrics.* and threads provenance into the persisted ranking row. reconstructed=true flags this as a synthetic period. Business metrics (users/monthly_arr/valuation/funding/employees/swe_bench.verified) are carried verbatim — value AND fidelity — from the sourced recovery dataset at data/historical-metrics/sources/business-metrics-recovery.json; fidelity is never upgraded, and any field/month that research could not substantiate is omitted so the live tools.data value is retained.",
+  "conventions": {
+    "parent_attribution": "ALLOWED, by explicit owner decision. A tool that is a feature of a larger product MAY carry its parent's FINANCIALS (valuation / funding / monthly_arr) — e.g. OpenAI's valuation and ChatGPT's ARR flow to ChatGPT Canvas, Anthropic's valuation flows to Claude Code and Claude Artifacts. This mirrors the engine's existing calculateCompanyBacking concept. Each such leaf keeps the dataset's own note (e.g. 'Anthropic Series E post-money (parent company)') as its recovery_note so the attribution stays auditable rather than implicit.",
+    "users_semantics": "A parent's USER COUNT is NOT covered by parent_attribution and is never emitted as a sub-feature's `users`: that is a factual mislabel, not a valuation judgement. More broadly, `users` is emitted ONLY where the dataset's number is a sourced, definitionally consistent count of THIS tool's users. Series holding a parent/platform count, an installs/stars/downloads proxy, a quota, a percentage, a customer/business count, or a mid-flight definition change are omitted entirely — see USERS_SEMANTIC_EXCLUSIONS in lib/historical-metrics/business-metrics.ts, which records a per-tool reason citing the dataset's own inline note. Omitted means the live tools.data value is retained; it does not zero the tool's adoption score.",
+    "cursor_users_recovery_note": "Cursor's `users` is omitted for every month. The dataset splices two definitions the research pass itself calls distinct — 360,000 paying customers (2024-12-19, sourced) and 50,000 enterprise business customers (2025-11-13, unsourced) — so holding the latter flat misreads a definition change as a ~7x decline. Per the single-definition rule the sourced 'paying customers' definition was preferred, but its only anchor predates this window by ~12 months and no sourced anchor under that definition falls inside Dec-2025..Jun-2026, so no month is genuinely covered and none is emitted. The enterprise anchor independently fails source_integrity.",
+    "source_integrity": "No leaf is emitted unless the anchors its value derives from carry a source URL. A `real` month must cite a source directly. An `interpolated` month legitimately has no source of its own (it is derived), but BOTH bracketing anchors must be sourced; a `held_flat` month requires its governing anchor to be sourced. This drops values that interpolate toward, or hold flat from, an unsourced claim."
+  },
+  "fidelity_levels": {
+    "real": "Directly retrieved from an external time-series API for this exact calendar month, or a dated primary-source disclosure (funding round, benchmark result, announced ARR) effective for this month.",
+    "interpolated": "Linear interpolation between two real dated anchor points (news/launch events + current snapshot).",
+    "held_flat": "No time-series source exists; the last known real value is carried forward, explicitly flagged. Never a real monthly reading.",
+    "not_applicable": "No value exists or is recoverable for this tool/metric/month."
+  },
+  "tools": {
+    "claude-code": {
+      "display_name": "Claude Code",
+      "metrics": {
+        "npm": {
+          "downloads_last_month": {
+            "value": 27575444,
+            "fidelity": "real",
+            "source": "https://api.npmjs.org/downloads/range/2025-12-01:2026-06-30/@anthropic-ai/claude-code",
+            "as_of": "2026-01",
+            "recovery_note": "Sum of daily npm downloads for calendar month 2026-01, retrieved live from the npm range API for @anthropic-ai/claude-code."
+          }
+        },
+        "valuation": {
+          "value": 183000000000,
+          "fidelity": "real",
+          "source": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+          "as_of": "2025-09-02",
+          "recovery_note": "Anthropic Series F post-money"
+        },
+        "funding": {
+          "value": 13000000000,
+          "fidelity": "real",
+          "source": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+          "as_of": "2025-09-02",
+          "recovery_note": "Series F raised"
+        },
+        "swe_bench": {
+          "verified": {
+            "value": 80.9,
+            "fidelity": "real",
+            "source": "https://www.anthropic.com/news/claude-opus-4-5",
+            "as_of": "2025-11-24",
+            "recovery_note": "Claude Opus 4.5"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "Claude Code inherits the SWE-bench score of the underlying Claude model; funding/valuation figures are Anthropic corporate-level, not Claude-Code-specific."
+      }
+    },
+    "github-copilot": {
+      "display_name": "GitHub Copilot",
+      "metrics": {
+        "swe_bench": {
+          "verified": {
+            "value": 56,
+            "fidelity": "real",
+            "source": "https://github.blog/news-insights/product-news/github-copilot-agent-mode-activated/",
+            "as_of": "2025-04-04",
+            "recovery_note": "Copilot agent mode running Claude 3.7 Sonnet"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "GitHub Copilot is a Microsoft/GitHub product; no standalone funding/valuation exists."
+      }
+    },
+    "cursor": {
+      "display_name": "Cursor",
+      "metrics": {
+        "valuation": {
+          "value": 29300000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2025/11/13/coding-assistant-cursor-raises-2-3b-5-months-after-its-previous-round/",
+          "as_of": "2025-11-13",
+          "recovery_note": "Series D post-money"
+        },
+        "funding": {
+          "value": 2300000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2025/11/13/coding-assistant-cursor-raises-2-3b-5-months-after-its-previous-round/",
+          "as_of": "2025-11-13",
+          "recovery_note": "Series D"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "chatgpt-canvas": {
+      "display_name": "ChatGPT Canvas",
+      "metrics": {
+        "monthly_arr": {
+          "value": 21400000000,
+          "fidelity": "real",
+          "source": "https://www.cnbc.com/2026/01/19/openai-to-focus-on-practical-adoption-in-2026-says-finance-chief-sarah-friar.html",
+          "as_of": null,
+          "recovery_note": "OpenAI annualized revenue, year-end 2025 (233% YoY)"
+        },
+        "valuation": {
+          "value": 500000000000,
+          "fidelity": "real",
+          "source": "https://www.cnbc.com/2025/10/02/openai-share-sale-500-billion-valuation.html",
+          "as_of": "2025-10-02",
+          "recovery_note": "secondary share sale (not new capital)"
+        },
+        "funding": {
+          "value": 40000000000,
+          "fidelity": "real",
+          "source": "https://openai.com/index/march-funding-updates/",
+          "as_of": "2025-03-31",
+          "recovery_note": "raised"
+        },
+        "swe_bench": {
+          "verified": {
+            "value": 74.9,
+            "fidelity": "real",
+            "source": "https://openai.com/index/introducing-gpt-5/",
+            "as_of": "2025-08-07",
+            "recovery_note": "GPT-5"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "Canvas is a ChatGPT feature; SWE-bench scores below are the underlying OpenAI model, not Canvas-specific. Funding/valuation are OpenAI corporate-level."
+      }
+    },
+    "v0-vercel": {
+      "display_name": "v0",
+      "metrics": {
+        "valuation": {
+          "value": 9300000000,
+          "fidelity": "real",
+          "source": "https://vercel.com/blog/series-f",
+          "as_of": "2025-09-01",
+          "recovery_note": "Vercel Series F post-money"
+        },
+        "funding": {
+          "value": 300000000,
+          "fidelity": "real",
+          "source": "https://vercel.com/blog/series-f",
+          "as_of": "2025-09-01",
+          "recovery_note": "Vercel Series F"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "v0 is a Vercel product; funding/valuation/employees below are Vercel corporate-wide, not v0-specific (not separately disclosed)."
+      }
+    },
+    "kiro": {
+      "display_name": "Kiro",
+      "metrics": {
+        "users": {
+          "value": 250000,
+          "fidelity": "held_flat",
+          "source": "https://siliconangle.com/2025/11/17/aws-launches-kiro-general-availability-team-features-cli-support/",
+          "as_of": null,
+          "recovery_note": "holding last known anchor (2025-11-17); 250,000+ developers had used Kiro since July 2025 preview, at GA announcement"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "low",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "Kiro is an internal AWS product; no standalone funding/valuation/ARR exists."
+      }
+    },
+    "windsurf": {
+      "display_name": "Windsurf",
+      "metrics": {
+        "users": {
+          "value": 700000,
+          "fidelity": "held_flat",
+          "source": "https://techcrunch.com/2024/08/29/github-copilot-competitor-codeium-raises-150m-at-a-1-25b-valuation/",
+          "as_of": null,
+          "recovery_note": "holding last known anchor (2024-08-29); 700,000+ active developers; enterprise ARR grew 500%+ since early 2024, 100B+ tokens/day"
+        },
+        "monthly_arr": {
+          "value": 82000000,
+          "fidelity": "held_flat",
+          "source": "https://techcrunch.com/2025/07/14/cognition-maker-of-the-ai-coding-agent-devin-acquires-windsurf/",
+          "as_of": null,
+          "recovery_note": "holding last known anchor (2025-07-14); ARR at time of Cognition acquisition; enterprise ARR doubling QoQ. Conflicting lower figures from stats aggregators ($12M Q4'24, $40M Feb'25) exist but this TechCrunch figure is best-sourced"
+        },
+        "valuation": {
+          "value": 1250000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2024/08/29/github-copilot-competitor-codeium-raises-150m-at-a-1-25b-valuation/",
+          "as_of": "2024-08-29",
+          "recovery_note": "Codeium Series C post-money"
+        },
+        "funding": {
+          "value": 150000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2024/08/29/github-copilot-competitor-codeium-raises-150m-at-a-1-25b-valuation/",
+          "as_of": "2024-08-29",
+          "recovery_note": "Codeium Series C, led by General Catalyst"
+        },
+        "employees": {
+          "value": 80,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2024/08/29/github-copilot-competitor-codeium-raises-150m-at-a-1-25b-valuation/",
+          "as_of": "2024-08-29",
+          "recovery_note": "Series C"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "Now owned by Cognition AI (Devin's maker) after a July 2025 acquisition, following a collapsed OpenAI deal and a Google DeepMind licensing deal. Post-acquisition valuation/funding figures are Cognition-corporate-level (see devin.json equivalent) and are NOT repeated here to avoid double-counting; only Windsurf/Codeium-specific pre-acquisition figures are listed."
+      }
+    },
+    "google-jules": {
+      "display_name": "Google Jules",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production.",
+        "parent_note": "Jules is a Google Labs product; no standalone funding/valuation/ARR exists (Alphabet is public, no product-level disclosure)."
+      }
+    },
+    "amazon-q-developer": {
+      "display_name": "Amazon Q Developer",
+      "metrics": {
+        "swe_bench": {
+          "verified": {
+            "value": 66,
+            "fidelity": "real",
+            "source": "https://aws.amazon.com/about-aws/whats-new/2025/04/amazon-q-developer-releases-state-art-agent-feature-development/",
+            "as_of": "2025-04-01",
+            "recovery_note": "'state of the art agent', top ranking SWE-bench Verified ~66%; figure via secondary citation, recommend re-fetching primary page to confirm exact wording"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "Amazon Q Developer is an AWS/Amazon product line; no standalone funding/valuation/ARR exists (Amazon is public)."
+      }
+    },
+    "lovable": {
+      "display_name": "Lovable",
+      "metrics": {
+        "users": {
+          "value": 8000000,
+          "fidelity": "held_flat",
+          "source": "https://techcrunch.com/2025/11/10/lovable-says-its-nearing-8-million-users-as-the-year-old-ai-coding-startup-eyes-more-corporate-employees/",
+          "as_of": null,
+          "recovery_note": "holding last known anchor (2025-11-10); nearing 8M users"
+        },
+        "monthly_arr": {
+          "value": 200000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2025/12/18/vibe-coding-startup-lovable-raises-330m-at-a-6-6b-valuation/",
+          "as_of": null,
+          "recovery_note": "$200M ARR reached ~4 months after $100M milestone (date implied, ~Dec2025/Jan2026)"
+        },
+        "valuation": {
+          "value": 6600000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2025/12/18/vibe-coding-startup-lovable-raises-330m-at-a-6-6b-valuation/",
+          "as_of": "2025-12-18",
+          "recovery_note": "Series B post-money"
+        },
+        "funding": {
+          "value": 330000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2025/12/18/vibe-coding-startup-lovable-raises-330m-at-a-6-6b-valuation/",
+          "as_of": "2025-12-18",
+          "recovery_note": "Series B, led by CapitalG and Menlo Ventures"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "aider": {
+      "display_name": "Aider",
+      "metrics": {
+        "pypi": {
+          "downloads_last_month": {
+            "value": 272089,
+            "fidelity": "real",
+            "source": "https://pypistats.org/api/packages/aider-chat/overall",
+            "as_of": "2026-01",
+            "recovery_note": "Sum of daily PyPI downloads for 2026-01 from the pypistats overall series (mirrors excluded)."
+          }
+        },
+        "github": {
+          "stars": {
+            "value": 40016,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/Aider-AI/aider (current stargazers_count=47437) linearly interpolated from repo creation 2023-05 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-01",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "swe_bench": {
+          "verified": {
+            "value": 18.9,
+            "fidelity": "real",
+            "source": "https://aider.chat/2024/06/02/main-swe-bench.html",
+            "as_of": "2024-06-02",
+            "recovery_note": "SWE-bench (full/main) pass@1, claimed SOTA at the time (beat prior SOTA 13.8% from Amazon Q Developer Agent)"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "Aider is a solo open-source project (Paul Gauthier); no funding, ARR, or employee headcount exists by nature (free, Apache 2.0, users pay their own LLM API costs)."
+      }
+    },
+    "tabnine": {
+      "display_name": "Tabnine",
+      "metrics": {
+        "users": {
+          "value": 1000000,
+          "fidelity": "held_flat",
+          "source": "https://techcrunch.com/2022/06/15/tabnine-raises-15-5m-for-ai-that-autocompletes-code/",
+          "as_of": null,
+          "recovery_note": "holding last known anchor (2022-06-15); 1M+ users; figure reaffirmed unchanged through Nov 2023 and again Sep 2025 (no reported growth)"
+        },
+        "funding": {
+          "value": 8000000,
+          "fidelity": "real",
+          "source": "https://www.globenewswire.com/news-release/2025/09/17/3151877/0/en/",
+          "as_of": "2025-04-29",
+          "recovery_note": "additional round; brings cumulative disclosed total to ~$65M per company statement"
+        },
+        "employees": {
+          "value": 65,
+          "fidelity": "real",
+          "source": "https://www.calcalistech.com/ctechnews/article/h1jlmiek1l",
+          "as_of": "2025-02-05",
+          "recovery_note": "laid off 15 employees (18% of workforce), implying ~80 pre-layoff, ~65 post"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "bolt-new": {
+      "display_name": "Bolt.new",
+      "metrics": {
+        "github": {
+          "stars": {
+            "value": 12002,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/stackblitz/bolt.new (current stargazers_count=16463) linearly interpolated from repo creation 2024-09 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-01",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "monthly_arr": {
+          "value": 40000000,
+          "fidelity": "held_flat",
+          "source": "https://www.indiehackers.com/post/the-story-behind-bolt-new-reaching-40m-arr-in-5-months-9cfdf04e70",
+          "as_of": null,
+          "recovery_note": "holding last known anchor (2025-03-01); $40M ARR within 5 months, coinciding with 1M daily active users"
+        },
+        "valuation": {
+          "value": 700000000,
+          "fidelity": "real",
+          "source": "https://www.bloomberg.com/news/articles/2025-01-21/ai-speech-to-code-startup-stackblitz-is-in-talks-for-a-700-million-valuation",
+          "as_of": "2025-01-21",
+          "recovery_note": "StackBlitz Series B post-money (in-talks reported same date)"
+        },
+        "funding": {
+          "value": 105500000,
+          "fidelity": "real",
+          "source": "https://www.bloomberg.com/news/articles/2025-01-21/ai-speech-to-code-startup-stackblitz-is-in-talks-for-a-700-million-valuation",
+          "as_of": "2025-01-21",
+          "recovery_note": "StackBlitz Series B, led by Emergence Capital and GV"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "Bolt.new is a StackBlitz product; funding/valuation/employees below are StackBlitz corporate-wide."
+      }
+    },
+    "augment-code": {
+      "display_name": "Augment Code",
+      "metrics": {
+        "monthly_arr": {
+          "value": 20000000,
+          "fidelity": "held_flat",
+          "source": "https://getlatka.com/companies/augmentcode.com",
+          "as_of": null,
+          "recovery_note": "holding last known anchor (2025-10-01); ~$20M ARR; third-party estimate (Latka), not an official company disclosure"
+        },
+        "valuation": {
+          "value": 977000000,
+          "fidelity": "real",
+          "source": "https://www.businesswire.com/news/home/20240424911981/en/",
+          "as_of": "2024-04-24",
+          "recovery_note": "Series B post-money"
+        },
+        "funding": {
+          "value": 227000000,
+          "fidelity": "real",
+          "source": "https://www.augmentcode.com/blog/augment-inc-raises-227-million",
+          "as_of": "2024-04-24",
+          "recovery_note": "Series A ($25M, Sutter Hill, exact date not pinned) + Series B combined total"
+        },
+        "swe_bench": {
+          "verified": {
+            "value": 65.4,
+            "fidelity": "real",
+            "source": "https://www.augmentcode.com/blog/1-open-source-agent-on-swe-bench-verified-by-combining-claude-3-7-and-o1",
+            "as_of": "2025-03-31",
+            "recovery_note": "Claude 3.7 + o1 ensemble; #1 open-source agent at the time"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "gemini-code-assist": {
+      "display_name": "Google Gemini Code Assist",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production.",
+        "parent_note": "Google product; no standalone funding/valuation/ARR exists."
+      }
+    },
+    "replit-agent": {
+      "display_name": "Replit Agent",
+      "metrics": {
+        "users": {
+          "value": 47857142.86,
+          "fidelity": "interpolated",
+          "source": null,
+          "as_of": null,
+          "recovery_note": "interpolated between 2025-09-10 (40000000) and 2026-03-11 (50000000)"
+        },
+        "monthly_arr": {
+          "value": 817857142.86,
+          "fidelity": "interpolated",
+          "source": null,
+          "as_of": null,
+          "recovery_note": "interpolated between 2025-09-10 (150000000) and 2026-03-11 (1000000000)"
+        },
+        "valuation": {
+          "value": 3000000000,
+          "fidelity": "real",
+          "source": "https://www.prnewswire.com/il/news-releases/replit-closes-250-million-in-funding-to-build-on-customer-momentum-302551540.html",
+          "as_of": "2025-09-10",
+          "recovery_note": "Series C post-money"
+        },
+        "funding": {
+          "value": 250000000,
+          "fidelity": "real",
+          "source": "https://www.prnewswire.com/il/news-releases/replit-closes-250-million-in-funding-to-build-on-customer-momentum-302551540.html",
+          "as_of": "2025-09-10",
+          "recovery_note": "Series C, led by Prysm Capital"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "zed": {
+      "display_name": "Zed",
+      "metrics": {
+        "github": {
+          "stars": {
+            "value": 79124,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/zed-industries/zed (current stargazers_count=87102) linearly interpolated from repo creation 2021-02 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-01",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "users": {
+          "value": 150000,
+          "fidelity": "held_flat",
+          "source": "https://www.finsmes.com/2025/08/zed-raises-32m-in-series-b-funding.html",
+          "as_of": null,
+          "recovery_note": "holding last known anchor (2025-08-20); 150,000+ active developers, 1,100 contributors since open-sourcing in 2024"
+        },
+        "funding": {
+          "value": 32000000,
+          "fidelity": "real",
+          "source": "https://www.businesswire.com/news/home/20250820782241/en/Zed-Raises-$32M-Series-B-Led-by-Sequoia-to-Scale-Collaborative-AI-Coding-Vision",
+          "as_of": "2025-08-20",
+          "recovery_note": "Series B (total funding to over $42M), led by Sequoia Capital"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "openai-codex-cli": {
+      "display_name": "OpenAI Codex CLI",
+      "metrics": {
+        "npm": {
+          "downloads_last_month": {
+            "value": 2327895,
+            "fidelity": "real",
+            "source": "https://api.npmjs.org/downloads/range/2025-12-01:2026-06-30/@openai/codex",
+            "as_of": "2026-01",
+            "recovery_note": "Sum of daily npm downloads for calendar month 2026-01, retrieved live from the npm range API for @openai/codex."
+          }
+        },
+        "github": {
+          "stars": {
+            "value": 59595,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/openai/codex (current stargazers_count=98819) linearly interpolated from repo creation 2025-04 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-01",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "valuation": {
+          "value": 500000000000,
+          "fidelity": "real",
+          "source": "https://www.cnbc.com/2025/10/02/openai-share-sale-500-billion-valuation.html",
+          "as_of": "2025-10-02",
+          "recovery_note": "secondary share sale (not new capital)"
+        },
+        "funding": {
+          "value": 40000000000,
+          "fidelity": "real",
+          "source": "https://openai.com/index/march-funding-updates/",
+          "as_of": "2025-03-31",
+          "recovery_note": "raised"
+        },
+        "swe_bench": {
+          "verified": {
+            "value": 74.9,
+            "fidelity": "real",
+            "source": "https://openai.com/index/introducing-gpt-5/",
+            "as_of": "2025-08-07",
+            "recovery_note": "GPT-5"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "Codex CLI is an OpenAI product; funding/valuation/ARR/users below are OpenAI corporate-wide (same anchors as chatgpt-canvas) except where Codex-specific figures exist."
+      }
+    },
+    "devin": {
+      "display_name": "Devin",
+      "metrics": {
+        "monthly_arr": {
+          "value": 356988888.89,
+          "fidelity": "interpolated",
+          "source": null,
+          "as_of": null,
+          "recovery_note": "interpolated between 2025-06-01 (73000000) and 2026-05-27 (492000000)"
+        },
+        "valuation": {
+          "value": 10200000000,
+          "fidelity": "real",
+          "source": "https://cognition.com/blog/funding-growth-and-the-next-frontier-of-ai-coding-agents",
+          "as_of": "2025-09-09",
+          "recovery_note": "post-money valuation"
+        },
+        "funding": {
+          "value": 400000000,
+          "fidelity": "real",
+          "source": "https://cognition.com/blog/funding-growth-and-the-next-frontier-of-ai-coding-agents",
+          "as_of": "2025-09-09",
+          "recovery_note": "round led by Founders Fund"
+        },
+        "swe_bench": {
+          "verified": {
+            "value": 13.86,
+            "fidelity": "real",
+            "source": "https://cognition.com/blog/swe-bench-technical-report",
+            "as_of": "2024-03-15",
+            "recovery_note": "unassisted, random 25% subset of full SWE-bench (not Verified split); launch claim"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "continue-dev": {
+      "display_name": "Continue",
+      "metrics": {
+        "github": {
+          "stars": {
+            "value": 29454,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/continuedev/continue (current stargazers_count=34916) linearly interpolated from repo creation 2023-05 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-01",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "vscode": {
+          "installs": {
+            "value": null,
+            "fidelity": "held_flat",
+            "source": "https://marketplace.visualstudio.com/items?itemName=Continue.continue",
+            "as_of": null,
+            "recovery_note": "The VS Code Marketplace exposes only a single current cumulative install counter with no dated history. Left null rather than mislabeling today's total as a 2026-01 reading."
+          }
+        },
+        "funding": {
+          "value": 3000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2025/02/26/continue-wants-to-help-developers-create-and-share-custom-ai-coding-assistants/",
+          "as_of": "2025-02-26",
+          "recovery_note": "additional seed/SAFE round, led by Heavybit (total raised to date: $5.6M per Tracxn)"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "claude-artifacts": {
+      "display_name": "Claude Artifacts",
+      "metrics": {
+        "valuation": {
+          "value": 183000000000,
+          "fidelity": "real",
+          "source": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+          "as_of": "2025-09-02",
+          "recovery_note": "Anthropic Series F post-money"
+        },
+        "funding": {
+          "value": 13000000000,
+          "fidelity": "real",
+          "source": "https://www.anthropic.com/news/anthropic-raises-series-f-at-usd183b-post-money-valuation",
+          "as_of": "2025-09-02",
+          "recovery_note": "Series F raised"
+        },
+        "swe_bench": {
+          "verified": {
+            "value": 80.9,
+            "fidelity": "real",
+            "source": "https://www.anthropic.com/news/claude-opus-4-5",
+            "as_of": "2025-11-24",
+            "recovery_note": "Claude Opus 4.5"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note.",
+        "parent_note": "Artifacts is a Claude.ai feature, not a standalone agent; SWE-bench/funding/valuation are Anthropic corporate-level (same anchors as claude-code)."
+      }
+    },
+    "sourcegraph-cody": {
+      "display_name": "Sourcegraph Cody",
+      "metrics": {
+        "valuation": {
+          "value": 2625000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2021/07/13/sourcegraph-raises-125m-series-d-on-2-6b-valuation-for-universal-code-search-tool/",
+          "as_of": "2021-07-13",
+          "recovery_note": "Series D post-money (2021, outside the Jan2024+ research window but the most recent valuation on record — no round found 2024-2026)"
+        },
+        "funding": {
+          "value": 125000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2021/07/13/sourcegraph-raises-125m-series-d-on-2-6b-valuation-for-universal-code-search-tool/",
+          "as_of": "2021-07-13",
+          "recovery_note": "Series D (2021); no funding round found in the 2024-2026 window"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "cline": {
+      "display_name": "Cline",
+      "metrics": {
+        "github": {
+          "stars": {
+            "value": 48677,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/cline/cline (current stargazers_count=64726) linearly interpolated from repo creation 2024-07 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-01",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "vscode": {
+          "installs": {
+            "value": null,
+            "fidelity": "held_flat",
+            "source": "https://marketplace.visualstudio.com/items?itemName=saoudrizwan.claude-dev",
+            "as_of": null,
+            "recovery_note": "The VS Code Marketplace exposes only a single current cumulative install counter with no dated history. Left null rather than mislabeling today's total as a 2026-01 reading."
+          }
+        },
+        "valuation": {
+          "value": 110000000,
+          "fidelity": "real",
+          "source": "https://cline.bot/blog/cline-raises-32m-series-a-and-seed-funding-building-the-open-source-ai-coding-agent-that-enterprises-trust",
+          "as_of": "2025-07-31",
+          "recovery_note": "Series A valuation"
+        },
+        "funding": {
+          "value": 27000000,
+          "fidelity": "real",
+          "source": "https://www.forbes.com/sites/rashishrivastava/2025/07/31/cline-has-raised-27-million-to-help-developers-control-their-ai-spend/",
+          "as_of": "2025-07-31",
+          "recovery_note": "Series A (combined seed+A total announced as $32M same date)"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "openhands": {
+      "display_name": "OpenHands",
+      "metrics": {
+        "pypi": {
+          "downloads_last_month": {
+            "value": 174790,
+            "fidelity": "real",
+            "source": "https://pypistats.org/api/packages/openhands-ai/overall",
+            "as_of": "2026-01",
+            "recovery_note": "Sum of daily PyPI downloads for 2026-01 from the pypistats overall series (mirrors excluded)."
+          }
+        },
+        "github": {
+          "stars": {
+            "value": 63800,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/All-Hands-AI/OpenHands (current stargazers_count=81010) linearly interpolated from repo creation 2024-03 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-01",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "funding": {
+          "value": 18800000,
+          "fidelity": "real",
+          "source": "https://www.openhands.dev/blog/weve-just-raised-18-8m-to-build-the-open-standard-for-autonomous-software-development",
+          "as_of": "2025-11-18",
+          "recovery_note": "Series A, led by Madrona (total raised to date: $23.8M)"
+        },
+        "swe_bench": {
+          "verified": {
+            "value": 60.6,
+            "fidelity": "real",
+            "source": "https://www.openhands.dev/blog/sota-on-swe-bench-verified-with-inference-time-scaling-and-critic-model",
+            "as_of": "2025-04-17",
+            "recovery_note": "single-rollout, SWE-bench Verified (66.4% with 5 attempts); #1 overall, only open-source agent in top 10 at the time"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "jetbrains-ai": {
+      "display_name": "JetBrains AI Assistant",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production.",
+        "parent_note": "JetBrains is privately held; no disclosed VC rounds/valuation exist for the AI Assistant product line."
+      }
+    },
+    "qodo-gen": {
+      "display_name": "Qodo Gen",
+      "metrics": {
+        "monthly_arr": {
+          "value": 1000000,
+          "fidelity": "held_flat",
+          "source": "https://www.prnewswire.com/news-releases/qodo-formerly-codiumai-raises-40m-amid-strong-adoption-of-its-quality-focused-ai-coding-platform-302262380.html",
+          "as_of": null,
+          "recovery_note": "holding last known anchor (2024-06-01); enterprise offering reached $1M ARR within 3 months of its March 2024 launch"
+        },
+        "funding": {
+          "value": 40000000,
+          "fidelity": "real",
+          "source": "https://www.prnewswire.com/news-releases/qodo-formerly-codiumai-raises-40m-amid-strong-adoption-of-its-quality-focused-ai-coding-platform-302262380.html",
+          "as_of": "2024-09-30",
+          "recovery_note": "Series A, led by Susa Ventures/Square Peg (total to date: $50M)"
+        },
+        "employees": {
+          "value": 100,
+          "fidelity": "real",
+          "source": "https://en.wikipedia.org/wiki/Qodo",
+          "as_of": "2025-01-01",
+          "recovery_note": "~100 employees (2025); third-party aggregators report inconsistent alternates (104-134) through mid-2026"
+        },
+        "swe_bench": {
+          "verified": {
+            "value": 71.2,
+            "fidelity": "real",
+            "source": "https://winbuzzer.com/2025/08/12/qodo-command-enters-ai-coding-agent-wars-with-71-2-swe-bench-score-xcxwbn/",
+            "as_of": "2025-08-11",
+            "recovery_note": "Qodo Command (Qodo's CLI agent, same corporate entity as Qodo Gen); ~5th globally at the time vs Claude/OpenAI leaders at 74.5/74.9%"
+          }
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "coderabbit": {
+      "display_name": "CodeRabbit",
+      "metrics": {
+        "valuation": {
+          "value": 550000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2025/09/16/coderabbit-raises-60m-valuing-the-2-year-old-ai-code-review-startup-at-550m/",
+          "as_of": "2025-09-16",
+          "recovery_note": "Series B post-money"
+        },
+        "funding": {
+          "value": 60000000,
+          "fidelity": "real",
+          "source": "https://techcrunch.com/2025/09/16/coderabbit-raises-60m-valuing-the-2-year-old-ai-code-review-startup-at-550m/",
+          "as_of": "2025-09-16",
+          "recovery_note": "Series B, led by Scale Venture Partners (total to date: $88M)"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "snyk-code": {
+      "display_name": "Snyk Code",
+      "metrics": {
+        "npm": {
+          "downloads_last_month": {
+            "value": 2127819,
+            "fidelity": "real",
+            "source": "https://api.npmjs.org/downloads/range/2025-12-01:2026-06-30/snyk",
+            "as_of": "2026-01",
+            "recovery_note": "Sum of daily npm downloads for calendar month 2026-01, retrieved live from the npm range API for snyk."
+          }
+        },
+        "github": {
+          "stars": {
+            "value": 5355,
+            "fidelity": "interpolated",
+            "source": "https://api.github.com/repos/snyk/cli (current stargazers_count=5614) linearly interpolated from repo creation 2015-10 (0 stars) to 2026-07",
+            "as_of": "estimated for 2026-01",
+            "recovery_note": "GitHub's REST API returns only the current total; monthly history requires paginating stargazer timestamps or star-history.com. This is a documented linear-interpolation estimate."
+          }
+        },
+        "monthly_arr": {
+          "value": 325946721.31,
+          "fidelity": "interpolated",
+          "source": null,
+          "as_of": null,
+          "recovery_note": "interpolated between 2024-10-01 (300000000) and 2026-02-01 (326000000)"
+        },
+        "valuation": {
+          "value": 7400000000,
+          "fidelity": "real",
+          "source": "https://snyk.io/news/snyk-closes-196-5-million-series-g-funding-at-7-4-billion-valuation/",
+          "as_of": "2022-12-01",
+          "recovery_note": "Series G post-money (Dec 2022; no round found 2024-2026, most recent confirmed valuation)"
+        },
+        "funding": {
+          "value": 196500000,
+          "fidelity": "real",
+          "source": "https://snyk.io/news/snyk-closes-196-5-million-series-g-funding-at-7-4-billion-valuation/",
+          "as_of": "2022-12-01",
+          "recovery_note": "Series G raised"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    },
+    "microsoft-intellicode": {
+      "display_name": "Microsoft IntelliCode",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production.",
+        "parent_note": "IntelliCode is a Microsoft feature; no standalone funding/valuation/ARR/employees exists."
+      }
+    },
+    "sourcery": {
+      "display_name": "Sourcery",
+      "metrics": {},
+      "provenance": {
+        "overall_confidence": "none",
+        "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
+      }
+    },
+    "diffblue-cover": {
+      "display_name": "Diffblue Cover",
+      "metrics": {
+        "funding": {
+          "value": 6300000,
+          "fidelity": "real",
+          "source": "https://www.diffblue.com/resources/diffblue-secures-6-3-million-in-new-funding-amidst-3x-growth-period/",
+          "as_of": "2024-10-30",
+          "recovery_note": "extension round (total funding to over $46M); investors incl. new investor Citi Institutional Strategic Investments"
+        }
+      },
+      "provenance": {
+        "overall_confidence": "medium-high",
+        "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
+      }
+    }
+  }
+}
