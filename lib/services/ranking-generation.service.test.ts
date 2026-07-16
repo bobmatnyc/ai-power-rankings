@@ -131,6 +131,41 @@ describe("ranking-generation.service", () => {
       expect(persistence.saved!.data).toHaveLength(3);
     });
 
+    it("leaves the LIVE path untouched when no metrics override is configured", async () => {
+      // The historical backfill must be strictly additive: the cron path (no
+      // metricsOverridePath) has to score live tools.data and persist rows with
+      // no reconstructed/provenance markers.
+      const persistence = fakePersistence();
+      const now = () => new Date("2026-07-01T09:00:00Z");
+
+      await regenerateRankings({ persistence, now });
+
+      for (const row of persistence.saved!.data) {
+        expect(row.reconstructed).toBeUndefined();
+        expect(row.provenance).toBeUndefined();
+      }
+      // Identical to scoring the source tools directly with no override applied.
+      expect(persistence.saved!.data.map((r) => r.tool_slug)).toEqual(
+        computeRankings(sampleTools, new Map(), now()).map((r) => r.tool_slug)
+      );
+    });
+
+    it("ignores a metrics override path that does not exist on disk", async () => {
+      const persistence = fakePersistence();
+      const now = () => new Date("2026-07-01T09:00:00Z");
+
+      await regenerateRankings({
+        persistence,
+        now,
+        metricsOverridePath: "/nonexistent/data/historical-metrics/1999-01.json",
+      });
+
+      for (const row of persistence.saved!.data) {
+        expect(row.reconstructed).toBeUndefined();
+      }
+      expect(persistence.saved!.data).toHaveLength(3);
+    });
+
     it("honors an explicit period override", async () => {
       const persistence = fakePersistence();
       const result = await regenerateRankings({ persistence, period: "2025-12" });
