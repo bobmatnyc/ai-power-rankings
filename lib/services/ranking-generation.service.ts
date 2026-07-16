@@ -19,6 +19,7 @@
  *   `rankings_period_idx` index is the durable backstop across instances.
  */
 
+import { existsSync, readFileSync } from "node:fs";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import { rankings, tools } from "@/lib/db/schema";
@@ -57,6 +58,17 @@ export interface RankingEntry {
     change: number;
     direction: "up" | "down" | "same";
   };
+  /**
+   * True when this row was scored from a period-specific historical metrics
+   * override file rather than the live `tools.data`. Absent on live cron runs.
+   */
+  reconstructed?: boolean;
+  /**
+   * Provenance block carried through from the override file (period + per-tool
+   * fidelity notes). Persisted alongside the row in the existing `rankings.data`
+   * JSONB; never populated on live cron runs. No schema migration required.
+   */
+  provenance?: Record<string, unknown>;
 }
 
 /** Summary returned to callers (cron route surfaces this as JSON). */
@@ -87,6 +99,14 @@ export interface RegenerateRankingsOptions {
   persistence?: RankingPersistencePort;
   /** Clock injection for deterministic tests. */
   now?: () => Date;
+  /**
+   * Optional path to a `data/historical-metrics/<period>.json` override file.
+   * When set AND the file exists, the loaded tools' `data.metrics.*` are merged
+   * with the reconstructed period-specific values before scoring (additive
+   * historical-backfill path). When unset or the file is missing, the live
+   * `tools.data` is scored unchanged — the cron path is byte-for-byte identical.
+   */
+  metricsOverridePath?: string;
 }
 
 /** Raised when a regeneration for the same period is already in flight. */
@@ -171,8 +191,9 @@ export function computeRankings(
     const rank = index + 1;
     const prevRank = previousRankMap.get(entry.tool.id);
     const change = prevRank ? prevRank - rank : 0;
+    const toolData = entry.tool.data as Record<string, unknown> | null;
 
-    return {
+    const row: RankingEntry = {
       tool_id: entry.tool.id,
       tool_name: entry.tool.name,
       tool_slug: entry.tool.slug,
@@ -188,6 +209,122 @@ export function computeRankings(
         direction: change > 0 ? "up" : change < 0 ? "down" : "same",
       },
     };
+
+    // Only stamp reconstruction fields when the tool was scored from an override
+    // file (applyHistoricalMetricsOverride sets `__reconstructed`). Left absent
+    // on the live path so persisted snapshots are unchanged there.
+    if (toolData?.["__reconstructed"] === true) {
+      row.reconstructed = true;
+      const provenance = toolData["__provenance"];
+      if (provenance && typeof provenance === "object") {
+        row.provenance = provenance as Record<string, unknown>;
+      }
+    }
+
+    return row;
+  });
+}
+
+/** A single reconstructed metric leaf in a historical override file. */
+export interface HistoricalMetricLeaf {
+  /** The numeric value the engine scores (null = intentionally not applicable). */
+  value: number | null;
+  fidelity?: "real" | "interpolated" | "held_flat" | "not_applicable";
+  source?: string | null;
+  as_of?: string | null;
+  recovery_note?: string;
+}
+
+/** Shape of a `data/historical-metrics/<period>.json` override file. */
+export interface HistoricalMetricsOverride {
+  period?: string;
+  reconstructed?: boolean;
+  tools: Record<
+    string,
+    {
+      display_name?: string;
+      /** Nested tree of metric leaves / containers (npm, github, pypi, users, …). */
+      metrics?: Record<string, unknown>;
+      provenance?: Record<string, unknown>;
+    }
+  >;
+  [key: string]: unknown;
+}
+
+/**
+ * Recursively copy the numeric `.value` leaves from an override subtree into the
+ * matching path of a target metrics object, preserving nesting. A node is a leaf
+ * when it carries a `value` property (e.g. `{ value, fidelity, source, … }`);
+ * otherwise it is a container (e.g. `npm`, `github`) and we recurse. Existing
+ * target values not named in the override are left untouched (deep merge).
+ */
+function mergeOverrideLeaves(
+  target: Record<string, unknown>,
+  override: Record<string, unknown>
+): void {
+  for (const [key, node] of Object.entries(override)) {
+    if (!node || typeof node !== "object") continue;
+    if ("value" in (node as Record<string, unknown>)) {
+      // Leaf: extract only the scored `.value` (may be null); provenance stays
+      // in the override file, not in the scored metrics tree.
+      target[key] = (node as HistoricalMetricLeaf).value;
+    } else {
+      const existing = target[key];
+      const child =
+        existing && typeof existing === "object"
+          ? (existing as Record<string, unknown>)
+          : {};
+      target[key] = child;
+      mergeOverrideLeaves(child, node as Record<string, unknown>);
+    }
+  }
+}
+
+/**
+ * PURE: apply a period-specific historical metrics override onto a set of source
+ * tools. For every tool whose `slug` matches a key in `overrides.tools`, the
+ * override's numeric `.value` leaves are deep-merged into `tool.data.metrics.*`
+ * (the exact paths the v7.6 engine reads) and the tool is flagged with
+ * `data.__reconstructed = true` (plus a `__provenance` block). Tools with no
+ * matching override key are returned by reference, completely untouched, so the
+ * live scoring path is unaffected when an override file omits a tool.
+ *
+ * Does not mutate the input array or its tools (returns fresh clones for matched
+ * tools) — safe to unit test directly.
+ */
+export function applyHistoricalMetricsOverride(
+  sourceTools: RankingSourceTool[],
+  overrides: HistoricalMetricsOverride
+): RankingSourceTool[] {
+  const overrideMap = overrides?.tools ?? {};
+
+  return sourceTools.map((tool) => {
+    const toolOverride = overrideMap[tool.slug];
+    if (!toolOverride) return tool; // untouched pass-through
+
+    const cloned = structuredClone(tool);
+    const data = (cloned.data ?? {}) as Record<string, unknown>;
+    cloned.data = data;
+
+    const existingMetrics = data["metrics"];
+    const metrics =
+      existingMetrics && typeof existingMetrics === "object"
+        ? (existingMetrics as Record<string, unknown>)
+        : {};
+    data["metrics"] = metrics;
+
+    if (toolOverride.metrics) {
+      mergeOverrideLeaves(metrics, toolOverride.metrics);
+    }
+
+    data["__reconstructed"] = true;
+    data["__provenance"] = {
+      period: overrides.period,
+      reconstructed: overrides.reconstructed ?? true,
+      ...(toolOverride.provenance ?? {}),
+    };
+
+    return cloned;
   });
 }
 
@@ -264,10 +401,21 @@ export async function regenerateRankings(
   inFlightPeriods.add(period);
 
   try {
-    const [sourceTools, prevSnapshot] = await Promise.all([
+    const [loadedTools, prevSnapshot] = await Promise.all([
       persistence.loadActiveTools(),
       persistence.loadCurrentRankings(),
     ]);
+
+    // Additive historical-backfill path: if a period-specific override file is
+    // provided AND exists on disk, score the reconstructed metrics instead of
+    // the live `tools.data`. Otherwise the live tools are scored unchanged.
+    let sourceTools = loadedTools;
+    if (options.metricsOverridePath && existsSync(options.metricsOverridePath)) {
+      const overrides = JSON.parse(
+        readFileSync(options.metricsOverridePath, "utf8")
+      ) as HistoricalMetricsOverride;
+      sourceTools = applyHistoricalMetricsOverride(loadedTools, overrides);
+    }
 
     const previousRankMap = buildPreviousRankMap(prevSnapshot?.data ?? null);
     const data = computeRankings(sourceTools, previousRankMap, publishedAt);
