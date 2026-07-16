@@ -10,10 +10,14 @@ import { scoreArrContribution, scoreUsersContribution } from "./ranking-metric-c
  * robust numeric coercion at metric read sites, and populated historical
  * business metrics (ARR, users, SWE-bench, valuation, funding).
  *
+ * Bumped v7.7 → v7.8: canonicalizeMetricPaths() fixes metric-path shadowing
+ * so every factor reads one canonical value per field instead of silently
+ * picking data.info.metrics.* vs data.metrics.* per factor.
+ *
  * NOTE: existing v76 content slugs (e.g. `algorithm-v76-november-2025-rankings`)
  * are historical references and intentionally keep their v7.6 naming.
  */
-export const ALGORITHM_VERSION = "v7.7";
+export const ALGORITHM_VERSION = "v7.8";
 
 export interface RankingWeightsV76 {
   agenticCapability: number;
@@ -379,13 +383,97 @@ function calculateMaturityBonus(metrics: ToolMetricsV76): number {
   return 0; // Too old might be outdated
 }
 
+/** Narrow an unknown to a plain object (spread-safe), else undefined. */
+function asPlainObject(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+}
+
+/**
+ * Canonical metric-path resolution (fixes metric-path shadowing).
+ *
+ * Some tools store business metrics at `data.metrics.*` (top level), some at
+ * `data.info.metrics.*` (the 34 "double-nested" tools), and some at BOTH.
+ * Historically, factor read sites split into two groups that read the SAME
+ * logical field from DIFFERENT paths, so a value present at only one path was
+ * silently invisible to half the factors.
+ *
+ * Precedence rule: per top-level metric key, `data.metrics.*` (top level) WINS
+ * over `data.info.metrics.*`; keys present only at the nested path are kept.
+ * Rationale:
+ * - Historical metric overrides (`applyHistoricalMetricsOverride`) merge into
+ *   `data.metrics.*` — they must be authoritative for every factor.
+ * - `data.metrics` is where the migration/collectors write current values
+ *   (github/vscode/npm/pypi and refreshed business metrics); the nested
+ *   `data.info.metrics` copy is legacy authored data.
+ * - Every pre-fix Group-A read already preferred the top-level value on
+ *   conflicts (e.g. swe_bench), so top-wins preserves those published scores.
+ *
+ * The merge is SHALLOW (whole top-level key wins) so each field resolves from
+ * exactly one source — one value, once; never double-counted, never dropped.
+ */
+export function canonicalizeMetricPaths(
+  topMetrics: Record<string, unknown> | undefined,
+  nestedMetrics: Record<string, unknown> | undefined
+): Record<string, unknown> {
+  return { ...(nestedMetrics ?? {}), ...(topMetrics ?? {}) };
+}
+
 export class RankingEngineV76 {
   constructor(private weights: RankingWeightsV76 = ALGORITHM_V76_WEIGHTS) {}
+
+  /**
+   * Single normalization step at load: canonicalize the tool's METRICS subtree
+   * so that every factor — whether it reads `metrics.info.metrics.*` directly
+   * (data completeness, company backing, agentic, business sentiment) or goes
+   * through `getData()` (developer adoption, market traction) — resolves the
+   * same logical field to the same single value.
+   *
+   * Only the metrics subtree is canonicalized. Non-metric info fields
+   * (features, description, technical, business, …) keep their existing
+   * per-group resolution exactly, so this fix cannot move scores for any tool
+   * whose metric paths already agreed (all 80 flat tools score identically).
+   *
+   * Does not mutate the input (or the underlying tool.data).
+   */
+  private normalizeInput(metrics: ToolMetricsV76): ToolMetricsV76 {
+    const outer = asPlainObject(metrics.info);
+    if (!outer) return metrics;
+
+    const hasDoubleNesting = "info" in outer;
+    const nestedInfo = hasDoubleNesting ? asPlainObject(outer["info"]) : outer;
+
+    const topMetrics =
+      asPlainObject(outer["metrics"]) ??
+      asPlainObject((metrics as { metrics?: unknown }).metrics);
+    const nestedMetrics = asPlainObject(nestedInfo?.["metrics"]);
+
+    const canonical = canonicalizeMetricPaths(topMetrics, nestedMetrics);
+
+    const normalizedOuter: Record<string, unknown> = hasDoubleNesting
+      ? {
+          ...outer,
+          metrics: canonical,
+          info: { ...(nestedInfo ?? {}), metrics: canonical },
+        }
+      : { ...outer, metrics: canonical };
+
+    return {
+      ...metrics,
+      info: normalizedOuter,
+      metrics: canonical,
+    } as ToolMetricsV76;
+  }
 
   /**
    * Helper to safely access nested data
    * Problem: scripts pass `info: toolData` where toolData = {info: {...}, metrics: {...}}
    * So we need to check both metrics.info.* and metrics.info.info.* paths
+   *
+   * NOTE: inputs are pre-normalized by `normalizeInput()` in
+   * `calculateToolScore`, so both branches of `metrics` below — and
+   * `info.metrics` — resolve to the same canonical metrics object.
    */
   private getData(metrics: ToolMetricsV76): {
     info: any;
@@ -893,10 +981,14 @@ export class RankingEngineV76 {
    * Calculate the overall score (0-100 range) with data completeness penalty
    */
   calculateToolScore(
-    metrics: ToolMetricsV76,
+    rawMetrics: ToolMetricsV76,
     currentDate: Date = new Date(),
     newsArticles?: NewsArticle[]
   ): ToolScoreV76 {
+    // Canonicalize metric paths ONCE at load so every factor below reads the
+    // same value for the same logical field (see normalizeInput).
+    const metrics = this.normalizeInput(rawMetrics);
+
     // Calculate news impact if articles provided
     let newsImpact = null;
     if (newsArticles && metrics.tool_id) {
