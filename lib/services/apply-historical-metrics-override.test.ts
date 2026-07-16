@@ -106,3 +106,83 @@ describe("applyHistoricalMetricsOverride", () => {
     expect(result).toBe(t);
   });
 });
+
+describe("override pipeline × double-nested tools (metric-path shadowing regression)", () => {
+  // Pre-fix bug: overrides merged into data.metrics.* only, while developer
+  // adoption / market traction read data.info.metrics.* for double-nested
+  // tools — so ALL business overrides were silently inert for those factors.
+  // These tests pin that a double-nested tool's overrides are actually read.
+
+  /** A double-nested tool: `data.info` subtree exists, with stale nested metrics. */
+  function doubleNestedTool(id: string, slug: string): RankingSourceTool {
+    return tool(id, slug, {
+      info: {
+        description: "double-nested fixture",
+        // Stale legacy copies that the override must beat.
+        metrics: { monthly_arr: 100_000, users: 5_000 },
+      },
+      metrics: {},
+    });
+  }
+
+  const businessOverride: HistoricalMetricsOverride = {
+    period: "2026-03",
+    reconstructed: true,
+    tools: {
+      "dn-tool": {
+        metrics: {
+          monthly_arr: { value: 400_000_000, fidelity: "real", source: "s", as_of: "2026-03" },
+          users: { value: 1_000_000, fidelity: "real", source: "s", as_of: "2026-03" },
+          valuation: { value: 5_000_000_000, fidelity: "real", source: "s", as_of: "2026-03" },
+        },
+      },
+      "flat-tool": {
+        metrics: {
+          monthly_arr: { value: 400_000_000, fidelity: "real", source: "s", as_of: "2026-03" },
+          users: { value: 1_000_000, fidelity: "real", source: "s", as_of: "2026-03" },
+          valuation: { value: 5_000_000_000, fidelity: "real", source: "s", as_of: "2026-03" },
+        },
+      },
+    },
+  };
+
+  const when = new Date("2026-03-01T00:00:00Z");
+
+  it("a double-nested tool's business overrides move the getData-based factors", () => {
+    const base = doubleNestedTool("1", "dn-tool");
+    const [withOverride] = applyHistoricalMetricsOverride([base], businessOverride);
+
+    const [beforeRow] = computeRankings([base], new Map(), when);
+    const [afterRow] = computeRankings([withOverride!], new Map(), when);
+
+    // Market traction reads ARR/valuation via getData().info.metrics — inert
+    // before the fix, must now reflect the override over the stale nested copy.
+    expect(afterRow!.factor_scores.marketTraction).toBeGreaterThan(
+      beforeRow!.factor_scores.marketTraction
+    );
+    // Developer adoption reads users via getData().info.metrics.
+    expect(afterRow!.factor_scores.developerAdoption).toBeGreaterThan(
+      beforeRow!.factor_scores.developerAdoption
+    );
+    expect(afterRow!.score).toBeGreaterThan(beforeRow!.score);
+  });
+
+  it("overrides land identically for double-nested and flat tools", () => {
+    const applied = applyHistoricalMetricsOverride(
+      [
+        doubleNestedTool("1", "dn-tool"),
+        tool("2", "flat-tool", { metrics: { monthly_arr: 100_000, users: 5_000 } }),
+      ],
+      businessOverride
+    );
+    const rows = computeRankings(applied, new Map(), when);
+    const dn = rows.find((r) => r.tool_slug === "dn-tool")!;
+    const flat = rows.find((r) => r.tool_slug === "flat-tool")!;
+
+    // Same override values → identical business-metric-driven factor scores,
+    // regardless of the tool's storage shape.
+    expect(dn.factor_scores.marketTraction).toBe(flat.factor_scores.marketTraction);
+    expect(dn.factor_scores.developerAdoption).toBe(flat.factor_scores.developerAdoption);
+    expect(dn.factor_scores.businessSentiment).toBe(flat.factor_scores.businessSentiment);
+  });
+});
