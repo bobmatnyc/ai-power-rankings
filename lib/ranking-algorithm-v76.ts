@@ -1,5 +1,7 @@
 
+import { hasPositiveNumeric, parseNumericOr, parseNumeric } from "./parse-numeric";
 import { calculateToolNewsImpact, type NewsArticle } from "./ranking-news-impact";
+import { scoreArrContribution, scoreUsersContribution } from "./ranking-metric-curves";
 
 export interface RankingWeightsV76 {
   agenticCapability: number;
@@ -63,20 +65,24 @@ export interface ToolMetricsV76 {
       pricing_details?: Record<string, string>;
       enterprise_pricing?: boolean;
     };
+    // NOTE: the numeric fields below are widened to `number | string` because
+    // live `tools` rows can store human-written values (Devin's valuation is
+    // "$10.2B (September 2025)"). They are coerced at read time via
+    // `parseNumeric`/`parseNumericOr`; stored data is never mutated.
     metrics?: {
       swe_bench?: {
-        verified?: number;
-        lite?: number;
-        full?: number;
+        verified?: number | string;
+        lite?: number | string;
+        full?: number | string;
       };
       news_mentions?: number;
-      users?: number;
-      monthly_arr?: number;
-      annual_recurring_revenue?: number;
-      valuation?: number;
-      funding?: number;
+      users?: number | string;
+      monthly_arr?: number | string;
+      annual_recurring_revenue?: number | string;
+      valuation?: number | string;
+      funding?: number | string;
       github_stars?: number;
-      employees?: number;
+      employees?: number | string;
     };
     // Additional metrics that might be present
     github_stats?: {
@@ -86,9 +92,9 @@ export interface ToolMetricsV76 {
     };
     vscode_installs?: number;
     npm_downloads?: number;
-    user_count?: number;
-    annual_recurring_revenue?: number;
-    swe_bench_score?: number;
+    user_count?: number | string;
+    annual_recurring_revenue?: number | string;
+    swe_bench_score?: number | string;
   };
 }
 
@@ -118,10 +124,11 @@ export interface ToolScoreV76 {
  * Returns 0-100 based on availability of real-world metrics
  */
 function calculateDataCompleteness(metrics: ToolMetricsV76): number {
-  // Helper to safely check numeric values
-  const hasValue = (value: any): boolean => {
-    return value !== undefined && value !== null && value > 0;
-  };
+  // Helper to safely check numeric values.
+  // Delegates to `hasPositiveNumeric` so string-stored metrics ("$10.2B") count
+  // as present. The previous inline `value > 0` was false for every string,
+  // under-reporting completeness and depressing the confidence multiplier.
+  const hasValue = (value: unknown): boolean => hasPositiveNumeric(value);
 
   // Access the actual metrics data location
   const metricsData = (metrics as any).metrics || {}; // NEW: actual storage location
@@ -311,9 +318,11 @@ function extractCapabilityScore(text: string): number {
  */
 function calculateCompanyBacking(metrics: ToolMetricsV76): number {
   const company = metrics.info?.company || metrics.info?.company_name || "";
-  const funding = metrics.info?.metrics?.funding || 0;
-  const valuation = metrics.info?.metrics?.valuation || 0;
-  const employees = metrics.info?.metrics?.employees || 0;
+  // Coerce at read time: these can arrive as human-written strings
+  // (e.g. Devin's "$575M+ total raised"), which previously read as 0.
+  const funding = parseNumericOr(metrics.info?.metrics?.funding);
+  const valuation = parseNumericOr(metrics.info?.metrics?.valuation);
+  const employees = parseNumericOr(metrics.info?.metrics?.employees);
 
   let score = 0;
 
@@ -386,11 +395,16 @@ export class RankingEngineV76 {
     let score = 50; // Base score
 
     // SWE-bench is the best indicator
+    // SWE-bench values may be stored as strings ("72%", "49.2"); coerce first
+    // so a real benchmark result isn't discarded as non-numeric.
     const sweBench = metrics.info?.metrics?.swe_bench;
-    if (sweBench?.verified) {
-      score = Math.min(100, (sweBench.verified / 70) * 100);
-    } else if (sweBench?.lite || sweBench?.full) {
-      const benchScore = sweBench.lite || sweBench.full || 0;
+    const verified = parseNumeric(sweBench?.verified);
+    const lite = parseNumeric(sweBench?.lite);
+    const full = parseNumeric(sweBench?.full);
+    if (verified !== null && verified > 0) {
+      score = Math.min(100, (verified / 70) * 100);
+    } else if ((lite !== null && lite > 0) || (full !== null && full > 0)) {
+      const benchScore = (lite ?? 0) > 0 ? (lite as number) : (full as number);
       score = Math.min(100, (benchScore / 30) * 80);
     }
 
@@ -566,21 +580,17 @@ export class RankingEngineV76 {
     // < 1000 installs = 0 points (Jules at 233 = 0)
 
     // User count (strong validation signal)
-    const users = info?.metrics?.users || info?.user_count || 0;
-    if (users >= 1000000) {
-      score += 30; // Copilot level
-    } else if (users >= 500000) {
-      score += 25;
-    } else if (users >= 100000) {
-      score += 20; // Cursor level
-    } else if (users >= 50000) {
-      score += 15;
-    } else if (users >= 10000) {
-      score += 10;
-    } else if (users >= 5000) {
-      score += 5;
-    }
-    // No users = 0 points
+    //
+    // CHANGED (v7.6): step bands replaced with a continuous log-interpolated
+    // curve calibrated THROUGH the original band anchors
+    // (5K->5, 10K->10, 50K->15, 100K->20, 500K->25, 1M->30).
+    // Exact anchor values score identically to before; only intermediate values
+    // smooth out, and the 0-below-5K / 30-above-1M clamps are unchanged.
+    // See lib/ranking-metric-curves.ts.
+    // `||` (not `??`) preserves the original fallback: a 0 user count defers to
+    // the legacy `user_count` field.
+    const users = parseNumericOr(info?.metrics?.users || info?.user_count);
+    score += scoreUsersContribution(users);
 
     // npm downloads - secondary signal
     const npmDownloads = metricsData?.npm?.downloads_last_month || 0;
@@ -646,22 +656,19 @@ export class RankingEngineV76 {
     const { info, metrics: metricsData } = this.getData(metrics);
 
     // ARR is PRIMARY signal - actual revenue proves market validation
-    const monthlyArr = info?.metrics?.monthly_arr ||
-                      info?.metrics?.annual_recurring_revenue ||
-                      info?.annual_recurring_revenue || 0;
-    if (monthlyArr >= 400000000) {
-      score += 50; // Copilot/Cursor level
-    } else if (monthlyArr >= 100000000) {
-      score += 45;
-    } else if (monthlyArr >= 50000000) {
-      score += 40;
-    } else if (monthlyArr >= 10000000) {
-      score += 35;
-    } else if (monthlyArr >= 1000000) {
-      score += 25;
-    } else if (monthlyArr >= 100000) {
-      score += 15;
-    }
+    //
+    // CHANGED (v7.6): step bands replaced with a continuous log-interpolated
+    // curve calibrated THROUGH the original band anchors
+    // (100K->15, 1M->25, 10M->35, 50M->40, 100M->45, 400M->50).
+    // Exact anchor values score identically to before; only intermediate values
+    // smooth out, and the 0-below-100K / 50-above-400M clamps are unchanged.
+    // See lib/ranking-metric-curves.ts.
+    const monthlyArr = parseNumericOr(
+      info?.metrics?.monthly_arr ||
+      info?.metrics?.annual_recurring_revenue ||
+      info?.annual_recurring_revenue
+    );
+    score += scoreArrContribution(monthlyArr);
     // No revenue = 0 points (Jules = 0)
 
     // Pricing model as proxy ONLY if no revenue data
@@ -688,8 +695,11 @@ export class RankingEngineV76 {
     }
 
     // Valuation/funding - investor validation
-    const valuation = info?.metrics?.valuation || 0;
-    const funding = info?.metrics?.funding || 0;
+    // Coerce at read time: e.g. Devin stores valuation as
+    // "$10.2B (September 2025)" and funding as "$575M+ total raised", both of
+    // which previously compared false against every threshold and scored 0.
+    const valuation = parseNumericOr(info?.metrics?.valuation);
+    const funding = parseNumericOr(info?.metrics?.funding);
 
     if (valuation >= 5000000000) {
       score += 20;
@@ -757,8 +767,13 @@ export class RankingEngineV76 {
     }
 
     // Growth metrics indicate positive sentiment
-    const arr = metrics.info?.metrics?.monthly_arr || metrics.info?.metrics?.annual_recurring_revenue || metrics.info?.annual_recurring_revenue || 0;
-    const users = metrics.info?.metrics?.users || metrics.info?.user_count || 0;
+    // Coerced at read time; these may be string-stored.
+    const arr = parseNumericOr(
+      metrics.info?.metrics?.monthly_arr ||
+      metrics.info?.metrics?.annual_recurring_revenue ||
+      metrics.info?.annual_recurring_revenue
+    );
+    const users = parseNumericOr(metrics.info?.metrics?.users || metrics.info?.user_count);
     if (arr >= 100000000 || users >= 500000) {
       score = Math.min(100, score + 10);
     }
