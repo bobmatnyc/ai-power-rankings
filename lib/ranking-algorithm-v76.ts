@@ -3,6 +3,18 @@ import { hasPositiveNumeric, parseNumericOr, parseNumeric } from "./parse-numeri
 import { calculateToolNewsImpact, type NewsArticle } from "./ranking-news-impact";
 import { scoreArrContribution, scoreUsersContribution } from "./ranking-metric-curves";
 
+/**
+ * Single source of truth for the ranking algorithm version.
+ *
+ * Bumped v7.6 → v7.7: continuous ARR/users curves (replacing step bands),
+ * robust numeric coercion at metric read sites, and populated historical
+ * business metrics (ARR, users, SWE-bench, valuation, funding).
+ *
+ * NOTE: existing v76 content slugs (e.g. `algorithm-v76-november-2025-rankings`)
+ * are historical references and intentionally keep their v7.6 naming.
+ */
+export const ALGORITHM_VERSION = "v7.7";
+
 export interface RankingWeightsV76 {
   agenticCapability: number;
   innovation: number;
@@ -959,7 +971,7 @@ export class RankingEngineV76 {
               newsImpact: newsImpact.totalImpact,
             }
           : undefined,
-      algorithm_version: "v7.6",
+      algorithm_version: ALGORITHM_VERSION,
     };
   }
 
@@ -968,7 +980,7 @@ export class RankingEngineV76 {
    */
   static getAlgorithmInfo() {
     return {
-      version: "v7.6",
+      version: ALGORITHM_VERSION,
       name: "Data-Driven Confidence Scoring with Missing Data Penalty",
       description: "Penalizes tools lacking real-world metrics. Tools with verified data (GitHub, VS Code, npm, revenue) rank higher than those with only descriptions.",
       weights: ALGORITHM_V76_WEIGHTS,
