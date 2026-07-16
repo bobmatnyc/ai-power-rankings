@@ -22,9 +22,14 @@
 import { eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import { rankings, tools } from "@/lib/db/schema";
-import { ALGORITHM_V76_WEIGHTS, RankingEngineV76 } from "@/lib/ranking-algorithm-v76";
+import { ALGORITHM_V76_WEIGHTS, ALGORITHM_VERSION, RankingEngineV76 } from "@/lib/ranking-algorithm-v76";
 
-export const RANKING_ALGORITHM_VERSION = "7.6";
+/**
+ * The version persisted on `rankings` rows. Derived from the engine's
+ * `ALGORITHM_VERSION` so the stored value can never drift from the engine that
+ * produced the scores. Stored without the leading "v" (schema convention).
+ */
+export const RANKING_ALGORITHM_VERSION = ALGORITHM_VERSION.replace(/^v/, "");
 
 /** Minimal tool shape required to score a tool. */
 export interface RankingSourceTool {
