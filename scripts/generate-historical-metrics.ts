@@ -31,7 +31,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { slugify } from "@/lib/historical-metrics/slugify";
+import { resolveLiveSlug, slugify } from "@/lib/historical-metrics/slugify";
 import {
   interpolateMonthly,
   periodToTime,
@@ -302,18 +302,30 @@ function anchorLeaf(anchors: Anchor[], period: string, metricLabel: string): Lea
 interface RosterEntry {
   tool_id: string;
   name: string;
+  /** Display-name-derived slug; used to key the SOURCES table above. */
   slug: string;
+  /**
+   * Live `tools.slug` value used as the override-file key: `slug` run through
+   * `resolveLiveSlug` (see lib/historical-metrics/slugify.ts) so it matches
+   * `applyHistoricalMetricsOverride`'s lookup even when the live slug carries a
+   * suffix the display name can't reproduce.
+   */
+  overrideKey: string;
 }
 
 function loadRoster(): RosterEntry[] {
   const raw = JSON.parse(readFileSync(ROSTER_PATH, "utf8")) as {
     rankings: Array<{ tool_id: string; tool_name: string }>;
   };
-  return raw.rankings.map((r) => ({
-    tool_id: String(r.tool_id),
-    name: r.tool_name,
-    slug: slugify(r.tool_name),
-  }));
+  return raw.rankings.map((r) => {
+    const slug = slugify(r.tool_name);
+    return {
+      tool_id: String(r.tool_id),
+      name: r.tool_name,
+      slug,
+      overrideKey: resolveLiveSlug(slug),
+    };
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -526,7 +538,7 @@ async function main() {
         // No substantiated data for this tool this month: emit an empty metrics
         // block so the file documents the full roster, but the loader will merge
         // nothing (production keeps the live tools.data value).
-        tools[entry.slug] = {
+        tools[entry.overrideKey] = {
           display_name: entry.name,
           metrics: {},
           provenance: {
@@ -536,7 +548,7 @@ async function main() {
         };
         continue;
       }
-      tools[entry.slug] = {
+      tools[entry.overrideKey] = {
         display_name: entry.name,
         metrics,
         provenance: {

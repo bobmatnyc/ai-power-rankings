@@ -114,7 +114,7 @@
         "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
       }
     },
-    "v0": {
+    "v0-vercel": {
       "display_name": "v0",
       "metrics": {},
       "provenance": {
@@ -262,7 +262,7 @@
         "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
       }
     },
-    "google-gemini-code-assist": {
+    "gemini-code-assist": {
       "display_name": "Google Gemini Code Assist",
       "metrics": {},
       "provenance": {
@@ -353,7 +353,7 @@
         "notes": "No external time-series or dated anchor available for this tool/month; live tools.data value is retained in production."
       }
     },
-    "continue": {
+    "continue-dev": {
       "display_name": "Continue",
       "metrics": {
         "github": {
@@ -450,7 +450,7 @@
         "notes": "Reconstructed metrics; see per-leaf fidelity/source/recovery_note."
       }
     },
-    "jetbrains-ai-assistant": {
+    "jetbrains-ai": {
       "display_name": "JetBrains AI Assistant",
       "metrics": {},
       "provenance": {
