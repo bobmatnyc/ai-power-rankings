@@ -13,10 +13,13 @@
  *                                 month; otherwise held_flat / not_applicable.
  *   - GitHub stars              : INTERPOLATED between repo creation (0) and the
  *                                 current total (linear; documented estimate).
- *   - users/arr/valuation/…     : INTERPOLATED between dated news anchors (mined
- *                                 from data/uuid-mappings.json + web research),
- *                                 else held_flat with an explicit assumption.
- *   - swe_bench                 : step function at release events.
+ *   - users/arr/valuation/funding/employees/swe_bench.verified:
+ *                                 taken VERBATIM (value + fidelity) from the
+ *                                 recovered business-metrics dataset — a dated,
+ *                                 URL-sourced research pass. See
+ *                                 lib/historical-metrics/business-metrics.ts.
+ *                                 Fidelity is never upgraded here, and fields the
+ *                                 research could not substantiate emit nothing.
  *
  * Every leaf carries {value, fidelity, source, as_of, recovery_note}. The loader
  * (applyHistoricalMetricsOverride) extracts `.value`; the rest is persisted
@@ -31,10 +34,14 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  businessLeavesForPeriod,
+  indexRecoveryByLiveSlug,
+  loadRecoveryDataset,
+} from "@/lib/historical-metrics/business-metrics";
 import { resolveLiveSlug, slugify } from "@/lib/historical-metrics/slugify";
 import {
   interpolateMonthly,
-  periodToTime,
   sumMonthlyDownloads,
   type DailyDownload,
 } from "@/lib/historical-metrics/timeseries";
@@ -46,6 +53,8 @@ import {
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT_DIR = join(ROOT, "data", "historical-metrics");
 const ROSTER_PATH = join(ROOT, "data", "extracted-rankings", "2025-09.json");
+/** Sourced business metrics (ARR/users/SWE-bench/valuation/funding/employees). */
+const RECOVERY_PATH = join(OUT_DIR, "sources", "business-metrics-recovery.json");
 
 /** The backfill gap: Dec 2025 through Jun 2026 (inclusive). */
 const PERIODS = [
@@ -75,113 +84,31 @@ interface Leaf {
   recovery_note: string;
 }
 
-interface Anchor {
-  period: string; // "YYYY-MM"
-  value: number;
-  source: string;
-}
-
 interface ToolSource {
   npm?: string;
   pypi?: string;
   github?: string; // "owner/repo"
   vscode?: string; // marketplace itemName (documented gap; value stays null)
-  anchors?: Partial<
-    Record<
-      "users" | "monthly_arr" | "valuation" | "funding" | "employees" | "swe_bench_verified",
-      Anchor[]
-    >
-  >;
 }
 
 /**
- * Per-tool source mapping (keyed by slug = slugify(display name)).
- * npm/pypi/github were probe-verified to resolve; anchors were mined from
- * data/uuid-mappings.json and dated 2026 news (TechCrunch/Bloomberg/Sacra/etc).
+ * Per-tool EXTERNAL-API source mapping (keyed by slug = slugify(display name)).
+ * npm/pypi/github were probe-verified to resolve.
+ *
+ * Business metrics are deliberately NOT listed here: they come from the
+ * recovered dataset (RECOVERY_PATH), keyed by live `tools.slug`. Previously this
+ * table carried hand-mined business anchors, some of which the sourced research
+ * pass could not substantiate (e.g. a "$60B valuation / SpaceX acquisition"
+ * anchor for Cursor with no primary source behind it). Sourced data now wins;
+ * see lib/historical-metrics/business-metrics.ts.
+ *
  * Tools absent from this table (or metrics absent for a tool) are intentionally
  * left to the live `tools.data` value in production — we only emit leaves we can
  * substantiate.
  */
 const SOURCES: Record<string, ToolSource> = {
-  "claude-code": {
-    npm: "@anthropic-ai/claude-code",
-    anchors: {
-      monthly_arr: [
-        { period: "2025-12", value: 1_000_000_000, source: "Anthropic: Claude Code hit $1B annualized within ~6 months of mid-2025 launch" },
-        { period: "2026-02", value: 2_500_000_000, source: "Claude Code run-rate >$2.5B by Feb 2026 (VentureBeat/Sacra)" },
-        { period: "2026-05", value: 8_000_000_000, source: "Claude Code ~$8B annualized run-rate by May 2026 (Sacra/Anthropic)" },
-      ],
-      swe_bench_verified: [
-        { period: "2025-08", value: 74.5, source: "Claude Opus 4.1 SWE-bench Verified 74.5% (uuid-mappings: anthropic-releases-claude-opus-4-1)" },
-      ],
-    },
-  },
-  cursor: {
-    anchors: {
-      monthly_arr: [
-        { period: "2025-12", value: 1_000_000_000, source: "Cursor crossed $1B ARR late 2025 (TechCrunch)" },
-        { period: "2026-02", value: 2_000_000_000, source: "Anysphere >$2B annualized run-rate by Feb 2026 (TechCrunch)" },
-        { period: "2026-06", value: 4_000_000_000, source: "Cursor ~$4B annualized revenue by Jun 2026 (multiple)" },
-      ],
-      valuation: [
-        { period: "2025-12", value: 29_300_000_000, source: "Anysphere ~$29.3B valuation (2025 round)" },
-        { period: "2026-06", value: 60_000_000_000, source: "Cursor $60B valuation, SpaceX acquisition announced 2026-06-16" },
-      ],
-      users: [
-        { period: "2025-12", value: 400_000, source: "Cursor ~360-400K paid users late 2025 (algorithm baseline)" },
-        { period: "2026-06", value: 1_000_000, source: "Cursor ~1M users mid-2026 (estimate)" },
-      ],
-      employees: [{ period: "2026-06", value: 300, source: "Anysphere ~300 employees 2026 (jobsbyculture)" }],
-    },
-  },
-  "github-copilot": {
-    anchors: {
-      monthly_arr: [{ period: "2025-09", value: 400_000_000, source: "GitHub Copilot ~$400M ARR (algorithm baseline)" }],
-      users: [{ period: "2025-09", value: 1_800_000, source: "GitHub Copilot ~1.8M users (algorithm baseline)" }],
-    },
-  },
-  lovable: {
-    anchors: {
-      monthly_arr: [
-        { period: "2025-11", value: 200_000_000, source: "Lovable $200M ARR Nov 2025 (TechCrunch)" },
-        { period: "2026-01", value: 300_000_000, source: "Lovable $300M ARR Jan 2026 (TechCrunch)" },
-        { period: "2026-02", value: 400_000_000, source: "Lovable $400M ARR Feb 2026 (Bloomberg)" },
-        { period: "2026-06", value: 500_000_000, source: "Lovable $500M annualized Jun 2026 (TechCrunch)" },
-      ],
-      users: [
-        { period: "2025-09", value: 140_000, source: "Lovable 140K users (uuid-mappings: lovable-achieves-5-56m-arr)" },
-        { period: "2026-06", value: 8_000_000, source: "Lovable ~8M users 2026 (getpanto)" },
-      ],
-      employees: [{ period: "2026-03", value: 146, source: "Lovable 146 employees (TechCrunch)" }],
-    },
-  },
-  "replit-agent": {
-    anchors: {
-      monthly_arr: [
-        { period: "2025-12", value: 300_000_000, source: "Replit $300M ARR end-2025 (Sacra)" },
-        { period: "2026-04", value: 525_000_000, source: "Replit $525M annualized Apr 2026 (Forbes/Sacra)" },
-      ],
-      valuation: [
-        { period: "2025-09", value: 3_000_000_000, source: "Replit $3B valuation Sep 2025 (Prysm round)" },
-        { period: "2026-03", value: 9_000_000_000, source: "Replit $9B valuation Mar 2026 (TechCrunch)" },
-      ],
-      users: [
-        { period: "2025-09", value: 40_000_000, source: "Replit 40M+ users Sep 2025 (Sacra)" },
-        { period: "2026-03", value: 50_000_000, source: "Replit 50M+ users Mar 2026 (Sacra)" },
-      ],
-    },
-  },
-  "bolt-new": {
-    github: "stackblitz/bolt.new",
-    anchors: {
-      monthly_arr: [{ period: "2025-08", value: 40_000_000, source: "Bolt.new $40M ARR (uuid-mappings: bolt-new-hits-40m-arr)" }],
-    },
-  },
-  "google-jules": {
-    anchors: {
-      swe_bench_verified: [{ period: "2025-06", value: 52.2, source: "Google Jules 52.2% SWE-bench (uuid-mappings: google-jules-public-beta)" }],
-    },
-  },
+  "claude-code": { npm: "@anthropic-ai/claude-code" },
+  "bolt-new": { github: "stackblitz/bolt.new" },
   aider: { github: "Aider-AI/aider", pypi: "aider-chat" },
   cline: { github: "cline/cline", vscode: "saoudrizwan.claude-dev" },
   continue: { github: "continuedev/continue", vscode: "Continue.continue" },
@@ -238,61 +165,6 @@ async function fetchPypiDaily(pkg: string): Promise<DailyDownload[] | null> {
   return json.data
     .filter((d) => typeof d.date === "string")
     .map((d) => ({ day: d.date as string, downloads: Number(d.downloads) || 0 }));
-}
-
-// ---------------------------------------------------------------------------
-// Anchor interpolation -> Leaf
-// ---------------------------------------------------------------------------
-
-/**
- * Resolve a dated-anchor metric for one period into a provenance leaf.
- * - strictly between two anchors -> interpolated
- * - clamped outside the anchor range (or single anchor) -> held_flat
- */
-function anchorLeaf(anchors: Anchor[], period: string, metricLabel: string): Leaf {
-  const sorted = [...anchors].sort((a, b) => periodToTime(a.period) - periodToTime(b.period));
-  const t = periodToTime(period);
-  const first = sorted[0]!;
-  const last = sorted[sorted.length - 1]!;
-
-  // Single anchor, or outside the anchor window -> hold flat at the nearest end.
-  if (sorted.length === 1 || t <= periodToTime(first.period)) {
-    return {
-      value: first.value,
-      fidelity: "held_flat",
-      source: first.source,
-      as_of: first.period,
-      recovery_note: `No time-series API for ${metricLabel}; held flat at the nearest dated anchor (${first.period}). Not a real ${period} reading.`,
-    };
-  }
-  if (t >= periodToTime(last.period)) {
-    return {
-      value: last.value,
-      fidelity: "held_flat",
-      source: last.source,
-      as_of: last.period,
-      recovery_note: `No time-series API for ${metricLabel}; held flat at the nearest dated anchor (${last.period}). Not a real ${period} reading.`,
-    };
-  }
-
-  // Between two anchors -> linear interpolation.
-  let lo = first;
-  let hi = last;
-  for (let i = 0; i < sorted.length - 1; i++) {
-    if (t >= periodToTime(sorted[i]!.period) && t <= periodToTime(sorted[i + 1]!.period)) {
-      lo = sorted[i]!;
-      hi = sorted[i + 1]!;
-      break;
-    }
-  }
-  const value = interpolateMonthly(lo.value, lo.period, hi.value, hi.period, period);
-  return {
-    value,
-    fidelity: "interpolated",
-    source: `Linear interpolation between dated anchors ${lo.period} (${lo.source}) and ${hi.period} (${hi.source})`,
-    as_of: `estimated for ${period}`,
-    recovery_note: `${metricLabel} has no monthly-history API; value linearly interpolated between two dated news anchors. Flagged interpolated so it can be down-weighted if stricter provenance is required.`,
-  };
 }
 
 // ---------------------------------------------------------------------------
@@ -391,12 +263,14 @@ async function buildCaches(): Promise<FetchCaches> {
 }
 
 function buildToolMetrics(
-  src: ToolSource,
+  src: ToolSource | undefined,
+  businessRecord: Record<string, unknown> | undefined,
   period: string,
   caches: FetchCaches,
   counts: FidelityCounts
 ): Record<string, unknown> {
   const metrics: Record<string, unknown> = {};
+  if (!src) return addBusinessLeaves(metrics, businessRecord, period, counts);
 
   // npm downloads (REAL)
   if (src.npm) {
@@ -468,23 +342,25 @@ function buildToolMetrics(
     bump(counts, "vscode.installs", "held_flat");
   }
 
-  // Business anchors (interpolated / held_flat)
-  const anchorMetrics: Array<[keyof NonNullable<ToolSource["anchors"]>, string[], string]> = [
-    ["users", ["users"], "user count"],
-    ["monthly_arr", ["monthly_arr"], "ARR"],
-    ["valuation", ["valuation"], "valuation"],
-    ["funding", ["funding"], "funding"],
-    ["employees", ["employees"], "employee count"],
-    ["swe_bench_verified", ["swe_bench", "verified"], "SWE-bench Verified"],
-  ];
-  for (const [key, path, label] of anchorMetrics) {
-    const anchors = src.anchors?.[key];
-    if (!anchors || anchors.length === 0) continue;
-    const leaf = anchorLeaf(anchors, period, label);
+  return addBusinessLeaves(metrics, businessRecord, period, counts);
+}
+
+/**
+ * Merge the sourced business leaves (ARR/users/SWE-bench/valuation/funding/
+ * employees) for this tool-month. Values and fidelity come straight from the
+ * recovery dataset; anything it could not substantiate emits nothing, so the
+ * live `tools.data` value survives untouched.
+ */
+function addBusinessLeaves(
+  metrics: Record<string, unknown>,
+  businessRecord: Record<string, unknown> | undefined,
+  period: string,
+  counts: FidelityCounts
+): Record<string, unknown> {
+  for (const { path, leaf } of businessLeavesForPeriod(businessRecord, period)) {
     setLeaf(metrics, path, leaf);
     bump(counts, path.join("."), leaf.fidelity);
   }
-
   return metrics;
 }
 
@@ -517,7 +393,12 @@ async function main() {
   }
 
   const roster = loadRoster();
+  const business = indexRecoveryByLiveSlug(loadRecoveryDataset(RECOVERY_PATH));
+  const matched = roster.filter((r) => business.has(r.overrideKey)).length;
   console.log(`\n📚 Roster: ${roster.length} tools (from ${ROSTER_PATH.replace(ROOT + "/", "")})`);
+  console.log(
+    `💼 Business metrics: ${business.size} tools in ${RECOVERY_PATH.replace(ROOT + "/", "")} — ${matched} matched to the roster`
+  );
   console.log(`🗓  Periods: ${periods.join(", ")}\n`);
   console.log("🌐 Fetching external time-series (npm / GitHub / PyPI)…");
   const caches = await buildCaches();
@@ -533,7 +414,8 @@ async function main() {
 
     for (const entry of roster) {
       const src = SOURCES[entry.slug];
-      const metrics = src ? buildToolMetrics(src, period, caches, counts) : {};
+      const businessRecord = business.get(entry.overrideKey);
+      const metrics = buildToolMetrics(src, businessRecord, period, caches, counts);
       if (Object.keys(metrics).length === 0) {
         // No substantiated data for this tool this month: emit an empty metrics
         // block so the file documents the full roster, but the loader will merge
@@ -563,11 +445,11 @@ async function main() {
       period,
       reconstructed: true,
       generated_at: generatedAt,
-      methodology_version: "1.0",
+      methodology_version: "2.0",
       notes:
-        "Research-augmented historical backfill for the v7.6 ranking engine. Every leaf carries fidelity/source/as_of provenance; the loader (applyHistoricalMetricsOverride) extracts `.value` into tools.data.metrics.* and threads provenance into the persisted ranking row. reconstructed=true flags this as a synthetic period.",
+        "Research-augmented historical backfill for the v7.7 ranking engine. Every leaf carries fidelity/source/as_of provenance; the loader (applyHistoricalMetricsOverride) extracts `.value` into tools.data.metrics.* and threads provenance into the persisted ranking row. reconstructed=true flags this as a synthetic period. Business metrics (users/monthly_arr/valuation/funding/employees/swe_bench.verified) are carried verbatim — value AND fidelity — from the sourced recovery dataset at data/historical-metrics/sources/business-metrics-recovery.json; fidelity is never upgraded, and any field/month that research could not substantiate is omitted so the live tools.data value is retained.",
       fidelity_levels: {
-        real: "Directly retrieved from an external time-series API for this exact calendar month.",
+        real: "Directly retrieved from an external time-series API for this exact calendar month, or a dated primary-source disclosure (funding round, benchmark result, announced ARR) effective for this month.",
         interpolated: "Linear interpolation between two real dated anchor points (news/launch events + current snapshot).",
         held_flat: "No time-series source exists; the last known real value is carried forward, explicitly flagged. Never a real monthly reading.",
         not_applicable: "No value exists or is recoverable for this tool/metric/month.",
