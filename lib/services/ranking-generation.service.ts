@@ -284,10 +284,19 @@ function mergeOverrideLeaves(
  * PURE: apply a period-specific historical metrics override onto a set of source
  * tools. For every tool whose `slug` matches a key in `overrides.tools`, the
  * override's numeric `.value` leaves are deep-merged into `tool.data.metrics.*`
- * (the exact paths the v7.6 engine reads) and the tool is flagged with
- * `data.__reconstructed = true` (plus a `__provenance` block). Tools with no
- * matching override key are returned by reference, completely untouched, so the
- * live scoring path is unaffected when an override file omits a tool.
+ * and the tool is flagged with `data.__reconstructed = true` (plus a
+ * `__provenance` block). Tools with no matching override key are returned by
+ * reference, completely untouched, so the live scoring path is unaffected when
+ * an override file omits a tool.
+ *
+ * CONTRACT with the engine (metric-path shadowing fix): the engine
+ * canonicalizes each tool's metric paths before scoring, with top-level
+ * `data.metrics.*` taking precedence over any legacy `data.info.metrics.*`
+ * copy (see `canonicalizeMetricPaths` in lib/ranking-algorithm-v76.ts).
+ * Merging overrides into `data.metrics.*` therefore makes them authoritative
+ * for EVERY factor, for double-nested and flat tools alike. Previously,
+ * factors that read `data.info.metrics.*` (developer adoption, market
+ * traction) silently ignored these overrides for the 34 double-nested tools.
  *
  * Does not mutate the input array or its tools (returns fresh clones for matched
  * tools) — safe to unit test directly.
