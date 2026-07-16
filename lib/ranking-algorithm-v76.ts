@@ -10,10 +10,14 @@ import { scoreArrContribution, scoreUsersContribution } from "./ranking-metric-c
  * robust numeric coercion at metric read sites, and populated historical
  * business metrics (ARR, users, SWE-bench, valuation, funding).
  *
+ * Bumped v7.7 → v7.8: canonicalizeMetricPaths() fixes metric-path shadowing
+ * so every factor reads one canonical value per field instead of silently
+ * picking data.info.metrics.* vs data.metrics.* per factor.
+ *
  * NOTE: existing v76 content slugs (e.g. `algorithm-v76-november-2025-rankings`)
  * are historical references and intentionally keep their v7.6 naming.
  */
-export const ALGORITHM_VERSION = "v7.7";
+export const ALGORITHM_VERSION = "v7.8";
 
 export interface RankingWeightsV76 {
   agenticCapability: number;
