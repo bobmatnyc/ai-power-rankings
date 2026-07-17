@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2026-07-16
+
+### Changed
+- feat(rankings): ranking algorithm v7.6 → v7.7 → v7.8; `ALGORITHM_VERSION` constant advanced as scoring changed (#97, #100)
+- feat(rankings): `monthly_arr`/`users` scoring is now continuous (log-interpolated through the previous band anchors) instead of step-banded (#97)
+
+### Fixed
+- fix(rankings): metric-path shadowing — `canonicalizeMetricPaths()` normalizes `data.metrics.*` vs `data.info.metrics.*` at scoring time so every factor reads one value per field; corrected Cursor's live rank #13→#3, whose users/ARR/news were invisible to two factor groups (#100)
+- fix(rankings): string-stored numeric fields (e.g. valuation `"$10.2B (…)"`) were silently scoring zero — added robust numeric coercion; corrected Devin's ranking (#97)
+- fix(rankings): restore the live current snapshot (`is_current`) after multi-period publishes (#98)
+
+### Added
+- feat(rankings): period-scoped metrics-override pipeline — `regenerateRankings({ metricsOverridePath })`, CLI `--metrics-source` and `--dry-run` flags, `scripts/generate-historical-metrics.ts` generator (#94, #97, #98)
+- data: reconstructed monthly ranking snapshots for Dec 2025–Jun 2026 (the 8-month gap after the Nov 2025 v7.6 rollout), built from source-verified data (npm/PyPI download APIs, dated funding/valuation/SWE-bench announcements) with per-metric `fidelity` provenance; rows flagged `reconstructed: true` (published, not real-time history)
+- data: populated live business metrics (`monthly_arr`, `users`, `valuation`, `funding`, `swe_bench`) for 29 tools from source-verified anchors; parent-company financials flow to sub-feature tools by policy, with provenance recorded in `data.business_metrics_provenance`
+
+### Known Issues
+- #95 — dated `tool_metrics_history` store (specced, not yet built)
+- #96 — lint toolchain broken in worktree
+- #101 — `data.info.technical`/`data.info.business` path divergence, same class as #100's fix
+
 ## [0.4.5] - 2026-04-12
 
 ### Changed
