@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- feat(rankings): v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside SWE-bench (best scaffold+model row per tool via a hand-curated allowlist, tunable `TB_BLEND_WEIGHT` default 0.4, no factor-weight change); wired matched `terminal_bench` leaves into `data/historical-metrics/2026-06.json` with full provenance and a curated source capture at `data/historical-metrics/sources/terminal-bench-2.1.json`
+
+### Changed
+- feat(rankings): v7.9 calibration so Terminal-Bench differentiates already-saturated leaders — SWE-bench Verified anchor 70 → 88 (`SWE_BENCH_ANCHOR`, de-saturates today's top scores to the low-90s) and agentic heuristic bonuses now fill remaining headroom instead of adding-then-clipping at 100 (`AGENTIC_BONUS_HEADROOM_SCALE`). Reshapes the SWE-bench contribution for all 31 tools (surfaced in the impact analysis); factor weights unchanged
+
 ## [0.5.0] - 2026-07-16
 
 ### Changed

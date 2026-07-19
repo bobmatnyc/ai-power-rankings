@@ -1,0 +1,56 @@
+{
+  "$schema": "terminal-bench-source/v1",
+  "benchmark": "Terminal-Bench",
+  "version": "terminal-bench 2.1",
+  "source": "https://www.tbench.ai/leaderboard/terminal-bench/2.1",
+  "captured_at": "2026-07-18",
+  "captured_by": "manual WebFetch of the live leaderboard, cross-checked against the research pass",
+  "notes": "Terminal-Bench reports accuracy per SCAFFOLD (agent harness) × MODEL. No JSON/CSV endpoint exists for terminal-bench 2.1 (server-rendered HTML; task suite: github.com/laude-institute/terminal-bench, harness: github.com/harbor-framework/harbor) — this is a curated static capture. Attribution to ranked tools is a hand-curated allowlist (lib/terminal-bench-mapping.ts): only 'Claude Code' → claude-code and 'Codex' → openai-codex-cli earn credit; 'Cursor CLI' and 'Gemini CLI' are excluded as likely-distinct products, and generic harnesses ('Terminus 2', 'mini-SWE-agent') have no ranked counterpart. Each credited tool takes its single BEST (highest-accuracy) row across all models; the winning scaffold+model is recorded in recovery_note.",
+  "leaderboard": [
+    { "rank": 1, "scaffold": "Claude Code", "model": "Fable 5", "accuracy": 83.8, "as_of": "2026-06-07" },
+    { "rank": 2, "scaffold": "Codex", "model": "GPT-5.5", "accuracy": 83.1, "as_of": "2026-05-01" },
+    { "rank": 3, "scaffold": "Terminus 2", "model": "Fable 5", "accuracy": 80.4, "as_of": "2026-06-05" },
+    { "rank": 4, "scaffold": "Cursor CLI", "model": "Grok 4.5", "accuracy": 79.3, "as_of": "2026-07-09" },
+    { "rank": 5, "scaffold": "Claude Code", "model": "Opus 4.8", "accuracy": 78.9, "as_of": "2026-07-09" },
+    { "rank": 6, "scaffold": "Codex", "model": "GPT-5.6 Terra", "accuracy": 78.4, "as_of": "2026-07-11" },
+    { "rank": 7, "scaffold": "Terminus 2", "model": "GPT-5.5", "accuracy": 78.0, "as_of": "2026-05-01" },
+    { "rank": 8, "scaffold": "mini-SWE-agent", "model": "Muse Spark 1.1", "accuracy": 76.2, "as_of": "2026-07-09" },
+    { "rank": 9, "scaffold": "Codex", "model": "GPT-5.6 Luna", "accuracy": 75.7, "as_of": "2026-07-11" },
+    { "rank": 10, "scaffold": "Claude Code", "model": "Sonnet 5", "accuracy": 74.6, "as_of": "2026-07-09" },
+    { "rank": 11, "scaffold": "Terminus 2", "model": "Gemini 3 Pro", "accuracy": 73.9, "as_of": "2026-05-01" },
+    { "rank": 12, "scaffold": "Claude Code", "model": "Opus 4.7", "accuracy": 68.9, "as_of": "2026-05-01" },
+    { "rank": 13, "scaffold": "Terminus 2", "model": "Opus 4.7", "accuracy": 66.1, "as_of": "2026-05-01" },
+    { "rank": 14, "scaffold": "Gemini CLI", "model": "Gemini 3 Pro", "accuracy": 65.8, "as_of": "2026-05-01" },
+    { "rank": 14, "scaffold": "Gemini CLI", "model": "Gemini 3.1 Pro", "accuracy": 65.8, "as_of": "2026-05-05" },
+    { "rank": 16, "scaffold": "Terminus 2", "model": "Gemini 3.1 Pro", "accuracy": 65.6, "as_of": "2026-05-05" },
+    { "rank": 17, "scaffold": "Claude Code", "model": "GLM-5.1", "accuracy": 58.7, "as_of": "2026-05-01" }
+  ],
+  "matched": {
+    "claude-code": {
+      "display_name": "Claude Code",
+      "terminal_bench": {
+        "value": 83.8,
+        "fidelity": "real",
+        "source": "https://www.tbench.ai/leaderboard/terminal-bench/2.1",
+        "as_of": "2026-06-07",
+        "recovery_note": "Terminal-Bench 2.1 best row for the Claude Code scaffold: Fable 5 (xhigh), 83.8% (leaderboard #1 overall)"
+      }
+    },
+    "openai-codex-cli": {
+      "display_name": "OpenAI Codex CLI",
+      "terminal_bench": {
+        "value": 83.1,
+        "fidelity": "real",
+        "source": "https://www.tbench.ai/leaderboard/terminal-bench/2.1",
+        "as_of": "2026-05-01",
+        "recovery_note": "Terminal-Bench 2.1 best row for the Codex scaffold: GPT-5.5 (xhigh), 83.1% (leaderboard #2 overall); Codex scaffold maps to OpenAI Codex CLI"
+      }
+    }
+  },
+  "excluded": {
+    "Cursor CLI": "likely a different product from the ranked 'Cursor' editor — not auto-aliased",
+    "Gemini CLI": "likely a different product from the ranked 'Google Gemini Code Assist' — not auto-aliased",
+    "Terminus 2": "generic benchmark harness — no ranked-tool counterpart",
+    "mini-SWE-agent": "generic benchmark harness — no ranked-tool counterpart"
+  }
+}
