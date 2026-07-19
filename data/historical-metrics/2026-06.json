@@ -52,6 +52,13 @@
             "as_of": "2025-11-24",
             "recovery_note": "Claude Opus 4.5"
           }
+        },
+        "terminal_bench": {
+          "value": 83.8,
+          "fidelity": "real",
+          "source": "https://www.tbench.ai/leaderboard/terminal-bench/2.1",
+          "as_of": "2026-06-07",
+          "recovery_note": "Terminal-Bench 2.1 best row for the Claude Code scaffold: Fable 5 (xhigh), 83.8% (leaderboard #1 overall). See data/historical-metrics/sources/terminal-bench-2.1.json."
         }
       },
       "provenance": {
@@ -567,6 +574,13 @@
             "as_of": "2025-08-07",
             "recovery_note": "GPT-5"
           }
+        },
+        "terminal_bench": {
+          "value": 83.1,
+          "fidelity": "real",
+          "source": "https://www.tbench.ai/leaderboard/terminal-bench/2.1",
+          "as_of": "2026-05-01",
+          "recovery_note": "Terminal-Bench 2.1 best row for the Codex scaffold: GPT-5.5 (xhigh), 83.1% (leaderboard #2 overall); Codex scaffold maps to OpenAI Codex CLI. See data/historical-metrics/sources/terminal-bench-2.1.json."
         }
       },
       "provenance": {

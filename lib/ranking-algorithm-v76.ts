@@ -1,7 +1,11 @@
 
 import { hasPositiveNumeric, parseNumericOr, parseNumeric } from "./parse-numeric";
 import { calculateToolNewsImpact, type NewsArticle } from "./ranking-news-impact";
-import { scoreArrContribution, scoreUsersContribution } from "./ranking-metric-curves";
+import {
+  scoreArrContribution,
+  scoreTerminalBenchContribution,
+  scoreUsersContribution,
+} from "./ranking-metric-curves";
 
 /**
  * Single source of truth for the ranking algorithm version.
@@ -14,10 +18,87 @@ import { scoreArrContribution, scoreUsersContribution } from "./ranking-metric-c
  * so every factor reads one canonical value per field instead of silently
  * picking data.info.metrics.* vs data.metrics.* per factor.
  *
+ * Bumped v7.8 → v7.9: Terminal-Bench (terminal-bench 2.1) blended into the
+ * agentic-capability factor as a SECOND benchmark signal alongside SWE-bench
+ * (see calculateAgenticCapability + TB_BLEND_WEIGHT). Calibrated so the blend
+ * actually differentiates leaders: the SWE-bench anchor moved 70 → 88
+ * (SWE_BENCH_ANCHOR) to de-saturate today's top scores, and heuristic bonuses
+ * now fill remaining headroom instead of adding-then-clipping at 100
+ * (AGENTIC_BONUS_HEADROOM_SCALE) so a strong benchmark blend is never re-capped
+ * away. Factor WEIGHTS are unchanged; this only reshapes the agentic base.
+ *
  * NOTE: existing v76 content slugs (e.g. `algorithm-v76-november-2025-rankings`)
  * are historical references and intentionally keep their v7.6 naming.
  */
-export const ALGORITHM_VERSION = "v7.8";
+export const ALGORITHM_VERSION = "v7.9";
+
+/**
+ * Blend weight for Terminal-Bench when BOTH benchmarks are present on a tool.
+ *
+ * Agentic base = (1 - TB_BLEND_WEIGHT) · sweBenchScore
+ *                     + TB_BLEND_WEIGHT · terminalBenchScore
+ *
+ * where each *Score is that benchmark's normalized 0–100 contribution. At the
+ * default 0.4 this is `0.6·SWE + 0.4·Terminal-Bench`. When only one benchmark is
+ * present the tool uses whichever exists (no blend). This is the single knob the
+ * algorithm owner retunes to weight Terminal-Bench more or less heavily; it does
+ * NOT touch ALGORITHM_V76_WEIGHTS (the cross-factor proportions).
+ */
+export const TB_BLEND_WEIGHT = 0.4;
+
+/**
+ * SWE-bench Verified normalization anchor (percent), i.e. the accuracy that maps
+ * to a normalized contribution of 100.
+ *
+ * v7.9 raised this from 70 → 88 (calibration). At 70 every current leader
+ * saturated (Claude Opus 4.5 @ 80.9% → 115 → capped 100), which erased the
+ * SWE↔Terminal-Bench blend: two tools both pinned at 100 cannot be separated by
+ * a ≤100 second benchmark. 88 is chosen so today's best real SWE-bench (80.9%)
+ * lands at 80.9/88 ≈ 91.9 — de-saturated, in the low-90s, with headroom above —
+ * while no tool in the current field (max 80.9%) reaches the anchor. This
+ * changes the SWE-bench contribution for ALL tools, not just Terminal-Bench
+ * matches; that is intended and surfaced in the impact analysis.
+ */
+export const SWE_BENCH_ANCHOR = 88;
+
+/**
+ * Headroom scale for the agentic HEURISTIC bonuses (category / multi-file /
+ * subprocess / capability-keyword).
+ *
+ * v7.9 stopped these bonuses from ADDING raw points and clipping the factor at
+ * 100 — which re-saturated any tool whose benchmark base was already high and so
+ * erased the retuned blend. Instead each unit of bonus now FILLS a fraction of
+ * the remaining headroom between the benchmark base and 100:
+ *
+ *     factor = base + (100 - base) · min(1, bonusPoints / AGENTIC_BONUS_HEADROOM_SCALE)
+ *
+ * Because the fill fraction is < 1 for any realistic bonus stack (the richest
+ * plausible stack is category 20 + multi-file 10 + subprocess ~10 + keyword ~9
+ * ≈ 49 < 60), a higher benchmark base ALWAYS yields a higher final factor —
+ * the SWE+Terminal-Bench blend can never be flattened away by the bonus/cap.
+ * 60 leaves that guaranteed margin; lowering it toward ~49 would risk
+ * re-saturating a maximally-endowed tool. Set to reproduce the legacy additive
+ * behavior only via the `additive` calibration model (used to compute the A
+ * baseline in the impact analysis).
+ */
+export const AGENTIC_BONUS_HEADROOM_SCALE = 60;
+
+/**
+ * Tunable agentic-capability calibration. Defaults reproduce the shipped v7.9
+ * behavior; the impact-analysis script overrides these to reconstruct the v7.8
+ * baseline (anchor 70 + legacy additive-then-clip bonuses) without resurrecting
+ * old code.
+ */
+export interface AgenticCalibration {
+  /** SWE-bench Verified anchor; default {@link SWE_BENCH_ANCHOR} (88). */
+  sweBenchAnchor?: number;
+  /**
+   * How heuristic bonuses combine with the benchmark base:
+   * - `"headroom"` (default, v7.9): fill remaining headroom, never masks the blend.
+   * - `"additive"` (legacy v7.8): add raw points then clip at 100.
+   */
+  bonusModel?: "headroom" | "additive";
+}
 
 export interface RankingWeightsV76 {
   agenticCapability: number;
@@ -91,6 +172,11 @@ export interface ToolMetricsV76 {
         lite?: number | string;
         full?: number | string;
       };
+      // Terminal-Bench accuracy (percent, 0–100) for this tool's BEST scaffold+model
+      // row. Canonical top-level path only (data.metrics.terminal_bench) — NEVER
+      // the nested data.info.metrics copy (v7.8 path-shadowing). May be string-
+      // stored; coerced via parseNumeric at read time.
+      terminal_bench?: number | string;
       news_mentions?: number;
       users?: number | string;
       monthly_arr?: number | string;
@@ -421,7 +507,10 @@ export function canonicalizeMetricPaths(
 }
 
 export class RankingEngineV76 {
-  constructor(private weights: RankingWeightsV76 = ALGORITHM_V76_WEIGHTS) {}
+  constructor(
+    private weights: RankingWeightsV76 = ALGORITHM_V76_WEIGHTS,
+    private calibration: AgenticCalibration = {}
+  ) {}
 
   /**
    * Single normalization step at load: canonicalize the tool's METRICS subtree
@@ -492,21 +581,57 @@ export class RankingEngineV76 {
    * Calculate agentic capability with enhanced differentiation
    */
   private calculateAgenticCapability(metrics: ToolMetricsV76): number {
-    let score = 50; // Base score
+    const sweBenchAnchor = this.calibration.sweBenchAnchor ?? SWE_BENCH_ANCHOR;
 
-    // SWE-bench is the best indicator
-    // SWE-bench values may be stored as strings ("72%", "49.2"); coerce first
-    // so a real benchmark result isn't discarded as non-numeric.
+    // ---- Benchmark base: SWE-bench blended with Terminal-Bench --------------
+    // Two independent benchmark signals feed the agentic base. Each is
+    // normalized to a 0–100 contribution against its anchor; when both exist
+    // they are combined via TB_BLEND_WEIGHT, otherwise the tool uses whichever
+    // it has. The blend operates on the UNSATURATED normalized values (the
+    // v7.9 anchor keeps today's leaders below 100), so Terminal-Bench can
+    // actually separate them. No factor weight changes here.
+
+    // SWE-bench normalized contribution (or null when absent).
+    // Values may be stored as strings ("72%", "49.2"); coerce first so a real
+    // benchmark result isn't discarded as non-numeric.
     const sweBench = metrics.info?.metrics?.swe_bench;
     const verified = parseNumeric(sweBench?.verified);
     const lite = parseNumeric(sweBench?.lite);
     const full = parseNumeric(sweBench?.full);
+    let sweBenchScore: number | null = null;
     if (verified !== null && verified > 0) {
-      score = Math.min(100, (verified / 70) * 100);
+      sweBenchScore = Math.min(100, (verified / sweBenchAnchor) * 100);
     } else if ((lite !== null && lite > 0) || (full !== null && full > 0)) {
       const benchScore = (lite ?? 0) > 0 ? (lite as number) : (full as number);
-      score = Math.min(100, (benchScore / 30) * 80);
+      sweBenchScore = Math.min(100, (benchScore / 30) * 80);
     }
+
+    // Terminal-Bench normalized contribution (or null when absent). Read from the
+    // CANONICAL top-level path data.metrics.terminal_bench only (normalizeInput
+    // has already canonicalized info.metrics to it) — never a nested copy.
+    const terminalBenchAccuracy = parseNumeric(metrics.info?.metrics?.terminal_bench);
+    const terminalBenchScore =
+      terminalBenchAccuracy !== null && terminalBenchAccuracy > 0
+        ? scoreTerminalBenchContribution(terminalBenchAccuracy)
+        : null;
+
+    // Blend the two signals into the agentic base (50 = neutral, no benchmark).
+    let benchmarkBase = 50;
+    if (sweBenchScore !== null && terminalBenchScore !== null) {
+      benchmarkBase =
+        (1 - TB_BLEND_WEIGHT) * sweBenchScore + TB_BLEND_WEIGHT * terminalBenchScore;
+    } else if (sweBenchScore !== null) {
+      benchmarkBase = sweBenchScore;
+    } else if (terminalBenchScore !== null) {
+      benchmarkBase = terminalBenchScore;
+    }
+
+    // ---- Heuristic bonuses --------------------------------------------------
+    // Accumulate raw bonus points from the non-benchmark signals, then combine
+    // them with the benchmark base per the calibration model (see below). These
+    // are the same signals/points as before; only how they fold into the final
+    // factor changed in v7.9.
+    let bonusPoints = 0;
 
     // Category bonuses - MORE GRANULAR
     const categoryBonus: Record<string, number> = {
@@ -518,29 +643,41 @@ export class RankingEngineV76 {
       "open-source-framework": 5,
       "app-builder": 3,
     };
-
     if (metrics.category && metrics.category in categoryBonus) {
-      score = Math.min(100, score + categoryBonus[metrics.category]);
+      bonusPoints += categoryBonus[metrics.category];
     }
 
     // Multi-file support bonus
     if (metrics.info?.technical?.multi_file_support) {
-      score = Math.min(100, score + 10);
+      bonusPoints += 10;
     }
 
     // Subprocess/automation capabilities
     const subprocess = metrics.info?.technical?.subprocess_support;
     if (subprocess) {
       const subprocessFeatures = Object.values(subprocess).filter(Boolean).length;
-      score = Math.min(100, score + subprocessFeatures * 2);
+      bonusPoints += subprocessFeatures * 2;
     }
 
     // Extract capability keywords from description
     const allText = `${metrics.info?.description || ""} ${metrics.info?.summary || ""} ${metrics.info?.overview || ""}`;
-    const capabilityBonus = extractCapabilityScore(allText);
-    score = Math.min(100, score + capabilityBonus * 0.3);
+    bonusPoints += extractCapabilityScore(allText) * 0.3;
 
-    return score;
+    // ---- Combine base + bonuses --------------------------------------------
+    if (this.calibration.bonusModel === "additive") {
+      // Legacy v7.8: add raw points and clip at 100. When the benchmark base is
+      // already high this re-saturates the factor and erases the SWE↔TB blend —
+      // reproduced here only to compute the v7.8 baseline in the impact analysis.
+      return Math.min(100, benchmarkBase + bonusPoints);
+    }
+
+    // v7.9 default: bonuses FILL a fraction of the remaining headroom above the
+    // benchmark base rather than adding-then-clipping. Because that fraction is
+    // < 1 for any realistic bonus stack, a higher benchmark base (stronger
+    // SWE+TB blend) always yields a higher final agentic score — the blend is
+    // never flattened away by the cap. Result stays within [benchmarkBase, 100].
+    const fill = Math.min(1, bonusPoints / AGENTIC_BONUS_HEADROOM_SCALE);
+    return benchmarkBase + (100 - benchmarkBase) * fill;
   }
 
   /**
@@ -1074,7 +1211,7 @@ export class RankingEngineV76 {
     return {
       version: ALGORITHM_VERSION,
       name: "Data-Driven Confidence Scoring with Missing Data Penalty",
-      description: "Penalizes tools lacking real-world metrics. Tools with verified data (GitHub, VS Code, npm, revenue) rank higher than those with only descriptions.",
+      description: "Penalizes tools lacking real-world metrics. Tools with verified data (GitHub, VS Code, npm, revenue) rank higher than those with only descriptions. Agentic capability blends two benchmark signals: SWE-bench Verified and Terminal-Bench (terminal-bench 2.1).",
       weights: ALGORITHM_V76_WEIGHTS,
       features: [
         "Data completeness scoring system (0-100%)",
@@ -1082,11 +1219,13 @@ export class RankingEngineV76 {
         "High-value metrics: GitHub stars, VS Code installs, npm downloads (25 pts each)",
         "Medium-value metrics: User count, revenue, SWE-bench (15 pts each)",
         "Low-value metrics: Description, features, company info, pricing (10 pts each)",
+        `Agentic capability blends SWE-bench + Terminal-Bench (default 0.6/${TB_BLEND_WEIGHT} split; whichever exists when only one is present)`,
+        `SWE-bench normalized against a ${SWE_BENCH_ANCHOR}% anchor so leaders stay unsaturated; heuristic bonuses fill remaining headroom (never re-cap the blend to 100)`,
         "All v7.3 features: Tiebreakers, differentiation, determinism",
         "Target: Data-backed tools rank higher than unverified tools",
         "Target: <20% duplicate scores, Top 10 all unique",
       ],
-      updatedAt: "2025-11-01",
+      updatedAt: "2026-07-18",
       improvements: [
         "Rewards tools with real-world verification metrics",
         "Penalizes tools with limited/missing data",
