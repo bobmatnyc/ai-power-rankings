@@ -198,3 +198,4 @@ wheels/
 .env*.local
 kuzu-memories/
 .trusty-search/
+.trusty-mpm/sessions/
