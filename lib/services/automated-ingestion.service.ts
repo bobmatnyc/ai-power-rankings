@@ -1211,6 +1211,12 @@ export class AutomatedIngestionService {
 
       const updateData: Partial<AutomatedIngestionRun> = {};
 
+      // The DB column only supports "running" | "completed" | "failed"
+      // (see AutomatedIngestionRunStatus in lib/db/schema.ts), so a "partial"
+      // run - one that ingested something but also hit errors - is stored as
+      // "completed". Track the original value separately so the completedAt
+      // stamping below still fires for it (see issue #104).
+      const originalStatus = updates.status;
       if (updates.status !== undefined) {
         updateData.status = updates.status === "partial" ? "completed" : updates.status;
       }
@@ -1242,8 +1248,16 @@ export class AutomatedIngestionService {
         updateData.ingestedArticleIds = updates.ingestedArticleIds;
       }
 
-      // Set completedAt when status changes from running to completed/failed
-      if (updates.status && (updates.status === "completed" || updates.status === "failed")) {
+      // Set completedAt when status changes from running to completed/failed/partial.
+      // Must check the ORIGINAL status here, not updateData.status: "partial" is
+      // remapped to "completed" for storage above, but the run has still finished
+      // and needs a completion timestamp (issue #104).
+      if (
+        originalStatus &&
+        (originalStatus === "completed" ||
+          originalStatus === "failed" ||
+          originalStatus === "partial")
+      ) {
         updateData.completedAt = new Date();
       }
 
