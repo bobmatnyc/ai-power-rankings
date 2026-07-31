@@ -137,3 +137,40 @@ export function scoreArrContribution(arr: number): number {
 export function scoreUsersContribution(users: number): number {
   return interpolateLogCurve(users, USERS_ANCHORS);
 }
+
+/**
+ * Terminal-Bench normalization ceiling (linear anchor), in accuracy-percent.
+ *
+ * Terminal-Bench (https://www.tbench.ai/leaderboard/terminal-bench/2.1) reports
+ * a single bounded accuracy in [0, 100]. Unlike ARR/users — which are unbounded,
+ * geometrically-spaced business metrics that call for a log curve — a bounded
+ * accuracy is best mapped LINEARLY against a fixed anchor, mirroring how the
+ * agentic factor already normalizes SWE-bench (`verified / 70 * 100`).
+ *
+ * 85 is chosen as the anchor (rather than 100) so the current #1 row (Claude Code
+ * @ 83.8%, terminal-bench 2.1) lands at ~98.6 rather than 83.8 — i.e. today's
+ * best-in-class earns near-full credit while a small headroom (85→100) is
+ * reserved for future gains. The algorithm owner can retune this single constant
+ * to make the curve stricter (raise it) or more generous (lower it).
+ */
+export const TERMINAL_BENCH_ANCHOR = 85;
+
+/**
+ * Linear contribution curve for a Terminal-Bench accuracy percentage.
+ *
+ * Contract:
+ *   - Precondition: `accuracy` is a coerced number (already run through
+ *     `parseNumeric`); non-finite or ≤ 0 inputs are treated as "no data".
+ *   - Postcondition: result ∈ [0, 100], monotonically non-decreasing in
+ *     `accuracy`, equals 100 at/above `TERMINAL_BENCH_ANCHOR`, and returns 0 for
+ *     absent/invalid data (never a spurious max).
+ *
+ * @param accuracy - Terminal-Bench accuracy in percent (0–100), coerced
+ * @returns 0 for no-data, else `min(100, accuracy / TERMINAL_BENCH_ANCHOR * 100)`
+ */
+export function scoreTerminalBenchContribution(accuracy: number): number {
+  if (!Number.isFinite(accuracy) || accuracy <= 0) {
+    return 0;
+  }
+  return Math.min(100, (accuracy / TERMINAL_BENCH_ANCHOR) * 100);
+}
