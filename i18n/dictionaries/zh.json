@@ -414,6 +414,12 @@
       "collapse": "收起"
     }
   },
+  "trending": {
+    "title": "[TRANSLATE] Historical AI Tool Rankings",
+    "description": "[TRANSLATE] Explore how AI tools have performed over time. Track rising stars, established leaders, and market shifts in the rapidly evolving AI landscape.",
+    "aboutTitle": "[TRANSLATE] About Historical Trending",
+    "aboutDescription": "[TRANSLATE] This chart shows how AI tools have moved in and out of the top 10 rankings over time. Tools that appear higher on the chart (closer to #1) are performing better."
+  },
   "footer": {
     "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v7.6 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
     "quickLinks": "[TRANSLATE] Quick Links",
@@ -1169,7 +1175,9 @@
         "revenueQuality": "[TRANSLATE] Revenue quality adjustments based on business model",
         "technicalWeighting": "[TRANSLATE] Technical capability weighting for different use cases",
         "dataValidation": "[TRANSLATE] Multi-source data validation and normalization",
-        "logarithmicScaling": "[TRANSLATE] Logarithmic scaling for balanced comparisons"
+        "logarithmicScaling": "[TRANSLATE] Logarithmic scaling for balanced comparisons",
+        "newsIntelligence": "[TRANSLATE] Dynamic velocity scoring from real-time news analysis",
+        "toolCapabilities": "[TRANSLATE] Enhanced subprocess and tool ecosystem assessment"
       },
       "version": "版本 6.0",
       "updateFrequency": "算法每季度更新"
@@ -1601,6 +1609,7 @@
     "navigation": "[TRANSLATE] Navigation",
     "quickLinks": "[TRANSLATE] Quick Links",
     "trending": "[TRANSLATE] Trending",
+    "historicalTrends": "[TRANSLATE] Historical Trends",
     "categories": "[TRANSLATE] Categories",
     "features": "[TRANSLATE] Features",
     "clearFilters": "[TRANSLATE] Clear Filters"

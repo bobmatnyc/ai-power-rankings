@@ -1,10 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLogger, logger, loggers } from "./logger";
 
-// TODO: re-enable — bit-rotted before vitest was wired (#10). 1/7 assertions
-// stale: "log level configuration" expects a 'silent' level the current logger
-// no longer exposes (got undefined).
-describe.skip("logger", () => {
+// Re-enabled for #76 (bit-rotted before vitest was wired, #10). The single
+// stale assertion ("log level configuration" expected LOG_LEVEL === "silent"
+// in tests, but nothing ever set it, and "silent" wasn't a real log level).
+// Fixed both sides: vitest.config.ts now sets LOG_LEVEL=silent for the test
+// env, and lib/logger-simple.ts's shouldLog() gained an actual "silent"
+// level (threshold above "fatal") so it genuinely suppresses all logging
+// instead of silently falling back to the "info" default.
+describe("logger", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

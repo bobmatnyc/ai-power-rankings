@@ -20,6 +20,13 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: false,
+    // Silence lib/logger(-simple).ts output during the test run (see #76 /
+    // lib/logger.test.ts, which asserts this convention). "silent" is a real
+    // level supported by logger-simple.ts's shouldLog(), not just a magic
+    // string the test expects.
+    env: {
+      LOG_LEVEL: "silent",
+    },
     // Vitest unit tests live under lib/**, i18n/**, and tests/** (the latter
     // holds hand-written unit specs such as ranking-changes-counter and
     // semantic-duplicate-detection). The Playwright suite stays separate via

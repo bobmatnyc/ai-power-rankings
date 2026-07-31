@@ -2,15 +2,17 @@
  * Tests for Tool Scoring Service
  */
 
-// TODO: re-enable — bit-rotted before vitest was wired (#10). Originally a Jest
-// suite importing from "@jest/globals", which is not installed and fails to
-// resolve under vitest. Import repointed to "vitest" (compatible API) and the
-// suite skipped pending a port/verification of the assertions against the
-// current ToolScoringService.
+// Re-enabled for #76 (bit-rotted before vitest was wired, #10). Originally a
+// Jest suite importing from "@jest/globals"; import repointed to "vitest"
+// (compatible API). Verified against the current ToolScoringService:
+// calculateCurrentScore's implementation matches every assertion below
+// exactly (sum baseline + delta per factor, defaulting missing values to 0,
+// without mutating its inputs), so no code or test changes were needed
+// beyond un-skipping.
 import { describe, it, expect, beforeEach } from "vitest";
 import { ToolScoringService, type ToolScoreFactors } from "./tool-scoring.service";
 
-describe.skip("ToolScoringService", () => {
+describe("ToolScoringService", () => {
   let service: ToolScoringService;
 
   beforeEach(() => {

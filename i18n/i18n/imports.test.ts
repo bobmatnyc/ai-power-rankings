@@ -2,38 +2,45 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-// TODO: re-enable — bit-rotted before vitest was wired (#10). All 6 assertions
-// reference a src/ layout that no longer exists (ENOENT on src/middleware.ts,
-// src/auth.ts, src/i18n/config.ts, src/app/[lang]/page.tsx) and en.json paths.
-describe.skip("i18n imports", () => {
+// Re-enabled for #76 (bit-rotted before vitest was wired, #10).
+//
+// This file lives inside `i18n/i18n/`, a duplicate copy of the real `i18n/`
+// tree that has existed since the initial commit but is never imported by
+// any app code (verified via grep: no `i18n/i18n` reference exists outside
+// this directory). Every original assertion here targeted a `src/`-based
+// layout (`src/middleware.ts`, `src/auth.ts`, `src/app/[lang]/page.tsx`,
+// `src/i18n/config.ts`) that has never existed in this repo — this app has
+// always used a root-level layout (`middleware.ts`, `app/[lang]/page.tsx`,
+// `i18n/config.ts`). The suite could never have passed as written.
+//
+// Fix applied: repoint the assertions at the real, current root-level files
+// so the suite verifies the actual import-extension convention it was meant
+// to protect, instead of files that don't exist. One assertion (an `auth.ts`
+// import check) was dropped rather than reinvented: there is no single
+// `auth.ts` in this codebase, and the closest candidate, `lib/auth-config.ts`,
+// turned out to be dead code (unused outside this test) — not something worth
+// fabricating a check for. The duplicate `i18n/i18n/` directory itself is out
+// of scope for this test-only change and is flagged separately for a
+// follow-up cleanup issue.
+describe("i18n imports", () => {
   it("should have correct import extensions in middleware.ts", async () => {
-    const middlewarePath = path.join(process.cwd(), "src/middleware.ts");
+    const middlewarePath = path.join(process.cwd(), "middleware.ts");
     const content = await fs.readFile(middlewarePath, "utf-8");
 
     // Server-side imports should NOT have .js extension (project convention)
-    expect(content).toContain('from "./i18n/config"');
-    expect(content).toContain('from "@/auth"');
-    expect(content).toContain('from "@/lib/auth-config"');
+    expect(content).toContain('from "@clerk/nextjs/server"');
+    expect(content).toContain('from "next/server"');
 
-    // Should not have imports with .js extension
-    expect(content).not.toContain('from "./i18n/config.js"');
-    expect(content).not.toContain('from "@/auth.js"');
-    expect(content).not.toContain('from "@/lib/auth-config.js"');
-  });
-
-  it("should have correct import extensions in auth.ts", async () => {
-    const authPath = path.join(process.cwd(), "src/auth.ts");
-    const content = await fs.readFile(authPath, "utf-8");
-
-    // Server-side imports should NOT have .js extension (project convention)
-    expect(content).toContain('from "@/lib/auth-config"');
-
-    // Should not have imports with .js extension
-    expect(content).not.toContain('from "@/lib/auth-config.js"');
+    // No import specifier in this file should carry a .js extension
+    const importSpecifiers = [...content.matchAll(/from\s+["']([^"']+)["']/g)].map((m) => m[1]);
+    expect(importSpecifiers.length).toBeGreaterThan(0);
+    for (const specifier of importSpecifiers) {
+      expect(specifier).not.toMatch(/\.js$/);
+    }
   });
 
   it("should NOT have .js extensions in client components", async () => {
-    const pagePath = path.join(process.cwd(), "src/app/[lang]/page.tsx");
+    const pagePath = path.join(process.cwd(), "app/[lang]/page.tsx");
     const content = await fs.readFile(pagePath, "utf-8");
 
     // Client-side imports should NOT have .js extension
@@ -46,7 +53,7 @@ describe.skip("i18n imports", () => {
   });
 
   it("should export required items from i18n config", async () => {
-    const configPath = path.join(process.cwd(), "src/i18n/config.ts");
+    const configPath = path.join(process.cwd(), "i18n/config.ts");
     const content = await fs.readFile(configPath, "utf-8");
 
     // Check required exports
@@ -56,8 +63,18 @@ describe.skip("i18n imports", () => {
   });
 
   it("should have all required dictionary files", async () => {
-    const locales = ["en", "de", "fr", "it", "ja", "ko", "uk", "hr", "zh"];
-    const dictPath = path.join(process.cwd(), "src/i18n/dictionaries");
+    const configPath = path.join(process.cwd(), "i18n/config.ts");
+    const configContent = await fs.readFile(configPath, "utf-8");
+    const localesMatch = configContent.match(/locales:\s*\[(.*?)\]/);
+    expect(localesMatch).not.toBeNull();
+
+    const locales = (localesMatch?.[1] ?? "")
+      .split(",")
+      .map((l) => l.trim().replace(/['"]/g, ""))
+      .filter((l) => l.length > 0);
+    expect(locales.length).toBeGreaterThan(0);
+
+    const dictPath = path.join(process.cwd(), "i18n/dictionaries");
 
     for (const locale of locales) {
       const filePath = path.join(dictPath, `${locale}.json`);
@@ -70,7 +87,7 @@ describe.skip("i18n imports", () => {
   });
 
   it("should have matching locales in config and dictionary files", async () => {
-    const configPath = path.join(process.cwd(), "src/i18n/config.ts");
+    const configPath = path.join(process.cwd(), "i18n/config.ts");
     const configContent = await fs.readFile(configPath, "utf-8");
 
     // Extract locales array from config
@@ -85,7 +102,7 @@ describe.skip("i18n imports", () => {
         .filter((l) => l.length > 0);
 
       // Check each locale has a dictionary file
-      const dictPath = path.join(process.cwd(), "src/i18n/dictionaries");
+      const dictPath = path.join(process.cwd(), "i18n/dictionaries");
       for (const locale of configLocales) {
         const filePath = path.join(dictPath, `${locale}.json`);
         const exists = await fs
