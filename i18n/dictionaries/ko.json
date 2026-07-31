@@ -180,6 +180,12 @@
       "copyright": "© 2025 AI Power Rankings. All rights reserved."
     }
   },
+  "trending": {
+    "title": "AI 툴 랭킹 히스토리",
+    "description": "AI 툴들이 시간이 지남에 따라 어떻게 성과를 냈는지 살펴보세요. 빠르게 진화하는 AI 생태계에서 떠오르는 스타, 확고한 리더, 시장 변화를 추적할 수 있습니다.",
+    "aboutTitle": "히스토리컬 트렌드 정보",
+    "aboutDescription": "이 차트는 AI 툴들이 시간이 지남에 따라 상위 10위 랭킹에 어떻게 들어오고 나갔는지를 보여줍니다. 차트에서 더 높이 표시되는(1위에 가까운) 툴일수록 더 좋은 성과를 내고 있는 것입니다."
+  },
   "footer": {
     "description": "혁신 감쇠, 플랫폼 리스크 수정자, 수익 품질 조정을 포함한 알고리즘 v7.1을 사용한 AI 코딩 툴의 종합적인 랭킹.",
     "quickLinks": "퀵 링크",
@@ -552,7 +558,9 @@
         "revenueQuality": "비즈니스 모델 기반 수익 품질 조정",
         "technicalWeighting": "다양한 사용 사례에 대한 기술적 역량 가중치",
         "dataValidation": "다중 소스 데이터 검증 및 정규화",
-        "logarithmicScaling": "균형 잡힌 비교를 위한 로그 스케일링"
+        "logarithmicScaling": "균형 잡힌 비교를 위한 로그 스케일링",
+        "newsIntelligence": "실시간 뉴스 분석을 통한 동적 벨로시티 스코어링",
+        "toolCapabilities": "서브프로세스 및 툴 생태계에 대한 향상된 평가"
       }
     },
     "factors": {
@@ -788,6 +796,7 @@
     "navigation": "네비게이션",
     "quickLinks": "퀵 링크",
     "trending": "트렌딩",
+    "historicalTrends": "히스토리컬 트렌드",
     "categories": "카테고리",
     "features": "기능",
     "clearFilters": "필터 초기화"

@@ -3,7 +3,7 @@
  * Wraps console methods for server-side logging
  */
 
-type LogLevel = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
+type LogLevel = "trace" | "debug" | "info" | "warn" | "error" | "fatal" | "silent";
 
 interface SimpleLogger {
   trace: (msg: string, ...args: any[]) => void;
@@ -31,6 +31,7 @@ class ServerLogger implements SimpleLogger {
       warn: 40,
       error: 50,
       fatal: 60,
+      silent: 100,
     };
 
     const configuredLevel = levels[this.logLevel as LogLevel] || 30;
