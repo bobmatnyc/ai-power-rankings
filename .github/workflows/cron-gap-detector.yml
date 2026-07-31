@@ -1,10 +1,15 @@
 name: Ingestion gap detector
 
 # Why: The scraper cron has gone silent for ~12 days three times (CRON_SECRET misconfig)
-# with no alert, because a failed cron still returns 2xx. This job queries the production
-# DB once a day and FAILS (red ❌) if automated_ingestion_runs has no row in the last 25h —
-# independent of the failure cause. A failed job triggers GitHub's built-in failed-workflow
-# email to the maintainer (no webhook/Slack wired by design).
+# with no alert, because a failed cron still returns 2xx. Separately, two more incidents
+# (2026-07-19 extraction errors, 2026-07-25 OpenRouter credit exhaustion) showed the cron
+# firing on schedule and writing a row while still yielding 0 articles — invisible to a
+# check that only looks at "is there a recent row". This job queries the production DB
+# once a day and FAILS (red ❌) if the scraper is silent, the latest run's status is
+# 'failed', OpenRouter billing errors show up in error_log, or ingestion has produced 0
+# articles for several runs running — independent of the failure cause. A failed job
+# triggers GitHub's built-in failed-workflow email to the maintainer (no webhook/Slack
+# wired by design).
 on:
   schedule:
     # 09:00 UTC — 3h after the 06:00 UTC daily-news cron, so a missed daily run is caught
@@ -35,11 +40,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Fails the job (non-zero exit) if no ingestion run was recorded in the last 25h.
-      # This remains the GATING step: its non-zero exit fails the workflow red so GitHub's
-      # own failed-workflow email still fires. The github-script step below is additive.
+      # Fails the job (non-zero exit) if the scraper is silent, the latest run failed,
+      # OpenRouter billing errors are present, or ingestion has zero-yielded for
+      # CONSECUTIVE_ZERO_YIELD_RUNS runs in a row (see scripts/check-ingestion-gap.mjs for
+      # the exact thresholds). This remains the GATING step: its non-zero exit fails the
+      # workflow red so GitHub's own failed-workflow email still fires. `set -o pipefail`
+      # plus `tee` captures the script's ALERT[REASON] lines to a file for the
+      # github-script step below (additive; it never masks this step's own exit code)
+      # while still printing them live to the job log.
       - name: Check ingestion gap
-        run: node scripts/check-ingestion-gap.mjs
+        run: |
+          set -o pipefail
+          node scripts/check-ingestion-gap.mjs 2>&1 | tee gap-check-output.txt
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
@@ -57,8 +69,25 @@ jobs:
           script: |
             const LABEL = 'ingestion-alert';
             const ASSIGNEE = 'bobmatnyc'; // editable: change to re-route the alert
+            // Kept emoji-free (unlike the actual issue title below) because it's also used
+            // as a GitHub code-search title filter, which tokenizes emoji unreliably.
+            const TITLE_SEARCH_TEXT = 'Ingestion alert — automated ingestion check failed';
+            const ISSUE_TITLE = `🚨 ${TITLE_SEARCH_TEXT}`;
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const ts = new Date().toISOString();
+
+            // Read the gating step's captured stdout/stderr so the issue names the exact
+            // ALERT[REASON] (STALLED / RUN_FAILED / OPENROUTER_CREDITS / ZERO_YIELD_STREAK /
+            // NO_RUNS_EVER) instead of assuming "silent scraper" — a stalled cron and a
+            // zero-yield or billing failure need different remediation. Never let a missing
+            // file abort the alert.
+            let checkOutput = '(no check output captured)';
+            try {
+              checkOutput = require('fs').readFileSync('gap-check-output.txt', 'utf8').trim() || checkOutput;
+            } catch (readErr) {
+              core.warning(`Could not read gap-check-output.txt: ${readErr.message}`);
+            }
+
             try {
               // Ensure the ingestion-alert label exists before we rely on it for dedup and
               // labeled creation. If it is missing (404), create it; ignore any create race
@@ -103,7 +132,7 @@ jobs:
               let dedupNumber = existing.data.length > 0 ? existing.data[0].number : null;
               if (dedupNumber === null) {
                 const byTitle = await github.rest.search.issuesAndPullRequests({
-                  q: `repo:${context.repo.owner}/${context.repo.repo} is:issue is:open "Ingestion gap detected" in:title`,
+                  q: `repo:${context.repo.owner}/${context.repo.repo} is:issue is:open "${TITLE_SEARCH_TEXT}" in:title`,
                   per_page: 1,
                 });
                 if (byTitle.data.total_count > 0) {
@@ -117,25 +146,44 @@ jobs:
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   issue_number: issueNumber,
-                  body: `Gap still present as of ${ts} — ${runUrl}`,
+                  body: [
+                    `Alert still present as of ${ts} — ${runUrl}`,
+                    '',
+                    '```',
+                    checkOutput,
+                    '```',
+                  ].join('\n'),
                 });
                 core.info(`Commented on existing ingestion-alert issue #${issueNumber}`);
                 return;
               }
 
               const body = [
-                '🚨 **No automated ingestion run recorded in the last 25h+.**',
+                '🚨 **The automated ingestion gap-detector failed.**',
                 '',
-                'The daily scraper appears to be silent. A failed cron still returns 2xx, so this',
-                'gap detector queries the production DB directly and fails when no row has landed',
-                'in `automated_ingestion_runs` within the 25h threshold.',
+                'A failed cron still returns 2xx, and a run that fires on schedule but fails or',
+                'yields 0 articles still writes a row — so this check queries the production DB',
+                'directly and evaluates run recency, run status, OpenRouter billing errors, and',
+                'consecutive zero-yield runs. See the check output below for which condition(s)',
+                'tripped this time — a stalled scraper, a failed run, an OpenRouter credits',
+                'issue, and a zero-yield streak each need a different response.',
+                '',
+                '```',
+                checkOutput,
+                '```',
                 '',
                 `**Failing run:** ${runUrl}`,
                 `**Detected at:** ${ts}`,
                 '',
                 '### Remediation',
-                '1. Redeploy production to re-bind `CRON_SECRET` (the recurring root cause of silent stalls).',
-                '2. Backfill the missed window via `scripts/trigger-ingestion.ts`.',
+                '- `ALERT[STALLED]` / `ALERT[NO_RUNS_EVER]`: redeploy production to re-bind `CRON_SECRET`',
+                '  (the recurring root cause of silent stalls), then backfill via `scripts/trigger-ingestion.ts`.',
+                '- `ALERT[OPENROUTER_CREDITS]`: top up or rotate the OpenRouter API key — this is a',
+                '  billing problem, not a code bug.',
+                '- `ALERT[RUN_FAILED]` (without OPENROUTER_CREDITS): inspect `error_log` on the latest',
+                '  row in `automated_ingestion_runs` for the underlying exception.',
+                '- `ALERT[ZERO_YIELD_STREAK]`: check extraction/source-fetch errors across the last',
+                '  runs — the pipeline is completing but discovering nothing.',
                 '',
                 '_This issue is opened automatically by the `Ingestion gap detector` workflow.',
                 'It is not auto-closed on recovery yet — close it manually once ingestion resumes._',
@@ -148,7 +196,7 @@ jobs:
                 const created = await github.rest.issues.create({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  title: '🚨 Ingestion gap detected — daily scraper silent',
+                  title: ISSUE_TITLE,
                   body,
                   labels: [LABEL],
                   assignees: [ASSIGNEE],
@@ -159,7 +207,7 @@ jobs:
                 const created = await github.rest.issues.create({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  title: '🚨 Ingestion gap detected — daily scraper silent',
+                  title: ISSUE_TITLE,
                   body,
                 });
                 core.info(`Opened ingestion-alert issue #${created.data.number} (no label/assignee)`);
