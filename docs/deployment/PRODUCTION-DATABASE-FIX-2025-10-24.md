@@ -44,6 +44,14 @@ npx tsx "$1"
 rm -f "$TEMP_ENV"
 ```
 
+> **⚠️ Historical snippet, no longer accurate.** The `vercel env pull` step shown above
+> is **forbidden** in this repo as of 2026-07: a later agent run of that exact command
+> overwrote `.env.local` with live production secrets (Clerk, OpenAI, DATABASE_URL)
+> with no rollback path. `scripts/run-with-prod-env.sh` has since been rewritten to
+> require an operator-supplied `DATABASE_URL` (exported, or set in
+> `.env.production.local`) and never fetches credentials itself. See the script's own
+> header comment for the current contract. Do not copy the snippet above.
+
 **Command Executed**:
 ```bash
 ./scripts/run-with-prod-env.sh scripts/set-october-2025-as-current.ts
@@ -225,7 +233,7 @@ curl -s "https://aipowerranking.com/api/rankings/current" | jq .
    - App cache: Short TTL (60s) clears automatically
    - CDN cache: Long TTL (1h) requires purge or wait
 
-3. **Helper Scripts Are Useful**: The `run-with-prod-env.sh` script makes running production database operations safe and repeatable
+3. **Helper Scripts Are Useful**: The `run-with-prod-env.sh` script makes running production database operations safe and repeatable (note: the script's credential-loading mechanism has since changed — see the ⚠️ callout above; it no longer runs `vercel env pull`)
 
 4. **Verification Is Critical**: Always verify database state AND API response separately to identify caching vs. database issues
 
