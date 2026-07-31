@@ -41,18 +41,18 @@
   },
   "navigation": {
     "home": "Startseite",
-    "rankings": "Rankings",
-    "news": "News",
-    "tools": "Tools",
+    "rankings": "Rangliste",
+    "news": "Neuigkeiten",
+    "tools": "Werkzeuge",
     "methodology": "Methodik",
     "about": "Über uns",
     "subscribeToUpdates": "Updates abonnieren",
     "signupForUpdates": "Updates abonnieren",
     "navigation": "Navigation",
     "quickLinks": "Schnelllinks",
-    "trending": "Trending",
+    "trending": "Angesagt",
     "categories": "Kategorien",
-    "features": "Features",
+    "features": "Funktionen",
     "clearFilters": "Filter löschen",
     "allCategories": "Alle Kategorien"
   },
@@ -201,7 +201,7 @@
     "activeFilters": "Aktive Filter",
     "sort": {
       "rank": "Rang",
-      "trending": "Trending",
+      "trending": "Angesagt",
       "score": "Score",
       "name": "Name"
     },
@@ -272,8 +272,8 @@
     "filters": {
       "all": "Alle News",
       "milestone": "Meilenstein",
-      "feature": "Feature",
-      "partnership": "Partnership",
+      "feature": "Funktion",
+      "partnership": "Partnerschaft",
       "update": "Update",
       "announcement": "Ankündigung"
     },
@@ -346,17 +346,17 @@
         "subtitle": "Benchmark-Ergebnisse und technische Fähigkeiten",
         "description": "Benchmark-Ergebnisse und technische Fähigkeiten einschließlich SWE-bench Scores und Feature-Unterstützung",
         "sweScore": "SWE-bench Score",
-        "contextWindow": "Context Window",
+        "contextWindow": "Kontextfenster",
         "languageSupport": "Sprachunterstützung",
         "multiFileSupport": "Multi-File-Unterstützung",
-        "llmProviders": "LLM Providers",
+        "llmProviders": "LLM-Anbieter",
         "tokens": "Tokens",
         "languages": "Sprachen",
         "yes": "Ja",
         "multiple": "Mehrere"
       },
       "businessMetrics": {
-        "title": "Business Metrics",
+        "title": "Geschäftskennzahlen",
         "subtitle": "Finanz- und Wachstumsmetriken",
         "monthlyArr": "ARR (Monatlich)",
         "valuation": "Bewertung",
@@ -390,10 +390,10 @@
       "autonomous-agent": "Autonomer Agent",
       "code-editor": "Code-Editor",
       "ide-assistant": "IDE-Assistent",
-      "app-builder": "App Builder",
+      "app-builder": "App-Builder",
       "open-source-framework": "Open-Source-Framework",
       "testing-tool": "Testing-Tool",
-      "code-review": "Code Review",
+      "code-review": "Code-Review",
       "code-generation": "Code-Generierung",
       "code-assistant": "Code-Assistent",
       "devops-assistant": "DevOps-Assistent"
@@ -789,10 +789,10 @@
   "sidebar": {
     "navigation": "Navigation",
     "quickLinks": "Schnelllinks",
-    "trending": "Trending",
+    "trending": "Angesagt",
     "historicalTrends": "Historische Trends",
     "categories": "Kategorien",
-    "features": "Features",
+    "features": "Funktionen",
     "clearFilters": "Filter löschen"
   },
   "features": {
