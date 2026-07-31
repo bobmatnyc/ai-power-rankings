@@ -1,7 +1,7 @@
 {
-  "version": "7.6",
+  "version": "7.9",
   "name": "Market-Validated Scoring",
-  "releaseDate": "2025-11-01",
+  "releaseDate": "2026-07-18",
   "description": "Market-validated scoring that combines real-world adoption metrics with technical capabilities for objective evaluations",
   "fullDescription": "Our ranking system combines real-world adoption metrics with technical capabilities to provide objective evaluations of AI coding tools. We prioritize measurable data over theoretical assessments.",
 
@@ -25,7 +25,7 @@
       "name": "Agentic Capability",
       "weight": 12,
       "description": "Autonomous coding abilities",
-      "details": "Task planning sophistication, Multi-step problem solving, Self-correction abilities, Tool/API integration, Autonomous iteration"
+      "details": "Task planning sophistication, Multi-step problem solving, Self-correction abilities, Tool/API integration, Autonomous iteration, SWE-bench Verified + Terminal-Bench (terminal-bench 2.1) benchmark blend"
     },
     {
       "id": "market_traction",
@@ -110,6 +110,20 @@
   },
 
   "changelog": {
+    "v7.9": {
+      "date": "2026-07-18",
+      "focus": "Terminal-Bench benchmark signal",
+      "changes": [
+        "Blended Terminal-Bench (terminal-bench 2.1) into Agentic Capability as a second benchmark alongside SWE-bench Verified",
+        "Default blend 0.6 SWE-bench / 0.4 Terminal-Bench (tunable via TB_BLEND_WEIGHT); whichever benchmark exists when only one is present",
+        "Terminal-Bench normalized linearly against an 85% ceiling anchor (headroom above today's 83.8% #1)",
+        "Retuned the SWE-bench Verified anchor 70 → 88 (SWE_BENCH_ANCHOR) so today's leaders no longer saturate at 100 — a prerequisite for the blend to differentiate them; affects the SWE-bench contribution for ALL tools",
+        "Agentic heuristic bonuses (category/multi-file/subprocess/keyword) now FILL remaining headroom instead of adding-then-clipping at 100 (AGENTIC_BONUS_HEADROOM_SCALE=60), so a strong benchmark blend is never re-capped away",
+        "Attribution is a hand-curated scaffold→tool allowlist (Claude Code, OpenAI Codex CLI); no fuzzy matching",
+        "Factor weights unchanged from v7.6",
+        "Aligned config version with the engine ALGORITHM_VERSION (was stale at 7.6 through v7.7/v7.8)"
+      ]
+    },
     "v7.6": {
       "date": "2025-11-01",
       "focus": "Market-Validated Scoring",

@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   ARR_ANCHORS,
+  TERMINAL_BENCH_ANCHOR,
   USERS_ANCHORS,
   interpolateLogCurve,
   scoreArrContribution,
+  scoreTerminalBenchContribution,
   scoreUsersContribution,
 } from "./ranking-metric-curves";
 
@@ -165,6 +167,48 @@ describe("smoothing behaviour between anchors", () => {
     // New curve: the same 1-dollar step moves the score by < 0.001.
     const delta = scoreArrContribution(1_000_000) - scoreArrContribution(999_999);
     expect(Math.abs(delta)).toBeLessThan(0.001);
+  });
+});
+
+describe("scoreTerminalBenchContribution — linear curve against the 85% anchor", () => {
+  it("maps accuracy linearly below the anchor", () => {
+    // accuracy / 85 * 100
+    expect(scoreTerminalBenchContribution(85)).toBeCloseTo(100, 10);
+    expect(scoreTerminalBenchContribution(42.5)).toBeCloseTo(50, 10);
+    expect(scoreTerminalBenchContribution(17)).toBeCloseTo(20, 10);
+  });
+
+  it("gives today's leaderboard leaders near-full but sub-100 credit", () => {
+    // Claude Code #1 = 83.8%, Codex #2 = 83.1% (terminal-bench 2.1).
+    expect(scoreTerminalBenchContribution(83.8)).toBeCloseTo((83.8 / 85) * 100, 10);
+    expect(scoreTerminalBenchContribution(83.8)).toBeLessThan(100);
+    expect(scoreTerminalBenchContribution(83.1)).toBeLessThan(
+      scoreTerminalBenchContribution(83.8)
+    );
+  });
+
+  it("clamps at 100 at/above the anchor (headroom is only 85→100)", () => {
+    expect(scoreTerminalBenchContribution(TERMINAL_BENCH_ANCHOR)).toBe(100);
+    expect(scoreTerminalBenchContribution(90)).toBe(100);
+    expect(scoreTerminalBenchContribution(100)).toBe(100);
+  });
+
+  it("treats absent / invalid data as no-data (0), never a max score", () => {
+    expect(scoreTerminalBenchContribution(0)).toBe(0);
+    expect(scoreTerminalBenchContribution(-5)).toBe(0);
+    expect(scoreTerminalBenchContribution(Number.NaN)).toBe(0);
+    expect(scoreTerminalBenchContribution(Number.POSITIVE_INFINITY)).toBe(0);
+  });
+
+  it("is monotonically non-decreasing and bounded across the range", () => {
+    let previous = -1;
+    for (let acc = 0; acc <= 120; acc += 0.5) {
+      const score = scoreTerminalBenchContribution(acc);
+      expect(score).toBeGreaterThanOrEqual(previous);
+      expect(score).toBeGreaterThanOrEqual(0);
+      expect(score).toBeLessThanOrEqual(100);
+      previous = score;
+    }
   });
 });
 
