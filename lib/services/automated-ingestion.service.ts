@@ -3,10 +3,11 @@
  * Coordinates the daily news ingestion pipeline:
  * 1. Creates ingestion run record
  * 2. Discovers articles via BraveSearchService
- * 3. Filters duplicates via existing articles
- * 4. Assesses quality via ArticleQualityService
- * 5. Ingests passing articles via ArticleIngestionService
- * 6. Updates run record with metrics
+ * 3. Drops articles whose source published date is stale (see FRESHNESS_WINDOW_DAYS)
+ * 4. Filters duplicates via existing articles
+ * 5. Assesses quality via ArticleQualityService
+ * 6. Ingests passing articles via ArticleIngestionService
+ * 7. Updates run record with metrics
  */
 
 import { desc, eq, gte, inArray } from "drizzle-orm";
@@ -39,6 +40,71 @@ type SearchProvider = "tavily" | "brave";
 // Re-export types for consumers
 export type { IngestionRunType } from "@/lib/db/schema";
 
+// ---------------------------------------------------------------------------
+// Freshness gate — see isFreshPublishedDate() below.
+// ---------------------------------------------------------------------------
+
+/**
+ * Maximum age (in days) of a discovered article's OWN source published date for
+ * that article to count as fresh yield.
+ *
+ * Why: Discovery carries each result's publisher-supplied date straight through
+ * to the insert, and `validatePublishedDate` (lib/types/article-analysis.ts:313)
+ * accepts any parseable date — it only falls back to now() when the date is
+ * missing or unparseable. From ~2026-08-20 every discovered article carried a
+ * date weeks to months old, so runs inserted rows and reported healthy positive
+ * `articlesIngested` counts while nothing surfaced in any publishedDate-ordered
+ * or publishedDate-filtered view (recent news, sitemap top, or the monthly
+ * editorial's month-window aggregation). That is the fail-open branch this
+ * constant closes.
+ *
+ * 14 days is wide enough to keep a genuinely recent story that a provider
+ * indexed late (daily-cron cadence plus provider indexing lag routinely surfaces
+ * items several days old), and narrow enough that a months-old article can never
+ * pass as current news. It doubles as the default provider lookback window so
+ * discovery stops requesting candidates the gate would only reject.
+ *
+ * Test: `isFreshPublishedDate` cases in automated-ingestion.freshness.test.ts.
+ */
+export const FRESHNESS_WINDOW_DAYS = 14;
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * Why: A stale source date must not reach the insert path as healthy yield —
+ * see FRESHNESS_WINDOW_DAYS.
+ * What: Returns true when `publishedDate` is within FRESHNESS_WINDOW_DAYS before
+ * `nowMs`. Missing, empty, and unparseable dates return true because
+ * `validatePublishedDate` substitutes now() for exactly those cases, so they
+ * genuinely ingest as current — the gate must not reject what downstream treats
+ * as fresh. Future-dated articles also return true: publisher clock skew and
+ * timezone rounding are not staleness, and rejecting them would drop real news.
+ * Pure (clock injected), so it is unit-testable without a database or network.
+ *
+ * @param publishedDate - Source-supplied published date, as discovery returns it
+ * @param nowMs - Injectable clock, for deterministic tests
+ * @param windowDays - Freshness window; defaults to FRESHNESS_WINDOW_DAYS. A run
+ *   that widens its provider lookback (`DailyDiscoveryOptions.days`) widens this
+ *   in step, so an operator-requested 30-day backfill is not silently gated back
+ *   down to 14.
+ * Test: `isFreshPublishedDate` cases in automated-ingestion.freshness.test.ts.
+ */
+export function isFreshPublishedDate(
+  publishedDate: string | null | undefined,
+  nowMs: number = Date.now(),
+  windowDays: number = FRESHNESS_WINDOW_DAYS
+): boolean {
+  if (!publishedDate) return true;
+
+  const parsed = new Date(publishedDate);
+  if (Number.isNaN(parsed.getTime())) return true;
+
+  const ageMs = nowMs - parsed.getTime();
+  if (ageMs < 0) return true;
+
+  return ageMs <= windowDays * MS_PER_DAY;
+}
+
 /**
  * Result of an ingestion run
  */
@@ -50,6 +116,15 @@ export interface IngestionResult {
   articlesIngested: number;
   articlesSkipped: number;
   articlesSkippedSemantic: number;
+  /**
+   * Discovered articles rejected by the freshness gate (source published date
+   * older than FRESHNESS_WINDOW_DAYS). Included in `articlesSkipped`; broken out
+   * so an all-stale run is diagnosable at a glance instead of looking like an
+   * ordinary all-duplicates day. Reported in the run's logs and API response;
+   * the persisted distinguishing signal is `articles_ingested = 0` alongside a
+   * positive `articles_discovered` (no new column, so no migration).
+   */
+  articlesSkippedStale: number;
   rankingChanges: number;
   estimatedCostUsd: number;
   errors: string[];
@@ -316,6 +391,7 @@ export class AutomatedIngestionService {
         articlesIngested: 0,
         articlesSkipped: 0,
         articlesSkippedSemantic: 0,
+        articlesSkippedStale: 0,
         rankingChanges: 0,
         estimatedCostUsd: 0,
         errors: [errorMsg],
@@ -349,6 +425,7 @@ export class AutomatedIngestionService {
     let articlesIngested = 0;
     let articlesSkipped = 0;
     let articlesSkippedSemantic = 0;
+    let articlesSkippedStale = 0;
     let rankingChanges = 0;
     let estimatedCostUsd = 0;
     let runId = "";
@@ -381,6 +458,7 @@ export class AutomatedIngestionService {
           articlesIngested: 0,
           articlesSkipped: 0,
           articlesSkippedSemantic: 0,
+          articlesSkippedStale: 0,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors,
@@ -420,6 +498,68 @@ export class AutomatedIngestionService {
           articlesIngested: 0,
           articlesSkipped: 0,
           articlesSkippedSemantic: 0,
+          articlesSkippedStale: 0,
+          rankingChanges: 0,
+          estimatedCostUsd: 0,
+          errors: [],
+          ingestedArticleIds: [],
+          durationMs: Date.now() - startTime,
+        };
+
+        if (!isDryRun) {
+          await this.updateRun(runId, result);
+        }
+
+        return result;
+      }
+
+      // Freshness gate: stale source dates must not count as healthy yield — Aug 2026 outage
+      //
+      // Step 2b: drop candidates whose SOURCE published date is older than
+      // FRESHNESS_WINDOW_DAYS, BEFORE any paid work (content extraction, LLM
+      // quality assessment) is spent on them. A stale article is skipped
+      // outright rather than ingested behind a flag: with a months-old
+      // publishedDate it would never surface in any publishedDate-ordered or
+      // -filtered view, so the row would be dead weight that still costs an
+      // extraction call and an LLM analysis. Skipping keeps it out of
+      // `articlesIngested` and out of the articles table.
+      //
+      // One window governs both the provider lookback and this gate, so an
+      // operator-widened backfill (`--days=30`) is not gated back down to 14.
+      const freshnessWindowDays = options?.days ?? FRESHNESS_WINDOW_DAYS;
+      const nowMs = Date.now();
+      const freshResults = searchResults.filter((r) =>
+        isFreshPublishedDate(r.publishedDate, nowMs, freshnessWindowDays)
+      );
+      articlesSkippedStale = searchResults.length - freshResults.length;
+
+      if (articlesSkippedStale > 0) {
+        loggers.api.warn("[AutomatedIngestion] Filtered stale articles", {
+          stale: articlesSkippedStale,
+          remaining: freshResults.length,
+          freshnessWindowDays,
+        });
+      }
+
+      // Every discovered article was stale. Complete with zero yield rather than
+      // reporting a healthy run: `articles_ingested = 0` against a positive
+      // `articles_discovered` is what makes this distinguishable in
+      // automated_ingestion_runs, and three such runs in a row trip
+      // ZERO_YIELD_STREAK in scripts/check-ingestion-gap.mjs.
+      if (freshResults.length === 0) {
+        loggers.api.warn(
+          "[AutomatedIngestion] All discovered articles failed the freshness gate, completing run with zero yield",
+          { articlesDiscovered, freshnessWindowDays }
+        );
+        const result: IngestionResult = {
+          runId,
+          status: "completed",
+          articlesDiscovered,
+          articlesPassedQuality: 0,
+          articlesIngested: 0,
+          articlesSkipped: articlesSkippedStale,
+          articlesSkippedSemantic: 0,
+          articlesSkippedStale,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors: [],
@@ -435,10 +575,10 @@ export class AutomatedIngestionService {
       }
 
       // Step 3: Filter URL duplicates
-      const urls = searchResults.map((r) => r.url);
+      const urls = freshResults.map((r) => r.url);
       const existingUrls = await this.checkDuplicates(urls);
-      const articlesWithoutUrlDuplicates = searchResults.filter((r) => !existingUrls.has(r.url));
-      const urlDuplicatesCount = searchResults.length - articlesWithoutUrlDuplicates.length;
+      const articlesWithoutUrlDuplicates = freshResults.filter((r) => !existingUrls.has(r.url));
+      const urlDuplicatesCount = freshResults.length - articlesWithoutUrlDuplicates.length;
       loggers.api.info("[AutomatedIngestion] Filtered URL duplicates", {
         duplicates: urlDuplicatesCount,
         remaining: articlesWithoutUrlDuplicates.length,
@@ -452,12 +592,13 @@ export class AutomatedIngestionService {
         recentArticles
       );
       articlesSkippedSemantic = articlesWithoutUrlDuplicates.length - newArticles.length;
-      articlesSkipped = urlDuplicatesCount + articlesSkippedSemantic;
+      articlesSkipped = articlesSkippedStale + urlDuplicatesCount + articlesSkippedSemantic;
 
       loggers.api.info("[AutomatedIngestion] Filtered all duplicates", {
+        staleArticles: articlesSkippedStale,
         urlDuplicates: urlDuplicatesCount,
         semanticDuplicates: articlesSkippedSemantic,
-        totalDuplicates: articlesSkipped,
+        totalSkipped: articlesSkipped,
         remaining: newArticles.length,
       });
 
@@ -471,6 +612,7 @@ export class AutomatedIngestionService {
           articlesIngested: 0,
           articlesSkipped,
           articlesSkippedSemantic,
+          articlesSkippedStale,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors: [],
@@ -607,6 +749,7 @@ export class AutomatedIngestionService {
           articlesIngested: 0,
           articlesSkipped: articlesSkipped + newArticles.length,
           articlesSkippedSemantic,
+          articlesSkippedStale,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors: ["Could not fetch content for any discovered articles"],
@@ -750,6 +893,7 @@ export class AutomatedIngestionService {
         articlesIngested,
         articlesSkipped,
         articlesSkippedSemantic,
+        articlesSkippedStale,
         rankingChanges,
         estimatedCostUsd,
         errors,
@@ -781,6 +925,7 @@ export class AutomatedIngestionService {
         articlesIngested,
         articlesSkipped,
         articlesSkippedSemantic,
+        articlesSkippedStale,
         errors: errors.length,
         durationMs: result.durationMs,
       });
@@ -799,6 +944,7 @@ export class AutomatedIngestionService {
         articlesIngested,
         articlesSkipped,
         articlesSkippedSemantic,
+        articlesSkippedStale,
         rankingChanges,
         estimatedCostUsd,
         errors,
@@ -870,7 +1016,16 @@ export class AutomatedIngestionService {
             // callers keep advanced depth.
             searchDepth: "basic",
             topic: "news",
-            days: options?.days,
+            // Freshness gate: stale source dates must not count as healthy yield — Aug 2026 outage
+            // The cron entry point (app/api/cron/daily-news/route.ts) calls
+            // runDailyDiscovery() with no arguments, so `days` was undefined on
+            // every production run and executeSearch() omitted the key entirely
+            // (tavily-search.service.ts:184) — discovery was relevance-ranked
+            // with no date bound at all. Defaulting to the freshness window
+            // stops us requesting candidates the gate would only reject.
+            // An explicit caller-supplied `days` (scripts/trigger-ingestion.ts
+            // --days) still wins, so backfills can widen the window.
+            days: options?.days ?? FRESHNESS_WINDOW_DAYS,
           }),
       });
     }
