@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- fix(ingestion): freshness gate — an auto-discovered article whose SOURCE published date is older than `FRESHNESS_WINDOW_DAYS` (default 14) is now skipped before any extraction or LLM spend, and never counts toward `articlesIngested`. Since ~2026-08-20 every discovered article carried a date weeks to months old, so runs inserted rows and reported healthy positive yield while nothing surfaced in any publishedDate-ordered or -filtered view (recent news, sitemap top, the monthly editorial's month window). A run that discovers articles but yields zero fresh ones now records `articles_ingested = 0` against a positive `articles_discovered`, so the existing `ZERO_YIELD_STREAK` alert in `scripts/check-ingestion-gap.mjs` fires
+- fix(ingestion): the daily cron called `runDailyDiscovery()` with no arguments, so the Tavily `days` lookback was `undefined` and omitted from the request — discovery was relevance-ranked with no date bound at all. It now defaults to the freshness window; an explicit `--days` still wins and widens the gate in step
+
 ### Added
 - feat(rankings): v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside SWE-bench (best scaffold+model row per tool via a hand-curated allowlist, tunable `TB_BLEND_WEIGHT` default 0.4, no factor-weight change); wired matched `terminal_bench` leaves into `data/historical-metrics/2026-06.json` with full provenance and a curated source capture at `data/historical-metrics/sources/terminal-bench-2.1.json`
 
