@@ -16,65 +16,65 @@ import { writeRankingsStaticCache } from "@/lib/cache/rankings-static-cache";
 import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
-// NOTE: The build/preview actions below still use the legacy RankingEngineV6.
-// The canonical regeneration path is now `regenerateRankings()` in
-// `@/lib/services/ranking-generation.service` (algorithm v7.6, see #86).
-// Consolidating onto it is deferred (#83 secondary) because the admin build
-// action is tightly coupled to V6's ToolMetricsV6/ToolScoreV6 score/weight
-// output contract; migrating it is a larger change than this ENOENT fix.
-import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
+import { ALGORITHM_VERSION } from "@/lib/ranking-algorithm-v76";
+// Canonical scoring path (#93): the build/preview actions below now score
+// tools with the SAME pure `computeRankings()` core that `regenerateRankings()`
+// uses for the live cron/CLI path (RankingEngineV76), so admin previews can
+// never diverge from what a real regeneration would produce.
+//
+// This route deliberately does NOT call `regenerateRankings()` itself: that
+// function's persistence contract always deletes any existing snapshot for
+// the target period and flips `is_current = true` for whatever it saves.
+// Admin "build" must be able to stage/update a non-live period without ever
+// touching the live pointer (that is what the separate "set-current" action
+// is for), so persistence stays local to this route via `RankingsRepository`,
+// exactly as it did before this migration — only the SCORING engine changed.
+import {
+  buildPreviousRankMap,
+  computeRankings,
+  RANKING_ALGORITHM_VERSION,
+  type RankingSourceTool,
+} from "@/lib/services/ranking-generation.service";
 
-// Helper function for category-based agentic scores
-function getCategoryBasedAgenticScore(category: string, toolName: string): number {
-  const premiumAgents = ["Devin", "Claude Code", "Google Jules"];
-  if (premiumAgents.includes(toolName)) {
-    return 8.5;
-  }
-
-  const categoryScores: Record<string, number> = {
-    "autonomous-agent": 8,
-    "ide-assistant": 6,
-    "code-assistant": 5,
-    "app-builder": 4,
-    "research-tool": 3,
-    "general-assistant": 2,
+/**
+ * Adapt a `ToolsRepository` row into the shape `computeRankings()` expects.
+ *
+ * `ToolsRepository.findByStatus()` returns the raw `tools.data` JSONB spread
+ * onto the row (see `mapDbToolToData`), which is structurally equivalent to
+ * the `row.data` object `regenerateRankings()`'s own persistence adapter reads
+ * directly from Drizzle — so passing the whole row through as `data` here
+ * reproduces the exact same `info`/`metrics` shape the canonical engine
+ * expects (including the top-level-vs-nested `metrics` canonicalization).
+ */
+function toRankingSourceTool(tool: {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  status: string;
+  [key: string]: unknown;
+}): RankingSourceTool {
+  return {
+    id: tool.id,
+    name: tool.name,
+    slug: tool.slug,
+    category: tool.category,
+    status: tool.status,
+    data: tool as unknown as Record<string, unknown>,
   };
-
-  return categoryScores[category] || 5;
 }
 
-// Helper function to transform tool to metrics
-function transformToToolMetrics(tool: any, innovationScore: number = 0): ToolMetricsV6 {
-  const info = tool.info || {};
-  const technical = info.technical || {};
-  const businessMetrics = info.metrics || {};
-  const business = info.business || {};
-
+/** Map the canonical engine's camelCase factor keys to the admin route's long-standing snake_case response contract. */
+function toSnakeCaseFactorScores(factorScores: Record<string, number>) {
   return {
-    tool_id: tool.id,
-    status: tool.status,
-    agentic_capability: getCategoryBasedAgenticScore(tool.category, tool.name),
-    swe_bench_score: businessMetrics.swe_bench_score || 0,
-    multi_file_capability: technical.multi_file_support ? 75 : 25,
-    planning_depth: 5,
-    context_utilization: 5,
-    context_window: technical.context_window || 100000,
-    language_support: technical.supported_languages || 10,
-    github_stars: businessMetrics.github_stars || 0,
-    innovation_score: innovationScore,
-    innovations: [],
-    estimated_users: businessMetrics.estimated_users || 0,
-    monthly_arr: businessMetrics.monthly_arr || 0,
-    valuation: businessMetrics.valuation || 0,
-    funding: businessMetrics.funding_total || 0,
-    business_model: business.business_model || "freemium",
-    business_sentiment: 5,
-    risk_factors: [],
-    release_frequency: 5,
-    github_contributors: businessMetrics.github_contributors || 0,
-    llm_provider_count: 1,
-    multi_model_support: false,
-    community_size: businessMetrics.estimated_users || 0,
+    agentic_capability: factorScores["agenticCapability"] ?? 0,
+    innovation: factorScores["innovation"] ?? 0,
+    technical_performance: factorScores["technicalPerformance"] ?? 0,
+    developer_adoption: factorScores["developerAdoption"] ?? 0,
+    market_traction: factorScores["marketTraction"] ?? 0,
+    business_sentiment: factorScores["businessSentiment"] ?? 0,
+    development_velocity: factorScores["developmentVelocity"] ?? 0,
+    platform_resilience: factorScores["platformResilience"] ?? 0,
   };
 }
 
@@ -199,7 +199,7 @@ export async function POST(request: NextRequest) {
     switch (action) {
       case "preview": {
         // Preview rankings
-        const { period, algorithm_version = "v6.0", preview_date, compare_with } = body;
+        const { period, algorithm_version = ALGORITHM_VERSION, preview_date, compare_with } = body;
 
         if (!period) {
           return NextResponse.json({ error: "Period parameter is required" }, { status: 400 });
@@ -243,98 +243,40 @@ export async function POST(request: NextRequest) {
           });
         }
 
-        // Load innovation scores (if available)
-        const innovationScores: { tool_id: string; score?: number }[] = [];
-        try {
-          const fs = await import("fs-extra");
-          const path = await import("node:path");
-          const innovationPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
-          if (await fs.pathExists(innovationPath)) {
-            const innovationData = await fs.readJSON(innovationPath);
-            innovationScores.push(...innovationData);
-          }
-        } catch (error) {
-          loggers.api.warn("Failed to load innovation scores", { error });
-        }
-        const innovationMap = new Map(innovationScores.map((s) => [s.tool_id, s]));
-
-        // Calculate scores
-        const rankingEngine = new RankingEngineV6();
-        const newScores: ToolScoreV6[] = [];
-
-        for (const tool of tools) {
-          try {
-            const innovationData = innovationMap.get(tool.id);
-            const innovationScore = innovationData?.score || 0;
-
-            const toolMetrics = transformToToolMetrics(tool, innovationScore);
-            const score = rankingEngine.calculateToolScore(
-              toolMetrics,
-              preview_date ? new Date(preview_date) : new Date(period)
-            );
-
-            // Recalculate overall score
-            const weights = RankingEngineV6.getAlgorithmInfo().weights;
-            score.overallScore = Object.entries(weights).reduce((total, [factor, weight]) => {
-              const factorScore =
-                score.factorScores[factor as keyof typeof score.factorScores] || 0;
-              return total + factorScore * weight;
-            }, 0);
-            score.overallScore = Math.max(
-              0,
-              Math.min(10, Math.round(score.overallScore * 1000) / 1000)
-            );
-
-            newScores.push(score);
-          } catch (error) {
-            loggers.api.error(`Error calculating score for tool ${tool.name}:`, error);
-          }
-        }
-
-        // Sort and create comparisons
-        newScores.sort((a, b) => b.overallScore - a.overallScore);
+        // Score with the canonical V7.6 engine (same pure core as
+        // `regenerateRankings()`) and rank against the comparison snapshot.
+        const referenceDate = preview_date ? new Date(preview_date) : new Date(period);
+        const sourceTools = tools.map(toRankingSourceTool);
+        const previousRankMap = buildPreviousRankMap({ rankings: currentRankings });
+        const scored = computeRankings(sourceTools, previousRankMap, referenceDate);
 
         // Generate comparison data
-        const comparisons = [];
         const currentRankingsMap = new Map(currentRankings.map((r) => [r.tool_id, r]));
 
-        for (let i = 0; i < newScores.length; i++) {
-          const newScore = newScores[i];
-          const tool = tools.find((t) => t.id === newScore?.toolId);
-          if (!tool) continue;
+        const comparisons = scored.map((entry) => {
+          const currentRanking = currentRankingsMap.get(entry.tool_id);
+          const previousPosition = entry.movement.previous_position;
 
-          const currentRanking = currentRankingsMap.get(tool.id);
-          const newPosition = i + 1;
-          const currentPosition = currentRanking?.position;
-
-          comparisons.push({
-            tool_id: tool.id,
-            tool_name: tool.name,
-            category: tool.category || "",
-            current_rank: newPosition,
-            current_score: newScore?.overallScore || 0,
-            previous_rank: currentPosition,
+          return {
+            tool_id: entry.tool_id,
+            tool_name: entry.tool_name,
+            category: entry.category || "",
+            current_rank: entry.rank,
+            current_score: entry.score,
+            previous_rank: previousPosition ?? undefined,
             previous_score: currentRanking?.score,
-            rank_change: currentPosition ? currentPosition - newPosition : 0,
-            score_change: currentRanking
-              ? (newScore?.overallScore || 0) - currentRanking.score
-              : newScore?.overallScore || 0,
-            movement: !currentPosition
-              ? "new"
-              : currentPosition > newPosition
-                ? "up"
-                : currentPosition < newPosition
-                  ? "down"
-                  : "same",
-          });
-        }
+            rank_change: entry.movement.change,
+            score_change: currentRanking ? entry.score - currentRanking.score : entry.score,
+            movement: previousPosition == null ? "new" : entry.movement.direction,
+          };
+        });
 
         return NextResponse.json({
           success: true,
           preview: {
             period,
             algorithm_version,
-            total_tools: newScores.length,
+            total_tools: scored.length,
             rankings_comparison: comparisons,
             comparison_period: comparisonPeriod,
           },
@@ -354,62 +296,20 @@ export async function POST(request: NextRequest) {
 
         const tools = await toolsRepo.findByStatus("active");
 
-        // Calculate rankings
-        const rankingEngine = new RankingEngineV6();
-        const scores: ToolScoreV6[] = [];
+        // Score with the canonical V7.6 engine (same pure core as
+        // `regenerateRankings()`). No comparison snapshot for "build" — it
+        // never computed movement historically, only position/score.
+        const sourceTools = tools.map(toRankingSourceTool);
+        const scored = computeRankings(sourceTools, new Map(), new Date(period));
 
-        // Load innovation scores
-        const innovationScores: { tool_id: string; score?: number }[] = [];
-        try {
-          const fs = await import("fs-extra");
-          const path = await import("node:path");
-          const innovationPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
-          if (await fs.pathExists(innovationPath)) {
-            const innovationData = await fs.readJSON(innovationPath);
-            innovationScores.push(...innovationData);
-          }
-        } catch (error) {
-          loggers.api.warn("Failed to load innovation scores", { error });
-        }
-        const innovationMap = new Map(innovationScores.map((s) => [s.tool_id, s]));
-
-        for (const tool of tools) {
-          try {
-            const innovationData = innovationMap.get(tool.id);
-            const innovationScore = innovationData?.score || 0;
-
-            const toolMetrics = transformToToolMetrics(tool, innovationScore);
-            const score = rankingEngine.calculateToolScore(toolMetrics, new Date(period));
-
-            scores.push(score);
-          } catch (error) {
-            loggers.api.error(`Error calculating score for ${tool.name}:`, error);
-          }
-        }
-
-        // Sort and format rankings
-        scores.sort((a, b) => b.overallScore - a.overallScore);
-
-        const rankings = scores.map((score, index) => {
-          const tool = tools.find((t) => t.id === score.toolId);
-          return {
-            position: index + 1,
-            tool_id: score.toolId,
-            tool_name: tool?.name || "Unknown",
-            tool_slug: tool?.slug || "",
-            score: score.overallScore,
-            factor_scores: {
-              agentic_capability: score.factorScores.agenticCapability,
-              innovation: score.factorScores.innovation,
-              technical_performance: score.factorScores.technicalPerformance,
-              developer_adoption: score.factorScores.developerAdoption,
-              market_traction: score.factorScores.marketTraction,
-              business_sentiment: score.factorScores.businessSentiment,
-              development_velocity: score.factorScores.developmentVelocity,
-              platform_resilience: score.factorScores.platformResilience,
-            },
-          };
-        });
+        const rankings = scored.map((entry) => ({
+          position: entry.rank,
+          tool_id: entry.tool_id,
+          tool_name: entry.tool_name,
+          tool_slug: entry.tool_slug,
+          score: entry.score,
+          factor_scores: toSnakeCaseFactorScores(entry.factor_scores),
+        }));
 
         if (dry_run) {
           return NextResponse.json({
@@ -424,7 +324,7 @@ export async function POST(request: NextRequest) {
         // Save rankings to database
         const rankingData = {
           period,
-          algorithm_version: "v6.0",
+          algorithm_version: RANKING_ALGORITHM_VERSION,
           generated_at: new Date().toISOString(),
           rankings,
         };
@@ -434,12 +334,12 @@ export async function POST(request: NextRequest) {
         if (existing) {
           await rankingsRepo.update(existing.id, {
             data: rankingData,
-            algorithm_version: "v6.0",
+            algorithm_version: RANKING_ALGORITHM_VERSION,
           });
         } else {
           await rankingsRepo.create({
             period,
-            algorithm_version: "v6.0",
+            algorithm_version: RANKING_ALGORITHM_VERSION,
             is_current: false,
             data: rankingData,
           });
@@ -536,7 +436,7 @@ export async function POST(request: NextRequest) {
           // Create empty period
           rankingData = {
             period,
-            algorithm_version: "v6.0",
+            algorithm_version: RANKING_ALGORITHM_VERSION,
             generated_at: new Date().toISOString(),
             rankings: [],
           };
@@ -544,7 +444,7 @@ export async function POST(request: NextRequest) {
 
         await rankingsRepo.create({
           period,
-          algorithm_version: rankingData.algorithm_version || "v6.0",
+          algorithm_version: rankingData.algorithm_version || RANKING_ALGORITHM_VERSION,
           is_current: false,
           data: rankingData,
         });
