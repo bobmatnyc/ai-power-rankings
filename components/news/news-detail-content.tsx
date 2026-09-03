@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { extractExternalLinks, stripRelatedLinksSection } from "@/lib/article-content-links";
 import ArticleScoringImpact from "./article-scoring-impact";
 
 interface NewsArticle {
@@ -273,23 +274,14 @@ export default function NewsDetailContent({
 
   const metrics = extractMetrics(article.content);
 
-  // Extract external links from markdown content
-  const extractExternalLinks = (content: string): Array<{ text: string; url: string }> => {
-    const links: Array<{ text: string; url: string }> = [];
-    const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
-    let match;
-
-    while ((match = linkPattern.exec(content)) !== null) {
-      links.push({
-        text: match[1],
-        url: match[2],
-      });
-    }
-
-    return links;
-  };
-
+  // Extract from the ORIGINAL content: the links live inside the in-body
+  // "Related Links" block that `articleBody` strips, so extracting from the
+  // stripped copy would leave the surviving section empty.
   const externalLinks = extractExternalLinks(article.content);
+
+  // Body prose with the redundant in-body "Related Links" block removed, so
+  // "Referenced Links" below is the page's only links section.
+  const articleBody = stripRelatedLinksSection(article.content);
 
   // Generate scoring factors for detail view (similar to API logic)
   const generateDetailScoringFactors = (article: NewsArticle) => {
@@ -583,7 +575,7 @@ export default function NewsDetailContent({
         <CardContent>
           {/* Main Content - Display full content with proper markdown rendering */}
           <div className="prose prose-lg dark:prose-invert max-w-none mb-6">
-            {article.content && article.content.length > 0 ? (
+            {articleBody && articleBody.length > 0 ? (
               <ReactMarkdown
                 components={{
                   a: ({ node, ...props }) => (
@@ -596,7 +588,7 @@ export default function NewsDetailContent({
                   ),
                 }}
               >
-                {article.content}
+                {articleBody}
               </ReactMarkdown>
             ) : (
               <p className="text-muted-foreground">
