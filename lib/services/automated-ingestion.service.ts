@@ -106,6 +106,69 @@ export function isFreshPublishedDate(
 }
 
 /**
+ * Why: #125 — discovery is provider-relevance-ordered, not date-ordered.
+ * Two caps downstream truncate that relevance order: the content-prep slice
+ * (`newArticles.slice(0, maxArticles * 2)`) and the final ingest slice
+ * (`passingArticles.slice(0, maxArticles)`). A same-day article ranked #18 by
+ * provider relevance was silently dropped by the first cap even though an
+ * 8-day-old article ranked #5 survived — the diagnostic behind #125 found
+ * freshest-ingested items were consistently 1-3 days old, never same-day,
+ * across 6 days of runs. Reordering candidates freshest-first before either
+ * cap closes that gap without touching the caps themselves.
+ * What: Returns a NEW array (input not mutated) sorted by `publishedDate`
+ * descending. Entries with a missing or unparseable date sort after every
+ * entry with a valid one — their true age is unknown, and treating an
+ * unknown as "freshest" would starve a genuinely fresh dated article of cap
+ * space for no evidence-based reason. isFreshPublishedDate's fail-open
+ * ("missing/unparseable is fresh") stays unaffected: that gate runs before
+ * this on the same list and already decided these entries pass.
+ * Test: `sortByFreshness` cases in automated-ingestion.freshness.test.ts.
+ */
+export function sortByFreshness<T extends { publishedDate: string | null | undefined }>(
+  items: T[]
+): T[] {
+  return [...items].sort((a, b) => {
+    const aTime = a.publishedDate ? new Date(a.publishedDate).getTime() : NaN;
+    const bTime = b.publishedDate ? new Date(b.publishedDate).getTime() : NaN;
+    const aValid = !Number.isNaN(aTime);
+    const bValid = !Number.isNaN(bTime);
+    if (aValid && bValid) return bTime - aTime;
+    if (aValid) return -1;
+    if (bValid) return 1;
+    return 0;
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Auto-block gate — see isAutoBlockableError() below.
+// ---------------------------------------------------------------------------
+
+/**
+ * Why: #125 — https://devin.ai/desktop repeatedly failed extraction with
+ * "429 Too Many Requests" and was never added to BLOCKED_DOMAINS, because the
+ * only condition checking for this (401/403/"blocked") didn't recognize a
+ * rate limit as a source-side refusal. A 429 from an extraction provider
+ * means the SAME thing as a 401/403 for this purpose: the source refused to
+ * serve the page, so retrying it on every future run wastes an extraction
+ * attempt (and, for Tavily Extract, 3 retries with backoff) that will fail
+ * again. No retry/backoff system is added here — this only decides whether a
+ * failure should mark the domain blocked for the rest of this run (and any
+ * warm process after it), the same way 401/403 already did.
+ * What: Returns true when `errorMsg` indicates the source itself refused the
+ * request (401, 403, 429, or the literal word "blocked"), as opposed to a
+ * generic network/timeout/parse failure that says nothing about the source.
+ * Test: `isAutoBlockableError` cases in automated-ingestion.rate-limit.test.ts.
+ */
+export function isAutoBlockableError(errorMsg: string): boolean {
+  return (
+    errorMsg.includes("401") ||
+    errorMsg.includes("403") ||
+    errorMsg.includes("429") ||
+    errorMsg.toLowerCase().includes("blocked")
+  );
+}
+
+/**
  * Result of an ingestion run
  */
 export interface IngestionResult {
@@ -201,6 +264,30 @@ export class AutomatedIngestionService {
   }
 
   /**
+   * Why: #125 — centralizes the "should this domain be auto-blocked" check
+   * used at every extraction-failure catch site, so 401/403/429/"blocked" is
+   * decided once (isAutoBlockableError) rather than re-implemented per call
+   * site with a risk of the conditions drifting apart.
+   * What: When `errorMsg` indicates the source refused the request, adds the
+   * URL's hostname to BLOCKED_DOMAINS so later URLs from the same domain in
+   * this run (and any warm process after it) are skipped before spending
+   * another extraction attempt on them. No-op for any other error shape.
+   */
+  private autoBlockDomainIfNeeded(url: string, errorMsg: string): void {
+    if (!isAutoBlockableError(errorMsg)) return;
+    try {
+      const domain = new URL(url).hostname.replace(/^www\./, "");
+      addBlockedDomain(domain);
+      loggers.api.warn("[AutomatedIngestion] Auto-blocked domain:", {
+        domain,
+        reason: errorMsg.substring(0, 100),
+      });
+    } catch {
+      // Ignore URL parsing errors
+    }
+  }
+
+  /**
    * Fetch article content from URL for quality assessment
    * Extraction chain: Tavily Extract → Jina Reader → Basic HTML fetch
    * Returns null if all methods fail (graceful degradation)
@@ -233,10 +320,17 @@ export class AutomatedIngestionService {
           return content;
         }
       } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : "Unknown error";
         loggers.api.warn("[AutomatedIngestion] Tavily Extract failed, trying Jina Reader", {
           url: url.substring(0, 100),
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: errorMsg,
         });
+        // #125: extractContent() now throws once its retries are exhausted
+        // (tavily-extract.service.ts), so this is where a Devin.ai-style 429
+        // is actually observable — check it here, not just in the outer
+        // catch below, which this per-method try/catch never lets errors
+        // reach.
+        this.autoBlockDomainIfNeeded(url, errorMsg);
         // Fall through to Jina Reader
       }
     }
@@ -260,10 +354,13 @@ export class AutomatedIngestionService {
           return result.content;
         }
       } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : "Unknown error";
         loggers.api.warn("[AutomatedIngestion] Jina Reader failed, trying basic HTML fetch", {
           url: url.substring(0, 100),
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: errorMsg,
         });
+        // #125: see the matching comment in the Tavily Extract catch above.
+        this.autoBlockDomainIfNeeded(url, errorMsg);
         // Fall through to basic fetch
       }
     }
@@ -528,8 +625,12 @@ export class AutomatedIngestionService {
       // operator-widened backfill (`--days=30`) is not gated back down to 14.
       const freshnessWindowDays = options?.days ?? FRESHNESS_WINDOW_DAYS;
       const nowMs = Date.now();
-      const freshResults = searchResults.filter((r) =>
-        isFreshPublishedDate(r.publishedDate, nowMs, freshnessWindowDays)
+      // #125: sort freshest-source-date-first BEFORE either downstream cap
+      // (content-prep slice below, and the final maxArticles slice) so a
+      // same-day article can't be crowded out by an older, higher-relevance
+      // one — see sortByFreshness().
+      const freshResults = sortByFreshness(
+        searchResults.filter((r) => isFreshPublishedDate(r.publishedDate, nowMs, freshnessWindowDays))
       );
       articlesSkippedStale = searchResults.length - freshResults.length;
 
@@ -701,17 +802,11 @@ export class AutomatedIngestionService {
               error: errorMsg,
             });
 
-            // If error mentions 401/403/blocked, add domain to blocked list
-            if (errorMsg.includes("401") || errorMsg.includes("403") || errorMsg.toLowerCase().includes("blocked")) {
-              try {
-                const urlObj = new URL(article.url);
-                const domain = urlObj.hostname.replace(/^www\./, "");
-                addBlockedDomain(domain);
-                loggers.api.warn("[AutomatedIngestion] Auto-blocked domain:", { domain });
-              } catch {
-                // Ignore URL parsing errors
-              }
-            }
+            // #125: kept as defense in depth (this catch is reached only if
+            // fetchArticleContent itself throws unexpectedly); the real fix
+            // lives in fetchArticleContent's own Tavily Extract / Jina
+            // catches above, which now actually observe the provider error.
+            this.autoBlockDomainIfNeeded(article.url, errorMsg);
 
             failedFetches.push({ url: article.url, reason: errorMsg.substring(0, 100) });
             // Continue to next article - don't let one failure stop the batch
@@ -1026,6 +1121,12 @@ export class AutomatedIngestionService {
             // An explicit caller-supplied `days` (scripts/trigger-ingestion.ts
             // --days) still wins, so backfills can widen the window.
             days: options?.days ?? FRESHNESS_WINDOW_DAYS,
+            // #125: add an explicit same-day recency pass ahead of the
+            // days-bounded pass above — see the comment in
+            // TavilySearchService.searchAINews. This is what actually makes
+            // same-day content reachable; sortByFreshness (this file) then
+            // makes sure it isn't crowded out by the caps below.
+            includeRecentPass: true,
           }),
       });
     }
