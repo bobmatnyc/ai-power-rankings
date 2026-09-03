@@ -24,7 +24,11 @@ import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import { extractExternalLinks, stripRelatedLinksSection } from "@/lib/article-content-links";
+import {
+  extractExternalLinks,
+  filterChromeLinks,
+  stripRelatedLinksSection,
+} from "@/lib/article-content-links";
 import ArticleScoringImpact from "./article-scoring-impact";
 
 interface NewsArticle {
@@ -277,7 +281,13 @@ export default function NewsDetailContent({
   // Extract from the ORIGINAL content: the links live inside the in-body
   // "Related Links" block that `articleBody` strips, so extracting from the
   // stripped copy would leave the surviving section empty.
-  const externalLinks = extractExternalLinks(article.content);
+  // #122: filterChromeLinks is a render-time backstop against source-site
+  // footer/sister-site navigation that ended up in this block (it cannot
+  // see the original ingestion-time source content, so it recognizes the
+  // SHAPE of a chrome link rather than verifying it) — the only mitigation
+  // available for already-stored articles, since new ones are also
+  // sanitized at ingestion time (see article-ingestion.service.ts).
+  const externalLinks = filterChromeLinks(extractExternalLinks(article.content));
 
   // Body prose with the redundant in-body "Related Links" block removed, so
   // "Referenced Links" below is the page's only links section.

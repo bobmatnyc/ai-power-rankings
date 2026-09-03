@@ -9,6 +9,9 @@ import type { Article, DryRunResult, IngestedArticle } from "@/lib/db/article-sc
 import { rankings } from "@/lib/db/schema";
 import { getDb } from "@/lib/db/connection";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
+// #122: post-processes the model's Related Links block against what it was
+// actually shown — see the call site in AIAnalyzer.analyzeContent.
+import { sanitizeRelatedLinksBlock } from "@/lib/article-content-links";
 import { WhatsNewSummaryService } from "./whats-new-summary.service";
 import { jinaReaderService } from "./jina-reader.service";
 
@@ -556,7 +559,11 @@ Focus on:
    - Summary: **400-500 words** - This is the MAIN content readers will see. Must be concise with clear introduction, body, and conclusion
    - Rewritten content: Approximately 800-1000 words - Optional extended version for archival/reference
    - Include key analysis and context (be concise, not verbose)
-   - Preserve ALL important links from the source article at the end
+   - #122: Only if directly story-relevant source links actually appear in the
+     article text below, include them at the end — never invent, guess, or
+     recall a publisher's typical links from your own knowledge, and never
+     include navigation, footer, subscription, or sister-site links. It is
+     correct to include none.
    - Be focused and informative - provide value without padding
    - CRITICAL: Never truncate mid-sentence. Always complete your thoughts and end with proper conclusion
 
@@ -574,9 +581,18 @@ Be thorough and precise. Extract the exact tool names as mentioned, we'll handle
 IMPORTANT: You MUST return ONLY a valid JSON object. Do not include any explanatory text before or after the JSON.`;
 
     // Format links for AI if available
+    // #122: this used to say "preserve these in your rewritten content",
+    // telling the model to keep every link unconditionally — including
+    // navigation/footer chrome, since the extraction chain's basic-HTML
+    // fallback pulls links from the WHOLE page, not just the article body.
+    // These are candidates to choose from, not a preservation mandate.
     let linksContext = "";
     if (metadata?.links && metadata.links.length > 0) {
-      linksContext = "\n\nIMPORTANT LINKS FROM SOURCE (preserve these in your rewritten content):\n";
+      linksContext =
+        "\n\nLINKS FOUND ON THE SOURCE PAGE (candidates only — this list may include " +
+        "site navigation, footer, or sister-site links that have nothing to do with this " +
+        "story; only reuse an entry below if it is directly relevant to the story and you " +
+        "would cite it as a reference):\n";
       metadata.links.slice(0, 20).forEach(link => {
         linksContext += `- [${link.text}](${link.href})\n`;
       });
@@ -588,6 +604,11 @@ IMPORTANT: You MUST return ONLY a valid JSON object. Do not include any explanat
     // "Referenced Links" (see lib/article-content-links.ts). Dropping the
     // instruction would silently empty that section for newly ingested
     // articles.
+    // #122: the block's own instructions constrain WHICH links may go in it
+    // (see "rewritten_content" and "CRITICAL REQUIREMENTS" below) — prompt
+    // compliance is reinforced, not replaced, by the deterministic
+    // sanitizeRelatedLinksBlock() post-processing applied to the model's
+    // response further down in this method.
     const userPrompt = `Analyze this article and extract comprehensive information:
 
 ${content.substring(0, 15000)}
@@ -599,7 +620,7 @@ Return a detailed JSON analysis with this structure:
 {
   "title": "Article title",
   "summary": "A concise 400-500 word summary that serves as the main article content. This should:\n- Have a clear introduction that hooks the reader\n- Cover the key points from the source concisely\n- Provide essential context and analysis\n- Include the most important examples and data points\n- End with a strong conclusion\n- Maintain logical flow throughout\n- Be self-contained and informative",
-  "rewritten_content": "Optional extended version of approximately 800-1000 words with additional details that:\n- Covers important points from the source in more depth\n- Provides additional context and analysis\n- Explains implications for the AI industry\n- Maintains journalistic quality\n- Includes important source links at the end in markdown format:\n\n**Related Links:**\n- [Link Title](url)\n- [Another Link](url)",
+  "rewritten_content": "Optional extended version of approximately 800-1000 words with additional details that:\n- Covers important points from the source in more depth\n- Provides additional context and analysis\n- Explains implications for the AI industry\n- Maintains journalistic quality\n- If, and only if, one or more links from the article text or the candidate list above are directly relevant to THIS story, ends with them in markdown format:\n\n**Related Links:**\n- [Link Title](url)\n- [Another Link](url)\n\n  Never include navigation, footer, subscription/newsletter, \"about us\", or sister-site links. Never include a link you were not given above or that does not appear in the article text. Omit the \"Related Links:\" block entirely when nothing qualifies.",
   "source": "Publication or domain",
   "url": "Source URL if available",
   "published_date": "YYYY-MM-DD format",
@@ -636,7 +657,7 @@ Return a detailed JSON analysis with this structure:
 CRITICAL REQUIREMENTS:
 - "summary" field: **400-500 words** - This is the MAIN article content. Must be CONCISE with clear beginning, middle, and end
 - "rewritten_content" field: Approximately 800-1000 words - Optional extended archival version
-- ALL important links from the source MUST be preserved in markdown format at the end of rewritten_content
+- #122: ONLY story-relevant links that appear in the article text or the candidate list MUST go in the "Related Links:" block, in markdown format at the end of rewritten_content. NEVER include navigation, footer, subscription, "about us", or sister-site links, and NEVER invent a link from what you know about the publisher. Omit the block entirely if nothing qualifies — an empty block is correct, not a failure.
 - Be concise but informative - no padding or filler content
 - Write in a professional, journalistic style
 - CRITICAL: Never truncate mid-sentence. Always complete your thoughts and end with proper conclusion
@@ -759,6 +780,28 @@ Return ONLY the JSON object above with actual data. No additional text or explan
         ...result,
         tool_mentions: ToolMapper.processToolMentions(result.tool_mentions),
       };
+
+      // #122: deterministic gate on the model's own Related Links block,
+      // independent of prompt compliance (see sanitizeRelatedLinksBlock in
+      // lib/article-content-links.ts). Verifies each link against exactly
+      // what the model was shown — the same truncated content and candidate
+      // href list used to build the prompt above — and drops anything that
+      // was never actually offered to it, or that still looks like chrome.
+      // Pre-existing, not changed here: for a manual "text"/"file" ingest
+      // through the admin route, `metadata.links` is always `[]` (only the
+      // "url" ingestion type populates it — see ContentExtractor.extractFromUrl
+      // above), so this call leans entirely on `sourceContent` text matching
+      // for those inputs.
+      if (result.rewritten_content) {
+        result = {
+          ...result,
+          rewritten_content: sanitizeRelatedLinksBlock(
+            result.rewritten_content,
+            content.substring(0, 15000),
+            metadata?.links?.map((link) => link.href) ?? []
+          ),
+        };
+      }
 
       return {
         ...result,
