@@ -27,7 +27,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  * Test: `npx vitest run lib/services/automated-ingestion.run-finalization.test.ts`.
  * Stash the fix (`git stash`) and re-run to see the first two tests fail
  * against the pre-fix code — both assert the row was actually persisted, and
- * pre-fix there is exactly one updateRun() call with no recovery path.
+ * pre-fix there is exactly one updateRun() call with no recovery path. The
+ * third test isolates finalizeRun's retry specifically (as opposed to test 1,
+ * which happens to pass even without a retry): delete the retry block in
+ * finalizeRun() and only that test fails.
  */
 
 const RUN_ID = "run-124-fixture";
@@ -198,6 +201,46 @@ describe("AutomatedIngestionService - run row finalization (#124)", () => {
   });
 
   /**
+   * The discriminating case for finalizeRun's retry specifically. Test 1
+   * above ("still lands a finalized row...") fails the very first write
+   * attempted after ingestion and happens to pass even if finalizeRun's
+   * retry were deleted, because in that scenario the LATER, independent
+   * checkpoint-vs-final call structure is what recovers — not the retry
+   * itself. This test isolates the retry in isolation: only the terminal
+   * status-carrying write's FIRST attempt fails; its second attempt (the
+   * retry) succeeds. If finalizeRun's retry block were deleted, the single
+   * un-retried attempt hits this failure and the row is abandoned at
+   * status='running' — this test fails.
+   */
+  it("recovers the terminal status write via finalizeRun's retry", async () => {
+    let statusCallCount = 0;
+    updateBehavior.shouldFail = (payload) => {
+      if (!("status" in payload)) return false; // checkpoint write always succeeds
+      statusCallCount += 1;
+      return statusCallCount === 1; // fail only the first status-carrying attempt
+    };
+
+    const result = await service.runDailyDiscovery({
+      skipQualityCheck: true,
+      maxArticles: 5,
+    });
+
+    expect(result.articlesIngested).toBe(1);
+    // Exactly one retry happened: the first status-carrying attempt failed,
+    // the second (the retry) succeeded. Not 1 (no retry attempted) and not
+    // >2 (retrying more than once, which finalizeRun does not do).
+    expect(statusCallCount).toBe(2);
+
+    expect(simulatedRow.status).not.toBe("running");
+    expect(simulatedRow.completedAt).not.toBeNull();
+    expect(simulatedRow.articlesIngested).toBe(1);
+
+    // The retry recovered, so no persistence-failure message should have
+    // leaked into the returned pipeline result.
+    expect(result.errors).toEqual([]);
+  });
+
+  /**
    * Isolates the checkpoint specifically: every write that carries a
    * `status` (i.e. every attempt to finalize the run) fails permanently, but
    * writes that only carry counters keep succeeding. This models a narrower,
@@ -231,8 +274,15 @@ describe("AutomatedIngestionService - run row finalization (#124)", () => {
    * never updated past its create-time defaults — but the IngestionResult
    * runDailyDiscovery() returns to its caller (and that the cron route turns
    * into an API response) must still report the real, successful outcome.
+   *
+   * It must also not go silent about the persistence failure itself: the
+   * pre-#124 success path appended a "Status update failed: …" message to
+   * `result.errors` when its one write failed, so an operator reading the
+   * API response (not just server logs) could tell the row didn't land.
+   * finalizeRun's return value restores that same reporting — see the
+   * `finally` block in executeDailyDiscovery.
    */
-  it("does not let a fully failed updateRun mask the returned pipeline result", async () => {
+  it("does not let a fully failed updateRun mask the returned pipeline result, and still reports the persistence failure", async () => {
     updateBehavior.shouldFail = () => true;
 
     const result = await service.runDailyDiscovery({
@@ -248,5 +298,8 @@ describe("AutomatedIngestionService - run row finalization (#124)", () => {
     // since every write failed — but that must show up as a DB-layer
     // problem for operators to find, never as a corrupted pipeline result.
     expect(simulatedRow.status).toBe("running");
+
+    // ...and it must show up in the RETURNED result too, not just server logs.
+    expect(result.errors.some((e) => e.includes("Run row persistence failed"))).toBe(true);
   });
 });

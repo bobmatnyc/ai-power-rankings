@@ -1054,14 +1054,35 @@ export class AutomatedIngestionService {
       // path — failed and was silently swallowed, and nothing else ever
       // touched the row again.
       //
-      // Does NOT defend a hard process kill (SIGKILL, or a platform-level
-      // function termination) that stops execution before this block starts
-      // running at all — no JS code runs after that, `finally` included. The
-      // checkpoint write right after the ingest loop above narrows that
-      // remaining window as far as is possible without such a kill being
-      // unstoppable by definition.
+      // Two gaps remain, neither addressed here:
+      // 1. A hard process kill (SIGKILL, or a platform-level function
+      //    termination) that stops execution before this block starts
+      //    running at all — no JS code runs after that, `finally` included.
+      //    The checkpoint write right after the ingest loop above narrows
+      //    that remaining window as far as is possible without such a kill
+      //    being unstoppable by definition.
+      // 2. runDailyDiscovery's Promise.race(executeDailyDiscovery(...),
+      //    timeout) does not cancel the losing side: if the timeout wins,
+      //    its handler writes status='failed', but this executeDailyDiscovery
+      //    call keeps running in the background and can still finish afterward
+      //    — its own finalize write here would then overwrite that
+      //    status='failed' row with a stale terminal status from a run the
+      //    caller already gave up on. Pre-existing (not introduced by this
+      //    change); tracked separately rather than fixed here.
       if (!isDryRun && runId && !runId.startsWith("dry-run") && pipelineResult) {
-        await this.finalizeRun(runId, pipelineResult);
+        // #124: restore error-reporting parity with the pre-fix success
+        // path, which appended "Status update failed: …" to the returned
+        // result when its one persistence write failed. finalizeRun's
+        // return value tells us the same thing here; mutating
+        // pipelineResult.errors reaches the caller because `return (pipelineResult
+        // = result)` above already handed back this same object by
+        // reference — the promise has not settled yet while `finally` runs.
+        const persisted = await this.finalizeRun(runId, pipelineResult);
+        if (!persisted) {
+          pipelineResult.errors.push(
+            `Run row persistence failed after retry (runId=${runId}); ingestion result above is accurate, but the automated_ingestion_runs row was not updated to reflect it.`
+          );
+        }
       }
     }
   }
@@ -1555,19 +1576,26 @@ export class AutomatedIngestionService {
    * article rows already carrying its ingestion_run_id. Centralizing every
    * write through this one retrying, never-throwing helper means a single
    * transient failure no longer strands the row, and every caller gets the
-   * same behavior instead of re-implementing (or forgetting) it.
+   * same behavior instead of re-implementing (or forgetting) it. Returning
+   * whether the write ultimately persisted (rather than just swallowing)
+   * restores parity with the pre-#124 success path, which appended a
+   * "Status update failed" message to the returned result's `errors` on a
+   * failed write — see the `finally` block in executeDailyDiscovery, the
+   * only caller that acts on this return value.
    * What: Calls updateRun() and, on failure, retries exactly once after a
    * short delay. Never throws: a second failure is logged at error level
-   * and swallowed, because a persistence failure must never mask an
-   * otherwise successful or already-handled pipeline result (see the
-   * `finally` block in executeDailyDiscovery, which is the only remaining
-   * caller of updateRun besides this method).
-   * Test: `finalizeRun` retry-then-succeed and swallow-second-failure cases
-   * in automated-ingestion.run-finalization.test.ts.
+   * and swallowed rather than propagated, because a persistence failure
+   * must never mask an otherwise successful or already-handled pipeline
+   * result. Returns `true` when either attempt succeeded, `false` when both
+   * failed.
+   * Test: `finalizeRun` retry-then-succeed and swallow-second-failure cases,
+   * plus the caller-side error-parity assertion, in
+   * automated-ingestion.run-finalization.test.ts.
    */
-  private async finalizeRun(runId: string, updates: Partial<IngestionResult>): Promise<void> {
+  private async finalizeRun(runId: string, updates: Partial<IngestionResult>): Promise<boolean> {
     try {
       await this.updateRun(runId, updates);
+      return true;
     } catch (firstError) {
       loggers.api.warn("[AutomatedIngestion] updateRun failed, retrying once", {
         runId,
@@ -1582,6 +1610,7 @@ export class AutomatedIngestionService {
 
       try {
         await this.updateRun(runId, updates);
+        return true;
       } catch (secondError) {
         loggers.api.error("[AutomatedIngestion] updateRun failed twice; run row not persisted for this write", {
           runId,
@@ -1589,6 +1618,7 @@ export class AutomatedIngestionService {
           articlesIngested: updates.articlesIngested,
           error: secondError instanceof Error ? secondError.message : "Unknown error",
         });
+        return false;
       }
     }
   }
