@@ -10,7 +10,7 @@
  * 7. Updates run record with metrics
  */
 
-import { desc, eq, gte, inArray } from "drizzle-orm";
+import { and, desc, eq, gte, inArray } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import {
   automatedIngestionRuns,
@@ -169,6 +169,25 @@ export function isAutoBlockableError(errorMsg: string): boolean {
 }
 
 /**
+ * Why: #126 — a 429 is a transient signal (the source's rate limiter cooling
+ * down); 401/403/"blocked" are the source explicitly refusing this content.
+ * Auto-blocking both the same way meant one rate-limited run could starve a
+ * good source for the life of a warm serverless process. Callers must only
+ * call this once isAutoBlockableError(errorMsg) is already true.
+ * What: Returns "transient" when `errorMsg` carries no permanent-refusal
+ * signal (no 401, 403, or "blocked") — i.e. it was classified auto-blockable
+ * by the 429 branch alone. Returns "permanent" whenever a 401/403/"blocked"
+ * signal is present, even alongside a 429, since a source that explicitly
+ * refused should not be treated as merely rate-limiting.
+ * Test: `classifyAutoBlockReason` cases in automated-ingestion.rate-limit.test.ts.
+ */
+export function classifyAutoBlockReason(errorMsg: string): "permanent" | "transient" {
+  const isPermanentSignal =
+    errorMsg.includes("401") || errorMsg.includes("403") || errorMsg.toLowerCase().includes("blocked");
+  return isPermanentSignal ? "permanent" : "transient";
+}
+
+/**
  * Result of an ingestion run
  */
 export interface IngestionResult {
@@ -272,15 +291,20 @@ export class AutomatedIngestionService {
    * URL's hostname to BLOCKED_DOMAINS so later URLs from the same domain in
    * this run (and any warm process after it) are skipped before spending
    * another extraction attempt on them. No-op for any other error shape.
+   * #126: a 429-only signal (no 401/403/"blocked" alongside it) is blocked
+   * transiently — see classifyAutoBlockReason() and blocked-domains.config's
+   * AUTO_BLOCK_TTL_MS — instead of for the life of the process.
    */
   private autoBlockDomainIfNeeded(url: string, errorMsg: string): void {
     if (!isAutoBlockableError(errorMsg)) return;
     try {
       const domain = new URL(url).hostname.replace(/^www\./, "");
-      addBlockedDomain(domain);
+      const reason = classifyAutoBlockReason(errorMsg);
+      addBlockedDomain(domain, { transient: reason === "transient" });
       loggers.api.warn("[AutomatedIngestion] Auto-blocked domain:", {
         domain,
         reason: errorMsg.substring(0, 100),
+        blockType: reason,
       });
     } catch {
       // Ignore URL parsing errors
@@ -1054,21 +1078,26 @@ export class AutomatedIngestionService {
       // path — failed and was silently swallowed, and nothing else ever
       // touched the row again.
       //
-      // Two gaps remain, neither addressed here:
+      // One gap remains, not addressed here:
       // 1. A hard process kill (SIGKILL, or a platform-level function
       //    termination) that stops execution before this block starts
       //    running at all — no JS code runs after that, `finally` included.
       //    The checkpoint write right after the ingest loop above narrows
       //    that remaining window as far as is possible without such a kill
       //    being unstoppable by definition.
-      // 2. runDailyDiscovery's Promise.race(executeDailyDiscovery(...),
-      //    timeout) does not cancel the losing side: if the timeout wins,
-      //    its handler writes status='failed', but this executeDailyDiscovery
-      //    call keeps running in the background and can still finish afterward
-      //    — its own finalize write here would then overwrite that
-      //    status='failed' row with a stale terminal status from a run the
-      //    caller already gave up on. Pre-existing (not introduced by this
-      //    change); tracked separately rather than fixed here.
+      //
+      // #128 defended what used to be gap 2 here: runDailyDiscovery's
+      // Promise.race(executeDailyDiscovery(...), timeout) still does not
+      // cancel the losing side, so if the timeout wins, its handler writes
+      // status='failed' while this executeDailyDiscovery call keeps running
+      // in the background and can still reach this finalize write afterward.
+      // That write no longer overwrites the status='failed' row, though:
+      // updateRun() now guards any write that carries a terminal status with
+      // `WHERE status = 'running'`, so the losing write's terminal fields
+      // (status, completedAt) are silently dropped — see updateRun's doc
+      // comment. Its counter fields still would have applied if this call had
+      // reached the earlier checkpoint write; that is unchanged and
+      // intentional (see updateRun).
       if (!isDryRun && runId && !runId.startsWith("dry-run") && pipelineResult) {
         // #124: restore error-reporting parity with the pre-fix success
         // path, which appended "Status update failed: …" to the returned
@@ -1478,7 +1507,38 @@ export class AutomatedIngestionService {
   }
 
   /**
-   * Update an existing run record with metrics
+   * Update an existing run record with metrics.
+   *
+   * Why: #128 — runDailyDiscovery's Promise.race(executeDailyDiscovery(...),
+   * timeout) never cancels the losing side. When the timeout wins, its
+   * handler writes status='failed' through this method; the abandoned
+   * executeDailyDiscovery call keeps running and can still reach its own
+   * finalize write afterward, carrying a stale 'completed'/'partial'. Before
+   * this fix that second write unconditionally replaced the row — downgrading
+   * an already-terminal 'failed' status and resetting completedAt to a later,
+   * wrong time. See the `finally`-block comment in executeDailyDiscovery for
+   * the fuller race description.
+   * What: A write that carries a terminal `status` (completed/failed/partial)
+   * applies status and completedAt only WHERE the row's current status is
+   * still 'running' — atomic in the UPDATE's WHERE clause, not read-then-
+   * write, so two racing terminal writes can never both land. Zero rows
+   * affected on such a write is ambiguous by itself: it could mean this
+   * write lost the race (the row exists, already terminal) or that runId
+   * does not exist at all (the pre-#128 error case). One follow-up
+   * existence-only SELECT distinguishes them — a race loss logs and returns
+   * normally; a genuinely missing row still throws, exactly as before #128.
+   * A checkpoint write (no `status` field, see the ingest-loop call site
+   * above) is NOT status-guarded: it still applies unconditionally against
+   * just `id`, because a losing pipeline's real ingestion counts remain
+   * useful even after the row is terminal, and because a checkpoint write
+   * has never been the field that a race could make regress
+   * (status/completedAt are). Zero rows affected on a checkpoint write
+   * always means the run genuinely does not exist (no race-loss case is
+   * possible for it), so that path keeps throwing without the extra SELECT.
+   * Test: `updateRun` status-guard and existence-check cases in
+   * automated-ingestion.status-guard.test.ts. Existing #124 finalization
+   * behavior (retry, checkpoint-vs-final split) is unchanged — see
+   * automated-ingestion.run-finalization.test.ts.
    */
   async updateRun(runId: string, updates: Partial<IngestionResult>): Promise<void> {
     const db = getDb();
@@ -1533,22 +1593,48 @@ export class AutomatedIngestionService {
       // Must check the ORIGINAL status here, not updateData.status: "partial" is
       // remapped to "completed" for storage above, but the run has still finished
       // and needs a completion timestamp (issue #104).
-      if (
-        originalStatus &&
-        (originalStatus === "completed" ||
-          originalStatus === "failed" ||
-          originalStatus === "partial")
-      ) {
+      const isTerminalWrite =
+        originalStatus === "completed" || originalStatus === "failed" || originalStatus === "partial";
+      if (isTerminalWrite) {
         updateData.completedAt = new Date();
       }
 
-      const updateResult = await db
-        .update(automatedIngestionRuns)
-        .set(updateData)
-        .where(eq(automatedIngestionRuns.id, runId))
-        .returning();
+      // #128: guard a terminal write with `status = 'running'` in the WHERE
+      // clause itself so two racing terminal writes (see the doc comment
+      // above) can never both apply — whichever lands first flips the row
+      // out of 'running' and the second necessarily matches zero rows. A
+      // checkpoint write (no status) stays guarded only by id, unchanged.
+      const whereClause = isTerminalWrite
+        ? and(eq(automatedIngestionRuns.id, runId), eq(automatedIngestionRuns.status, "running"))
+        : eq(automatedIngestionRuns.id, runId);
+
+      const updateResult = await db.update(automatedIngestionRuns).set(updateData).where(whereClause).returning();
 
       if (updateResult.length === 0) {
+        // #128: zero rows on a terminal write is ambiguous by itself — it
+        // means either this write lost the race (the row exists, but its
+        // status column no longer reads 'running') or runId does not exist
+        // at all (the pre-#128 behavior, which threw and surfaced into the
+        // caller's result.errors). Collapsing both into a silent no-op would
+        // swallow the genuinely-missing-run case that used to be reported;
+        // one follow-up existence check keeps that distinction.
+        if (isTerminalWrite) {
+          const [existingRun] = await db
+            .select({ status: automatedIngestionRuns.status })
+            .from(automatedIngestionRuns)
+            .where(eq(automatedIngestionRuns.id, runId))
+            .limit(1);
+
+          if (existingRun) {
+            // Row exists but is no longer 'running' — this write lost the
+            // race (see this method's doc comment above). Not an error.
+            loggers.api.info(
+              `[AutomatedIngestion] Run ${runId} terminal write skipped: row is no longer 'running' (already finalized by a competing write)`,
+              { attemptedStatus: updates.status, currentStatus: existingRun.status }
+            );
+            return;
+          }
+        }
         throw new Error(`No ingestion run found with ID: ${runId}`);
       }
 
