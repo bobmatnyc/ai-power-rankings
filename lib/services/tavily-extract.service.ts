@@ -218,7 +218,14 @@ export class TavilyExtractService {
       finalError: lastError?.message ?? 'Unknown error',
     });
 
-    return null;
+    // #125: previously returned null here, discarding the provider's error
+    // (status + message) once retries were exhausted. The caller
+    // (AutomatedIngestionService.fetchArticleContent) needs that text to
+    // decide whether the SOURCE refused the request (401/403/429) and the
+    // domain should be auto-blocked, versus some other failure. Throwing
+    // makes this consistent with JinaReaderService.fetchArticle, which
+    // already throws on failure for the same reason.
+    throw lastError ?? new Error('Tavily Extract failed after all retries');
   }
 
   /**
@@ -245,8 +252,17 @@ export class TavilyExtractService {
     const results: Array<{ url: string; content: string | null }> = [];
 
     for (const url of urls) {
-      const content = await this.extractContent(url, options);
-      results.push({ url, content });
+      // #125: extractContent() now throws once its retries are exhausted
+      // (see above) so its caller can inspect the provider's error. This
+      // batch method's contract is "null for failed extractions" for every
+      // URL, so catch here and keep that contract instead of letting one
+      // URL's failure abort the rest of the batch.
+      try {
+        const content = await this.extractContent(url, options);
+        results.push({ url, content });
+      } catch {
+        results.push({ url, content: null });
+      }
     }
 
     const successCount = results.filter((r) => r.content !== null).length;

@@ -81,6 +81,15 @@ export class TavilySearchService {
     includeDomains?: string[];
     topic?: 'general' | 'news';
     days?: number;
+    /**
+     * #125: when true (and topic is "news"), issues an extra pass with
+     * `time_range: 'day'` — Tavily's documented recency filter — ahead of the
+     * broader `days`-bounded pass below. Opt-in rather than default-on so
+     * every OTHER searchAINews caller (e.g. the admin test-search route)
+     * keeps its exact current request shape; the automated-ingestion pipeline
+     * is the only caller that turns it on.
+     */
+    includeRecentPass?: boolean;
   } = {}): Promise<TavilySearchResult[]> {
     if (!this.apiKey) {
       loggers.api.warn('[TavilySearch] API key not configured, returning empty results');
@@ -97,11 +106,50 @@ export class TavilySearchService {
       includeDomains = [],
       topic = 'news',
       days,
+      includeRecentPass = false,
     } = options;
 
     const results: TavilySearchResult[] = [];
 
     try {
+      // #125: recent-first pass. Tavily ranks results by relevance, not
+      // recency (confirmed against the current API reference — there is no
+      // sort-by-date option), and a same-day story can rank below a more
+      // established multi-day-old one on relevance alone, keeping it out of
+      // the top `maxResults` entirely rather than merely ranking it lower.
+      // `time_range: 'day'` (documented, topic-independent per the API
+      // reference) is the provider-supported way to force retrieval of
+      // last-24h content instead of hoping relevance ranking surfaces it.
+      // This ADDS candidates ahead of the broader pass below rather than
+      // narrowing it, so total volume is not reduced — a day with no
+      // same-day story still gets the full broader-window result set.
+      //
+      // #125 (code-critic follow-up on bbf43787): this pass gets its OWN
+      // try/catch. It must degrade to "no recency pass" on a transient
+      // failure, not abort the primary/supplementary passes below it — the
+      // comment above already promised "additive, never narrowing" and a
+      // shared try block broke that promise (a failure here previously
+      // propagated out of searchAINews entirely, failing the whole run when
+      // Brave wasn't configured as a fallback).
+      if (includeRecentPass && topic === 'news') {
+        try {
+          const recentQuery = this.buildAINewsQuery();
+          const recentResults = await this.executeSearch(recentQuery, {
+            maxResults: 10,
+            searchDepth,
+            includeDomains,
+            topic,
+            timeRange: 'day',
+          });
+          results.push(...recentResults);
+        } catch (error) {
+          loggers.api.warn('[TavilySearch] Recency pass failed, continuing with broader pass only', {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
+          // Fall through — the broader days-bounded pass below still runs.
+        }
+      }
+
       // Execute primary query
       const primaryQuery = this.buildAINewsQuery();
       const primaryResults = await this.executeSearch(primaryQuery, {
@@ -161,9 +209,14 @@ export class TavilySearchService {
       includeDomains?: string[];
       topic?: 'general' | 'news';
       days?: number;
+      // #125: Tavily's documented recency filter (see the Tavily API
+      // reference — `time_range` accepts day/week/month/year and, per its
+      // description, is not restricted to topic="news"). Distinct from
+      // `days`: this is a discrete bucket, not an arbitrary day count.
+      timeRange?: 'day' | 'week' | 'month' | 'year';
     }
   ): Promise<TavilySearchResult[]> {
-    const { maxResults, searchDepth, includeDomains = [], topic = 'news', days } = options;
+    const { maxResults, searchDepth, includeDomains = [], topic = 'news', days, timeRange } = options;
 
     const requestBody: Record<string, unknown> = {
       api_key: this.apiKey,
@@ -185,12 +238,18 @@ export class TavilySearchService {
       requestBody.days = days;
     }
 
+    // #125: recency filter for the recent-first pass (see searchAINews)
+    if (timeRange !== undefined) {
+      requestBody.time_range = timeRange;
+    }
+
     loggers.api.debug('[TavilySearch] Executing search', {
       query: query.substring(0, 100) + '...',
       maxResults,
       searchDepth,
       topic,
       days,
+      timeRange,
     });
 
     const response = await fetch(this.baseUrl, {
