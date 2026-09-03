@@ -465,19 +465,16 @@ export class AutomatedIngestionService {
         runId: runIdRef.current,
       });
 
-      // Best-effort: mark the run as failed so it doesn't stay "running"
+      // #124: best-effort, via the same retrying/never-throwing helper used
+      // by executeDailyDiscovery's own finalization — mark the run as
+      // failed so it doesn't stay "running". This fires on the
+      // Promise.race timeout path (PIPELINE_TIMEOUT_MS) and on any error
+      // that somehow escapes executeDailyDiscovery's own try/catch/finally.
       if (!isDryRun && runIdRef.current && !runIdRef.current.startsWith("dry-run")) {
-        try {
-          await this.updateRun(runIdRef.current, {
-            status: "failed",
-            errors: [errorMsg],
-          });
-        } catch (updateError) {
-          loggers.api.error("[AutomatedIngestion] Failed to mark timed-out run as failed", {
-            runId: runIdRef.current,
-            error: updateError instanceof Error ? updateError.message : "Unknown error",
-          });
-        }
+        await this.finalizeRun(runIdRef.current, {
+          status: "failed",
+          errors: [errorMsg],
+        });
       }
 
       return {
@@ -526,6 +523,11 @@ export class AutomatedIngestionService {
     let rankingChanges = 0;
     let estimatedCostUsd = 0;
     let runId = "";
+    // #124: every branch below assigns its IngestionResult here on the way
+    // out (`return (pipelineResult = result)`) instead of persisting it
+    // itself. The `finally` block is the single place that actually writes
+    // to the run row — see the comment there and finalizeRun().
+    let pipelineResult: IngestionResult | undefined;
 
     try {
       // Step 1: Create ingestion run record (skip in dry run)
@@ -563,11 +565,8 @@ export class AutomatedIngestionService {
           durationMs: Date.now() - startTime,
         };
 
-        if (!isDryRun && runId && !runId.startsWith("dry-run")) {
-          await this.updateRun(runId, result);
-        }
-
-        return result;
+        // #124: persistence happens once, in the `finally` block below.
+        return (pipelineResult = result);
       }
 
       // Step 2: Discover articles with resilient provider fallback.
@@ -603,11 +602,8 @@ export class AutomatedIngestionService {
           durationMs: Date.now() - startTime,
         };
 
-        if (!isDryRun) {
-          await this.updateRun(runId, result);
-        }
-
-        return result;
+        // #124: persistence happens once, in the `finally` block below.
+        return (pipelineResult = result);
       }
 
       // Freshness gate: stale source dates must not count as healthy yield — Aug 2026 outage
@@ -668,11 +664,8 @@ export class AutomatedIngestionService {
           durationMs: Date.now() - startTime,
         };
 
-        if (!isDryRun) {
-          await this.updateRun(runId, result);
-        }
-
-        return result;
+        // #124: persistence happens once, in the `finally` block below.
+        return (pipelineResult = result);
       }
 
       // Step 3: Filter URL duplicates
@@ -721,11 +714,8 @@ export class AutomatedIngestionService {
           durationMs: Date.now() - startTime,
         };
 
-        if (!isDryRun) {
-          await this.updateRun(runId, result);
-        }
-
-        return result;
+        // #124: persistence happens once, in the `finally` block below.
+        return (pipelineResult = result);
       }
 
       // Step 4: Prepare articles with content for quality assessment
@@ -852,11 +842,8 @@ export class AutomatedIngestionService {
           durationMs: Date.now() - startTime,
         };
 
-        if (!isDryRun) {
-          await this.updateRun(runId, result);
-        }
-
-        return result;
+        // #124: persistence happens once, in the `finally` block below.
+        return (pipelineResult = result);
       }
 
       // Step 5: Quality assessment (can be skipped for testing)
@@ -960,6 +947,31 @@ export class AutomatedIngestionService {
         }
       }
 
+      // #124: checkpoint the counters accrued by the ingest loop above,
+      // immediately and before any later stage runs. Run 483bd3e8
+      // (2026-08-29) inserted 9 article rows under its ingestion_run_id but
+      // its own run row was never updated — status stuck 'running',
+      // completedAt null, every counter still 0 from createRun(). If the
+      // process dies (or the finalize write in `finally` below fails)
+      // anywhere after this point, the row still reflects the real
+      // ingestion counts instead of those create-time zeros. Deliberately
+      // omits `status`/completedAt: this is a checkpoint, not a completion —
+      // see finalizeRun() and updateRun(), which only touch fields that are
+      // actually present in `updates`.
+      if (!isDryRun) {
+        await this.finalizeRun(runId, {
+          articlesDiscovered,
+          articlesPassedQuality,
+          articlesIngested,
+          articlesSkipped,
+          articlesSkippedSemantic,
+          articlesSkippedStale,
+          rankingChanges,
+          estimatedCostUsd,
+          ingestedArticleIds,
+        });
+      }
+
       // If dry run, count all passed articles as "ingested" for reporting
       if (isDryRun) {
         articlesIngested = articlesToIngest.length;
@@ -996,26 +1008,8 @@ export class AutomatedIngestionService {
         durationMs: Date.now() - startTime,
       };
 
-      // Step 6: Update run record with final metrics
-      if (!isDryRun) {
-        try {
-          await this.updateRun(runId, result);
-          loggers.api.info("[AutomatedIngestion] Successfully updated run status", {
-            runId,
-            status: result.status,
-          });
-        } catch (updateError) {
-          // Log the error but don't fail the entire operation since articles were successfully ingested
-          loggers.api.error("[AutomatedIngestion] Failed to update run status (ingestion succeeded)", {
-            runId,
-            error: updateError instanceof Error ? updateError.message : "Unknown error",
-            articlesIngested: result.articlesIngested,
-          });
-          // Add this error to the result but don't change overall status
-          result.errors.push(`Status update failed: ${updateError instanceof Error ? updateError.message : "Unknown error"}`);
-        }
-      }
-
+      // #124: persistence happens once, in the `finally` block below — no
+      // direct updateRun call here anymore. See finalizeRun().
       loggers.api.info("[AutomatedIngestion] Daily discovery completed", {
         articlesIngested,
         articlesSkipped,
@@ -1025,7 +1019,7 @@ export class AutomatedIngestionService {
         durationMs: result.durationMs,
       });
 
-      return result;
+      return (pipelineResult = result);
     } catch (error) {
       const errorMsg = `Pipeline error: ${error instanceof Error ? error.message : "Unknown error"}`;
       loggers.api.error("[AutomatedIngestion] " + errorMsg);
@@ -1047,18 +1041,49 @@ export class AutomatedIngestionService {
         durationMs: Date.now() - startTime,
       };
 
-      // Try to update run record with error
-      if (!isDryRun && runId && !runId.startsWith("dry-run")) {
-        try {
-          await this.updateRun(runId, result);
-        } catch (updateError) {
-          loggers.api.error("[AutomatedIngestion] Failed to update run with error status", {
-            error: updateError instanceof Error ? updateError.message : "Unknown error",
-          });
+      // #124: persistence happens once, in the `finally` block below.
+      return (pipelineResult = result);
+    } finally {
+      // #124: single finalization path. Every return above — every early-exit
+      // branch, the success path, and the catch block just above — funnels
+      // through here exactly once, so the run row can never be abandoned in
+      // its create-time state (status='running', every counter 0) as long as
+      // this function ran long enough to build a result. This is what was
+      // missing for run 483bd3e8 (2026-08-29): 9 articles were inserted, but
+      // the one and only updateRun() call — at the old end of the success
+      // path — failed and was silently swallowed, and nothing else ever
+      // touched the row again.
+      //
+      // Two gaps remain, neither addressed here:
+      // 1. A hard process kill (SIGKILL, or a platform-level function
+      //    termination) that stops execution before this block starts
+      //    running at all — no JS code runs after that, `finally` included.
+      //    The checkpoint write right after the ingest loop above narrows
+      //    that remaining window as far as is possible without such a kill
+      //    being unstoppable by definition.
+      // 2. runDailyDiscovery's Promise.race(executeDailyDiscovery(...),
+      //    timeout) does not cancel the losing side: if the timeout wins,
+      //    its handler writes status='failed', but this executeDailyDiscovery
+      //    call keeps running in the background and can still finish afterward
+      //    — its own finalize write here would then overwrite that
+      //    status='failed' row with a stale terminal status from a run the
+      //    caller already gave up on. Pre-existing (not introduced by this
+      //    change); tracked separately rather than fixed here.
+      if (!isDryRun && runId && !runId.startsWith("dry-run") && pipelineResult) {
+        // #124: restore error-reporting parity with the pre-fix success
+        // path, which appended "Status update failed: …" to the returned
+        // result when its one persistence write failed. finalizeRun's
+        // return value tells us the same thing here; mutating
+        // pipelineResult.errors reaches the caller because `return (pipelineResult
+        // = result)` above already handed back this same object by
+        // reference — the promise has not settled yet while `finally` runs.
+        const persisted = await this.finalizeRun(runId, pipelineResult);
+        if (!persisted) {
+          pipelineResult.errors.push(
+            `Run row persistence failed after retry (runId=${runId}); ingestion result above is accurate, but the automated_ingestion_runs row was not updated to reflect it.`
+          );
         }
       }
-
-      return result;
     }
   }
 
@@ -1538,6 +1563,63 @@ export class AutomatedIngestionService {
         updateData: updates.status ? { status: updates.status } : undefined,
       });
       throw new Error(`Database update failed: ${errorMsg}`);
+    }
+  }
+
+  /**
+   * Why: #124 — every run-row write used to go straight through updateRun()
+   * from several different call sites, each with its own log-and-swallow
+   * catch and no retry. When that single write failed (e.g. a dropped DB
+   * connection near a serverless timeout), the row was abandoned silently:
+   * status stuck 'running', completedAt null, every counter still the
+   * create-time 0 — exactly what run 483bd3e8 (2026-08-29) shows, despite 9
+   * article rows already carrying its ingestion_run_id. Centralizing every
+   * write through this one retrying, never-throwing helper means a single
+   * transient failure no longer strands the row, and every caller gets the
+   * same behavior instead of re-implementing (or forgetting) it. Returning
+   * whether the write ultimately persisted (rather than just swallowing)
+   * restores parity with the pre-#124 success path, which appended a
+   * "Status update failed" message to the returned result's `errors` on a
+   * failed write — see the `finally` block in executeDailyDiscovery, the
+   * only caller that acts on this return value.
+   * What: Calls updateRun() and, on failure, retries exactly once after a
+   * short delay. Never throws: a second failure is logged at error level
+   * and swallowed rather than propagated, because a persistence failure
+   * must never mask an otherwise successful or already-handled pipeline
+   * result. Returns `true` when either attempt succeeded, `false` when both
+   * failed.
+   * Test: `finalizeRun` retry-then-succeed and swallow-second-failure cases,
+   * plus the caller-side error-parity assertion, in
+   * automated-ingestion.run-finalization.test.ts.
+   */
+  private async finalizeRun(runId: string, updates: Partial<IngestionResult>): Promise<boolean> {
+    try {
+      await this.updateRun(runId, updates);
+      return true;
+    } catch (firstError) {
+      loggers.api.warn("[AutomatedIngestion] updateRun failed, retrying once", {
+        runId,
+        status: updates.status,
+        error: firstError instanceof Error ? firstError.message : "Unknown error",
+      });
+
+      // Brief delay before the single retry — a transient connection drop
+      // is the failure this is meant to recover from, not a sustained
+      // outage (which the swallow below still handles safely).
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      try {
+        await this.updateRun(runId, updates);
+        return true;
+      } catch (secondError) {
+        loggers.api.error("[AutomatedIngestion] updateRun failed twice; run row not persisted for this write", {
+          runId,
+          status: updates.status,
+          articlesIngested: updates.articlesIngested,
+          error: secondError instanceof Error ? secondError.message : "Unknown error",
+        });
+        return false;
+      }
     }
   }
 
