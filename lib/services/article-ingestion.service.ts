@@ -582,6 +582,12 @@ IMPORTANT: You MUST return ONLY a valid JSON object. Do not include any explanat
       });
     }
 
+    // The `**Related Links:**` block requested in `rewritten_content` below is
+    // how source links reach `article.content`. The news detail view strips
+    // that heading from the rendered prose and re-renders the links once under
+    // "Referenced Links" (see lib/article-content-links.ts). Dropping the
+    // instruction would silently empty that section for newly ingested
+    // articles.
     const userPrompt = `Analyze this article and extract comprehensive information:
 
 ${content.substring(0, 15000)}
