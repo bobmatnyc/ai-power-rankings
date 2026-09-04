@@ -11,6 +11,26 @@
 import { loggers } from '@/lib/logger';
 
 /**
+ * Which discovery pass produced a result.
+ *
+ * Why: #132 — the `time_range: 'day'` recency pass (#125) and the broader
+ * `days`-bounded window pass return the same shape, so once their results were
+ * merged nothing downstream could tell them apart. Tavily's self-reported
+ * `published_date` is frequently weeks stale even for a page the recency pass
+ * just returned as last-24h content, and every freshness mechanism in the
+ * pipeline keyed off that one field — so a same-day article was gated, sorted,
+ * and finally inserted as if it were a month old.
+ * What: `'recency'` means the result came from the `time_range: 'day'` pass —
+ * Tavily itself asserts the page is from the last day, independent of the date
+ * string it reports. `'window'` means the result came from the broader
+ * `days`-bounded pass (or a supplementary query), where the reported date is
+ * the only freshness signal available.
+ * Test: `dedupeSearchResultsPreferRecency` cases in
+ * tavily-search.service.recency-tagging.test.ts.
+ */
+export type DiscoveredVia = "recency" | "window";
+
+/**
  * Search result structure from Tavily API
  */
 export interface TavilySearchResult {
@@ -21,6 +41,44 @@ export interface TavilySearchResult {
   publishedDate: string | null;
   content?: string;
   score: number;
+  // #132: records which pass found this result, so downstream freshness logic
+  // stops treating Tavily's published_date as the only signal.
+  discoveredVia: DiscoveredVia;
+}
+
+/**
+ * Why: #132 — merging the recency and window passes deduplicated by URL
+ * FIRST-SEEN. That kept the recency entry only because the recency pass
+ * happens to be pushed first; any reordering of the passes would silently drop
+ * the recency tag for a URL both passes returned, and with it the only
+ * same-day signal that does not depend on Tavily's published_date.
+ * What: Deduplicates by URL and, on a collision, keeps the `'recency'`-tagged
+ * entry BY TAG rather than by array position. Position still decides output
+ * ordering (the first occurrence keeps its slot) and still breaks ties when
+ * both entries carry the same tag.
+ * Test: `dedupeSearchResultsPreferRecency` cases in
+ * tavily-search.service.recency-tagging.test.ts, including one with the push
+ * order deliberately reversed.
+ */
+export function dedupeSearchResultsPreferRecency(
+  results: TavilySearchResult[]
+): TavilySearchResult[] {
+  const byUrl = new Map<string, TavilySearchResult>();
+
+  for (const result of results) {
+    const existing = byUrl.get(result.url);
+    if (!existing) {
+      byUrl.set(result.url, result);
+      continue;
+    }
+    // Map.set on an existing key preserves the original insertion position,
+    // so upgrading the tag never reorders the output.
+    if (existing.discoveredVia !== "recency" && result.discoveredVia === "recency") {
+      byUrl.set(result.url, result);
+    }
+  }
+
+  return [...byUrl.values()];
 }
 
 /**
@@ -140,6 +198,9 @@ export class TavilySearchService {
             includeDomains,
             topic,
             timeRange: 'day',
+            // #132: tag every result this pass returns, so the freshness gate
+            // and sort downstream can trust the pass instead of the date.
+            discoveredVia: 'recency',
           });
           results.push(...recentResults);
         } catch (error) {
@@ -174,15 +235,9 @@ export class TavilySearchService {
         results.push(...supplementaryResults);
       }
 
-      // Deduplicate by URL
-      const seen = new Set<string>();
-      const deduplicated = results.filter((result) => {
-        if (seen.has(result.url)) {
-          return false;
-        }
-        seen.add(result.url);
-        return true;
-      });
+      // #132: deduplicate by URL keeping the recency-tagged entry BY TAG, not
+      // by array position — see dedupeSearchResultsPreferRecency().
+      const deduplicated = dedupeSearchResultsPreferRecency(results);
 
       loggers.api.info('[TavilySearch] Search completed', {
         totalResults: results.length,
@@ -214,9 +269,19 @@ export class TavilySearchService {
       // description, is not restricted to topic="news"). Distinct from
       // `days`: this is a discrete bucket, not an arbitrary day count.
       timeRange?: 'day' | 'week' | 'month' | 'year';
+      // #132: which pass this call represents; defaults to the broader window.
+      discoveredVia?: DiscoveredVia;
     }
   ): Promise<TavilySearchResult[]> {
-    const { maxResults, searchDepth, includeDomains = [], topic = 'news', days, timeRange } = options;
+    const {
+      maxResults,
+      searchDepth,
+      includeDomains = [],
+      topic = 'news',
+      days,
+      timeRange,
+      discoveredVia = 'window',
+    } = options;
 
     const requestBody: Record<string, unknown> = {
       api_key: this.apiKey,
@@ -267,13 +332,16 @@ export class TavilySearchService {
 
     const data: TavilyApiResponse = await response.json();
 
-    return data.results.map((result) => this.mapToSearchResult(result));
+    return data.results.map((result) => this.mapToSearchResult(result, discoveredVia));
   }
 
   /**
    * Map Tavily API result to our standard format
    */
-  private mapToSearchResult(result: TavilyApiResult): TavilySearchResult {
+  private mapToSearchResult(
+    result: TavilyApiResult,
+    discoveredVia: DiscoveredVia = 'window'
+  ): TavilySearchResult {
     // Extract domain from URL
     let source = '';
     try {
@@ -291,6 +359,7 @@ export class TavilySearchService {
       publishedDate: result.published_date || null,
       content: result.content,
       score: result.score,
+      discoveredVia,
     };
   }
 

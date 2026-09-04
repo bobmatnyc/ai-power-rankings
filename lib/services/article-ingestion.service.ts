@@ -33,6 +33,14 @@ export const ArticleIngestionSchema = z
         isAutoIngested: z.boolean().optional(),
         ingestionRunId: z.string().optional(),
         discoverySource: z.string().optional(),
+        // #132: which discovery pass found this candidate, and when the run
+        // discovered it. resolveEffectivePublishedDate() needs both to decide
+        // whether the run clock may stand in for a missing article date.
+        discoveredVia: z.enum(["recency", "window"]).optional(),
+        discoveredAt: z.string().optional(),
+        // #132: the run's own freshness window. Absent for a manual admin
+        // ingest, where the resolver's RESOLVER_WINDOW_DAYS default applies.
+        windowDays: z.number().int().positive().optional(),
       })
       .optional(),
   })
