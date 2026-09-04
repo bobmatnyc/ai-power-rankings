@@ -35,6 +35,14 @@ async function main() {
     console.log(`  Ingested: ${run.articlesIngested}`);
     console.log(`  Skipped: ${run.articlesSkipped}`);
     console.log(`  Semantic Skipped: ${run.articlesSkippedSemantic}`);
+    // #132: the two columns that tell "no fresh candidate existed" from "one
+    // existed and failed to insert".
+    console.log(`  Stale Skipped: ${run.articlesSkippedStale}`);
+    const outcomes = Array.isArray(run.candidateOutcomes) ? run.candidateOutcomes : [];
+    console.log(`  Candidate Outcomes: ${outcomes.length}`);
+    if (outcomes.length > 0) {
+      console.log(`  Outcome details: ${JSON.stringify(outcomes).substring(0, 400)}`);
+    }
     console.log(`  Errors: ${run.errorLog?.length || 0}`);
     if (run.errorLog && run.errorLog.length > 0) {
       console.log(`  Error details: ${JSON.stringify(run.errorLog).substring(0, 200)}`);

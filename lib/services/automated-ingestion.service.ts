@@ -3,7 +3,8 @@
  * Coordinates the daily news ingestion pipeline:
  * 1. Creates ingestion run record
  * 2. Discovers articles via BraveSearchService
- * 3. Drops articles whose source published date is stale (see FRESHNESS_WINDOW_DAYS)
+ * 3. Drops window-pass articles whose source published date is stale (see
+ *    FRESHNESS_WINDOW_DAYS and passesFreshnessGate)
  * 4. Filters duplicates via existing articles
  * 5. Assesses quality via ArticleQualityService
  * 6. Ingests passing articles via ArticleIngestionService
@@ -20,7 +21,12 @@ import {
 } from "@/lib/db/schema";
 import { ArticleIngestionService } from "./article-ingestion.service";
 import { BraveSearchService, type BraveSearchResult } from "./brave-search.service";
-import { TavilySearchService, type TavilySearchResult } from "./tavily-search.service";
+import {
+  TavilySearchService,
+  type DiscoveredVia,
+  type TavilySearchResult,
+} from "./tavily-search.service";
+import type { PublishedDateSource } from "./published-date-resolver";
 import {
   ArticleQualityService,
   type QualityAssessment,
@@ -105,6 +111,64 @@ export function isFreshPublishedDate(
   return ageMs <= windowDays * MS_PER_DAY;
 }
 
+/** The two fields the gate-time freshness decisions read off a candidate. */
+export interface FreshnessCandidate {
+  publishedDate: string | null | undefined;
+  discoveredVia?: DiscoveredVia;
+}
+
+/** A candidate with no tag came from the broader window pass (or from Brave). */
+export function discoveredViaOf(item: FreshnessCandidate): DiscoveredVia {
+  return item.discoveredVia ?? "window";
+}
+
+/**
+ * Why: #132 — before extraction runs there is no LLM-extracted date yet, so
+ * the only signals available are the provider's `publishedDate` and which pass
+ * found the candidate. Tavily's date is frequently weeks stale for a page its
+ * own `time_range: 'day'` pass just returned, so keying the gate and the sort
+ * on that date alone dropped or de-prioritized exactly the same-day articles
+ * the recency pass exists to surface.
+ * What: Returns the epoch-ms date to gate and sort on. The provider's date
+ * wins when it parses and falls inside the freshness window. Otherwise a
+ * recency-pass candidate falls back to `nowMs` — the run's discovery time —
+ * because Tavily has asserted the page is last-24h content independently of
+ * the date string it reports. Anything else keeps the parsed date (NaN when
+ * missing or unparseable), so a window candidate behaves exactly as pre-#132.
+ * Test: `provisionalPublishedDateMs` cases in
+ * automated-ingestion.recency-freshness.test.ts.
+ */
+export function provisionalPublishedDateMs(
+  item: FreshnessCandidate,
+  nowMs: number = Date.now(),
+  windowDays: number = FRESHNESS_WINDOW_DAYS
+): number {
+  const parsed = item.publishedDate ? new Date(item.publishedDate).getTime() : Number.NaN;
+  if (!Number.isNaN(parsed) && isFreshPublishedDate(item.publishedDate, nowMs, windowDays)) {
+    return parsed;
+  }
+  if (discoveredViaOf(item) === "recency") return nowMs;
+  return parsed;
+}
+
+/**
+ * Why: #132 — a stale provider date must not drop a candidate the recency pass
+ * found, or the pass adds nothing: the run of 2026-09-03 discovered same-day
+ * pages whose Tavily dates read Aug 20, Aug 21 and Aug 30.
+ * What: Returns true for every recency-pass candidate. A window-pass candidate
+ * keeps the pre-#132 decision — isFreshPublishedDate against the provider date.
+ * Test: `passesFreshnessGate` cases in
+ * automated-ingestion.recency-freshness.test.ts.
+ */
+export function passesFreshnessGate(
+  item: FreshnessCandidate,
+  nowMs: number = Date.now(),
+  windowDays: number = FRESHNESS_WINDOW_DAYS
+): boolean {
+  if (discoveredViaOf(item) === "recency") return true;
+  return isFreshPublishedDate(item.publishedDate, nowMs, windowDays);
+}
+
 /**
  * Why: #125 — discovery is provider-relevance-ordered, not date-ordered.
  * Two caps downstream truncate that relevance order: the content-prep slice
@@ -115,21 +179,30 @@ export function isFreshPublishedDate(
  * freshest-ingested items were consistently 1-3 days old, never same-day,
  * across 6 days of runs. Reordering candidates freshest-first before either
  * cap closes that gap without touching the caps themselves.
- * What: Returns a NEW array (input not mutated) sorted by `publishedDate`
- * descending. Entries with a missing or unparseable date sort after every
- * entry with a valid one — their true age is unknown, and treating an
- * unknown as "freshest" would starve a genuinely fresh dated article of cap
- * space for no evidence-based reason. isFreshPublishedDate's fail-open
- * ("missing/unparseable is fresh") stays unaffected: that gate runs before
- * this on the same list and already decided these entries pass.
- * Test: `sortByFreshness` cases in automated-ingestion.freshness.test.ts.
+ * What: Returns a NEW array (input not mutated) sorted descending by the
+ * PROVISIONAL published date — the provider date when it is inside the
+ * freshness window, else `nowMs` for a recency-pass candidate, else the parsed
+ * provider date (see provisionalPublishedDateMs). #132 changed the sort key
+ * from the raw `publishedDate` to that provisional date, so a recency-pass
+ * candidate carrying a weeks-old Tavily date is no longer ordered behind a
+ * window candidate that merely reports a newer one. Entries whose provisional
+ * date is missing or unparseable sort after every entry with a valid one —
+ * their true age is unknown, and treating an unknown as "freshest" would
+ * starve a genuinely fresh dated article of cap space for no evidence-based
+ * reason. isFreshPublishedDate's fail-open ("missing/unparseable is fresh")
+ * stays unaffected: the gate runs before this on the same list and already
+ * decided these entries pass.
+ * Test: `sortByFreshness` cases in automated-ingestion.freshness.test.ts and
+ * automated-ingestion.recency-freshness.test.ts.
  */
-export function sortByFreshness<T extends { publishedDate: string | null | undefined }>(
-  items: T[]
+export function sortByFreshness<T extends FreshnessCandidate>(
+  items: T[],
+  nowMs: number = Date.now(),
+  windowDays: number = FRESHNESS_WINDOW_DAYS
 ): T[] {
   return [...items].sort((a, b) => {
-    const aTime = a.publishedDate ? new Date(a.publishedDate).getTime() : NaN;
-    const bTime = b.publishedDate ? new Date(b.publishedDate).getTime() : NaN;
+    const aTime = provisionalPublishedDateMs(a, nowMs, windowDays);
+    const bTime = provisionalPublishedDateMs(b, nowMs, windowDays);
     const aValid = !Number.isNaN(aTime);
     const bValid = !Number.isNaN(bTime);
     if (aValid && bValid) return bTime - aTime;
@@ -137,6 +210,84 @@ export function sortByFreshness<T extends { publishedDate: string | null | undef
     if (bValid) return 1;
     return 0;
   });
+}
+
+/**
+ * What happened to one discovered candidate. Every terminal disposition the
+ * pipeline can reach is representable, so the list explains a zero-yield run.
+ */
+export type CandidateOutcomeKind =
+  | "skipped_stale"
+  | "skipped_duplicate"
+  | "skipped_semantic"
+  | "extraction_failed"
+  | "quality_rejected"
+  | "ingest_failed"
+  | "ingested";
+
+/**
+ * Why: #132 — the run row recorded counts only, so "a fresh candidate existed
+ * but failed to insert" and "no fresh candidate existed" produced identical
+ * rows. The 2026-09-03 run passed 5 candidates through quality and ingested 3;
+ * which two failed, and why, was unknowable afterward.
+ * What: One small, JSON-serializable record per candidate. `effectiveDate` and
+ * `publishedDateSource` are present only for an `ingested` outcome, where the
+ * resolver has actually run — see resolveEffectivePublishedDate().
+ */
+export interface CandidateOutcome {
+  url: string;
+  discoveredVia: DiscoveredVia;
+  sourceDate: string | null;
+  provisionalDate: string | null;
+  outcome: CandidateOutcomeKind;
+  reason?: string;
+  effectiveDate?: string;
+  publishedDateSource?: PublishedDateSource;
+}
+
+/**
+ * Cap on persisted outcome entries. A run discovers on the order of 20
+ * candidates, so 100 covers an operator-widened backfill while keeping the
+ * jsonb column small enough that reading a run row stays cheap.
+ */
+export const CANDIDATE_OUTCOME_LIMIT = 100;
+
+/**
+ * Why: #132 — the outcome list is diagnostic detail. It must never be able to
+ * take down the write that carries the run's terminal status and counters, so
+ * every failure mode is forced through one place the caller can guard.
+ * What: Caps the list at CANDIDATE_OUTCOME_LIMIT and round-trips it through
+ * JSON, which throws on anything the jsonb column could not hold (a circular
+ * reference, a value with a throwing toJSON). Callers catch that and persist
+ * the rest of the write without this field.
+ * Test: `serializeCandidateOutcomes` cases in
+ * automated-ingestion.candidate-outcomes.test.ts.
+ */
+export function serializeCandidateOutcomes(outcomes: CandidateOutcome[]): CandidateOutcome[] {
+  return JSON.parse(JSON.stringify(outcomes.slice(0, CANDIDATE_OUTCOME_LIMIT)));
+}
+
+/**
+ * Why: #132 — the two new run-row columns ship in a migration, and a deploy can
+ * reach production before that migration is applied. Without this, the first
+ * write of either field fails with Postgres 42703 and takes the run's terminal
+ * status and every counter down with it, recreating exactly the stuck-'running'
+ * rows #124 fixed.
+ * What: Returns true only for an undefined-column error naming one of the two
+ * columns this issue added. Any other error class — a dropped connection, a
+ * constraint violation, an undefined column from unrelated schema drift —
+ * returns false, so it still propagates to finalizeRun's retry unchanged.
+ * Test: `isUndefinedNewRunColumnError` cases in
+ * automated-ingestion.candidate-outcomes.test.ts.
+ */
+export function isUndefinedNewRunColumnError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const candidate = error as { code?: unknown; message?: unknown };
+  const code = typeof candidate.code === "string" ? candidate.code : "";
+  const message = typeof candidate.message === "string" ? candidate.message : "";
+  const isUndefinedColumn = code === "42703" || /undefined[_ ]column/i.test(message);
+  if (!isUndefinedColumn) return false;
+  return /candidate_outcomes|articles_skipped_stale/i.test(message);
 }
 
 // ---------------------------------------------------------------------------
@@ -199,14 +350,23 @@ export interface IngestionResult {
   articlesSkipped: number;
   articlesSkippedSemantic: number;
   /**
-   * Discovered articles rejected by the freshness gate (source published date
-   * older than FRESHNESS_WINDOW_DAYS). Included in `articlesSkipped`; broken out
-   * so an all-stale run is diagnosable at a glance instead of looking like an
-   * ordinary all-duplicates day. Reported in the run's logs and API response;
-   * the persisted distinguishing signal is `articles_ingested = 0` alongside a
-   * positive `articles_discovered` (no new column, so no migration).
+   * Discovered articles rejected by the freshness gate — a window-pass
+   * candidate whose source published date is older than FRESHNESS_WINDOW_DAYS.
+   * A recency-pass candidate is never counted here (#132). Included in
+   * `articlesSkipped`; broken out so an all-stale run is diagnosable at a
+   * glance instead of looking like an ordinary all-duplicates day. #132 gave
+   * it a column of its own (`articles_skipped_stale`, migration 0013) — before
+   * that it was computed every run and silently dropped, leaving
+   * `articles_ingested = 0` against a positive `articles_discovered` as the
+   * only persisted signal.
    */
   articlesSkippedStale: number;
+  /**
+   * #132: per-candidate dispositions for this run, capped at
+   * CANDIDATE_OUTCOME_LIMIT. Persisted to
+   * automated_ingestion_runs.candidate_outcomes.
+   */
+  candidateOutcomes: CandidateOutcome[];
   rankingChanges: number;
   estimatedCostUsd: number;
   errors: string[];
@@ -235,6 +395,9 @@ interface SearchResultWithContent {
   source: string;
   publishedDate: string | null;
   content: string;
+  // #132: carried through content prep so the insert path can tell the recency
+  // pass from the window pass — see resolveEffectivePublishedDate().
+  discoveredVia: DiscoveredVia;
 }
 
 /**
@@ -510,6 +673,7 @@ export class AutomatedIngestionService {
         articlesSkipped: 0,
         articlesSkippedSemantic: 0,
         articlesSkippedStale: 0,
+        candidateOutcomes: [],
         rankingChanges: 0,
         estimatedCostUsd: 0,
         errors: [errorMsg],
@@ -544,6 +708,9 @@ export class AutomatedIngestionService {
     let articlesSkipped = 0;
     let articlesSkippedSemantic = 0;
     let articlesSkippedStale = 0;
+    // #132: per-candidate dispositions, so a zero-yield run can be read back
+    // as "no fresh candidate existed" vs "one existed and failed to insert".
+    const candidateOutcomes: CandidateOutcome[] = [];
     let rankingChanges = 0;
     let estimatedCostUsd = 0;
     let runId = "";
@@ -582,6 +749,7 @@ export class AutomatedIngestionService {
           articlesSkipped: 0,
           articlesSkippedSemantic: 0,
           articlesSkippedStale: 0,
+          candidateOutcomes,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors,
@@ -619,6 +787,7 @@ export class AutomatedIngestionService {
           articlesSkipped: 0,
           articlesSkippedSemantic: 0,
           articlesSkippedStale: 0,
+          candidateOutcomes,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors: [],
@@ -649,10 +818,42 @@ export class AutomatedIngestionService {
       // (content-prep slice below, and the final maxArticles slice) so a
       // same-day article can't be crowded out by an older, higher-relevance
       // one — see sortByFreshness().
-      const freshResults = sortByFreshness(
-        searchResults.filter((r) => isFreshPublishedDate(r.publishedDate, nowMs, freshnessWindowDays))
+      // #132: a recency-pass candidate is never dropped for a stale Tavily
+      // date, and the sort key is the provisional date rather than the raw
+      // provider one — see passesFreshnessGate() and sortByFreshness().
+      const recordOutcome = (
+        item: { url: string; publishedDate: string | null | undefined; discoveredVia?: DiscoveredVia },
+        outcome: CandidateOutcomeKind,
+        reason?: string,
+        extra?: { effectiveDate?: string; publishedDateSource?: PublishedDateSource }
+      ): void => {
+        if (candidateOutcomes.length >= CANDIDATE_OUTCOME_LIMIT) return;
+        const provisionalMs = provisionalPublishedDateMs(item, nowMs, freshnessWindowDays);
+        candidateOutcomes.push({
+          url: item.url.substring(0, 300),
+          discoveredVia: discoveredViaOf(item),
+          sourceDate: item.publishedDate ?? null,
+          provisionalDate: Number.isNaN(provisionalMs)
+            ? null
+            : new Date(provisionalMs).toISOString(),
+          outcome,
+          ...(reason ? { reason: reason.substring(0, 120) } : {}),
+          ...extra,
+        });
+      };
+
+      const staleResults = searchResults.filter(
+        (r) => !passesFreshnessGate(r, nowMs, freshnessWindowDays)
       );
-      articlesSkippedStale = searchResults.length - freshResults.length;
+      for (const stale of staleResults) {
+        recordOutcome(stale, "skipped_stale", `source date outside ${freshnessWindowDays}d window`);
+      }
+      const freshResults = sortByFreshness(
+        searchResults.filter((r) => passesFreshnessGate(r, nowMs, freshnessWindowDays)),
+        nowMs,
+        freshnessWindowDays
+      );
+      articlesSkippedStale = staleResults.length;
 
       if (articlesSkippedStale > 0) {
         loggers.api.warn("[AutomatedIngestion] Filtered stale articles", {
@@ -681,6 +882,7 @@ export class AutomatedIngestionService {
           articlesSkipped: articlesSkippedStale,
           articlesSkippedSemantic: 0,
           articlesSkippedStale,
+          candidateOutcomes,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors: [],
@@ -697,6 +899,10 @@ export class AutomatedIngestionService {
       const existingUrls = await this.checkDuplicates(urls);
       const articlesWithoutUrlDuplicates = freshResults.filter((r) => !existingUrls.has(r.url));
       const urlDuplicatesCount = freshResults.length - articlesWithoutUrlDuplicates.length;
+      // #132: record which candidate died where, not just how many.
+      for (const duplicate of freshResults.filter((r) => existingUrls.has(r.url))) {
+        recordOutcome(duplicate, "skipped_duplicate", "source URL already ingested");
+      }
       loggers.api.info("[AutomatedIngestion] Filtered URL duplicates", {
         duplicates: urlDuplicatesCount,
         remaining: articlesWithoutUrlDuplicates.length,
@@ -711,6 +917,11 @@ export class AutomatedIngestionService {
       );
       articlesSkippedSemantic = articlesWithoutUrlDuplicates.length - newArticles.length;
       articlesSkipped = articlesSkippedStale + urlDuplicatesCount + articlesSkippedSemantic;
+      // #132: record which candidate died where, not just how many.
+      const survivingUrls = new Set(newArticles.map((a) => a.url));
+      for (const dropped of articlesWithoutUrlDuplicates.filter((a) => !survivingUrls.has(a.url))) {
+        recordOutcome(dropped, "skipped_semantic", "semantic duplicate of a recent article");
+      }
 
       loggers.api.info("[AutomatedIngestion] Filtered all duplicates", {
         staleArticles: articlesSkippedStale,
@@ -731,6 +942,7 @@ export class AutomatedIngestionService {
           articlesSkipped,
           articlesSkippedSemantic,
           articlesSkippedStale,
+          candidateOutcomes,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors: [],
@@ -765,6 +977,7 @@ export class AutomatedIngestionService {
             source: article.source,
           });
           failedFetches.push({ url: article.url, reason: "blocked_domain" });
+          recordOutcome(article, "extraction_failed", "blocked_domain"); // #132
           continue;
         }
 
@@ -789,6 +1002,7 @@ export class AutomatedIngestionService {
             source: article.source,
             publishedDate: article.publishedDate,
             content: tavilyContent,
+            discoveredVia: discoveredViaOf(article), // #132
           });
         } else {
           // Fallback: fetch content using extraction chain (Tavily Extract → Jina Reader → Basic HTML)
@@ -803,10 +1017,12 @@ export class AutomatedIngestionService {
                 source: article.source,
                 publishedDate: article.publishedDate,
                 content,
+                discoveredVia: discoveredViaOf(article), // #132
               });
             } else {
               // Content extraction returned null - all methods failed gracefully
               failedFetches.push({ url: article.url, reason: "all_extraction_methods_failed" });
+              recordOutcome(article, "extraction_failed", "all_extraction_methods_failed"); // #132
             }
           } catch (error) {
             // This catch should rarely be hit since fetchArticleContent handles errors gracefully
@@ -823,6 +1039,7 @@ export class AutomatedIngestionService {
             this.autoBlockDomainIfNeeded(article.url, errorMsg);
 
             failedFetches.push({ url: article.url, reason: errorMsg.substring(0, 100) });
+            recordOutcome(article, "extraction_failed", errorMsg); // #132
             // Continue to next article - don't let one failure stop the batch
           }
         }
@@ -859,6 +1076,7 @@ export class AutomatedIngestionService {
           articlesSkipped: articlesSkipped + newArticles.length,
           articlesSkippedSemantic,
           articlesSkippedStale,
+          candidateOutcomes,
           rankingChanges: 0,
           estimatedCostUsd: 0,
           errors: ["Could not fetch content for any discovered articles"],
@@ -904,6 +1122,16 @@ export class AutomatedIngestionService {
         });
         articlesPassedQuality = passingArticles.length;
 
+        // #132: record which candidate died where, not just how many.
+        articlesWithContent.forEach((assessed, index) => {
+          if (qualityResults[index]?.shouldIngest === true) return;
+          recordOutcome(
+            assessed,
+            "quality_rejected",
+            qualityResults[index]?.reasoning ?? "no quality assessment returned"
+          );
+        });
+
         loggers.api.info("[AutomatedIngestion] Quality assessment complete", {
           passed: articlesPassedQuality,
           rejected: articlesWithContent.length - articlesPassedQuality,
@@ -935,6 +1163,11 @@ export class AutomatedIngestionService {
               isAutoIngested: true,
               ingestionRunId: runId,
               discoverySource: searchSource,
+              // #132: the insert path resolves the effective published date
+              // from the LLM-extracted date, this provider date, and — for a
+              // recency-pass candidate only — this discovery time.
+              discoveredVia: article.discoveredVia,
+              discoveredAt: new Date(nowMs).toISOString(),
             },
           });
 
@@ -951,10 +1184,20 @@ export class AutomatedIngestionService {
             const fullResult = ingestionResult as {
               id: string;
               rankingChangesApplied?: number;
+              // #132: attached non-enumerably by ArticleDatabaseService so the
+              // run row can record which date signal actually won.
+              publishedDate?: Date | string | null;
+              publishedDateSource?: PublishedDateSource;
             };
             if (fullResult.id) {
               ingestedArticleIds.push(fullResult.id);
               articlesIngested++;
+              recordOutcome(article, "ingested", undefined, {
+                effectiveDate: fullResult.publishedDate
+                  ? new Date(fullResult.publishedDate).toISOString()
+                  : undefined,
+                publishedDateSource: fullResult.publishedDateSource,
+              }); // #132
               // Record the ACTUAL ranking changes applied, not 0. This fixes the
               // long-standing rankingChanges=0 telemetry defect on live runs.
               rankingChanges += fullResult.rankingChangesApplied ?? 0;
@@ -967,6 +1210,12 @@ export class AutomatedIngestionService {
           const errorMsg = `Failed to ingest ${article.url}: ${error instanceof Error ? error.message : "Unknown error"}`;
           loggers.api.error("[AutomatedIngestion] " + errorMsg);
           errors.push(errorMsg);
+          // #132: an insert failure is the case the run row could not express.
+          recordOutcome(
+            article,
+            "ingest_failed",
+            error instanceof Error ? error.message : "Unknown error"
+          );
           // Continue with next article even if one fails
         }
       }
@@ -990,6 +1239,7 @@ export class AutomatedIngestionService {
           articlesSkipped,
           articlesSkippedSemantic,
           articlesSkippedStale,
+          candidateOutcomes,
           rankingChanges,
           estimatedCostUsd,
           ingestedArticleIds,
@@ -1025,6 +1275,7 @@ export class AutomatedIngestionService {
         articlesSkipped,
         articlesSkippedSemantic,
         articlesSkippedStale,
+        candidateOutcomes,
         rankingChanges,
         estimatedCostUsd,
         errors,
@@ -1058,6 +1309,7 @@ export class AutomatedIngestionService {
         articlesSkipped,
         articlesSkippedSemantic,
         articlesSkippedStale,
+        candidateOutcomes,
         rankingChanges,
         estimatedCostUsd,
         errors,
@@ -1535,8 +1787,20 @@ export class AutomatedIngestionService {
    * (status/completedAt are). Zero rows affected on a checkpoint write
    * always means the run genuinely does not exist (no race-loss case is
    * possible for it), so that path keeps throwing without the extra SELECT.
+   *
+   * #132 added two fields to the same `updateData` builder —
+   * `articlesSkippedStale` (computed every run since the freshness gate landed,
+   * but never mapped, so it was silently dropped) and `candidateOutcomes`. Both
+   * write only through this one path, so they inherit finalizeRun's retry and
+   * the status guard above. Two arms keep them from costing a run its terminal
+   * status: a serialization failure on the outcome list drops that one field
+   * and writes the rest, and an undefined-column error naming either new column
+   * (a deploy that reached production before migration 0013) retries the SAME
+   * write without them. Any other error class still propagates unchanged.
+   *
    * Test: `updateRun` status-guard and existence-check cases in
-   * automated-ingestion.status-guard.test.ts. Existing #124 finalization
+   * automated-ingestion.status-guard.test.ts; the #132 arms in
+   * automated-ingestion.candidate-outcomes.test.ts. Existing #124 finalization
    * behavior (retry, checkpoint-vs-final split) is unchanged — see
    * automated-ingestion.run-finalization.test.ts.
    */
@@ -1576,6 +1840,29 @@ export class AutomatedIngestionService {
       if (updates.articlesSkippedSemantic !== undefined) {
         updateData.articlesSkippedSemantic = updates.articlesSkippedSemantic;
       }
+      // #132: the stale-skip count was computed every run and dropped here —
+      // updateRun never mapped it and no column held it.
+      if (updates.articlesSkippedStale !== undefined) {
+        updateData.articlesSkippedStale = updates.articlesSkippedStale;
+      }
+      // #132: the outcome list is diagnostic detail; a serialization failure
+      // must not take the run's terminal status and counters down with it.
+      if (updates.candidateOutcomes !== undefined) {
+        try {
+          updateData.candidateOutcomes = serializeCandidateOutcomes(updates.candidateOutcomes);
+        } catch (serializationError) {
+          loggers.api.warn(
+            "[AutomatedIngestion] Candidate outcomes could not be serialized; persisting the run row without them",
+            {
+              runId,
+              error:
+                serializationError instanceof Error
+                  ? serializationError.message
+                  : "Unknown serialization error",
+            }
+          );
+        }
+      }
       if (updates.rankingChanges !== undefined) {
         updateData.rankingChanges = updates.rankingChanges;
       }
@@ -1608,7 +1895,30 @@ export class AutomatedIngestionService {
         ? and(eq(automatedIngestionRuns.id, runId), eq(automatedIngestionRuns.status, "running"))
         : eq(automatedIngestionRuns.id, runId);
 
-      const updateResult = await db.update(automatedIngestionRuns).set(updateData).where(whereClause).returning();
+      const applyUpdate = (data: Partial<AutomatedIngestionRun>) =>
+        db.update(automatedIngestionRuns).set(data).where(whereClause).returning();
+
+      let updateResult: Awaited<ReturnType<typeof applyUpdate>>;
+      try {
+        updateResult = await applyUpdate(updateData);
+      } catch (error) {
+        // #132: a deploy can reach production before the migration that adds
+        // articles_skipped_stale and candidate_outcomes. Retry the SAME write
+        // without those two fields so the terminal status and every existing
+        // counter still land; any other error class propagates unchanged to
+        // finalizeRun's retry.
+        if (!isUndefinedNewRunColumnError(error)) throw error;
+
+        loggers.api.warn(
+          "[AutomatedIngestion] Run row is missing the #132 columns; retrying the write without them (migration 0013 not applied yet)",
+          { runId, error: error instanceof Error ? error.message : "Unknown error" }
+        );
+
+        const legacyUpdateData: Partial<AutomatedIngestionRun> = { ...updateData };
+        delete legacyUpdateData.articlesSkippedStale;
+        delete legacyUpdateData.candidateOutcomes;
+        updateResult = await applyUpdate(legacyUpdateData);
+      }
 
       if (updateResult.length === 0) {
         // #128: zero rows on a terminal write is ambiguous by itself — it

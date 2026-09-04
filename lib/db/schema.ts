@@ -276,6 +276,9 @@ export const automatedIngestionRuns = pgTable(
     articlesIngested: integer("articles_ingested").default(0),
     articlesSkipped: integer("articles_skipped").default(0),
     articlesSkippedSemantic: integer("articles_skipped_semantic").default(0),
+    // #132: the stale-skip count was computed every run and silently dropped —
+    // updateRun() never mapped it and no column existed to hold it.
+    articlesSkippedStale: integer("articles_skipped_stale").default(0),
     rankingChanges: integer("ranking_changes").default(0),
 
     // Timing and details
@@ -284,6 +287,12 @@ export const automatedIngestionRuns = pgTable(
     searchQuery: text("search_query"),
     errorLog: jsonb("error_log").default("[]"),
     ingestedArticleIds: jsonb("ingested_article_ids").default("[]"),
+    // #132: per-candidate outcomes (see CandidateOutcome in
+    // lib/services/automated-ingestion.service.ts). Without this, a run that
+    // discovered a fresh candidate and failed to insert it is indistinguishable
+    // from a run where no fresh candidate existed. Capped at
+    // CANDIDATE_OUTCOME_LIMIT entries.
+    candidateOutcomes: jsonb("candidate_outcomes").default("[]"),
     estimatedCostUsd: decimal("estimated_cost_usd", { precision: 10, scale: 4 }).default("0"),
 
     // Timestamps

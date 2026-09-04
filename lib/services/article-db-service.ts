@@ -28,9 +28,9 @@ import {
   cleanToolMentions,
   ensureArray,
   validateImportanceScore,
-  validatePublishedDate,
   validateSentimentScore,
 } from "@/lib/types/article-analysis";
+import { resolveEffectivePublishedDate } from "./published-date-resolver";
 import {
   AIAnalyzer,
   type ArticleIngestionInput,
@@ -255,6 +255,19 @@ export class ArticleDatabaseService {
           analysis.company_mentions
         );
 
+        // #132: Tavily's self-reported date is almost always truthy, so the
+        // previous `metadata.publishedDate || analysis.published_date` made it
+        // unconditionally beat the date the LLM read out of the article text —
+        // the direct mechanism behind the 2026-09-03 run inserting three
+        // same-day articles dated Aug 20, Aug 21 and Aug 30. Resolution now
+        // runs here, after extraction and analysis, where both signals exist.
+        const effectivePublishedDate = resolveEffectivePublishedDate({
+          articleDate: analysis.published_date,
+          searchDate: input.metadata?.publishedDate,
+          discoveredVia: input.metadata?.discoveredVia,
+          discoveredAt: input.metadata?.discoveredAt,
+        });
+
         // Create article with validated data
         const newArticle: NewArticle = {
           slug,
@@ -283,9 +296,7 @@ export class ArticleDatabaseService {
             input.metadata?.author ||
             (analysis.source && analysis.source !== "Unknown" ? analysis.source : "APR Team")
           ).substring(0, 255),
-          publishedDate: validatePublishedDate(
-            input.metadata?.publishedDate || analysis.published_date
-          ),
+          publishedDate: effectivePublishedDate.date, // #132: see the resolver above
           ingestedBy: "admin",
           status: "active",
           isProcessed: false,
@@ -321,6 +332,16 @@ export class ArticleDatabaseService {
           action: "ingest",
           status: "started",
           performedBy: "admin",
+          // #132: record which date signal won, and the two it beat, so a
+          // stale insert stays auditable per article rather than only
+          // inferable from the run row.
+          debugInfo: {
+            publishedDateSource: effectivePublishedDate.source,
+            effectivePublishedDate: effectivePublishedDate.date.toISOString(),
+            searchPublishedDate: input.metadata?.publishedDate ?? null,
+            articlePublishedDate: analysis.published_date ?? null,
+            discoveredVia: input.metadata?.discoveredVia ?? null,
+          },
         });
 
         // Create new companies if needed (only if article was saved)
@@ -415,6 +436,14 @@ export class ArticleDatabaseService {
         // Non-enumerable to avoid altering the persisted/serialized Article shape.
         Object.defineProperty(article, "rankingChangesApplied", {
           value: rankingChanges.length,
+          enumerable: false,
+        });
+
+        // #132: same non-enumerable channel, so AutomatedIngestionService can
+        // record which date signal won in the run's candidate_outcomes without
+        // changing the persisted/serialized Article shape.
+        Object.defineProperty(article, "publishedDateSource", {
+          value: effectivePublishedDate.source,
           enumerable: false,
         });
 

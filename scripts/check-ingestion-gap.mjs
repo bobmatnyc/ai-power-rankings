@@ -19,7 +19,13 @@
  *   OPENROUTER_CREDIT_ERROR_PATTERN in any of the fetched runs), and ZERO_YIELD_STREAK
  *   (the last CONSECUTIVE_ZERO_YIELD_RUNS runs all ingested 0 articles). Any one of these
  *   trips the alert; all applicable reasons are printed so an operator can tell a stalled
- *   scraper from a zero-yield or billing failure at a glance. The evaluation logic takes
+ *   scraper from a zero-yield or billing failure at a glance.
+ *   #132 added two columns this script deliberately does NOT read: articles_skipped_stale
+ *   and candidate_outcomes. They explain WHY a run yielded zero — no fresh candidate
+ *   existed, or one existed and failed to insert — which is diagnosis, not detection, and
+ *   the four conditions above already fire on the yield itself. An operator investigating a
+ *   ZERO_YIELD_STREAK reads them off the run row (scripts/check-ingestion-runs.ts prints
+ *   both); adding them here would only widen this query without changing any verdict. The evaluation logic takes
  *   no DB dependency, so it is unit-testable without a live database (see
  *   tests/unit/check-ingestion-gap.test.ts).
  * Test: Run locally with a valid DATABASE_URL — prints `OK: ...` and exits 0 when the
@@ -156,6 +162,8 @@ async function main() {
     // Most-recent-first; fetch enough rows to evaluate both the single-latest-run checks
     // (gap, failed status, credits) and the consecutive-zero-yield streak in one query.
     const rows = await sql`
+      -- #132: articles_skipped_stale / candidate_outcomes are intentionally not selected —
+      -- see the header. This query stays narrow enough to run against a pre-migration DB.
       SELECT started_at, status, articles_ingested, error_log
       FROM automated_ingestion_runs
       ORDER BY started_at DESC
