@@ -266,6 +266,9 @@ export class ArticleDatabaseService {
           searchDate: input.metadata?.publishedDate,
           discoveredVia: input.metadata?.discoveredVia,
           discoveredAt: input.metadata?.discoveredAt,
+          // #132: undefined for a manual ingest, where the resolver falls back
+          // to RESOLVER_WINDOW_DAYS.
+          windowDays: input.metadata?.windowDays,
         });
 
         // Create article with validated data

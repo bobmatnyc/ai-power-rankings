@@ -1168,6 +1168,10 @@ export class AutomatedIngestionService {
               // recency-pass candidate only — this discovery time.
               discoveredVia: article.discoveredVia,
               discoveredAt: new Date(nowMs).toISOString(),
+              // #132: the resolver must judge staleness against the SAME
+              // window the gate used, or an operator-widened run (--days=30)
+              // admits a candidate the resolver then rejects at 14 days.
+              windowDays: freshnessWindowDays,
             },
           });
 

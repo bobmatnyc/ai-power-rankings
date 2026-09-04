@@ -54,7 +54,11 @@ export interface ResolvePublishedDateInput {
   discoveredAt?: string | number | Date | null;
   /** Injectable clock, for deterministic tests. */
   nowMs?: number;
-  /** Freshness window; callers pass the run's own window. */
+  /**
+   * Freshness window. The ingestion pipeline passes the run's own window
+   * (`options.days ?? FRESHNESS_WINDOW_DAYS`) so an operator-widened backfill
+   * is not gated back down here; RESOLVER_WINDOW_DAYS applies when absent.
+   */
   windowDays?: number;
 }
 

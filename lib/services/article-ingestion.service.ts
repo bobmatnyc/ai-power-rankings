@@ -38,6 +38,9 @@ export const ArticleIngestionSchema = z
         // whether the run clock may stand in for a missing article date.
         discoveredVia: z.enum(["recency", "window"]).optional(),
         discoveredAt: z.string().optional(),
+        // #132: the run's own freshness window. Absent for a manual admin
+        // ingest, where the resolver's RESOLVER_WINDOW_DAYS default applies.
+        windowDays: z.number().int().positive().optional(),
       })
       .optional(),
   })
