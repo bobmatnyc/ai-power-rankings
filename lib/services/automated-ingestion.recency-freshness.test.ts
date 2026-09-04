@@ -11,6 +11,7 @@ import type { TavilySearchService } from "./tavily-search.service";
 import type { BraveSearchService } from "./brave-search.service";
 import type { ArticleQualityService } from "./article-quality.service";
 import type { ArticleIngestionService } from "./article-ingestion.service";
+import { resolveEffectivePublishedDate } from "./published-date-resolver";
 
 /**
  * Regression tests for #132 phase A — gate-time provisional freshness.
@@ -95,8 +96,16 @@ function injectServices(
   } as unknown as Partial<ArticleIngestionService>;
 }
 
-function runDiscovery(service: AutomatedIngestionService): Promise<IngestionResult> {
-  return service.runDailyDiscovery({ dryRun: true, skipQualityCheck: true, maxArticles: 20 });
+function runDiscovery(
+  service: AutomatedIngestionService,
+  days?: number
+): Promise<IngestionResult> {
+  return service.runDailyDiscovery({
+    dryRun: true,
+    skipQualityCheck: true,
+    maxArticles: 20,
+    ...(days === undefined ? {} : { days }),
+  });
 }
 
 describe("passesFreshnessGate (#132)", () => {
@@ -239,5 +248,65 @@ describe("AutomatedIngestionService - recency candidates survive the gate (#132)
     const metadata = ingestArticle.mock.calls[0][0].metadata;
     expect(metadata.discoveredVia).toBe("recency");
     expect(Number.isNaN(new Date(metadata.discoveredAt).getTime())).toBe(false);
+  });
+});
+
+/**
+ * The gate and the resolver must judge staleness against the SAME window.
+ * `freshnessWindowDays` is `options.days ?? FRESHNESS_WINDOW_DAYS`, so an
+ * operator running `--days=30` widens the gate; if that width does not reach
+ * the insert path, the resolver keeps applying its own 14-day default and
+ * rejects a candidate the gate deliberately admitted.
+ */
+describe("AutomatedIngestionService - widened window reaches the resolver (#132)", () => {
+  let service: AutomatedIngestionService;
+  let ingestArticle: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    service = new AutomatedIngestionService();
+    ingestArticle = vi.fn().mockResolvedValue({ predictedChanges: [] });
+  });
+
+  it("carries the run's freshness window in the insert metadata", async () => {
+    injectServices(service, [searchResult(daysAgo(20), "window")], ingestArticle);
+
+    await runDiscovery(service, 30);
+
+    expect(ingestArticle.mock.calls[0][0].metadata.windowDays).toBe(30);
+  });
+
+  it("defaults to the standard window when the run does not widen it", async () => {
+    injectServices(service, [searchResult(daysAgo(3), "window")], ingestArticle);
+
+    await runDiscovery(service);
+
+    expect(ingestArticle.mock.calls[0][0].metadata.windowDays).toBe(FRESHNESS_WINDOW_DAYS);
+  });
+
+  /**
+   * The reported failure, end to end: a 30-day run admits a window candidate
+   * whose Tavily date is 20 days old, and the article text carries a 25-day-old
+   * date. Both are inside the run's window, so the LLM-extracted date must win
+   * and the source must read `article`. Before the window was threaded through
+   * `metadata`, the resolver applied 14 days, rejected both, and fell through to
+   * `fallback` — which also picks the Tavily date over the article's own.
+   */
+  it("resolves a 25-day-old article date under an operator-widened 30-day run", async () => {
+    injectServices(service, [searchResult(daysAgo(20), "window")], ingestArticle);
+
+    await runDiscovery(service, 30);
+
+    const metadata = ingestArticle.mock.calls[0][0].metadata;
+    const articleDate = daysAgo(25);
+    const resolved = resolveEffectivePublishedDate({
+      articleDate,
+      searchDate: metadata.publishedDate,
+      discoveredVia: metadata.discoveredVia,
+      discoveredAt: metadata.discoveredAt,
+      windowDays: metadata.windowDays,
+    });
+
+    expect(resolved.source).toBe("article");
+    expect(resolved.date.toISOString()).toBe(articleDate);
   });
 });
