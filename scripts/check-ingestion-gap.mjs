@@ -19,7 +19,10 @@
  *   OPENROUTER_CREDIT_ERROR_PATTERN in any of the fetched runs), and ZERO_YIELD_STREAK
  *   (the last CONSECUTIVE_ZERO_YIELD_RUNS runs all ingested 0 articles). Any one of these
  *   trips the alert; all applicable reasons are printed so an operator can tell a stalled
- *   scraper from a zero-yield or billing failure at a glance.
+ *   scraper from a zero-yield or billing failure at a glance. Every outcome — healthy or
+ *   alerting — also ends with `LAST_STATUS=<status>` and `LAST_RUN_STARTED=<iso>` (#134),
+ *   the machine-readable state the gap-detector workflow reads before deciding whether
+ *   re-triggering the production cron is safe.
  *   #132 added two columns this script deliberately does NOT read: articles_skipped_stale
  *   and candidate_outcomes. They explain WHY a run yielded zero — no fresh candidate
  *   existed, or one existed and failed to insert — which is diagnosis, not detection, and
@@ -86,7 +89,11 @@ export function evaluateIngestionRuns(rows, nowMs = Date.now()) {
     return {
       ok: false,
       exitCode: 1,
-      lines: ["ALERT[NO_RUNS_EVER]: no ingestion run ever recorded (automated_ingestion_runs is empty)"],
+      lines: [
+        "ALERT[NO_RUNS_EVER]: no ingestion run ever recorded (automated_ingestion_runs is empty)",
+        "LAST_STATUS=none",
+        "LAST_RUN_STARTED=none",
+      ],
     };
   }
 
@@ -135,8 +142,17 @@ export function evaluateIngestionRuns(rows, nowMs = Date.now()) {
     }
   }
 
+  // #134: every outcome ends with the same two machine-readable lines so a consumer can
+  // read the latest row's state without re-parsing prose. The gap-detector workflow's
+  // fallback trigger needs LAST_STATUS to refuse to fire while a row is still 'running'
+  // (createRun() has no concurrency guard, and run 483bd3e8 stuck at 'running' for good —
+  // see lib/services/automated-ingestion.service.ts, the #124 checkpoint comment), and
+  // LAST_RUN_STARTED to tell "the fallback wrote a new row" from "nothing changed".
+  // Appended, never prepended: `lines[0]` stays the OK/first-ALERT line callers expect.
+  const stateLines = [`LAST_STATUS=${latest.status ?? "unknown"}`, `LAST_RUN_STARTED=${lastRunIso}`];
+
   if (alerts.length > 0) {
-    return { ok: false, exitCode: 1, lines: alerts };
+    return { ok: false, exitCode: 1, lines: [...alerts, ...stateLines] };
   }
 
   return {
@@ -144,6 +160,7 @@ export function evaluateIngestionRuns(rows, nowMs = Date.now()) {
     exitCode: 0,
     lines: [
       `OK: last ingestion run ${ageHoursStr}h ago (${lastRunIso}), status='${latest.status}', ${latestArticlesIngested} articles ingested`,
+      ...stateLines,
     ],
   };
 }
