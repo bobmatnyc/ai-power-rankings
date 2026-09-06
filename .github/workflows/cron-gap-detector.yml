@@ -10,20 +10,44 @@ name: Ingestion gap detector
 # articles for several runs running — independent of the failure cause. A failed job
 # triggers GitHub's built-in failed-workflow email to the maintainer (no webhook/Slack
 # wired by design).
+#
+# #134: a STALLED alert only says "no row landed"; it cannot distinguish a scheduler that
+# never fired from a scheduler that fired and got a 401. So on STALLED this job now calls
+# the production cron route itself from the runner, re-runs the same DB recency check, and
+# records what happened — a 401 proves the secrets diverged, a 2xx followed by a fresh row
+# is a recovery (and a backfill), a 2xx with no new row is a route that wrote nothing. The
+# same call is available on demand via the force_trigger dispatch input, which replaces
+# running scripts/trigger-ingestion.ts from a laptop.
 on:
   schedule:
     # 09:00 UTC — 3h after the 06:00 UTC daily-news cron, so a missed daily run is caught
     # the same morning.
     - cron: '0 9 * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      force_trigger:
+        description: 'Call the production ingestion cron even when the gap check passes (manual backfill path). Requires the CRON_SECRET repository secret.'
+        type: boolean
+        default: false
+        required: false
+
+# Single source for the production origin the fallback trigger calls, so the host is not
+# repeated per step. Set the PRODUCTION_BASE_URL repository variable to point this at a
+# different deployment; the literal below is only the default.
+env:
+  PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://aipowerranking.com' }}
+  # app/api/cron/daily-news/route.ts declares `export const maxDuration = 300` (5 minutes),
+  # so the client timeout must exceed that — otherwise a healthy-but-slow ingestion run is
+  # misreported as a network failure. 360 = 300 + 60s of margin.
+  FALLBACK_TIMEOUT_SECONDS: '360'
 
 jobs:
   check-ingestion-gap:
     name: Check last ingestion run
     runs-on: ubuntu-latest
-    # issues:write lets the post-failure step open/comment on an ingestion-alert issue
-    # using the built-in GITHUB_TOKEN — no extra secret/webhook required. contents:read
-    # is the minimum actions/checkout needs.
+    # issues:write lets the post-failure step open/comment on an ingestion-alert issue, and
+    # the post-success step close it, using the built-in GITHUB_TOKEN — no extra
+    # secret/webhook required. contents:read is the minimum actions/checkout needs.
     permissions:
       contents: read
       issues: write
@@ -49,19 +73,169 @@ jobs:
       # github-script step below (additive; it never masks this step's own exit code)
       # while still printing them live to the job log.
       - name: Check ingestion gap
+        id: gap_check
         run: |
           set -o pipefail
           node scripts/check-ingestion-gap.mjs 2>&1 | tee gap-check-output.txt
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
+      # Decide whether to call production, without ever branching on the secret's value.
+      # Only ALERT[STALLED] qualifies: RUN_FAILED / OPENROUTER_CREDITS / ZERO_YIELD_STREAK
+      # all mean the cron IS firing, so re-triggering it would burn API credits without
+      # testing anything. NO_RUNS_EVER is excluded too — an empty table is a fresh-install
+      # or wrong-database problem, not a stalled scheduler.
+      - name: Classify alert and fallback preconditions
+        id: classify
+        if: ${{ !cancelled() }}
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          FORCE_TRIGGER: ${{ inputs.force_trigger }}
+        run: |
+          set -uo pipefail
+
+          stalled=false
+          if [ -f gap-check-output.txt ] && grep -qF 'ALERT[STALLED]' gap-check-output.txt; then
+            stalled=true
+          fi
+
+          # Presence only — the value is never printed, compared, or logged.
+          secret_present=false
+          if [ -n "${CRON_SECRET:-}" ]; then
+            secret_present=true
+          fi
+
+          force=false
+          if [ "${FORCE_TRIGGER:-false}" = "true" ]; then
+            force=true
+          fi
+
+          should_trigger=false
+          if [ "$secret_present" = "true" ] && { [ "$stalled" = "true" ] || [ "$force" = "true" ]; }; then
+            should_trigger=true
+          fi
+
+          {
+            echo "stalled=$stalled"
+            echo "secret_present=$secret_present"
+            echo "force=$force"
+            echo "should_trigger=$should_trigger"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "stalled=$stalled force=$force secret_present=$secret_present should_trigger=$should_trigger"
+
+      # -sS with no -v: curl prints its own diagnostic on failure (e.g. "curl: (28)
+      # Operation timed out") but never echoes request headers, so the bearer token cannot
+      # reach the job log. It is also a GitHub secret, hence masked even if a future edit
+      # did print it. The response body is captured to a file, never to stdout, because the
+      # route echoes back request-shaped fields on error.
+      - name: Trigger production ingestion (fallback)
+        id: fallback
+        if: ${{ !cancelled() && steps.classify.outputs.should_trigger == 'true' }}
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -uo pipefail
+          target="${PRODUCTION_BASE_URL%/}/api/cron/daily-news"
+          echo "GET ${target} (timeout ${FALLBACK_TIMEOUT_SECONDS}s)"
+
+          : > fallback-body.txt
+          http_status=$(curl -sS \
+            --max-time "${FALLBACK_TIMEOUT_SECONDS}" \
+            -o fallback-body.txt \
+            -w '%{http_code}' \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${target}") || http_status='000'
+
+          head -c 400 fallback-body.txt | tr '\n\r\t' '   ' > fallback-body-truncated.txt
+
+          echo "http_status=${http_status}" >> "$GITHUB_OUTPUT"
+          echo "HTTP status: ${http_status}"
+
+      # Reuses scripts/check-ingestion-gap.mjs rather than re-issuing its SQL, so "did a
+      # fresh row land?" is answered by exactly the same query and thresholds the gating
+      # step used. Its exit code is captured, not propagated: a still-stalled DB after the
+      # trigger is a finding to report, not a second failure to raise.
+      - name: Re-check ingestion recency after fallback
+        id: recheck
+        if: ${{ !cancelled() && steps.classify.outputs.should_trigger == 'true' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          set -uo pipefail
+          if node scripts/check-ingestion-gap.mjs > gap-recheck-output.txt 2>&1; then
+            echo "recovered=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "recovered=false" >> "$GITHUB_OUTPUT"
+          fi
+          cat gap-recheck-output.txt
+
+      # Renders one human-readable verdict into fallback-outcome.txt, which the alert step
+      # below pastes into the issue so a reader never has to open the Actions log. Also
+      # mirrored to the job summary, which is the only surface when force_trigger is used
+      # on a passing check (no issue exists to comment on).
+      - name: Summarize fallback outcome
+        if: ${{ !cancelled() }}
+        env:
+          STALLED: ${{ steps.classify.outputs.stalled }}
+          FORCE: ${{ steps.classify.outputs.force }}
+          SECRET_PRESENT: ${{ steps.classify.outputs.secret_present }}
+          SHOULD_TRIGGER: ${{ steps.classify.outputs.should_trigger }}
+          HTTP_STATUS: ${{ steps.fallback.outputs.http_status }}
+          RECOVERED: ${{ steps.recheck.outputs.recovered }}
+        run: |
+          set -uo pipefail
+          : > fallback-outcome.txt
+
+          if [ "${SHOULD_TRIGGER:-false}" != "true" ]; then
+            if [ "${SECRET_PRESENT:-false}" != "true" ] && { [ "${STALLED:-false}" = "true" ] || [ "${FORCE:-false}" = "true" ]; }; then
+              echo 'Fallback trigger skipped: CRON_SECRET secret not configured' >> fallback-outcome.txt
+            else
+              echo 'Fallback trigger not attempted: no ALERT[STALLED] and force_trigger not set' >> fallback-outcome.txt
+            fi
+          else
+            status="${HTTP_STATUS:-000}"
+            echo "Fallback trigger: GET ${PRODUCTION_BASE_URL%/}/api/cron/daily-news -> HTTP ${status}" >> fallback-outcome.txt
+            case "$status" in
+              401)
+                echo 'Reason: 401 — the CRON_SECRET repository secret does not match the CRON_SECRET set in Vercel Production.' >> fallback-outcome.txt
+                ;;
+              2??)
+                if [ "${RECOVERED:-false}" = "true" ]; then
+                  echo 'Reason: recovered — the route ran and the recency re-check now passes.' >> fallback-outcome.txt
+                else
+                  echo 'Reason: the route accepted the call but no fresh run row appeared — it returned 2xx and wrote nothing.' >> fallback-outcome.txt
+                fi
+                ;;
+              000)
+                echo "Reason: no HTTP response — timeout after ${FALLBACK_TIMEOUT_SECONDS}s, DNS, or TLS failure." >> fallback-outcome.txt
+                ;;
+              *)
+                echo "Reason: unexpected HTTP ${status} from the cron route — check Vercel function logs for /api/cron/daily-news." >> fallback-outcome.txt
+                ;;
+            esac
+            if [ -s fallback-body-truncated.txt ]; then
+              echo "Response body (truncated): $(cat fallback-body-truncated.txt)" >> fallback-outcome.txt
+            fi
+            if [ -s gap-recheck-output.txt ]; then
+              echo "Recency re-check: $(head -c 500 gap-recheck-output.txt | tr '\n\r' '  ')" >> fallback-outcome.txt
+            fi
+          fi
+
+          cat fallback-outcome.txt
+          {
+            echo '### Fallback trigger'
+            echo ''
+            echo '```'
+            cat fallback-outcome.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       # Louder, credential-free GitHub alert. Runs ONLY when a prior step failed (i.e. the
       # gap check above tripped). Uses the built-in GITHUB_TOKEN via actions/github-script —
       # no SMTP/webhook/extra secret. It never throws on its own errors (try/catch), so it
       # cannot mask the real failure: the job still ends red because the gating step exited
       # non-zero. On failure it opens (or comments on) a single de-duplicated tracking issue.
-      # TODO(future): add a companion `if: success()` step that auto-closes the open
-      # `ingestion-alert` issue once ingestion recovers (out of scope for this PR).
       - name: Open or update ingestion-alert issue
         if: failure()
         uses: actions/github-script@v7
@@ -86,6 +260,15 @@ jobs:
               checkOutput = require('fs').readFileSync('gap-check-output.txt', 'utf8').trim() || checkOutput;
             } catch (readErr) {
               core.warning(`Could not read gap-check-output.txt: ${readErr.message}`);
+            }
+
+            // #134: what the fallback trigger did (or why it was skipped), so the reader
+            // sees the 401-vs-no-invocation evidence without opening the Actions log.
+            let fallbackOutcome = '(fallback outcome not recorded)';
+            try {
+              fallbackOutcome = require('fs').readFileSync('fallback-outcome.txt', 'utf8').trim() || fallbackOutcome;
+            } catch (readErr) {
+              core.warning(`Could not read fallback-outcome.txt: ${readErr.message}`);
             }
 
             try {
@@ -152,6 +335,12 @@ jobs:
                     '```',
                     checkOutput,
                     '```',
+                    '',
+                    '**Fallback trigger**',
+                    '',
+                    '```',
+                    fallbackOutcome,
+                    '```',
                   ].join('\n'),
                 });
                 core.info(`Commented on existing ingestion-alert issue #${issueNumber}`);
@@ -175,9 +364,26 @@ jobs:
                 `**Failing run:** ${runUrl}`,
                 `**Detected at:** ${ts}`,
                 '',
+                '### Fallback trigger',
+                '',
+                'On `ALERT[STALLED]` this workflow calls the production cron route itself and',
+                're-runs the same recency check, so the issue records whether the route is',
+                'reachable and whether it wrote a row.',
+                '',
+                '```',
+                fallbackOutcome,
+                '```',
+                '',
                 '### Remediation',
-                '- `ALERT[STALLED]` / `ALERT[NO_RUNS_EVER]`: redeploy production to re-bind `CRON_SECRET`',
-                '  (the recurring root cause of silent stalls), then backfill via `scripts/trigger-ingestion.ts`.',
+                '- `ALERT[STALLED]` / `ALERT[NO_RUNS_EVER]`: no run row landed. In order —',
+                '  1. Vercel project → **Cron Jobs**: read `/api/cron/daily-news` last invocation and status.',
+                '  2. Vercel **function logs** for `/api/cron/daily-news` at 06:00 UTC: no invocation means',
+                '     the scheduler did not fire; a 401 means `CRON_SECRET` in Vercel Production does not',
+                '     match the caller; a 500 means a runtime error — read the logged exception.',
+                '  3. Backfill by re-running this workflow from the Actions tab with `force_trigger: true`',
+                '     (needs the `CRON_SECRET` repository secret set to the same value as Vercel Production).',
+                '     This replaces running `scripts/trigger-ingestion.ts` locally.',
+                '  4. Last resort: redeploy production.',
                 '- `ALERT[OPENROUTER_CREDITS]`: top up or rotate the OpenRouter API key — this is a',
                 '  billing problem, not a code bug.',
                 '- `ALERT[RUN_FAILED]` (without OPENROUTER_CREDITS): inspect `error_log` on the latest',
@@ -185,8 +391,8 @@ jobs:
                 '- `ALERT[ZERO_YIELD_STREAK]`: check extraction/source-fetch errors across the last',
                 '  runs — the pipeline is completing but discovering nothing.',
                 '',
-                '_This issue is opened automatically by the `Ingestion gap detector` workflow.',
-                'It is not auto-closed on recovery yet — close it manually once ingestion resumes._',
+                '_This issue is opened automatically by the `Ingestion gap detector` workflow, and',
+                'closed automatically by the same workflow once a run of the check passes._',
               ].join('\n');
 
               // Try to create labeled + assigned. If labeling/assignment is rejected (e.g. the
@@ -215,4 +421,76 @@ jobs:
             } catch (err) {
               // Never mask the real failure: log and let the job stay red from the gating step.
               core.warning(`Could not open/update ingestion-alert issue: ${err.message}`);
+            }
+
+      # Companion to the step above: once the gating check passes, close every open
+      # ingestion-alert issue with a comment carrying the passing check's timestamp and the
+      # latest run row's timestamp. Idempotent — with no open issues it comments on nothing
+      # and exits clean. Uses the same GITHUB_TOKEN and github-script mechanism as the open
+      # path, and swallows its own errors so a transient API hiccup cannot turn a green run red.
+      - name: Close ingestion-alert issues on recovery
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const LABEL = 'ingestion-alert';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const ts = new Date().toISOString();
+
+            let checkOutput = '';
+            try {
+              checkOutput = require('fs').readFileSync('gap-check-output.txt', 'utf8').trim();
+            } catch (readErr) {
+              core.warning(`Could not read gap-check-output.txt: ${readErr.message}`);
+            }
+
+            // check-ingestion-gap.mjs's OK line embeds the latest run row's ISO timestamp in
+            // parentheses: `OK: last ingestion run 3.2h ago (2026-09-06T06:00:00.000Z), ...`.
+            const runMatch = checkOutput.match(/\((\d{4}-\d{2}-\d{2}T[^)]+)\)/);
+            const latestRunTs = runMatch ? runMatch[1] : 'unknown (see check output below)';
+
+            try {
+              const issues = await github.paginate(github.rest.issues.listForRepo, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                labels: LABEL,
+                per_page: 100,
+              });
+
+              // listForRepo returns pull requests alongside issues; never close a PR.
+              const openAlerts = issues.filter((issue) => !issue.pull_request);
+              if (openAlerts.length === 0) {
+                core.info('No open ingestion-alert issues to close.');
+                return;
+              }
+
+              for (const issue of openAlerts) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: [
+                    `✅ Ingestion recovered — closing automatically.`,
+                    '',
+                    `**Passing check at:** ${ts}`,
+                    `**Latest ingestion run row:** ${latestRunTs}`,
+                    `**Run:** ${runUrl}`,
+                    '',
+                    '```',
+                    checkOutput || '(no check output captured)',
+                    '```',
+                  ].join('\n'),
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  state: 'closed',
+                  state_reason: 'completed',
+                });
+                core.info(`Closed ingestion-alert issue #${issue.number}`);
+              }
+            } catch (err) {
+              core.warning(`Could not close ingestion-alert issue(s): ${err.message}`);
             }
