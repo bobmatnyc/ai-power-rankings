@@ -119,6 +119,48 @@ describe("evaluateIngestionRuns", () => {
   });
 });
 
+/**
+ * The gap-detector workflow greps these two lines to decide whether re-triggering the
+ * production cron is safe (#134): a row still at 'running' means a previous invocation may
+ * be alive, and a LAST_RUN_STARTED that does not move after a fallback call proves the
+ * route wrote nothing. Both are a contract with `.github/workflows/cron-gap-detector.yml`,
+ * so the exact `KEY=value` shape and the append-not-prepend position are pinned here.
+ */
+describe("evaluateIngestionRuns — machine-readable state lines (#134)", () => {
+  it("appends LAST_STATUS and LAST_RUN_STARTED to a healthy result without displacing the OK line", () => {
+    const rows = [runAt(2), runAt(26), runAt(50)];
+    const result = evaluateIngestionRuns(rows, NOW);
+
+    expect(result.lines[0]).toMatch(/^OK: /);
+    expect(result.lines).toContain("LAST_STATUS=completed");
+    expect(result.lines).toContain(`LAST_RUN_STARTED=${new Date(NOW - 2 * 60 * 60 * 1000).toISOString()}`);
+  });
+
+  it("reports LAST_STATUS=running for a row still in flight, so the workflow can refuse to overlap it", () => {
+    const rows = [runAt(30, { status: "running", articles_ingested: 0 })];
+    const result = evaluateIngestionRuns(rows, NOW);
+
+    expect(result.lines.some((l) => l.startsWith("ALERT[STALLED]"))).toBe(true);
+    expect(result.lines).toContain("LAST_STATUS=running");
+  });
+
+  it("reports LAST_STATUS on an alerting result without displacing the first ALERT line", () => {
+    const rows = [runAt(1, { status: FAILED_STATUS, articles_ingested: 0 })];
+    const result = evaluateIngestionRuns(rows, NOW);
+
+    expect(result.lines[0]).toMatch(/^ALERT\[RUN_FAILED\]/);
+    expect(result.lines).toContain(`LAST_STATUS=${FAILED_STATUS}`);
+  });
+
+  it("reports LAST_STATUS=none when no run was ever recorded", () => {
+    const result = evaluateIngestionRuns([], NOW);
+
+    expect(result.lines[0]).toMatch(/^ALERT\[NO_RUNS_EVER\]/);
+    expect(result.lines).toContain("LAST_STATUS=none");
+    expect(result.lines).toContain("LAST_RUN_STARTED=none");
+  });
+});
+
 describe("errorLogText", () => {
   it("joins string entries and stringifies non-string entries", () => {
     expect(errorLogText(["a", "b"])).toBe("a\nb");
