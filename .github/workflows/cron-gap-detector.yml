@@ -81,10 +81,12 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       # Decide whether to call production, without ever branching on the secret's value.
-      # Only ALERT[STALLED] qualifies: RUN_FAILED / OPENROUTER_CREDITS / ZERO_YIELD_STREAK
-      # all mean the cron IS firing, so re-triggering it would burn API credits without
-      # testing anything. NO_RUNS_EVER is excluded too — an empty table is a fresh-install
-      # or wrong-database problem, not a stalled scheduler.
+      # Only a LONE ALERT[STALLED] qualifies. RUN_FAILED / OPENROUTER_CREDITS /
+      # ZERO_YIELD_STREAK all mean the cron IS firing, so re-triggering it burns API credit
+      # without testing anything — and because those conditions are evaluated independently,
+      # STALLED can appear alongside one of them, which is still "the cron is firing" and
+      # must not trigger. NO_RUNS_EVER is excluded too: an empty table is a fresh-install or
+      # wrong-database problem, not a stalled scheduler.
       - name: Classify alert and fallback preconditions
         id: classify
         if: ${{ !cancelled() }}
@@ -95,8 +97,35 @@ jobs:
           set -uo pipefail
 
           stalled=false
+          stall_suppressed_by=''
           if [ -f gap-check-output.txt ] && grep -qF 'ALERT[STALLED]' gap-check-output.txt; then
             stalled=true
+            for co_alert in 'ALERT[OPENROUTER_CREDITS]' 'ALERT[RUN_FAILED]' 'ALERT[ZERO_YIELD_STREAK]'; do
+              if grep -qF "$co_alert" gap-check-output.txt; then
+                echo "STALLED co-occurs with ${co_alert}; the cron is firing, so not treating this as a stall."
+                stalled=false
+                stall_suppressed_by="${stall_suppressed_by}${co_alert} "
+              fi
+            done
+          fi
+          stall_suppressed_by="${stall_suppressed_by% }"
+
+          # LAST_STATUS / LAST_RUN_STARTED are emitted by check-ingestion-gap.mjs on every
+          # outcome. A row still at 'running' means a previous invocation may be alive:
+          # createRun() takes no lock, so a fallback call would run a second pipeline
+          # concurrently against the same tables. Refuse, and say so in the issue.
+          last_status=unknown
+          last_run_started=unknown
+          if [ -f gap-check-output.txt ]; then
+            last_status=$(grep -m1 '^LAST_STATUS=' gap-check-output.txt | cut -d= -f2- || true)
+            last_run_started=$(grep -m1 '^LAST_RUN_STARTED=' gap-check-output.txt | cut -d= -f2- || true)
+          fi
+          : "${last_status:=unknown}"
+          : "${last_run_started:=unknown}"
+
+          running=false
+          if [ "$last_status" = "running" ]; then
+            running=true
           fi
 
           # Presence only — the value is never printed, compared, or logged.
@@ -111,24 +140,31 @@ jobs:
           fi
 
           should_trigger=false
-          if [ "$secret_present" = "true" ] && { [ "$stalled" = "true" ] || [ "$force" = "true" ]; }; then
+          if [ "$secret_present" = "true" ] && [ "$running" != "true" ] \
+            && { [ "$stalled" = "true" ] || [ "$force" = "true" ]; }; then
             should_trigger=true
           fi
 
           {
             echo "stalled=$stalled"
+            echo "stall_suppressed_by=$stall_suppressed_by"
             echo "secret_present=$secret_present"
             echo "force=$force"
+            echo "running=$running"
+            echo "last_status=$last_status"
+            echo "last_run_started=$last_run_started"
             echo "should_trigger=$should_trigger"
           } >> "$GITHUB_OUTPUT"
 
-          echo "stalled=$stalled force=$force secret_present=$secret_present should_trigger=$should_trigger"
+          echo "stalled=$stalled force=$force secret_present=$secret_present running=$running last_status=$last_status should_trigger=$should_trigger"
 
       # -sS with no -v: curl prints its own diagnostic on failure (e.g. "curl: (28)
       # Operation timed out") but never echoes request headers, so the bearer token cannot
       # reach the job log. It is also a GitHub secret, hence masked even if a future edit
-      # did print it. The response body is captured to a file, never to stdout, because the
-      # route echoes back request-shaped fields on error.
+      # did print it. The response body is captured to a file, never to stdout, and never
+      # reaches the issue raw: this repository is public, and the route's 500 path returns
+      # `error.message` verbatim, which can carry a URL, a header, or a provider key from
+      # whatever threw. Only a JSON `error` string survives, redacted and capped.
       - name: Trigger production ingestion (fallback)
         id: fallback
         if: ${{ !cancelled() && steps.classify.outputs.should_trigger == 'true' }}
@@ -147,7 +183,35 @@ jobs:
             -H "Authorization: Bearer ${CRON_SECRET}" \
             "${target}") || http_status='000'
 
-          head -c 400 fallback-body.txt | tr '\n\r\t' '   ' > fallback-body-truncated.txt
+          # Anything that is not a JSON object with a string `error` field is dropped
+          # wholesale — an HTML error page, a proxy banner, a stack trace. Redaction runs
+          # before the 200-char cap so truncation cannot leave a sub-24-char fragment of a
+          # token that the length rule would then miss.
+          node - > fallback-body-safe.txt <<'REDACT_JS'
+          const fs = require('node:fs');
+
+          const LABELLED_VALUE = /\b(key|token|secret|bearer)\b(?:[=:])?\s*\S*/gi;
+          const TOKEN_LIKE = /[A-Za-z0-9_-]{24,}/g;
+
+          function redact(text) {
+            return text
+              .replace(/[\r\n\t]+/g, ' ')
+              .replace(LABELLED_VALUE, '$1 [redacted]')
+              .replace(TOKEN_LIKE, '[redacted]');
+          }
+
+          let out = 'body omitted; see Vercel function logs';
+          try {
+            const parsed = JSON.parse(fs.readFileSync('fallback-body.txt', 'utf8'));
+            if (parsed && typeof parsed.error === 'string' && parsed.error.trim() !== '') {
+              const safe = redact(parsed.error).slice(0, 200).trim();
+              if (safe !== '') out = safe;
+            }
+          } catch {
+            // Not JSON, unreadable, or no usable error field — keep the omission marker.
+          }
+          process.stdout.write(out);
+          REDACT_JS
 
           echo "http_status=${http_status}" >> "$GITHUB_OUTPUT"
           echo "HTTP status: ${http_status}"
@@ -178,9 +242,12 @@ jobs:
         if: ${{ !cancelled() }}
         env:
           STALLED: ${{ steps.classify.outputs.stalled }}
+          STALL_SUPPRESSED_BY: ${{ steps.classify.outputs.stall_suppressed_by }}
           FORCE: ${{ steps.classify.outputs.force }}
           SECRET_PRESENT: ${{ steps.classify.outputs.secret_present }}
           SHOULD_TRIGGER: ${{ steps.classify.outputs.should_trigger }}
+          RUNNING: ${{ steps.classify.outputs.running }}
+          LAST_RUN_STARTED: ${{ steps.classify.outputs.last_run_started }}
           HTTP_STATUS: ${{ steps.fallback.outputs.http_status }}
           RECOVERED: ${{ steps.recheck.outputs.recovered }}
         run: |
@@ -188,14 +255,39 @@ jobs:
           : > fallback-outcome.txt
 
           if [ "${SHOULD_TRIGGER:-false}" != "true" ]; then
-            if [ "${SECRET_PRESENT:-false}" != "true" ] && { [ "${STALLED:-false}" = "true" ] || [ "${FORCE:-false}" = "true" ]; }; then
-              echo 'Fallback trigger skipped: CRON_SECRET secret not configured' >> fallback-outcome.txt
-            else
-              echo 'Fallback trigger not attempted: no ALERT[STALLED] and force_trigger not set' >> fallback-outcome.txt
+            # Both skip reasons can hold at once; report each one that applies rather than
+            # letting the first hide the other from whoever reads the issue.
+            if [ "${STALLED:-false}" = "true" ] || [ "${FORCE:-false}" = "true" ]; then
+              if [ "${RUNNING:-false}" = "true" ]; then
+                echo "Fallback trigger skipped: latest run row is still status=running (started ${LAST_RUN_STARTED:-unknown}); a second run would overlap it" >> fallback-outcome.txt
+              fi
+              if [ "${SECRET_PRESENT:-false}" != "true" ]; then
+                echo 'Fallback trigger skipped: CRON_SECRET secret not configured' >> fallback-outcome.txt
+              fi
+            fi
+            if [ ! -s fallback-outcome.txt ]; then
+              if [ -n "${STALL_SUPPRESSED_BY:-}" ]; then
+                echo "Fallback trigger not attempted: ALERT[STALLED] co-occurs with ${STALL_SUPPRESSED_BY} — the cron is firing, so re-triggering it would test nothing" >> fallback-outcome.txt
+              else
+                echo 'Fallback trigger not attempted: no ALERT[STALLED] and force_trigger not set' >> fallback-outcome.txt
+              fi
             fi
           else
             status="${HTTP_STATUS:-000}"
             echo "Fallback trigger: GET ${PRODUCTION_BASE_URL%/}/api/cron/daily-news -> HTTP ${status}" >> fallback-outcome.txt
+
+            # What the re-check actually reports, so the 2xx branch below can tell "the
+            # route wrote nothing" from "the route wrote a row and that run then failed".
+            recheck_alerts=''
+            recheck_non_stalled=''
+            recheck_started='unknown'
+            if [ -s gap-recheck-output.txt ]; then
+              recheck_alerts=$(grep -o 'ALERT\[[A-Z_]*\]' gap-recheck-output.txt | sort -u | tr '\n' ' ' || true)
+              recheck_non_stalled=$(echo "$recheck_alerts" | tr ' ' '\n' | grep -v '^ALERT\[STALLED\]$' | grep -v '^$' | tr '\n' ' ' || true)
+              recheck_started=$(grep -m1 '^LAST_RUN_STARTED=' gap-recheck-output.txt | cut -d= -f2- || true)
+            fi
+            : "${recheck_started:=unknown}"
+
             case "$status" in
               401)
                 echo 'Reason: 401 — the CRON_SECRET repository secret does not match the CRON_SECRET set in Vercel Production.' >> fallback-outcome.txt
@@ -203,8 +295,12 @@ jobs:
               2??)
                 if [ "${RECOVERED:-false}" = "true" ]; then
                   echo 'Reason: recovered — the route ran and the recency re-check now passes.' >> fallback-outcome.txt
+                elif [ -n "$recheck_non_stalled" ]; then
+                  echo "Reason: the fallback run wrote a row but the re-check reports ${recheck_non_stalled%% }." >> fallback-outcome.txt
+                elif [ "$recheck_started" = "${LAST_RUN_STARTED:-unknown}" ]; then
+                  echo "Reason: the route returned 2xx but the latest run row is unchanged (still ${recheck_started}) — it wrote nothing." >> fallback-outcome.txt
                 else
-                  echo 'Reason: the route accepted the call but no fresh run row appeared — it returned 2xx and wrote nothing.' >> fallback-outcome.txt
+                  echo 'Reason: the route returned 2xx and the re-check still fails — see the re-check line below.' >> fallback-outcome.txt
                 fi
                 ;;
               000)
@@ -214,8 +310,8 @@ jobs:
                 echo "Reason: unexpected HTTP ${status} from the cron route — check Vercel function logs for /api/cron/daily-news." >> fallback-outcome.txt
                 ;;
             esac
-            if [ -s fallback-body-truncated.txt ]; then
-              echo "Response body (truncated): $(cat fallback-body-truncated.txt)" >> fallback-outcome.txt
+            if [ -s fallback-body-safe.txt ]; then
+              echo "Response detail: $(cat fallback-body-safe.txt)" >> fallback-outcome.txt
             fi
             if [ -s gap-recheck-output.txt ]; then
               echo "Recency re-check: $(head -c 500 gap-recheck-output.txt | tr '\n\r' '  ')" >> fallback-outcome.txt
@@ -434,6 +530,10 @@ jobs:
         with:
           script: |
             const LABEL = 'ingestion-alert';
+            // Must stay identical to TITLE_SEARCH_TEXT in the open step above: closing is
+            // scoped to issues THIS workflow opened, so a human who labels an unrelated
+            // issue `ingestion-alert` does not get it closed out from under them.
+            const TITLE_SEARCH_TEXT = 'Ingestion alert — automated ingestion check failed';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const ts = new Date().toISOString();
 
@@ -458,10 +558,13 @@ jobs:
                 per_page: 100,
               });
 
-              // listForRepo returns pull requests alongside issues; never close a PR.
-              const openAlerts = issues.filter((issue) => !issue.pull_request);
+              // listForRepo returns pull requests alongside issues; never close a PR. The
+              // title match is the ownership check — label alone is not enough.
+              const openAlerts = issues.filter(
+                (issue) => !issue.pull_request && (issue.title || '').includes(TITLE_SEARCH_TEXT)
+              );
               if (openAlerts.length === 0) {
-                core.info('No open ingestion-alert issues to close.');
+                core.info('No open ingestion-alert issues opened by this workflow to close.');
                 return;
               }
 
