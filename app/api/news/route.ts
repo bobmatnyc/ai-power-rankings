@@ -2,9 +2,32 @@ import { type NextRequest, NextResponse } from "next/server";
 import { cachedJsonResponse } from "@/lib/api-cache";
 import { getDb } from "@/lib/db/connection";
 import { NewsRepository } from "@/lib/db/repositories/news";
-import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
 import { findToolByText } from "@/lib/tool-matcher";
+
+/** Largest page the route will serve; the news page asks for exactly this many. */
+const MAX_LIMIT = 100;
+const DEFAULT_LIMIT = 20;
+
+/**
+ * Reads one non-negative integer query parameter.
+ *
+ * Why: `parseInt("abc")` is NaN, which reached the query as a LIMIT/OFFSET and
+ * would fail the statement rather than fall back (#140).
+ * What: Returns `fallback` for anything non-numeric or negative, and clamps to
+ * `max` when one is given.
+ */
+function readBoundedInt(
+  raw: string | null,
+  fallback: number,
+  { min = 0, max }: { min?: number; max?: number } = {}
+): number {
+  const parsed = Number.parseInt(raw ?? "", 10);
+  if (!Number.isFinite(parsed)) return fallback;
+
+  const floored = Math.max(min, parsed);
+  return max === undefined ? floored : Math.min(max, floored);
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,19 +45,29 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get("limit") || "20", 10);
-    const offset = parseInt(searchParams.get("offset") || "0", 10);
+    // #140: bound both, and fall back rather than 500, before either reaches SQL.
+    const limit = readBoundedInt(searchParams.get("limit"), DEFAULT_LIMIT, {
+      min: 1,
+      max: MAX_LIMIT,
+    });
+    const offset = readBoundedInt(searchParams.get("offset"), 0);
     const filter = searchParams.get("filter") || "all";
     const debug = searchParams.get("debug") === "true";
     const cacheKey = searchParams.get("cb"); // Cache-busting key
 
+    // #140: the event_type filter is a SQL expression now, so the page, its
+    // total and the filter all come out of one query instead of a fetched pool.
+    const eventType = filter === "all" ? null : filter;
+
     loggers.api.debug("Getting news from database", { limit, offset, filter });
 
     const newsRepo = new NewsRepository();
-    const toolsRepo = new ToolsRepository();
 
-    // Get paginated news articles from database
-    const { articles: allNews } = await newsRepo.getPaginated(limit * 3, 0); // Get more to filter
+    const {
+      articles: allNews,
+      total,
+      hasMore,
+    } = await newsRepo.getPaginatedFiltered({ limit, offset, eventType });
 
     // Helper function to get the effective date
     const getEffectiveDate = (article: any) => {
@@ -79,102 +112,10 @@ export async function GET(request: NextRequest) {
           primaryToolId = matchedSlug;
         }
 
-        // Map event type based on tags or content
-        let eventType = "update";
-
-        // Check tags first for better categorization
         const tags = article.tags || [];
-        if (tags.length > 0) {
-          const tagStr = tags.join(" ").toLowerCase();
-          if (
-            tagStr.includes("milestone") ||
-            tagStr.includes("revenue") ||
-            tagStr.includes("funding") ||
-            tagStr.includes("growth") ||
-            tagStr.includes("valuation") ||
-            tagStr.includes("series") ||
-            tagStr.includes("unicorn")
-          ) {
-            eventType = "milestone";
-          } else if (
-            tagStr.includes("launch") ||
-            tagStr.includes("beta") ||
-            tagStr.includes("general-availability") ||
-            tagStr.includes("benchmark") ||
-            tagStr.includes("performance") ||
-            tagStr.includes("release")
-          ) {
-            eventType = "feature";
-          } else if (
-            tagStr.includes("partnership") ||
-            tagStr.includes("integration") ||
-            tagStr.includes("collaboration")
-          ) {
-            eventType = "partnership";
-          } else if (tagStr.includes("rebrand") || tagStr.includes("acquisition")) {
-            eventType = "announcement";
-          }
-        }
-
-        // Fallback to content analysis
-        if (eventType === "update") {
-          const text =
-            `${article.title} ${article.summary || article.content || ""}`.toLowerCase();
-
-          if (
-            text.includes("funding") ||
-            text.includes("raised") ||
-            text.includes("investment") ||
-            text.includes("valuation") ||
-            text.includes("arr") ||
-            text.includes("unicorn") ||
-            text.includes("series") ||
-            text.includes("customers") ||
-            text.includes("revenue") ||
-            text.includes("growth") ||
-            text.includes("users")
-          ) {
-            eventType = "milestone";
-          } else if (
-            text.includes("launch") ||
-            text.includes("released") ||
-            text.includes("feature") ||
-            text.includes("introduces") ||
-            text.includes("announces") ||
-            text.includes("unveils") ||
-            text.includes("debuts") ||
-            text.includes("new model") ||
-            text.includes("introducing") ||
-            text.includes("rolls out") ||
-            text.includes("ships") ||
-            text.includes("releases")
-          ) {
-            eventType = "feature";
-          } else if (
-            text.includes("partnership") ||
-            text.includes("acquired") ||
-            text.includes("acquisition") ||
-            text.includes("integrates") ||
-            text.includes("collaboration") ||
-            text.includes("joins") ||
-            text.includes("integrating") ||
-            text.includes("integrated with") ||
-            text.includes("teams up")
-          ) {
-            eventType = "partnership";
-          } else if (
-            text.includes("rebrand") ||
-            text.includes("stepping down") ||
-            text.includes("appointed") ||
-            text.includes("new ceo") ||
-            text.includes("new chief") ||
-            text.includes("rebranding") ||
-            text.includes("spin-off") ||
-            text.includes("merger")
-          ) {
-            eventType = "announcement";
-          }
-        }
+        // #140: event_type is derived in SQL (lib/db/news-event-type.ts) so the
+        // WHERE, the COUNT(*) and this response all read one classification.
+        const eventType = article.eventType;
 
         // Generate scoring factor impacts based on content and event type
         const generateScoringFactors = (eventType: string, title: string, importance: number) => {
@@ -291,20 +232,10 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    // Apply filter
-    let filteredNews = transformedNews;
-    if (filter !== "all") {
-      filteredNews = transformedNews.filter((item) => item.event_type === filter);
-    }
-
-    // Apply pagination to the filtered results
-    const paginatedNews = filteredNews.slice(offset, offset + limit);
-    const hasMoreFiltered = offset + limit < filteredNews.length;
-
     const responseData = {
-      news: paginatedNews,
-      total: filteredNews.length,
-      hasMore: hasMoreFiltered,
+      news: transformedNews,
+      total,
+      hasMore,
       _source: "database",
       _timestamp: new Date().toISOString(),
       ...(debug && {
