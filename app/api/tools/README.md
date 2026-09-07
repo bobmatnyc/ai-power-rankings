@@ -2,19 +2,19 @@
 
 ## Overview
 
-The tools API is being migrated from Supabase/Payload CMS to the JSON database.
+The tools API reads from the database through the Drizzle repositories in `lib/db/repositories/`.
 
 ## Endpoints
 
 ### Main Tools Endpoint
 
-- **Current**: `/api/tools/route.ts` - Uses Payload CMS with cache fallback
+- **Current**: `/api/tools/route.ts` - Reads `tools.repository` with cache fallback
 - **JSON Version**: `/api/tools/route.json.ts` - Uses JSON database
 - **New JSON API**: `/api/tools/json/route.ts` - Enhanced JSON API with more features
 
 ### Tool Details
 
-- **Current**: `/api/tools/[slug]/route.ts` - Uses Payload CMS
+- **Current**: `/api/tools/[slug]/route.ts` - Reads `tools.repository`
 - **JSON Version**: `/api/tools/[slug]/json/route.ts` - Uses JSON database
 
 ### Additional Endpoints
@@ -30,7 +30,7 @@ The tools API is being migrated from Supabase/Payload CMS to the JSON database.
 4. ⏳ Update main `/api/tools` route to use JSON (rename route.json.ts to route.ts)
 5. ⏳ Update `/api/tools/[slug]` route to use JSON
 6. ⏳ Update frontend to use new endpoints
-7. ⏳ Remove Supabase/Payload dependencies
+7. ⏳ Remove Supabase dependencies
 
 ## Query Parameters
 

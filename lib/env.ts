@@ -50,9 +50,6 @@ export const env = {
   NEXTAUTH_SECRET: process.env["NEXTAUTH_SECRET"] ?? undefined,
   AUTH_SECRET: process.env["AUTH_SECRET"] ?? undefined,
 
-  // Payload
-  PAYLOAD_SECRET: process.env["PAYLOAD_SECRET"] ?? undefined,
-
   // Feature flags
   NODE_ENV: process.env["NODE_ENV"] || "development",
   isDevelopment: process.env["NODE_ENV"] === "development",
