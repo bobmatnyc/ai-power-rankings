@@ -35,7 +35,11 @@ export interface CategoryFetchResult {
  * real implementations; tests supply spies.
  */
 export interface GenerateCategoriesDeps {
-  /** Whether a database connection string is configured in the environment. */
+  /**
+   * Whether `getDb()` would find a connection string for this environment —
+   * supplied by `hasUsableDatabaseUrl()` in lib/db/connection.ts, never by a
+   * second reading of `process.env` (#143).
+   */
   hasDatabaseUrl: boolean;
   /** `--allow-empty`: permit a zero-category read to overwrite the file. */
   allowEmpty: boolean;
@@ -177,7 +181,7 @@ export const STATIC_CATEGORIES: Category[] = ${JSON.stringify(entries, null, 2)}
 export async function decideStaticCategories(deps: GenerateCategoriesDeps): Promise<number> {
   if (!deps.hasDatabaseUrl) {
     deps.log(
-      `${LOG_PREFIX} DATABASE_URL is not set — skipping regeneration and keeping the committed ${OUTPUT_RELATIVE_PATH}.`
+      `${LOG_PREFIX} No DATABASE_URL is set for this NODE_ENV — skipping regeneration and keeping the committed ${OUTPUT_RELATIVE_PATH}.`
     );
     return 0;
   }

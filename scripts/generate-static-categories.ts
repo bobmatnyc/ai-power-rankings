@@ -38,26 +38,8 @@ import {
 // Imported for its side effects as well as `getDb`: the module loads .env.local
 // and .env in development, so the DATABASE_URL check below sees the same
 // environment the connection itself would use.
-import { getDb } from "../lib/db/connection";
+import { getDb, hasUsableDatabaseUrl } from "../lib/db/connection";
 import { rankings } from "../lib/db/schema";
-
-/**
- * Whether a usable connection string is configured.
- *
- * #143: mirrors the variables `getDatabaseUrl()` in lib/db/connection.ts reads,
- * including its rejection of the `.env.example` `YOUR_PASSWORD` placeholder, so
- * "we would skip" and "the connection would fail" cannot disagree.
- */
-function hasDatabaseUrl(): boolean {
-  const candidates = [
-    process.env["DATABASE_URL"],
-    process.env["DATABASE_URL_DEVELOPMENT"],
-    process.env["DATABASE_URL_STAGING"],
-  ];
-  return candidates.some(
-    (url) => typeof url === "string" && url.length > 0 && !url.includes("YOUR_PASSWORD")
-  );
-}
 
 /** Reads the current rankings snapshot. Throws rather than returning a fallback. */
 async function fetchCategoriesFromDb(): Promise<CategoryFetchResult> {
@@ -103,7 +85,10 @@ function writeStaticCategoriesFile(contents: string): void {
 
 async function main(): Promise<void> {
   const exitCode = await decideStaticCategories({
-    hasDatabaseUrl: hasDatabaseUrl(),
+    // #143: one source of truth — hasUsableDatabaseUrl() applies exactly the
+    // NODE_ENV-conditional rules getDb() will act on, so the guard cannot pass
+    // an environment the connection would then reject.
+    hasDatabaseUrl: hasUsableDatabaseUrl(),
     allowEmpty: process.argv.includes("--allow-empty"),
     fetchCategories: fetchCategoriesFromDb,
     writeFile: writeStaticCategoriesFile,

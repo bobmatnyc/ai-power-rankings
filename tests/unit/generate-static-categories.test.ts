@@ -25,6 +25,10 @@ import {
   type CategoryFetchResult,
   type GenerateCategoriesDeps,
 } from "../../lib/data/static-categories-generator";
+// Imported instead of lib/db/connection so the test runs no dotenv load and
+// depends on no .env* file existing. connection.ts's getDatabaseUrl() and its
+// exported hasUsableDatabaseUrl() are both thin wrappers over resolveDatabaseUrl.
+import { describeDatabaseUrlResolution, resolveDatabaseUrl } from "../../lib/db/database-url";
 
 const REAL_CATEGORIES: Category[] = [
   { id: "ide-assistant", name: "Ide Assistant", count: 11 },
@@ -66,7 +70,7 @@ describe("decideStaticCategories behaviour matrix", () => {
     expect(fetchCategories).not.toHaveBeenCalled();
     expect(logError).not.toHaveBeenCalled();
     expect(log).toHaveBeenCalledTimes(1);
-    expect(log.mock.calls[0]?.[0]).toContain("DATABASE_URL is not set");
+    expect(log.mock.calls[0]?.[0]).toContain("No DATABASE_URL is set for this NODE_ENV");
     expect(log.mock.calls[0]?.[0]).toContain("lib/data/static-categories.ts");
   });
 
@@ -148,6 +152,109 @@ describe("decideStaticCategories behaviour matrix", () => {
     expect(contents).toContain('"id": "ide-assistant"');
     expect(contents).toContain('"count": 51');
     expect(log.mock.calls[0]?.[0]).toContain("Wrote 2 categories from 51 tools");
+  });
+});
+
+describe("the guard resolves the database URL through getDb()'s own rules", () => {
+  // The CLI wires `hasDatabaseUrl: hasUsableDatabaseUrl()`, which is
+  // `resolveDatabaseUrl(process.env, NODE_ENV).url !== undefined`. These rows
+  // compose the same two functions over an injected environment, so no
+  // process.env mutation and no .env* file is involved.
+  function guardFor(env: Record<string, string | undefined>, nodeEnv: string): boolean {
+    return resolveDatabaseUrl(env, nodeEnv).url !== undefined;
+  }
+
+  it("skips when only DATABASE_URL_STAGING is set under NODE_ENV=production", async () => {
+    const env = { DATABASE_URL_STAGING: "postgres://staging.example.com/db" };
+    const fetchCategories = vi.fn(async () => NON_EMPTY_READ);
+    const { deps, writeFile, log } = makeDeps({
+      hasDatabaseUrl: guardFor(env, "production"),
+      fetchCategories,
+    });
+
+    const exitCode = await decideStaticCategories(deps);
+
+    // Before #143's review follow-up the guard ORed all three variables, so this
+    // environment reached getDb(), which reads DATABASE_URL only in production,
+    // and the build died at exit 1 instead of skipping.
+    expect(exitCode).toBe(0);
+    expect(writeFile).not.toHaveBeenCalled();
+    expect(fetchCategories).not.toHaveBeenCalled();
+    expect(log.mock.calls[0]?.[0]).toContain("No DATABASE_URL is set for this NODE_ENV");
+  });
+
+  it("proceeds when DATABASE_URL is set under NODE_ENV=production", async () => {
+    const env = { DATABASE_URL: "postgres://prod.example.com/db" };
+    const fetchCategories = vi.fn(async () => NON_EMPTY_READ);
+    const { deps, writeFile } = makeDeps({
+      hasDatabaseUrl: guardFor(env, "production"),
+      fetchCategories,
+    });
+
+    const exitCode = await decideStaticCategories(deps);
+
+    expect(exitCode).toBe(0);
+    expect(fetchCategories).toHaveBeenCalledTimes(1);
+    expect(writeFile).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("resolveDatabaseUrl", () => {
+  it("reads DATABASE_URL only in production, ignoring the branch variables", () => {
+    expect(
+      resolveDatabaseUrl({ DATABASE_URL_STAGING: "postgres://s/db" }, "production")
+    ).toEqual({});
+    expect(
+      resolveDatabaseUrl({ DATABASE_URL_DEVELOPMENT: "postgres://d/db" }, "production")
+    ).toEqual({});
+    expect(resolveDatabaseUrl({ DATABASE_URL: "postgres://p/db" }, "production")).toEqual({
+      url: "postgres://p/db",
+      variable: "DATABASE_URL",
+    });
+  });
+
+  it("prefers the branch variable in development and staging, then falls back", () => {
+    expect(
+      resolveDatabaseUrl(
+        { DATABASE_URL_DEVELOPMENT: "postgres://d/db", DATABASE_URL: "postgres://p/db" },
+        "development"
+      ).variable
+    ).toBe("DATABASE_URL_DEVELOPMENT");
+    expect(resolveDatabaseUrl({ DATABASE_URL: "postgres://p/db" }, "development").variable).toBe(
+      "DATABASE_URL"
+    );
+    expect(
+      resolveDatabaseUrl(
+        { DATABASE_URL_STAGING: "postgres://s/db", DATABASE_URL: "postgres://p/db" },
+        "staging"
+      ).variable
+    ).toBe("DATABASE_URL_STAGING");
+    expect(resolveDatabaseUrl({ DATABASE_URL: "postgres://p/db" }, "staging").variable).toBe(
+      "DATABASE_URL"
+    );
+  });
+
+  it("treats the .env.example placeholder and an empty value as unconfigured", () => {
+    expect(
+      resolveDatabaseUrl({ DATABASE_URL: "postgres://u:YOUR_PASSWORD@h/db" }, "production")
+    ).toEqual({});
+    expect(resolveDatabaseUrl({ DATABASE_URL: "" }, "production")).toEqual({});
+    expect(resolveDatabaseUrl({}, "development")).toEqual({});
+  });
+
+  it("keeps the log line getDb() printed for each resolution", () => {
+    expect(describeDatabaseUrlResolution("development", "DATABASE_URL_DEVELOPMENT")).toContain(
+      "Using DATABASE_URL_DEVELOPMENT (development branch)"
+    );
+    expect(describeDatabaseUrlResolution("development", "DATABASE_URL")).toContain(
+      "DATABASE_URL_DEVELOPMENT not found, falling back to DATABASE_URL"
+    );
+    expect(describeDatabaseUrlResolution("staging", "DATABASE_URL_STAGING")).toContain(
+      "Using DATABASE_URL_STAGING (staging branch)"
+    );
+    expect(describeDatabaseUrlResolution("production", "DATABASE_URL")).toContain(
+      "Using DATABASE_URL (production branch)"
+    );
   });
 });
 
