@@ -54,19 +54,6 @@ async function testConnection() {
     console.log(`   Database: ${result.rows[0].current_database}`);
     console.log(`   User: ${result.rows[0].current_user}`);
     console.log(`   Version: ${result.rows[0].version.split(",")[0]}`);
-
-    // Check if payload schema exists
-    const schemaResult = await client.query(`
-      SELECT schema_name 
-      FROM information_schema.schemata 
-      WHERE schema_name = 'payload'
-    `);
-
-    if (schemaResult.rows.length > 0) {
-      console.log("✅ Payload schema exists");
-    } else {
-      console.log("⚠️  Payload schema does not exist - migrations may need to run");
-    }
   } catch (error) {
     const err = error as { message?: string; code?: string; severity?: string };
     console.error("\n❌ Connection failed:");
