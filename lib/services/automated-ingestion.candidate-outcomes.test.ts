@@ -71,14 +71,11 @@ vi.mock("../db/connection", () => {
 
   return {
     getDb: () => ({
-      insert: () => ({
-        values: (data: Record<string, unknown>) => ({
-          returning: async () => {
-            Object.assign(simulatedRow, data);
-            return [{ id: RUN_ID, ...data }];
-          },
-        }),
-      }),
+      // createRun(): db.execute(sql`insert into "automated_ingestion_runs" (...)
+      // ... returning "id"`) since #134 — see automated-ingestion.create-run.test.ts.
+      // resetDbFixture() above already seeds simulatedRow with the create-time
+      // values, so this only has to hand back the id.
+      execute: async () => ({ rows: [{ id: RUN_ID }] }),
       update: () => ({
         set: (data: Record<string, unknown>) => ({
           where: () => ({
