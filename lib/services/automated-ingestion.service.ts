@@ -11,7 +11,7 @@
  * 7. Updates run record with metrics
  */
 
-import { and, desc, eq, gte, inArray } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import {
   automatedIngestionRuns,
@@ -281,13 +281,41 @@ export function serializeCandidateOutcomes(outcomes: CandidateOutcome[]): Candid
  * automated-ingestion.candidate-outcomes.test.ts.
  */
 export function isUndefinedNewRunColumnError(error: unknown): boolean {
+  if (!isUndefinedColumnError(error)) return false;
+  return /candidate_outcomes|articles_skipped_stale/i.test(errorMessageOf(error));
+}
+
+/**
+ * Why: #134 — createRun() needs the same schema-skew detection updateRun() has,
+ * but it cannot name the columns it is guarding against: after the fix its
+ * statement lists only columns the deployed database is known to have, so any
+ * 42703 it still sees names a column this code did not anticipate.
+ * What: Returns true for any Postgres undefined-column error, whatever column it
+ * names. `isUndefinedNewRunColumnError` above narrows this to the two columns
+ * migration 0013 adds, so updateRun's retry keeps its existing scope.
+ * Test: `isUndefinedColumnError` cases in automated-ingestion.create-run.test.ts.
+ */
+export function isUndefinedColumnError(error: unknown): boolean {
   if (!error || typeof error !== "object") return false;
-  const candidate = error as { code?: unknown; message?: unknown };
-  const code = typeof candidate.code === "string" ? candidate.code : "";
-  const message = typeof candidate.message === "string" ? candidate.message : "";
-  const isUndefinedColumn = code === "42703" || /undefined[_ ]column/i.test(message);
-  if (!isUndefinedColumn) return false;
-  return /candidate_outcomes|articles_skipped_stale/i.test(message);
+  const code = (error as { code?: unknown }).code;
+  const message = errorMessageOf(error);
+  return code === "42703" || /undefined[_ ]column/i.test(message);
+}
+
+/** Reads an error's `message` when it has a string one, else the empty string. */
+function errorMessageOf(error: unknown): string {
+  if (!error || typeof error !== "object") return "";
+  const message = (error as { message?: unknown }).message;
+  return typeof message === "string" ? message : "";
+}
+
+/**
+ * Pulls the column name out of Postgres's `column "x" of relation "y" does not
+ * exist` / `column "x" does not exist` text, so a warning can say which column
+ * the deployed database is missing instead of dumping the raw error.
+ */
+function missingColumnName(error: unknown): string | undefined {
+  return /column "([^"]+)"/.exec(errorMessageOf(error))?.[1];
 }
 
 // ---------------------------------------------------------------------------
@@ -1725,8 +1753,39 @@ export class AutomatedIngestionService {
   }
 
   /**
-   * Create a new ingestion run record
-   * Returns the run ID
+   * Create a new ingestion run record. Returns the run ID.
+   *
+   * Why: #134 — the production cron returned HTTP 200 on 2026-09-05 and
+   * 2026-09-06 while logging `column "articles_skipped_stale" of relation
+   * "automated_ingestion_runs" does not exist`, and no row was written to
+   * automated_ingestion_runs at all. #133 added articles_skipped_stale and
+   * candidate_outcomes to the Drizzle schema; migration 0013, which adds them
+   * to the database, is applied by hand and had not been run. updateRun()
+   * already survives that skew (see isUndefinedNewRunColumnError), but
+   * createRun runs first, so every run died before its row existed and the
+   * pipeline had nothing to finalize.
+   *
+   * Leaving the two columns out of `.values()` does not keep them out of the
+   * statement. Drizzle's insert builder names EVERY column of the table and
+   * passes `default` for the ones the caller omitted, and a bare `.returning()`
+   * lists every column a second time — so both halves referenced columns the
+   * database did not have:
+   *
+   *     insert into "automated_ingestion_runs"
+   *       (..., "articles_skipped_stale", ..., "candidate_outcomes", ...)
+   *     values (..., default, ..., default, ...)
+   *     returning ..., "articles_skipped_stale", ..., "candidate_outcomes", ...
+   *
+   * What: Seeds the row through an explicit column list — the columns the
+   * deployed database is known to have — and returns only `id`, the sole field
+   * the caller uses. Every bound value is what the Drizzle builder already sent
+   * for that column (an ISO timestamp, `[]` for the two jsonb lists, `"0"` for
+   * the decimal), so the row this writes is identical to the pre-#134 row. If
+   * the insert still hits an undefined column, one retry writes only run_type,
+   * status and started_at and lets the database's own defaults fill the rest;
+   * any other error propagates untouched.
+   *
+   * Test: automated-ingestion.create-run.test.ts.
    */
   async createRun(runType: IngestionRunType): Promise<string> {
     const db = getDb();
@@ -1736,30 +1795,51 @@ export class AutomatedIngestionService {
 
     console.log(`[AutomatedIngestion] Creating run record with type: ${runType}`);
 
-    const result = await db
-      .insert(automatedIngestionRuns)
-      .values({
-        runType,
-        status: "running",
-        articlesDiscovered: 0,
-        articlesPassedQuality: 0,
-        articlesIngested: 0,
-        articlesSkipped: 0,
-        articlesSkippedSemantic: 0,
-        rankingChanges: 0,
-        startedAt: new Date(),
-        errorLog: [],
-        ingestedArticleIds: [],
-        estimatedCostUsd: "0",
-      })
-      .returning();
+    const startedAt = new Date().toISOString();
 
-    const run = result[0];
-    if (!run?.id) {
+    // #134: name the insert's columns explicitly so a schema column the deployed
+    // database has not been migrated to yet cannot reach the statement.
+    const seedRun = () =>
+      db.execute(sql`
+        insert into "automated_ingestion_runs"
+          ("run_type", "status", "articles_discovered", "articles_passed_quality",
+           "articles_ingested", "articles_skipped", "articles_skipped_semantic",
+           "ranking_changes", "started_at", "error_log", "ingested_article_ids",
+           "estimated_cost_usd")
+        values (${runType}, 'running', 0, 0, 0, 0, 0, 0, ${startedAt}, ${"[]"}, ${"[]"}, ${"0"})
+        returning "id"
+      `);
+
+    // Fallback column set: run_type, status and started_at are the columns this
+    // table has carried since it was created. Every counter, list and cost
+    // column carries a database default, so omitting them writes the same row.
+    const seedRunOnBaseColumns = () =>
+      db.execute(sql`
+        insert into "automated_ingestion_runs" ("run_type", "status", "started_at")
+        values (${runType}, 'running', ${startedAt})
+        returning "id"
+      `);
+
+    let result: { rows: Record<string, unknown>[] };
+    try {
+      result = await seedRun();
+    } catch (error) {
+      if (!isUndefinedColumnError(error)) throw error;
+
+      loggers.api.warn(
+        `[AutomatedIngestion] Run table is missing column "${missingColumnName(error) ?? "unknown"}"; retrying the insert on the base column set (a migration has not been applied)`,
+        { runType, error: errorMessageOf(error) || "Unknown error" }
+      );
+
+      result = await seedRunOnBaseColumns();
+    }
+
+    const id = result.rows[0]?.["id"];
+    if (typeof id !== "string" || id.length === 0) {
       throw new Error("Failed to create ingestion run record");
     }
 
-    return run.id;
+    return id;
   }
 
   /**
