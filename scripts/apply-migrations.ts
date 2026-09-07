@@ -61,6 +61,7 @@ export interface CliOptions {
   dryRun: boolean;
   only: string | null;
   showColumns: string | null;
+  force: boolean;
 }
 
 export interface MigrationDeps {
@@ -74,6 +75,8 @@ export interface MigrationPlan {
   applied: string[];
   pending: string[];
   toApply: string[];
+  /** Files in `toApply` that already have a tracking row, so must not get a second one. */
+  skipRecord: string[];
   errors: string[];
 }
 
@@ -120,7 +123,7 @@ export function redactConnectionString(text: string, databaseUrl?: string): stri
  * can report every problem at once and exit non-zero.
  */
 export function parseArgs(argv: string[]): { options: CliOptions; errors: string[] } {
-  const options: CliOptions = { dryRun: false, only: null, showColumns: null };
+  const options: CliOptions = { dryRun: false, only: null, showColumns: null, force: false };
   const errors: string[] = [];
 
   const takeValue = (flag: string, inline: string | undefined, index: number): { value: string | null; next: number } => {
@@ -146,6 +149,11 @@ export function parseArgs(argv: string[]): { options: CliOptions; errors: string
         errors.push("--dry-run takes no value");
       }
       options.dryRun = true;
+    } else if (flag === "--force") {
+      if (inline !== undefined) {
+        errors.push("--force takes no value");
+      }
+      options.force = true;
     } else if (flag === "--only") {
       const { value, next } = takeValue("--only", inline, i);
       i = next;
@@ -169,6 +177,12 @@ export function parseArgs(argv: string[]): { options: CliOptions; errors: string
     } else {
       errors.push(`unknown argument: ${arg}`);
     }
+  }
+
+  // #134: --force overrides the one guard that stops a recorded migration re-running, so
+  // it is only ever allowed against a single named file — never across everything pending.
+  if (options.force && options.only === null) {
+    errors.push("--force is only valid together with --only <file>");
   }
 
   return { options, errors };
@@ -203,17 +217,24 @@ export function splitStatements(migrationSql: string): string[] {
  * `only` is refused (a non-empty `errors`) when the named file is not on disk or is
  * already recorded as applied — re-running a recorded migration is the failure this whole
  * change exists to avoid, so it must never be a silent no-op or a silent re-apply.
+ *
+ * `force` lifts the second refusal only, and only for the one named file: the old splitter
+ * could record a migration whose statements it had silently dropped, so production may
+ * hold a row for 0013 with neither of its columns present. A forced file keeps its
+ * existing tracking row (`skipRecord`) rather than gaining a duplicate.
  */
 export function planMigrations(
   filesOnDisk: string[],
   appliedFilenames: string[],
-  only: string | null
+  only: string | null,
+  force = false
 ): MigrationPlan {
   const appliedSet = new Set(appliedFilenames);
   const files = [...filesOnDisk].sort();
   const applied = files.filter((file) => appliedSet.has(file));
   const pending = files.filter((file) => !appliedSet.has(file));
   const errors: string[] = [];
+  const skipRecord: string[] = [];
   let toApply: string[] = pending;
 
   if (only !== null) {
@@ -221,14 +242,19 @@ export function planMigrations(
       errors.push(`--only ${only}: no such file in ${MIGRATIONS_DIR}/`);
       toApply = [];
     } else if (appliedSet.has(only)) {
-      errors.push(`--only ${only}: already recorded as applied in ${TRACKING_TABLE}; refusing to re-apply`);
-      toApply = [];
+      if (force) {
+        toApply = [only];
+        skipRecord.push(only);
+      } else {
+        errors.push(`--only ${only}: already recorded as applied in ${TRACKING_TABLE}; refusing to re-apply (pass --force to re-execute it anyway)`);
+        toApply = [];
+      }
     } else {
       toApply = [only];
     }
   }
 
-  return { files, applied, pending, toApply, errors };
+  return { files, applied, pending, toApply, skipRecord, errors };
 }
 
 function formatColumns(table: string, rows: ColumnRow[]): string[] {
@@ -254,7 +280,11 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
   };
 
   const { db, files } = deps;
-  const mode = options.dryRun ? "DRY RUN (no writes)" : options.only ? `single file: ${options.only}` : "apply all pending";
+  const mode = options.dryRun
+    ? "DRY RUN (no writes)"
+    : options.only
+      ? `single file: ${options.only}${options.force ? " (forced)" : ""}`
+      : "apply all pending";
   emit(`Migration runner — mode: ${mode}`);
 
   const filesOnDisk = files.list();
@@ -276,11 +306,18 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
     emit(`\nCreated tracking table ${TRACKING_TABLE}.`);
   }
 
-  const plan = planMigrations(filesOnDisk, appliedFilenames, options.only);
+  const plan = planMigrations(filesOnDisk, appliedFilenames, options.only, options.force);
 
   emit(`\nRecorded as applied (${plan.applied.length}):`);
   for (const file of plan.applied) {
     emit(`  ${file}`);
+    // #134: a tracking row is not proof the statements ran — the old splitter dropped
+    // every chunk that opened with a comment while still recording the file. The dry run
+    // is where someone compares this list against the columns below, so say what to do
+    // when they disagree.
+    if (options.dryRun) {
+      emit(`    recorded as applied; use --only ${file} --force if --show-columns shows its columns missing`);
+    }
   }
   emit(`\nPending (${plan.pending.length}):`);
   for (const file of plan.pending) {
@@ -319,22 +356,57 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
     emit(`\nOther pending migrations left untouched (${untouched.length}): ${untouched.join(", ") || "none"}`);
   }
 
+  // #134: every migration file must be re-runnable. Each statement and the tracking-row
+  // INSERT are separate calls over neon-http with no enclosing transaction, so any failure
+  // part-way leaves some statements applied and the file still pending — and --force
+  // deliberately re-executes a file that already has a row. Guard every statement
+  // (IF EXISTS / IF NOT EXISTS, or an equivalent) so a second run is a no-op.
   for (const file of plan.toApply) {
     emit(`\nApplying ${file}...`);
+
+    let statements: string[];
     try {
-      const statements = splitStatements(files.read(file));
-      emit(`  ${statements.length} statement(s)`);
-      for (const statement of statements) {
-        await db.executeStatement(statement);
-      }
-      await db.recordApplied(file);
-      appliedNow.push(file);
-      emit(`  applied ${file}`);
+      statements = splitStatements(files.read(file));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      emit(`\nERROR: applying ${file} failed: ${redactConnectionString(message)}`);
+      emit(`\nERROR: reading ${file} failed: ${redactConnectionString(message)}`);
       return { exitCode: 1, lines, appliedNow };
     }
+    emit(`  ${statements.length} statement(s)`);
+
+    // The two halves report separately: a failed statement means nothing was recorded,
+    // while a failed INSERT means the DDL landed and only the bookkeeping is missing.
+    for (let index = 0; index < statements.length; index++) {
+      try {
+        await db.executeStatement(statements[index] as string);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        emit(
+          `\nERROR: applying ${file} failed while executing statement ${index + 1} of ${statements.length}: ${redactConnectionString(message)}`
+        );
+        return { exitCode: 1, lines, appliedNow };
+      }
+    }
+
+    if (plan.skipRecord.includes(file)) {
+      emit(`  re-executed under --force; kept the existing ${TRACKING_TABLE} row for ${file}`);
+    } else {
+      try {
+        await db.recordApplied(file);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        emit(
+          `\nERROR: statements for ${file} executed but recording it in ${TRACKING_TABLE} failed: ${redactConnectionString(message)}`
+        );
+        emit(
+          `  The DDL landed; ${file} is still pending, so re-running with --only ${file} will re-execute its statements — safe only because migrations are guarded (IF EXISTS / IF NOT EXISTS).`
+        );
+        return { exitCode: 1, lines, appliedNow };
+      }
+    }
+
+    appliedNow.push(file);
+    emit(`  applied ${file}`);
   }
 
   if (options.showColumns) {
@@ -433,7 +505,9 @@ async function applyMigrations(argv: string[] = process.argv.slice(2)): Promise<
     for (const error of errors) {
       console.error(`ERROR: ${error}`);
     }
-    console.error("Usage: tsx scripts/apply-migrations.ts [--dry-run] [--only <NNNN_name.sql>] [--show-columns <table>]");
+    console.error(
+      "Usage: tsx scripts/apply-migrations.ts [--dry-run] [--only <NNNN_name.sql> [--force]] [--show-columns <table>]"
+    );
     return 1;
   }
 
