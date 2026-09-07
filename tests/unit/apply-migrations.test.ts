@@ -88,7 +88,7 @@ describe("parseArgs", () => {
   it("defaults to a full apply with no flags", () => {
     const { options, errors } = parseArgs([]);
     expect(errors).toEqual([]);
-    expect(options).toEqual({ dryRun: false, only: null, showColumns: null });
+    expect(options).toEqual({ dryRun: false, only: null, showColumns: null, force: false });
   });
 
   it("accepts --dry-run, --only and --show-columns in both spaced and = forms", () => {
@@ -98,6 +98,7 @@ describe("parseArgs", () => {
       dryRun: true,
       only: "0013_candidate.sql",
       showColumns: "automated_ingestion_runs",
+      force: false,
     });
 
     const inline = parseArgs(["--only=0013_candidate.sql", "--show-columns=automated_ingestion_runs"]);
@@ -117,6 +118,17 @@ describe("parseArgs", () => {
     const { options, errors } = parseArgs(["--show-columns", "users; DROP TABLE x"]);
     expect(options.showColumns).toBeNull();
     expect(errors).toHaveLength(1);
+  });
+
+  it("rejects --force unless --only names the single file to re-run", () => {
+    expect(parseArgs(["--force"]).errors).toEqual(["--force is only valid together with --only <file>"]);
+    expect(parseArgs(["--dry-run", "--force"]).errors).toEqual([
+      "--force is only valid together with --only <file>",
+    ]);
+
+    const paired = parseArgs(["--only", "0013_candidate.sql", "--force"]);
+    expect(paired.errors).toEqual([]);
+    expect(paired.options.force).toBe(true);
   });
 
   it("reports a flag given without its value, and an unknown flag", () => {
@@ -147,6 +159,13 @@ describe("planMigrations", () => {
     expect(plan.toApply).toEqual([]);
     expect(plan.errors).toHaveLength(1);
     expect(plan.errors[0]).toContain("already recorded as applied");
+  });
+
+  it("re-applies a recorded file under --force without adding a second tracking row", () => {
+    const plan = planMigrations(FILES, ["0013_candidate.sql"], "0013_candidate.sql", true);
+    expect(plan.errors).toEqual([]);
+    expect(plan.toApply).toEqual(["0013_candidate.sql"]);
+    expect(plan.skipRecord).toEqual(["0013_candidate.sql"]);
   });
 
   it("refuses --only on a file that is not on disk", () => {
@@ -186,7 +205,7 @@ describe("runMigrations --dry-run", () => {
     const db = createFakeDb({ applied: ["0000_oval_manta.sql"] });
     const result = await runMigrations(
       { db, files: createFakeFiles(), log: () => {} },
-      { dryRun: true, only: null, showColumns: null }
+      { dryRun: true, only: null, showColumns: null, force: false }
     );
 
     expect(result.exitCode).toBe(0);
@@ -196,11 +215,23 @@ describe("runMigrations --dry-run", () => {
     expect(result.lines.join("\n")).toContain("Pending (3)");
   });
 
+  it("points at --force beside every file it reports as recorded", async () => {
+    const db = createFakeDb({ applied: ["0013_candidate.sql"] });
+    const result = await runMigrations(
+      { db, files: createFakeFiles(), log: () => {} },
+      { dryRun: true, only: null, showColumns: "automated_ingestion_runs", force: false }
+    );
+
+    expect(result.lines).toContain(
+      "    recorded as applied; use --only 0013_candidate.sql --force if --show-columns shows its columns missing"
+    );
+  });
+
   it("reports a missing tracking table instead of creating it", async () => {
     const db = createFakeDb({ tableExists: false });
     const result = await runMigrations(
       { db, files: createFakeFiles(), log: () => {} },
-      { dryRun: true, only: null, showColumns: null }
+      { dryRun: true, only: null, showColumns: null, force: false }
     );
 
     expect(result.exitCode).toBe(0);
@@ -212,7 +243,7 @@ describe("runMigrations --dry-run", () => {
     const db = createFakeDb();
     const result = await runMigrations(
       { db, files: createFakeFiles(), log: () => {} },
-      { dryRun: true, only: "0013_candidate.sql", showColumns: null }
+      { dryRun: true, only: "0013_candidate.sql", showColumns: null, force: false }
     );
 
     expect(result.exitCode).toBe(0);
@@ -223,7 +254,7 @@ describe("runMigrations --dry-run", () => {
     const db = createFakeDb();
     const result = await runMigrations(
       { db, files: createFakeFiles(), log: () => {} },
-      { dryRun: true, only: null, showColumns: "automated_ingestion_runs" }
+      { dryRun: true, only: null, showColumns: "automated_ingestion_runs", force: false }
     );
 
     expect(result.exitCode).toBe(0);
@@ -238,7 +269,7 @@ describe("runMigrations --only", () => {
     const db = createFakeDb({ applied: ["0013_candidate.sql"] });
     const result = await runMigrations(
       { db, files: createFakeFiles(), log: () => {} },
-      { dryRun: false, only: "0013_candidate.sql", showColumns: null }
+      { dryRun: false, only: "0013_candidate.sql", showColumns: null, force: false }
     );
 
     expect(result.exitCode).toBe(1);
@@ -251,7 +282,7 @@ describe("runMigrations --only", () => {
     const db = createFakeDb();
     const result = await runMigrations(
       { db, files: createFakeFiles(), log: () => {} },
-      { dryRun: false, only: "0099_nope.sql", showColumns: null }
+      { dryRun: false, only: "0099_nope.sql", showColumns: null, force: false }
     );
 
     expect(result.exitCode).toBe(1);
@@ -262,7 +293,7 @@ describe("runMigrations --only", () => {
     const db = createFakeDb({ applied: ["0000_oval_manta.sql"] });
     const result = await runMigrations(
       { db, files: createFakeFiles({ "0013_candidate.sql": "ALTER TABLE a ADD COLUMN b integer;" }), log: () => {} },
-      { dryRun: false, only: "0013_candidate.sql", showColumns: null }
+      { dryRun: false, only: "0013_candidate.sql", showColumns: null, force: false }
     );
 
     expect(result.exitCode).toBe(0);
@@ -276,7 +307,7 @@ describe("runMigrations --only", () => {
     const db = createFakeDb();
     const result = await runMigrations(
       { db, files: createFakeFiles(), log: () => {} },
-      { dryRun: false, only: "0013_candidate.sql", showColumns: "automated_ingestion_runs" }
+      { dryRun: false, only: "0013_candidate.sql", showColumns: "automated_ingestion_runs", force: false }
     );
 
     expect(result.exitCode).toBe(0);
@@ -287,12 +318,41 @@ describe("runMigrations --only", () => {
   });
 });
 
+describe("runMigrations --force", () => {
+  it("re-executes a recorded file's statements and adds no second tracking row", async () => {
+    const db = createFakeDb({ applied: ["0013_candidate.sql"] });
+    const result = await runMigrations(
+      { db, files: createFakeFiles({ "0013_candidate.sql": "ALTER TABLE a ADD COLUMN IF NOT EXISTS b integer;" }), log: () => {} },
+      { dryRun: false, only: "0013_candidate.sql", showColumns: null, force: true }
+    );
+
+    expect(result.exitCode).toBe(0);
+    expect(db.executed).toEqual(["ALTER TABLE a ADD COLUMN IF NOT EXISTS b integer;"]);
+    expect(db.calls).not.toContain("recordApplied");
+    expect(db.recorded).toEqual([]);
+    expect(result.appliedNow).toEqual(["0013_candidate.sql"]);
+    expect(result.lines.join("\n")).toContain("kept the existing _drizzle_migrations row");
+  });
+
+  it("records a pending file exactly once when --force is passed redundantly", async () => {
+    const db = createFakeDb({ applied: ["0000_oval_manta.sql"] });
+    const result = await runMigrations(
+      { db, files: createFakeFiles(), log: () => {} },
+      { dryRun: false, only: "0013_candidate.sql", showColumns: null, force: true }
+    );
+
+    expect(result.exitCode).toBe(0);
+    expect(db.executed).toHaveLength(1);
+    expect(db.recorded).toEqual(["0013_candidate.sql"]);
+  });
+});
+
 describe("runMigrations default behaviour", () => {
   it("creates the tracking table and applies every pending migration in order", async () => {
     const db = createFakeDb({ tableExists: false });
     const result = await runMigrations(
       { db, files: createFakeFiles(), log: () => {} },
-      { dryRun: false, only: null, showColumns: null }
+      { dryRun: false, only: null, showColumns: null, force: false }
     );
 
     expect(result.exitCode).toBe(0);
@@ -301,36 +361,57 @@ describe("runMigrations default behaviour", () => {
     expect(db.recorded).toEqual(FILES);
   });
 
-  it("stops with a non-zero exit when a statement throws, and never records that file", async () => {
+  it("names which statement failed, and records nothing, when a statement throws", async () => {
     const db = createFakeDb();
     db.executeStatement = async () => {
       throw new Error("relation does not exist");
     };
     const result = await runMigrations(
       { db, files: createFakeFiles(), log: () => {} },
-      { dryRun: false, only: null, showColumns: null }
+      { dryRun: false, only: null, showColumns: null, force: false }
     );
 
     expect(result.exitCode).toBe(1);
     expect(db.recorded).toEqual([]);
-    expect(result.lines.join("\n")).toContain("relation does not exist");
+    const output = result.lines.join("\n");
+    expect(output).toContain("failed while executing statement 1 of 1");
+    expect(output).toContain("relation does not exist");
   });
+
+  it("says the DDL landed when only the tracking-row write fails", async () => {
+    const db = createFakeDb();
+    db.recordApplied = async () => {
+      throw new Error("connection terminated");
+    };
+    const result = await runMigrations(
+      { db, files: createFakeFiles(), log: () => {} },
+      { dryRun: false, only: null, showColumns: null, force: false }
+    );
+
+    expect(result.exitCode).toBe(1);
+    expect(db.executed).toHaveLength(1);
+    expect(result.appliedNow).toEqual([]);
+    const output = result.lines.join("\n");
+    expect(output).toContain("executed but recording it in _drizzle_migrations failed");
+    expect(output).toContain("The DDL landed");
+  });
+
 });
 
 describe("redactConnectionString", () => {
   it("removes a postgres connection string from an error message", () => {
-    const message = 'connect ECONNREFUSED for postgresql://neondb_owner:npg_secret@ep-x.aws.neon.tech/neondb?sslmode=require';
+    const message = 'connect ECONNREFUSED for postgresql://neondb_owner:npg_secret@ep-test-fixture-000000.aws.neon.tech/neondb?sslmode=require';
     const redacted = redactConnectionString(message, undefined);
     expect(redacted).not.toContain("npg_secret");
-    expect(redacted).not.toContain("ep-x.aws.neon.tech");
+    expect(redacted).not.toContain("ep-test-fixture-000000.aws.neon.tech");
     expect(redacted).toContain("[redacted-url]");
   });
 
   it("removes the host and password even when they appear on their own", () => {
-    const url = "postgresql://neondb_owner:npg_longsecret@ep-dark-firefly-adp1p3v8.aws.neon.tech/neondb";
-    const message = "host ep-dark-firefly-adp1p3v8.aws.neon.tech rejected password npg_longsecret";
+    const url = "postgresql://neondb_owner:npg_longsecret@ep-test-fixture-000000.aws.neon.tech/neondb";
+    const message = "host ep-test-fixture-000000.aws.neon.tech rejected password npg_longsecret";
     const redacted = redactConnectionString(message, url);
     expect(redacted).not.toContain("npg_longsecret");
-    expect(redacted).not.toContain("ep-dark-firefly-adp1p3v8");
+    expect(redacted).not.toContain("ep-test-fixture-000000");
   });
 });
