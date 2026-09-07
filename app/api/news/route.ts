@@ -10,12 +10,15 @@ const MAX_LIMIT = 100;
 const DEFAULT_LIMIT = 20;
 
 /**
- * Deepest page the route will serve.
+ * Deepest page the route will serve; a request past it is rejected, not clamped.
  *
  * Why: Postgres reaches an OFFSET by sorting and discarding every row before it,
  * so an unbounded `?offset=` is a cheap way for a caller to make the database do
- * arbitrary work per request. The news page walks forward one page at a time and
- * no in-repo caller passes an offset at all, so a ceiling costs nothing real.
+ * arbitrary work per request. Clamping would be worse than rejecting: a client
+ * paging forward would get page 10000 back with `hasMore: true` and walk that
+ * same page forever. A 400 tells it where the wall is. The news page walks
+ * forward one page at a time and no in-repo caller passes an offset at all.
+ * Test: `tests/unit/news-route-pagination.test.ts`.
  */
 const MAX_OFFSET = 10000;
 
@@ -63,10 +66,22 @@ export async function GET(request: NextRequest) {
       min: 1,
       max: MAX_LIMIT,
     });
-    const offset = readBoundedInt(searchParams.get("offset"), 0, { max: MAX_OFFSET });
+    const offset = readBoundedInt(searchParams.get("offset"), 0);
     const filter = searchParams.get("filter") || "all";
     const debug = searchParams.get("debug") === "true";
     const cacheKey = searchParams.get("cb"); // Cache-busting key
+
+    // #140: past the ceiling the request is refused rather than served a
+    // clamped page, which a paginating client would loop on.
+    if (offset > MAX_OFFSET) {
+      return NextResponse.json(
+        {
+          error: "Invalid offset",
+          message: `offset exceeds maximum of ${MAX_OFFSET}`,
+        },
+        { status: 400 }
+      );
+    }
 
     // #140: the event_type filter is a SQL expression now, so the page, its
     // total and the filter all come out of one query instead of a fetched pool.
