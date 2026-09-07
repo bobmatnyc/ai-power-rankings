@@ -154,12 +154,36 @@ describe("GET /api/news pagination (#140)", () => {
     expect(data.news[0].tool_name).toBeDefined();
   });
 
-  it("clamps limit to 100, floors offset at 0, and falls back on non-numeric input", async () => {
+  it("caps a huge offset so one request cannot make Postgres discard arbitrarily many rows", async () => {
+    getPaginatedFiltered.mockResolvedValue({ articles: [], total: 0, hasMore: false });
+
+    const response = await getNews(
+      request("http://localhost/api/news?limit=20&offset=999999999&debug=true")
+    );
+    const data = await body(response);
+
+    // The repository — and so the OFFSET in the statement — sees the cap, not
+    // the request's number.
+    expect(getPaginatedFiltered).toHaveBeenCalledWith({
+      limit: 20,
+      offset: 10000,
+      eventType: null,
+    });
+    // The clamp happens once, at parse time, so everything downstream of it
+    // agrees: what the response echoes back is the offset hasMore was computed
+    // against, not the raw parameter.
+    expect(data._debug.query_params.offset).toBe(10000);
+    expect(response.status).toBe(200);
+  });
+
+  it("clamps limit to 100, bounds offset to [0, 10000], and falls back on non-numeric input", async () => {
     const cases: Array<[string, { limit: number; offset: number }]> = [
       ["limit=5000&offset=10", { limit: 100, offset: 10 }],
       ["limit=20&offset=-40", { limit: 20, offset: 0 }],
       ["limit=abc&offset=xyz", { limit: 20, offset: 0 }],
       ["limit=0", { limit: 1, offset: 0 }],
+      ["offset=10001", { limit: 20, offset: 10000 }],
+      ["offset=10000", { limit: 20, offset: 10000 }],
     ];
 
     for (const [query, expected] of cases) {
