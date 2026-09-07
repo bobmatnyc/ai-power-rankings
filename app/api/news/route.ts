@@ -10,12 +10,25 @@ const MAX_LIMIT = 100;
 const DEFAULT_LIMIT = 20;
 
 /**
- * Reads one non-negative integer query parameter.
+ * Deepest page the route will serve.
+ *
+ * Why: Postgres reaches an OFFSET by sorting and discarding every row before it,
+ * so an unbounded `?offset=` is a cheap way for a caller to make the database do
+ * arbitrary work per request. The news page walks forward one page at a time and
+ * no in-repo caller passes an offset at all, so a ceiling costs nothing real.
+ */
+const MAX_OFFSET = 10000;
+
+/**
+ * Reads one integer query parameter, bounded.
  *
  * Why: `parseInt("abc")` is NaN, which reached the query as a LIMIT/OFFSET and
  * would fail the statement rather than fall back (#140).
- * What: Returns `fallback` for anything non-numeric or negative, and clamps to
- * `max` when one is given.
+ * What: Returns `fallback` when the value is not a number. Otherwise clamps it
+ * into `[min, max]` — `min` defaults to 0, and an omitted `max` means no upper
+ * bound. Out-of-range input is clamped, never rejected and never replaced by
+ * `fallback`.
+ * Test: `tests/unit/news-route-pagination.test.ts`.
  */
 function readBoundedInt(
   raw: string | null,
@@ -50,7 +63,7 @@ export async function GET(request: NextRequest) {
       min: 1,
       max: MAX_LIMIT,
     });
-    const offset = readBoundedInt(searchParams.get("offset"), 0);
+    const offset = readBoundedInt(searchParams.get("offset"), 0, { max: MAX_OFFSET });
     const filter = searchParams.get("filter") || "all";
     const debug = searchParams.get("debug") === "true";
     const cacheKey = searchParams.get("cb"); // Cache-busting key

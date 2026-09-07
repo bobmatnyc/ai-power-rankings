@@ -11,11 +11,14 @@ const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 100;
 
 /**
- * Reads one positive integer query parameter.
+ * Reads one positive integer query parameter, bounded.
  *
  * Why: `parseInt("abc")` is NaN, which would reach the query as a LIMIT or an
  * interval width and fail the statement rather than fall back (#140).
- * What: Returns `fallback` for anything non-numeric, then clamps to [1, max].
+ * What: Returns `fallback` when the value is not a number. Otherwise clamps it
+ * into `[1, max]` — out-of-range input is clamped, never rejected and never
+ * replaced by `fallback`.
+ * Test: `tests/unit/news-route-pagination.test.ts`.
  */
 function readBoundedInt(raw: string | null, fallback: number, max: number): number {
   const parsed = Number.parseInt(raw ?? "", 10);
