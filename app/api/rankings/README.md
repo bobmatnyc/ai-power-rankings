@@ -2,7 +2,7 @@
 
 ## Overview
 
-The rankings API is being migrated from Payload CMS to the JSON database.
+The rankings API reads from the database through the Drizzle repositories in `lib/db/repositories/`.
 
 ## Public Endpoints
 
@@ -10,7 +10,7 @@ The rankings API is being migrated from Payload CMS to the JSON database.
 
 **GET** `/api/rankings`
 
-- **Current**: `route.ts` - Uses Payload CMS with news-enhanced algorithm
+- **Current**: `route.ts` - Reads `rankings.repository` with the news-enhanced algorithm
 - **JSON Version**: `route.json.ts` - Uses JSON database
 
 ### Get Rankings with Options
@@ -75,7 +75,6 @@ Request body:
 4. ✅ Created admin endpoints for managing rankings
 5. ⏳ Update main `/api/rankings` route to use JSON (rename route.json.ts to route.ts)
 6. ⏳ Update frontend to use new endpoints
-7. ⏳ Remove Payload CMS dependencies
 
 ## Data Structure
 
