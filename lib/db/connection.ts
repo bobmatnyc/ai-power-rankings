@@ -32,6 +32,7 @@ import { drizzle } from "drizzle-orm/neon-http";
 import { drizzle as drizzlePool } from "drizzle-orm/neon-serverless";
 // Explicitly import article tables to ensure they're included
 import { articleProcessingLogs, articleRankingsChanges, articles } from "./article-schema";
+import { describeDatabaseUrlResolution, resolveDatabaseUrl } from "./database-url";
 import * as schema from "./schema";
 
 // Configure Neon for optimal performance
@@ -46,48 +47,32 @@ let sql: ReturnType<typeof neon> | null = null;
 /**
  * Get the appropriate database URL based on environment
  * Implements database branching strategy for different environments
+ *
+ * #143: the branching rules moved to ./database-url so a caller that only needs
+ * to know whether a connection would be attempted can ask without connecting.
  */
 function getDatabaseUrl(): string | undefined {
-  const nodeEnv = NODE_ENV;
-
-  // Development environment
-  if (nodeEnv === "development") {
-    const devUrl = process.env["DATABASE_URL_DEVELOPMENT"];
-    const fallbackUrl = process.env["DATABASE_URL"];
-
-    if (devUrl && !devUrl.includes("YOUR_PASSWORD")) {
-      console.log("🔧 Using DATABASE_URL_DEVELOPMENT (development branch)");
-      return devUrl;
-    } else if (fallbackUrl && !fallbackUrl.includes("YOUR_PASSWORD")) {
-      console.log("⚠️ DATABASE_URL_DEVELOPMENT not found, falling back to DATABASE_URL");
-      return fallbackUrl;
-    }
-    return undefined;
+  const { url, variable } = resolveDatabaseUrl(process.env, NODE_ENV);
+  if (url && variable) {
+    console.log(describeDatabaseUrlResolution(NODE_ENV, variable));
   }
+  return url;
+}
 
-  // Staging environment
-  if ((nodeEnv as string) === "staging") {
-    const stagingUrl = process.env["DATABASE_URL_STAGING"];
-    const fallbackUrl = process.env["DATABASE_URL"];
-
-    if (stagingUrl && !stagingUrl.includes("YOUR_PASSWORD")) {
-      console.log("🚦 Using DATABASE_URL_STAGING (staging branch)");
-      return stagingUrl;
-    } else if (fallbackUrl && !fallbackUrl.includes("YOUR_PASSWORD")) {
-      console.log("⚠️ DATABASE_URL_STAGING not found, falling back to DATABASE_URL");
-      return fallbackUrl;
-    }
-    return undefined;
-  }
-
-  // Production environment
-  const prodUrl = process.env["DATABASE_URL"];
-  if (prodUrl && !prodUrl.includes("YOUR_PASSWORD")) {
-    console.log("🚀 Using DATABASE_URL (production branch)");
-    return prodUrl;
-  }
-
-  return undefined;
+/**
+ * Whether `getDb()` would find a connection string for this environment.
+ *
+ * Why: #143 — the generate-categories build step must decide whether to skip
+ * regeneration before it risks a connection, and its answer has to be the one
+ * `getDb()` will act on. A second, looser check let a `NODE_ENV=production`
+ * environment carrying only `DATABASE_URL_STAGING` pass the guard and then throw.
+ * What: Applies the same NODE_ENV-conditional resolution `getDb()` uses, without
+ * logging, connecting or throwing.
+ * Test: `tests/unit/generate-static-categories.test.ts` covers the resolution
+ * rules through `resolveDatabaseUrl`, which this delegates to.
+ */
+export function hasUsableDatabaseUrl(): boolean {
+  return resolveDatabaseUrl(process.env, NODE_ENV).url !== undefined;
 }
 
 /**
