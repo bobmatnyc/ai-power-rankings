@@ -2,55 +2,80 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { cacheBustFetch } from "@/lib/api/cache-busting";
+import {
+  buildDashboardStats,
+  type DashboardStats,
+  type NewsListResponse,
+  type RankingsResponse,
+  type SubscribersResponse,
+  type ToolsListResponse,
+} from "./admin-dashboard-stats";
 
-interface DashboardStats {
-  totalTools: number;
-  totalRankings: number;
-  totalNews: number;
-  totalSubscribers: number;
-  latestPeriod: string;
-  lastGenerated: string;
+const EMPTY_STATS: DashboardStats = {
+  totalTools: null,
+  totalRankings: null,
+  totalNews: null,
+  totalSubscribers: null,
+  latestPeriod: null,
+  lastPublishedAt: null,
+};
+
+/**
+ * Reads one endpoint, resolving to `null` instead of throwing.
+ *
+ * Why: the four fetches shared one `try`, so a single failure took all four
+ * counts down with it — and `/api/admin/subscribers` has no route, so its 404
+ * answers with an HTML body that `.json()` always threw on. Every card read 0
+ * as a result (#140 follow-up). The `res.ok` check also stops a 500/503 error
+ * payload from being parsed as a stats body.
+ * What: resolves to the parsed body, or `null` on a network error, a non-2xx
+ * status, or a body that is not JSON.
+ * Test: `tests/unit/admin-dashboard-stats.test.ts` covers what a `null` here
+ * renders as.
+ */
+async function readJson<T>(send: () => Promise<Response>): Promise<T | null> {
+  try {
+    const response = await send();
+    if (!response.ok) return null;
+    return (await response.json()) as T;
+  } catch (error) {
+    console.error("Dashboard stat fetch failed:", error);
+    return null;
+  }
+}
+
+/** Formats an ISO timestamp for display, or "N/A" when there is none. */
+function formatDay(iso: string | null): string {
+  if (!iso) return "N/A";
+  const parsed = new Date(iso);
+  return Number.isNaN(parsed.getTime()) ? "N/A" : parsed.toLocaleDateString();
+}
+
+/** Renders a count, or an em dash when the fetch behind it failed. */
+function renderCount(count: number | null): string {
+  return count === null ? "—" : String(count);
 }
 
 export const AdminDashboard: React.FC = () => {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalTools: 0,
-    totalRankings: 0,
-    totalNews: 0,
-    totalSubscribers: 0,
-    latestPeriod: "",
-    lastGenerated: "",
-  });
+  const [stats, setStats] = useState<DashboardStats>(EMPTY_STATS);
   const [loading, setLoading] = useState(true);
 
   const fetchStats = useCallback(async () => {
-    try {
-      // Fetch stats from various APIs
-      const [toolsRes, rankingsRes, newsRes, subscribersRes] = await Promise.all([
-        fetch("/api/tools?limit=1"),
-        fetch("/api/rankings?limit=1"),
-        cacheBustFetch("/api/news?limit=1", {}, { timestamp: true }),
-        fetch("/api/admin/subscribers"),
-      ]);
+    // #140 follow-up: each response is read independently, and each count comes
+    // from the field its route actually returns — `total` for news, the tools
+    // array length, `stats.total_tools` for rankings. All three previously read
+    // `totalDocs`, which no route here emits.
+    const [tools, rankings, news, subscribers] = await Promise.all([
+      readJson<ToolsListResponse>(() => fetch("/api/tools")),
+      readJson<RankingsResponse>(() => fetch("/api/rankings")),
+      readJson<NewsListResponse>(() =>
+        cacheBustFetch("/api/news?limit=1", {}, { timestamp: true })
+      ),
+      readJson<SubscribersResponse>(() => fetch("/api/admin/subscribers")),
+    ]);
 
-      const tools = await toolsRes.json();
-      const rankings = await rankingsRes.json();
-      const news = await newsRes.json();
-      const subscribers = await subscribersRes.json();
-
-      setStats({
-        totalTools: tools.totalDocs || 0,
-        totalRankings: rankings.totalDocs || 0,
-        totalNews: news.totalDocs || 0,
-        totalSubscribers: subscribers.stats?.total || 0,
-        latestPeriod: rankings.docs?.[0]?.period || "N/A",
-        lastGenerated: new Date().toLocaleDateString(),
-      });
-    } catch (error) {
-      console.error("Failed to fetch stats:", error);
-    } finally {
-      setLoading(false);
-    }
+    setStats(buildDashboardStats({ tools, rankings, news, subscribers }));
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -86,7 +111,7 @@ export const AdminDashboard: React.FC = () => {
         >
           <h3 style={{ fontSize: "14px", color: "#64748b", margin: "0 0 8px 0" }}>Total Tools</h3>
           <div style={{ fontSize: "24px", fontWeight: "bold", color: "#1e293b" }}>
-            {stats.totalTools}
+            {renderCount(stats.totalTools)}
           </div>
         </div>
 
@@ -102,7 +127,7 @@ export const AdminDashboard: React.FC = () => {
             Total Rankings
           </h3>
           <div style={{ fontSize: "24px", fontWeight: "bold", color: "#1e293b" }}>
-            {stats.totalRankings}
+            {renderCount(stats.totalRankings)}
           </div>
         </div>
 
@@ -116,7 +141,7 @@ export const AdminDashboard: React.FC = () => {
         >
           <h3 style={{ fontSize: "14px", color: "#64748b", margin: "0 0 8px 0" }}>News Articles</h3>
           <div style={{ fontSize: "24px", fontWeight: "bold", color: "#1e293b" }}>
-            {stats.totalNews}
+            {renderCount(stats.totalNews)}
           </div>
         </div>
 
@@ -130,7 +155,7 @@ export const AdminDashboard: React.FC = () => {
         >
           <h3 style={{ fontSize: "14px", color: "#64748b", margin: "0 0 8px 0" }}>Subscribers</h3>
           <div style={{ fontSize: "24px", fontWeight: "bold", color: "#1e293b" }}>
-            {stats.totalSubscribers}
+            {renderCount(stats.totalSubscribers)}
           </div>
         </div>
       </div>
@@ -149,10 +174,12 @@ export const AdminDashboard: React.FC = () => {
           }}
         >
           <div style={{ marginBottom: "10px" }}>
-            <strong>Latest Ranking Period:</strong> {stats.latestPeriod}
+            <strong>Latest Ranking Period:</strong> {stats.latestPeriod ?? "N/A"}
           </div>
           <div style={{ marginBottom: "10px" }}>
-            <strong>Last Generated:</strong> {stats.lastGenerated}
+            {/* #140 follow-up: this read `new Date()`, so it always showed today
+                regardless of when the snapshot was published. */}
+            <strong>Rankings Published:</strong> {formatDay(stats.lastPublishedAt)}
           </div>
           <div style={{ color: "#10b981", fontWeight: "bold" }}>✓ All systems operational</div>
         </div>
