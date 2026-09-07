@@ -1,0 +1,153 @@
+name: Apply database migration
+
+# Why: #134 — migration 0013 shipped with the #133 deploy and was never applied, so
+# production ingestion was down from 2026-09-04. Migrations are applied by hand, and the
+# hand that has to apply them cannot reach production: the DATABASE_URL is injected at
+# runtime and nobody can pull it to a laptop. The GitHub Actions DATABASE_URL repository
+# secret already reaches production (cron-gap-detector.yml queries it daily), so the apply
+# runs here instead.
+#
+# What: a manual, two-pass dispatch. The first pass is always a dry run — it connects,
+# lists the migration files on disk against the ones recorded in _drizzle_migrations, and
+# prints the target table's columns, writing nothing. Re-dispatching with dry_run: false
+# applies exactly the one named file via --only, which refuses a filename that is missing
+# or already recorded rather than re-running it. Both passes write their output to the job
+# summary, so the pending list and the before/after columns are readable without opening
+# the log. The script redacts anything URL-shaped out of its error messages; this repo is
+# public and the driver can put the connection string into one.
+
+on:
+  workflow_dispatch:
+    inputs:
+      migration_file:
+        description: 'Migration filename in lib/db/migrations/, e.g. 0013_add_candidate_outcome_tracking.sql'
+        type: string
+        required: true
+      dry_run:
+        description: 'Inspect only: report pending migrations and columns, write nothing. Run this first.'
+        type: boolean
+        default: true
+        required: false
+      show_columns_table:
+        description: 'Table whose columns are printed before and after the apply.'
+        type: string
+        default: 'automated_ingestion_runs'
+        required: false
+      force:
+        description: 'Re-execute the file even when _drizzle_migrations already records it. For a migration the old splitter recorded without running its statements (#134). Ignored on a dry run.'
+        type: boolean
+        default: false
+        required: false
+
+# Read-only: this workflow writes to the database, never to the repository or its issues.
+permissions:
+  contents: read
+
+jobs:
+  apply-migration:
+    name: Apply one migration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Dispatch inputs are attacker-controllable by anyone who can run a workflow, so they
+      # are shape-checked here before any step interpolates them, and they reach the shell
+      # only through `env:` — never as `${{ }}` inside a `run:` body, where a crafted value
+      # would be pasted into the script text itself.
+      - name: Validate inputs
+        env:
+          MIGRATION_FILE: ${{ inputs.migration_file }}
+          SHOW_COLUMNS_TABLE: ${{ inputs.show_columns_table }}
+        run: |
+          set -uo pipefail
+          migration_re='^[0-9]{4}_[a-z0-9_]+\.sql$'
+          table_re='^[a-z_][a-z0-9_]*$'
+
+          if [[ ! "$MIGRATION_FILE" =~ $migration_re ]]; then
+            echo "::error::migration_file must look like 0013_add_candidate_outcome_tracking.sql"
+            exit 1
+          fi
+          if [[ ! "$SHOW_COLUMNS_TABLE" =~ $table_re ]]; then
+            echo "::error::show_columns_table must be lowercase letters and underscores only"
+            exit 1
+          fi
+          if [ ! -f "lib/db/migrations/${MIGRATION_FILE}" ]; then
+            echo "::error::lib/db/migrations/${MIGRATION_FILE} does not exist on this ref"
+            exit 1
+          fi
+
+          echo "migration_file=${MIGRATION_FILE} show_columns_table=${SHOW_COLUMNS_TABLE}"
+
+      # Always runs, including on an apply dispatch, so the apply is preceded by a recorded
+      # snapshot of what was pending and what the table looked like beforehand.
+      - name: Dry run (writes nothing)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SHOW_COLUMNS_TABLE: ${{ inputs.show_columns_table }}
+        run: |
+          set -uo pipefail
+          status=0
+          npx tsx scripts/apply-migrations.ts --dry-run --show-columns "$SHOW_COLUMNS_TABLE" > dry-run.txt 2>&1 || status=$?
+          cat dry-run.txt
+          {
+            echo '## Dry run — pending migrations and current columns'
+            echo ''
+            echo '```'
+            cat dry-run.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      # The single-file apply. --only refuses a file that is missing or already recorded in
+      # _drizzle_migrations, so a repeat dispatch of an applied migration fails loudly
+      # instead of re-running its statements. --force lifts only that second refusal, for
+      # the one named file, and keeps its existing tracking row rather than adding a second
+      # — the escape hatch for a migration the old splitter recorded without executing.
+      # --show-columns prints the target table before and after, which is the evidence that
+      # the ALTER actually landed.
+      - name: Apply migration
+        if: ${{ inputs.dry_run == false }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          MIGRATION_FILE: ${{ inputs.migration_file }}
+          SHOW_COLUMNS_TABLE: ${{ inputs.show_columns_table }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          set -uo pipefail
+          force_flag=()
+          if [ "${FORCE}" = "true" ]; then
+            force_flag=(--force)
+            echo 'Running with --force: the file will be re-executed even if already recorded.'
+          fi
+          status=0
+          npx tsx scripts/apply-migrations.ts --only "$MIGRATION_FILE" "${force_flag[@]}" --show-columns "$SHOW_COLUMNS_TABLE" > apply.txt 2>&1 || status=$?
+          cat apply.txt
+          {
+            echo "## Apply ${MIGRATION_FILE} — columns before and after"
+            echo ''
+            echo '```'
+            cat apply.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Note that nothing was applied
+        if: ${{ inputs.dry_run }}
+        env:
+          MIGRATION_FILE: ${{ inputs.migration_file }}
+        run: |
+          set -uo pipefail
+          {
+            echo ''
+            echo "Dry run only — nothing was written. Re-dispatch with \`dry_run: false\` and \`migration_file: ${MIGRATION_FILE}\` to apply it."
+          } >> "$GITHUB_STEP_SUMMARY"
