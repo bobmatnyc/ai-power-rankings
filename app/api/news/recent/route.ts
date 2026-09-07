@@ -4,6 +4,26 @@ import { getDb } from "@/lib/db/connection";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { loggers } from "@/lib/logger";
 
+/** Bounds on the window and the page, so neither can reach SQL unbounded. */
+const DEFAULT_DAYS = 7;
+const MAX_DAYS = 365;
+const DEFAULT_LIMIT = 10;
+const MAX_LIMIT = 100;
+
+/**
+ * Reads one positive integer query parameter.
+ *
+ * Why: `parseInt("abc")` is NaN, which would reach the query as a LIMIT or an
+ * interval width and fail the statement rather than fall back (#140).
+ * What: Returns `fallback` for anything non-numeric, then clamps to [1, max].
+ */
+function readBoundedInt(raw: string | null, fallback: number, max: number): number {
+  const parsed = Number.parseInt(raw ?? "", 10);
+  if (!Number.isFinite(parsed)) return fallback;
+
+  return Math.min(max, Math.max(1, parsed));
+}
+
 export async function GET(request: NextRequest) {
   try {
     // Ensure database connection is available
@@ -21,32 +41,17 @@ export async function GET(request: NextRequest) {
 
     // Get query parameters
     const searchParams = request.nextUrl.searchParams;
-    const days = parseInt(searchParams.get("days") || "7", 10);
-    const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const days = readBoundedInt(searchParams.get("days"), DEFAULT_DAYS, MAX_DAYS);
+    const limit = readBoundedInt(searchParams.get("limit"), DEFAULT_LIMIT, MAX_LIMIT);
 
     loggers.api.debug("Getting recent news from database", { days, limit });
 
     const newsRepo = new NewsRepository();
 
-    // Calculate date threshold
-    const dateThreshold = new Date();
-    dateThreshold.setDate(dateThreshold.getDate() - days);
-
-    // Get all news articles from database
-    const { articles: allNews } = await newsRepo.getPaginated(100, 0);
-
-    // Filter for recent articles
-    const recentNews = allNews
-      .filter((article) => {
-        const articleDate = new Date(article.publishedAt);
-        return articleDate >= dateThreshold;
-      })
-      .sort((a, b) => {
-        const dateA = new Date(a.publishedAt);
-        const dateB = new Date(b.publishedAt);
-        return dateB.getTime() - dateA.getTime(); // Sort by newest first
-      })
-      .slice(0, limit);
+    // #140: the window, the ordering and the bound are all in the query now.
+    // Fetching the top 100 and filtering by date here truncated any window that
+    // held more than 100 articles.
+    const recentNews = await newsRepo.getRecentWithin({ days, limit });
 
     // Transform to a simpler format for the homepage
     const transformedNews = recentNews.map((article) => {
