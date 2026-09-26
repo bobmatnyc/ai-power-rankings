@@ -23,7 +23,7 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { lang, slug } = await params;
 
   // Get the base metadata from the existing function
   const baseMetadata = await generateToolMetadata(slug);
@@ -31,9 +31,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // Override the alternates section to fix SEO duplicate content issue:
   // canonical is always the English version; hreflang covers every locale.
   // #153: built from the shared siteOrigin() rule.
+  // #155: also carries the locale's RSS link, which this override would drop.
   return {
     ...baseMetadata,
-    alternates: localizedAlternates(`/tools/${slug}`, "en"),
+    alternates: localizedAlternates(lang, `/tools/${slug}`),
   };
 }
 

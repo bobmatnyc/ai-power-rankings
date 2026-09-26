@@ -45,7 +45,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       siteName: "AI Power Rankings",
     },
     // Canonical is always the English version; hreflang covers every locale.
-    alternates: localizedAlternates("/best-open-source-frameworks", "en"),
+    // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
+    alternates: localizedAlternates(lang, "/best-open-source-frameworks"),
   };
 }
 

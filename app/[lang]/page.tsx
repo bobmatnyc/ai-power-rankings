@@ -121,7 +121,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         images: [`${baseUrl}/og-image.png`],
       },
       // Each locale's home page is its own canonical.
-      alternates: localizedAlternates("", lang),
+      // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
+      alternates: localizedAlternates(lang, "", { canonicalLang: lang }),
     };
 
     console.log("[Metadata] Successfully generated metadata (static keywords)");

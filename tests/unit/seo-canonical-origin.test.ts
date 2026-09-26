@@ -13,6 +13,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * every emitted URL is on `https://aipowerranking.com` (or a known third-party
  * host) and that none names `vercel.app`. The fetch-oriented `getUrl()` keeps
  * returning the deployment host, and the server-side fetches still use it.
+ * The #155 block checks that every page setting its own `alternates` still
+ * carries the locale's `application/rss+xml` link.
  * Test: `npx vitest run tests/unit/seo-canonical-origin.test.ts`. No database
  * access, no network: repositories and `fetch` are stubbed.
  */
@@ -323,5 +325,36 @@ describe("getUrl() for server-side fetches (#153)", () => {
     vi.stubEnv("NODE_ENV", "production");
     const { getUrl } = await import("../../lib/get-url");
     expect(getUrl()).toBe(ORIGIN);
+  });
+});
+
+/**
+ * #155: Next.js replaces the layout's whole `alternates` object when a page
+ * sets its own, so every page with a canonical must re-add the RSS link.
+ */
+describe("RSS discovery link survives page alternates (#155)", () => {
+  type Loader = (lang: string) => Promise<{ alternates?: unknown } | null | undefined>;
+  const page = (path: string, extra: Record<string, string> = {}): Loader => async (lang) => {
+    const mod = await import(/* @vite-ignore */ `../../app/[lang]/${path}`);
+    return mod.generateMetadata(params({ lang, ...extra }));
+  };
+
+  const LOADERS: Array<[string, Loader]> = [
+    ["[lang]/layout", page("layout.tsx")],
+    ["news list", page("news/page.tsx")],
+    ["news article", page("news/[slug]/page.tsx", { slug: "big-launch" })],
+    ["home", page("page.tsx")],
+    ["rankings", page("rankings/page.tsx")],
+    ["trending", page("trending/page.tsx")],
+    ["tool detail", page("tools/[slug]/page.tsx", { slug: "cursor" })],
+    ...LOCALIZED_PAGES.map((p): [string, Loader] => [p, page(`${p}/page.tsx`)]),
+  ];
+
+  it.each(LOADERS)("%s advertises the locale's news RSS feed", async (_name, load) => {
+    const metadata = await load("ja");
+    const alternates = metadata?.alternates as { types?: Record<string, unknown> } | undefined;
+    expect(alternates?.types?.["application/rss+xml"]).toEqual([
+      { title: "AI Power Rankings - News & Updates", url: `${ORIGIN}/ja/news/rss.xml` },
+    ]);
   });
 });

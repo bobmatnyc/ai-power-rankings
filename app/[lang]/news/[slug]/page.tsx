@@ -101,7 +101,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         description,
       },
       // Canonical is always the English version; hreflang covers every locale.
-      alternates: localizedAlternates(`/news/${slug}`, "en"),
+      // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
+      alternates: localizedAlternates(lang, `/news/${slug}`),
     };
   } catch {
     // Fallback metadata if article fetch fails

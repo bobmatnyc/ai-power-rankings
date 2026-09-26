@@ -69,7 +69,8 @@ export async function generateMetadata({ params }: Pick<PageProps, "params">): P
     },
     // #153: absolute production URLs; relative ones resolved against a
     // metadataBase that named the VERCEL_URL host.
-    alternates: localizedAlternates("/trending", lang),
+    // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
+    alternates: localizedAlternates(lang, "/trending", { canonicalLang: lang }),
   };
 }
 
