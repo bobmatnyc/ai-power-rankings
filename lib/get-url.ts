@@ -1,8 +1,14 @@
+import { DEFAULT_SITE_ORIGIN } from "@/lib/site-origin";
+
 /**
  * Get the current application URL dynamically
  * Works in both server and client environments
+ *
+ * #153: this is the host of the running deployment (a `*.vercel.app` host on
+ * previews), for server-side fetches of this app's own `/api/*` routes. Never
+ * use it for canonical, hreflang, openGraph, JSON-LD or sitemap URLs; those
+ * use `siteOrigin()` from `lib/site-origin.ts`.
  */
-
 export function getUrl(): string {
   try {
     // Try all available URL sources in order of preference
@@ -66,7 +72,8 @@ export function getUrl(): string {
     // 8. Last resort production fallbacks
     if (process.env["NODE_ENV"] === "production") {
       // Try to determine the production URL
-      const productionUrl = "https://aipowerrankings.com";
+      // #153: was the misspelled "https://aipowerrankings.com".
+      const productionUrl = DEFAULT_SITE_ORIGIN;
       console.log("[getUrl] Using production fallback:", productionUrl);
       return productionUrl;
     }
@@ -78,7 +85,7 @@ export function getUrl(): string {
   } catch (error) {
     console.error("[getUrl] Error determining URL:", error);
     // Return production URL as ultimate fallback
-    return process.env["NODE_ENV"] === "production" ? "https://aipowerrankings.com" : "";
+    return process.env["NODE_ENV"] === "production" ? DEFAULT_SITE_ORIGIN : "";
   }
 }
 

@@ -1,11 +1,12 @@
 // SEO configuration for AI Power Rankings
 // This file contains base configuration, with language-specific content loaded from dictionaries
 
-import { getBaseUrl } from "@/lib/get-base-url";
+import { siteOrigin } from "@/lib/site-origin";
 
 export const seoConfig = {
+  // #153: the production origin, never the per-deployment VERCEL_URL host.
   get baseUrl() {
-    return getBaseUrl();
+    return siteOrigin();
   },
   siteName: "AI Power Rankings",
   twitterHandle: "https://hyperdev.matsuoka.com/",

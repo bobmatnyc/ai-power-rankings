@@ -17,6 +17,10 @@ import tsconfigPaths from "vite-tsconfig-paths";
  */
 export default defineConfig({
   plugins: [tsconfigPaths()],
+  // tsconfig has `"jsx": "preserve"` for Next.js; tests that import .tsx pages
+  // (tests/unit/seo-canonical-origin.test.ts) need the automatic runtime that
+  // Next.js itself compiles with, or JSX throws "React is not defined".
+  esbuild: { jsx: "automatic" },
   test: {
     environment: "node",
     globals: false,

@@ -5,7 +5,8 @@ import { GoogleAnalyticsOptimized } from "@/components/analytics/GoogleAnalytics
 import { ClientLayout } from "@/components/layout/client-layout";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { getUrl } from "@/lib/get-url";
+// #153: SEO URLs use the production origin, never the VERCEL_URL host.
+import { siteOrigin } from "@/lib/site-origin";
 import { getCategoriesWithCounts } from "@/lib/db/repositories/categories";
 import "@/globals.css";
 
@@ -24,7 +25,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(getUrl()),
+  metadataBase: new URL(siteOrigin()),
   title: {
     default: "AI Power Rankings",
     template: "%s | AI Power Rankings",
@@ -33,11 +34,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: getUrl(),
+    url: siteOrigin(),
     siteName: "AI Power Rankings",
     images: [
       {
-        url: `${getUrl()}/og-image.png`,
+        url: `${siteOrigin()}/og-image.png`,
         width: 1200,
         height: 630,
         alt: "AI Power Rankings",
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AI Power Rankings",
     description: "Comprehensive rankings and analysis of AI coding tools and assistants",
-    images: [`${getUrl()}/og-image.png`],
+    images: [`${siteOrigin()}/og-image.png`],
   },
   robots: {
     index: true,

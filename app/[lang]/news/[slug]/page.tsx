@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Locale } from "@/i18n/config";
-import { locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
+import { localizedAlternates } from "@/lib/seo/alternates";
+import { siteOrigin } from "@/lib/site-origin";
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = "force-dynamic";
@@ -64,16 +65,12 @@ async function fetchArticle(slug: string): Promise<{ article: NewsArticle; tool:
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, slug } = await params;
-  const baseUrl = getUrl();
+  // #153: SEO URLs use the production origin; only fetchArticle() keeps getUrl(),
+  // which must reach this deployment's own API on previews.
+  const baseUrl = siteOrigin();
 
   try {
     const { article, tool } = await fetchArticle(slug);
-
-    // Build hreflang alternates for all supported languages
-    const languages: Record<string, string> = {};
-    locales.forEach((locale) => {
-      languages[locale] = `${baseUrl}/${locale}/news/${slug}`;
-    });
 
     const toolName = tool ? ` - ${tool.name}` : "";
     const description = article.summary || article.content.substring(0, 160);
@@ -103,12 +100,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: article.title,
         description,
       },
-      alternates: {
-        // Always set canonical to the English version
-        canonical: `${baseUrl}/en/news/${slug}`,
-        // Include hreflang tags for all supported languages
-        languages,
-      },
+      // Canonical is always the English version; hreflang covers every locale.
+      // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
+      alternates: localizedAlternates(lang, `/news/${slug}`),
     };
   } catch {
     // Fallback metadata if article fetch fails

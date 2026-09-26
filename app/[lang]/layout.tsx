@@ -4,7 +4,7 @@ import { ClientLayout } from "@/components/layout/client-layout";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
-import { siteOrigin } from "@/lib/site-origin";
+import { newsRssAlternateTypes } from "@/lib/seo/alternates";
 
 export async function generateMetadata({
   params,
@@ -22,24 +22,15 @@ export async function generateMetadata({
     const dict = await getDictionary(lang);
     console.log("[Layout] generateMetadata: Dictionary loaded:", !!dict);
 
-    // #150: `A || B ? x : ""` parsed as `(A || B) ? x : ""`, advertising the
-    // per-deployment host (or `https://undefined`); share the feed's own origin.
-    const baseUrl = siteOrigin();
-    console.log("[Layout] generateMetadata: Base URL:", baseUrl);
-
     return {
       title: dict.seo?.title || `${dict.common.appName} - ${dict.common.appDescription}`,
       description: dict.seo?.description || dict.home.methodology.algorithmDescription,
       keywords: dict.seo?.keywords?.split(", ") || [],
+      // #150: the feed's own origin (siteOrigin()), never VERCEL_URL.
+      // #155: the same builder localizedAlternates() uses, so a page that
+      // replaces these alternates re-adds an identical RSS link.
       alternates: {
-        types: {
-          "application/rss+xml": [
-            {
-              title: "AI Power Rankings - News & Updates",
-              url: `${baseUrl}/${lang}/news/rss.xml`,
-            },
-          ],
-        },
+        types: newsRssAlternateTypes(lang),
       },
     };
   } catch (error) {

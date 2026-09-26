@@ -11,12 +11,14 @@ import type {
 import type { Ranking, Tool } from "@/types/database";
 import type { RankedTool } from "@/types/rankings";
 
-const baseUrl =
-  process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
-    ? `https://${process.env["VERCEL_URL"]}`
-    : "";
+import { siteOrigin } from "@/lib/site-origin";
+
+// #153: each builder reads siteOrigin() at call time. The old module constant
+// parsed as `(A || B) ? https://${VERCEL_URL} : ""`, so JSON-LD named the
+// per-deployment host even when NEXT_PUBLIC_BASE_URL was set.
 
 export function createOrganizationSchema(): WithContext<Organization> {
+  const baseUrl = siteOrigin();
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -64,6 +66,7 @@ export function createOrganizationSchema(): WithContext<Organization> {
 }
 
 export function createWebsiteSchema(): WithContext<WebSite> {
+  const baseUrl = siteOrigin();
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -159,6 +162,7 @@ export function createSoftwareApplicationSchema(
 }
 
 export function createRankingSchema(rankings: RankedTool[], period: string): WithContext<ItemList> {
+  const baseUrl = siteOrigin();
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -185,6 +189,7 @@ export function createRankingSchema(rankings: RankedTool[], period: string): Wit
 export function createBreadcrumbSchema(
   items: { name: string; url: string }[]
 ): WithContext<BreadcrumbList> {
+  const baseUrl = siteOrigin();
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -237,6 +242,7 @@ export function createComparisonSchema(
     }>;
   };
 }> {
+  const baseUrl = siteOrigin();
   return {
     "@context": "https://schema.org",
     "@type": "Article",
