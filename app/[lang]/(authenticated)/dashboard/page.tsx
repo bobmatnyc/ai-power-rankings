@@ -6,7 +6,7 @@ import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 // Force dynamic rendering - this page requires authentication context
 export const dynamic = "force-dynamic";
 
-// #156: served at /{lang}/dashboard; canonical, og:url and hreflang need the locale.
+// #156: served at /{lang}/dashboard; canonical and og:url need the locale; noindex, so no hreflang.
 export async function generateMetadata({
   params,
 }: {

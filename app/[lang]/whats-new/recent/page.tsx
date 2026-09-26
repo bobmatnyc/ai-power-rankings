@@ -1,6 +1,18 @@
 import Link from 'next/link';
 import { Calendar, Newspaper, Wrench, Sparkles, TrendingUp, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import type { Metadata } from 'next';
+import { whatsNewPageMetadata } from '../page-metadata';
+
+// #156: self-canonical per locale; the layout sets no alternates.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  return whatsNewPageMetadata(lang, "/whats-new/recent");
+}
 
 type UnifiedFeedItem =
   | {
