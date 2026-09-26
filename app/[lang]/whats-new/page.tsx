@@ -46,8 +46,8 @@ export default async function WhatsNewPage() {
         <FileText className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
         <h2 className="text-xl font-semibold mb-2">No Monthly Summary Available</h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          The monthly summary will be generated automatically based on recent activity.
-          Check back soon for insights into the latest AI tool rankings and platform updates.
+          A monthly summary has not been published yet. Check back later for insights into the
+          latest AI tool rankings and platform updates.
         </p>
       </div>
     );

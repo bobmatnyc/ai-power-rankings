@@ -469,7 +469,7 @@ export function WhatsNewModal({
                   <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
                   <p className="text-muted-foreground">No monthly summary available</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Summary will be generated automatically based on recent activity
+                    A monthly summary has not been published yet
                   </p>
                 </div>
               )}

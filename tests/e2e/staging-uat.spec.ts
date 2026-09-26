@@ -184,7 +184,7 @@ test.describe('Core Functionality Verification', () => {
       '/api/rankings/current',
       '/api/rankings/trending',
       '/api/changelog',
-      '/api/data/db-status'
+      // /api/data/db-status is admin-only; see "Database status endpoint refuses an anonymous request".
     ];
 
     for (const endpoint of endpoints) {
@@ -242,16 +242,15 @@ test.describe('Responsive Design Verification', () => {
 
 test.describe('Database Connectivity Verification', () => {
 
-  test('Database status endpoint responds correctly', async ({ request }) => {
+  test('Database status endpoint refuses an anonymous request', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/api/data/db-status`);
 
-    // Accept 200 (working) or 500 (error but endpoint exists)
-    expect([200, 500].includes(response.status())).toBeTruthy();
-
-    if (response.status() === 200) {
-      const data = await response.json();
-      expect(data).toHaveProperty('status');
-    }
+    // Admin-only: an anonymous request gets 401 and no connection details.
+    expect(response.status()).toBe(401);
+    const data = await response.json();
+    expect(data).not.toHaveProperty('database');
+    expect(data).not.toHaveProperty('maskedHost');
+    expect(data).not.toHaveProperty('connectionError');
   });
 
   test('Data fetching works (rankings endpoint)', async ({ request }) => {

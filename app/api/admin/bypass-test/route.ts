@@ -19,6 +19,12 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Admin only outside production too; runs before any debug work.
+  const adminCheck = await requireAdmin();
+  if (adminCheck.error) {
+    return adminCheck.error;
+  }
+
   const { searchParams } = new URL(request.url);
   const mode = searchParams.get("mode") || "admin";
 

@@ -1,38 +1,22 @@
 import { NextResponse } from "next/server";
-import { isAuthenticatedManual } from "@/lib/manual-auth";
+import { requireAdmin } from "@/lib/api-auth";
 
 /**
- * Articles endpoint using manual authentication
- * This bypasses Clerk's middleware to avoid HTML error responses
+ * GET /api/data/articles
+ *
+ * Why: Declared admin-only, but it used to accept any request that carried a
+ * session cookie, whatever the cookie's value.
+ * What: `requireAdmin()` verifies the Clerk session first (401 anonymous,
+ * 403 non-admin), then returns the placeholder article list.
+ * Test: `tests/unit/auth-hardening.test.ts`.
  */
 export async function GET() {
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
-    console.log("[articles-manual] Starting articles request");
-
-    // Check authentication using manual approach
-    const isAuth = await isAuthenticatedManual();
-    console.log("[articles-manual] Manual authentication result:", isAuth);
-
-    if (!isAuth) {
-      console.log("[articles-manual] User not authenticated, returning 401");
-      return NextResponse.json(
-        {
-          error: "Unauthorized",
-          message: "Admin session required for articles access",
-          authenticated: false,
-          timestamp: new Date().toISOString(),
-        },
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    console.log("[articles-manual] User authenticated, fetching articles data");
-
     // Mock articles data for now (in real implementation, this would query the database)
     const articles = [
       {
@@ -57,12 +41,12 @@ export async function GET() {
       articles,
       total: articles.length,
       timestamp: new Date().toISOString(),
-      authMethod: "manual-cookie",
+      authMethod: "clerk",
       authenticated: true,
       message: "Articles retrieved successfully",
     };
 
-    console.log("[articles-manual] Returning articles data");
+    console.log("[data/articles] Returning articles data");
     return NextResponse.json(response, {
       headers: {
         "Content-Type": "application/json",
@@ -70,7 +54,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("[articles-manual] Error getting articles:", error);
+    console.error("[data/articles] Error getting articles:", error);
 
     const errorResponse = {
       error: "Failed to get articles",
@@ -78,7 +62,7 @@ export async function GET() {
       articles: [],
       total: 0,
       timestamp: new Date().toISOString(),
-      authMethod: "manual-cookie",
+      authMethod: "clerk",
       stack:
         process.env["NODE_ENV"] === "development" && error instanceof Error
           ? error.stack

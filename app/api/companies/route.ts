@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 import { cachedJsonResponse } from "@/lib/api-cache";
 import { getDb } from "@/lib/db/connection";
 import { companiesRepository } from "@/lib/db/repositories/companies.repository";
@@ -121,8 +122,21 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Create new company
+/**
+ * POST /api/companies
+ *
+ * Why: Inserts a company row, so it is admin-only; it used to accept any
+ * caller. The list GET above stays public.
+ * What: `requireAdmin()` runs before the database or the body is touched
+ * (401 anonymous, 403 non-admin); an admin's body is inserted.
+ * Test: `tests/unit/auth-hardening.test.ts`.
+ */
 export async function POST(request: NextRequest) {
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     // Ensure database connection is available
     const db = getDb();
@@ -136,8 +150,6 @@ export async function POST(request: NextRequest) {
         { status: 503 }
       );
     }
-
-    // TODO: Add authentication check here
 
     const body = (await request.json()) as Partial<Company>;
 
