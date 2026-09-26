@@ -27,6 +27,7 @@ const touched = vi.hoisted(() => ({
   getCachedSummary: vi.fn(),
   getLatestSummary: vi.fn(),
   generateMonthlySummary: vi.fn(),
+  regenerateIfChanged: vi.fn(),
   llmFetch: vi.fn(),
 }));
 
@@ -53,6 +54,7 @@ vi.mock("../../lib/services/whats-new-summary.service", () => ({
     getCachedSummary = touched.getCachedSummary;
     getLatestSummary = touched.getLatestSummary;
     generateMonthlySummary = touched.generateMonthlySummary;
+    regenerateIfChanged = touched.regenerateIfChanged;
   },
 }));
 
@@ -207,6 +209,8 @@ describe("what's-new summary GET stays public", () => {
     });
     const res = await whatsNewSummary.GET(new NextRequest("http://localhost/api/whats-new/summary"));
     expect(touched.generateMonthlySummary).not.toHaveBeenCalled();
+    // #160: the cron-only regeneration path is not reachable from the public GET.
+    expect(touched.regenerateIfChanged).not.toHaveBeenCalled();
     expect(touched.llmFetch).not.toHaveBeenCalled();
     expect(res.status).toBe(200);
     expect((await res.json()).summary.period).toBe("2025-12");

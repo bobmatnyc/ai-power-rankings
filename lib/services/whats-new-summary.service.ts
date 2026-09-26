@@ -20,6 +20,25 @@ export interface SummaryGenerationResult {
   generationTimeMs: number;
 }
 
+/**
+ * Result of one cron-driven regeneration attempt (#160). "skipped" and
+ * "failed" both leave every stored summary row exactly as it was.
+ */
+export type AutoRegenerationOutcome =
+  | { status: "generated"; period: string; generationTimeMs: number }
+  | {
+      status: "skipped";
+      period: string;
+      reason: "unchanged" | "no-articles-this-month" | "insufficient-time-budget";
+    }
+  | { status: "failed"; period: string; error: string };
+
+/**
+ * #160: below this remaining budget the cron skips the LLM call instead of
+ * risking Vercel killing the whole ingestion run at `maxDuration`.
+ */
+export const MIN_GENERATION_BUDGET_MS = 60_000;
+
 export class WhatsNewSummaryService {
   private apiKey: string;
   private aggregationService: WhatsNewAggregationService;
@@ -229,6 +248,69 @@ export class WhatsNewSummaryService {
     const aggregatedData = await this.aggregationService.getMonthlyData(month, year);
     const dataHash = this.aggregationService.calculateDataHash(aggregatedData);
 
+    return this.generateAndStore(targetPeriod, aggregatedData, dataHash, startTime);
+  }
+
+  /**
+   * Why: #160 — the summary must follow the month's news without an admin,
+   * but each generation is a paid LLM call, so only the CRON_SECRET-gated
+   * daily-news cron calls this, once per run.
+   * What: Aggregates `period`'s data and hashes it the same way the stored
+   * row's `dataHash` was computed. Skips when the hash matches the stored row,
+   * when the month has no active articles yet, or when `timeBudgetMs` is under
+   * `MIN_GENERATION_BUDGET_MS`. Otherwise makes one LLM call, aborted after
+   * `timeBudgetMs`, and upserts only `period`'s row. Throws on any failure
+   * before the upsert, so no row is changed; callers wrap it
+   * (`autoRegenerateMonthlySummary`).
+   * Test: `tests/unit/whats-new-auto-regenerate.test.ts`.
+   */
+  async regenerateIfChanged(period: string, timeBudgetMs: number): Promise<AutoRegenerationOutcome> {
+    const startTime = Date.now();
+    const stored = await this.getCachedSummary(period);
+
+    const { month, year } = this.parsePeriod(period);
+    const aggregatedData = await this.aggregationService.getMonthlyData(month, year);
+    const dataHash = this.aggregationService.calculateDataHash(aggregatedData);
+
+    if (stored && stored.dataHash === dataHash) {
+      return { status: "skipped", period, reason: "unchanged" };
+    }
+    // #160: an empty new month would replace last month's summary with a
+    // vacuous one; the public GET keeps serving the latest stored row instead.
+    if (aggregatedData.newsArticles.length === 0) {
+      return { status: "skipped", period, reason: "no-articles-this-month" };
+    }
+    if (timeBudgetMs < MIN_GENERATION_BUDGET_MS) {
+      return { status: "skipped", period, reason: "insufficient-time-budget" };
+    }
+
+    const result = await this.generateAndStore(
+      period,
+      aggregatedData,
+      dataHash,
+      startTime,
+      AbortSignal.timeout(timeBudgetMs)
+    );
+    return { status: "generated", period, generationTimeMs: result.generationTimeMs };
+  }
+
+  /**
+   * One LLM call for `targetPeriod`, then an upsert of that period's row. The
+   * row is written only after non-empty content comes back, so any failure
+   * leaves the stored summary untouched.
+   */
+  private async generateAndStore(
+    targetPeriod: string,
+    aggregatedData: MonthlyDataSources,
+    dataHash: string,
+    startTime: number,
+    signal?: AbortSignal
+  ): Promise<SummaryGenerationResult> {
+    const db = getDb();
+    if (!db) {
+      throw new Error("Database connection not available");
+    }
+
     // 3. Format data for LLM prompt
     const dataPrompt = this.formatDataForPrompt(aggregatedData);
 
@@ -285,6 +367,7 @@ Generate the summary now:`;
           temperature: 0.3,
           max_tokens: 16000,
         }),
+        signal,
       });
 
       if (!response.ok) {
@@ -296,7 +379,8 @@ Generate the summary now:`;
       const data = await response.json();
       const content = data.choices?.[0]?.message?.content;
 
-      if (!content) {
+      // #160: whitespace-only content must not overwrite a stored summary either.
+      if (typeof content !== "string" || content.trim() === "") {
         throw new Error("No content in OpenRouter response");
       }
 
