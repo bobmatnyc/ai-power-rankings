@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { isAuthenticated as checkAuth } from "@/lib/clerk-auth";
+import { requireAdmin } from "@/lib/api-auth";
 import { getDb } from "@/lib/db/connection";
 import { ArticleDatabaseService } from "@/lib/services/article-db-service";
 import { invalidateArticleCache } from "@/lib/cache/invalidation.service";
@@ -18,9 +18,9 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
     const useCachedAnalysis = searchParams.get("useCachedAnalysis") === "true";
 
     // Check admin authentication
-    const isAuthenticated = await checkAuth();
-    if (!isAuthenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     // Check database availability
@@ -156,9 +156,9 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     const useCachedAnalysis = body.useCachedAnalysis === true;
 
     // Check admin authentication
-    const isAuthenticated = await checkAuth();
-    if (!isAuthenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     // Check database availability

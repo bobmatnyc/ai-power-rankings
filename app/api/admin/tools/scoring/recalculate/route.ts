@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 import { getDb } from "@/lib/db/connection";
 import { toolScoringService } from "@/lib/services/tool-scoring.service";
 import { loggers } from "@/lib/logger";
@@ -8,6 +9,12 @@ import { loggers } from "@/lib/logger";
  * Recalculate all current scores from baseline + delta
  */
 export async function POST(): Promise<NextResponse> {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     const db = getDb();
     if (!db) {

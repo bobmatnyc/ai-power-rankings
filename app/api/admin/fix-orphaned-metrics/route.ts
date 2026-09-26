@@ -1,5 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 export async function POST(_request: NextRequest) {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     // This endpoint requires a metrics repository which doesn't exist yet
 
@@ -31,6 +38,12 @@ export async function POST(_request: NextRequest) {
 }
 
 export async function GET() {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     // This endpoint requires a metrics repository which doesn't exist yet
 

@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 export async function POST() {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     // User management is no longer needed with JSON repositories
     // Authentication is handled by NextAuth.js directly
