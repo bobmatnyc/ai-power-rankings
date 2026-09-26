@@ -154,23 +154,24 @@ export class NewsRepository {
    * Why: `/api/news` reported `total` as the length of the rows it had already
    * fetched, which capped it at the size of the in-memory pool (#140).
    * What: `COUNT(*)` under the same predicate `getPaginatedFiltered` pages over.
-   * Test: `lib/db/repositories/news.test.ts`.
+   * Throws when no database is configured or the query fails (#152).
+   * Test: `lib/db/repositories/news.test.ts`,
+   * `tests/unit/news-route-fail-closed.test.ts`.
    */
   async countFiltered(filters: NewsFilters = {}): Promise<number> {
+    // #152: a swallowed failure read as "zero articles", which `/api/news`
+    // served as a successful empty page. Its only caller now fails closed.
     const db = getDb();
-    if (!db) return 0;
-
-    try {
-      const countResult = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(articles)
-        .where(this.filterWhere(filters));
-
-      return Number(countResult[0]?.count || 0);
-    } catch (error) {
-      console.error("Error counting filtered news:", error);
-      return 0;
+    if (!db) {
+      throw new Error("Database connection unavailable");
     }
+
+    const countResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(articles)
+      .where(this.filterWhere(filters));
+
+    return Number(countResult[0]?.count || 0);
   }
 
   /**
@@ -182,9 +183,11 @@ export class NewsRepository {
    * expression now, so nothing is left to filter after the fetch.
    * What: Adds `event_type` to the projection, applies `filters` in the WHERE,
    * and pairs the rows with a real `COUNT(*)`. `id` breaks `published_date`
-   * ties so a row cannot repeat on one page and vanish from the next.
+   * ties so a row cannot repeat on one page and vanish from the next. Throws
+   * when either read fails, so an empty page always means zero matches (#152).
    * Test: `lib/db/repositories/news.test.ts`,
-   * `tests/unit/news-route-pagination.test.ts`.
+   * `tests/unit/news-route-pagination.test.ts`,
+   * `tests/unit/news-route-fail-closed.test.ts`.
    */
   async getPaginatedFiltered(options: PaginatedNewsOptions = {}): Promise<{
     articles: ClassifiedNewsArticle[];
@@ -194,32 +197,23 @@ export class NewsRepository {
     const offset = options.offset ?? 0;
     const filters: NewsFilters = { eventType: options.eventType ?? null };
 
-    const db = getDb();
-    if (!db) {
-      return { articles: [], total: 0, hasMore: false };
-    }
+    // #152: no catch here. Both reads throw, and `/api/news` — the only caller —
+    // turns that into a 503 instead of a 200 with `news: []`.
+    const page = await this.getPageFiltered(options);
+    const total = await this.countFiltered(filters);
 
-    try {
-      const page = await this.getPageFiltered(options);
-      const total = await this.countFiltered(filters);
-
-      return {
-        articles: page,
-        total,
-        hasMore: offset + page.length < total,
-      };
-    } catch (error) {
-      console.error("Error fetching filtered paginated news:", error);
-      return { articles: [], total: 0, hasMore: false };
-    }
+    return {
+      articles: page,
+      total,
+      hasMore: offset + page.length < total,
+    };
   }
 
   /**
    * The rows of one `getPaginatedFiltered` page, with failures thrown, not swallowed.
    *
-   * Why: `getPaginatedFiltered` turns a failed read into an empty page, which a
-   * cached consumer such as the RSS feed would then serve as a valid, empty
-   * document (#150).
+   * Why: A failed read turned into an empty page, which a cached consumer such
+   * as the RSS feed would then serve as a valid, empty document (#150).
    * What: Same predicate, ordering (`published_date` desc, `id` desc), limit and
    * offset as `getPaginatedFiltered`, which delegates here. Throws when no
    * database is configured or the query fails.
@@ -253,35 +247,36 @@ export class NewsRepository {
    * to whatever fell inside the first 100 (#140).
    * What: Puts the lower bound in the WHERE and the bound in the LIMIT, both
    * over `COALESCE(published_date, created_at)` — the same fallback the route
-   * ordered by when it did this in JavaScript.
-   * Test: `lib/db/repositories/news.test.ts`.
+   * ordered by when it did this in JavaScript. Throws when no database is
+   * configured or the query fails (#152).
+   * Test: `lib/db/repositories/news.test.ts`,
+   * `tests/unit/news-route-fail-closed.test.ts`.
    */
   async getRecentWithin(options: { days: number; limit: number }) {
     const { days, limit } = options;
 
+    // #152: same bug as `/api/news` — `/api/news/recent`, the only caller,
+    // served a swallowed failure as a cacheable empty 200. It fails closed now.
     const db = getDb();
-    if (!db) return [];
+    if (!db) {
+      throw new Error("Database connection unavailable");
+    }
 
     const effectiveDate = sql`coalesce(${articles.publishedDate}, ${articles.createdAt})`;
 
-    try {
-      const results = await db
-        .select()
-        .from(articles)
-        .where(
-          and(
-            eq(articles.status, "active"),
-            sql`${effectiveDate} >= now() - make_interval(days => ${days}::int)`
-          )
+    const results = await db
+      .select()
+      .from(articles)
+      .where(
+        and(
+          eq(articles.status, "active"),
+          sql`${effectiveDate} >= now() - make_interval(days => ${days}::int)`
         )
-        .orderBy(sql`${effectiveDate} desc`, desc(articles.id))
-        .limit(limit);
+      )
+      .orderBy(sql`${effectiveDate} desc`, desc(articles.id))
+      .limit(limit);
 
-      return results.map((article) => this.mapArticleToNews(article));
-    } catch (error) {
-      console.error("Error fetching recent news within window:", error);
-      return [];
-    }
+    return results.map((article) => this.mapArticleToNews(article));
   }
 
   /**

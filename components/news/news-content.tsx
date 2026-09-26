@@ -23,7 +23,6 @@ import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
-import { cacheBustFetch } from "@/lib/api/cache-busting";
 import { loggers } from "@/lib/logger-client";
 import ArticleScoringImpact from "./article-scoring-impact";
 import ScoringMetrics from "./scoring-metrics";
@@ -86,12 +85,9 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
     try {
       setLoading(true);
 
-      // Use cache-busting utility for reliable mobile cache prevention
-      const response = await cacheBustFetch("/api/news?limit=100", {}, {
-        timestamp: true,
-        userAgent: true,
-        randomSeed: true
-      });
+      // #152: a plain URL, so every visitor shares the edge's cached copy. The
+      // per-request `cb`/`_r`/`_ua` query made each fetch a cache miss.
+      const response = await fetch("/api/news?limit=100");
 
       if (!response.ok) {
         throw new Error("Failed to fetch news");
@@ -103,11 +99,6 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
       // Store all news for client-side filtering
       setNewsItems(allNews);
       setLoading(false);
-
-      // Log cache-busting debug info if available
-      if (data._debug) {
-        loggers.news.debug("News fetch with cache busting", data._debug);
-      }
     } catch (error) {
       loggers.news.error("Failed to fetch news", { error });
       setLoading(false);
