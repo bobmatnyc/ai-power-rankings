@@ -5,9 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveCrownIcon } from "@/components/ui/crown-icon-server";
-import { locales } from "@/i18n/config";
 import { getCurrentYear } from "@/lib/get-current-year";
-import { getUrl } from "@/lib/get-url";
+import { localizedAlternates } from "@/lib/seo/alternates";
+import { siteOrigin } from "@/lib/site-origin";
 
 // Force dynamic rendering to prevent build timeout
 export const dynamic = "force-dynamic";
@@ -18,14 +18,9 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  const baseUrl = getUrl();
+  // #153: the production origin, never the per-deployment VERCEL_URL host.
+  const baseUrl = siteOrigin();
   const currentYear = getCurrentYear();
-
-  // Build hreflang alternates for all supported languages
-  const languages: Record<string, string> = {};
-  locales.forEach((locale) => {
-    languages[locale] = `${baseUrl}/${locale}/best-ai-app-builders`;
-  });
 
   return {
     title: `Best AI App Builders ${currentYear} - No-Code AI Development Platforms`,
@@ -49,12 +44,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `${baseUrl}/${lang}/best-ai-app-builders`,
       siteName: "AI Power Rankings",
     },
-    alternates: {
-      // Always set canonical to the English version
-      canonical: `${baseUrl}/en/best-ai-app-builders`,
-      // Include hreflang tags for all supported languages
-      languages,
-    },
+    // Canonical is always the English version; hreflang covers every locale.
+    alternates: localizedAlternates("/best-ai-app-builders", "en"),
   };
 }
 

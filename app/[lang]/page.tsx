@@ -11,8 +11,9 @@ import { ResponsiveCrownIcon } from "@/components/ui/crown-icon-server";
 import { RankingsTableSkeleton } from "@/components/ui/skeleton";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { getUrl } from "@/lib/get-url";
 import { getAllKeywords } from "@/lib/metadata/static-keywords";
+import { localizedAlternates } from "@/lib/seo/alternates";
+import { siteOrigin } from "@/lib/site-origin";
 import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
 
 // Source homepage category counts from generated data so they never drift.
@@ -80,8 +81,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const dict = await getDictionary(lang as Locale);
     console.log("[Metadata] Dictionary loaded successfully");
 
-    const baseUrl = getUrl();
-    console.log("[Metadata] Base URL from getUrl:", baseUrl);
+    // #153: the production origin, never the per-deployment VERCEL_URL host.
+    const baseUrl = siteOrigin();
 
     // Use pre-generated static keywords (no API fetch needed)
     // This eliminates 300-3000ms metadata generation delay
@@ -89,9 +90,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const allKeywords = getAllKeywords(baseKeywords);
 
     console.log("[Metadata] Using static keywords (no API fetch required)");
-
-    // Handle cases where baseUrl might be empty
-    const metadataUrl = baseUrl || "";
 
     const metadata = {
       title: dict.seo?.title || "AI Power Rankings",
@@ -104,43 +102,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
         type: "website",
         locale: lang,
-        ...(metadataUrl && { url: `${metadataUrl}/${lang}` }),
+        url: `${baseUrl}/${lang}`,
         siteName: dict.common?.appName || "AI Power Rankings",
-        ...(metadataUrl && {
-          images: [
-            {
-              url: `${metadataUrl}/og-image.png`,
-              width: 1200,
-              height: 630,
-              alt: dict.common?.appName || "AI Power Rankings",
-            },
-          ],
-        }),
+        images: [
+          {
+            url: `${baseUrl}/og-image.png`,
+            width: 1200,
+            height: 630,
+            alt: dict.common?.appName || "AI Power Rankings",
+          },
+        ],
       },
       twitter: {
         card: "summary_large_image",
         title: dict.seo?.title || "AI Power Rankings",
         description:
           dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
-        ...(metadataUrl && { images: [`${metadataUrl}/og-image.png`] }),
+        images: [`${baseUrl}/og-image.png`],
       },
-      alternates: metadataUrl
-        ? {
-            canonical: `${metadataUrl}/${lang}`,
-            languages: {
-              en: `${metadataUrl}/en`,
-              de: `${metadataUrl}/de`,
-              fr: `${metadataUrl}/fr`,
-              it: `${metadataUrl}/it`,
-              ja: `${metadataUrl}/ja`,
-              ko: `${metadataUrl}/ko`,
-              uk: `${metadataUrl}/uk`,
-              hr: `${metadataUrl}/hr`,
-              zh: `${metadataUrl}/zh`,
-              es: `${metadataUrl}/es`,
-            },
-          }
-        : undefined,
+      // Each locale's home page is its own canonical.
+      alternates: localizedAlternates("", lang),
     };
 
     console.log("[Metadata] Successfully generated metadata (static keywords)");
@@ -202,8 +183,8 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       }
     }
 
-    const baseUrl = getUrl();
-    console.log("[Page] Home: Base URL from getUrl:", baseUrl);
+    // #153: JSON-LD names the production origin, never the VERCEL_URL host.
+    const baseUrl = siteOrigin();
 
     // Provide server-side fallback data to prevent loading state
     // Updated with Algorithm v7.6 rankings (November 2025)
@@ -271,29 +252,27 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
       },
     ];
 
-    // Create structured data for SEO - handle case where baseUrl might be empty
+    // Create structured data for SEO
     let structuredData = null;
     try {
-      structuredData = baseUrl
-        ? {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            name: dict.common?.appName || "AI Power Rankings",
-            description:
-              dict.seo?.description ||
-              dict.home?.methodology?.algorithmDescription ||
-              "AI tool rankings",
-            url: `${baseUrl}/${lang}`,
-            potentialAction: {
-              "@type": "SearchAction",
-              target: {
-                "@type": "EntryPoint",
-                urlTemplate: `${baseUrl}/${lang}/rankings?search={search_term_string}`,
-              },
-              "query-input": "required name=search_term_string",
-            },
-          }
-        : null;
+      structuredData = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: dict.common?.appName || "AI Power Rankings",
+        description:
+          dict.seo?.description ||
+          dict.home?.methodology?.algorithmDescription ||
+          "AI tool rankings",
+        url: `${baseUrl}/${lang}`,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${baseUrl}/${lang}/rankings?search={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
+      };
     } catch (error) {
       console.error("[Page] Home: Error creating structured data:", error);
       structuredData = null;

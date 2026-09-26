@@ -2,8 +2,7 @@ import type { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
 import { toolsRepository } from "@/lib/db/repositories/tools.repository";
 import { newsRepository } from "@/lib/db/repositories/news";
-
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://aipowerranking.com";
+import { siteOrigin } from "@/lib/site-origin";
 
 // Category page slugs based on existing app structure
 const categoryPages = [
@@ -45,6 +44,8 @@ export const revalidate = 3600; // Revalidate every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [];
+  // #153: the one shared production-origin rule, read per request.
+  const baseUrl = siteOrigin();
   const isBuildTime = !process.env.DATABASE_URL;
 
   // 1. Generate static routes for all languages

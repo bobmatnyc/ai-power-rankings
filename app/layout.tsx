@@ -8,6 +8,7 @@ import {
   generateWebsiteSchema,
   createJsonLdScript,
 } from "@/lib/schema";
+import { siteOrigin } from "@/lib/site-origin";
 
 export const metadata: Metadata = {
   title: {
@@ -24,10 +25,9 @@ export const metadata: Metadata = {
     "GitHub Copilot",
     "Claude",
   ],
-  metadataBase: new URL(
-    process.env["NEXT_PUBLIC_BASE_URL"] ||
-      (process.env["VERCEL_URL"] ? `https://${process.env["VERCEL_URL"]}` : "http://localhost:3001")
-  ),
+  // #153: relative metadata URLs resolve against the production origin, never
+  // the per-deployment VERCEL_URL host.
+  metadataBase: new URL(siteOrigin()),
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -52,10 +52,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // The suppressHydrationWarning is necessary because the lang attribute may differ
   // between server and client rendering in internationalized routes
 
-  // Get base URL for schema markup
-  const baseUrl =
-    process.env["NEXT_PUBLIC_BASE_URL"] ||
-    (process.env["VERCEL_URL"] ? `https://${process.env["VERCEL_URL"]}` : "https://aipowerranking.com");
+  // #153: schema markup names the production origin, never the VERCEL_URL host.
+  const baseUrl = siteOrigin();
 
   // Generate site-wide schema markup
   const organizationSchema = generateOrganizationSchema({
