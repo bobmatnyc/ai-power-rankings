@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { locales } from "@/i18n/config";
+import { i18n, locales } from "@/i18n/config";
 import { toolsRepository } from "@/lib/db/repositories/tools.repository";
 import { newsRepository } from "@/lib/db/repositories/news";
 import { siteOrigin } from "@/lib/site-origin";
@@ -107,18 +107,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const newsArticles = await newsRepository.getAll();
 
+    // #156: article bodies are English-only and every locale's article page
+    // canonicalises to /en, so only that URL is listed.
     for (const article of newsArticles) {
-      for (const locale of locales) {
-        routes.push({
-          url: `${baseUrl}/${locale}/news/${article.slug}`,
-          lastModified: article.publishedAt || new Date(),
-          changeFrequency: "monthly",
-          priority: 0.6,
-        });
-      }
+      routes.push({
+        url: `${baseUrl}/${i18n.defaultLocale}/news/${article.slug}`,
+        lastModified: article.publishedAt || new Date(),
+        changeFrequency: "monthly",
+        priority: 0.6,
+      });
     }
 
-    console.log(`[sitemap] Generated ${newsArticles.length} news pages across ${locales.length} languages`);
+    console.log(`[sitemap] Generated ${newsArticles.length} news pages (${i18n.defaultLocale} only)`);
   } catch (error) {
     console.error("[sitemap] Error fetching news articles for sitemap:", error);
     // Continue generating sitemap even if news query fails

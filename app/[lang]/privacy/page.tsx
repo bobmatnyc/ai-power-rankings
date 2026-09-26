@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Locale } from "@/i18n/config";
 import { contentLoader } from "@/lib/content-loader";
+import { localizedAlternates } from "@/lib/seo/alternates";
 
 export const dynamic = "force-dynamic";
 
@@ -57,9 +58,21 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
   const { lang } = await params;
   const content = await contentLoader.loadContent(lang as Locale, "privacy");
+  const title = content?.title || "Privacy Policy";
+  const description = content?.subtitle || "AI Power Rankings privacy policy";
+  // #156: self-canonical per locale; og:url reads the same canonical.
+  const alternates = localizedAlternates(lang, "/privacy");
 
   return {
-    title: content?.title || "Privacy Policy",
-    description: content?.subtitle || "AI Power Rankings privacy policy",
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: alternates.canonical,
+      siteName: "AI Power Rankings",
+    },
+    alternates,
   };
 }
