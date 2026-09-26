@@ -15,7 +15,7 @@ import { FAQSection, QuickAnswerBox } from "@/components/seo";
 import { generalFAQs } from "@/data/seo-content";
 import { getUrl } from "@/lib/get-url";
 import { generateRankingOGImageUrl } from "@/lib/og-utils";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import {
   createJsonLdScript,
@@ -94,6 +94,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       type: "website",
+      locale: canonicalLocale(lang), // #156: never an unknown segment
       url: alternates.canonical, // #156: always the canonical
       siteName: "AI Power Rankings",
       images: [

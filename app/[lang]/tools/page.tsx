@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getCurrentYear } from "@/lib/get-current-year";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import ToolsClient from "./tools-client";
 
 // Enable ISR with 1-hour revalidation
@@ -38,6 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `All AI Coding Tools ${currentYear}`,
       description: "Browse and compare 50+ AI coding tools across all categories.",
       type: "website",
+      locale: canonicalLocale(lang), // #156: never an unknown segment
       url: alternates.canonical, // #156: always the canonical
       siteName: "AI Power Rankings",
     },

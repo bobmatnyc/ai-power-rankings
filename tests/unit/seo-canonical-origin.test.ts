@@ -192,6 +192,10 @@ function expectSelfCanonical(
   expectHreflang(alternates, path, where);
   const ogUrl = (metadata?.openGraph as { url?: string | URL } | undefined)?.url;
   expect(ogUrl === undefined ? undefined : String(ogUrl), `${where} og:url`).toBe(canonical);
+  // #156: a real translation's og:locale is the page's own locale, never the
+  // root layout's en_US default a page's own openGraph silently replaces.
+  const ogLocale = (metadata?.openGraph as { locale?: string } | undefined)?.locale;
+  expect(ogLocale, `${where} og:locale`).toBe(lang);
 }
 
 /**
@@ -669,7 +673,9 @@ describe("unknown locale segment falls back to English (#156)", () => {
 
   it.each([
     ["home", "page.tsx", {}],
+    ["rankings", "rankings/page.tsx", {}],
     ["trending", "trending/page.tsx", {}],
+    ["tools", "tools/page.tsx", {}],
     ["tool detail", "tools/[slug]/page.tsx", { slug: "cursor" }],
   ] as Array<[string, string, Record<string, string>]>)("%s og:locale is en for lang xx", async (name, file, extra) => {
     const metadata = await load(file, "xx", extra);
