@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveCrownIcon } from "@/components/ui/crown-icon-server";
 import { getCurrentYear } from "@/lib/get-current-year";
 import { localizedAlternates } from "@/lib/seo/alternates";
-import { siteOrigin } from "@/lib/site-origin";
 
 // Force dynamic rendering to avoid Clerk SSG issues
 export const dynamic = "force-dynamic";
@@ -18,10 +17,10 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  // #153: the production origin, never the per-deployment VERCEL_URL host.
-  const baseUrl = siteOrigin();
   const currentYear = getCurrentYear();
 
+  // #156: one builder for canonical and og:url, so they cannot disagree.
+  const alternates = localizedAlternates(lang, "/best-testing-tools");
   return {
     title: `Best AI Testing Tools ${currentYear} - Automated Test Generation & QA`,
     description: `Discover the best AI-powered testing tools of ${currentYear}. Compare intelligent test automation, automated test generation, and QA platforms. Updated monthly.`,
@@ -41,12 +40,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `Best AI Testing Tools ${currentYear} - Automated Test Generation & QA`,
       description: `Discover the best AI-powered testing tools of ${currentYear}. Compare top intelligent test automation platforms trusted by QA teams.`,
       type: "website",
-      url: `${baseUrl}/${lang}/best-testing-tools`,
+      url: alternates.canonical, // #156: always the canonical
       siteName: "AI Power Rankings",
     },
     // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-    alternates: localizedAlternates(lang, "/best-testing-tools"),
+    alternates,
   };
 }
 

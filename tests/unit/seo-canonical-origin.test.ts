@@ -492,3 +492,58 @@ describe("RSS discovery link survives page alternates (#155)", () => {
     ]);
   });
 });
+
+/**
+ * #156: `/xx/about` or `/EN/news` renders the English page. Canonical,
+ * `og:url` and the RSS link must all name the English URL, never the junk
+ * segment, which would otherwise be an indexable duplicate and a 404 feed.
+ */
+describe("unknown locale segment falls back to English (#156)", () => {
+  type Meta = { alternates?: unknown; openGraph?: unknown } | null | undefined;
+  const load = async (file: string, lang: string, extra: Record<string, string> = {}): Promise<Meta> => {
+    const mod = await import(/* @vite-ignore */ `../../app/[lang]/${file}`);
+    return mod.generateMetadata(params({ lang, ...extra }));
+  };
+  const EN_RSS = [{ title: "AI Power Rankings - News & Updates", url: `${ORIGIN}/en/news/rss.xml` }];
+
+  // [name, module under app/[lang], extra params, locale-free path]
+  const PAGES: Array<[string, string, Record<string, string>, string]> = [
+    ["home", "page.tsx", {}, ""],
+    ["news list", "news/page.tsx", {}, "/news"],
+    ["news article", "news/[slug]/page.tsx", { slug: "big-launch" }, "/news/big-launch"],
+    ["rankings", "rankings/page.tsx", {}, "/rankings"],
+    ["trending", "trending/page.tsx", {}, "/trending"],
+    ["tool detail", "tools/[slug]/page.tsx", { slug: "cursor" }, "/tools/cursor"],
+    ...LOCALIZED_PAGES.map((p): [string, string, Record<string, string>, string] => [
+      p,
+      `${p}/page.tsx`,
+      {},
+      `/${p}`,
+    ]),
+  ];
+
+  it.each(PAGES)("%s: canonical, og:url and RSS name /en for lang xx", async (name, file, extra, path) => {
+    const metadata = await load(file, "xx", extra);
+    const alternates = metadata?.alternates as
+      | { canonical?: string; types?: Record<string, unknown> }
+      | undefined;
+    expect(alternates?.canonical, `${name} canonical`).toBe(`${ORIGIN}/en${path}`);
+    const ogUrl = (metadata?.openGraph as { url?: string | URL } | undefined)?.url;
+    expect(String(ogUrl), `${name} og:url`).toBe(`${ORIGIN}/en${path}`);
+    expect(alternates?.types?.["application/rss+xml"], `${name} RSS`).toEqual(EN_RSS);
+  });
+
+  it("the [lang] layout advertises the English feed for lang EN", async () => {
+    const metadata = await load("layout.tsx", "EN");
+    const alternates = metadata?.alternates as { types?: Record<string, unknown> } | undefined;
+    expect(alternates?.types?.["application/rss+xml"]).toEqual(EN_RSS);
+  });
+
+  it("newsRssAlternateTypes() keeps a real locale and maps an unknown one to en", async () => {
+    const { newsRssAlternateTypes } = await import("../../lib/seo/alternates");
+    expect(newsRssAlternateTypes("xx")["application/rss+xml"]).toEqual(EN_RSS);
+    expect(newsRssAlternateTypes("de")["application/rss+xml"]).toEqual([
+      { title: "AI Power Rankings - News & Updates", url: `${ORIGIN}/de/news/rss.xml` },
+    ]);
+  });
+});
