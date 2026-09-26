@@ -26,7 +26,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { TrendingPageContent } from "./trending-content";
 
 export const dynamic = "force-dynamic";
@@ -47,6 +47,8 @@ export async function generateMetadata({ params }: Pick<PageProps, "params">): P
   const { lang } = await params;
   const dict = await getDictionary(lang as Locale);
 
+  // #156: one builder for canonical and og:url, so they cannot disagree.
+  const alternates = localizedAlternates(lang, "/trending");
   return {
     title: `${dict.trending.title} | AI Power Rankings`,
     description:
@@ -58,7 +60,8 @@ export async function generateMetadata({ params }: Pick<PageProps, "params">): P
         dict.trending.description ||
         "Historical trends and analysis of AI tool rankings over time.",
       type: "website",
-      locale: lang,
+      locale: canonicalLocale(lang), // #156: never an unknown segment
+      url: alternates.canonical, // #156: always the canonical
     },
     twitter: {
       card: "summary_large_image",
@@ -70,7 +73,8 @@ export async function generateMetadata({ params }: Pick<PageProps, "params">): P
     // #153: absolute production URLs; relative ones resolved against a
     // metadataBase that named the VERCEL_URL host.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-    alternates: localizedAlternates(lang, "/trending", { canonicalLang: lang }),
+    // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
+    alternates,
   };
 }
 

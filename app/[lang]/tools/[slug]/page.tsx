@@ -4,7 +4,7 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { ToolDetailClient } from "./tool-detail-client";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { canonicalLocale } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import {
   generateToolSchema,
@@ -25,17 +25,9 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, slug } = await params;
 
-  // Get the base metadata from the existing function
-  const baseMetadata = await generateToolMetadata(slug);
-
-  // Override the alternates section to fix SEO duplicate content issue:
-  // canonical is always the English version; hreflang covers every locale.
-  // #153: built from the shared siteOrigin() rule.
-  // #155: also carries the locale's RSS link, which this override would drop.
-  return {
-    ...baseMetadata,
-    alternates: localizedAlternates(lang, `/tools/${slug}`),
-  };
+  // #156: lib/seo/utils builds canonical, og:url and hreflang from
+  // localizedAlternates(), so the page no longer overrides them.
+  return generateToolMetadata(slug, lang);
 }
 
 export default async function ToolDetailPage({ params }: PageProps): Promise<React.JSX.Element> {
@@ -81,8 +73,9 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
       breadcrumbSchema = generateBreadcrumbSchema(
         [
           { name: "Home", url: "/" },
-          { name: "Tools", url: `/${lang}/tools` },
-          { name: tool.name, url: `/${lang}/tools/${slug}` },
+          // #156: an unknown segment renders English; name the /en URLs.
+          { name: "Tools", url: `/${canonicalLocale(lang)}/tools` },
+          { name: tool.name, url: `/${canonicalLocale(lang)}/tools/${slug}` },
         ],
         baseUrl
       );

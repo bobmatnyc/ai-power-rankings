@@ -12,7 +12,7 @@ import { RankingsTableSkeleton } from "@/components/ui/skeleton";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getAllKeywords } from "@/lib/metadata/static-keywords";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
 
@@ -91,6 +91,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     console.log("[Metadata] Using static keywords (no API fetch required)");
 
+    // #156: one builder for canonical and og:url, so they cannot disagree.
+    const alternates = localizedAlternates(lang, "");
     const metadata = {
       title: dict.seo?.title || "AI Power Rankings",
       description:
@@ -101,8 +103,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         description:
           dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
         type: "website",
-        locale: lang,
-        url: `${baseUrl}/${lang}`,
+        locale: canonicalLocale(lang), // #156: never an unknown segment
+        url: alternates.canonical, // #156: always the canonical
         siteName: dict.common?.appName || "AI Power Rankings",
         images: [
           {
@@ -120,9 +122,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
         images: [`${baseUrl}/og-image.png`],
       },
-      // Each locale's home page is its own canonical.
       // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-      alternates: localizedAlternates(lang, "", { canonicalLang: lang }),
+      // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
+      alternates,
     };
 
     console.log("[Metadata] Successfully generated metadata (static keywords)");
@@ -264,12 +266,13 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
           dict.seo?.description ||
           dict.home?.methodology?.algorithmDescription ||
           "AI tool rankings",
-        url: `${baseUrl}/${lang}`,
+        // #156: an unknown segment renders English; name the /en URLs.
+        url: `${baseUrl}/${canonicalLocale(lang)}`,
         potentialAction: {
           "@type": "SearchAction",
           target: {
             "@type": "EntryPoint",
-            urlTemplate: `${baseUrl}/${lang}/rankings?search={search_term_string}`,
+            urlTemplate: `${baseUrl}/${canonicalLocale(lang)}/rankings?search={search_term_string}`,
           },
           "query-input": "required name=search_term_string",
         },
