@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
  * Regression tests for #150 — the per-locale RSS feed at `/{lang}/news/rss.xml`.
@@ -23,10 +23,6 @@ vi.mock("../../lib/db/repositories/news", () => ({
   NewsRepository: class {
     getPageFiltered = getPageFiltered;
   },
-}));
-
-vi.mock("../../lib/get-url", () => ({
-  getUrl: () => "https://aipowerranking.com",
 }));
 
 import { GET } from "../../app/[lang]/news/rss.xml/route";
@@ -132,7 +128,62 @@ const RFC_822 = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} [A-Z][a-z]{2} \d{4} \d{2}
 describe("GET /{lang}/news/rss.xml (#150)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Deterministic origin regardless of the developer's shell environment.
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", undefined);
+    vi.stubEnv("VERCEL_URL", undefined);
     getPageFiltered.mockResolvedValue([article("newest"), article("older")]);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  /** Every URL the feed emits: channel link, atom self-href, item links and guids. */
+  function feedUrls(xml: string): string[] {
+    return [
+      ...[...xml.matchAll(/<(?:link|guid)[^>]*>([^<]*)<\//g)].map((m) => m[1] ?? ""),
+      ...[...xml.matchAll(/<atom:link href="([^"]*)"/g)].map((m) => m[1] ?? ""),
+    ];
+  }
+
+  it("uses https://aipowerranking.com for every link and guid on Vercel with no NEXT_PUBLIC_BASE_URL", async () => {
+    vi.stubEnv("VERCEL_URL", "foo.vercel.app");
+
+    const xml = await (await get("en")).text();
+    const urls = feedUrls(xml);
+
+    // channel link + self link + (link, guid) per item
+    expect(urls).toHaveLength(2 + 2 * 2);
+    for (const url of urls) {
+      expect(url.startsWith(`${BASE}/`), url).toBe(true);
+    }
+    expect(xml).not.toContain("vercel.app");
+    expect(xml).not.toContain("localhost");
+  });
+
+  it("uses NEXT_PUBLIC_BASE_URL over the default and over VERCEL_URL when it is set", async () => {
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://staging.example.com");
+    vi.stubEnv("VERCEL_URL", "foo.vercel.app");
+
+    const urls = feedUrls(await (await get("en")).text());
+
+    expect(urls).toHaveLength(6);
+    for (const url of urls) {
+      expect(url.startsWith("https://staging.example.com/"), url).toBe(true);
+    }
+  });
+
+  it("omits <pubDate> for an unparseable date and drops a lone surrogate from a title", async () => {
+    getPageFiltered.mockResolvedValue([
+      article("undated", { publishedAt: "not a date", title: "a\uD800b" }),
+    ]);
+
+    const xml = await (await get("en")).text();
+
+    assertWellFormedXml(xml);
+    const [item] = items(xml);
+    expect(item).not.toContain("<pubDate>");
+    expect(element(item ?? "", "title")).toBe("ab");
   });
 
   it("serves a well-formed RSS 2.0 feed with the RSS content type for every supported locale", async () => {
@@ -201,6 +252,7 @@ describe("GET /{lang}/news/rss.xml (#150)", () => {
     const response = await get("xx");
 
     expect(response.status).toBe(404);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(getPageFiltered).not.toHaveBeenCalled();
   });
 

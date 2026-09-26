@@ -1,8 +1,8 @@
 import { locales } from "@/i18n/config";
 import { NewsRepository } from "@/lib/db/repositories/news";
-import { getUrl } from "@/lib/get-url";
 import { loggers } from "@/lib/logger";
 import { NEWS_RSS_ITEM_LIMIT, buildNewsRssFeed } from "@/lib/news-rss";
+import { siteOrigin } from "@/lib/site-origin";
 
 /**
  * Per-locale RSS 2.0 news feed at `/{lang}/news/rss.xml`.
@@ -37,7 +37,7 @@ function errorResponse(status: number, message: string): Response {
 }
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ lang: string }> }
 ): Promise<Response> {
   const { lang } = await params;
@@ -64,10 +64,9 @@ export async function GET(
     return errorResponse(503, "News feed temporarily unavailable");
   }
 
-  // #150: getUrl() is the base the news pages build their own URLs from; the
-  // request origin only stands in when no site URL is configured at all.
-  const baseUrl = getUrl() || new URL(request.url).origin;
-  const xml = buildNewsRssFeed({ lang, baseUrl, articles, now: new Date() });
+  // #150: the canonical origin, never VERCEL_URL or the request host, so item
+  // links and guids stay the same across deploys.
+  const xml = buildNewsRssFeed({ lang, baseUrl: siteOrigin(), articles, now: new Date() });
 
   return new Response(xml, {
     status: 200,

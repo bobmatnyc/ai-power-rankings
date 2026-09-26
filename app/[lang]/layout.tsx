@@ -4,6 +4,7 @@ import { ClientLayout } from "@/components/layout/client-layout";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
+import { siteOrigin } from "@/lib/site-origin";
 
 export async function generateMetadata({
   params,
@@ -21,10 +22,9 @@ export async function generateMetadata({
     const dict = await getDictionary(lang);
     console.log("[Layout] generateMetadata: Dictionary loaded:", !!dict);
 
-    const baseUrl =
-      process.env["NEXT_PUBLIC_BASE_URL"] || process.env["VERCEL_URL"]
-        ? `https://${process.env["VERCEL_URL"]}`
-        : "";
+    // #150: `A || B ? x : ""` parsed as `(A || B) ? x : ""`, advertising the
+    // per-deployment host (or `https://undefined`); share the feed's own origin.
+    const baseUrl = siteOrigin();
     console.log("[Layout] generateMetadata: Base URL:", baseUrl);
 
     return {
