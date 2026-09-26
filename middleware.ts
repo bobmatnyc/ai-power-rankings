@@ -1,44 +1,10 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { routeAccess } from "./lib/route-access";
 
 // Quick Win #4: Only log in development to save 10-30ms TTFB in production
 const isDevelopment = process.env.NODE_ENV === 'development';
-
-// Define public routes that don't require authentication
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/(.*)/sign-in(.*)",
-  "/(.*)/sign-up(.*)",
-  "/api/public(.*)",
-  "/api/health(.*)",
-  "/api/rankings(.*)",
-  "/api/tools(.*)",
-  "/api/news(.*)",
-  "/api/og(.*)",
-  "/api/cron(.*)",  // Cron jobs authenticate via CRON_SECRET, not Clerk
-  "/api/whats-new(.*)",  // Public API for monthly summaries
-  "/(.*)/news(.*)",
-  "/(.*)/rankings(.*)",
-  "/(.*)/tools(.*)",
-  "/(.*)/about(.*)",
-  "/(.*)/methodology(.*)",
-  "/(.*)/trending(.*)",
-  "/(.*)/privacy(.*)",
-  "/(.*)/terms(.*)",
-  "/(.*)/contact(.*)",
-]);
-
-// Define protected routes that require authentication
-// These routes are now under the (authenticated) route group
-// Note: sign-in and sign-up are in isPublicRoute, not here
-const isProtectedRoute = createRouteMatcher([
-  "/:locale/admin(.*)",
-  "/:locale/dashboard(.*)",
-  "/api/admin(.*)",
-]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   // Check if auth is disabled for development/testing
@@ -63,8 +29,11 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     console.log("[middleware] Processing request:", pathname);
   }
 
+  // Protected patterns are checked before public ones; see lib/route-access.ts.
+  const access = routeAccess(req);
+
   // Allow public routes without authentication check
-  if (isPublicRoute(req)) {
+  if (access === "public") {
     if (isDevelopment) {
       console.log("[middleware] Public route, allowing access:", pathname);
     }
@@ -80,7 +49,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       pathname,
       userId: userId || "null",
       sessionId: sessionId || "null",
-      isProtectedRoute: isProtectedRoute(req),
+      access,
       headers: {
         cookie: req.headers.get("cookie")?.substring(0, 50) + "...",
       }
@@ -88,8 +57,15 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   }
 
   // For protected routes, use Clerk's protect() method which handles auth automatically
-  if (isProtectedRoute(req)) {
+  if (access === "protected") {
     if (!userId) {
+      // API callers get a 401 JSON body; a sign-in redirect is only useful to a browser.
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json(
+          { error: "Unauthorized", message: "Authentication required", code: "AUTH_REQUIRED" },
+          { status: 401 }
+        );
+      }
       if (isDevelopment) {
         console.log("[middleware] Protected route without userId, redirecting to sign-in");
       }

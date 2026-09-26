@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAuthenticated } from "@/lib/auth-helper";
+import { requireAdmin } from "@/lib/api-auth";
 import { getDb, testConnection } from "@/lib/db/connection";
 
 // Let Next.js auto-detect runtime - avoid conflicts with middleware
@@ -90,41 +90,11 @@ export async function GET() {
     console.log("[db-status] Starting GET request");
     console.log("[db-status] Auth disabled:", process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true");
 
-    // Check admin authentication with error handling
-    let isAuth = false;
-    try {
-      console.log("[db-status] Checking authentication...");
-      isAuth = await isAuthenticated();
-      console.log("[db-status] Authentication result:", isAuth);
-    } catch (authError) {
-      console.error("[db-status] Authentication check failed:", authError);
-      console.error(
-        "[db-status] Auth error stack:",
-        authError instanceof Error ? authError.stack : "No stack"
-      );
-
-      // Return specific error for auth failures
-      return NextResponse.json(
-        {
-          error: "Authentication check failed",
-          message: authError instanceof Error ? authError.message : "Unknown authentication error",
-          details:
-            process.env["NODE_ENV"] === "development"
-              ? authError instanceof Error
-                ? authError.stack
-                : String(authError)
-              : undefined,
-        },
-        { status: 500 }
-      );
+    // Check admin authentication
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
-
-    if (!isAuth) {
-      console.log("[db-status] User not authenticated, returning 401");
-      return NextResponse.json({ error: "Unauthorized - Admin session required" }, { status: 401 });
-    }
-
-    console.log("[db-status] User authenticated, proceeding with database status check");
 
     // Get database configuration
     const databaseUrl = process.env["DATABASE_URL"];
