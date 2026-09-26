@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 import { z } from "zod";
-import { isAuthenticated } from "@/lib/clerk-auth";
 import { getDb } from "@/lib/db/connection";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { ArticleDatabaseService } from "@/lib/services/article-db-service";
@@ -23,9 +23,9 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ id
     const params = await context.params;
     const { id } = params;
     // Check admin authentication
-    const isAuth = await isAuthenticated();
-    if (!isAuth) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     // Check database availability
@@ -70,9 +70,9 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     const params = await context.params;
     const { id } = params;
     // Check admin authentication
-    const isAuth = await isAuthenticated();
-    if (!isAuth) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     // Check database availability
@@ -124,9 +124,9 @@ export async function DELETE(_request: NextRequest, context: { params: Promise<{
     const params = await context.params;
     const { id } = params;
     // Check admin authentication
-    const isAuth = await isAuthenticated();
-    if (!isAuth) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     // Check database availability

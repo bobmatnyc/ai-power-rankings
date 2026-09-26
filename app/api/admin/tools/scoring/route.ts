@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 import { getDb } from "@/lib/db/connection";
 import { toolScoringService } from "@/lib/services/tool-scoring.service";
 import { loggers } from "@/lib/logger";
@@ -8,6 +9,12 @@ import { loggers } from "@/lib/logger";
  * Get all tools with their scoring data
  */
 export async function GET(): Promise<NextResponse> {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     const db = getDb();
     if (!db) {
@@ -44,6 +51,12 @@ export async function GET(): Promise<NextResponse> {
  * Update scoring for a specific tool
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     const db = getDb();
     if (!db) {
@@ -101,6 +114,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  * Initialize baseline scores from current data
  */
 export async function PUT(): Promise<NextResponse> {
+  // Check admin authentication
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     const db = getDb();
     if (!db) {

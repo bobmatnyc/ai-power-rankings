@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 import { getDb, testConnection } from "@/lib/db/connection";
 
 // Force Node.js runtime instead of Edge Runtime
@@ -9,25 +9,10 @@ export async function GET() {
   try {
     console.log("[db-status-v2] Starting request");
 
-    // Check if auth is disabled
-    const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-    console.log("[db-status-v2] Auth disabled:", isAuthDisabled);
-
-    if (!isAuthDisabled) {
-      // Use Clerk auth directly
-      console.log("[db-status-v2] Checking auth...");
-      const authResult = await auth();
-      console.log("[db-status-v2] Auth result - userId:", authResult?.userId);
-
-      if (!authResult?.userId) {
-        return NextResponse.json(
-          { error: "Unauthorized", message: "Authentication required" },
-          { status: 401 }
-        );
-      }
-
-      // For now, skip admin check to isolate the issue
-      console.log("[db-status-v2] User authenticated, proceeding...");
+    // Check admin authentication
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     // Get database status

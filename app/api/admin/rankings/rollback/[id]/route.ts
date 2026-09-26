@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 import { writeRankingsStaticCache } from "@/lib/cache/rankings-static-cache";
 
 interface Tool {
@@ -74,11 +75,9 @@ async function loadVersionHistory(): Promise<RankingVersion[]> {
 export async function POST(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // Check admin authentication
-    const { isAuthenticated } = await import("@/lib/clerk-auth");
-    const isAuth = await isAuthenticated();
-
-    if (!isAuth) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     const userEmail = "admin";

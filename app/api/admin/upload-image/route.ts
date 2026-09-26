@@ -5,17 +5,17 @@
  * Saves images to /public/uploads/news/ directory.
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 import path from "path";
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Check admin authentication
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     // Get form data

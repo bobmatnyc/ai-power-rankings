@@ -1,14 +1,14 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 import { GoogleSearchConsole } from "@/lib/google-search-console";
 import { siteOrigin } from "@/lib/site-origin";
 
 export async function POST() {
   try {
-    // Check authentication using Clerk
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Check admin authentication
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
     }
 
     const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
