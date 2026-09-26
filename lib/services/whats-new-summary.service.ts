@@ -255,16 +255,22 @@ export class WhatsNewSummaryService {
    * Why: #160 — the summary must follow the month's news without an admin,
    * but each generation is a paid LLM call, so only the CRON_SECRET-gated
    * daily-news cron calls this, once per run.
-   * What: Aggregates `period`'s data and hashes it the same way the stored
-   * row's `dataHash` was computed. Skips when the hash matches the stored row,
-   * when the month has no active articles yet, or when `timeBudgetMs` is under
-   * `MIN_GENERATION_BUDGET_MS`. Otherwise makes one LLM call, aborted after
+   * What: Skips at once when `timeBudgetMs` is under
+   * `MIN_GENERATION_BUDGET_MS`. Otherwise aggregates `period`'s data and
+   * hashes it the same way the stored row's `dataHash` was computed, and
+   * skips when the hash matches the stored row or when the month has no
+   * active articles yet. Otherwise makes one LLM call, aborted after
    * `timeBudgetMs`, and upserts only `period`'s row. Throws on any failure
    * before the upsert, so no row is changed; callers wrap it
    * (`autoRegenerateMonthlySummary`).
    * Test: `tests/unit/whats-new-auto-regenerate.test.ts`.
    */
   async regenerateIfChanged(period: string, timeBudgetMs: number): Promise<AutoRegenerationOutcome> {
+    // #160: checked before any database read, so a run that used most of the
+    // function limit on ingestion spends none of the rest here.
+    if (timeBudgetMs < MIN_GENERATION_BUDGET_MS) {
+      return { status: "skipped", period, reason: "insufficient-time-budget" };
+    }
     const startTime = Date.now();
     const stored = await this.getCachedSummary(period);
 
@@ -279,9 +285,6 @@ export class WhatsNewSummaryService {
     // vacuous one; the public GET keeps serving the latest stored row instead.
     if (aggregatedData.newsArticles.length === 0) {
       return { status: "skipped", period, reason: "no-articles-this-month" };
-    }
-    if (timeBudgetMs < MIN_GENERATION_BUDGET_MS) {
-      return { status: "skipped", period, reason: "insufficient-time-budget" };
     }
 
     const result = await this.generateAndStore(
