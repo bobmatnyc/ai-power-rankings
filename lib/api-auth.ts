@@ -15,15 +15,82 @@ import { NextResponse } from "next/server";
 // Note: Only importing for type checking, actual imports are dynamic
 
 /**
- * Check if authentication is disabled or not configured
+ * How the auth helpers treat the current environment.
+ *
+ * - `enforced`: Clerk is configured; every check runs against Clerk.
+ * - `local-bypass`: local development with auth disabled or Clerk keys unset;
+ *   the helpers return mock identities.
+ * - `misconfigured`: a production or preview deployment without Clerk keys;
+ *   the helpers refuse the request with 503.
  */
-function isAuthDisabled(): boolean {
-  const isDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
+type AuthMode = "enforced" | "local-bypass" | "misconfigured";
+
+/** True for `next start`/production builds and for Vercel production or preview deployments. */
+function isProductionLike(): boolean {
+  const vercelEnv = process.env["VERCEL_ENV"];
+  return (
+    process.env["NODE_ENV"] === "production" || vercelEnv === "production" || vercelEnv === "preview"
+  );
+}
+
+let bypassWarningLogged = false;
+
+/**
+ * Decides whether the auth helpers enforce Clerk, bypass it, or refuse.
+ *
+ * Why: Missing Clerk keys used to mean "auth disabled", so a deployment whose
+ * keys were unset returned a mock admin to every caller.
+ * What: In a production-like environment the bypass is never used — Clerk is
+ * enforced when both keys are set, and the mode is `misconfigured` otherwise.
+ * `NEXT_PUBLIC_DISABLE_AUTH` and missing keys only bypass auth outside
+ * production, with a one-time warning.
+ * Test: `tests/unit/api-auth-fail-closed.test.ts`.
+ */
+function resolveAuthMode(): AuthMode {
+  const disabledByFlag = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
   const hasClerkKey = !!process.env["NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY"];
   const hasClerkSecret = !!process.env["CLERK_SECRET_KEY"];
+  const configured = hasClerkKey && hasClerkSecret;
 
-  return isDisabled || !hasClerkKey || !hasClerkSecret;
+  if (isProductionLike()) {
+    if (configured) return "enforced";
+    console.error(
+      "[API Auth] Clerk keys are missing in a production environment; refusing authenticated requests.",
+      { hasClerkKey, hasClerkSecret }
+    );
+    return "misconfigured";
+  }
+
+  if (!disabledByFlag && configured) return "enforced";
+
+  if (!bypassWarningLogged) {
+    bypassWarningLogged = true;
+    console.warn(
+      "[API Auth] Authentication is bypassed for local development (auth disabled or Clerk keys unset). Mock identities are returned."
+    );
+  }
+  return "local-bypass";
 }
+
+/** 503 returned when a production-like environment has no Clerk configuration. */
+function authNotConfiguredResponse() {
+  return NextResponse.json(
+    {
+      error: "Authentication service unavailable",
+      message: "The authentication service is not configured",
+      code: "AUTH_NOT_CONFIGURED",
+    },
+    { status: 503 }
+  );
+}
+
+const MOCK_ADMIN_USER = {
+  id: "mock-admin-id",
+  privateMetadata: { isAdmin: true },
+  emailAddresses: [{ emailAddress: "admin@mock.local" }],
+  firstName: "Mock",
+  lastName: "Admin",
+};
 
 /**
  * Next.js 15 safe dynamic import with React Context isolation
@@ -65,13 +132,15 @@ async function safeImportClerk(): Promise<{
  * Enhanced for Next.js 15 with proper server/client boundary isolation
  */
 export async function requireAuth() {
-  try {
-    // Check if auth is disabled
-    if (isAuthDisabled()) {
-      // Return a mock userId when auth is disabled for development/testing
-      return { userId: "mock-user-id", error: null };
-    }
+  const mode = resolveAuthMode();
+  if (mode === "misconfigured") {
+    return { error: authNotConfiguredResponse() };
+  }
+  if (mode === "local-bypass") {
+    return { userId: "mock-user-id", error: null };
+  }
 
+  try {
     // Use safe import to prevent useContext errors
     const { auth, error: importError } = await safeImportClerk();
 
@@ -116,76 +185,67 @@ export async function requireAuth() {
 
     return { userId, error: null };
   } catch (error) {
-    console.error("[API Auth] Authentication check failed:", error);
-
-    // Enhanced error handling for different failure modes
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-
-    // Check for specific useContext errors
-    if (errorMessage.includes("useContext") || errorMessage.includes("createContext")) {
-      console.error("[API Auth] React Context error detected - auth may be running in wrong runtime");
-
-      // If auth is disabled, return mock data
-      if (isAuthDisabled()) {
-        return { userId: "mock-user-id", error: null };
-      }
-
-      return {
-        error: NextResponse.json(
-          {
-            error: "Authentication runtime error",
-            message: "Authentication service encountered a runtime error",
-            code: "AUTH_RUNTIME_ERROR",
-          },
-          { status: 503 }
-        ),
-      };
-    }
-
-    // Handle module import failures
-    if (errorMessage.includes("Cannot find module") || errorMessage.includes("not available")) {
-      if (isAuthDisabled()) {
-        return { userId: "mock-user-id", error: null };
-      }
-    }
-
-    return {
-      error: NextResponse.json(
-        {
-          error: "Authentication failed",
-          message: process.env["NODE_ENV"] === "development" ? errorMessage : "Authentication service error",
-          code: "AUTH_ERROR",
-        },
-        { status: 500 }
-      ),
-    };
+    return { error: authFailureResponse(error, "Authentication check failed") };
   }
 }
 
 /**
- * Require admin privileges for an API route
- * Returns the userId and user if admin, or an error response if not
+ * Maps an unexpected failure inside an auth check to an error response.
+ * Never grants access: every arm is a 5xx.
+ */
+function authFailureResponse(error: unknown, logLabel: string) {
+  console.error(`[API Auth] ${logLabel}:`, error);
+  const errorMessage = error instanceof Error ? error.message : "Unknown error";
+
+  if (errorMessage.includes("useContext") || errorMessage.includes("createContext")) {
+    console.error("[API Auth] React Context error detected - auth may be running in wrong runtime");
+    return NextResponse.json(
+      {
+        error: "Authentication runtime error",
+        message: "Authentication service encountered a runtime error",
+        code: "AUTH_RUNTIME_ERROR",
+      },
+      { status: 503 }
+    );
+  }
+
+  return NextResponse.json(
+    {
+      error: "Authentication failed",
+      message: process.env["NODE_ENV"] === "development" ? errorMessage : "Authentication service error",
+      code: "AUTH_ERROR",
+    },
+    { status: 500 }
+  );
+}
+
+/**
+ * Require admin privileges for an API route.
  *
- * Enhanced for Next.js 15 with proper server/client boundary isolation
+ * Why: Admin handlers rely on this as their only gate, so any path that
+ * returns a user without a verified Clerk session is an open admin API.
+ * What: Returns `{ userId, user, error: null }` for a signed-in user whose
+ * `privateMetadata.isAdmin` is `true`; otherwise `{ error }` carrying 401
+ * (no session), 403 (not an admin), 404 (user lookup empty), 503 (Clerk not
+ * configured in a production-like environment, or unavailable) or 500.
+ * Outside production, with auth disabled or Clerk keys unset, it returns a
+ * mock admin.
+ * Test: `tests/unit/api-auth-fail-closed.test.ts`, `tests/unit/admin-api-auth.test.ts`.
  */
 export async function requireAdmin() {
-  try {
-    // Check if auth is disabled
-    if (isAuthDisabled()) {
-      // Return mock admin user when auth is disabled for development/testing
-      return {
-        userId: "mock-admin-id",
-        user: {
-          id: "mock-admin-id",
-          privateMetadata: { isAdmin: true },
-          emailAddresses: [{ emailAddress: "admin@mock.local" }],
-          firstName: "Mock",
-          lastName: "Admin",
-        } as any, // Mock user object
-        error: null,
-      };
-    }
+  const mode = resolveAuthMode();
+  if (mode === "misconfigured") {
+    return { error: authNotConfiguredResponse() };
+  }
+  if (mode === "local-bypass") {
+    return {
+      userId: "mock-admin-id",
+      user: MOCK_ADMIN_USER as any, // Mock user object
+      error: null,
+    };
+  }
 
+  try {
     // Use safe import to prevent useContext errors
     const { auth, currentUser, error: importError } = await safeImportClerk();
 
@@ -263,69 +323,7 @@ export async function requireAdmin() {
 
     return { userId, user, error: null };
   } catch (error) {
-    console.error("[API Auth] Admin check failed:", error);
-
-    // Enhanced error handling for different failure modes
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-
-    // Check for specific useContext errors
-    if (errorMessage.includes("useContext") || errorMessage.includes("createContext")) {
-      console.error("[API Auth] React Context error detected in admin check");
-
-      // If auth is disabled, return mock data
-      if (isAuthDisabled()) {
-        return {
-          userId: "mock-admin-id",
-          user: {
-            id: "mock-admin-id",
-            privateMetadata: { isAdmin: true },
-            emailAddresses: [{ emailAddress: "admin@mock.local" }],
-            firstName: "Mock",
-            lastName: "Admin",
-          } as any,
-          error: null,
-        };
-      }
-
-      return {
-        error: NextResponse.json(
-          {
-            error: "Authentication runtime error",
-            message: "Authentication service encountered a runtime error",
-            code: "AUTH_RUNTIME_ERROR",
-          },
-          { status: 503 }
-        ),
-      };
-    }
-
-    // Handle module import failures
-    if (errorMessage.includes("Cannot find module") || errorMessage.includes("not available")) {
-      if (isAuthDisabled()) {
-        return {
-          userId: "mock-admin-id",
-          user: {
-            id: "mock-admin-id",
-            privateMetadata: { isAdmin: true },
-            emailAddresses: [{ emailAddress: "admin@mock.local" }],
-            firstName: "Mock",
-            lastName: "Admin",
-          } as any,
-          error: null,
-        };
-      }
-    }
-
-    return {
-      error: NextResponse.json(
-        {
-          error: "Authentication failed",
-          message: process.env["NODE_ENV"] === "development" ? errorMessage : "Authentication service error",
-          code: "AUTH_ERROR",
-        },
-        { status: 500 }
-      ),
-    };
+    return { error: authFailureResponse(error, "Admin check failed") };
   }
 }
 
@@ -337,8 +335,8 @@ export async function requireAdmin() {
  */
 export async function optionalAuth() {
   try {
-    // Check if auth is disabled
-    if (isAuthDisabled()) {
+    // No Clerk session to read: bypassed locally, or unconfigured in production.
+    if (resolveAuthMode() !== "enforced") {
       return { userId: null, error: null };
     }
 
