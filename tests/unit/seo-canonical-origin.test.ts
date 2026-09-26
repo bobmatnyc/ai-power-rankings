@@ -292,16 +292,24 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     expectSelfCanonical(metadata, "ko", `/${page}`, page);
   });
 
-  it.each(DASHBOARD_PAGES)("%s metadata is self-canonical under its locale (#156)", async (dir, route) => {
-    const mod = await import(/* @vite-ignore */ `../../app/[lang]/${dir}/page.tsx`);
-    // A static `metadata` export cannot know the locale; read it anyway so a
-    // regression fails on the URLs rather than on a missing export.
-    const metadata = mod.generateMetadata
-      ? await mod.generateMetadata(params({ lang: "zh" }))
-      : mod.metadata;
-    expectProductionUrls(metadata, dir);
-    expectSelfCanonical(metadata, "zh", route, dir);
-  });
+  it.each(DASHBOARD_PAGES)(
+    "%s metadata is noindex, self-canonical under its locale, with no hreflang (#156)",
+    async (dir, route) => {
+      const mod = await import(/* @vite-ignore */ `../../app/[lang]/${dir}/page.tsx`);
+      // A static `metadata` export cannot know the locale; read it anyway so a
+      // regression fails on the URLs rather than on a missing export.
+      const metadata = mod.generateMetadata
+        ? await mod.generateMetadata(params({ lang: "zh" }))
+        : mod.metadata;
+      expectProductionUrls(metadata, dir);
+      const canonical = `${ORIGIN}/zh${route}`;
+      expect(metadata.alternates?.canonical, `${dir} canonical`).toBe(canonical);
+      // A noindex page offers no translations to index, so it lists none.
+      expect(metadata.alternates?.languages, `${dir} hreflang`).toBeUndefined();
+      expect(metadata.robots?.index, `${dir} robots.index`).toBe(false);
+      expect(String(metadata.openGraph?.url), `${dir} og:url`).toBe(canonical);
+    }
+  );
 
   it("lib/seo/schema JSON-LD builders use the production origin", async () => {
     const schema = await import("../../lib/seo/schema");
@@ -332,6 +340,8 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     expectProductionUrls(metadata, "lib/seo/utils");
     // #156: locale-prefixed canonical and og:url, the 10 real locales (no pt-BR).
     expectSelfCanonical(metadata, "hr", "/dashboard", "lib/seo/utils");
+    // og:locale follows the page locale, as on the home and trending pages.
+    expect((metadata.openGraph as { locale?: string } | undefined)?.locale).toBe("hr");
   });
 
   it("OG image URL helpers default to the production origin", async () => {
@@ -394,6 +404,18 @@ describe("localizedAlternates() (#153, #155, #156)", () => {
     const { localizedAlternates } = await import("../../lib/seo/alternates");
     const call = localizedAlternates as unknown as (lang: string, path: string, opts: object) => Alternates;
     expect(call("fr", "/about", { canonicalLang: "en" }).canonical).toBe(`${ORIGIN}/fr/about`);
+  });
+
+  it.each([
+    ["xx", "/news"],
+    ["EN", "/tools/cursor"],
+  ])("canonicalises an unknown locale segment %s to the English URL", async (lang, path) => {
+    const { localizedAlternates } = await import("../../lib/seo/alternates");
+    const alternates = localizedAlternates(lang, path);
+    // /xx/news renders English content; a self-canonical would make it an
+    // indexable duplicate of /en/news.
+    expect(alternates.canonical).toBe(`${ORIGIN}/en${path}`);
+    expectHreflang(alternates as Alternates, path, lang);
   });
 
   it("emits no trailing slash for the empty home path, x-default included", async () => {

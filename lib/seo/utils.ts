@@ -24,7 +24,9 @@ interface GenerateMetadataProps {
  * locale the site does not serve and a canonical and `og:url` without the
  * locale segment the route lives under (#156).
  * What: canonical, hreflang and the RSS link come from `localizedAlternates()`;
- * `openGraph.url` is the same `${siteOrigin()}/${lang}${path}` as the canonical.
+ * `openGraph.url` is that canonical and `openGraph.locale` is `lang`. With
+ * `noIndex`, `alternates` keeps canonical and the RSS link but no hreflang:
+ * a page kept out of the index has no translations to offer it.
  * Test: `tests/unit/seo-canonical-origin.test.ts`.
  */
 export function generateMetadata({
@@ -39,8 +41,13 @@ export function generateMetadata({
 }: GenerateMetadataProps): Metadata {
   // #153: the production origin; getBaseUrl() returned the VERCEL_URL host.
   const baseUrl = siteOrigin();
-  // #156: the page's own locale URL, shared by canonical and og:url.
-  const url = `${baseUrl}/${lang}${path}`;
+  const localized = localizedAlternates(lang, path);
+  // #156: og:url is the canonical, so the two cannot disagree.
+  const url = localized.canonical;
+  // #156: no hreflang on a noindex page; canonical and the RSS link stay.
+  const alternates = noIndex
+    ? { canonical: localized.canonical, types: localized.types }
+    : localized;
 
   const images = ogImage
     ? [{ url: ogImage, width: 1200, height: 630, alt: title }]
@@ -77,7 +84,7 @@ export function generateMetadata({
       url,
       siteName: "AI Power Rankings",
       images,
-      locale: "en_US",
+      locale: lang, // #156: the page locale, as on the home and trending pages.
       type: "website",
     },
     twitter: {
@@ -88,8 +95,7 @@ export function generateMetadata({
       creator: "@aipowerrankings",
       site: "@aipowerrankings",
     },
-    // #156: the shared builder; its canonical equals `url` above.
-    alternates: localizedAlternates(lang, path),
+    alternates,
     ...(lastModified && { lastModified: lastModified.toISOString() }),
   };
 }
