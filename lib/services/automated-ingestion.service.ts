@@ -640,13 +640,19 @@ export class AutomatedIngestionService {
    * Pipeline-level timeout for the entire daily discovery run.
    * Prevents indefinite hangs (e.g., when downstream services like
    * OpenRouter stall on individual requests).
+   *
+   * #160: must fire inside the cron route's 300 s `maxDuration`, or Vercel
+   * kills the function first: the run row stays "running" and the what's-new
+   * summary step never runs. 200 s leaves 100 s: the route keeps 20 s back,
+   * the summary needs 60 s (`MIN_GENERATION_BUDGET_MS`), and 20 s covers the
+   * failed-run write and the summary's hash-check reads.
    */
-  private static readonly PIPELINE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+  private static readonly PIPELINE_TIMEOUT_MS = 200 * 1000;
 
   /**
    * Run daily discovery pipeline with overall timeout guard.
    *
-   * Wraps the core pipeline in a Promise.race against a 10-minute timeout.
+   * Wraps the core pipeline in a Promise.race against PIPELINE_TIMEOUT_MS.
    * On timeout, the in-flight run record is marked as "failed" with a
    * timeout error so the database does not leave stale "running" rows.
    */

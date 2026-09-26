@@ -4,8 +4,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  * Regression tests for #128 — a timed-out pipeline overwriting its own
  * terminal status.
  *
- * Why: runDailyDiscovery races executeDailyDiscovery(...) against a 10-minute
- * timeout via Promise.race, and never cancels the losing side. When the
+ * Why: runDailyDiscovery races executeDailyDiscovery(...) against
+ * PIPELINE_TIMEOUT_MS (200 s since #160) via Promise.race, and never cancels the losing side. When the
  * timeout wins, its handler writes status='failed' through updateRun(). The
  * abandoned executeDailyDiscovery call keeps running in the background and,
  * before this fix, its own finalize write in the `finally` block could still
