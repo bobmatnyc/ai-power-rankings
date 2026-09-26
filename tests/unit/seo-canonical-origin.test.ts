@@ -76,6 +76,8 @@ vi.mock("../../lib/db/repositories/tools.repository", () => {
 vi.mock("../../lib/db/repositories/news", () => {
   class NewsRepository {
     getAll = async () => [{ slug: "big-launch", publishedAt: new Date("2026-09-01") }];
+    // #162: the sitemap's throwing read.
+    getPublishedSlugs = async () => [{ slug: "big-launch", publishedAt: new Date("2026-09-01") }];
   }
   return { NewsRepository, newsRepository: new NewsRepository() };
 });
@@ -444,8 +446,11 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
   });
 
   it("sitemap URLs use the production origin", async () => {
-    const { default: sitemap } = await import("../../app/sitemap");
-    const entries = await sitemap();
+    // #162: the list moved from app/sitemap.ts to lib/sitemap.ts; the origin is
+    // still the one app/sitemap.xml/route.ts passes in.
+    const { buildSitemapEntries } = await import("../../lib/sitemap");
+    const { siteOrigin } = await import("../../lib/site-origin");
+    const entries = await buildSitemapEntries(siteOrigin());
     expect(entries.some((e) => e.url.endsWith("/tools/cursor"))).toBe(true);
     expect(entries.some((e) => e.url.endsWith("/news/big-launch"))).toBe(true);
     // #156: article pages canonicalise to /en, so only that URL is listed.
