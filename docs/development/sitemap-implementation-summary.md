@@ -4,6 +4,8 @@
 **Version:** 0.3.12
 **Status:** ✅ Complete
 
+> **Superseded (#162):** `app/sitemap.ts` was replaced by the per-request route handler `app/sitemap.xml/route.ts`, with the URL list in `lib/sitemap.ts`. The build-time prerender described below shipped a sitemap without tools or articles after every deploy.
+
 ## Overview
 
 Created comprehensive `app/sitemap.ts` file that generates a proper XML sitemap with all static and dynamic routes for the AI Power Ranking website.

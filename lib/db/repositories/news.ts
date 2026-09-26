@@ -91,6 +91,38 @@ export class NewsRepository {
   }
 
   /**
+   * The slug and date of every active article, with failures thrown, not swallowed.
+   *
+   * Why: `/sitemap.xml` listed articles through `getAll()`, which turns a failed
+   * read into an empty list the CDN would then cache as a valid sitemap (#162).
+   * What: `status = 'active'`, newest first; `publishedAt` is `published_date`,
+   * else `created_at`, the same fallback `mapArticleToNews` uses. Reads only
+   * those three columns. Throws when no database is configured or the query fails.
+   * Test: `lib/db/repositories/news.test.ts`, `tests/unit/sitemap-route.test.ts`.
+   */
+  async getPublishedSlugs(): Promise<Array<{ slug: string; publishedAt: Date }>> {
+    const db = getDb();
+    if (!db) {
+      throw new Error("Database connection unavailable");
+    }
+
+    const results = await db
+      .select({
+        slug: articles.slug,
+        publishedDate: articles.publishedDate,
+        createdAt: articles.createdAt,
+      })
+      .from(articles)
+      .where(eq(articles.status, "active"))
+      .orderBy(desc(articles.publishedDate), desc(articles.id));
+
+    return results.map((row) => ({
+      slug: row.slug,
+      publishedAt: row.publishedDate ?? row.createdAt,
+    }));
+  }
+
+  /**
    * Get news articles with pagination
    */
   async getPaginated(limit: number = 20, offset: number = 0) {
