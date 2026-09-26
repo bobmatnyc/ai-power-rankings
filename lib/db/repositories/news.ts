@@ -90,44 +90,8 @@ export class NewsRepository {
     }
   }
 
-  /**
-   * Get news articles with pagination
-   */
-  async getPaginated(limit: number = 20, offset: number = 0) {
-    const db = getDb();
-    if (!db) {
-      return { articles: [], total: 0, hasMore: false };
-    }
-
-    try {
-      // Get paginated articles
-      const results = await db
-        .select()
-        .from(articles)
-        .where(eq(articles.status, "active"))
-        .orderBy(desc(articles.publishedDate))
-        .limit(limit)
-        .offset(offset);
-
-      // Get total count of active articles
-      const countResult = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(articles)
-        .where(eq(articles.status, "active"));
-
-      const total = Number(countResult[0]?.count || 0);
-      const hasMore = offset + limit < total;
-
-      return {
-        articles: results.map((article) => this.mapArticleToNews(article)),
-        total,
-        hasMore
-      };
-    } catch (error) {
-      console.error("Error fetching paginated news:", error);
-      return { articles: [], total: 0, hasMore: false };
-    }
-  }
+  // #152: `getPaginated()` is gone. It swallowed a failed read into an empty
+  // page, and its last caller, `/api/whats-new`, now reads `getPageFiltered()`.
 
   /**
    * The WHERE shared by `getPaginatedFiltered` and `countFiltered`.
@@ -217,7 +181,8 @@ export class NewsRepository {
    * What: Same predicate, ordering (`published_date` desc, `id` desc), limit and
    * offset as `getPaginatedFiltered`, which delegates here. Throws when no
    * database is configured or the query fails.
-   * Test: `lib/db/repositories/news.test.ts`, `tests/unit/news-rss-route.test.ts`.
+   * Test: `lib/db/repositories/news.test.ts`, `tests/unit/news-rss-route.test.ts`,
+   * `tests/unit/whats-new-route-fail-closed.test.ts`.
    */
   async getPageFiltered(options: PaginatedNewsOptions = {}): Promise<ClassifiedNewsArticle[]> {
     const db = getDb();
