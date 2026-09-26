@@ -26,6 +26,7 @@ import type { Dictionary } from "@/i18n/get-dictionary";
 import { loggers } from "@/lib/logger-client";
 import ArticleScoringImpact from "./article-scoring-impact";
 import ScoringMetrics from "./scoring-metrics";
+import { loadNewsItems } from "./load-news";
 import StateOfUnion from "./state-of-union";
 
 interface MetricsHistory {
@@ -70,6 +71,8 @@ interface NewsContentProps {
 export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX.Element {
   const [newsItems, setNewsItems] = useState<MetricsHistory[]>([]);
   const [loading, setLoading] = useState(true);
+  // #152: kept apart from `newsItems.length === 0`, which means "no news".
+  const [loadFailed, setLoadFailed] = useState(false);
   const searchParams = useSearchParams();
 
   // Get category filter from URL params
@@ -82,27 +85,20 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
   const router = useRouter();
 
   const fetchNews = useCallback(async (): Promise<void> => {
-    try {
-      setLoading(true);
+    setLoading(true);
 
-      // #152: a plain URL, so every visitor shares the edge's cached copy. The
-      // per-request `cb`/`_r`/`_ua` query made each fetch a cache miss.
-      const response = await fetch("/api/news?limit=100");
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch news");
-      }
-
-      const data = await response.json();
-      const allNews: MetricsHistory[] = data.news || [];
-
+    // #152: a failed read sets `loadFailed` and shows the error card with a
+    // retry; only a successful read, possibly empty, replaces the items.
+    const result = await loadNewsItems<MetricsHistory>();
+    if (result.ok) {
       // Store all news for client-side filtering
-      setNewsItems(allNews);
-      setLoading(false);
-    } catch (error) {
-      loggers.news.error("Failed to fetch news", { error });
-      setLoading(false);
+      setNewsItems(result.items);
+      setLoadFailed(false);
+    } else {
+      loggers.news.error("Failed to fetch news", { reason: result.reason });
+      setLoadFailed(true);
     }
+    setLoading(false);
   }, []);
 
   // Initial data fetch
@@ -300,7 +296,15 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
 
       {/* News List */}
       <div className="space-y-2 md:space-y-4">
-        {paginatedNews.length === 0 ? (
+        {loadFailed ? (
+          // #152: a failed read is an error with a retry, never "no news".
+          <Card className="p-8 text-center" role="alert">
+            <p className="text-muted-foreground mb-4">{dict.common.error}</p>
+            <Button variant="outline" size="sm" onClick={() => fetchNews()}>
+              {dict.common.tryAgain}
+            </Button>
+          </Card>
+        ) : paginatedNews.length === 0 ? (
           <Card className="p-8 text-center">
             <p className="text-muted-foreground">{dict.news.noItems}</p>
           </Card>
