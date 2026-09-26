@@ -29,12 +29,18 @@ const { fixture } = vi.hoisted(() => {
     params: [] as unknown[][],
     /** Result rows handed back, one entry per statement, in order. */
     responses: [] as unknown[][][],
+    /** When set, the fake driver rejects every statement with this error (#150). */
+    failWith: null as Error | null,
+    /** When true, `getDb()` reports no configured database (#150). */
+    noDb: false,
   };
 
   function reset(): void {
     state.statements = [];
     state.params = [];
     state.responses = [];
+    state.failWith = null;
+    state.noDb = false;
   }
 
   return { fixture: { state, reset } };
@@ -49,10 +55,11 @@ vi.mock("../connection", async () => {
   const builder = drizzle(async (statement: string, params: unknown[]) => {
     fixture.state.statements.push(statement);
     fixture.state.params.push(params);
+    if (fixture.state.failWith) throw fixture.state.failWith;
     return { rows: fixture.state.responses.shift() ?? [] };
   });
 
-  return { getDb: () => builder };
+  return { getDb: () => (fixture.state.noDb ? null : builder) };
 });
 
 import { NEWS_EVENT_TYPES } from "../news-event-type";
@@ -199,5 +206,48 @@ describe("NewsRepository.getRecentWithin (#140)", () => {
     expect(fixture.state.params[0]).toContain(50);
     // The old implementation always asked for exactly 100 rows.
     expect(fixture.state.params[0]).not.toContain(100);
+  });
+});
+
+describe("NewsRepository.getPageFiltered (#150)", () => {
+  beforeEach(() => {
+    fixture.reset();
+  });
+
+  it("throws when the read fails, where getPaginatedFiltered returns an empty page", async () => {
+    // The RSS feed reads through getPageFiltered so a failed read becomes a 5xx,
+    // not an empty feed; getPaginatedFiltered keeps its swallow-to-empty contract.
+    fixture.state.failWith = new Error("connection reset");
+
+    await expect(new NewsRepository().getPageFiltered({ limit: 50 })).rejects.toThrow(
+      "connection reset"
+    );
+    await expect(new NewsRepository().getPaginatedFiltered({ limit: 50 })).resolves.toEqual({
+      articles: [],
+      total: 0,
+      hasMore: false,
+    });
+  });
+
+  it("throws when no database is configured instead of returning an empty page", async () => {
+    fixture.state.noDb = true;
+
+    await expect(new NewsRepository().getPageFiltered({ limit: 50 })).rejects.toThrow(
+      "Database connection unavailable"
+    );
+    expect(fixture.state.statements).toHaveLength(0);
+  });
+
+  it("runs the same newest-first page query getPaginatedFiltered does, without a count", async () => {
+    fixture.state.responses = [[]];
+
+    await new NewsRepository().getPageFiltered({ limit: 50, offset: 0 });
+
+    expect(fixture.state.statements).toHaveLength(1);
+    const [page] = fixture.state.statements;
+    expect(page.toLowerCase()).toMatch(/order by\s+"?articles"?\."?published_date"?\s+desc/);
+    expect(page.toLowerCase()).toContain('"id" desc');
+    expect(page.toLowerCase()).not.toContain("count(");
+    expect(fixture.state.params[0]).toContain(50);
   });
 });
