@@ -251,3 +251,45 @@ describe("NewsRepository.getPageFiltered (#150)", () => {
     expect(fixture.state.params[0]).toContain(50);
   });
 });
+
+describe("NewsRepository.getPublishedSlugs (#162)", () => {
+  beforeEach(() => {
+    fixture.reset();
+  });
+
+  it("throws when the read fails or no database is configured, where getAll returns []", async () => {
+    // The sitemap reads through getPublishedSlugs so a failed read becomes a 503,
+    // not a cached sitemap without articles.
+    fixture.state.failWith = new Error("connection reset");
+    await expect(new NewsRepository().getPublishedSlugs()).rejects.toThrow("connection reset");
+    await expect(new NewsRepository().getAll()).resolves.toEqual([]);
+
+    fixture.reset();
+    fixture.state.noDb = true;
+    await expect(new NewsRepository().getPublishedSlugs()).rejects.toThrow(
+      "Database connection unavailable"
+    );
+    expect(fixture.state.statements).toHaveLength(0);
+  });
+
+  it("reads only active slugs and dates, dating an article by published_date, else created_at", async () => {
+    fixture.state.responses = [
+      [
+        ["big-launch", "2026-09-20 08:30:00", "2026-09-19 00:00:00"],
+        ["undated", null, "2026-08-01 00:00:00"],
+      ],
+    ];
+
+    const rows = await new NewsRepository().getPublishedSlugs();
+
+    expect(rows).toEqual([
+      { slug: "big-launch", publishedAt: new Date("2026-09-20T08:30:00.000Z") },
+      { slug: "undated", publishedAt: new Date("2026-08-01T00:00:00.000Z") },
+    ]);
+    const [statement] = fixture.state.statements;
+    const select = statement.toLowerCase().split(" from ")[0];
+    expect(select).not.toContain('"content"');
+    expect(statement.toLowerCase()).toMatch(/"?status"?\s*=\s*\$1/);
+    expect(fixture.state.params[0]).toEqual(["active"]);
+  });
+});
