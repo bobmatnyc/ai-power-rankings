@@ -11,7 +11,6 @@ import { getCurrentYear } from "@/lib/get-current-year";
 export const dynamic = "force-dynamic";
 
 import { localizedAlternates } from "@/lib/seo/alternates";
-import { siteOrigin } from "@/lib/site-origin";
 
 interface PageProps {
   params: Promise<{ lang: string }>;
@@ -19,10 +18,10 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  // #153: the production origin, never the per-deployment VERCEL_URL host.
-  const baseUrl = siteOrigin();
   const currentYear = getCurrentYear();
 
+  // #156: one builder for canonical and og:url, so they cannot disagree.
+  const alternates = localizedAlternates(lang, "/best-ai-coding-tools");
   return {
     title: `Best AI Coding Tools ${currentYear} - Top 50+ Developer AI Assistants`,
     description: `Discover the best AI coding tools of ${currentYear}. Compare Cursor, GitHub Copilot, Claude, and 50+ top AI assistants. Updated monthly with rankings and reviews.`,
@@ -42,12 +41,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `Best AI Coding Tools ${currentYear} - Top Developer AI Assistants`,
       description: `Discover the best AI coding tools of ${currentYear}. Compare top AI assistants trusted by developers worldwide.`,
       type: "website",
-      url: `${baseUrl}/${lang}/best-ai-coding-tools`,
+      url: alternates.canonical, // #156: always the canonical
       siteName: "AI Power Rankings",
     },
     // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-    alternates: localizedAlternates(lang, "/best-ai-coding-tools"),
+    alternates,
   };
 }
 

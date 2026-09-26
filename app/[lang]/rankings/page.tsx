@@ -29,9 +29,8 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  // #153: SEO URLs use the production origin; the rankings fetch keeps
-  // getUrl(), which must reach this deployment's own API on previews.
-  const baseUrl = siteOrigin();
+  // #153: the rankings fetch keeps getUrl(), which must reach this
+  // deployment's own API on previews; SEO URLs come from localizedAlternates().
 
   // Try to get current ranking period and top tools
   let topTools: string[] = [];
@@ -78,6 +77,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ? `Latest rankings of ${totalTools} AI tools. See how ${topTools.slice(0, 2).join(", ")} and other leading AI assistants compare.`
       : "Comprehensive rankings and analysis of leading AI coding tools. Compare performance, features, and adoption metrics.";
 
+  // #156: one builder for canonical and og:url, so they cannot disagree.
+  const alternates = localizedAlternates(lang, "/rankings");
   return {
     title,
     description,
@@ -93,7 +94,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       type: "website",
-      url: `${baseUrl}/${lang}/rankings`,
+      url: alternates.canonical, // #156: always the canonical
       siteName: "AI Power Rankings",
       images: [
         {
@@ -114,7 +115,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
     // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
-    alternates: localizedAlternates(lang, "/rankings"),
+    alternates,
   };
 }
 

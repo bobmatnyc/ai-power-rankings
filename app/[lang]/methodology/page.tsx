@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import type { Locale } from "@/i18n/config";
 import { contentLoader } from "@/lib/content-loader";
 import { localizedAlternates } from "@/lib/seo/alternates";
-import { siteOrigin } from "@/lib/site-origin";
 
 // Force dynamic rendering to avoid Clerk SSG issues
 export const dynamic = "force-dynamic";
@@ -14,9 +13,9 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  // #153: the production origin, never the per-deployment VERCEL_URL host.
-  const baseUrl = siteOrigin();
 
+  // #156: one builder for canonical and og:url, so they cannot disagree.
+  const alternates = localizedAlternates(lang, "/methodology");
   return {
     title: "AI Power Rankings Methodology - How We Rank AI Coding Tools",
     description:
@@ -36,12 +35,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description:
         "Discover how we evaluate and rank AI coding tools using our comprehensive methodology.",
       type: "website",
-      url: `${baseUrl}/${lang}/methodology`,
+      url: alternates.canonical, // #156: always the canonical
       siteName: "AI Power Rankings",
     },
     // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-    alternates: localizedAlternates(lang, "/methodology"),
+    alternates,
   };
 }
 
