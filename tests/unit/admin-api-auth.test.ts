@@ -197,6 +197,26 @@ describe("admin API handlers require an admin", () => {
     expect(touchedCount()).toBe(0);
   });
 
+  // The admin check must run before the request body is read or parsed.
+  it.each([
+    ["anonymous", { userId: null }, null, 401],
+    ["signed-in non-admin", { userId: "user_1" }, { id: "user_1", privateMetadata: {} }, 403],
+  ])(
+    "POST /api/admin/articles/[id]/recalculate refuses a %s caller without reading the body",
+    async (_who, session, user, status) => {
+      clerk.auth.mockResolvedValue(session);
+      clerk.currentUser.mockResolvedValue(user);
+      const request = jsonReq("/api/admin/articles/article-1/recalculate", "POST", { dryRun: true });
+      const readText = vi.spyOn(request, "text");
+      const readJson = vi.spyOn(request, "json");
+      const res = await articleRecalculate.POST(request, params());
+      expect(res.status).toBe(status);
+      expect(readText).not.toHaveBeenCalled();
+      expect(readJson).not.toHaveBeenCalled();
+      expect(touchedCount()).toBe(0);
+    }
+  );
+
   // Shows the "not touched" assertion above can fail: an admin does reach
   // the mocked data layer through the same handlers.
   it.each(HANDLERS.filter(([name]) => /db-status-v2|articles\/\[id\]$|rankings\/versions/.test(name)))(

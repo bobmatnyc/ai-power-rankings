@@ -138,6 +138,13 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
  */
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
+    // Authenticate before reading the body, so an unauthorised caller's
+    // payload is never read or parsed.
+    const authResult = await requireAdmin();
+    if (authResult.error) {
+      return authResult.error;
+    }
+
     const params = await context.params;
     const { id } = params;
 
@@ -154,12 +161,6 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
     const dryRun = body.dryRun === true;
     const useCachedAnalysis = body.useCachedAnalysis === true;
-
-    // Check admin authentication
-    const authResult = await requireAdmin();
-    if (authResult.error) {
-      return authResult.error;
-    }
 
     // Check database availability
     const db = getDb();
