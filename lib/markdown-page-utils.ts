@@ -7,7 +7,8 @@ export function getMarkdownPageConfig(slug: string): MarkdownPageConfig | null {
   return markdownPages[slug] || null;
 }
 
-export function generateMarkdownPageMetadata(slug: string): Metadata {
+// #156: `lang` is the `[lang]` segment; lib/seo/utils builds locale URLs from it.
+export function generateMarkdownPageMetadata(slug: string, lang: string): Metadata {
   const config = getMarkdownPageConfig(slug);
 
   if (!config) {
@@ -20,6 +21,7 @@ export function generateMarkdownPageMetadata(slug: string): Metadata {
   return generateSEOMetadata({
     title: config.title,
     description: config.description,
+    lang,
     path: `/${slug}`,
     noIndex: config.noIndex,
   });

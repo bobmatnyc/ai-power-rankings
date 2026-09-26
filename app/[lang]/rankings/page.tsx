@@ -112,9 +112,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       images: [ogImageUrl],
     },
-    // Each locale's rankings page is its own canonical.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-    alternates: localizedAlternates(lang, "/rankings", { canonicalLang: lang }),
+    // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
+    alternates: localizedAlternates(lang, "/rankings"),
   };
 }
 
