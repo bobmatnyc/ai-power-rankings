@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/api-auth";
 import { type NextRequest, NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
@@ -25,6 +26,12 @@ export async function GET(request: NextRequest) {
       { error: 'Endpoint not available in production' },
       { status: 404 }
     );
+  }
+
+  // Admin only outside production too; runs before any debug work.
+  const adminCheck = await requireAdmin();
+  if (adminCheck.error) {
+    return adminCheck.error;
   }
 
   const startTime = Date.now();

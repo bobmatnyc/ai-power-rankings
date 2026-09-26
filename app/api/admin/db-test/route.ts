@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/api-auth";
 import { currentUser } from "@clerk/nextjs/server";
 import { neon } from "@neondatabase/serverless";
 import { NextResponse } from "next/server";
@@ -13,6 +14,12 @@ export async function GET() {
       { error: 'Endpoint not available in production' },
       { status: 404 }
     );
+  }
+
+  // Admin only outside production too; runs before any debug work.
+  const adminCheck = await requireAdmin();
+  if (adminCheck.error) {
+    return adminCheck.error;
   }
 
   try {

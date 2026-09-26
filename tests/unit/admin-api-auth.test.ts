@@ -72,6 +72,7 @@ vi.mock("fs/promises", async (importOriginal) => {
   return { ...actual, default: { ...actual, writeFile: touched.writeFile }, writeFile: touched.writeFile };
 });
 
+import * as adminArticles from "../../app/api/admin/articles/route";
 import * as articleById from "../../app/api/admin/articles/[id]/route";
 import * as articleRecalculate from "../../app/api/admin/articles/[id]/recalculate/route";
 import * as articleIngest from "../../app/api/admin/articles/ingest/route";
@@ -110,6 +111,7 @@ const id = { params: Promise.resolve({ id: "article-1" }) };
 const params = () => ({ params: Promise.resolve({ id: "article-1" }) });
 
 const HANDLERS: Array<[string, () => Promise<Response>]> = [
+  ["GET /api/admin/articles", () => adminArticles.GET(req("/api/admin/articles"))],
   ["GET /api/admin/articles/[id]", () => articleById.GET(req("/api/admin/articles/article-1"), params())],
   [
     "PATCH /api/admin/articles/[id]",
@@ -194,6 +196,17 @@ describe("admin API handlers require an admin", () => {
     clerk.currentUser.mockResolvedValue({ id: "user_1", privateMetadata: {} });
     const res = await call();
     expect(res.status).toBe(403);
+    expect(touchedCount()).toBe(0);
+  });
+
+  // NEXT_PUBLIC_DISABLE_AUTH must not open the admin article list outside local development.
+  it("GET /api/admin/articles ignores NEXT_PUBLIC_DISABLE_AUTH in production", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PUBLIC_DISABLE_AUTH", "true");
+    clerk.auth.mockResolvedValue({ userId: null });
+    clerk.currentUser.mockResolvedValue(null);
+    const res = await adminArticles.GET(req("/api/admin/articles"));
+    expect(res.status).toBe(401);
     expect(touchedCount()).toBe(0);
   });
 

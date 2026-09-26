@@ -18,8 +18,13 @@ vi.mock("@clerk/nextjs/server", () => clerk);
 
 import { optionalAuth, requireAdmin, requireAuth } from "../../lib/api-auth";
 
+// Only development/test with VERCEL_ENV unset or "development" may bypass;
+// every other combination is treated as production.
 const PRODUCTION_LIKE: Array<[string, Record<string, string>]> = [
   ["NODE_ENV=production", { NODE_ENV: "production", VERCEL_ENV: "" }],
+  ["NODE_ENV=staging", { NODE_ENV: "staging", VERCEL_ENV: "" }],
+  ["NODE_ENV unset", { NODE_ENV: "", VERCEL_ENV: "" }],
+  ["NODE_ENV=test, VERCEL_ENV=staging", { NODE_ENV: "test", VERCEL_ENV: "staging" }],
   ["VERCEL_ENV=production", { NODE_ENV: "development", VERCEL_ENV: "production" }],
   ["VERCEL_ENV=preview", { NODE_ENV: "development", VERCEL_ENV: "preview" }],
 ];
@@ -104,5 +109,15 @@ describe("local development keeps the bypass", () => {
     expect(clerk.auth).not.toHaveBeenCalled();
     // First bypass in this module instance, so the one-time warning fires here.
     expect(console.warn).toHaveBeenCalledWith(expect.stringContaining("bypassed for local development"));
+  });
+
+  it.each([
+    ["NODE_ENV=test", { NODE_ENV: "test", VERCEL_ENV: "" }],
+    ["NODE_ENV=development, VERCEL_ENV=development", { NODE_ENV: "development", VERCEL_ENV: "development" }],
+  ])("keeps the bypass for %s", async (_name, env) => {
+    stubAll({ ...env, NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "", CLERK_SECRET_KEY: "" });
+    const result = await requireAdmin();
+    expect(result.error).toBeNull();
+    expect(result.userId).toBe("mock-admin-id");
   });
 });

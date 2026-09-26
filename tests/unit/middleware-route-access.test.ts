@@ -160,6 +160,8 @@ describe("middleware: public pages and APIs stay anonymous", () => {
     "/en/whats-new",
     "/sitemap.xml",
     "/robots.txt",
+    // Middleware lets /api/companies through; its POST handler requires an
+    // admin (tests/unit/auth-hardening.test.ts).
     "/api/companies",
     "/api/state-of-ai/current",
   ])(

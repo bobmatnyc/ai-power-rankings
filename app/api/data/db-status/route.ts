@@ -32,8 +32,9 @@ export async function GET() {
     try {
       isConnected = await testConnection();
     } catch (connError) {
+      // The driver message can name the user and host; keep it in the server log only.
       console.error("[data/db-status] Connection test failed:", connError);
-      connectionError = connError instanceof Error ? connError.message : "Connection test failed";
+      connectionError = "Connection test failed";
     }
 
     // Get current database instance status

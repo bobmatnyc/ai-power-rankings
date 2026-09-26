@@ -56,6 +56,17 @@ vi.mock("../../lib/services/whats-new-summary.service", () => ({
   },
 }));
 
+const companyRepo = vi.hoisted(() => ({
+  create: vi.fn(async (data: Record<string, unknown>) => ({ ...data })),
+  findAll: vi.fn(async () => []),
+  search: vi.fn(async () => []),
+  findBySize: vi.fn(async () => []),
+}));
+vi.mock("../../lib/db/repositories/companies.repository", () => ({
+  companiesRepository: companyRepo,
+}));
+
+import * as companies from "../../app/api/companies/route";
 import * as dataArticles from "../../app/api/data/articles/route";
 import * as dataDbStatus from "../../app/api/data/db-status/route";
 import * as whatsNewSummary from "../../app/api/whats-new/summary/route";
@@ -201,16 +212,83 @@ describe("what's-new summary GET stays public", () => {
     expect((await res.json()).summary.period).toBe("2025-12");
   });
 
-  it.each([
-    ["no period, nothing stored", "/api/whats-new/summary"],
-    ["an explicit period with no stored summary", "/api/whats-new/summary?period=2026-02"],
-  ])("returns 404 for %s without generating", async (_case, path) => {
+  it("returns 404 when nothing is stored, without generating", async () => {
     touched.getCachedSummary.mockResolvedValue(null);
     touched.getLatestSummary.mockResolvedValue(null);
-    const res = await whatsNewSummary.GET(new NextRequest(`http://localhost${path}`));
+    const res = await whatsNewSummary.GET(new NextRequest("http://localhost/api/whats-new/summary"));
     expect(touched.generateMonthlySummary).not.toHaveBeenCalled();
     expect(touched.llmFetch).not.toHaveBeenCalled();
     expect(res.status).toBe(404);
+    expect(clerk.auth).not.toHaveBeenCalled();
+  });
+
+  // An explicit period must not fall back to another month's summary.
+  it("returns 404 for an explicit period with no stored summary, without falling back", async () => {
+    touched.getCachedSummary.mockResolvedValue(null);
+    touched.getLatestSummary.mockResolvedValue({
+      period: "2025-12",
+      content: "other month",
+      generatedAt: new Date("2025-12-31T00:00:00Z"),
+      metadata: {},
+    });
+    const res = await whatsNewSummary.GET(
+      new NextRequest("http://localhost/api/whats-new/summary?period=2026-02")
+    );
+    expect(res.status).toBe(404);
+    expect(touched.getLatestSummary).not.toHaveBeenCalled();
+    expect(touched.generateMonthlySummary).not.toHaveBeenCalled();
+    expect(touched.llmFetch).not.toHaveBeenCalled();
+  });
+});
+
+describe("data db-status hides driver errors", () => {
+  it("reports a fixed connectionError string, never the driver message", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    touched.testConnection.mockRejectedValueOnce(
+      new Error('password authentication failed for user "svc_user" at db-internal-7:5432')
+    );
+    clerk.auth.mockResolvedValue({ userId: "user_1" });
+    clerk.currentUser.mockResolvedValue({ id: "user_1", privateMetadata: { isAdmin: true } });
+    const res = await dataDbStatus.GET();
+    const body = await res.json();
+    expect(body.connectionError).toBe("Connection test failed");
+    expect(JSON.stringify(body)).not.toContain("svc_user");
+    expect(JSON.stringify(body)).not.toContain("db-internal-7");
+  });
+});
+
+describe("company creation requires an admin", () => {
+  function createCompany(): NextRequest {
+    return jsonReq("/api/companies", "POST", { name: "Acme" });
+  }
+
+  it.each([
+    ["anonymous", { userId: null }, null, 401],
+    ["signed-in non-admin", { userId: "user_1" }, { id: "user_1", privateMetadata: {} }, 403],
+  ])("refuses a %s caller before reading the body or inserting", async (_who, session, user, status) => {
+    clerk.auth.mockResolvedValue(session);
+    clerk.currentUser.mockResolvedValue(user);
+    const request = createCompany();
+    const readJson = vi.spyOn(request, "json");
+    const res = await companies.POST(request);
+    expect(res.status).toBe(status);
+    expect(readJson).not.toHaveBeenCalled();
+    expect(companyRepo.create).not.toHaveBeenCalled();
+    expect(touched.getDb).not.toHaveBeenCalled();
+  });
+
+  it("lets an admin create a company (the insert assertion above can fail)", async () => {
+    clerk.auth.mockResolvedValue({ userId: "user_1" });
+    clerk.currentUser.mockResolvedValue({ id: "user_1", privateMetadata: { isAdmin: true } });
+    const res = await companies.POST(createCompany());
+    expect(res.status).toBe(200);
+    expect(companyRepo.create).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the company list GET public, with no auth lookup", async () => {
+    const res = await companies.GET(new NextRequest("http://localhost/api/companies"));
+    expect(res.status).toBe(200);
+    expect(companyRepo.findAll).toHaveBeenCalledTimes(1);
     expect(clerk.auth).not.toHaveBeenCalled();
   });
 });

@@ -363,43 +363,4 @@ Generate the summary now:`;
       throw error;
     }
   }
-
-  /**
-   * Get existing summary or generate if missing
-   */
-  async getSummary(period?: string): Promise<MonthlySummary | null> {
-    const db = getDb();
-    if (!db) {
-      throw new Error("Database connection not available");
-    }
-
-    const targetPeriod = period || new Date().toISOString().slice(0, 7);
-
-    const existing = await db
-      .select()
-      .from(monthlySummaries)
-      .where(eq(monthlySummaries.period, targetPeriod))
-      .limit(1);
-
-    if (existing.length > 0) {
-      return existing[0];
-    }
-
-    // No existing summary, generate one
-    const result = await this.generateMonthlySummary(targetPeriod);
-    return result.summary;
-  }
-
-  /**
-   * Invalidate (delete) cached summary for a period
-   */
-  async invalidateSummary(period: string): Promise<void> {
-    const db = getDb();
-    if (!db) {
-      throw new Error("Database connection not available");
-    }
-
-    await db.delete(monthlySummaries).where(eq(monthlySummaries.period, period));
-    loggers.api.info(`Invalidated summary for period: ${period}`);
-  }
 }

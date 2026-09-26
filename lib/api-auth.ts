@@ -20,17 +20,22 @@ import { NextResponse } from "next/server";
  * - `enforced`: Clerk is configured; every check runs against Clerk.
  * - `local-bypass`: local development with auth disabled or Clerk keys unset;
  *   the helpers return mock identities.
- * - `misconfigured`: a production or preview deployment without Clerk keys;
- *   the helpers refuse the request with 503.
+ * - `misconfigured`: any environment that is not local development (see
+ *   `isProductionLike`) without Clerk keys; the helpers refuse with 503.
  */
 type AuthMode = "enforced" | "local-bypass" | "misconfigured";
 
-/** True for `next start`/production builds and for Vercel production or preview deployments. */
+/**
+ * True unless this is clearly local development: NODE_ENV is `development`
+ * or `test` AND VERCEL_ENV is unset or `development`. Any other combination,
+ * including an unknown NODE_ENV such as `staging`, counts as production.
+ */
 function isProductionLike(): boolean {
+  const nodeEnv = process.env["NODE_ENV"];
   const vercelEnv = process.env["VERCEL_ENV"];
-  return (
-    process.env["NODE_ENV"] === "production" || vercelEnv === "production" || vercelEnv === "preview"
-  );
+  const localNodeEnv = nodeEnv === "development" || nodeEnv === "test";
+  const localVercelEnv = !vercelEnv || vercelEnv === "development";
+  return !(localNodeEnv && localVercelEnv);
 }
 
 let bypassWarningLogged = false;
