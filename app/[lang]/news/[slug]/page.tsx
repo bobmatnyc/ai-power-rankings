@@ -5,7 +5,7 @@ import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
-import { englishOnlyAlternates } from "@/lib/seo/alternates";
+import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = "force-dynamic";
@@ -90,6 +90,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         description,
         type: "article",
         url: alternates.canonical, // #156: always the canonical
+        locale: ENGLISH_ONLY_OG_LOCALE, // #156: the body is English
         siteName: "AI Power Rankings",
         publishedTime: article.published_date,
         modifiedTime: article.updated_at,
