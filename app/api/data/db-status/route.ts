@@ -1,39 +1,24 @@
 import { NextResponse } from "next/server";
-import { isAuthenticatedManual } from "@/lib/manual-auth";
+import { requireAdmin } from "@/lib/api-auth";
 import { getDb, testConnection } from "@/lib/db/connection";
 
 /**
- * Database status endpoint using manual authentication
- * This bypasses Clerk's middleware to avoid HTML error responses
+ * GET /api/data/db-status
+ *
+ * Why: Reports the database name, host and connection errors, so only an
+ * admin may read it. It used to accept any request that carried a session
+ * cookie, whatever the cookie's value.
+ * What: `requireAdmin()` verifies the Clerk session first (401 anonymous,
+ * 403 non-admin); only then is the database touched or described.
+ * Test: `tests/unit/auth-hardening.test.ts`.
  */
 export async function GET() {
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
-    console.log("[db-status-manual] Starting database status check");
-
-    // Check authentication using manual approach
-    const isAuth = await isAuthenticatedManual();
-    console.log("[db-status-manual] Manual authentication result:", isAuth);
-
-    if (!isAuth) {
-      console.log("[db-status-manual] User not authenticated, returning 401");
-      return NextResponse.json(
-        {
-          error: "Unauthorized",
-          message: "Admin session required",
-          authenticated: false,
-          timestamp: new Date().toISOString(),
-        },
-        {
-          status: 401,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
-
-    console.log("[db-status-manual] User authenticated, checking database status");
-
     // Get database configuration
     const databaseUrl = process.env["DATABASE_URL"];
     const nodeEnv = process.env["NODE_ENV"] || "development";
@@ -47,7 +32,7 @@ export async function GET() {
     try {
       isConnected = await testConnection();
     } catch (connError) {
-      console.error("[db-status-manual] Connection test failed:", connError);
+      console.error("[data/db-status] Connection test failed:", connError);
       connectionError = connError instanceof Error ? connError.message : "Connection test failed";
     }
 
@@ -57,7 +42,7 @@ export async function GET() {
       const db = getDb();
       hasActiveInstance = db !== null;
     } catch (dbError) {
-      console.error("[db-status-manual] Error getting database instance:", dbError);
+      console.error("[data/db-status] Error getting database instance:", dbError);
     }
 
     // Prepare response with safe information
@@ -80,7 +65,7 @@ export async function GET() {
 
       // Additional metadata
       timestamp: new Date().toISOString(),
-      authMethod: "manual-cookie",
+      authMethod: "clerk",
 
       // Status summary
       status: isConnected
@@ -94,7 +79,7 @@ export async function GET() {
       displayEnvironment: dbInfo.environment,
     };
 
-    console.log("[db-status-manual] Returning database status");
+    console.log("[data/db-status] Returning database status");
     return NextResponse.json(status, {
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +87,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("[db-status-manual] Error getting database status:", error);
+    console.error("[data/db-status] Error getting database status:", error);
 
     const errorResponse = {
       error: "Failed to get database status",
@@ -110,7 +95,7 @@ export async function GET() {
       connected: false,
       status: "error",
       timestamp: new Date().toISOString(),
-      authMethod: "manual-cookie",
+      authMethod: "clerk",
       stack:
         process.env["NODE_ENV"] === "development" && error instanceof Error
           ? error.stack

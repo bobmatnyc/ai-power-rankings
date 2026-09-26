@@ -5,7 +5,7 @@
  */
 
 import { type NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { requireAdmin } from "@/lib/api-auth";
 import { cachedJsonResponse } from "@/lib/api-cache";
 import { WhatsNewSummaryService } from "@/lib/services/whats-new-summary.service";
 import { loggers } from "@/lib/logger";
@@ -120,36 +120,17 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/whats-new/summary
- * Force regeneration of monthly summary (admin only)
+ *
+ * Why: Forces an LLM regeneration of the monthly summary, so it is admin-only.
+ * It used to accept any signed-in user, and only when NODE_ENV was production.
+ * What: `requireAdmin()` runs before the body is read (401 anonymous, 403
+ * non-admin); an admin's request regenerates the summary for `body.period`.
+ * Test: `tests/unit/auth-hardening.test.ts`.
  */
 export async function POST(request: NextRequest) {
-  // Admin authentication check
-  if (process.env["NODE_ENV"] === "production") {
-    try {
-      const { userId } = await auth();
-
-      if (!userId) {
-        return NextResponse.json(
-          {
-            error: "Unauthorized",
-            message: "Authentication required for manual regeneration.",
-          },
-          { status: 401 }
-        );
-      }
-
-      // Additional admin check (you can customize this)
-      // For now, any authenticated user can trigger regeneration
-      // In production, you might want to check for specific admin roles
-    } catch (error) {
-      return NextResponse.json(
-        {
-          error: "Authentication error",
-          message: "Failed to verify authentication.",
-        },
-        { status: 401 }
-      );
-    }
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
   }
 
   try {
@@ -158,7 +139,7 @@ export async function POST(request: NextRequest) {
 
     loggers.api.info("Manual regeneration triggered", {
       period: period || "current",
-      userId: (await auth()).userId || "development",
+      userId: authResult.userId,
     });
 
     const summaryService = new WhatsNewSummaryService();
