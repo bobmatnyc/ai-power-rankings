@@ -250,7 +250,17 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     const { generateMetadata } = await import("../../app/[lang]/news/[slug]/page");
     const metadata = await generateMetadata(params({ lang: "fr", slug: "big-launch" }));
     expectProductionUrls(metadata, "news article");
-    expectSelfCanonical(metadata, "fr", "/news/big-launch", "news article");
+    // #156 owner ruling: article bodies are English in every locale, so every
+    // locale's article canonicalises to /en, with no hreflang to contradict it.
+    const alternates = metadata.alternates as Alternates & { types?: Record<string, unknown> };
+    expect(alternates.canonical, "news article canonical").toBe(`${ORIGIN}/en/news/big-launch`);
+    expect(String(metadata.openGraph?.url), "news article og:url").toBe(
+      `${ORIGIN}/en/news/big-launch`
+    );
+    expect(alternates.languages, "news article hreflang").toBeUndefined();
+    expect(alternates.types?.["application/rss+xml"], "news article RSS").toEqual([
+      { title: "AI Power Rankings - News & Updates", url: `${ORIGIN}/fr/news/rss.xml` },
+    ]);
     expect(String(fetchMock.mock.calls[0]?.[0])).toBe(`https://${PREVIEW_HOST}/api/news/big-launch`);
   });
 
@@ -375,6 +385,28 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     const { generateMetadata } = await import("../../app/[lang]/news/page");
     const metadata = await generateMetadata(params({ lang: "en" }));
     expect((metadata.alternates as Alternates).canonical).toBe("https://staging.example.com/en/news");
+  });
+});
+
+describe("englishOnlyAlternates() (#156)", () => {
+  it("canonicalises every locale to /en, lists no hreflang, and keeps the locale's RSS link", async () => {
+    const mod = await import("../../lib/seo/alternates");
+    // Resolved through the namespace so a missing export fails as an assertion.
+    const build = (mod as Record<string, unknown>)["englishOnlyAlternates"] as
+      | ((lang: string, path: string) => Alternates & { types?: Record<string, unknown> })
+      | undefined;
+    expect(typeof build, "englishOnlyAlternates export").toBe("function");
+    for (const [lang, rss] of [
+      ["de", "de"],
+      ["xx", "en"],
+    ]) {
+      const alternates = build!(lang!, "/news/big-launch");
+      expect(alternates.canonical).toBe(`${ORIGIN}/en/news/big-launch`);
+      expect(alternates.languages).toBeUndefined();
+      expect(alternates.types?.["application/rss+xml"]).toEqual([
+        { title: "AI Power Rankings - News & Updates", url: `${ORIGIN}/${rss}/news/rss.xml` },
+      ]);
+    }
   });
 });
 
