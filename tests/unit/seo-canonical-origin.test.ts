@@ -45,6 +45,23 @@ const TOOL_ROW = {
 // sets; the pages under test are Server Components, so neutralise the guard.
 vi.mock("server-only", () => ({}));
 
+vi.mock("next/headers", () => ({
+  cookies: async () => ({ get: () => undefined }),
+  headers: async () => new Headers(),
+}));
+
+vi.mock("../../lib/content-loader", () => ({
+  contentLoader: {
+    loadContent: async (_locale: string, slug: string) => ({
+      title: `${slug} title`,
+      subtitle: `${slug} subtitle`,
+      content: "",
+      htmlContent: "",
+      metadata: {},
+    }),
+  },
+}));
+
 vi.mock("../../lib/db/repositories/tools.repository", () => {
   class ToolsRepository {
     findBySlug = async () => TOOL_ROW;
@@ -204,6 +221,11 @@ const LOCALIZED_PAGES = [
   "best-ide-assistants",
   "best-open-source-frameworks",
   "best-testing-tools",
+  // #156: the remaining localized pages; each renders for all 10 locales.
+  "terms",
+  "privacy",
+  "whats-new",
+  "whats-new/recent",
 ] as const;
 
 // #156: dashboard pages built by lib/seo/utils, as [module dir under
@@ -296,7 +318,8 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
   });
 
   it.each(LOCALIZED_PAGES)("%s metadata uses the production origin", async (page) => {
-    const { generateMetadata } = await import(`../../app/[lang]/${page}/page.tsx`);
+    // Vite's variable-import helper reaches one directory level; whats-new/recent is two.
+    const { generateMetadata } = await import(/* @vite-ignore */ `../../app/[lang]/${page}/page.tsx`);
     const metadata = await generateMetadata(params({ lang: "ko" }));
     expectProductionUrls(metadata, page);
     expectSelfCanonical(metadata, "ko", `/${page}`, page);
@@ -339,6 +362,13 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     );
   });
 
+  it("contact metadata is self-canonical under its locale (#156)", async () => {
+    const { generateMetadata } = await import("../../app/[lang]/contact/[slug]/page");
+    const metadata = await generateMetadata(params({ lang: "uk", slug: "default" }) as never);
+    expectProductionUrls(metadata, "contact");
+    expectSelfCanonical(metadata, "uk", "/contact/default", "contact");
+  });
+
   it("lib/seo/utils metadata uses the production origin", async () => {
     const utils = await import("../../lib/seo/utils");
     const metadata = utils.generateMetadata({
@@ -372,6 +402,11 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     const entries = await sitemap();
     expect(entries.some((e) => e.url.endsWith("/tools/cursor"))).toBe(true);
     expect(entries.some((e) => e.url.endsWith("/news/big-launch"))).toBe(true);
+    // #156: article pages canonicalise to /en, so only that URL is listed.
+    const urls = entries.map((e) => e.url);
+    expect(urls).toContain(`${ORIGIN}/en/news/big-launch`);
+    expect(urls).not.toContain(`${ORIGIN}/de/news/big-launch`);
+    expect(urls.filter((u) => u.endsWith("/news/big-launch"))).toEqual([`${ORIGIN}/en/news/big-launch`]);
     expectProductionUrls(entries, "sitemap");
   });
 
@@ -546,6 +581,7 @@ describe("unknown locale segment falls back to English (#156)", () => {
     ["rankings", "rankings/page.tsx", {}, "/rankings"],
     ["trending", "trending/page.tsx", {}, "/trending"],
     ["tool detail", "tools/[slug]/page.tsx", { slug: "cursor" }, "/tools/cursor"],
+    ["contact", "contact/[slug]/page.tsx", { slug: "default" }, "/contact/default"],
     ...LOCALIZED_PAGES.map((p): [string, string, Record<string, string>, string] => [
       p,
       `${p}/page.tsx`,
@@ -563,6 +599,35 @@ describe("unknown locale segment falls back to English (#156)", () => {
     const ogUrl = (metadata?.openGraph as { url?: string | URL } | undefined)?.url;
     expect(String(ogUrl), `${name} og:url`).toBe(`${ORIGIN}/en${path}`);
     expect(alternates?.types?.["application/rss+xml"], `${name} RSS`).toEqual(EN_RSS);
+  });
+
+  it.each([
+    ["home", "page.tsx", {}],
+    ["trending", "trending/page.tsx", {}],
+    ["tool detail", "tools/[slug]/page.tsx", { slug: "cursor" }],
+  ] as Array<[string, string, Record<string, string>]>)("%s og:locale is en for lang xx", async (name, file, extra) => {
+    const metadata = await load(file, "xx", extra);
+    expect((metadata?.openGraph as { locale?: string } | undefined)?.locale, name).toBe("en");
+  });
+
+  it("home WebSite JSON-LD names /en for lang xx", async () => {
+    const mod = await import("../../app/[lang]/page");
+    const [site] = jsonLdIn(await mod.default(params({ lang: "xx" }))) as Array<{
+      url?: string;
+      potentialAction?: { target?: { urlTemplate?: string } };
+    }>;
+    expect(site?.url).toBe(`${ORIGIN}/en`);
+    expect(site?.potentialAction?.target?.urlTemplate).toBe(
+      `${ORIGIN}/en/rankings?search={search_term_string}`
+    );
+  });
+
+  it("tool detail breadcrumb JSON-LD names /en for lang xx", async () => {
+    const mod = await import("../../app/[lang]/tools/[slug]/page");
+    const blocks = jsonLdIn(await mod.default(params({ lang: "xx", slug: "cursor" }) as never));
+    const serialized = JSON.stringify(blocks);
+    expect(serialized).toContain(`${ORIGIN}/en/tools/cursor`);
+    expect(serialized).not.toContain("/xx/");
   });
 
   it("the [lang] layout advertises the English feed for lang EN", async () => {

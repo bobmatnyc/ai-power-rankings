@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import type { Tool } from "@/types/database";
 
@@ -84,7 +84,7 @@ export function generateMetadata({
       url,
       siteName: "AI Power Rankings",
       images,
-      locale: lang, // #156: the page locale, as on the home and trending pages.
+      locale: canonicalLocale(lang), // #156: the page locale; en for an unknown segment.
       type: "website",
     },
     twitter: {

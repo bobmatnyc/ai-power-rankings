@@ -4,6 +4,7 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { ToolDetailClient } from "./tool-detail-client";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
+import { canonicalLocale } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import {
   generateToolSchema,
@@ -72,8 +73,9 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
       breadcrumbSchema = generateBreadcrumbSchema(
         [
           { name: "Home", url: "/" },
-          { name: "Tools", url: `/${lang}/tools` },
-          { name: tool.name, url: `/${lang}/tools/${slug}` },
+          // #156: an unknown segment renders English; name the /en URLs.
+          { name: "Tools", url: `/${canonicalLocale(lang)}/tools` },
+          { name: tool.name, url: `/${canonicalLocale(lang)}/tools/${slug}` },
         ],
         baseUrl
       );

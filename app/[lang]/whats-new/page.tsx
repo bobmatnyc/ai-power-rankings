@@ -3,6 +3,18 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { Metadata } from 'next';
+import { whatsNewPageMetadata } from './page-metadata';
+
+// #156: self-canonical per locale; the layout sets no alternates.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  return whatsNewPageMetadata(lang, "/whats-new");
+}
 
 interface MonthlySummary {
   period: string;

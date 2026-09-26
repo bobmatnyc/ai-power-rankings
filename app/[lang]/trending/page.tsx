@@ -26,7 +26,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { TrendingPageContent } from "./trending-content";
 
 export const dynamic = "force-dynamic";
@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: Pick<PageProps, "params">): P
         dict.trending.description ||
         "Historical trends and analysis of AI tool rankings over time.",
       type: "website",
-      locale: lang,
+      locale: canonicalLocale(lang), // #156: never an unknown segment
       url: alternates.canonical, // #156: always the canonical
     },
     twitter: {
