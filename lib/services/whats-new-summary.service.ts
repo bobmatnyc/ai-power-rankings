@@ -6,7 +6,7 @@
 import { getDb } from "@/lib/db/connection";
 import { monthlySummaries } from "@/lib/db/schema";
 import type { MonthlySummary, NewMonthlySummary } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { loggers } from "@/lib/logger";
 import {
@@ -155,6 +155,25 @@ export class WhatsNewSummaryService {
       .limit(1);
 
     return existing.length > 0 ? existing[0] : null;
+  }
+
+  /**
+   * Most recent stored summary by period (`YYYY-MM` sorts chronologically),
+   * or null when none is stored. Reads only; never generates.
+   */
+  async getLatestSummary(): Promise<MonthlySummary | null> {
+    const db = getDb();
+    if (!db) {
+      throw new Error("Database connection not available");
+    }
+
+    const latest = await db
+      .select()
+      .from(monthlySummaries)
+      .orderBy(desc(monthlySummaries.period))
+      .limit(1);
+
+    return latest.length > 0 ? latest[0] : null;
   }
 
   /**

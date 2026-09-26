@@ -93,6 +93,9 @@ describe("middleware: protected routes win over public patterns", () => {
     ["GET", "/api/admin/x.png"],
     ["GET", "/api/admin"],
     ["GET", "/API/admin/tools/scoring"],
+    ["GET", "/api/data/db-status"],
+    ["GET", "/api/data/articles"],
+    ["POST", "/api/ai/analyze-news"],
   ])("refuses anonymous %s %s with 401", async (method, path) => {
     const res = await run(path, method);
     expect(anonymousAuth).toHaveBeenCalledTimes(1);
@@ -181,6 +184,8 @@ describe("route-access: public patterns are anchored", () => {
     "/api/admin",
     "/api/admin/x.png",
     "/API/admin/tools/scoring",
+    "/api/data/db-status",
+    "/api/ai/analyze-news",
   ])("no public pattern matches %s", async (path) => {
     const { isPublicRoute, routeAccess } = await import("../../lib/route-access");
     const req = new NextRequest(`http://localhost${path}`);

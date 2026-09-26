@@ -150,8 +150,9 @@ function parseDatabaseUrl(url: string | undefined) {
     // Extract database name from pathname
     const database = urlObj.pathname.slice(1).split("?")[0] || "default";
 
-    // Use full hostname (no masking)
-    const maskedHost = hostname;
+    // Keep a short prefix of the first label, enough to tell known hosts
+    // apart; the rest of the hostname (endpoint ID, region, domain) is hidden.
+    const maskedHost = `${(hostname.split(".")[0] ?? "").slice(0, 6)}***`;
 
     // Detect provider from hostname
     let provider = "postgresql";

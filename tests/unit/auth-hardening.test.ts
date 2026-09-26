@@ -25,6 +25,7 @@ const touched = vi.hoisted(() => ({
   testConnection: vi.fn(async () => true),
   summaryService: vi.fn(),
   getCachedSummary: vi.fn(),
+  getLatestSummary: vi.fn(),
   generateMonthlySummary: vi.fn(),
   llmFetch: vi.fn(),
 }));
@@ -50,6 +51,7 @@ vi.mock("../../lib/services/whats-new-summary.service", () => ({
       touched.summaryService();
     }
     getCachedSummary = touched.getCachedSummary;
+    getLatestSummary = touched.getLatestSummary;
     generateMonthlySummary = touched.generateMonthlySummary;
   },
 }));
@@ -154,6 +156,20 @@ describe("data, summary and analysis endpoints require an admin", () => {
   );
 });
 
+describe("data db-status masks the database host for an admin", () => {
+  it("returns a short first-label prefix, never the full hostname", async () => {
+    vi.stubEnv("DATABASE_URL", "postgresql://u:pw@ep-quiet-lake-123456.us-east-2.aws.neon.tech/stubdb");
+    clerk.auth.mockResolvedValue({ userId: "user_1" });
+    clerk.currentUser.mockResolvedValue({ id: "user_1", privateMetadata: { isAdmin: true } });
+    const res = await dataDbStatus.GET();
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.maskedHost).toBe("ep-qui***");
+    expect(JSON.stringify(body)).not.toContain("quiet-lake-123456");
+    expect(JSON.stringify(body)).not.toContain("us-east-2");
+  });
+});
+
 describe("what's-new summary GET stays public", () => {
   it("serves a cached summary to an anonymous visitor without an auth lookup", async () => {
     touched.getCachedSummary.mockResolvedValue({
@@ -167,5 +183,34 @@ describe("what's-new summary GET stays public", () => {
     expect((await res.json()).summary.content).toBe("cached");
     expect(clerk.auth).not.toHaveBeenCalled();
     expect(touched.generateMonthlySummary).not.toHaveBeenCalled();
+  });
+
+  // Generation spends LLM credits; only the admin POST may start it.
+  it("serves the latest stored summary on a cache miss without generating", async () => {
+    touched.getCachedSummary.mockResolvedValue(null);
+    touched.getLatestSummary.mockResolvedValue({
+      period: "2025-12",
+      content: "previous month",
+      generatedAt: new Date("2025-12-31T00:00:00Z"),
+      metadata: {},
+    });
+    const res = await whatsNewSummary.GET(new NextRequest("http://localhost/api/whats-new/summary"));
+    expect(touched.generateMonthlySummary).not.toHaveBeenCalled();
+    expect(touched.llmFetch).not.toHaveBeenCalled();
+    expect(res.status).toBe(200);
+    expect((await res.json()).summary.period).toBe("2025-12");
+  });
+
+  it.each([
+    ["no period, nothing stored", "/api/whats-new/summary"],
+    ["an explicit period with no stored summary", "/api/whats-new/summary?period=2026-02"],
+  ])("returns 404 for %s without generating", async (_case, path) => {
+    touched.getCachedSummary.mockResolvedValue(null);
+    touched.getLatestSummary.mockResolvedValue(null);
+    const res = await whatsNewSummary.GET(new NextRequest(`http://localhost${path}`));
+    expect(touched.generateMonthlySummary).not.toHaveBeenCalled();
+    expect(touched.llmFetch).not.toHaveBeenCalled();
+    expect(res.status).toBe(404);
+    expect(clerk.auth).not.toHaveBeenCalled();
   });
 });

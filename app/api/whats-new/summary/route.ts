@@ -1,6 +1,6 @@
 /**
  * API Route: What's New Monthly Summary
- * GET: Retrieve cached summary or generate if stale
+ * GET: Read a stored summary (public; never generates)
  * POST: Force regeneration (admin only)
  */
 
@@ -17,10 +17,15 @@ export const maxDuration = 60; // Allow 60 seconds for LLM regeneration
 
 /**
  * GET /api/whats-new/summary
- * Retrieve monthly summary (cached or generate)
  *
- * Fast-path: Returns cached summary instantly without hash validation
- * Full generation only runs if no cache exists
+ * Why: This route is public, and generating a summary spends LLM credits, so
+ * an anonymous request must never start generation. Generation happens only
+ * through the admin POST below.
+ * What: Returns the stored summary for `?period=YYYY-MM`, or 404 when none is
+ * stored. Without a period it returns the current month's stored summary,
+ * else the most recent stored one (the current month's row is deleted when
+ * new articles are published), else 404.
+ * Test: `tests/unit/auth-hardening.test.ts`.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -31,53 +36,34 @@ export async function GET(request: NextRequest) {
 
     const summaryService = new WhatsNewSummaryService();
 
-    // Fast-path: Try to get cached summary first (no hash validation)
-    const cachedSummary = await summaryService.getCachedSummary(period);
+    const stored =
+      (await summaryService.getCachedSummary(period)) ??
+      (period ? null : await summaryService.getLatestSummary());
 
-    if (cachedSummary) {
-      loggers.api.info("Returning cached summary (fast-path)", {
-        period: cachedSummary.period,
-        generatedAt: cachedSummary.generatedAt
-      });
-
-      return cachedJsonResponse(
-        {
-          summary: {
-            period: cachedSummary.period,
-            content: cachedSummary.content,
-            generatedAt: cachedSummary.generatedAt,
-            metadata: cachedSummary.metadata,
-          },
-          isNew: false,
-          generationTimeMs: 0,
-          _timestamp: new Date().toISOString(),
-          _cached: true,
-        },
-        `/api/whats-new/summary?period=${period || "current"}`,
-        200, // HTTP status code
-        { maxAge: 300, sMaxAge: 300 } // Cache for 5 minutes
+    if (!stored) {
+      loggers.api.info("No stored summary found", { period: period || "current" });
+      return NextResponse.json(
+        { error: "Not found", message: "No summary is available for this period.", summary: null },
+        { status: 404 }
       );
     }
-
-    // No cache exists - run full generation
-    loggers.api.info("No cached summary found, generating new", { period: period || "current" });
-    const result = await summaryService.generateMonthlySummary(period, false);
 
     return cachedJsonResponse(
       {
         summary: {
-          period: result.summary.period,
-          content: result.summary.content,
-          generatedAt: result.summary.generatedAt,
-          metadata: result.summary.metadata,
+          period: stored.period,
+          content: stored.content,
+          generatedAt: stored.generatedAt,
+          metadata: stored.metadata,
         },
-        isNew: result.isNew,
-        generationTimeMs: result.generationTimeMs,
+        isNew: false,
+        generationTimeMs: 0,
         _timestamp: new Date().toISOString(),
+        _cached: true,
       },
       `/api/whats-new/summary?period=${period || "current"}`,
       200, // HTTP status code
-      { maxAge: result.isNew ? 3600 : 300, sMaxAge: result.isNew ? 3600 : 300 } // Cache for 1 hour if new, 5 minutes if cached
+      { maxAge: 300, sMaxAge: 300 } // Cache for 5 minutes
     );
   } catch (error) {
     loggers.api.error("Monthly summary API error", {
@@ -85,33 +71,20 @@ export async function GET(request: NextRequest) {
       stack: error instanceof Error ? error.stack : undefined,
     });
 
-    // Check for specific error types
-    if (error instanceof Error) {
-      if (error.message.includes("Database connection")) {
-        return NextResponse.json(
-          {
-            error: "Database unavailable",
-            message: "The database service is currently unavailable. Please try again later.",
-          },
-          { status: 503 }
-        );
-      }
-
-      if (error.message.includes("OpenRouter")) {
-        return NextResponse.json(
-          {
-            error: "AI service unavailable",
-            message: "The AI summary service is currently unavailable. Please try again later.",
-          },
-          { status: 503 }
-        );
-      }
+    if (error instanceof Error && error.message.includes("Database connection")) {
+      return NextResponse.json(
+        {
+          error: "Database unavailable",
+          message: "The database service is currently unavailable. Please try again later.",
+        },
+        { status: 503 }
+      );
     }
 
     return NextResponse.json(
       {
         error: "Internal server error",
-        message: "An error occurred while generating the summary. Please try again later.",
+        message: "An error occurred while reading the summary. Please try again later.",
       },
       { status: 500 }
     );
