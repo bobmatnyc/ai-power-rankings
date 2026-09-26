@@ -13,7 +13,8 @@ import { loggers } from "@/lib/logger";
 // Runtime configuration for Vercel
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60; // Allow 60 seconds for LLM regeneration
+// #160: a 16k-token regeneration can outlast 60 s; matches /api/cron/monthly-summary.
+export const maxDuration = 300;
 
 /**
  * GET /api/whats-new/summary
