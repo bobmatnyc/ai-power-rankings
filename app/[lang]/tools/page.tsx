@@ -4,7 +4,6 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getCurrentYear } from "@/lib/get-current-year";
 import { localizedAlternates } from "@/lib/seo/alternates";
-import { siteOrigin } from "@/lib/site-origin";
 import ToolsClient from "./tools-client";
 
 // Enable ISR with 1-hour revalidation
@@ -17,10 +16,10 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  // #153: the production origin, never the per-deployment VERCEL_URL host.
-  const baseUrl = siteOrigin();
   const currentYear = getCurrentYear();
 
+  // #156: one builder for canonical and og:url, so they cannot disagree.
+  const alternates = localizedAlternates(lang, "/tools");
   return {
     title: `All AI Coding Tools ${currentYear} - Complete Directory & Comparison`,
     description:
@@ -39,12 +38,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `All AI Coding Tools ${currentYear}`,
       description: "Browse and compare 50+ AI coding tools across all categories.",
       type: "website",
-      url: `${baseUrl}/${lang}/tools`,
+      url: alternates.canonical, // #156: always the canonical
       siteName: "AI Power Rankings",
     },
     // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-    alternates: localizedAlternates(lang, "/tools"),
+    alternates,
   };
 }
 

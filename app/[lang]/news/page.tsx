@@ -5,7 +5,6 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getCurrentYear } from "@/lib/get-current-year";
 import { localizedAlternates } from "@/lib/seo/alternates";
-import { siteOrigin } from "@/lib/site-origin";
 
 // Force dynamic rendering to prevent build timeout
 export const dynamic = "force-dynamic";
@@ -16,10 +15,10 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  // #153: the production origin, never the per-deployment VERCEL_URL host.
-  const baseUrl = siteOrigin();
   const currentYear = getCurrentYear();
 
+  // #156: one builder for canonical and og:url, so they cannot disagree.
+  const alternates = localizedAlternates(lang, "/news");
   return {
     title: `AI Coding Tools News ${currentYear} - Latest Updates & Announcements`,
     description:
@@ -38,12 +37,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `AI Coding Tools News ${currentYear}`,
       description: "Stay updated with the latest AI coding tools news and announcements.",
       type: "website",
-      url: `${baseUrl}/${lang}/news`,
+      url: alternates.canonical, // #156: always the canonical
       siteName: "AI Power Rankings",
     },
     // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-    alternates: localizedAlternates(lang, "/news"),
+    alternates,
   };
 }
 

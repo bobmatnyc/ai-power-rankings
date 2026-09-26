@@ -91,6 +91,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     console.log("[Metadata] Using static keywords (no API fetch required)");
 
+    // #156: one builder for canonical and og:url, so they cannot disagree.
+    const alternates = localizedAlternates(lang, "");
     const metadata = {
       title: dict.seo?.title || "AI Power Rankings",
       description:
@@ -102,7 +104,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
         type: "website",
         locale: lang,
-        url: `${baseUrl}/${lang}`,
+        url: alternates.canonical, // #156: always the canonical
         siteName: dict.common?.appName || "AI Power Rankings",
         images: [
           {
@@ -122,7 +124,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       },
       // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
       // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
-      alternates: localizedAlternates(lang, ""),
+      alternates,
     };
 
     console.log("[Metadata] Successfully generated metadata (static keywords)");

@@ -7,18 +7,33 @@ type Alternates = NonNullable<Metadata["alternates"]>;
 export const NEWS_RSS_TITLE = "AI Power Rankings - News & Updates";
 
 /**
+ * The locale a `[lang]` segment's URLs are built for: `lang` itself when it is
+ * a locale in `i18n/config.ts`, else `i18n.defaultLocale`.
+ *
+ * Why: nothing rejects an unknown segment, so `/xx/news` and `/EN/tools/cursor`
+ * render the English page with a 200. Naming the junk segment in canonical,
+ * `og:url` or the RSS link made it an indexable duplicate and advertised a
+ * feed that 404s (#156).
+ * Test: `tests/unit/seo-canonical-origin.test.ts`.
+ */
+export function canonicalLocale(lang: string): string {
+  return (locales as readonly string[]).includes(lang) ? lang : i18n.defaultLocale;
+}
+
+/**
  * The `<link rel="alternate" type="application/rss+xml">` entry for a locale's news feed.
  *
  * Why: `app/[lang]/layout.tsx` advertises the feed for every page, but Next.js
  * replaces the whole `alternates` object when a page sets its own, so every
  * page with a canonical silently dropped the RSS discovery link (#155).
- * What: `alternates.types` naming `${siteOrigin()}/${lang}/news/rss.xml`.
+ * What: `alternates.types` naming `${siteOrigin()}/${canonicalLocale(lang)}/news/rss.xml`.
  * Test: `tests/unit/seo-canonical-origin.test.ts`.
  */
 export function newsRssAlternateTypes(lang: string): NonNullable<Alternates["types"]> {
   return {
     "application/rss+xml": [
-      { title: NEWS_RSS_TITLE, url: `${siteOrigin()}/${lang}/news/rss.xml` },
+      // #156: an unknown segment advertises the English feed, not a 404.
+      { title: NEWS_RSS_TITLE, url: `${siteOrigin()}/${canonicalLocale(lang)}/news/rss.xml` },
     ],
   };
 }
@@ -34,8 +49,9 @@ export function newsRssAlternateTypes(lang: string): NonNullable<Alternates["typ
  * page is a real translation, so each one canonicalises to itself; pointing
  * `/de/news` at `/en/news` told search engines to drop the German page (#156).
  * What: `path` is the locale-free path (`""` for the home page, `/news`,
- * `/tools/cursor`). Returns `canonical` = `${siteOrigin()}/${lang}${path}`
- * when `lang` is in `i18n/config.ts`, else the `i18n.defaultLocale` URL;
+ * `/tools/cursor`). Returns `canonical` =
+ * `${siteOrigin()}/${canonicalLocale(lang)}${path}` (pages use it as `og:url`
+ * too);
  * `languages[locale]` = `${siteOrigin()}/${locale}${path}` for every locale,
  * `languages["x-default"]` = `${siteOrigin()}/${i18n.defaultLocale}${path}`,
  * and `types` = `newsRssAlternateTypes(lang)`. A known locale cannot
@@ -50,12 +66,10 @@ export function localizedAlternates(lang: string, path: string): Alternates & { 
   }
   // #156: the language-selector fallback for searchers matching no locale.
   languages["x-default"] = `${origin}/${i18n.defaultLocale}${path}`;
-  // #156: an unknown segment (`/xx/news`, `/EN/tools/cursor`) renders the
-  // English content, so it canonicalises there rather than to itself.
-  const canonicalLang = (locales as readonly string[]).includes(lang) ? lang : i18n.defaultLocale;
   return {
-    // #156: self-canonical for every real locale.
-    canonical: `${origin}/${canonicalLang}${path}`,
+    // #156: self-canonical for every real locale; an unknown segment
+    // (`/xx/news`, `/EN/tools/cursor`) renders English, so it points there.
+    canonical: `${origin}/${canonicalLocale(lang)}${path}`,
     languages,
     types: newsRssAlternateTypes(lang),
   };
