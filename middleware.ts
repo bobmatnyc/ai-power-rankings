@@ -60,7 +60,8 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   if (access === "protected") {
     if (!userId) {
       // API callers get a 401 JSON body; a sign-in redirect is only useful to a browser.
-      if (pathname.startsWith("/api/")) {
+      // Case-insensitive, matching the protected-route matcher in lib/route-access.ts.
+      if (pathname.toLowerCase().startsWith("/api/")) {
         return NextResponse.json(
           { error: "Unauthorized", message: "Authentication required", code: "AUTH_REQUIRED" },
           { status: 401 }

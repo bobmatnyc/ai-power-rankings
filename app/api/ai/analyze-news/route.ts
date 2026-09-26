@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { requireAdmin } from "@/lib/api-auth";
 import { loggers } from "@/lib/logger";
 
 // Schema for qualitative metrics extraction
@@ -109,8 +110,22 @@ const QualitativeMetricsSchema = z.object({
 
 export type QualitativeMetrics = z.infer<typeof QualitativeMetricsSchema>;
 
-// Route handler for AI news analysis
+/**
+ * POST /api/ai/analyze-news
+ *
+ * Why: Each request spends LLM credits, and no public page calls this route,
+ * so it is admin-only. It used to have no auth check.
+ * What: `requireAdmin()` runs before the body is read (401 anonymous, 403
+ * non-admin); an admin's request sends the article to the model and returns
+ * the extracted metrics.
+ * Test: `tests/unit/auth-hardening.test.ts`.
+ */
 export async function POST(request: NextRequest) {
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
     const body = await request.json();
     const { article, toolName, toolContext, debug = false } = body;

@@ -12,7 +12,6 @@ import { getOpenRouterApiKey } from "@/lib/startup-validation";
 // #122: post-processes the model's Related Links block against what it was
 // actually shown — see the call site in AIAnalyzer.analyzeContent.
 import { sanitizeRelatedLinksBlock } from "@/lib/article-content-links";
-import { WhatsNewSummaryService } from "./whats-new-summary.service";
 import { jinaReaderService } from "./jina-reader.service";
 
 // Validation schemas
@@ -1172,21 +1171,6 @@ export class ArticleIngestionService {
   }
 
   /**
-   * Invalidate monthly summary cache (called after article publication)
-   */
-  private async invalidateMonthlySummaryCache(): Promise<void> {
-    try {
-      const summaryService = new WhatsNewSummaryService();
-      const currentPeriod = new Date().toISOString().slice(0, 7); // YYYY-MM
-      await summaryService.invalidateSummary(currentPeriod);
-      console.log(`[ArticleIngestion] Invalidated monthly summary cache for ${currentPeriod}`);
-    } catch (error) {
-      // Non-critical error - log but don't fail article ingestion
-      console.error("[ArticleIngestion] Failed to invalidate summary cache:", error);
-    }
-  }
-
-  /**
    * Get current system state (rankings, tools, companies) for analysis
    */
   private async getCurrentState(_isDryRun: boolean): Promise<{
@@ -1414,9 +1398,7 @@ export class ArticleIngestionService {
         // accurate metric; we pass it straight through.
         const savedArticle = await dbService.ingestArticle(preprocessedInput);
 
-        // Invalidate monthly summary cache after successful save
-        await this.invalidateMonthlySummaryCache();
-
+        // The stored what's-new summary is kept; only an admin regenerates it (#160).
         return savedArticle as IngestedArticle;
       }
     } catch (error) {

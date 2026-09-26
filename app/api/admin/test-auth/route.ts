@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/api-auth";
 import { auth } from "@clerk/nextjs/server";
 import {
   withErrorBoundary,
@@ -23,6 +24,12 @@ export const GET = withErrorBoundary(async () => {
       404,
       'NOT_AVAILABLE'
     );
+  }
+
+  // Admin only outside production too; runs before any debug work.
+  const adminCheck = await requireAdmin();
+  if (adminCheck.error) {
+    return adminCheck.error;
   }
 
   console.log("[TEST-AUTH-V2] Starting enhanced auth test");

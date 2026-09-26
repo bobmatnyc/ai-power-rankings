@@ -17,11 +17,17 @@ import { locales } from "@/i18n/config";
 /** Locale segment restricted to the configured locales, e.g. `(en|de|fr)`. */
 const LOCALE = `:locale(${locales.join("|")})`;
 
-/** Paths that require a signed-in user. Checked before the public list. */
+/**
+ * Paths that require a signed-in user. Checked before the public list.
+ * `/api/data` and `/api/ai` are admin-only; their handlers also call
+ * `requireAdmin()`, and no public page calls them.
+ */
 export const PROTECTED_ROUTE_PATTERNS = [
   "/:locale/admin(.*)",
   "/:locale/dashboard(.*)",
   "/api/admin(.*)",
+  "/api/data(.*)",
+  "/api/ai(.*)",
 ];
 
 /**

@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/api-auth";
 import { currentUser, auth as getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { getDb, testConnection } from "@/lib/db/connection";
@@ -22,6 +23,12 @@ export async function GET() {
       { error: 'Endpoint not available in production' },
       { status: 404 }
     );
+  }
+
+  // Admin only outside production too; runs before any debug work.
+  const adminCheck = await requireAdmin();
+  if (adminCheck.error) {
+    return adminCheck.error;
   }
 
   console.log("[DEBUG-AUTH] Starting comprehensive authentication debug");

@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/connection";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
-import { getAuth, isAdmin } from "@/lib/auth-helper";
+import { requireAdmin } from "@/lib/api-auth";
 
 // Let Next.js auto-detect runtime - avoid conflicts with middleware
 
@@ -12,101 +12,13 @@ import { getAuth, isAdmin } from "@/lib/auth-helper";
 export async function GET(request: NextRequest) {
   console.log("[API] Articles endpoint - Request received");
 
+  // requireAdmin() applies the auth-disabled flag only in local development.
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return authResult.error;
+  }
+
   try {
-    // Check if auth is disabled (development mode)
-    const isAuthDisabled = process.env["NEXT_PUBLIC_DISABLE_AUTH"] === "true";
-    console.log("[API] Auth disabled mode:", isAuthDisabled);
-
-    if (!isAuthDisabled) {
-      // In production, verify authentication and admin status
-      console.log("[API] Checking authentication...");
-
-      try {
-        // Get auth data using the auth helper
-        console.log("[API] Getting auth data using auth-helper...");
-        const authData = await getAuth();
-        console.log("[API] Auth data received - userId:", authData.userId);
-        console.log(
-          "[API] User data:",
-          authData.user ? { id: authData.user.id, isAdmin: authData.user.isAdmin } : null
-        );
-
-        if (!authData.userId || !authData.user) {
-          console.log("[API] No authenticated user found");
-          return NextResponse.json(
-            {
-              error: "Unauthorized",
-              message: "Authentication required. Please sign in to access this resource.",
-              code: "AUTH_REQUIRED",
-            },
-            {
-              status: 401,
-              headers: {
-                "Content-Type": "application/json",
-                "WWW-Authenticate": "Bearer",
-              },
-            }
-          );
-        }
-
-        // Check if user has admin privileges using the helper
-        console.log("[API] Checking admin privileges...");
-        const userIsAdmin = await isAdmin();
-        console.log("[API] User isAdmin:", userIsAdmin);
-
-        if (!userIsAdmin) {
-          console.log("[API] User lacks admin privileges");
-          return NextResponse.json(
-            {
-              error: "Forbidden",
-              message: "Admin access required. Your account does not have admin privileges.",
-              code: "ADMIN_REQUIRED",
-              userId: authData.user.id,
-              help: "To grant admin access, update your Clerk user's publicMetadata with: { isAdmin: true }",
-            },
-            {
-              status: 403,
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-        }
-
-        console.log("[API] Authentication successful - user is admin");
-      } catch (authError) {
-        console.error("[API] Authentication error:", authError);
-        console.error(
-          "[API] Auth error stack:",
-          authError instanceof Error ? authError.stack : "No stack"
-        );
-        console.error("[API] Auth error type:", typeof authError);
-        console.error("[API] Auth error constructor:", authError?.constructor?.name);
-
-        return NextResponse.json(
-          {
-            error: "Authentication Error",
-            message: "Failed to verify authentication status.",
-            details: authError instanceof Error ? authError.message : "Unknown error",
-            stack:
-              process.env["NODE_ENV"] === "development"
-                ? authError instanceof Error
-                  ? authError.stack
-                  : String(authError)
-                : undefined,
-          },
-          {
-            status: 500,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      }
-    } else {
-      console.log("[API] Skipping authentication - auth is disabled");
-    }
-
     // Check database availability
     console.log("[API] Getting database connection...");
     const db = getDb();

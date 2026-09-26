@@ -1,17 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { unstable_doesMiddlewareMatch } from "next/experimental/testing/server";
+import { config } from "../../middleware";
 
 /**
  * Route-access tests for `middleware.ts`.
  *
  * Why: Unanchored public patterns such as `/(.*)/tools(.*)` were evaluated
  * before the protected list, so admin API paths and dashboard pages skipped
- * authentication.
- * What: Runs the real middleware handler (Clerk's wrapper is replaced by an
- * identity function; `createRouteMatcher` is Clerk's own) against an anonymous
- * session. Protected paths must call `auth()` and be refused (401 for API,
- * redirect to sign-in for pages). Public paths must pass through without an
- * auth lookup.
+ * authentication. The handler tests alone cannot show the middleware runs at
+ * all for a path; that is decided by `config.matcher`.
+ * What: Checks the real exported `config.matcher` with Next's
+ * `unstable_doesMiddlewareMatch`, then runs the real middleware handler
+ * (Clerk's wrapper is replaced by an identity function; `createRouteMatcher`
+ * is Clerk's own) against an anonymous session. Protected paths must call
+ * `auth()` and be refused (401 for API, redirect to sign-in for pages). Public
+ * paths must pass through without an auth lookup.
  * Test: `npx vitest run tests/unit/middleware-route-access.test.ts`.
  */
 
@@ -52,6 +56,31 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
+describe("middleware: config.matcher decides which paths run the middleware", () => {
+  it.each([
+    "/api/admin/tools/scoring",
+    "/api/admin/tools/scoring.json",
+    "/api/admin/x.png",
+    "/api/admin",
+    "/API/admin/tools/scoring",
+    "/en/sign-in/factor-one",
+    "/en/admin/news",
+    "/en/dashboard/tools",
+    "/api/data/db-status",
+    "/api/ai/analyze-news",
+  ])("runs the middleware for %s", (path) => {
+    expect(unstable_doesMiddlewareMatch({ config, url: `http://localhost${path}` })).toBe(true);
+  });
+
+  // Shows the matcher check can fail: static assets and Next internals skip it.
+  it.each(["/logo.png", "/favicon.ico", "/_next/static/chunks/main.js"])(
+    "skips the middleware for %s",
+    (path) => {
+      expect(unstable_doesMiddlewareMatch({ config, url: `http://localhost${path}` })).toBe(false);
+    }
+  );
+});
+
 describe("middleware: protected routes win over public patterns", () => {
   it.each([
     ["GET", "/api/admin/tools/scoring"],
@@ -60,6 +89,13 @@ describe("middleware: protected routes win over public patterns", () => {
     ["POST", "/api/admin/tools/scoring/recalculate"],
     ["GET", "/api/admin/news"],
     ["GET", "/api/admin/rankings/versions"],
+    ["GET", "/api/admin/tools/scoring.json"],
+    ["GET", "/api/admin/x.png"],
+    ["GET", "/api/admin"],
+    ["GET", "/API/admin/tools/scoring"],
+    ["GET", "/api/data/db-status"],
+    ["GET", "/api/data/articles"],
+    ["POST", "/api/ai/analyze-news"],
   ])("refuses anonymous %s %s with 401", async (method, path) => {
     const res = await run(path, method);
     expect(anonymousAuth).toHaveBeenCalledTimes(1);
@@ -100,6 +136,7 @@ describe("middleware: public pages and APIs stay anonymous", () => {
     "/en/contact",
     "/en/sign-in",
     "/en/sign-up",
+    "/en/sign-in/factor-one",
     "/sign-in",
     "/api/news",
     "/api/news/recent",
@@ -123,6 +160,8 @@ describe("middleware: public pages and APIs stay anonymous", () => {
     "/en/whats-new",
     "/sitemap.xml",
     "/robots.txt",
+    // Middleware lets /api/companies through; its POST handler requires an
+    // admin (tests/unit/auth-hardening.test.ts).
     "/api/companies",
     "/api/state-of-ai/current",
   ])(
@@ -144,6 +183,11 @@ describe("route-access: public patterns are anchored", () => {
     "/xx/dashboard/rankings",
     "/en/admin/news",
     "/api/admin/sign-in",
+    "/api/admin",
+    "/api/admin/x.png",
+    "/API/admin/tools/scoring",
+    "/api/data/db-status",
+    "/api/ai/analyze-news",
   ])("no public pattern matches %s", async (path) => {
     const { isPublicRoute, routeAccess } = await import("../../lib/route-access");
     const req = new NextRequest(`http://localhost${path}`);
