@@ -191,7 +191,6 @@ export class NewsRepository {
     total: number;
     hasMore: boolean;
   }> {
-    const limit = options.limit ?? 20;
     const offset = options.offset ?? 0;
     const filters: NewsFilters = { eventType: options.eventType ?? null };
 
@@ -201,28 +200,49 @@ export class NewsRepository {
     }
 
     try {
-      const results = await db
-        .select({ ...getTableColumns(articles), eventType: newsEventTypeSql() })
-        .from(articles)
-        .where(this.filterWhere(filters))
-        .orderBy(desc(articles.publishedDate), desc(articles.id))
-        .limit(limit)
-        .offset(offset);
-
+      const page = await this.getPageFiltered(options);
       const total = await this.countFiltered(filters);
 
       return {
-        articles: results.map((row) => ({
-          ...this.mapArticleToNews(row),
-          eventType: row.eventType,
-        })),
+        articles: page,
         total,
-        hasMore: offset + results.length < total,
+        hasMore: offset + page.length < total,
       };
     } catch (error) {
       console.error("Error fetching filtered paginated news:", error);
       return { articles: [], total: 0, hasMore: false };
     }
+  }
+
+  /**
+   * The rows of one `getPaginatedFiltered` page, with failures thrown, not swallowed.
+   *
+   * Why: `getPaginatedFiltered` turns a failed read into an empty page, which a
+   * cached consumer such as the RSS feed would then serve as a valid, empty
+   * document (#150).
+   * What: Same predicate, ordering (`published_date` desc, `id` desc), limit and
+   * offset as `getPaginatedFiltered`, which delegates here. Throws when no
+   * database is configured or the query fails.
+   * Test: `lib/db/repositories/news.test.ts`, `tests/unit/news-rss-route.test.ts`.
+   */
+  async getPageFiltered(options: PaginatedNewsOptions = {}): Promise<ClassifiedNewsArticle[]> {
+    const db = getDb();
+    if (!db) {
+      throw new Error("Database connection unavailable");
+    }
+
+    const results = await db
+      .select({ ...getTableColumns(articles), eventType: newsEventTypeSql() })
+      .from(articles)
+      .where(this.filterWhere({ eventType: options.eventType ?? null }))
+      .orderBy(desc(articles.publishedDate), desc(articles.id))
+      .limit(options.limit ?? 20)
+      .offset(options.offset ?? 0);
+
+    return results.map((row) => ({
+      ...this.mapArticleToNews(row),
+      eventType: row.eventType,
+    }));
   }
 
   /**
