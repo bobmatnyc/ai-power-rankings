@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { locales } from "../../i18n/config";
 
 /**
  * Regression tests for #153 — SEO URLs must name the production origin.
@@ -133,12 +134,21 @@ type Alternates = {
   languages?: Record<string, string>;
 };
 
-/** Canonical and hreflang must be absolute production URLs, not relative paths. */
-function expectAbsoluteAlternates(alternates: Alternates | undefined | null, where: string): void {
+/**
+ * Canonical is an absolute production URL, and hreflang names exactly one
+ * `${ORIGIN}/${locale}${path}` entry for every locale in `i18n/config.ts`.
+ */
+function expectAbsoluteAlternates(
+  alternates: Alternates | undefined | null,
+  path: string,
+  where: string
+): void {
   expect(alternates?.canonical, `${where} canonical`).toMatch(new RegExp(`^${ORIGIN}/`));
-  const languages = Object.values(alternates?.languages ?? {});
-  expect(languages.length, `${where} hreflang count`).toBeGreaterThan(0);
-  for (const href of languages) expect(href, `${where} hreflang`).toMatch(new RegExp(`^${ORIGIN}/`));
+  const languages = alternates?.languages ?? {};
+  expect(Object.keys(languages).sort(), `${where} hreflang locales`).toEqual([...locales].sort());
+  for (const locale of locales) {
+    expect(languages[locale], `${where} hreflang ${locale}`).toBe(`${ORIGIN}/${locale}${path}`);
+  }
 }
 
 /** JSON-LD payloads rendered anywhere in a React element tree. */
@@ -191,7 +201,8 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     const mod = await import("../../app/[lang]/page");
     const metadata = await mod.generateMetadata(params({ lang: "de" }));
     expectProductionUrls(metadata, "home metadata");
-    expectAbsoluteAlternates(metadata.alternates as Alternates, "home");
+    expectAbsoluteAlternates(metadata.alternates as Alternates, "", "home");
+    // Each locale's home page is its own canonical, not the English one.
     expect((metadata.alternates as Alternates).canonical).toBe(`${ORIGIN}/de`);
     const blocks = jsonLdIn(await mod.default(params({ lang: "de" })));
     expect(blocks.length).toBe(1);
@@ -202,7 +213,7 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     const { generateMetadata } = await import("../../app/[lang]/news/page");
     const metadata = await generateMetadata(params({ lang: "ja" }));
     expectProductionUrls(metadata, "news list");
-    expectAbsoluteAlternates(metadata.alternates as Alternates, "news list");
+    expectAbsoluteAlternates(metadata.alternates as Alternates, "/news", "news list");
     expect((metadata.alternates as Alternates).canonical).toBe(`${ORIGIN}/en/news`);
   });
 
@@ -210,20 +221,22 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     const { generateMetadata } = await import("../../app/[lang]/news/[slug]/page");
     const metadata = await generateMetadata(params({ lang: "fr", slug: "big-launch" }));
     expectProductionUrls(metadata, "news article");
-    expectAbsoluteAlternates(metadata.alternates as Alternates, "news article");
+    expectAbsoluteAlternates(metadata.alternates as Alternates, "/news/big-launch", "news article");
     expect((metadata.alternates as Alternates).canonical).toBe(`${ORIGIN}/en/news/big-launch`);
     expect(String(fetchMock.mock.calls[0]?.[0])).toBe(`https://${PREVIEW_HOST}/api/news/big-launch`);
   });
 
   it("rankings metadata and JSON-LD use the production origin while the fetch keeps the deployment host", async () => {
     const mod = await import("../../app/[lang]/rankings/page");
-    const metadata = await mod.generateMetadata(params({ lang: "en" }));
+    const metadata = await mod.generateMetadata(params({ lang: "de" }));
     expectProductionUrls(metadata, "rankings metadata");
-    expect((metadata.alternates as Alternates).canonical).toBe(`${ORIGIN}/en/rankings`);
+    expectAbsoluteAlternates(metadata.alternates as Alternates, "/rankings", "rankings");
+    // Each locale's rankings page is its own canonical, not the English one.
+    expect((metadata.alternates as Alternates).canonical).toBe(`${ORIGIN}/de/rankings`);
     expect(String(fetchMock.mock.calls[0]?.[0])).toBe(`https://${PREVIEW_HOST}/api/rankings`);
 
     fetchMock.mockClear();
-    const blocks = jsonLdIn(await mod.default(params({ lang: "en" })));
+    const blocks = jsonLdIn(await mod.default(params({ lang: "de" })));
     expect(blocks.length).toBeGreaterThan(0);
     expectProductionUrls(blocks, "rankings JSON-LD");
     expect(String(fetchMock.mock.calls[0]?.[0])).toBe(`https://${PREVIEW_HOST}/api/rankings`);
@@ -233,14 +246,17 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     const { generateMetadata } = await import("../../app/[lang]/trending/page");
     const metadata = await generateMetadata(params({ lang: "es" }));
     expectProductionUrls(metadata, "trending");
-    expectAbsoluteAlternates(metadata.alternates as Alternates, "trending");
+    expectAbsoluteAlternates(metadata.alternates as Alternates, "/trending", "trending");
+    // Each locale's trending page is its own canonical, not the English one.
+    expect((metadata.alternates as Alternates).canonical).toBe(`${ORIGIN}/es/trending`);
   });
 
   it("tool detail metadata and JSON-LD use the production origin", async () => {
     const mod = await import("../../app/[lang]/tools/[slug]/page");
     const metadata = await mod.generateMetadata(params({ lang: "en", slug: "cursor" }) as never);
     expectProductionUrls(metadata, "tool detail metadata");
-    expectAbsoluteAlternates(metadata.alternates as Alternates, "tool detail");
+    expectAbsoluteAlternates(metadata.alternates as Alternates, "/tools/cursor", "tool detail");
+    expect((metadata.alternates as Alternates).canonical).toBe(`${ORIGIN}/en/tools/cursor`);
     const blocks = jsonLdIn(await mod.default(params({ lang: "en", slug: "cursor" }) as never));
     expect(blocks.length).toBeGreaterThan(0);
     expectProductionUrls(blocks, "tool detail JSON-LD");
@@ -250,7 +266,7 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     const { generateMetadata } = await import(`../../app/[lang]/${page}/page.tsx`);
     const metadata = await generateMetadata(params({ lang: "ko" }));
     expectProductionUrls(metadata, page);
-    expectAbsoluteAlternates(metadata.alternates, page);
+    expectAbsoluteAlternates(metadata.alternates, `/${page}`, page);
     expect(metadata.alternates.canonical).toBe(`${ORIGIN}/en/${page}`);
   });
 
@@ -310,6 +326,53 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     const { generateMetadata } = await import("../../app/[lang]/news/page");
     const metadata = await generateMetadata(params({ lang: "en" }));
     expect((metadata.alternates as Alternates).canonical).toBe("https://staging.example.com/en/news");
+  });
+});
+
+describe("localizedAlternates() (#153, #155)", () => {
+  const RSS = (lang: string) => ({
+    "application/rss+xml": [
+      { title: "AI Power Rankings - News & Updates", url: `${ORIGIN}/${lang}/news/rss.xml` },
+    ],
+  });
+
+  it("canonicalises to English by default and lists every locale", async () => {
+    const { localizedAlternates } = await import("../../lib/seo/alternates");
+    const alternates = localizedAlternates("ko", "/news/big-launch");
+    expect(alternates.canonical).toBe(`${ORIGIN}/en/news/big-launch`);
+    expectAbsoluteAlternates(alternates as Alternates, "/news/big-launch", "default");
+    expect(alternates.types).toEqual(RSS("ko"));
+  });
+
+  it("uses canonicalLang when given, while the RSS link follows the page locale", async () => {
+    const { localizedAlternates } = await import("../../lib/seo/alternates");
+    const alternates = localizedAlternates("fr", "/rankings", { canonicalLang: "fr" });
+    expect(alternates.canonical).toBe(`${ORIGIN}/fr/rankings`);
+    expectAbsoluteAlternates(alternates as Alternates, "/rankings", "canonicalLang");
+    expect(alternates.types).toEqual(RSS("fr"));
+  });
+
+  it("emits no trailing slash for the empty home path", async () => {
+    const { localizedAlternates } = await import("../../lib/seo/alternates");
+    const alternates = localizedAlternates("de", "", { canonicalLang: "de" });
+    expect(alternates.canonical).toBe(`${ORIGIN}/de`);
+    expect((alternates as Alternates).languages?.["en"]).toBe(`${ORIGIN}/en`);
+  });
+
+  it("never doubles the slash when NEXT_PUBLIC_BASE_URL ends in one", async () => {
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://staging.example.com/");
+    const { localizedAlternates } = await import("../../lib/seo/alternates");
+    const alternates = localizedAlternates("en", "/about");
+    expect(alternates.canonical).toBe("https://staging.example.com/en/about");
+    expect((alternates as Alternates).languages?.["ja"]).toBe("https://staging.example.com/ja/about");
+    expect(alternates.types).toEqual({
+      "application/rss+xml": [
+        {
+          title: "AI Power Rankings - News & Updates",
+          url: "https://staging.example.com/en/news/rss.xml",
+        },
+      ],
+    });
   });
 });
 
