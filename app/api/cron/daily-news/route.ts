@@ -6,6 +6,8 @@
  * - Discovers and ingests relevant AI coding tools news
  * - Requires CRON_SECRET authentication via Bearer token OR Vercel cron authentication
  * - Invalidates news/homepage caches after successful ingestion
+ * - #160: then regenerates the current month's what's-new summary when its
+ *   data changed; a regeneration failure is reported, never fails the run
  */
 
 import { NextResponse } from "next/server";
@@ -14,6 +16,7 @@ import {
   type IngestionResult,
 } from "@/lib/services/automated-ingestion.service";
 import { invalidateArticleCache } from "@/lib/cache/invalidation.service";
+import { autoRegenerateMonthlySummary } from "@/lib/services/whats-new-auto-regenerate";
 import { loggers } from "@/lib/logger";
 
 /**
@@ -51,6 +54,9 @@ async function sendCronAlert(
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; // 5 minutes - Vercel max for the configured plan
+
+/** #160: time kept back from `maxDuration` for the upsert and the response. */
+const SUMMARY_SAFETY_MARGIN_MS = 20_000;
 
 /**
  * Verify if request is authorized for cron execution.
@@ -151,7 +157,14 @@ export async function GET(request: Request) {
       }
     }
 
-    // 4. Return success response
+    // 4. #160: regenerate the what's-new summary from this CRON_SECRET-gated
+    // path only, at most one LLM call per run. The call never throws; its
+    // outcome (including a failure) goes into the run result.
+    const whatsNewSummary = await autoRegenerateMonthlySummary({
+      timeBudgetMs: maxDuration * 1000 - (Date.now() - startTime) - SUMMARY_SAFETY_MARGIN_MS,
+    });
+
+    // 5. Return success response
     return NextResponse.json(
       {
         success: true,
@@ -167,6 +180,7 @@ export async function GET(request: Request) {
           errors: result.errors,
           ingestedArticleIds: result.ingestedArticleIds,
           durationMs: result.durationMs,
+          whatsNewSummary,
         },
       },
       { status: 200 }
