@@ -38,6 +38,7 @@ vi.mock("../../lib/db/repositories/tools.repository", () => {
 
 import * as route from "../../app/sitemap.xml/route";
 import { locales } from "../../i18n/config";
+import { renderSitemapXml } from "../../lib/sitemap";
 
 const ORIGIN = "https://aipowerranking.com";
 
@@ -128,5 +129,13 @@ describe("GET /sitemap.xml (#162)", () => {
     expect(response.status).toBe(503);
     expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(await response.text()).not.toContain("<urlset");
+  });
+});
+
+describe("renderSitemapXml (#162)", () => {
+  it("escapes XML metacharacters in <loc>, & first so no entity is escaped twice", () => {
+    const xml = renderSitemapXml([{ url: "https://x/a?b=1&c=<d>" }]);
+
+    expect(xml).toContain("<loc>https://x/a?b=1&amp;c=&lt;d&gt;</loc>");
   });
 });

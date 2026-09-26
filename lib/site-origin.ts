@@ -4,8 +4,8 @@
  * Why: RSS guids and links, and the feed URL the layout advertises, have to
  * name the public site. `getUrl()` prefers `VERCEL_URL`, the per-deployment
  * `*.vercel.app` host, so a feed built from it gave every item a new guid on
- * every deploy (#150). `app/sitemap.ts` and `app/robots.ts` already follow
- * this rule inline.
+ * every deploy (#150). `lib/sitemap.ts` (via `app/sitemap.xml/route.ts`,
+ * #162) and `app/robots.ts` follow the same rule.
  * What: `NEXT_PUBLIC_BASE_URL` when set and non-empty, else
  * `https://aipowerranking.com`; any trailing slash is removed. Never reads
  * `VERCEL_URL` or the request.

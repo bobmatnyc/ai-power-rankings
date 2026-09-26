@@ -31,7 +31,9 @@ export async function GET(): Promise<Response> {
     xml = renderSitemapXml(await buildSitemapEntries(siteOrigin()));
   } catch (error) {
     // #162: fail closed. An article-less 200 would be cached as the sitemap.
-    loggers.api.error("Sitemap: database read failed", {
+    // Not only database reads can throw here, so the log names the error type.
+    loggers.api.error("Sitemap: build failed", {
+      name: error instanceof Error ? error.name : typeof error,
       error: error instanceof Error ? error.message : String(error),
     });
     return new Response("Sitemap temporarily unavailable", {
