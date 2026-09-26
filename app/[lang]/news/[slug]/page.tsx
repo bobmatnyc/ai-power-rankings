@@ -5,7 +5,7 @@ import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { englishOnlyAlternates } from "@/lib/seo/alternates";
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = "force-dynamic";
@@ -65,7 +65,7 @@ async function fetchArticle(slug: string): Promise<{ article: NewsArticle; tool:
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, slug } = await params;
   // #153: only fetchArticle() uses getUrl(), which must reach this deployment's
-  // own API on previews; SEO URLs come from localizedAlternates().
+  // own API on previews; SEO URLs come from englishOnlyAlternates().
 
   try {
     const { article, tool } = await fetchArticle(slug);
@@ -73,8 +73,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const toolName = tool ? ` - ${tool.name}` : "";
     const description = article.summary || article.content.substring(0, 160);
 
-    // #156: one builder for canonical and og:url, so they cannot disagree.
-    const alternates = localizedAlternates(lang, `/news/${slug}`);
+    // #156: article bodies are English-only, so every locale canonicalises to
+    // /en with no hreflang; og:url reads the same canonical.
+    const alternates = englishOnlyAlternates(lang, `/news/${slug}`);
     return {
       title: `${article.title}${toolName}`,
       description,
@@ -100,7 +101,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: article.title,
         description,
       },
-      // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
       // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
       alternates,
     };

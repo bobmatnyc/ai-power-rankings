@@ -39,6 +39,27 @@ export function newsRssAlternateTypes(lang: string): NonNullable<Alternates["typ
 }
 
 /**
+ * `alternates` for a page whose body is English in every locale: an English
+ * canonical, no hreflang, and the page locale's news RSS link.
+ *
+ * Why: #156: news article bodies are English-only, so `/fr/news/<slug>` is a
+ * duplicate of `/en/news/<slug>`, not a translation. Hreflang next to a
+ * cross-language canonical would contradict it, so none is emitted.
+ * What: `canonical` = `${siteOrigin()}/${i18n.defaultLocale}${path}` for any
+ * `lang`; `types` = `newsRssAlternateTypes(lang)`; no `languages`.
+ * Test: `tests/unit/seo-canonical-origin.test.ts`.
+ */
+export function englishOnlyAlternates(
+  lang: string,
+  path: string
+): Alternates & { canonical: string } {
+  return {
+    canonical: `${siteOrigin()}/${i18n.defaultLocale}${path}`,
+    types: newsRssAlternateTypes(lang),
+  };
+}
+
+/**
  * Builds a localized page's `alternates`: a self-referencing canonical, one
  * hreflang per locale plus `x-default`, and the locale's news RSS link.
  *
