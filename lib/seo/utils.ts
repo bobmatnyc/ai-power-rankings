@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
+import { localizedAlternates } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import type { Tool } from "@/types/database";
-import type { RankedTool } from "@/types/rankings";
 
 interface GenerateMetadataProps {
   title: string;
   description: string;
+  /** The `[lang]` route segment the page is served under. */
+  lang: string;
+  /** Locale-free route path (`/tools/cursor`, `/dashboard`); `""` for home. */
   path?: string;
   ogImage?: string;
   keywords?: string[];
@@ -13,9 +16,21 @@ interface GenerateMetadataProps {
   lastModified?: Date;
 }
 
+/**
+ * Metadata for a page under `app/[lang]/`: title, robots, openGraph, twitter
+ * and localized alternates.
+ *
+ * Why: this builder hard-coded its own hreflang map, with a `pt-BR` → `/pt`
+ * locale the site does not serve and a canonical and `og:url` without the
+ * locale segment the route lives under (#156).
+ * What: canonical, hreflang and the RSS link come from `localizedAlternates()`;
+ * `openGraph.url` is the same `${siteOrigin()}/${lang}${path}` as the canonical.
+ * Test: `tests/unit/seo-canonical-origin.test.ts`.
+ */
 export function generateMetadata({
   title,
   description,
+  lang,
   path = "",
   ogImage,
   keywords = [],
@@ -24,7 +39,8 @@ export function generateMetadata({
 }: GenerateMetadataProps): Metadata {
   // #153: the production origin; getBaseUrl() returned the VERCEL_URL host.
   const baseUrl = siteOrigin();
-  const url = `${baseUrl}${path}`;
+  // #156: the page's own locale URL, shared by canonical and og:url.
+  const url = `${baseUrl}/${lang}${path}`;
 
   const images = ogImage
     ? [{ url: ogImage, width: 1200, height: 630, alt: title }]
@@ -72,24 +88,13 @@ export function generateMetadata({
       creator: "@aipowerrankings",
       site: "@aipowerrankings",
     },
-    alternates: {
-      canonical: url,
-      languages: {
-        "en-US": url,
-        "ja-JP": `${baseUrl}/ja${path}`,
-        "zh-CN": `${baseUrl}/zh${path}`,
-        "es-ES": `${baseUrl}/es${path}`,
-        "fr-FR": `${baseUrl}/fr${path}`,
-        "de-DE": `${baseUrl}/de${path}`,
-        "ko-KR": `${baseUrl}/ko${path}`,
-        "pt-BR": `${baseUrl}/pt${path}`,
-      },
-    },
+    // #156: the shared builder; its canonical equals `url` above.
+    alternates: localizedAlternates(lang, path),
     ...(lastModified && { lastModified: lastModified.toISOString() }),
   };
 }
 
-export function generateToolMetadata(tool: Tool): Metadata {
+export function generateToolMetadata(tool: Tool, lang: string): Metadata {
   const keywords = [
     tool.name,
     tool.category,
@@ -113,58 +118,10 @@ export function generateToolMetadata(tool: Tool): Metadata {
   return generateMetadata({
     title,
     description,
+    lang,
     path: `/tools/${tool.slug}`,
     keywords,
     ogImage: `/api/og?title=${encodeURIComponent(tool.name)}&subtitle=${encodeURIComponent(tool.category)}&logo=${encodeURIComponent(tool.info?.metadata?.logo_url || "")}`,
-  });
-}
-
-export function generateRankingMetadata(period: string, rankings?: RankedTool[]): Metadata {
-  const title = `AI Coding Tools Rankings - ${period}`;
-  const description = `Monthly rankings of the best AI coding assistants for ${period}. Compare Cursor, GitHub Copilot, Claude, and 50+ tools based on performance, features, and developer satisfaction.`;
-
-  const topTools =
-    rankings
-      ?.slice(0, 5)
-      .map((r) => r.name)
-      .join(", ") || "";
-  const keywords = [
-    "AI rankings",
-    period,
-    "coding tools comparison",
-    "best AI assistants",
-    ...topTools.split(", "),
-  ];
-
-  return generateMetadata({
-    title,
-    description,
-    path: `/rankings/${period}`,
-    keywords,
-    ogImage: `/api/og?title=${encodeURIComponent(title)}&subtitle=Top Tools: ${encodeURIComponent(topTools)}`,
-  });
-}
-
-export function generateComparisonMetadata(tool1: Tool, tool2: Tool): Metadata {
-  const title = `${tool1.name} vs ${tool2.name} - AI Coding Tools Comparison`;
-  const description = `Detailed comparison between ${tool1.name} and ${tool2.name}. Features, pricing, performance benchmarks, and which AI coding assistant is better for your needs.`;
-
-  const keywords = [
-    tool1.name,
-    tool2.name,
-    `${tool1.name} vs ${tool2.name}`,
-    "AI tools comparison",
-    "coding assistant comparison",
-    tool1.category,
-    tool2.category,
-  ];
-
-  return generateMetadata({
-    title,
-    description,
-    path: `/compare/${tool1.slug}-vs-${tool2.slug}`,
-    keywords,
-    ogImage: `/api/og?title=${encodeURIComponent(title)}`,
   });
 }
 

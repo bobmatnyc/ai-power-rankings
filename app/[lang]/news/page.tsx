@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `${baseUrl}/${lang}/news`,
       siteName: "AI Power Rankings",
     },
-    // Canonical is always the English version; hreflang covers every locale.
+    // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
     alternates: localizedAlternates(lang, "/news"),
   };

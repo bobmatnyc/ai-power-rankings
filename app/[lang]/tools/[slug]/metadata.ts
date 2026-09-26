@@ -10,7 +10,7 @@ interface ToolInfo {
   [key: string]: unknown;
 }
 
-export async function generateToolMetadata(slug: string): Promise<Metadata> {
+export async function generateToolMetadata(slug: string, lang: string): Promise<Metadata> {
   try {
     const toolsRepo = new ToolsRepository();
     const toolData = await toolsRepo.findBySlug(slug);
@@ -36,7 +36,8 @@ export async function generateToolMetadata(slug: string): Promise<Metadata> {
       info: toolData.info as ToolInfo,
     };
 
-    return generateMetadataFromTool(tool);
+    // #156: the locale builds the page's own canonical, og:url and hreflang.
+    return generateMetadataFromTool(tool, lang);
   } catch (error) {
     console.error("Error generating tool metadata:", error);
     return {

@@ -120,9 +120,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           dict.seo?.description || "Comprehensive rankings of AI coding tools and assistants",
         images: [`${baseUrl}/og-image.png`],
       },
-      // Each locale's home page is its own canonical.
       // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-      alternates: localizedAlternates(lang, "", { canonicalLang: lang }),
+      // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
+      alternates: localizedAlternates(lang, ""),
     };
 
     console.log("[Metadata] Successfully generated metadata (static keywords)");
