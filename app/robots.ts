@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
+import { siteOrigin } from "@/lib/site-origin";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+  // #153: the one shared production-origin rule.
+  const baseUrl = siteOrigin();
 
   return {
     rules: [

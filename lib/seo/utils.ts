@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getBaseUrl } from "@/lib/get-base-url";
+import { siteOrigin } from "@/lib/site-origin";
 import type { Tool } from "@/types/database";
 import type { RankedTool } from "@/types/rankings";
 
@@ -22,7 +22,8 @@ export function generateMetadata({
   noIndex = false,
   lastModified,
 }: GenerateMetadataProps): Metadata {
-  const baseUrl = getBaseUrl();
+  // #153: the production origin; getBaseUrl() returned the VERCEL_URL host.
+  const baseUrl = siteOrigin();
   const url = `${baseUrl}${path}`;
 
   const images = ogImage
@@ -169,7 +170,7 @@ export function generateComparisonMetadata(tool1: Tool, tool2: Tool): Metadata {
 
 // Helper to generate breadcrumb structured data
 export function generateBreadcrumbSchema(items: { name: string; url: string }[]) {
-  const baseUrl = getBaseUrl();
+  const baseUrl = siteOrigin(); // #153
 
   return {
     "@context": "https://schema.org",

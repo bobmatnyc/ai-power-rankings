@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import NewsContent from "@/components/news/news-content";
 import type { Locale } from "@/i18n/config";
-import { locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getCurrentYear } from "@/lib/get-current-year";
-import { getUrl } from "@/lib/get-url";
+import { localizedAlternates } from "@/lib/seo/alternates";
+import { siteOrigin } from "@/lib/site-origin";
 
 // Force dynamic rendering to prevent build timeout
 export const dynamic = "force-dynamic";
@@ -16,14 +16,9 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  const baseUrl = getUrl();
+  // #153: the production origin, never the per-deployment VERCEL_URL host.
+  const baseUrl = siteOrigin();
   const currentYear = getCurrentYear();
-
-  // Build hreflang alternates for all supported languages
-  const languages: Record<string, string> = {};
-  locales.forEach((locale) => {
-    languages[locale] = `${baseUrl}/${locale}/news`;
-  });
 
   return {
     title: `AI Coding Tools News ${currentYear} - Latest Updates & Announcements`,
@@ -46,12 +41,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `${baseUrl}/${lang}/news`,
       siteName: "AI Power Rankings",
     },
-    alternates: {
-      // Always set canonical to the English version
-      canonical: `${baseUrl}/en/news`,
-      // Include hreflang tags for all supported languages
-      languages,
-    },
+    // Canonical is always the English version; hreflang covers every locale.
+    // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
+    alternates: localizedAlternates(lang, "/news"),
   };
 }
 

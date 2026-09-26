@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { generateToolMetadata } from "./metadata";
 import type { Locale } from "@/i18n/config";
-import { locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { ToolDetailClient } from "./tool-detail-client";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
+import { localizedAlternates } from "@/lib/seo/alternates";
+import { siteOrigin } from "@/lib/site-origin";
 import {
   generateToolSchema,
   generateToolReviewSchema,
@@ -22,29 +23,18 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { lang, slug } = await params;
 
   // Get the base metadata from the existing function
   const baseMetadata = await generateToolMetadata(slug);
 
-  // Get the base URL
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
-
-  // Build hreflang alternates for all supported languages
-  const languages: Record<string, string> = {};
-  locales.forEach((locale) => {
-    languages[locale] = `${baseUrl}/${locale}/tools/${slug}`;
-  });
-
-  // Override the alternates section to fix SEO duplicate content issue
+  // Override the alternates section to fix SEO duplicate content issue:
+  // canonical is always the English version; hreflang covers every locale.
+  // #153: built from the shared siteOrigin() rule.
+  // #155: also carries the locale's RSS link, which this override would drop.
   return {
     ...baseMetadata,
-    alternates: {
-      // Always set canonical to the English version
-      canonical: `${baseUrl}/en/tools/${slug}`,
-      // Include hreflang tags for all 10 supported languages
-      languages,
-    },
+    alternates: localizedAlternates(lang, `/tools/${slug}`),
   };
 }
 
@@ -62,7 +52,8 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
     const tool = await toolsRepo.findBySlug(slug);
 
     if (tool) {
-      const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+      // #153: the shared production-origin rule.
+      const baseUrl = siteOrigin();
 
       // Parse JSON info if available
       const jsonInfo = tool.json_info ? (typeof tool.json_info === 'string' ? JSON.parse(tool.json_info) : tool.json_info) : {};

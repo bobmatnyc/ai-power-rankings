@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import type { Locale } from "@/i18n/config";
-import { locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { contentLoader } from "@/lib/content-loader";
-import { getUrl } from "@/lib/get-url";
+import { localizedAlternates } from "@/lib/seo/alternates";
+import { siteOrigin } from "@/lib/site-origin";
 import { MarkdownAboutContent } from "./markdown-about-content";
 
 export const dynamic = "force-dynamic";
@@ -16,13 +16,8 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  const baseUrl = getUrl();
-
-  // Build hreflang alternates for all supported languages
-  const languages: Record<string, string> = {};
-  locales.forEach((locale) => {
-    languages[locale] = `${baseUrl}/${locale}/about`;
-  });
+  // #153: the production origin, never the per-deployment VERCEL_URL host.
+  const baseUrl = siteOrigin();
 
   return {
     title: "About AI Power Rankings - Independent AI Tool Analysis & Reviews",
@@ -46,12 +41,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `${baseUrl}/${lang}/about`,
       siteName: "AI Power Rankings",
     },
-    alternates: {
-      // Always set canonical to the English version
-      canonical: `${baseUrl}/en/about`,
-      // Include hreflang tags for all supported languages
-      languages,
-    },
+    // Canonical is always the English version; hreflang covers every locale.
+    // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
+    alternates: localizedAlternates(lang, "/about"),
   };
 }
 

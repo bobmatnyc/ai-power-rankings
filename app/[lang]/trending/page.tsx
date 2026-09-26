@@ -26,6 +26,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { localizedAlternates } from "@/lib/seo/alternates";
 import { TrendingPageContent } from "./trending-content";
 
 export const dynamic = "force-dynamic";
@@ -66,17 +67,10 @@ export async function generateMetadata({ params }: Pick<PageProps, "params">): P
         dict.trending.description ||
         "Historical trends and analysis of AI tool rankings over time.",
     },
-    alternates: {
-      canonical: `/${lang}/trending`,
-      languages: {
-        en: "/en/trending",
-        es: "/es/trending",
-        fr: "/fr/trending",
-        ko: "/ko/trending",
-        hr: "/hr/trending",
-        it: "/it/trending",
-      },
-    },
+    // #153: absolute production URLs; relative ones resolved against a
+    // metadataBase that named the VERCEL_URL host.
+    // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
+    alternates: localizedAlternates(lang, "/trending", { canonicalLang: lang }),
   };
 }
 

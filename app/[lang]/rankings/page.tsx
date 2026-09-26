@@ -15,6 +15,8 @@ import { FAQSection, QuickAnswerBox } from "@/components/seo";
 import { generalFAQs } from "@/data/seo-content";
 import { getUrl } from "@/lib/get-url";
 import { generateRankingOGImageUrl } from "@/lib/og-utils";
+import { localizedAlternates } from "@/lib/seo/alternates";
+import { siteOrigin } from "@/lib/site-origin";
 import {
   createJsonLdScript,
   generateBreadcrumbSchema,
@@ -27,7 +29,9 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  const baseUrl = getUrl();
+  // #153: SEO URLs use the production origin; the rankings fetch keeps
+  // getUrl(), which must reach this deployment's own API on previews.
+  const baseUrl = siteOrigin();
 
   // Try to get current ranking period and top tools
   let topTools: string[] = [];
@@ -36,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   try {
     const isDev = process.env["NODE_ENV"] === "development";
-    const rankingsUrl = `${baseUrl}/api/rankings`;
+    const rankingsUrl = `${getUrl()}/api/rankings`;
 
     const response = await fetch(rankingsUrl, {
       next: { revalidate: isDev ? 0 : 300 },
@@ -108,9 +112,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       images: [ogImageUrl],
     },
-    alternates: {
-      canonical: `${baseUrl}/${lang}/rankings`,
-    },
+    // Each locale's rankings page is its own canonical.
+    // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
+    alternates: localizedAlternates(lang, "/rankings", { canonicalLang: lang }),
   };
 }
 
@@ -144,7 +148,8 @@ export default async function RankingsPage({ params }: PageProps): Promise<React
   }
 
   // Generate structured data
-  const structuredDataBaseUrl = getUrl();
+  // #153: JSON-LD names the production origin, never the VERCEL_URL host.
+  const structuredDataBaseUrl = siteOrigin();
   const faqSchema = generateRankingFAQSchema();
   const breadcrumbSchema = generateBreadcrumbSchema(
     [

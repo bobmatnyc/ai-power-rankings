@@ -2,13 +2,14 @@
 
 import { config } from "dotenv";
 import { GoogleSearchConsole } from "../google-search-console";
+import { siteOrigin } from "../site-origin";
 
 // Load environment variables
 config({ path: ".env.local" });
 
 async function submitSitemap() {
   const siteUrl = process.env["GOOGLE_SEARCH_CONSOLE_SITE_URL"];
-  const baseUrl = process.env["NEXT_PUBLIC_BASE_URL"] || "https://aipowerranking.com";
+  const baseUrl = siteOrigin(); // #153: the sitemap's own origin rule
 
   if (!siteUrl) {
     console.error("❌ GOOGLE_SEARCH_CONSOLE_SITE_URL not configured");
