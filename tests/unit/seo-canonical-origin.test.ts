@@ -16,8 +16,11 @@ import { locales } from "../../i18n/config";
  * returning the deployment host, and the server-side fetches still use it.
  * The #155 block checks that every page setting its own `alternates` still
  * carries the locale's `application/rss+xml` link. #156: every page case runs
- * under a non-English locale and asserts a self-referencing canonical, the
- * 10 locales plus `x-default` → `/en${path}`, and `og:url` === canonical.
+ * under a non-English locale. A page with per-locale body content asserts a
+ * self-referencing canonical, the 10 locales plus `x-default` → `/en${path}`,
+ * and `og:url` === canonical. A page whose body is English in every locale
+ * asserts canonical and `og:url` → `/en${path}`, no hreflang and `og:locale`
+ * `en`; the sitemap lists it once, under `/en`.
  * Test: `npx vitest run tests/unit/seo-canonical-origin.test.ts`. No database
  * access, no network: repositories and `fetch` are stubbed.
  */
@@ -191,6 +194,25 @@ function expectSelfCanonical(
   expect(ogUrl === undefined ? undefined : String(ogUrl), `${where} og:url`).toBe(canonical);
 }
 
+/**
+ * #156: a page whose body is English in every locale is a duplicate of its
+ * `/en` page, not a translation. Every locale canonicalises to `/en${path}`,
+ * lists no hreflang, and sets `og:url` to that canonical and `og:locale` to `en`.
+ */
+function expectEnglishOnly(
+  metadata: { alternates?: unknown; openGraph?: unknown } | null | undefined,
+  path: string,
+  where: string
+): void {
+  const alternates = metadata?.alternates as Alternates | undefined;
+  const canonical = `${ORIGIN}/en${path}`;
+  expect(alternates?.canonical, `${where} canonical`).toBe(canonical);
+  expect(alternates?.languages, `${where} hreflang`).toBeUndefined();
+  const og = metadata?.openGraph as { url?: string | URL; locale?: string } | undefined;
+  expect(og?.url === undefined ? undefined : String(og.url), `${where} og:url`).toBe(canonical);
+  expect(og?.locale, `${where} og:locale`).toBe("en");
+}
+
 /** JSON-LD payloads rendered anywhere in a React element tree. */
 function jsonLdIn(node: unknown, out: unknown[] = []): unknown[] {
   if (Array.isArray(node)) {
@@ -207,11 +229,20 @@ function jsonLdIn(node: unknown, out: unknown[] = []): unknown[] {
 
 const params = <T extends Record<string, string>>(p: T) => ({ params: Promise.resolve(p) });
 
-// Pages that build canonical + hreflang from a single path under /[lang].
-const LOCALIZED_PAGES = [
+// Pages with per-locale body content that build canonical + hreflang from a
+// single path under /[lang].
+const LOCALIZED_PAGES = ["tools"] as const;
+
+// #156: single-path pages whose body is English in every locale: markdown
+// from lib/content-loader (only src/content/en exists), English literals in
+// the component, or an English-only API.
+const ENGLISH_ONLY_PAGES = [
   "about",
   "methodology",
-  "tools",
+  "terms",
+  "privacy",
+  "whats-new",
+  "whats-new/recent",
   "best-ai-app-builders",
   "best-ai-code-editors",
   "best-ai-coding-tools",
@@ -221,12 +252,9 @@ const LOCALIZED_PAGES = [
   "best-ide-assistants",
   "best-open-source-frameworks",
   "best-testing-tools",
-  // #156: the remaining localized pages; each renders for all 10 locales.
-  "terms",
-  "privacy",
-  "whats-new",
-  "whats-new/recent",
 ] as const;
+
+const SINGLE_PATH_PAGES = [...LOCALIZED_PAGES, ...ENGLISH_ONLY_PAGES];
 
 // #156: dashboard pages built by lib/seo/utils, as [module dir under
 // app/[lang], served route path without the locale].
@@ -265,7 +293,9 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     const { generateMetadata } = await import("../../app/[lang]/news/page");
     const metadata = await generateMetadata(params({ lang: "ja" }));
     expectProductionUrls(metadata, "news list");
-    expectSelfCanonical(metadata, "ja", "/news", "news list");
+    // #156: the list's headlines, summaries and State of AI editorial come
+    // from English-only APIs; only the heading and filters are translated.
+    expectEnglishOnly(metadata, "/news", "news list");
   });
 
   it("news article metadata uses the production origin while the fetch keeps the deployment host", async () => {
@@ -280,6 +310,7 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
       `${ORIGIN}/en/news/big-launch`
     );
     expect(alternates.languages, "news article hreflang").toBeUndefined();
+    expectEnglishOnly(metadata, "/news/big-launch", "news article");
     expect(alternates.types?.["application/rss+xml"], "news article RSS").toEqual([
       { title: "AI Power Rankings - News & Updates", url: `${ORIGIN}/fr/news/rss.xml` },
     ]);
@@ -318,12 +349,22 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
   });
 
   it.each(LOCALIZED_PAGES)("%s metadata uses the production origin", async (page) => {
-    // Vite's variable-import helper reaches one directory level; whats-new/recent is two.
     const { generateMetadata } = await import(/* @vite-ignore */ `../../app/[lang]/${page}/page.tsx`);
     const metadata = await generateMetadata(params({ lang: "ko" }));
     expectProductionUrls(metadata, page);
     expectSelfCanonical(metadata, "ko", `/${page}`, page);
   });
+
+  it.each(ENGLISH_ONLY_PAGES)(
+    "%s metadata canonicalises every locale to /en with no hreflang (#156)",
+    async (page) => {
+      // Vite's variable-import helper reaches one directory level; whats-new/recent is two.
+      const { generateMetadata } = await import(/* @vite-ignore */ `../../app/[lang]/${page}/page.tsx`);
+      const metadata = await generateMetadata(params({ lang: "ko" }));
+      expectProductionUrls(metadata, page);
+      expectEnglishOnly(metadata, `/${page}`, page);
+    }
+  );
 
   it.each(DASHBOARD_PAGES)(
     "%s metadata is noindex, self-canonical under its locale, with no hreflang (#156)",
@@ -362,11 +403,12 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     );
   });
 
-  it("contact metadata is self-canonical under its locale (#156)", async () => {
+  it("contact metadata canonicalises every locale to /en with no hreflang (#156)", async () => {
     const { generateMetadata } = await import("../../app/[lang]/contact/[slug]/page");
     const metadata = await generateMetadata(params({ lang: "uk", slug: "default" }) as never);
     expectProductionUrls(metadata, "contact");
-    expectSelfCanonical(metadata, "uk", "/contact/default", "contact");
+    // The body is src/content/en/contact.md plus English literals and form.
+    expectEnglishOnly(metadata, "/contact/default", "contact");
   });
 
   it("lib/seo/utils metadata uses the production origin", async () => {
@@ -408,6 +450,30 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     expect(urls).not.toContain(`${ORIGIN}/de/news/big-launch`);
     expect(urls.filter((u) => u.endsWith("/news/big-launch"))).toEqual([`${ORIGIN}/en/news/big-launch`]);
     expectProductionUrls(entries, "sitemap");
+
+    // The locale segments the sitemap lists `path` under, sorted.
+    const listedLocales = (path: string): string[] =>
+      urls
+        .filter((u) => u.startsWith(`${ORIGIN}/`))
+        .map((u) => u.slice(ORIGIN.length + 1))
+        .filter((rest) => rest.replace(/^[^/]+/, "") === path)
+        .map((rest) => rest.split("/")[0]!)
+        .sort();
+    // #156: an English-only page canonicalises to /en, so only that URL is listed.
+    const englishOnlyPaths = [
+      "/news",
+      "/contact/default",
+      ...ENGLISH_ONLY_PAGES.filter((p) => !p.startsWith("whats-new")).map((p) => `/${p}`),
+    ];
+    for (const path of englishOnlyPaths) {
+      expect(listedLocales(path), `sitemap ${path}`).toEqual(["en"]);
+    }
+    // /{lang}/contact only redirects to /{lang}/contact/default.
+    expect(listedLocales("/contact"), "sitemap /contact").toEqual([]);
+    // A per-locale page keeps one URL per locale.
+    for (const path of ["", "/rankings", "/tools", "/trending", "/tools/cursor"]) {
+      expect(listedLocales(path), `sitemap ${path || "home"}`).toEqual([...locales].sort());
+    }
   });
 
   it("robots sitemap URL uses the production origin", async () => {
@@ -548,7 +614,7 @@ describe("RSS discovery link survives page alternates (#155)", () => {
     ["rankings", page("rankings/page.tsx")],
     ["trending", page("trending/page.tsx")],
     ["tool detail", page("tools/[slug]/page.tsx", { slug: "cursor" })],
-    ...LOCALIZED_PAGES.map((p): [string, Loader] => [p, page(`${p}/page.tsx`)]),
+    ...SINGLE_PATH_PAGES.map((p): [string, Loader] => [p, page(`${p}/page.tsx`)]),
   ];
 
   it.each(LOADERS)("%s advertises the locale's news RSS feed", async (_name, load) => {
@@ -582,7 +648,7 @@ describe("unknown locale segment falls back to English (#156)", () => {
     ["trending", "trending/page.tsx", {}, "/trending"],
     ["tool detail", "tools/[slug]/page.tsx", { slug: "cursor" }, "/tools/cursor"],
     ["contact", "contact/[slug]/page.tsx", { slug: "default" }, "/contact/default"],
-    ...LOCALIZED_PAGES.map((p): [string, string, Record<string, string>, string] => [
+    ...SINGLE_PATH_PAGES.map((p): [string, string, Record<string, string>, string] => [
       p,
       `${p}/page.tsx`,
       {},
