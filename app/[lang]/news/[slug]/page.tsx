@@ -5,8 +5,7 @@ import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getUrl } from "@/lib/get-url";
-import { localizedAlternates } from "@/lib/seo/alternates";
-import { siteOrigin } from "@/lib/site-origin";
+import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = "force-dynamic";
@@ -65,9 +64,8 @@ async function fetchArticle(slug: string): Promise<{ article: NewsArticle; tool:
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, slug } = await params;
-  // #153: SEO URLs use the production origin; only fetchArticle() keeps getUrl(),
-  // which must reach this deployment's own API on previews.
-  const baseUrl = siteOrigin();
+  // #153: only fetchArticle() uses getUrl(), which must reach this deployment's
+  // own API on previews; SEO URLs come from englishOnlyAlternates().
 
   try {
     const { article, tool } = await fetchArticle(slug);
@@ -75,6 +73,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const toolName = tool ? ` - ${tool.name}` : "";
     const description = article.summary || article.content.substring(0, 160);
 
+    // #156: article bodies are English-only, so every locale canonicalises to
+    // /en with no hreflang; og:url reads the same canonical.
+    const alternates = englishOnlyAlternates(lang, `/news/${slug}`);
     return {
       title: `${article.title}${toolName}`,
       description,
@@ -88,7 +89,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: article.title,
         description,
         type: "article",
-        url: `${baseUrl}/${lang}/news/${slug}`,
+        url: alternates.canonical, // #156: always the canonical
+        locale: ENGLISH_ONLY_OG_LOCALE, // #156: the body is English
         siteName: "AI Power Rankings",
         publishedTime: article.published_date,
         modifiedTime: article.updated_at,
@@ -100,9 +102,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: article.title,
         description,
       },
-      // Canonical is always the English version; hreflang covers every locale.
       // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-      alternates: localizedAlternates(lang, `/news/${slug}`),
+      alternates,
     };
   } catch {
     // Fallback metadata if article fetch fails

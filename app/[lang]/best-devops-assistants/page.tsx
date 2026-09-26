@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveCrownIcon } from "@/components/ui/crown-icon-server";
 import { getCurrentYear } from "@/lib/get-current-year";
-import { localizedAlternates } from "@/lib/seo/alternates";
-import { siteOrigin } from "@/lib/site-origin";
+import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
 // Force dynamic rendering to avoid Clerk SSG issues
 export const dynamic = "force-dynamic";
@@ -18,10 +17,11 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  // #153: the production origin, never the per-deployment VERCEL_URL host.
-  const baseUrl = siteOrigin();
   const currentYear = getCurrentYear();
 
+  // #156: English canonical, no hreflang: body is English literals in the
+  // component, no dictionary.
+  const alternates = englishOnlyAlternates(lang, "/best-devops-assistants");
   return {
     title: `Best AI DevOps Assistants ${currentYear} - Infrastructure Automation Tools`,
     description: `Discover the best AI-powered DevOps assistants of ${currentYear}. Compare intelligent infrastructure automation, deployment pipelines, and monitoring tools. Updated monthly.`,
@@ -41,12 +41,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `Best AI DevOps Assistants ${currentYear} - Infrastructure Automation Tools`,
       description: `Discover the best AI-powered DevOps assistants of ${currentYear}. Compare top infrastructure automation tools trusted by engineering teams.`,
       type: "website",
-      url: `${baseUrl}/${lang}/best-devops-assistants`,
+      url: alternates.canonical, // #156: always the canonical
+      locale: ENGLISH_ONLY_OG_LOCALE, // #156: the body is English
       siteName: "AI Power Rankings",
     },
-    // Canonical is always the English version; hreflang covers every locale.
+    // #156: every locale canonicalises to /en, with no hreflang.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-    alternates: localizedAlternates(lang, "/best-devops-assistants"),
+    alternates,
   };
 }
 

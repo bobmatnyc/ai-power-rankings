@@ -15,7 +15,7 @@ import { FAQSection, QuickAnswerBox } from "@/components/seo";
 import { generalFAQs } from "@/data/seo-content";
 import { getUrl } from "@/lib/get-url";
 import { generateRankingOGImageUrl } from "@/lib/og-utils";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import {
   createJsonLdScript,
@@ -29,9 +29,8 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
-  // #153: SEO URLs use the production origin; the rankings fetch keeps
-  // getUrl(), which must reach this deployment's own API on previews.
-  const baseUrl = siteOrigin();
+  // #153: the rankings fetch keeps getUrl(), which must reach this
+  // deployment's own API on previews; SEO URLs come from localizedAlternates().
 
   // Try to get current ranking period and top tools
   let topTools: string[] = [];
@@ -78,6 +77,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ? `Latest rankings of ${totalTools} AI tools. See how ${topTools.slice(0, 2).join(", ")} and other leading AI assistants compare.`
       : "Comprehensive rankings and analysis of leading AI coding tools. Compare performance, features, and adoption metrics.";
 
+  // #156: one builder for canonical and og:url, so they cannot disagree.
+  const alternates = localizedAlternates(lang, "/rankings");
   return {
     title,
     description,
@@ -93,7 +94,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description,
       type: "website",
-      url: `${baseUrl}/${lang}/rankings`,
+      locale: canonicalLocale(lang), // #156: never an unknown segment
+      url: alternates.canonical, // #156: always the canonical
       siteName: "AI Power Rankings",
       images: [
         {
@@ -112,9 +114,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       images: [ogImageUrl],
     },
-    // Each locale's rankings page is its own canonical.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
-    alternates: localizedAlternates(lang, "/rankings", { canonicalLang: lang }),
+    // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
+    alternates,
   };
 }
 

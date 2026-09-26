@@ -8,12 +8,21 @@ import { generateMetadata as generateSEOMetadata } from "@/lib/seo/utils";
 // Force dynamic rendering - this page may use authentication context
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = generateSEOMetadata({
-  title: "Rankings Management - Admin",
-  description: "View and manage AI tool rankings",
-  path: "/dashboard/rankings",
-  noIndex: true,
-});
+// #156: served at /{lang}/dashboard/rankings; canonical and og:url need the locale; noindex, so no hreflang.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  return generateSEOMetadata({
+    title: "Rankings Management - Admin",
+    description: "View and manage AI tool rankings",
+    lang,
+    path: "/dashboard/rankings",
+    noIndex: true,
+  });
+}
 
 function LoadingFallback() {
   return (

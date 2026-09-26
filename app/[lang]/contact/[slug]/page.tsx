@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ContactForm } from "@/components/contact/contact-form";
 import type { Locale } from "@/i18n/config";
 import { contentLoader } from "@/lib/content-loader";
+import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
 // Force dynamic rendering to avoid SSG issues with Clerk
 export const dynamic = "force-dynamic";
@@ -95,9 +96,23 @@ export async function generateMetadata({ params }: PageProps) {
   await forceRuntimeCheck();
 
   const content = await contentLoader.loadContent(lang as Locale, "contact");
+  const title = content?.title || "Contact Us";
+  const description = content?.subtitle || "Get in touch with AI Power Rankings";
+  // #156: English canonical, no hreflang: body from content-loader (English in
+  // every locale) plus English literals and form.
+  const alternates = englishOnlyAlternates(lang, "/contact/default");
 
   return {
-    title: content?.title || "Contact Us",
-    description: content?.subtitle || "Get in touch with AI Power Rankings",
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: alternates.canonical,
+      locale: ENGLISH_ONLY_OG_LOCALE, // #156: the body is English
+      siteName: "AI Power Rankings",
+    },
+    alternates,
   };
 }
