@@ -20,11 +20,12 @@ export const maxDuration = 60; // Allow 60 seconds for LLM regeneration
  *
  * Why: This route is public, and generating a summary spends LLM credits, so
  * an anonymous request must never start generation. Generation happens only
- * through the admin POST below.
+ * through the admin POST below and the CRON_SECRET-gated daily-news cron.
  * What: Returns the stored summary for `?period=YYYY-MM`, or 404 when none is
  * stored. Without a period it returns the current month's stored summary,
- * else the most recent stored one (the current month's row is deleted when
- * new articles are published), else 404.
+ * else the most recent stored one, else 404. #160: the daily-news cron
+ * (re)generates the current month's row, so the fallback covers the days
+ * before a new month has any articles.
  * Test: `tests/unit/auth-hardening.test.ts`.
  */
 export async function GET(request: NextRequest) {
