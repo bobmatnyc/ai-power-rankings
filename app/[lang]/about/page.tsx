@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { contentLoader } from "@/lib/content-loader";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 import { MarkdownAboutContent } from "./markdown-about-content";
 
 export const dynamic = "force-dynamic";
@@ -16,8 +16,9 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang } = await params;
 
-  // #156: one builder for canonical and og:url, so they cannot disagree.
-  const alternates = localizedAlternates(lang, "/about");
+  // #156: English canonical, no hreflang: body from content-loader, English
+  // in every locale (only src/content/en exists).
+  const alternates = englishOnlyAlternates(lang, "/about");
   return {
     title: "About AI Power Rankings - Independent AI Tool Analysis & Reviews",
     description:
@@ -38,9 +39,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         "Learn about our mission to provide unbiased, data-driven rankings of AI coding tools.",
       type: "website",
       url: alternates.canonical, // #156: always the canonical
+      locale: ENGLISH_ONLY_OG_LOCALE, // #156: the body is English
       siteName: "AI Power Rankings",
     },
-    // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
+    // #156: every locale canonicalises to /en, with no hreflang.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
     alternates,
   };

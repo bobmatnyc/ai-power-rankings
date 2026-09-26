@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Locale } from "@/i18n/config";
 import { contentLoader } from "@/lib/content-loader";
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
 export const dynamic = "force-dynamic";
 
@@ -60,8 +60,9 @@ export async function generateMetadata({ params }: PageProps) {
   const content = await contentLoader.loadContent(lang as Locale, "privacy");
   const title = content?.title || "Privacy Policy";
   const description = content?.subtitle || "AI Power Rankings privacy policy";
-  // #156: self-canonical per locale; og:url reads the same canonical.
-  const alternates = localizedAlternates(lang, "/privacy");
+  // #156: English canonical, no hreflang: body from content-loader, English
+  // in every locale (only src/content/en exists).
+  const alternates = englishOnlyAlternates(lang, "/privacy");
 
   return {
     title,
@@ -71,6 +72,7 @@ export async function generateMetadata({ params }: PageProps) {
       description,
       type: "website",
       url: alternates.canonical,
+      locale: ENGLISH_ONLY_OG_LOCALE, // #156: the body is English
       siteName: "AI Power Rankings",
     },
     alternates,

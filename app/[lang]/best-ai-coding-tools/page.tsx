@@ -10,7 +10,7 @@ import { getCurrentYear } from "@/lib/get-current-year";
 // Force dynamic rendering to prevent build timeout
 export const dynamic = "force-dynamic";
 
-import { localizedAlternates } from "@/lib/seo/alternates";
+import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
 interface PageProps {
   params: Promise<{ lang: string }>;
@@ -20,8 +20,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang } = await params;
   const currentYear = getCurrentYear();
 
-  // #156: one builder for canonical and og:url, so they cannot disagree.
-  const alternates = localizedAlternates(lang, "/best-ai-coding-tools");
+  // #156: English canonical, no hreflang: body is English literals in the
+  // component, no dictionary.
+  const alternates = englishOnlyAlternates(lang, "/best-ai-coding-tools");
   return {
     title: `Best AI Coding Tools ${currentYear} - Top 50+ Developer AI Assistants`,
     description: `Discover the best AI coding tools of ${currentYear}. Compare Cursor, GitHub Copilot, Claude, and 50+ top AI assistants. Updated monthly with rankings and reviews.`,
@@ -42,9 +43,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: `Discover the best AI coding tools of ${currentYear}. Compare top AI assistants trusted by developers worldwide.`,
       type: "website",
       url: alternates.canonical, // #156: always the canonical
+      locale: ENGLISH_ONLY_OG_LOCALE, // #156: the body is English
       siteName: "AI Power Rankings",
     },
-    // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
+    // #156: every locale canonicalises to /en, with no hreflang.
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
     alternates,
   };

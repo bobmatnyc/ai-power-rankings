@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import type { Metadata } from 'next';
 import { whatsNewPageMetadata } from './page-metadata';
 
-// #156: self-canonical per locale; the layout sets no alternates.
+// #156: English canonical, no hreflang (see whatsNewPageMetadata); the layout sets no alternates.
 export async function generateMetadata({
   params,
 }: {

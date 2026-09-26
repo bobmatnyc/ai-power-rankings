@@ -39,12 +39,21 @@ export function newsRssAlternateTypes(lang: string): NonNullable<Alternates["typ
 }
 
 /**
+ * `og:locale` for a page built with `englishOnlyAlternates()`: its body is
+ * English whatever the `[lang]` segment says (#156).
+ */
+export const ENGLISH_ONLY_OG_LOCALE = i18n.defaultLocale;
+
+/**
  * `alternates` for a page whose body is English in every locale: an English
  * canonical, no hreflang, and the page locale's news RSS link.
  *
- * Why: #156: news article bodies are English-only, so `/fr/news/<slug>` is a
- * duplicate of `/en/news/<slug>`, not a translation. Hreflang next to a
- * cross-language canonical would contradict it, so none is emitted.
+ * Why: #156: a page whose main body is English in every locale (news
+ * articles and the news list, the content-loader pages, the best-* guides,
+ * what's new) is a duplicate of its `/en` page, not a translation, even when
+ * its navigation is translated. Hreflang next to a cross-language canonical
+ * would contradict it, so none is emitted. Pages pair it with `og:url` =
+ * `canonical` and `og:locale` = `ENGLISH_ONLY_OG_LOCALE`.
  * What: `canonical` = `${siteOrigin()}/${i18n.defaultLocale}${path}` for any
  * `lang`; `types` = `newsRssAlternateTypes(lang)`; no `languages`.
  * Test: `tests/unit/seo-canonical-origin.test.ts`.
@@ -66,9 +75,11 @@ export function englishOnlyAlternates(
  * Why: pages built these URLs from `getUrl()`, which is the per-deployment
  * `*.vercel.app` host on Vercel, so canonical and hreflang named a duplicate
  * of the real domain (#153). A page's `alternates` also replaces the layout's,
- * so the RSS link has to be rebuilt here or it disappears (#155). Every locale
- * page is a real translation, so each one canonicalises to itself; pointing
- * `/de/news` at `/en/news` told search engines to drop the German page (#156).
+ * so the RSS link has to be rebuilt here or it disappears (#155). A page with
+ * per-locale body content is a real translation, so each locale canonicalises
+ * to itself; pointing `/de/rankings` at `/en/rankings` told search engines to
+ * drop the German page (#156). Pages whose body is English in every locale use
+ * `englishOnlyAlternates()` instead.
  * What: `path` is the locale-free path (`""` for the home page, `/news`,
  * `/tools/cursor`). Returns `canonical` =
  * `${siteOrigin()}/${canonicalLocale(lang)}${path}` (pages use it as `og:url`

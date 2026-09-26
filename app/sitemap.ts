@@ -17,18 +17,21 @@ const categoryPages = [
   "best-ai-app-builders",
 ] as const;
 
-// Static pages with their change frequencies
+// Static pages with their change frequencies. #156: `englishOnly` marks a page
+// whose body is English in every locale; it canonicalises to /en (see
+// englishOnlyAlternates()), so only that URL is listed.
 const staticPages = [
-  { path: "", changeFrequency: "daily" as const, priority: 1.0 }, // Homepage
-  { path: "rankings", changeFrequency: "daily" as const, priority: 0.9 },
-  { path: "tools", changeFrequency: "daily" as const, priority: 0.9 },
-  { path: "news", changeFrequency: "daily" as const, priority: 0.9 },
-  { path: "trending", changeFrequency: "daily" as const, priority: 0.9 },
-  { path: "methodology", changeFrequency: "monthly" as const, priority: 0.7 },
-  { path: "about", changeFrequency: "monthly" as const, priority: 0.7 },
-  { path: "privacy", changeFrequency: "yearly" as const, priority: 0.3 },
-  { path: "terms", changeFrequency: "yearly" as const, priority: 0.3 },
-  { path: "contact", changeFrequency: "monthly" as const, priority: 0.5 },
+  { path: "", changeFrequency: "daily" as const, priority: 1.0, englishOnly: false }, // Homepage
+  { path: "rankings", changeFrequency: "daily" as const, priority: 0.9, englishOnly: false },
+  { path: "tools", changeFrequency: "daily" as const, priority: 0.9, englishOnly: false },
+  { path: "news", changeFrequency: "daily" as const, priority: 0.9, englishOnly: true },
+  { path: "trending", changeFrequency: "daily" as const, priority: 0.9, englishOnly: false },
+  { path: "methodology", changeFrequency: "monthly" as const, priority: 0.7, englishOnly: true },
+  { path: "about", changeFrequency: "monthly" as const, priority: 0.7, englishOnly: true },
+  { path: "privacy", changeFrequency: "yearly" as const, priority: 0.3, englishOnly: true },
+  { path: "terms", changeFrequency: "yearly" as const, priority: 0.3, englishOnly: true },
+  // #156: the canonical URL; /{lang}/contact only redirects here.
+  { path: "contact/default", changeFrequency: "monthly" as const, priority: 0.5, englishOnly: true },
 ] as const;
 
 /**
@@ -48,9 +51,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteOrigin();
   const isBuildTime = !process.env.DATABASE_URL;
 
-  // 1. Generate static routes for all languages
+  // 1. Generate static routes: every locale, or /en only for an English-only page
   for (const locale of locales) {
     for (const page of staticPages) {
+      if (page.englishOnly && locale !== i18n.defaultLocale) continue;
       const path = page.path === "" ? `/${locale}` : `/${locale}/${page.path}`;
       routes.push({
         url: `${baseUrl}${path}`,
@@ -61,16 +65,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // 2. Generate category pages for all languages
-  for (const locale of locales) {
-    for (const category of categoryPages) {
-      routes.push({
-        url: `${baseUrl}/${locale}/${category}`,
-        lastModified: new Date(),
-        changeFrequency: "weekly",
-        priority: 0.8,
-      });
-    }
+  // 2. Generate category pages. #156: their body is English literals in every
+  // locale and they canonicalise to /en, so only that URL is listed.
+  for (const category of categoryPages) {
+    routes.push({
+      url: `${baseUrl}/${i18n.defaultLocale}/${category}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    });
   }
 
   // Skip dynamic routes during build time
