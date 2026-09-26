@@ -34,15 +34,15 @@ export function newsRssAlternateTypes(lang: string): NonNullable<Alternates["typ
  * page is a real translation, so each one canonicalises to itself; pointing
  * `/de/news` at `/en/news` told search engines to drop the German page (#156).
  * What: `path` is the locale-free path (`""` for the home page, `/news`,
- * `/tools/cursor`). Returns `canonical` = `${siteOrigin()}/${lang}${path}`,
- * `languages[locale]` = `${siteOrigin()}/${locale}${path}` for every locale in
- * `i18n/config.ts`, `languages["x-default"]` =
- * `${siteOrigin()}/${i18n.defaultLocale}${path}`, and
- * `types` = `newsRssAlternateTypes(lang)`. There is no way to canonicalise to
- * another language.
+ * `/tools/cursor`). Returns `canonical` = `${siteOrigin()}/${lang}${path}`
+ * when `lang` is in `i18n/config.ts`, else the `i18n.defaultLocale` URL;
+ * `languages[locale]` = `${siteOrigin()}/${locale}${path}` for every locale,
+ * `languages["x-default"]` = `${siteOrigin()}/${i18n.defaultLocale}${path}`,
+ * and `types` = `newsRssAlternateTypes(lang)`. A known locale cannot
+ * canonicalise to another language.
  * Test: `tests/unit/seo-canonical-origin.test.ts`.
  */
-export function localizedAlternates(lang: string, path: string): Alternates {
+export function localizedAlternates(lang: string, path: string): Alternates & { canonical: string } {
   const origin = siteOrigin();
   const languages: Record<string, string> = {};
   for (const locale of locales) {
@@ -50,9 +50,12 @@ export function localizedAlternates(lang: string, path: string): Alternates {
   }
   // #156: the language-selector fallback for searchers matching no locale.
   languages["x-default"] = `${origin}/${i18n.defaultLocale}${path}`;
+  // #156: an unknown segment (`/xx/news`, `/EN/tools/cursor`) renders the
+  // English content, so it canonicalises there rather than to itself.
+  const canonicalLang = (locales as readonly string[]).includes(lang) ? lang : i18n.defaultLocale;
   return {
-    // #156: self-canonical; the canonicalLang override is gone.
-    canonical: `${origin}/${lang}${path}`,
+    // #156: self-canonical for every real locale.
+    canonical: `${origin}/${canonicalLang}${path}`,
     languages,
     types: newsRssAlternateTypes(lang),
   };
