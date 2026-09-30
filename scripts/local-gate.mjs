@@ -16,13 +16,14 @@
  *   only, with no post and no clean/pushed requirement.
  *   Exit codes: 0 all checks passed (and, unless --no-status, the status posted);
  *   1 a check failed; 2 the status was refused or its post failed.
- * Test: `npx vitest run tests/unit/local-gate.test.ts` covers the pure helpers
- *   (remote parsing, status summary). The CLI paths: `npm run gate:local -- --no-status`
- *   on a clean tree exits 0; with a type error it exits 1; without `--no-status` on an
- *   unpushed commit it exits 2 and posts nothing.
+ * Test: `npx vitest run tests/unit/local-gate.test.ts` covers the pure helpers and,
+ *   with stub `gh`/`npx`/`npm` over a temp repo, every CLI arm: pass and post, failing
+ *   check, failing post, each refusal, and invocation through a symlinked path.
  */
 
 import { spawnSync } from "node:child_process";
+import { realpathSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 export const STATUS_CONTEXT = "local-gate";
 
@@ -167,6 +168,16 @@ function main() {
   process.exit(checksExit || (posted ? 0 : 2));
 }
 
-// Only run when invoked directly, not when imported by tests.
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
-if (isMain) main();
+// Only run when invoked directly, not when imported by tests. Node builds import.meta.url
+// from the entry file's realpath, percent-encoded, so compare real filesystem paths: a
+// string compare against argv[1] is false through a symlink or for a path with a space,
+// and the gate would exit 0 without running any check.
+function isEntryPoint() {
+  if (!process.argv[1]) return false;
+  try {
+    return fileURLToPath(import.meta.url) === realpathSync(process.argv[1]);
+  } catch {
+    return false;
+  }
+}
+if (isEntryPoint()) main();
