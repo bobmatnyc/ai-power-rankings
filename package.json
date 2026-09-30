@@ -19,6 +19,7 @@
     "migrate-tool-data": "tsx scripts/migrate-tool-data-to-top-level.ts",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
+    "gate:local": "node scripts/local-gate.mjs",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
