@@ -115,4 +115,24 @@ describe("GET /api/cron/daily-news — what's-new summary regeneration", () => {
       error: "OpenRouter API error (500): upstream down",
     });
   });
+
+  it("skips regeneration without calling the LLM when ingestion failed", async () => {
+    mocks.runDailyDiscovery.mockResolvedValue({
+      ...INGESTION,
+      status: "failed",
+      articlesIngested: 0,
+      ingestedArticleIds: [],
+      errors: ["OpenRouter API error (402): insufficient credits"],
+    });
+
+    const response = await GET(authorizedRequest());
+
+    expect(mocks.regenerateIfChanged).not.toHaveBeenCalled();
+    const payload = (await response.json()) as Payload;
+    expect(payload.data.whatsNewSummary).toEqual({
+      status: "skipped",
+      period: new Date().toISOString().slice(0, 7),
+      reason: "ingestion-failed",
+    });
+  });
 });

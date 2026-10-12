@@ -7,7 +7,8 @@
  * - Requires CRON_SECRET authentication via Bearer token OR Vercel cron authentication
  * - Invalidates news/homepage caches after successful ingestion
  * - #160: then regenerates the current month's what's-new summary when its
- *   data changed; a regeneration failure is reported, never fails the run
+ *   data changed; a regeneration failure is reported, never fails the run.
+ *   A failed ingestion run skips regeneration.
  */
 
 import { NextResponse } from "next/server";
@@ -17,6 +18,7 @@ import {
 } from "@/lib/services/automated-ingestion.service";
 import { invalidateArticleCache } from "@/lib/cache/invalidation.service";
 import { autoRegenerateMonthlySummary } from "@/lib/services/whats-new-auto-regenerate";
+import type { AutoRegenerationOutcome } from "@/lib/services/whats-new-summary.service";
 import { loggers } from "@/lib/logger";
 
 /**
@@ -160,9 +162,17 @@ export async function GET(request: Request) {
     // 4. #160: regenerate the what's-new summary from this CRON_SECRET-gated
     // path only, at most one LLM call per run. The call never throws; its
     // outcome (including a failure) goes into the run result.
-    const whatsNewSummary = await autoRegenerateMonthlySummary({
-      timeBudgetMs: maxDuration * 1000 - (Date.now() - startTime) - SUMMARY_SAFETY_MARGIN_MS,
-    });
+    // #160: a failed run skips the LLM call rather than spend credit (#167).
+    const whatsNewSummary: AutoRegenerationOutcome =
+      result.status === "failed"
+        ? {
+            status: "skipped",
+            period: new Date().toISOString().slice(0, 7),
+            reason: "ingestion-failed",
+          }
+        : await autoRegenerateMonthlySummary({
+            timeBudgetMs: maxDuration * 1000 - (Date.now() - startTime) - SUMMARY_SAFETY_MARGIN_MS,
+          });
 
     const data = {
       runId: result.runId,
