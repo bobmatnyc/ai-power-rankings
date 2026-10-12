@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { cachedJsonResponse } from "@/lib/api-cache";
-import { getDb } from "@/lib/db/connection";
+import { cachedJsonResponse, uncachedJsonResponse } from "@/lib/api-cache";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { loggers } from "@/lib/logger";
 import { findToolByText } from "@/lib/tool-matcher";
@@ -45,21 +44,21 @@ function readBoundedInt(
   return max === undefined ? floored : Math.min(max, floored);
 }
 
+/**
+ * One page of active news articles for the news page.
+ *
+ * Why: A failed database read came back as a 200 with `news: []`, which the
+ * news page showed as "no news" and which a cache could keep (#152).
+ * What: 400 for an offset past `MAX_OFFSET`. 503 `no-store` when the database
+ * is missing or either read (page or count) fails. Otherwise a 200 with the
+ * page, its `total` and `hasMore`, cached at the edge through `lib/api-cache.ts`;
+ * a read that matches nothing is still that 200, with `news: []`. A `?debug=true`
+ * response echoes the caller's User-Agent, so it is `no-store`.
+ * Test: `tests/unit/news-route-fail-closed.test.ts`,
+ * `tests/unit/news-route-pagination.test.ts`.
+ */
 export async function GET(request: NextRequest) {
   try {
-    // Ensure database connection is available
-    const db = getDb();
-    if (!db) {
-      loggers.api.error("Database connection not available");
-      return NextResponse.json(
-        {
-          error: "Database connection unavailable",
-          message: "The database service is currently unavailable. Please try again later.",
-        },
-        { status: 503 }
-      );
-    }
-
     const searchParams = request.nextUrl.searchParams;
     // #140: bound both, and fall back rather than 500, before either reaches SQL.
     const limit = readBoundedInt(searchParams.get("limit"), DEFAULT_LIMIT, {
@@ -89,13 +88,25 @@ export async function GET(request: NextRequest) {
 
     loggers.api.debug("Getting news from database", { limit, offset, filter });
 
-    const newsRepo = new NewsRepository();
-
-    const {
-      articles: allNews,
-      total,
-      hasMore,
-    } = await newsRepo.getPaginatedFiltered({ limit, offset, eventType });
+    // #152: the page (`getPageFiltered`) and the count both throw, including
+    // when no database is configured, so a failure can never reach the 200
+    // below as an empty list. An empty page past this point means zero matches.
+    let page: Awaited<ReturnType<NewsRepository["getPaginatedFiltered"]>>;
+    try {
+      page = await new NewsRepository().getPaginatedFiltered({ limit, offset, eventType });
+    } catch (error) {
+      loggers.api.error("News API: database read failed", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return uncachedJsonResponse(
+        {
+          error: "News temporarily unavailable",
+          message: "The news service is currently unavailable. Please try again later.",
+        },
+        503
+      );
+    }
+    const { articles: allNews, total, hasMore } = page;
 
     // Helper function to get the effective date
     const getEffectiveDate = (article: any) => {
@@ -282,19 +293,25 @@ export async function GET(request: NextRequest) {
       })
     };
 
-    return cachedJsonResponse(responseData, "/api/news", 200, undefined, request);
+    // #152: `_debug` carries the caller's User-Agent; never store it publicly.
+    if (debug) {
+      return uncachedJsonResponse(responseData, 200);
+    }
+
+    return cachedJsonResponse(responseData, "/api/news");
   } catch (error) {
     loggers.api.error("News API error", {
       error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,
     });
 
-    return NextResponse.json(
+    // #152: an error body must not be kept by any cache.
+    return uncachedJsonResponse(
       {
         error: "Internal server error",
         message: "An error occurred while fetching news. Please try again later.",
       },
-      { status: 500 }
+      500
     );
   }
 }

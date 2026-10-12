@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { cachedJsonResponse } from "@/lib/api-cache";
+import type { NextRequest } from "next/server";
+import { cachedJsonResponse, uncachedJsonResponse } from "@/lib/api-cache";
 import { getDb } from "@/lib/db/connection";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
@@ -42,9 +42,24 @@ type UnifiedFeedItem =
       version: string;
     };
 
+/** The 503 body for a failed news read (#152). */
+const NEWS_UNAVAILABLE = {
+  error: "Updates temporarily unavailable",
+  message: "The news service is currently unavailable. Please try again later.",
+};
+
 /**
- * Combined endpoint for "What's New" modal
- * Returns a unified feed sorted by recency
+ * Combined endpoint for the What's New modal and page: news, tool updates and
+ * the platform changelog in one feed, newest first.
+ *
+ * Why: A failed news read came back as an empty list, so the route served a
+ * 200 feed with no news that the edge cached for a minute (#152).
+ * What: 503 `no-store` when the database is missing or the news read fails,
+ * even if the tools read succeeded — the feed is one merged list with no
+ * per-section marker, so a partial feed would read as "no news this week".
+ * 500 `no-store` for any other failure. Otherwise a 200 cached
+ * `public, max-age=60, s-maxage=60`.
+ * Test: `tests/unit/whats-new-route-fail-closed.test.ts`.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -52,13 +67,8 @@ export async function GET(request: NextRequest) {
     const db = getDb();
     if (!db) {
       loggers.api.error("Database connection not available");
-      return NextResponse.json(
-        {
-          error: "Database connection unavailable",
-          message: "The database service is currently unavailable. Please try again later.",
-        },
-        { status: 503 }
-      );
+      // #152: never let the edge keep an outage response.
+      return uncachedJsonResponse(NEWS_UNAVAILABLE, 503);
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -71,11 +81,13 @@ export async function GET(request: NextRequest) {
     dateThreshold.setDate(dateThreshold.getDate() - days);
 
     // Fetch all data in parallel for maximum performance
-    const [newsResult, toolsResult] = await Promise.all([
-      // Fetch recent news
+    const [newsRead, toolsResult] = await Promise.all([
+      // Fetch recent news.
+      // #152: `getPageFiltered` throws on a failed read, where `getPaginated`
+      // returned an empty page. The rejection is captured here, not thrown,
+      // so the route can answer it with a 503 rather than the generic 500.
       (async () => {
-        const newsRepo = new NewsRepository();
-        const { articles: allNews } = await newsRepo.getPaginated(100, 0);
+        const allNews = await new NewsRepository().getPageFiltered({ limit: 100, offset: 0 });
 
         const recentNews = allNews
           .filter((article) => {
@@ -97,8 +109,8 @@ export async function GET(request: NextRequest) {
             };
           });
 
-        return recentNews;
-      })(),
+        return { ok: true as const, news: recentNews };
+      })().catch((error: unknown) => ({ ok: false as const, error })),
 
       // Fetch recent tool updates
       (async () => {
@@ -127,6 +139,15 @@ export async function GET(request: NextRequest) {
         return recentTools;
       })(),
     ]);
+
+    // #152: a news failure fails the whole feed; see the doc comment above.
+    if (!newsRead.ok) {
+      loggers.api.error("What's New API: news read failed", {
+        error: newsRead.error instanceof Error ? newsRead.error.message : String(newsRead.error),
+      });
+      return uncachedJsonResponse(NEWS_UNAVAILABLE, 503);
+    }
+    const newsResult = newsRead.news;
 
     // Changelog data (static for now, can be made dynamic later)
     const changelogItems = [
@@ -230,12 +251,13 @@ export async function GET(request: NextRequest) {
       stack: error instanceof Error ? error.stack : undefined,
     });
 
-    return NextResponse.json(
+    // #152: an error body must not be kept by any cache.
+    return uncachedJsonResponse(
       {
         error: "Internal server error",
         message: "An error occurred while fetching updates. Please try again later.",
       },
-      { status: 500 }
+      500
     );
   }
 }
