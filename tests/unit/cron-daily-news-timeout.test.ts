@@ -121,16 +121,16 @@ describe("GET /api/cron/daily-news — ingestion and summary inside maxDuration"
     else process.env["CRON_SECRET"] = originalCronSecret;
   });
 
-  it("marks a pipeline that never finishes failed and returns a structured 200 before the limit", async () => {
+  it("marks a pipeline that never finishes failed and returns a structured 500 (with the shared data) before the limit", async () => {
     pipelineTakes(null);
 
     const { settled, response } = await runCronFor(LIMIT_MS);
     expect(settled).toBe(true);
 
     const res = await response;
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(500);
     const payload = (await res.json()) as Payload;
-    expect(payload.success).toBe(true);
+    expect(payload.success).toBe(false);
     expect(payload.data).toMatchObject({ runId: RUN_ID, status: "failed" });
     expect(payload.data.errors).toEqual([expect.stringMatching(/^Pipeline timeout: exceeded \d+s$/)]);
     expect(updateRun).toHaveBeenCalledWith(
@@ -187,7 +187,7 @@ describe("GET /api/cron/daily-news — ingestion and summary inside maxDuration"
     expect(settled).toBe(true);
 
     const res = await response;
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(500);
     const payload = (await res.json()) as Payload;
     expect(payload.data.status).toBe("failed");
     expect(payload.data.errors).toEqual([
