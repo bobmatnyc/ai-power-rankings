@@ -36,6 +36,14 @@ describe("providerBillingCondition (#167)", () => {
     "Failed to ingest https://example.com/posts/402: Request timed out",
     "OpenRouter API error (500)",
     "Assessment failed - using default scores",
+    // #167: a paywalled site's own 402 / balance text, relayed by Tavily Extract or a direct fetch.
+    "Extraction failed: 402 Payment Required",
+    "Extraction failed: insufficient balance to read this article",
+    "Extraction failed: insufficient credits — subscribe to continue reading",
+    "Failed to ingest https://paywalled.example.com/a: Failed to extract content from URL: Failed to fetch URL: 402 Payment Required",
+    // #167: a URL that carries 402 next to error/status words.
+    "Failed to ingest https://example.com/error/402: Request timed out",
+    "Failed to ingest https://example.com/a?status=402: Request timed out",
   ])("does not classify %s as billing", (message) => {
     expect(providerBillingCondition(message)).toBeNull();
   });

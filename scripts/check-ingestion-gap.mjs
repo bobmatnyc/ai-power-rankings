@@ -73,10 +73,12 @@ export const OPENROUTER_CREDIT_ERROR_PATTERN = /insufficient credits?|requires m
 
 // #167: any other provider out of credit — Tavily ("API error: 402 ... unpaid
 // pay-as-you-go balance") and Jina ("API error (402): Payment Required",
-// InsufficientBalanceError). A bare `402` is not matched: it also occurs in URLs.
+// InsufficientBalanceError). Only the providers' own API error forms match: a paywalled
+// site's "402 Payment Required" lands in error_log via "Failed to ingest <url>: ...",
+// and every alternative needs whitespace, so a URL such as /error/402 cannot match.
 // Mirrors PAYMENT_REQUIRED_PATTERN in lib/services/provider-billing-errors.ts.
 export const PROVIDER_BILLING_ERROR_PATTERN =
-  /(?:error|status|code)\W{0,3}402\b|\b402\b\W{0,3}(?:payment required|insufficient)|payment required|insufficient ?balance|unpaid .{0,40}balance/i;
+  /\bTavily (?:Extract )?API error:\s*402\b|\bJina\.ai API error \(402\)|\b402\s+InsufficientBalanceError\b/i;
 
 // automated_ingestion_runs.status value written when a run fails outright.
 export const FAILED_STATUS = "failed";
