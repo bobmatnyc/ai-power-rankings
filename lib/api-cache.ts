@@ -4,7 +4,6 @@
  */
 
 import { NextResponse } from "next/server";
-import { getMobileCacheHeaders, isMobileUserAgent } from "@/lib/api/cache-busting";
 
 interface CacheConfig {
   maxAge?: number; // seconds
@@ -27,11 +26,13 @@ const DEFAULT_CACHE_CONFIG: Record<string, CacheConfig> = {
     staleWhileRevalidate: 600, // 10 minutes stale (reduced from 24 hours)
     mustRevalidate: true, // Force revalidation
   },
+  // #152: `max-age=0`, `must-revalidate` and the `no-cache` the old per-UA
+  // branch appended kept the edge from storing a single response. With no
+  // `max-age` the browser has no freshness lifetime of its own, so it still
+  // asks the edge every time; only the edge holds the 5-minute copy.
   "/api/news": {
-    maxAge: 0, // No browser cache for mobile compatibility
-    sMaxAge: 300, // 5 minutes CDN cache (reduced for fresh content)
-    staleWhileRevalidate: 1800, // 30 minutes stale (reduced from 12 hours)
-    mustRevalidate: true, // Force revalidation on mobile
+    sMaxAge: 300, // 5 minutes CDN cache
+    staleWhileRevalidate: 1800, // 30 minutes stale
   },
   "/api/companies": {
     maxAge: 600, // 10 minutes
@@ -49,8 +50,7 @@ const DEFAULT_CACHE_CONFIG: Record<string, CacheConfig> = {
 export function setCacheHeaders(
   response: NextResponse,
   pathname: string,
-  customConfig?: CacheConfig,
-  request?: Request
+  customConfig?: CacheConfig
 ): NextResponse {
   // Find matching config
   let config = customConfig;
@@ -103,41 +103,25 @@ export function setCacheHeaders(
     directives.push("must-revalidate");
   }
 
-  // Enhanced mobile-specific cache prevention for news endpoint
-  if (pathname.startsWith("/api/news")) {
-    const userAgent = request?.headers.get("User-Agent") || "";
-    const isMobile = isMobileUserAgent(userAgent);
-
-    if (isMobile) {
-      // Very aggressive cache prevention for mobile
-      directives.push("no-cache", "no-store", "private");
-      response.headers.set("Pragma", "no-cache");
-      response.headers.set("Expires", "0");
-      response.headers.set("X-Mobile-Cache", "disabled");
-    } else {
-      // Less aggressive for desktop but still prevent stale data
-      directives.push("no-cache");
-    }
-
-    response.headers.set("Vary", "User-Agent");
-  }
+  // #152: the `/api/news*` branch that sat here appended `no-cache` for every
+  // client (and `no-store, private` for mobile ones) plus `Vary: User-Agent`,
+  // so the edge never stored a news response. The body carries nothing
+  // per-client, so one public copy serves every User-Agent.
 
   // Set headers
   response.headers.set("Cache-Control", directives.join(", "));
 
-  // Add ETag for conditional requests
-  const data = response.body;
-  if (data) {
-    const etag = generateETag(JSON.stringify(data));
-    response.headers.set("ETag", etag);
-  }
+  // #152: no ETag. The old one hashed `JSON.stringify(response.body)`, a
+  // ReadableStream that always stringifies to "{}", so every response carried
+  // the same ETag; once the edge caches, a matching If-None-Match would get a
+  // 304 for content that has changed.
 
   // Add performance headers
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Response-Source", "json-db");
 
-  // Add Vercel Edge Cache headers for better cache control
-  response.headers.set("X-Vercel-Cache", "MISS");
+  // #152: `X-Vercel-Cache` is Vercel's own report of a cache hit; the app set
+  // it to "MISS" on every response, which made a hit indistinguishable.
   response.headers.set("CDN-Cache-Control", directives.join(", "));
 
   // Add timestamp header for debugging
@@ -145,19 +129,6 @@ export function setCacheHeaders(
   response.headers.set("X-Last-Modified", new Date().toUTCString());
 
   return response;
-}
-
-/**
- * Generate ETag for content
- */
-function generateETag(content: string): string {
-  let hash = 0;
-  for (let i = 0; i < content.length; i++) {
-    const char = content.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  return `"${Math.abs(hash).toString(36)}"`;
 }
 
 /**
@@ -175,11 +146,23 @@ export function cachedJsonResponse(
   data: unknown,
   pathname: string,
   status: number = 200,
-  customConfig?: CacheConfig,
-  request?: Request
+  customConfig?: CacheConfig
 ): NextResponse {
+  // #152: no `request` parameter; the header no longer varies by User-Agent.
   const response = NextResponse.json(data, { status });
-  return setCacheHeaders(response, pathname, customConfig, request);
+  return setCacheHeaders(response, pathname, customConfig);
+}
+
+/**
+ * A JSON response no cache may store.
+ *
+ * Why: An error or a per-request body served under a route's public
+ * `s-maxage` would be kept by the edge and handed to every later caller (#152).
+ * What: `NextResponse.json(data, { status })` with `Cache-Control: no-store`.
+ * Test: `tests/unit/news-route-fail-closed.test.ts`.
+ */
+export function uncachedJsonResponse(data: unknown, status: number): NextResponse {
+  return NextResponse.json(data, { status, headers: { "Cache-Control": "no-store" } });
 }
 
 /**

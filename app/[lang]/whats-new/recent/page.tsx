@@ -1,6 +1,11 @@
 import Link from 'next/link';
 import { Calendar, Newspaper, Wrench, Sparkles, TrendingUp, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import type { Locale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/get-dictionary';
+import { type ListLoadResult, loadList } from '@/lib/load-list';
 import type { Metadata } from 'next';
 import { whatsNewPageMetadata } from '../page-metadata';
 
@@ -47,24 +52,12 @@ type UnifiedFeedItem =
       version: string;
     };
 
-async function getRecentUpdates(): Promise<UnifiedFeedItem[]> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/whats-new?days=7`, {
-      cache: 'no-store', // Always fetch fresh data
-    });
-
-    if (!response.ok) {
-      console.error('Failed to fetch recent updates:', response.status);
-      return [];
-    }
-
-    const data = await response.json();
-    return data.feed || [];
-  } catch (error) {
-    console.error('Error fetching recent updates:', error);
-    return [];
-  }
+// #152: a failed read is `{ ok: false }`, never an empty feed; `no-store` as before.
+function getRecentUpdates(): Promise<ListLoadResult<UnifiedFeedItem>> {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  return loadList<UnifiedFeedItem>(`${baseUrl}/api/whats-new?days=7`, 'feed', {
+    cache: 'no-store', // Always fetch fresh data
+  });
 }
 
 function getItemTypeIcon(item: UnifiedFeedItem) {
@@ -139,8 +132,23 @@ export default async function RecentUpdatesPage({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const feedItems = await getRecentUpdates();
+  const result = await getRecentUpdates();
 
+  if (!result.ok) {
+    // #152: a failed read is an error with a retry, never "No Recent Updates".
+    console.error('Failed to fetch recent updates:', result.reason);
+    const dict = await getDictionary(lang as Locale);
+    return (
+      <Card className="p-8 text-center" role="alert">
+        <p className="text-muted-foreground mb-4">{dict.common.error}</p>
+        <Button asChild variant="outline" size="sm">
+          <a href={`/${lang}/whats-new/recent`}>{dict.common.tryAgain}</a>
+        </Button>
+      </Card>
+    );
+  }
+
+  const feedItems = result.items;
   if (feedItems.length === 0) {
     return (
       <div className="text-center py-16">

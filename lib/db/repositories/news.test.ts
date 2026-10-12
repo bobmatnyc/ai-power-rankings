@@ -214,19 +214,23 @@ describe("NewsRepository.getPageFiltered (#150)", () => {
     fixture.reset();
   });
 
-  it("throws when the read fails, where getPaginatedFiltered returns an empty page", async () => {
+  it("throws when the read fails, and so does every read /api/news* composes from it", async () => {
     // The RSS feed reads through getPageFiltered so a failed read becomes a 5xx,
-    // not an empty feed; getPaginatedFiltered keeps its swallow-to-empty contract.
+    // not an empty feed. #152: getPaginatedFiltered, countFiltered and
+    // getRecentWithin used to swallow the same failure into an empty result,
+    // which /api/news and /api/news/recent served as a 200.
     fixture.state.failWith = new Error("connection reset");
 
     await expect(new NewsRepository().getPageFiltered({ limit: 50 })).rejects.toThrow(
       "connection reset"
     );
-    await expect(new NewsRepository().getPaginatedFiltered({ limit: 50 })).resolves.toEqual({
-      articles: [],
-      total: 0,
-      hasMore: false,
-    });
+    await expect(new NewsRepository().getPaginatedFiltered({ limit: 50 })).rejects.toThrow(
+      "connection reset"
+    );
+    await expect(new NewsRepository().countFiltered()).rejects.toThrow("connection reset");
+    await expect(
+      new NewsRepository().getRecentWithin({ days: 14, limit: 50 })
+    ).rejects.toThrow("connection reset");
   });
 
   it("throws when no database is configured instead of returning an empty page", async () => {
@@ -235,6 +239,13 @@ describe("NewsRepository.getPageFiltered (#150)", () => {
     await expect(new NewsRepository().getPageFiltered({ limit: 50 })).rejects.toThrow(
       "Database connection unavailable"
     );
+    // #152: the count and the recent-window read no longer answer 0 / [] here.
+    await expect(new NewsRepository().countFiltered()).rejects.toThrow(
+      "Database connection unavailable"
+    );
+    await expect(
+      new NewsRepository().getRecentWithin({ days: 14, limit: 50 })
+    ).rejects.toThrow("Database connection unavailable");
     expect(fixture.state.statements).toHaveLength(0);
   });
 

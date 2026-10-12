@@ -1,6 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { cachedJsonResponse } from "@/lib/api-cache";
-import { getDb } from "@/lib/db/connection";
+import type { NextRequest } from "next/server";
+import { cachedJsonResponse, uncachedJsonResponse } from "@/lib/api-cache";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { loggers } from "@/lib/logger";
 
@@ -29,19 +28,6 @@ function readBoundedInt(raw: string | null, fallback: number, max: number): numb
 
 export async function GET(request: NextRequest) {
   try {
-    // Ensure database connection is available
-    const db = getDb();
-    if (!db) {
-      loggers.api.error("Database connection not available");
-      return NextResponse.json(
-        {
-          error: "Database connection unavailable",
-          message: "The database service is currently unavailable. Please try again later.",
-        },
-        { status: 503 }
-      );
-    }
-
     // Get query parameters
     const searchParams = request.nextUrl.searchParams;
     const days = readBoundedInt(searchParams.get("days"), DEFAULT_DAYS, MAX_DAYS);
@@ -49,12 +35,26 @@ export async function GET(request: NextRequest) {
 
     loggers.api.debug("Getting recent news from database", { days, limit });
 
-    const newsRepo = new NewsRepository();
-
     // #140: the window, the ordering and the bound are all in the query now.
     // Fetching the top 100 and filtering by date here truncated any window that
     // held more than 100 articles.
-    const recentNews = await newsRepo.getRecentWithin({ days, limit });
+    // #152: `getRecentWithin` throws on a failed read or a missing database, so
+    // a failure is a 503 `no-store` here, never an empty 200 the edge keeps.
+    let recentNews: Awaited<ReturnType<NewsRepository["getRecentWithin"]>>;
+    try {
+      recentNews = await new NewsRepository().getRecentWithin({ days, limit });
+    } catch (error) {
+      loggers.api.error("Recent news API: database read failed", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return uncachedJsonResponse(
+        {
+          error: "News temporarily unavailable",
+          message: "The news service is currently unavailable. Please try again later.",
+        },
+        503
+      );
+    }
 
     // Transform to a simpler format for the homepage
     const transformedNews = recentNews.map((article) => {
@@ -79,10 +79,7 @@ export async function GET(request: NextRequest) {
         _source: "database",
         _timestamp: new Date().toISOString(),
       },
-      "/api/news/recent",
-      200,
-      undefined,
-      request
+      "/api/news/recent"
     );
   } catch (error) {
     loggers.api.error("Recent news API error", {
@@ -90,12 +87,13 @@ export async function GET(request: NextRequest) {
       stack: error instanceof Error ? error.stack : undefined,
     });
 
-    return NextResponse.json(
+    // #152: an error body must not be kept by any cache.
+    return uncachedJsonResponse(
       {
         error: "Internal server error",
         message: "An error occurred while fetching recent news. Please try again later.",
       },
-      { status: 500 }
+      500
     );
   }
 }
