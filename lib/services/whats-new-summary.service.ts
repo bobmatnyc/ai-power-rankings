@@ -29,7 +29,11 @@ export type AutoRegenerationOutcome =
   | {
       status: "skipped";
       period: string;
-      reason: "unchanged" | "no-articles-this-month" | "insufficient-time-budget";
+      reason:
+        | "unchanged"
+        | "no-articles-this-month"
+        | "insufficient-time-budget"
+        | "ingestion-failed";
     }
   | { status: "failed"; period: string; error: string };
 

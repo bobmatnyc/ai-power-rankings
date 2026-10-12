@@ -139,7 +139,7 @@ describe("GET /api/cron/daily-news — ingestion and summary inside maxDuration"
     );
     expect(payload.data.whatsNewSummary).toMatchObject({
       status: "skipped",
-      reason: "insufficient-time-budget",
+      reason: "ingestion-failed",
     });
     expect(llm).not.toHaveBeenCalled();
   });
