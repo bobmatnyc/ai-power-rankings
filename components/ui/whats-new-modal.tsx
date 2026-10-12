@@ -1,7 +1,7 @@
 "use client";
 
 import { Calendar, Clock, FileText, Newspaper, Sparkles, TrendingUp, Wrench, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useI18n } from "@/i18n/client";
+import { loadList } from "@/lib/load-list";
 
 interface WhatsNewModalProps {
   open: boolean;
@@ -69,7 +71,10 @@ export function WhatsNewModal({
 }: WhatsNewModalProps): React.JSX.Element {
   const params = useParams();
   const lang = (params?.lang as string) || "en";
+  const { dict } = useI18n();
   const [feedItems, setFeedItems] = useState<UnifiedFeedItem[]>([]);
+  // #152: kept apart from `feedItems.length === 0`, which means "no updates".
+  const [feedFailed, setFeedFailed] = useState(false);
   const [monthlySummary, setMonthlySummary] = useState<MonthlySummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [summaryLoading, setSummaryLoading] = useState(false);
@@ -88,32 +93,27 @@ export function WhatsNewModal({
   }, [open]);
 
   // Fetch unified feed from API (past 7 days)
+  const fetchAllUpdates = useCallback(async (): Promise<void> => {
+    setLoading(true);
+
+    // #152: a failed read sets `feedFailed` and shows the error card with a
+    // retry; only a successful read, possibly empty, replaces the items.
+    const result = await loadList<UnifiedFeedItem>("/api/whats-new?days=7", "feed");
+    if (result.ok) {
+      setFeedItems(result.items);
+      setFeedFailed(false);
+    } else {
+      console.error("Error fetching updates:", result.reason);
+      setFeedFailed(true);
+    }
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
-    const fetchAllUpdates = async () => {
-      try {
-        setLoading(true);
-
-        // Fetch from single combined endpoint for better performance
-        const response = await fetch("/api/whats-new?days=7");
-
-        if (response.ok) {
-          const data = await response.json();
-          setFeedItems(data.feed || []);
-        } else {
-          setFeedItems([]);
-        }
-      } catch (error) {
-        console.error("Error fetching updates:", error);
-        setFeedItems([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (open) {
       fetchAllUpdates();
     }
-  }, [open]);
+  }, [open, fetchAllUpdates]);
 
   // Fetch monthly summary when switching to summary tab
   useEffect(() => {
@@ -263,7 +263,15 @@ export function WhatsNewModal({
 
           <TabsContent value="recent" className="flex-1 overflow-y-auto scroll-smooth px-1 mt-4">
             <div className="space-y-3 py-2">
-            {feedItems.length === 0 ? (
+            {feedFailed ? (
+              // #152: a failed read is an error with a retry, never "no updates".
+              <div className="text-center py-8" role="alert">
+                <p className="text-muted-foreground mb-4">{dict.common.error}</p>
+                <Button variant="outline" size="sm" onClick={() => fetchAllUpdates()}>
+                  {dict.common.tryAgain}
+                </Button>
+              </div>
+            ) : feedItems.length === 0 ? (
               <div className="text-center py-8">
                 <Newspaper className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
                 <p className="text-muted-foreground">No recent updates to show</p>
