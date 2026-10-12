@@ -151,26 +151,39 @@ export async function GET(request: Request) {
       }
     }
 
+    const data = {
+      runId: result.runId,
+      status: result.status,
+      articlesDiscovered: result.articlesDiscovered,
+      articlesPassedQuality: result.articlesPassedQuality,
+      articlesIngested: result.articlesIngested,
+      articlesSkipped: result.articlesSkipped,
+      rankingChanges: result.rankingChanges,
+      estimatedCostUsd: result.estimatedCostUsd,
+      errors: result.errors,
+      ingestedArticleIds: result.ingestedArticleIds,
+      durationMs: result.durationMs,
+    };
+
+    // #167: a failed run (e.g. a provider billing error) must not answer 2xx — the
+    // scheduler and the gap detector both read the status code.
+    if (result.status === "failed") {
+      const errorMessage = result.errors.slice(0, 5).join("; ") || "Ingestion run failed";
+      loggers.api.error("Cron: Daily news discovery run failed", {
+        runId: result.runId,
+        error: errorMessage,
+        durationMs: duration,
+      });
+      await sendCronAlert("/api/cron/daily-news", errorMessage, {
+        runId: result.runId,
+        durationMs: duration,
+        impact: "Daily article ingestion failed — see the run's error_log",
+      });
+      return NextResponse.json({ success: false, error: errorMessage, data }, { status: 500 });
+    }
+
     // 4. Return success response
-    return NextResponse.json(
-      {
-        success: true,
-        data: {
-          runId: result.runId,
-          status: result.status,
-          articlesDiscovered: result.articlesDiscovered,
-          articlesPassedQuality: result.articlesPassedQuality,
-          articlesIngested: result.articlesIngested,
-          articlesSkipped: result.articlesSkipped,
-          rankingChanges: result.rankingChanges,
-          estimatedCostUsd: result.estimatedCostUsd,
-          errors: result.errors,
-          ingestedArticleIds: result.ingestedArticleIds,
-          durationMs: result.durationMs,
-        },
-      },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true, data }, { status: 200 });
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
