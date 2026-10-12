@@ -97,6 +97,50 @@ describe("evaluateIngestionRuns", () => {
     expect(result.lines.some((l) => l.startsWith("ALERT[RUN_FAILED]"))).toBe(true);
   });
 
+  // #167: the 2026-10-12 incident's OpenRouter text did not contain "insufficient
+  // credits", so OPENROUTER_CREDITS stayed silent and only ZERO_YIELD_STREAK fired.
+  it.each([
+    "OpenRouter request failed: 402 insufficient credits",
+    "OpenRouter generation failed: This request requires more credits, or fewer max_tokens. You requested up to 1000 tokens, but can only afford 648.",
+  ])("alerts ALERT[OPENROUTER_CREDITS] for OpenRouter credits text: %s", (text) => {
+    const rows = [runAt(1, { status: FAILED_STATUS, articles_ingested: 0, error_log: [text] }), runAt(25), runAt(49)];
+    const result = evaluateIngestionRuns(rows, NOW);
+
+    expect(result.lines.some((l) => l.startsWith("ALERT[OPENROUTER_CREDITS]"))).toBe(true);
+  });
+
+  it.each([
+    'Tavily API error: 402 - {"detail":{"error":"Your account is currently disabled because of an unpaid pay-as-you-go balance."}}',
+    "Failed to fetch article with Jina.ai: Jina.ai API error (402): Payment Required",
+    "Jina Reader: 402 InsufficientBalanceError",
+  ])("alerts ALERT[PROVIDER_BILLING] for a provider 402 / balance text: %s", (text) => {
+    const rows = [runAt(1, { status: FAILED_STATUS, articles_ingested: 0, error_log: [text] }), runAt(25), runAt(49)];
+    const result = evaluateIngestionRuns(rows, NOW);
+
+    expect(result.ok).toBe(false);
+    expect(result.lines.some((l) => l.startsWith("ALERT[PROVIDER_BILLING]"))).toBe(true);
+  });
+
+  it("raises no billing or credits alert for a 429 rate limit or a URL that merely contains 402", () => {
+    const rows = [
+      runAt(1, {
+        error_log: [
+          "Brave Search API error: 429 Request rate limit exceeded",
+          "Failed to ingest https://example.com/posts/402: Request timed out",
+          // #167: a URL with 402 beside error/status words, and a paywalled site's own 402.
+          "Failed to ingest https://example.com/error/402: Request timed out",
+          "Failed to ingest https://paywalled.example.com/a: Failed to extract content from URL: Failed to fetch URL: 402 Payment Required",
+        ],
+      }),
+      runAt(25),
+      runAt(49),
+    ];
+    const result = evaluateIngestionRuns(rows, NOW);
+
+    expect(result.lines.some((l) => l.startsWith("ALERT[PROVIDER_BILLING]"))).toBe(false);
+    expect(result.lines.some((l) => l.startsWith("ALERT[OPENROUTER_CREDITS]"))).toBe(false);
+  });
+
   it("alerts ALERT[ZERO_YIELD_STREAK] when the last CONSECUTIVE_ZERO_YIELD_RUNS runs all ingested 0 articles", () => {
     const rows = Array.from({ length: CONSECUTIVE_ZERO_YIELD_RUNS }, (_, i) =>
       runAt((i + 1) * 24, { status: "completed", articles_ingested: 0 })

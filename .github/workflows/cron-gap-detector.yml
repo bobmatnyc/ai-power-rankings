@@ -82,7 +82,7 @@ jobs:
 
       # Decide whether to call production, without ever branching on the secret's value.
       # Only a LONE ALERT[STALLED] qualifies. RUN_FAILED / OPENROUTER_CREDITS /
-      # ZERO_YIELD_STREAK all mean the cron IS firing, so re-triggering it burns API credit
+      # PROVIDER_BILLING / ZERO_YIELD_STREAK all mean the cron IS firing, so re-triggering it burns API credit
       # without testing anything — and because those conditions are evaluated independently,
       # STALLED can appear alongside one of them, which is still "the cron is firing" and
       # must not trigger. NO_RUNS_EVER is excluded too: an empty table is a fresh-install or
@@ -100,7 +100,7 @@ jobs:
           stall_suppressed_by=''
           if [ -f gap-check-output.txt ] && grep -qF 'ALERT[STALLED]' gap-check-output.txt; then
             stalled=true
-            for co_alert in 'ALERT[OPENROUTER_CREDITS]' 'ALERT[RUN_FAILED]' 'ALERT[ZERO_YIELD_STREAK]'; do
+            for co_alert in 'ALERT[OPENROUTER_CREDITS]' 'ALERT[PROVIDER_BILLING]' 'ALERT[RUN_FAILED]' 'ALERT[ZERO_YIELD_STREAK]'; do
               if grep -qF "$co_alert" gap-check-output.txt; then
                 echo "STALLED co-occurs with ${co_alert}; the cron is firing, so not treating this as a stall."
                 stalled=false
@@ -347,7 +347,7 @@ jobs:
             const ts = new Date().toISOString();
 
             // Read the gating step's captured stdout/stderr so the issue names the exact
-            // ALERT[REASON] (STALLED / RUN_FAILED / OPENROUTER_CREDITS / ZERO_YIELD_STREAK /
+            // ALERT[REASON] (STALLED / RUN_FAILED / OPENROUTER_CREDITS / PROVIDER_BILLING / ZERO_YIELD_STREAK /
             // NO_RUNS_EVER) instead of assuming "silent scraper" — a stalled cron and a
             // zero-yield or billing failure need different remediation. Never let a missing
             // file abort the alert.
@@ -482,7 +482,9 @@ jobs:
                 '  4. Last resort: redeploy production.',
                 '- `ALERT[OPENROUTER_CREDITS]`: top up or rotate the OpenRouter API key — this is a',
                 '  billing problem, not a code bug.',
-                '- `ALERT[RUN_FAILED]` (without OPENROUTER_CREDITS): inspect `error_log` on the latest',
+                '- `ALERT[PROVIDER_BILLING]`: a search/extraction provider (Tavily, Jina) answered',
+                '  HTTP 402 — top up that account; `error_log` names the provider. Billing, not code.',
+                '- `ALERT[RUN_FAILED]` (without a billing alert): inspect `error_log` on the latest',
                 '  row in `automated_ingestion_runs` for the underlying exception.',
                 '- `ALERT[ZERO_YIELD_STREAK]`: check extraction/source-fetch errors across the last',
                 '  runs — the pipeline is completing but discovering nothing.',

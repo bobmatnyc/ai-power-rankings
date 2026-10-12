@@ -16,7 +16,8 @@
  *   automated_ingestion_runs (most-recent-first), and evaluates four independent
  *   conditions via evaluateIngestionRuns(): STALLED (latest run older than MAX_GAP_HOURS),
  *   RUN_FAILED (latest run's status is 'failed'), OPENROUTER_CREDITS (error_log matches
- *   OPENROUTER_CREDIT_ERROR_PATTERN in any of the fetched runs), and ZERO_YIELD_STREAK
+ *   OPENROUTER_CREDIT_ERROR_PATTERN in any of the fetched runs), PROVIDER_BILLING (#167:
+ *   error_log matches PROVIDER_BILLING_ERROR_PATTERN — a Tavily/Jina 402), and ZERO_YIELD_STREAK
  *   (the last CONSECUTIVE_ZERO_YIELD_RUNS runs all ingested 0 articles). Any one of these
  *   trips the alert; all applicable reasons are printed so an operator can tell a stalled
  *   scraper from a zero-yield or billing failure at a glance. Every outcome — healthy or
@@ -65,7 +66,19 @@ export const CONSECUTIVE_ZERO_YIELD_RUNS = 3;
 // the 2026-07-25 incident's error_log). Matched case-insensitively and singular/plural so
 // it survives minor wording drift, and reported as its own alert reason because the fix is
 // "top up / rotate the API key", not a code change.
-export const OPENROUTER_CREDIT_ERROR_PATTERN = /insufficient credits?/i;
+// #167: the 2026-10-12 incident's text was "This request requires more credits, or fewer
+// max_tokens ... but can only afford 648", which the original pattern missed — so only
+// ZERO_YIELD_STREAK fired. Mirrors CREDITS_PATTERN in lib/services/provider-billing-errors.ts.
+export const OPENROUTER_CREDIT_ERROR_PATTERN = /insufficient credits?|requires more credits|can only afford/i;
+
+// #167: any other provider out of credit — Tavily ("API error: 402 ... unpaid
+// pay-as-you-go balance") and Jina ("API error (402): Payment Required",
+// InsufficientBalanceError). Only the providers' own API error forms match: a paywalled
+// site's "402 Payment Required" lands in error_log via "Failed to ingest <url>: ...",
+// and every alternative needs whitespace, so a URL such as /error/402 cannot match.
+// Mirrors PAYMENT_REQUIRED_PATTERN in lib/services/provider-billing-errors.ts.
+export const PROVIDER_BILLING_ERROR_PATTERN =
+  /\bTavily (?:Extract )?API error:\s*402\b|\bJina\.ai API error \(402\)|\b402\s+InsufficientBalanceError\b/i;
 
 // automated_ingestion_runs.status value written when a run fails outright.
 export const FAILED_STATUS = "failed";
@@ -343,6 +356,15 @@ export function evaluateIngestionRuns(rows, nowMs = Date.now()) {
   if (creditExhaustedRuns.length > 0) {
     alerts.push(
       `ALERT[OPENROUTER_CREDITS]: OpenRouter "insufficient credits" error found in ${creditExhaustedRuns.length} of the last ${rows.length} run(s) — billing issue, not a code bug`
+    );
+  }
+
+  // 3b. #167: a search/extraction provider out of credit (HTTP 402). Same remedy class as
+  //     OPENROUTER_CREDITS — a billing problem, not a code bug — but a different account.
+  const billingFailedRuns = rows.filter((row) => PROVIDER_BILLING_ERROR_PATTERN.test(errorLogText(row.error_log)));
+  if (billingFailedRuns.length > 0) {
+    alerts.push(
+      `ALERT[PROVIDER_BILLING]: provider billing error (HTTP 402 / insufficient balance) found in ${billingFailedRuns.length} of the last ${rows.length} run(s) — billing issue, not a code bug`
     );
   }
 

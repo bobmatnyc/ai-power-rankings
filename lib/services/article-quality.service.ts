@@ -17,6 +17,9 @@ export interface QualityAssessment {
   suggestedCategories: string[];
   shouldIngest: boolean;
   estimatedCost: number;
+  // #167: the provider error when the LLM call itself failed, so the caller can tell
+  // "assessment never ran" (e.g. OpenRouter out of credits) from a quality rejection.
+  error?: string;
 }
 
 /**
@@ -137,15 +140,17 @@ export class ArticleQualityService {
 
       return assessment;
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       loggers.api.error('Article quality assessment failed', {
         title: article.title.substring(0, 50),
         source: article.source,
-        error: error instanceof Error ? error.message : String(error),
+        error: message,
       });
 
       return {
         ...DEFAULT_ASSESSMENT,
         estimatedCost: 0,
+        error: message, // #167: keep the provider error for the run's failure reason
       };
     }
   }
@@ -206,13 +211,15 @@ export class ArticleQualityService {
         batch.map((article) =>
           this.assessArticle(article).catch((error) => {
             qualityFailures++;
+            const message = error instanceof Error ? error.message : String(error);
             loggers.api.error('Quality assessment threw in batch', {
               title: article.title.substring(0, 50),
-              error: error instanceof Error ? error.message : String(error),
+              error: message,
             });
             return {
               ...DEFAULT_ASSESSMENT,
               estimatedCost: 0,
+              error: message, // #167: see assessArticle's catch
             } as QualityAssessment;
           })
         )

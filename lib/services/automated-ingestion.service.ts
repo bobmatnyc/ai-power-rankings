@@ -35,6 +35,7 @@ import {
 import { jinaReaderService } from "./jina-reader.service";
 import { tavilyExtractService } from "./tavily-extract.service";
 import { isDomainBlocked, addBlockedDomain } from "./blocked-domains.config";
+import { ProviderBillingFailures } from "./provider-billing-errors";
 import { loggers } from "@/lib/logger";
 
 // Unified search result type
@@ -221,6 +222,8 @@ export type CandidateOutcomeKind =
   | "skipped_duplicate"
   | "skipped_semantic"
   | "extraction_failed"
+  // #167: the quality LLM call itself failed (e.g. out of credits) — not a rejection.
+  | "assessment_failed"
   | "quality_rejected"
   | "ingest_failed"
   | "ingested";
@@ -509,7 +512,8 @@ export class AutomatedIngestionService {
    */
   private async fetchArticleContent(
     url: string,
-    extractionStats?: { tavilySuccess: number; jinaSuccess: number; basicSuccess: number; allFailed: number }
+    extractionStats?: { tavilySuccess: number; jinaSuccess: number; basicSuccess: number; allFailed: number },
+    billingFailures?: ProviderBillingFailures
   ): Promise<string | null> {
     // Method 1: Try Tavily Extract first (optimized for news content)
     if (tavilyExtractService.isAvailable()) {
@@ -546,6 +550,7 @@ export class AutomatedIngestionService {
         // catch below, which this per-method try/catch never lets errors
         // reach.
         this.autoBlockDomainIfNeeded(url, errorMsg);
+        billingFailures?.note("tavily", errorMsg); // #167: a 402 here fails the run
         // Fall through to Jina Reader
       }
     }
@@ -576,6 +581,7 @@ export class AutomatedIngestionService {
         });
         // #125: see the matching comment in the Tavily Extract catch above.
         this.autoBlockDomainIfNeeded(url, errorMsg);
+        billingFailures?.note("jina", errorMsg); // #167: a 402 here fails the run
         // Fall through to basic fetch
       }
     }
@@ -739,6 +745,8 @@ export class AutomatedIngestionService {
     // #132: per-candidate dispositions, so a zero-yield run can be read back
     // as "no fresh candidate existed" vs "one existed and failed to insert".
     const candidateOutcomes: CandidateOutcome[] = [];
+    // #167: provider billing errors seen anywhere in this run; any one fails it.
+    const billingFailures = new ProviderBillingFailures();
     let rankingChanges = 0;
     let estimatedCostUsd = 0;
     let runId = "";
@@ -796,7 +804,7 @@ export class AutomatedIngestionService {
       // `usedProvider` reflects the provider that actually returned results, so
       // downstream discoverySource metadata stays accurate.
       const { results: searchResults, provider: usedProvider } =
-        await this.discoverArticles(options);
+        await this.discoverArticles(options, billingFailures);
 
       articlesDiscovered = searchResults.length;
       loggers.api.info("[AutomatedIngestion] Discovered articles", {
@@ -1036,7 +1044,11 @@ export class AutomatedIngestionService {
           // Fallback: fetch content using extraction chain (Tavily Extract → Jina Reader → Basic HTML)
           // Individual failures are gracefully handled and logged, never blocking the batch
           try {
-            const content = await this.fetchArticleContent(article.url, extractionStats);
+            const content = await this.fetchArticleContent(
+              article.url,
+              extractionStats,
+              billingFailures
+            );
             if (content) {
               articlesWithContent.push({
                 url: article.url,
@@ -1153,6 +1165,13 @@ export class AutomatedIngestionService {
         // #132: record which candidate died where, not just how many.
         articlesWithContent.forEach((assessed, index) => {
           if (qualityResults[index]?.shouldIngest === true) return;
+          // #167: an LLM call that failed is not a quality verdict; a credits error fails the run.
+          const assessmentError = qualityResults[index]?.error;
+          if (assessmentError) {
+            billingFailures.note("openrouter", assessmentError);
+            recordOutcome(assessed, "assessment_failed", assessmentError);
+            return;
+          }
           recordOutcome(
             assessed,
             "quality_rejected",
@@ -1242,6 +1261,8 @@ export class AutomatedIngestionService {
           const errorMsg = `Failed to ingest ${article.url}: ${error instanceof Error ? error.message : "Unknown error"}`;
           loggers.api.error("[AutomatedIngestion] " + errorMsg);
           errors.push(errorMsg);
+          // #167: article analysis runs on OpenRouter; its credits error fails the run.
+          billingFailures.note(/openrouter/i.test(errorMsg) ? "openrouter" : "article_ingestion", errorMsg);
           // #132: an insert failure is the case the run row could not express.
           recordOutcome(
             article,
@@ -1382,6 +1403,17 @@ export class AutomatedIngestionService {
       // comment. Its counter fields still would have applied if this call had
       // reached the earlier checkpoint write; that is unchanged and
       // intentional (see updateRun).
+      //
+      // #167: a provider billing error fails the run, whatever else happened. No
+      // candidate can succeed until the account is topped up, so a `completed`
+      // zero-yield row would hide the cause. The reasons lead error_log so the run
+      // row, the cron response and the gap detector all name the provider. Applied
+      // here, the one exit every branch shares, so no early return can skip it.
+      const billingReasons = billingFailures.reasons();
+      if (pipelineResult && billingReasons.length > 0) {
+        pipelineResult.status = "failed";
+        pipelineResult.errors.unshift(...billingReasons);
+      }
       if (!isDryRun && runId && !runId.startsWith("dry-run") && pipelineResult) {
         // #124: restore error-reporting parity with the pre-fix success
         // path, which appended "Status update failed: …" to the returned
@@ -1423,7 +1455,8 @@ export class AutomatedIngestionService {
    * @returns Results and the provider that produced them
    */
   private async discoverArticles(
-    options: DailyDiscoveryOptions | undefined
+    options: DailyDiscoveryOptions | undefined,
+    billingFailures?: ProviderBillingFailures
   ): Promise<{ results: SearchResult[]; provider: SearchProvider }> {
     // Ordered list of configured providers. Tavily is primary when healthy;
     // Brave is the fallback. Order is preserved; only configured providers run.
@@ -1497,6 +1530,8 @@ export class AutomatedIngestionService {
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown error";
         failures.push(`${provider.name}: ${message}`);
+        // #167: a billing error still fails the run even when the fallback answers.
+        billingFailures?.note(provider.name, message);
         // Clear, actionable warning so ops can see WHY we failed over.
         loggers.api.warn(
           `[AutomatedIngestion] ${provider.name} search failed (${message}), falling back to next provider`,
