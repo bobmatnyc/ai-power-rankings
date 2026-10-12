@@ -127,6 +127,9 @@ describe("evaluateIngestionRuns", () => {
         error_log: [
           "Brave Search API error: 429 Request rate limit exceeded",
           "Failed to ingest https://example.com/posts/402: Request timed out",
+          // #167: a URL with 402 beside error/status words, and a paywalled site's own 402.
+          "Failed to ingest https://example.com/error/402: Request timed out",
+          "Failed to ingest https://paywalled.example.com/a: Failed to extract content from URL: Failed to fetch URL: 402 Payment Required",
         ],
       }),
       runAt(25),
