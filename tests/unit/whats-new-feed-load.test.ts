@@ -104,9 +104,11 @@ describe("What's New modal feed read (#152)", () => {
     expect(source).toContain('loadList<UnifiedFeedItem>("/api/whats-new?days=7", "feed")');
 
     const errorBranch = source.indexOf("{feedFailed ? (");
-    const retry = source.indexOf("{dict.common.tryAgain}");
+    const retry = source.indexOf("Try Again");
     const empty = source.indexOf("No recent updates to show");
     expect(errorBranch).toBeGreaterThan(-1);
+    // #152: the modal mounts outside I18nProvider in the layout fallback.
+    expect(source).not.toContain('from "@/i18n/client"');
     expect(retry).toBeGreaterThan(errorBranch);
     expect(empty).toBeGreaterThan(retry);
   });
