@@ -24,6 +24,12 @@ const mocks = vi.hoisted(() => ({
   /** Called once per `new AutomatedIngestionService()` — the ordering probe. */
   constructed: vi.fn(),
   runDailyDiscovery: vi.fn(),
+  /** #160: the what's-new summary regeneration, which spends LLM credits. */
+  regenerate: vi.fn(async () => ({ status: "skipped", period: "2026-09", reason: "unchanged" })),
+}));
+
+vi.mock("../../lib/services/whats-new-auto-regenerate", () => ({
+  autoRegenerateMonthlySummary: mocks.regenerate,
 }));
 
 vi.mock("../../lib/services/automated-ingestion.service", () => ({
@@ -76,6 +82,7 @@ describe("GET /api/cron/daily-news — cron auth gate", () => {
   beforeEach(() => {
     mocks.constructed.mockClear();
     mocks.runDailyDiscovery.mockReset();
+    mocks.regenerate.mockClear();
     process.env["CRON_SECRET"] = SECRET;
     // sendCronAlert() no-ops without this, keeping the 401 paths network-free.
     delete process.env["ALERT_WEBHOOK_URL"];
@@ -96,6 +103,7 @@ describe("GET /api/cron/daily-news — cron auth gate", () => {
     });
     expect(mocks.constructed).not.toHaveBeenCalled();
     expect(mocks.runDailyDiscovery).not.toHaveBeenCalled();
+    expect(mocks.regenerate).not.toHaveBeenCalled();
   });
 
   it("returns 401 and never constructs the ingestion service for a wrong bearer token", async () => {
@@ -104,6 +112,7 @@ describe("GET /api/cron/daily-news — cron auth gate", () => {
     expect(response.status).toBe(401);
     expect(mocks.constructed).not.toHaveBeenCalled();
     expect(mocks.runDailyDiscovery).not.toHaveBeenCalled();
+    expect(mocks.regenerate).not.toHaveBeenCalled();
   });
 
   // Drop the `if (!cronSecret) return false` guard and the comparison becomes
@@ -121,6 +130,7 @@ describe("GET /api/cron/daily-news — cron auth gate", () => {
 
     expect(response.status).toBe(401);
     expect(mocks.constructed).not.toHaveBeenCalled();
+    expect(mocks.regenerate).not.toHaveBeenCalled();
   });
 
   it("proceeds to the ingestion service for the correct bearer token", async () => {
@@ -143,6 +153,7 @@ describe("GET /api/cron/daily-news — cron auth gate", () => {
     expect(response.status).toBe(200);
     expect(mocks.constructed).toHaveBeenCalledTimes(1);
     expect(mocks.runDailyDiscovery).toHaveBeenCalledTimes(1);
+    expect(mocks.regenerate).toHaveBeenCalledTimes(1);
 
     const payload = (await response.json()) as {
       success: boolean;

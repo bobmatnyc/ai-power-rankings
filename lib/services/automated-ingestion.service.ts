@@ -646,13 +646,27 @@ export class AutomatedIngestionService {
    * Pipeline-level timeout for the entire daily discovery run.
    * Prevents indefinite hangs (e.g., when downstream services like
    * OpenRouter stall on individual requests).
+   *
+   * #160: ingestion gets as much of the cron route's 300 s `maxDuration` as
+   * is safe, while still firing before Vercel kills the function (which
+   * would leave the run row "running"). 265 s = 300 s − 20 s route margin
+   * (`SUMMARY_SAFETY_MARGIN_MS`) − 10 s bounded failed-run write
+   * (`FAILED_RUN_WRITE_TIMEOUT_MS`) − 5 s for the response. The what's-new
+   * summary step runs only when 60 s remain, so after a run this long it is
+   * skipped for budget and retried by the next daily run.
    */
-  private static readonly PIPELINE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+  private static readonly PIPELINE_TIMEOUT_MS = 265 * 1000;
+
+  /**
+   * #160: upper bound on the timeout path's failed-run write, so a hung
+   * database cannot push the function past `maxDuration`.
+   */
+  private static readonly FAILED_RUN_WRITE_TIMEOUT_MS = 10 * 1000;
 
   /**
    * Run daily discovery pipeline with overall timeout guard.
    *
-   * Wraps the core pipeline in a Promise.race against a 10-minute timeout.
+   * Wraps the core pipeline in a Promise.race against PIPELINE_TIMEOUT_MS.
    * On timeout, the in-flight run record is marked as "failed" with a
    * timeout error so the database does not leave stale "running" rows.
    */
@@ -691,11 +705,26 @@ export class AutomatedIngestionService {
       // failed so it doesn't stay "running". This fires on the
       // Promise.race timeout path (PIPELINE_TIMEOUT_MS) and on any error
       // that somehow escapes executeDailyDiscovery's own try/catch/finally.
+      const errors = [errorMsg];
       if (!isDryRun && runIdRef.current && !runIdRef.current.startsWith("dry-run")) {
-        await this.finalizeRun(runIdRef.current, {
-          status: "failed",
-          errors: [errorMsg],
-        });
+        // #160: bounded by FAILED_RUN_WRITE_TIMEOUT_MS; a write that fails or
+        // hangs is reported in the result instead of holding the function.
+        let writeTimer: ReturnType<typeof setTimeout> | undefined;
+        const persisted = await Promise.race([
+          this.finalizeRun(runIdRef.current, { status: "failed", errors: [errorMsg] }),
+          new Promise<false>((resolve) => {
+            writeTimer = setTimeout(
+              () => resolve(false),
+              AutomatedIngestionService.FAILED_RUN_WRITE_TIMEOUT_MS
+            );
+          }),
+        ]);
+        clearTimeout(writeTimer);
+        if (!persisted) {
+          errors.push(
+            `Run row persistence failed or timed out (runId=${runIdRef.current}); the automated_ingestion_runs row may still read "running".`
+          );
+        }
       }
 
       return {
@@ -710,7 +739,7 @@ export class AutomatedIngestionService {
         candidateOutcomes: [],
         rankingChanges: 0,
         estimatedCostUsd: 0,
-        errors: [errorMsg],
+        errors,
         ingestedArticleIds: [],
         durationMs: Date.now() - startTime,
       };
