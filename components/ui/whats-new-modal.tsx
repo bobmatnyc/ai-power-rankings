@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useI18n } from "@/i18n/client";
 import { loadList } from "@/lib/load-list";
 
 interface WhatsNewModalProps {
@@ -71,7 +70,6 @@ export function WhatsNewModal({
 }: WhatsNewModalProps): React.JSX.Element {
   const params = useParams();
   const lang = (params?.lang as string) || "en";
-  const { dict } = useI18n();
   const [feedItems, setFeedItems] = useState<UnifiedFeedItem[]>([]);
   // #152: kept apart from `feedItems.length === 0`, which means "no updates".
   const [feedFailed, setFeedFailed] = useState(false);
@@ -265,10 +263,12 @@ export function WhatsNewModal({
             <div className="space-y-3 py-2">
             {feedFailed ? (
               // #152: a failed read is an error with a retry, never "no updates".
+              // English literals, not `useI18n()`: app/[lang]/layout.tsx's catch
+              // fallback renders children without I18nProvider, where it throws.
               <div className="text-center py-8" role="alert">
-                <p className="text-muted-foreground mb-4">{dict.common.error}</p>
+                <p className="text-muted-foreground mb-4">Unable to load recent updates</p>
                 <Button variant="outline" size="sm" onClick={() => fetchAllUpdates()}>
-                  {dict.common.tryAgain}
+                  Try Again
                 </Button>
               </div>
             ) : feedItems.length === 0 ? (
