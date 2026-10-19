@@ -54,7 +54,8 @@ export interface GenerationMetadata {
  * Source: https://openrouter.ai/models
  */
 const MODEL_PRICING: Record<string, { input: number; output: number }> = {
-  'anthropic/claude-sonnet-4': { input: 3.0, output: 15.0 },
+  // #172: claude-sonnet-4 retired; Sonnet 5.5 list price from OpenRouter /api/v1/models.
+  'anthropic/claude-sonnet-5.5': { input: 2.0, output: 10.0 },
   'anthropic/claude-opus-4': { input: 15.0, output: 75.0 },
   'anthropic/claude-opus-4.1': { input: 15.0, output: 75.0 },
   'anthropic/claude-3.5-sonnet': { input: 3.0, output: 15.0 },

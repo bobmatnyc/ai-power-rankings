@@ -13,6 +13,7 @@ import {
   type MonthlyDataSources,
 } from "./whats-new-aggregation.service";
 import { getOpenRouterService } from "./openrouter.service";
+import { getOpenRouterModel } from "./openrouter-model";
 
 export interface StateOfAiGenerationResult {
   summary: StateOfAiSummary;
@@ -266,11 +267,15 @@ ${dataPrompt}
 
 Write the monthly update now (4-5 sections, 400-600 words, markdown format - only link to newsletter and main site, NOT to /tools/ pages):`;
 
+    // #172: anthropic/claude-sonnet-4 was retired on OpenRouter; resolve the shared id once
+    // so the call and the stored metadata name the same model.
+    const modelName = getOpenRouterModel();
+
     try {
       const llmStartTime = Date.now();
 
       const { content, metadata: llmMetadata } = await this.openRouterService.generate({
-        model: "anthropic/claude-sonnet-4",
+        model: modelName,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -283,7 +288,7 @@ Write the monthly update now (4-5 sections, 400-600 words, markdown format - onl
 
       // 5. Save summary in database
       const metadata = {
-        model: "anthropic/claude-sonnet-4",
+        model: modelName,
         generation_time_ms: llmDuration,
         article_count: aggregatedData.metadata.totalArticles,
         ranking_change_count: aggregatedData.metadata.totalRankingChanges,
