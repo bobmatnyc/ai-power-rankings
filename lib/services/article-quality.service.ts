@@ -4,6 +4,7 @@
  */
 
 import { getOpenRouterService, type GenerationMetadata } from '@/lib/services/openrouter.service';
+import { getOpenRouterModel } from '@/lib/services/openrouter-model';
 import { loggers } from '@/lib/logger';
 
 /**
@@ -97,7 +98,10 @@ Categories to choose from: AI Assistants, Code Generation, IDE Integration, Test
  * Evaluates articles using LLM to determine ingestion worthiness
  */
 export class ArticleQualityService {
-  private readonly model = 'anthropic/claude-sonnet-4';
+  // #172: anthropic/claude-sonnet-4 was retired on OpenRouter; resolve the shared id per call.
+  private get model(): string {
+    return getOpenRouterModel();
+  }
 
   /**
    * Assess a single article for quality, relevance, and credibility
