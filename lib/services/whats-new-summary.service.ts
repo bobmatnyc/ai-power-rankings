@@ -8,6 +8,7 @@ import { monthlySummaries } from "@/lib/db/schema";
 import type { MonthlySummary, NewMonthlySummary } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
+import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 import { loggers } from "@/lib/logger";
 import {
   WhatsNewAggregationService,
@@ -356,6 +357,10 @@ Remember to:
 
 Generate the summary now:`;
 
+    // #172: anthropic/claude-sonnet-4 was retired on OpenRouter; resolve the shared id once
+    // so the call and the stored metadata name the same model.
+    const modelName = getOpenRouterModel();
+
     try {
       const llmStartTime = Date.now();
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -366,7 +371,7 @@ Generate the summary now:`;
           Referer: process.env["NEXT_PUBLIC_BASE_URL"] || "http://localhost:3007",
         },
         body: JSON.stringify({
-          model: "anthropic/claude-sonnet-4",
+          model: modelName,
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },
@@ -395,7 +400,7 @@ Generate the summary now:`;
 
       // 5. Save or update summary in database
       const metadata = {
-        model: "anthropic/claude-sonnet-4",
+        model: modelName,
         generation_time_ms: llmDuration,
         article_count: aggregatedData.metadata.totalArticles,
         ranking_change_count: aggregatedData.metadata.totalRankingChanges,

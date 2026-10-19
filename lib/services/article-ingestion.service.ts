@@ -9,6 +9,7 @@ import type { Article, DryRunResult, IngestedArticle } from "@/lib/db/article-sc
 import { rankings } from "@/lib/db/schema";
 import { getDb } from "@/lib/db/connection";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
+import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 // #122: post-processes the model's Related Links block against what it was
 // actually shown — see the call site in AIAnalyzer.analyzeContent.
 import { sanitizeRelatedLinksBlock } from "@/lib/article-content-links";
@@ -679,10 +680,8 @@ COPYRIGHT COMPLIANCE (MANDATORY):
 
 Return ONLY the JSON object above with actual data. No additional text or explanation.`;
 
-    // Using Claude 4 Sonnet model for enhanced analysis capabilities
-    // Claude 4 Sonnet provides superior analysis quality with improved understanding
-    // of context, nuance, and technical details in AI articles
-    const modelName = "anthropic/claude-sonnet-4";
+    // #172: anthropic/claude-sonnet-4 was retired on OpenRouter; resolve the shared id.
+    const modelName = getOpenRouterModel();
 
     try {
       let response: Response;
@@ -700,7 +699,7 @@ Return ONLY the JSON object above with actual data. No additional text or explan
               { role: "system", content: systemPrompt },
               { role: "user", content: userPrompt },
             ],
-            temperature: 0.2, // Lower temperature for more consistent, focused analysis with Claude 4
+            temperature: 0.2, // Lower temperature for more consistent, focused analysis
             max_tokens: 4000, // ~2000-2500 tokens needed; 4k provides headroom without bloating completion time
           }),
           signal: AbortSignal.timeout(120_000),
@@ -812,7 +811,7 @@ Return ONLY the JSON object above with actual data. No additional text or explan
 
       return {
         ...result,
-        model: "Claude 4 Sonnet", // Display friendly model name using Claude 4
+        model: modelName, // #172: report the id actually called, not a hardcoded label
       };
     } catch (error) {
       console.error("[AIAnalyzer] Analysis failed:", error);
