@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/api-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
+import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 import { ToolMapper } from "@/lib/services/tool-mapper.service";
 import { jinaReaderService, type JinaReaderMetadata } from "@/lib/services/jina-reader.service";
 
@@ -199,11 +200,8 @@ async function analyzeWithOpenRouter(content: string, url?: string, verbose = fa
   const startTime = Date.now();
 
   // Define modelName at function scope so it's accessible throughout
-  // Available Claude 4 models on OpenRouter:
-  // - anthropic/claude-opus-4 (72.5% SWE-bench, best for complex long-running tasks)
-  // - anthropic/claude-opus-4.1 (74.5% SWE-bench, improved multi-file refactoring)
-  // - anthropic/claude-sonnet-4 (72.7% SWE-bench, balanced efficiency & capability)
-  const modelName = "anthropic/claude-sonnet-4"; // Claude 4 Sonnet - latest model with excellent extraction
+  // #172: anthropic/claude-sonnet-4 was retired on OpenRouter; resolve the shared id.
+  const modelName = getOpenRouterModel();
 
   // Get API key using validation helper - will throw if not configured
   const openRouterKey = getOpenRouterApiKey();
