@@ -12,6 +12,7 @@ import {
   extractOpenRouterContent,
   type OpenRouterResponse,
 } from '@/lib/validation/llm-response-validator';
+import { LlmTruncatedResponseError, readCompletion } from '@/lib/services/llm-completion';
 
 /**
  * OpenRouter API message structure
@@ -284,6 +285,21 @@ export class OpenRouterService {
         500,
         false
       );
+    }
+
+    // #172: log finish_reason/length/model; a max_tokens cut-off is not retried (the same
+    // budget would cut it off again) and is reported as truncation.
+    try {
+      readCompletion(responseData, {
+        label: 'OpenRouterService',
+        model: config.model,
+        maxTokens: requestBody.max_tokens,
+      });
+    } catch (error) {
+      if (error instanceof LlmTruncatedResponseError) {
+        throw new OpenRouterError(error.message, undefined, false, error);
+      }
+      throw error;
     }
 
     // Extract content
