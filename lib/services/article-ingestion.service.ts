@@ -13,6 +13,7 @@ import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 // #122: post-processes the model's Related Links block against what it was
 // actually shown — see the call site in AIAnalyzer.analyzeContent.
 import { sanitizeRelatedLinksBlock } from "@/lib/article-content-links";
+import { extractJsonObject, readCompletion } from "@/lib/services/llm-completion";
 import { jinaReaderService } from "./jina-reader.service";
 
 // Validation schemas
@@ -524,6 +525,16 @@ export class ContentExtractor {
 }
 
 /**
+ * #172: completion budget for one article analysis. The reply asks for a 400-500 word
+ * summary plus an 800-1000 word rewrite (~1,500 words, ~2,000 tokens at ~1.35 tokens per
+ * English word, more once JSON-escaped) and the mention arrays, insights and tags (~800-
+ * 1,000 tokens): ~3,000 tokens at the requested sizes. 4,000 left a model that overshoots
+ * "approximately" by a third no room; 8,000 gives 2.5x. At ~70-100 tokens/s a full 8,000
+ * still fits the 120 s per-article request timeout.
+ */
+export const ANALYSIS_MAX_TOKENS = 8000;
+
+/**
  * AI Analysis Service
  */
 export class AIAnalyzer {
@@ -638,8 +649,8 @@ Return a detailed JSON analysis with this structure:
     {
       "tool": "Tool name as mentioned (e.g., 'ChatGPT Canvas', 'Claude Code', 'GitHub Copilot', 'Devin')",
       "context": "How the tool is mentioned",
-      "sentiment": 0.8, // -1 to 1
-      "relevance": 0.9  // 0 to 1, how central to the article
+      "sentiment": 0.8,
+      "relevance": 0.9
     }
   ],
   "company_mentions": [
@@ -649,8 +660,8 @@ Return a detailed JSON analysis with this structure:
       "tools": ["tools owned by this company"]
     }
   ],
-  "overall_sentiment": 0.7, // -1 to 1
-  "importance_score": 8, // 0 to 10
+  "overall_sentiment": 0.7,
+  "importance_score": 8,
   "key_insights": [
     "Major insight or trend from the article",
     "Another key finding"
@@ -670,6 +681,8 @@ CRITICAL REQUIREMENTS:
 - Write in a professional, journalistic style
 - CRITICAL: Never truncate mid-sentence. Always complete your thoughts and end with proper conclusion
 - Ensure the summary field is 400-500 words with logical flow from start to finish
+- Number ranges: "sentiment" and "overall_sentiment" are -1 to 1; "relevance" is 0 to 1 (how central to the article); "importance_score" is 0 to 10
+- The output must be strict JSON: no comments, no trailing commas
 
 COPYRIGHT COMPLIANCE (MANDATORY):
 - Write ENTIRELY in your own words - NO verbatim copying from the source
@@ -700,7 +713,7 @@ Return ONLY the JSON object above with actual data. No additional text or explan
               { role: "user", content: userPrompt },
             ],
             temperature: 0.2, // Lower temperature for more consistent, focused analysis
-            max_tokens: 4000, // ~2000-2500 tokens needed; 4k provides headroom without bloating completion time
+            max_tokens: ANALYSIS_MAX_TOKENS, // #172: 4000 truncated sonnet-5.5 replies; see the constant
           }),
           signal: AbortSignal.timeout(120_000),
         });
@@ -742,25 +755,29 @@ Return ONLY the JSON object above with actual data. No additional text or explan
         throw new Error("Invalid JSON response from OpenRouter API");
       }
 
-      const content = data.choices?.[0]?.message?.content;
+      // #172: log finish_reason/length/model and fail a max_tokens cut-off as truncation,
+      // not as malformed JSON.
+      const { content, diagnostics } = readCompletion(data, {
+        label: "AIAnalyzer",
+        model: modelName,
+        maxTokens: ANALYSIS_MAX_TOKENS,
+      });
 
       if (!content) {
-        console.error("[AIAnalyzer] No content in OpenRouter response:", data);
+        console.error("[AIAnalyzer] No content in OpenRouter response", diagnostics);
         throw new Error("No response content from AI");
       }
 
-      // Parse and validate the response
-      const jsonStr = content.replace(/```json\n?|\n?```/g, "").trim();
-
+      // #172: tolerate a code fence or prose around the object; never repair a cut-off one.
       let parsed: any;
       try {
-        parsed = JSON.parse(jsonStr);
+        parsed = extractJsonObject(content);
       } catch (parseError) {
-        console.error(
-          "[AIAnalyzer] Failed to parse AI response as JSON:",
-          jsonStr.substring(0, 500)
-        );
-        throw new Error("AI response was not valid JSON");
+        console.error("[AIAnalyzer] Failed to parse AI response as JSON", {
+          ...diagnostics,
+          error: parseError instanceof Error ? parseError.message : String(parseError),
+        });
+        throw parseError;
       }
 
       // Handle null fields - convert to undefined for Zod validation
