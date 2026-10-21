@@ -9,6 +9,7 @@ import type { MonthlySummary, NewMonthlySummary } from "@/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { getOpenRouterModel } from "@/lib/services/openrouter-model";
+import { readCompletion } from "@/lib/services/llm-completion";
 import { loggers } from "@/lib/logger";
 import {
   WhatsNewAggregationService,
@@ -43,6 +44,9 @@ export type AutoRegenerationOutcome =
  * risking Vercel killing the whole ingestion run at `maxDuration`.
  */
 export const MIN_GENERATION_BUDGET_MS = 60_000;
+
+/** Completion budget for the ~1,500-word summary (~2,000 tokens); unchanged by #172. */
+const WHATS_NEW_MAX_TOKENS = 16000;
 
 export class WhatsNewSummaryService {
   private apiKey: string;
@@ -377,7 +381,7 @@ Generate the summary now:`;
             { role: "user", content: userPrompt },
           ],
           temperature: 0.3,
-          max_tokens: 16000,
+          max_tokens: WHATS_NEW_MAX_TOKENS,
         }),
         signal,
       });
@@ -389,7 +393,13 @@ Generate the summary now:`;
       }
 
       const data = await response.json();
-      const content = data.choices?.[0]?.message?.content;
+      // #172: a summary cut off at max_tokens must not overwrite a stored one; log
+      // finish_reason/length/model either way.
+      const { content } = readCompletion(data, {
+        label: "WhatsNewSummary",
+        model: modelName,
+        maxTokens: WHATS_NEW_MAX_TOKENS,
+      });
 
       // #160: whitespace-only content must not overwrite a stored summary either.
       if (typeof content !== "string" || content.trim() === "") {
