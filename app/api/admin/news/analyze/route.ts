@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/api-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { getOpenRouterModel } from "@/lib/services/openrouter-model";
+import { extractJsonObject, readCompletion } from "@/lib/services/llm-completion";
 import { ToolMapper } from "@/lib/services/tool-mapper.service";
 import { jinaReaderService, type JinaReaderMetadata } from "@/lib/services/jina-reader.service";
 
@@ -337,7 +338,9 @@ REMINDER: The field name MUST be "tool" (not "name", "tool_name", or anything el
       { role: "user", content: userPrompt },
     ],
     temperature: 0.3,
-    max_tokens: 4000, // Increased for Claude 4's enhanced capabilities
+    // #172: a 2-3 sentence summary, a 500-char rewrite and the mention lists fit inside
+    // 4000; readCompletion() below reports it if a reply ever hits the limit.
+    max_tokens: 4000,
   };
 
   // Use correct header names for OpenRouter API
@@ -484,21 +487,27 @@ REMINDER: The field name MUST be "tool" (not "name", "tool_name", or anything el
       throw new Error("Invalid JSON response from OpenRouter API");
     }
 
-    const openRouterData = data as OpenRouterResponse;
-    const content = openRouterData.choices?.[0]?.message?.content;
+    // #172: log finish_reason/length/model; a max_tokens cut-off throws as truncation.
+    const { content, diagnostics } = readCompletion(data as OpenRouterResponse, {
+      label: "News Analysis",
+      model: modelName,
+      maxTokens: requestBody.max_tokens,
+    });
 
     if (!content) {
       throw new Error("No response from OpenRouter");
     }
 
     // Parse the JSON response
+    // #172: tolerate a code fence or prose around the object; log diagnostics, not content.
     let parsed: unknown;
     try {
-      // Remove any markdown code blocks if present
-      const jsonStr = content.replace(/```json\n?|\n?```/g, "").trim();
-      parsed = JSON.parse(jsonStr);
-    } catch {
-      console.error("Failed to parse OpenRouter response:", content);
+      parsed = extractJsonObject(content);
+    } catch (parseError) {
+      console.error("[News Analysis] Failed to parse AI response as JSON", {
+        ...diagnostics,
+        error: parseError instanceof Error ? parseError.message : String(parseError),
+      });
       throw new Error("Invalid JSON response from AI");
     }
 
