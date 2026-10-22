@@ -59,6 +59,12 @@ module.exports = {
         },
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        // #178: sample design-agent token set (--ds-* in app/globals.css).
+        "ds-rank": {
+          up: "hsl(var(--ds-rank-up))",
+          down: "hsl(var(--ds-rank-down))",
+          steady: "hsl(var(--ds-rank-steady))",
+        },
       },
       borderRadius: {
         lg: "var(--radius-lg)",
@@ -67,6 +73,8 @@ module.exports = {
         xl: "var(--radius-xl)",
         "2xl": "var(--radius-2xl)",
         full: "var(--radius-full)",
+        // #178: sample design-agent token.
+        "ds-chip": "var(--ds-radius-chip)",
       },
       fontFamily: {
         sans: [
@@ -104,6 +112,8 @@ module.exports = {
         "3xl": "var(--font-size-3xl)",
         "4xl": "var(--font-size-4xl)",
         "5xl": "var(--font-size-5xl)",
+        // #178: sample design-agent token.
+        "ds-delta": "var(--ds-font-size-delta)",
       },
       lineHeight: {
         tight: "var(--line-height-tight)",
@@ -136,6 +146,8 @@ module.exports = {
         16: "var(--space-16)",
         20: "var(--space-20)",
         24: "var(--space-24)",
+        // #178: sample design-agent token.
+        "ds-inline": "var(--ds-space-inline)",
       },
       animation: {
         "fade-in": "fade-in var(--duration-normal) var(--ease-out)",

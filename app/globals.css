@@ -141,6 +141,17 @@
     --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
     --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+    /* #178: sample design-agent token set (docs/refresh/design-agent-spike.md).
+       Namespaced --ds-* so it adds to, and never overrides, the tokens above.
+       Colour values equal Tailwind's green-600 / red-600 / gray-500, so
+       components that move onto them render unchanged. */
+    --ds-rank-up: 142.1 76.2% 36.3%;
+    --ds-rank-down: 0 72.2% 50.6%;
+    --ds-rank-steady: 220 8.9% 46.1%;
+    --ds-space-inline: 0.25rem;
+    --ds-radius-chip: 9999px;
+    --ds-font-size-delta: var(--font-size-sm);
   }
 
   .dark {
@@ -175,6 +186,11 @@
     --warning: 45 100% 51%;
     --error: 0 72% 51%;
     --info: 199 89% 48%;
+
+    /* #178: dark values equal Tailwind's green-400 / red-400 / gray-400. */
+    --ds-rank-up: 141.9 69.2% 58%;
+    --ds-rank-down: 0 90.6% 70.8%;
+    --ds-rank-steady: 217.9 10.6% 64.9%;
   }
 }
 
