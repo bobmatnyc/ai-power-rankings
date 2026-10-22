@@ -16,8 +16,8 @@ Algorithm v7.3 has been successfully tested in the development environment and i
 **⚠️ IMPORTANT CONFIGURATION DISCOVERY:**
 
 Both `DATABASE_URL` and `DATABASE_URL_DEVELOPMENT` currently point to the **SAME database endpoint**:
-- Production (`DATABASE_URL`): `ep-dark-firefly-adp1p3v8`
-- Development (`DATABASE_URL_DEVELOPMENT`): `ep-dark-firefly-adp1p3v8`
+- Production (`DATABASE_URL`): `<REDACTED_ENDPOINT>`
+- Development (`DATABASE_URL_DEVELOPMENT`): `<REDACTED_ENDPOINT>`
 
 **Impact:** The development and production databases are currently **UNIFIED**. This means:
 - ✅ Rankings generated with `generate-v73-rankings.ts` are already in the production database
@@ -32,10 +32,10 @@ Both `DATABASE_URL` and `DATABASE_URL_DEVELOPMENT` currently point to the **SAME
 
 ```env
 # Production database (promoted from staging after cleanup and verification)
-# Database: ep-dark-firefly-adp1p3v8
-DATABASE_URL=postgresql://neondb_owner:npg_***@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+# Database: <REDACTED_ENDPOINT>
+DATABASE_URL=postgresql://neondb_owner:npg_***@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 
-DATABASE_URL_DEVELOPMENT=postgresql://neondb_owner:npg_***@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+DATABASE_URL_DEVELOPMENT=postgresql://neondb_owner:npg_***@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 ```
 
 **Database Connection Strategy** (from `lib/db/connection.ts`):

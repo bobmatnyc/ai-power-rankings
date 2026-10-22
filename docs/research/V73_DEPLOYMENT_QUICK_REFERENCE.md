@@ -149,11 +149,11 @@ Run verify-v73-deployment.ts
 
 ### Current Setup (.env.local)
 ```env
-DATABASE_URL=postgresql://...@ep-dark-firefly-adp1p3v8-pooler...
-DATABASE_URL_DEVELOPMENT=postgresql://...@ep-dark-firefly-adp1p3v8-pooler...
+DATABASE_URL=postgresql://...@<REDACTED_ENDPOINT>-pooler...
+DATABASE_URL_DEVELOPMENT=postgresql://...@<REDACTED_ENDPOINT>-pooler...
 ```
 
-**Database Endpoint:** `ep-dark-firefly-adp1p3v8`
+**Database Endpoint:** `<REDACTED_ENDPOINT>`
 **Status:** Both variables point to same database
 
 ### How Scripts Select Database

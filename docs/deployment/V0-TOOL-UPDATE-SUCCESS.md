@@ -21,7 +21,7 @@ npx tsx scripts/update-v0-tool-content.ts
 ```
 
 **Result**: ✅ Success
-**Database**: Development branch (ep-dark-firefly-adp1p3v8)
+**Database**: Development branch (<REDACTED_ENDPOINT>)
 **Connection Mode**: HTTP
 **Timestamp**: 2025-10-24 15:48:45 GMT-0400
 

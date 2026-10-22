@@ -119,7 +119,7 @@ These are in the lower rankings and don't affect competitive positioning.
 
 ### Database Status
 - **Environment**: Development
-- **Database**: ep-dark-firefly-adp1p3v8
+- **Database**: <REDACTED_ENDPOINT>
 - **Period**: 2025-11
 - **Is Current**: true
 - **Published At**: 2025-11-01T20:31:58.091Z

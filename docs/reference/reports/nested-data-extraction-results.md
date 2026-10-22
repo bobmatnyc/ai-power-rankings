@@ -2,7 +2,7 @@
 
 **Date:** 2025-10-07
 **Script:** `scripts/extract-nested-tool-data.ts`
-**Database:** Development (ep-dark-firefly-adp1p3v8)
+**Database:** Development (<REDACTED_ENDPOINT>)
 
 ## Executive Summary
 

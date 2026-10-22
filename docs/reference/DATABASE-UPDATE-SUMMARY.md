@@ -196,7 +196,7 @@ All 7 tools confirmed with:
 ### Database Connection
 - **Environment:** Development branch
 - **Connection mode:** HTTP
-- **Endpoint:** ep-dark-firefly-adp1p3v8
+- **Endpoint:** <REDACTED_ENDPOINT>
 - **ORM:** Drizzle ORM
 - **Database:** PostgreSQL
 

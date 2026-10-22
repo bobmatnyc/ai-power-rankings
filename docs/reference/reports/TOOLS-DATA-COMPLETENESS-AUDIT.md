@@ -1,7 +1,7 @@
 # Tools Database Completeness Audit Report
 
 **Generated:** October 7, 2025
-**Database:** Development Branch (ep-dark-firefly-adp1p3v8)
+**Database:** Development Branch (<REDACTED_ENDPOINT>)
 
 ---
 
