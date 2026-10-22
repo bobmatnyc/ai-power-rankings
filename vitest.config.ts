@@ -35,7 +35,9 @@ export default defineConfig({
     // holds hand-written unit specs such as ranking-changes-counter and
     // semantic-duplicate-detection). The Playwright suite stays separate via
     // the *.spec.ts + tests/e2e exclusions below, so only *.test.ts runs here.
-    include: ["lib/**/*.test.ts", "i18n/**/*.test.ts", "tests/**/*.test.ts"],
+    // #175: tests/**/*.test.tsx holds component interaction tests; each such
+    // file opts into jsdom with a `// @vitest-environment jsdom` docblock.
+    include: ["lib/**/*.test.ts", "i18n/**/*.test.ts", "tests/**/*.test.ts", "tests/**/*.test.tsx"],
     exclude: [
       "**/node_modules/**",
       "**/.next/**",
