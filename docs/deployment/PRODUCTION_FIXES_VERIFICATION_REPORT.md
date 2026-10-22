@@ -107,7 +107,7 @@ All production fixes have been successfully applied and verified. The Jules dupl
 
 ### Production Database Confirmed
 ```
-Database URL: postgresql://neondb_owner:<REDACTED>@ep-dark...
+Database URL: postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>
 Database ID: <REDACTED_ENDPOINT>
 Connection: HTTP mode (Neon serverless)
 Environment: Production
