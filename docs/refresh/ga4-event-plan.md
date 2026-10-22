@@ -2,6 +2,8 @@
 
 Status: implemented in code. DebugView verification is pending GA4 property access.
 
+Bot-share gate and M7 thresholds: [bot-share-gate.md](bot-share-gate.md) (#176).
+
 Property: `G-5YBL6NPWL6`. All events go through `trackEvent` in
 `lib/analytics/track.ts`. The helper does nothing when `window.gtag` is absent
 (server render, tests, blocked tags). It never throws. It sends only string,
