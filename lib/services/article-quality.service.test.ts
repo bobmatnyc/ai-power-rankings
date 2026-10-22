@@ -100,6 +100,19 @@ describe("ArticleQualityService.assessArticle (#172)", () => {
     expect(logged.some((line) => line.includes(reason))).toBe(true);
   });
 
+  // #172: a reply that parses but carries no numeric score is not a quality verdict.
+  it.each([
+    ["an empty object", "{}"],
+    ["schema-drifted keys", '{"quality": 8, "relevance": 9, "credibility": 8}'],
+  ])("returns an assessment carrying `error` for %s", async (_name, content) => {
+    stubOpenRouter(reply(content, "stop"));
+
+    const assessment = await new ArticleQualityService().assessArticle(ARTICLE);
+
+    expect(assessment.shouldIngest).toBe(false);
+    expect(assessment.error).toMatch(/no numeric score/);
+  });
+
   it("parses a complete verdict wrapped in prose and a ```json fence, with no error", async () => {
     stubOpenRouter(reply(`Here is my evaluation:\n\`\`\`json\n${JSON.stringify(VERDICT)}\n\`\`\``, "stop"));
 

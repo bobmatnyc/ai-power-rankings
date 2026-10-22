@@ -132,7 +132,7 @@ export class ArticleQualityService {
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userPrompt },
           ],
-          temperature: 0.3, // #172: sonnet-5.5 accepts temperature; #203 kept 0.2 for analysis
+          temperature: 0.3, // #172: sonnet-5.5 accepts temperature, so the value is unchanged
           max_tokens: ASSESSMENT_MAX_TOKENS, // #172: was 1000; see the constant
         },
         {
@@ -177,8 +177,8 @@ export class ArticleQualityService {
    * sequential OpenRouter timeouts that can hang the entire pipeline.
    *
    * Includes a circuit breaker: if more than 30% of assessments fail,
-   * remaining articles are accepted with a default "ingest" assessment
-   * to prevent total pipeline failure.
+   * remaining articles are skipped with an `error` and never ingested
+   * (#172: accepting them ingested unassessed content).
    *
    * @param articles - Array of articles to assess
    * @returns Array of quality assessments in same order as input
@@ -195,26 +195,25 @@ export class ArticleQualityService {
     for (let i = 0; i < articles.length; i += BATCH_SIZE) {
       const batch = articles.slice(i, i + BATCH_SIZE);
 
-      // Circuit breaker: if too many failures, accept remaining articles
+      // Circuit breaker: if too many failures, skip remaining articles (#172)
       if (!circuitBreakerTripped && qualityFailures > FAILURE_THRESHOLD) {
         loggers.api.warn(
-          `Too many quality failures (${qualityFailures}/${articles.length}), accepting remaining articles`,
+          // #172: the remaining articles are skipped, not accepted.
+          `Too many quality failures (${qualityFailures}/${articles.length}), skipping remaining articles`,
           { failureThreshold: FAILURE_THRESHOLD, remaining: articles.length - i }
         );
         circuitBreakerTripped = true;
       }
 
       if (circuitBreakerTripped) {
-        // Accept remaining articles with default-ingest assessment
+        // #172: fail closed. An unassessed article is never accepted; it carries `error` so
+        // the run records `assessment_failed`, and stops spending calls on a failing provider.
         for (const _article of batch) {
           assessments.push({
-            qualityScore: 7,
-            relevanceScore: 7,
-            credibilityScore: 7,
-            reasoning: 'Circuit breaker accepted: too many quality assessment failures',
-            suggestedCategories: [],
-            shouldIngest: true,
+            ...DEFAULT_ASSESSMENT,
+            reasoning: 'Circuit breaker open: assessment skipped',
             estimatedCost: 0,
+            error: `circuit breaker open: assessment unavailable after ${qualityFailures} failures`,
           });
         }
         continue;
@@ -304,6 +303,11 @@ ${article.content.substring(0, 4000)}${article.content.length > 4000 ? '\n[Conte
         reasoning?: string;
         suggestedCategories?: string[];
       };
+
+      // #172: a reply with no numeric score at all (`{}`, drifted keys) is not a verdict.
+      if (![parsed.qualityScore, parsed.relevanceScore, parsed.credibilityScore].some(Number.isFinite)) {
+        throw new Error('reply has no numeric score');
+      }
 
       // Validate and clamp scores to 0-10 range
       const qualityScore = this.clampScore(parsed.qualityScore);
