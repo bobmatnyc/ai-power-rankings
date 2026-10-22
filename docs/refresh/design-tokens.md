@@ -74,6 +74,23 @@ current `--primary` (white on `--primary` is 3.76:1), and `--ds-text-muted` is
 slate-600 in light mode, not slate-500 (`--muted-foreground` on `--muted` is
 4.34:1).
 
+### Fixed colours (#190 PR B)
+
+Components that look the same in both modes today (footer, tier-legend and
+tool-icon text, status indicator, skeletons, error fallbacks, dialog overlays) use
+fixed tokens: one Tailwind palette colour in both modes, declared in a
+`:root, .dark` rule. They are `--ds-surface-{overlay, footer, skeleton,
+paper, paper-muted, paper-sunken}`, `--ds-text-{on-fill, footer,
+paper-muted}`, `--ds-border-footer`, `--ds-accent-fixed`,
+`--ds-accent-cat-{green, blue, purple}` (decorative dots), `--ds-{success,
+warning, danger, info}-solid`, `--ds-warning-solid-strong`, `--ds-{success,
+warning, danger}-fixed` and `--ds-danger-fixed-soft`. `--ds-surface-signal`
+and `--ds-surface-signal-off`
+(status indicator) keep a light and a dark value. Gradients stay on palette
+classes for now (see the map). Values, the class each one replaced, and the
+contrast pairs below AA they keep:
+[design-audit/migration-190b.md](design-audit/migration-190b.md).
+
 ## Contrast (WCAG 2.x, AA = 4.5:1)
 
 Computed from the token values by `contrast()` in `scripts/design-tokens.ts`;
@@ -105,6 +122,8 @@ the test asserts each pair is at least 4.5.
 | `--ds-score-fg` | `--ds-score-b` | 5.02 | 11.48 |
 | `--ds-score-fg` | `--ds-score-c` | 7.58 | 7.80 |
 | `--ds-score-fg` | `--ds-score-d` | 6.47 | 7.23 |
+| `--ds-text-footer` | `--ds-surface-footer` | 12.04 | 12.04 |
+| `--ds-text-on-fill` | `--ds-surface-footer` | 17.74 | 17.74 |
 
 The #178 rank tokens, for the record (not changed here): on `--ds-surface`,
 `--ds-rank-up` is 3.30 light / 11.48 dark, `--ds-rank-down` 4.83 / 7.23,

@@ -63,7 +63,7 @@ export function ToolIcon({
       )}
       style={{ width: size, height: size }}
     >
-      <Newspaper size={size * 0.6} className="text-white" />
+      <Newspaper size={size * 0.6} className="text-ds-text-on-fill" />
     </div>
   );
 
@@ -83,7 +83,7 @@ export function ToolIcon({
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="text-white"
+        className="text-ds-text-on-fill"
         aria-label={`${name} icon`}
       >
         <title>{name}</title>

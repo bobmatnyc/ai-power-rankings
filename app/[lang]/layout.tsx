@@ -93,9 +93,9 @@ export default async function LanguageLayout({
     // Return a minimal error layout without HTML/body tags
     return (
       <div className="min-h-screen p-8">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">Layout Error</h1>
-        <p className="text-gray-600 mb-2">An error occurred while rendering the layout.</p>
-        <details className="mt-4 p-4 bg-gray-100 rounded">
+        <h1 className="text-2xl font-bold text-ds-danger-fixed mb-4">Layout Error</h1>
+        <p className="text-ds-text-paper-muted mb-2">An error occurred while rendering the layout.</p>
+        <details className="mt-4 p-4 bg-ds-surface-paper-sunken rounded">
           <summary className="cursor-pointer font-semibold">Error Details</summary>
           <pre className="mt-2 whitespace-pre-wrap text-sm">
             {error instanceof Error ? error.message : String(error)}

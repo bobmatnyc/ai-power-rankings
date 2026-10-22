@@ -312,7 +312,7 @@ function RankingsContentInner(): React.JSX.Element {
                       <div className="text-sm space-y-1">
                         {ranking.modifiers?.innovation_decay &&
                           ranking.modifiers.innovation_decay < 0.8 && (
-                            <div className="text-orange-600">
+                            <div className="text-ds-warning-fixed">
                               🔄 Decay: {(ranking.modifiers.innovation_decay * 100).toFixed(0)}%
                             </div>
                           )}
@@ -321,8 +321,8 @@ function RankingsContentInner(): React.JSX.Element {
                             <div
                               className={
                                 ranking.modifiers.platform_risk > 0
-                                  ? "text-green-600"
-                                  : "text-red-600"
+                                  ? "text-ds-success-fixed"
+                                  : "text-ds-danger-fixed"
                               }
                             >
                               ⚠️ Risk: {ranking.modifiers.platform_risk > 0 ? "+" : ""}
@@ -331,7 +331,7 @@ function RankingsContentInner(): React.JSX.Element {
                           )}
                         {ranking.modifiers?.revenue_quality &&
                           ranking.modifiers.revenue_quality !== 0.5 && (
-                            <div className="text-blue-600">
+                            <div className="text-ds-accent-fixed">
                               💰 Quality: {(ranking.modifiers.revenue_quality * 100).toFixed(0)}%
                             </div>
                           )}

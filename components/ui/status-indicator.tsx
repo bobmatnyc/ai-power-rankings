@@ -35,23 +35,23 @@ export function StatusIndicator({
 
     return {
       active: {
-        color: "bg-green-500",
+        color: "bg-ds-success-solid",
         ...getStatusText("active"),
       },
       beta: {
-        color: "bg-yellow-500",
+        color: "bg-ds-warning-solid",
         ...getStatusText("beta"),
       },
       deprecated: {
-        color: "bg-orange-500",
+        color: "bg-ds-warning-solid-strong",
         ...getStatusText("deprecated"),
       },
       discontinued: {
-        color: "bg-red-500",
+        color: "bg-ds-danger-solid",
         ...getStatusText("discontinued"),
       },
       acquired: {
-        color: "bg-blue-500",
+        color: "bg-ds-info-solid",
         ...getStatusText("acquired"),
       },
     };
@@ -64,12 +64,12 @@ export function StatusIndicator({
   return (
     <div className={cn("flex items-center gap-1.5", className)} title={config.title}>
       {/* Traffic light container */}
-      <div className="flex items-center gap-0.5 px-1 py-0.5 bg-gray-900 dark:bg-gray-800 rounded">
+      <div className="flex items-center gap-0.5 px-1 py-0.5 bg-ds-surface-signal rounded">
         {/* Three lights in horizontal layout */}
         <div
           className={cn(
             "w-2 h-2 rounded-full transition-all duration-200",
-            status === "active" ? config.color : "bg-gray-600 dark:bg-gray-700"
+            status === "active" ? config.color : "bg-ds-surface-signal-off"
           )}
         />
         <div
@@ -77,13 +77,13 @@ export function StatusIndicator({
             "w-2 h-2 rounded-full transition-all duration-200",
             status === "beta" || status === "deprecated"
               ? statusConfig[status].color
-              : "bg-gray-600 dark:bg-gray-700"
+              : "bg-ds-surface-signal-off"
           )}
         />
         <div
           className={cn(
             "w-2 h-2 rounded-full transition-all duration-200",
-            status === "discontinued" ? config.color : "bg-gray-600 dark:bg-gray-700"
+            status === "discontinued" ? config.color : "bg-ds-surface-signal-off"
           )}
         />
       </div>

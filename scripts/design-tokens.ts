@@ -114,6 +114,9 @@ export const AA_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ["ds-score-fg", "ds-score-b"],
   ["ds-score-fg", "ds-score-c"],
   ["ds-score-fg", "ds-score-d"],
+  // #190 PR B: the footer's fixed colours.
+  ["ds-text-footer", "ds-surface-footer"],
+  ["ds-text-on-fill", "ds-surface-footer"],
 ];
 
 /**
