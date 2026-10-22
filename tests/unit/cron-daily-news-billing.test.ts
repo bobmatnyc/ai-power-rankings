@@ -366,3 +366,72 @@ describe("GET /api/cron/daily-news — every quality assessment fails (#172)", (
     expect(mocks.ingestArticle).not.toHaveBeenCalled();
   });
 });
+
+// #172: the circuit breaker in batchAssess must not accept candidates it never assessed;
+// with N >= 6 it used to trip after batch 1 and pass every later candidate at score 7.
+describe("GET /api/cron/daily-news — assessment circuit breaker fails closed (#172)", () => {
+  beforeEach(() => {
+    mocks.resetRow();
+    mocks.tavilySearch.mockReset();
+    mocks.braveSearch.mockReset();
+    mocks.braveAvailable.value = false;
+    mocks.tavilyExtract.mockReset();
+    mocks.jinaFetch.mockReset();
+    mocks.openRouterGenerate.mockReset();
+    mocks.ingestArticle.mockReset();
+    // A wrongly accepted candidate must ingest cleanly, or the ingest error alone fails the run.
+    mocks.ingestArticle.mockImplementation(async () => ({ id: "article-fixture" }));
+    process.env["CRON_SECRET"] = SECRET;
+    delete process.env["ALERT_WEBHOOK_URL"];
+  });
+
+  afterEach(() => {
+    restoreEnv("CRON_SECRET", originalCronSecret);
+    restoreEnv("ALERT_WEBHOOK_URL", originalWebhookUrl);
+  });
+
+  /** N same-day candidates whose titles share no word, so semantic dedupe keeps all N. */
+  function distinctCandidates(n: number, tag: string) {
+    const template = discoveryResults(true)[0]!;
+    return Array.from({ length: n }, (_, i) => ({
+      ...template,
+      title: `Kestrel${tag}${i} Quillon${tag}${i} Varvex${tag}${i}`,
+      url: `https://breaker-${tag}-${i}.example.org/story`,
+      source: `breaker-${tag}-${i}.example.org`,
+    }));
+  }
+
+  it.each([6, 11, 20])(
+    "accepts nothing and answers 500 when no reply parses across %i candidates",
+    async (n) => {
+      mocks.tavilySearch.mockResolvedValue(distinctCandidates(n, `u${n}`));
+      mocks.openRouterGenerate.mockResolvedValue({
+        content: '{"qualityScore": 8, "relevanceScore": 9, "reasoning": "Specific product ne',
+        metadata: { estimatedCost: 0.001 },
+      });
+
+      const response = await GET(cronRequest());
+      const payload = (await response.json()) as RoutePayload;
+
+      const outcomes = (mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? [];
+      expect.soft(outcomes.map((o) => o.outcome)).toEqual(Array(n).fill("assessment_failed"));
+      expect.soft(mocks.ingestArticle).not.toHaveBeenCalled();
+      expect.soft(response.status).toBe(500);
+      expect(payload.data?.status).toBe("failed");
+      expect(mocks.row["status"]).toBe("failed");
+    }
+  );
+
+  it("records assessment_failed for a parseable reply that carries no score", async () => {
+    mocks.tavilySearch.mockResolvedValue(distinctCandidates(3, "empty"));
+    mocks.openRouterGenerate.mockResolvedValue({ content: "{}", metadata: { estimatedCost: 0.001 } });
+
+    const response = await GET(cronRequest());
+    const payload = (await response.json()) as RoutePayload;
+
+    const outcomes = (mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? [];
+    expect.soft(outcomes.map((o) => o.outcome)).toEqual(Array(3).fill("assessment_failed"));
+    expect.soft(response.status).toBe(500);
+    expect(payload.data?.status).toBe("failed");
+  });
+});
