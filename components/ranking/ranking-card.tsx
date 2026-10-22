@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RankingChange } from "@/components/ui/ranking-change";
 import { ToolIcon } from "@/components/ui/tool-icon";
+import { trackEvent } from "@/lib/analytics/track";
 import { getCategoryColor } from "@/lib/category-colors";
 import { CategoryIcon } from "@/lib/category-icons";
 import { calculateTier, getTierColor } from "@/lib/ranking-utils";
@@ -44,14 +45,18 @@ interface RankingCardProps {
   ranking: RankingData;
   showDetails?: boolean;
   lang?: string;
+  // #175: which list the row sits in, sent as `list_name` on ranking_row_click.
+  listName?: string;
 }
 
 export function RankingCard({
   ranking,
   showDetails = true,
   lang = "en",
+  listName = "rankings",
 }: RankingCardProps): React.JSX.Element {
   const router = useRouter();
+  const toolSlug = ranking.tool.slug || ranking.tool.id;
 
   const getMedal = (rank: number): string => {
     switch (rank) {
@@ -67,7 +72,19 @@ export function RankingCard({
   };
 
   return (
-    <Link href={`/${lang}/tools/${ranking.tool.slug || ranking.tool.id}`} className="block h-full">
+    <Link
+      href={`/${lang}/tools/${toolSlug}`}
+      className="block h-full"
+      // #175: the category badge below stops propagation, so only row clicks land here.
+      onClick={() =>
+        trackEvent("ranking_row_click", {
+          tool_slug: toolSlug,
+          rank: ranking.rank,
+          list_name: listName,
+          tool_category: ranking.tool.category,
+        })
+      }
+    >
       <Card className="group hover:shadow-lg transition-all duration-200 border-border/50 hover:border-primary/20 h-full flex flex-col cursor-pointer">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">
@@ -126,6 +143,12 @@ export function RankingCard({
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
+                    // #175: the badge applies a category filter on /tools.
+                    trackEvent("filter_use", {
+                      filter_name: "category",
+                      filter_value: ranking.tool.category,
+                      page_type: "rankings",
+                    });
                     router.push(`/${lang}/tools?category=${ranking.tool.category}`);
                   }}
                 >

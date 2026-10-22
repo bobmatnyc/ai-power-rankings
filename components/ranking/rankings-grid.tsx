@@ -17,9 +17,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { trackEvent } from "@/lib/analytics/track";
 import { loggers } from "@/lib/logger-client";
 import { RankingCard } from "./ranking-card";
 import { TierLegend } from "./tier-legend";
+import { useRankingsSearch } from "./use-rankings-search";
 
 interface RankingData {
   rank: number;
@@ -84,6 +86,8 @@ function RankingsGridContent({
   const categoryParam = searchParams.get("category") || "all";
   const tagsParam = searchParams.get("tags")?.split(",") || [];
   const sortParam = searchParams.get("sort") || "rank";
+  // #175: the schema.org SearchAction lands here with ?search=<term>.
+  const searchParam = searchParams.get("search") || "";
 
   const fetchToolsStatistics = useCallback(async (): Promise<void> => {
     try {
@@ -252,9 +256,11 @@ function RankingsGridContent({
     // Add tag filtering logic here when tags are implemented
     return true;
   });
+  // #175: apply ?search= and send site_search once the rankings are loaded.
+  const searchedRankings = useRankingsSearch(filteredRankings, searchParam, !loading);
 
   // Apply sorting
-  const sortedRankings = [...filteredRankings].sort((a, b) => {
+  const sortedRankings = [...searchedRankings].sort((a, b) => {
     switch (sortParam) {
       case "trending":
         // Simulate trending by looking at recent metrics
@@ -382,6 +388,8 @@ function RankingsGridContent({
           <Select
             value={sortParam}
             onValueChange={(value) => {
+              // #175: the rankings sort select.
+              trackEvent("filter_use", { filter_name: "sort", filter_value: value, page_type: "rankings" });
               const params = new URLSearchParams(searchParams.toString());
               if (value === "rank") {
                 params.delete("sort");
@@ -437,7 +445,7 @@ function RankingsGridContent({
       </div>
 
       {/* Active Filters */}
-      {(categoryParam !== "all" || tagsParam.length > 0) && (
+      {(categoryParam !== "all" || tagsParam.length > 0 || searchParam.trim()) && (
         <div className="flex items-center gap-2 mb-4">
           <span className="text-sm text-muted-foreground">{dict.rankings.activeFilters}:</span>
           {categoryParam !== "all" && (
@@ -451,6 +459,20 @@ function RankingsGridContent({
               }}
             >
               {categoryParam.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} ✕
+            </Badge>
+          )}
+          {searchParam.trim() && (
+            // #175: show the active ?search= term so the filtered list is explained and clearable.
+            <Badge
+              variant="secondary"
+              className="cursor-pointer"
+              onClick={() => {
+                const params = new URLSearchParams(searchParams.toString());
+                params.delete("search");
+                window.location.href = `/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`;
+              }}
+            >
+              &ldquo;{searchParam.trim()}&rdquo; ✕
             </Badge>
           )}
           {tagsParam.map((tag) => (
