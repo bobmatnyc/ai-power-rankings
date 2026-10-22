@@ -4,7 +4,13 @@ import { useEffect, useRef } from "react";
 import { queryLengthBucket, trackEvent } from "@/lib/analytics/track";
 
 interface SearchableRanking {
-  tool: { id: string; slug?: string; name: string; category: string };
+  // #175: typed as the API actually delivers them, not as the UI hopes.
+  tool: {
+    id?: string | null;
+    slug?: string | null;
+    name?: string | null;
+    category?: string | null;
+  };
 }
 
 /**
@@ -13,7 +19,8 @@ interface SearchableRanking {
  * Why: #175 needs a search event. The site's only search entry point is the
  *   schema.org SearchAction (`/{lang}/rankings?search={term}`, app/[lang]/page.tsx),
  *   which landed on an unfiltered list. Filtering makes the result count real.
- * What: Case-insensitive substring match on tool name, slug and category.
+ * What: Case-insensitive substring match on tool name, slug (else id) and
+ *   category; a null or undefined field is skipped, not matched.
  *   An empty term returns `rankings` unchanged and sends nothing. Once `ready`
  *   (rankings loaded), sends one `site_search` per distinct term with the
  *   query length, its bucket and the result count — never the term itself.
@@ -27,8 +34,9 @@ export function useRankingsSearch<T extends SearchableRanking>(
   const term = rawTerm.trim().toLowerCase();
   const results = term
     ? rankings.filter(({ tool }) =>
-        [tool.name, tool.slug ?? tool.id, tool.category].some((field) =>
-          field.toLowerCase().includes(term)
+        // #175: the rankings API passes these through unchecked; any may be null/undefined.
+        [tool.name, tool.slug ?? tool.id, tool.category].some(
+          (field) => typeof field === "string" && field.toLowerCase().includes(term)
         )
       )
     : rankings;

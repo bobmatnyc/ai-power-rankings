@@ -4,7 +4,7 @@
  * documented name and parameters (docs/refresh/ga4-event-plan.md).
  * `trackEvent` is mocked; the pure helpers stay real.
  */
-import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import en from "../../i18n/dictionaries/en.json";
@@ -65,6 +65,7 @@ import { ScrollDepthTracker } from "../../components/analytics/scroll-depth-trac
 import { AppSidebar } from "../../components/layout/app-sidebar";
 import { RankingCard } from "../../components/ranking/ranking-card";
 import RankingsGrid from "../../components/ranking/rankings-grid";
+import { useRankingsSearch } from "../../components/ranking/use-rankings-search";
 import { ToolDetailClient } from "../../app/[lang]/tools/[slug]/tool-detail-client";
 import { trackEvent } from "../../lib/analytics/track";
 
@@ -265,5 +266,18 @@ describe("site_search", () => {
     });
     expect(tracked.mock.calls.filter(([name]) => name === "site_search")).toHaveLength(0);
     expect(screen.getByText("Claude Code")).toBeTruthy();
+  });
+
+  // #175: the rankings API passes name/category/slug/id through unchecked.
+  it("matches rows with null or undefined fields on the fields they do have", () => {
+    const rows = [
+      { tool: { id: null, slug: undefined, name: null, category: "cursor-like" } },
+      { tool: { id: "id-x", slug: null, name: "Cursor Pro", category: undefined } },
+      { tool: { id: "cursor-id", slug: undefined, name: undefined, category: null } },
+      { tool: { id: null, slug: null, name: null, category: null } },
+      { tool: { id: "id-y", slug: "other", name: "Other", category: "editor" } },
+    ];
+    const { result } = renderHook(() => useRankingsSearch(rows as never[], "cursor", true));
+    expect(result.current).toEqual([rows[0], rows[1], rows[2]]);
   });
 });
