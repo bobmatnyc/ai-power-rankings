@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { linkDomain, trackEvent } from "@/lib/analytics/track";
 
 interface ToolInfo {
   links?: {
@@ -176,6 +177,14 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
   const description = product["description"] || tool.description;
   const tagline = product["tagline"] || tool.tagline;
 
+  // #175: outbound clicks send the tool slug and destination host, never the full URL.
+  const trackOutbound = (url: string, linkType: "website" | "github") => (): void => {
+    const domain = linkDomain(url);
+    if (domain) {
+      trackEvent("tool_outbound_click", { tool_slug: tool.slug || slug, link_domain: domain, link_type: linkType });
+    }
+  };
+
   // Transform pricing data to expected format
   const pricingPlans = business["pricing_details"]
     ? Object.entries(business["pricing_details"]).map(([planName, details], index) => {
@@ -256,14 +265,14 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
           <div className="hidden md:flex gap-2">
             {websiteUrl && (
               <Button asChild>
-                <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
+                <a href={websiteUrl} target="_blank" rel="noopener noreferrer" onClick={trackOutbound(websiteUrl, "website")}>
                   {dict.tools.detail.visitWebsite}
                 </a>
               </Button>
             )}
             {githubUrl && (
               <Button variant="outline" asChild>
-                <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+                <a href={githubUrl} target="_blank" rel="noopener noreferrer" onClick={trackOutbound(githubUrl, "github")}>
                   GitHub
                 </a>
               </Button>
@@ -318,14 +327,14 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
       <div className="mt-8 flex flex-col items-center gap-3 md:hidden">
         {websiteUrl && (
           <Button asChild size="lg" className="w-full max-w-xs">
-            <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
+            <a href={websiteUrl} target="_blank" rel="noopener noreferrer" onClick={trackOutbound(websiteUrl, "website")}>
               {dict.tools.detail.visitWebsite}
             </a>
           </Button>
         )}
         {githubUrl && (
           <Button variant="outline" asChild size="lg" className="w-full max-w-xs">
-            <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+            <a href={githubUrl} target="_blank" rel="noopener noreferrer" onClick={trackOutbound(githubUrl, "github")}>
               {dict.tools.detail.viewGithub}
             </a>
           </Button>

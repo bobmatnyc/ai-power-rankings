@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { Sidebar, useSidebar } from "@/components/ui/sidebar";
 import { useRankingChanges } from "@/contexts/ranking-changes-context";
 import { useI18n } from "@/i18n/client";
+import { pageTypeFromPath, trackEvent } from "@/lib/analytics/track";
 import type { Category } from "@/lib/db/repositories/categories";
 import { CategoryIcon } from "@/lib/category-icons";
 import { cn } from "@/lib/utils";
@@ -80,6 +81,14 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
       setOpenMobile(false);
     }
   };
+
+  // #175: filter values are fixed category/tag ids, never free text.
+  const trackFilter = (filterName: "category" | "tag", value: string): void =>
+    trackEvent("filter_use", {
+      filter_name: filterName,
+      filter_value: value,
+      page_type: pageTypeFromPath(pathname),
+    });
 
   const createFilterUrl = (type: string, value: string): string => {
     const params = new URLSearchParams(searchParams.toString());
@@ -263,7 +272,11 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
                   <Link
                     key={`${category.id}-${currentCategory}`}
                     href={createFilterUrl("category", category.id)}
-                    onClick={handleNavClick}
+                    onClick={() => {
+                      // #175: sidebar category links are the site-wide category filter.
+                      trackFilter("category", category.id);
+                      handleNavClick();
+                    }}
                     className={cn(
                       "group flex items-center justify-between px-3 py-2 text-sm rounded-md transition-all duration-200",
                       isActive
@@ -330,6 +343,8 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
                     type="button"
                     key={tag.id}
                     onClick={() => {
+                      // #175: tag buttons are the feature filter.
+                      trackFilter("tag", tag.id);
                       window.location.href = createFilterUrl("tag", tag.id);
                       handleNavClick();
                     }}

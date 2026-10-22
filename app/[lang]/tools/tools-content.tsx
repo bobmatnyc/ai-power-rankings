@@ -16,6 +16,7 @@ import { StatusIndicator } from "@/components/ui/status-indicator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { trackEvent } from "@/lib/analytics/track";
 import { getCategoryColor } from "@/lib/category-colors";
 import { CategoryIcon } from "@/lib/category-icons";
 import { extractTextFromRichText } from "@/lib/richtext-utils";
@@ -72,6 +73,8 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
 
   // Update URL when category changes
   const handleCategoryChange = (newCategory: string) => {
+    // #175: the /tools category select.
+    trackEvent("filter_use", { filter_name: "category", filter_value: newCategory, page_type: "tools" });
     setSelectedCategory(newCategory);
     const params = new URLSearchParams(searchParams.toString());
     if (newCategory === "all") {
@@ -147,7 +150,14 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
           </SelectContent>
         </Select>
 
-        <Select value={sortBy} onValueChange={setSortBy}>
+        <Select
+          value={sortBy}
+          onValueChange={(value) => {
+            // #175: the /tools sort select.
+            trackEvent("filter_use", { filter_name: "sort", filter_value: value, page_type: "tools" });
+            setSortBy(value);
+          }}
+        >
           <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue placeholder={dict.tools.sortBy} />
           </SelectTrigger>
