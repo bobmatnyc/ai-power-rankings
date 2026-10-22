@@ -32,6 +32,9 @@ The `text-` and `bg-` palette classes alone come to 559 (`grep -rhoE
 | `rgb(` / `rgba(` | 20 |
 | **Total** | **845**, in 85 files |
 
+`tests/unit/globals-consolidation-189.test.ts` counts the same way and fails
+above 845 (#189). Lower its baseline as #190 migrates files.
+
 By directory: `app/[lang]` 258, `components/admin` 172, `components/ui` 90,
 `components/news` 80, `app/api` 43 (Open Graph image routes, which render
 outside the stylesheet and need literal colours), `components/seo` 39,
