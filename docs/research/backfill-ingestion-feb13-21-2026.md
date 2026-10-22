@@ -21,7 +21,7 @@ The ingestion system does NOT support targeting a specific date. `runDailyDiscov
 
 ## 2. Existing Coverage (What's Already in DB)
 
-From querying the production database (`ep-dark-firefly-adp1p3v8`):
+From querying the production database (`<REDACTED_ENDPOINT>`):
 
 ### Ingestion Runs by Date
 
@@ -64,7 +64,7 @@ The cron runs daily at 6 AM UTC but Tavily keys were misconfigured/expired durin
 ### Method 1: Local Script (Recommended for Backfill)
 
 ```bash
-DATABASE_URL="postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
+DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
 TAVILY_API_KEY="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" \
 npx tsx scripts/trigger-ingestion.ts [--dry-run] [--max-articles=N]
 ```
@@ -120,7 +120,7 @@ Since the system cannot target specific past dates, the best approach is to run 
 
 ```bash
 # Run 1 - now (will get Feb 18-21 news)
-DATABASE_URL="postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
+DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
 TAVILY_API_KEY="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" \
 npx tsx scripts/trigger-ingestion.ts --max-articles=15
 
@@ -136,12 +136,12 @@ This will get you coverage for roughly the past 5-7 days:
 
 ```bash
 # Dry run first to verify it works
-DATABASE_URL="postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
+DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
 TAVILY_API_KEY="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" \
 npx tsx scripts/trigger-ingestion.ts --dry-run --max-articles=15
 
 # Live run (remove --dry-run)
-DATABASE_URL="postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
+DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
 TAVILY_API_KEY="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" \
 npx tsx scripts/trigger-ingestion.ts --max-articles=15
 ```
@@ -153,14 +153,14 @@ npx tsx scripts/trigger-ingestion.ts --max-articles=15
 To check articles per ingestion date:
 
 ```bash
-DATABASE_URL="postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
+DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
 npx tsx scripts/check-recent-articles.ts
 ```
 
 To check ingestion runs:
 
 ```bash
-DATABASE_URL="postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
+DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
 npx tsx scripts/check-ingestion-runs.ts
 ```
 
@@ -186,8 +186,8 @@ npx tsx scripts/check-ingestion-runs.ts
 Use these for running scripts locally against the production database:
 
 ```
-DATABASE_URL=postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require
+DATABASE_URL=postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require
 TAVILY_API_KEY=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
 ```
 
-Note: The `.env.local` points to a development/staging database endpoint (`ep-bold-sunset-adneqlo6`). The production database is `ep-dark-firefly-adp1p3v8` from `.env.production.local`.
+Note: The `.env.local` points to a development/staging database endpoint (`<REDACTED_ENDPOINT>`). The production database is `<REDACTED_ENDPOINT>` from `.env.production.local`.

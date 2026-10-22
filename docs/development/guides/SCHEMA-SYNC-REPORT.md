@@ -207,8 +207,8 @@ The production tools API successfully serves data with all scoring columns acces
    Database Schema Comparison Tool
 ========================================
 
-📍 Production:  ep-bold-sunset-adneqlo6-pooler.c-2.us-east-1.aws.neon.tech
-📍 Development: ep-bold-sunset-adneqlo6-pooler.c-2.us-east-1.aws.neon.tech
+📍 Production:  <REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech
+📍 Development: <REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech
 
 🔌 Testing database connections...
    ✅ Production connection successful

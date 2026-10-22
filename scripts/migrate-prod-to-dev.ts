@@ -19,12 +19,17 @@ import path from "path";
 // Load environment variables
 dotenv.config({ path: path.join(process.cwd(), ".env.local") });
 
-// Database connection strings
-const PROD_DATABASE_URL = process.env.PROD_DATABASE_URL ||
-  "postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-wispy-fog-ad8d4skz-pooler.c-2.us-east-1.aws.neon.tech/neondb";
+// Database connection strings, read from the environment (.env.local)
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`${name} is not set. Add it to .env.local before running this script.`);
+  }
+  return value;
+}
 
-const DEV_DATABASE_URL = process.env.DATABASE_URL ||
-  "postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-bold-sunset-adneqlo6-pooler.c-2.us-east-1.aws.neon.tech/neondb";
+const PROD_DATABASE_URL = requireEnv("PROD_DATABASE_URL");
+const DEV_DATABASE_URL = requireEnv("DATABASE_URL");
 
 // Create database connections
 const prodSql = neon(PROD_DATABASE_URL);

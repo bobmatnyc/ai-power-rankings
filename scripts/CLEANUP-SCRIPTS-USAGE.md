@@ -17,7 +17,7 @@ TypeScript scripts for database cleanup, data migration, and tool data managemen
 
 ### Prerequisites
 
-1. Ensure you're connected to the **staging database**: `ep-dark-firefly-adp1p3v8`
+1. Ensure you're connected to the **staging database**: `<REDACTED_ENDPOINT>`
 2. Set the appropriate `DATABASE_URL` in your environment
 3. Have `tsx` installed (already in project dependencies)
 

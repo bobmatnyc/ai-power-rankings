@@ -14,7 +14,14 @@ import { eq } from 'drizzle-orm';
 import * as fs from 'fs';
 import * as path from 'path';
 
-async function updateProductionLogoUrls() {
+// Production host fragment that DATABASE_URL must contain; kept out of source.
+const PROD_DATABASE_HOST = process.env.PROD_DATABASE_HOST;
+if (!PROD_DATABASE_HOST) {
+  console.error('❌ PROD_DATABASE_HOST is not set. Export it before running this script.');
+  process.exit(1);
+}
+
+async function updateProductionLogoUrls(prodHost: string): Promise<void> {
   const db = getDb();
 
   console.log('\n🎨 Updating Production Logo URLs...\n');
@@ -22,7 +29,7 @@ async function updateProductionLogoUrls() {
 
   // Verify we're using the right database
   const dbUrl = process.env.DATABASE_URL || '';
-  const isProduction = dbUrl.includes('ep-dark-firefly-adp1p3v8');
+  const isProduction = dbUrl.includes(prodHost);
 
   console.log('\n🔍 Database Connection Check:');
   console.log(`   URL: ${dbUrl.substring(0, 50)}...`);
@@ -30,7 +37,7 @@ async function updateProductionLogoUrls() {
 
   if (!isProduction) {
     console.log('\n⚠️  WARNING: This does not appear to be the production database!');
-    console.log('   Expected: ep-dark-firefly-adp1p3v8');
+    console.log(`   Expected: ${prodHost}`);
     console.log('\n   Continue anyway? (The script will proceed in 3 seconds)');
     await new Promise(resolve => setTimeout(resolve, 3000));
   }
@@ -161,7 +168,7 @@ async function updateProductionLogoUrls() {
   console.log('   Logos will display on next deployment.\n');
 }
 
-updateProductionLogoUrls()
+updateProductionLogoUrls(PROD_DATABASE_HOST)
   .catch((error) => {
     console.error('\n❌ Logo update error:', error);
     process.exit(1);

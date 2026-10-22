@@ -68,7 +68,7 @@ Security: Authentication requirement working as designed ✅
 #### Database Status:
 - **Connection**: PostgreSQL (Neon) via HTTP mode ✅
 - **Environment**: Development
-- **Host**: ep-bold-sunset-adneqlo6-pooler.c-2.us-east-1.aws.neon.tech
+- **Host**: <REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech
 - **Tables Present**: 8 total, 4 article-related
 
 #### Table Analysis:

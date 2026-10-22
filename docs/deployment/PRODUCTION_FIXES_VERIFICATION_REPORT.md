@@ -1,6 +1,6 @@
 # Production Fixes Verification Report
 **Date**: October 31, 2025
-**Database**: Production (ep-dark-firefly-adp1p3v8)
+**Database**: Production (<REDACTED_ENDPOINT>)
 **Status**: ✅ COMPLETE
 
 ---
@@ -107,8 +107,8 @@ All production fixes have been successfully applied and verified. The Jules dupl
 
 ### Production Database Confirmed
 ```
-Database URL: postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark...
-Database ID: ep-dark-firefly-adp1p3v8
+Database URL: postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>
+Database ID: <REDACTED_ENDPOINT>
 Connection: HTTP mode (Neon serverless)
 Environment: Production
 ```
@@ -233,7 +233,7 @@ The production database is now in the correct state with:
 
 ## Contact & Support
 
-**Database**: Neon PostgreSQL (ep-dark-firefly-adp1p3v8)
+**Database**: Neon PostgreSQL (<REDACTED_ENDPOINT>)
 **Scripts Location**: `/scripts/`
 **Public Assets**: `/public/tools/`
 

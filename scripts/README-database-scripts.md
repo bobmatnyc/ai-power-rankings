@@ -173,7 +173,7 @@ DATABASE_URL=postgresql://user:pass@host/db              # Production
 ```
 🚀 Starting scoring columns migration...
 
-📍 Using database: ep-wispy-fog-ad8d4skz-pooler.c-2.us-east-1.aws.neon.tech
+📍 Using database: <REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech
 📄 Reading migration file: .../lib/db/migrations/0003_add_scoring_columns.sql
 
 📝 Found 4 SQL statements to execute

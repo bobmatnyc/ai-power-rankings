@@ -164,7 +164,7 @@ export function getDb(): typeof db {
     }
 
     console.log("📍 Environment:", NODE_ENV);
-    // Extract just the endpoint ID (e.g., "ep-dark-firefly-adp1p3v8") from the full host
+    // Extract just the endpoint ID (e.g., "ep-example-name-12345678") from the full host
     const fullHost = DATABASE_URL.split("@")[1]?.split("/")[0] || "unknown";
     const endpointId = fullHost.split("-pooler")[0] || fullHost;
     console.log("🔗 Database endpoint:", endpointId);

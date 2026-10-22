@@ -162,7 +162,7 @@ All API endpoints tested successfully:
 🔧 Using DATABASE_URL_DEVELOPMENT (development branch)
 ✅ Database connection established (HTTP mode)
 📍 Environment: development
-🔗 Database endpoint: ep-dark-firefly-adp1p3v8
+🔗 Database endpoint: <REDACTED_ENDPOINT>
 ⚡ Connection mode: HTTP
 ```
 

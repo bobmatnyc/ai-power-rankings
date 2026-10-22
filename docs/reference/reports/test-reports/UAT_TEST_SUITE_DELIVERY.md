@@ -240,7 +240,7 @@ Delivered a **comprehensive end-to-end UAT test suite** with **100+ tests** cove
 1. Node.js v18 or higher
 2. npm package manager
 3. Running server on localhost:3011
-4. Database access (ep-dark-firefly-adp1p3v8)
+4. Database access (<REDACTED_ENDPOINT>)
 
 ### One-Time Setup
 ```bash

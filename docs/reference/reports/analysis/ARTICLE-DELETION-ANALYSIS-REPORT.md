@@ -1,7 +1,7 @@
 # Article Deletion Analysis Report
 
 **Date:** 2025-10-03
-**Database:** Development (ep-dark-firefly-adp1p3v8)
+**Database:** Development (<REDACTED_ENDPOINT>)
 **Purpose:** Identify all articles to be deleted (0 tool mentions + test articles)
 
 ---
@@ -521,4 +521,4 @@ WHERE tool_mentions = '[]'::jsonb OR tool_mentions IS NULL;
 
 **Report Generated:** 2025-10-03
 **Script Used:** `scripts/analyze-articles-to-delete.ts`
-**Database:** Development (ep-dark-firefly-adp1p3v8)
+**Database:** Development (<REDACTED_ENDPOINT>)
