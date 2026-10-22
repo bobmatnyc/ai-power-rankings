@@ -11,7 +11,14 @@ import { getDb, closeDb } from '../lib/db/connection';
 import { tools, rankings } from '../lib/db/schema';
 import { eq } from 'drizzle-orm';
 
-async function applyProductionFixes() {
+// Production host fragment that DATABASE_URL must contain; kept out of source.
+const PROD_DATABASE_HOST = process.env.PROD_DATABASE_HOST;
+if (!PROD_DATABASE_HOST) {
+  console.error('❌ PROD_DATABASE_HOST is not set. Export it before running this script.');
+  process.exit(1);
+}
+
+async function applyProductionFixes(prodHost: string): Promise<void> {
   const db = getDb();
 
   console.log('\n🚀 Applying Production Fixes...\n');
@@ -19,7 +26,7 @@ async function applyProductionFixes() {
 
   // Verify we're using the right database
   const dbUrl = process.env.DATABASE_URL || '';
-  const isProduction = dbUrl.includes('ep-dark-firefly-adp1p3v8');
+  const isProduction = dbUrl.includes(prodHost);
 
   console.log('\n🔍 Database Connection Check:');
   console.log(`   URL: ${dbUrl.substring(0, 50)}...`);
@@ -27,7 +34,7 @@ async function applyProductionFixes() {
 
   if (!isProduction) {
     console.log('\n⚠️  WARNING: This does not appear to be the production database!');
-    console.log('   Expected: ep-dark-firefly-adp1p3v8');
+    console.log(`   Expected: ${prodHost}`);
     console.log('\n   Continue anyway? (The script will proceed in 3 seconds)');
     await new Promise(resolve => setTimeout(resolve, 3000));
   }
@@ -142,7 +149,7 @@ async function applyProductionFixes() {
   console.log('');
 }
 
-applyProductionFixes()
+applyProductionFixes(PROD_DATABASE_HOST)
   .catch((error) => {
     console.error('\n❌ Production fix error:', error);
     process.exit(1);
