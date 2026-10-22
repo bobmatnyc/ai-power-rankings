@@ -4,6 +4,10 @@ import { Minus, Sparkles, TrendingDown, TrendingUp } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
+// #178: the rank-delta colours and gap come from the sample --ds-* design-agent
+// tokens (app/globals.css). Values equal the Tailwind palette classes they
+// replace, light and dark, so nothing renders differently.
+
 interface RankingChangeProps {
   previousRank?: number;
   currentRank: number;
@@ -29,7 +33,7 @@ export function RankingChange({
           <TooltipTrigger asChild>
             <span
               className={cn(
-                "inline-flex items-center gap-1 font-medium text-green-600 dark:text-green-400",
+                "inline-flex items-center gap-ds-inline font-medium text-ds-rank-up",
                 size === "sm" && "text-xs",
                 size === "md" && "text-sm",
                 size === "lg" && "text-base",
@@ -59,7 +63,7 @@ export function RankingChange({
           <TooltipTrigger asChild>
             <span
               className={cn(
-                "inline-flex items-center gap-1 font-medium text-gray-500 dark:text-gray-400",
+                "inline-flex items-center gap-ds-inline font-medium text-ds-rank-steady",
                 size === "sm" && "text-xs",
                 size === "md" && "text-sm",
                 size === "lg" && "text-base",
@@ -85,7 +89,7 @@ export function RankingChange({
           <TooltipTrigger asChild>
             <span
               className={cn(
-                "inline-flex items-center gap-1 font-medium text-green-600 dark:text-green-400",
+                "inline-flex items-center gap-ds-inline font-medium text-ds-rank-up",
                 size === "sm" && "text-xs",
                 size === "md" && "text-sm",
                 size === "lg" && "text-base",
@@ -114,7 +118,7 @@ export function RankingChange({
         <TooltipTrigger asChild>
           <span
             className={cn(
-              "inline-flex items-center gap-1 font-medium text-red-600 dark:text-red-400",
+              "inline-flex items-center gap-ds-inline font-medium text-ds-rank-down",
               size === "sm" && "text-xs",
               size === "md" && "text-sm",
               size === "lg" && "text-base",
