@@ -1,7 +1,7 @@
 # Goose AI Tool Verification Report
 **Date**: October 30, 2025  
 **Environment**: Development (localhost:3000)  
-**Database**: Development branch (ep-dark-firefly-adp1p3v8)  
+**Database**: Development branch (<REDACTED_ENDPOINT>)  
 **Tester**: Web QA Agent
 
 ---

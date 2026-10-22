@@ -76,7 +76,7 @@ curl http://localhost:3007/api/tools/goose/json | jq '.tool | {name, logo_url, c
 
 ## Environment
 - Database: DEVELOPMENT
-- Endpoint: ep-dark-firefly-adp1p3v8
+- Endpoint: <REDACTED_ENDPOINT>
 - Mode: HTTP (Neon serverless)
 
 ## Changes Summary

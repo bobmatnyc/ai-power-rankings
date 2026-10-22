@@ -62,7 +62,7 @@ rm -f "$TEMP_ENV"
 🚀 Using DATABASE_URL (production branch)
 ✅ Database connection pool established
 📍 Environment: production
-🔗 Database endpoint: ep-dark-firefly-adp1p3v8
+🔗 Database endpoint: <REDACTED_ENDPOINT>
 ⚡ Connection mode: Pooled
 🔄 Setting October 2025 rankings as current...
 
@@ -213,7 +213,7 @@ curl -s "https://aipowerranking.com/api/rankings/current" | jq .
 ## Database Connection Details
 
 **Production Database**:
-- **Endpoint**: `ep-dark-firefly-adp1p3v8`
+- **Endpoint**: `<REDACTED_ENDPOINT>`
 - **Connection Mode**: Pooled
 - **Environment**: `NODE_ENV=production`
 - **Updated Ranking**:

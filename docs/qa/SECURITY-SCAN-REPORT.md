@@ -27,7 +27,7 @@
 
 **Exposed Secret**:
 ```
-CLERK_SECRET_KEY=CLERK_LIVE_SECRET_KEY-REDACTED
+CLERK_SECRET_KEY=sk_live_<REDACTED>
 ```
 
 **Risk**:
@@ -53,7 +53,7 @@ CLERK_SECRET_KEY=CLERK_LIVE_SECRET_KEY-REDACTED
 
 **Exposed Secret**:
 ```
-CLERK_SECRET_KEY=CLERK_TEST_SECRET_KEY-REDACTED
+CLERK_SECRET_KEY=sk_test_<REDACTED>
 ```
 
 **Risk**:
@@ -188,7 +188,7 @@ Scanned for:
 5. **Re-scan After Fixes**
    ```bash
    # Run security scan again
-   git diff origin/main HEAD | grep -iE "(sk_test_KH011|sk_live_ckkPN)"
+   git diff origin/main HEAD | grep -iE "(sk_test_|sk_live_)"
    # Should return ZERO results
    ```
 

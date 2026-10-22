@@ -264,7 +264,7 @@ done
 ## Notes
 
 - Database environment: DEVELOPMENT
-- Database endpoint: ep-dark-firefly-adp1p3v8
+- Database endpoint: <REDACTED_ENDPOINT>
 - Connection mode: HTTP (Neon serverless)
 - All changes made to development database only
 
