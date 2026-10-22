@@ -14,6 +14,8 @@
  * OpenRouter credits text) that must end failed with a non-2xx response; a run whose
  * candidates are genuinely rejected on quality, which must still complete with 200;
  * and a run whose only provider failure is a 429 rate limit, which is not billing.
+ * #172 adds a run in which no quality reply parses: every candidate is
+ * `assessment_failed`, the run ends failed and the route answers 500.
  *
  * Test: `npx vitest run tests/unit/cron-daily-news-billing.test.ts`. No network, no
  * database.
@@ -296,5 +298,140 @@ describe("GET /api/cron/daily-news — provider billing errors (#167)", () => {
     expect(response.status).toBe(200);
     expect(payload.data?.status).toBe("completed");
     expect(mocks.row["status"]).toBe("completed");
+  });
+});
+
+// #172: an unparseable quality reply is an assessment failure, and a run in which every
+// assessment failed must not end `completed` with a 200.
+describe("GET /api/cron/daily-news — every quality assessment fails (#172)", () => {
+  beforeEach(() => {
+    mocks.resetRow();
+    mocks.tavilySearch.mockReset();
+    mocks.braveSearch.mockReset();
+    mocks.braveAvailable.value = false;
+    mocks.tavilyExtract.mockReset();
+    mocks.jinaFetch.mockReset();
+    mocks.openRouterGenerate.mockReset();
+    mocks.ingestArticle.mockReset();
+    process.env["CRON_SECRET"] = SECRET;
+    delete process.env["ALERT_WEBHOOK_URL"];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(
+            `<html><body><p>${"Editors and agents compete on latency and price. ".repeat(8)}</p></body></html>`,
+            { status: 200 }
+          )
+      )
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    restoreEnv("CRON_SECRET", originalCronSecret);
+    restoreEnv("ALERT_WEBHOOK_URL", originalWebhookUrl);
+  });
+
+  it("records assessment_failed, ends the run failed and answers 500 when no reply parses", async () => {
+    // Fresh hosts: the 429 arm above leaves its hosts on the in-process blocked-domain list.
+    mocks.tavilySearch.mockResolvedValue(
+      discoveryResults(true).map((r, i) => ({
+        ...r,
+        url: `https://assess-${i}.example.org/story`,
+        source: `assess-${i}.example.org`,
+      }))
+    );
+    // A reply cut off mid-object, with no finish_reason "length" to flag it.
+    mocks.openRouterGenerate.mockResolvedValue({
+      content: '{"qualityScore": 8, "relevanceScore": 9, "reasoning": "Specific product ne',
+      metadata: { estimatedCost: 0.001 },
+    });
+
+    const response = await GET(cronRequest());
+    const payload = (await response.json()) as RoutePayload;
+
+    // Soft, so a regression reports the outcome and the status code separately.
+    const outcomes = (mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? [];
+    expect.soft(outcomes.map((o) => o.outcome)).toEqual([
+      "assessment_failed",
+      "assessment_failed",
+      "assessment_failed",
+    ]);
+    expect.soft(response.status).toBe(500);
+    expect(payload.success).toBe(false);
+    expect(payload.data?.status).toBe("failed");
+    expect(payload.error).toMatch(/quality assessment failed for all 3 candidates/i);
+    expect(mocks.row["status"]).toBe("failed");
+    expect(mocks.ingestArticle).not.toHaveBeenCalled();
+  });
+});
+
+// #172: the circuit breaker in batchAssess must not accept candidates it never assessed;
+// with N >= 6 it used to trip after batch 1 and pass every later candidate at score 7.
+describe("GET /api/cron/daily-news — assessment circuit breaker fails closed (#172)", () => {
+  beforeEach(() => {
+    mocks.resetRow();
+    mocks.tavilySearch.mockReset();
+    mocks.braveSearch.mockReset();
+    mocks.braveAvailable.value = false;
+    mocks.tavilyExtract.mockReset();
+    mocks.jinaFetch.mockReset();
+    mocks.openRouterGenerate.mockReset();
+    mocks.ingestArticle.mockReset();
+    // A wrongly accepted candidate must ingest cleanly, or the ingest error alone fails the run.
+    mocks.ingestArticle.mockImplementation(async () => ({ id: "article-fixture" }));
+    process.env["CRON_SECRET"] = SECRET;
+    delete process.env["ALERT_WEBHOOK_URL"];
+  });
+
+  afterEach(() => {
+    restoreEnv("CRON_SECRET", originalCronSecret);
+    restoreEnv("ALERT_WEBHOOK_URL", originalWebhookUrl);
+  });
+
+  /** N same-day candidates whose titles share no word, so semantic dedupe keeps all N. */
+  function distinctCandidates(n: number, tag: string) {
+    const template = discoveryResults(true)[0]!;
+    return Array.from({ length: n }, (_, i) => ({
+      ...template,
+      title: `Kestrel${tag}${i} Quillon${tag}${i} Varvex${tag}${i}`,
+      url: `https://breaker-${tag}-${i}.example.org/story`,
+      source: `breaker-${tag}-${i}.example.org`,
+    }));
+  }
+
+  it.each([6, 11, 20])(
+    "accepts nothing and answers 500 when no reply parses across %i candidates",
+    async (n) => {
+      mocks.tavilySearch.mockResolvedValue(distinctCandidates(n, `u${n}`));
+      mocks.openRouterGenerate.mockResolvedValue({
+        content: '{"qualityScore": 8, "relevanceScore": 9, "reasoning": "Specific product ne',
+        metadata: { estimatedCost: 0.001 },
+      });
+
+      const response = await GET(cronRequest());
+      const payload = (await response.json()) as RoutePayload;
+
+      const outcomes = (mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? [];
+      expect.soft(outcomes.map((o) => o.outcome)).toEqual(Array(n).fill("assessment_failed"));
+      expect.soft(mocks.ingestArticle).not.toHaveBeenCalled();
+      expect.soft(response.status).toBe(500);
+      expect(payload.data?.status).toBe("failed");
+      expect(mocks.row["status"]).toBe("failed");
+    }
+  );
+
+  it("records assessment_failed for a parseable reply that carries no score", async () => {
+    mocks.tavilySearch.mockResolvedValue(distinctCandidates(3, "empty"));
+    mocks.openRouterGenerate.mockResolvedValue({ content: "{}", metadata: { estimatedCost: 0.001 } });
+
+    const response = await GET(cronRequest());
+    const payload = (await response.json()) as RoutePayload;
+
+    const outcomes = (mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? [];
+    expect.soft(outcomes.map((o) => o.outcome)).toEqual(Array(3).fill("assessment_failed"));
+    expect.soft(response.status).toBe(500);
+    expect(payload.data?.status).toBe("failed");
   });
 });
