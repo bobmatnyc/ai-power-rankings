@@ -74,7 +74,7 @@ This test suite provides complete coverage of critical user paths and business r
 1. **Node.js**: v18 or higher
 2. **Playwright**: Installed via npm
 3. **Running Server**: Application running on `localhost:3011`
-4. **Database**: Production database access (ep-dark-firefly-adp1p3v8)
+4. **Database**: Production database access (<REDACTED_ENDPOINT>)
 5. **Environment**: `.env.local` configured with proper credentials
 
 ## Installation

@@ -459,5 +459,5 @@ Goose AI Agent has been successfully integrated into the AI Power Rankings platf
 
 *Generated: 2025-10-30*
 *Environment: Development*
-*Database: ep-dark-firefly-adp1p3v8*
+*Database: <REDACTED_ENDPOINT>*
 *Status: ✅ READY FOR PRODUCTION*

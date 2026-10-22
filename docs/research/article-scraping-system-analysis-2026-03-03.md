@@ -7,7 +7,7 @@
 
 ## 1. Last Published Article Date
 
-**Production database query results** (from `ep-dark-firefly-adp1p3v8`):
+**Production database query results** (from `<REDACTED_ENDPOINT>`):
 
 The most recent ingestion runs occurred on **Tue Mar 03, 2026 at 01:17-01:20 AM EST** (presumably triggered manually last night as a backfill test). These runs ingested articles published through **Mon Mar 02, 2026** (Cursor $2B article at 8:53 PM EST, Feb 27 Israeli startup article).
 
@@ -144,7 +144,7 @@ The Mar 03 runs already picked up the most prominent Feb 27-Mar 02 stories. Howe
 ### Step 1: Verify What's Actually Missing
 
 ```bash
-DATABASE_URL="postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
+DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
 npx tsx scripts/check-recent-articles.ts
 ```
 
@@ -155,7 +155,7 @@ Look at the `publishedDate` spread. If you see articles from Feb 27+ but nothing
 To maximize coverage of the missed Feb 25 - Mar 2 window:
 
 ```bash
-DATABASE_URL="postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
+DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
 TAVILY_API_KEY="<your-tavily-key>" \
 OPENROUTER_API_KEY="<your-openrouter-key>" \
 npx tsx scripts/trigger-ingestion.ts --max-articles=20 --days=14

@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-15
 **Status:** Completed
-**Database:** ep-dark-firefly-adp1p3v8 (development/main branch)
+**Database:** <REDACTED_ENDPOINT> (development/main branch)
 
 ## Summary
 
@@ -13,14 +13,14 @@
 The working connection is `DATABASE_URL_DEVELOPMENT` (and the pooled variant used in the backup `.env.local.bak`):
 
 ```
-postgresql://neondb_owner:npg_3oQsxj0FcfKY@ep-dark-firefly-adp1p3v8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
 ```
 
 The current `.env.local` has two URLs pointing to different (empty) Neon branches:
-- `DATABASE_URL` (pooled): `ep-bold-sunset-adneqlo6` — authentication fails (expired)
-- `DATABASE_URL_UNPOOLED`: `ep-autumn-glitter-ad1uqvfm` — connects but has 0 tools (empty branch)
+- `DATABASE_URL` (pooled): `<REDACTED_ENDPOINT>` — authentication fails (expired)
+- `DATABASE_URL_UNPOOLED`: `<REDACTED_ENDPOINT>` — connects but has 0 tools (empty branch)
 
-The live data is on `ep-dark-firefly-adp1p3v8`, found in `.env.local.bak`.
+The live data is on `<REDACTED_ENDPOINT>`, found in `.env.local.bak`.
 
 ## Deleted Tools
 
@@ -138,4 +138,4 @@ Add a `findByStatus("pending_review")` admin UI view for curator review.
 
 ### 4. Fix `.env.local` to point at the live database
 
-Update `DATABASE_URL` in `.env.local` to use the `ep-dark-firefly-adp1p3v8` endpoint (from `.env.local.bak`) so local development connects to the correct branch.
+Update `DATABASE_URL` in `.env.local` to use the `<REDACTED_ENDPOINT>` endpoint (from `.env.local.bak`) so local development connects to the correct branch.

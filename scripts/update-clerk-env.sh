@@ -5,6 +5,9 @@
 
 set -e  # Exit on error
 
+: "${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:?Set NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY before running}"
+: "${CLERK_SECRET_KEY:?Set CLERK_SECRET_KEY before running}"
+
 echo "🔗 Linking to Vercel project..."
 vercel link --yes
 
@@ -17,10 +20,10 @@ echo ""
 echo "➕ Adding new Clerk LIVE keys to production..."
 
 # Add publishable key
-echo "pk_live_Y2xlcmsuYWlwb3dlcnJhbmtpbmcuY29tJA" | vercel env add NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY production
+echo "$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY" | vercel env add NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY production
 
 # Add secret key
-echo "sk_live_ckkPNjau1etDPUFu9ugPORqBSDBCOPY2aVKsj4z2xK" | vercel env add CLERK_SECRET_KEY production
+echo "$CLERK_SECRET_KEY" | vercel env add CLERK_SECRET_KEY production
 
 echo ""
 echo "✅ Clerk live keys added to production!"
