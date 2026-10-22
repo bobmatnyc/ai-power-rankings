@@ -5,6 +5,9 @@
 
 import { getOpenRouterService, type GenerationMetadata } from '@/lib/services/openrouter.service';
 import { getOpenRouterModel } from '@/lib/services/openrouter-model';
+// #172: the same JSON extraction #203 gave article analysis; truncation is already
+// rejected inside OpenRouterService.generate via readCompletion.
+import { extractJsonObject } from '@/lib/services/llm-completion';
 import { loggers } from '@/lib/logger';
 
 /**
@@ -53,6 +56,14 @@ const INGEST_THRESHOLDS = {
   minimumAverageScore: 7.0,
   minimumRelevanceScore: 7,
 };
+
+/**
+ * #172: completion budget for one assessment. The verdict is five short JSON fields,
+ * ~150-300 tokens. 1000 left no margin for a model that reasons or pads before the
+ * object; 2000 is ~7x the verdict. A reply that still hits the cap fails as truncation
+ * (assessment_failed), never as a quality verdict.
+ */
+export const ASSESSMENT_MAX_TOKENS = 2000;
 
 /**
  * System prompt for the quality assessment LLM
@@ -121,8 +132,8 @@ export class ArticleQualityService {
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userPrompt },
           ],
-          temperature: 0.3,
-          max_tokens: 1000,
+          temperature: 0.3, // #172: sonnet-5.5 accepts temperature; #203 kept 0.2 for analysis
+          max_tokens: ASSESSMENT_MAX_TOKENS, // #172: was 1000; see the constant
         },
         {
           maxAttempts: 2,
@@ -285,16 +296,8 @@ ${article.content.substring(0, 4000)}${article.content.length > 4000 ? '\n[Conte
     metadata: GenerationMetadata
   ): QualityAssessment {
     try {
-      // Extract JSON from response (handle markdown code blocks)
-      let jsonContent = content.trim();
-
-      // Remove markdown code block if present
-      const jsonMatch = jsonContent.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (jsonMatch) {
-        jsonContent = jsonMatch[1].trim();
-      }
-
-      const parsed = JSON.parse(jsonContent) as {
+      // #172: tolerate a fence or prose around the object; never repair a cut-off one.
+      const parsed = extractJsonObject(content) as {
         qualityScore?: number;
         relevanceScore?: number;
         credibilityScore?: number;
@@ -327,14 +330,19 @@ ${article.content.substring(0, 4000)}${article.content.length > 4000 ? '\n[Conte
         estimatedCost: metadata.estimatedCost,
       };
     } catch (error) {
-      loggers.api.warn('Failed to parse LLM assessment response', {
-        error: error instanceof Error ? error.message : String(error),
-        contentPreview: content.substring(0, 200),
+      // #172: an unparseable reply is an assessment failure, not a quality verdict. Carry
+      // `error` so the run records `assessment_failed`; log at error level, without content.
+      const message = error instanceof Error ? error.message : String(error);
+      loggers.api.error('Failed to parse LLM assessment response', {
+        error: message,
+        model: metadata.model,
+        contentLength: content.length,
       });
 
       return {
         ...DEFAULT_ASSESSMENT,
         estimatedCost: metadata.estimatedCost,
+        error: `Quality assessment reply unparseable: ${message}`,
       };
     }
   }

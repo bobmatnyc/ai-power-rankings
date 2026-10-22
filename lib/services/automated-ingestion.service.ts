@@ -1208,6 +1208,15 @@ export class AutomatedIngestionService {
           );
         });
 
+        // #172: when no candidate got a quality verdict, the run did not find a quiet day; it
+        // could not assess anything. The error makes the run `failed` and the route answer 500.
+        const assessmentErrors = qualityResults.map((r) => r?.error).filter(Boolean);
+        if (articlesWithContent.length > 0 && assessmentErrors.length === articlesWithContent.length) {
+          errors.push(
+            `Quality assessment failed for all ${articlesWithContent.length} candidates: ${assessmentErrors[0]}`
+          );
+        }
+
         loggers.api.info("[AutomatedIngestion] Quality assessment complete", {
           passed: articlesPassedQuality,
           rejected: articlesWithContent.length - articlesPassedQuality,
