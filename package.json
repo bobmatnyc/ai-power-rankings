@@ -34,7 +34,8 @@
     "release:major": "bash scripts/release.sh major",
     "version:check": "node -p \"require(\"./package.json\").version\"",
     "verify": "bash scripts/verify-deployment.sh",
-    "verify:staging": "bash scripts/verify-deployment.sh ${STAGING_URL:-https://aipowerranking.vercel.app}"
+    "verify:staging": "bash scripts/verify-deployment.sh ${STAGING_URL:-https://aipowerranking.vercel.app}",
+    "test:visual": "playwright test -c tests/visual/playwright.design.config.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.33.0",
