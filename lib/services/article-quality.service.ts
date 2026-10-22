@@ -5,6 +5,9 @@
 
 import { getOpenRouterService, type GenerationMetadata } from '@/lib/services/openrouter.service';
 import { getOpenRouterModel } from '@/lib/services/openrouter-model';
+// #172: the same JSON extraction #203 gave article analysis; truncation is already
+// rejected inside OpenRouterService.generate via readCompletion.
+import { extractJsonObject } from '@/lib/services/llm-completion';
 import { loggers } from '@/lib/logger';
 
 /**
@@ -53,6 +56,14 @@ const INGEST_THRESHOLDS = {
   minimumAverageScore: 7.0,
   minimumRelevanceScore: 7,
 };
+
+/**
+ * #172: completion budget for one assessment. The verdict is five short JSON fields,
+ * ~150-300 tokens. 1000 left no margin for a model that reasons or pads before the
+ * object; 2000 is ~7x the verdict. A reply that still hits the cap fails as truncation
+ * (assessment_failed), never as a quality verdict.
+ */
+export const ASSESSMENT_MAX_TOKENS = 2000;
 
 /**
  * System prompt for the quality assessment LLM
@@ -121,8 +132,8 @@ export class ArticleQualityService {
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: userPrompt },
           ],
-          temperature: 0.3,
-          max_tokens: 1000,
+          temperature: 0.3, // #172: sonnet-5.5 accepts temperature, so the value is unchanged
+          max_tokens: ASSESSMENT_MAX_TOKENS, // #172: was 1000; see the constant
         },
         {
           maxAttempts: 2,
@@ -166,8 +177,8 @@ export class ArticleQualityService {
    * sequential OpenRouter timeouts that can hang the entire pipeline.
    *
    * Includes a circuit breaker: if more than 30% of assessments fail,
-   * remaining articles are accepted with a default "ingest" assessment
-   * to prevent total pipeline failure.
+   * remaining articles are skipped with an `error` and never ingested
+   * (#172: accepting them ingested unassessed content).
    *
    * @param articles - Array of articles to assess
    * @returns Array of quality assessments in same order as input
@@ -184,26 +195,25 @@ export class ArticleQualityService {
     for (let i = 0; i < articles.length; i += BATCH_SIZE) {
       const batch = articles.slice(i, i + BATCH_SIZE);
 
-      // Circuit breaker: if too many failures, accept remaining articles
+      // Circuit breaker: if too many failures, skip remaining articles (#172)
       if (!circuitBreakerTripped && qualityFailures > FAILURE_THRESHOLD) {
         loggers.api.warn(
-          `Too many quality failures (${qualityFailures}/${articles.length}), accepting remaining articles`,
+          // #172: the remaining articles are skipped, not accepted.
+          `Too many quality failures (${qualityFailures}/${articles.length}), skipping remaining articles`,
           { failureThreshold: FAILURE_THRESHOLD, remaining: articles.length - i }
         );
         circuitBreakerTripped = true;
       }
 
       if (circuitBreakerTripped) {
-        // Accept remaining articles with default-ingest assessment
+        // #172: fail closed. An unassessed article is never accepted; it carries `error` so
+        // the run records `assessment_failed`, and stops spending calls on a failing provider.
         for (const _article of batch) {
           assessments.push({
-            qualityScore: 7,
-            relevanceScore: 7,
-            credibilityScore: 7,
-            reasoning: 'Circuit breaker accepted: too many quality assessment failures',
-            suggestedCategories: [],
-            shouldIngest: true,
+            ...DEFAULT_ASSESSMENT,
+            reasoning: 'Circuit breaker open: assessment skipped',
             estimatedCost: 0,
+            error: `circuit breaker open: assessment unavailable after ${qualityFailures} failures`,
           });
         }
         continue;
@@ -285,22 +295,19 @@ ${article.content.substring(0, 4000)}${article.content.length > 4000 ? '\n[Conte
     metadata: GenerationMetadata
   ): QualityAssessment {
     try {
-      // Extract JSON from response (handle markdown code blocks)
-      let jsonContent = content.trim();
-
-      // Remove markdown code block if present
-      const jsonMatch = jsonContent.match(/```(?:json)?\s*([\s\S]*?)```/);
-      if (jsonMatch) {
-        jsonContent = jsonMatch[1].trim();
-      }
-
-      const parsed = JSON.parse(jsonContent) as {
+      // #172: tolerate a fence or prose around the object; never repair a cut-off one.
+      const parsed = extractJsonObject(content) as {
         qualityScore?: number;
         relevanceScore?: number;
         credibilityScore?: number;
         reasoning?: string;
         suggestedCategories?: string[];
       };
+
+      // #172: a reply with no numeric score at all (`{}`, drifted keys) is not a verdict.
+      if (![parsed.qualityScore, parsed.relevanceScore, parsed.credibilityScore].some(Number.isFinite)) {
+        throw new Error('reply has no numeric score');
+      }
 
       // Validate and clamp scores to 0-10 range
       const qualityScore = this.clampScore(parsed.qualityScore);
@@ -327,14 +334,19 @@ ${article.content.substring(0, 4000)}${article.content.length > 4000 ? '\n[Conte
         estimatedCost: metadata.estimatedCost,
       };
     } catch (error) {
-      loggers.api.warn('Failed to parse LLM assessment response', {
-        error: error instanceof Error ? error.message : String(error),
-        contentPreview: content.substring(0, 200),
+      // #172: an unparseable reply is an assessment failure, not a quality verdict. Carry
+      // `error` so the run records `assessment_failed`; log at error level, without content.
+      const message = error instanceof Error ? error.message : String(error);
+      loggers.api.error('Failed to parse LLM assessment response', {
+        error: message,
+        model: metadata.model,
+        contentLength: content.length,
       });
 
       return {
         ...DEFAULT_ASSESSMENT,
         estimatedCost: metadata.estimatedCost,
+        error: `Quality assessment reply unparseable: ${message}`,
       };
     }
   }
