@@ -103,11 +103,12 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
  * an exact token; the 59 without one stay (migration-190e1.md). #190 PR E2a:
  * 264, the 126 uses in the admin components and SEO dashboard that have an
  * exact token; the 55 without one stay (migration-190e2a.md). #190 ruling
- * Df8: 205, E1's 59 untokenised uses exempted per file below.
+ * Df8: 205, E1's 59 untokenised uses exempted per file below; then 150,
+ * E2a's 55 untokenised uses exempted the same way.
  * Lower it as #190 migrates; never raise it.
  */
-// #190 Df8: lowered from 264 by the 59 E1 uses the allowlist now exempts.
-const HARDCODED_COLOUR_BASELINE = 205;
+// #190 Df8: lowered from 205 by the 55 E2a uses the allowlist now exempts.
+const HARDCODED_COLOUR_BASELINE = 150;
 
 /**
  * #190 rulings D2-D4 and Df8: the only places a literal colour is the right
@@ -191,6 +192,56 @@ const RATCHET_ALLOWLIST: ReadonlyArray<{
     path: /^app\/\[lang\]\/not-found\.tsx$/,
     colourCap: 4,
     reason: "Df8: the card's box-shadow rgba values, and #111827 / #374151 headings that only surface and border tokens hold.",
+  },
+  // #190 Df8: the 55 E2a colours with no exact token (migration-190e2a.md
+  // "Not migrated"), exempted per file and capped at the measured count.
+  {
+    path: /^components\/admin\/generation-stats\.tsx$/,
+    colourCap: 24,
+    reason:
+      "Df8: the stat tiles' 50-step fills and 900-step values, the red-800/700 error and gray-700 to gray-900 text have no token in either mode.",
+  },
+  {
+    path: /^components\/admin\/rankings-viewer\.tsx$/,
+    colourCap: 14,
+    reason:
+      "Df8: 100/800 badges in both modes (the tag tokens switch in dark) and the top-3 rows' yellow-50/200/300, which no token holds.",
+  },
+  {
+    path: /^components\/admin\/unified-admin-dashboard\.tsx$/,
+    colourCap: 6,
+    reason:
+      "Df8: gray-700, blue-700, yellow-700 and green-800 text in both modes, and the db-status edge's inline #10b981 / #6b7280, which only a text token holds.",
+  },
+  {
+    path: /^components\/admin\/news-ingestion-tool\.tsx$/,
+    colourCap: 4,
+    reason: "Df8: green-800 / red-800 alert text in both modes and the yellow-50/200 warning, which no token holds.",
+  },
+  {
+    path: /^components\/admin\/admin-dashboard\.tsx$/,
+    colourCap: 2,
+    reason: "Df8: the disabled tiles' bg-gray-500; only a text token and a gradient stop hold #6b7280.",
+  },
+  {
+    path: /^components\/admin\/character-counter\.tsx$/,
+    colourCap: 2,
+    reason: "Df8: text-orange-600 / dark:text-orange-400; --ds-accent-cat-orange-strong is orange-600 in both modes.",
+  },
+  {
+    path: /^components\/admin\/article-management\.tsx$/,
+    colourCap: 1,
+    reason: "Df8: hover:text-red-700 in both modes; --ds-danger is red-700 in light only.",
+  },
+  {
+    path: /^components\/admin\/tools-manager\.tsx$/,
+    colourCap: 1,
+    reason: "Df8: text-red-800 alert text in both modes, which no token holds.",
+  },
+  {
+    path: /^components\/seo\/seo-dashboard\.tsx$/,
+    colourCap: 1,
+    reason: "Df8: text-red-700 in both modes; --ds-danger is red-700 in light only.",
   },
 ];
 
