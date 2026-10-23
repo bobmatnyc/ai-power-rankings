@@ -169,22 +169,36 @@ function firstSentence(body: string): string {
 /**
  * Maps CHANGELOG.md line numbers to the committer time (Unix seconds) of the
  * commit that introduced the line's current text, from
- * `git blame --line-porcelain` output. A line not yet committed maps to null.
+ * `git blame --line-porcelain` output. A line maps to null when it is not yet
+ * committed or when blame marks its commit `boundary`.
+ *
+ * #231: in a shallow clone (Vercel's git builds) blame stops at the oldest
+ * fetched commit and charges every older line to it, marked `boundary`. That
+ * commit's time is not when the line was added, so a boundary line counts as
+ * unresolved and the resolver falls back to the previous data's date. A record
+ * is decided at its tab-led content row, because `boundary` follows
+ * `committer-time`.
  */
 export function parseBlamePorcelain(output: string): Map<number, number | null> {
   const lines = new Map<number, number | null>();
-  let current: { line: number; uncommitted: boolean } | null = null;
+  type Record = { line: number; uncommitted: boolean; boundary: boolean; time: number | null };
+  let current: Record | null = null;
   for (const row of output.split("\n")) {
-    const header = /^([0-9a-f]{40}) \d+ (\d+)/.exec(row);
-    if (header) {
-      current = { line: Number(header[2]), uncommitted: /^0+$/.test(header[1]!) };
+    if (current && row.startsWith("\t")) {
+      const resolved = !current.uncommitted && !current.boundary && current.time !== null;
+      lines.set(current.line, resolved ? current.time : null);
+      current = null;
       continue;
     }
-    const time = /^committer-time (\d+)$/.exec(row);
-    if (time && current) {
-      lines.set(current.line, current.uncommitted ? null : Number(time[1]));
-      current = null;
+    const header = /^([0-9a-f]{40}) \d+ (\d+)/.exec(row);
+    if (header) {
+      current = { line: Number(header[2]), uncommitted: /^0+$/.test(header[1]!), boundary: false, time: null };
+      continue;
     }
+    if (!current) continue;
+    const time = /^committer-time (\d+)$/.exec(row);
+    if (time) current.time = Number(time[1]);
+    else if (row === "boundary") current.boundary = true;
   }
   return lines;
 }

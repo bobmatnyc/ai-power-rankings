@@ -17,11 +17,12 @@
  *
  * Usage:
  *   npm run generate-changelog
+ *   tsx scripts/generate-changelog-data.ts --root <repo>   (tests use a fixture repo)
  */
 
 import { spawnSync } from "child_process";
-import { existsSync, readFileSync, renameSync, writeFileSync } from "fs";
-import { join } from "path";
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "fs";
+import { dirname, join, resolve } from "path";
 import {
   buildEntries,
   dateResolver,
@@ -33,7 +34,9 @@ import {
   type ResolvedDate,
 } from "../lib/data/changelog-generator";
 
-const root = join(__dirname, "..");
+// #231: `--root` lets the script-level test run against a fixture git repo.
+const rootFlag = process.argv.indexOf("--root");
+const root = rootFlag !== -1 && process.argv[rootFlag + 1] ? resolve(process.argv[rootFlag + 1]!) : join(__dirname, "..");
 
 function previousDates(target: string): Map<string, ResolvedDate> {
   if (!existsSync(target)) return new Map();
@@ -47,7 +50,20 @@ function previousDates(target: string): Map<string, ResolvedDate> {
 }
 
 function blame(): Map<number, number | null> | null {
-  const res = spawnSync("git", ["blame", "--line-porcelain", "--", "CHANGELOG.md"], {
+  // #231: a shallow clone blames older lines on its boundary commit; those
+  // lines keep their previous dates (see parseBlamePorcelain).
+  const shallow = spawnSync("git", ["rev-parse", "--is-shallow-repository"], { cwd: root, encoding: "utf8" });
+  const isShallow = shallow.status === 0 && shallow.stdout.trim() === "true";
+  if (isShallow) {
+    console.warn(
+      "generate-changelog: shallow clone; lines older than the fetched history keep their previous dates."
+    );
+  }
+  // #231: on a full clone `--root` stops blame marking the repository's root
+  // commit `boundary`, so lines it added keep their real date. On a shallow
+  // clone it is left off, so the cut-off commit stays marked `boundary`.
+  const args = ["blame", "--line-porcelain", ...(isShallow ? [] : ["--root"]), "--", "CHANGELOG.md"];
+  const res = spawnSync("git", args, {
     cwd: root,
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,
@@ -77,6 +93,7 @@ async function main(): Promise<number> {
     return 1;
   }
 
+  mkdirSync(dirname(target), { recursive: true });
   const temp = `${target}.tmp`;
   writeFileSync(temp, renderData(entries));
   renameSync(temp, target);

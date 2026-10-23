@@ -124,9 +124,31 @@ describe("unreleased dating order (#231 ruling)", () => {
   });
 
   it("falls back to the previous module's date when the line is not committed", () => {
-    const blame = parseBlamePorcelain(`${"0".repeat(40)} 3 3 1\ncommitter-time 1760000000\n`);
+    const blame = parseBlamePorcelain(`${"0".repeat(40)} 3 3 1\ncommitter-time 1760000000\n\t- x\n`);
     expect(blame.get(3)).toBeNull();
     expect(dateResolver({ blame, previous, buildDate })(bullet, "id-1")).toEqual(previous.get("id-1"));
+  });
+
+  // #231: a shallow clone charges older lines to its `boundary` commit.
+  it("treats a boundary blame line as unresolved and keeps the previous date", () => {
+    const blame = parseBlamePorcelain(
+      [
+        `${"b".repeat(40)} 3 3 1`,
+        "author x",
+        "committer-time 1790000000",
+        "summary shallow tip",
+        "boundary",
+        "filename CHANGELOG.md",
+        "\t- fix: x",
+        "",
+      ].join("\n")
+    );
+    expect(blame.get(3)).toBeNull();
+    expect(dateResolver({ blame, previous, buildDate })(bullet, "id-1")).toEqual(previous.get("id-1"));
+    expect(dateResolver({ blame, previous, buildDate })(bullet, "id-2")).toEqual({
+      date: buildDate.toISOString(),
+      dateSource: "build",
+    });
   });
 
   it("falls back to the build date when nothing else resolves, and never drops the entry", () => {
