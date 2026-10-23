@@ -72,7 +72,7 @@ const REQUIRED: Record<string, { states: string[]; signature: string }> = {
   // #190 PR C1
   alert: { states: ["default", "destructive"], signature: "[role='alert']" },
   "form-control": { states: ["default", "focus"], signature: "input.border-ds-border-strong" },
-  "fixed-text": { states: ["default"], signature: ".text-ds-success-fixed" },
+  "modifier-text": { states: ["default"], signature: ".text-ds-success" },
 };
 
 const RANK_CLASS: Record<string, string> = {

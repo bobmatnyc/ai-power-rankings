@@ -117,8 +117,8 @@ export const AA_PAIRS: ReadonlyArray<readonly [string, string]> = [
   // #190 PR B: the footer's fixed colours.
   ["ds-text-footer", "ds-surface-footer"],
   ["ds-text-on-fill", "ds-surface-footer"],
-  // #190 PR C1: fixed status text, checked on white. On the dark-mode card it
-  // is below AA (docs/refresh/design-audit/migration-190b.md, PR C1).
+  // #190 PR C1: the fixed success/warning text, on white. No component uses
+  // them now; the tables use the mode-dependent tokens.
   ["ds-success-fixed", "ds-surface-paper"],
   ["ds-warning-fixed", "ds-surface-paper"],
   // #190 PR C1: `text-destructive-foreground` on a `bg-destructive` fill.
