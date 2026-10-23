@@ -194,6 +194,169 @@
   }
 }
 
+/* #188 design-system tokens BEGIN (docs/refresh/design-tokens.md)
+   ========================================================================
+   Semantic --ds-* token layer. Additive: nothing uses these yet, so no page
+   changes. Colours are HSL components, used as hsl(var(--ds-…)), with light
+   values on :root and dark values on .dark. Mode-invariant tokens (type,
+   spacing, radius, motion) are declared once for both. The #178 rank tokens
+   stay where they are, in the blocks above. No raw hex or RGB values in this layer;
+   tests/unit/design-tokens-188.test.ts enforces that.
+   ======================================================================== */
+@layer base {
+  :root,
+  .dark {
+    /* Type scale: reuses the fluid --font-size-* steps above. */
+    --ds-font-size-caption: var(--font-size-xs);
+    --ds-font-size-body-sm: var(--font-size-sm);
+    --ds-font-size-body: var(--font-size-base);
+    --ds-font-size-lead: var(--font-size-lg);
+    --ds-font-size-h4: var(--font-size-xl);
+    --ds-font-size-h3: var(--font-size-2xl);
+    --ds-font-size-h2: var(--font-size-3xl);
+    --ds-font-size-h1: var(--font-size-4xl);
+    --ds-font-size-display: var(--font-size-5xl);
+    --ds-line-height-heading: var(--line-height-tight);
+    --ds-line-height-body: var(--line-height-body);
+    --ds-font-weight-body: var(--font-weight-normal);
+    --ds-font-weight-label: var(--font-weight-medium);
+    --ds-font-weight-heading: var(--font-weight-bold);
+
+    /* Spacing: t-shirt steps on the --space-* scale, plus layout roles. */
+    --ds-space-xs: var(--space-1);
+    --ds-space-sm: var(--space-2);
+    --ds-space-md: var(--space-4);
+    --ds-space-lg: var(--space-6);
+    --ds-space-xl: var(--space-8);
+    --ds-space-2xl: var(--space-12);
+    --ds-space-gutter: var(--space-4);
+    --ds-space-section: var(--space-16);
+
+    /* Radius: by role. --ds-radius-chip (#178) covers pills. */
+    --ds-radius-control: var(--radius-md);
+    --ds-radius-card: var(--radius-lg);
+    --ds-radius-panel: var(--radius-xl);
+
+    /* Motion */
+    --ds-duration-fast: var(--duration-fast);
+    --ds-duration-base: var(--duration-normal);
+    --ds-duration-slow: var(--duration-slow);
+    --ds-ease-standard: var(--ease-in-out);
+    --ds-ease-enter: var(--ease-out);
+    --ds-ease-exit: var(--ease-in);
+  }
+
+  :root {
+    /* Surface */
+    --ds-surface: 0 0% 100%;
+    --ds-surface-raised: 0 0% 100%;
+    --ds-surface-muted: 210 40% 96.1%;
+    --ds-surface-inverse: 222.2 84% 4.9%;
+
+    /* Text */
+    --ds-text: 222.2 84% 4.9%;
+    --ds-text-muted: 215.3 19.3% 34.5%;
+    --ds-text-inverse: 210 40% 98%;
+
+    /* Border */
+    --ds-border: 214.3 31.8% 91.4%;
+    --ds-border-strong: 212.7 26.8% 83.9%;
+    --ds-focus-ring: 221.2 83.2% 53.3%;
+
+    /* Accent */
+    --ds-accent: 221.2 83.2% 53.3%;
+    --ds-accent-hover: 224.3 76.3% 48%;
+    --ds-accent-fg: 0 0% 100%;
+    --ds-accent-subtle: 214.3 100% 96.9%;
+
+    /* Status: the base colour passes AA as text on surface and on -subtle. */
+    --ds-success: 142.4 71.8% 29.2%;
+    --ds-success-subtle: 138.5 76.5% 96.7%;
+    --ds-warning: 26 90.5% 37.1%;
+    --ds-warning-subtle: 48 100% 96.1%;
+    --ds-danger: 0 73.7% 41.8%;
+    --ds-danger-subtle: 0 85.7% 97.3%;
+    --ds-info: 201.3 96.3% 32.2%;
+    --ds-info-subtle: 204 100% 97.1%;
+
+    /* Score bands: tier badges S-D (lib/ranking-utils.ts), text in --ds-score-fg. */
+    --ds-score-s: 26 90.5% 37.1%;
+    --ds-score-a: 224.3 76.3% 48%;
+    --ds-score-b: 142.4 71.8% 29.2%;
+    --ds-score-c: 215.3 19.3% 34.5%;
+    --ds-score-d: 0 73.7% 41.8%;
+    --ds-score-fg: 0 0% 100%;
+
+    /* Shadow: colour plus three elevations. */
+    --ds-shadow-color: 222.2 84% 4.9%;
+    --ds-shadow-sm: 0 1px 2px 0 hsl(var(--ds-shadow-color) / 0.06);
+    --ds-shadow-md: 0 4px 6px -1px hsl(var(--ds-shadow-color) / 0.1),
+      0 2px 4px -2px hsl(var(--ds-shadow-color) / 0.1);
+    --ds-shadow-lg: 0 10px 15px -3px hsl(var(--ds-shadow-color) / 0.1),
+      0 4px 6px -4px hsl(var(--ds-shadow-color) / 0.1);
+  }
+
+  .dark {
+    /* Surface */
+    --ds-surface: 222.2 84% 4.9%;
+    --ds-surface-raised: 222.2 47.4% 11.2%;
+    --ds-surface-muted: 217.2 32.6% 17.5%;
+    --ds-surface-inverse: 210 40% 98%;
+
+    /* Text */
+    --ds-text: 210 40% 98%;
+    --ds-text-muted: 215 20.2% 65.1%;
+    --ds-text-inverse: 222.2 84% 4.9%;
+
+    /* Border */
+    --ds-border: 217.2 32.6% 17.5%;
+    --ds-border-strong: 215.3 19.3% 34.5%;
+    --ds-focus-ring: 213.1 93.9% 67.8%;
+
+    /* Accent */
+    --ds-accent: 213.1 93.9% 67.8%;
+    --ds-accent-hover: 211.7 96.4% 78.4%;
+    --ds-accent-fg: 222.2 84% 4.9%;
+    --ds-accent-subtle: 224.4 64.3% 32.9%;
+
+    /* Status */
+    --ds-success: 141.9 69.2% 58%;
+    --ds-success-subtle: 144.9 80.4% 10%;
+    --ds-warning: 43.3 96.4% 56.3%;
+    --ds-warning-subtle: 20.5 91.7% 14.1%;
+    --ds-danger: 0 90.6% 70.8%;
+    --ds-danger-subtle: 0 74.7% 15.5%;
+    --ds-info: 198.4 93.2% 59.6%;
+    --ds-info-subtle: 204 80.2% 15.9%;
+
+    /* Score bands: light badges with dark text. */
+    --ds-score-s: 43.3 96.4% 56.3%;
+    --ds-score-a: 213.1 93.9% 67.8%;
+    --ds-score-b: 141.9 69.2% 58%;
+    --ds-score-c: 215 20.2% 65.1%;
+    --ds-score-d: 0 90.6% 70.8%;
+    --ds-score-fg: 222.2 84% 4.9%;
+
+    /* Shadow: black and stronger, so elevation still reads on dark surfaces. */
+    --ds-shadow-color: 0 0% 0%;
+    --ds-shadow-sm: 0 1px 2px 0 hsl(var(--ds-shadow-color) / 0.3);
+    --ds-shadow-md: 0 4px 6px -1px hsl(var(--ds-shadow-color) / 0.4),
+      0 2px 4px -2px hsl(var(--ds-shadow-color) / 0.4);
+    --ds-shadow-lg: 0 10px 15px -3px hsl(var(--ds-shadow-color) / 0.5),
+      0 4px 6px -4px hsl(var(--ds-shadow-color) / 0.5);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root,
+    .dark {
+      --ds-duration-fast: 0ms;
+      --ds-duration-base: 0ms;
+      --ds-duration-slow: 0ms;
+    }
+  }
+}
+/* #188 design-system tokens END */
+
 /* ========================================================================
    Base Typography Styles
    ======================================================================== */
