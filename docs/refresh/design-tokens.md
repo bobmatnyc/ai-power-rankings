@@ -43,8 +43,8 @@ styles](design-audit/one-off-styles.md), the screenshots described in
 | `--ds-text` | `222.2 84% 4.9%` | `210 40% 98%` | `text-ds-text` | Body and headings |
 | `--ds-text-muted` | `215.3 19.3% 34.5%` | `215 20.2% 65.1%` | `text-ds-text-muted` | Secondary text, captions |
 | `--ds-text-inverse` | `210 40% 98%` | `222.2 84% 4.9%` | `text-ds-text-inverse` | Text on `--ds-surface-inverse` |
-| `--ds-border` | `214.3 31.8% 91.4%` | `217.2 32.6% 17.5%` | `border-ds-border` | Dividers, card edges |
-| `--ds-border-strong` | `212.7 26.8% 83.9%` | `215.3 19.3% 34.5%` | `border-ds-border-strong` | Inputs, emphasised edges |
+| `--ds-border` | `214.3 31.8% 91.4%` | `217.2 32.6% 17.5%` | `border-ds-border` | Dividers, card edges (decorative, below 3:1) |
+| `--ds-border-strong` | `215 16.3% 56%` | `215 16.3% 46.9%` | `border-ds-border-strong` | Form-control edges (3:1 on every surface, #190 PR C1) |
 | `--ds-focus-ring` | `221.2 83.2% 53.3%` | `213.1 93.9% 67.8%` | `ring-ds-focus-ring` | Focus outline |
 | `--ds-accent` | `221.2 83.2% 53.3%` | `213.1 93.9% 67.8%` | `bg-ds-accent`, `text-ds-accent` | Links, primary buttons |
 | `--ds-accent-hover` | `224.3 76.3% 48%` | `211.7 96.4% 78.4%` | `bg-ds-accent-hover` | Hover/active of the above |
@@ -60,7 +60,7 @@ styles](design-audit/one-off-styles.md), the screenshots described in
 | `--ds-info-subtle` | `204 100% 97.1%` | `204 80.2% 15.9%` | `bg-ds-info-subtle` | Info callout background |
 | `--ds-score-s` … `-d` | amber-700, blue-700, green-700, slate-600, red-700 | amber-400, blue-400, green-400, slate-400, red-400 | `bg-ds-score-s` … | Tier badges S–D (`lib/ranking-utils.ts`) |
 | `--ds-score-fg` | `0 0% 100%` | `222.2 84% 4.9%` | `text-ds-score-fg` | Text on a tier badge |
-| `--ds-rank-up/down/steady` (#178) | green-600, red-600, gray-500 | green-400, red-400, gray-400 | `text-ds-rank-up` … | Rank movement; unchanged by #188 |
+| `--ds-rank-up/down/steady` (#178) | green-700 (#190 PR C1; was green-600), red-600, gray-500 | green-400, red-400, gray-400 | `text-ds-rank-up` … | Rank movement |
 
 Status colours are text colours first: each passes AA as text on
 `--ds-surface` and on its own `-subtle` background, so a callout is
@@ -124,14 +124,25 @@ the test asserts each pair is at least 4.5.
 | `--ds-score-fg` | `--ds-score-d` | 6.47 | 7.23 |
 | `--ds-text-footer` | `--ds-surface-footer` | 12.04 | 12.04 |
 | `--ds-text-on-fill` | `--ds-surface-footer` | 17.74 | 17.74 |
+| `--ds-success-fixed` | `--ds-surface-paper` (white) | 5.02 | 5.02 |
+| `--ds-warning-fixed` | `--ds-surface-paper` (white) | 5.18 | 5.18 |
+| `--ds-surface` (`destructive-foreground`) | `--ds-danger` (`destructive`) | 6.47 | 7.23 |
 
-The #178 rank tokens, for the record (not changed here): on `--ds-surface`,
-`--ds-rank-up` is 3.30 light / 11.48 dark, `--ds-rank-down` 4.83 / 7.23,
-`--ds-rank-steady` 4.83 / 7.88. `--ds-rank-up` in light mode meets only the
-3:1 large-text threshold, and `RankingChange` renders it at `text-xs` to
-`text-base` in `font-medium`, which is not large text. Moving its light value
-to green-700 (`142.4 71.8% 29.2%`, 5.02:1) fixes it but changes the look, so
-it is left for #190 and the owner.
+The #178 rank tokens live outside this layer; `tests/unit/design-tokens-178.test.ts`
+checks them on `--ds-surface` and `--ds-surface-raised`. On `--ds-surface`,
+`--ds-rank-up` is 5.02 light / 11.48 dark, `--ds-rank-down` 4.83 / 7.23,
+`--ds-rank-steady` 4.83 / 7.88. #190 PR C1 moved light `--ds-rank-up` from
+green-600 (3.30:1) to green-700 (`142.4 71.8% 29.2%`, the `--ds-success`
+value).
+
+Non-text pairs (WCAG 1.4.11, 3:1) are checked by
+`tests/unit/design-contrast-190.test.ts`. `--ds-border-strong` meets 3:1 on
+every surface in both modes (light 3.42 / 3.42 / 3.12, dark 4.20 / 3.75 /
+3.07 on surface / raised / muted). `--ds-border` stays below 3:1 as a
+decorative exception: it never draws the only edge of a control.
+
+`destructive` in `tailwind.config.js` (#190 PR C1) is an alias:
+`destructive` is `--ds-danger`, `destructive-foreground` is `--ds-surface`.
 
 ## Type scale
 

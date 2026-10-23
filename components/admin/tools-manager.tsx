@@ -214,8 +214,9 @@ export function ToolsManager() {
           </div>
           <div>
             <Label>Category</Label>
+            {/* #190: control edge on --ds-border-strong (3:1). */}
             <select
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="flex h-10 w-full rounded-md border border-ds-border-strong bg-background px-3 py-2 text-sm"
               value={selectedCategory || ""}
               onChange={(e) => setSelectedCategory(e.target.value || null)}
             >

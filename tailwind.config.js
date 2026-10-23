@@ -57,6 +57,13 @@ module.exports = {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
         },
+        // #190: `destructive` classes emitted nothing before this entry. The
+        // foreground is --ds-surface: white on the light-mode red (6.47:1),
+        // near-black on the dark-mode red-400 (7.23:1).
+        destructive: {
+          DEFAULT: "hsl(var(--ds-danger))",
+          foreground: "hsl(var(--ds-surface))",
+        },
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         // #178: sample design-agent token set (--ds-* in app/globals.css).

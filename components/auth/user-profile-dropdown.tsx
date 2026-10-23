@@ -153,11 +153,12 @@ export function UserProfileDropdown({ user, signOut, afterSignOutUrl }: UserProf
             ) : (
               // Non-admin user - show subscribe checkbox
               <label className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent transition-colors cursor-pointer">
+                {/* #190: control edge token, not a palette grey. */}
                 <input
                   type="checkbox"
                   checked={isSubscribed}
                   onChange={handleSubscriptionToggle}
-                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary focus:ring-offset-0"
+                  className="h-4 w-4 rounded border-ds-border-strong text-primary focus:ring-primary focus:ring-offset-0"
                 />
                 <Bell className="h-4 w-4" />
                 <span className="flex-1">Subscribe for Updates</span>

@@ -9,6 +9,8 @@ const alertVariants = cva(
     variants: {
       variant: {
         default: "bg-background text-foreground",
+        // #190: `destructive` now resolves to --ds-danger (tailwind.config.js);
+        // before, these classes emitted no CSS and the Alert rendered uncoloured.
         destructive:
           "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
       },

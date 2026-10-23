@@ -1,12 +1,17 @@
 "use client";
 
-import { Home, List, Newspaper } from "lucide-react";
+import { AlertCircle, Home, List, Newspaper } from "lucide-react";
 import type { ReactNode } from "react";
 import { Footer } from "@/components/layout/footer";
 import { RankingCard } from "@/components/ranking/ranking-card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { RankingChange } from "@/components/ui/ranking-change";
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -263,6 +268,52 @@ function Samples() {
         </div>
       </Group>
 
+      {/* #190 PR C1: the Alert, form-control and modifier-text samples show the a11y fixes. */}
+      <Group title="Alert" note="Alert from components/ui/alert, default and destructive.">
+        <div className="grid gap-6 md:grid-cols-2">
+          {(["default", "destructive"] as const).map((variant) => (
+            <Sample key={variant} component="alert" state={variant}>
+              <Alert variant={variant}>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  {variant === "default" ? "An informational message." : "The import failed: 3 rows were rejected."}
+                </AlertDescription>
+              </Alert>
+            </Sample>
+          ))}
+        </div>
+      </Group>
+
+      <Group title="Form controls" note="Input, Select, Textarea and the outline Button from components/ui.">
+        <div className="grid gap-6 md:grid-cols-2">
+          {(["default", "focus"] as const).map((state) => (
+            <Sample key={state} component="form-control" state={state}>
+              <div className="space-y-3">
+                <Input aria-label={`Sample input, ${state}`} placeholder="Search tools" />
+                <Select>
+                  <SelectTrigger aria-label={`Sample select, ${state}`}>
+                    <SelectValue placeholder="Choose a category" />
+                  </SelectTrigger>
+                </Select>
+                <Textarea aria-label={`Sample textarea, ${state}`} placeholder="Notes" />
+                <Button variant="outline">Outline button</Button>
+              </div>
+            </Sample>
+          ))}
+        </div>
+      </Group>
+
+      <Group title="Modifier text" note="The rankings table's modifier colours, as it renders them.">
+        <Sample component="modifier-text" state="default">
+          <div className="text-sm space-y-1">
+            <div className="text-ds-warning">Decay: 72%</div>
+            <div className="text-ds-success">Risk: +0.4</div>
+            <div className="text-ds-danger-fixed">Risk: -0.6</div>
+            <div className="text-ds-accent-fixed">Quality: 64%</div>
+          </div>
+        </Sample>
+      </Group>
+
       <Group title="Nav" note="A sidebar navigation link, as AppSidebar renders it.">
         <div className="grid gap-6 md:grid-cols-2">
           <NavItem state="default" icon={Home} title="Home" />
@@ -283,7 +334,7 @@ function Samples() {
       </Group>
 
       <p className="text-sm text-muted-foreground">
-        Disabled: none of these components has a disabled state.
+        Disabled: only the form controls have a disabled state (50% opacity); it is not sampled.
       </p>
     </div>
   );

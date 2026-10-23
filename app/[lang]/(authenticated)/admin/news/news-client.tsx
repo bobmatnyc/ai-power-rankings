@@ -177,13 +177,14 @@ export default function NewsListPage() {
           <div className="flex items-center justify-between mb-4 pb-4 border-b">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Articles per page:</span>
+              {/* #190: control edge on --ds-border-strong (3:1). */}
               <select
                 value={pageSize}
                 onChange={(e) => {
                   setPageSize(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="border rounded px-2 py-1 text-sm"
+                className="border border-ds-border-strong rounded px-2 py-1 text-sm"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
