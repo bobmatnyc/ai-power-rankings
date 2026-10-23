@@ -4,6 +4,7 @@ import { ArrowRight, Newspaper } from "lucide-react";
 import Link from "next/link";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatUtcDate } from "@/lib/format-utc-date";
 
 interface NewsArticle {
   id: string;
@@ -44,7 +45,8 @@ function formatRelativeTime(dateString: string): string {
   } else if (diffDays < 7) {
     return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
   } else {
-    return date.toLocaleDateString("en-US", {
+    // #239: UTC, so a browser west of UTC shows the stored day.
+    return formatUtcDate(date, "en-US", {
       month: "short",
       day: "numeric",
     });
