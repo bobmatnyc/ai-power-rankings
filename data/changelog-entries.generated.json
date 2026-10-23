@@ -1,5 +1,16 @@
 [
   {
+    "id": "unreleased-f231cd61c335",
+    "version": "Unreleased",
+    "date": "2026-10-23T23:37:09.000Z",
+    "dateSource": "commit",
+    "section": "Security",
+    "scope": "auth",
+    "title": "the middleware classifies percent-encoded paths",
+    "description": "the middleware classifies percent-encoded paths. `routeAccess()` matched the raw pathname, which keeps percent escapes, so `/en/%61dmin` and `/api/%61dmin/x` classed as unprotected and skipped the sign-in check; only the router's 404 kept them from serving. A path is now protected when its raw form or its once-decoded form (`decodeURIComponent`, as Next's route lookup does) is protected, and an anonymous request whose raw or decoded path is under `/api/` gets 401. A path is decoded once only, so `/en/%2561dmin` stays unprotected and the router answers 404; a malformed escape such as `%E0%A4%A` classifies the raw path and never throws. Public paths, including `/api/cron/*`, keep their class, and decoding never makes a path public. Tests: `tests/unit/route-access-encoded-228.test.ts` (#228)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-d504d7d156d9",
     "version": "Unreleased",
     "date": "2026-09-26T21:49:21.000Z",
