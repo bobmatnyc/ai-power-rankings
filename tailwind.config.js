@@ -3,6 +3,11 @@ const GRAD_STOPS = ["blue-500", "blue-600", "purple-500", "purple-600", "pink-50
   "indigo-500", "indigo-600", "red-500", "red-600", "gray-500", "gray-600", "green-700", "green-800",
   "orange-700", "orange-800", "teal-700", "teal-800"];
 
+// #190 PR D: what's-new badge hues, SEO callout tones, 600-step category colours.
+const TAG_HUES = ["purple", "blue", "green", "orange"];
+const CALLOUTS = ["success", "danger", "info"];
+const CAT_STRONG = ["purple", "green", "orange", "yellow", "emerald", "indigo", "slate"];
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   mode: "jit",
@@ -96,6 +101,13 @@ module.exports = {
             paper: "hsl(var(--ds-surface-paper))",
             "paper-muted": "hsl(var(--ds-surface-paper-muted))",
             "paper-sunken": "hsl(var(--ds-surface-paper-sunken))",
+            // #190 PR D: what's-new kind badges (opaque light, 30 % dark) and
+            // the SEO callouts.
+            ...Object.fromEntries(TAG_HUES.map((hue) => [
+              `tag-${hue}`,
+              `hsl(var(--ds-surface-tag-${hue}) / var(--ds-opacity-tag-surface))`,
+            ])),
+            ...Object.fromEntries(CALLOUTS.map((tone) => [`callout-${tone}`, `hsl(var(--ds-surface-callout-${tone}))`])),
           },
           text: {
             DEFAULT: "hsl(var(--ds-text))",
@@ -104,11 +116,25 @@ module.exports = {
             "on-fill": "hsl(var(--ds-text-on-fill))",
             footer: "hsl(var(--ds-text-footer))",
             "paper-muted": "hsl(var(--ds-text-paper-muted))",
+            // #190 PR D
+            "paper-subtle": "hsl(var(--ds-text-paper-subtle))",
+            "paper-faint": "hsl(var(--ds-text-paper-faint))",
+            ...Object.fromEntries(TAG_HUES.map((hue) => [`tag-${hue}`, `hsl(var(--ds-text-tag-${hue}))`])),
+            "callout-success": "hsl(var(--ds-text-callout-success))",
+            "callout-success-title": "hsl(var(--ds-text-callout-success-title))",
+            "callout-danger": "hsl(var(--ds-text-callout-danger))",
+            "callout-danger-title": "hsl(var(--ds-text-callout-danger-title))",
           },
           border: {
             DEFAULT: "hsl(var(--ds-border))",
             strong: "hsl(var(--ds-border-strong))",
             footer: "hsl(var(--ds-border-footer))",
+            // #190 PR D
+            paper: "hsl(var(--ds-border-paper))",
+            neutral: "hsl(var(--ds-border-neutral))",
+            "neutral-hover": "hsl(var(--ds-border-neutral-hover))",
+            ...Object.fromEntries(TAG_HUES.map((hue) => [`tag-${hue}`, `hsl(var(--ds-border-tag-${hue}))`])),
+            ...Object.fromEntries(CALLOUTS.map((tone) => [`callout-${tone}`, `hsl(var(--ds-border-callout-${tone}))`])),
           },
           "focus-ring": "hsl(var(--ds-focus-ring))",
           accent: {
@@ -122,6 +148,10 @@ module.exports = {
             "cat-green": "hsl(var(--ds-accent-cat-green))",
             // #190 C2: the home page's Autonomous Agents card.
             agent: "hsl(var(--ds-accent-agent))",
+            // #190 PR D: category icons, dots and labels; `-strong` is the 600 step.
+            "cat-yellow": "hsl(var(--ds-accent-cat-yellow))",
+            "cat-orange": "hsl(var(--ds-accent-cat-orange))",
+            ...Object.fromEntries(CAT_STRONG.map((hue) => [`cat-${hue}-strong`, `hsl(var(--ds-accent-cat-${hue}-strong))`])),
           },
           // #190 C2: from-ds-grad-blue-500, to-ds-grad-teal-800, ...
           grad: Object.fromEntries(GRAD_STOPS.map((stop) => [stop, `hsl(var(--ds-grad-${stop}))`])),
@@ -130,6 +160,11 @@ module.exports = {
             subtle: "hsl(var(--ds-success-subtle))",
             solid: "hsl(var(--ds-success-solid))",
             fixed: "hsl(var(--ds-success-fixed))",
+            // #190 PR D
+            "fixed-mid": "hsl(var(--ds-success-fixed-mid))",
+            "fixed-soft": "hsl(var(--ds-success-fixed-soft))",
+            "fixed-subtle": "hsl(var(--ds-success-fixed-subtle))",
+            "fixed-border": "hsl(var(--ds-success-fixed-border))",
           },
           warning: {
             DEFAULT: "hsl(var(--ds-warning))",
@@ -144,6 +179,9 @@ module.exports = {
             solid: "hsl(var(--ds-danger-solid))",
             fixed: "hsl(var(--ds-danger-fixed))",
             "fixed-soft": "hsl(var(--ds-danger-fixed-soft))",
+            // #190 PR D
+            "fixed-subtle": "hsl(var(--ds-danger-fixed-subtle))",
+            "fixed-border": "hsl(var(--ds-danger-fixed-border))",
           },
           info: {
             DEFAULT: "hsl(var(--ds-info))",
@@ -222,6 +260,10 @@ module.exports = {
         "ds-h2": "var(--ds-font-size-h2)",
         "ds-h1": "var(--ds-font-size-h1)",
         "ds-display": "var(--ds-font-size-display)",
+      },
+      // #190 PR D: the what's-new tag surfaces' alpha (1 light, 0.3 dark).
+      opacity: {
+        "ds-tag-surface": "var(--ds-opacity-tag-surface)",
       },
       // #188
       fontWeight: {

@@ -432,6 +432,95 @@
     --ds-grad-teal-800: 176.1038961 69.36936937% 21.76470588%;
   }
 
+  /* News, what's-new and SEO pages (#190 PR D): fixed in both modes, like
+     the PR B block. Tailwind palette colours as HSL; the palette name is in
+     each comment. Map: docs/refresh/design-audit/migration-190d.md. */
+  :root,
+  .dark {
+    /* Decorative category colours: icons, dots and labels. */
+    --ds-accent-cat-yellow: 45.39823009 93.38842975% 47.45098039%; /* yellow-500 */
+    --ds-accent-cat-orange: 24.5814978 94.9790795% 53.1372549%; /* orange-500 */
+    --ds-accent-cat-purple-strong: 271.47540984 81.33333333% 55.88235294%; /* purple-600 */
+    --ds-accent-cat-green-strong: 142.12765957 76.21621622% 36.2745098%; /* green-600 */
+    --ds-accent-cat-orange-strong: 20.54054054 90.24390244% 48.23529412%; /* orange-600 */
+    --ds-accent-cat-yellow-strong: 40.60606061 96.11650485% 40.39215686%; /* yellow-600 */
+    --ds-accent-cat-emerald-strong: 161.37931034 93.5483871% 30.39215686%; /* emerald-600 */
+    --ds-accent-cat-indigo-strong: 243.39622642 75.35545024% 58.62745098%; /* indigo-600 */
+    --ds-accent-cat-slate-strong: 215.29411765 19.31818182% 34.50980392%; /* slate-600 */
+
+    /* Gain and loss text and callouts on paper (news impact panels). */
+    --ds-success-fixed-mid: 142.12765957 76.21621622% 36.2745098%; /* green-600 */
+    --ds-success-fixed-soft: 141.89189189 69.1588785% 58.03921569%; /* green-400 */
+    --ds-success-fixed-subtle: 138.46153846 76.47058824% 96.66666667%; /* green-50 */
+    --ds-success-fixed-border: 141 78.94736842% 85.09803922%; /* green-200 */
+    --ds-danger-fixed-subtle: 0 85.71428571% 97.25490196%; /* red-50 */
+    --ds-danger-fixed-border: 0 96.2962963% 89.41176471%; /* red-200 */
+    --ds-text-paper-subtle: 220 8.93617021% 46.07843137%; /* gray-500 */
+    --ds-text-paper-faint: 217.89473684 10.61452514% 64.90196078%; /* gray-400 */
+    --ds-border-paper: 220 13.04347826% 90.98039216%; /* gray-200 */
+
+    /* What's-new kind badges: the edge keeps its light value in dark mode. */
+    --ds-border-tag-purple: 268.57142857 100% 91.76470588%; /* purple-200 */
+    --ds-border-tag-blue: 213.33333333 96.92307692% 87.25490196%; /* blue-200 */
+    --ds-border-tag-green: 141 78.94736842% 85.09803922%; /* green-200 */
+    --ds-border-tag-orange: 32.14285714 97.6744186% 83.1372549%; /* orange-200 */
+  }
+
+  /* #190 PR D: the same pages' colours that had a `dark:` variant. Light on
+     :root, dark on .dark; the comment names light / dark. */
+  :root {
+    --ds-surface-tag-purple: 268.69565217 100% 95.49019608%; /* purple-100 */
+    --ds-surface-tag-blue: 214.28571429 94.59459459% 92.74509804%; /* blue-100 */
+    --ds-surface-tag-green: 140.625 84.21052632% 92.54901961%; /* green-100 */
+    --ds-surface-tag-orange: 34.28571429 100% 91.76470588%; /* orange-100 */
+    --ds-text-tag-purple: 272.88888889 67.1641791% 39.41176471%; /* purple-800 */
+    --ds-text-tag-blue: 225.93103448 70.73170732% 40.19607843%; /* blue-800 */
+    --ds-text-tag-green: 142.78481013 64.22764228% 24.11764706%; /* green-800 */
+    --ds-text-tag-orange: 15 79.06976744% 33.7254902%; /* orange-800 */
+    /* Opacity of the tag surfaces: opaque in light, 30 % in dark. */
+    --ds-opacity-tag-surface: 1;
+
+    --ds-border-neutral: 220 13.04347826% 90.98039216%; /* gray-200 / gray-700 */
+    --ds-border-neutral-hover: 216 12.19512195% 83.92156863%; /* gray-300 / gray-600 */
+
+    --ds-surface-callout-success: 138.46153846 76.47058824% 96.66666667%; /* green-50 / green-950 */
+    --ds-border-callout-success: 141 78.94736842% 85.09803922%; /* green-200 / green-800 */
+    --ds-text-callout-success: 142.12765957 76.21621622% 36.2745098%; /* green-600 / green-400 */
+    --ds-text-callout-success-title: 142.42990654 71.81208054% 29.21568627%; /* green-700 / green-300 */
+    --ds-surface-callout-danger: 0 85.71428571% 97.25490196%; /* red-50 / red-950 */
+    --ds-border-callout-danger: 0 96.2962963% 89.41176471%; /* red-200 / red-800 */
+    --ds-text-callout-danger: 0 72.22222222% 50.58823529%; /* red-600 / red-400 */
+    --ds-text-callout-danger-title: 0 73.70892019% 41.76470588%; /* red-700 / red-300 */
+    --ds-surface-callout-info: 213.75 100% 96.8627451%; /* blue-50 / blue-950 */
+    --ds-border-callout-info: 213.33333333 96.92307692% 87.25490196%; /* blue-200 / blue-800 */
+  }
+
+  .dark {
+    --ds-surface-tag-purple: 273.64485981 65.64417178% 31.96078431%; /* purple-900 */
+    --ds-surface-tag-blue: 224.44444444 64.28571429% 32.94117647%; /* blue-900 */
+    --ds-surface-tag-green: 143.80952381 61.16504854% 20.19607843%; /* green-900 */
+    --ds-surface-tag-orange: 15.28301887 74.64788732% 27.84313725%; /* orange-900 */
+    --ds-text-tag-purple: 269.18918919 97.36842105% 85.09803922%; /* purple-300 */
+    --ds-text-tag-blue: 211.69811321 96.36363636% 78.43137255%; /* blue-300 */
+    --ds-text-tag-green: 141.71428571 76.64233577% 73.1372549%; /* green-300 */
+    --ds-text-tag-orange: 30.65693431 97.16312057% 72.35294118%; /* orange-300 */
+    --ds-opacity-tag-surface: 0.3;
+
+    --ds-border-neutral: 216.92307692 19.11764706% 26.66666667%;
+    --ds-border-neutral-hover: 215 13.79310345% 34.11764706%;
+
+    --ds-surface-callout-success: 144.87804878 80.39215686% 10%;
+    --ds-border-callout-success: 142.78481013 64.22764228% 24.11764706%;
+    --ds-text-callout-success: 141.89189189 69.1588785% 58.03921569%;
+    --ds-text-callout-success-title: 141.71428571 76.64233577% 73.1372549%;
+    --ds-surface-callout-danger: 0 74.6835443% 15.49019608%;
+    --ds-border-callout-danger: 0 70% 35.29411765%;
+    --ds-text-callout-danger: 0 90.60402685% 70.78431373%;
+    --ds-text-callout-danger-title: 0 93.5483871% 81.76470588%;
+    --ds-surface-callout-info: 226.2295082 57.00934579% 20.98039216%;
+    --ds-border-callout-info: 225.93103448 70.73170732% 40.19607843%;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     :root,
     .dark {

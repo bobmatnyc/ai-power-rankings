@@ -62,20 +62,20 @@ function getRecentUpdates(): Promise<ListLoadResult<UnifiedFeedItem>> {
 
 function getItemTypeIcon(item: UnifiedFeedItem) {
   if (item.type === 'news') {
-    return <Newspaper className="h-5 w-5 text-purple-600" />;
+    return <Newspaper className="h-5 w-5 text-ds-accent-cat-purple-strong" />;
   } else if (item.type === 'tool') {
-    return <Wrench className="h-5 w-5 text-blue-600" />;
+    return <Wrench className="h-5 w-5 text-ds-accent-fixed" />;
   } else {
     // Platform updates
     switch (item.changeType) {
       case 'feature':
-        return <Sparkles className="h-5 w-5 text-green-600" />;
+        return <Sparkles className="h-5 w-5 text-ds-accent-cat-green-strong" />;
       case 'improvement':
-        return <TrendingUp className="h-5 w-5 text-blue-600" />;
+        return <TrendingUp className="h-5 w-5 text-ds-accent-fixed" />;
       case 'fix':
-        return <Wrench className="h-5 w-5 text-orange-600" />;
+        return <Wrench className="h-5 w-5 text-ds-accent-cat-orange-strong" />;
       case 'news':
-        return <Newspaper className="h-5 w-5 text-purple-600" />;
+        return <Newspaper className="h-5 w-5 text-ds-accent-cat-purple-strong" />;
       default:
         return <Clock className="h-5 w-5" />;
     }
@@ -85,23 +85,23 @@ function getItemTypeIcon(item: UnifiedFeedItem) {
 function getItemTypeBadge(item: UnifiedFeedItem) {
   if (item.type === 'news') {
     return (
-      <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300">
+      <Badge variant="secondary" className="bg-ds-surface-tag-purple text-ds-text-tag-purple border-ds-border-tag-purple">
         News
       </Badge>
     );
   } else if (item.type === 'tool') {
     return (
-      <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300">
+      <Badge variant="secondary" className="bg-ds-surface-tag-blue text-ds-text-tag-blue border-ds-border-tag-blue">
         Tool Update
       </Badge>
     );
   } else {
     // Platform updates
     const typeColors = {
-      feature: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300',
-      improvement: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300',
-      fix: 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300',
-      news: 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300',
+      feature: 'bg-ds-surface-tag-green text-ds-text-tag-green border-ds-border-tag-green',
+      improvement: 'bg-ds-surface-tag-blue text-ds-text-tag-blue border-ds-border-tag-blue',
+      fix: 'bg-ds-surface-tag-orange text-ds-text-tag-orange border-ds-border-tag-orange',
+      news: 'bg-ds-surface-tag-purple text-ds-text-tag-purple border-ds-border-tag-purple',
     };
     return (
       <Badge variant="secondary" className={typeColors[item.changeType]}>
@@ -171,7 +171,7 @@ export default async function RecentUpdatesPage({
               href={`/${lang}/news/${item.slug}`}
               className="block group"
             >
-              <div className="flex items-start gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-card hover:bg-muted/50 transition-colors">
+              <div className="flex items-start gap-4 p-4 rounded-lg border border-ds-border-neutral bg-card hover:bg-muted/50 transition-colors">
                 <div className="flex-shrink-0 mt-1">
                   {getItemTypeIcon(item)}
                 </div>
@@ -208,7 +208,7 @@ export default async function RecentUpdatesPage({
               href={`/${lang}/tools/${item.slug}`}
               className="block group"
             >
-              <div className="flex items-start gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-card hover:bg-muted/50 transition-colors">
+              <div className="flex items-start gap-4 p-4 rounded-lg border border-ds-border-neutral bg-card hover:bg-muted/50 transition-colors">
                 <div className="flex-shrink-0 mt-1">
                   {getItemTypeIcon(item)}
                 </div>
@@ -240,7 +240,7 @@ export default async function RecentUpdatesPage({
           return (
             <div
               key={item.id}
-              className="flex items-start gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-card"
+              className="flex items-start gap-4 p-4 rounded-lg border border-ds-border-neutral bg-card"
             >
               <div className="flex-shrink-0 mt-1">
                 {getItemTypeIcon(item)}

@@ -125,6 +125,15 @@ export const AA_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ["ds-surface", "ds-danger"],
   // #190 C2: the Autonomous Agents card's link text on the card.
   ["ds-accent-agent", "ds-surface"],
+  // #190 PR D: what's-new tags (dark checks the opaque surface, a lower bound
+  // for the 30 % fill on a dark card), SEO callout titles, impact text.
+  ["ds-text-tag-purple", "ds-surface-tag-purple"],
+  ["ds-text-tag-blue", "ds-surface-tag-blue"],
+  ["ds-text-tag-green", "ds-surface-tag-green"],
+  ["ds-text-tag-orange", "ds-surface-tag-orange"],
+  ["ds-text-callout-success-title", "ds-surface-callout-success"],
+  ["ds-text-callout-danger-title", "ds-surface-callout-danger"],
+  ["ds-text-paper-subtle", "ds-surface-paper-muted"],
 ];
 
 /**
