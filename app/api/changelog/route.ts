@@ -1,140 +1,63 @@
-import { readFile, access } from "node:fs/promises";
-import path from "node:path";
-import { NextResponse } from "next/server";
-import { constants } from "node:fs";
+import { cachedJsonResponse, uncachedJsonResponse } from "@/lib/api-cache";
+import { CHANGELOG_ENTRIES } from "@/lib/data/changelog-entries";
+import { loggers } from "@/lib/logger";
 
+/** How many versions (counting "Unreleased" as one) the endpoint returns. */
+const RECENT_VERSIONS = 3;
+
+/**
+ * Platform changelog for the changelog modal: the most recent versions'
+ * entries, newest version first.
+ *
+ * Why: The route read CHANGELOG.md from disk. The deploy did not ship that
+ * file, so production answered `200 []` and logged at info level (#231).
+ * What: Serves entries from the build-time module
+ * `data/changelog-entries.generated.json`, so no file read happens at
+ * runtime. The body carries `_sources` and `_degraded`. With no entries it
+ * answers 503 `no-store` and `_degraded: true`, never a `200 []`.
+ * Test: `tests/unit/changelog-route-231.test.ts`.
+ */
 export async function GET() {
-  try {
-    const changelogPath = path.join(process.cwd(), "CHANGELOG.md");
+  // #231: entries come from the generated module, not a runtime fs read.
+  const entries = CHANGELOG_ENTRIES;
 
-    // Check if the changelog file exists
-    try {
-      await access(changelogPath, constants.F_OK);
-    } catch {
-      // File doesn't exist - return empty array with 200 status
-      console.info("CHANGELOG.md not found, returning empty changelog");
-      return NextResponse.json([], { status: 200 });
-    }
-
-    // Read and parse the changelog content
-    const changelogContent = await readFile(changelogPath, "utf-8");
-
-    // Parse the changelog content
-    const releases = parseChangelog(changelogContent);
-
-    // Filter to only recent releases (last 3 releases or last 30 days)
-    const recentReleases = releases.slice(0, 3);
-
-    // Transform to the format expected by the modal
-    const changelogData = recentReleases.flatMap((release) =>
-      release.items.map((item) => ({
-        id: `${release.version}-${item.category}-${item.title.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}`,
-        title: item.title,
-        description: item.description,
-        date: release.date,
-        category: "Platform",
-        type: getCategoryType(item.category),
-        version: release.version,
-      }))
-    );
-
-    return NextResponse.json(changelogData);
-  } catch (error) {
-    console.error("Error processing changelog:", error);
-    // Return empty array with 200 status to prevent application-wide errors
-    return NextResponse.json([], { status: 200 });
-  }
-}
-
-interface ChangelogItem {
-  category: string;
-  title: string;
-  description: string;
-}
-
-interface Release {
-  version: string;
-  date: string;
-  items: ChangelogItem[];
-}
-
-function parseChangelog(content: string): Release[] {
-  const releases: Release[] = [];
-  const lines = content.split("\n");
-
-  let currentRelease: Release | null = null;
-  let currentCategory = "";
-
-  for (const line of lines) {
-    // Match release headers like "## [3.1.0] - 2025-07-01"
-    const releaseMatch = line.match(/^## \[([^\]]+)\] - (\d{4}-\d{2}-\d{2})/);
-    if (releaseMatch) {
-      if (currentRelease) {
-        releases.push(currentRelease);
-      }
-      const version = releaseMatch[1] || "Unknown";
-      const date = (releaseMatch[2] || new Date().toISOString().split("T")[0]) as string;
-      currentRelease = {
-        version,
-        date,
+  if (entries.length === 0) {
+    // #231: an empty module is a build defect; make it visible, never `200 []`.
+    loggers.api.error("Changelog API: generated changelog module has no entries");
+    return uncachedJsonResponse(
+      {
+        error: "Changelog temporarily unavailable",
         items: [],
-      };
-      currentCategory = "";
-      continue;
-    }
-
-    // Match category headers like "### Added"
-    const categoryMatch = line.match(/^### (.+)/);
-    if (categoryMatch) {
-      currentCategory = categoryMatch[1] || "General";
-      continue;
-    }
-
-    // Match list items like "- **Interactive Tool Links**: Description"
-    const itemMatch = line.match(/^- \*\*([^*]+)\*\*: (.+)/);
-    if (itemMatch && currentRelease && currentCategory) {
-      currentRelease.items.push({
-        category: currentCategory,
-        title: itemMatch[1] || "Update",
-        description: itemMatch[2] || "Platform update",
-      });
-      continue;
-    }
-
-    // Match simple list items like "- Item description"
-    const simpleItemMatch = line.match(/^- (.+)/);
-    if (simpleItemMatch && currentRelease && currentCategory) {
-      // Skip if it's a sub-item (starts with spaces)
-      if (!line.startsWith("  ")) {
-        currentRelease.items.push({
-          category: currentCategory,
-          title:
-            simpleItemMatch[1]?.split(":")[0] || simpleItemMatch[1]?.substring(0, 50) || "Update",
-          description: simpleItemMatch[1] || "Platform update",
-        });
-      }
-    }
+        _sources: { changelog: { status: "unavailable", count: 0 } },
+        _degraded: true,
+        _timestamp: new Date().toISOString(),
+      },
+      503
+    );
   }
 
-  // Add the last release
-  if (currentRelease) {
-    releases.push(currentRelease);
-  }
+  const versions = [...new Set(entries.map((entry) => entry.version))].slice(0, RECENT_VERSIONS);
+  const items = entries
+    .filter((entry) => versions.includes(entry.version))
+    .map((entry) => ({
+      id: entry.id,
+      title: entry.title,
+      description: entry.description,
+      date: entry.date,
+      category: "Platform",
+      type: entry.changeType,
+      version: entry.version,
+    }));
 
-  return releases;
-}
-
-function getCategoryType(category: string): "feature" | "improvement" | "fix" | "news" {
-  switch (category.toLowerCase()) {
-    case "added":
-      return "feature";
-    case "changed":
-      return "improvement";
-    case "fixed":
-      return "fix";
-    case "removed":
-      return "improvement";
-    default:
-      return "feature";
-  }
+  return cachedJsonResponse(
+    {
+      items,
+      _sources: { changelog: { status: "ok", count: items.length } },
+      _degraded: false,
+      _timestamp: new Date().toISOString(),
+    },
+    "/api/changelog",
+    200,
+    { maxAge: 60, sMaxAge: 60 }
+  );
 }
