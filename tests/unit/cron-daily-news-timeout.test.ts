@@ -34,6 +34,9 @@ import {
   AutomatedIngestionService,
   type IngestionResult,
 } from "../../lib/services/automated-ingestion.service";
+import { TavilySearchService } from "../../lib/services/tavily-search.service";
+import { RUN_SUMMARY_MSG } from "../../lib/services/ingestion-run-summary";
+import { loggers } from "../../lib/logger";
 import {
   MIN_GENERATION_BUDGET_MS,
   WhatsNewSummaryService,
@@ -194,6 +197,47 @@ describe("GET /api/cron/daily-news — ingestion and summary inside maxDuration"
       expect.stringMatching(/^Pipeline timeout: exceeded \d+s$/),
       expect.stringContaining(`Run row persistence failed or timed out (runId=${RUN_ID})`),
     ]);
+  });
+
+  // #172: the timeout arm logs the run summary with the counts reached before the hang.
+  it("logs one error-level run summary with cause pipeline_timeout and the counts reached", async () => {
+    vi.spyOn(TavilySearchService.prototype, "isConfigured").mockReturnValue(true);
+    vi.spyOn(AutomatedIngestionService.prototype, "createRun").mockResolvedValue(RUN_ID);
+    const now = new Date().toISOString();
+    vi.spyOn(
+      AutomatedIngestionService.prototype as unknown as {
+        discoverArticles: () => Promise<{ results: unknown[]; provider: string }>;
+      },
+      "discoverArticles"
+    ).mockResolvedValue({
+      results: [
+        { title: "Alpha story", url: "https://a.example.org/1", publishedDate: now, discoveredVia: "recency" },
+        { title: "Beta story", url: "https://b.example.org/2", publishedDate: now, discoveredVia: "recency" },
+      ],
+      provider: "tavily",
+    });
+    // The stage after discovery and the freshness filter never returns.
+    vi.spyOn(AutomatedIngestionService.prototype, "checkDuplicates").mockImplementation(
+      () => new Promise<Set<string>>(() => undefined)
+    );
+    const errorSpy = vi.spyOn(loggers.api, "error");
+    const warnSpy = vi.spyOn(loggers.api, "warn");
+
+    const { settled, response } = await runCronFor(LIMIT_MS);
+    expect(settled).toBe(true);
+    expect((await response).status).toBe(500);
+
+    const summaries = errorSpy.mock.calls.filter((call) => call[0] === RUN_SUMMARY_MSG);
+    expect(warnSpy.mock.calls.filter((call) => call[0] === RUN_SUMMARY_MSG)).toHaveLength(0);
+    expect(summaries).toHaveLength(1);
+    expect(summaries[0]![1]).toMatchObject({
+      runId: RUN_ID,
+      status: "failed",
+      cause: "pipeline_timeout",
+      discovered: 2,
+      candidates: 2,
+      added: 0,
+    });
   });
 });
 
