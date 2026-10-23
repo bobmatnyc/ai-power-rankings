@@ -27,6 +27,9 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/design",
   useSearchParams: () => new URLSearchParams(),
   useRouter: () => ({ push: () => {}, replace: () => {}, prefetch: () => {} }),
+  notFound: () => {
+    throw new Error("NEXT_NOT_FOUND");
+  },
 }));
 vi.mock("next/link", () => ({
   default: ({ href, children, ...rest }: { href: string; children: ReactNode }) => (
@@ -46,7 +49,8 @@ vi.mock("../../lib/db/repositories/tools.repository", () => ({
   toolsRepository: { findAll: vi.fn(async () => []) },
 }));
 
-import { metadata } from "../../app/design/page";
+import DesignPage, { metadata } from "../../app/design/page";
+import { designPreviewEnabled } from "../../app/design/preview-gate";
 import { DesignPreview } from "../../app/design/design-preview";
 import { forcedSelector } from "../../app/design/force-states";
 import { buildSitemapEntries } from "../../lib/sitemap";
@@ -65,6 +69,10 @@ const REQUIRED: Record<string, { states: string[]; signature: string }> = {
   footer: { states: ["default", "hover", "focus"], signature: "footer" },
   "score-pill": { states: ["default", "hover"], signature: ".rounded-full" },
   "rank-change": { states: ["new", "up", "down", "steady"], signature: "[class*='text-ds-rank-']" },
+  // #190 PR C1
+  alert: { states: ["default", "destructive"], signature: "[role='alert']" },
+  "form-control": { states: ["default", "focus"], signature: "input.border-ds-border-strong" },
+  "fixed-text": { states: ["default"], signature: ".text-ds-success-fixed" },
 };
 
 const RANK_CLASS: Record<string, string> = {
@@ -113,6 +121,29 @@ describe("/design preview (#190)", () => {
 
   it("is noindex", () => {
     expect(metadata.robots).toMatchObject({ index: false, follow: false });
+  });
+
+  // #190 PR C1: production answers 404 unless DESIGN_PREVIEW is set.
+  it.each([
+    [{ NODE_ENV: "production" }, false],
+    [{ NODE_ENV: "production", DESIGN_PREVIEW: "" }, false],
+    [{ NODE_ENV: "production", DESIGN_PREVIEW: "1" }, true],
+    [{ NODE_ENV: "development" }, true],
+    [{ NODE_ENV: "test" }, true],
+  ])("gates on %j -> %s", (env, enabled) => {
+    expect(designPreviewEnabled(env)).toBe(enabled);
+  });
+
+  it("calls notFound() in production without DESIGN_PREVIEW", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DESIGN_PREVIEW", "");
+    try {
+      await expect(DesignPage()).rejects.toThrow("NEXT_NOT_FOUND");
+      vi.stubEnv("DESIGN_PREVIEW", "1");
+      await expect(DesignPage()).resolves.toBeTruthy();
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it("has no link from any source outside app/design", () => {

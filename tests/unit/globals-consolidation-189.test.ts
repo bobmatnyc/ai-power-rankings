@@ -92,9 +92,10 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
  * Measured count after the allowlist below. #190 PR A: 791, the #188 audit's
  * 845 less 35 (open-graph routes), 8 (contact email) and 11 (globals.css
  * `--shadow*` values). #190 PR B: 708, after 83 core-component uses moved to
- * tokens. Lower it as #190 migrates; never raise it.
+ * tokens. #190 PR C1: 707, the subscribe checkbox's `border-gray-300`. Lower
+ * it as #190 migrates; never raise it.
  */
-const HARDCODED_COLOUR_BASELINE = 708;
+const HARDCODED_COLOUR_BASELINE = 707;
 
 /**
  * #190 rulings D2-D4: the only places a literal colour is the right tool. An

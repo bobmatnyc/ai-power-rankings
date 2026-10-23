@@ -8,6 +8,7 @@ import tailwindcss from "tailwindcss";
 import colors from "tailwindcss/colors";
 import { describe, expect, it } from "vitest";
 import { RankingChange } from "../../components/ui/ranking-change";
+import { contrast, tokensFor } from "../../scripts/design-tokens";
 
 /**
  * Regression tests for #178 — the sample design-agent token set.
@@ -17,7 +18,9 @@ import { RankingChange } from "../../components/ui/ranking-change";
  * What: (1) Tailwind, run with the repo config, emits each `--ds-*` utility as
  * the matching CSS variable; (2) `RankingChange` renders those utilities, not
  * the palette classes it used before; (3) each colour token in app/globals.css,
- * light and dark, converts to the same hex as the palette class it replaced.
+ * light and dark, converts to the hex of its palette class (light rank-up is
+ * green-700 since #190); (4) each rank colour meets AA on the page and card
+ * surfaces in both modes.
  * Test: `npx vitest run tests/unit/design-tokens-178.test.ts`. No network.
  */
 
@@ -92,11 +95,26 @@ describe("design-agent sample tokens (#178)", () => {
   });
 
   it.each([
-    ["ds-rank-up", colors.green[600], colors.green[400]],
+    // #190: light rank-up moved from green-600 to green-700 to meet AA.
+    ["ds-rank-up", colors.green[700], colors.green[400]],
     ["ds-rank-down", colors.red[600], colors.red[400]],
     ["ds-rank-steady", colors.gray[500], colors.gray[400]],
-  ])("--%s equals the palette colour it replaced, light and dark", (name, light, dark) => {
+  ])("--%s equals its palette colour, light and dark", (name, light, dark) => {
     expect(hslToHex(tokenIn("root", name))).toBe(light);
     expect(hslToHex(tokenIn("dark", name))).toBe(dark);
+  });
+
+  // #190: the rank colours are text on cards (--ds-surface-raised) and on the
+  // page (--ds-surface), so each must meet AA (4.5:1) there in both modes.
+  it.each(
+    (["light", "dark"] as const).flatMap((mode) =>
+      ["ds-rank-up", "ds-rank-down", "ds-rank-steady"].flatMap((fg) =>
+        ["ds-surface", "ds-surface-raised"].map((bg) => [mode, fg, bg] as const),
+      ),
+    ),
+  )("%s --%s on --%s meets AA", (mode, fg, bg) => {
+    const surface = tokensFor(globalsCss, mode).get(`--${bg}`) ?? "";
+    const ratio = contrast(hslToHex(tokenIn(mode === "light" ? "root" : "dark", fg)), hslToHex(surface));
+    expect(ratio, `${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(4.5);
   });
 });

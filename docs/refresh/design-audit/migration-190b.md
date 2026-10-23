@@ -70,8 +70,49 @@ not in `AA_PAIRS`; changing them is a visible change for the owner.
 | `--ds-text-on-fill` (white) on the tier S gradient, yellow-500 / amber-500 | 1.92 / 2.15 |
 | `--ds-text-on-fill` on the tier B and D gradient starts, green-500 / orange-500 | 2.28 / 2.80 |
 | `--ds-text-on-fill` on the green, orange and teal tool icons (500 stop) | 2.28 / 2.80 / 2.49 |
-| `--ds-success-fixed` on white (rankings modifiers, comparison tick) | 3.30 |
-| `--ds-warning-fixed` on white (rankings modifiers) | 3.56 |
+
+PR C1 removed the `--ds-success-fixed` and `--ds-warning-fixed` rows; see
+below. The remaining rows are gradient fills, left for PR C2.
+
+## PR C1: accessibility fixes (visible)
+
+PR C1 is the first #190 change that alters pixels. The owner approves it
+from before/after screenshots.
+
+| Change | Pair | Before | After |
+|---|---|---|---|
+| `--ds-rank-up` light: green-600 to green-700 (`--ds-success` value) | on `--ds-surface` and `--ds-surface-raised` (white) | 3.30 | 5.02 |
+| `--ds-success-fixed`: green-600 to green-700 | on white | 3.30 | 5.02 |
+| `--ds-warning-fixed`: orange-600 to orange-700 | on white | 3.56 | 5.18 |
+| `--ds-border-strong` light: slate-300 to `215 16.3% 56%` (`#7d8ca1`) | on surface / raised / muted | 1.48 / 1.48 / 1.36 | 3.42 / 3.42 / 3.12 |
+| `--ds-border-strong` dark: slate-600 to slate-500 | on surface / raised / muted | 2.64 / 2.36 / 1.93 | 4.20 / 3.75 / 3.07 |
+| `destructive` colour added, `--ds-danger` | text on light / dark surface | none (no CSS) | 6.47 / 7.23 |
+| `destructive-foreground`, `--ds-surface` | on a `bg-destructive` fill, light / dark | none (no CSS) | 6.47 / 7.23 |
+
+- **Destructive.** `tailwind.config.js` had no `destructive` colour, so the
+  8 `text-`/`bg-`/`border-destructive` sites (6 files) emitted no CSS:
+  destructive Alerts, the home autonomous-agent card, the error boundary
+  icon and the confirm-dialog button rendered without red. They now
+  resolve to `--ds-danger`. `tests/unit/tailwind-colour-classes-190.test.ts`
+  fails when a `text-`, `bg-` or `border-` class in source compiles to nothing.
+- **Borders.** `--ds-border` stays below 3:1 as a documented decorative
+  exception: it draws dividers and card edges, never the only edge of a
+  control. Form controls move from `border-input` (the same value as
+  `--ds-border`, 1.23 light) to `border-ds-border-strong`: Input, Select
+  trigger, Textarea, the admin tools-manager and news selects, the subscribe
+  checkbox, and the outline button (`components/ui/button.tsx` and the two
+  about-page HTML buttons). 10 sites.
+- **`-fixed` text in dark mode.** The `-fixed` tokens hold one value in both
+  modes, and the rankings table shows them on the dark card too. There the
+  700 step is below AA: green-700 on `#020817` is 3.99 (green-600 was
+  6.07), orange-700 is 3.86 (orange-600 was 5.62). `AA_PAIRS` checks them on
+  white only. Moving those sites to the mode-dependent `--ds-success` and
+  `--ds-warning` would pass in both modes.
+- **`/design`.** Answers 404 in production unless `DESIGN_PREVIEW` is set
+  (non-empty) at build time; it keeps its `noindex` metadata. Dev, local and
+  visual-test runs render it. It gains Alert, form-control and fixed-text
+  samples.
+- Ratchet: 708 to 707 (the subscribe checkbox's `border-gray-300`).
 
 ## How parity was checked
 

@@ -10,8 +10,7 @@ import { NON_TEXT_PAIRS, contrast, hslToHex, tokensFor, type Mode } from "../../
  * the only edge of a control. The #188 test covers text pairs only.
  * What: for each `NON_TEXT_PAIRS` entry in light and dark, requires 3:1 unless
  * the pair is a named known exception. A known exception must still be below
- * 3:1, so the list shrinks when a token is fixed. The tokens are not changed
- * here: raising a border is a visible change, left to the owner.
+ * 3:1, so the list shrinks when a token is fixed.
  * Test: `npx vitest run tests/unit/design-contrast-190.test.ts`. No network.
  */
 
@@ -20,22 +19,19 @@ const MODES: Mode[] = ["light", "dark"];
 const NON_TEXT_MINIMUM = 3;
 
 /**
- * Pairs below 3:1 at #190 PR A, as `<mode> <fg> on <bg>`. Borders here are
- * dividers and card edges; cards also carry a shadow and inputs a label.
+ * Pairs below 3:1, as `<mode> <fg> on <bg>`.
+ * #190 PR C1: `--ds-border` is a documented decorative exception. It draws
+ * dividers and card edges, never the only edge of a control: cards also carry
+ * a shadow, and form controls use `--ds-border-strong`, which now meets 3:1
+ * and so is no longer listed.
  */
 const KNOWN_EXCEPTIONS = new Set<string>([
-  "light ds-border on ds-surface", // 1.23
-  "light ds-border on ds-surface-raised", // 1.23
-  "light ds-border on ds-surface-muted", // 1.13
-  "light ds-border-strong on ds-surface", // 1.48
-  "light ds-border-strong on ds-surface-raised", // 1.48
-  "light ds-border-strong on ds-surface-muted", // 1.36
-  "dark ds-border on ds-surface", // 1.37
-  "dark ds-border on ds-surface-raised", // 1.22
-  "dark ds-border on ds-surface-muted", // 1.00, same value
-  "dark ds-border-strong on ds-surface", // 2.64
-  "dark ds-border-strong on ds-surface-raised", // 2.36
-  "dark ds-border-strong on ds-surface-muted", // 1.93
+  "light ds-border on ds-surface", // 1.23, decorative
+  "light ds-border on ds-surface-raised", // 1.23, decorative
+  "light ds-border on ds-surface-muted", // 1.13, decorative
+  "dark ds-border on ds-surface", // 1.37, decorative
+  "dark ds-border on ds-surface-raised", // 1.22, decorative
+  "dark ds-border on ds-surface-muted", // 1.00, decorative, same value
 ]);
 
 function ratio(mode: Mode, fg: string, bg: string): number {
