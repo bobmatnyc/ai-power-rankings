@@ -17,7 +17,7 @@
  * control shot. It prints the differing-pixel count for token vs old and
  * control vs old. Exit 0 only when every parity mapping and control is 0 and
  * every `expectDiff` mapping (the deliberate one-step change) is non-zero.
- * The `190e2a` set builds each mapping from the table in
+ * The `190e2a` and `190e2b` sets build each mapping from the table in
  * `scripts/design-class-maps.ts`, so it renders the substitutions the
  * class-diff check accepts.
  * Test: run by hand (`npx tsx scripts/design-parity-pixels.ts --set 190e1`);
@@ -33,7 +33,7 @@ import { join } from "node:path";
 import { chromium, type Page } from "playwright";
 import postcss from "postcss";
 import tailwindcss from "tailwindcss";
-import { CLASS_MAPS } from "./design-class-maps";
+import { CLASS_MAPS, type ClassMap } from "./design-class-maps";
 import { countDiffPixels } from "./pixel-diff";
 
 /** One side of a mapping: a class string, an inline style, or both. */
@@ -54,6 +54,8 @@ interface Mapping {
   states?: ReadonlyArray<State>;
   /** A deliberate change: passes only when token and old differ. */
   expectDiff?: boolean;
+  /** Modes to shoot; default light and dark. */
+  modes?: ReadonlyArray<(typeof MODES)[number]>;
 }
 
 const tags = (hue: string): Mapping => ({
@@ -144,41 +146,42 @@ const SET_190E1: Mapping[] = [
   },
 ];
 
-const MAP_190E2A = CLASS_MAPS["190e2a"];
 const ALL_STATES: ReadonlyArray<State> = ["rest", "hover", "active"];
 
-/** A class string with each word replaced through the 190e2a table (pairs first; variants and `/opacity` kept). */
-function mapClasses(classes: string): string {
+/** A class string with each word replaced through `map` (pairs first; variants and `/opacity` kept). */
+function mapClasses(classes: string, map: ClassMap): string {
   let out = ` ${classes} `;
-  for (const [pair, token] of Object.entries(MAP_190E2A.pairs)) out = out.replace(` ${pair} `, ` ${token} `);
+  for (const [pair, token] of Object.entries(map.pairs)) out = out.replace(` ${pair} `, ` ${token} `);
   return out
     .trim()
     .split(/\s+/)
     .map((word) => {
       const match = /^((?:[^\s:]+:)*)([^/]+)(\/.+)?$/.exec(word);
-      const token = match ? MAP_190E2A.classes[match[2]] : undefined;
+      const token = match ? map.classes[match[2]] : undefined;
       return match && token ? `${match[1]}${token}${match[3] ?? ""}` : word;
     })
     .join(" ");
 }
 
-/** Old class string vs its table mapping, in `element`, at rest, hover and active. */
-function e2a(classes: string, element: NonNullable<Mapping["element"]> = "div"): Mapping {
-  const token = mapClasses(classes);
-  if (token === classes) throw new Error(`190e2a: no table entry maps "${classes}"`);
-  return { name: `${element} ${classes}`, element, states: ALL_STATES, old: { className: classes }, token: { className: token } };
-}
-
-/** An inline style with one hex replaced by its table value. */
-function e2aInline(style: string, hex: string, element: NonNullable<Mapping["element"]> = "div"): Mapping {
-  return {
+/** Builders for one `CLASS_MAPS` set: a class string or an inline hex vs its table mapping, at rest, hover and active. */
+function tableMappings(setName: string) {
+  const map = CLASS_MAPS[setName];
+  const cls = (classes: string, element: NonNullable<Mapping["element"]> = "div"): Mapping => {
+    const token = mapClasses(classes, map);
+    if (token === classes) throw new Error(`${setName}: no table entry maps "${classes}"`);
+    return { name: `${element} ${classes}`, element, states: ALL_STATES, old: { className: classes }, token: { className: token } };
+  };
+  const inline = (style: string, hex: string, element: NonNullable<Mapping["element"]> = "div"): Mapping => ({
     name: `${element} ${style}`,
     element,
     states: ALL_STATES,
     old: { style },
-    token: { style: style.replace(hex, MAP_190E2A.inline[hex]) },
-  };
+    token: { style: style.replace(hex, map.inline[hex]) },
+  });
+  return { cls, inline };
 }
+
+const { cls: e2a, inline: e2aInline } = tableMappings("190e2a");
 
 /** #190 E2a: admin components and the SEO dashboard, each in the element it is used on. */
 const SET_190E2A: Mapping[] = [
@@ -226,7 +229,44 @@ const SET_190E2A: Mapping[] = [
   },
 ];
 
-export const SETS: Record<string, Mapping[]> = { "190e1": SET_190E1, "190e2a": SET_190E2A };
+const { cls: e2b } = tableMappings("190e2b");
+
+/** #190 E2b-1: the auth components, each class string as the component writes it, in its element. */
+const SET_190E2B: Mapping[] = [
+  // no-auth-header: the dev-mode label and its email chip.
+  e2b("text-sm text-gray-600"),
+  e2b("rounded-md bg-gray-100"),
+  // clerk-debug panel.
+  e2b("bg-black/80 text-white rounded text-xs"),
+  // clerk-header: the Sign In and Sign Up buttons (unmapped classes stay).
+  e2b("text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50", "button"),
+  e2b("text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700", "button"),
+  // user-button-with-admin fallback avatar skeleton.
+  e2b("rounded-full bg-gray-200"),
+  // no-auth-provider: the staging tooltip, the dev dropdown, its admin link and sign-out button.
+  e2b("bg-gray-900 text-white text-sm rounded-lg shadow-lg"),
+  e2b("bg-white rounded-md shadow-lg border border-gray-200"),
+  e2b("flex items-center text-sm text-gray-700 hover:bg-gray-100", "a"),
+  e2b("w-full text-left text-sm text-gray-700 hover:bg-gray-100", "button"),
+  // The controls: a light-only match must show in dark, and the admin link losing its hover variant must show.
+  {
+    name: "CONTROL bg-gray-900 to --ds-surface-signal (gray-900 in light only), dark",
+    modes: ["dark"],
+    old: { className: "bg-gray-900" },
+    token: { className: "bg-ds-surface-signal" },
+    expectDiff: true,
+  },
+  {
+    name: "CONTROL a text-gray-700 hover:bg-gray-100 without its hover background",
+    element: "a",
+    states: ["hover"],
+    old: { className: "text-gray-700 hover:bg-gray-100" },
+    token: { className: "text-gray-700" },
+    expectDiff: true,
+  },
+];
+
+export const SETS: Record<string, Mapping[]> = { "190e1": SET_190E1, "190e2a": SET_190E2A, "190e2b": SET_190E2B };
 
 const ROOT = join(__dirname, "..");
 const MODES = ["light", "dark"] as const;
@@ -291,7 +331,7 @@ async function main(): Promise<void> {
     const diffPage = await browser.newPage();
     console.log("mode\tstate\ttoken-vs-old px\tcontrol px\tresult\tmapping");
     for (const mapping of mappings) {
-      for (const mode of MODES) {
+      for (const mode of mapping.modes ?? MODES) {
         await page.setContent(
           `<!doctype html><html class="${mode === "dark" ? "dark" : ""}"><head><style>${css}</style></head>` +
             `<body class="bg-background" style="margin:0;padding:40px">${slotMarkup(mapping.element ?? "div")}</body></html>`,
