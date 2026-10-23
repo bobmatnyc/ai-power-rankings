@@ -1,6 +1,7 @@
 # Current-UI audit (#188)
 
 Input to the design-system token layer (`docs/refresh/design-tokens.md`).
+Contributor guide: [../design-system.md](../design-system.md).
 
 | File | Content |
 |---|---|
