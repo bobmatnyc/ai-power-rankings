@@ -18,9 +18,10 @@
  * or changed variant, a non-colour class change, or a code change.
  * Exit 0 when every file passes, 1 otherwise. It prints the substitution
  * count per table entry.
- * Test: `tests/unit/design-parity-190e2a.test.ts` runs `diffSource` on
- * passing and failing samples; `npx tsx scripts/design-class-diff.ts --set
- * 190e2a` checks the branch.
+ * Test: `tests/unit/design-parity-190e2a.test.ts` and
+ * `tests/unit/design-parity-190e2b.test.ts` run `diffSource` on passing and
+ * failing samples; `npx tsx scripts/design-class-diff.ts --set <set>` checks
+ * the branch.
  */
 
 import { execFileSync } from "node:child_process";
@@ -58,13 +59,19 @@ function startsWith(tokens: string[], at: number, wanted: string[]): boolean {
   return wanted.every((token, k) => tokens[at + k] === token);
 }
 
-/** True when the class string holding `tokens[at]` also has a `dark:<utility>-` class. */
-function hasDarkPartner(tokens: string[], at: number, utility: string): boolean {
+/**
+ * True when the class string holding `tokens[at]` also has a `dark:` partner:
+ * `dark:<variants><utility>-` or `<variants>dark:<utility>-`, where
+ * `variants` is the light class's own prefix (`hover:` and so on).
+ */
+function hasDarkPartner(tokens: string[], at: number, utility: string, variants = ""): boolean {
   const isQuote = (token: string) => token === '"' || token === "'" || token === "`";
   let start = at;
   while (start > 0 && !isQuote(tokens[start - 1])) start--;
   for (let k = start; k < tokens.length && !isQuote(tokens[k]); k++) {
-    if (tokens[k].startsWith(`dark:${utility}-`)) return true;
+    // #190 E2b: `hover:bg-gray-100 dark:hover:bg-gray-800` is a pair too.
+    const token = tokens[k];
+    if (token.startsWith(`dark:${variants}${utility}-`) || token.startsWith(`${variants}dark:${utility}-`)) return true;
   }
   return false;
 }
@@ -80,8 +87,8 @@ export function rulesFor(map: ClassMap): NamedRule[] {
       apply: (removed, i, added, j) => {
         const match = pattern.exec(removed[i] ?? "");
         if (!match) return null;
-        // A light class with a `dark:` partner maps only as a pair.
-        if (!match[1] && hasDarkPartner(removed, i, utility)) return null;
+        // A light class with a `dark:` partner maps only as a pair, with or without a variant prefix.
+        if (!match[1].includes("dark:") && hasDarkPartner(removed, i, utility, match[1])) return null;
         const expected = `${match[1]}${newClass}${match[2] ?? ""}`;
         return added[j] === expected ? { di: 1, dj: 1 } : null;
       },

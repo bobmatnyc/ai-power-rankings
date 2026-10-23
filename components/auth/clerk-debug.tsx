@@ -33,7 +33,7 @@ export function ClerkDebug() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 bg-black/80 text-white p-4 rounded text-xs max-w-xs z-50">
+    <div className="fixed bottom-4 right-4 bg-ds-surface-overlay/80 text-ds-text-on-fill p-4 rounded text-xs max-w-xs z-50">
       <h3 className="font-bold mb-2">Clerk Debug</h3>
       <pre className="text-[10px]">{JSON.stringify(debugInfo, null, 2)}</pre>
     </div>

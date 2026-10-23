@@ -12,9 +12,10 @@
  * `dark:` class, written together, to one token class with both values.
  * `inline` maps an inline-style hex to the token's `hsl(var(--ds-…))` value.
  * `files` lists the set's files. Each old colour has exactly one target.
- * Test: `tests/unit/design-parity-190e2a.test.ts` checks every entry against
- * the palette and the token layer; `npx tsx scripts/design-class-diff.ts
- * --set 190e2a` checks the source against it.
+ * Test: `tests/unit/design-parity-190e2a.test.ts` and
+ * `tests/unit/design-parity-190e2b.test.ts` check every entry against the
+ * palette and the token layer; `npx tsx scripts/design-class-diff.ts --set
+ * <set>` checks the source against it.
  */
 
 export interface ClassMap {
@@ -91,4 +92,39 @@ const MAP_190E2A: ClassMap = {
   },
 };
 
-export const CLASS_MAPS: Readonly<Record<string, ClassMap>> = { "190e2a": MAP_190E2A };
+/**
+ * #190 PR E2b: the auth components and the authenticated pages. E2b-1 adds
+ * `components/auth/**` and `app/[lang]/(authenticated)/layout.tsx`; E2b-2
+ * extends this set with the rest of `app/[lang]/(authenticated)/**`.
+ */
+const MAP_190E2B: ClassMap = {
+  files: [
+    "components/auth/no-auth-provider.tsx",
+    "components/auth/clerk-header.tsx",
+    "components/auth/auth-components-simple.tsx",
+    "components/auth/clerk-debug.tsx",
+    "components/auth/clerk-direct-components.tsx",
+    "components/auth/no-auth-header.tsx",
+    "components/auth/user-button-with-admin.tsx",
+    "components/auth/clerk-provider-client.tsx",
+    "app/[lang]/(authenticated)/layout.tsx",
+  ],
+  classes: {
+    // Neutral paper surfaces, borders and text (one value in both modes).
+    "bg-white": "bg-ds-surface-paper",
+    "bg-gray-50": "bg-ds-surface-paper-muted",
+    "bg-gray-100": "bg-ds-surface-paper-sunken",
+    "bg-gray-200": "bg-ds-surface-skeleton",
+    "bg-gray-900": "bg-ds-surface-footer",
+    "bg-black": "bg-ds-surface-overlay",
+    "border-gray-200": "border-ds-border-paper",
+    "text-gray-600": "text-ds-text-paper-muted",
+    "text-white": "text-ds-text-on-fill",
+    // Accent.
+    "bg-blue-600": "bg-ds-accent-fixed",
+  },
+  pairs: {},
+  inline: {},
+};
+
+export const CLASS_MAPS: Readonly<Record<string, ClassMap>> = { "190e2a": MAP_190E2A, "190e2b": MAP_190E2B };
