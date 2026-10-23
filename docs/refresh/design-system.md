@@ -64,6 +64,13 @@ allowlist in that test exempts the open-graph image routes, the contact email
 HTML and the `--shadow*` declarations in `app/globals.css`, each with its
 reason. Any other literal colour in `app/globals.css` counts.
 
+**Open-graph exemption.** `app/api/og/*` is permanently exempt from tokens.
+These routes render images through `next/og` (Satori), which cannot read CSS
+custom properties, so their colours stay literal. The allowlist entry's
+`literalCap` holds the current count of hex, rgb/rgba and hsl/hsla literals
+in those files; the test fails if the count rises. Lower the cap when it
+falls.
+
 **Contrast exceptions.** `--ds-border` and `--ds-border-strong` are below 3:1
 on every surface in both modes. They are listed by name in
 `KNOWN_EXCEPTIONS`; raising them is a visible change for the owner to approve.
