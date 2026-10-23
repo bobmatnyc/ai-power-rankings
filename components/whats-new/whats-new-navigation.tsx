@@ -27,7 +27,7 @@ export function WhatsNewNavigation({ lang }: WhatsNewNavigationProps) {
   ];
 
   return (
-    <nav className="border-b border-gray-200 dark:border-gray-700 mb-8">
+    <nav className="border-b border-ds-border-neutral mb-8">
       <div className="flex space-x-8">
         {tabs.map((tab) => {
           const isActive = pathname === tab.href;
@@ -41,7 +41,7 @@ export function WhatsNewNavigation({ lang }: WhatsNewNavigationProps) {
                 group py-4 px-1 border-b-2 font-medium text-sm transition-all
                 ${isActive
                   ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-gray-300 dark:hover:border-gray-600'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-ds-border-neutral-hover'
                 }
               `}
               title={tab.description}

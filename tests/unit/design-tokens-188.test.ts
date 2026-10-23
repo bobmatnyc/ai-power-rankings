@@ -52,6 +52,8 @@ const RUBRIC: Record<string, RegExp> = {
   radius: /^--ds-radius-/,
   shadow: /^--ds-shadow-/,
   motion: /^--ds-(duration|ease)-/,
+  // #190 PR D: the what's-new tag surfaces' alpha, 1 light and 0.3 dark.
+  opacity: /^--ds-opacity-/,
 };
 
 const COLOUR_CATEGORIES = ["surface", "text", "border", "accent", "status", "score bands", "gradient"];
@@ -73,6 +75,7 @@ function utilityFor(name: string): [string, string] {
     [/^shadow-/, "shadow-ds-"],
     [/^duration-/, "duration-ds-"],
     [/^ease-/, "ease-ds-"],
+    [/^opacity-/, "opacity-ds-"],
   ];
   for (const [prefix, utility] of prefixed) {
     if (prefix.test(rest)) return [`${utility}${rest.replace(prefix, "")}`, `var(${name})`];

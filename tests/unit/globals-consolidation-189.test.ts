@@ -94,10 +94,11 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
  * `--shadow*` values). #190 PR B: 708, after 83 core-component uses moved to
  * tokens. #190 PR C1: 707, the subscribe checkbox's `border-gray-300`. #190
  * C2: 679, the 28 gradient stops in tool-icon.tsx (18) and tier-legend.tsx
- * (10); lib/ranking-utils.ts is outside the scan. Lower it as #190 migrates;
- * never raise it.
+ * (10); lib/ranking-utils.ts is outside the scan. #190 PR D: 459, the 220
+ * uses on the news, what's-new, SEO and best-* pages and their components.
+ * Lower it as #190 migrates; never raise it.
  */
-const HARDCODED_COLOUR_BASELINE = 679;
+const HARDCODED_COLOUR_BASELINE = 459;
 
 /**
  * #190 rulings D2-D4: the only places a literal colour is the right tool. An

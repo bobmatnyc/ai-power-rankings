@@ -7,6 +7,7 @@ Contributor guide: [../design-system.md](../design-system.md).
 |---|---|
 | [token-inventory.md](token-inventory.md) | Colours, type scale, spacing, radius, shadows and motion in use, with class counts |
 | [migration-190b.md](migration-190b.md) | #190 PR B: core-component classes mapped to fixed tokens, with resolved values |
+| [migration-190d.md](migration-190d.md) | #190 PR D: news, what's-new, SEO and best-* classes mapped to tokens, with resolved values |
 | [one-off-styles.md](one-off-styles.md) | Hard-coded colours (palette classes, hex, `rgb(`) per file under `components/` and `app/` |
 | `tmp/design-audit/<label>/` | Screenshots, local only (gitignored, never committed) |
 

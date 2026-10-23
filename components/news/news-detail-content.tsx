@@ -203,7 +203,7 @@ export default function NewsDetailContent({
             value: amount,
             label: "Annual Recurring Revenue",
             icon: "dollar-sign",
-            color: "text-green-600",
+            color: "text-ds-accent-cat-green-strong",
           });
         }
       });
@@ -222,7 +222,7 @@ export default function NewsDetailContent({
             value: amount,
             label: "Company Valuation",
             icon: "award",
-            color: "text-purple-600",
+            color: "text-ds-accent-cat-purple-strong",
           });
         }
       });
@@ -240,7 +240,7 @@ export default function NewsDetailContent({
             value: u,
             label: "Paying Customers",
             icon: "users",
-            color: "text-orange-600",
+            color: "text-ds-accent-cat-orange-strong",
           });
         } else {
           metrics.push({
@@ -248,7 +248,7 @@ export default function NewsDetailContent({
             value: u,
             label: "Total Users",
             icon: "users",
-            color: "text-blue-600",
+            color: "text-ds-accent-fixed",
           });
         }
       });
@@ -267,7 +267,7 @@ export default function NewsDetailContent({
             value: `${tokens} tokens`,
             label: "Context Window",
             icon: "code",
-            color: "text-indigo-600",
+            color: "text-ds-accent-cat-indigo-strong",
           });
         }
       });

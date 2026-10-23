@@ -73,7 +73,7 @@ export default async function BestAutonomousAgentsPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-          <Button size="lg" className="gradient-primary text-white px-8 py-3" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8 py-3" asChild>
             <Link href={`/${lang}/rankings?category=autonomous-agent`}>
               View Agent Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -86,15 +86,15 @@ export default async function BestAutonomousAgentsPage({ params }: PageProps) {
         {/* Trust indicators */}
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Star className="h-4 w-4 text-yellow-500" />
+            <Star className="h-4 w-4 text-ds-accent-cat-yellow" />
             <span>6+ AI Agents Ranked</span>
           </div>
           <div className="flex items-center gap-2">
-            <Bot className="h-4 w-4 text-blue-500" />
+            <Bot className="h-4 w-4 text-ds-accent-cat-blue" />
             <span>Fully Autonomous</span>
           </div>
           <div className="flex items-center gap-2">
-            <Cpu className="h-4 w-4 text-green-500" />
+            <Cpu className="h-4 w-4 text-ds-accent-cat-green" />
             <span>Multi-step Reasoning</span>
           </div>
         </div>
@@ -300,7 +300,7 @@ export default async function BestAutonomousAgentsPage({ params }: PageProps) {
                 coding, testing, and deploying complete applications.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-purple rounded-full"></div>
                 <span>Full stack development • Multi-step reasoning</span>
               </div>
             </CardContent>
@@ -319,7 +319,7 @@ export default async function BestAutonomousAgentsPage({ params }: PageProps) {
                 impressive performance on SWE-bench benchmarks.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-green rounded-full"></div>
                 <span>Research proven • GitHub integration</span>
               </div>
             </CardContent>
@@ -336,7 +336,7 @@ export default async function BestAutonomousAgentsPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="gradient-primary text-white px-8" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8" asChild>
             <Link href={`/${lang}/rankings?category=autonomous-agent`}>
               View Complete Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
