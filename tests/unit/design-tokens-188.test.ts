@@ -23,8 +23,8 @@ import {
  * additive, so the #178 tokens and every existing variable keep their values.
  * What: reads the `#188 design-system tokens` region of app/globals.css and
  * checks (1) each rubric category has tokens in both modes and colour tokens
- * match across modes, (2) colours are HSL components and the layer holds no hex
- * or `rgb(`, (3) Tailwind with the repo config emits a `ds` utility for every
+ * match across modes, (2) colours are HSL components (the #190 C2 exception:
+ * `--ds-grad-exact-*` are sRGB channels) and the layer holds no hex or `rgb(`, (3) Tailwind with the repo config emits a `ds` utility for every
  * token, (4) text/surface pairs meet WCAG AA in both modes, (5) the layer only
  * declares new `--ds-*` names and the #178 tokens are unchanged.
  * Test: `npx vitest run tests/unit/design-tokens-188.test.ts`. No network.
@@ -45,6 +45,8 @@ const RUBRIC: Record<string, RegExp> = {
   accent: /^--ds-accent/,
   status: /^--ds-(success|warning|danger|info)/,
   "score bands": /^--ds-score-/,
+  // #190 C2: gradient stops for the /design option comparison.
+  gradient: /^--ds-grad-/,
   "type scale": /^--ds-(font-size|line-height|font-weight)-/,
   spacing: /^--ds-space-/,
   radius: /^--ds-radius-/,
@@ -52,8 +54,11 @@ const RUBRIC: Record<string, RegExp> = {
   motion: /^--ds-(duration|ease)-/,
 };
 
-const COLOUR_CATEGORIES = ["surface", "text", "border", "accent", "status", "score bands"];
+const COLOUR_CATEGORIES = ["surface", "text", "border", "accent", "status", "score bands", "gradient"];
 const HSL_COMPONENTS = /^\d+(\.\d+)? \d+(\.\d+)?% \d+(\.\d+)?%$/;
+// #190 C2: the documented exception. Exact gradient stops are sRGB channels, used as rgb(var(--…)).
+const EXACT_TOKEN = /^--ds-grad-exact-/;
+const RGB_CHANNELS = /^(?:\d{1,3}) (?:\d{1,3}) (?:\d{1,3})$/;
 
 function isColour(name: string): boolean {
   return name === "--ds-shadow-color" || COLOUR_CATEGORIES.some((c) => RUBRIC[c].test(name));
@@ -77,7 +82,7 @@ function utilityFor(name: string): [string, string] {
   }
   // #190: no closing paren, so a token mapped with `/ <alpha-value>` (the
   // overlay, used as `bg-ds-surface-overlay/80`) also matches.
-  return [`bg-ds-${rest}`, `hsl(var(${name})`];
+  return [`bg-ds-${rest}`, `${EXACT_TOKEN.test(name) ? "rgb" : "hsl"}(var(${name})`];
 }
 
 async function compile(classes: string[]): Promise<string> {
@@ -115,7 +120,7 @@ describe("design-system token layer (#188)", () => {
     expect(declarations).not.toMatch(/\brgba?\(/i);
     for (const mode of MODES) {
       for (const [name, value] of tokensFor(globalsCss, mode)) {
-        if (isColour(name)) expect(value, `${name} (${mode})`).toMatch(HSL_COMPONENTS);
+        if (isColour(name)) expect(value, `${name} (${mode})`).toMatch(EXACT_TOKEN.test(name) ? RGB_CHANNELS : HSL_COMPONENTS);
       }
     }
   });

@@ -26,6 +26,7 @@ import type { Dictionary } from "@/i18n/get-dictionary";
 import { getTierColor } from "@/lib/ranking-utils";
 import { cn } from "@/lib/utils";
 import { ForceStates } from "./force-states";
+import { AgentCardOptions, GradientOptions } from "./option-sections";
 
 /**
  * The `/design` state sheet (#190).
@@ -340,11 +341,14 @@ function Samples() {
   );
 }
 
-function ModePanel({ mode }: { mode: Mode }) {
+function ModePanel({ mode, dict }: { mode: Mode; dict: Dictionary }) {
   return (
     <section data-design-mode={mode} className={cn("bg-background text-foreground py-8", mode === "dark" && "dark")}>
       <div className="container mx-auto px-4 space-y-8">
         <h2 className="text-2xl font-bold">{mode === "light" ? "Light" : "Dark"}</h2>
+        {/* #190 C2: option comparison for the owner's pick; production renders Current. */}
+        <GradientOptions mode={mode} />
+        <AgentCardOptions mode={mode} dict={dict} />
         <Samples />
       </div>
     </section>
@@ -363,7 +367,7 @@ export function DesignPreview({ dict }: { dict: Dictionary }) {
           </p>
         </div>
         {MODES.map((mode) => (
-          <ModePanel key={mode} mode={mode} />
+          <ModePanel key={mode} mode={mode} dict={dict} />
         ))}
       </main>
     </I18nProvider>
