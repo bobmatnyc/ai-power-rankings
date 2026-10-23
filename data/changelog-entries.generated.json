@@ -90,8 +90,8 @@
   {
     "id": "unreleased-09edc6769832",
     "version": "Unreleased",
-    "date": "2026-10-23T20:47:27.487Z",
-    "dateSource": "build",
+    "date": "2026-10-23T20:47:56.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "whats-new",
     "title": "the What's New feed and /api/changelog showed no platform changes in production",
