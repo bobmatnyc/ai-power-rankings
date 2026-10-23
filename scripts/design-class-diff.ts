@@ -13,7 +13,8 @@
  * block passes only when the old tokens turn into the new ones through equal
  * tokens and table substitutions from `scripts/design-class-maps.ts`:
  * a palette class to its token class with the same variant prefix and
- * opacity modifier, a light/`dark:` pair to its one token, or an inline hex
+ * opacity modifier, a light/`dark:` pair to its one token (other classes may
+ * sit between the pair's two halves; see `groupPairs`), or an inline hex
  * to its `hsl(var(--ds-…))`. Anything else fails: another class, a dropped
  * or changed variant, a non-colour class change, or a code change.
  * Exit 0 when every file passes, 1 otherwise. It prints the substitution
@@ -114,6 +115,32 @@ export function rulesFor(map: ClassMap): NamedRule[] {
 }
 
 /**
+ * Moves each table pair's `dark:` class next to its light class when both sit
+ * in one class string with other classes between them
+ * (`bg-green-50 border-green-200 dark:bg-green-950 …`), so the pair rule can
+ * match it. Class order inside a string does not change the CSS, and the move
+ * is skipped when a class it would cross shares the `dark:` class's variant
+ * and utility, the one case where `tailwind-merge` order could matter.
+ */
+export function groupPairs(tokens: string[], map: ClassMap): string[] {
+  // #190 E2b-2: the Alert success boxes interleave two light/dark pairs.
+  const out = [...tokens];
+  const isQuote = (token: string) => token === '"' || token === "'" || token === "`";
+  for (const pair of Object.keys(map.pairs)) {
+    const [lightClass, darkClass] = pair.split(" ");
+    // `dark:bg-green-950` → `dark:bg-`.
+    const group = darkClass.replace(/^((?:[^\s:]+:)*[a-z]+-).*$/, "$1");
+    for (let i = 0; i < out.length; i++) {
+      if (out[i] !== lightClass) continue;
+      let k = i + 1;
+      while (k < out.length && !isQuote(out[k]) && out[k] !== darkClass && !out[k].startsWith(group)) k++;
+      if (k > i + 1 && out[k] === darkClass) out.splice(i + 1, 0, ...out.splice(k, 1));
+    }
+  }
+  return out;
+}
+
+/**
  * Aligns one changed block: equal tokens, or table rules. Returns the rule
  * keys used, or null when no alignment exists.
  */
@@ -199,7 +226,7 @@ export function diffSource(before: string, after: string, map: ClassMap): DiffRe
   const newLines = stripComments(after).split("\n");
   const result: DiffResult = { substitutions: {}, failures: [] };
   for (const [oldStart, oldEnd, newStart, newEnd] of changedBlocks(oldLines, newLines)) {
-    const removed = tokenize(oldLines.slice(oldStart, oldEnd).join("\n"));
+    const removed = groupPairs(tokenize(oldLines.slice(oldStart, oldEnd).join("\n")), map);
     const added = tokenize(newLines.slice(newStart, newEnd).join("\n"));
     const used = alignBlock(removed, added, rules);
     if (used === null) {

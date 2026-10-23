@@ -132,3 +132,138 @@ global test (119 > 118). Both were reverted.
   tolerance, no baseline update: 6 of 6 pass. `/design` sits outside the
   `[lang]` layout, so it does not render the auth header; the pixel check
   above is the evidence for these components.
+
+## E2b-2: authenticated pages
+
+119 counted uses in the 12 remaining files under `app/[lang]/(authenticated)/`:
+46 move to tokens, 42 stay under ruling Df8 with a per-file cap, and
+`clerk-debug/page.tsx`'s 31 stay unchanged under a cap by architect ruling.
+The ratchet drops from 119 to 0.
+
+### Files
+
+| File (under `app/[lang]/(authenticated)/`) | Uses | Migrated | Capped |
+|---|---|---|---|
+| `clerk-debug/page.tsx` | 31 | 0 | 31 (ruling) |
+| `unauthorized/page.tsx` | 23 | 4 | 19 |
+| `dashboard/rankings/[period]/changes/ranking-changes-summary.tsx` | 13 | 7 | 6 |
+| `dashboard/auth/error/page.tsx` | 12 | 7 | 5 |
+| `admin/automated-ingestion/automated-ingestion-client.tsx` | 11 | 9 | 2 |
+| `admin/whats-new-summary/whats-new-summary-client.tsx` | 9 | 5 | 4 |
+| `admin/state-of-ai/state-of-ai-client.tsx` | 8 | 6 | 2 |
+| `dashboard/tools/[slug]/dashboard-tool-detail.tsx` | 4 | 0 | 4 |
+| `admin/news/edit/[id]/page.tsx` | 3 | 3 | 0 |
+| `admin/news/new/page.tsx` | 2 | 2 | 0 |
+| `dashboard/cache/cache-client.tsx` | 2 | 2 | 0 |
+| `dashboard/rankings/page.tsx` | 1 | 1 | 0 |
+| **Total** | **119** | **46** | **73** |
+
+### Mapping
+
+Entries added to set `190e2b`; E2b-1's entries are reused unchanged
+(`bg-white`, `bg-gray-50`, `bg-gray-200`, `bg-black`, `text-gray-600`,
+`text-white`, `bg-blue-600`).
+
+| Old class | Token | Light | Dark | Uses | Where |
+|---|---|---|---|---|---|
+| `text-gray-500` | `text-ds-text-paper-subtle` | `#6b7280` | `#6b7280` | 1 | rankings loader |
+| `text-blue-600` | `text-ds-accent-fixed` | `#2563eb` | `#2563eb` | 2 | "new" count and icon |
+| `text-blue-500` | `text-ds-accent-cat-blue` | `#3b82f6` | `#3b82f6` | 2 | daily-news icon, analysis link |
+| `text-purple-500` | `text-ds-accent-cat-purple` | `#a855f7` | `#a855f7` | 1 | monthly icon |
+| `text-orange-500` | `text-ds-accent-cat-orange` | `#f97316` | `#f97316` | 1 | manual icon |
+| `border-blue-200` | `border-ds-border-tag-blue` | `#bfdbfe` | `#bfdbfe` | 2 | what's-new note box, help card |
+| `text-green-500`, `bg-green-500` | `…-ds-success-solid` | `#22c55e` | `#22c55e` | 2 | cache icon, sentiment bar |
+| `text-green-600` | `text-ds-success-fixed-mid` | `#16a34a` | `#16a34a` | 4 | counts and icons |
+| `bg-green-50` | `bg-ds-success-fixed-subtle` | `#f0fdf4` | `#f0fdf4` | 1 | what's-new alert |
+| `border-green-200` | `border-ds-success-fixed-border` | `#bbf7d0` | `#bbf7d0` | 1 | what's-new alert |
+| `text-red-500` | `text-ds-danger-solid` | `#ef4444` | `#ef4444` | 1 | cache icon |
+| `text-red-600` | `text-ds-danger-fixed` | `#dc2626` | `#dc2626` | 4 | auto-save error, counts and icons |
+| `bg-green-50 dark:bg-green-950` | `bg-ds-surface-callout-success` | `#f0fdf4` | `#052e16` | 4 (2 pairs) | ingestion and State of AI alerts |
+| `border-green-200 dark:border-green-800` | `border-ds-border-callout-success` | `#bbf7d0` | `#166534` | 4 (2 pairs) | same |
+| `text-green-600 dark:text-green-400` | `text-ds-text-callout-success` | `#16a34a` | `#4ade80` | 4 (2 pairs) | same alerts' icons |
+| `text-red-600 dark:text-red-400` | `text-ds-text-callout-danger` | `#dc2626` | `#f87171` | 2 (1 pair) | access-denied icon |
+
+Plus the reused entries: `bg-gray-50` (2), `bg-white`, `bg-gray-200`,
+`text-gray-600`, `bg-black/50`, `bg-blue-600` (2) and `text-white` (2).
+
+- **Interleaved pairs.** The two success alerts write
+  `bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800`.
+  `design-class-diff.ts` now moves a pair's `dark:` class next to its light
+  class inside one class string before it aligns, so each pair maps to its
+  one token; a light class mapped alone, or a dropped `dark:` class, still
+  fails. Class order inside a string does not change the CSS. The pixel
+  script's table builder handles the same shape.
+- **Links.** Every converted link colour here is a class replaced by a class
+  (`text-blue-500`, `text-white`, `hover:bg-gray-50`), so the global
+  `a:hover` and `a:active` rules beat old and new alike and no `hover:` or
+  `active:` variant is added. A pixel control shows that adding them would
+  change the hover and active colour.
+- **`bg-gray-200` on the auth-error "Back to Home" link** takes
+  `--ds-surface-skeleton`, the only surface token that is gray-200 in both
+  modes, as in E1 and E2a.
+- `unauthorized/page.tsx:33`'s `text-gray-500 dark:text-gray-500` stays as is.
+
+### Not migrated
+
+`clerk-debug/page.tsx` is left byte-for-byte unchanged with one
+`RATCHET_ALLOWLIST` entry, `colourCap: 31`, reason "developer page; capped by
+Architect ruling 2026-10-23, parity only". It is not in the set's file list.
+
+The rest have no token with the same value in light and dark in the same
+role. Each file has its own entry with the reason below and a `colourCap` at
+its measured count.
+
+| File | `colourCap` | Old | Value, light / dark | Nearest token and why it does not match |
+|---|---|---|---|---|
+| `unauthorized/page.tsx` | 19 | `bg-red-100 dark:bg-red-900/20` | red-100 / red-900 at 20 % | none |
+| | | `text-gray-900 dark:text-white` | gray-900 / white | `--ds-text` is `#020817` / slate-50 |
+| | | `text-gray-600 dark:text-gray-400` (2 places) | gray-600 / gray-400 | `--ds-text-muted` is slate |
+| | | `text-gray-500 dark:text-gray-500` | gray-500 both | left as is (a `dark:` no-op) |
+| | | `hover:bg-blue-700` | blue-700 both | `--ds-accent-hover` is blue-700 in light only |
+| | | `bg-gray-200 dark:bg-gray-700`, `hover:bg-gray-300 dark:hover:bg-gray-600` | gray-200 / 700, gray-300 / 600 | `--ds-border-neutral(-hover)`: border tokens |
+| | | `text-gray-900 dark:text-white` (button) | gray-900 / white | as above |
+| | | `bg-gray-50 dark:bg-gray-800` | gray-50 / gray-800 | none |
+| `ranking-changes-summary.tsx` | 6 | `bg-<hue>-100 text-<hue>-800` (green, red, blue) | 100 / 800 both | the tag tokens switch to 900 and 300 in dark |
+| `dashboard/auth/error/page.tsx` | 5 | `bg-red-100` | red-100 both | none |
+| | | `text-gray-900`, `text-gray-800` | 900 / 800 step both | only surface or gradient tokens |
+| | | `hover:bg-blue-700` | blue-700 both | `--ds-accent-hover` is light only |
+| | | `hover:bg-gray-300` | gray-300 both | `--ds-text-footer`: a text token |
+| `dashboard-tool-detail.tsx` | 4 | `bg-<hue>-100 text-<hue>-800` (green, red) | 100 / 800 both | the tag tokens switch in dark |
+| `whats-new-summary-client.tsx` | 4 | `text-green-800` | green-800 both | `--ds-grad-green-800`: a gradient token |
+| | | `bg-blue-50`, `bg-blue-50/50` | blue-50 both | `--ds-accent-subtle` is blue-900 in dark |
+| | | `text-blue-800` | blue-800 both | `--ds-text-tag-blue` is blue-300 in dark |
+| `automated-ingestion-client.tsx` | 2 | `text-green-800 dark:text-green-200` | green-800 / green-200 | `--ds-text-callout-success-title` is green-700 / green-300 |
+| `state-of-ai-client.tsx` | 2 | same | same | same |
+
+### Ratchet
+
+| | Before | After |
+|---|---|---|
+| `HARDCODED_COLOUR_BASELINE` | 119 | 0 |
+| Counted uses in the 12 files | 119 | 0 |
+
+Two negative runs showed the gate still bites: an extra `active:bg-blue-800`
+in `dashboard/auth/error/page.tsx` failed its cap (6 > 5), and a baseline of
+-1 failed the global test (0 > -1). Both were reverted.
+
+### How parity was checked
+
+- **Class diff.** `npx tsx scripts/design-class-diff.ts --set 190e2b`: 20
+  files against `origin/main`, 0 unexplained changes, 46 substitutions in the
+  E2b-2 files. Before the pair grouping the two alert blocks failed. The E2a
+  set still passes against its own base.
+- **Unit test.** `tests/unit/design-parity-190e2b.test.ts` checks every new
+  entry's light and dark value and role through the shared suite, which now
+  also runs the merge-group check on each pair's light class. It adds
+  class-diff cases for interleaved pairs: both mapped passes, one pair mapped
+  and the other left whole passes, a light class mapped alone and a dropped
+  `dark:` class fail.
+- **Pixels.** `scripts/design-parity-pixels.ts --set 190e2b` on full Chrome for
+  Testing 153.0.8010.12 (Playwright build 1243): 41 parity mappings, 254
+  mode/state rows, 0 pixels different. Each page class string renders as the
+  page writes it (Alert boxes as `cn()` leaves them), in its element, light
+  and dark, at rest, hover and active. The new controls differed: the alert
+  pairs mapped by their light classes only, in dark, by 16,783 pixels, and a
+  `text-blue-500` link given `hover:`/`active:` token variants by 946 to 951.
+  This per-mapping run is E2b-2's pixel evidence (architect ruling); the
+  authenticated pages cannot be screenshotted (ruling D1).
