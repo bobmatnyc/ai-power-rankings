@@ -150,11 +150,17 @@ const ALL_STATES: ReadonlyArray<State> = ["rest", "hover", "active"];
 
 /** A class string with each word replaced through `map` (pairs first; variants and `/opacity` kept). */
 function mapClasses(classes: string, map: ClassMap): string {
-  let out = ` ${classes} `;
-  for (const [pair, token] of Object.entries(map.pairs)) out = out.replace(` ${pair} `, ` ${token} `);
-  return out
-    .trim()
-    .split(/\s+/)
+  const words = classes.trim().split(/\s+/);
+  for (const [pair, token] of Object.entries(map.pairs)) {
+    // #190 E2b-2: a pair's two classes need not be adjacent (the Alert boxes interleave two pairs).
+    const [lightClass, darkClass] = pair.split(" ");
+    const at = words.indexOf(lightClass);
+    const darkAt = words.indexOf(darkClass);
+    if (at < 0 || darkAt < 0) continue;
+    words[at] = token;
+    words.splice(darkAt, 1);
+  }
+  return words
     .map((word) => {
       const match = /^((?:[^\s:]+:)*)([^/]+)(\/.+)?$/.exec(word);
       const token = match ? map.classes[match[2]] : undefined;
@@ -231,7 +237,7 @@ const SET_190E2A: Mapping[] = [
 
 const { cls: e2b } = tableMappings("190e2b");
 
-/** #190 E2b-1: the auth components, each class string as the component writes it, in its element. */
+/** #190 E2b: the auth components (E2b-1) and authenticated pages (E2b-2), each class string as written, in its element. */
 const SET_190E2B: Mapping[] = [
   // no-auth-header: the dev-mode label and its email chip.
   e2b("text-sm text-gray-600"),
@@ -262,6 +268,56 @@ const SET_190E2B: Mapping[] = [
     states: ["hover"],
     old: { className: "text-gray-700 hover:bg-gray-100" },
     token: { className: "text-gray-700" },
+    expectDiff: true,
+  },
+  // E2b-2: the authenticated pages. Alert boxes render as cn() leaves them (the default bg-background is dropped).
+  ...["text-blue-500", "text-purple-500", "text-orange-500"].map((c) => e2b(`h-3.5 w-3.5 ${c}`, "svg")),
+  e2b("rounded-lg border p-4 text-foreground bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800"),
+  e2b("h-4 w-4 text-green-600 dark:text-green-400", "svg"),
+  // news edit and new: auto-save status, preview overlay, analysis link and sentiment bar.
+  e2b("text-red-600"),
+  e2b("h-4 w-4 text-green-600", "svg"),
+  e2b("bg-black/50"),
+  e2b("text-blue-500 hover:underline", "a"),
+  e2b("bg-green-500 h-2 rounded-full"),
+  // what's-new summary: success alert, note box and help card.
+  e2b("rounded-lg border p-4 text-foreground mb-6 border-green-200 bg-green-50"),
+  e2b("bg-blue-50 border border-blue-200 rounded-lg p-3"),
+  e2b("rounded-lg border mt-6 border-blue-200 bg-blue-50/50"),
+  // dashboard auth error page: page, card, icon, message and both links.
+  e2b("min-h-screen bg-gray-50"),
+  e2b("w-full bg-white rounded-lg shadow-md"),
+  e2b("w-8 h-8 text-red-600", "svg"),
+  e2b("text-gray-600 mb-6"),
+  e2b("block w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors", "a"),
+  e2b("block w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors", "a"),
+  // cache status icons, rankings loader, ranking-changes counts, rows and icons.
+  ...["text-green-500", "text-red-500", "text-gray-500", "text-green-600", "text-red-600", "text-blue-600"].map((c) =>
+    e2b(`h-5 w-5 ${c}`, "svg"),
+  ),
+  ...["text-green-600", "text-red-600", "text-blue-600"].map((c) => e2b(`text-2xl font-bold ${c}`)),
+  e2b("flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50 transition-colors", "a"),
+  // unauthorized: the shield icon and the home link.
+  e2b("w-10 h-10 text-red-600 dark:text-red-400", "svg"),
+  e2b(
+    "inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors",
+    "a",
+  ),
+  // E2b-2 controls: light classes of an interleaved pair mapped alone must show in dark; a class-to-class link
+  // given hover:/active: text variants must show, since `a:hover` beats both the old and the token class.
+  {
+    name: "CONTROL alert pairs mapped by their light classes only (fixed tokens), dark",
+    modes: ["dark"],
+    old: { className: "border p-4 bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800" },
+    token: { className: "border p-4 bg-ds-success-fixed-subtle border-ds-success-fixed-border" },
+    expectDiff: true,
+  },
+  {
+    name: "CONTROL a text-blue-500 given hover:/active: token variants",
+    element: "a",
+    states: ["hover", "active"],
+    old: { className: "text-blue-500" },
+    token: { className: "text-ds-accent-cat-blue hover:text-ds-accent-cat-blue active:text-ds-accent-cat-blue" },
     expectDiff: true,
   },
 ];

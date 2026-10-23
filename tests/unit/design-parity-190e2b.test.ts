@@ -17,7 +17,8 @@ import { dark, describeTableParity, light, oldHex } from "./design-parity-suite"
  * (a token that matches in light but not in dark must not count) and checks
  * that the class-diff check passes the E2b substitutions and fails a wrong
  * token, a dropped `hover:` variant and a half-mapped `hover:`/`dark:hover:`
- * pair.
+ * pair, and (E2b-2) passes interleaved light/dark pairs while failing a light
+ * class mapped alone or a dropped `dark:` class.
  * Map and evidence: docs/refresh/design-audit/migration-190e2b.md.
  * Test: `npx vitest run tests/unit/design-parity-190e2b.test.ts`. No network.
  */
@@ -66,5 +67,24 @@ describe("#190 E2b class-diff check (scripts/design-class-diff.ts)", () => {
   it("fails on a hover: class mapped without its dark:hover: partner", () => {
     const half = 'const b = <a className="px-3 hover:bg-ds-surface-paper-sunken dark:hover:bg-gray-800">Account</a>;';
     expect(diffSource(baseSource, source(goodA, half), map).failures).toHaveLength(1);
+  });
+
+  // E2b-2: the Alert success boxes write two light/dark pairs interleaved.
+  const alert = '<Alert className="p-4 bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800">';
+
+  it("passes interleaved light/dark pairs, each mapped to its one token", () => {
+    const after = '<Alert className="p-4 bg-ds-surface-callout-success border-ds-border-callout-success">';
+    const result = diffSource(alert, after, map);
+    expect(result.failures).toEqual([]);
+    expect(Object.keys(result.substitutions)).toHaveLength(2);
+    const onePair = '<Alert className="p-4 bg-ds-surface-callout-success border-green-200 dark:border-green-800">';
+    expect(diffSource(alert, onePair, map).failures).toEqual([]);
+  });
+
+  it.each([
+    ["a light class mapped alone", '<Alert className="p-4 bg-ds-success-fixed-subtle border-ds-border-callout-success dark:bg-green-950">'],
+    ["a dropped dark: class", '<Alert className="p-4 bg-ds-surface-callout-success border-green-200">'],
+  ])("fails on interleaved pairs with %s", (_, after) => {
+    expect(diffSource(alert, after, map).failures).toHaveLength(1);
   });
 });

@@ -389,7 +389,7 @@ export default function NewArticlePage() {
                         href={analysis.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline"
+                        className="text-ds-accent-cat-blue hover:underline"
                       >
                         {analysis.url}
                       </a>
@@ -444,7 +444,7 @@ export default function NewArticlePage() {
                     <div className="flex items-center gap-2 mt-1">
                       <div className="flex-1 bg-secondary rounded-full h-2">
                         <div
-                          className="bg-green-500 h-2 rounded-full"
+                          className="bg-ds-success-solid h-2 rounded-full"
                           style={{
                             width: `${((analysis.overall_sentiment + 1) / 2) * 100}%`,
                           }}

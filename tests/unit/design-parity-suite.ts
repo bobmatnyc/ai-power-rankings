@@ -114,7 +114,9 @@ export function describeTableParity(setName: string): void {
       expect(ROLE_NEUTRAL.test(token) || ROLE[utility].test(token), `${newClass} is not a ${utility} token`).toBe(true);
     });
 
-    it.each(classRows)("cn() merges %s and %s the same way", (oldClass, newClass) => {
+    // #190 E2b-2: a pair's token is checked against its light class, which carries the merge group.
+    const mergeRows = [...classRows, ...pairRows.map(([pair, token]) => [pair.split(" ")[0], token] as [string, string])];
+    it.each(mergeRows)("cn() merges %s and %s the same way", (oldClass, newClass) => {
       for (const prefix of ["", "hover:"]) {
         for (const probe of PROBES[oldClass.split("-")[0]]) {
           const keeps = (cls: string) =>
