@@ -65,6 +65,57 @@ module.exports = {
           down: "hsl(var(--ds-rank-down))",
           steady: "hsl(var(--ds-rank-steady))",
         },
+        // #188: design-system token layer (--ds-* in app/globals.css,
+        // docs/refresh/design-tokens.md). Utilities: bg-ds-surface,
+        // text-ds-text-muted, border-ds-border, bg-ds-score-a, ...
+        ds: {
+          surface: {
+            DEFAULT: "hsl(var(--ds-surface))",
+            raised: "hsl(var(--ds-surface-raised))",
+            muted: "hsl(var(--ds-surface-muted))",
+            inverse: "hsl(var(--ds-surface-inverse))",
+          },
+          text: {
+            DEFAULT: "hsl(var(--ds-text))",
+            muted: "hsl(var(--ds-text-muted))",
+            inverse: "hsl(var(--ds-text-inverse))",
+          },
+          border: {
+            DEFAULT: "hsl(var(--ds-border))",
+            strong: "hsl(var(--ds-border-strong))",
+          },
+          "focus-ring": "hsl(var(--ds-focus-ring))",
+          accent: {
+            DEFAULT: "hsl(var(--ds-accent))",
+            hover: "hsl(var(--ds-accent-hover))",
+            fg: "hsl(var(--ds-accent-fg))",
+            subtle: "hsl(var(--ds-accent-subtle))",
+          },
+          success: {
+            DEFAULT: "hsl(var(--ds-success))",
+            subtle: "hsl(var(--ds-success-subtle))",
+          },
+          warning: {
+            DEFAULT: "hsl(var(--ds-warning))",
+            subtle: "hsl(var(--ds-warning-subtle))",
+          },
+          danger: {
+            DEFAULT: "hsl(var(--ds-danger))",
+            subtle: "hsl(var(--ds-danger-subtle))",
+          },
+          info: {
+            DEFAULT: "hsl(var(--ds-info))",
+            subtle: "hsl(var(--ds-info-subtle))",
+          },
+          score: {
+            s: "hsl(var(--ds-score-s))",
+            a: "hsl(var(--ds-score-a))",
+            b: "hsl(var(--ds-score-b))",
+            c: "hsl(var(--ds-score-c))",
+            d: "hsl(var(--ds-score-d))",
+            fg: "hsl(var(--ds-score-fg))",
+          },
+        },
       },
       borderRadius: {
         lg: "var(--radius-lg)",
@@ -75,6 +126,10 @@ module.exports = {
         full: "var(--radius-full)",
         // #178: sample design-agent token.
         "ds-chip": "var(--ds-radius-chip)",
+        // #188
+        "ds-control": "var(--ds-radius-control)",
+        "ds-card": "var(--ds-radius-card)",
+        "ds-panel": "var(--ds-radius-panel)",
       },
       fontFamily: {
         sans: [
@@ -114,6 +169,22 @@ module.exports = {
         "5xl": "var(--font-size-5xl)",
         // #178: sample design-agent token.
         "ds-delta": "var(--ds-font-size-delta)",
+        // #188
+        "ds-caption": "var(--ds-font-size-caption)",
+        "ds-body-sm": "var(--ds-font-size-body-sm)",
+        "ds-body": "var(--ds-font-size-body)",
+        "ds-lead": "var(--ds-font-size-lead)",
+        "ds-h4": "var(--ds-font-size-h4)",
+        "ds-h3": "var(--ds-font-size-h3)",
+        "ds-h2": "var(--ds-font-size-h2)",
+        "ds-h1": "var(--ds-font-size-h1)",
+        "ds-display": "var(--ds-font-size-display)",
+      },
+      // #188
+      fontWeight: {
+        "ds-body": "var(--ds-font-weight-body)",
+        "ds-label": "var(--ds-font-weight-label)",
+        "ds-heading": "var(--ds-font-weight-heading)",
       },
       lineHeight: {
         tight: "var(--line-height-tight)",
@@ -122,6 +193,9 @@ module.exports = {
         relaxed: "var(--line-height-relaxed)",
         loose: "var(--line-height-loose)",
         body: "var(--line-height-body)",
+        // #188
+        "ds-heading": "var(--ds-line-height-heading)",
+        "ds-body": "var(--ds-line-height-body)",
       },
       letterSpacing: {
         tighter: "var(--letter-spacing-tighter)",
@@ -148,6 +222,15 @@ module.exports = {
         24: "var(--space-24)",
         // #178: sample design-agent token.
         "ds-inline": "var(--ds-space-inline)",
+        // #188
+        "ds-xs": "var(--ds-space-xs)",
+        "ds-sm": "var(--ds-space-sm)",
+        "ds-md": "var(--ds-space-md)",
+        "ds-lg": "var(--ds-space-lg)",
+        "ds-xl": "var(--ds-space-xl)",
+        "ds-2xl": "var(--ds-space-2xl)",
+        "ds-gutter": "var(--ds-space-gutter)",
+        "ds-section": "var(--ds-space-section)",
       },
       animation: {
         "fade-in": "fade-in var(--duration-normal) var(--ease-out)",
@@ -163,6 +246,10 @@ module.exports = {
         normal: "var(--duration-normal)",
         slow: "var(--duration-slow)",
         slower: "var(--duration-slower)",
+        // #188
+        "ds-fast": "var(--ds-duration-fast)",
+        "ds-base": "var(--ds-duration-base)",
+        "ds-slow": "var(--ds-duration-slow)",
       },
       transitionTimingFunction: {
         linear: "var(--ease-linear)",
@@ -170,6 +257,10 @@ module.exports = {
         out: "var(--ease-out)",
         "in-out": "var(--ease-in-out)",
         spring: "var(--ease-spring)",
+        // #188
+        "ds-standard": "var(--ds-ease-standard)",
+        "ds-enter": "var(--ds-ease-enter)",
+        "ds-exit": "var(--ds-ease-exit)",
       },
       boxShadow: {
         xs: "var(--shadow-xs)",
@@ -179,6 +270,10 @@ module.exports = {
         xl: "var(--shadow-xl)",
         "2xl": "var(--shadow-2xl)",
         inner: "var(--shadow-inner)",
+        // #188
+        "ds-sm": "var(--ds-shadow-sm)",
+        "ds-md": "var(--ds-shadow-md)",
+        "ds-lg": "var(--ds-shadow-lg)",
       },
       zIndex: {
         base: "var(--z-base)",
