@@ -102,15 +102,30 @@ from before/after screenshots.
   trigger, Textarea, the admin tools-manager and news selects, the subscribe
   checkbox, and the outline button (`components/ui/button.tsx` and the two
   about-page HTML buttons). 10 sites.
-- **`-fixed` text in dark mode.** The `-fixed` tokens hold one value in both
-  modes, and the rankings table shows them on the dark card too. There the
-  700 step is below AA: green-700 on `#020817` is 3.99 (green-600 was
-  6.07), orange-700 is 3.86 (orange-600 was 5.62). `AA_PAIRS` checks them on
-  white only. Moving those sites to the mode-dependent `--ds-success` and
-  `--ds-warning` would pass in both modes.
+- **Modifier text in dark mode (resolved).** The rankings table and the
+  comparison table show success/warning text on a card that is white in
+  light mode and `#020817` in dark mode. A one-value `-fixed` token cannot
+  pass on both: the 700 step fell to 3.99 (green) and 3.86 (orange) in dark
+  mode. The three sites (`rankings-content.tsx` decay and positive risk,
+  `comparison-table.tsx` tick) now use the mode-dependent `--ds-success` and
+  `--ds-warning`. On the card, light / dark:
+
+  | Site text | Before C1 | After |
+  |---|---|---|
+  | success (was `--ds-success-fixed`, green-600) | 3.30 / 6.07 | 5.02 / 11.48 |
+  | warning (was `--ds-warning-fixed`, orange-600) | 3.56 / 5.62 | 5.02 / 11.98 |
+
+  On the row hover (`--ds-surface-muted`, the worst case) both are 4.58
+  light; dark is 8.40 (success) and 8.76 (warning), up from 4.44 and 4.11.
+  The light warning hue moves from orange-600 to amber-700, and the dark ones
+  to green-400 and amber-400. `tests/unit/modifier-text-contrast-190.test.ts`
+  checks every `text-ds-success*` / `text-ds-warning*` class in both files
+  against the surface, raised and muted tokens in both modes.
+  `--ds-success-fixed` and `--ds-warning-fixed` have no remaining use; they
+  stay at the 700 values and in `AA_PAIRS` on white.
 - **`/design`.** Answers 404 in production unless `DESIGN_PREVIEW` is set
   (non-empty) at build time; it keeps its `noindex` metadata. Dev, local and
-  visual-test runs render it. It gains Alert, form-control and fixed-text
+  visual-test runs render it. It gains Alert, form-control and modifier-text
   samples.
 - Ratchet: 708 to 707 (the subscribe checkbox's `border-gray-300`).
 

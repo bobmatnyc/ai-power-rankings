@@ -268,7 +268,7 @@ function Samples() {
         </div>
       </Group>
 
-      {/* #190 PR C1: the Alert, form-control and fixed-text samples show the a11y fixes. */}
+      {/* #190 PR C1: the Alert, form-control and modifier-text samples show the a11y fixes. */}
       <Group title="Alert" note="Alert from components/ui/alert, default and destructive.">
         <div className="grid gap-6 md:grid-cols-2">
           {(["default", "destructive"] as const).map((variant) => (
@@ -303,11 +303,11 @@ function Samples() {
         </div>
       </Group>
 
-      <Group title="Fixed status text" note="The --ds-*-fixed text colours, as the rankings table renders them.">
-        <Sample component="fixed-text" state="default">
+      <Group title="Modifier text" note="The rankings table's modifier colours, as it renders them.">
+        <Sample component="modifier-text" state="default">
           <div className="text-sm space-y-1">
-            <div className="text-ds-warning-fixed">Decay: 72%</div>
-            <div className="text-ds-success-fixed">Risk: +0.4</div>
+            <div className="text-ds-warning">Decay: 72%</div>
+            <div className="text-ds-success">Risk: +0.4</div>
             <div className="text-ds-danger-fixed">Risk: -0.6</div>
             <div className="text-ds-accent-fixed">Quality: 64%</div>
           </div>
