@@ -13,16 +13,9 @@ const nextConfig = {
   skipTrailingSlashRedirect: true,
   // Fix workspace root warning by explicitly setting the output file tracing root
   outputFileTracingRoot: path.join(__dirname),
-  // #172: CHANGELOG.md is read at runtime with fs (whats-new aggregation, /api/changelog),
-  // which file tracing cannot see, so ship it with every route that reaches that code.
-  outputFileTracingIncludes: {
-    '/api/cron/daily-news': ['./CHANGELOG.md'],
-    '/api/cron/monthly-summary': ['./CHANGELOG.md'],
-    '/api/whats-new/summary': ['./CHANGELOG.md'],
-    '/api/state-of-ai/current': ['./CHANGELOG.md'],
-    '/api/admin/state-of-ai/generate': ['./CHANGELOG.md'],
-    '/api/changelog': ['./CHANGELOG.md'],
-  },
+  // #231: no runtime code reads CHANGELOG.md any more (it is compiled into
+  // data/changelog-entries.generated.json at build time), so the #172
+  // outputFileTracingIncludes entries for it are removed.
   // Disable static optimization for specific pages
   async headers() {
     return []

@@ -1,9 +1,11 @@
 import type { NextRequest } from "next/server";
 import { cachedJsonResponse, uncachedJsonResponse } from "@/lib/api-cache";
+import { CHANGELOG_ENTRIES } from "@/lib/data/changelog-entries";
 import { getDb } from "@/lib/db/connection";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
+import { composeFeed, platformFeedItem } from "@/lib/services/whats-new-feed";
 
 /**
  * Unified feed item type
@@ -58,8 +60,11 @@ const NEWS_UNAVAILABLE = {
  * even if the tools read succeeded — the feed is one merged list with no
  * per-section marker, so a partial feed would read as "no news this week".
  * 500 `no-store` for any other failure. Otherwise a 200 cached
- * `public, max-age=60, s-maxage=60`.
- * Test: `tests/unit/whats-new-route-fail-closed.test.ts`.
+ * `public, max-age=60, s-maxage=60`. #231: platform items come from the
+ * build-time changelog module with 3 of 20 slots reserved; the body carries
+ * `_sources` and `_degraded`, and a degraded feed is `no-store`.
+ * Test: `tests/unit/whats-new-route-fail-closed.test.ts`,
+ * `tests/unit/whats-new-feed-231.test.ts`.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -149,63 +154,18 @@ export async function GET(request: NextRequest) {
     }
     const newsResult = newsRead.news;
 
-    // Changelog data (static for now, can be made dynamic later)
-    const changelogItems = [
-      {
-        id: "v0.2.0-1",
-        title: "Comprehensive SEO Schema.org Markup",
-        description: "Added structured data across the site including Organization, Website, SoftwareApplication, Review, and Breadcrumb schemas for improved search visibility and rich results.",
-        date: "2025-10-24T00:00:00.000Z",
-        category: "SEO",
-        type: "feature" as const,
-        version: "0.2.0",
-      },
-      {
-        id: "v0.2.0-2",
-        title: "Enhanced Article Summaries",
-        description: "Upgraded AI-generated article summaries from 200-300 characters to comprehensive 750-1000 word primary content with improved quality and structure.",
-        date: "2025-10-24T00:00:00.000Z",
-        category: "Content",
-        type: "feature" as const,
-        version: "0.2.0",
-      },
-      {
-        id: "v0.2.0-3",
-        title: "Repository Organization",
-        description: "Archived 9 experimental branches (2,870+ commits preserved) with comprehensive cleanup plan and clear categorization.",
-        date: "2025-10-24T00:00:00.000Z",
-        category: "Development",
-        type: "improvement" as const,
-        version: "0.2.0",
-      },
-      {
-        id: "v0.1.4-1",
-        title: "Security & TypeScript Hardening",
-        description: "Fixed TypeScript errors across components, added admin endpoint protection, and reorganized documentation structure.",
-        date: "2025-10-19T00:00:00.000Z",
-        category: "Security",
-        type: "fix" as const,
-        version: "0.1.4",
-      },
-      {
-        id: "v0.1.4-2",
-        title: "Algorithm v7.2 Release",
-        description: "Updated rankings with Algorithm v7.2 for October 2025, including updated i18n dictionaries and homepage tagline.",
-        date: "2025-10-19T00:00:00.000Z",
-        category: "Rankings",
-        type: "feature" as const,
-        version: "0.1.4",
-      },
-    ];
+    // #231: platform items come from the build-time changelog module. The
+    // hardcoded 2025-10 list never changed, so the feed showed no recent change.
+    const platformAvailable = CHANGELOG_ENTRIES.length > 0;
+    if (!platformAvailable) {
+      loggers.api.error("What's New API: generated changelog module has no entries");
+    }
+    const platformItems = CHANGELOG_ENTRIES.filter(
+      (entry) => new Date(entry.date) >= dateThreshold
+    ).map(platformFeedItem);
 
-    // Filter changelog items by date threshold
-    const recentChangelog = changelogItems.filter((item) => {
-      const itemDate = new Date(item.date);
-      return itemDate >= dateThreshold;
-    });
-
-    // Create unified feed with type discrimination
-    const unifiedFeed: UnifiedFeedItem[] = [
+    // #231: 3 of the 20 slots are held for platform items (supervisor ruling).
+    const unifiedFeed: UnifiedFeedItem[] = composeFeed<UnifiedFeedItem>([
       ...newsResult.map((item) => ({
           ...item,
           type: "news" as const,
@@ -218,29 +178,27 @@ export async function GET(request: NextRequest) {
           date: item.updatedAt,
         } as UnifiedFeedItem)
       ),
-      ...recentChangelog.map(
-        (item): UnifiedFeedItem => ({
-          type: "platform" as const,
-          date: item.date,
-          id: item.id,
-          title: item.title,
-          description: item.description,
-          category: item.category,
-          changeType: item.type,
-          version: item.version,
-        })
-      ),
-    ]
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 20);
+      ...platformItems,
+    ]);
+
+    // #231: per-source status, so a missing source is visible in the body.
+    const body = {
+      feed: unifiedFeed,
+      days,
+      _sources: {
+        news: { status: "ok", count: newsResult.length },
+        tools: { status: "ok", count: toolsResult.length },
+        platform: { status: platformAvailable ? "ok" : "unavailable", count: platformItems.length },
+      },
+      _degraded: !platformAvailable,
+      _timestamp: new Date().toISOString(),
+    };
+
+    // #231: a degraded feed is served but never cached.
+    if (!platformAvailable) return uncachedJsonResponse(body, 200);
 
     return cachedJsonResponse(
-      {
-        feed: unifiedFeed,
-        days,
-        _source: "database",
-        _timestamp: new Date().toISOString(),
-      },
+      body,
       "/api/whats-new",
       200, // HTTP 200 OK
       { maxAge: 60, sMaxAge: 60 } // Cache for 1 minute

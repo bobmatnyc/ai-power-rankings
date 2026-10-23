@@ -57,13 +57,14 @@ test.describe('Changelog Fix Verification', () => {
     expect(response.status()).toBe(200);
   });
 
-  test('API /api/changelog returns 200 with empty array (no CHANGELOG.md)', async ({ request }) => {
+  // #231: entries come from the build-time module; an empty list is a 503, never `200 []`.
+  test('API /api/changelog returns 200 with platform entries', async ({ request }) => {
     const response = await request.get('http://localhost:3000/api/changelog');
 
     expect(response.status()).toBe(200);
     const data = await response.json();
-    expect(Array.isArray(data)).toBe(true);
-    expect(data).toEqual([]);
+    expect(data.items.length).toBeGreaterThan(0);
+    expect(data._degraded).toBe(false);
   });
 
   test('No 500 Internal Server Errors on any route', async ({ page }) => {
