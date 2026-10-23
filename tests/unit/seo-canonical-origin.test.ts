@@ -691,13 +691,11 @@ describe("unknown locale segment falls back to English (#156)", () => {
     const mod = await import("../../app/[lang]/page");
     const [site] = jsonLdIn(await mod.default(params({ lang: "xx" }))) as Array<{
       url?: string;
-      potentialAction?: { target?: { urlTemplate?: string } };
+      potentialAction?: unknown;
     }>;
     expect(site?.url).toBe(`${ORIGIN}/en`);
-    expect(site?.potentialAction?.target?.urlTemplate).toBe(
-      // #175: `term`, not a GA4 enhanced-measurement site-search key.
-      `${ORIGIN}/en/rankings?term={search_term_string}`
-    );
+    // #233: no SearchAction, so no URL template that would carry a search term.
+    expect(site?.potentialAction).toBeUndefined();
   });
 
   it("tool detail breadcrumb JSON-LD names /en for lang xx", async () => {
