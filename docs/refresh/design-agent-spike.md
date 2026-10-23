@@ -82,12 +82,10 @@ key. A fits a run on the operator's machine; B fits a scripted or CI run.
 | Components | `components/ui/` |
 | Tests | `tests/unit/` (vitest, `*.test.ts`) |
 
-`app/globals.css` is the stylesheet the build uses: `app/layout.tsx` imports
-`./globals.css`. `public/globals.css` is a second copy fetched only by
-`components/DeferredStyles.tsx`, which nothing imports; M4-2 (#189) retires
-it, so the agent must not edit it. `app/[lang]/layout-optimized.tsx` imports
-`@/globals.css`, a path with no file behind it, and is not a Next.js layout
-file name, so it is not built either.
+`app/globals.css` is the only stylesheet: `app/layout.tsx` imports
+`./globals.css`. M4-2 (#189) removed the stale `public/globals.css` copy and
+its two dead readers; `tests/unit/globals-consolidation-189.test.ts` keeps it
+that way.
 
 The proposal's `design/tokens.json` plus Tailwind preset assumed a Claude
 Design handoff bundle. With the agent writing code directly, the CSS variables
