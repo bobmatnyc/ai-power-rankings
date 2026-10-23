@@ -1,12 +1,16 @@
-import { getDb } from '../lib/db/connection';
+import { getDb, getRawSql } from '../lib/db/connection';
+import { toUtcTimestampSql } from '../lib/db/naive-utc-timestamp.mjs';
 
 async function migrateArticle() {
   const db = await getDb();
+  // #103: news.published_at and articles.published_date are timestamp WITHOUT time
+  // zone; read them as UTC.
+  const rawSql = getRawSql();
 
   console.log('\n🔄 Migrating v7.6 article from news to articles table...\n');
 
   // Get the article from news table
-  const newsResult = await db.execute(`
+  const newsResult = await rawSql(`
     SELECT * FROM news WHERE slug = 'algorithm-v76-november-2025-rankings'
   `);
 
@@ -25,6 +29,10 @@ async function migrateArticle() {
     if (!str) return '';
     return String(str).replace(/'/g, "''");
   };
+
+  // #103: rawSql returns published_at as a Date; write its ISO UTC form (or NULL), not
+  // Date.toString(). Built before the DELETE below so a bad value removes no row.
+  const publishedDateSql = toUtcTimestampSql(article.published_at);
 
   // Check if already exists
   const existsCheck = await db.execute(`
@@ -65,7 +73,7 @@ async function migrateArticle() {
       '${escapeSql(article.source_url || '')}',
       '${escapeSql(article.category || 'algorithm-update')}',
       ${article.importance || 95},
-      '${article.published_at}',
+      ${publishedDateSql},
       'active',
       NOW(),
       NOW()
@@ -75,7 +83,7 @@ async function migrateArticle() {
   console.log('✅ Article inserted into articles table');
 
   // Verify
-  const verifyResult = await db.execute(`
+  const verifyResult = await rawSql(`
     SELECT
       slug,
       title,

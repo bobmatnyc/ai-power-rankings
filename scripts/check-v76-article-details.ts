@@ -1,9 +1,10 @@
-import { getDb } from '../lib/db/connection';
+import { getRawSql } from '../lib/db/connection';
 
 async function checkArticle() {
-  const db = await getDb();
+  // #103: published_at and created_at are timestamp WITHOUT time zone; read them as UTC.
+  const rawSql = getRawSql();
 
-  const result = await db.execute(`
+  const result = await rawSql(`
     SELECT
       slug,
       title,

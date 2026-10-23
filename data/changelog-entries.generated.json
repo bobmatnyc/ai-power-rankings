@@ -88,6 +88,17 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-ead2db5206df",
+    "version": "Unreleased",
+    "date": "2026-10-23T21:40:21.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "ops",
+    "title": "the ingestion gap check reported the 06:00 UTC daily run four hours late when run outside UTC",
+    "description": "the ingestion gap check reported the 06:00 UTC daily run four hours late when run outside UTC. The `timestamp` columns hold UTC with no zone, and the database driver read them in the process time zone. Raw SQL readers in `scripts/` now parse them as UTC through `lib/db/naive-utc-timestamp.mjs` (`naiveUtcTypes`, `parseNaiveUtcTimestamp`) or `getRawSql()` in `lib/db/connection.ts`, so the gap, age and printed times match under any `TZ`. No schema change. `docs/deployment/cron-schedules-and-timestamps.md` records that `vercel.json` crons run on UTC. Tests: `tests/unit/naive-utc-timestamp.test.ts`, `tests/unit/naive-utc-timestamp-tz.test.ts` (#103)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-09edc6769832",
     "version": "Unreleased",
     "date": "2026-10-23T20:58:11.000Z",
@@ -475,8 +486,8 @@
   {
     "id": "unreleased-d8430187d1c3",
     "version": "Unreleased",
-    "date": "2026-10-23T21:13:34.234Z",
-    "dateSource": "build",
+    "date": "2026-10-23T21:19:06.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
     "title": "a rankings search that matches no tool now shows \"No tools match \"<term>\".\" (announced as a status message) with a…",

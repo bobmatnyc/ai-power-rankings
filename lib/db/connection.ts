@@ -33,6 +33,9 @@ import { drizzle as drizzlePool } from "drizzle-orm/neon-serverless";
 // Explicitly import article tables to ensure they're included
 import { articleProcessingLogs, articleRankingsChanges, articles } from "./article-schema";
 import { describeDatabaseUrlResolution, resolveDatabaseUrl } from "./database-url";
+// #103: raw readers parse `timestamp` (no zone) as UTC; see getRawSql().
+import type { NeonQueryFunction } from "@neondatabase/serverless";
+import { naiveUtcTypes } from "./naive-utc-timestamp.mjs";
 import * as schema from "./schema";
 
 // Configure Neon for optimal performance
@@ -240,6 +243,25 @@ export async function testConnection(): Promise<boolean> {
 
     return false;
   }
+}
+
+/**
+ * Raw SQL client whose `timestamp` values read as UTC.
+ *
+ * Why: #103 — a raw `getDb().execute()` returns `timestamp without time zone` values
+ *   parsed in the process TZ (HTTP mode) or as zone-less text (pool mode). A script
+ *   that prints or compares them must read them as the UTC they hold.
+ * What: A neon() HTTP client on the URL `getDb()` would use, with `naiveUtcTypes` and
+ *   `fullResults`, so a call returns `{ rows }` as `execute()` does. Throws when no URL
+ *   is configured. Drizzle-typed reads do not need it; they map these columns as UTC.
+ * Test: `naiveUtcTypes` cases in tests/unit/naive-utc-timestamp.test.ts.
+ */
+export function getRawSql(): NeonQueryFunction<false, true> {
+  const DATABASE_URL = getDatabaseUrl();
+  if (!DATABASE_URL) {
+    throw new Error(`No database URL available for environment: ${NODE_ENV}`);
+  }
+  return neon(DATABASE_URL, { types: naiveUtcTypes, fullResults: true });
 }
 
 /**
