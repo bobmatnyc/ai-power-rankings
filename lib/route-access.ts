@@ -66,9 +66,55 @@ export const isPublicRoute = createRouteMatcher(PUBLIC_ROUTE_PATTERNS);
 
 export type RouteAccess = "protected" | "public" | "default";
 
-/** Classifies a request; a protected match wins over any public match. */
+/**
+ * The forms of a pathname that Next can route: the raw form and, when it
+ * decodes, its single `decodeURIComponent` form.
+ *
+ * Why: `req.nextUrl.pathname` is a WHATWG `URL.pathname`, which keeps percent
+ * escapes, so `/en/%61dmin` reached the matchers undecoded and classed
+ * `default` (#228). Next's own route lookup tries the raw path and then one
+ * `decodeURIComponent` of it, ignoring a decode error.
+ * What: Returns `[raw]`, or `[raw, decoded]` when one decode succeeds and
+ * changes the path. Never decodes twice and never throws.
+ * Test: `tests/unit/route-access-encoded-228.test.ts`.
+ */
+export function pathForms(raw: string): string[] {
+  // #228: decode once, as Next's router does; a malformed escape keeps only the raw form.
+  try {
+    const decoded = decodeURIComponent(raw);
+    return decoded === raw ? [raw] : [raw, decoded];
+  } catch {
+    return [raw];
+  }
+}
+
+/**
+ * Runs a Clerk route matcher on a bare pathname. A matcher built from a
+ * pattern list reads only `req.nextUrl.pathname`, so a shim carrying that
+ * field avoids `new URL()`, which would normalise the decoded path further.
+ */
+function matchesPath(matcher: (req: NextRequest) => boolean, pathname: string): boolean {
+  return matcher({ nextUrl: { pathname } } as unknown as NextRequest);
+}
+
+/**
+ * Classifies a request; a protected match wins over any public match.
+ * #228: protected when the raw OR the once-decoded path is protected (fail
+ * closed); public only when the raw path is public, so decoding never widens
+ * public access.
+ */
 export function routeAccess(req: NextRequest): RouteAccess {
-  if (isProtectedRoute(req)) return "protected";
+  const forms = pathForms(req.nextUrl.pathname);
+  if (forms.some((pathname) => matchesPath(isProtectedRoute, pathname))) return "protected";
   if (isPublicRoute(req)) return "public";
   return "default";
+}
+
+/**
+ * #228: an anonymous protected request gets a 401 instead of a sign-in
+ * redirect when the raw OR the once-decoded path is under `/api/`, matching
+ * `routeAccess`. Case-insensitive, like the route matchers.
+ */
+export function isApiPath(raw: string): boolean {
+  return pathForms(raw).some((pathname) => pathname.toLowerCase().startsWith("/api/"));
 }
