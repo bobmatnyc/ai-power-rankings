@@ -137,6 +137,9 @@ describe("GET /api/whats-new fails closed (#152)", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe("public, max-age=60, s-maxage=60");
-    expect(data.feed.map((item: { type: string }) => item.type).sort()).toEqual(["news", "tool"]);
+    // #231: platform items now come from the real changelog module and may
+    // appear in a 7-day window; this test is about news and tools only.
+    const types = data.feed.map((item: { type: string }) => item.type);
+    expect(types.filter((type: string) => type !== "platform").sort()).toEqual(["news", "tool"]);
   });
 });
