@@ -1,3 +1,8 @@
+// #190 C2: ToolIcon gradient stops (--ds-grad-* HSL tokens in app/globals.css).
+const GRAD_STOPS = ["blue-500", "blue-600", "purple-500", "purple-600", "pink-500", "pink-600",
+  "indigo-500", "indigo-600", "red-500", "red-600", "gray-500", "gray-600", "green-700", "green-800",
+  "orange-700", "orange-800", "teal-700", "teal-800"];
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   mode: "jit",
@@ -115,7 +120,11 @@ module.exports = {
             "cat-blue": "hsl(var(--ds-accent-cat-blue))",
             "cat-purple": "hsl(var(--ds-accent-cat-purple))",
             "cat-green": "hsl(var(--ds-accent-cat-green))",
+            // #190 C2: the home page's Autonomous Agents card.
+            agent: "hsl(var(--ds-accent-agent))",
           },
+          // #190 C2: from-ds-grad-blue-500, to-ds-grad-teal-800, ...
+          grad: Object.fromEntries(GRAD_STOPS.map((stop) => [stop, `hsl(var(--ds-grad-${stop}))`])),
           success: {
             DEFAULT: "hsl(var(--ds-success))",
             subtle: "hsl(var(--ds-success-subtle))",

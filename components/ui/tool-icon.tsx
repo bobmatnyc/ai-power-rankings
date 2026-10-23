@@ -30,17 +30,19 @@ export function ToolIcon({
     console.log("ToolIcon:", { name, domain, isLocalPath, imageError });
   }
 
-  // Generate a consistent color based on the tool name
+  // Generate a consistent color based on the tool name.
+  // #190 C2 (Option B): --ds-grad-* HSL tokens; green, orange and teal use the
+  // 700-800 steps so the white glyph meets 3:1. Order is the hash index; keep it.
   const getGradientClass = (name: string) => {
     const colors = [
-      "bg-gradient-to-br from-blue-500 to-blue-600",
-      "bg-gradient-to-br from-purple-500 to-purple-600",
-      "bg-gradient-to-br from-green-500 to-green-600",
-      "bg-gradient-to-br from-orange-500 to-orange-600",
-      "bg-gradient-to-br from-pink-500 to-pink-600",
-      "bg-gradient-to-br from-indigo-500 to-indigo-600",
-      "bg-gradient-to-br from-teal-500 to-teal-600",
-      "bg-gradient-to-br from-red-500 to-red-600",
+      "bg-gradient-to-br from-ds-grad-blue-500 to-ds-grad-blue-600",
+      "bg-gradient-to-br from-ds-grad-purple-500 to-ds-grad-purple-600",
+      "bg-gradient-to-br from-ds-grad-green-700 to-ds-grad-green-800",
+      "bg-gradient-to-br from-ds-grad-orange-700 to-ds-grad-orange-800",
+      "bg-gradient-to-br from-ds-grad-pink-500 to-ds-grad-pink-600",
+      "bg-gradient-to-br from-ds-grad-indigo-500 to-ds-grad-indigo-600",
+      "bg-gradient-to-br from-ds-grad-teal-700 to-ds-grad-teal-800",
+      "bg-gradient-to-br from-ds-grad-red-500 to-ds-grad-red-600",
     ];
 
     // Simple hash function to get consistent color
@@ -58,7 +60,7 @@ export function ToolIcon({
     <div
       className={cn(
         "flex items-center justify-center rounded-lg",
-        "bg-gradient-to-br from-gray-500 to-gray-600",
+        "bg-gradient-to-br from-ds-grad-gray-500 to-ds-grad-gray-600", // #190 C2
         className
       )}
       style={{ width: size, height: size }}
