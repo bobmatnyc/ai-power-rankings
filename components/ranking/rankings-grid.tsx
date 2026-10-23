@@ -312,7 +312,7 @@ function RankingsGridContent({
           <CardContent>
             <div className="text-2xl font-bold">
               {loading ? (
-                <div className="animate-pulse bg-gray-200 h-8 w-12 rounded" />
+                <div className="animate-pulse bg-ds-surface-skeleton h-8 w-12 rounded" />
               ) : totalTools > 0 ? (
                 totalTools
               ) : (
@@ -330,7 +330,7 @@ function RankingsGridContent({
           <CardContent>
             <div className="text-2xl font-bold">
               {loading ? (
-                <div className="animate-pulse bg-gray-200 h-8 w-8 rounded" />
+                <div className="animate-pulse bg-ds-surface-skeleton h-8 w-8 rounded" />
               ) : categoriesCount > 0 ? (
                 categoriesCount
               ) : (
@@ -348,7 +348,7 @@ function RankingsGridContent({
           <CardContent>
             <div className="text-2xl font-bold">
               {loading ? (
-                <div className="animate-pulse bg-gray-200 h-8 w-12 rounded" />
+                <div className="animate-pulse bg-ds-surface-skeleton h-8 w-12 rounded" />
               ) : avgScore > 0 ? (
                 avgScore.toFixed(1)
               ) : (
@@ -366,7 +366,7 @@ function RankingsGridContent({
           <CardContent>
             <div className="text-2xl font-bold">
               {loading ? (
-                <div className="animate-pulse bg-gray-200 h-8 w-16 rounded" />
+                <div className="animate-pulse bg-ds-surface-skeleton h-8 w-16 rounded" />
               ) : lastUpdateDate && !lastUpdateDate.includes("2025") ? (
                 lastUpdateDate
               ) : (

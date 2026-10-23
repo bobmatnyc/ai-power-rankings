@@ -322,7 +322,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button
                   size="lg"
-                  className="gradient-primary text-white hover:opacity-90 transition-opacity px-8 py-3 w-full sm:w-auto min-w-[200px]"
+                  className="gradient-primary text-ds-text-on-fill hover:opacity-90 transition-opacity px-8 py-3 w-full sm:w-auto min-w-[200px]"
                   asChild
                 >
                   <Link href={`/${lang}/rankings`}>
@@ -501,15 +501,15 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             <div className="text-center">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-ds-accent-cat-green rounded-full"></div>
                   <span>100% Independent</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-ds-accent-cat-blue rounded-full"></div>
                   <span>Data-Driven</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-ds-accent-cat-purple rounded-full"></div>
                   <span>Transparent Methodology</span>
                 </div>
               </div>
@@ -619,9 +619,9 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     // Return a minimal error page
     return (
       <div className="min-h-screen p-8">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">Page Rendering Error</h1>
-        <p className="text-gray-600 mb-2">An error occurred while rendering the home page.</p>
-        <details className="mt-4 p-4 bg-gray-100 rounded">
+        <h1 className="text-2xl font-bold text-ds-danger-fixed mb-4">Page Rendering Error</h1>
+        <p className="text-ds-text-paper-muted mb-2">An error occurred while rendering the home page.</p>
+        <details className="mt-4 p-4 bg-ds-surface-paper-sunken rounded">
           <summary className="cursor-pointer font-semibold">Error Details</summary>
           <pre className="mt-2 whitespace-pre-wrap text-sm">
             {error instanceof Error ? error.message : String(error)}
@@ -630,7 +630,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
           </pre>
         </details>
         <div className="mt-8">
-          <a href="/" className="text-blue-600 hover:underline">
+          <a href="/" className="text-ds-accent-fixed hover:underline">
             Try refreshing the page
           </a>
         </div>

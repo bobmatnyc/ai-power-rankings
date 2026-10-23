@@ -55,8 +55,8 @@ the sitemap.
 count of hard-coded colours in `components/` and `app/`. When you migrate
 colours to tokens, lower it to the new count; never raise it. The one
 allowlist in that test exempts the open-graph image routes, the contact email
-HTML and the custom-property declarations in `app/globals.css`, each with its
-reason.
+HTML and the `--shadow*` declarations in `app/globals.css`, each with its
+reason. Any other literal colour in `app/globals.css` counts.
 
 **Contrast exceptions.** `--ds-border` and `--ds-border-strong` are below 3:1
 on every surface in both modes. They are listed by name in

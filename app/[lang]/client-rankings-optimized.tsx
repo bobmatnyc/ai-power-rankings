@@ -174,7 +174,7 @@ const StatsSection = memo(
         <div className="text-center flex flex-col justify-center" style={{ minHeight: "80px" }}>
           <div className="text-3xl font-bold text-primary mb-1">
             {loading ? (
-              <div className="animate-pulse bg-gray-200 h-9 w-12 mx-auto rounded" />
+              <div className="animate-pulse bg-ds-surface-skeleton h-9 w-12 mx-auto rounded" />
             ) : totalTools > 0 ? (
               totalTools
             ) : (
@@ -186,7 +186,7 @@ const StatsSection = memo(
         <div className="text-center flex flex-col justify-center" style={{ minHeight: "80px" }}>
           <div className="text-3xl font-bold text-secondary mb-1">
             {loading ? (
-              <div className="animate-pulse bg-gray-200 h-9 w-8 mx-auto rounded" />
+              <div className="animate-pulse bg-ds-surface-skeleton h-9 w-8 mx-auto rounded" />
             ) : categoriesCount > 0 ? (
               categoriesCount
             ) : (
@@ -198,7 +198,7 @@ const StatsSection = memo(
         <div className="text-center flex flex-col justify-center" style={{ minHeight: "80px" }}>
           <div className="text-3xl font-bold text-accent mb-1">
             {loading ? (
-              <div className="animate-pulse bg-gray-200 h-9 w-16 mx-auto rounded" />
+              <div className="animate-pulse bg-ds-surface-skeleton h-9 w-16 mx-auto rounded" />
             ) : avgScore > 0 ? (
               avgScore.toFixed(1)
             ) : (
@@ -210,7 +210,7 @@ const StatsSection = memo(
         <div className="text-center flex flex-col justify-center" style={{ minHeight: "80px" }}>
           <div className="text-3xl font-bold text-foreground mb-1">
             {loading ? (
-              <div className="animate-pulse bg-gray-200 h-9 w-20 mx-auto rounded" />
+              <div className="animate-pulse bg-ds-surface-skeleton h-9 w-20 mx-auto rounded" />
             ) : lastUpdateDate && !lastUpdateDate.includes("2025") ? (
               lastUpdateDate
             ) : (
@@ -720,9 +720,9 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="bg-card border rounded-lg p-4 h-32">
                   <div className="animate-pulse space-y-3">
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-full"></div>
+                    <div className="h-4 bg-ds-surface-skeleton rounded w-3/4"></div>
+                    <div className="h-3 bg-ds-surface-skeleton rounded w-1/2"></div>
+                    <div className="h-3 bg-ds-surface-skeleton rounded w-full"></div>
                   </div>
                 </div>
               ))}

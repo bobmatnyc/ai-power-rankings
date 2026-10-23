@@ -9,12 +9,12 @@ export function Footer() {
   const { lang } = useI18n();
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-ds-surface-footer text-ds-text-footer">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-xl font-bold text-white mb-4">AI Power Rankings</h3>
+            <h3 className="text-xl font-bold text-ds-text-on-fill mb-4">AI Power Rankings</h3>
             <p className="text-sm mb-4">
               The definitive monthly rankings and analysis of AI coding tools. Trusted by developers
               worldwide for unbiased, data-driven insights.
@@ -28,30 +28,30 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
+            <h4 className="text-lg font-semibold text-ds-text-on-fill mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href={`/${lang}/rankings`} className="hover:text-white transition-colors">
+                <Link href={`/${lang}/rankings`} className="hover:text-ds-text-on-fill transition-colors">
                   Current Rankings
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/tools`} className="hover:text-white transition-colors">
+                <Link href={`/${lang}/tools`} className="hover:text-ds-text-on-fill transition-colors">
                   All Tools
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/methodology`} className="hover:text-white transition-colors">
+                <Link href={`/${lang}/methodology`} className="hover:text-ds-text-on-fill transition-colors">
                   Methodology
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/news`} className="hover:text-white transition-colors">
+                <Link href={`/${lang}/news`} className="hover:text-ds-text-on-fill transition-colors">
                   News & Updates
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/about`} className="hover:text-white transition-colors">
+                <Link href={`/${lang}/about`} className="hover:text-ds-text-on-fill transition-colors">
                   About Us
                 </Link>
               </li>
@@ -60,12 +60,12 @@ export function Footer() {
 
           {/* Categories */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Categories</h4>
+            <h4 className="text-lg font-semibold text-ds-text-on-fill mb-4">Categories</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   href={`/${lang}/best-ide-assistants`}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-ds-text-on-fill transition-colors"
                 >
                   IDE Assistants
                 </Link>
@@ -73,7 +73,7 @@ export function Footer() {
               <li>
                 <Link
                   href={`/${lang}/best-autonomous-agents`}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-ds-text-on-fill transition-colors"
                 >
                   Autonomous Agents
                 </Link>
@@ -81,7 +81,7 @@ export function Footer() {
               <li>
                 <Link
                   href={`/${lang}/best-ai-code-editors`}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-ds-text-on-fill transition-colors"
                 >
                   AI Code Editors
                 </Link>
@@ -89,7 +89,7 @@ export function Footer() {
               <li>
                 <Link
                   href={`/${lang}/best-ai-app-builders`}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-ds-text-on-fill transition-colors"
                 >
                   AI App Builders
                 </Link>
@@ -97,7 +97,7 @@ export function Footer() {
               <li>
                 <Link
                   href={`/${lang}/best-code-review-tools`}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-ds-text-on-fill transition-colors"
                 >
                   Code Review Tools
                 </Link>
@@ -105,7 +105,7 @@ export function Footer() {
               <li>
                 <Link
                   href={`/${lang}/best-devops-assistants`}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-ds-text-on-fill transition-colors"
                 >
                   DevOps Assistants
                 </Link>
@@ -113,7 +113,7 @@ export function Footer() {
               <li>
                 <Link
                   href={`/${lang}/best-testing-tools`}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-ds-text-on-fill transition-colors"
                 >
                   Testing Tools
                 </Link>
@@ -121,7 +121,7 @@ export function Footer() {
               <li>
                 <Link
                   href={`/${lang}/best-open-source-frameworks`}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-ds-text-on-fill transition-colors"
                 >
                   Open Source Frameworks
                 </Link>
@@ -129,7 +129,7 @@ export function Footer() {
               <li>
                 <Link
                   href={`/${lang}/best-ai-coding-tools`}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-ds-text-on-fill transition-colors"
                 >
                   All AI Tools
                 </Link>
@@ -139,20 +139,20 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Legal</h4>
+            <h4 className="text-lg font-semibold text-ds-text-on-fill mb-4">Legal</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href={`/${lang}/privacy`} className="hover:text-white transition-colors">
+                <Link href={`/${lang}/privacy`} className="hover:text-ds-text-on-fill transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/terms`} className="hover:text-white transition-colors">
+                <Link href={`/${lang}/terms`} className="hover:text-ds-text-on-fill transition-colors">
                   Terms of Use
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/contact`} className="hover:text-white transition-colors">
+                <Link href={`/${lang}/contact`} className="hover:text-ds-text-on-fill transition-colors">
                   Contact Us
                 </Link>
               </li>
@@ -160,7 +160,7 @@ export function Footer() {
           </div>
         </div>
 
-        <Separator className="my-8 bg-gray-700" />
+        <Separator className="my-8 bg-ds-border-footer" />
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center text-sm">

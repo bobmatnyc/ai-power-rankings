@@ -203,7 +203,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         >
           <div className="text-3xl font-bold text-primary mb-1">
             {loading ? (
-              <div className="animate-pulse bg-gray-200 h-9 w-12 mx-auto rounded" />
+              <div className="animate-pulse bg-ds-surface-skeleton h-9 w-12 mx-auto rounded" />
             ) : (
               totalTools
             )}
@@ -222,7 +222,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         >
           <div className="text-3xl font-bold text-secondary mb-1">
             {loading ? (
-              <div className="animate-pulse bg-gray-200 h-9 w-20 mx-auto rounded" />
+              <div className="animate-pulse bg-ds-surface-skeleton h-9 w-20 mx-auto rounded" />
             ) : (
               `${trendingUpCount}/${trendingDownCount}`
             )}
@@ -241,7 +241,7 @@ export function ClientRankings({ loadingText, lang }: ClientRankingsProps) {
         >
           <div className="text-3xl font-bold text-accent mb-1">
             {loading ? (
-              <div className="animate-pulse bg-gray-200 h-9 w-16 mx-auto rounded" />
+              <div className="animate-pulse bg-ds-surface-skeleton h-9 w-16 mx-auto rounded" />
             ) : (
               lastUpdateDate || "Daily"
             )}

@@ -196,8 +196,8 @@
 
 /* #188 design-system tokens BEGIN (docs/refresh/design-tokens.md)
    ========================================================================
-   Semantic --ds-* token layer. Additive: nothing uses these yet, so no page
-   changes. Colours are HSL components, used as hsl(var(--ds-…)), with light
+   Semantic --ds-* token layer. Additive: new names only; #190 moves
+   components onto them. Colours are HSL components, used as hsl(var(--ds-…)), with light
    values on :root and dark values on .dark. Mode-invariant tokens (type,
    spacing, radius, motion) are declared once for both. The #178 rank tokens
    stay where they are, in the blocks above. No raw hex or RGB values in this layer;
@@ -279,6 +279,10 @@
     --ds-info: 201.3 96.3% 32.2%;
     --ds-info-subtle: 204 100% 97.1%;
 
+    /* Status-indicator housing and unlit lamp (#190 PR B: gray-900, gray-600). */
+    --ds-surface-signal: 220.90909091 39.28571429% 10.98039216%;
+    --ds-surface-signal-off: 215 13.79310345% 34.11764706%;
+
     /* Score bands: tier badges S-D (lib/ranking-utils.ts), text in --ds-score-fg. */
     --ds-score-s: 26 90.5% 37.1%;
     --ds-score-a: 224.3 76.3% 48%;
@@ -329,6 +333,10 @@
     --ds-info: 198.4 93.2% 59.6%;
     --ds-info-subtle: 204 80.2% 15.9%;
 
+    /* Status-indicator housing and unlit lamp (#190 PR B: gray-800, gray-700). */
+    --ds-surface-signal: 215 27.9069767% 16.8627451%;
+    --ds-surface-signal-off: 216.92307692 19.11764706% 26.66666667%;
+
     /* Score bands: light badges with dark text. */
     --ds-score-s: 43.3 96.4% 56.3%;
     --ds-score-a: 213.1 93.9% 67.8%;
@@ -344,6 +352,48 @@
       0 2px 4px -2px hsl(var(--ds-shadow-color) / 0.4);
     --ds-shadow-lg: 0 10px 15px -3px hsl(var(--ds-shadow-color) / 0.5),
       0 4px 6px -4px hsl(var(--ds-shadow-color) / 0.5);
+  }
+
+  /* Fixed colours (#190 PR B): one value in both modes, for components that
+     do not change with dark mode today. Each is a Tailwind palette colour
+     written as HSL precise to 1e-7 of a channel, so a solid fill or text
+     colour renders the same pixels. Gradients stay on palette classes: the
+     unrounded HSL stops shift dithered pixels. Map and reasons in
+     docs/refresh/design-audit/migration-190b.md. */
+  :root,
+  .dark {
+    /* Surface */
+    --ds-surface-overlay: 0 0% 0%; /* black: modal scrim, used with /80 or /50 */
+    --ds-surface-footer: 220.90909091 39.28571429% 10.98039216%; /* gray-900 */
+    --ds-surface-skeleton: 220 13.04347826% 90.98039216%; /* gray-200 */
+    --ds-surface-paper: 0 0% 100%; /* white */
+    --ds-surface-paper-muted: 210 20% 98.0392157%; /* gray-50 */
+    --ds-surface-paper-sunken: 220 14.28571429% 95.88235294%; /* gray-100 */
+
+    /* Text */
+    --ds-text-on-fill: 0 0% 100%; /* white, on coloured fills and the footer */
+    --ds-text-footer: 216 12.195122% 83.9215686%; /* gray-300 */
+    --ds-text-paper-muted: 215 13.79310345% 34.11764706%; /* gray-600 */
+
+    /* Border */
+    --ds-border-footer: 216.92307692 19.11764706% 26.66666667%; /* gray-700 */
+
+    /* Accent: links on paper, and decorative categorical dots. */
+    --ds-accent-fixed: 221.21212121 83.19327731% 53.33333333%; /* blue-600 */
+    --ds-accent-cat-blue: 217.21925134 91.2195122% 59.80392157%; /* blue-500 */
+    --ds-accent-cat-purple: 270.74074074 91.01123596% 65.09803922%; /* purple-500 */
+    --ds-accent-cat-green: 142.08588957 70.56277056% 45.29411765%; /* green-500 */
+
+    /* Status: solid lamps, and text that keeps one colour. */
+    --ds-success-solid: 142.08588957 70.56277056% 45.29411765%; /* green-500 */
+    --ds-warning-solid: 45.39823009 93.38842975% 47.45098039%; /* yellow-500 */
+    --ds-warning-solid-strong: 24.5814978 94.9790795% 53.1372549%; /* orange-500 */
+    --ds-danger-solid: 0 84.2364532% 60.19607843%; /* red-500 */
+    --ds-info-solid: 217.21925134 91.2195122% 59.80392157%; /* blue-500 */
+    --ds-success-fixed: 142.1276596 76.2162162% 36.2745098%; /* green-600 */
+    --ds-warning-fixed: 20.54054054 90.24390244% 48.23529412%; /* orange-600 */
+    --ds-danger-fixed: 0 72.2222222% 50.5882353%; /* red-600 */
+    --ds-danger-fixed-soft: 0 90.6040268% 70.7843137%; /* red-400 */
   }
 
   @media (prefers-reduced-motion: reduce) {
