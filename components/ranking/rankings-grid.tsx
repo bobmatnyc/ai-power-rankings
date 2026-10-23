@@ -2,7 +2,7 @@
 
 import { ArrowUpDown, Grid, List, Star, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { trackEvent } from "@/lib/analytics/track";
 import { loggers } from "@/lib/logger-client";
+import { LEGACY_SEARCH_PARAM, SEARCH_PARAM, readSearchTerm } from "@/lib/search-param";
 import { RankingCard } from "./ranking-card";
 import { TierLegend } from "./tier-legend";
 import { useRankingsSearch } from "./use-rankings-search";
@@ -71,6 +72,7 @@ function RankingsGridContent({
   initialRankings = [],
 }: RankingsGridProps): React.JSX.Element {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [rankings, setRankings] = useState<RankingData[]>(initialRankings);
   const [loading, setLoading] = useState(initialRankings.length === 0);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -86,8 +88,8 @@ function RankingsGridContent({
   const categoryParam = searchParams.get("category") || "all";
   const tagsParam = searchParams.get("tags")?.split(",") || [];
   const sortParam = searchParams.get("sort") || "rank";
-  // #175: the schema.org SearchAction lands here with ?search=<term>.
-  const searchParam = searchParams.get("search") || "";
+  // #175: the schema.org SearchAction lands here with ?term=<term>; old ?search= links still work.
+  const searchParam = readSearchTerm(searchParams);
 
   const fetchToolsStatistics = useCallback(async (): Promise<void> => {
     try {
@@ -256,7 +258,7 @@ function RankingsGridContent({
     // Add tag filtering logic here when tags are implemented
     return true;
   });
-  // #175: apply ?search= and send site_search once the rankings are loaded.
+  // #175: apply the search term and send site_search once the rankings are loaded.
   const searchedRankings = useRankingsSearch(filteredRankings, searchParam, !loading);
 
   // Apply sorting
@@ -396,7 +398,8 @@ function RankingsGridContent({
               } else {
                 params.set("sort", value);
               }
-              window.location.href = `/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`;
+              // #175: client-side navigation keeps the page loaded, so gtag sends filter_use from its normal batch.
+              router.push(`/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`);
             }}
           >
             <SelectTrigger className="w-[180px]">
@@ -462,13 +465,15 @@ function RankingsGridContent({
             </Badge>
           )}
           {searchParam.trim() && (
-            // #175: show the active ?search= term so the filtered list is explained and clearable.
+            // #175: show the active search term so the filtered list is explained and clearable.
             <Badge
               variant="secondary"
               className="cursor-pointer"
               onClick={() => {
                 const params = new URLSearchParams(searchParams.toString());
-                params.delete("search");
+                // #175: clear the current key and the legacy one.
+                params.delete(SEARCH_PARAM);
+                params.delete(LEGACY_SEARCH_PARAM);
                 window.location.href = `/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`;
               }}
             >
