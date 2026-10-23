@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import type { Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/get-dictionary';
 import { type ListLoadResult, loadList } from '@/lib/load-list';
+import { siteOrigin } from '@/lib/site-origin';
 import type { Metadata } from 'next';
 import { whatsNewPageMetadata } from '../page-metadata';
 
@@ -54,8 +55,8 @@ type UnifiedFeedItem =
 
 // #152: a failed read is `{ ok: false }`, never an empty feed; `no-store` as before.
 function getRecentUpdates(): Promise<ListLoadResult<UnifiedFeedItem>> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  return loadList<UnifiedFeedItem>(`${baseUrl}/api/whats-new?days=7`, 'feed', {
+  // #219: the env var is unset in production, so a localhost fallback always failed.
+  return loadList<UnifiedFeedItem>(`${siteOrigin()}/api/whats-new?days=7`, 'feed', {
     cache: 'no-store', // Always fetch fresh data
   });
 }
