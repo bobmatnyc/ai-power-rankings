@@ -90,7 +90,7 @@
   {
     "id": "unreleased-f528db3fa04b",
     "version": "Unreleased",
-    "date": "2026-10-23T22:19:16.000Z",
+    "date": "2026-10-23T22:23:54.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "dates",
@@ -625,6 +625,17 @@
     "title": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside…",
     "description": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside SWE-bench (best scaffold+model row per tool via a hand-curated allowlist, tunable `TB_BLEND_WEIGHT` default 0.4, no factor-weight change); wired matched `terminal_bench` leaves into `data/historical-metrics/2026-06.json` with full provenance and a curated source capture at `data/historical-metrics/sources/terminal-bench-2.1.json`",
     "changeType": "feature"
+  },
+  {
+    "id": "unreleased-39cfdff9c69e",
+    "version": "Unreleased",
+    "date": "2026-10-23T22:35:21.000Z",
+    "dateSource": "commit",
+    "section": "Changed",
+    "scope": "rankings",
+    "title": "ranking algorithm v7.10",
+    "description": "ranking algorithm v7.10. For the double-nested tools, the engine now reads `technical` and `business` from both `data.*` and `data.info.*`, merged per key with the top-level value winning (the #100 rule). Before, those tools scored the base 40 on technical performance and missed their pricing and free-tier data in several factors. Only those two groups fold; `info.company` and the other `info.*` fields are unchanged (#241). Flat tools score exactly as in v7.9. Weights and factor formulas are unchanged. The version stamp moves from v7.9 to v7.10 in the engine, the stored snapshot version (`7.10`) and `config/algorithm-config.json`. `scripts/compare-ranking-versions.ts` prints a read-only per-tool table of v7.9 against v7.10 (old and new rank and score, movers first) from the active tools, or from a fixture file with `--fixtures=<path>`; it never writes. v7.10 is not to be published until the owner reviews that table on real data. Tests: `lib/ranking-algorithm-v76.info-paths.test.ts`, `lib/ranking-version-compare.test.ts` (#101)",
+    "changeType": "improvement"
   },
   {
     "id": "unreleased-cdf6fe1e4956",

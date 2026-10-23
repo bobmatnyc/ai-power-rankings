@@ -6,6 +6,7 @@ import {
   scoreTerminalBenchContribution,
   scoreUsersContribution,
 } from "./ranking-metric-curves";
+import { canonicalizeInfoGroups, type InfoPathOptions } from "./ranking-info-paths";
 
 /**
  * Single source of truth for the ranking algorithm version.
@@ -27,10 +28,16 @@ import {
  * (AGENTIC_BONUS_HEADROOM_SCALE) so a strong benchmark blend is never re-capped
  * away. Factor WEIGHTS are unchanged; this only reshapes the agentic base.
  *
+ * Bumped v7.9 → v7.10 (#101): normalizeInput() also folds the `technical` and
+ * `business` groups of double-nested tools (`data.info.*`) into the top-level
+ * path the factors read, top-level winning per key (see canonicalizeInfoGroups
+ * in ./ranking-info-paths). Weights and factor formulas are unchanged.
+ *
  * NOTE: existing v76 content slugs (e.g. `algorithm-v76-november-2025-rankings`)
  * are historical references and intentionally keep their v7.6 naming.
  */
-export const ALGORITHM_VERSION = "v7.9";
+// #101: technical/business info-path fold changes scores, so the version moves.
+export const ALGORITHM_VERSION = "v7.10";
 
 /**
  * Blend weight for Terminal-Bench when BOTH benchmarks are present on a tool.
@@ -509,7 +516,9 @@ export function canonicalizeMetricPaths(
 export class RankingEngineV76 {
   constructor(
     private weights: RankingWeightsV76 = ALGORITHM_V76_WEIGHTS,
-    private calibration: AgenticCalibration = {}
+    private calibration: AgenticCalibration = {},
+    // #101: `{ foldInfoGroups: false }` reproduces v7.9 for the compare script.
+    private infoPaths: InfoPathOptions = {}
   ) {}
 
   /**
@@ -519,10 +528,11 @@ export class RankingEngineV76 {
    * through `getData()` (developer adoption, market traction) — resolves the
    * same logical field to the same single value.
    *
-   * Only the metrics subtree is canonicalized. Non-metric info fields
-   * (features, description, technical, business, …) keep their existing
-   * per-group resolution exactly, so this fix cannot move scores for any tool
-   * whose metric paths already agreed (all 80 flat tools score identically).
+   * v7.10 (#101): for double-nested tools the `technical` and `business`
+   * groups are canonicalized the same way (top-level wins per key), and the
+   * merged object is written to both `info.X` and `info.info.X`. No other
+   * non-metric field (features, description, company, …) is folded (#241).
+   * Flat tools have one path only, so their scores cannot change.
    *
    * Does not mutate the input (or the underlying tool.data).
    */
@@ -540,11 +550,18 @@ export class RankingEngineV76 {
 
     const canonical = canonicalizeMetricPaths(topMetrics, nestedMetrics);
 
+    // #101: fold info.technical / info.business into the path the factors read.
+    const groups =
+      hasDoubleNesting && this.infoPaths.foldInfoGroups !== false
+        ? canonicalizeInfoGroups(outer, nestedInfo)
+        : {};
+
     const normalizedOuter: Record<string, unknown> = hasDoubleNesting
       ? {
           ...outer,
+          ...groups,
           metrics: canonical,
-          info: { ...(nestedInfo ?? {}), metrics: canonical },
+          info: { ...(nestedInfo ?? {}), ...groups, metrics: canonical },
         }
       : { ...outer, metrics: canonical };
 
