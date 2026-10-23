@@ -84,6 +84,13 @@ describe("rankings search empty state (#207)", () => {
     for (const name of names) expect(screen.queryByText(name)).toBeNull();
   });
 
+  // #207: String.replace expands `$&`, `$$`, `` $` `` and `$'` in a string replacement.
+  it.each(["$&", "$$", "$`", "$'"])("shows the term %s literally in the status text", async (term) => {
+    await renderGrid();
+    type(term);
+    expect(screen.getByRole("status").textContent).toBe(`No tools match "${term}".`);
+  });
+
   it("still sends one site_search with result_count 0 and no term text for a no-match term", async () => {
     await renderGrid();
     vi.useFakeTimers();
