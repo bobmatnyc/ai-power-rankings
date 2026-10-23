@@ -50,6 +50,7 @@ styles](design-audit/one-off-styles.md), the screenshots described in
 | `--ds-accent-hover` | `224.3 76.3% 48%` | `211.7 96.4% 78.4%` | `bg-ds-accent-hover` | Hover/active of the above |
 | `--ds-accent-fg` | `0 0% 100%` | `222.2 84% 4.9%` | `text-ds-accent-fg` | Text on accent |
 | `--ds-accent-subtle` | `214.3 100% 96.9%` | `224.4 64.3% 32.9%` | `bg-ds-accent-subtle` | Selected rows, info callouts |
+| `--ds-accent-agent` (#190 C2) | purple-700 | purple-400 | `text-ds-accent-agent`, `bg-ds-accent-agent/10` | Home page Autonomous Agents card |
 | `--ds-success` | `142.4 71.8% 29.2%` | `141.9 69.2% 58%` | `text-ds-success` | Positive values, "live" |
 | `--ds-success-subtle` | `138.5 76.5% 96.7%` | `144.9 80.4% 10%` | `bg-ds-success-subtle` | Success callout background |
 | `--ds-warning` | `26 90.5% 37.1%` | `43.3 96.4% 56.3%` | `text-ds-warning` | Caution |

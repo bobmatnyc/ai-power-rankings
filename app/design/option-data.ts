@@ -1,13 +1,13 @@
 /**
  * Data for the #190 C2 samples on `/design`: the shipped Option B fills and
- * the Autonomous Agents card accents (still pending the owner's pick).
+ * the Autonomous Agents card's purple accent.
  *
  * Why: each swatch states its contrast, and the ratio must come from the
  * colours the swatch draws.
  * What: the Tailwind 3.4 palette steps behind the --ds-grad-* tokens (as
  * sRGB channels), the mode-dependent token values the samples use, the tool
  * icon and tier fills with the classes the production components use, the
- * accent candidates, and WCAG 2.x contrast helpers.
+ * Agents-card accent, and WCAG 2.x contrast helpers.
  * Test: `tests/unit/design-options-190.test.ts` checks every value here
  * against app/globals.css, the Tailwind palette and the production
  * components, and the ratios.
@@ -40,7 +40,7 @@ export const PALETTE = {
 
 export type PaletteStep = keyof typeof PALETTE;
 
-/** Mode-dependent `--ds-*` values the comparison uses, as written in app/globals.css. */
+/** Mode-dependent `--ds-*` values the samples use, as written in app/globals.css. */
 export const MODE_TOKENS = {
   light: {
     "ds-surface": "0 0% 100%",
@@ -51,10 +51,7 @@ export const MODE_TOKENS = {
     "ds-score-c": "215.3 19.3% 34.5%",
     "ds-score-d": "0 73.7% 41.8%",
     "ds-score-fg": "0 0% 100%",
-    "ds-danger": "0 73.7% 41.8%",
-    "ds-warning": "26 90.5% 37.1%",
-    "ds-accent-agent-purple": "272.09302326 71.66666667% 47.05882353%",
-    "ds-accent-agent-teal": "175.33980583 77.44360902% 26.07843137%",
+    "ds-accent-agent": "272.09302326 71.66666667% 47.05882353%",
   },
   dark: {
     "ds-surface": "222.2 84% 4.9%",
@@ -65,10 +62,7 @@ export const MODE_TOKENS = {
     "ds-score-c": "215 20.2% 65.1%",
     "ds-score-d": "0 90.6% 70.8%",
     "ds-score-fg": "222.2 84% 4.9%",
-    "ds-danger": "0 90.6% 70.8%",
-    "ds-warning": "43.3 96.4% 56.3%",
-    "ds-accent-agent-purple": "270 95.23809524% 75.29411765%",
-    "ds-accent-agent-teal": "172.45508982 66.00790514% 50.39215686%",
+    "ds-accent-agent": "270 95.23809524% 75.29411765%",
   },
 } as const satisfies Record<Mode, Record<string, string>>;
 
@@ -182,10 +176,8 @@ export const TIER_SWATCHES: readonly TierSwatch[] = [
   tier("D", "Below Average", "bg-ds-score-d hover:bg-ds-score-d text-ds-score-fg"),
 ];
 
+// #190 C2: the owner picked purple; the red, teal and amber candidates are gone.
 export type AgentAccent = {
-  id: "current" | "purple" | "teal" | "amber";
-  title: string;
-  note: string;
   token: ModeToken;
   /** Card hover border, count badge, and "Explore" link classes, as app/[lang]/page.tsx writes them. */
   border: string;
@@ -193,44 +185,12 @@ export type AgentAccent = {
   text: string;
 };
 
-export const AGENT_ACCENTS: readonly AgentAccent[] = [
-  {
-    id: "current",
-    title: "Current: destructive (red)",
-    note: "What production renders since C1 mapped destructive to --ds-danger. Reads as an error.",
-    token: "ds-danger",
-    border: "hover:border-destructive/20",
-    badge: "bg-destructive/10 text-destructive",
-    text: "text-destructive",
-  },
-  {
-    id: "purple",
-    title: "Purple (new --ds-accent-agent-purple)",
-    note: "purple-700 light, purple-400 dark.",
-    token: "ds-accent-agent-purple",
-    border: "hover:border-ds-accent-agent-purple/20",
-    badge: "bg-ds-accent-agent-purple/10 text-ds-accent-agent-purple",
-    text: "text-ds-accent-agent-purple",
-  },
-  {
-    id: "teal",
-    title: "Teal (new --ds-accent-agent-teal)",
-    note: "teal-700 light, teal-400 dark.",
-    token: "ds-accent-agent-teal",
-    border: "hover:border-ds-accent-agent-teal/20",
-    badge: "bg-ds-accent-agent-teal/10 text-ds-accent-agent-teal",
-    text: "text-ds-accent-agent-teal",
-  },
-  {
-    id: "amber",
-    title: "Amber (existing --ds-warning)",
-    note: "Known exception: the badge text fails AA in light mode. Warning semantics.",
-    token: "ds-warning",
-    border: "hover:border-ds-warning/20",
-    badge: "bg-ds-warning/10 text-ds-warning",
-    text: "text-ds-warning",
-  },
-];
+export const AGENT_ACCENT: AgentAccent = {
+  token: "ds-accent-agent",
+  border: "hover:border-ds-accent-agent/20",
+  badge: "bg-ds-accent-agent/10 text-ds-accent-agent",
+  text: "text-ds-accent-agent",
+};
 
 /** The 10% badge tint over the card surface. */
 export const BADGE_TINT = 0.1;

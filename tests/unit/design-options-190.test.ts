@@ -6,7 +6,7 @@ import tailwindcss from "tailwindcss";
 import colors from "tailwindcss/colors";
 import { describe, expect, it } from "vitest";
 import {
-  AGENT_ACCENTS,
+  AGENT_ACCENT,
   agentContrast,
   GRAPHIC_MINIMUM,
   hslToRgb,
@@ -23,7 +23,7 @@ import { getTierColor } from "../../lib/ranking-utils";
 import { tokensFor } from "../../scripts/design-tokens";
 
 /**
- * #190 C2: the shipped Option B fills and the pending Agents-card accents.
+ * #190 C2: the shipped Option B fills and the Agents-card accent.
  *
  * Why: ToolIcon, TierLegend and getTierColor moved to tokens so a white glyph
  * or the band text meets its contrast minimum; the /design ratios must
@@ -33,8 +33,8 @@ import { tokensFor } from "../../scripts/design-tokens";
  * --ds-* tokens in app/globals.css and the three production components;
  * that every from-/to-/bg-/text-/border-ds class it names compiles; that
  * each shipped fill meets 3:1 (icon glyphs) or 4.5:1 (tier letters) in both
- * modes; and that the accent candidates meet AA except the labelled amber
- * light-mode badge.
+ * modes; and that the Agents-card accent meets AA for its link and badge
+ * text and matches app/[lang]/page.tsx.
  * Test: `npx vitest run tests/unit/design-options-190.test.ts`. No network.
  */
 
@@ -129,26 +129,16 @@ describe("C2 shipped fills meet their contrast minimum (#190)", () => {
   });
 });
 
-describe("C2 Autonomous Agents card accents, pending (#190)", () => {
-  /** Below AA and labelled on /design; must stay below, so the label stays true. */
-  const KNOWN_EXCEPTIONS = new Set(["amber light badge"]);
-
+// #190 C2: the purple accent shipped; the card itself is checked in agent-card-accent-190.test.ts.
+describe("C2 Autonomous Agents card accent (#190)", () => {
   it.each(MODES)("meets AA for link text and badge text, %s mode", (mode) => {
-    for (const accent of AGENT_ACCENTS.filter((a) => a.id !== "current")) {
-      const { text, badge } = agentContrast(accent, mode);
-      for (const [kind, value] of [["text", text], ["badge", badge]] as const) {
-        const name = `${accent.id} ${mode} ${kind}`;
-        if (KNOWN_EXCEPTIONS.has(name)) expect(value, `${name} now passes; drop the exception`).toBeLessThan(TEXT_MINIMUM);
-        else expect(value, `${name} = ${value.toFixed(2)}`).toBeGreaterThanOrEqual(TEXT_MINIMUM);
-      }
-    }
+    const { text, badge } = agentContrast(AGENT_ACCENT, mode);
+    expect(text, `text = ${text.toFixed(2)}`).toBeGreaterThanOrEqual(TEXT_MINIMUM);
+    expect(badge, `badge = ${badge.toFixed(2)}`).toBeGreaterThanOrEqual(TEXT_MINIMUM);
   });
 
-  it("keeps the reference card, and the home page card, on the destructive classes", () => {
-    const [current, ...candidates] = AGENT_ACCENTS;
-    expect(current.badge).toBe("bg-destructive/10 text-destructive");
-    for (const accent of candidates) expect(`${accent.border} ${accent.badge} ${accent.text}`).not.toMatch(/destructive/);
-    // #190 C2: the owner has not picked an accent, so the live card is unchanged.
-    expect(read("app", "[lang]", "page.tsx")).toContain('<Badge className="bg-destructive/10 text-destructive">');
+  it("uses the classes the home page card uses", () => {
+    const page = read("app", "[lang]", "page.tsx");
+    for (const cls of [AGENT_ACCENT.border, AGENT_ACCENT.badge, AGENT_ACCENT.text]) expect(page).toContain(cls);
   });
 });

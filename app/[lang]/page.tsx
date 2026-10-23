@@ -433,12 +433,13 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                 </Card>
               </Link>
 
+              {/* #190 C2: purple --ds-accent-agent; destructive read as an error. */}
               <Link href={`/${lang}/rankings?category=autonomous-agent`} className="block h-full">
-                <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-destructive/20 h-full">
+                <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer border-border/50 hover:border-ds-accent-agent/20 h-full">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center justify-between">
                       {dict.categories.autonomousAgent}
-                      <Badge className="bg-destructive/10 text-destructive">
+                      <Badge className="bg-ds-accent-agent/10 text-ds-accent-agent">
                         {categoryCount("autonomous-agent")}
                       </Badge>
                     </CardTitle>
@@ -447,7 +448,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
                     <p className="text-sm text-muted-foreground">
                       {dict.home.categories.agentDescription}
                     </p>
-                    <p className="text-sm text-destructive mt-3 group-hover:underline">
+                    <p className="text-sm text-ds-accent-agent mt-3 group-hover:underline">
                       {dict.common.explore} →
                     </p>
                   </CardContent>

@@ -123,9 +123,8 @@ export const AA_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ["ds-warning-fixed", "ds-surface-paper"],
   // #190 PR C1: `text-destructive-foreground` on a `bg-destructive` fill.
   ["ds-surface", "ds-danger"],
-  // #190 C2: Autonomous Agents card candidates, as link text on the card.
-  ["ds-accent-agent-purple", "ds-surface"],
-  ["ds-accent-agent-teal", "ds-surface"],
+  // #190 C2: the Autonomous Agents card's link text on the card.
+  ["ds-accent-agent", "ds-surface"],
 ];
 
 /**
